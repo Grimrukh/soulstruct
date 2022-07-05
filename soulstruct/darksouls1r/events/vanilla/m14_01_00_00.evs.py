@@ -1982,7 +1982,7 @@ def Event_11410100(_, character: int):
     Kill(character)
     End()
     IfCharacterDead(0, character)
-    EndIfNotEqual(left=character, right=1410110)
+    EndIfValueNotEqual(left=character, right=1410110)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)

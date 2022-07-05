@@ -844,7 +844,7 @@ def Event_12804500(_, flag: int, entity: int, flag_1: int, character: int, left:
     DefineLabel(0)
     EnableSpawner(entity=entity)
     IfFlagEnabled(1, flag_1)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfFlagEnabled(1, flag_2)
     IfConditionTrue(0, input_condition=1)
 
@@ -1154,7 +1154,7 @@ def Event_12805600(
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
-    SkipLinesIfEqual(2, left=left, right=1)
+    SkipLinesIfValueEqual(2, left=left, right=1)
     ForceAnimation(character, animation__animation_id)
     SkipLines(1)
     RotateToFaceEntity(character, PLAYER, animation=animation__animation_id)

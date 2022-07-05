@@ -161,6 +161,53 @@ def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path |
     Path(pyi_path).write_text(pyi_str)
 
 
+def generate_tests_pyi(game_module_name, emedf_aliases, emedf_tests, pyi_path):
+    pyi_docstring = (
+        "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module.\n"
+        "\n"
+        "Import this into any EVS script to have full access to tests.\n"
+        "Make sure you also do `from soulstruct.{game}.events import *` to get all enums and constants.\n"
+        "\"\"\"\n\n")
+    pyi_imports = (
+        f"from soulstruct.{game_module_name}.game_types import *\n"
+        "from .emevd.compiler import *\n"  # custom instructions
+        "from .emevd.enums import *\n"
+    )
+    pyi_all_lines = []
+    pyi_funcs_str = ""
+
+    for test_name, test_info in emedf_tests.items():
+
+        # We use the 'If' instruction to generate the signatures.
+        # TODO: EMEDF_TESTS generator should make sure the partial signatures are identical.
+        print(test_name, test_info)
+        partial_name = test_info["if"]
+        partial_names = " or ".join(f"`{name}`" for name in test_info.values())
+        category, index, instr_info = emedf_aliases[partial_name]
+        args_dict = {}
+        for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
+            args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
+
+        partial_kwargs = instr_info["partials"][partial_name]  # guaranteed to exist
+        partial_args_dict = {
+            arg_name: arg_info for arg_name, arg_info in args_dict.items()
+            if arg_name not in partial_kwargs and arg_name not in {"condition", "line_count", "label"}
+        }
+        partial_args = get_arg_string(partial_args_dict, len(partial_name))
+        pyi_funcs_str += _DEF_TEMPLATE.format(alias=test_name, args=partial_args) + "\n"
+        if "__docstring" in partial_kwargs:
+            partial_docstring = f"\n{partial_kwargs['__docstring']}"
+            pyi_funcs_str += format_docstring(partial_docstring) + "\n"
+        pyi_funcs_str += "    ...\n"
+        pyi_all_lines.append(f"\"{test_name}\",")
+
+    pyi_all = "__all__ = [\n    " + "\n    ".join(pyi_all_lines) + "\n]\n\n"
+    pyi_str = pyi_docstring + pyi_all + pyi_imports + pyi_funcs_str
+    print(pyi_str)
+    print(f"Writing {pyi_path}...")
+    Path(pyi_path).write_text(pyi_str)
+
+
 def darksouls1r():
     from soulstruct.darksouls1r.events.emevd import compiler
     from soulstruct.darksouls1r.events.emevd.emedf import EMEDF
@@ -174,12 +221,18 @@ def darksouls1r():
 
 def darksouls1ptde():
     from soulstruct.darksouls1ptde.events.emevd import compiler
-    from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF
+    from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
     generate_instr_pyi(
         "darksouls1ptde",
         EMEDF,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
         compiler,
+    )
+    generate_tests_pyi(
+        "darksouls1ptde",
+        EMEDF_ALIASES,
+        EMEDF_TESTS,
+        PACKAGE_PATH("darksouls1ptde/events/tests.pyi"),
     )
 
 

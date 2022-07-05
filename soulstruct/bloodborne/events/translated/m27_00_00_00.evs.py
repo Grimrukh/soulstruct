@@ -992,7 +992,7 @@ def ShadowOfYharnamPhaseTwoTrigger(_, shadow_to_transform: int, other_shadow_1: 
     IfCharacterHasTAEEvent(0, shadow_to_transform, tae_event_id=50)
     AICommand(shadow_to_transform, command_id=20, slot=1)
     ReplanAI(shadow_to_transform)
-    SkipLinesIfEqual(1, left=shadow_to_transform, right=Characters.Shadow2)
+    SkipLinesIfValueEqual(1, left=shadow_to_transform, right=Characters.Shadow2)
     AddSpecialEffect(shadow_to_transform, 5539, affect_npc_part_hp=False)
     IfCharacterHasTAEEvent(0, shadow_to_transform, tae_event_id=30)
     AICommand(shadow_to_transform, command_id=40, slot=1)

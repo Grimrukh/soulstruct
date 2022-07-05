@@ -583,7 +583,7 @@ def Event_11105170(_, character: int, region: int, seconds: float):
 def Event_11106200(_, obj: int, other_entity: int, animation_id: int, left: int):
     """Event 11106200"""
     DisableNetworkSync()
-    SkipLinesIfEqual(1, left=left, right=-1)
+    SkipLinesIfValueEqual(1, left=left, right=-1)
     IfFlagEnabled(-1, left)
     IfEntityWithinDistance(-1, entity=PLAYER, other_entity=other_entity, radius=7.0)
     IfConditionTrue(0, input_condition=-1)

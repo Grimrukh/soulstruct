@@ -1161,7 +1161,7 @@ def Event_12704812(_, character: int, character_1: int, character_2: int):
     IfCharacterHasTAEEvent(0, character, tae_event_id=50)
     AICommand(character, command_id=20, command_slot=1)
     ReplanAI(character)
-    SkipLinesIfEqual(1, left=character, right=2700801)
+    SkipLinesIfValueEqual(1, left=character, right=2700801)
     AddSpecialEffect(character, 5539)
     IfCharacterHasTAEEvent(0, character, tae_event_id=30)
     AICommand(character, command_id=40, command_slot=1)

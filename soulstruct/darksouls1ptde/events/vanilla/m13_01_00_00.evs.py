@@ -7,6 +7,7 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
+from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -38,7 +39,7 @@ def Constructor():
     DisableObject(1311600)
     SkipLinesIfFlagDisabled(1, 11310810)
     EnableTreasure(obj=1311600)
-    Event_11310090(0, line_intersects__obj=1311700, vfx_id=1311701, destination=1312600, destination_1=1312601)
+    Event_11310090(0, obj=1311700, vfx_id=1311701, destination=1312600, destination_1=1312601)
     Event_11315040()
     Event_11315041()
     Event_11315042()
@@ -124,19 +125,20 @@ def Preconstructor():
 
 
 @NeverRestart(11310090)
-def Event_11310090(_, line_intersects__obj: int, vfx_id: int, destination: int, destination_1: int):
+def Event_11310090(_, obj: int, vfx_id: int, destination: int, destination_1: int):
     """Event 11310090"""
-    SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableObject(line_intersects__obj)
-    DeleteVFX(vfx_id, erase_root_only=False)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableObject(obj)
+        DeleteVFX(vfx_id, erase_root_only=False)
+        End()
     IfActionButton(
         1,
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=line_intersects__obj,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+        line_intersects=obj,
     )
     IfActionButton(
         2,
@@ -144,7 +146,8 @@ def Event_11310090(_, line_intersects__obj: int, vfx_id: int, destination: int, 
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=line_intersects__obj,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+        line_intersects=obj,
     )
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -154,14 +157,15 @@ def Event_11310090(_, line_intersects__obj: int, vfx_id: int, destination: int, 
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7410)
-    DisableObject(line_intersects__obj)
+    DisableObject(obj)
     DeleteVFX(vfx_id)
 
 
 @RestartOnRest(11315040)
 def Event_11315040():
     """Event 11315040"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableCharacter(1310900)
     DisableCharacter(1310901)
     DisableCharacter(1310902)
@@ -278,6 +282,7 @@ def Event_11310095():
         anchor_entity=1312610,
         anchor_type=CoordEntityType.Region,
         model_point=0,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=1311710,
     )
     DisplayStatus(10010630)
@@ -294,6 +299,7 @@ def Event_11315390():
         prompt_text=10010403,
         anchor_entity=1312998,
         anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         boss_version=True,
         line_intersects=1311990,
     )
@@ -617,7 +623,8 @@ def Event_11315370(
 def Event_11315350(_, character: int):
     """Event 11315350"""
     EndIfFlagEnabled(7)
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableImmortality(character)
     IfHealthLessThanOrEqual(0, 1310800, value=0.0)
     CancelSpecialEffect(character, 5451)
@@ -722,9 +729,9 @@ def Event_11315092():
 @RestartOnRest(11315050)
 def Event_11315050(_, character: int, entity: int, seconds: float):
     """Event 11315050"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    SetStandbyAnimationSettings(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        SetStandbyAnimationSettings(character)
+        End()
     SetStandbyAnimationSettings(character, standby_animation=9000)
     IfEntityWithinDistance(0, entity=entity, other_entity=PLAYER, radius=5.0)
     Wait(seconds)
@@ -764,7 +771,8 @@ def Event_11315070(_, character: int, region: int, seconds: float):
 @RestartOnRest(11315080)
 def Event_11315080():
     """Event 11315080"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableAI(1310250)
     IfEntityWithinDistance(1, entity=1310250, other_entity=PLAYER, radius=7.0)
     IfAttacked(2, attacked_entity=1310250, attacker=PLAYER)
@@ -864,12 +872,12 @@ def Event_11310100():
 @RestartOnRest(11310820)
 def Event_11310820(_, character: int, item_lot_param_id: int):
     """Event 11310820"""
-    SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableCharacter(character)
-    Kill(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableCharacter(character)
+        Kill(character)
+        End()
     IfCharacterDead(0, character)
-    EndIfEqual(left=item_lot_param_id, right=0)
+    EndIfValueEqual(left=item_lot_param_id, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)
@@ -901,9 +909,9 @@ def Event_11310510(_, character: int, flag: int):
 @NeverRestart(11310520)
 def Event_11310520(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11310520"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
     IfHealthLessThanOrEqual(0, character, value=0.0)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1184,7 +1192,8 @@ def Event_11310810():
     IfFlagDisabled(1, 11315032)
     SkipLinesIfConditionTrue(1, 1)
     DisableCharacter(6551)
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfCharacterDead(0, 6551)
     EnableFlag(11310810)
 
@@ -1192,7 +1201,8 @@ def Event_11310810():
 @NeverRestart(11310002)
 def Event_11310002():
     """Event 11310002"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfHost(1)
     IfFlagDisabled(1, 1625)
     IfFlagDisabled(1, 1627)

@@ -1098,7 +1098,7 @@ def Event_12500454(
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(7, condition=2)
     ForceAnimation(character, animation_id_1)
-    SkipLinesIfNotEqual(2, left=region, right=2502021)
+    SkipLinesIfValueNotEqual(2, left=region, right=2502021)
     SetNest(character, region=region)
     WaitFrames(frames=frames)
     SetAIParamID(character, ai_param_id=ai_param_id_1)

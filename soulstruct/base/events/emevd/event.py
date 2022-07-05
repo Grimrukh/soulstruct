@@ -223,7 +223,7 @@ class Event(abc.ABC):
             # Remove non-preferred arg names.
             for vague_arg_name in (
                 "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
-                "destination", "copy_draw_parent", "flag", "left", "right",
+                "destination", "copy_draw_parent", "line_intersects", "flag", "left", "right",
             ):
                 if len(arg_names) >= 2 and vague_arg_name in arg_names:
                     arg_names.remove(vague_arg_name)
@@ -279,7 +279,7 @@ class Event(abc.ABC):
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=False):
+    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=True):
         """Convert single event script to EVS."""
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
@@ -317,6 +317,12 @@ class Event(abc.ABC):
         skip_if_slot_disabled_re = re.compile(
             r"^(?P<indent> *)SkipLinesIfThisEventSlotFlagDisabled\((?P<line_count>\d+)\)$"
         )
+        end_if_flag_enabled_re = re.compile(
+            r"^(?P<indent> *)EndIfThisEventFlagEnabled\(\)$"
+        )
+        end_if_flag_slot_enabled_re = re.compile(
+            r"^(?P<indent> *)EndIfThisEventSlotFlagEnabled\(\)$"
+        )
 
         i = 0
         while i < len(instruction_lines):
@@ -325,11 +331,23 @@ class Event(abc.ABC):
                 m = match.groupdict()
                 indent = m["indent"]
                 line_count = int(m["line_count"])
-                output_lines.append(f"{indent}if THIS_SLOT_FLAG:")
+                output_lines.append(f"{indent}if ThisEventSlotFlagEnabled():")
                 i += 1
                 for _ in range(line_count):
                     output_lines.append(f"{indent}    {instruction_lines[i]}")
                     i += 1
+            elif match := end_if_flag_enabled_re.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                output_lines.append(f"{indent}if ThisEventFlagEnabled():")
+                output_lines.append(f"{indent}    return")
+                i += 1
+            elif match := end_if_flag_slot_enabled_re.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                output_lines.append(f"{indent}if ThisEventSlotFlagEnabled():")
+                output_lines.append(f"{indent}    return")
+                i += 1
             else:
                 output_lines.append(line)
                 i += 1

@@ -2133,7 +2133,7 @@ def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     AddSpecialEffect(PLAYER, 4680)
     KillBoss(game_area_param_id=character__game_area_param_id)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2155,7 +2155,7 @@ def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2177,7 +2177,7 @@ def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2199,7 +2199,7 @@ def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2258,7 +2258,7 @@ def Event_12901589(
     AddSpecialEffect(PLAYER, 4680)
     KillBoss(game_area_param_id=character__game_area_param_id)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2280,7 +2280,7 @@ def Event_12901589(
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2302,7 +2302,7 @@ def Event_12901589(
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2324,7 +2324,7 @@ def Event_12901589(
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2407,7 +2407,7 @@ def Event_12901591(
     AddSpecialEffect(PLAYER, 4680)
     KillBoss(game_area_param_id=character__game_area_param_id)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2429,7 +2429,7 @@ def Event_12901591(
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2451,7 +2451,7 @@ def Event_12901591(
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2473,7 +2473,7 @@ def Event_12901591(
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2786,7 +2786,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2808,7 +2808,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2830,7 +2830,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2852,7 +2852,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2913,7 +2913,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2935,7 +2935,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2957,7 +2957,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -2979,7 +2979,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3043,7 +3043,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3065,7 +3065,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3087,7 +3087,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3109,7 +3109,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3765,7 +3765,7 @@ def Event_12901723(
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3787,7 +3787,7 @@ def Event_12901723(
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3809,7 +3809,7 @@ def Event_12901723(
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3831,7 +3831,7 @@ def Event_12901723(
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3916,7 +3916,7 @@ def Event_12901725(
     DisableNetworkSync()
     GotoIfClient(Label.L1)
     CreatePlayLog(name=262)
-    SkipLinesIfNotEqual(5, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901800)
     StopPlayLogMeasurement(measurement_id=2900010)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3938,7 +3938,7 @@ def Event_12901725(
         name=274,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901801)
     StopPlayLogMeasurement(measurement_id=2900011)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3960,7 +3960,7 @@ def Event_12901725(
         name=300,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901802)
     StopPlayLogMeasurement(measurement_id=2900012)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -3982,7 +3982,7 @@ def Event_12901725(
         name=326,
         output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
     )
-    SkipLinesIfNotEqual(5, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(5, left=left, right=12901803)
     StopPlayLogMeasurement(measurement_id=2900013)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
@@ -6308,13 +6308,13 @@ def Event_12904863(_, character: int, character_1: int, character_2: int, region
     ReferDamageToEntity(character_1, target_entity=character_2)
     EnableBossHealthBar(character_2, name=name)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
     EnableFlag(flag)
 
@@ -6589,13 +6589,13 @@ def Event_12904877(
     End()
     IfCharacterInsideRegion(0, PLAYER, region=region)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
     SkipLinesIfFlagEnabled(2, flag)
     EnableObject(obj)
@@ -6683,13 +6683,13 @@ def Event_12904881(_, character: int, region: int, vfx_id: int, name: int, flag:
     ForceAnimation(character, 7020, loop=True, skip_transition=True)
     IfCharacterInsideRegion(0, PLAYER, region=region)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
     SkipLinesIfFlagEnabled(2, flag)
     EnableObject(obj)
@@ -13402,13 +13402,13 @@ def Event_12906791(_, character: int, name: int, left: int, flag: int, flag_1: i
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableFlag(flag_1)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 
@@ -13518,13 +13518,13 @@ def Event_12906795(_, character: int, name: int, left: int, flag: int, flag_1: i
     EnableBossHealthBar(character_2, name=304003, bar_slot=2)
     EnableFlag(flag_1)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 
@@ -13698,13 +13698,13 @@ def Event_12906806(_, character: int, name: int, left: int, flag: int, flag_1: i
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableFlag(flag_1)
     CreatePlayLog(name=1260)
-    SkipLinesIfNotEqual(1, left=left, right=12901800)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901800)
     StartPlayLogMeasurement(measurement_id=2900010, name=1316, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901801)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901801)
     StartPlayLogMeasurement(measurement_id=2900011, name=1352, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901802)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901802)
     StartPlayLogMeasurement(measurement_id=2900012, name=1388, overwrite=True)
-    SkipLinesIfNotEqual(1, left=left, right=12901803)
+    SkipLinesIfValueNotEqual(1, left=left, right=12901803)
     StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 

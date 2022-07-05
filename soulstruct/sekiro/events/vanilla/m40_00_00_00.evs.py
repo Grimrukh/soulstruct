@@ -629,7 +629,7 @@ def Event14000121(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfActionButtonParamActivated(1, action_button_id=arg_16_19, entity=arg_12_15)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, arg_12_15, animation=arg_20_23, wait_for_completion=True)
-    SkipLinesIfEqual(2, left=arg_20_23, right=69050)
+    SkipLinesIfValueEqual(2, left=arg_20_23, right=69050)
     Wait(0.8999999761581421)
     SkipLines(1)
     Wait(2.0)

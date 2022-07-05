@@ -3298,7 +3298,7 @@ def Event13505750(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=arg_20_23, right=0)
+    SkipLinesIfValueEqual(1, left=arg_20_23, right=0)
     AddSpecialEffect(arg_0_3, 5000, affect_npc_part_hp=False)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_12_15)
     ReplanAI(arg_0_3)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     # Basic enums
     "RestartType",
@@ -74,25 +76,25 @@ class ProtectedEntities(IntEnum):
     ClientPlayer5 = 10005
 
 
-class AIStatusType(IntEnum):
+class AIStatusType(BaseEMEVDEnum):
     Normal = 0
     Caution = 1
     Search = 2
     Battle = 3
 
 
-class BitOperation(IntEnum):
+class BitOperation(BaseEMEVDEnum):
     Add = 0
     Delete = 1
     Invert = 2
 
 
-class ButtonType(IntEnum):
+class ButtonType(BaseEMEVDEnum):
     Yes_or_No = 0
     OK_or_Cancel = 1
 
 
-class CharacterType(IntEnum):
+class CharacterType(BaseEMEVDEnum):
     Human = 0  # Also called "Survival" in some resources.
     WhitePhantom = 1
     BlackPhantom = 2
@@ -100,7 +102,7 @@ class CharacterType(IntEnum):
     Intruder = 12
 
 
-class CharacterUpdateRate(IntEnum):
+class CharacterUpdateRate(BaseEMEVDEnum):
     Never = -1
     Always = 0
     EveryTwoFrames = 2
@@ -108,7 +110,7 @@ class CharacterUpdateRate(IntEnum):
     Unknown105 = 105  # TODO: Move to `eldenring`
 
 
-class ClassType(IntEnum):
+class ClassType(BaseEMEVDEnum):
     Warrior = 0
     Knight = 1
     Wanderer = 2
@@ -130,13 +132,28 @@ class ClassType(IntEnum):
     Chi_Pyromancer = 27
 
 
-class ComparisonType(IntEnum):
+class ComparisonType(BaseNegatableEMEVDEnum):
     Equal = 0
     NotEqual = 1
     GreaterThan = 2
     LessThan = 3
     GreaterThanOrEqual = 4
     LessThanOrEqual = 5
+
+    def negate(self):
+        if self == ComparisonType.Equal:
+            return ComparisonType.NotEqual
+        elif self == ComparisonType.NotEqual:
+            return ComparisonType.Equal
+        elif self == ComparisonType.GreaterThan:
+            return ComparisonType.LessThanOrEqual
+        elif self == ComparisonType.LessThan:
+            return ComparisonType.GreaterThanOrEqual
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ComparisonType.LessThan
+        elif self == ComparisonType.LessThanOrEqual:
+            return ComparisonType.GreaterThan
+        return super().negate()
 
 
 class CutsceneFlags(BaseEMEVDFlags):
@@ -145,49 +162,74 @@ class CutsceneFlags(BaseEMEVDFlags):
     FadeOut = 0b0000_1000  # 8
 
 
-class DamageTargetType(IntEnum):
+class DamageTargetType(BaseEMEVDEnum):
     Character = 1
     Map = 2
     Character_and_Map = 3
 
 
-class EventReturnType(IntEnum):
+class EventReturnType(BaseEMEVDEnum):
     End = 0
     Restart = 1
 
 
-class FlagState(IntEnum):
+class FlagState(BaseNegatableEMEVDEnum):
     Off = 0
     On = 1
     Change = 2
 
+    def negate(self):
+        if self == FlagState.Off:
+            return FlagState.On
+        elif self == FlagState.On:
+            return FlagState.Off
+        return super().negate()
 
-class FlagType(IntEnum):
+
+class FlagType(BaseEMEVDEnum):
     Absolute = 0
     RelativeToThisEvent = 1
     RelativeToThisEventSlot = 2
 
 
-class InterpolationState(IntEnum):
+class InterpolationState(BaseNegatableEMEVDEnum):
     Interpolated = 0
     NotInterpolated = 1
 
+    def negate(self):
+        if self == InterpolationState.Interpolated:
+            return InterpolationState.NotInterpolated
+        elif self == InterpolationState.NotInterpolated:
+            return InterpolationState.Interpolated
+        return super().negate()
 
-class ItemType(IntEnum):
+
+class ItemType(BaseEMEVDEnum):
     Weapon = 0
     Armor = 1
     Ring = 2
     Good = 3
 
 
-class RangeState(IntEnum):
+class RangeState(BaseNegatableEMEVDEnum):
     AllOn = 0
     AllOff = 1
     AnyOn = 2  # or "not all off"
     AnyOff = 3  # or "not all on"
 
+    def negate(self):
+        if self == RangeState.AllOn:
+            return RangeState.AnyOff
+        elif self == RangeState.AllOff:
+            return RangeState.AnyOn
+        elif self == RangeState.AnyOn:
+            return RangeState.AllOff
+        elif self == RangeState.AnyOff:
+            return RangeState.AllOn
+        return super().negate()
 
-class CoordEntityType(IntEnum):
+
+class CoordEntityType(BaseEMEVDEnum):
     """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
 
     Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
@@ -198,7 +240,7 @@ class CoordEntityType(IntEnum):
     Character = 2
 
 
-class NavmeshType(IntEnum):
+class NavmeshType(BaseEMEVDEnum):
     """Bit flags for Navmesh types."""
 
     Solid = 0b00000000000001
@@ -217,25 +259,32 @@ class NavmeshType(IntEnum):
     ClosedDoor = 0b10000000000000
 
 
-class NumberButtons(IntEnum):
+class NumberButtons(BaseEMEVDEnum):
     OneButton = 1
     TwoButton = 2
     NoButton = 6
 
 
-class OnOffChange(IntEnum):
+class OnOffChange(BaseNegatableEMEVDEnum):
     On = 0
     Off = 1
     Change = 2
 
+    def negate(self):
+        if self == OnOffChange.On:
+            return OnOffChange.Off
+        elif self == OnOffChange.Off:
+            return OnOffChange.On
+        return super().negate()
 
-class RestartType(IntEnum):
+
+class RestartType(BaseEMEVDEnum):
     NeverRestart = 0
     RestartOnRest = 1
     UnknownRestart = 2
 
 
-class SummonSignType(IntEnum):
+class SummonSignType(BaseEMEVDEnum):
     BlueEyeSign = 0  # Used for NPC summons.
     BlackEyeSign = 1  # Used for NPC invasions.
     RedEyeSign = 2
@@ -244,7 +293,7 @@ class SummonSignType(IntEnum):
     BlackHelpSign = 5
 
 
-class SoundType(IntEnum):
+class SoundType(BaseEMEVDEnum):
     # The initial letter is prefixed to the sound ID to find the sound file in the FEV.
     a_Ambient = 0
     c_CharacterMotion = 1
@@ -259,12 +308,12 @@ class SoundType(IntEnum):
     g_Ghost = 10
 
 
-class StatueType(IntEnum):
+class StatueType(BaseEMEVDEnum):
     Stone = 0  # e.g. in the Depths, from Basilisk breath
     Crystal = 1  # e.g. in Crystal Cave, from Seath crystals
 
 
-class TriggerAttribute(IntEnum):
+class TriggerAttribute(BaseEMEVDFlags):
     """Bit flags that determine which categories of player are able to use a given action button trigger.
 
     If you want multiple player types to be able to use it, simply add those enums together. The vanilla events almost
@@ -283,15 +332,13 @@ class TriggerAttribute(IntEnum):
     BlackPhantom = 0b10000000
     All = 0b11111111
 
-    Human_or_Hollow = Human + Hollow  # Shortcut
 
-
-class WorldTendencyType(IntEnum):
+class WorldTendencyType(BaseEMEVDEnum):
     White = 0
     Black = 1
 
 
-class UpdateAuthority(IntEnum):
+class UpdateAuthority(BaseEMEVDEnum):
     Normal = 0
     Forced = 4095
 

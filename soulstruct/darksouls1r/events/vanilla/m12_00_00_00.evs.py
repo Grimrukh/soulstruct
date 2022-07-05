@@ -786,7 +786,7 @@ def Event_11200100(
     EndOfAnimation(obj=line_intersects__obj, animation_id=1)
     End()
     CreateObjectVFX(line_intersects__obj, vfx_id=200, model_point=model_point)
-    SkipLinesIfEqual(1, left=left, right=1)
+    SkipLinesIfValueEqual(1, left=left, right=1)
     IfPlayerHasGood(1, 2002)
     IfActionButton(
         1,
@@ -801,9 +801,9 @@ def Event_11200100(
     EnableFlag(flag_1)
     RotateToFaceEntity(PLAYER, target_entity=line_intersects__obj)
     ForceAnimation(PLAYER, 7114, wait_for_completion=1)
-    SkipLinesIfEqual(1, left=left, right=1)
+    SkipLinesIfValueEqual(1, left=left, right=1)
     SkipLinesIfClient(1)
-    SkipLinesIfEqual(1, left=left, right=1)
+    SkipLinesIfValueEqual(1, left=left, right=1)
     DisplayDialog(text=10010861, anchor_entity=line_intersects__obj, button_type=ButtonType.Yes_or_No)
     ForceAnimation(line_intersects__obj, 1)
     DeleteObjectVFX(line_intersects__obj)
@@ -814,9 +814,9 @@ def Event_11200110(_, flag: int, line_intersects: int, anchor_entity: int, left:
     """Event 11200110"""
     DisableNetworkSync()
     IfFlagEnabled(-1, flag)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfFlagEnabled(1, 703)
-    SkipLinesIfEqual(1, left=left, right=1)
+    SkipLinesIfValueEqual(1, left=left, right=1)
     IfPlayerDoesNotHaveGood(1, 2002)
     IfActionButton(
         1,
@@ -866,7 +866,7 @@ def Event_11205150(_, character: int):
 @RestartOnRest(11205180)
 def Event_11205180(_, character: int, left: int):
     """Event 11205180"""
-    SkipLinesIfEqual(3, left=left, right=0)
+    SkipLinesIfValueEqual(3, left=left, right=0)
     IfHasAIStatus(0, character, ai_status=AIStatusType.Battle)
     SetNest(character, region=1202732)
     End()
@@ -935,7 +935,7 @@ def Event_11205290(_, character: int, flag: int, seconds: float, right: int):
     DisableAI(character)
     IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
     IfAttacked(-1, attacked_entity=character, attacker=6521)
-    SkipLinesIfEqual(1, left=0, right=right)
+    SkipLinesIfValueEqual(1, left=0, right=right)
     SkipLinesIfClient(1)
     IfFlagEnabled(-1, flag)
     IfConditionTrue(0, input_condition=-1)
@@ -1116,14 +1116,14 @@ def Event_11200200():
 def Event_11200810(_, character: int, left: int, item_lot_param_id: int):
     """Event 11200810"""
     SkipLinesIfThisEventSlotFlagDisabled(6)
-    SkipLinesIfEqual(3, left=left, right=1)
+    SkipLinesIfValueEqual(3, left=left, right=1)
     DisableCharacter(character)
     Kill(character)
     End()
     DropMandatoryTreasure(character)
     End()
     IfCharacterDead(0, character)
-    EndIfEqual(left=item_lot_param_id, right=0)
+    EndIfValueEqual(left=item_lot_param_id, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)

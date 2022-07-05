@@ -11,7 +11,7 @@ from soulstruct.darksouls1r.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
 from .enums import *
 
-__all__ = ["EMEDF", "EMEDF_ALIASES"]
+__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS"]
 
 
 EVENT_RETURN_TYPE = {
@@ -434,10 +434,4 @@ EMEDF |= {
 
 
 add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
-
-# Retrieve instruction information by EVS instruction alias name (or partial name).
-EMEDF_ALIASES = {v["alias"]: (category, index, v) for (category, index), v in EMEDF.items()}
-for (category, index), v in EMEDF.items():
-    if "partials" in v:
-        for partial_name in v["partials"]:
-            EMEDF_ALIASES[partial_name] = (category, index, v)
+EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)

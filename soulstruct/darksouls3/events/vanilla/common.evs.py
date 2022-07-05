@@ -265,7 +265,7 @@ def Event130(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int, arg_8_9: ushort, a
     SkipLinesIfConditionFalse(1, 2)
     IfMapInCeremony(1, game_map=(arg_0_0, arg_1_1), ceremony_id=arg_8_9)
     IfConditionTrue(0, input_condition=1)
-    EndIfEqual(left=arg_12_15, right=-1)
+    EndIfValueEqual(left=arg_12_15, right=-1)
     AwardAchievement(arg_12_15)
     End()
 
@@ -603,13 +603,13 @@ def Event970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 970: Event 970 """
     EndIfFlagEnabled(arg_0_3)
     IfFlagEnabled(0, arg_0_3)
-    SkipLinesIfEqual(1, left=arg_4_7, right=0)
+    SkipLinesIfValueEqual(1, left=arg_4_7, right=0)
     AwardItemLot(arg_4_7, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    SkipLinesIfEqual(1, left=arg_8_11, right=0)
+    SkipLinesIfValueEqual(1, left=arg_8_11, right=0)
     AwardItemLot(arg_8_11, host_only=True)
-    SkipLinesIfEqual(1, left=arg_12_15, right=0)
+    SkipLinesIfValueEqual(1, left=arg_12_15, right=0)
     AwardItemLot(arg_12_15, host_only=True)
 
 
@@ -1734,7 +1734,7 @@ def Event840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Wait(1.0)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=123456789)
     Wait(4.0)
-    SkipLinesIfEqual(1, left=arg_12_15, right=-1)
+    SkipLinesIfValueEqual(1, left=arg_12_15, right=-1)
     ForceAnimation(PLAYER, arg_12_15, loop=True)
     Restart()
 

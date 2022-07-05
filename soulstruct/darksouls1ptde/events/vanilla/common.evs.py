@@ -7,6 +7,7 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
+from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -377,7 +378,8 @@ def Preconstructor():
 @NeverRestart(290)
 def Event_290():
     """Event 290"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     EnableFlagRange((280, 290))
     IfPlayerClass(-1, ClassType.Knight)
     IfPlayerClass(-1, ClassType.Cleric)
@@ -395,7 +397,8 @@ def Event_290():
 @NeverRestart(701)
 def Event_701():
     """Event 701"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     EnableVagrantSpawning()
     IfInsideMap(0, game_map=UNDEAD_ASYLUM)
     DisableVagrantSpawning()
@@ -459,7 +462,8 @@ def Event_706():
 @NeverRestart(710)
 def Event_710():
     """Event 710"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfPlayerHasGood(0, 2510)
     EnableFlag(710)
 
@@ -467,7 +471,8 @@ def Event_710():
 @NeverRestart(711)
 def Event_711(_, item: int, flag: int):
     """Event 711"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfPlayerHasGood(0, item)
     EnableFlag(flag)
 
@@ -493,7 +498,8 @@ def Event_715():
 @NeverRestart(716)
 def Event_716():
     """Event 716"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(0, 50000082)
     EnableFlag(716)
 
@@ -501,30 +507,32 @@ def Event_716():
 @NeverRestart(8131)
 def Event_8131(_, item: int, item_1: int):
     """Event 8131"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfPlayerHasGood(-1, item)
     IfPlayerHasGood(-1, item_1)
     IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfNotEqual(1, left=item, right=202)
+    SkipLinesIfValueNotEqual(1, left=item, right=202)
     EnableFlag(8131)
-    SkipLinesIfNotEqual(1, left=item, right=204)
+    SkipLinesIfValueNotEqual(1, left=item, right=204)
     EnableFlagRange((8131, 8132))
-    SkipLinesIfNotEqual(1, left=item, right=206)
+    SkipLinesIfValueNotEqual(1, left=item, right=206)
     EnableFlagRange((8131, 8133))
-    SkipLinesIfNotEqual(1, left=item, right=208)
+    SkipLinesIfValueNotEqual(1, left=item, right=208)
     EnableFlagRange((8131, 8134))
-    SkipLinesIfNotEqual(1, left=item, right=210)
+    SkipLinesIfValueNotEqual(1, left=item, right=210)
     EnableFlagRange((8131, 8135))
-    SkipLinesIfNotEqual(1, left=item, right=212)
+    SkipLinesIfValueNotEqual(1, left=item, right=212)
     EnableFlagRange((8131, 8136))
-    SkipLinesIfNotEqual(1, left=item, right=214)
+    SkipLinesIfValueNotEqual(1, left=item, right=214)
     EnableFlagRange((8131, 8137))
 
 
 @NeverRestart(819)
 def Event_819():
     """Event 819"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(-1, 11017040)
     IfFlagEnabled(-1, 11017170)
     IfConditionTrue(0, input_condition=-1)
@@ -535,7 +543,8 @@ def Event_819():
 @NeverRestart(719)
 def Event_719():
     """Event 719"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfPlayerHasGood(-1, 3000)
     IfPlayerHasGood(-1, 3010)
     IfPlayerHasGood(-1, 3020)
@@ -616,7 +625,8 @@ def Event_719():
 @NeverRestart(720)
 def Event_720():
     """Event 720"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfPlayerHasGood(-1, 4020)
     IfPlayerHasGood(-1, 4030)
     IfPlayerHasGood(-1, 4040)
@@ -653,7 +663,8 @@ def Event_731():
 @NeverRestart(250)
 def Event_250(_, item: int, flag: int):
     """Event 250"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfPlayerHasGood(0, item)
     EnableFlag(flag)
 
@@ -661,9 +672,9 @@ def Event_250(_, item: int, flag: int):
 @NeverRestart(350)
 def Event_350(_, flag: int, item: int):
     """Event 350"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    IfPlayerHasGood(1, item)
-    EndIfConditionFalse(1)
+    if ThisEventSlotFlagEnabled():
+        IfPlayerHasGood(1, item)
+        EndIfConditionFalse(1)
     IfFlagEnabled(0, flag)
     RemoveGoodFromPlayer(item=item, quantity=1)
 
@@ -703,13 +714,13 @@ def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, it
     """Event 970"""
     EndIfFlagEnabled(flag)
     IfFlagEnabled(0, flag)
-    SkipLinesIfEqual(1, left=item_lot_param_id, right=0)
+    SkipLinesIfValueEqual(1, left=item_lot_param_id, right=0)
     AwardItemLot(item_lot_param_id, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    SkipLinesIfEqual(1, left=item_lot_param_id_1, right=0)
+    SkipLinesIfValueEqual(1, left=item_lot_param_id_1, right=0)
     AwardItemLot(item_lot_param_id_1, host_only=True)
-    SkipLinesIfEqual(1, left=item_lot_param_id_2, right=0)
+    SkipLinesIfValueEqual(1, left=item_lot_param_id_2, right=0)
     AwardItemLot(item_lot_param_id_2, host_only=True)
 
 
@@ -738,7 +749,8 @@ def Event_890(_, flag: int, item_lot_param_id: int, state: uchar):
 @NeverRestart(960)
 def Event_960(_, flag: int, character: int, item_lot_param_id: int):
     """Event 960"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfFlagEnabled(1, flag)
     IfCharacterDead(1, character)
     IfConditionTrue(0, input_condition=1)
@@ -851,7 +863,8 @@ def Event_721():
 @NeverRestart(722)
 def Event_722():
     """Event 722"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11407120)
     IfFlagEnabled(1, 11407130)
     IfFlagEnabled(1, 11407150)
@@ -869,7 +882,8 @@ def Event_722():
 @NeverRestart(723)
 def Event_723():
     """Event 723"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11027130)
     IfFlagEnabled(1, 11027140)
     IfFlagEnabled(1, 11027150)
@@ -889,7 +903,8 @@ def Event_723():
 @NeverRestart(724)
 def Event_724():
     """Event 724"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11017050)
     IfFlagEnabled(1, 11017060)
     IfFlagEnabled(1, 11017070)
@@ -906,7 +921,8 @@ def Event_724():
 @NeverRestart(725)
 def Event_725():
     """Event 725"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfTrueFlagCountGreaterThanOrEqual(0, FlagType.Absolute, flag_range=(11707100, 11707190), value=2)
     EnableFlag(725)
 
@@ -914,7 +930,8 @@ def Event_725():
 @NeverRestart(726)
 def Event_726():
     """Event 726"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfTrueFlagCountGreaterThanOrEqual(0, FlagType.Absolute, flag_range=(11607000, 11607090), value=2)
     EnableFlag(726)
 
@@ -922,7 +939,8 @@ def Event_726():
 @NeverRestart(727)
 def Event_727():
     """Event 727"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11327000)
     IfFlagEnabled(1, 11327010)
     IfFlagEnabled(1, 11327020)
@@ -1235,7 +1253,8 @@ def Event_818():
 @NeverRestart(810)
 def Event_810():
     """Event 810"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(0, 50001031)
     EnableFlag(810)
 
@@ -1243,7 +1262,8 @@ def Event_810():
 @NeverRestart(812)
 def Event_812(_, flag: int):
     """Event 812"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfFlagEnabled(0, flag)
     End()
 
@@ -1282,7 +1302,7 @@ def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_
     Wait(1.0)
     PlaySoundEffect(PLAYER, 123456789, sound_type=SoundType.s_SFX)
     Wait(4.0)
-    SkipLinesIfEqual(1, left=animation_id_1, right=-1)
+    SkipLinesIfValueEqual(1, left=animation_id_1, right=-1)
     ForceAnimation(PLAYER, animation_id_1, loop=True)
     Restart()
 

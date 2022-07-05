@@ -13,7 +13,7 @@ from soulstruct.bloodborne.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
 from .enums import *
 
-__all__ = ["EMEDF", "EMEDF_ALIASES"]
+__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS"]
 
 
 EVENT_RETURN_TYPE = {
@@ -318,7 +318,7 @@ EMEDF = PTDE_EMEDF | {
             "prompt_text": NO_DEFAULT(EventTextTyping),
             "trigger_attribute": {
                 "type": TriggerAttribute,
-                "default": TriggerAttribute.Human_or_Hollow,
+                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
             },
             "button": INT | {"default": 0},
         },
@@ -498,7 +498,7 @@ EMEDF = PTDE_EMEDF | {
             },
             "trigger_attribute": {
                 "type": TriggerAttribute,
-                "default": TriggerAttribute.Human_or_Hollow,
+                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
             },
             "button": INT | {"default": 0},
         },
@@ -597,7 +597,7 @@ EMEDF = PTDE_EMEDF | {
             },
             "trigger_attribute": {
                 "type": TriggerAttribute,
-                "default": TriggerAttribute.Human_or_Hollow,
+                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
             },
             "button": INT | {"default": 0},
             "line_intersects": INT,
@@ -641,7 +641,7 @@ EMEDF = PTDE_EMEDF | {
             },
             "trigger_attribute": {
                 "type": TriggerAttribute,
-                "default": TriggerAttribute.Human_or_Hollow,
+                "default": TriggerAttribute.Human | TriggerAttribute.Hollow,
             },
             "button": INT | {"default": 0},
             "line_intersects": INT,
@@ -1036,7 +1036,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (1000, 5): {
-        "alias": "SkipLinesIfComparison",
+        "alias": "SkipLinesIfValueComparison",
         "docstring": "TODO",
         "args": {
             "line_count": INT | HIDE_NAME,
@@ -1045,16 +1045,16 @@ EMEDF = PTDE_EMEDF | {
             "right": INT,
         },
         "partials": {
-            "SkipLinesIfEqual": dict(comparison_type=ComparisonType.Equal),
-            "SkipLinesIfNotEqual": dict(comparison_type=ComparisonType.NotEqual),
-            "SkipLinesIfGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
-            "SkipLinesIfLessThan": dict(comparison_type=ComparisonType.LessThan),
-            "SkipLinesIfGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
-            "SkipLinesIfLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
+            "SkipLinesIfValueEqual": dict(comparison_type=ComparisonType.Equal),
+            "SkipLinesIfValueNotEqual": dict(comparison_type=ComparisonType.NotEqual),
+            "SkipLinesIfValueGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
+            "SkipLinesIfValueLessThan": dict(comparison_type=ComparisonType.LessThan),
+            "SkipLinesIfValueGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
+            "SkipLinesIfValueLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
     (1000, 6): {
-        "alias": "ReturnIfComparison",
+        "alias": "ReturnIfValueComparison",
         "docstring": "TODO",
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
@@ -1063,51 +1063,51 @@ EMEDF = PTDE_EMEDF | {
             "right": INT,
         },
         "partials": {
-            "EndIfEqual": dict(
+            "EndIfValueEqual": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.Equal,
             ),
-            "EndIfNotEqual": dict(
+            "EndIfValueNotEqual": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.NotEqual,
             ),
-            "EndIfGreaterThan": dict(
+            "EndIfValueGreaterThan": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.GreaterThan,
             ),
-            "EndIfLessThan": dict(
+            "EndIfValueLessThan": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.LessThan,
             ),
-            "EndIfGreaterThanOrEqual": dict(
+            "EndIfValueGreaterThanOrEqual": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.GreaterThanOrEqual,
             ),
-            "EndIfLessThanOrEqual": dict(
+            "EndIfValueLessThanOrEqual": dict(
                 event_return_type=EventReturnType.End,
                 comparison_type=ComparisonType.LessThanOrEqual,
             ),
-            "RestartIfEqual": dict(
+            "RestartIfValueEqual": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.Equal,
             ),
-            "RestartIfNotEqual": dict(
+            "RestartIfValueNotEqual": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.NotEqual,
             ),
-            "RestartIfGreaterThan": dict(
+            "RestartIfValueGreaterThan": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.GreaterThan,
             ),
-            "RestartIfLessThan": dict(
+            "RestartIfValueLessThan": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.LessThan,
             ),
-            "RestartIfGreaterThanOrEqual": dict(
+            "RestartIfValueGreaterThanOrEqual": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.GreaterThanOrEqual,
             ),
-            "RestartIfLessThanOrEqual": dict(
+            "RestartIfValueLessThanOrEqual": dict(
                 event_return_type=EventReturnType.Restart,
                 comparison_type=ComparisonType.LessThanOrEqual,
             ),
@@ -2257,12 +2257,12 @@ EMEDF = PTDE_EMEDF | {
     (2004, 8): {
         "alias": "AddSpecialEffect",
         "docstring": """
-                'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
-                nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
+            'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will 
+            do nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
 
-                The Bloodborne version has an additional argument that determines whether any HP changes caused by the 
-                special effect should also affect NPC parts, which I set to `False` by default (more common).
-            """,
+            The Bloodborne version has an additional argument that determines whether any HP changes caused by the 
+            special effect should also affect NPC parts, which I set to `False` by default (more common).
+        """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "special_effect_id": INT | HIDE_NAME,
@@ -4482,10 +4482,4 @@ EMEDF = {k: EMEDF[k] for k in sorted(EMEDF.keys())}
 
 
 add_common_emedf_info(EMEDF, PACKAGE_PATH("bloodborne/events/emevd/bb-common.emedf.json"))
-
-# Retrieve instruction information by EVS instruction alias name (or partial name).
-EMEDF_ALIASES = {v["alias"]: (category, index, v) for (category, index), v in EMEDF.items()}
-for (category, index), v in EMEDF.items():
-    if "partials" in v:
-        for partial_name in v["partials"]:
-            EMEDF_ALIASES[partial_name] = (category, index, v)
+EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)

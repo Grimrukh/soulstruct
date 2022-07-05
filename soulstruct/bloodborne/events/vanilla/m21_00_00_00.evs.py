@@ -613,7 +613,7 @@ def Event_12100020(_, item: int, flag: int, left: int):
     DisableNetworkSync()
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     DisableFlag(flag)
     IfPlayerHasGood(0, item)
     EnableFlag(flag)

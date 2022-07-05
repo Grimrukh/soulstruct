@@ -175,7 +175,7 @@ def ActionButton(
     facing_angle: float = None,
     max_distance: float = None,
     model_point: int = None,
-    trigger_attribute: TriggerAttribute = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human | TriggerAttribute.Hollow,
     button=0,
     boss_version=False,
     line_intersects: CoordEntityTyping = None,

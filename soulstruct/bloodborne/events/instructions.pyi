@@ -186,26 +186,26 @@ __all__ = [
     "Return",  # 1000[4]
     "End",
     "Restart",
-    "SkipLinesIfComparison",  # 1000[5]
-    "SkipLinesIfEqual",
-    "SkipLinesIfNotEqual",
-    "SkipLinesIfGreaterThan",
-    "SkipLinesIfLessThan",
-    "SkipLinesIfGreaterThanOrEqual",
-    "SkipLinesIfLessThanOrEqual",
-    "ReturnIfComparison",  # 1000[6]
-    "EndIfEqual",
-    "EndIfNotEqual",
-    "EndIfGreaterThan",
-    "EndIfLessThan",
-    "EndIfGreaterThanOrEqual",
-    "EndIfLessThanOrEqual",
-    "RestartIfEqual",
-    "RestartIfNotEqual",
-    "RestartIfGreaterThan",
-    "RestartIfLessThan",
-    "RestartIfGreaterThanOrEqual",
-    "RestartIfLessThanOrEqual",
+    "SkipLinesIfValueComparison",  # 1000[5]
+    "SkipLinesIfValueEqual",
+    "SkipLinesIfValueNotEqual",
+    "SkipLinesIfValueGreaterThan",
+    "SkipLinesIfValueLessThan",
+    "SkipLinesIfValueGreaterThanOrEqual",
+    "SkipLinesIfValueLessThanOrEqual",
+    "ReturnIfValueComparison",  # 1000[6]
+    "EndIfValueEqual",
+    "EndIfValueNotEqual",
+    "EndIfValueGreaterThan",
+    "EndIfValueLessThan",
+    "EndIfValueGreaterThanOrEqual",
+    "EndIfValueLessThanOrEqual",
+    "RestartIfValueEqual",
+    "RestartIfValueNotEqual",
+    "RestartIfValueGreaterThan",
+    "RestartIfValueLessThan",
+    "RestartIfValueGreaterThanOrEqual",
+    "RestartIfValueLessThanOrEqual",
     "SkipLinesIfFinishedConditionState",  # 1000[7]
     "SkipLinesIfFinishedConditionTrue",
     "SkipLinesIfFinishedConditionFalse",
@@ -881,7 +881,7 @@ def IfActionButtonBasic(
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
 ):
     """
@@ -1135,7 +1135,7 @@ def IfActionButtonBoss(
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
 ):
     """
@@ -1223,7 +1223,7 @@ def IfActionButtonBasicLineIntersect(
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
 ):
     """
@@ -1244,7 +1244,7 @@ def IfActionButtonBossLineIntersect(
     facing_angle: float = None,
     model_point: int = -1,
     max_distance: float = None,
-    trigger_attribute: TriggerAttribute | int = TriggerAttribute.Human_or_Hollow,
+    trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
 ):
     """
@@ -1882,49 +1882,49 @@ def Restart():
     """
 
 
-def SkipLinesIfComparison(line_count: int, comparison_type: ComparisonType | int, left: int, right: int):
+def SkipLinesIfValueComparison(line_count: int, comparison_type: ComparisonType | int, left: int, right: int):
     """
     TODO
     """
 
 
-def SkipLinesIfEqual(line_count: int, left: int, right: int):
+def SkipLinesIfValueEqual(line_count: int, left: int, right: int):
     """
-    Calls `SkipLinesIfComparison` with `comparison_type=0`.
-    """
-
-
-def SkipLinesIfNotEqual(line_count: int, left: int, right: int):
-    """
-    Calls `SkipLinesIfComparison` with `comparison_type=1`.
+    Calls `SkipLinesIfValueComparison` with `comparison_type=0`.
     """
 
 
-def SkipLinesIfGreaterThan(line_count: int, left: int, right: int):
+def SkipLinesIfValueNotEqual(line_count: int, left: int, right: int):
     """
-    Calls `SkipLinesIfComparison` with `comparison_type=2`.
-    """
-
-
-def SkipLinesIfLessThan(line_count: int, left: int, right: int):
-    """
-    Calls `SkipLinesIfComparison` with `comparison_type=3`.
+    Calls `SkipLinesIfValueComparison` with `comparison_type=1`.
     """
 
 
-def SkipLinesIfGreaterThanOrEqual(line_count: int, left: int, right: int):
+def SkipLinesIfValueGreaterThan(line_count: int, left: int, right: int):
     """
-    Calls `SkipLinesIfComparison` with `comparison_type=4`.
-    """
-
-
-def SkipLinesIfLessThanOrEqual(line_count: int, left: int, right: int):
-    """
-    Calls `SkipLinesIfComparison` with `comparison_type=5`.
+    Calls `SkipLinesIfValueComparison` with `comparison_type=2`.
     """
 
 
-def ReturnIfComparison(
+def SkipLinesIfValueLessThan(line_count: int, left: int, right: int):
+    """
+    Calls `SkipLinesIfValueComparison` with `comparison_type=3`.
+    """
+
+
+def SkipLinesIfValueGreaterThanOrEqual(line_count: int, left: int, right: int):
+    """
+    Calls `SkipLinesIfValueComparison` with `comparison_type=4`.
+    """
+
+
+def SkipLinesIfValueLessThanOrEqual(line_count: int, left: int, right: int):
+    """
+    Calls `SkipLinesIfValueComparison` with `comparison_type=5`.
+    """
+
+
+def ReturnIfValueComparison(
     event_return_type: EventReturnType | int,
     comparison_type: ComparisonType | int,
     left: int,
@@ -1935,75 +1935,75 @@ def ReturnIfComparison(
     """
 
 
-def EndIfEqual(left: int, right: int):
+def EndIfValueEqual(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=0`.
-    """
-
-
-def EndIfNotEqual(left: int, right: int):
-    """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=1`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=0`.
     """
 
 
-def EndIfGreaterThan(left: int, right: int):
+def EndIfValueNotEqual(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=2`.
-    """
-
-
-def EndIfLessThan(left: int, right: int):
-    """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=3`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=1`.
     """
 
 
-def EndIfGreaterThanOrEqual(left: int, right: int):
+def EndIfValueGreaterThan(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=4`.
-    """
-
-
-def EndIfLessThanOrEqual(left: int, right: int):
-    """
-    Calls `ReturnIfComparison` with `event_return_type=0`, `comparison_type=5`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=2`.
     """
 
 
-def RestartIfEqual(left: int, right: int):
+def EndIfValueLessThan(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=0`.
-    """
-
-
-def RestartIfNotEqual(left: int, right: int):
-    """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=1`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=3`.
     """
 
 
-def RestartIfGreaterThan(left: int, right: int):
+def EndIfValueGreaterThanOrEqual(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=2`.
-    """
-
-
-def RestartIfLessThan(left: int, right: int):
-    """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=3`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=4`.
     """
 
 
-def RestartIfGreaterThanOrEqual(left: int, right: int):
+def EndIfValueLessThanOrEqual(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=4`.
+    Calls `ReturnIfValueComparison` with `event_return_type=0`, `comparison_type=5`.
     """
 
 
-def RestartIfLessThanOrEqual(left: int, right: int):
+def RestartIfValueEqual(left: int, right: int):
     """
-    Calls `ReturnIfComparison` with `event_return_type=1`, `comparison_type=5`.
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=0`.
+    """
+
+
+def RestartIfValueNotEqual(left: int, right: int):
+    """
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=1`.
+    """
+
+
+def RestartIfValueGreaterThan(left: int, right: int):
+    """
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=2`.
+    """
+
+
+def RestartIfValueLessThan(left: int, right: int):
+    """
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=3`.
+    """
+
+
+def RestartIfValueGreaterThanOrEqual(left: int, right: int):
+    """
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=4`.
+    """
+
+
+def RestartIfValueLessThanOrEqual(left: int, right: int):
+    """
+    Calls `ReturnIfValueComparison` with `event_return_type=1`, `comparison_type=5`.
     """
 
 
@@ -3709,8 +3709,8 @@ def CreateProjectileOwner(entity: Object | Region | Character | int):
 
 def AddSpecialEffect(character: Character | int, special_effect_id: int, affect_npc_part_hp: bool | int = False):
     """
-    'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
-    nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
+    'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will
+    do nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
     
     The Bloodborne version has an additional argument that determines whether any HP changes caused by the
     special effect should also affect NPC parts, which I set to `False` by default (more common).

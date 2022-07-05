@@ -954,7 +954,7 @@ def Event_12410200(_, obj: int, obj_1: int, obj_act_id: int):
     IfObjectActivated(0, obj_act_id=obj_act_id)
     ForceAnimation(obj, 1)
     DisableNetworkSync()
-    SkipLinesIfNotEqual(1, left=obj_1, right=2411314)
+    SkipLinesIfValueNotEqual(1, left=obj_1, right=2411314)
     DisplayDialog(text=10010850, anchor_entity=obj_1, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -1118,7 +1118,7 @@ def Event_12410337(_, navmesh_id: int):
 @RestartOnRest(12415420)
 def Event_12415420(_, character: int, region: int, left: int):
     """Event 12415420"""
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     EndIfFlagEnabled(left)
     IfCharacterBackreadEnabled(1, character)
     IfCharacterInsideRegion(1, character, region=region)
@@ -2781,7 +2781,7 @@ def Event_12415345(
 
     # --- 0 --- #
     DefineLabel(0)
-    EndIfEqual(left=left, right=0)
+    EndIfValueEqual(left=left, right=0)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
 
 
@@ -4992,7 +4992,7 @@ def Event_12415130(
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfEqual(1, left=0, right=right)
+    SkipLinesIfValueEqual(1, left=0, right=right)
     IfFlagEnabled(-1, flag)
     IfConditionTrue(0, input_condition=-1)
     WaitRandomFrames(min_frames=0, max_frames=60)

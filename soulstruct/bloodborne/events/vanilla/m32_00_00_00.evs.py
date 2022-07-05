@@ -1764,7 +1764,7 @@ def Event_13205080(_, character: int, region: int, animation_id: int, animation_
     IfCharacterWhitePhantom(-1, PLAYER)
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=region)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfFlagEnabled(1, flag)
     IfAttackedWithDamageType(2, attacked_entity=character)
     IfConditionTrue(-2, input_condition=1)

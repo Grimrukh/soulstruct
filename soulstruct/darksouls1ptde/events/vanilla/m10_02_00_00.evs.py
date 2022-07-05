@@ -7,6 +7,7 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
+from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -94,21 +95,21 @@ def Event_11020800(_, right: int, flag: int, item_type: uchar, item: int, flag_1
     IfFlagEnabled(1, right)
     IfFlagDisabled(1, flag)
     IfPlayerDoesNotHaveItem(1, item, item_type=item_type, including_storage=True)
-    SkipLinesIfNotEqual(1, left=50000082, right=right)
+    SkipLinesIfValueNotEqual(1, left=50000082, right=right)
     IfPlayerDoesNotHaveGood(1, 201, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8131, right=right)
+    SkipLinesIfValueNotEqual(1, left=8131, right=right)
     IfPlayerDoesNotHaveGood(1, 203, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8132, right=right)
+    SkipLinesIfValueNotEqual(1, left=8132, right=right)
     IfPlayerDoesNotHaveGood(1, 205, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8133, right=right)
+    SkipLinesIfValueNotEqual(1, left=8133, right=right)
     IfPlayerDoesNotHaveGood(1, 207, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8134, right=right)
+    SkipLinesIfValueNotEqual(1, left=8134, right=right)
     IfPlayerDoesNotHaveGood(1, 209, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8135, right=right)
+    SkipLinesIfValueNotEqual(1, left=8135, right=right)
     IfPlayerDoesNotHaveGood(1, 211, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8136, right=right)
+    SkipLinesIfValueNotEqual(1, left=8136, right=right)
     IfPlayerDoesNotHaveGood(1, 213, including_storage=True)
-    SkipLinesIfNotEqual(1, left=8137, right=right)
+    SkipLinesIfValueNotEqual(1, left=8137, right=right)
     IfPlayerDoesNotHaveGood(1, 215, including_storage=True)
     EndIfConditionFalse(1)
     EnableFlag(11025300)
@@ -398,7 +399,8 @@ def Event_11025050():
 def Event_11020001():
     """Event 11020001"""
     DisableNetworkSync()
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     SkipLinesIfInsideMap(2, game_map=UNDEAD_ASYLUM)
     IfInsideMap(0, game_map=FIRELINK_SHRINE)
     EnableFlag(11810000)
@@ -443,9 +445,9 @@ def Event_11020001():
 @RestartOnRest(11025200)
 def Event_11025200(_, other_entity: int, character: int, radius: float, seconds: float):
     """Event 11025200"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    SetStandbyAnimationSettings(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        SetStandbyAnimationSettings(character)
+        End()
     IfEntityWithinDistance(0, entity=PLAYER, other_entity=other_entity, radius=radius)
     DisableNetworkSync()
     Wait(seconds)
@@ -455,12 +457,24 @@ def Event_11025200(_, other_entity: int, character: int, radius: float, seconds:
 @NeverRestart(11020020)
 def Event_11020020():
     """Event 11020020"""
-    IfActionButton(0, prompt_text=10010506, anchor_entity=1022120, anchor_type=CoordEntityType.Region)
+    IfActionButton(
+        0,
+        prompt_text=10010506,
+        anchor_entity=1022120,
+        anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    )
     SetStandbyAnimationSettings(PLAYER, standby_animation=7816)
     ForceAnimation(PLAYER, 7815, wait_for_completion=True)
     EnableFlag(11025060)
     WaitFrames(frames=3)
-    IfActionButton(1, prompt_text=10010507, anchor_entity=1022120, anchor_type=CoordEntityType.Region)
+    IfActionButton(
+        1,
+        prompt_text=10010507,
+        anchor_entity=1022120,
+        anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    )
     IfCharacterOutsideRegion(2, PLAYER, region=1022120)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -518,6 +532,7 @@ def Event_11020106():
         anchor_type=CoordEntityType.Object,
         max_distance=3.4000000953674316,
         model_point=-1,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     )
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
@@ -532,7 +547,8 @@ def Event_11020106():
 @NeverRestart(11020108)
 def Event_11020108():
     """Event 11020108"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(-1, 71020022)
     IfFlagEnabled(-1, 71020023)
     IfConditionTrue(0, input_condition=-1)
@@ -542,12 +558,12 @@ def Event_11020108():
 @NeverRestart(11020120)
 def Event_11020120(_, obj_act_id: int, text: int, obj: int, text_1: int, item: int):
     """Event 11020120"""
-    SkipLinesIfThisEventSlotFlagDisabled(5)
-    DisableObjectActivation(obj, obj_act_id=-1, relative_index=0)
-    DisableObjectActivation(obj, obj_act_id=-1, relative_index=1)
-    DisableObjectActivation(obj, obj_act_id=-1, relative_index=2)
-    DisableObjectActivation(obj, obj_act_id=-1, relative_index=3)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=0)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=1)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=2)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=3)
+        End()
     IfHost(1)
     IfObjectActivated(1, obj_act_id=obj_act_id)
     IfConditionTrue(0, input_condition=1)
@@ -609,11 +625,11 @@ def Event_11020352():
 @NeverRestart(11020700)
 def Event_11020700(_, obj: int, obj_act_id: int):
     """Event 11020700"""
-    SkipLinesIfThisEventSlotFlagDisabled(4)
-    EndOfAnimation(obj=obj, animation_id=0)
-    DisableObjectActivation(obj, obj_act_id=-1)
-    EnableTreasure(obj=obj)
-    End()
+    if ThisEventSlotFlagEnabled():
+        EndOfAnimation(obj=obj, animation_id=0)
+        DisableObjectActivation(obj, obj_act_id=-1)
+        EnableTreasure(obj=obj)
+        End()
     DisableTreasure(obj=obj)
     IfObjectActivated(0, obj_act_id=obj_act_id)
     WaitFrames(frames=10)
@@ -677,9 +693,9 @@ def Event_11020510(_, character: int, flag: int):
 @NeverRestart(11020530)
 def Event_11020530(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020530"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
     IfHealthLessThanOrEqual(1, character, value=0.0)
     IfCharacterInsideRegion(2, character, region=1022300)
     IfConditionTrue(-1, input_condition=1)

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     # Basic enums/types
     "RestartType",
@@ -119,13 +121,28 @@ class ClassType(BaseEMEVDEnum):
     Chi_Pyromancer = 27
 
 
-class ComparisonType(BaseEMEVDEnum):
+class ComparisonType(BaseNegatableEMEVDEnum):
     Equal = 0
     NotEqual = 1
     GreaterThan = 2
     LessThan = 3
     GreaterThanOrEqual = 4
     LessThanOrEqual = 5
+
+    def negate(self):
+        if self == ComparisonType.Equal:
+            return ComparisonType.NotEqual
+        elif self == ComparisonType.NotEqual:
+            return ComparisonType.Equal
+        elif self == ComparisonType.GreaterThan:
+            return ComparisonType.LessThanOrEqual
+        elif self == ComparisonType.LessThan:
+            return ComparisonType.GreaterThanOrEqual
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ComparisonType.LessThan
+        elif self == ComparisonType.LessThanOrEqual:
+            return ComparisonType.GreaterThan
+        return super().negate()
 
 
 class CutsceneFlags(BaseEMEVDFlags):
@@ -149,10 +166,17 @@ class EventReturnType(BaseEMEVDEnum):
     Restart = 1
 
 
-class FlagState(BaseEMEVDEnum):
+class FlagState(BaseNegatableEMEVDEnum):
     Off = 0
     On = 1
     Change = 2
+
+    def negate(self):
+        if self == FlagState.Off:
+            return FlagState.On
+        elif self == FlagState.On:
+            return FlagState.Off
+        return super().negate()
 
 
 class FlagType(BaseEMEVDEnum):
@@ -161,9 +185,16 @@ class FlagType(BaseEMEVDEnum):
     RelativeToThisEventSlot = 2
 
 
-class InterpolationState(BaseEMEVDEnum):
+class InterpolationState(BaseNegatableEMEVDEnum):
     Interpolated = 0
     NotInterpolated = 1
+
+    def negate(self):
+        if self == InterpolationState.Interpolated:
+            return InterpolationState.NotInterpolated
+        elif self == InterpolationState.NotInterpolated:
+            return InterpolationState.Interpolated
+        return super().negate()
 
 
 class ItemType(BaseEMEVDEnum):
@@ -173,11 +204,22 @@ class ItemType(BaseEMEVDEnum):
     Good = 3
 
 
-class RangeState(BaseEMEVDEnum):
+class RangeState(BaseNegatableEMEVDEnum):
     AllOn = 0
     AllOff = 1
     AnyOn = 2  # or "not all off"
     AnyOff = 3  # or "not all on"
+
+    def negate(self):
+        if self == RangeState.AllOn:
+            return RangeState.AnyOff
+        elif self == RangeState.AllOff:
+            return RangeState.AnyOn
+        elif self == RangeState.AnyOn:
+            return RangeState.AllOff
+        elif self == RangeState.AnyOff:
+            return RangeState.AllOn
+        return super().negate()
 
 
 class CoordEntityType(BaseEMEVDEnum):
@@ -216,10 +258,17 @@ class NumberButtons(BaseEMEVDEnum):
     NoButton = 6
 
 
-class OnOffChange(BaseEMEVDEnum):
+class OnOffChange(BaseNegatableEMEVDEnum):
     On = 0
     Off = 1
     Change = 2
+
+    def negate(self):
+        if self == OnOffChange.On:
+            return OnOffChange.Off
+        elif self == OnOffChange.Off:
+            return OnOffChange.On
+        return super().negate()
 
 
 class RestartType(BaseEMEVDEnum):
@@ -257,7 +306,7 @@ class StatueType(BaseEMEVDEnum):
     Crystal = 1  # e.g. in Crystal Cave, from Seath crystals
 
 
-class TriggerAttribute(BaseEMEVDEnum):
+class TriggerAttribute(BaseEMEVDFlags):
     """Bit flags that determine which categories of player are able to use a given action button trigger.
 
     If you want multiple player types to be able to use it, simply add those enums together. The vanilla events almost
@@ -275,8 +324,6 @@ class TriggerAttribute(BaseEMEVDEnum):
     WhitePhantom = 0b01000000
     BlackPhantom = 0b10000000
     All = 0b11111111
-
-    Human_or_Hollow = Human + Hollow  # Shortcut
 
 
 class WorldTendencyType(BaseEMEVDEnum):

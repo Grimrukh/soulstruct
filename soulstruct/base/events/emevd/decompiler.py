@@ -131,7 +131,11 @@ def _process_arg_types(
             else:
                 flag_enum_values = []
                 for flag_value in enum:
-                    if arg_value & flag_value:
+                    if arg_value == flag_value:
+                        # Use exact flag.
+                        flag_enum_values = [EnumValue(enum, flag_value)]
+                        break
+                    if arg_value & flag_value == flag_value:
                         flag_enum_values.append(EnumValue(enum, flag_value))
                 args[arg_name] = Variable(" | ".join(f"{v}" for v in flag_enum_values))
         else:

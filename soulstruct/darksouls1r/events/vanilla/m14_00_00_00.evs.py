@@ -836,7 +836,7 @@ def Event_11405350(
     left: int,
 ):
     """Event 11405350"""
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     SkipLinesIfFlagEnabled(1, 11400533)
     SkipLinesIfThisEventSlotFlagDisabled(2)
     SetDisplayMask(character, bit_index=2, switch_type=OnOffChange.On)
@@ -916,7 +916,7 @@ def Event_11400850(_, character: int, item_lot_param_id: int):
     Kill(character)
     End()
     IfCharacterDead(0, character)
-    EndIfEqual(left=item_lot_param_id, right=0)
+    EndIfValueEqual(left=item_lot_param_id, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)

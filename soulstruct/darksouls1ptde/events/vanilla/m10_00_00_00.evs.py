@@ -7,6 +7,7 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
+from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -30,7 +31,7 @@ def Constructor():
     DeleteVFX(1001997, erase_root_only=False)
     SkipLinesIfFlagDisabled(1, 11000100)
     EndOfAnimation(obj=1001319, animation_id=0)
-    Event_11000090(0, line_intersects__obj=1001700, vfx_id=1001701, destination=1002600, destination_1=1002601)
+    Event_11000090(0, obj=1001700, vfx_id=1001701, destination=1002600, destination_1=1002601)
     Event_11005080()
     Event_11005081()
     Event_11005082()
@@ -129,25 +130,27 @@ def Preconstructor():
 
 
 @NeverRestart(11000090)
-def Event_11000090(_, line_intersects__obj: int, vfx_id: int, destination: int, destination_1: int):
+def Event_11000090(_, obj: int, vfx_id: int, destination: int, destination_1: int):
     """Event 11000090"""
-    SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableObject(line_intersects__obj)
-    DeleteVFX(vfx_id, erase_root_only=False)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableObject(obj)
+        DeleteVFX(vfx_id, erase_root_only=False)
+        End()
     IfActionButton(
         1,
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
-        line_intersects=line_intersects__obj,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+        line_intersects=obj,
     )
     IfActionButton(
         2,
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
-        line_intersects=line_intersects__obj,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+        line_intersects=obj,
     )
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -157,14 +160,15 @@ def Event_11000090(_, line_intersects__obj: int, vfx_id: int, destination: int, 
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7410)
-    DisableObject(line_intersects__obj)
+    DisableObject(obj)
     DeleteVFX(vfx_id)
 
 
 @RestartOnRest(11005080)
 def Event_11005080():
     """Event 11005080"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableCharacter(1000900)
     DisableCharacter(1000901)
     DisableCharacter(1000902)
@@ -282,6 +286,7 @@ def Event_11005390():
         prompt_text=10010403,
         anchor_entity=1002998,
         anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         boss_version=True,
         line_intersects=1001990,
     )
@@ -388,7 +393,8 @@ def Event_11005395():
 def Event_11005396():
     """Event 11005396"""
     DisableCharacter(1000801)
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(0, 11005390)
     CreateNPCPart(1000800, npc_part_id=5260, part_index=NPCPartType.Part1, part_health=300)
     IfCharacterPartHealthLessThanOrEqual(0, 1000800, npc_part_id=5260, value=0)
@@ -442,9 +448,9 @@ def Event_11005398():
 @NeverRestart(11005000)
 def Event_11005000(_, other_entity: int, obj: int, animation_id: int):
     """Event 11005000"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DisableObject(obj)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableObject(obj)
+        End()
     IfEntityWithinDistance(0, entity=PLAYER, other_entity=other_entity, radius=3.0)
     ForceAnimation(obj, animation_id, wait_for_completion=True)
     DisableObject(obj)
@@ -506,6 +512,7 @@ def Event_11000110():
         facing_angle=60.0,
         max_distance=1.5,
         model_point=100,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     )
     IfConditionTrue(0, input_condition=1)
     EnableFlag(11000111)
@@ -531,6 +538,7 @@ def Event_11000111():
         facing_angle=60.0,
         max_distance=1.5,
         model_point=100,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     )
     IfClient(2)
     IfActionButton(
@@ -554,7 +562,8 @@ def Event_11000111():
 @NeverRestart(11000120)
 def Event_11000120(_, obj_act_id: int, text: int, anchor_entity: int, text_1: int, item: int):
     """Event 11000120"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     IfObjectActivated(0, obj_act_id=obj_act_id)
     EndIfClient()
     IfPlayerHasGood(1, item)
@@ -567,7 +576,8 @@ def Event_11000120(_, obj_act_id: int, text: int, anchor_entity: int, text_1: in
 @RestartOnRest(11000200)
 def Event_11000200():
     """Event 11000200"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableAI(1000200)
     IfFlagDisabled(1, 11000200)
     IfEntityWithinDistance(1, entity=1000200, other_entity=PLAYER, radius=9.0)
@@ -606,7 +616,8 @@ def Event_11005050():
 @NeverRestart(11005060)
 def Event_11005060():
     """Event 11005060"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     CreateObjectVFX(1001400, vfx_id=10, model_point=100013)
     IfObjectDestroyed(0, 1001400)
     DeleteObjectVFX(1001400)
@@ -619,7 +630,8 @@ def Event_11005070():
     SkipLinesIfConditionFalse(2, 7)
     DisableCharacter(1000090)
     End()
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableAI(1000090)
     IfCharacterInsideRegion(1, PLAYER, region=1002200)
     IfAttacked(2, attacked_entity=1000090, attacker=PLAYER)
@@ -649,7 +661,8 @@ def Event_11005100(_, region: int, character: int, seconds: float):
 @RestartOnRest(11005200)
 def Event_11005200(_, character: int, region: int):
     """Event 11005200"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     DisableAI(character)
     IfCharacterInsideRegion(-1, PLAYER, region=region)
     IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
@@ -660,9 +673,9 @@ def Event_11005200(_, character: int, region: int):
 @RestartOnRest(11005150)
 def Event_11005150(_, character: int, obj: int):
     """Event 11005150"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    PostDestruction(obj)
-    End()
+    if ThisEventSlotFlagEnabled():
+        PostDestruction(obj)
+        End()
     RestoreObject(obj)
     DisableCharacter(character)
     IfEntityWithinDistance(1, entity=PLAYER, other_entity=character, radius=3.0)
@@ -682,10 +695,10 @@ def Event_11005150(_, character: int, obj: int):
 @RestartOnRest(11000850)
 def Event_11000850(_, character: int):
     """Event 11000850"""
-    SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableCharacter(character)
-    Kill(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DisableCharacter(character)
+        Kill(character)
+        End()
     IfCharacterDead(0, character)
     End()
 
@@ -693,11 +706,11 @@ def Event_11000850(_, character: int):
 @NeverRestart(11000600)
 def Event_11000600(_, obj: int, obj_act_id: int):
     """Event 11000600"""
-    SkipLinesIfThisEventSlotFlagDisabled(4)
-    EndOfAnimation(obj=obj, animation_id=0)
-    DisableObjectActivation(obj, obj_act_id=-1)
-    EnableTreasure(obj=obj)
-    End()
+    if ThisEventSlotFlagEnabled():
+        EndOfAnimation(obj=obj, animation_id=0)
+        DisableObjectActivation(obj, obj_act_id=-1)
+        EnableTreasure(obj=obj)
+        End()
     DisableTreasure(obj=obj)
     IfObjectActivated(0, obj_act_id=obj_act_id)
     WaitFrames(frames=10)
@@ -729,9 +742,9 @@ def Event_11000510(_, character: int, flag: int):
 @NeverRestart(11000520)
 def Event_11000520(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11000520"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
     IfHealthLessThanOrEqual(0, character, value=0.0)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -784,9 +797,9 @@ def Event_11000532(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11000533)
 def Event_11000533(_, character: int, flag: int):
     """Event 11000533"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
     IfHealthLessThanOrEqual(0, character, value=0.0)
     DisableFlag(1434)
     EnableFlag(flag)
@@ -838,7 +851,8 @@ def Event_11005030():
 @NeverRestart(11005031)
 def Event_11005031():
     """Event 11005031"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11005032)
     IfFlagEnabled(1, 11005393)
     IfConditionTrue(0, input_condition=1)
@@ -885,7 +899,8 @@ def Event_11005033():
 @NeverRestart(11005034)
 def Event_11005034():
     """Event 11005034"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11005035)
     IfFlagEnabled(1, 11005393)
     IfConditionTrue(0, input_condition=1)
@@ -930,6 +945,7 @@ def Event_11000810():
     IfFlagDisabled(1, 11005041)
     SkipLinesIfConditionTrue(1, 1)
     DisableCharacter(6562)
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfCharacterDead(0, 6562)
     EnableFlag(11000810)

@@ -13,7 +13,6 @@ from pathlib import Path
 from soulstruct.base.game_types.basic_types import BaseGameObject, FlagRange, MapFlagSuffix
 from soulstruct.games import Game
 from soulstruct.utilities.files import import_arbitrary_file
-from .compiler import BooleanTestCompiler
 from .exceptions import NoNegateError, NoSkipOrReturnError
 from .utils import (
     COMPARISON_NODES,
@@ -63,6 +62,7 @@ class EVSParser(abc.ABC):
 
     GAME: Game = None  # mixed in by subclasses
     EMEDF_ALIASES: dict[str, tp.Any] = None
+    EMEDF_TESTS: dict[str, tp.Any] = None
     EVENTS_MODULE = None  # type: tp.Any
     GAME_TYPES = None  # type: tp.Any
     OR_SLOTS = []  # type: list[int, ...]
@@ -80,7 +80,6 @@ class EVSParser(abc.ABC):
     globals: dict[str, tp.Any]  # global script namespace
     for_vars: dict[str, tp.Any]  # local to each event function
 
-    tests: dict[str, tp.Union[tp.Callable, BooleanTestCompiler, BaseGameObject]]
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
     common_func_events: dict[str, EventInfo]  # information about [COMMON_FUNC] imported events
     event_ids: set[int]  # set of event IDs used, so duplicates can easily be spotted
@@ -128,12 +127,6 @@ class EVSParser(abc.ABC):
         # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
         self.for_vars = {}
 
-        self.tests = {
-            name: attr
-            for name, attr in vars(self.EVENTS_MODULE.tests).items()
-            if not name.startswith("_")
-            and (isinstance(attr, BooleanTestCompiler) or getattr(attr, "__module__", "").endswith("tests"))
-        }
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
         self.common_func_events = {}  # Same, but for [COMMON_FUNC] imports, which are added to `events` last.
         self.event_ids = set()  # Used to ensure the same ID is not repeated.
@@ -293,6 +286,7 @@ class EVSParser(abc.ABC):
             "typing",
             f"soulstruct.{self.GAME.submodule_name}.events",
             f"soulstruct.{self.GAME.submodule_name}.events.instructions",
+            f"soulstruct.{self.GAME.submodule_name}.events.tests",
         ]
 
         for node in self.tree.body[1:]:
@@ -738,22 +732,9 @@ class EVSParser(abc.ABC):
                 )
 
         # 4. The condition is a builtin test constant (e.g. THIS_FLAG, HOST, OFFLINE, SKULL_LANTERN_ACTIVE, ...)
-        if isinstance(node, ast.Name) and node.id in self.tests:
-            try:
-                test = self.tests[node.id]
-            except KeyError:  # No other permitted names.
-                raise EVSNameError(node.lineno, node.id)
-            if isinstance(test, BooleanTestCompiler):
-                return test(negate=negate, skip_lines=skip_lines, end_event=end_event, restart_event=restart_event)
-            if isinstance(test, FlagRange):
-                raise EVSSyntaxError(
-                    node.lineno,
-                    "Cannot implicitly use a FlagRange as a condition. Call `any()` "
-                    "or `all()` on it (with or without `not` in front) to test it.",
-                )
-            raise NoSkipOrReturnError
+        # DEPRECATED. All test conditions must now be called, e.g., `Host()`, `FlagEnabled(flag)`.
 
-        # 5. The condition is a callable 'boolean' object in the global namespace that requires no arguments.
+        # 5. The condition is a 'compilable' game object in the global namespace that requires no arguments.
         if isinstance(node, (ast.Attribute, ast.Name)):
             game_object = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
             if not isinstance(game_object, BaseGameObject):
@@ -783,13 +764,15 @@ class EVSParser(abc.ABC):
             return self._compile_simple_comparison(node, negate, skip_lines)
 
         # 7. The condition is a test function call.
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.tests:
-            test_function = self.tests[node.func.id]
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.EMEDF_TESTS:
             # Get arguments.
             args = self._parse_nodes(node.args)
             kwargs = self._parse_keyword_nodes(node.keywords)
-            return test_function(
-                *args, skip_lines=skip_lines, negate=negate, end_event=end_event, restart_event=restart_event, **kwargs
+            return self._try_compile_test(
+                node.func,
+                *args,
+                skip_lines=skip_lines, negate=negate, end_event=end_event, restart_event=restart_event,
+                **kwargs,
             )  # This will raise the same error as below.
 
         # 8. The condition is any() or all() called on a FlagRange or a sequence of simple skips that can be chained.
@@ -817,10 +800,10 @@ class EVSParser(abc.ABC):
                 raise NoSkipOrReturnError
             if not negate:  # note inversion
                 return self._compile_instr(
-                    node, "SkipLinesIfComparison", skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
+                    node, "SkipLinesIfValueComparison", skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
                 )
             return self._compile_instr(
-                node, "SkipLinesIfComparison", skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
+                node, "SkipLinesIfValueComparison", skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
             )
         raise NoSkipOrReturnError
 
@@ -955,11 +938,10 @@ class EVSParser(abc.ABC):
             node = node.func  # -> ast.Name (parsed below)
 
         # Test function
-        if isinstance(node, ast.Name) and node.id in self.tests:
-            test_function = self.tests[node.id]
+        if isinstance(node, ast.Name) and node.id in self.EMEDF_TESTS:
             try:
-                return test_function(
-                    *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs
+                return self._try_compile_test(
+                    node, *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs
                 )
             except (NoSkipOrReturnError, NoNegateError):
                 # No builtin tests for terminating/negating condition. Need to construct a temporary one.
@@ -979,7 +961,7 @@ class EVSParser(abc.ABC):
             game_object = self._parse_nodes(node)  # This will raise an `EmevdNameError` if the name is invalid.
             if not isinstance(game_object, BaseGameObject):
                 raise EVSValueError(
-                    node.lineno, f"Only (some) `BaseGameObjectObject` subclasses are directly testable."
+                    node.lineno, f"Only (some) `BaseGameObject` subclasses are directly testable."
                 )
             elif isinstance(game_object, FlagRange):
                 raise EVSValueError(
@@ -1086,6 +1068,53 @@ class EVSParser(abc.ABC):
             return self.COMPILE(instr_name, *args, **kwargs)
         except Exception as ex:
             raise EVSSyntaxError(node, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
+
+    def _try_compile_test(
+        self,
+        node: ast.Name,
+        *args,
+        condition=None,
+        skip_lines=0,
+        negate=False,
+        end_event=False,
+        restart_event=False,
+        **kwargs,
+    ):
+        tests = self.EMEDF_TESTS[node.id]
+
+        if negate:
+            # TODO: Look up 'negate' key of test to redirect (or raise `NoNegateError`).
+            # tests = tests["negate"]
+            raise EVSError(node, f"Cannot yet support `not` keyword with tests.")
+
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if "skip" not in tests:
+                raise NoSkipOrReturnError
+            return self._compile_instr(node, tests["skip"], *args, line_count=skip_lines, **kwargs)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            # "if" is always present in tests.
+            return self._compile_instr(node, tests["if"], *args, condition=condition, **kwargs)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if "end" not in tests:
+                raise NoSkipOrReturnError
+            return self._compile_instr(node, tests["end"], *args, **kwargs)
+
+        if restart_event:
+            if "restart" not in tests:
+                raise NoSkipOrReturnError
+            return self._compile_instr(node, tests["restart"], *args, **kwargs)
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
 
     # ~~~~~~~~~~~~~~~~~~~~
     #  ASSIGNMENT METHODS: These create global/local objects, including Conditions, from assignment nodes.
@@ -1205,9 +1234,7 @@ class EVSParser(abc.ABC):
                 return partial(self.current_event.arg_classes[name].__call__, arg)
             return arg
 
-        # Look in tests first (boolean objects), then 'for' loop variables, then globals.
-        if name in self.tests:
-            return self.tests[name]
+        # Look in 'for' loop variables, then globals.
         if name in self.for_vars:
             return self.for_vars[name]
         if name in self.globals:
@@ -1228,6 +1255,10 @@ class EVSParser(abc.ABC):
             return left / right
         elif isinstance(node.op, ast.FloorDiv):
             return left // right
+        elif isinstance(node.op, ast.BitOr):
+            return left | right
+        elif isinstance(node.op, ast.BitAnd):
+            return left & right
         raise EVSSyntaxError(node, f"Unsupported binary operation: {node.op}")
 
     def _parse_function_call(self, node: ast.Call):

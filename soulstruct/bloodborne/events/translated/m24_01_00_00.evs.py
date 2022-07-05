@@ -786,7 +786,7 @@ def Event12410200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfObjectActivated(0, obj_act_id=arg_8_11)
     ForceAnimation(arg_0_3, 1)
     DisableNetworkSync()
-    SkipLinesIfNotEqual(1, left=arg_4_7, right=2411314)
+    SkipLinesIfValueNotEqual(1, left=arg_4_7, right=2411314)
     DisplayDialog(
         10010850,
         anchor_entity=arg_4_7,
@@ -958,7 +958,7 @@ def Event12410337(_, arg_0_3: int):
 @RestartOnRest
 def Event12415420(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12415420: Event 12415420 """
-    SkipLinesIfEqual(1, left=arg_8_11, right=0)
+    SkipLinesIfValueEqual(1, left=arg_8_11, right=0)
     EndIfFlagEnabled(arg_8_11)
     IfCharacterBackreadEnabled(1, arg_0_3)
     IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
@@ -2539,7 +2539,7 @@ def Event12415345(
 
     # --- 0 --- #
     DefineLabel(0)
-    EndIfEqual(left=arg_20_23, right=0)
+    EndIfValueEqual(left=arg_20_23, right=0)
     ChangePatrolBehavior(arg_4_7, patrol_information_id=arg_24_27)
 
 
@@ -4651,7 +4651,7 @@ def Event12415130(
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
-    SkipLinesIfEqual(1, left=0, right=arg_24_27)
+    SkipLinesIfValueEqual(1, left=0, right=arg_24_27)
     IfFlagEnabled(-1, arg_12_15)
     IfConditionTrue(0, input_condition=-1)
     WaitRandomFrames(min_frames=0, max_frames=60)

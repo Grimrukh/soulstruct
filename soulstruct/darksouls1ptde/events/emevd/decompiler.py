@@ -77,7 +77,9 @@ def decompile_instruction(
 def _RunEvent(
     slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
 ):
-    return base_decompile_run_event(slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager)
+    return base_decompile_run_event(
+        slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
+    )
 
 
 @_decompile(2002, 2)
@@ -241,7 +243,7 @@ def _IfActionButton(
     line_intersects=None,
 ):
     defaults = {
-        "trigger_attribute": TriggerAttribute.Human_or_Hollow,
+        "trigger_attribute": TriggerAttribute.Human | TriggerAttribute.Hollow,
         "button": 0,
     }
     if not isinstance(anchor_type, str):

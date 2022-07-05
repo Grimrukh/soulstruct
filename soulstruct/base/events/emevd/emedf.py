@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = [
     "ArgType",
     "add_common_emedf_info",
+    "build_emedf_aliases_tests",
     "HIDE_NAME",
     "BOOL",
     "INT",
@@ -18,6 +19,7 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.utilities.files import read_json
+from .enums import BaseNegatableEMEVDEnum
 
 
 class ArgType(IntEnum):
@@ -141,6 +143,55 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
                     f"Instruction ({category}, {index}) argument '{arg_name}' has unrecognized type in common EMEDF: "
                     f"{instr_type}"
                 )
+
+
+def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
+    # Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary.
+    emedf_aliases = {v["alias"]: (category, index, v) for (category, index), v in emedf.items()}
+    emedf_tests = {}
+    for (category, index), v in emedf.items():
+
+        if "partials" in v:
+            for partial_name in v["partials"]:
+                emedf_aliases[partial_name] = (category, index, v)
+
+            if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfFinishedConditionState"):
+                continue  # condition tests are handled with `Condition` EVS object
+
+            if v["alias"].startswith("If"):
+                for partial_name in v["partials"]:
+                    emedf_tests.setdefault(partial_name[2:], {})["if"] = partial_name
+            elif v["alias"].startswith("SkipLinesIf"):
+                for partial_name, partial_kwargs in v["partials"].items():
+                    boolean_kwargs = [
+                        (kw, kw_v) for kw, kw_v in partial_kwargs.items()
+                        if isinstance(kw_v, (bool, BaseNegatableEMEVDEnum))
+                    ]
+                    if len(boolean_kwargs) == 1:
+                        bool_name, bool_value = boolean_kwargs[0]
+                        if isinstance(bool_value, BaseNegatableEMEVDEnum):
+                            try:
+                                negated_value = bool_value.negate()
+                            except ValueError:
+                                continue
+                        else:
+                            negated_value = not bool_value
+                        negated_kwargs = partial_kwargs.copy() | {bool_name: negated_value}
+
+                        for check_partial_name, check_partial_kwargs in v["partials"].items():
+                            if check_partial_kwargs == negated_kwargs:
+                                emedf_tests.setdefault(partial_name[11:], {})["skip"] = check_partial_name
+            elif v["alias"].startswith("ReturnIf"):
+                for partial_name in v["partials"]:
+                    if partial_name.startswith("EndIf"):
+                        emedf_tests.setdefault(partial_name[5:], {})["end"] = partial_name
+                    elif partial_name.startswith("RestartIf"):
+                        emedf_tests.setdefault(partial_name[9:], {})["restart"] = partial_name
+            elif v["alias"].startswith("GotoIf"):
+                for partial_name in v["partials"]:
+                    emedf_tests.setdefault(partial_name[6:], {})["goto"] = partial_name
+
+    return emedf_aliases, emedf_tests
 
 
 HIDE_NAME = {

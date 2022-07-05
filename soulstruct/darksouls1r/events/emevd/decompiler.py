@@ -241,7 +241,7 @@ def _IfActionButton(
     line_intersects=None,
 ):
     defaults = {
-        "trigger_attribute": TriggerAttribute.Human_or_Hollow,
+        "trigger_attribute": TriggerAttribute.Human | TriggerAttribute.Hollow,
         "button": 0,
     }
     if not isinstance(anchor_type, str):

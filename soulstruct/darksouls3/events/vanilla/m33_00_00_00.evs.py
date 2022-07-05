@@ -1053,7 +1053,7 @@ def Event13305211(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     AddSpecialEffect(arg_4_7, arg_12_15)
-    EndIfEqual(left=arg_16_19, right=0)
+    EndIfValueEqual(left=arg_16_19, right=0)
     SetAIParamID(arg_4_7, arg_16_19)
     ReplanAI(arg_4_7)
 

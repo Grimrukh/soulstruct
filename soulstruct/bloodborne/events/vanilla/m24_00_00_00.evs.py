@@ -4887,7 +4887,7 @@ def Event_12400708(_, flag: int, flag_1: int, flag_2: int, flag_3: int, left: in
     IfConditionTrue(-1, input_condition=1)
     IfFlagEnabled(-1, flag_2)
     IfFlagEnabled(-1, flag_3)
-    SkipLinesIfNotEqual(1, left=left, right=1)
+    SkipLinesIfValueNotEqual(1, left=left, right=1)
     IfFlagEnabled(-1, 1315)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionFalse(input_condition=1)

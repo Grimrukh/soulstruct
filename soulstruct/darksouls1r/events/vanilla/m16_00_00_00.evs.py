@@ -610,7 +610,7 @@ def Event_11605360(_, character: int):
     ResetAnimation(character, disable_interpolation=1)
     ForceAnimation(character, 6084, wait_for_completion=1)
     DisableCharacter(character)
-    EndIfNotEqual(left=character, right=10000)
+    EndIfValueNotEqual(left=character, right=10000)
     EnableFlag(8120)
 
 
@@ -1399,11 +1399,11 @@ def Event_11605050(_, character: int, region: int, cancel_animation: int, left: 
     DisableAI(character)
     IfCharacterInsideRegion(1, PLAYER, region=region)
     IfAttacked(2, attacked_entity=character, attacker=PLAYER)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfEntityWithinDistance(3, entity=character, other_entity=PLAYER, radius=radius)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(2, condition=1)

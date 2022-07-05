@@ -7,6 +7,7 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
+from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -91,7 +92,8 @@ def Preconstructor():
 @RestartOnRest(11805090)
 def Event_11805090():
     """Event 11805090"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableCharacter(1800900)
     DisableCharacter(1800901)
     DisableCharacter(1800902)
@@ -182,6 +184,7 @@ def Event_11805390():
         prompt_text=10010403,
         anchor_entity=1802998,
         anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         boss_version=True,
         line_intersects=1801990,
     )
@@ -276,6 +279,7 @@ def Event_20():
         anchor_type=CoordEntityType.Object,
         max_distance=1.5,
         model_point=-1,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     )
     IfConditionTrue(0, input_condition=1)
     IncrementNewGameCycle(dummy_arg=1)
@@ -358,11 +362,19 @@ def Event_11800002():
 @NeverRestart(11800100)
 def Event_11800100():
     """Event 11800100"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     DisableObject(1801110)
     IfHost(1)
     IfPlayerHasGood(1, 2510)
-    IfActionButton(1, prompt_text=10010105, anchor_entity=1801960, anchor_type=CoordEntityType.Object, model_point=150)
+    IfActionButton(
+        1,
+        prompt_text=10010105,
+        anchor_entity=1801960,
+        anchor_type=CoordEntityType.Object,
+        model_point=150,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    )
     IfConditionTrue(0, input_condition=1)
     PlayCutscene(180015, cutscene_flags=0, player_id=10000)
     WaitFrames(frames=1)
@@ -558,9 +570,9 @@ def Event_11800510(_, character: int, flag: int):
 @NeverRestart(11800520)
 def Event_11800520(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11800520"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
     IfHealthLessThanOrEqual(0, character, value=0.0)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -792,7 +804,8 @@ def Event_11805030():
 @NeverRestart(11805032)
 def Event_11805032():
     """Event 11805032"""
-    EndIfThisEventFlagEnabled()
+    if ThisEventFlagEnabled():
+        return
     IfFlagEnabled(1, 11805031)
     IfFlagEnabled(1, 11805393)
     IfConditionTrue(0, input_condition=1)

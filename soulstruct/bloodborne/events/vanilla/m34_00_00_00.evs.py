@@ -2612,7 +2612,7 @@ def Event_13405110():
     SetAIParamID(3400406, ai_param_id=400018)
     SetAIParamID(3400200, ai_param_id=263757)
     ReplanAI(3400200)
-    SkipLinesIfEqual(1, left=1, right=0)
+    SkipLinesIfValueEqual(1, left=1, right=0)
     AddSpecialEffect(3400406, 5000)
     ChangePatrolBehavior(3400406, patrol_information_id=3403350)
     Wait(3.0)
@@ -2949,7 +2949,7 @@ def Event_13405216(
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     AddSpecialEffect(character, 5000)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
     ReplanAI(character)
@@ -3049,7 +3049,7 @@ def Event_13405350(
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     AddSpecialEffect(character, 5000)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
     ReplanAI(character)
@@ -3114,7 +3114,7 @@ def Event_13405530(_, character: int, region: int):
 def Event_13405540(_, character: int, patrol_information_id: int, value: uint, left: int, seconds: float):
     """Event 13405540"""
     IfEventValueGreaterThanOrEqual(0, flag=13405500, bit_count=4, value=value)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     AddSpecialEffect(character, 5000)
     Wait(seconds)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)

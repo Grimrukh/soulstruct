@@ -1043,11 +1043,11 @@ def Event_11700110():
 def Event_11700120(_, obj_act_id: int, obj: int, obj_1: int, animation_id: int, left: int):
     """Event 11700120"""
     SkipLinesIfThisEventSlotFlagDisabled(4)
-    SkipLinesIfEqual(1, left=left, right=1)
+    SkipLinesIfValueEqual(1, left=left, right=1)
     SetObjectActivation(obj_1, obj_act_id=-1, state=0)
     EndOfAnimation(obj=obj, animation_id=animation_id)
     End()
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfFlagEnabled(-1, 11700140)
     IfObjectActivated(-1, obj_act_id=obj_act_id)
     IfConditionTrue(0, input_condition=-1)
@@ -1402,7 +1402,7 @@ def Event_11700810(_, character: int, left: int, item_lot_param_id: int):
     Kill(character)
     End()
     IfCharacterDead(0, character)
-    SkipLinesIfEqual(4, left=left, right=0)
+    SkipLinesIfValueEqual(4, left=left, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)

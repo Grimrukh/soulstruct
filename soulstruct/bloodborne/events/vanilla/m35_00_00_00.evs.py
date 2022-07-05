@@ -3658,7 +3658,7 @@ def Event_13505750(
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     AddSpecialEffect(character, 5000)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
     ReplanAI(character)

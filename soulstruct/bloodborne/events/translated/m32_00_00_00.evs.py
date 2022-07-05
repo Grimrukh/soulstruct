@@ -1444,7 +1444,7 @@ def Event13205080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
     IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
-    SkipLinesIfEqual(1, left=arg_16_19, right=0)
+    SkipLinesIfValueEqual(1, left=arg_16_19, right=0)
     IfFlagEnabled(1, arg_20_23)
     IfAttackedWithDamageType(2, attacked_entity=arg_0_3, attacker=-1)
     IfConditionTrue(-2, input_condition=1)

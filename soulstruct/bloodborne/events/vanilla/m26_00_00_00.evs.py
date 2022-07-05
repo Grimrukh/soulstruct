@@ -2889,7 +2889,7 @@ def Event_12600190(_, character: int, left: int):
     """Event 12600190"""
     DisableAI(character)
     IfEntityWithinDistance(-1, entity=character, other_entity=PLAYER, radius=30.0)
-    SkipLinesIfEqual(1, left=left, right=0)
+    SkipLinesIfValueEqual(1, left=left, right=0)
     IfEntityWithinDistance(-1, entity=left, other_entity=PLAYER, radius=30.0)
     IfAttackedWithDamageType(-1, attacked_entity=character)
     IfConditionTrue(0, input_condition=-1)

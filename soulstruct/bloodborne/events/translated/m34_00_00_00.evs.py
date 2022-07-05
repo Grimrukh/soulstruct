@@ -2222,7 +2222,7 @@ def Event13405110():
     SetAIParamID(3400406, 400018)
     SetAIParamID(3400200, 263757)
     ReplanAI(3400200)
-    SkipLinesIfEqual(1, left=1, right=0)
+    SkipLinesIfValueEqual(1, left=1, right=0)
     AddSpecialEffect(3400406, 5000, affect_npc_part_hp=False)
     ChangePatrolBehavior(3400406, patrol_information_id=3403350)
     Wait(3.0)
@@ -2551,7 +2551,7 @@ def Event13405216(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=arg_20_23, right=0)
+    SkipLinesIfValueEqual(1, left=arg_20_23, right=0)
     AddSpecialEffect(arg_0_3, 5000, affect_npc_part_hp=False)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_12_15)
     ReplanAI(arg_0_3)
@@ -2643,7 +2643,7 @@ def Event13405350(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
     # --- 0 --- #
     DefineLabel(0)
-    SkipLinesIfEqual(1, left=arg_20_23, right=0)
+    SkipLinesIfValueEqual(1, left=arg_20_23, right=0)
     AddSpecialEffect(arg_0_3, 5000, affect_npc_part_hp=False)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_12_15)
     ReplanAI(arg_0_3)
@@ -2708,7 +2708,7 @@ def Event13405530(_, arg_0_3: int, arg_4_7: int):
 def Event13405540(_, arg_0_3: int, arg_4_7: int, arg_8_11: uint, arg_12_15: int, arg_16_19: float):
     """ 13405540: Event 13405540 """
     IfEventValueComparison(0, 13405500, bit_count=4, comparison_type=ComparisonType.GreaterThanOrEqual, value=arg_8_11)
-    SkipLinesIfEqual(1, left=arg_12_15, right=0)
+    SkipLinesIfValueEqual(1, left=arg_12_15, right=0)
     AddSpecialEffect(arg_0_3, 5000, affect_npc_part_hp=False)
     Wait(arg_16_19)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_4_7)

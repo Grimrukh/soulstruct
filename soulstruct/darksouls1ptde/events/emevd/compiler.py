@@ -398,7 +398,7 @@ def IfActionButton(
     facing_angle: float = None,
     max_distance: float = None,
     model_point=-1,
-    trigger_attribute=TriggerAttribute.Human_or_Hollow,
+    trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
     button=0,
     boss_version=False,
     line_intersects=None,

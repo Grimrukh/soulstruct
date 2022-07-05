@@ -1629,7 +1629,7 @@ def Event_11210350(_, character: int, item_lot_param_id: int):
     Kill(character)
     End()
     IfCharacterDead(0, character)
-    EndIfEqual(left=item_lot_param_id, right=0)
+    EndIfValueEqual(left=item_lot_param_id, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)
@@ -2070,13 +2070,13 @@ def Event_11210140():
 def Event_11210170(_, left: int, collision: int, region: int):
     """Event 11210170"""
     DisableMapCollision(collision=collision)
-    SkipLinesIfNotEqual(1, left=left, right=11215220)
+    SkipLinesIfValueNotEqual(1, left=left, right=11215220)
     IfAllPlayersOutsideRegion(1, region=1212100)
     IfCharacterInsideRegion(1, PLAYER, region=region)
     IfFlagEnabled(1, left)
     IfConditionTrue(0, input_condition=1)
     EnableMapCollision(collision=collision)
-    SkipLinesIfNotEqual(3, left=left, right=11215220)
+    SkipLinesIfValueNotEqual(3, left=left, right=11215220)
     IfCharacterInsideRegion(7, PLAYER, region=1212100)
     IfTimeElapsed(7, seconds=2.0)
     IfConditionTrue(-1, input_condition=7)
@@ -3183,7 +3183,7 @@ def Event_11213888():
 @NeverRestart(11215843)
 def Event_11215843(_, left: int, line_intersects: int, anchor_entity: int, target_entity: int):
     """Event 11215843"""
-    SkipLinesIfEqual(1, left=left, right=11210001)
+    SkipLinesIfValueEqual(1, left=left, right=11210001)
     SkipLines(3)
     IfFlagEnabled(2, 11210592)
     IfFlagDisabled(2, 11210004)
@@ -3209,7 +3209,7 @@ def Event_11215843(_, left: int, line_intersects: int, anchor_entity: int, targe
 @NeverRestart(11215846)
 def Event_11215846(_, left: int, obj: int, vfx_id: int):
     """Event 11215846"""
-    SkipLinesIfEqual(1, left=left, right=11210001)
+    SkipLinesIfValueEqual(1, left=left, right=11210001)
     SkipLines(3)
     IfFlagEnabled(4, 11210592)
     IfFlagDisabled(4, 11210004)
@@ -3711,7 +3711,7 @@ def Event_11210800(_, region: int, flag: int, unk1: int):
 def Event_11210820(_, left: int, flag: int, event_id: int, event_slot: int):
     """Event 11210820"""
     IfMultiplayer(1)
-    SkipLinesIfEqual(1, left=left, right=11215350)
+    SkipLinesIfValueEqual(1, left=left, right=11215350)
     IfClient(1)
     IfFlagEnabled(1, left)
     IfTimeElapsed(1, seconds=3.0)
@@ -4535,7 +4535,7 @@ def Event_11210875(_, left: int, message_id: int, concatenator_base_flag: int):
     AddSpecialEffect(PLAYER, 103)
     AddSpecialEffect(PLAYER, 104)
     Wait(0.0)
-    SkipLinesIfEqual(1, left=left, right=6990)
+    SkipLinesIfValueEqual(1, left=left, right=6990)
     DisplayConcatenatedMessage(
         message_id=message_id,
         pad_enabled=1,

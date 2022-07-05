@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = [
     # Basic
     "RestartType",
@@ -8,6 +10,7 @@ __all__ = [
     "uchar",
     "PLAYER",
     "BaseEMEVDEnum",
+    "BaseNegatableEMEVDEnum",
     "BaseEMEVDFlags",
 ]
 
@@ -33,8 +36,16 @@ class BaseEMEVDEnum(IntEnum):
     """Base class for all EMEVD enums."""
     @classmethod
     def get_event_arg_fmt(cls):
-        # All EMEVD enums that I'm aware of are `uchar`.
+        """All EMEVD enums that I'm aware of are `uchar`."""
         return "B"
+
+
+class BaseNegatableEMEVDEnum(BaseEMEVDEnum):
+    """EMEVD enum that supports `negate` for one or more members."""
+
+    def negate(self):
+        """Implemented by enums who support negation for one or more members."""
+        raise ValueError(f"Cannot invert `{self.__class__.__name__}` value: {self}")
 
 
 class BaseEMEVDFlags(BaseEMEVDEnum):
