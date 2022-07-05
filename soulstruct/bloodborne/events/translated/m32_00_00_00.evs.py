@@ -368,8 +368,8 @@ def Event13200020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200020: Event 13200020 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_12_15)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_8_11)
-    IfActionButtonParam(2, action_button_id=arg_4_7, entity=arg_8_11)
+    IfActionButtonParamActivated(1, action_button_id=arg_0_3, entity=arg_8_11)
+    IfActionButtonParamActivated(2, action_button_id=arg_4_7, entity=arg_8_11)
     IfFlagEnabled(3, arg_12_15)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -390,7 +390,7 @@ def Event13200030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 13200030: Event 13200030 """
     DisableNetworkSync()
     IfFlagEnabled(1, arg_12_15)
-    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_0_3)
+    IfActionButtonParamActivated(1, action_button_id=arg_4_7, entity=arg_0_3)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         arg_8_11,
@@ -420,7 +420,7 @@ def Event13200050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13200050: Event 13200050 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_8_11)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
+    IfActionButtonParamActivated(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagEnabled(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -446,7 +446,7 @@ def Event13200055(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EndIfFlagEnabled(arg_8_11)
     IfFlagDisabled(1, 1420)
     IfConditionTrue(1, input_condition=-1)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
+    IfActionButtonParamActivated(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagEnabled(2, arg_8_11)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
@@ -710,7 +710,7 @@ def Event13200400():
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
     CreateObjectVFX(900201, obj=3201010, model_point=200)
-    IfActionButtonParam(0, action_button_id=3200010, entity=3201010)
+    IfActionButtonParamActivated(0, action_button_id=3200010, entity=3201010)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3200810, host_only=False)
     DeleteObjectVFX(3201010, erase_root=True)
@@ -733,7 +733,7 @@ def Event13200500(_, arg_0_3: int):
 def Event13200990():
     """ 13200990: Event 13200990 """
     EndIfThisEventFlagEnabled()
-    IfStandingOnCollision(0, 3204000)
+    IfPlayerStandingOnCollision(0, 3204000)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 0, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 0, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 0, PlayLogMultiplayerType.HostOnly)
@@ -923,7 +923,7 @@ def KillRomSpider(_, spider: int, trigger_flag: int):
 def Event13204100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 13204100: Event 13204100 """
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=arg_4_7, entity=arg_0_3)
+    IfActionButtonParamActivated(0, action_button_id=arg_4_7, entity=arg_0_3)
     DisplayDialog(
         arg_8_11,
         anchor_entity=-1,
@@ -960,7 +960,7 @@ def EnterRomFog():
     DefineLabel(0)
     IfFlagDisabled(2, Flags.RomDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=3200800, entity=Objects.RomFog)
+    IfActionButtonParamActivated(2, action_button_id=3200800, entity=Objects.RomFog)
     IfFlagEnabled(3, Flags.RomDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -985,7 +985,7 @@ def EnterRomFogAsSummon():
     IfFlagEnabled(1, Flags.RomFirstTimeDone)
     IfFlagEnabled(1, Flags.RomLakeEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=3200800, entity=Objects.RomFog)
+    IfActionButtonParamActivated(1, action_button_id=3200800, entity=Objects.RomFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3202800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1625,7 +1625,7 @@ def Event13200950():
     """ 13200950: Event 13200950 """
     IfCharacterHuman(1, PLAYER)
     GotoIfConditionFalse(Label.L0, input_condition=1)
-    IfStandingOnCollision(2, 3204001)
+    IfPlayerStandingOnCollision(2, 3204001)
     IfFlagEnabled(2, 12800434)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(12800434)
@@ -1651,8 +1651,8 @@ def Event13200960():
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
     GotoIfConditionFalse(Label.L0, input_condition=1)
-    IfStandingOnCollision(-1, 3204001)
-    IfStandingOnCollision(-1, 3204002)
+    IfPlayerStandingOnCollision(-1, 3204001)
+    IfPlayerStandingOnCollision(-1, 3204002)
     IfConditionTrue(0, input_condition=-1)
     AwardAchievement(13)
     End()
@@ -1840,7 +1840,7 @@ def Event13204410(
     IfFlagDisabled(2, arg_16_19)
     IfFlagEnabled(2, arg_20_23)
     IfFlagDisabled(2, arg_24_27)
-    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
+    IfActionButtonParamActivated(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)

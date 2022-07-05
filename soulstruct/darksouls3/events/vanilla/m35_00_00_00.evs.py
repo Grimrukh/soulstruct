@@ -1164,7 +1164,7 @@ def Event13500490():
     # --- 0 --- #
     DefineLabel(0)
     IfPlayerInOwnWorld(1)
-    IfActionButtonParam(1, action_button_id=9200, entity=3501490)
+    IfActionButtonParamActivated(1, action_button_id=9200, entity=3501490)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3501490, animation=60210, wait_for_completion=False)
     Wait(0.009999999776482582)
@@ -2088,7 +2088,7 @@ def Event13505752(_, arg_0_3: int):
     EndIfFlagDisabled(1623)
     CreateObjectVFX(735504, obj=arg_0_3, model_point=200)
     IfPlayerInOwnWorld(1)
-    IfActionButtonParam(0, action_button_id=6600, entity=arg_0_3)
+    IfActionButtonParamActivated(0, action_button_id=6600, entity=arg_0_3)
     DeleteObjectVFX(arg_0_3, erase_root=True)
     EnableFlag(73500339)
 

@@ -60,9 +60,9 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
         DisableGravity(slime)
         DisableMapCollision(slime)
         if trigger_region_2 == 0:
-            Await(trigger_region_1 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or Attacked(slime, PLAYER))
         else:
-            Await(trigger_region_1 or trigger_region_2 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or trigger_region_2 or Attacked(slime, PLAYER))
         Wait(delay)
 
     EnableGravity(slime)

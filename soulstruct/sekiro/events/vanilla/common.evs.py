@@ -260,7 +260,7 @@ def Event130(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int, arg_8_9: ushort, a
     """ 130: Event 130 """
     EndIfThisEventSlotFlagEnabled()
     IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
-    IfStandingOnCollision(1, arg_4_7)
+    IfPlayerStandingOnCollision(1, arg_4_7)
     IfInsideMap(2, game_map=FIRELINK_SHRINE)
     SkipLinesIfConditionFalse(1, 2)
     IfMapInCeremony(1, game_map=(arg_0_0, arg_1_1), ceremony_id=arg_8_9)
@@ -580,7 +580,7 @@ def Event741():
     EnableFlag(743)
     IfInsideMap(2, game_map=FIRELINK_SHRINE)
     IfMapInCeremony(2, game_map=FIRELINK_SHRINE, ceremony_id=10)
-    IfStandingOnCollision(3, 4004120)
+    IfPlayerStandingOnCollision(3, 4004120)
     IfConditionFalse(2, input_condition=3)
     IfConditionTrue(0, input_condition=2)
     Restart()

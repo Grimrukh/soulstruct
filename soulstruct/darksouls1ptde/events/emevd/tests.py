@@ -9,13 +9,16 @@ __all__ = [
     "END",
     "RESTART",
     "Await",
-
     "THIS_FLAG",
     "THIS_SLOT_FLAG",
     "ONLINE",
     "OFFLINE",
     "DLC_OWNED",
     "SKULL_LANTERN_ACTIVE",
+    "HOST",
+    "CLIENT",
+    "SINGLEPLAYER",
+    "MULTIPLAYER",
     "WHITE_WORLD_TENDENCY",
     "BLACK_WORLD_TENDENCY",
     "NEW_GAME_CYCLE",
@@ -53,9 +56,9 @@ __all__ = [
     "OwnsArmor",
     "OwnsRing",
     "OwnsGood",
-    "IsAlive",
-    "IsDead",
-    "IsAttacked",
+    "Alive",
+    "Dead",
+    "Attacked",
     "HealthRatio",
     "HealthValue",
     "PartHealthValue",
@@ -68,25 +71,21 @@ __all__ = [
     "HasSpecialEffect",
     "BackreadEnabled",
     "BackreadDisabled",
-    "HasTaeEvent",
-    "IsTargeting",
-    "HasAiStatus",
-    "AiStatusIsNormal",
-    "AiStatusIsRecognition",
-    "AiStatusIsAlert",
-    "AiStatusIsBattle",
+    "CharacterHasTAEEvent",
+    "CharacterTargeting",
+    "HasAIStatus",
+    "HasNormalAIStatus",
+    "HasRecognitionAIStatus",
+    "HasAlertAIStatus",
+    "HasBattleAIStatus",
     "PlayerIsClass",
     "PlayerInCovenant",
-    "IsDamaged",
-    "IsDestroyed",
-    "IsActivated",
+    "ObjectDamaged",
+    "ObjectDestroyed",
+    "ObjectActivated",
     "PlayerStandingOnCollision",
     "PlayerMovingOnCollision",
     "PlayerRunningOnCollision",
-    "HOST",
-    "CLIENT",
-    "SINGLEPLAYER",
-    "MULTIPLAYER",
 ]
 import typing as tp
 
@@ -182,6 +181,38 @@ SKULL_LANTERN_ACTIVE = BooleanTestCompiler(
     compile_instruction=compile_instruction,
     if_true="IfSkullLanternActive",
     if_false="IfSkullLanternInactive",
+)
+
+HOST = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfHost",
+    skip_if_true="SkipLinesIfHost",
+    end_if_true="EndIfHost",
+    restart_if_true="RestartIfHost",
+)
+
+CLIENT = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfClient",
+    skip_if_true="SkipLinesIfClient",
+    end_if_true="EndIfClient",
+    restart_if_true="RestartIfClient",
+)
+
+SINGLEPLAYER = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfSingleplayer",
+    skip_if_true="SkipLinesIfSingleplayer",
+    end_if_true="EndIfSingleplayer",
+    restart_if_true="RestartIfSingleplayer",
+)
+
+MULTIPLAYER = BooleanTestCompiler(
+    compile_instruction=compile_instruction,
+    if_true="IfMultiplayer",
+    skip_if_true="SkipLinesIfMultiplayer",
+    end_if_true="EndIfMultiplayer",
+    restart_if_true="RestartIfMultiplayer",
 )
 
 
@@ -502,17 +533,17 @@ def OwnsGood(good: GoodParam, condition, negate=False):
 
 
 @negate_only
-def IsAlive(character: Character, condition, negate=False):
+def Alive(character: Character, condition, negate=False):
     return compile_instruction("IfCharacterDeathState", condition, character, negate)
 
 
 @negate_only
-def IsDead(character: Character, condition, negate=False):
+def Dead(character: Character, condition, negate=False):
     return compile_instruction("IfCharacterDeathState", condition, character, not negate)
 
 
 @no_skip_or_negate_or_return
-def IsAttacked(attacked_entity, attacker, condition):
+def Attacked(attacked_entity, attacker, condition):
     return compile_instruction("IfAttacked", condition, attacked_entity, attacker)
 
 
@@ -582,37 +613,37 @@ def BackreadDisabled(character: Character, condition, negate=False):
 
 
 @negate_only
-def HasTaeEvent(character: Character, tae_event_id, condition, negate=False):
+def CharacterHasTAEEvent(character: Character, tae_event_id, condition, negate=False):
     return compile_instruction("IfCharacterTAEEventState", condition, character, tae_event_id, not negate)
 
 
 @negate_only
-def IsTargeting(targeting_chr, targeted_chr, condition, negate=False):
+def CharacterTargeting(targeting_chr, targeted_chr, condition, negate=False):
     return compile_instruction("IfCharacterTargetingState", condition, targeting_chr, targeted_chr, not negate)
 
 
 @no_skip_or_negate_or_return
-def HasAiStatus(character: Character, ai_status, condition):
+def HasAIStatus(character: Character, ai_status, condition):
     return compile_instruction("IfHasAIStatus", condition, character, ai_status)
 
 
 @no_skip_or_negate_or_return
-def AiStatusIsNormal(character: Character, condition):
+def HasNormalAIStatus(character: Character, condition):
     return compile_instruction("IfHasAIStatus", condition, character, AIStatusType.Normal)
 
 
 @no_skip_or_negate_or_return
-def AiStatusIsRecognition(character: Character, condition):
+def HasRecognitionAIStatus(character: Character, condition):
     return compile_instruction("IfHasAIStatus", condition, character, AIStatusType.Caution)
 
 
 @no_skip_or_negate_or_return
-def AiStatusIsAlert(character: Character, condition):
+def HasAlertAIStatus(character: Character, condition):
     return compile_instruction("IfHasAIStatus", condition, character, AIStatusType.Search)
 
 
 @no_skip_or_negate_or_return
-def AiStatusIsBattle(character: Character, condition):
+def HasBattleAIStatus(character: Character, condition):
     return compile_instruction("IfHasAIStatus", condition, character, AIStatusType.Battle)
 
 
@@ -627,12 +658,12 @@ def PlayerInCovenant(covenant_type: Covenant, condition):
 
 
 @no_skip_or_negate_or_return
-def IsDamaged(attacked_obj: Object, attacker, condition):
-    return compile_instruction("IfObjectDamagedBy", condition, attacked_obj, attacker)
+def ObjectDamaged(attacked_obj: Object, attacker, condition):
+    return compile_instruction("IfObjectDamaged", condition, attacked_obj, attacker)
 
 
 @skip_and_negate_and_return
-def IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=False, restart_event=False):
+def ObjectDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=False, restart_event=False):
     if skip_lines > 0:
         return compile_instruction("SkipLinesIfObjectDestructionState", skip_lines, negate, obj)
     if end_event:
@@ -643,53 +674,20 @@ def IsDestroyed(obj: Object, condition, negate=False, skip_lines=0, end_event=Fa
 
 
 @no_skip_or_negate_or_return
-def IsActivated(obj_act_flag: Flag, condition):
+def ObjectActivated(obj_act_flag: Flag, condition):
     return compile_instruction("IfObjectActivated", condition, obj_act_flag)
 
 
 @no_skip_or_negate_or_return
 def PlayerStandingOnCollision(collision: Collision, condition):
-    return compile_instruction("IfStandingOnCollision", condition, collision)
+    return compile_instruction("IfPlayerStandingOnCollision", condition, collision)
 
 
 @no_skip_or_negate_or_return
 def PlayerMovingOnCollision(collision: Collision, condition):
-    return compile_instruction("IfMovingOnCollision", condition, collision)
+    return compile_instruction("IfPlayerMovingOnCollision", condition, collision)
 
 
 @no_skip_or_negate_or_return
 def PlayerRunningOnCollision(collision: Collision, condition):
-    return compile_instruction("IfRunningOnCollision", condition, collision)
-
-
-HOST = BooleanTestCompiler(
-    compile_instruction=compile_instruction,
-    if_true="IfHost",
-    skip_if_true="SkipLinesIfHost",
-    end_if_true="EndIfHost",
-    restart_if_true="RestartIfHost",
-)
-
-CLIENT = BooleanTestCompiler(
-    compile_instruction=compile_instruction,
-    if_true="IfClient",
-    skip_if_true="SkipLinesIfClient",
-    end_if_true="EndIfClient",
-    restart_if_true="RestartIfClient",
-)
-
-SINGLEPLAYER = BooleanTestCompiler(
-    compile_instruction=compile_instruction,
-    if_true="IfSingleplayer",
-    skip_if_true="SkipLinesIfSingleplayer",
-    end_if_true="EndIfSingleplayer",
-    restart_if_true="RestartIfSingleplayer",
-)
-
-MULTIPLAYER = BooleanTestCompiler(
-    compile_instruction=compile_instruction,
-    if_true="IfMultiplayer",
-    skip_if_true="SkipLinesIfMultiplayer",
-    end_if_true="EndIfMultiplayer",
-    restart_if_true="RestartIfMultiplayer",
-)
+    return compile_instruction("IfPlayerRunningOnCollision", condition, collision)

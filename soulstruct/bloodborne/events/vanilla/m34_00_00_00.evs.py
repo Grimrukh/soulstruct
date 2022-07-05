@@ -275,14 +275,14 @@ def Constructor():
         0,
         region=3402370,
         entity=3401350,
-        obj__projectile_id=3401351,
+        obj__source_entity=3401351,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0
     )
     Event_13405115(
         0,
-        obj__projectile_id=3401366,
+        obj__source_entity=3401366,
         flag=13405130,
         frames=0,
         frames_1=50,
@@ -293,7 +293,7 @@ def Constructor():
     )
     Event_13405115(
         1,
-        obj__projectile_id=3401356,
+        obj__source_entity=3401356,
         flag=13405131,
         frames=0,
         frames_1=60,
@@ -304,7 +304,7 @@ def Constructor():
     )
     Event_13405115(
         2,
-        obj__projectile_id=3401359,
+        obj__source_entity=3401359,
         flag=13405132,
         frames=0,
         frames_1=70,
@@ -315,7 +315,7 @@ def Constructor():
     )
     Event_13405115(
         3,
-        obj__projectile_id=3401363,
+        obj__source_entity=3401363,
         flag=13405132,
         frames=20,
         frames_1=80,
@@ -326,7 +326,7 @@ def Constructor():
     )
     Event_13405115(
         4,
-        obj__projectile_id=3401364,
+        obj__source_entity=3401364,
         flag=13405132,
         frames=10,
         frames_1=40,
@@ -337,7 +337,7 @@ def Constructor():
     )
     Event_13405115(
         5,
-        obj__projectile_id=3401365,
+        obj__source_entity=3401365,
         flag=13405132,
         frames=30,
         frames_1=50,
@@ -348,7 +348,7 @@ def Constructor():
     )
     Event_13405115(
         6,
-        obj__projectile_id=3401364,
+        obj__source_entity=3401364,
         flag=13405133,
         frames=10,
         frames_1=60,
@@ -359,7 +359,7 @@ def Constructor():
     )
     Event_13405115(
         7,
-        obj__projectile_id=3401359,
+        obj__source_entity=3401359,
         flag=13405135,
         frames=20,
         frames_1=40,
@@ -370,7 +370,7 @@ def Constructor():
     )
     Event_13405115(
         9,
-        obj__projectile_id=3401363,
+        obj__source_entity=3401363,
         flag=13405135,
         frames=10,
         frames_1=70,
@@ -381,7 +381,7 @@ def Constructor():
     )
     Event_13405115(
         10,
-        obj__projectile_id=3401364,
+        obj__source_entity=3401364,
         flag=13405135,
         frames=17,
         frames_1=60,
@@ -392,7 +392,7 @@ def Constructor():
     )
     Event_13405115(
         11,
-        obj__projectile_id=3401365,
+        obj__source_entity=3401365,
         flag=13405135,
         frames=6,
         frames_1=50,
@@ -403,7 +403,7 @@ def Constructor():
     )
     Event_13405113(
         0,
-        obj__projectile_id=3401360,
+        obj__source_entity=3401360,
         flag=13405136,
         frames=6,
         frames_1=50,
@@ -420,21 +420,21 @@ def Constructor():
     Event_13405145(2, region=3402371, entity=3401367, flag=13405135)
     Event_13405145(3, region=3402374, entity=3401368, flag=13405136)
     Event_13405155(0, region=3402515)
-    Event_13405160(0, obj__projectile_id=3401330)
-    Event_13405160(1, obj__projectile_id=3401331)
-    Event_13405160(2, obj__projectile_id=3401332)
-    Event_13405160(3, obj__projectile_id=3401333)
-    Event_13405160(4, obj__projectile_id=3401334)
-    Event_13405160(5, obj__projectile_id=3401335)
-    Event_13405160(6, obj__projectile_id=3401336)
-    Event_13405160(7, obj__projectile_id=3401337)
-    Event_13405160(8, obj__projectile_id=3401338)
-    Event_13405160(9, obj__projectile_id=3401339)
-    Event_13405160(10, obj__projectile_id=3401340)
-    Event_13405160(11, obj__projectile_id=3401341)
-    Event_13405160(12, obj__projectile_id=3401342)
-    Event_13405160(13, obj__projectile_id=3401343)
-    Event_13405160(14, obj__projectile_id=3401344)
+    Event_13405160(0, obj__source_entity=3401330)
+    Event_13405160(1, obj__source_entity=3401331)
+    Event_13405160(2, obj__source_entity=3401332)
+    Event_13405160(3, obj__source_entity=3401333)
+    Event_13405160(4, obj__source_entity=3401334)
+    Event_13405160(5, obj__source_entity=3401335)
+    Event_13405160(6, obj__source_entity=3401336)
+    Event_13405160(7, obj__source_entity=3401337)
+    Event_13405160(8, obj__source_entity=3401338)
+    Event_13405160(9, obj__source_entity=3401339)
+    Event_13405160(10, obj__source_entity=3401340)
+    Event_13405160(11, obj__source_entity=3401341)
+    Event_13405160(12, obj__source_entity=3401342)
+    Event_13405160(13, obj__source_entity=3401343)
+    Event_13405160(14, obj__source_entity=3401344)
     Event_13405110()
     Event_13405112()
     Event_13405200(0, character=3400300, region=3402600, animation_id=3004, region_1=3402601)
@@ -1134,30 +1134,30 @@ def Event_13404730(
 def Event_13404740():
     """Event 13404740"""
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(-1, 3404000)
-    IfStandingOnCollision(-1, 3404001)
-    IfStandingOnCollision(-1, 3404002)
-    IfStandingOnCollision(-1, 3404003)
-    IfStandingOnCollision(-1, 3404004)
-    IfStandingOnCollision(-1, 3404005)
-    IfStandingOnCollision(-1, 3404006)
-    IfStandingOnCollision(-1, 3404007)
-    IfStandingOnCollision(-1, 3404008)
-    IfStandingOnCollision(-1, 3404009)
+    IfPlayerStandingOnCollision(-1, 3404000)
+    IfPlayerStandingOnCollision(-1, 3404001)
+    IfPlayerStandingOnCollision(-1, 3404002)
+    IfPlayerStandingOnCollision(-1, 3404003)
+    IfPlayerStandingOnCollision(-1, 3404004)
+    IfPlayerStandingOnCollision(-1, 3404005)
+    IfPlayerStandingOnCollision(-1, 3404006)
+    IfPlayerStandingOnCollision(-1, 3404007)
+    IfPlayerStandingOnCollision(-1, 3404008)
+    IfPlayerStandingOnCollision(-1, 3404009)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13404741)
     IfCharacterHuman(2, PLAYER)
-    IfStandingOnCollision(-2, 3404000)
-    IfStandingOnCollision(-2, 3404001)
-    IfStandingOnCollision(-2, 3404002)
-    IfStandingOnCollision(-2, 3404003)
-    IfStandingOnCollision(-2, 3404004)
-    IfStandingOnCollision(-2, 3404005)
-    IfStandingOnCollision(-2, 3404006)
-    IfStandingOnCollision(-2, 3404007)
-    IfStandingOnCollision(-2, 3404008)
-    IfStandingOnCollision(-2, 3404009)
+    IfPlayerStandingOnCollision(-2, 3404000)
+    IfPlayerStandingOnCollision(-2, 3404001)
+    IfPlayerStandingOnCollision(-2, 3404002)
+    IfPlayerStandingOnCollision(-2, 3404003)
+    IfPlayerStandingOnCollision(-2, 3404004)
+    IfPlayerStandingOnCollision(-2, 3404005)
+    IfPlayerStandingOnCollision(-2, 3404006)
+    IfPlayerStandingOnCollision(-2, 3404007)
+    IfPlayerStandingOnCollision(-2, 3404008)
+    IfPlayerStandingOnCollision(-2, 3404009)
     IfConditionFalse(2, input_condition=-1)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(13404741)
@@ -1168,62 +1168,62 @@ def Event_13404740():
 def Event_13404742():
     """Event 13404742"""
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(-1, 3404020)
-    IfStandingOnCollision(-1, 3404021)
-    IfStandingOnCollision(-1, 3404022)
-    IfStandingOnCollision(-1, 3404023)
-    IfStandingOnCollision(-1, 3404024)
-    IfStandingOnCollision(-1, 3404025)
-    IfStandingOnCollision(-1, 3404026)
-    IfStandingOnCollision(-1, 3404027)
-    IfStandingOnCollision(-1, 3404028)
-    IfStandingOnCollision(-1, 3404029)
-    IfStandingOnCollision(-1, 3404030)
-    IfStandingOnCollision(-1, 3404031)
-    IfStandingOnCollision(-1, 3404032)
-    IfStandingOnCollision(-1, 3404033)
-    IfStandingOnCollision(-1, 3404034)
-    IfStandingOnCollision(-1, 3404035)
-    IfStandingOnCollision(-1, 3404036)
-    IfStandingOnCollision(-1, 3404037)
-    IfStandingOnCollision(-1, 3404038)
-    IfStandingOnCollision(-1, 3404039)
-    IfStandingOnCollision(-1, 3404040)
-    IfStandingOnCollision(-1, 3404041)
-    IfStandingOnCollision(-1, 3404042)
-    IfStandingOnCollision(-1, 3404043)
-    IfStandingOnCollision(-1, 3404044)
-    IfStandingOnCollision(-1, 3404045)
+    IfPlayerStandingOnCollision(-1, 3404020)
+    IfPlayerStandingOnCollision(-1, 3404021)
+    IfPlayerStandingOnCollision(-1, 3404022)
+    IfPlayerStandingOnCollision(-1, 3404023)
+    IfPlayerStandingOnCollision(-1, 3404024)
+    IfPlayerStandingOnCollision(-1, 3404025)
+    IfPlayerStandingOnCollision(-1, 3404026)
+    IfPlayerStandingOnCollision(-1, 3404027)
+    IfPlayerStandingOnCollision(-1, 3404028)
+    IfPlayerStandingOnCollision(-1, 3404029)
+    IfPlayerStandingOnCollision(-1, 3404030)
+    IfPlayerStandingOnCollision(-1, 3404031)
+    IfPlayerStandingOnCollision(-1, 3404032)
+    IfPlayerStandingOnCollision(-1, 3404033)
+    IfPlayerStandingOnCollision(-1, 3404034)
+    IfPlayerStandingOnCollision(-1, 3404035)
+    IfPlayerStandingOnCollision(-1, 3404036)
+    IfPlayerStandingOnCollision(-1, 3404037)
+    IfPlayerStandingOnCollision(-1, 3404038)
+    IfPlayerStandingOnCollision(-1, 3404039)
+    IfPlayerStandingOnCollision(-1, 3404040)
+    IfPlayerStandingOnCollision(-1, 3404041)
+    IfPlayerStandingOnCollision(-1, 3404042)
+    IfPlayerStandingOnCollision(-1, 3404043)
+    IfPlayerStandingOnCollision(-1, 3404044)
+    IfPlayerStandingOnCollision(-1, 3404045)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13404743)
     IfCharacterHuman(2, PLAYER)
-    IfStandingOnCollision(-2, 3404020)
-    IfStandingOnCollision(-2, 3404021)
-    IfStandingOnCollision(-2, 3404022)
-    IfStandingOnCollision(-2, 3404023)
-    IfStandingOnCollision(-2, 3404024)
-    IfStandingOnCollision(-2, 3404025)
-    IfStandingOnCollision(-2, 3404026)
-    IfStandingOnCollision(-2, 3404027)
-    IfStandingOnCollision(-2, 3404028)
-    IfStandingOnCollision(-2, 3404029)
-    IfStandingOnCollision(-2, 3404030)
-    IfStandingOnCollision(-2, 3404031)
-    IfStandingOnCollision(-2, 3404032)
-    IfStandingOnCollision(-2, 3404033)
-    IfStandingOnCollision(-2, 3404034)
-    IfStandingOnCollision(-2, 3404035)
-    IfStandingOnCollision(-2, 3404036)
-    IfStandingOnCollision(-2, 3404037)
-    IfStandingOnCollision(-2, 3404038)
-    IfStandingOnCollision(-2, 3404039)
-    IfStandingOnCollision(-2, 3404040)
-    IfStandingOnCollision(-2, 3404041)
-    IfStandingOnCollision(-2, 3404042)
-    IfStandingOnCollision(-2, 3404043)
-    IfStandingOnCollision(-2, 3404044)
-    IfStandingOnCollision(-2, 3404045)
+    IfPlayerStandingOnCollision(-2, 3404020)
+    IfPlayerStandingOnCollision(-2, 3404021)
+    IfPlayerStandingOnCollision(-2, 3404022)
+    IfPlayerStandingOnCollision(-2, 3404023)
+    IfPlayerStandingOnCollision(-2, 3404024)
+    IfPlayerStandingOnCollision(-2, 3404025)
+    IfPlayerStandingOnCollision(-2, 3404026)
+    IfPlayerStandingOnCollision(-2, 3404027)
+    IfPlayerStandingOnCollision(-2, 3404028)
+    IfPlayerStandingOnCollision(-2, 3404029)
+    IfPlayerStandingOnCollision(-2, 3404030)
+    IfPlayerStandingOnCollision(-2, 3404031)
+    IfPlayerStandingOnCollision(-2, 3404032)
+    IfPlayerStandingOnCollision(-2, 3404033)
+    IfPlayerStandingOnCollision(-2, 3404034)
+    IfPlayerStandingOnCollision(-2, 3404035)
+    IfPlayerStandingOnCollision(-2, 3404036)
+    IfPlayerStandingOnCollision(-2, 3404037)
+    IfPlayerStandingOnCollision(-2, 3404038)
+    IfPlayerStandingOnCollision(-2, 3404039)
+    IfPlayerStandingOnCollision(-2, 3404040)
+    IfPlayerStandingOnCollision(-2, 3404041)
+    IfPlayerStandingOnCollision(-2, 3404042)
+    IfPlayerStandingOnCollision(-2, 3404043)
+    IfPlayerStandingOnCollision(-2, 3404044)
+    IfPlayerStandingOnCollision(-2, 3404045)
     IfConditionFalse(2, input_condition=-2)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(13404743)
@@ -1423,7 +1423,7 @@ def Event_13404800():
     DefineLabel(0)
     IfFlagDisabled(2, 13401800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=3400800, entity=3401800)
+    IfActionButtonParamActivated(2, action_button_id=3400800, entity=3401800)
     IfFlagEnabled(3, 13401800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1451,7 +1451,7 @@ def Event_13404801():
     IfFlagEnabled(1, 13401801)
     IfFlagEnabled(1, 13404808)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3400800, entity=3401800)
+    IfActionButtonParamActivated(1, action_button_id=3400800, entity=3401800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3402800, animation=101130, wait_for_completion=True)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -2053,7 +2053,7 @@ def Event_13404850():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonParam(3, action_button_id=3400850, entity=3401850)
+    IfActionButtonParamActivated(3, action_button_id=3400850, entity=3401850)
     IfFlagDisabled(3, 13401850)
     IfFlagEnabled(4, 13401850)
     IfConditionTrue(-2, input_condition=3)
@@ -2082,7 +2082,7 @@ def Event_13404851():
     IfFlagEnabled(1, 13401851)
     IfFlagEnabled(1, 13404858)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3400850, entity=3401850)
+    IfActionButtonParamActivated(1, action_button_id=3400850, entity=3401850)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3402850, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -2296,7 +2296,7 @@ def Event_13401200(_, action_button_id: int, anchor_entity: int, flag: int):
     """Event 13401200"""
     DisableNetworkSync()
     EndIfFlagEnabled(flag)
-    IfActionButtonParam(1, action_button_id=action_button_id, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=action_button_id, entity=anchor_entity)
     IfFlagEnabled(2, flag)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -2350,7 +2350,7 @@ def Event_13400100():
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
-    IfStandingOnCollision(0, 3404000)
+    IfPlayerStandingOnCollision(0, 3404000)
     RunEvent(9350, slot=0, args=(2,))
 
 
@@ -2397,7 +2397,7 @@ def Event_13400320():
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     CreateObjectVFX(3401500, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=3400100, entity=3401500)
+    IfActionButtonParamActivated(0, action_button_id=3400100, entity=3401500)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3401810, host_only=False)
     DeleteObjectVFX(3401500)
@@ -2530,7 +2530,7 @@ def Event_13405105(
     _,
     region: int,
     entity: int,
-    obj__projectile_id: int,
+    obj__source_entity: int,
     launch_angle_x: int,
     launch_angle_y: int,
     launch_angle_z: int,
@@ -2538,11 +2538,11 @@ def Event_13405105(
     """Event 13405105"""
     IfCharacterInsideRegion(0, PLAYER, region=region)
     ForceAnimation(entity, 1, wait_for_completion=True)
-    IfObjectNotDestroyed(0, obj__projectile_id)
-    ForceAnimation(obj__projectile_id, 1)
+    IfObjectNotDestroyed(0, obj__source_entity)
+    ForceAnimation(obj__source_entity, 1)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
@@ -2552,7 +2552,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6281,
         launch_angle_x=launch_angle_x,
@@ -2562,7 +2562,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6282,
         launch_angle_x=launch_angle_x,
@@ -2572,7 +2572,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6283,
         launch_angle_x=launch_angle_x,
@@ -2582,7 +2582,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
@@ -2633,7 +2633,7 @@ def Event_13405112():
     ForceAnimation(3401352, 1, wait_for_completion=True)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=3401320,
+        source_entity=3401320,
         model_point=10,
         behavior_id=6290,
         launch_angle_x=0,
@@ -2647,7 +2647,7 @@ def Event_13405112():
 @RestartOnRest(13405113)
 def Event_13405113(
     _,
-    obj__projectile_id: int,
+    obj__source_entity: int,
     flag: int,
     frames: int,
     frames_1: int,
@@ -2658,13 +2658,13 @@ def Event_13405113(
 ):
     """Event 13405113"""
     IfFlagEnabled(1, flag)
-    IfObjectNotDestroyed(1, obj__projectile_id)
+    IfObjectNotDestroyed(1, obj__source_entity)
     IfConditionTrue(0, input_condition=1)
     IfFramesElapsed(0, frames=frames)
-    ForceAnimation(obj__projectile_id, 1)
+    ForceAnimation(obj__source_entity, 1)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
@@ -2674,7 +2674,7 @@ def Event_13405113(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_1,
         launch_angle_x=340,
@@ -2684,7 +2684,7 @@ def Event_13405113(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_2,
         launch_angle_x=340,
@@ -2694,7 +2694,7 @@ def Event_13405113(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_3,
         launch_angle_x=340,
@@ -2704,7 +2704,7 @@ def Event_13405113(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
@@ -2719,7 +2719,7 @@ def Event_13405113(
 @RestartOnRest(13405115)
 def Event_13405115(
     _,
-    obj__projectile_id: int,
+    obj__source_entity: int,
     flag: int,
     frames: int,
     frames_1: int,
@@ -2730,13 +2730,13 @@ def Event_13405115(
 ):
     """Event 13405115"""
     IfFlagEnabled(1, flag)
-    IfObjectNotDestroyed(1, obj__projectile_id)
+    IfObjectNotDestroyed(1, obj__source_entity)
     IfConditionTrue(0, input_condition=1)
     IfFramesElapsed(0, frames=frames)
-    ForceAnimation(obj__projectile_id, 1)
+    ForceAnimation(obj__source_entity, 1)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
@@ -2746,7 +2746,7 @@ def Event_13405115(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_1,
         launch_angle_x=0,
@@ -2756,7 +2756,7 @@ def Event_13405115(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_2,
         launch_angle_x=0,
@@ -2766,7 +2766,7 @@ def Event_13405115(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id_3,
         launch_angle_x=0,
@@ -2776,7 +2776,7 @@ def Event_13405115(
     IfFramesElapsed(0, frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
@@ -2843,49 +2843,49 @@ def Event_13405155(_, region: int):
 
 
 @RestartOnRest(13405160)
-def Event_13405160(_, obj__projectile_id: int):
+def Event_13405160(_, obj__source_entity: int):
     """Event 13405160"""
     EndIfThisEventSlotFlagEnabled()
-    IfAttackedWithDamageType(-1, attacked_entity=obj__projectile_id, damage_type=DamageType.Fire)
-    IfAttackedWithDamageType(-1, attacked_entity=obj__projectile_id, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(-1, attacked_entity=obj__source_entity, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(-1, attacked_entity=obj__source_entity, damage_type=DamageType.NoType)
     IfConditionTrue(1, input_condition=-1)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Magic)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Lightning)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Blunt)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Slash)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Thrust)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Magic)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Lightning)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Blunt)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Slash)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Thrust)
     IfConditionTrue(2, input_condition=-2)
-    IfObjectHealthValueComparison(2, obj__projectile_id, ComparisonType.LessThanOrEqual, value=999)
+    IfObjectHealthValueComparison(2, obj__source_entity, ComparisonType.LessThanOrEqual, value=999)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=3400799,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=-1,
         behavior_id=6292,
         launch_angle_x=0,
         launch_angle_y=90,
         launch_angle_z=0,
     )
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(13405200)
@@ -4035,7 +4035,7 @@ def Event_13404410(
     IfFlagDisabled(2, dismissal_flag)
     IfFlagEnabled(2, flag)
     IfFlagDisabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=action_button_id, entity=character)
+    IfActionButtonParamActivated(2, action_button_id=action_button_id, entity=character)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)

@@ -13,6 +13,7 @@ __all__ = [
     "NO_DEFAULT",
 ]
 
+import typing as tp
 from enum import IntEnum
 from pathlib import Path
 
@@ -145,8 +146,8 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
 HIDE_NAME = {
     "hide_name": True,
 }
-BOOL = {
-    "type": bool,
+BOOL = {  # boolean event arguments will be typed as integers
+    "type": tp.Union[bool, int],
     "default": None,
 }
 INT = {

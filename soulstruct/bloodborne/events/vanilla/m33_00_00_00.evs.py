@@ -484,7 +484,7 @@ def Event_13304870():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonParam(3, action_button_id=3300800, entity=3301800)
+    IfActionButtonParamActivated(3, action_button_id=3300800, entity=3301800)
     IfFlagDisabled(3, 13301800)
     IfFlagEnabled(4, 13301800)
     IfConditionTrue(-2, input_condition=3)
@@ -513,7 +513,7 @@ def Event_13304871():
     IfFlagEnabled(1, 13301802)
     IfFlagEnabled(1, 13304800)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3300800, entity=3301800)
+    IfActionButtonParamActivated(1, action_button_id=3300800, entity=3301800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3302800, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -1247,7 +1247,7 @@ def Event_13300990():
     """Event 13300990"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 3303500)
+    IfPlayerStandingOnCollision(0, 3303500)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
         name=140,

@@ -155,12 +155,12 @@ __all__ = [
     "IfObjectDestructionState",  # 5[0]
     "IfObjectDestroyed",
     "IfObjectNotDestroyed",
-    "IfObjectDamagedBy",  # 5[1]
+    "IfObjectDamaged",  # 5[1]
     "IfObjectActivated",  # 5[2]
     "IfObjectHealthValueComparison",  # 5[3]
-    "IfMovingOnCollision",  # 11[0]
-    "IfRunningOnCollision",  # 11[1]
-    "IfStandingOnCollision",  # 11[2]
+    "IfPlayerMovingOnCollision",  # 11[0]
+    "IfPlayerRunningOnCollision",  # 11[1]
+    "IfPlayerStandingOnCollision",  # 11[2]
     "AwaitConditionState",  # 1000[0]
     "AwaitConditionTrue",
     "AwaitConditionFalse",
@@ -326,6 +326,7 @@ __all__ = [
     "DisableNavmeshType",
     "ToggleNavmeshType",
     "WarpToMap",  # 2003[14]
+    "HandleMinibossDefeat",  # 2003[15]
     "TriggerMultiplayerEvent",  # 2003[16]
     "SetRandomFlagInRange",  # 2003[17]
     "EnableRandomFlagInRange",
@@ -539,7 +540,7 @@ from .emevd.compiler import *
 from .emevd.enums import *
 
 
-def IfConditionState(condition: int, state: bool, input_condition: int):
+def IfConditionState(condition: int, state: bool | int, input_condition: int):
     """
     TODO
     """
@@ -700,7 +701,12 @@ def IfFlagRangeAnyDisabled(condition: int, flag_range: FlagRange | tuple | list)
     """
 
 
-def IfCharacterRegionState(condition: int, state: bool, character: Character | Object | int, region: Region | int):
+def IfCharacterRegionState(
+    condition: int,
+    state: bool | int,
+    character: Character | Object | int,
+    region: Region | int,
+):
     """
     Not sure if this works for objects.
     """
@@ -732,7 +738,7 @@ def IfCharacterOutsideRegion(condition: int, character: Character | Object | int
 
 def IfEntityDistanceState(
     condition: int,
-    state: bool,
+    state: bool | int,
     entity: Object | Region | Character | int,
     other_entity: Object | Region | Character | int,
     radius: float,
@@ -779,7 +785,7 @@ def IfEntityBeyondDistance(
 def IfPlayerItemStateExcludingStorage(
     condition: int,
     item: BaseItemParam | int,
-    state: bool,
+    state: bool | int,
     item_type: ItemType | int = None,
 ):
     """
@@ -850,7 +856,7 @@ def IfUnknownPlayerType5(condition: int):
     """
 
 
-def IfAllPlayersRegionState(condition: int, state: bool, region: Region | int):
+def IfAllPlayersRegionState(condition: int, state: bool | int, region: Region | int):
     """
     TODO
     """
@@ -868,7 +874,7 @@ def IfAllPlayersOutsideRegion(condition: int, region: Region | int):
     """
 
 
-def IfMapPresenceState(condition: int, state: bool, game_map: Map | tuple | list):
+def IfMapPresenceState(condition: int, state: bool | int, game_map: Map | tuple | list):
     """
     Conditions upon player's presence in a particular game map.
     """
@@ -1084,7 +1090,7 @@ def IfItemDropped(condition: int, item: BaseItemParam | int, item_type: ItemType
 def IfPlayerItemStateIncludingStorage(
     condition: int,
     item: BaseItemParam | int,
-    state: bool,
+    state: bool | int,
     item_type: ItemType | int = None,
 ):
     """
@@ -1208,7 +1214,7 @@ def IfDLCNotOwned(condition: int):
     """
 
 
-def IfOnlineState(condition: int, state: bool):
+def IfOnlineState(condition: int, state: bool | int):
     """
     TODO
     """
@@ -1238,7 +1244,7 @@ def If_Unknown_3_24(condition: int, unk1: int, unk2: int):
     """
 
 
-def IfCharacterDeathState(condition: int, character: Character | int, is_dead: bool):
+def IfCharacterDeathState(condition: int, character: Character | int, is_dead: bool | int):
     """
     TODO
     """
@@ -1332,7 +1338,7 @@ def IfCharacterTargetingState(
     condition: int,
     targeting_character: Character | int,
     targeted_character: Character | int,
-    state: bool,
+    state: bool | int,
 ):
     """
     TODO
@@ -1351,7 +1357,7 @@ def IfCharacterNotTargeting(condition: int, targeting_character: Character | int
     """
 
 
-def IfCharacterSpecialEffectState(condition: int, character: Character | int, special_effect: int, state: bool):
+def IfCharacterSpecialEffectState(condition: int, character: Character | int, special_effect: int, state: bool | int):
     """
     TODO
     """
@@ -1399,7 +1405,7 @@ def IfCharacterPartHealthLessThanOrEqual(condition: int, character: Character | 
     """
 
 
-def IfCharacterBackreadState(condition: int, character: Character | int, state: bool):
+def IfCharacterBackreadState(condition: int, character: Character | int, state: bool | int):
     """
     TODO
     """
@@ -1417,7 +1423,7 @@ def IfCharacterBackreadDisabled(condition: int, character: Character | int):
     """
 
 
-def IfCharacterTAEEventState(condition: int, character: Character | int, tae_event_id: int, state: bool):
+def IfCharacterTAEEventState(condition: int, character: Character | int, tae_event_id: int, state: bool | int):
     """
     TODO
     """
@@ -1441,7 +1447,7 @@ def IfHasAIStatus(condition: int, character: Character | int, ai_status: AIStatu
     """
 
 
-def IfSkullLanternState(condition: int, state: bool):
+def IfSkullLanternState(condition: int, state: bool | int):
     """
     TODO
     """
@@ -1578,7 +1584,7 @@ def IfArenaMatchmaking(condition: int):
     """
 
 
-def IfObjectDestructionState(condition: int, state: bool, obj: Object | int):
+def IfObjectDestructionState(condition: int, state: bool | int, obj: Object | int):
     """
     TODO
     """
@@ -1596,7 +1602,7 @@ def IfObjectNotDestroyed(condition: int, obj: Object | int):
     """
 
 
-def IfObjectDamagedBy(condition: int, obj: Object | int, attacker: Character | int):
+def IfObjectDamaged(condition: int, obj: Object | int, attacker: Character | int):
     """
     TODO
     """
@@ -1614,25 +1620,25 @@ def IfObjectHealthValueComparison(condition: int, obj: Object | int, comparison_
     """
 
 
-def IfMovingOnCollision(condition: int, collision: Collision | int):
+def IfPlayerMovingOnCollision(condition: int, collision: Collision | int):
     """
     TODO
     """
 
 
-def IfRunningOnCollision(condition: int, collision: Collision | int):
+def IfPlayerRunningOnCollision(condition: int, collision: Collision | int):
     """
     TODO
     """
 
 
-def IfStandingOnCollision(condition: int, collision: Collision | int):
+def IfPlayerStandingOnCollision(condition: int, collision: Collision | int):
     """
     TODO
     """
 
 
-def AwaitConditionState(state: bool, condition: int):
+def AwaitConditionState(state: bool | int, condition: int):
     """
     Not sure if this is ever really used over `IfConditionState`.
     """
@@ -1650,7 +1656,7 @@ def AwaitConditionFalse(condition: int):
     """
 
 
-def SkipLinesIfConditionState(line_count: int, state: bool, condition: int):
+def SkipLinesIfConditionState(line_count: int, state: bool | int, condition: int):
     """
     TODO
     """
@@ -1668,7 +1674,7 @@ def SkipLinesIfConditionFalse(line_count: int, condition: int):
     """
 
 
-def ReturnIfConditionState(event_return_type: EventReturnType | int, state: bool, input_condition: int):
+def ReturnIfConditionState(event_return_type: EventReturnType | int, state: bool | int, input_condition: int):
     """
     TODO
     """
@@ -1847,7 +1853,7 @@ def RestartIfLessThanOrEqual(left: int, right: int):
     """
 
 
-def SkipLinesIfFinishedConditionState(line_count: int, state: bool, condition: int):
+def SkipLinesIfFinishedConditionState(line_count: int, state: bool | int, condition: int):
     """
     This command is used instead of 1000[01] when conditions are being checked *after* they have already been
     uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02)
@@ -1868,7 +1874,7 @@ def SkipLinesIfFinishedConditionFalse(line_count: int, condition: int):
     """
 
 
-def ReturnIfFinishedConditionState(event_return_type: EventReturnType | int, state: bool, input_condition: int):
+def ReturnIfFinishedConditionState(event_return_type: EventReturnType | int, state: bool | int, input_condition: int):
     """
     TODO
     """
@@ -2310,7 +2316,7 @@ def RestartIfUnknownPlayerType5():
     """
 
 
-def SkipLinesIfMapPresenceState(line_count: int, state: bool, game_map: Map | tuple | list):
+def SkipLinesIfMapPresenceState(line_count: int, state: bool | int, game_map: Map | tuple | list):
     """
     TODO
     """
@@ -2328,7 +2334,7 @@ def SkipLinesIfOutsideMap(line_count: int, game_map: Map | tuple | list):
     """
 
 
-def ReturnIfMapPresenceState(event_return_type: EventReturnType | int, state: bool, game_map: Map | tuple | list):
+def ReturnIfMapPresenceState(event_return_type: EventReturnType | int, state: bool | int, game_map: Map | tuple | list):
     """
     TODO
     """
@@ -2358,7 +2364,7 @@ def RestartIfOutsideMap(game_map: Map | tuple | list):
     """
 
 
-def AwaitObjectDestructionState(state: bool, obj: Object | int):
+def AwaitObjectDestructionState(state: bool | int, obj: Object | int):
     """
     TODO
     """
@@ -2376,7 +2382,7 @@ def AwaitObjectNotDestroyed(obj: Object | int):
     """
 
 
-def SkipLinesIfObjectDestructionState(line_count: int, state: bool, obj: Object | int):
+def SkipLinesIfObjectDestructionState(line_count: int, state: bool | int, obj: Object | int):
     """
     TODO
     """
@@ -2394,7 +2400,7 @@ def SkipLinesIfObjectNotDestroyed(line_count: int, obj: Object | int):
     """
 
 
-def ReturnIfObjectDestructionState(event_return_type: EventReturnType | int, state: bool, obj: Object | int):
+def ReturnIfObjectDestructionState(event_return_type: EventReturnType | int, state: bool | int, obj: Object | int):
     """
     TODO
     """
@@ -2433,7 +2439,7 @@ def TerminateEvent(event_slot: int, event_id: int):
     """
 
 
-def SetNetworkSyncState(state: bool):
+def SetNetworkSyncState(state: bool | int):
     """
     TODO
     """
@@ -2551,8 +2557,8 @@ def PlayCutsceneAndRandomlyWarpPlayer_2002_7(
 def RequestAnimation(
     entity: Character | Object | int,
     animation_id: int,
-    loop: bool = False,
-    wait_for_completion: bool = False,
+    loop: bool | int = False,
+    wait_for_completion: bool | int = False,
 ):
     """
     Not used very often, in favor of ForceAnimation below.
@@ -2583,7 +2589,7 @@ def ToggleFlag(flag: Flag | int):
     """
 
 
-def SetSpawnerState(entity: Object | Region | Character | int, state: bool):
+def SetSpawnerState(entity: Object | Region | Character | int, state: bool | int):
     """
     e.g. the baby skeletons in Tomb of the Giants.
     """
@@ -2609,7 +2615,7 @@ def AwardItemLotToAllPlayers(item_lot_param_id: int):
 
 def ShootProjectile(
     owner_entity: Object | Region | Character | int,
-    projectile_id: int,
+    source_entity: Object | Region | Character | int,
     model_point: int,
     behavior_id: int,
     launch_angle_x: int,
@@ -2619,7 +2625,7 @@ def ShootProjectile(
     """
     The owner entity sets the 'team' of the projectile (i.e. who it can hurt).
     
-    You can use this to directly spawn bullets by setting `projectile_id` to `owner_entity`.
+    You can use this to directly spawn bullets by setting `source_entity` to `owner_entity`.
     
     Note that the angle arguments are all integers.
     """
@@ -2649,7 +2655,7 @@ def RestartEvent(event_id: int, event_slot: int = 0):
     """
 
 
-def SetBossHealthBarState(character: Character | int, state: bool, name: NPCName | int = 0, bar_slot: int = 0):
+def SetBossHealthBarState(character: Character | int, state: bool | int, name: NPCName | int = 0, bar_slot: int = 0):
     """
     Note: slot number can be 0-1 in DS1.
     """
@@ -2721,6 +2727,14 @@ def WarpToMap(game_map: Map | tuple | list, player_start: PlayerStart | int = -1
     """
 
 
+def HandleMinibossDefeat(miniboss_id: int):
+    """
+    Called instead of `KillBoss` for bosses that aren't the final boss of the area.
+    
+    Not used in DS1, and I don't know what it would do.
+    """
+
+
 def TriggerMultiplayerEvent(event_id: int):
     """
     Used to make the Bell of Awakening sounds, for example.
@@ -2754,9 +2768,9 @@ def ToggleRandomFlagInRange(flag_range: FlagRange | tuple | list):
 def ForceAnimation(
     entity: Character | Object | int,
     animation_id: int,
-    loop: bool = False,
-    wait_for_completion: bool = False,
-    skip_transition: bool = False,
+    loop: bool | int = False,
+    wait_for_completion: bool | int = False,
+    skip_transition: bool | int = False,
 ):
     """
     Used a lot. Standard way to make a Character or Object perform an animation.
@@ -2860,7 +2874,7 @@ def PlaceSummonSign(
     """
 
 
-def SetSoapstoneMessageState(message_id: int, state: bool):
+def SetSoapstoneMessageState(message_id: int, state: bool | int):
     """
     Enable or disable developer message.
     """
@@ -2885,7 +2899,7 @@ def AwardAchievement(achievement_id: int):
     """
 
 
-def SetVagrantSpawningState(spawning_disabled: bool):
+def SetVagrantSpawningState(spawning_disabled: bool | int):
     """
     Note inverted bool.
     """
@@ -2997,9 +3011,9 @@ def Unknown_2003_43(flag: Flag | int, bit_count: int, unk1: int, unk2: int):
 def ForceAnimation_Unknown_2003_44(
     entity: Character | Object | int,
     animation: int,
-    loop: bool,
-    wait_for_completion: bool,
-    skip_transition: bool,
+    loop: bool | int,
+    wait_for_completion: bool | int,
+    skip_transition: bool | int,
     unk1: int,
 ):
     """
@@ -3010,9 +3024,9 @@ def ForceAnimation_Unknown_2003_44(
 def ForceAnimation_Unknown_2003_46(
     entity: Character | Object | int,
     animation: int,
-    loop: bool,
-    wait_for_completion: bool,
-    skip_transition: bool,
+    loop: bool | int,
+    wait_for_completion: bool | int,
+    skip_transition: bool | int,
     unk1: int,
 ):
     """
@@ -3046,7 +3060,7 @@ def EraseNPCSummonSign(summoned_character: Character | int):
     """
 
 
-def SetAIState(character: Character | int, state: bool):
+def SetAIState(character: Character | int, state: bool | int):
     """
     TODO
     """
@@ -3082,13 +3096,13 @@ def MoveToEntity(
     """
 
 
-def Kill(character: Character | int, award_souls: bool = False):
+def Kill(character: Character | int, award_souls: bool | int = False):
     """
     Technically a kill 'request.'
     """
 
 
-def SetCharacterState(character: Character | int, state: bool):
+def SetCharacterState(character: Character | int, state: bool | int):
     """
     TODO
     """
@@ -3144,7 +3158,7 @@ def ResetStandbyAnimationSettings(character: Character | int):
     """
 
 
-def SetGravityState(character: Character | int, state: bool):
+def SetGravityState(character: Character | int, state: bool | int):
     """
     Simply determines if the character loses height as it moves around. They will still gain height by running
     up slopes.
@@ -3169,7 +3183,7 @@ def SetCharacterEventTarget(character: Character | int, region: Region | int):
     """
 
 
-def SetImmortalityState(character: Character | int, state: bool):
+def SetImmortalityState(character: Character | int, state: bool | int):
     """
     Character will take damage, but not die (i.e. cannot go below 1 HP).
     """
@@ -3201,7 +3215,7 @@ def RotateToFaceEntity(character: Character | int, target_entity: Object | Regio
     """
 
 
-def SetInvincibilityState(character: Character | int, state: bool):
+def SetInvincibilityState(character: Character | int, state: bool | int):
     """
     Character cannot take damage or die.
     """
@@ -3262,8 +3276,8 @@ def CreateNPCPart(
     part_health: int,
     damage_correction: float = 1.0,
     body_damage_correction: float = 1.0,
-    is_invincible: bool = False,
-    start_in_stop_state: bool = False,
+    is_invincible: bool | int = False,
+    start_in_stop_state: bool | int = False,
 ):
     """
     Complex. Sets specific damage parameters for part of an NPC model. Further changes to the specific part can
@@ -3333,7 +3347,7 @@ def DisableBackread(character: Character | int):
     """
 
 
-def SetHealthBarState(character: Character | int, state: bool):
+def SetHealthBarState(character: Character | int, state: bool | int):
     """
     Normal health bar that appears above character.
     """
@@ -3396,7 +3410,7 @@ def SetNetworkUpdateRate(character: Character | int, is_fixed: bool, update_rate
     """
 
 
-def SetBackreadStateAlternate(character: Character | int, state: bool):
+def SetBackreadStateAlternate(character: Character | int, state: bool | int):
     """
     I have no idea how this differs from the standard backread function above.
     """
@@ -3426,7 +3440,7 @@ def BetrayCurrentCovenant(dummy: int = 0):
     """
 
 
-def SetAnimationsState(entity: Character | Object | int, state: bool):
+def SetAnimationsState(entity: Character | Object | int, state: bool | int):
     """
     TODO
     """
@@ -3482,7 +3496,7 @@ def MoveAndCopyDrawParent(
     """
 
 
-def ResetAnimation(character: Character | int, disable_interpolation: bool = False):
+def ResetAnimation(character: Character | int, disable_interpolation: bool | int = False):
     """
     Cancels an animation. Note the inverted bool for controlling interpolation.
     """
@@ -3559,7 +3573,7 @@ def RestoreObject(obj: Object | int):
     """
 
 
-def SetObjectState(obj: Object | int, state: bool):
+def SetObjectState(obj: Object | int, state: bool | int):
     """
     TODO
     """
@@ -3577,7 +3591,7 @@ def DisableObject(obj: Object | int):
     """
 
 
-def SetTreasureState(obj: Object | int, state: bool):
+def SetTreasureState(obj: Object | int, state: bool | int):
     """
     TODO
     """
@@ -3611,7 +3625,7 @@ def ActivateObject(obj: Object | int, obj_act_id: int, relative_index: int):
     """
 
 
-def SetObjectActivation(obj: Object | int, obj_act_id: int, state: bool):
+def SetObjectActivation(obj: Object | int, obj_act_id: int, state: bool | int):
     """
     Sets whether the object can be activated (1) or not activated (0).
     """
@@ -3672,7 +3686,7 @@ def RemoveObjectFlag(obj_flag: Flag | int):
     """
 
 
-def SetObjectInvulnerabilityState(obj: Object | int, state: bool):
+def SetObjectInvulnerabilityState(obj: Object | int, state: bool | int):
     """
     1 = invulnerable.
     """
@@ -3690,7 +3704,7 @@ def DisableObjectInvulnerability(obj: Object | int):
     """
 
 
-def SetObjectActivationWithIdx(obj: Object | int, obj_act_id: int, relative_index: int, state: bool):
+def SetObjectActivationWithIdx(obj: Object | int, obj_act_id: int, relative_index: int, state: bool | int):
     """
     Similar to SetObjectActivation, but you can provide the relative index to disable (e.g. one side of a door).
     """
@@ -3824,7 +3838,12 @@ def ArenaSetNametag6(player_id: int):
     """
 
 
-def DisplayConcatenatedMessage(message_id: int, pad_enabled: bool, concatenator_base_flag: Flag | int, bit_count: int):
+def DisplayConcatenatedMessage(
+    message_id: int,
+    pad_enabled: bool | int,
+    concatenator_base_flag: Flag | int,
+    bit_count: int,
+):
     """
     TODO
     """
@@ -3935,7 +3954,7 @@ def NotifyBossBattleStart(dummy: int = 0):
 
 
 def SetBackgroundMusic(
-    state: bool,
+    state: bool | int,
     music_slot: int,
     entity: Object | Region | Character | int,
     sound_type: SoundType | int,
@@ -3956,7 +3975,7 @@ def PlaySoundEffect(
     """
 
 
-def SetSoundEventState(sound_id: int, state: bool):
+def SetSoundEventState(sound_id: int, state: bool | int):
     """
     The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
     """
@@ -3974,7 +3993,7 @@ def DisableSoundEvent(sound_id: int):
     """
 
 
-def SetMapCollisionState(collision: Collision | int, state: bool):
+def SetMapCollisionState(collision: Collision | int, state: bool | int):
     """
     Enable or disable a map collision (HKX). The ID is specified in the MSB. Note that a Collision doesn't have
     to be solid ground, but could be anything triggered by collision, such as a kill plane (which this is often
@@ -3994,7 +4013,7 @@ def DisableMapCollision(collision: Collision | int):
     """
 
 
-def SetMapCollisionBackreadMaskState(collision: Collision | int, state: bool):
+def SetMapCollisionBackreadMaskState(collision: Collision | int, state: bool | int):
     """
     Unused.
     """
@@ -4012,7 +4031,7 @@ def DisableMapCollisionBackreadMask(collision: Collision | int):
     """
 
 
-def SetMapPieceState(map_piece_id: MapPiece | int, state: bool):
+def SetMapPieceState(map_piece_id: MapPiece | int, state: bool | int):
     """
     Set the visibility of individual map pieces (e.g. all the crystals in Seath's tower).
     """

@@ -1182,7 +1182,7 @@ def Event13700470():
     """ 13700470: Event 13700470 """
     GotoIfFlagEnabled(Label.L0, 13700472)
     IfPlayerInOwnWorld(1)
-    IfActionButtonParam(1, action_button_id=3701000, entity=3701471)
+    IfActionButtonParamActivated(1, action_button_id=3701000, entity=3701471)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13700472)
     Move(PLAYER, destination=3701471, destination_type=CoordEntityType.Object, model_point=103, short_move=True)
@@ -1204,7 +1204,7 @@ def Event13700471():
     DisableNetworkSync()
     EndIfFlagEnabled(13700472)
     IfFlagDisabled(1, 13700470)
-    IfActionButtonParam(1, action_button_id=7100, entity=3701470)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=3701470)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10010160,
@@ -1270,7 +1270,7 @@ def Event13705511(
     DisableObjectActivation(arg_12_15, obj_act_id=-1)
     IfObjectActivated(-1, obj_act_id=arg_24_27)
     IfFlagEnabled(-2, arg_0_3)
-    IfActionButtonParam(-3, action_button_id=9300, entity=arg_8_11)
+    IfActionButtonParamActivated(-3, action_button_id=9300, entity=arg_8_11)
     IfConditionTrue(-4, input_condition=-1)
     IfConditionTrue(-4, input_condition=-2)
     IfConditionTrue(-4, input_condition=-3)
@@ -1313,7 +1313,7 @@ def Event13705511(
     DisableObjectActivation(arg_20_23, obj_act_id=-1)
     IfObjectActivated(-5, obj_act_id=arg_16_19)
     IfFlagDisabled(-6, arg_0_3)
-    IfActionButtonParam(-7, action_button_id=9301, entity=arg_8_11)
+    IfActionButtonParamActivated(-7, action_button_id=9301, entity=arg_8_11)
     IfConditionTrue(-8, input_condition=-5)
     IfConditionTrue(-8, input_condition=-6)
     IfConditionTrue(-8, input_condition=-7)
@@ -1362,7 +1362,7 @@ def Event13705512(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfFlagDisabled(0, arg_16_19)
     GotoIfFlagEnabled(Label.L0, arg_0_3)
     IfFlagEnabled(-1, arg_0_3)
-    IfActionButtonParam(-1, action_button_id=arg_8_11, entity=arg_4_7)
+    IfActionButtonParamActivated(-1, action_button_id=arg_8_11, entity=arg_4_7)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFlagEnabled(1, arg_0_3)
     DisplayDialog(
@@ -1377,7 +1377,7 @@ def Event13705512(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     # --- 0 --- #
     DefineLabel(0)
     IfFlagDisabled(-2, arg_0_3)
-    IfActionButtonParam(-2, action_button_id=arg_12_15, entity=arg_4_7)
+    IfActionButtonParamActivated(-2, action_button_id=arg_12_15, entity=arg_4_7)
     IfConditionTrue(0, input_condition=-2)
     SkipLinesIfFlagDisabled(1, arg_0_3)
     DisplayDialog(
@@ -1407,7 +1407,7 @@ def Event13705520(_, arg_0_3: int, arg_4_7: int):
     EndIfThisEventSlotFlagEnabled()
     CreateObjectVFX(831023, obj=arg_0_3, model_point=200)
     CreateObjectVFX(60, obj=arg_0_3, model_point=200)
-    IfActionButtonParam(0, action_button_id=9600, entity=arg_4_7)
+    IfActionButtonParamActivated(0, action_button_id=9600, entity=arg_4_7)
     ForceAnimation(PLAYER, 60070)
     Wait(0.20000000298023224)
     CreateTemporaryVFX(301002, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=220)
@@ -1468,7 +1468,7 @@ def Event13705541():
     DisableNetworkSync()
     EndIfPlayerNotInOwnWorld()
     EndIfFlagEnabled(13700540)
-    IfActionButtonParam(1, action_button_id=9310, entity=3701540)
+    IfActionButtonParamActivated(1, action_button_id=9310, entity=3701540)
     IfPlayerDoesNotHaveGood(1, 2005, including_box=False)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
@@ -2510,12 +2510,12 @@ def Event13705644(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfPlayerHasGood(1, 2139, including_box=False)
     IfCharacterInsideRegion(1, PLAYER, region=arg_8_11)
     GotoIfFlagDisabled(Label.L0, 9013)
-    IfActionButtonParam(1, action_button_id=6290, entity=arg_0_3)
+    IfActionButtonParamActivated(1, action_button_id=6290, entity=arg_0_3)
     Goto(Label.L10)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfActionButtonParam(1, action_button_id=6290, entity=arg_4_7)
+    IfActionButtonParamActivated(1, action_button_id=6290, entity=arg_4_7)
 
     # --- 10 --- #
     DefineLabel(10)

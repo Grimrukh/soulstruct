@@ -339,16 +339,24 @@ EMEDF = PTDE_EMEDF | {
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
-            "state": {
-                "type": MultiplayerState,
-                "default": None,
-            },
+            "state": NO_DEFAULT(MultiplayerState),
         },
         "partials": {
-            "IfHost": dict(state=MultiplayerState.Host),
-            "IfClient": dict(state=MultiplayerState.Client),
-            "IfMultiplayer": dict(state=MultiplayerState.Multiplayer),
-            "IfSingleplayer": dict(state=MultiplayerState.Singleplayer),
+            "IfHost": dict(
+                state=MultiplayerState.Host,
+            ),
+            "IfClient": dict(
+                state=MultiplayerState.Client,
+            ),
+            "IfMultiplayer": dict(
+                state=MultiplayerState.Multiplayer,
+            ),
+            "IfConnectingMultiplayer": dict(
+                state=MultiplayerState.ConnectingMultiplayer,
+            ),
+            "IfSingleplayer": dict(
+                state=MultiplayerState.Singleplayer,
+            ),
         },
     },
     (3, 7): {
@@ -917,7 +925,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (5, 1): {
-        "alias": "IfObjectDamagedBy",
+        "alias": "IfObjectDamaged",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -944,7 +952,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (11, 0): {
-        "alias": "IfMovingOnCollision",
+        "alias": "IfPlayerMovingOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -952,7 +960,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (11, 1): {
-        "alias": "IfRunningOnCollision",
+        "alias": "IfPlayerRunningOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -960,7 +968,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (11, 2): {
-        "alias": "IfStandingOnCollision",
+        "alias": "IfPlayerStandingOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -1407,23 +1415,7 @@ EMEDF = PTDE_EMEDF | {
             ),
         },
     },
-    (1003, 5): {
-        "alias": "SkipLinesIfMultiplayerState",
-        "docstring": "TODO",
-        "args": {
-            "line_count": INT | HIDE_NAME,
-            "state": {
-                "type": MultiplayerState,
-                "default": None,
-            },
-        },
-        "partials": {
-            "SkipLinesIfHost": dict(state=MultiplayerState.Host),
-            "SkipLinesIfClient": dict(state=MultiplayerState.Client),
-            "SkipLinesIfMultiplayer": dict(state=MultiplayerState.Multiplayer),
-            "SkipLinesIfSingleplayer": dict(state=MultiplayerState.Singleplayer),
-        },
-    },
+    # (1003, 5) updated below.
     (1003, 6): {
         "alias": "ReturnIfMultiplayerState",
         "docstring": "TODO",
@@ -1728,13 +1720,13 @@ EMEDF = PTDE_EMEDF | {
         "docstring": """
             The owner entity sets the 'team' of the projectile (i.e. who it can hurt).
 
-            You can use this to directly spawn bullets by setting `projectile_id` to `owner_entity`.
+            You can use this to directly spawn bullets by setting `source_entity` to `owner_entity`.
 
             Note that the angle arguments are all integers.
         """,
         "args": {
             "owner_entity": NO_DEFAULT(CoordEntityTyping),
-            "projectile_id": INT,  # TODO: BulletParam?
+            "source_entity": NO_DEFAULT(CoordEntityTyping),
             "model_point": INT,
             "behavior_id": INT,
             "launch_angle_x": INT,
@@ -1742,8 +1734,8 @@ EMEDF = PTDE_EMEDF | {
             "launch_angle_z": INT,
         },
     },
-    # TODO: Could not find [2003, 6]: (De)activate Map Hit. Seems reundant with (2011, 1).
-    # TODO: Could not find [2003, 7]: Set Map Visibility. Seems reundant with (2012, 1).
+    # TODO: Could not find [2003, 6]: (De)activate Map Hit. Seems redundant with (2011, 1).
+    # TODO: Could not find [2003, 7]: Set Map Visibility. Seems redundant with (2012, 1).
     (2003, 8): {
         "alias": "SetEventState",
         "docstring": """
@@ -1878,7 +1870,18 @@ EMEDF = PTDE_EMEDF | {
             "player_start": {},
         },
     },
-    # TODO: Could not find [2003, 15]: Handle Miniboss Defeat
+    (2003, 15): {
+        "alias": "HandleMinibossDefeat",
+        "docstring": """
+            Called instead of `KillBoss` for bosses that aren't the final boss of the area.
+
+            Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to 
+            fight Moon Presence.
+        """,
+        "args": {
+            "miniboss_id": INT,
+        },
+    },
     (2003, 16): {
         "alias": "TriggerMultiplayerEvent",
         "docstring": """
@@ -2254,11 +2257,16 @@ EMEDF = PTDE_EMEDF | {
     (2004, 8): {
         "alias": "AddSpecialEffect",
         "docstring": """
-            'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
-        """,
+                'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
+                nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
+
+                The Bloodborne version has an additional argument that determines whether any HP changes caused by the 
+                special effect should also affect NPC parts, which I set to `False` by default (more common).
+            """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "special_effect_id": INT | HIDE_NAME,
+            "affect_npc_part_hp": BOOL | {"default": False},
         },
     },
     (2004, 9): {
@@ -2357,12 +2365,17 @@ EMEDF = PTDE_EMEDF | {
         "alias": "RotateToFaceEntity",
         "docstring": """
             Rotate a character to face a target map entity of any type.
-            WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at 
+            WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
             least.)
+
+            The Bloodborne+ version allows you to force an animation at the same time (post-rotation) and optionally 
+            wait until that animation is completed. (I assume a value of -1 avoids it.)
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "target_entity": NO_DEFAULT(CoordEntityTyping),
+            "target_entity": NO_DEFAULT(CoordEntityTyping) | HIDE_NAME,
+            "animation": INT | {"default": -1, "internal_default": -1},
+            "wait_for_completion": BOOL | {"default": False},
         },
     },
     (2004, 15): {
@@ -3432,54 +3445,8 @@ EMEDF = PTDE_EMEDF | {
         },
     },
 
-    # New or replaced Bloodborne instructions start here (PTDE above).
+    # New Bloodborne instructions start here (PTDE above).
 
-    (3, 6): {
-        "alias": "IfMultiplayerState",
-        "docstring": "TODO",
-        "args": {
-            "condition": INT | HIDE_NAME,
-            "state": NO_DEFAULT(MultiplayerState),
-        },
-        "partials": {
-            "IfHost": dict(
-                state=MultiplayerState.Host,
-            ),
-            "IfClient": dict(
-                state=MultiplayerState.Client,
-            ),
-            "IfMultiplayer": dict(
-                state=MultiplayerState.Multiplayer,
-            ),
-            "IfConnectingMultiplayer": dict(
-                state=MultiplayerState.ConnectingMultiplayer,
-            ),
-            "IfSingleplayer": dict(
-                state=MultiplayerState.Singleplayer,
-            ),
-        },
-    },
-    (3, 8): {
-        "alias": "IfMapPresenceState",
-        "docstring": """
-            Conditions upon player's presence in a particular game map.        
-        """,
-        "args": {
-            "condition": INT | HIDE_NAME,
-            "state": BOOL | HIDE_NAME,
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-        },
-        "evs_args": {
-            "condition": {},
-            "state": {},
-            "game_map": GAME_MAP_EVS,
-        },
-        "partials": {
-            "IfInsideMap": dict(state=True),
-            "IfOutsideMap": dict(state=False),
-        },
-    },
     (3, 23): {
         "alias": "IfAttackedWithDamageType",
         "docstring": "TODO",
@@ -3498,7 +3465,7 @@ EMEDF = PTDE_EMEDF | {
         }
     },
     (3, 24): {
-        "alias": "IfActionButtonParam",
+        "alias": "IfActionButtonParamActivated",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -3507,7 +3474,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (3, 25): {
-        "alias": "IfPlayerArmorType",
+        "alias": "IfPlayerArmorInRange",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -3588,7 +3555,7 @@ EMEDF = PTDE_EMEDF | {
         "partials": {
             "IfCharacterDrawGroupEnabled": dict(state=True),
             "IfCharacterDrawGroupDisabled": dict(state=False),
-        }
+        },
     },
     (1000, 101): {
         "alias": "GotoIfConditionState",
@@ -4097,8 +4064,8 @@ EMEDF = PTDE_EMEDF | {
     (2003, 11): {
         "alias": "SetBossHealthBarState",
         "docstring": """
-                Note: slot number can be 0-2 in BB.
-            """,
+            Note: slot number can be 0-2 in BB.
+        """,
         "args": {
             "state": BOOL | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
@@ -4150,18 +4117,6 @@ EMEDF = PTDE_EMEDF | {
         "evs_args": {
             "game_map": GAME_MAP_EVS,
             "player_start": {},
-        },
-    },
-    (2003, 15): {
-        "alias": "HandleMinibossDefeat",
-        "docstring": """
-            Called instead of `KillBoss` for bosses that aren't the final boss of the area.
-            
-            Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to 
-            fight Moon Presence.
-        """,
-        "args": {
-            "miniboss_id": INT,
         },
     },
     (2003, 27): {
@@ -4318,38 +4273,6 @@ EMEDF = PTDE_EMEDF | {
             "character": NO_DEFAULT(CharacterTyping) | {"internal_default": -1},
         },
     },
-    (2004, 8): {
-        "alias": "AddSpecialEffect",
-        "docstring": """
-            'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will do
-            nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
-            
-            The Bloodborne version has an additional argument that determines whether any HP changes caused by the 
-            special effect should also affect NPC parts, which I set to `False` by default (more common).
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "special_effect_id": INT | HIDE_NAME,
-            "affect_npc_part_hp": BOOL | {"default": False},
-        },
-    },
-    (2004, 14): {
-        "alias": "RotateToFaceEntity",
-        "docstring": """
-            Rotate a character to face a target map entity of any type.
-            WARNING: This instruction will crash its event script (silently) if used on a disabled character! (In DS1 at
-            least.)
-            
-            The Bloodborne version allows you to force an animation at the same time (post-rotation) and optionally wait
-            until that animation is completed. (I assume a value of -1 avoids it.)
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "target_entity": NO_DEFAULT(CoordEntityTyping) | HIDE_NAME,
-            "animation": INT | {"default": -1, "internal_default": -1},
-            "wait_for_completion": BOOL | {"default": False},
-        },
-    },
     (2004, 48): {
         "alias": "ChangeCharacterCloth",
         "docstring": "TODO",
@@ -4424,26 +4347,6 @@ EMEDF = PTDE_EMEDF | {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "special_effect": INT | HIDE_NAME,
             "affect_npc_parts_hp": BOOL | {"default": False},
-        },
-    },
-    (2005, 10): {
-        "alias": "RegisterStatue",
-        "docstring": """
-            Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
-        """,
-        "args": {
-            "obj": NO_DEFAULT(ObjectTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "statue_type": {
-                "type": StatueType,
-                "default": None,
-            },
-        },
-        "evs_args": {
-            "obj": {},
-            "game_map": GAME_MAP_EVS,
-            "statue_type": {},
         },
     },
     (2005, 16): {

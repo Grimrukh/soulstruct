@@ -247,14 +247,14 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
             # comparison, but it's generally only used to query event arguments, because comparing two predefined
             # constants and expecting to ever be surprised is a lost cause. Also note the built-in PLAYER constant,
             # which is always equal to 10000. (10001-10006 refer to summoned players. Not sure about invaders...)
-            Await(trigger_region_1 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or Attacked(slime, PLAYER))
         else:
             # If were were writing in raw EMEVD, we would probably just conditionally skip over a single line that adds
             # trigger_region_2 to the condition if it is not equal to 0. (That's what I did in Daughters of Ash.) But
             # this happens so rarely (and doesn't even affect performance, just script length) that I don't think it's
             # a good enough reason to bother implementing front-end condition control. The whole point is that you
             # never have to manually build a condition or calculate a line skip again.
-            Await(trigger_region_1 or trigger_region_2 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or trigger_region_2 or Attacked(slime, PLAYER))
         Wait(delay)
 
     EnableGravity(slime)

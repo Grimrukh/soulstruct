@@ -505,16 +505,16 @@ def Constructor():
     Event_13505797(0, obj=3501270)
     Event_13505797(1, obj=3501271)
     Event_13505797(2, obj=3501272)
-    Event_13505800(0, region=3502600, entity=3501600, obj=0, projectile_id=3501601, character=3500751)
-    Event_13505800(1, region=3502610, entity=3501610, obj=0, projectile_id=3501611, character=0)
-    Event_13505800(2, region=3502640, entity=3501640, obj=0, projectile_id=3501641, character=0)
+    Event_13505800(0, region=3502600, entity=3501600, obj=0, source_entity=3501601, character=3500751)
+    Event_13505800(1, region=3502610, entity=3501610, obj=0, source_entity=3501611, character=0)
+    Event_13505800(2, region=3502640, entity=3501640, obj=0, source_entity=3501641, character=0)
     Event_13505810(
         0,
         region=3502630,
         entity=3501630,
         obj=0,
-        projectile_id=3501631,
-        projectile_id_1=3501621,
+        source_entity=3501631,
+        source_entity_1=3501621,
         character=3500764
     )
     Event_13505820(
@@ -869,20 +869,20 @@ def Event_13504730(
 def Event_13504740():
     """Event 13504740"""
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(-1, 3504000)
-    IfStandingOnCollision(-1, 3504001)
-    IfStandingOnCollision(-1, 3504002)
-    IfStandingOnCollision(-1, 3504003)
-    IfStandingOnCollision(-1, 3504004)
+    IfPlayerStandingOnCollision(-1, 3504000)
+    IfPlayerStandingOnCollision(-1, 3504001)
+    IfPlayerStandingOnCollision(-1, 3504002)
+    IfPlayerStandingOnCollision(-1, 3504003)
+    IfPlayerStandingOnCollision(-1, 3504004)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13504741)
     IfCharacterHuman(2, PLAYER)
-    IfStandingOnCollision(-2, 3504000)
-    IfStandingOnCollision(-2, 3504001)
-    IfStandingOnCollision(-2, 3504002)
-    IfStandingOnCollision(-2, 3504003)
-    IfStandingOnCollision(-2, 3504004)
+    IfPlayerStandingOnCollision(-2, 3504000)
+    IfPlayerStandingOnCollision(-2, 3504001)
+    IfPlayerStandingOnCollision(-2, 3504002)
+    IfPlayerStandingOnCollision(-2, 3504003)
+    IfPlayerStandingOnCollision(-2, 3504004)
     IfConditionFalse(2, input_condition=-1)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(13504741)
@@ -893,54 +893,54 @@ def Event_13504740():
 def Event_13504742():
     """Event 13504742"""
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(-1, 3504020)
-    IfStandingOnCollision(-1, 3504021)
-    IfStandingOnCollision(-1, 3504022)
-    IfStandingOnCollision(-1, 3504023)
-    IfStandingOnCollision(-1, 3504024)
-    IfStandingOnCollision(-1, 3504025)
-    IfStandingOnCollision(-1, 3504026)
-    IfStandingOnCollision(-1, 3504027)
-    IfStandingOnCollision(-1, 3504028)
-    IfStandingOnCollision(-1, 3504029)
-    IfStandingOnCollision(-1, 3504030)
-    IfStandingOnCollision(-1, 3504031)
-    IfStandingOnCollision(-1, 3504032)
-    IfStandingOnCollision(-1, 3504033)
-    IfStandingOnCollision(-1, 3504034)
-    IfStandingOnCollision(-1, 3504035)
-    IfStandingOnCollision(-1, 3504036)
-    IfStandingOnCollision(-1, 3504037)
-    IfStandingOnCollision(-1, 3504038)
-    IfStandingOnCollision(-1, 3504039)
-    IfStandingOnCollision(-1, 3504040)
-    IfStandingOnCollision(-1, 3504041)
+    IfPlayerStandingOnCollision(-1, 3504020)
+    IfPlayerStandingOnCollision(-1, 3504021)
+    IfPlayerStandingOnCollision(-1, 3504022)
+    IfPlayerStandingOnCollision(-1, 3504023)
+    IfPlayerStandingOnCollision(-1, 3504024)
+    IfPlayerStandingOnCollision(-1, 3504025)
+    IfPlayerStandingOnCollision(-1, 3504026)
+    IfPlayerStandingOnCollision(-1, 3504027)
+    IfPlayerStandingOnCollision(-1, 3504028)
+    IfPlayerStandingOnCollision(-1, 3504029)
+    IfPlayerStandingOnCollision(-1, 3504030)
+    IfPlayerStandingOnCollision(-1, 3504031)
+    IfPlayerStandingOnCollision(-1, 3504032)
+    IfPlayerStandingOnCollision(-1, 3504033)
+    IfPlayerStandingOnCollision(-1, 3504034)
+    IfPlayerStandingOnCollision(-1, 3504035)
+    IfPlayerStandingOnCollision(-1, 3504036)
+    IfPlayerStandingOnCollision(-1, 3504037)
+    IfPlayerStandingOnCollision(-1, 3504038)
+    IfPlayerStandingOnCollision(-1, 3504039)
+    IfPlayerStandingOnCollision(-1, 3504040)
+    IfPlayerStandingOnCollision(-1, 3504041)
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13504743)
     IfCharacterHuman(2, PLAYER)
-    IfStandingOnCollision(-2, 3504020)
-    IfStandingOnCollision(-2, 3504021)
-    IfStandingOnCollision(-2, 3504022)
-    IfStandingOnCollision(-2, 3504023)
-    IfStandingOnCollision(-2, 3504024)
-    IfStandingOnCollision(-2, 3504025)
-    IfStandingOnCollision(-2, 3504026)
-    IfStandingOnCollision(-2, 3504027)
-    IfStandingOnCollision(-2, 3504028)
-    IfStandingOnCollision(-2, 3504029)
-    IfStandingOnCollision(-2, 3504030)
-    IfStandingOnCollision(-2, 3504031)
-    IfStandingOnCollision(-2, 3504032)
-    IfStandingOnCollision(-2, 3504033)
-    IfStandingOnCollision(-2, 3504034)
-    IfStandingOnCollision(-2, 3504035)
-    IfStandingOnCollision(-2, 3504036)
-    IfStandingOnCollision(-2, 3504037)
-    IfStandingOnCollision(-2, 3504038)
-    IfStandingOnCollision(-2, 3504039)
-    IfStandingOnCollision(-2, 3504040)
-    IfStandingOnCollision(-2, 3504041)
+    IfPlayerStandingOnCollision(-2, 3504020)
+    IfPlayerStandingOnCollision(-2, 3504021)
+    IfPlayerStandingOnCollision(-2, 3504022)
+    IfPlayerStandingOnCollision(-2, 3504023)
+    IfPlayerStandingOnCollision(-2, 3504024)
+    IfPlayerStandingOnCollision(-2, 3504025)
+    IfPlayerStandingOnCollision(-2, 3504026)
+    IfPlayerStandingOnCollision(-2, 3504027)
+    IfPlayerStandingOnCollision(-2, 3504028)
+    IfPlayerStandingOnCollision(-2, 3504029)
+    IfPlayerStandingOnCollision(-2, 3504030)
+    IfPlayerStandingOnCollision(-2, 3504031)
+    IfPlayerStandingOnCollision(-2, 3504032)
+    IfPlayerStandingOnCollision(-2, 3504033)
+    IfPlayerStandingOnCollision(-2, 3504034)
+    IfPlayerStandingOnCollision(-2, 3504035)
+    IfPlayerStandingOnCollision(-2, 3504036)
+    IfPlayerStandingOnCollision(-2, 3504037)
+    IfPlayerStandingOnCollision(-2, 3504038)
+    IfPlayerStandingOnCollision(-2, 3504039)
+    IfPlayerStandingOnCollision(-2, 3504040)
+    IfPlayerStandingOnCollision(-2, 3504041)
     IfConditionFalse(2, input_condition=-1)
     IfConditionTrue(0, input_condition=2)
     DisableFlag(13504743)
@@ -1076,7 +1076,7 @@ def Event_13501802():
     DefineLabel(0)
     IfPlayerHasGood(1, 4021)
     IfCharacterOutsideRegion(1, PLAYER, region=3502803)
-    IfActionButtonParam(1, action_button_id=3500912, entity=3501802)
+    IfActionButtonParamActivated(1, action_button_id=3500912, entity=3501802)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3501802, animation=101340)
     WaitFrames(frames=120)
@@ -1095,7 +1095,7 @@ def Event_13501803():
     EndIfConditionFalse(1)
     IfFlagEnabled(0, 13501800)
     CreateObjectVFX(3501801, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=3500911, entity=3501801)
+    IfActionButtonParamActivated(0, action_button_id=3500911, entity=3501801)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3501800, host_only=False)
     DeleteObjectVFX(3501801)
@@ -1106,7 +1106,7 @@ def Event_13501804():
     """Event 13501804"""
     DisableNetworkSync()
     IfFlagEnabled(1, 13501802)
-    IfActionButtonParam(1, action_button_id=7100, entity=3501201)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=3501201)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010172, number_buttons=NumberButtons.OneButton)
     Restart()
@@ -1150,7 +1150,7 @@ def Event_13501810():
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
-    IfStandingOnCollision(0, 3504020)
+    IfPlayerStandingOnCollision(0, 3504020)
     RunEvent(9350, slot=0, args=(2,))
 
 
@@ -1172,7 +1172,7 @@ def Event_13504800():
     DefineLabel(0)
     IfFlagDisabled(2, 13501800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=3500800, entity=3501800)
+    IfActionButtonParamActivated(2, action_button_id=3500800, entity=3501800)
     IfFlagEnabled(3, 13501800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1200,7 +1200,7 @@ def Event_13504801():
     IfFlagEnabled(1, 13501801)
     IfFlagEnabled(1, 13504808)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3500800, entity=3501800)
+    IfActionButtonParamActivated(1, action_button_id=3500800, entity=3501800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3502800, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -1502,7 +1502,7 @@ def Event_13504850():
     DefineLabel(0)
     IfFlagDisabled(2, 13501850)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=3500850, entity=3501810)
+    IfActionButtonParamActivated(2, action_button_id=3500850, entity=3501810)
     IfFlagEnabled(3, 13501850)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1530,7 +1530,7 @@ def Event_13504851():
     IfFlagEnabled(1, 13501851)
     IfFlagEnabled(1, 13504858)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3500850, entity=3501810)
+    IfActionButtonParamActivated(1, action_button_id=3500850, entity=3501810)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3502810, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -2019,7 +2019,7 @@ def Event_13505662():
 
 
 @NeverRestart(13505670)
-def Event_13505670(_, projectile_id: int, behavior_id: int, frames: int, character: int):
+def Event_13505670(_, source_entity: int, behavior_id: int, frames: int, character: int):
     """Event 13505670"""
     IfFlagEnabled(1, 13504866)
     IfCharacterAlive(1, character)
@@ -2027,7 +2027,7 @@ def Event_13505670(_, projectile_id: int, behavior_id: int, frames: int, charact
     WaitFrames(frames=frames)
     ShootProjectile(
         owner_entity=character,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
@@ -2288,23 +2288,23 @@ def Event_13501104():
     """Event 13501104"""
     DisableNetworkSync()
     IfFlagDisabled(1, 13501108)
-    IfActionButtonParam(1, action_button_id=7100, entity=3501101)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=3501101)
     IfFlagDisabled(2, 13501108)
-    IfActionButtonParam(2, action_button_id=7100, entity=3501102)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=3501102)
     IfFlagDisabled(3, 13501108)
-    IfActionButtonParam(3, action_button_id=7100, entity=3501103)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=3501103)
     IfFlagEnabled(4, 13504100)
-    IfActionButtonParam(4, action_button_id=7100, entity=3501101)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=3501101)
     IfFlagEnabled(5, 13504100)
-    IfActionButtonParam(5, action_button_id=7100, entity=3501102)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=3501102)
     IfFlagEnabled(6, 13504100)
-    IfActionButtonParam(6, action_button_id=7100, entity=3501103)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=3501103)
     IfFlagEnabled(7, 13501106)
-    IfActionButtonParam(7, action_button_id=7100, entity=3501101)
+    IfActionButtonParamActivated(7, action_button_id=7100, entity=3501101)
     IfFlagDisabled(8, 13501106)
-    IfActionButtonParam(8, action_button_id=7100, entity=3501102)
+    IfActionButtonParamActivated(8, action_button_id=7100, entity=3501102)
     IfFlagDisabled(9, 13501106)
-    IfActionButtonParam(9, action_button_id=7100, entity=3501103)
+    IfActionButtonParamActivated(9, action_button_id=7100, entity=3501103)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -2324,7 +2324,7 @@ def Event_13501105():
     """Event 13501105"""
     EndIfFlagEnabled(13501108)
     IfPlayerHasGood(1, 4017)
-    IfActionButtonParam(1, action_button_id=3500101, entity=3501100)
+    IfActionButtonParamActivated(1, action_button_id=3500101, entity=3501100)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(9180)
     WaitFrames(frames=1)
@@ -2412,7 +2412,7 @@ def Event_13501140():
     EndIfConditionFalse(1)
     IfPlayerDoesNotHaveGood(1, 4017)
     IfFlagDisabled(1, 13501105)
-    IfActionButtonParam(1, action_button_id=3500100, entity=3501100)
+    IfActionButtonParamActivated(1, action_button_id=3500100, entity=3501100)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010601, number_buttons=NumberButtons.OneButton)
     Restart()
@@ -2423,7 +2423,7 @@ def Event_13501141():
     """Event 13501141"""
     GotoIfFlagEnabled(Label.L0, flag=53502000)
     IfCharacterHuman(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=3500102, entity=3501104)
+    IfActionButtonParamActivated(1, action_button_id=3500102, entity=3501104)
     IfConditionTrue(0, input_condition=1)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3502000, host_only=False)
@@ -2586,17 +2586,17 @@ def Event_13501114():
     """Event 13501114"""
     DisableNetworkSync()
     IfFlagDisabled(1, 13501118)
-    IfActionButtonParam(1, action_button_id=7100, entity=3501106)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=3501106)
     IfFlagDisabled(2, 13501118)
-    IfActionButtonParam(2, action_button_id=7100, entity=3501107)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=3501107)
     IfFlagEnabled(3, 13504110)
-    IfActionButtonParam(3, action_button_id=7100, entity=3501106)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=3501106)
     IfFlagEnabled(4, 13504110)
-    IfActionButtonParam(4, action_button_id=7100, entity=3501107)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=3501107)
     IfFlagEnabled(5, 13501116)
-    IfActionButtonParam(5, action_button_id=7100, entity=3501106)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=3501106)
     IfFlagDisabled(6, 13501116)
-    IfActionButtonParam(6, action_button_id=7100, entity=3501107)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=3501107)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -2752,17 +2752,17 @@ def Event_13501124():
     """Event 13501124"""
     DisableNetworkSync()
     IfFlagDisabled(1, 13501128)
-    IfActionButtonParam(1, action_button_id=7100, entity=3501111)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=3501111)
     IfFlagDisabled(2, 13501128)
-    IfActionButtonParam(2, action_button_id=7100, entity=3501112)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=3501112)
     IfFlagEnabled(3, 13504120)
-    IfActionButtonParam(3, action_button_id=7100, entity=3501111)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=3501111)
     IfFlagEnabled(4, 13504120)
-    IfActionButtonParam(4, action_button_id=7100, entity=3501112)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=3501112)
     IfFlagEnabled(5, 13501126)
-    IfActionButtonParam(5, action_button_id=7100, entity=3501111)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=3501111)
     IfFlagDisabled(6, 13501126)
-    IfActionButtonParam(6, action_button_id=7100, entity=3501112)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=3501112)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -2968,7 +2968,7 @@ def Event_13500105():
     DisableSoundEvent(sound_id=3503202)
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(1, 3504020)
+    IfPlayerStandingOnCollision(1, 3504020)
     IfConditionTrue(0, input_condition=1)
     PlaySoundEffect(PLAYER, 350000010, sound_type=SoundType.a_Ambient)
 
@@ -2979,7 +2979,7 @@ def Event_13500106():
     DisableSoundEvent(sound_id=3503203)
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
-    IfStandingOnCollision(1, 3504815)
+    IfPlayerStandingOnCollision(1, 3504815)
     IfConditionTrue(0, input_condition=1)
     PlaySoundEffect(PLAYER, 350000011, sound_type=SoundType.a_Ambient)
 
@@ -3212,7 +3212,7 @@ def Event_13500460(_, character: int, animation_id: int, flag: int):
 def Event_13500500(_, entity: int, action_button_id: int, text: int):
     """Event 13500500"""
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=action_button_id, entity=entity)
+    IfActionButtonParamActivated(0, action_button_id=action_button_id, entity=entity)
     DisplayDialog(text=text, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -3685,7 +3685,7 @@ def Event_13505797(_, obj: int):
 
 
 @RestartOnRest(13505800)
-def Event_13505800(_, region: int, entity: int, obj: int, projectile_id: int, character: int):
+def Event_13505800(_, region: int, entity: int, obj: int, source_entity: int, character: int):
     """Event 13505800"""
     RestoreObject(obj)
     ForceAnimation(entity, 2)
@@ -3699,7 +3699,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, projectile_id: int, ch
     SkipLinesIfFlagEnabled(2, 6603)
     ShootProjectile(
         owner_entity=3500799,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=200,
         behavior_id=6350,
         launch_angle_x=0,
@@ -3709,7 +3709,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, projectile_id: int, ch
     Goto(Label.L1)
     ShootProjectile(
         owner_entity=3500799,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=200,
         behavior_id=6352,
         launch_angle_x=0,
@@ -3724,7 +3724,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, projectile_id: int, ch
 
 
 @RestartOnRest(13505810)
-def Event_13505810(_, region: int, entity: int, obj: int, projectile_id: int, projectile_id_1: int, character: int):
+def Event_13505810(_, region: int, entity: int, obj: int, source_entity: int, source_entity_1: int, character: int):
     """Event 13505810"""
     RestoreObject(obj)
     ForceAnimation(entity, 2)
@@ -3736,7 +3736,7 @@ def Event_13505810(_, region: int, entity: int, obj: int, projectile_id: int, pr
     WaitFrames(frames=25)
     ShootProjectile(
         owner_entity=3500799,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=200,
         behavior_id=6350,
         launch_angle_x=0,
@@ -3746,7 +3746,7 @@ def Event_13505810(_, region: int, entity: int, obj: int, projectile_id: int, pr
     WaitFrames(frames=20)
     ShootProjectile(
         owner_entity=3500799,
-        projectile_id=projectile_id_1,
+        source_entity=source_entity_1,
         model_point=200,
         behavior_id=6350,
         launch_angle_x=0,
@@ -4025,7 +4025,7 @@ def Event_13500948(_, entity: int):
     EndIfConditionFalse(-15)
     EndIfFlagEnabled(13501801)
     IfFlagRangeAnyEnabled(1, flag_range=(1650, 1651))
-    IfActionButtonParam(1, action_button_id=3500910, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=3500910, entity=entity)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(13500947)
 
@@ -4778,7 +4778,7 @@ def Event_13504410(
     IfFlagDisabled(2, dismissal_flag)
     IfFlagEnabled(2, flag)
     IfFlagDisabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=action_button_id, entity=character)
+    IfActionButtonParamActivated(2, action_button_id=action_button_id, entity=character)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)

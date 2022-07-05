@@ -4,7 +4,8 @@ __all__ = [
     "reprocess_opt_args",
     "looks_like_entity_id",
     "assemble_arg_string",
-    "base_run_event",
+    "base_decompile_run_event",
+    "base_decompile_run_common_event",
 ]
 
 import logging
@@ -94,6 +95,11 @@ def _process_arg_types(
             union_types = ()  # implies `arg_type` is a class for checks below
         else:
             union_types = tp.get_args(arg_type) if origin is tp.Union else ()
+
+            if bool in union_types:  # convert `int` to `bool`
+                args[arg_name] = bool(arg_value)
+                continue
+
             # All union types should be `MapEntity` subclasses; this will be enforced by the checkout method
             # below (invalid types will have no entity ID dictionaries).
 
@@ -126,7 +132,7 @@ def _process_arg_types(
                 flag_enum_values = []
                 for flag_value in enum:
                     if arg_value & flag_value:
-                        flag_enum_values.append(EnumValue(enum, arg_value))
+                        flag_enum_values.append(EnumValue(enum, flag_value))
                 args[arg_name] = Variable(" | ".join(f"{v}" for v in flag_enum_values))
         else:
             try:
@@ -241,7 +247,7 @@ def base_decompiler_instruction(
     return f"{evs_name}({', '.join(arg_strings)})"
 
 
-def base_run_event(
+def base_decompile_run_event(
     slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
 ):
     """Shared across all games."""
@@ -290,3 +296,60 @@ def base_run_event(
         # No arg types, or all signed integers (default). "arg_types" keyword omitted.
         return f"RunEvent({event_id}, {slot=}, args={event_args})"
     return f"RunEvent({event_id}, {slot=}, args={event_args}, arg_types=\"{arg_types}\")"
+
+
+def base_decompile_run_common_event(
+    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+):
+    """Shared across games from Dark Souls 3 onward.
+
+    Note that Bloodborne also uses 'common' functions (from `common.emevd.dcx`), but they are simply called with
+    `RunEvent` and 'imported' through 'linked' strings in EMEVD.
+
+    TODO:
+        - Enums manager also has `all_common_event_ids`.
+        - EMEVD version indicates whether these IDs should come from a specific module (common_func, for DS3 onwards)
+        or be detected through 'linked' names (Bloodborne).
+        - Events in `common_func` are named `CommonEvent_{ID}` rather than `Event_{ID}`.
+        - EVS compiler uses 'RunCommonEvent' if the Python function is imported (in DS3).
+        - Unrelated: use `with EVENT_LAYERS(0, 1, 2):` block for event layers, rather than tacked-on argument.
+    """
+    if not opt_args and first_arg == 0:
+        # `args` and `arg_types` omitted. (Yes, there are common events called without arguments).
+        return f"RunCommonEvent({event_id})"
+
+    event_args = (first_arg, *opt_args)
+
+    if (
+        arg_types and "f" in arg_types and not arg_types.strip("i").strip("f")
+        and all(isinstance(i, int) for i in event_args)
+    ):
+        # Process incorrectly unpacked arguments (e.g. floats represented by integers).
+        try:
+            event_args = reprocess_opt_args(event_args, arg_types)
+        except struct.error:
+            _LOGGER.error(
+                f"Error interpreting event arguments for event ID {event_id}: "
+                f"args = {event_args}, arg_types = {arg_types}"
+            )
+            raise
+
+    if enums_manager is not None:
+        new_args = list(event_args)
+        for i, arg in enumerate(event_args):
+            if looks_like_entity_id(arg, event_id):
+                try:
+                    new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
+                except EntityEnumsManager.MissingEntityError:
+                    pass  # do nothing
+        event_args = tuple(new_args)
+
+    # if event_id in enums_manager.all_event_ids:
+    #     # Arg types are given in event definition and are not needed in this call.
+    #     # TODO: Support multiline.
+    #     return f"Event_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
+
+    if not arg_types or not arg_types.strip("i"):
+        # No arg types, or all signed integers (default). "arg_types" keyword omitted.
+        return f"RunCommonEvent({event_id}, args={event_args})"
+    return f"RunCommonEvent({event_id}, args={event_args}, arg_types=\"{arg_types}\")"

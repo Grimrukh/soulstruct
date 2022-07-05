@@ -55,9 +55,9 @@ __all__ = [
     "OwnsArmor",
     "OwnsAccessory",
     "OwnsGood",
-    "IsAlive",
-    "IsDead",
-    "IsAttacked",
+    "Alive",
+    "Dead",
+    "Attacked",
     "HealthRatio",
     "HealthValue",
     "PartHealthValue",
@@ -70,18 +70,18 @@ __all__ = [
     "HasSpecialEffect",
     "BackreadEnabled",
     "BackreadDisabled",
-    "HasTaeEvent",
-    "IsTargeting",
-    "HasAiStatus",
-    "AiStatusIsNormal",
-    "AiStatusIsRecognition",
-    "AiStatusIsAlert",
-    "AiStatusIsBattle",
+    "CharacterHasTAEEvent",
+    "CharacterTargeting",
+    "HasAIStatus",
+    "HasNormalAIStatus",
+    "HasRecognitionAIStatus",
+    "HasAlertAIStatus",
+    "HasBattleAIStatus",
     "PlayerIsClass",
     "PlayerInCovenant",
-    "IsDamaged",
-    "IsDestroyed",
-    "IsActivated",
+    "ObjectDamaged",
+    "ObjectDestroyed",
+    "ObjectActivated",
     "PlayerStandingOnCollision",
     "PlayerMovingOnCollision",
     "PlayerRunningOnCollision",
@@ -90,7 +90,7 @@ __all__ = [
     "CLIENT",
     "IN_OWN_WORLD",
     "ActionButtonParamActivated",
-    "IsAttackedWithDamageType",
+    "AttackedWithDamageType",
     "CharacterDrawGroupActive",
     "CharacterDrawGroupInactive",
 ]
@@ -104,6 +104,6 @@ CLIENT = ...
 IN_OWN_WORLD = ...
 
 def ActionButtonParamActivated(action_button_id: int, entity: CoordEntityTyping): ...
-def IsAttackedWithDamageType(attacked_entity: CharacterTyping, attacker: CharacterTyping, damage_type: DamageType): ...
+def AttackedWithDamageType(attacked_entity: CharacterTyping, attacker: CharacterTyping, damage_type: DamageType): ...
 def CharacterDrawGroupActive(character: CharacterTyping): ...
 def CharacterDrawGroupInactive(character: CharacterTyping): ...

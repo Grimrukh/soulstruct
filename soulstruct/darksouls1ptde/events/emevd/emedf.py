@@ -910,7 +910,7 @@ EMEDF = {
         },
     },
     (5, 1): {
-        "alias": "IfObjectDamagedBy",
+        "alias": "IfObjectDamaged",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -937,7 +937,7 @@ EMEDF = {
         },
     },
     (11, 0): {
-        "alias": "IfMovingOnCollision",
+        "alias": "IfPlayerMovingOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -945,7 +945,7 @@ EMEDF = {
         },
     },
     (11, 1): {
-        "alias": "IfRunningOnCollision",
+        "alias": "IfPlayerRunningOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -953,7 +953,7 @@ EMEDF = {
         },
     },
     (11, 2): {
-        "alias": "IfStandingOnCollision",
+        "alias": "IfPlayerStandingOnCollision",
         "docstring": "TODO",
         "args": {
             "condition": INT | HIDE_NAME,
@@ -1546,7 +1546,7 @@ EMEDF = {
         "alias": "RunEvent",
         "docstring": "Initialize an instance (slot) of an event script with the given (optional) arguments.",
         "args": {
-            "event_slot": INT | HIDE_NAME,
+            "slot": INT | HIDE_NAME,
             "event_id": INT | HIDE_NAME,
             # Default argument is a single 32-bit zero, but more packed data can be passed.
             "args": {
@@ -1721,13 +1721,13 @@ EMEDF = {
         "docstring": """
             The owner entity sets the 'team' of the projectile (i.e. who it can hurt).
 
-            You can use this to directly spawn bullets by setting `projectile_id` to `owner_entity`.
+            You can use this to directly spawn bullets by setting `source_entity` to `owner_entity`.
 
             Note that the angle arguments are all integers.
         """,
         "args": {
             "owner_entity": NO_DEFAULT(CoordEntityTyping),
-            "projectile_id": INT,  # TODO: BulletParam?
+            "source_entity": NO_DEFAULT(CoordEntityTyping),
             "model_point": INT,
             "behavior_id": INT,
             "launch_angle_x": INT,
@@ -1735,8 +1735,8 @@ EMEDF = {
             "launch_angle_z": INT,
         },
     },
-    # TODO: Could not find [2003, 6]: (De)activate Map Hit. Seems reundant with (2011, 1).
-    # TODO: Could not find [2003, 7]: Set Map Visibility. Seems reundant with (2012, 1).
+    # TODO: Could not find [2003, 6]: (De)activate Map Hit. Seems redundant with (2011, 1).
+    # TODO: Could not find [2003, 7]: Set Map Visibility. Seems redundant with (2012, 1).
     (2003, 8): {
         "alias": "SetEventState",
         "docstring": """
@@ -1871,7 +1871,17 @@ EMEDF = {
             "player_start": {},
         },
     },
-    # TODO: Could not find [2003, 15]: Handle Miniboss Defeat
+    (2003, 15): {
+        "alias": "HandleMinibossDefeat",
+        "docstring": """
+            Called instead of `KillBoss` for bosses that aren't the final boss of the area.
+
+            Not used in DS1, and I don't know what it would do.
+        """,
+        "args": {
+            "miniboss_id": INT,
+        },
+    },
     (2003, 16): {
         "alias": "TriggerMultiplayerEvent",
         "docstring": """

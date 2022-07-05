@@ -70,7 +70,7 @@ def Event14100100():
     CreateObjectVFX(30001, obj=4101100, model_point=0)
     IfFlagDisabled(2, 101)
     IfLeavingSession(2)
-    IfActionButtonParam(2, action_button_id=9341, entity=4101100)
+    IfActionButtonParamActivated(2, action_button_id=9341, entity=4101100)
     IfConditionTrue(0, input_condition=2)
     DisplayDialogAndSetFlags(
         message=10012020,
@@ -160,7 +160,7 @@ def Event14100101():
     ForceAnimation(4101952, 11, loop=True)
     IfFlagDisabled(2, 100)
     IfLeavingSession(2)
-    IfActionButtonParam(2, action_button_id=9342, entity=4101952)
+    IfActionButtonParamActivated(2, action_button_id=9342, entity=4101952)
     IfConditionTrue(0, input_condition=2)
     DisplayDialogAndSetFlags(
         message=10012021,
@@ -209,7 +209,7 @@ def Event14100101():
 def Event14105520(_, arg_0_3: int, arg_4_7: int):
     """ 14105520: Event 14105520 """
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=9356, entity=arg_4_7)
+    IfActionButtonParamActivated(0, action_button_id=9356, entity=arg_4_7)
     DisplayDialog(
         arg_0_3,
         anchor_entity=arg_4_7,
@@ -223,7 +223,7 @@ def Event14105520(_, arg_0_3: int, arg_4_7: int):
 
 def Event14105500():
     """ 14105500: Event 14105500 """
-    IfActionButtonParam(0, action_button_id=9343, entity=4101101)
+    IfActionButtonParamActivated(0, action_button_id=9343, entity=4101101)
     RotateToFaceEntity(PLAYER, 4101101, animation=91040, wait_for_completion=False)
     Wait(3.0)
     WarpToMap(game_map=KILN_OF_THE_FIRST_FLAME, player_start=4100120)
@@ -241,7 +241,7 @@ def Event14105510():
     EnableFlag(14100512)
     IfPlayerInOwnWorld(2)
     IfLeavingSession(2)
-    IfActionButtonParam(2, action_button_id=9344, entity=4101102)
+    IfActionButtonParamActivated(2, action_button_id=9344, entity=4101102)
     IfConditionTrue(0, input_condition=2)
     BanishPhantoms(unknown=0)
     RotateToFaceEntity(PLAYER, 4101102, animation=91040, wait_for_completion=False)

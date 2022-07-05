@@ -452,7 +452,7 @@ def EnterAmygdalaFog():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(3, PLAYER)
-    IfActionButtonParam(3, action_button_id=3300800, entity=Objects.AmygdalaFog1)
+    IfActionButtonParamActivated(3, action_button_id=3300800, entity=Objects.AmygdalaFog1)
     IfFlagDisabled(3, Flags.AmygdalaDead)
     IfFlagEnabled(4, Flags.AmygdalaDead)
     IfConditionTrue(-2, input_condition=3)
@@ -481,7 +481,7 @@ def EnterAmygdalaFogAsSummon():
     IfFlagEnabled(1, Flags.AmygdalaFirstTimeDone)
     IfFlagEnabled(1, Flags.AmygdalaFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=3300800, entity=Objects.AmygdalaFog1)
+    IfActionButtonParamActivated(1, action_button_id=3300800, entity=Objects.AmygdalaFog1)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3302800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1220,7 +1220,7 @@ def Event13300990():
     """ 13300990: Event 13300990 """
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 3303500)
+    IfPlayerStandingOnCollision(0, 3303500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 140, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 140, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 140, PlayLogMultiplayerType.HostOnly)

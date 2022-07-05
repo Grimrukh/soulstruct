@@ -32,9 +32,9 @@ def Constructor():
     SkipLinesIfClient(5)
     EnableFlag(405)
     DisableObject(1701994)
-    DeleteVFX(vfx_id=1701995, erase_root_only=False)
+    DeleteVFX(1701995, erase_root_only=False)
     DisableObject(1701996)
-    DeleteVFX(vfx_id=1701997, erase_root_only=False)
+    DeleteVFX(1701997, erase_root_only=False)
     SkipLinesIfFlagDisabled(1, 11700140)
     DisableFlag(405)
     SkipLinesIfClient(9)
@@ -51,7 +51,7 @@ def Constructor():
     EndOfAnimation(obj=1701410, animation_id=0)
     SkipLinesIfFlagDisabled(1, 61700105)
     ForceAnimation(1701400, 1)
-    Event_11700083(0, 1701706, 1701707, 1702606, 1702607)
+    Event_11700083(0, line_intersects__obj=1701706, vfx_id=1701707, destination=1702606, destination_1=1702607)
     Event_11700085()
     Event_11705080()
     Event_11705081()
@@ -64,21 +64,77 @@ def Constructor():
     Event_11705384()
     Event_11705385()
     Event_11700110()
-    Event_11700120(0, 11700120, 1701120, 1701121, 0, 0)
-    Event_11700120(5, 11700125, 1701125, 1701126, 1, 1)
-    Event_11700160(0, 11700100, 1701100, 11700210, 11700211, 11705090, 11705180, 11705181)
-    Event_11700105(0, 11700100, 1701100, 1701101, 1701102, 11705090, 11705180, 11705181)
-    Event_11700160(1, 11700102, 1701130, 11700220, 11700221, 11705091, 11705182, 11705183)
-    Event_11700105(2, 11700102, 1701130, 1701131, 1701132, 11705091, 11705182, 11705183)
-    Event_11700090(0, 11700100, 0, 1701101, 11705090)
-    Event_11700090(1, 11700100, 1, 1701102, 11705090)
-    Event_11700090(2, 11700102, 0, 1701131, 11705091)
-    Event_11700090(3, 11700102, 1, 1701132, 11705091)
-    Event_11705150(0, 11700205, 1701200, 1701210)
-    Event_11700200(0, 11700205, 1701200, 1701201, 1703200, 1703201, 1703010, 1703011, 11705151)
-    Event_11700200(1, 11700205, 1701210, 1701211, 1703210, 1703211, 1703012, 1703013, 11705152)
-    Event_11700150(0, 1703100, 1702780)
-    Event_11700150(1, 1703101, 1702781)
+    Event_11700120(0, obj_act_id=11700120, obj=1701120, obj_1=1701121, animation_id=0, left=0)
+    Event_11700120(5, obj_act_id=11700125, obj=1701125, obj_1=1701126, animation_id=1, left=1)
+    Event_11700160(
+        0,
+        flag=11700100,
+        destination=1701100,
+        obj_act_id=11700210,
+        obj_act_id_1=11700211,
+        flag_1=11705090,
+        flag_2=11705180,
+        flag_3=11705181
+    )
+    Event_11700105(
+        0,
+        flag=11700100,
+        obj=1701100,
+        obj_1=1701101,
+        obj_2=1701102,
+        flag_1=11705090,
+        flag_2=11705180,
+        flag_3=11705181
+    )
+    Event_11700160(
+        1,
+        flag=11700102,
+        destination=1701130,
+        obj_act_id=11700220,
+        obj_act_id_1=11700221,
+        flag_1=11705091,
+        flag_2=11705182,
+        flag_3=11705183
+    )
+    Event_11700105(
+        2,
+        flag=11700102,
+        obj=1701130,
+        obj_1=1701131,
+        obj_2=1701132,
+        flag_1=11705091,
+        flag_2=11705182,
+        flag_3=11705183
+    )
+    Event_11700090(0, flag=11700100, state=0, anchor_entity=1701101, flag_1=11705090)
+    Event_11700090(1, flag=11700100, state=1, anchor_entity=1701102, flag_1=11705090)
+    Event_11700090(2, flag=11700102, state=0, anchor_entity=1701131, flag_1=11705091)
+    Event_11700090(3, flag=11700102, state=1, anchor_entity=1701132, flag_1=11705091)
+    Event_11705150(0, flag=11700205, destination=1701200, destination_1=1701210)
+    Event_11700200(
+        0,
+        flag=11700205,
+        obj=1701200,
+        obj_1=1701201,
+        collision=1703200,
+        collision_1=1703201,
+        navmesh_id=1703010,
+        navmesh_id_1=1703011,
+        flag_1=11705151
+    )
+    Event_11700200(
+        1,
+        flag=11700205,
+        obj=1701210,
+        obj_1=1701211,
+        collision=1703210,
+        collision_1=1703211,
+        navmesh_id=1703012,
+        navmesh_id_1=1703013,
+        flag_1=11705152
+    )
+    Event_11700150(0, collision=1703100, region=1702780)
+    Event_11700150(1, collision=1703101, region=1702781)
     Event_11705100()
     Event_11705103()
     Event_11705108()
@@ -86,13 +142,13 @@ def Constructor():
     Event_11705102()
     Event_11700130()
     RunEvent(11700132, slot=0, args=(0,))
-    Event_11700300(0, 11700300, 10010863, 1701500)
-    Event_11700300(1, 11700311, 10010879, 1701501)
-    Event_11700300(2, 11700302, 10010863, 1701502)
-    Event_11700300(3, 11700313, 10010879, 1701503)
-    Event_11700300(4, 11700304, 10010863, 1701504)
-    Event_11700300(5, 11700305, 10010863, 1701505)
-    Event_11700300(6, 11700320, 10010865, 1701506)
+    Event_11700300(0, obj_act_id=11700300, text=10010863, anchor_entity=1701500)
+    Event_11700300(1, obj_act_id=11700311, text=10010879, anchor_entity=1701501)
+    Event_11700300(2, obj_act_id=11700302, text=10010863, anchor_entity=1701502)
+    Event_11700300(3, obj_act_id=11700313, text=10010879, anchor_entity=1701503)
+    Event_11700300(4, obj_act_id=11700304, text=10010863, anchor_entity=1701504)
+    Event_11700300(5, obj_act_id=11700305, text=10010863, anchor_entity=1701505)
+    Event_11700300(6, obj_act_id=11700320, text=10010865, anchor_entity=1701506)
     Event_11700140()
     Event_11700141()
     Event_11705170()
@@ -102,7 +158,7 @@ def Constructor():
     Event_11705392()
     DisableObject(1701800)
     DisableObject(1701990)
-    DeleteVFX(vfx_id=1701991, erase_root_only=False)
+    DeleteVFX(1701991, erase_root_only=False)
     SkipLines(10)
     Event_11700000()
     Event_11705390()
@@ -117,73 +173,73 @@ def Constructor():
     Event_11705200()
     Event_11705270(0, 1700250, 15.0)
     Event_11705270(1, 1700251, 15.0)
-    Event_11705140(0, 1700102, 1702150)
-    Event_11705140(1, 1700103, 1702151)
+    Event_11705140(0, character=1700102, region=1702150)
+    Event_11705140(1, character=1700103, region=1702151)
     Event_11705160(0, 1700350, 3.0)
     Event_11705160(1, 1700351, 3.0)
     Event_11705160(2, 1700352, 10.0)
-    Event_11705010(0, 1700400)
-    Event_11705020(0, 1700400)
-    Event_11705030(0, 1700400)
-    Event_11705040(0, 1700400)
-    Event_11705050(0, 1700400, 1702010)
-    Event_11700900(0, 1700400)
-    Event_11705060(0, 1700400)
-    Event_11705010(1, 1700401)
-    Event_11705020(1, 1700401)
-    Event_11705030(1, 1700401)
-    Event_11705040(1, 1700401)
-    Event_11705050(1, 1700401, 1702011)
-    Event_11700900(1, 1700401)
-    Event_11705060(1, 1700401)
-    Event_11700810(0, 6610, 0, 0)
-    Event_11700810(1, 1700450, 1, 33001000)
-    Event_11700810(2, 1700451, 1, 33001000)
-    Event_11700810(3, 1700452, 1, 33001000)
-    Event_11700810(4, 1700453, 1, 33001000)
-    Event_11700810(5, 1700190, 0, 0)
-    Event_11700810(6, 1700191, 0, 0)
-    Event_11700810(10, 1700501, 0, 0)
-    Event_11700810(11, 1700502, 0, 0)
-    Event_11700810(12, 1700150, 0, 0)
-    Event_11700810(13, 1700151, 0, 0)
-    Event_11705280(0, 1700350)
-    Event_11705280(1, 1700351)
-    Event_11700600(1, 1701651, 11700601)
-    Event_11700600(2, 1701652, 11700602)
-    Event_11700600(3, 1701653, 11700603)
-    Event_11700600(4, 1701654, 11700604)
-    Event_11700600(5, 1701655, 11700605)
-    Event_11700600(6, 1701656, 11700606)
-    Event_11700600(7, 1701657, 11700607)
-    Event_11700600(8, 1701658, 11700608)
-    Event_11700600(9, 1701659, 11700609)
-    Event_11700600(10, 1701660, 11700610)
-    Event_11700600(11, 1701661, 11700611)
-    Event_11700600(12, 1701662, 11700612)
-    Event_11700600(13, 1701663, 11700613)
-    Event_11700600(14, 1701664, 11700614)
-    Event_11700600(15, 1701665, 11700615)
-    Event_11700600(16, 1701666, 11700616)
-    Event_11705110(0, 1700110)
-    Event_11705110(1, 1700111)
-    Event_11705110(2, 1700112)
-    Event_11705110(3, 1700113)
-    Event_11705110(4, 1700114)
-    Event_11705110(5, 1700115)
-    Event_11705110(6, 1700116)
-    Event_11705110(7, 1700117)
-    Event_11705110(8, 1700118)
-    Event_11705110(9, 1700119)
-    Event_11705110(10, 1700120)
-    Event_11705110(11, 1700121)
-    Event_11705110(12, 1700122)
-    Event_11705110(13, 1700123)
-    Event_11705110(14, 1700124)
-    Event_11705110(15, 1700125)
-    Event_11705110(16, 1700126)
-    Event_11705110(17, 1700127)
-    Event_11705110(18, 1700908)
+    Event_11705010(0, character=1700400)
+    Event_11705020(0, character=1700400)
+    Event_11705030(0, character=1700400)
+    Event_11705040(0, character=1700400)
+    Event_11705050(0, character=1700400, region=1702010)
+    Event_11700900(0, character=1700400)
+    Event_11705060(0, character=1700400)
+    Event_11705010(1, character=1700401)
+    Event_11705020(1, character=1700401)
+    Event_11705030(1, character=1700401)
+    Event_11705040(1, character=1700401)
+    Event_11705050(1, character=1700401, region=1702011)
+    Event_11700900(1, character=1700401)
+    Event_11705060(1, character=1700401)
+    Event_11700810(0, character=6610, left=0, item_lot_param_id=0)
+    Event_11700810(1, character=1700450, left=1, item_lot_param_id=33001000)
+    Event_11700810(2, character=1700451, left=1, item_lot_param_id=33001000)
+    Event_11700810(3, character=1700452, left=1, item_lot_param_id=33001000)
+    Event_11700810(4, character=1700453, left=1, item_lot_param_id=33001000)
+    Event_11700810(5, character=1700190, left=0, item_lot_param_id=0)
+    Event_11700810(6, character=1700191, left=0, item_lot_param_id=0)
+    Event_11700810(10, character=1700501, left=0, item_lot_param_id=0)
+    Event_11700810(11, character=1700502, left=0, item_lot_param_id=0)
+    Event_11700810(12, character=1700150, left=0, item_lot_param_id=0)
+    Event_11700810(13, character=1700151, left=0, item_lot_param_id=0)
+    Event_11705280(0, character=1700350)
+    Event_11705280(1, character=1700351)
+    Event_11700600(1, obj=1701651, obj_act_id=11700601)
+    Event_11700600(2, obj=1701652, obj_act_id=11700602)
+    Event_11700600(3, obj=1701653, obj_act_id=11700603)
+    Event_11700600(4, obj=1701654, obj_act_id=11700604)
+    Event_11700600(5, obj=1701655, obj_act_id=11700605)
+    Event_11700600(6, obj=1701656, obj_act_id=11700606)
+    Event_11700600(7, obj=1701657, obj_act_id=11700607)
+    Event_11700600(8, obj=1701658, obj_act_id=11700608)
+    Event_11700600(9, obj=1701659, obj_act_id=11700609)
+    Event_11700600(10, obj=1701660, obj_act_id=11700610)
+    Event_11700600(11, obj=1701661, obj_act_id=11700611)
+    Event_11700600(12, obj=1701662, obj_act_id=11700612)
+    Event_11700600(13, obj=1701663, obj_act_id=11700613)
+    Event_11700600(14, obj=1701664, obj_act_id=11700614)
+    Event_11700600(15, obj=1701665, obj_act_id=11700615)
+    Event_11700600(16, obj=1701666, obj_act_id=11700616)
+    Event_11705110(0, character=1700110)
+    Event_11705110(1, character=1700111)
+    Event_11705110(2, character=1700112)
+    Event_11705110(3, character=1700113)
+    Event_11705110(4, character=1700114)
+    Event_11705110(5, character=1700115)
+    Event_11705110(6, character=1700116)
+    Event_11705110(7, character=1700117)
+    Event_11705110(8, character=1700118)
+    Event_11705110(9, character=1700119)
+    Event_11705110(10, character=1700120)
+    Event_11705110(11, character=1700121)
+    Event_11705110(12, character=1700122)
+    Event_11705110(13, character=1700123)
+    Event_11705110(14, character=1700124)
+    Event_11705110(15, character=1700125)
+    Event_11705110(16, character=1700126)
+    Event_11705110(17, character=1700127)
+    Event_11705110(18, character=1700908)
     Event_11705110(19, 1700909)
 
 
@@ -200,51 +256,51 @@ def Preconstructor():
     SetTeamTypeAndExitStandbyAnimation(6033, team_type=TeamType.HostileAlly)
     SkipLinesIfFlagDisabled(1, 11700594)
     Move(6032, destination=1702501, destination_type=CoordEntityType.Region, set_draw_parent=1703300)
-    Event_11700510(0, 6032, 1096)
-    Event_11700520(0, 6032, 1090, 1109, 1097)
-    Event_11700520(1, 6033, 1090, 1109, 1097)
-    Event_11700530(0, 6032, 1090, 1109, 1093)
-    Event_11700531(0, 6032, 1090, 1109, 1094)
-    Event_11700532(0, 6032, 1090, 1109, 1095)
-    Event_11700533(0, 6032, 1090, 1109, 1099, 6033)
+    Event_11700510(0, character=6032, flag=1096)
+    Event_11700520(0, character=6032, first_flag=1090, last_flag=1109, flag=1097)
+    Event_11700520(1, character=6033, first_flag=1090, last_flag=1109, flag=1097)
+    Event_11700530(0, character=6032, first_flag=1090, last_flag=1109, flag=1093)
+    Event_11700531(0, character=6032, first_flag=1090, last_flag=1109, flag=1094)
+    Event_11700532(0, character=6032, first_flag=1090, last_flag=1109, flag=1095)
+    Event_11700533(0, character=6032, first_flag=1090, last_flag=1109, flag=1099, character_1=6033)
     HumanityRegistration(6291, event_flag=8454)
     SkipLinesIfFlagEnabled(2, 1547)
     SkipLinesIfFlagEnabled(1, 1542)
     DisableCharacter(6291)
-    Event_11700510(2, 6291, 1547)
-    Event_11700520(2, 6291, 1540, 1569, 1548)
-    Event_11700538(0, 6291, 1540, 1569, 1541)
-    Event_11700539(0, 6291, 1540, 1569, 1542)
-    Event_11700540(0, 6291, 1540, 1569, 1543)
+    Event_11700510(2, character=6291, flag=1547)
+    Event_11700520(2, character=6291, first_flag=1540, last_flag=1569, flag=1548)
+    Event_11700538(0, character=6291, first_flag=1540, last_flag=1569, flag=1541)
+    Event_11700539(0, character=6291, first_flag=1540, last_flag=1569, flag=1542)
+    Event_11700540(0, character=6291, first_flag=1540, last_flag=1569, flag=1543)
     SetTeamTypeAndExitStandbyAnimation(6073, team_type=TeamType.HostileAlly)
     SkipLinesIfFlagEnabled(1, 1181)
     DisableCharacter(6073)
-    Event_11700520(3, 6073, 1170, 1189, 1177)
+    Event_11700520(3, character=6073, first_flag=1170, last_flag=1189, flag=1177)
     Event_11700545(0, 6073, 1170, 1189, 1181)
 
 
 @NeverRestart(11700080)
-def Event_11700080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700080(_, line_intersects__obj: int, vfx_id: int, destination: int, destination_1: int):
     """Event 11700080"""
     SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableObject(arg_0_3)
-    DeleteVFX(vfx_id=arg_4_7, erase_root_only=False)
+    DisableObject(line_intersects__obj)
+    DeleteVFX(vfx_id, erase_root_only=False)
     End()
     IfActionButton(
         1,
         prompt_text=10010403,
-        anchor_entity=arg_8_11,
+        anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=arg_0_3,
+        line_intersects=line_intersects__obj,
     )
     IfActionButton(
         2,
         prompt_text=10010407,
-        anchor_entity=arg_12_15,
+        anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=arg_0_3,
+        line_intersects=line_intersects__obj,
     )
     IfFlagEnabled(3, 11700080)
     IfConditionTrue(-1, input_condition=1)
@@ -254,47 +310,47 @@ def Event_11700080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     EnableFlag(11700080)
     SkipLinesIfFinishedConditionTrue(5, condition=3)
     SkipLinesIfFinishedConditionTrue(2, condition=2)
-    Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Region, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
-    Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
+    Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7410)
-    DisableObject(arg_0_3)
-    DeleteVFX(vfx_id=arg_4_7)
+    DisableObject(line_intersects__obj)
+    DeleteVFX(vfx_id)
 
 
 @NeverRestart(11700083)
-def Event_11700083(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700083(_, line_intersects__obj: int, vfx_id: int, destination: int, destination_1: int):
     """Event 11700083"""
     SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableObject(arg_0_3)
-    DeleteVFX(vfx_id=arg_4_7, erase_root_only=False)
+    DisableObject(line_intersects__obj)
+    DeleteVFX(vfx_id, erase_root_only=False)
     End()
     IfActionButton(
         1,
         prompt_text=10010403,
-        anchor_entity=arg_8_11,
+        anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=arg_0_3,
+        line_intersects=line_intersects__obj,
     )
     IfActionButton(
         2,
         prompt_text=10010407,
-        anchor_entity=arg_12_15,
+        anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
         model_point=0,
-        line_intersects=arg_0_3,
+        line_intersects=line_intersects__obj,
     )
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(2, condition=2)
-    Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Region, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
-    Move(PLAYER, destination=arg_12_15, destination_type=CoordEntityType.Region, short_move=True)
+    Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7410)
-    DisableObject(arg_0_3)
-    DeleteVFX(vfx_id=arg_4_7)
+    DisableObject(line_intersects__obj)
+    DeleteVFX(vfx_id)
 
 
 @RestartOnRest(11705080)
@@ -403,11 +459,11 @@ def Event_11700085():
     SkipLinesIfFlagDisabled(4, 11800100)
     EnableFlag(11700086)
     DisableObject(1701710)
-    DeleteVFX(vfx_id=1701711, erase_root_only=False)
+    DeleteVFX(1701711, erase_root_only=False)
     End()
     SkipLinesIfFlagDisabled(3, 11700086)
     DisableObject(1701710)
-    DeleteVFX(vfx_id=1701711, erase_root_only=False)
+    DeleteVFX(1701711, erase_root_only=False)
     End()
     EndIfClient()
     IfActionButton(
@@ -427,7 +483,7 @@ def Event_11700000():
     """Event 11700000"""
     EndIfThisEventFlagEnabled()
     DisableObject(1701990)
-    DeleteVFX(vfx_id=1701991, erase_root_only=False)
+    DeleteVFX(1701991, erase_root_only=False)
     DisableCharacter(1700800)
     EnableObjectInvulnerability(1701800)
     IfThisEventFlagDisabled(1)
@@ -447,13 +503,19 @@ def Event_11700000():
     PlayCutscene(170000, cutscene_flags=0, player_id=10000, move_to_region=1702801, game_map=DUKES_ARCHIVES)
     SkipLines(4)
     SkipLinesIfClient(2)
-    PlayCutscene(170000, cutscene_flags=2, player_id=10000, move_to_region=1702801, game_map=DUKES_ARCHIVES)
+    PlayCutscene(
+        170000,
+        cutscene_flags=CutsceneFlags.Unskippable,
+        player_id=10000,
+        move_to_region=1702801,
+        game_map=DUKES_ARCHIVES,
+    )
     SkipLines(1)
-    PlayCutscene(170000, cutscene_flags=2, player_id=10000)
+    PlayCutscene(170000, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
     WaitFrames(frames=1)
     DisableObjectInvulnerability(1701800)
     EnableObject(1701990)
-    CreateVFX(vfx_id=1701991)
+    CreateVFX(1701991)
     Move(1700800, destination=1702800, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(1700800)
 
@@ -481,7 +543,7 @@ def Event_11705381():
     """Event 11705381"""
     IfFlagDisabled(1, 11700000)
     IfFlagEnabled(1, 11705386)
-    IfCharacterType(1, PLAYER, character_type=CharacterType.WhitePhantom)
+    IfCharacterWhitePhantom(1, PLAYER)
     IfActionButton(
         1,
         prompt_text=10010403,
@@ -569,7 +631,7 @@ def Event_11705385():
     DisableCharacter(1700700)
     DisableObject(1701050)
     DisableObject(1701890)
-    DeleteVFX(vfx_id=1701891)
+    DeleteVFX(1701891)
 
 
 @NeverRestart(11705390)
@@ -599,7 +661,7 @@ def Event_11705391():
     """Event 11705391"""
     IfFlagDisabled(1, 14)
     IfFlagEnabled(1, 11705393)
-    IfCharacterType(1, PLAYER, character_type=CharacterType.WhitePhantom)
+    IfCharacterWhitePhantom(1, PLAYER)
     IfCharacterAlive(1, 1700800)
     IfActionButton(
         1,
@@ -659,7 +721,7 @@ def Event_11700001():
     SkipLinesIfClient(1)
     AwardAchievement(achievement_id=38)
     DisableObject(1701990)
-    DeleteVFX(vfx_id=1701991)
+    DeleteVFX(1701991)
     CreateTemporaryVFX(vfx_id=90014, anchor_entity=1701950, anchor_type=CoordEntityType.Object)
     Wait(2.0)
     EnableObject(1701950)
@@ -697,7 +759,7 @@ def Event_11705396():
     AddSpecialEffect(1700800, 5442)
     AddSpecialEffect(1700800, 5443)
     EnableImmortality(1700800)
-    CreateObjectVFX(vfx_id=1701800, obj=100, model_point=170004)
+    CreateObjectVFX(1701800, vfx_id=100, model_point=170004)
     IfObjectDestroyed(0, 1701800)
     DeleteObjectVFX(1703100)
     ForceAnimation(1700800, 7000)
@@ -717,12 +779,12 @@ def Event_11705397():
     SkipLinesIfThisEventFlagDisabled(4)
     SetDisplayMask(1700800, bit_index=1, switch_type=OnOffChange.On)
     SetCollisionMask(1700800, bit_index=1, switch_type=OnOffChange.Off)
-    AICommand(1700800, command_id=20, slot=0)
+    AICommand(1700800, command_id=20, command_slot=0)
     End()
     IfCharacterBackreadEnabled(0, 1700800)
     CreateNPCPart(1700800, npc_part_id=5290, part_index=NPCPartType.Part1, part_health=330)
     IfHealthGreaterThan(1, 1700800, value=0.0)
-    IfCharacterPartHealthComparison(1, 1700800, npc_part_id=5290, comparison_type=ComparisonType.Equal, value=5)
+    IfCharacterPartHealthLessThanOrEqual(1, 1700800, npc_part_id=5290, value=0)
     IfHealthLessThanOrEqual(2, 1700800, value=0.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -741,7 +803,7 @@ def Event_11705397():
     SetDisplayMask(1700800, bit_index=1, switch_type=OnOffChange.On)
     SetCollisionMask(1700800, bit_index=1, switch_type=OnOffChange.Off)
     ForceAnimation(1700801, 8100)
-    AICommand(1700800, command_id=20, slot=0)
+    AICommand(1700800, command_id=20, command_slot=0)
     ReplanAI(1700800)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
@@ -752,107 +814,98 @@ def Event_11705397():
 @NeverRestart(11700160)
 def Event_11700160(
     _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
+    flag: int,
+    destination: int,
+    obj_act_id: int,
+    obj_act_id_1: int,
+    flag_1: int,
+    flag_2: int,
+    flag_3: int,
 ):
     """Event 11700160"""
-    IfFlagDisabled(1, arg_16_19)
+    IfFlagDisabled(1, flag_1)
     IfActionButton(
         1,
         prompt_text=10010501,
-        anchor_entity=arg_4_7,
+        anchor_entity=destination,
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
         model_point=192,
         trigger_attribute=TriggerAttribute.All,
     )
-    IfObjectActivated(2, obj_act_id=arg_8_11)
-    IfObjectActivated(3, obj_act_id=arg_12_15)
+    IfObjectActivated(2, obj_act_id=obj_act_id)
+    IfObjectActivated(3, obj_act_id=obj_act_id_1)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_16_19)
+    EnableFlag(flag_1)
     SkipLinesIfFinishedConditionTrue(2, condition=3)
     SkipLinesIfFinishedConditionTrue(9, condition=2)
-    SkipLinesIfFlagEnabled(8, arg_0_3)
+    SkipLinesIfFlagEnabled(8, flag)
     SkipLinesIfFinishedConditionFalse(4, condition=1)
-    Move(PLAYER, destination=arg_4_7, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
-    ForceAnimation(arg_4_7, 0)
+    ForceAnimation(destination, 0)
     WaitFrames(frames=105)
-    EnableFlag(arg_20_23)
-    IfFlagDisabled(0, arg_16_19)
+    EnableFlag(flag_2)
+    IfFlagDisabled(0, flag_1)
     Restart()
     SkipLinesIfFinishedConditionFalse(4, condition=1)
-    Move(PLAYER, destination=arg_4_7, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
-    ForceAnimation(arg_4_7, 2)
+    ForceAnimation(destination, 2)
     WaitFrames(frames=105)
-    EnableFlag(arg_24_27)
-    IfFlagDisabled(0, arg_16_19)
+    EnableFlag(flag_3)
+    IfFlagDisabled(0, flag_1)
     Restart()
 
 
 @NeverRestart(11700105)
-def Event_11700105(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-):
+def Event_11700105(_, flag: int, obj: int, obj_1: int, obj_2: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 11700105"""
-    SkipLinesIfFlagDisabled(4, arg_0_3)
-    EndOfAnimation(obj=arg_4_7, animation_id=11)
-    EnableObjectActivation(arg_8_11, obj_act_id=-1)
-    DisableObjectActivation(arg_12_15, obj_act_id=-1)
+    SkipLinesIfFlagDisabled(4, flag)
+    EndOfAnimation(obj=obj, animation_id=11)
+    EnableObjectActivation(obj_1, obj_act_id=-1)
+    DisableObjectActivation(obj_2, obj_act_id=-1)
     SkipLines(2)
-    DisableObjectActivation(arg_8_11, obj_act_id=-1)
-    EnableObjectActivation(arg_12_15, obj_act_id=-1)
+    DisableObjectActivation(obj_1, obj_act_id=-1)
+    EnableObjectActivation(obj_2, obj_act_id=-1)
     IfHost(1)
-    IfFlagEnabled(1, arg_20_23)
+    IfFlagEnabled(1, flag_2)
     IfHost(2)
-    IfFlagEnabled(2, arg_24_27)
+    IfFlagEnabled(2, flag_3)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    DisableFlag(arg_20_23)
-    DisableFlag(arg_24_27)
-    DisableObjectActivation(arg_8_11, obj_act_id=-1)
-    DisableObjectActivation(arg_12_15, obj_act_id=-1)
+    DisableFlag(flag_2)
+    DisableFlag(flag_3)
+    DisableObjectActivation(obj_1, obj_act_id=-1)
+    DisableObjectActivation(obj_2, obj_act_id=-1)
     SkipLinesIfFinishedConditionTrue(5, condition=2)
-    EnableFlag(arg_0_3)
-    ForceAnimation(arg_4_7, 1)
+    EnableFlag(flag)
+    ForceAnimation(obj, 1)
     WaitFrames(frames=300)
-    DisableFlag(arg_16_19)
+    DisableFlag(flag_1)
     Restart()
-    DisableFlag(arg_0_3)
-    ForceAnimation(arg_4_7, 3)
+    DisableFlag(flag)
+    ForceAnimation(obj, 3)
     WaitFrames(frames=344)
-    DisableFlag(arg_16_19)
+    DisableFlag(flag_1)
     Restart()
 
 
 @NeverRestart(11700090)
-def Event_11700090(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: int, arg_12_15: int):
+def Event_11700090(_, flag: int, state: uchar, anchor_entity: int, flag_1: int):
     """Event 11700090"""
     DisableNetworkSync()
-    IfFlagState(1, arg_4_4, FlagType.Absolute, arg_0_3)
-    IfFlagDisabled(1, arg_12_15)
+    IfFlagState(1, state, FlagType.Absolute, flag)
+    IfFlagDisabled(1, flag_1)
     IfActionButton(
         1,
         prompt_text=10010501,
-        anchor_entity=arg_8_11,
+        anchor_entity=anchor_entity,
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
@@ -860,17 +913,17 @@ def Event_11700090(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: int, arg_12_15: in
         trigger_attribute=TriggerAttribute.All,
     )
     IfConditionTrue(0, input_condition=1)
-    DisplayDialog(text=10010170, anchor_entity=arg_8_11)
+    DisplayDialog(text=10010170, anchor_entity=anchor_entity)
     Restart()
 
 
 @NeverRestart(11705150)
-def Event_11705150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event_11705150(_, flag: int, destination: int, destination_1: int):
     """Event 11705150"""
     IfActionButton(
         1,
         prompt_text=10010503,
-        anchor_entity=arg_4_7,
+        anchor_entity=destination,
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
@@ -880,7 +933,7 @@ def Event_11705150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfActionButton(
         2,
         prompt_text=10010503,
-        anchor_entity=arg_8_11,
+        anchor_entity=destination_1,
         anchor_type=CoordEntityType.Object,
         facing_angle=60.0,
         max_distance=1.5,
@@ -891,19 +944,19 @@ def Event_11705150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionFalse(7, condition=1)
-    Move(PLAYER, destination=arg_4_7, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
-    SkipLinesIfFlagEnabled(2, arg_0_3)
-    ForceAnimation(arg_4_7, 0)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    SkipLinesIfFlagEnabled(2, flag)
+    ForceAnimation(destination, 0)
     SkipLines(1)
-    ForceAnimation(arg_4_7, 2)
+    ForceAnimation(destination, 2)
     ForceAnimation(PLAYER, 8010)
     WaitFrames(frames=105)
     SkipLinesIfFinishedConditionFalse(7, condition=2)
-    Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
-    SkipLinesIfFlagEnabled(2, arg_0_3)
-    ForceAnimation(arg_8_11, 0)
+    Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    SkipLinesIfFlagEnabled(2, flag)
+    ForceAnimation(destination_1, 0)
     SkipLines(1)
-    ForceAnimation(arg_8_11, 2)
+    ForceAnimation(destination_1, 2)
     ForceAnimation(PLAYER, 8010)
     WaitFrames(frames=105)
     EnableFlag(11705151)
@@ -917,50 +970,50 @@ def Event_11705150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @NeverRestart(11700200)
 def Event_11700200(
     _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
+    flag: int,
+    obj: int,
+    obj_1: int,
+    collision: int,
+    collision_1: int,
+    navmesh_id: int,
+    navmesh_id_1: int,
+    flag_1: int,
 ):
     """Event 11700200"""
-    DisableObject(arg_8_11)
-    SkipLinesIfFlagEnabled(5, arg_0_3)
-    EndOfAnimation(obj=arg_4_7, animation_id=3)
-    DisableMapCollision(collision=arg_16_19)
-    DisableNavmeshType(navmesh_id=arg_20_23, navmesh_type=NavmeshType.Solid)
-    EnableNavmeshType(navmesh_id=arg_24_27, navmesh_type=NavmeshType.Solid)
+    DisableObject(obj_1)
+    SkipLinesIfFlagEnabled(5, flag)
+    EndOfAnimation(obj=obj, animation_id=3)
+    DisableMapCollision(collision=collision_1)
+    DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    EnableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Solid)
     SkipLines(4)
-    EndOfAnimation(obj=arg_4_7, animation_id=1)
-    DisableMapCollision(collision=arg_12_15)
-    EnableNavmeshType(navmesh_id=arg_20_23, navmesh_type=NavmeshType.Solid)
-    DisableNavmeshType(navmesh_id=arg_24_27, navmesh_type=NavmeshType.Solid)
-    IfFlagEnabled(0, arg_28_31)
-    SkipLinesIfFlagEnabled(11, arg_0_3)
-    ForceAnimation(arg_4_7, 1)
-    DisableMapCollision(collision=arg_12_15)
-    EnableObject(arg_8_11)
-    EnableNavmeshType(navmesh_id=arg_20_23, navmesh_type=NavmeshType.Solid)
-    ForceAnimation(arg_8_11, 1)
+    EndOfAnimation(obj=obj, animation_id=1)
+    DisableMapCollision(collision=collision)
+    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    DisableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Solid)
+    IfFlagEnabled(0, flag_1)
+    SkipLinesIfFlagEnabled(11, flag)
+    ForceAnimation(obj, 1)
+    DisableMapCollision(collision=collision)
+    EnableObject(obj_1)
+    EnableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
+    ForceAnimation(obj_1, 1)
     WaitFrames(frames=180)
-    DisableObject(arg_8_11)
-    EnableMapCollision(collision=arg_16_19)
-    EnableFlag(arg_0_3)
-    DisableFlag(arg_28_31)
+    DisableObject(obj_1)
+    EnableMapCollision(collision=collision_1)
+    EnableFlag(flag)
+    DisableFlag(flag_1)
     Restart()
-    ForceAnimation(arg_4_7, 3)
-    DisableMapCollision(collision=arg_16_19)
-    EnableObject(arg_8_11)
-    EnableNavmeshType(navmesh_id=arg_24_27, navmesh_type=NavmeshType.Solid)
-    ForceAnimation(arg_8_11, 3)
+    ForceAnimation(obj, 3)
+    DisableMapCollision(collision=collision_1)
+    EnableObject(obj_1)
+    EnableNavmeshType(navmesh_id=navmesh_id_1, navmesh_type=NavmeshType.Solid)
+    ForceAnimation(obj_1, 3)
     WaitFrames(frames=180)
-    DisableObject(arg_8_11)
-    EnableMapCollision(collision=arg_12_15)
-    DisableFlag(arg_0_3)
-    DisableFlag(arg_28_31)
+    DisableObject(obj_1)
+    EnableMapCollision(collision=collision)
+    DisableFlag(flag)
+    DisableFlag(flag_1)
     Restart()
 
 
@@ -985,28 +1038,28 @@ def Event_11700110():
 
 
 @NeverRestart(11700120)
-def Event_11700120(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event_11700120(_, obj_act_id: int, obj: int, obj_1: int, animation_id: int, left: int):
     """Event 11700120"""
     SkipLinesIfThisEventSlotFlagDisabled(4)
-    SkipLinesIfEqual(1, left=arg_16_19, right=1)
-    DisableObjectActivation(arg_8_11, obj_act_id=-1)
-    EndOfAnimation(obj=arg_4_7, animation_id=arg_12_15)
+    SkipLinesIfEqual(1, left=left, right=1)
+    DisableObjectActivation(obj_1, obj_act_id=-1)
+    EndOfAnimation(obj=obj, animation_id=animation_id)
     End()
-    SkipLinesIfEqual(1, left=arg_16_19, right=0)
+    SkipLinesIfEqual(1, left=left, right=0)
     IfFlagEnabled(-1, 11700140)
-    IfObjectActivated(-1, obj_act_id=arg_0_3)
+    IfObjectActivated(-1, obj_act_id=obj_act_id)
     IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    ForceAnimation(arg_4_7, arg_12_15)
+    EnableFlag(obj_act_id)
+    ForceAnimation(obj, animation_id)
 
 
 @NeverRestart(11700150)
-def Event_11700150(_, arg_0_3: int, arg_4_7: int):
+def Event_11700150(_, collision: int, region: int):
     """Event 11700150"""
-    IfAllPlayersOutsideRegion(0, region=arg_4_7)
-    EnableMapCollision(collision=arg_0_3)
-    IfCharacterInsideRegion(0, PLAYER, region=arg_4_7)
-    DisableMapCollision(collision=arg_0_3)
+    IfAllPlayersOutsideRegion(0, region=region)
+    EnableMapCollision(collision=collision)
+    IfCharacterInsideRegion(0, PLAYER, region=region)
+    DisableMapCollision(collision=collision)
     Restart()
 
 
@@ -1046,7 +1099,7 @@ def Event_11705101():
     SkipLinesIfMultiplayer(2)
     PlayCutscene(170010, cutscene_flags=0, player_id=10000)
     SkipLines(1)
-    PlayCutscene(170010, cutscene_flags=2, player_id=10000)
+    PlayCutscene(170010, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
     WaitFrames(frames=1)
     ForceAnimation(1701410, 0)
     EnableFlag(11700002)
@@ -1111,7 +1164,7 @@ def Event_11705108():
 
 
 @RestartOnRest(11705110)
-def Event_11705110(_, arg_0_3: int):
+def Event_11705110(_, character: int):
     """Event 11705110"""
     IfFlagEnabled(1, 61700105)
     IfCharacterInsideRegion(-7, PLAYER, region=1702100)
@@ -1127,8 +1180,8 @@ def Event_11705110(_, arg_0_3: int):
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionFalse(8, condition=1)
-    AICommand(arg_0_3, command_id=1, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=1, command_slot=0)
+    ReplanAI(character)
     IfAllPlayersOutsideRegion(7, region=1702100)
     IfAllPlayersOutsideRegion(7, region=1702101)
     IfConditionTrue(-2, input_condition=7)
@@ -1136,15 +1189,15 @@ def Event_11705110(_, arg_0_3: int):
     IfConditionTrue(0, input_condition=-2)
     Restart()
     SkipLinesIfFinishedConditionFalse(7, condition=2)
-    AICommand(arg_0_3, command_id=2, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=2, command_slot=0)
+    ReplanAI(character)
     IfCharacterInsideRegion(-3, PLAYER, region=1702100)
     IfCharacterInsideRegion(-3, PLAYER, region=1702101)
     IfFlagDisabled(-3, 61700105)
     IfConditionTrue(0, input_condition=-3)
     Restart()
-    AICommand(arg_0_3, command_id=3, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=3, command_slot=0)
+    ReplanAI(character)
     IfFlagEnabled(0, 61700105)
     Restart()
 
@@ -1162,19 +1215,19 @@ def Event_11700130():
 
 
 @RestartOnRest(11705140)
-def Event_11705140(_, arg_0_3: int, arg_4_7: int):
+def Event_11705140(_, character: int, region: int):
     """Event 11705140"""
     EndIfThisEventSlotFlagEnabled()
     IfFlagEnabled(0, 11705101)
-    SetNest(arg_0_3, region=arg_4_7)
-    AICommand(arg_0_3, command_id=10, slot=0)
-    ReplanAI(arg_0_3)
+    SetNest(character, region=region)
+    AICommand(character, command_id=10, command_slot=0)
+    ReplanAI(character)
     IfThisEventSlotFlagEnabled(-1)
-    IfCharacterInsideRegion(-1, arg_0_3, region=arg_4_7)
+    IfCharacterInsideRegion(-1, character, region=region)
     IfConditionTrue(0, input_condition=-1)
-    ClearTargetList(arg_0_3)
-    AICommand(arg_0_3, command_id=-1, slot=0)
-    ReplanAI(arg_0_3)
+    ClearTargetList(character)
+    AICommand(character, command_id=-1, command_slot=0)
+    ReplanAI(character)
 
 
 @NeverRestart(11700140)
@@ -1254,112 +1307,112 @@ def Event_11705170():
 
 
 @RestartOnRest(11705160)
-def Event_11705160(_, arg_0_3: int, arg_4_7: float):
+def Event_11705160(_, character: int, radius: float):
     """Event 11705160"""
     SkipLinesIfThisEventSlotFlagDisabled(2)
-    SetStandbyAnimationSettings(arg_0_3)
+    SetStandbyAnimationSettings(character)
     End()
-    IfEntityWithinDistance(0, entity=arg_0_3, other_entity=PLAYER, radius=arg_4_7)
-    SetStandbyAnimationSettings(arg_0_3, cancel_animation=13000)
+    IfEntityWithinDistance(0, entity=character, other_entity=PLAYER, radius=radius)
+    SetStandbyAnimationSettings(character, cancel_animation=13000)
 
 
 @RestartOnRest(11705250)
-def Event_11705250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event_11705250(_, region: int, character: int, animation_id: int):
     """Event 11705250"""
     EndIfThisEventSlotFlagEnabled()
-    DisableAI(arg_4_7)
-    IfCharacterInsideRegion(-1, PLAYER, region=arg_0_3)
-    IfAttacked(-1, attacked_entity=arg_4_7, attacker=PLAYER)
+    DisableAI(character)
+    IfCharacterInsideRegion(-1, PLAYER, region=region)
+    IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
-    ForceAnimation(arg_4_7, arg_8_11, wait_for_completion=True)
-    EnableAI(arg_4_7)
+    ForceAnimation(character, animation_id, wait_for_completion=True)
+    EnableAI(character)
 
 
 @RestartOnRest(11705270)
-def Event_11705270(_, arg_0_3: int, arg_4_7: float):
+def Event_11705270(_, character: int, radius: float):
     """Event 11705270"""
     EndIfThisEventSlotFlagEnabled()
-    SetStandbyAnimationSettings(arg_0_3, standby_animation=9000)
-    IfEntityWithinDistance(-1, entity=arg_0_3, other_entity=PLAYER, radius=arg_4_7)
-    IfAttacked(-1, attacked_entity=arg_0_3, attacker=PLAYER)
+    SetStandbyAnimationSettings(character, standby_animation=9000)
+    IfEntityWithinDistance(-1, entity=character, other_entity=PLAYER, radius=radius)
+    IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
-    SetStandbyAnimationSettings(arg_0_3, cancel_animation=9060)
+    SetStandbyAnimationSettings(character, cancel_animation=9060)
 
 
 @NeverRestart(11700300)
-def Event_11700300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event_11700300(_, obj_act_id: int, text: int, anchor_entity: int):
     """Event 11700300"""
     EndIfClient()
     EndIfThisEventSlotFlagEnabled()
-    IfObjectActivated(0, obj_act_id=arg_0_3)
-    EnableFlag(arg_0_3)
-    DisplayDialog(text=arg_4_7, anchor_entity=arg_8_11, button_type=ButtonType.Yes_or_No)
+    IfObjectActivated(0, obj_act_id=obj_act_id)
+    EnableFlag(obj_act_id)
+    DisplayDialog(text=text, anchor_entity=anchor_entity, button_type=ButtonType.Yes_or_No)
 
 
 @RestartOnRest(11705200)
 def Event_11705200():
     """Event 11705200"""
-    Event_11705240(0, 1700900)
-    Event_11705240(1, 1700901)
-    Event_11705240(2, 1700902)
-    Event_11705240(3, 1700903)
-    Event_11705201(0, 11705200, 1700300, 1702301, 11705202)
-    Event_11705201(1, 11705201, 1700300, 1702306, 11705202)
-    Event_11705201(2, 11705202, 1700300, 1702305, 11705202)
+    Event_11705240(0, character=1700900)
+    Event_11705240(1, character=1700901)
+    Event_11705240(2, character=1700902)
+    Event_11705240(3, character=1700903)
+    Event_11705201(0, flag=11705200, character=1700300, region=1702301, flag_1=11705202)
+    Event_11705201(1, flag=11705201, character=1700300, region=1702306, flag_1=11705202)
+    Event_11705201(2, flag=11705202, character=1700300, region=1702305, flag_1=11705202)
     EnableFlag(11705210)
-    Event_11705201(10, 11705210, 1700301, 1702311, 11705213)
-    Event_11705201(11, 11705211, 1700301, 1702312, 11705213)
-    Event_11705201(12, 11705212, 1700301, 1702313, 11705213)
-    Event_11705201(13, 11705213, 1700301, 1702314, 11705213)
+    Event_11705201(10, flag=11705210, character=1700301, region=1702311, flag_1=11705213)
+    Event_11705201(11, flag=11705211, character=1700301, region=1702312, flag_1=11705213)
+    Event_11705201(12, flag=11705212, character=1700301, region=1702313, flag_1=11705213)
+    Event_11705201(13, flag=11705213, character=1700301, region=1702314, flag_1=11705213)
     EnableFlag(11705220)
-    Event_11705201(20, 11705220, 1700302, 1702321, 11705221)
+    Event_11705201(20, flag=11705220, character=1700302, region=1702321, flag_1=11705221)
     Event_11705201(21, 11705221, 1700302, 1702322, 11705221)
 
 
 @RestartOnRest(11705240)
-def Event_11705240(_, arg_0_3: int):
+def Event_11705240(_, character: int):
     """Event 11705240"""
     DisableNetworkSync()
-    IfCharacterBackreadEnabled(0, arg_0_3)
-    AICommand(arg_0_3, command_id=1, slot=0)
+    IfCharacterBackreadEnabled(0, character)
+    AICommand(character, command_id=1, command_slot=0)
 
 
 @UnknownRestart(11705201)
-def Event_11705201(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11705201(_, flag: int, character: int, region: int, flag_1: int):
     """Event 11705201"""
     EndIfThisEventSlotFlagEnabled()
-    IfFlagEnabled(1, arg_0_3)
-    IfCharacterHasTAEEvent(1, arg_4_7, tae_event_id=1000)
+    IfFlagEnabled(1, flag)
+    IfCharacterHasTAEEvent(1, character, tae_event_id=1000)
     IfConditionTrue(0, input_condition=1)
-    Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Region, short_move=True)
-    SetNest(arg_4_7, region=arg_8_11)
-    ForceAnimation(arg_4_7, 7000, wait_for_completion=True)
-    SkipLinesIfFlagDisabled(1, arg_12_15)
-    AICommand(arg_4_7, command_id=1, slot=0)
-    ReplanAI(arg_4_7)
+    Move(character, destination=region, destination_type=CoordEntityType.Region, short_move=True)
+    SetNest(character, region=region)
+    ForceAnimation(character, 7000, wait_for_completion=True)
+    SkipLinesIfFlagDisabled(1, flag_1)
+    AICommand(character, command_id=1, command_slot=0)
+    ReplanAI(character)
 
 
 @RestartOnRest(11700810)
-def Event_11700810(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
+def Event_11700810(_, character: int, left: int, item_lot_param_id: int):
     """Event 11700810"""
     SkipLinesIfThisEventSlotFlagDisabled(3)
-    DisableCharacter(arg_0_3)
-    Kill(arg_0_3)
+    DisableCharacter(character)
+    Kill(character)
     End()
-    IfCharacterDead(0, arg_0_3)
-    SkipLinesIfEqual(4, left=arg_4_7, right=0)
+    IfCharacterDead(0, character)
+    SkipLinesIfEqual(4, left=left, right=0)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)
-    AwardItemLot(arg_8_11, host_only=True)
+    AwardItemLot(item_lot_param_id, host_only=True)
     End()
 
 
 @RestartOnRest(11705280)
-def Event_11705280(_, arg_0_3: int):
+def Event_11705280(_, character: int):
     """Event 11705280"""
-    IfCharacterAlive(0, arg_0_3)
-    IfCharacterDead(0, arg_0_3)
+    IfCharacterAlive(0, character)
+    IfCharacterDead(0, character)
     IfCharacterHuman(-7, PLAYER)
     IfCharacterHollow(-7, PLAYER)
     EndIfConditionFalse(-7)
@@ -1367,31 +1420,31 @@ def Event_11705280(_, arg_0_3: int):
 
 
 @NeverRestart(11700600)
-def Event_11700600(_, arg_0_3: int, arg_4_7: int):
+def Event_11700600(_, obj: int, obj_act_id: int):
     """Event 11700600"""
     SkipLinesIfThisEventSlotFlagDisabled(4)
-    EndOfAnimation(obj=arg_0_3, animation_id=0)
-    DisableObjectActivation(arg_0_3, obj_act_id=-1)
-    EnableTreasure(obj=arg_0_3)
+    EndOfAnimation(obj=obj, animation_id=0)
+    DisableObjectActivation(obj, obj_act_id=-1)
+    EnableTreasure(obj=obj)
     End()
-    DisableTreasure(obj=arg_0_3)
-    IfObjectActivated(0, obj_act_id=arg_4_7)
+    DisableTreasure(obj=obj)
+    IfObjectActivated(0, obj_act_id=obj_act_id)
     WaitFrames(frames=10)
-    EnableTreasure(obj=arg_0_3)
+    EnableTreasure(obj=obj)
 
 
 @RestartOnRest(11705010)
-def Event_11705010(_, arg_0_3: int):
+def Event_11705010(_, character: int):
     """Event 11705010"""
-    IfCharacterAlive(1, arg_0_3)
-    IfCharacterBackreadEnabled(1, arg_0_3)
-    IfCharacterHasSpecialEffect(1, arg_0_3, 5421)
+    IfCharacterAlive(1, character)
+    IfCharacterBackreadEnabled(1, character)
+    IfCharacterHasSpecialEffect(1, character, 5421)
     IfCharacterType(2, PLAYER, character_type=CharacterType.BlackPhantom)
     IfConditionFalse(1, input_condition=2)
     IfActionButton(
         1,
         prompt_text=10010400,
-        anchor_entity=arg_0_3,
+        anchor_entity=character,
         anchor_type=CoordEntityType.Character,
         facing_angle=45.0,
         max_distance=1.2000000476837158,
@@ -1401,135 +1454,135 @@ def Event_11705010(_, arg_0_3: int):
     IfConditionTrue(0, input_condition=1)
     Move(
         PLAYER,
-        destination=arg_0_3,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=100,
-        copy_draw_parent=arg_0_3,
+        copy_draw_parent=character,
     )
     ForceAnimation(PLAYER, 7521)
-    AICommand(arg_0_3, command_id=10, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=10, command_slot=0)
+    ReplanAI(character)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(character, command_id=-1, command_slot=0)
     Restart()
 
 
 @RestartOnRest(11705020)
-def Event_11705020(_, arg_0_3: int):
+def Event_11705020(_, character: int):
     """Event 11705020"""
-    IfCharacterDoesNotHaveSpecialEffect(1, arg_0_3, 5420)
-    IfAttacked(1, attacked_entity=arg_0_3, attacker=PLAYER)
+    IfCharacterDoesNotHaveSpecialEffect(1, character, 5420)
+    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
     IfConditionTrue(0, input_condition=1)
-    CancelSpecialEffect(arg_0_3, 3150)
-    CancelSpecialEffect(arg_0_3, 3151)
-    IfCharacterBackreadDisabled(7, arg_0_3)
+    CancelSpecialEffect(character, 3150)
+    CancelSpecialEffect(character, 3151)
+    IfCharacterBackreadDisabled(7, character)
     RestartIfConditionTrue(7)
-    IfCharacterHasSpecialEffect(2, arg_0_3, 5421)
+    IfCharacterHasSpecialEffect(2, character, 5421)
     SkipLinesIfConditionFalse(1, 2)
-    ForceAnimation(arg_0_3, 3001, wait_for_completion=True)
-    IfCharacterHasSpecialEffect(3, arg_0_3, 5422)
+    ForceAnimation(character, 3001, wait_for_completion=True)
+    IfCharacterHasSpecialEffect(3, character, 5422)
     SkipLinesIfConditionFalse(1, 3)
-    ForceAnimation(arg_0_3, 3001, wait_for_completion=True)
-    IfCharacterHasSpecialEffect(4, arg_0_3, 5423)
+    ForceAnimation(character, 3001, wait_for_completion=True)
+    IfCharacterHasSpecialEffect(4, character, 5423)
     SkipLinesIfConditionFalse(1, 4)
-    ForceAnimation(arg_0_3, 3001, wait_for_completion=True)
-    IfCharacterHasSpecialEffect(5, arg_0_3, 5424)
+    ForceAnimation(character, 3001, wait_for_completion=True)
+    IfCharacterHasSpecialEffect(5, character, 5424)
     SkipLinesIfConditionFalse(1, 5)
-    ForceAnimation(arg_0_3, 3006, wait_for_completion=True)
-    ReplanAI(arg_0_3)
-    CancelSpecialEffect(arg_0_3, 3150)
-    CancelSpecialEffect(arg_0_3, 3151)
+    ForceAnimation(character, 3006, wait_for_completion=True)
+    ReplanAI(character)
+    CancelSpecialEffect(character, 3150)
+    CancelSpecialEffect(character, 3151)
     Restart()
 
 
 @RestartOnRest(11705030)
-def Event_11705030(_, arg_0_3: int):
+def Event_11705030(_, character: int):
     """Event 11705030"""
-    IfCharacterHasSpecialEffect(1, arg_0_3, 5421)
-    IfCharacterHasSpecialEffect(1, arg_0_3, 3150)
-    IfCharacterHasSpecialEffect(2, arg_0_3, 5420)
-    IfCharacterHasSpecialEffect(2, arg_0_3, 3150)
+    IfCharacterHasSpecialEffect(1, character, 5421)
+    IfCharacterHasSpecialEffect(1, character, 3150)
+    IfCharacterHasSpecialEffect(2, character, 5420)
+    IfCharacterHasSpecialEffect(2, character, 3150)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(5, condition=2)
-    AICommand(arg_0_3, command_id=200, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=200, command_slot=0)
+    ReplanAI(character)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(character, command_id=-1, command_slot=0)
     SkipLines(4)
-    AICommand(arg_0_3, command_id=210, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=210, command_slot=0)
+    ReplanAI(character)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=-1, slot=0)
-    IfCharacterHasSpecialEffect(-2, arg_0_3, 5420)
-    IfCharacterHasSpecialEffect(-2, arg_0_3, 5421)
+    AICommand(character, command_id=-1, command_slot=0)
+    IfCharacterHasSpecialEffect(-2, character, 5420)
+    IfCharacterHasSpecialEffect(-2, character, 5421)
     IfConditionTrue(0, input_condition=-2)
     Restart()
 
 
 @RestartOnRest(11705040)
-def Event_11705040(_, arg_0_3: int):
+def Event_11705040(_, character: int):
     """Event 11705040"""
-    IfCharacterHasSpecialEffect(1, arg_0_3, 5422)
-    IfCharacterDoesNotHaveSpecialEffect(1, arg_0_3, 3150)
-    IfCharacterHasSpecialEffect(2, arg_0_3, 5423)
-    IfCharacterDoesNotHaveSpecialEffect(2, arg_0_3, 3150)
+    IfCharacterHasSpecialEffect(1, character, 5422)
+    IfCharacterDoesNotHaveSpecialEffect(1, character, 3150)
+    IfCharacterHasSpecialEffect(2, character, 5423)
+    IfCharacterDoesNotHaveSpecialEffect(2, character, 3150)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(arg_0_3, 3150)
-    CancelSpecialEffect(arg_0_3, 3151)
+    CancelSpecialEffect(character, 3150)
+    CancelSpecialEffect(character, 3151)
     SkipLinesIfFinishedConditionTrue(5, condition=2)
-    AICommand(arg_0_3, command_id=201, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=201, command_slot=0)
+    ReplanAI(character)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=-1, slot=0)
+    AICommand(character, command_id=-1, command_slot=0)
     SkipLines(4)
-    AICommand(arg_0_3, command_id=211, slot=0)
-    ReplanAI(arg_0_3)
+    AICommand(character, command_id=211, command_slot=0)
+    ReplanAI(character)
     Wait(0.10000000149011612)
-    AICommand(arg_0_3, command_id=-1, slot=0)
-    IfCharacterHasSpecialEffect(-2, arg_0_3, 5420)
-    IfCharacterHasSpecialEffect(-2, arg_0_3, 5421)
+    AICommand(character, command_id=-1, command_slot=0)
+    IfCharacterHasSpecialEffect(-2, character, 5420)
+    IfCharacterHasSpecialEffect(-2, character, 5421)
     IfConditionTrue(0, input_condition=-2)
     Restart()
 
 
 @RestartOnRest(11705050)
-def Event_11705050(_, arg_0_3: int, arg_4_7: int):
+def Event_11705050(_, character: int, region: int):
     """Event 11705050"""
     IfSingleplayer(1)
-    IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
-    IfCharacterBackreadDisabled(1, arg_0_3)
+    IfCharacterInsideRegion(1, character, region=region)
+    IfCharacterBackreadDisabled(1, character)
     IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(arg_0_3, 5421)
-    ClearTargetList(arg_0_3)
-    ReplanAI(arg_0_3)
-    Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, short_move=True)
-    IfCharacterBackreadEnabled(0, arg_0_3)
+    AddSpecialEffect(character, 5421)
+    ClearTargetList(character)
+    ReplanAI(character)
+    Move(character, destination=region, destination_type=CoordEntityType.Region, short_move=True)
+    IfCharacterBackreadEnabled(0, character)
     Restart()
 
 
 @RestartOnRest(11700900)
-def Event_11700900(_, arg_0_3: int):
+def Event_11700900(_, character: int):
     """Event 11700900"""
     SkipLinesIfThisEventSlotFlagDisabled(2)
-    DisableCharacter(arg_0_3)
+    DisableCharacter(character)
     End()
-    IfCharacterDead(0, arg_0_3)
+    IfCharacterDead(0, character)
     End()
 
 
 @RestartOnRest(11705060)
-def Event_11705060(_, arg_0_3: int):
+def Event_11705060(_, character: int):
     """Event 11705060"""
     EndIfHost()
-    IfCharacterBackreadDisabled(1, arg_0_3)
+    IfCharacterBackreadDisabled(1, character)
     EndIfConditionTrue(1)
-    ResetAnimation(arg_0_3, disable_interpolation=True)
-    ForceAnimation(arg_0_3, 0)
-    ReplanAI(arg_0_3)
+    ResetAnimation(character, disable_interpolation=True)
+    ForceAnimation(character, 0)
+    ReplanAI(character)
 
 
 @RestartOnRest(11700700)
@@ -1549,49 +1602,49 @@ def Event_11700700():
 
 
 @NeverRestart(11700510)
-def Event_11700510(_, arg_0_3: int, arg_4_7: int):
+def Event_11700510(_, character: int, flag: int):
     """Event 11700510"""
-    IfHealthLessThanOrEqual(1, arg_0_3, value=0.8999999761581421)
-    IfHealthGreaterThan(1, arg_0_3, value=0.0)
-    IfAttacked(1, attacked_entity=arg_0_3, attacker=PLAYER)
-    IfFlagEnabled(2, arg_4_7)
+    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
+    IfHealthGreaterThan(1, character, value=0.0)
+    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    IfFlagEnabled(2, flag)
     IfThisEventSlotFlagEnabled(2)
-    IfFlagEnabled(3, arg_4_7)
+    IfFlagEnabled(3, flag)
     IfThisEventSlotFlagDisabled(3)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionFalse(2, condition=3)
-    DisableCharacter(arg_0_3)
+    DisableCharacter(character)
     IfFlagEnabled(0, 703)
-    EnableFlag(arg_4_7)
-    SetTeamTypeAndExitStandbyAnimation(arg_0_3, team_type=TeamType.HostileAlly)
+    EnableFlag(flag)
+    SetTeamTypeAndExitStandbyAnimation(character, team_type=TeamType.HostileAlly)
     SaveRequest()
 
 
 @NeverRestart(11700520)
-def Event_11700520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700520(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700520"""
     SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(arg_0_3)
+    DropMandatoryTreasure(character)
     End()
-    IfHealthLessThanOrEqual(0, arg_0_3, value=0.0)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    IfHealthLessThanOrEqual(0, character, value=0.0)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
 
 
 @NeverRestart(11700530)
-def Event_11700530(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700530(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700530"""
     IfFlagDisabled(1, 1096)
     IfFlagEnabled(1, 1092)
     IfCharacterInsideRegion(1, PLAYER, region=1702410)
     IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
     EnableFlag(11020694)
-    EnableCharacter(arg_0_3)
+    EnableCharacter(character)
     DisableFlag(61700320)
     EndOfAnimation(obj=1701506, animation_id=1)
     EnableObjectActivation(1701506, obj_act_id=27401, relative_index=0)
@@ -1601,20 +1654,20 @@ def Event_11700530(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
 
 
 @NeverRestart(11700531)
-def Event_11700531(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700531(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700531"""
     IfFlagDisabled(1, 1096)
     IfFlagEnabled(1, 1093)
     IfFlagEnabled(1, 61700320)
-    IfCharacterAlive(1, arg_0_3)
+    IfCharacterAlive(1, character)
     IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
     EnableFlag(11700594)
 
 
 @NeverRestart(11700532)
-def Event_11700532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700532(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700532"""
     IfFlagDisabled(1, 1096)
     IfFlagEnabled(1, 1094)
@@ -1626,17 +1679,17 @@ def Event_11700532(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
     EnableFlag(11700594)
-    EnableCharacter(arg_0_3)
-    Move(arg_0_3, destination=1702501, destination_type=CoordEntityType.Region, set_draw_parent=1703300)
-    IfCharacterBackreadEnabled(0, arg_0_3)
-    SetNest(arg_0_3, region=1702501)
+    EnableCharacter(character)
+    Move(character, destination=1702501, destination_type=CoordEntityType.Region, set_draw_parent=1703300)
+    IfCharacterBackreadEnabled(0, character)
+    SetNest(character, region=1702501)
 
 
 @NeverRestart(11700533)
-def Event_11700533(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
+def Event_11700533(_, character: int, first_flag: int, last_flag: int, flag: int, character_1: int):
     """Event 11700533"""
     SkipLinesIfFlagEnabled(2, 11700595)
     DisableObject(1701664)
@@ -1654,15 +1707,15 @@ def Event_11700533(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int,
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(input_condition=1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
-    DisableCharacter(arg_0_3)
-    EnableCharacter(arg_16_19)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
+    DisableCharacter(character)
+    EnableCharacter(character_1)
     EnableFlag(11700595)
 
 
 @NeverRestart(11700538)
-def Event_11700538(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700538(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700538"""
     DisableCharacter(1700500)
     IfFlagDisabled(1, 1547)
@@ -1670,38 +1723,38 @@ def Event_11700538(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     IfFlagDisabled(1, 1512)
     IfFlagDisabled(1, 1513)
     IfFlagRangeAnyEnabled(1, flag_range=(1501, 1511))
-    IfCharacterAlive(1, arg_0_3)
+    IfCharacterAlive(1, character)
     IfFlagEnabled(2, 1541)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
     EnableCharacter(1700500)
     SetDisplayMask(1700500, bit_index=1, switch_type=OnOffChange.Off)
 
 
 @NeverRestart(11700539)
-def Event_11700539(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700539(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700539"""
     IfFlagDisabled(1, 1547)
     IfFlagEnabled(1, 1541)
     IfCharacterDead(1, 1700500)
     IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
     Move(
-        arg_0_3,
+        character,
         destination=1700500,
         destination_type=CoordEntityType.Character,
         model_point=101,
         copy_draw_parent=1700500,
     )
-    EnableCharacter(arg_0_3)
+    EnableCharacter(character)
 
 
 @NeverRestart(11700540)
-def Event_11700540(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700540(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700540"""
     IfFlagDisabled(1, 1547)
     IfFlagEnabled(1, 1542)
@@ -1716,13 +1769,13 @@ def Event_11700540(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     IfConditionTrue(0, input_condition=-1)
     EndIfFinishedConditionTrue(input_condition=1)
     SkipLinesIfFinishedConditionTrue(2, condition=2)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
-    DisableCharacter(arg_0_3)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
+    DisableCharacter(character)
 
 
 @NeverRestart(11700545)
-def Event_11700545(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
+def Event_11700545(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11700545"""
     IfFlagDisabled(1, 1176)
     IfFlagDisabled(1, 1179)
@@ -1732,6 +1785,6 @@ def Event_11700545(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
-    DisableFlagRange((arg_4_7, arg_8_11))
-    EnableFlag(arg_12_15)
-    EnableCharacter(arg_0_3)
+    DisableFlagRange((first_flag, last_flag))
+    EnableFlag(flag)
+    EnableCharacter(character)

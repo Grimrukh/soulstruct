@@ -800,7 +800,7 @@ def Event_12414010(_, character: int, value: uchar, flag: int):
 def Event_12414100(_, entity: int, action_button_id: int, text: int):
     """Event 12414100"""
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=action_button_id, entity=entity)
+    IfActionButtonParamActivated(0, action_button_id=action_button_id, entity=entity)
     DisplayDialog(text=text, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -929,7 +929,7 @@ def Event_12415080(
 def Event_12415020(_, action_button_id: int, anchor_entity: int, flag: int, text: int):
     """Event 12415020"""
     DisableNetworkSync()
-    IfActionButtonParam(-1, action_button_id=action_button_id, entity=anchor_entity)
+    IfActionButtonParamActivated(-1, action_button_id=action_button_id, entity=anchor_entity)
     IfFlagEnabled(-1, flag)
     IfConditionTrue(0, input_condition=-1)
     EndIfFlagEnabled(flag)
@@ -945,7 +945,7 @@ def Event_12410200(_, obj: int, obj_1: int, obj_act_id: int):
     Wait(1.0)
     DisableObjectActivation(obj_1, obj_act_id=2410000)
     DisableObjectActivation(obj_1, obj_act_id=2410001)
-    IfActionButtonParam(0, action_button_id=7100, entity=obj_1)
+    IfActionButtonParamActivated(0, action_button_id=7100, entity=obj_1)
     DisplayDialog(text=10010172, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -964,7 +964,7 @@ def Event_12410100(_, action_button_id: int, anchor_entity: int, flag: int, text
     """Event 12410100"""
     DisableNetworkSync()
     EndIfFlagEnabled(flag)
-    IfActionButtonParam(1, action_button_id=action_button_id, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=action_button_id, entity=anchor_entity)
     IfFlagEnabled(2, flag)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1043,7 +1043,7 @@ def Event_12410151():
     IfFlagDisabled(1, 12411000)
     EndIfConditionTrue(1)
     DisableObjectActivation(2411304, obj_act_id=2410080)
-    IfActionButtonParam(0, action_button_id=7002, entity=2411304)
+    IfActionButtonParamActivated(0, action_button_id=7002, entity=2411304)
     IfPlayGoState(2, playgo_state=PlayGoState.DownloadedFirstChunk)
     GotoIfConditionFalse(Label.L0, input_condition=2)
     DisplayDialog(
@@ -1368,30 +1368,30 @@ def Event_12415480(_, character: int, animation_id: int, animation_id_1: int, ai
 
 
 @RestartOnRest(12415498)
-def Event_12415498(_, character__projectile_id: int, behavior_id: int):
+def Event_12415498(_, character__source_entity: int, behavior_id: int):
     """Event 12415498"""
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Caution)
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Search)
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Battle)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Search)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
     WaitRandomFrames(min_frames=0, max_frames=30)
-    ForceAnimation(character__projectile_id, 3010, wait_for_completion=True)
+    ForceAnimation(character__source_entity, 3010, wait_for_completion=True)
     IfFramesElapsed(-2, frames=51)
-    IfAttackedWithDamageType(1, attacked_entity=character__projectile_id, attacker=PLAYER)
+    IfAttackedWithDamageType(1, attacked_entity=character__source_entity, attacker=PLAYER)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(0, input_condition=-2)
     SkipLinesIfFinishedConditionTrue(2, condition=1)
     ShootProjectile(
-        owner_entity=character__projectile_id,
-        projectile_id=character__projectile_id,
+        owner_entity=character__source_entity,
+        source_entity=character__source_entity,
         model_point=7,
         behavior_id=behavior_id,
         launch_angle_x=90,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__projectile_id, 7004, wait_for_completion=True)
-    IfHasAIStatus(0, character__projectile_id, ai_status=AIStatusType.Normal)
+    ForceAnimation(character__source_entity, 7004, wait_for_completion=True)
+    IfHasAIStatus(0, character__source_entity, ai_status=AIStatusType.Normal)
     Restart()
 
 
@@ -1589,7 +1589,7 @@ def Event_12414730():
     DefineLabel(0)
     IfFlagDisabled(2, 12411700)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2410040, entity=2411800)
+    IfActionButtonParamActivated(2, action_button_id=2410040, entity=2411800)
     IfFlagEnabled(3, 12411700)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1618,7 +1618,7 @@ def Event_12414731():
     IfFlagEnabled(1, 12411702)
     IfFlagEnabled(1, 12414700)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2410040, entity=2411800)
+    IfActionButtonParamActivated(1, action_button_id=2410040, entity=2411800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2412800, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -2000,7 +2000,7 @@ def Event_12414810():
     DefineLabel(0)
     IfFlagDisabled(2, 12411800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2410041, entity=2411810)
+    IfActionButtonParamActivated(2, action_button_id=2410041, entity=2411810)
     IfFlagEnabled(3, 12411800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -2028,7 +2028,7 @@ def Event_12414811():
     IfFlagEnabled(1, 12411802)
     IfFlagEnabled(1, 12414800)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2410041, entity=2411810)
+    IfActionButtonParamActivated(1, action_button_id=2410041, entity=2411810)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2412810, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -3065,7 +3065,7 @@ def Event_12410510():
     # --- 0 --- #
     DefineLabel(0)
     CreateObjectVFX(2411200, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2410060, entity=2411200)
+    IfActionButtonParamActivated(0, action_button_id=2410060, entity=2411200)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2410990, host_only=False)
     DeleteObjectVFX(2411200)
@@ -4182,7 +4182,7 @@ def Event_12410750(_, flag: int, action_button_id: int, destination: int):
     IfFlagEnabled(0, 72410382)
     DisableFlag(flag)
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=action_button_id, entity=destination)
+    IfActionButtonParamActivated(1, action_button_id=action_button_id, entity=destination)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
@@ -4928,7 +4928,7 @@ def Event_12410850(_, flag: int, action_button_id: int, destination: int):
     EndIfConditionFalse(15)
     DisableFlag(flag)
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=action_button_id, entity=destination)
+    IfActionButtonParamActivated(1, action_button_id=action_button_id, entity=destination)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
@@ -5220,17 +5220,17 @@ def Event_12410324(_, flag: int, flag_1: int, flag_2: int, entity: int, entity_1
     """Event 12410324"""
     DisableNetworkSync()
     IfFlagDisabled(1, flag_2)
-    IfActionButtonParam(1, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=entity)
     IfFlagDisabled(2, flag_2)
-    IfActionButtonParam(2, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(3, flag)
-    IfActionButtonParam(3, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=entity)
     IfFlagEnabled(4, flag)
-    IfActionButtonParam(4, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(5, flag_1)
-    IfActionButtonParam(5, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=entity)
     IfFlagDisabled(6, flag_1)
-    IfActionButtonParam(6, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=entity_1)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -5446,7 +5446,7 @@ def Event_12414410(
     IfFlagDisabled(2, dismissal_flag)
     IfFlagEnabled(2, flag)
     IfFlagDisabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=action_button_id, entity=character)
+    IfActionButtonParamActivated(2, action_button_id=action_button_id, entity=character)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)
@@ -5945,7 +5945,7 @@ def Event_12410285(_, start_climbing_flag: int, stop_climbing_flag: int, obj: in
     Wait(1.0)
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, obj=obj)
     DisableObjectActivation(obj_1, obj_act_id=2410000)
-    IfActionButtonParam(0, action_button_id=7100, entity=obj_1)
+    IfActionButtonParamActivated(0, action_button_id=7100, entity=obj_1)
     DisplayDialog(text=10010172, number_buttons=NumberButtons.OneButton)
     Restart()
     IfObjectActivated(0, obj_act_id=12410206)
@@ -6159,7 +6159,7 @@ def Event_12410490(_, obj: int, obj_1: int, flag: int):
 def Event_12410990():
     """Event 12410990"""
     EndIfThisEventFlagEnabled()
-    IfStandingOnCollision(0, 2413500)
+    IfPlayerStandingOnCollision(0, 2413500)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
         name=148,
@@ -6187,7 +6187,7 @@ def Event_12410995():
     """Event 12410995"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(1, 2414110)
+    IfPlayerStandingOnCollision(1, 2414110)
     IfCharacterOutsideRegion(1, PLAYER, region=2412900)
     IfConditionTrue(0, input_condition=1)
     RunEvent(9350, slot=0, args=(1,))

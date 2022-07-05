@@ -1137,7 +1137,7 @@ def Event13005540():
 def Event13005550():
     """ 13005550: Event 13005550 """
     EndIfPlayerNotInOwnWorld()
-    IfActionButtonParam(0, action_button_id=3001810, entity=3001650)
+    IfActionButtonParamActivated(0, action_button_id=3001810, entity=3001650)
     IfPlayerHasGood(1, 2102, including_box=False)
     GotoIfConditionTrue(Label.L0, input_condition=1)
     DisplayDialog(
@@ -1637,7 +1637,7 @@ def Event13005880():
     DisableObject(3001870)
     EndIfPlayerNotInOwnWorld()
     IfFlagEnabled(0, 13000890)
-    IfActionButtonParam(0, action_button_id=3001895, entity=3001896)
+    IfActionButtonParamActivated(0, action_button_id=3001895, entity=3001896)
     SkipLinesIfTryingToCreateSession(2)
     PlayCutscene(
         30000020,
@@ -1746,7 +1746,7 @@ def Event13005890():
     EnableCharacter(3000899)
     EnableAnimations(3000899)
     GotoIfPlayerNotInOwnWorld(Label.L2)
-    IfActionButtonParam(0, action_button_id=3001890, entity=3001890)
+    IfActionButtonParamActivated(0, action_button_id=3001890, entity=3001890)
     RotateToFaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
 
     # --- 2 --- #
@@ -1822,7 +1822,7 @@ def Event13005893():
     IfFlagEnabled(0, 13005885)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
     IfFlagDisabled(1, 13000890)
-    IfActionButtonParam(1, action_button_id=3001890, entity=3001890)
+    IfActionButtonParamActivated(1, action_button_id=3001890, entity=3001890)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 3002896, animation=60060, wait_for_completion=True)
     EnableBossMusic(3002899)
@@ -1925,7 +1925,7 @@ def Event13000901(_, arg_0_3: int):
     EndIfFlagEnabled(6079)
     DisableNetworkSync()
     CreateObjectVFX(62, obj=arg_0_3, model_point=90)
-    IfActionButtonParam(0, action_button_id=4200, entity=arg_0_3)
+    IfActionButtonParamActivated(0, action_button_id=4200, entity=arg_0_3)
     ForceAnimation(PLAYER, 60070)
     DeleteObjectVFX(arg_0_3, erase_root=True)
     EnableFlag(13000900)

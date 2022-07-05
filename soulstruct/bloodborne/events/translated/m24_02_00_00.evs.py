@@ -406,7 +406,7 @@ def EnterEbrietasFog():
     DefineLabel(0)
     IfFlagDisabled(2, Flags.EbrietasDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2420800, entity=Objects.EbrietasFog)
+    IfActionButtonParamActivated(2, action_button_id=2420800, entity=Objects.EbrietasFog)
     IfFlagEnabled(3, Flags.EbrietasDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -433,7 +433,7 @@ def EnterEbrietasFogAsSummon():
     IfFlagEnabled(1, Flags.EbrietasFirstTimeDone)
     IfFlagEnabled(1, Flags.EbrietasFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2420800, entity=Objects.EbrietasFog)
+    IfActionButtonParamActivated(1, action_button_id=2420800, entity=Objects.EbrietasFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2422800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -882,7 +882,7 @@ def EnterCelestialEmissaryFog():
     DefineLabel(0)
     IfFlagDisabled(1, Flags.CelestialEmissaryDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
+    IfActionButtonParamActivated(2, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
     IfFlagEnabled(3, Flags.CelestialEmissaryDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -908,7 +908,7 @@ def EnterCelestialEmissaryFogAsSummon():
     IfFlagDisabled(1, Flags.CelestialEmissaryDead)
     IfFlagEnabled(1, Flags.CelestialEmissaryFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
+    IfActionButtonParamActivated(1, action_button_id=2420700, entity=Objects.CelestialEmissaryEntranceFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2422810, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1318,8 +1318,8 @@ def Event12420124():
     """ 12420124: Event 12420124 """
     DisableNetworkSync()
     EndIfFlagEnabled(12420123)
-    IfActionButtonParam(1, action_button_id=2420030, entity=2421200)
-    IfActionButtonParam(2, action_button_id=2420000, entity=2421200)
+    IfActionButtonParamActivated(1, action_button_id=2420030, entity=2421200)
+    IfActionButtonParamActivated(2, action_button_id=2420000, entity=2421200)
     IfObjectActivated(3, obj_act_id=12420122)
     IfFlagEnabled(4, 12420123)
     IfConditionTrue(-1, input_condition=1)
@@ -1357,7 +1357,7 @@ def Event12420140():
     """ 12420140: Event 12420140 """
     DisableNetworkSync()
     IfFlagEnabled(1, 12420123)
-    IfActionButtonParam(1, action_button_id=7100, entity=2421270)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2421270)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10010172,
@@ -1455,7 +1455,7 @@ def Event12420153():
     IfFlagDisabled(-1, 12420154)
     IfFlagEnabled(-1, 12420155)
     IfConditionTrue(1, input_condition=-1)
-    IfActionButtonParam(1, action_button_id=7100, entity=2421251)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2421251)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10010172,
@@ -1473,7 +1473,7 @@ def Event12420156():
     IfFlagEnabled(-1, 12420154)
     IfFlagEnabled(-1, 12420155)
     IfConditionTrue(1, input_condition=-1)
-    IfActionButtonParam(1, action_button_id=7100, entity=2421252)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2421252)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10010172,
@@ -2060,7 +2060,7 @@ def Event12420990():
     """ 12420990: Event 12420990 """
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 2423500)
+    IfPlayerStandingOnCollision(0, 2423500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 154, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 154, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 154, PlayLogMultiplayerType.HostOnly)
@@ -2146,7 +2146,7 @@ def Event12424410(
     IfFlagDisabled(2, arg_16_19)
     IfFlagEnabled(2, arg_20_23)
     IfFlagDisabled(2, arg_24_27)
-    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
+    IfActionButtonParamActivated(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)

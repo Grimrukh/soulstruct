@@ -223,7 +223,7 @@ class Event(abc.ABC):
             # Remove non-preferred arg names.
             for vague_arg_name in (
                 "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
-                "destination", "flag", "left", "right",
+                "destination", "copy_draw_parent", "flag", "left", "right",
             ):
                 if len(arg_names) >= 2 and vague_arg_name in arg_names:
                     arg_names.remove(vague_arg_name)
@@ -279,7 +279,7 @@ class Event(abc.ABC):
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self, enums_manager: EntityEnumsManager):
+    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=False):
         """Convert single event script to EVS."""
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
@@ -288,14 +288,53 @@ class Event(abc.ABC):
         function_def = self.indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def
-        for i, instr in enumerate(self.instructions):
-            instruction = instr.to_evs(self.EVENT_ARG_TYPES, enums_manager)
-            if label_match := _LABEL_RE.match(instruction):
+
+        instruction_lines = [instr.to_evs(self.EVENT_ARG_TYPES, enums_manager) for instr in self.instructions]
+
+        if use_high_level_language:
+            instruction_lines = self.high_level_evs_decompile(instruction_lines)
+
+        # SIMPLE DECOMPILATION
+        for i, instr_line in enumerate(instruction_lines):
+            if label_match := _LABEL_RE.match(instr_line):
                 if evs_event_string[-1] != "\n":
                     evs_event_string += "\n"
-                evs_event_string += f"\n    # --- {label_match.group(1)} --- #"
-            evs_event_string += self._indent_and_wrap_instruction(instruction, wrap_limit=self.WRAP_LIMIT, indent=4)
+                evs_event_string += f"\n    # --- Label {label_match.group(1)} --- #"
+            evs_event_string += self._indent_and_wrap_instruction(instr_line, wrap_limit=self.WRAP_LIMIT, indent=4)
+
         return evs_event_string
+
+    def high_level_evs_decompile(self, instruction_lines: list[str]):
+        """Parses basic EVS output and replaces it with Python `if/else` tests and `Await()` calls where possible.
+
+        Note that none of the input `instruction_lines` have been indented yet, so we can add our own indentation here
+        as necessary and ALL of it will be indented by the rest of `to_evs()`.
+        """
+        output_lines = []
+
+        # TODO: EMEDF marks whether (and how) an instruction has a high-level equivalent. Regex here is auto-generated
+        #  from EVS instruction name and args.
+        skip_if_slot_disabled_re = re.compile(
+            r"^(?P<indent> *)SkipLinesIfThisEventSlotFlagDisabled\((?P<line_count>\d+)\)$"
+        )
+
+        i = 0
+        while i < len(instruction_lines):
+            line = instruction_lines[i]
+            if match := skip_if_slot_disabled_re.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                line_count = int(m["line_count"])
+                output_lines.append(f"{indent}if THIS_SLOT_FLAG:")
+                i += 1
+                for _ in range(line_count):
+                    output_lines.append(f"{indent}    {instruction_lines[i]}")
+                    i += 1
+            else:
+                output_lines.append(line)
+                i += 1
+
+        return output_lines
 
     def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
         if self.event_arg_count == 0:
@@ -369,12 +408,16 @@ class Event(abc.ABC):
                     arg_strings.append("),")
             elif arg.startswith("event_layers=["):
                 # Consume additional args to reconstruct event layers list (not bothering to handle multi-line).
-                event_layer_indices = [arg[14:]]
-                i += 1
-                while not (test_arg := args[i]).endswith("]"):
-                    event_layer_indices.append(test_arg)
+                if arg.endswith("]"):
+                    # Single layer.
+                    event_layer_indices = [arg[14:-1]]
+                else:
+                    event_layer_indices = [arg[14:]]  # first layer
                     i += 1
-                event_layer_indices.append(test_arg[:-1])  # cut off closing bracket
+                    while not (test_arg := args[i]).endswith("]"):
+                        event_layer_indices.append(test_arg)
+                        i += 1
+                    event_layer_indices.append(test_arg[:-1])  # cut off closing bracket
                 one_line_event_layers = f"event_layers=[{', '.join(event_layer_indices)}],"
                 arg_strings.append(one_line_event_layers)
             elif map_match := re.match(r"(\w*map=)\((\d+)", arg):

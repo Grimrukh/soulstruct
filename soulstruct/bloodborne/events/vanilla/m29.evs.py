@@ -162,14 +162,14 @@ def Event_12900067(_, obj: int, obj_act_id: int, flag: int):
 
 
 @NeverRestart(12900078)
-def Event_12900078(_, projectile_id: int, flag: int):
+def Event_12900078(_, source_entity: int, flag: int):
     """Event 12900078"""
     EndIfThisEventSlotFlagEnabled()
     IfFlagEnabled(0, flag)
     CreatePlayLog(name=0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=90,
         behavior_id=6051,
         launch_angle_x=270,
@@ -179,7 +179,7 @@ def Event_12900078(_, projectile_id: int, flag: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=90,
         behavior_id=6053,
         launch_angle_x=270,
@@ -189,7 +189,7 @@ def Event_12900078(_, projectile_id: int, flag: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -199,7 +199,7 @@ def Event_12900078(_, projectile_id: int, flag: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -209,7 +209,7 @@ def Event_12900078(_, projectile_id: int, flag: int):
     Wait(2.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=90,
         behavior_id=6055,
         launch_angle_x=270,
@@ -260,7 +260,7 @@ def Event_12900174(_, entity: int, obj_act_id: int, flag: int):
     # --- 0 --- #
     DefineLabel(0)
     DisableNetworkSync()
-    IfActionButtonParam(1, action_button_id=7011, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=7011, entity=entity)
     IfObjectActivated(2, obj_act_id=obj_act_id)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -295,8 +295,8 @@ def Event_12900186(_, anchor_entity: int, flag: int):
     """Event 12900186"""
     DisableNetworkSync()
     EndIfFlagEnabled(flag)
-    IfActionButtonParam(1, action_button_id=7010, entity=anchor_entity)
-    IfActionButtonParam(2, action_button_id=7011, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=7010, entity=anchor_entity)
+    IfActionButtonParamActivated(2, action_button_id=7011, entity=anchor_entity)
     IfFlagEnabled(3, flag)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -313,7 +313,7 @@ def Event_12900187(_, anchor_entity: int, flag: int):
     """Event 12900187"""
     DisableNetworkSync()
     IfFlagEnabled(1, flag)
-    IfActionButtonParam(1, action_button_id=7100, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=anchor_entity)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010170, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
@@ -361,7 +361,7 @@ def Event_12900190(_, anchor_entity: int, flag: int):
     DisableNetworkSync()
     EndIfFlagEnabled(flag)
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=7010, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=7010, entity=anchor_entity)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010160, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
@@ -373,7 +373,7 @@ def Event_12900191(_, anchor_entity: int, flag: int):
     """Event 12900191"""
     DisableNetworkSync()
     IfFlagEnabled(1, flag)
-    IfActionButtonParam(1, action_button_id=7100, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=anchor_entity)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010170, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
@@ -421,7 +421,7 @@ def Event_12900202(_, anchor_entity: int, flag: int):
     DisableNetworkSync()
     EndIfFlagEnabled(flag)
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=7010, entity=anchor_entity)
+    IfActionButtonParamActivated(1, action_button_id=7010, entity=anchor_entity)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010167, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
@@ -434,7 +434,7 @@ def Event_12900207(_, anchor_entity: int, flag: int):
     DisableNetworkSync()
     IfFlagEnabled(0, flag)
     Wait(3.0)
-    IfActionButtonParam(0, action_button_id=7100, entity=anchor_entity)
+    IfActionButtonParamActivated(0, action_button_id=7100, entity=anchor_entity)
     DisplayDialog(text=10010170, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
@@ -535,7 +535,7 @@ def Event_12900238(_, obj: int, obj_act_id: int, obj_act_id_1: int, obj_act_id_2
 
 
 @NeverRestart(12900239)
-def Event_12900239(_, projectile_id: int, flag: int):
+def Event_12900239(_, source_entity: int, flag: int):
     """Event 12900239"""
     EndIfThisEventSlotFlagEnabled()
     IfFlagEnabled(0, flag)
@@ -543,7 +543,7 @@ def Event_12900239(_, projectile_id: int, flag: int):
     Wait(1.5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=projectile_id,
+        source_entity=source_entity,
         model_point=120,
         behavior_id=6020,
         launch_angle_x=270,
@@ -642,14 +642,14 @@ def Event_12900255(_, entity: int, entity_1: int, flag: int, flag_1: int):
     DisableNetworkSync()
     IfFlagEnabled(1, flag)
     IfFlagDisabled(1, flag_1)
-    IfActionButtonParam(1, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=entity)
     IfFlagDisabled(2, flag)
     IfFlagDisabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(3, flag_1)
-    IfActionButtonParam(3, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=entity)
     IfFlagEnabled(4, flag_1)
-    IfActionButtonParam(4, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=entity_1)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -834,14 +834,14 @@ def Event_12900339(_, flag: int, entity: int, flag_1: int, entity_1: int):
     DisableNetworkSync()
     IfFlagDisabled(1, flag)
     IfFlagDisabled(1, flag_1)
-    IfActionButtonParam(1, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=entity)
     IfFlagDisabled(2, flag)
     IfFlagEnabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(3, flag)
-    IfActionButtonParam(3, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(4, flag)
-    IfActionButtonParam(4, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=entity)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1017,14 +1017,14 @@ def Event_12900357(_, entity: int, entity_1: int, flag: int, flag_1: int):
     DisableNetworkSync()
     IfFlagDisabled(1, flag)
     IfFlagDisabled(1, flag_1)
-    IfActionButtonParam(1, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=entity)
     IfFlagEnabled(2, flag)
     IfFlagDisabled(2, flag_1)
-    IfActionButtonParam(2, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=entity_1)
     IfFlagEnabled(3, flag_1)
-    IfActionButtonParam(3, action_button_id=7100, entity=entity)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=entity)
     IfFlagEnabled(4, flag_1)
-    IfActionButtonParam(4, action_button_id=7100, entity=entity_1)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=entity_1)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1663,9 +1663,9 @@ def Event_12901347(_, region: int, entity: int, flag: int):
 
 
 @NeverRestart(12901400)
-def Event_12901400(_, obj__projectile_id: int, flag: int):
+def Event_12901400(_, obj__source_entity: int, flag: int):
     """Event 12901400"""
-    IfObjectNotDestroyed(1, obj__projectile_id)
+    IfObjectNotDestroyed(1, obj__source_entity)
     IfFlagEnabled(2, flag)
     IfConditionTrue(3, input_condition=1)
     IfConditionTrue(3, input_condition=2)
@@ -1674,11 +1674,11 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     CreatePlayLog(name=188)
     CreateTemporaryVFX(
         vfx_id=150005,
-        anchor_entity=obj__projectile_id,
+        anchor_entity=obj__source_entity,
         model_point=101,
         anchor_type=CoordEntityType.Object,
     )
-    PlaySoundEffect(obj__projectile_id, 990100001, sound_type=SoundType.o_Object)
+    PlaySoundEffect(obj__source_entity, 990100001, sound_type=SoundType.o_Object)
     SkipLinesIfFlagEnabled(84, 92905107)
     SkipLinesIfFlagEnabled(72, 92905106)
     SkipLinesIfFlagEnabled(60, 92905105)
@@ -1692,7 +1692,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6200,
         launch_angle_x=0,
@@ -1702,7 +1702,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6210,
         launch_angle_x=0,
@@ -1712,7 +1712,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6220,
         launch_angle_x=0,
@@ -1722,7 +1722,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6230,
         launch_angle_x=0,
@@ -1735,7 +1735,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6201,
         launch_angle_x=0,
@@ -1745,7 +1745,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6211,
         launch_angle_x=0,
@@ -1755,7 +1755,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6221,
         launch_angle_x=0,
@@ -1765,7 +1765,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6231,
         launch_angle_x=0,
@@ -1778,7 +1778,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6202,
         launch_angle_x=0,
@@ -1788,7 +1788,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6212,
         launch_angle_x=0,
@@ -1798,7 +1798,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6222,
         launch_angle_x=0,
@@ -1808,7 +1808,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6232,
         launch_angle_x=0,
@@ -1821,7 +1821,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6203,
         launch_angle_x=0,
@@ -1831,7 +1831,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6213,
         launch_angle_x=0,
@@ -1841,7 +1841,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6223,
         launch_angle_x=0,
@@ -1851,7 +1851,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6233,
         launch_angle_x=0,
@@ -1864,7 +1864,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6204,
         launch_angle_x=0,
@@ -1874,7 +1874,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6214,
         launch_angle_x=0,
@@ -1884,7 +1884,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6224,
         launch_angle_x=0,
@@ -1894,7 +1894,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6234,
         launch_angle_x=0,
@@ -1907,7 +1907,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6205,
         launch_angle_x=0,
@@ -1917,7 +1917,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6215,
         launch_angle_x=0,
@@ -1927,7 +1927,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6225,
         launch_angle_x=0,
@@ -1937,7 +1937,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6235,
         launch_angle_x=0,
@@ -1950,7 +1950,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6206,
         launch_angle_x=0,
@@ -1960,7 +1960,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6216,
         launch_angle_x=0,
@@ -1970,7 +1970,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6226,
         launch_angle_x=0,
@@ -1980,7 +1980,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6236,
         launch_angle_x=0,
@@ -1993,7 +1993,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLinesIfFlagEnabled(2, 92905202)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6207,
         launch_angle_x=0,
@@ -2003,7 +2003,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6217,
         launch_angle_x=0,
@@ -2013,7 +2013,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(3)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6227,
         launch_angle_x=0,
@@ -2023,7 +2023,7 @@ def Event_12901400(_, obj__projectile_id: int, flag: int):
     SkipLines(1)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6237,
         launch_angle_x=0,
@@ -4470,27 +4470,27 @@ def Event_12904043(_, character: int, region: int):
 
 
 @RestartOnRest(12904070)
-def Event_12904070(_, character__copy_draw_parent: int, character: int, flag: int):
+def Event_12904070(_, character: int, character_1: int, flag: int):
     """Event 12904070"""
     EndIfThisEventSlotFlagEnabled()
-    DisableCharacter(character)
+    DisableCharacter(character_1)
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    IfCharacterHasTAEEvent(0, character__copy_draw_parent, tae_event_id=70)
+    IfCharacterHasTAEEvent(0, character, tae_event_id=70)
     Move(
-        character,
-        destination=character__copy_draw_parent,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=230,
-        copy_draw_parent=character__copy_draw_parent,
+        copy_draw_parent=character,
     )
 
     # --- 0 --- #
     DefineLabel(0)
-    IfCharacterDead(0, character__copy_draw_parent)
-    IfCharacterDrawGroupDisabled(0, character=character)
+    IfCharacterDead(0, character)
+    IfCharacterDrawGroupDisabled(0, character=character_1)
     CreatePlayLog(name=768)
-    EnableCharacter(character)
-    ReplanAI(character)
+    EnableCharacter(character_1)
+    ReplanAI(character_1)
 
 
 @RestartOnRest(12904156)
@@ -4976,35 +4976,35 @@ def Event_12904345(_, character: int):
 
 
 @NeverRestart(12904361)
-def Event_12904361(_, character__copy_draw_parent: int, character: int):
+def Event_12904361(_, character: int, character_1: int):
     """Event 12904361"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetDisplayMask(character__copy_draw_parent, bit_index=0, switch_type=OnOffChange.On)
-    DisableCharacter(character)
+    SetDisplayMask(character, bit_index=0, switch_type=OnOffChange.On)
+    DisableCharacter(character_1)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
-    IfCharacterBackreadEnabled(0, character__copy_draw_parent)
-    CreateNPCPart(character__copy_draw_parent, npc_part_id=10, part_index=NPCPartType.Part1, part_health=30)
-    SetNPCPartEffects(character__copy_draw_parent, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
-    DisableCharacter(character)
-    IfCharacterPartHealthLessThanOrEqual(-1, character__copy_draw_parent, npc_part_id=10, value=0)
-    IfHealthLessThanOrEqual(-1, character__copy_draw_parent, value=0.0)
+    IfCharacterBackreadEnabled(0, character)
+    CreateNPCPart(character, npc_part_id=10, part_index=NPCPartType.Part1, part_health=30)
+    SetNPCPartEffects(character, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
+    DisableCharacter(character_1)
+    IfCharacterPartHealthLessThanOrEqual(-1, character, npc_part_id=10, value=0)
+    IfHealthLessThanOrEqual(-1, character, value=0.0)
     IfConditionTrue(0, input_condition=-1)
-    SetAIParamID(character__copy_draw_parent, ai_param_id=121001)
-    DisableGravity(character)
+    SetAIParamID(character, ai_param_id=121001)
+    DisableGravity(character_1)
     Move(
-        character,
-        destination=character__copy_draw_parent,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=40,
-        copy_draw_parent=character__copy_draw_parent,
+        copy_draw_parent=character,
     )
-    EnableCharacter(character)
-    SetDisplayMask(character__copy_draw_parent, bit_index=0, switch_type=OnOffChange.On)
-    ForceAnimation(character, 8100, wait_for_completion=True)
-    DisableCharacter(character)
+    EnableCharacter(character_1)
+    SetDisplayMask(character, bit_index=0, switch_type=OnOffChange.On)
+    ForceAnimation(character_1, 8100, wait_for_completion=True)
+    DisableCharacter(character_1)
 
 
 @NeverRestart(12904369)
@@ -5857,36 +5857,36 @@ def Event_12904634(
 
 
 @RestartOnRest(12904643)
-def Event_12904643(_, character__projectile_id: int):
+def Event_12904643(_, character__source_entity: int):
     """Event 12904643"""
-    IfHasAIStatus(1, character__projectile_id, ai_status=AIStatusType.Caution)
-    IfHasAIStatus(2, character__projectile_id, ai_status=AIStatusType.Battle)
-    IfEntityWithinDistance(3, entity=character__projectile_id, other_entity=PLAYER, radius=8.800000190734863)
-    IfHealthEqual(4, character__projectile_id, value=1.0)
+    IfHasAIStatus(1, character__source_entity, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(2, character__source_entity, ai_status=AIStatusType.Battle)
+    IfEntityWithinDistance(3, entity=character__source_entity, other_entity=PLAYER, radius=8.800000190734863)
+    IfHealthEqual(4, character__source_entity, value=1.0)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(5, input_condition=-1)
     IfConditionTrue(5, input_condition=3)
     IfConditionTrue(5, input_condition=4)
     IfConditionTrue(0, input_condition=5)
-    IfEntityWithinDistance(6, entity=character__projectile_id, other_entity=PLAYER, radius=5.800000190734863)
+    IfEntityWithinDistance(6, entity=character__source_entity, other_entity=PLAYER, radius=5.800000190734863)
     SkipLinesIfConditionTrue(9, 6)
-    ForceAnimation(character__projectile_id, 3010)
+    ForceAnimation(character__source_entity, 3010)
     WaitFrames(frames=40)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6064,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    IfHealthNotEqual(7, character__projectile_id, value=1.0)
+    IfHealthNotEqual(7, character__source_entity, value=1.0)
     SkipLinesIfConditionTrue(5, 7)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=205,
         behavior_id=6051,
         launch_angle_x=270,
@@ -5894,18 +5894,18 @@ def Event_12904643(_, character__projectile_id: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    IfHealthNotEqual(8, character__projectile_id, value=1.0)
+    IfHealthNotEqual(8, character__source_entity, value=1.0)
     SkipLinesIfConditionTrue(1, 8)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=205,
         behavior_id=6053,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    IfHasAIStatus(0, character__projectile_id, ai_status=AIStatusType.Normal)
+    IfHasAIStatus(0, character__source_entity, ai_status=AIStatusType.Normal)
     Restart()
 
 
@@ -5959,18 +5959,18 @@ def Event_12904736(_, attacker__character: int, region: int, radius: float):
 
 
 @RestartOnRest(12904737)
-def Event_12904737(_, obj__projectile_id: int):
+def Event_12904737(_, obj__source_entity: int):
     """Event 12904737"""
-    EnableObjectInvulnerability(obj__projectile_id)
-    IfActionButtonParam(-1, action_button_id=2400900, entity=obj__projectile_id)
-    IfObjectDamagedBy(-1, obj__projectile_id, attacker=PLAYER)
+    EnableObjectInvulnerability(obj__source_entity)
+    IfActionButtonParamActivated(-1, action_button_id=2400900, entity=obj__source_entity)
+    IfObjectDamaged(-1, obj__source_entity, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
     CreatePlayLog(name=1132)
-    ForceAnimation(obj__projectile_id, 1)
-    PlaySoundEffect(obj__projectile_id, 24011006, sound_type=SoundType.a_Ambient)
+    ForceAnimation(obj__source_entity, 1)
+    PlaySoundEffect(obj__source_entity, 24011006, sound_type=SoundType.a_Ambient)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6063,
         launch_angle_x=270,
@@ -5980,7 +5980,7 @@ def Event_12904737(_, obj__projectile_id: int):
     WaitFrames(frames=10)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6055,
         launch_angle_x=270,
@@ -5990,7 +5990,7 @@ def Event_12904737(_, obj__projectile_id: int):
     WaitFrames(frames=90)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6059,
         launch_angle_x=270,
@@ -6000,7 +6000,7 @@ def Event_12904737(_, obj__projectile_id: int):
     WaitFrames(frames=80)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=101,
         behavior_id=6062,
         launch_angle_x=270,
@@ -6089,7 +6089,7 @@ def Event_12904772(_, region: int, obj: int, character: int, region_1: int):
 def Event_12904773(_, target_entity: int, entity: int, flag: int):
     """Event 12904773"""
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
@@ -6113,7 +6113,7 @@ def Event_12904775(_, target_entity: int, entity: int, flag: int, flag_1: int):
     IfFlagDisabled(1, flag_1)
     IfFlagEnabled(1, flag)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
@@ -6215,21 +6215,21 @@ def Event_12904780(_, character: int):
 
 
 @NeverRestart(12904852)
-def Event_12904852(_, character__copy_draw_parent: int, character: int, character_1: int):
+def Event_12904852(_, character: int, character_1: int, character_2: int):
     """Event 12904852"""
-    DisableCharacter(character)
-    IfCharacterHasTAEEvent(0, character__copy_draw_parent, tae_event_id=100)
+    DisableCharacter(character_1)
+    IfCharacterHasTAEEvent(0, character, tae_event_id=100)
     WaitFrames(frames=5)
     Move(
-        character,
-        destination=character__copy_draw_parent,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=30,
-        copy_draw_parent=character__copy_draw_parent,
+        copy_draw_parent=character,
     )
-    EnableCharacter(character)
-    ForceAnimation(character, 7000)
-    ReplanAI(character_1)
+    EnableCharacter(character_1)
+    ForceAnimation(character_1, 7000)
+    ReplanAI(character_2)
 
 
 @RestartOnRest(12904858)
@@ -6636,7 +6636,7 @@ def Event_12904878(_, target_entity: int, entity: int, flag: int, flag_1: int):
     """Event 12904878"""
     AwaitFlagEnabled(flag=flag_1)
     IfFlagDisabled(1, flag)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
@@ -6660,7 +6660,7 @@ def Event_12904880(_, target_entity: int, entity: int, flag: int, flag_1: int):
     IfFlagDisabled(1, flag_1)
     IfFlagEnabled(1, flag)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=101130)
     Restart()
@@ -9122,7 +9122,7 @@ def Event_12905302(_, collision: int):
 @NeverRestart(12905303)
 def Event_12905303(_, entity: int, collision: int):
     """Event 12905303"""
-    IfMovingOnCollision(0, collision)
+    IfPlayerMovingOnCollision(0, collision)
     ForceAnimation(entity, 0, wait_for_completion=True)
     Restart()
 
@@ -9255,7 +9255,7 @@ def Event_12905401(_, obj_act_id: int, flag: int):
 @RestartOnRest(12905402)
 def Event_12905402(_, obj: int, flag: int):
     """Event 12905402"""
-    IfObjectDamagedBy(-1, obj, attacker=PLAYER)
+    IfObjectDamaged(-1, obj, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(frames=45)
     EnableFlag(flag)
@@ -9306,23 +9306,23 @@ def Event_12905407(_, character: int, flag: int):
 
 
 @RestartOnRest(12906400)
-def Event_12906400(_, obj__projectile_id: int):
+def Event_12906400(_, obj__source_entity: int):
     """Event 12906400"""
-    IfAttackedWithDamageType(1, attacked_entity=obj__projectile_id, damage_type=DamageType.Fire)
-    IfAttackedWithDamageType(2, attacked_entity=obj__projectile_id, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(1, attacked_entity=obj__source_entity, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(2, attacked_entity=obj__source_entity, damage_type=DamageType.NoType)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
-    IfObjectHealthValueComparison(-1, obj__projectile_id, ComparisonType.LessThan, value=999)
+    IfObjectHealthValueComparison(-1, obj__source_entity, ComparisonType.LessThan, value=999)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(7, condition=-2)
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
     WaitFrames(frames=10)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6051,
         launch_angle_x=270,
@@ -9332,7 +9332,7 @@ def Event_12906400(_, obj__projectile_id: int):
     WaitFrames(frames=45)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6053,
         launch_angle_x=270,
@@ -9345,7 +9345,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905100)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6150,
         launch_angle_x=0,
@@ -9356,7 +9356,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905101)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6151,
         launch_angle_x=0,
@@ -9367,7 +9367,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905102)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6152,
         launch_angle_x=0,
@@ -9378,7 +9378,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905103)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6153,
         launch_angle_x=0,
@@ -9389,7 +9389,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905104)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6154,
         launch_angle_x=0,
@@ -9400,7 +9400,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905105)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6155,
         launch_angle_x=0,
@@ -9411,7 +9411,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905106)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6156,
         launch_angle_x=0,
@@ -9422,7 +9422,7 @@ def Event_12906400(_, obj__projectile_id: int):
     IfFlagEnabled(0, 92905107)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6157,
         launch_angle_x=0,
@@ -9440,7 +9440,7 @@ def Event_12906400(_, obj__projectile_id: int):
     SkipLinesIfConditionTrue(1, -2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6000,
         launch_angle_x=0,
@@ -9449,15 +9449,15 @@ def Event_12906400(_, obj__projectile_id: int):
     )
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=200,
         behavior_id=6055,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(12906500)
@@ -11192,42 +11192,42 @@ def Event_12906648(_, character: int, character_1: int, animation_id: int, desti
 
 
 @RestartOnRest(12906654)
-def Event_12906654(_, character__projectile_id: int, region: int):
+def Event_12906654(_, character__source_entity: int, region: int):
     """Event 12906654"""
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Caution)
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Search)
-    IfHasAIStatus(-1, character__projectile_id, ai_status=AIStatusType.Battle)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Caution)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Search)
+    IfHasAIStatus(-1, character__source_entity, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
-    SetNest(character__projectile_id, region=region)
-    AICommand(character__projectile_id, command_id=10, command_slot=0)
-    ResetAnimation(character__projectile_id)
-    ReplanAI(character__projectile_id)
+    SetNest(character__source_entity, region=region)
+    AICommand(character__source_entity, command_id=10, command_slot=0)
+    ResetAnimation(character__source_entity)
+    ReplanAI(character__source_entity)
     Wait(3.0)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=32,
         behavior_id=210200599,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    PlaySoundEffect(character__projectile_id, 225000000, sound_type=SoundType.a_Ambient)
-    IfCharacterInsideRegion(0, character__projectile_id, region=region)
-    ForceAnimation(character__projectile_id, 3010, wait_for_completion=True)
-    PlaySoundEffect(character__projectile_id, 225000000, sound_type=SoundType.a_Ambient)
+    PlaySoundEffect(character__source_entity, 225000000, sound_type=SoundType.a_Ambient)
+    IfCharacterInsideRegion(0, character__source_entity, region=region)
+    ForceAnimation(character__source_entity, 3010, wait_for_completion=True)
+    PlaySoundEffect(character__source_entity, 225000000, sound_type=SoundType.a_Ambient)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=32,
         behavior_id=210200599,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__projectile_id, 7004, wait_for_completion=True)
-    AICommand(character__projectile_id, command_id=-1, command_slot=0)
-    ReplanAI(character__projectile_id)
+    ForceAnimation(character__source_entity, 7004, wait_for_completion=True)
+    AICommand(character__source_entity, command_id=-1, command_slot=0)
+    ReplanAI(character__source_entity)
 
 
 @RestartOnRest(12906655)
@@ -11243,7 +11243,7 @@ def Event_12906655(_, character: int, animation_id: int):
 
 
 @RestartOnRest(12906656)
-def Event_12906656(_, character: int, sound_id: int, character__projectile_id: int):
+def Event_12906656(_, character: int, sound_id: int, character__source_entity: int):
     """Event 12906656"""
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Caution)
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Battle)
@@ -11254,7 +11254,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     IfEntityWithinDistance(3, entity=character, other_entity=PLAYER, radius=5.0)
     SkipLinesIfConditionTrue(23, 3)
     Move(
-        character__projectile_id,
+        character__source_entity,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
         model_point=236,
@@ -11265,7 +11265,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     WaitFrames(frames=40)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6064,
         launch_angle_x=270,
@@ -11276,7 +11276,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     SkipLinesIfConditionTrue(17, 4)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6051,
         launch_angle_x=270,
@@ -11288,7 +11288,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     SkipLinesIfConditionTrue(13, 5)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6054,
         launch_angle_x=270,
@@ -11300,7 +11300,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     SkipLinesIfConditionTrue(9, 6)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -11312,7 +11312,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     SkipLinesIfConditionTrue(5, 7)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -11324,7 +11324,7 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
     SkipLinesIfConditionTrue(1, 8)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=101,
         behavior_id=6056,
         launch_angle_x=270,
@@ -11336,22 +11336,22 @@ def Event_12906656(_, character: int, sound_id: int, character__projectile_id: i
 
 
 @NeverRestart(12906660)
-def Event_12906660(_, obj__projectile_id: int):
+def Event_12906660(_, obj__source_entity: int):
     """Event 12906660"""
-    EndIfObjectDestroyed(obj__projectile_id)
+    EndIfObjectDestroyed(obj__source_entity)
     GotoIfFlagEnabled(Label.L1, flag=92905310)
     GotoIfFlagEnabled(Label.L0, flag=92905301)
-    CreateObjectVFX(obj__projectile_id, vfx_id=600, model_point=929302)
-    IfObjectDamagedBy(0, obj__projectile_id, attacker=-1)
+    CreateObjectVFX(obj__source_entity, vfx_id=600, model_point=929302)
+    IfObjectDamaged(0, obj__source_entity, attacker=-1)
     Goto(Label.L3)
 
     # --- 0 --- #
     DefineLabel(0)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(obj__projectile_id, vfx_id=600, model_point=929305)
+    CreateObjectVFX(obj__source_entity, vfx_id=600, model_point=929305)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6090,
         launch_angle_x=0,
@@ -11363,7 +11363,7 @@ def Event_12906660(_, obj__projectile_id: int):
     # --- 1 --- #
     DefineLabel(1)
     SkipLinesIfThisEventSlotFlagEnabled(1)
-    CreateObjectVFX(obj__projectile_id, vfx_id=600, model_point=929304)
+    CreateObjectVFX(obj__source_entity, vfx_id=600, model_point=929304)
     SkipLinesIfFlagEnabled(21, 92905107)
     SkipLinesIfFlagEnabled(18, 92905106)
     SkipLinesIfFlagEnabled(15, 92905105)
@@ -11374,7 +11374,7 @@ def Event_12906660(_, obj__projectile_id: int):
     SkipLinesIfFlagEnabled(0, 92905100)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6120,
         launch_angle_x=0,
@@ -11384,7 +11384,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6121,
         launch_angle_x=0,
@@ -11394,7 +11394,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6122,
         launch_angle_x=0,
@@ -11404,7 +11404,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6123,
         launch_angle_x=0,
@@ -11414,7 +11414,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6124,
         launch_angle_x=0,
@@ -11424,7 +11424,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6125,
         launch_angle_x=0,
@@ -11434,7 +11434,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6126,
         launch_angle_x=0,
@@ -11444,7 +11444,7 @@ def Event_12906660(_, obj__projectile_id: int):
     Goto(Label.L2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=100,
         behavior_id=6127,
         launch_angle_x=0,
@@ -11455,7 +11455,7 @@ def Event_12906660(_, obj__projectile_id: int):
     # --- 2 --- #
     DefineLabel(2)
     IfTimeElapsed(1, seconds=0.5)
-    IfObjectHealthValueComparison(2, obj__projectile_id, ComparisonType.LessThan, value=999)
+    IfObjectHealthValueComparison(2, obj__source_entity, ComparisonType.LessThan, value=999)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -11463,9 +11463,9 @@ def Event_12906660(_, obj__projectile_id: int):
 
     # --- 3 --- #
     DefineLabel(3)
-    DeleteObjectVFX(obj__projectile_id)
+    DeleteObjectVFX(obj__source_entity)
     IfFramesElapsed(0, frames=1)
-    DestroyObject(obj__projectile_id)
+    DestroyObject(obj__source_entity)
 
 
 @RestartOnRest(12906726)
@@ -13308,7 +13308,7 @@ def Event_12906789(
     DefineLabel(0)
     IfFlagDisabled(2, flag)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2900010, entity=obj)
+    IfActionButtonParamActivated(2, action_button_id=2900010, entity=obj)
     IfFlagEnabled(3, flag)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -13341,7 +13341,7 @@ def Event_12906790(_, region: int, entity: int, flag: int, flag_1: int, flag_2: 
     IfFlagEnabled(1, flag_1)
     IfFlagEnabled(1, flag_2)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, region, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -13560,7 +13560,7 @@ def Event_12906796(
     DefineLabel(0)
     IfFlagDisabled(2, flag)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2900010, entity=obj)
+    IfActionButtonParamActivated(2, action_button_id=2900010, entity=obj)
     IfFlagEnabled(3, flag)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -13602,7 +13602,7 @@ def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int
     DefineLabel(0)
     IfFlagDisabled(2, flag)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2900010, entity=obj)
+    IfActionButtonParamActivated(2, action_button_id=2900010, entity=obj)
     IfFlagEnabled(3, flag)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -13635,7 +13635,7 @@ def Event_12906802(_, target_entity: int, entity: int, flag: int, flag_1: int, f
     IfFlagEnabled(1, flag_1)
     IfFlagEnabled(1, flag_2)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2900010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2900010, entity=entity)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -15499,21 +15499,21 @@ def Event_12906868(_, character: int):
 
 
 @RestartOnRest(12906829)
-def Event_12906829(_, character__copy_draw_parent: int, character: int, model_point: int, flag: int):
+def Event_12906829(_, character: int, character_1: int, model_point: int, flag: int):
     """Event 12906829"""
     EndIfFlagEnabled(flag)
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    IfCharacterBackreadEnabled(0, character__copy_draw_parent)
-    DisableGravity(character)
+    IfCharacterBackreadEnabled(0, character)
+    DisableGravity(character_1)
 
     # --- 0 --- #
     DefineLabel(0)
     Move(
-        character,
-        destination=character__copy_draw_parent,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=model_point,
-        copy_draw_parent=character__copy_draw_parent,
+        copy_draw_parent=character,
     )
     Restart()
 
@@ -15564,17 +15564,17 @@ def Event_12904884(_, character: int):
 
 
 @RestartOnRest(12904734)
-def Event_12904734(_, character__projectile_id: int):
+def Event_12904734(_, character__source_entity: int):
     """Event 12904734"""
     WaitFrames(frames=1)
-    IfCharacterDead(1, character__projectile_id)
+    IfCharacterDead(1, character__source_entity)
     EndIfConditionTrue(1)
-    IfCharacterHasSpecialEffect(2, character__projectile_id, 5650)
-    IfHealthValueLessThan(2, character__projectile_id, value=0)
+    IfCharacterHasSpecialEffect(2, character__source_entity, 5650)
+    IfHealthValueLessThan(2, character__source_entity, value=0)
     IfConditionTrue(0, input_condition=2)
     ShootProjectile(
         owner_entity=2900000,
-        projectile_id=character__projectile_id,
+        source_entity=character__source_entity,
         model_point=6,
         behavior_id=225100310,
         launch_angle_x=0,
@@ -16308,7 +16308,7 @@ def Event_12906966(
     IfFlagDisabled(2, dismissal_flag)
     IfFlagState(2, FlagState.On, FlagType.RelativeToThisEventSlot, 14)
     IfFlagDisabled(2, flag)
-    IfActionButtonParam(2, action_button_id=action_button_id, entity=character)
+    IfActionButtonParamActivated(2, action_button_id=action_button_id, entity=character)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)

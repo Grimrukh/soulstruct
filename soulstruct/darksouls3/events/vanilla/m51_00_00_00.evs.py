@@ -1457,7 +1457,7 @@ def Event15105500():
     DisableGravity(5100890)
     DisableCharacterCollision(5100890)
     IfPlayerInOwnWorld(1)
-    IfActionButtonParam(1, action_button_id=9390, entity=5100890)
+    IfActionButtonParamActivated(1, action_button_id=9390, entity=5100890)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(15100500)
     EnableFlag(15110001)
@@ -1571,7 +1571,7 @@ def Event15105525():
     """ 15105525: Event 15105525 """
     DisableNetworkSync()
     IfFlagDisabled(1, 15100520)
-    IfActionButtonParam(1, action_button_id=9391, entity=5101525)
+    IfActionButtonParamActivated(1, action_button_id=9391, entity=5101525)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10012810,
@@ -2029,7 +2029,7 @@ def Event15105820():
     EndIfFlagEnabled(15100800)
     EndIfPlayerNotInOwnWorld()
     IfPlayerInOwnWorld(1)
-    IfStandingOnCollision(1, 5104810)
+    IfPlayerStandingOnCollision(1, 5104810)
     IfFlagDisabled(1, 15105803)
     IfConditionTrue(0, input_condition=1)
     AddSpecialEffect(PLAYER, 9020)

@@ -43,7 +43,7 @@ def Preconstructor():
 def Event_12110100():
     """Event 12110100"""
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=2110000, entity=2110700)
+    IfActionButtonParamActivated(0, action_button_id=2110000, entity=2110700)
     DisplayDialog(text=10010190, number_buttons=NumberButtons.OneButton)
     Restart()
 
@@ -70,7 +70,7 @@ def Event_12110300():
     EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(2111100, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2110010, entity=2111100)
+    IfActionButtonParamActivated(0, action_button_id=2110010, entity=2111100)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110800, host_only=False)
     DeleteObjectVFX(2111100)
@@ -82,7 +82,7 @@ def Event_12110301():
     EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(2111101, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2110011, entity=2111101)
+    IfActionButtonParamActivated(0, action_button_id=2110011, entity=2111101)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110810, host_only=False)
     DeleteObjectVFX(2111101)
@@ -94,7 +94,7 @@ def Event_12110302():
     EndIfThisEventFlagEnabled()
     EndIfClient()
     CreateObjectVFX(2111102, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2110012, entity=2111102)
+    IfActionButtonParamActivated(0, action_button_id=2110012, entity=2111102)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2110000, host_only=False)
     DeleteObjectVFX(2111102)
@@ -134,7 +134,7 @@ def Event_12110990():
     """Event 12110990"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 2113500)
+    IfPlayerStandingOnCollision(0, 2113500)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
         name=0,

@@ -139,14 +139,10 @@ class ComparisonType(IntEnum):
     LessThanOrEqual = 5
 
 
-class CutsceneFlags(IntEnum):
+class CutsceneFlags(BaseEMEVDFlags):
     """Bit flags, stored in one byte."""
     Unskippable = 0b0000_0010  # 2
     FadeOut = 0b0000_1000  # 8
-    # TODO: Move these to `eldenring` (or `sekiro` if appropriate)
-    Unknown16 = 0b0001_0000  # 16
-    Unknown32 = 0b0010_0000  # 32
-    Unknown64 = 0b0100_0000  # 64
 
 
 class DamageTargetType(IntEnum):

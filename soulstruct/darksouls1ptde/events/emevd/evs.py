@@ -1,8 +1,8 @@
 __all__ = ["EVSParser"]
 
 from soulstruct.base.events.emevd.evs import EVSParser as _BaseEVSParser
-from soulstruct.games import DarkSoulsPTDEType
 from soulstruct.darksouls1ptde import events, game_types
+from soulstruct.games import DarkSoulsPTDEType
 from .compiler import COMPILER, compile_instruction, compile_game_object_test
 from .emedf import EMEDF_ALIASES
 

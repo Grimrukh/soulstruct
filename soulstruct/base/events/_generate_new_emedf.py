@@ -96,7 +96,11 @@ def _generate(old_instr_module, emedf_json_path):
                             if arg_default == "None":
                                 arg_dict["default"] = "TODO"
                             else:
-                                arg_dict["default"] = literal_eval(arg_default)
+                                try:
+                                    arg_dict["default"] = literal_eval(arg_default)
+                                except ValueError:
+                                    print(arg_default)
+                                    raise
                                 if arg_dict["type"] is None:
                                     arg_dict["type"] = type(arg_dict["default"]).__name__
                         else:
@@ -133,6 +137,6 @@ def _generate(old_instr_module, emedf_json_path):
 
 if __name__ == '__main__':
     _generate(
-        PACKAGE_PATH("bloodborne/events/emevd/instructions.py"),
-        PACKAGE_PATH("bloodborne/events/emevd/bb-common.emedf.json"),
+        PACKAGE_PATH("darksouls3/events/emevd/instructions.py"),
+        PACKAGE_PATH("darksouls3/events/emevd/ds3-common.emedf.json"),
     )

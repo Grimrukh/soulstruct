@@ -8,7 +8,7 @@ import typing as tp
 from soulstruct.base.events.emevd.decompiler import (
     base_decompiler_instruction,
     assemble_arg_string,
-    base_run_event,
+    base_decompile_run_event,
 )
 from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.darksouls1ptde.maps.constants import get_map_variable_name
@@ -77,7 +77,7 @@ def decompile_instruction(
 def _RunEvent(
     slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
 ):
-    return base_run_event(slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager)
+    return base_decompile_run_event(slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager)
 
 
 @_decompile(2002, 2)

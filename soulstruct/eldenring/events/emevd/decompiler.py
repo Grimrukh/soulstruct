@@ -135,7 +135,7 @@ class InstructionDecompiler(_BaseDecompiler):
             return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=})"
         return f"IfAttackedWithDamageType({condition}, {attacked_entity=}, {attacker=}, {damage_type=})"
 
-    @parse_parameters("IfActionButtonParam", no_name_count=1)
+    @parse_parameters("IfActionButtonParamActivated", no_name_count=1)
     def _3_24(self, condition, action_button_id, entity: PlayerEntity):
         pass
 

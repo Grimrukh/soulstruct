@@ -662,7 +662,7 @@ def Event13900900():
     EndIfPlayerNotInOwnWorld()
     EndIfThisEventSlotFlagEnabled()
     CreateObjectVFX(61, obj=3901250, model_point=90)
-    IfActionButtonParam(0, action_button_id=4200, entity=3901250)
+    IfActionButtonParamActivated(0, action_button_id=4200, entity=3901250)
     ForceAnimation(PLAYER, 60070, skip_transition=True)
     SkipLinesIfFlagEnabled(1, 6073)
     AwardGestureItem(gesture_id=23, item_type=ItemType.Good, item_id=9024)

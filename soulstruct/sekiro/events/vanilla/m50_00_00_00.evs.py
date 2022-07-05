@@ -279,7 +279,7 @@ def Event15005100():
     """ 15005100: Event 15005100 """
     EndIfPlayerNotInOwnWorld()
     IfFlagEnabled(1, 15000800)
-    IfActionButtonParam(1, action_button_id=9380, entity=5001100)
+    IfActionButtonParamActivated(1, action_button_id=9380, entity=5001100)
     IfConditionTrue(0, input_condition=1)
     IfPlayerHasGood(2, 2156, including_box=False)
     GotoIfConditionTrue(Label.L0, input_condition=2)

@@ -619,7 +619,7 @@ def KillCharacterIfLowInsight(_, character: CharacterTyping, insight_threshold: 
 def Event12414100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12414100: Event 12414100 """
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=arg_4_7, entity=arg_0_3)
+    IfActionButtonParamActivated(0, action_button_id=arg_4_7, entity=arg_0_3)
     DisplayDialog(
         arg_8_11,
         anchor_entity=-1,
@@ -750,7 +750,7 @@ def Event12415080(
 def Event12415020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12415020: Event 12415020 """
     DisableNetworkSync()
-    IfActionButtonParam(-1, action_button_id=arg_0_3, entity=arg_4_7)
+    IfActionButtonParamActivated(-1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagEnabled(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     EndIfFlagEnabled(arg_8_11)
@@ -771,7 +771,7 @@ def Event12410200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     Wait(1.0)
     DisableObjectActivation(arg_4_7, obj_act_id=2410000)
     DisableObjectActivation(arg_4_7, obj_act_id=2410001)
-    IfActionButtonParam(0, action_button_id=7100, entity=arg_4_7)
+    IfActionButtonParamActivated(0, action_button_id=7100, entity=arg_4_7)
     DisplayDialog(
         10010172,
         anchor_entity=-1,
@@ -801,7 +801,7 @@ def Event12410100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12410100: Event 12410100 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_8_11)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
+    IfActionButtonParamActivated(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagEnabled(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -882,7 +882,7 @@ def Event12410151():
     IfFlagDisabled(1, 12411000)
     EndIfConditionTrue(1)
     DisableObjectActivation(2411304, obj_act_id=2410080)
-    IfActionButtonParam(0, action_button_id=7002, entity=2411304)
+    IfActionButtonParamActivated(0, action_button_id=7002, entity=2411304)
     IfPlayGoState(2, PlayGoState.DownloadedFirstChunk)
     GotoIfConditionFalse(Label.L0, input_condition=2)
     DisplayDialog(
@@ -1398,7 +1398,7 @@ def EnterClericBeastFog():
     DefineLabel(0)
     IfFlagDisabled(2, Flags.ClericBeastDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2410040, entity=Objects.ClericBeastFog)
+    IfActionButtonParamActivated(2, action_button_id=2410040, entity=Objects.ClericBeastFog)
     IfFlagEnabled(3, Flags.ClericBeastDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1426,7 +1426,7 @@ def EnterClericBeastFogAsSummon():
     IfFlagEnabled(1, Flags.ClericBeastFirstTimeDone)
     IfFlagEnabled(1, Flags.ClericBeastFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2410040, entity=Objects.ClericBeastFog)
+    IfActionButtonParamActivated(1, action_button_id=2410040, entity=Objects.ClericBeastFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2412800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1784,7 +1784,7 @@ def EnterFatherGascoigneFog():
     DefineLabel(0)
     IfFlagDisabled(2, Flags.GascoigneDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2410041, entity=2411810)
+    IfActionButtonParamActivated(2, action_button_id=2410041, entity=2411810)
     IfFlagEnabled(3, Flags.GascoigneDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1811,7 +1811,7 @@ def EnterFatherGascoigneFogAsSummon():
     IfFlagEnabled(1, Flags.GascoigneFirstTimeDone)
     IfFlagEnabled(1, Flags.GascoigneFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2410041, entity=2411810)
+    IfActionButtonParamActivated(1, action_button_id=2410041, entity=2411810)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2412810, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -2813,7 +2813,7 @@ def Event12410510():
     # --- 0 --- #
     DefineLabel(0)
     CreateObjectVFX(900201, obj=2411200, model_point=200)
-    IfActionButtonParam(0, action_button_id=2410060, entity=2411200)
+    IfActionButtonParamActivated(0, action_button_id=2410060, entity=2411200)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2410990, host_only=False)
     DeleteObjectVFX(2411200, erase_root=True)
@@ -3872,7 +3872,7 @@ def Event12410750(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     IfFlagEnabled(0, 72410382)
     DisableFlag(arg_0_3)
     IfFlagDisabled(1, arg_0_3)
-    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_8_11)
+    IfActionButtonParamActivated(1, action_button_id=arg_4_7, entity=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
@@ -4597,7 +4597,7 @@ def Event12410850(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EndIfConditionFalse(15)
     DisableFlag(arg_0_3)
     IfFlagDisabled(1, arg_0_3)
-    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_8_11)
+    IfActionButtonParamActivated(1, action_button_id=arg_4_7, entity=arg_8_11)
     IfConditionTrue(0, input_condition=1)
     Move(PLAYER, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=210, short_move=True)
     ForceAnimation(PLAYER, 101320)
@@ -4868,17 +4868,17 @@ def Event12410324(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     """ 12410324: Event 12410324 """
     DisableNetworkSync()
     IfFlagDisabled(1, arg_8_11)
-    IfActionButtonParam(1, action_button_id=7100, entity=arg_12_15)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=arg_12_15)
     IfFlagDisabled(2, arg_8_11)
-    IfActionButtonParam(2, action_button_id=7100, entity=arg_16_19)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=arg_16_19)
     IfFlagEnabled(3, arg_0_3)
-    IfActionButtonParam(3, action_button_id=7100, entity=arg_12_15)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=arg_12_15)
     IfFlagEnabled(4, arg_0_3)
-    IfActionButtonParam(4, action_button_id=7100, entity=arg_16_19)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=arg_16_19)
     IfFlagEnabled(5, arg_4_7)
-    IfActionButtonParam(5, action_button_id=7100, entity=arg_12_15)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=arg_12_15)
     IfFlagDisabled(6, arg_4_7)
-    IfActionButtonParam(6, action_button_id=7100, entity=arg_16_19)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=arg_16_19)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -5090,7 +5090,7 @@ def Event12414410(
     IfFlagDisabled(2, arg_16_19)
     IfFlagEnabled(2, arg_20_23)
     IfFlagDisabled(2, arg_24_27)
-    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
+    IfActionButtonParamActivated(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -5578,7 +5578,7 @@ def Event12410285(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     Wait(1.0)
     RegisterLadder(start_climbing_flag=arg_0_3, stop_climbing_flag=arg_4_7, obj=arg_8_11)
     DisableObjectActivation(arg_12_15, obj_act_id=2410000)
-    IfActionButtonParam(0, action_button_id=7100, entity=arg_12_15)
+    IfActionButtonParamActivated(0, action_button_id=7100, entity=arg_12_15)
     DisplayDialog(
         10010172,
         anchor_entity=-1,
@@ -5794,7 +5794,7 @@ def Event12410490(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12410990():
     """ 12410990: Event 12410990 """
     EndIfThisEventFlagEnabled()
-    IfStandingOnCollision(0, 2413500)
+    IfPlayerStandingOnCollision(0, 2413500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 148, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 148, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 148, PlayLogMultiplayerType.HostOnly)
@@ -5805,7 +5805,7 @@ def Event12410995():
     """ 12410995: Event 12410995 """
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(1, 2414110)
+    IfPlayerStandingOnCollision(1, 2414110)
     IfCharacterOutsideRegion(1, PLAYER, region=2412900)
     IfConditionTrue(0, input_condition=1)
     RunEvent(9350, 0, args=(1,))

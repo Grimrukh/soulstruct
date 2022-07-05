@@ -194,7 +194,19 @@ def bloodborne():
     )
 
 
+def darksouls3():
+    from soulstruct.darksouls3.events.emevd import compiler
+    from soulstruct.darksouls3.events.emevd.emedf import EMEDF
+    generate_instr_pyi(
+        "darksouls3",
+        EMEDF,
+        PACKAGE_PATH("darksouls3/events/instructions.pyi"),
+        compiler,
+    )
+
+
 if __name__ == '__main__':
     darksouls1ptde()
     darksouls1r()
     bloodborne()
+    darksouls3()

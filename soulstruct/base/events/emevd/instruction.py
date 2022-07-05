@@ -214,9 +214,7 @@ class Instruction(abc.ABC):
             evs_arg_name = list(self.EMEDF[self.category, self.index]["args"])[argument_index]
             if evs_arg_name == "slot":
                 # Not permitted as an event argument (conflicts with `RunEvent` slot).
-                raise ValueError(
-                    f"Internal error: `slot` is not a valid instruction argument name in {self.category}[{self.index}]."
-                )
+                evs_arg_name = "event_slot"
             default_arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
 
             if value_to_overwrite not in permitted and argument_byte_type != "s":

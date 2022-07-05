@@ -312,34 +312,34 @@ def Constructor():
     Event_12205150(4, 2200212, 7014, 0, 0.0)
     Event_12205160(0, region=2202040, obj=2201401, character=2200410, region_1=2200400)
     Event_12205160(1, region=2202041, obj=2201406, character=2200411, region_1=2200401)
-    Event_12205170(0, obj__projectile_id=2201400, owner_entity=2200420)
-    Event_12205170(1, obj__projectile_id=2201401, owner_entity=2200420)
-    Event_12205170(2, obj__projectile_id=2201402, owner_entity=2200420)
-    Event_12205170(3, obj__projectile_id=2201403, owner_entity=2200420)
-    Event_12205170(4, obj__projectile_id=2201404, owner_entity=2200420)
-    Event_12205170(5, obj__projectile_id=2201405, owner_entity=2200420)
-    Event_12205170(6, obj__projectile_id=2201406, owner_entity=2200420)
-    Event_12205170(7, obj__projectile_id=2201407, owner_entity=2200422)
-    Event_12205170(8, obj__projectile_id=2201408, owner_entity=2200422)
-    Event_12205170(9, obj__projectile_id=2201409, owner_entity=2200422)
-    Event_12205170(10, obj__projectile_id=2201410, owner_entity=2200421)
-    Event_12205170(11, obj__projectile_id=2201411, owner_entity=2200421)
-    Event_12205170(12, obj__projectile_id=2201412, owner_entity=2200421)
-    Event_12205170(13, obj__projectile_id=2201413, owner_entity=2200421)
-    Event_12205170(14, obj__projectile_id=2201414, owner_entity=2200421)
-    Event_12205170(15, obj__projectile_id=2201415, owner_entity=2200421)
-    Event_12205170(16, obj__projectile_id=2201416, owner_entity=2200421)
-    Event_12205170(17, obj__projectile_id=2201417, owner_entity=2200421)
-    Event_12205170(18, obj__projectile_id=2201418, owner_entity=2200421)
-    Event_12205170(19, obj__projectile_id=2201419, owner_entity=2200421)
-    Event_12205170(20, obj__projectile_id=2201420, owner_entity=2200420)
-    Event_12205170(21, obj__projectile_id=2201421, owner_entity=2200420)
-    Event_12205170(22, obj__projectile_id=2201422, owner_entity=2200421)
-    Event_12205170(23, obj__projectile_id=2201423, owner_entity=2200421)
-    Event_12205170(24, obj__projectile_id=2201424, owner_entity=2200421)
-    Event_12205170(25, obj__projectile_id=2201425, owner_entity=2200421)
-    Event_12205170(26, obj__projectile_id=2201426, owner_entity=2200421)
-    Event_12205170(27, obj__projectile_id=2201427, owner_entity=2200421)
+    Event_12205170(0, obj__source_entity=2201400, owner_entity=2200420)
+    Event_12205170(1, obj__source_entity=2201401, owner_entity=2200420)
+    Event_12205170(2, obj__source_entity=2201402, owner_entity=2200420)
+    Event_12205170(3, obj__source_entity=2201403, owner_entity=2200420)
+    Event_12205170(4, obj__source_entity=2201404, owner_entity=2200420)
+    Event_12205170(5, obj__source_entity=2201405, owner_entity=2200420)
+    Event_12205170(6, obj__source_entity=2201406, owner_entity=2200420)
+    Event_12205170(7, obj__source_entity=2201407, owner_entity=2200422)
+    Event_12205170(8, obj__source_entity=2201408, owner_entity=2200422)
+    Event_12205170(9, obj__source_entity=2201409, owner_entity=2200422)
+    Event_12205170(10, obj__source_entity=2201410, owner_entity=2200421)
+    Event_12205170(11, obj__source_entity=2201411, owner_entity=2200421)
+    Event_12205170(12, obj__source_entity=2201412, owner_entity=2200421)
+    Event_12205170(13, obj__source_entity=2201413, owner_entity=2200421)
+    Event_12205170(14, obj__source_entity=2201414, owner_entity=2200421)
+    Event_12205170(15, obj__source_entity=2201415, owner_entity=2200421)
+    Event_12205170(16, obj__source_entity=2201416, owner_entity=2200421)
+    Event_12205170(17, obj__source_entity=2201417, owner_entity=2200421)
+    Event_12205170(18, obj__source_entity=2201418, owner_entity=2200421)
+    Event_12205170(19, obj__source_entity=2201419, owner_entity=2200421)
+    Event_12205170(20, obj__source_entity=2201420, owner_entity=2200420)
+    Event_12205170(21, obj__source_entity=2201421, owner_entity=2200420)
+    Event_12205170(22, obj__source_entity=2201422, owner_entity=2200421)
+    Event_12205170(23, obj__source_entity=2201423, owner_entity=2200421)
+    Event_12205170(24, obj__source_entity=2201424, owner_entity=2200421)
+    Event_12205170(25, obj__source_entity=2201425, owner_entity=2200421)
+    Event_12205170(26, obj__source_entity=2201426, owner_entity=2200421)
+    Event_12205170(27, obj__source_entity=2201427, owner_entity=2200421)
     Event_12205200(0, character=2200200)
     Event_12205200(1, character=2200201)
     Event_12205200(2, character=2200202)
@@ -565,7 +565,7 @@ def Event_12204890():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2200800, entity=2201800)
+    IfActionButtonParamActivated(2, action_button_id=2200800, entity=2201800)
     IfFlagDisabled(2, 12201800)
     IfFlagEnabled(3, 12201800)
     IfConditionTrue(-1, input_condition=2)
@@ -594,7 +594,7 @@ def Event_12204891():
     IfFlagEnabled(1, 12201802)
     IfFlagEnabled(1, 12204800)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2200800, entity=2201800)
+    IfActionButtonParamActivated(1, action_button_id=2200800, entity=2201800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2202800, animation=101130)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -1349,8 +1349,8 @@ def Event_12200111():
     """Event 12200111"""
     DisableNetworkSync()
     EndIfFlagEnabled(12200110)
-    IfActionButtonParam(1, action_button_id=2200000, entity=2201002)
-    IfActionButtonParam(2, action_button_id=2200001, entity=2201002)
+    IfActionButtonParamActivated(1, action_button_id=2200000, entity=2201002)
+    IfActionButtonParamActivated(2, action_button_id=2200001, entity=2201002)
     IfFlagEnabled(3, 12200110)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1367,7 +1367,7 @@ def Event_12200112():
     """Event 12200112"""
     DisableNetworkSync()
     IfFlagEnabled(1, 12200110)
-    IfActionButtonParam(1, action_button_id=7100, entity=2201220)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2201220)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(text=10010172, anchor_entity=2201220, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
@@ -1487,19 +1487,19 @@ def Event_12200124():
     """Event 12200124"""
     DisableNetworkSync()
     IfFlagDisabled(1, 12200121)
-    IfActionButtonParam(1, action_button_id=7100, entity=2201200)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2201200)
     IfFlagDisabled(2, 12200121)
-    IfActionButtonParam(2, action_button_id=7100, entity=2201201)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=2201201)
     IfFlagDisabled(3, 12200126)
     IfFlagDisabled(3, 12200125)
-    IfActionButtonParam(3, action_button_id=7100, entity=2201200)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=2201200)
     IfFlagDisabled(4, 12200126)
     IfFlagEnabled(4, 12200125)
-    IfActionButtonParam(4, action_button_id=7100, entity=2201201)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=2201201)
     IfFlagEnabled(5, 12200126)
-    IfActionButtonParam(5, action_button_id=7100, entity=2201200)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=2201200)
     IfFlagEnabled(6, 12200126)
-    IfActionButtonParam(6, action_button_id=7100, entity=2201201)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=2201201)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1544,7 +1544,7 @@ def Event_12200131():
     EndIfFlagEnabled(12507810)
     IfFlagEnabled(1, 12200130)
     IfCharacterAlive(1, 2201310)
-    IfActionButtonParam(1, action_button_id=2200010, entity=2201300)
+    IfActionButtonParamActivated(1, action_button_id=2200010, entity=2201300)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(9180)
     WaitFrames(frames=1)
@@ -2148,46 +2148,46 @@ def Event_12205160(_, region: int, obj: int, character: int, region_1: int):
 
 
 @RestartOnRest(12205170)
-def Event_12205170(_, obj__projectile_id: int, owner_entity: int):
+def Event_12205170(_, obj__source_entity: int, owner_entity: int):
     """Event 12205170"""
     GotoIfThisEventSlotFlagDisabled(Label.L1)
-    PostDestruction(obj__projectile_id)
+    PostDestruction(obj__source_entity)
     End()
 
     # --- 1 --- #
     DefineLabel(1)
-    IfAttackedWithDamageType(-1, attacked_entity=obj__projectile_id, damage_type=DamageType.Fire)
-    IfAttackedWithDamageType(-1, attacked_entity=obj__projectile_id, damage_type=DamageType.NoType)
+    IfAttackedWithDamageType(-1, attacked_entity=obj__source_entity, damage_type=DamageType.Fire)
+    IfAttackedWithDamageType(-1, attacked_entity=obj__source_entity, damage_type=DamageType.NoType)
     IfConditionTrue(1, input_condition=-1)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Magic)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Lightning)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Blunt)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Slash)
-    IfAttackedWithDamageType(-2, attacked_entity=obj__projectile_id, damage_type=DamageType.Thrust)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Magic)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Lightning)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Blunt)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Slash)
+    IfAttackedWithDamageType(-2, attacked_entity=obj__source_entity, damage_type=DamageType.Thrust)
     IfConditionTrue(2, input_condition=-2)
-    IfObjectHealthValueComparison(2, obj__projectile_id, ComparisonType.LessThanOrEqual, value=999)
+    IfObjectHealthValueComparison(2, obj__source_entity, ComparisonType.LessThanOrEqual, value=999)
     IfConditionTrue(-3, input_condition=1)
     IfConditionTrue(-3, input_condition=2)
     IfConditionTrue(0, input_condition=-3)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=1)
     ShootProjectile(
         owner_entity=owner_entity,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=owner_entity,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=-1,
         behavior_id=6055,
         launch_angle_x=270,
@@ -2196,15 +2196,15 @@ def Event_12205170(_, obj__projectile_id: int, owner_entity: int):
     )
     ShootProjectile(
         owner_entity=owner_entity,
-        projectile_id=obj__projectile_id,
+        source_entity=obj__source_entity,
         model_point=-1,
         behavior_id=6071,
         launch_angle_x=0,
         launch_angle_y=90,
         launch_angle_z=0,
     )
-    DestroyObject(obj__projectile_id)
-    PlaySoundEffect(obj__projectile_id, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj__source_entity)
+    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(12205200)
@@ -2476,7 +2476,7 @@ def Event_12205300(_, sound_id: int, flag: int, flag_1: int, flag_2: int):
 def Event_12200990():
     """Event 12200990"""
     EndIfThisEventFlagEnabled()
-    IfStandingOnCollision(0, 2203500)
+    IfPlayerStandingOnCollision(0, 2203500)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
         name=214,

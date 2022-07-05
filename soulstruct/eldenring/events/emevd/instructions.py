@@ -348,12 +348,12 @@ __all__ = [
     "IfObjectDestructionState",
     "IfObjectDestroyed",
     "IfObjectNotDestroyed",
-    "IfObjectDamagedBy",
+    "IfObjectDamaged",
     "IfObjectActivated",
     "IfObjectHealthValueComparison",
-    "IfMovingOnCollision",
-    "IfRunningOnCollision",
-    "IfStandingOnCollision",
+    "IfPlayerMovingOnCollision",
+    "IfPlayerRunningOnCollision",
+    "IfPlayerStandingOnCollision",
     "SkipLinesIfComparison",
     "SkipLinesIfEqual",
     "SkipLinesIfNotEqual",
@@ -454,7 +454,7 @@ __all__ = [
     "IfLeavingSession",
     "IfFailedToCreateSession",
     "IfAttackedWithDamageType",
-    "IfActionButtonParam",
+    "IfActionButtonParamActivated",
     "IfPlayerOwnWorldState",
     "IfPlayerInOwnWorld",
     "IfPlayerNotInOwnWorld",
@@ -935,7 +935,7 @@ def IfAttackedWithDamageType(
     return to_numeric(instruction_info, condition, attacked_entity, attacker, damage_type)
 
 
-def IfActionButtonParam(condition: int, action_button_id: int, entity: CoordEntityTyping):
+def IfActionButtonParamActivated(condition: int, action_button_id: int, entity: CoordEntityTyping):
     """Streamlined version of `IfActionButton` that uses information from an `ActionButtonParam` entry."""
     instruction_info = (3, 24, [0, -1, 0])
     return to_numeric(instruction_info, condition, action_button_id, entity)

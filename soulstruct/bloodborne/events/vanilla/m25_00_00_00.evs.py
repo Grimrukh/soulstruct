@@ -639,7 +639,7 @@ def Event_12500020():
     """Event 12500020"""
     EndIfClient()
     IfFlagEnabled(0, 1042)
-    IfActionButtonParam(0, action_button_id=2500020, entity=2501016)
+    IfActionButtonParamActivated(0, action_button_id=2500020, entity=2501016)
     IfPlayerDoesNotHaveGood(1, 4305)
     GotoIfConditionTrue(Label.L0, input_condition=1)
     DisplayDialog(text=10010150, number_buttons=NumberButtons.OneButton)
@@ -822,11 +822,11 @@ def Event_12500072(_, entity: int, state: uchar):
     """Event 12500072"""
     DisableNetworkSync()
     IfFlagRangeAllDisabled(1, flag_range=(12500076, 12500077))
-    IfActionButtonParam(1, action_button_id=2500010, entity=entity)
+    IfActionButtonParamActivated(1, action_button_id=2500010, entity=entity)
     IfFlagEnabled(2, 12505074)
-    IfActionButtonParam(2, action_button_id=2500010, entity=entity)
+    IfActionButtonParamActivated(2, action_button_id=2500010, entity=entity)
     IfFlagState(3, state, FlagType.Absolute, 12500074)
-    IfActionButtonParam(3, action_button_id=2500010, entity=entity)
+    IfActionButtonParamActivated(3, action_button_id=2500010, entity=entity)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1368,7 +1368,7 @@ def Event_12500810():
     IfCharacterHuman(1, PLAYER)
     IfFlagEnabled(1, 12501800)
     IfCharacterInsideRegion(1, PLAYER, region=2502806)
-    IfPlayerArmorType(
+    IfPlayerArmorInRange(
         1,
         armor_type=ArmorType.Head,
         required_armor_range_first=250000,
@@ -1582,7 +1582,7 @@ def Event_12501803():
     EndIfThisEventFlagEnabled()
     IfFlagEnabled(0, 12501800)
     CreateObjectVFX(2500850, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2500030, entity=2500850)
+    IfActionButtonParamActivated(0, action_button_id=2500030, entity=2500850)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2502000, host_only=False)
     DeleteObjectVFX(2500850)
@@ -1606,7 +1606,7 @@ def Event_12500600():
     EndIfThisEventFlagEnabled()
     IfFlagEnabled(0, 12500810)
     CreateObjectVFX(2500851, vfx_id=200, model_point=900201)
-    IfActionButtonParam(0, action_button_id=2500040, entity=2500851)
+    IfActionButtonParamActivated(0, action_button_id=2500040, entity=2500851)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2500910, host_only=False)
     DeleteObjectVFX(2500851)
@@ -1632,7 +1632,7 @@ def Event_12504810():
     ForceAnimation(2500800, 0)
     IfFlagDisabled(1, 12501800)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2500800, entity=2501800)
+    IfActionButtonParamActivated(2, action_button_id=2500800, entity=2501800)
     IfFlagEnabled(3, 12501800)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1660,7 +1660,7 @@ def Event_12504811():
     IfFlagEnabled(1, 12501802)
     IfFlagEnabled(1, 12504800)
     IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2500800, entity=2501800)
+    IfActionButtonParamActivated(1, action_button_id=2500800, entity=2501800)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2502500, animation=101130, wait_for_completion=True)
     IfCharacterWhitePhantom(2, PLAYER)
@@ -1852,7 +1852,7 @@ def Event_12504807():
     IfCharacterHasSpecialEffect(0, 2500800, 5633)
     ShootProjectile(
         owner_entity=2500802,
-        projectile_id=2500800,
+        source_entity=2500800,
         model_point=6,
         behavior_id=223200590,
         launch_angle_x=0,
@@ -1978,7 +1978,7 @@ def Event_12500090():
     """Event 12500090"""
     EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 2503500)
+    IfPlayerStandingOnCollision(0, 2503500)
     PlayLogParameterOutput(
         category=PlayerPlayLogParameter.PrimaryParameters,
         name=282,

@@ -827,7 +827,7 @@ def EnterBloodStarvedBeastFog():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2300800, entity=Objects.BossFog)
+    IfActionButtonParamActivated(2, action_button_id=2300800, entity=Objects.BossFog)
     IfFlagDisabled(2, Flags.BloodStarvedBeastDead)
     IfFlagEnabled(3, Flags.BloodStarvedBeastDead)
     IfConditionTrue(-1, input_condition=2)
@@ -855,7 +855,7 @@ def EnterBloodStarvedBeastFogAsSummon():
     IfFlagEnabled(1, Flags.BloodStarvedBeastFirstTimeDone)
     IfFlagEnabled(1, 12304800)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2300800, entity=Objects.BossFog)
+    IfActionButtonParamActivated(1, action_button_id=2300800, entity=Objects.BossFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2302800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1135,7 +1135,7 @@ def Event12304730():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2300800, entity=2301810)
+    IfActionButtonParamActivated(2, action_button_id=2300800, entity=2301810)
     IfFlagDisabled(2, Flags.DarkbeastPaarlDead)
     IfFlagEnabled(3, Flags.DarkbeastPaarlDead)
     IfConditionTrue(-1, input_condition=2)
@@ -1165,7 +1165,7 @@ def Event12304731():
     IfFlagEnabled(1, Flags.DarkbeastPaarlFirstTimeDone)
     IfFlagEnabled(1, 12304700)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2300800, entity=2301810)
+    IfActionButtonParamActivated(1, action_button_id=2300800, entity=2301810)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2302810, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1528,7 +1528,7 @@ def Event12304410(
     IfFlagDisabled(2, arg_16_19)
     IfFlagEnabled(2, arg_20_23)
     IfFlagDisabled(2, arg_24_27)
-    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
+    IfActionButtonParamActivated(2, action_button_id=arg_28_31, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
@@ -1747,7 +1747,7 @@ def Event12300110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12300110: Event 12300110 """
     DisableNetworkSync()
     EndIfFlagEnabled(arg_8_11)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
+    IfActionButtonParamActivated(1, action_button_id=arg_0_3, entity=arg_4_7)
     IfFlagEnabled(2, arg_8_11)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1789,7 +1789,7 @@ def Event12300130():
     IfCharacterHuman(1, PLAYER)
     EndIfConditionFalse(1)
     CreateObjectVFX(900201, obj=2301500, model_point=200)
-    IfActionButtonParam(0, action_button_id=2300000, entity=2301500)
+    IfActionButtonParamActivated(0, action_button_id=2300000, entity=2301500)
     AwardItemLot(2300170, host_only=False)
     DeleteObjectVFX(2301500, erase_root=True)
 
@@ -1842,7 +1842,7 @@ def Event12300190():
     """ 12300190: Event 12300190 """
     EndIfThisEventFlagEnabled()
     IfCharacterHuman(1, PLAYER)
-    IfActionButtonParam(1, action_button_id=2300020, entity=2301020)
+    IfActionButtonParamActivated(1, action_button_id=2300020, entity=2301020)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(2, PLAYER)
     EndIfConditionFalse(2)
@@ -3048,7 +3048,7 @@ def Event12300753():
 def Event12300990():
     """ 12300990: Event 12300990 """
     EndIfThisEventFlagEnabled()
-    IfStandingOnCollision(0, 2303500)
+    IfPlayerStandingOnCollision(0, 2303500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 154, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 154, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 154, PlayLogMultiplayerType.HostOnly)
