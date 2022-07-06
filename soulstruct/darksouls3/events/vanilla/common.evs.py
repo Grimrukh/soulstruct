@@ -6,285 +6,373 @@ strings:
 
 """
 from soulstruct.darksouls3.events import *
+from soulstruct.darksouls3.events.instructions import *
 
 
+@NeverRestart(0)
 def Constructor():
-    """ 0: Event 0 """
-    RunEvent(200)
-    RunEvent(230)
-    RunEvent(9570, slot=0, args=(4500, 3740))
-    RunEvent(9570, slot=1, args=(4510, 3750))
-    EndIfClient()
-    EndIfFlagEnabled(2052)
-    RunEvent(130, slot=0, args=(40, 0, 4004110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=1, args=(30, 0, 3004110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=2, args=(31, 0, 3104110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=3, args=(33, 0, 3304110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=4, args=(35, 0, 3504110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=5, args=(33, 0, 3304111, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=6, args=(38, 0, 3804110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=7, args=(38, 0, 3804111, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=8, args=(37, 0, 3704110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=9, args=(37, 0, 3704111, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=10, args=(39, 0, 3904110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=11, args=(32, 0, 3204110, 0, 26), arg_types="BBiHi")
-    RunEvent(130, slot=12, args=(30, 0, 3004111, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=13, args=(34, 1, 3414110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=14, args=(40, 0, 4004111, 10, 25), arg_types="BBiHi")
-    RunEvent(130, slot=15, args=(41, 0, 4104110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=16, args=(45, 0, 4504110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=17, args=(50, 0, 5004110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=18, args=(51, 0, 5104110, 0, -1), arg_types="BBiHi")
-    RunEvent(130, slot=19, args=(51, 1, 5114110, 0, -1), arg_types="BBiHi")
-    RunEvent(9004, slot=0, args=(9007,))
-    RunEvent(9005, slot=0, args=(9008,))
-    RunEvent(9006, slot=0, args=(9009,))
-    RunEvent(9000, slot=0, args=(9001, 9007, 9008, 9009))
-    RunEvent(9002, slot=0, args=(9003,))
-    RunEvent(9010)
-    RunEvent(970, slot=0, args=(13000800, 2000, 0, 0))
-    RunEvent(970, slot=1, args=(13000890, 2010, 0, 0))
-    RunEvent(970, slot=2, args=(13000830, 2020, 0, 0))
-    RunEvent(970, slot=3, args=(13010800, 2030, 0, 0))
-    RunEvent(970, slot=9, args=(13410830, 2040, 0, 0))
-    RunEvent(970, slot=10, args=(13410860, 2050, 0, 0))
-    RunEvent(970, slot=4, args=(13100800, 2060, 0, 0))
-    RunEvent(970, slot=5, args=(13200800, 2070, 0, 0))
-    RunEvent(970, slot=6, args=(13200850, 2080, 0, 0))
-    RunEvent(970, slot=7, args=(13300850, 2090, 0, 0))
-    RunEvent(970, slot=8, args=(13300800, 2100, 0, 0))
-    RunEvent(970, slot=11, args=(13500800, 2110, 0, 0))
-    RunEvent(970, slot=12, args=(13700850, 2120, 0, 0))
-    RunEvent(970, slot=13, args=(13700800, 2130, 0, 0))
-    RunEvent(970, slot=14, args=(13800800, 2140, 0, 0))
-    RunEvent(970, slot=15, args=(13800830, 2150, 0, 0))
-    RunEvent(970, slot=17, args=(13900800, 2170, 0, 0))
-    RunEvent(970, slot=18, args=(14000800, 2180, 0, 0))
-    RunEvent(970, slot=19, args=(14000830, 2190, 0, 0))
-    RunEvent(970, slot=20, args=(14100800, 2200, 0, 0))
-    RunEvent(970, slot=21, args=(14500800, 2300, 0, 0))
-    RunEvent(970, slot=22, args=(14500860, 2310, 0, 0))
-    RunEvent(970, slot=23, args=(15000800, 2330, 0, 0))
-    RunEvent(970, slot=24, args=(15100800, 2340, 0, 0))
-    RunEvent(970, slot=25, args=(15100850, 2350, 0, 0))
-    RunEvent(970, slot=26, args=(15110800, 2360, 0, 0))
-    RunEvent(250, slot=10, args=(17, 6700, 0.0), arg_types="iif")
-    RunEvent(250, slot=11, args=(18, 6770, 0.0), arg_types="iif")
-    RunEvent(250, slot=12, args=(19, 6740, 0.0), arg_types="iif")
-    RunEvent(250, slot=13, args=(20, 6750, 0.0), arg_types="iif")
-    RunEvent(250, slot=14, args=(21, 6760, 0.0), arg_types="iif")
-    RunEvent(250, slot=15, args=(22, 6710, 0.0), arg_types="iif")
-    RunEvent(250, slot=16, args=(23, 6720, 0.0), arg_types="iif")
-    RunEvent(250, slot=17, args=(24, 6730, 0.0), arg_types="iif")
-    RunEvent(250, slot=20, args=(4, 13300800, 0.0), arg_types="iif")
-    RunEvent(250, slot=21, args=(5, 13900800, 0.0), arg_types="iif")
-    RunEvent(250, slot=22, args=(6, 13700800, 0.0), arg_types="iif")
-    RunEvent(250, slot=23, args=(7, 13410830, 0.0), arg_types="iif")
-    RunEvent(250, slot=24, args=(27, 14000800, 0.0), arg_types="iif")
-    RunEvent(250, slot=25, args=(28, 13000800, 0.0), arg_types="iif")
-    RunEvent(250, slot=26, args=(29, 13100800, 0.0), arg_types="iif")
-    RunEvent(250, slot=27, args=(30, 13300850, 0.0), arg_types="iif")
-    RunEvent(250, slot=28, args=(31, 13500800, 0.0), arg_types="iif")
-    RunEvent(250, slot=29, args=(32, 13800800, 0.0), arg_types="iif")
-    RunEvent(250, slot=30, args=(33, 13700850, 0.0), arg_types="iif")
-    RunEvent(250, slot=31, args=(34, 13000890, 0.0), arg_types="iif")
-    RunEvent(250, slot=32, args=(35, 13010800, 0.0), arg_types="iif")
-    RunEvent(250, slot=33, args=(36, 13800830, 0.0), arg_types="iif")
-    RunEvent(250, slot=34, args=(37, 13000830, 0.0), arg_types="iif")
-    RunEvent(250, slot=35, args=(38, 14000830, 0.0), arg_types="iif")
-    RunEvent(250, slot=36, args=(39, 13200800, 0.0), arg_types="iif")
-    RunEvent(250, slot=37, args=(40, 13200850, 0.0), arg_types="iif")
-    RunEvent(6099)
-    RunEvent(6100, slot=0, args=(6100, 13300800))
-    RunEvent(6100, slot=1, args=(6101, 13900800))
-    RunEvent(6100, slot=2, args=(6102, 13700800))
-    RunEvent(6100, slot=3, args=(6103, 13410830))
-    RunEvent(6100, slot=4, args=(6104, 14000800))
-    RunEvent(6100, slot=5, args=(6105, 13000800))
-    RunEvent(6100, slot=6, args=(6106, 13300850))
-    RunEvent(6100, slot=7, args=(6107, 13500800))
-    RunEvent(6100, slot=8, args=(6108, 13800800))
-    RunEvent(6100, slot=9, args=(6109, 13700850))
-    RunEvent(6100, slot=10, args=(6110, 13000890))
-    RunEvent(6100, slot=11, args=(6111, 13010800))
-    RunEvent(6100, slot=12, args=(6112, 110))
-    RunEvent(702)
-    RunEvent(710)
-    RunEvent(9510)
-    RunEvent(9511)
-    RunEvent(9512)
-    RunEvent(9520, slot=0, args=(4410, 8, 9013, 6058), arg_types="iHii")
-    RunEvent(9525, slot=0, args=(4430, 4, 9005, 6054), arg_types="iHii")
-    RunEvent(9530, slot=0, args=(4420, 18, 9020, 6068), arg_types="iHii")
-    RunEvent(9540, slot=0, args=(15, 9017, 6065), arg_types="Hii")
-    RunEvent(9100, slot=0, args=(70000007,))
-    RunEvent(9101, slot=0, args=(70000008,))
-    RunEvent(9102, slot=0, args=(70000012,))
-    RunEvent(9103, slot=0, args=(70000013,))
-    RunEvent(9104, slot=0, args=(70000017,))
-    RunEvent(9105, slot=0, args=(70000019, 70000020, 70000021))
-    RunEvent(9111, slot=0, args=(70000022, 70000023))
-    RunEvent(9106, slot=0, args=(70000000,))
-    RunEvent(9107, slot=0, args=(70000001,))
-    RunEvent(9108, slot=0, args=(70000002,))
-    RunEvent(9109, slot=0, args=(70000003,))
-    RunEvent(9110, slot=0, args=(70000004,))
-    RunEvent(9112, slot=0, args=(70000005,))
-    RunEvent(9113, slot=0, args=(70000030,))
-    RunEvent(9114, slot=0, args=(70000031,))
-    RunEvent(9120, slot=0, args=(74000756, 74000760, 74000760, 1, 1, 1, 0), arg_types="iiiIBIi")
-    RunEvent(9120, slot=1, args=(74000591, 74000552, 74000592, 3, 3, 3, 0), arg_types="iiiIBIi")
-    RunEvent(9120, slot=2, args=(74000552, 74000553, 74000592, 3, 3, 6, 0), arg_types="iiiIBIi")
-    RunEvent(9120, slot=3, args=(74000303, 74000316, 74000316, 1, 1, 1, 1), arg_types="iiiIBIi")
-    RunEvent(9120, slot=4, args=(74000306, 74000318, 74000318, 1, 1, 1, 1), arg_types="iiiIBIi")
-    RunEvent(9120, slot=5, args=(74000921, 74000925, 74000925, 1, 1, 1, 1), arg_types="iiiIBIi")
-    RunEvent(9120, slot=6, args=(74000916, 74000913, 74000913, 1, 1, 1, 1), arg_types="iiiIBIi")
-    RunEvent(9120, slot=7, args=(73500265, 73500264, 73500264, 1, 1, 1, 0), arg_types="iiiIBIi")
-    RunEvent(9016)
-    RunEvent(9011, slot=0, args=(74000132,))
-    RunEvent(9014)
-    RunEvent(9018)
-    RunEvent(9019, slot=0, args=(74000669,))
-    RunEvent(9015)
-    RunEvent(6900)
-    RunEvent(9020, slot=0, args=(73500300, 1621, 1634, 6951, 35, 0), arg_types="iiiiBB")
-    RunEvent(9020, slot=1, args=(14100511, 14100512, 14100512, 6952, 41, 0), arg_types="iiiiBB")
-    RunEvent(9020, slot=2, args=(14500161, 14500162, 14500162, 6952, 45, 0), arg_types="iiiiBB")
+    """Event 0"""
+    Event_200()
+    Event_230()
+    Event_9570(0, item_lot_param_id=4500, special_effect=3740)
+    Event_9570(1, item_lot_param_id=4510, special_effect=3750)
+    if Client():
+        return
+    if FlagEnabled(2052):
+        return
+    Event_130(0, 40, 0, 4004110, 0, -1)
+    Event_130(1, 30, 0, 3004110, 0, -1)
+    Event_130(2, 31, 0, 3104110, 0, -1)
+    Event_130(3, 33, 0, 3304110, 0, -1)
+    Event_130(4, 35, 0, 3504110, 0, -1)
+    Event_130(5, 33, 0, 3304111, 0, -1)
+    Event_130(6, 38, 0, 3804110, 0, -1)
+    Event_130(7, 38, 0, 3804111, 0, -1)
+    Event_130(8, 37, 0, 3704110, 0, -1)
+    Event_130(9, 37, 0, 3704111, 0, -1)
+    Event_130(10, 39, 0, 3904110, 0, -1)
+    Event_130(11, area_id=32, block_id=0, collision=3204110, ceremony_id=0, achievement_id=26)
+    Event_130(12, 30, 0, 3004111, 0, -1)
+    Event_130(13, 34, 1, 3414110, 0, -1)
+    Event_130(14, area_id=40, block_id=0, collision=4004111, ceremony_id=10, achievement_id=25)
+    Event_130(15, 41, 0, 4104110, 0, -1)
+    Event_130(16, 45, 0, 4504110, 0, -1)
+    Event_130(17, 50, 0, 5004110, 0, -1)
+    Event_130(18, 51, 0, 5104110, 0, -1)
+    Event_130(19, 51, 1, 5114110, 0, -1)
+    Event_9004(0, flag=9007)
+    Event_9005(0, flag=9008)
+    Event_9006(0, flag=9009)
+    Event_9000(0, flag=9001, flag_1=9007, flag_2=9008, flag_3=9009)
+    Event_9002(0, flag=9003)
+    Event_9010()
+    Event_970(0, flag=13000800, item_lot_param_id=2000, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(1, flag=13000890, item_lot_param_id=2010, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(2, flag=13000830, item_lot_param_id=2020, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(3, flag=13010800, item_lot_param_id=2030, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(9, flag=13410830, item_lot_param_id=2040, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(10, flag=13410860, item_lot_param_id=2050, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(4, flag=13100800, item_lot_param_id=2060, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(5, flag=13200800, item_lot_param_id=2070, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(6, flag=13200850, item_lot_param_id=2080, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(7, flag=13300850, item_lot_param_id=2090, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(8, flag=13300800, item_lot_param_id=2100, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(11, flag=13500800, item_lot_param_id=2110, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(12, flag=13700850, item_lot_param_id=2120, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(13, flag=13700800, item_lot_param_id=2130, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(14, flag=13800800, item_lot_param_id=2140, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(15, flag=13800830, item_lot_param_id=2150, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(17, flag=13900800, item_lot_param_id=2170, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(18, flag=14000800, item_lot_param_id=2180, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(19, flag=14000830, item_lot_param_id=2190, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(20, flag=14100800, item_lot_param_id=2200, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(21, flag=14500800, item_lot_param_id=2300, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(22, flag=14500860, item_lot_param_id=2310, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(23, flag=15000800, item_lot_param_id=2330, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(24, flag=15100800, item_lot_param_id=2340, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(25, flag=15100850, item_lot_param_id=2350, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(26, flag=15110800, item_lot_param_id=2360, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_250(10, 17, 6700, 0.0)
+    Event_250(11, 18, 6770, 0.0)
+    Event_250(12, 19, 6740, 0.0)
+    Event_250(13, 20, 6750, 0.0)
+    Event_250(14, 21, 6760, 0.0)
+    Event_250(15, 22, 6710, 0.0)
+    Event_250(16, 23, 6720, 0.0)
+    Event_250(17, 24, 6730, 0.0)
+    Event_250(20, 4, 13300800, 0.0)
+    Event_250(21, 5, 13900800, 0.0)
+    Event_250(22, 6, 13700800, 0.0)
+    Event_250(23, 7, 13410830, 0.0)
+    Event_250(24, 27, 14000800, 0.0)
+    Event_250(25, 28, 13000800, 0.0)
+    Event_250(26, 29, 13100800, 0.0)
+    Event_250(27, 30, 13300850, 0.0)
+    Event_250(28, 31, 13500800, 0.0)
+    Event_250(29, 32, 13800800, 0.0)
+    Event_250(30, 33, 13700850, 0.0)
+    Event_250(31, 34, 13000890, 0.0)
+    Event_250(32, 35, 13010800, 0.0)
+    Event_250(33, 36, 13800830, 0.0)
+    Event_250(34, 37, 13000830, 0.0)
+    Event_250(35, 38, 14000830, 0.0)
+    Event_250(36, 39, 13200800, 0.0)
+    Event_250(37, 40, 13200850, 0.0)
+    Event_6099()
+    Event_6100(0, flag=6100, flag_1=13300800)
+    Event_6100(1, flag=6101, flag_1=13900800)
+    Event_6100(2, flag=6102, flag_1=13700800)
+    Event_6100(3, flag=6103, flag_1=13410830)
+    Event_6100(4, flag=6104, flag_1=14000800)
+    Event_6100(5, flag=6105, flag_1=13000800)
+    Event_6100(6, flag=6106, flag_1=13300850)
+    Event_6100(7, flag=6107, flag_1=13500800)
+    Event_6100(8, flag=6108, flag_1=13800800)
+    Event_6100(9, flag=6109, flag_1=13700850)
+    Event_6100(10, flag=6110, flag_1=13000890)
+    Event_6100(11, flag=6111, flag_1=13010800)
+    Event_6100(12, flag=6112, flag_1=110)
+    Event_702()
+    Event_710()
+    Event_9510()
+    Event_9511()
+    Event_9512()
+    Event_9520(0, special_effect=4410, gesture_id=8, item_id=9013, flag=6058)
+    Event_9525(0, special_effect=4430, gesture_id=4, item_id=9005, flag=6054)
+    Event_9530(0, special_effect=4420, gesture_id=18, item_id=9020, flag=6068)
+    Event_9540(0, gesture_id=15, item_id=9017, flag=6065)
+    Event_9100(0, flag=70000007)
+    Event_9101(0, flag=70000008)
+    Event_9102(0, flag=70000012)
+    Event_9103(0, flag=70000013)
+    Event_9104(0, flag=70000017)
+    Event_9105(0, flag=70000019, flag_1=70000020, flag_2=70000021)
+    Event_9111(0, flag=70000022, flag_1=70000023)
+    Event_9106(0, flag=70000000)
+    Event_9107(0, flag=70000001)
+    Event_9108(0, flag=70000002)
+    Event_9109(0, flag=70000003)
+    Event_9110(0, flag=70000004)
+    Event_9112(0, flag=70000005)
+    Event_9113(0, flag=70000030)
+    Event_9114(0, flag=70000031)
+    Event_9120(
+        0,
+        flag=74000756,
+        flag_1=74000760,
+        flag_2=74000760,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=0
+    )
+    Event_9120(
+        1,
+        flag=74000591,
+        flag_1=74000552,
+        flag_2=74000592,
+        bit_count=3,
+        bit_count_1=3,
+        max_value__value=3,
+        left=0
+    )
+    Event_9120(
+        2,
+        flag=74000552,
+        flag_1=74000553,
+        flag_2=74000592,
+        bit_count=3,
+        bit_count_1=3,
+        max_value__value=6,
+        left=0
+    )
+    Event_9120(
+        3,
+        flag=74000303,
+        flag_1=74000316,
+        flag_2=74000316,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=1
+    )
+    Event_9120(
+        4,
+        flag=74000306,
+        flag_1=74000318,
+        flag_2=74000318,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=1
+    )
+    Event_9120(
+        5,
+        flag=74000921,
+        flag_1=74000925,
+        flag_2=74000925,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=1
+    )
+    Event_9120(
+        6,
+        flag=74000916,
+        flag_1=74000913,
+        flag_2=74000913,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=1
+    )
+    Event_9120(
+        7,
+        flag=73500265,
+        flag_1=73500264,
+        flag_2=73500264,
+        bit_count=1,
+        bit_count_1=1,
+        max_value__value=1,
+        left=0
+    )
+    Event_9016()
+    Event_9011(0, flag=74000132)
+    Event_9014()
+    Event_9018()
+    Event_9019(0, flag=74000669)
+    Event_9015()
+    Event_6900()
+    Event_9020(0, flag=73500300, first_flag=1621, last_flag=1634, flag_1=6951, area_id=35, block_id=0)
+    Event_9020(1, flag=14100511, first_flag=14100512, last_flag=14100512, flag_1=6952, area_id=41, block_id=0)
+    Event_9020(2, 14500161, 14500162, 14500162, 6952, 45, 0)
 
 
+@NeverRestart(50)
 def Preconstructor():
-    """ 50: Event 50 """
-    RunEvent(231)
-    RunEvent(232)
-    RunEvent(701)
-    RunEvent(700)
-    RunEvent(9012)
-    RunEvent(741)
-    RunEvent(740)
-    RunEvent(9080, slot=0, args=(2, 10040, 6700), arg_types="Bii")
-    RunEvent(9080, slot=1, args=(2, 10050, 6710), arg_types="Bii")
-    RunEvent(9080, slot=2, args=(2, 10020, 6720), arg_types="Bii")
-    RunEvent(9080, slot=3, args=(2, 10030, 6730), arg_types="Bii")
-    RunEvent(9080, slot=4, args=(2, 10070, 6740), arg_types="Bii")
-    RunEvent(9080, slot=5, args=(2, 10000, 6750), arg_types="Bii")
-    RunEvent(9080, slot=6, args=(2, 10080, 6760), arg_types="Bii")
-    RunEvent(9080, slot=7, args=(2, 10060, 6770), arg_types="Bii")
-    RunEvent(9080, slot=10, args=(3, 520, 6790), arg_types="Bii")
-    RunEvent(9080, slot=11, args=(3, 521, 6791), arg_types="Bii")
-    RunEvent(9080, slot=12, args=(3, 522, 6792), arg_types="Bii")
-    RunEvent(9080, slot=13, args=(3, 523, 6793), arg_types="Bii")
-    RunEvent(9080, slot=14, args=(3, 524, 6794), arg_types="Bii")
-    RunEvent(9080, slot=15, args=(3, 102, 6780), arg_types="Bii")
-    RunEvent(9080, slot=16, args=(3, 101, 6781), arg_types="Bii")
-    RunEvent(9080, slot=17, args=(3, 108, 6782), arg_types="Bii")
-    RunEvent(9080, slot=18, args=(2, 10090, 6830), arg_types="Bii")
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(2052)
-    IfFlagEnabled(1, 6400)
-    IfFlagDisabled(1, 14000100)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    RemoveGoodFromPlayer(115, quantity=1)
-    RemoveGoodFromPlayer(384, quantity=1)
-    RemoveGoodFromPlayer(386, quantity=1)
-    RemoveGoodFromPlayer(390, quantity=1)
-    RemoveGoodFromPlayer(490, quantity=8)
-    RemoveGoodFromPlayer(2001, quantity=1)
-    RemoveGoodFromPlayer(2005, quantity=1)
-    RemoveGoodFromPlayer(2007, quantity=1)
-    RemoveGoodFromPlayer(2008, quantity=1)
-    RemoveGoodFromPlayer(2009, quantity=1)
-    RemoveGoodFromPlayer(2010, quantity=1)
-    RemoveGoodFromPlayer(2011, quantity=1)
-    RemoveGoodFromPlayer(2012, quantity=1)
-    RemoveGoodFromPlayer(2013, quantity=1)
-    RemoveGoodFromPlayer(2014, quantity=1)
-    RemoveGoodFromPlayer(2015, quantity=1)
-    RemoveGoodFromPlayer(2102, quantity=1)
-    RemoveGoodFromPlayer(2103, quantity=1)
-    RemoveGoodFromPlayer(2104, quantity=1)
-    RemoveGoodFromPlayer(2105, quantity=1)
-    RemoveGoodFromPlayer(2106, quantity=1)
-    RemoveGoodFromPlayer(2107, quantity=1)
-    RemoveGoodFromPlayer(2108, quantity=1)
-    RemoveGoodFromPlayer(2109, quantity=1)
-    RemoveGoodFromPlayer(2110, quantity=1)
-    RemoveGoodFromPlayer(2111, quantity=1)
-    RemoveGoodFromPlayer(2112, quantity=1)
-    RemoveGoodFromPlayer(2113, quantity=1)
-    RemoveGoodFromPlayer(2114, quantity=1)
-    RemoveGoodFromPlayer(2115, quantity=1)
-    RemoveGoodFromPlayer(2116, quantity=1)
-    RemoveGoodFromPlayer(2117, quantity=1)
-    RemoveGoodFromPlayer(2119, quantity=1)
-    RemoveGoodFromPlayer(2120, quantity=1)
-    RemoveGoodFromPlayer(2121, quantity=1)
-    RemoveGoodFromPlayer(2123, quantity=1)
-    RemoveGoodFromPlayer(2124, quantity=1)
-    RemoveGoodFromPlayer(2125, quantity=1)
-    RemoveGoodFromPlayer(2126, quantity=1)
-    RemoveGoodFromPlayer(2127, quantity=1)
-    RemoveGoodFromPlayer(2128, quantity=1)
-    RemoveGoodFromPlayer(2129, quantity=1)
-    RemoveGoodFromPlayer(2130, quantity=1)
-    RemoveGoodFromPlayer(2131, quantity=1)
-    RemoveGoodFromPlayer(2132, quantity=1)
-    RemoveGoodFromPlayer(2133, quantity=1)
-    RemoveGoodFromPlayer(2134, quantity=1)
-    RemoveGoodFromPlayer(2135, quantity=1)
-    RemoveGoodFromPlayer(2137, quantity=1)
-    RemoveGoodFromPlayer(2138, quantity=1)
-    RemoveGoodFromPlayer(2139, quantity=1)
-    RemoveGoodFromPlayer(2140, quantity=1)
-    RemoveGoodFromPlayer(2142, quantity=1)
-    RemoveGoodFromPlayer(2144, quantity=1)
-    RemoveGoodFromPlayer(2145, quantity=1)
-    RemoveGoodFromPlayer(2146, quantity=1)
-    RemoveGoodFromPlayer(2147, quantity=1)
-    RemoveGoodFromPlayer(2148, quantity=1)
-    RemoveGoodFromPlayer(2149, quantity=1)
-    RemoveGoodFromPlayer(2150, quantity=1)
-    RemoveGoodFromPlayer(2151, quantity=1)
-    RemoveGoodFromPlayer(2152, quantity=1)
-    RemoveGoodFromPlayer(2154, quantity=1)
-    RemoveGoodFromPlayer(2155, quantity=1)
-    RemoveGoodFromPlayer(2156, quantity=1)
-    RemoveGoodFromPlayer(2157, quantity=1)
-    RemoveGoodFromPlayer(2158, quantity=1)
+    """Event 50"""
+    Event_231()
+    Event_232()
+    Event_701()
+    Event_700()
+    Event_9012()
+    Event_741()
+    Event_740()
+    Event_9080(0, item_type=2, item=10040, flag=6700)
+    Event_9080(1, item_type=2, item=10050, flag=6710)
+    Event_9080(2, item_type=2, item=10020, flag=6720)
+    Event_9080(3, item_type=2, item=10030, flag=6730)
+    Event_9080(4, item_type=2, item=10070, flag=6740)
+    Event_9080(5, item_type=2, item=10000, flag=6750)
+    Event_9080(6, item_type=2, item=10080, flag=6760)
+    Event_9080(7, item_type=2, item=10060, flag=6770)
+    Event_9080(10, item_type=3, item=520, flag=6790)
+    Event_9080(11, item_type=3, item=521, flag=6791)
+    Event_9080(12, item_type=3, item=522, flag=6792)
+    Event_9080(13, item_type=3, item=523, flag=6793)
+    Event_9080(14, item_type=3, item=524, flag=6794)
+    Event_9080(15, item_type=3, item=102, flag=6780)
+    Event_9080(16, item_type=3, item=101, flag=6781)
+    Event_9080(17, item_type=3, item=108, flag=6782)
+    Event_9080(18, item_type=2, item=10090, flag=6830)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(2052):
+        return
+    AND_1.Add(FlagEnabled(6400))
+    AND_1.Add(FlagDisabled(14000100))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    RemoveGoodFromPlayer(item=115, quantity=1)
+    RemoveGoodFromPlayer(item=384, quantity=1)
+    RemoveGoodFromPlayer(item=386, quantity=1)
+    RemoveGoodFromPlayer(item=390, quantity=1)
+    RemoveGoodFromPlayer(item=490, quantity=8)
+    RemoveGoodFromPlayer(item=2001, quantity=1)
+    RemoveGoodFromPlayer(item=2005, quantity=1)
+    RemoveGoodFromPlayer(item=2007, quantity=1)
+    RemoveGoodFromPlayer(item=2008, quantity=1)
+    RemoveGoodFromPlayer(item=2009, quantity=1)
+    RemoveGoodFromPlayer(item=2010, quantity=1)
+    RemoveGoodFromPlayer(item=2011, quantity=1)
+    RemoveGoodFromPlayer(item=2012, quantity=1)
+    RemoveGoodFromPlayer(item=2013, quantity=1)
+    RemoveGoodFromPlayer(item=2014, quantity=1)
+    RemoveGoodFromPlayer(item=2015, quantity=1)
+    RemoveGoodFromPlayer(item=2102, quantity=1)
+    RemoveGoodFromPlayer(item=2103, quantity=1)
+    RemoveGoodFromPlayer(item=2104, quantity=1)
+    RemoveGoodFromPlayer(item=2105, quantity=1)
+    RemoveGoodFromPlayer(item=2106, quantity=1)
+    RemoveGoodFromPlayer(item=2107, quantity=1)
+    RemoveGoodFromPlayer(item=2108, quantity=1)
+    RemoveGoodFromPlayer(item=2109, quantity=1)
+    RemoveGoodFromPlayer(item=2110, quantity=1)
+    RemoveGoodFromPlayer(item=2111, quantity=1)
+    RemoveGoodFromPlayer(item=2112, quantity=1)
+    RemoveGoodFromPlayer(item=2113, quantity=1)
+    RemoveGoodFromPlayer(item=2114, quantity=1)
+    RemoveGoodFromPlayer(item=2115, quantity=1)
+    RemoveGoodFromPlayer(item=2116, quantity=1)
+    RemoveGoodFromPlayer(item=2117, quantity=1)
+    RemoveGoodFromPlayer(item=2119, quantity=1)
+    RemoveGoodFromPlayer(item=2120, quantity=1)
+    RemoveGoodFromPlayer(item=2121, quantity=1)
+    RemoveGoodFromPlayer(item=2123, quantity=1)
+    RemoveGoodFromPlayer(item=2124, quantity=1)
+    RemoveGoodFromPlayer(item=2125, quantity=1)
+    RemoveGoodFromPlayer(item=2126, quantity=1)
+    RemoveGoodFromPlayer(item=2127, quantity=1)
+    RemoveGoodFromPlayer(item=2128, quantity=1)
+    RemoveGoodFromPlayer(item=2129, quantity=1)
+    RemoveGoodFromPlayer(item=2130, quantity=1)
+    RemoveGoodFromPlayer(item=2131, quantity=1)
+    RemoveGoodFromPlayer(item=2132, quantity=1)
+    RemoveGoodFromPlayer(item=2133, quantity=1)
+    RemoveGoodFromPlayer(item=2134, quantity=1)
+    RemoveGoodFromPlayer(item=2135, quantity=1)
+    RemoveGoodFromPlayer(item=2137, quantity=1)
+    RemoveGoodFromPlayer(item=2138, quantity=1)
+    RemoveGoodFromPlayer(item=2139, quantity=1)
+    RemoveGoodFromPlayer(item=2140, quantity=1)
+    RemoveGoodFromPlayer(item=2142, quantity=1)
+    RemoveGoodFromPlayer(item=2144, quantity=1)
+    RemoveGoodFromPlayer(item=2145, quantity=1)
+    RemoveGoodFromPlayer(item=2146, quantity=1)
+    RemoveGoodFromPlayer(item=2147, quantity=1)
+    RemoveGoodFromPlayer(item=2148, quantity=1)
+    RemoveGoodFromPlayer(item=2149, quantity=1)
+    RemoveGoodFromPlayer(item=2150, quantity=1)
+    RemoveGoodFromPlayer(item=2151, quantity=1)
+    RemoveGoodFromPlayer(item=2152, quantity=1)
+    RemoveGoodFromPlayer(item=2154, quantity=1)
+    RemoveGoodFromPlayer(item=2155, quantity=1)
+    RemoveGoodFromPlayer(item=2156, quantity=1)
+    RemoveGoodFromPlayer(item=2157, quantity=1)
+    RemoveGoodFromPlayer(item=2158, quantity=1)
     DisableFlag(6400)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
 
 
-def Event130(_, arg_0_0: uchar, arg_1_1: uchar, arg_4_7: int, arg_8_9: ushort, arg_12_15: int):
-    """ 130: Event 130 """
-    EndIfThisEventSlotFlagEnabled()
-    IfInsideMap(1, game_map=(arg_0_0, arg_1_1))
-    IfPlayerStandingOnCollision(1, arg_4_7)
-    IfInsideMap(2, game_map=FIRELINK_SHRINE)
-    SkipLinesIfConditionFalse(1, 2)
-    IfMapInCeremony(1, game_map=(arg_0_0, arg_1_1), ceremony_id=arg_8_9)
-    IfConditionTrue(0, input_condition=1)
-    EndIfValueEqual(left=arg_12_15, right=-1)
-    AwardAchievement(arg_12_15)
+@NeverRestart(130)
+def Event_130(_, area_id: uchar, block_id: uchar, collision: int, ceremony_id: ushort, achievement_id: int):
+    """Event 130"""
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_1.Add(InsideMap(game_map=(area_id, block_id)))
+    AND_1.Add(PlayerStandingOnCollision(collision))
+    AND_2.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    SkipLinesIfConditionFalse(1, AND_2)
+    AND_1.Add(MapInCeremony(game_map=(area_id, block_id), ceremony_id=ceremony_id))
+    
+    MAIN.Await(AND_1)
+    
+    if ValueEqual(left=achievement_id, right=-1):
+        return
+    AwardAchievement(achievement_id=achievement_id)
     End()
 
 
-@RestartOnRest
-def Event200():
-    """ 200: Event 200 """
+@RestartOnRest(200)
+def Event_200():
+    """Event 200"""
     DisableNetworkSync()
-    EndIfPlayerInOwnWorld()
+    if PlayerInOwnWorld():
+        return
     EnableFlag(201)
 
 
-@RestartOnRest
-def Event230():
-    """ 230: Event 230 """
-    EndIfFlagEnabled(230)
-    IfFlagEnabled(1, 9314)
-    IfFlagEnabled(1, 9318)
-    IfConditionTrue(0, input_condition=1)
+@RestartOnRest(230)
+def Event_230():
+    """Event 230"""
+    if FlagEnabled(230):
+        return
+    AND_1.Add(FlagEnabled(9314))
+    AND_1.Add(FlagEnabled(9318))
+    
+    MAIN.Await(AND_1)
+    
     SetMapCeremony(game_map=HIGH_WALL_OF_LOTHRIC, ceremony_id=10)
     SetMapCeremony(game_map=LOTHRIC_CASTLE, ceremony_id=10)
     SetMapCeremony(game_map=GRAND_ARCHIVES, ceremony_id=10)
@@ -294,89 +382,107 @@ def Event230():
     EnableFlag(230)
 
 
-@RestartOnRest
-def Event231():
-    """ 231: Event 231 """
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    EndIfConditionTrue(1)
+@RestartOnRest(231)
+def Event_231():
+    """Event 231"""
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    if AND_1:
+        return
     SetMapCeremony(game_map=FIRELINK_SHRINE, ceremony_id=10)
     End()
 
 
-def Event232():
-    """ 232: Event 232 """
-    GotoIfFlagEnabled(Label.L1, 8221)
-    GotoIfFlagEnabled(Label.L0, 230)
+@NeverRestart(232)
+def Event_232():
+    """Event 232"""
+    GotoIfFlagEnabled(Label.L1, flag=8221)
+    GotoIfFlagEnabled(Label.L0, flag=230)
     SetMapCeremony(game_map=UNDEAD_SETTLEMENT, ceremony_id=0)
     Goto(Label.L1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     SetMapCeremony(game_map=UNDEAD_SETTLEMENT, ceremony_id=10)
     Goto(Label.L1)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    IfInsideMap(-1, game_map=HIGH_WALL_OF_LOTHRIC)
-    IfInsideMap(-1, game_map=LOTHRIC_CASTLE)
-    IfInsideMap(-1, game_map=GRAND_ARCHIVES)
-    IfInsideMap(-1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=-1)
-    WaitFrames(1)
-    GotoIfFlagEnabled(Label.L2, 230)
+    OR_1.Add(InsideMap(game_map=HIGH_WALL_OF_LOTHRIC))
+    OR_1.Add(InsideMap(game_map=LOTHRIC_CASTLE))
+    OR_1.Add(InsideMap(game_map=GRAND_ARCHIVES))
+    OR_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(OR_1)
+    
+    WaitFrames(frames=1)
+    GotoIfFlagEnabled(Label.L2, flag=230)
     SetMapCeremony(game_map=UNDEAD_SETTLEMENT, ceremony_id=20)
     Goto(Label.L3)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
     SetMapCeremony(game_map=UNDEAD_SETTLEMENT, ceremony_id=30)
     Goto(Label.L3)
 
-    # --- 3 --- #
+    # --- Label 3 --- #
     DefineLabel(3)
-    IfOutsideMap(1, game_map=HIGH_WALL_OF_LOTHRIC)
-    IfOutsideMap(1, game_map=LOTHRIC_CASTLE)
-    IfOutsideMap(1, game_map=GRAND_ARCHIVES)
-    IfOutsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(OutsideMap(game_map=HIGH_WALL_OF_LOTHRIC))
+    AND_1.Add(OutsideMap(game_map=LOTHRIC_CASTLE))
+    AND_1.Add(OutsideMap(game_map=GRAND_ARCHIVES))
+    AND_1.Add(OutsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     Restart()
 
 
-def Event250(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
-    """ 250: Event 250 """
-    EndIfThisEventSlotFlagEnabled()
-    IfFlagEnabled(1, arg_4_7)
-    IfPlayerInOwnWorld(1)
-    IfConditionTrue(0, input_condition=1)
-    Wait(arg_8_11)
-    AwardAchievement(arg_0_3)
+@NeverRestart(250)
+def Event_250(_, achievement_id: int, flag: int, seconds: float):
+    """Event 250"""
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(PlayerInOwnWorld())
+    
+    MAIN.Await(AND_1)
+    
+    Wait(seconds)
+    AwardAchievement(achievement_id=achievement_id)
 
 
-def Event6100(_, arg_0_3: int, arg_4_7: int):
-    """ 6100: Event 6100 """
-    EndIfThisEventSlotFlagEnabled()
-    IfFlagEnabled(1, arg_4_7)
-    IfPlayerInOwnWorld(1)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
+@NeverRestart(6100)
+def Event_6100(_, flag: int, flag_1: int):
+    """Event 6100"""
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(PlayerInOwnWorld())
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
 
 
-def Event700():
-    """ 700: Event 700 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(2052)
-    EndIfThisEventSlotFlagEnabled()
+@NeverRestart(700)
+def Event_700():
+    """Event 700"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(2052):
+        return
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(50006020)
     EnableFlag(9215)
     SetPlayerRemainingYoelLevels(level_count=5)
     EnableFlag(70000125)
     EnableFlag(70000128)
     EnableFlag(70000129)
-    IfPlayerClass(-15, ClassType.Sorcerer)
-    SkipLinesIfConditionFalse(1, -15)
+    OR_15.Add(PlayerClass(ClassType.Sorcerer))
+    SkipLinesIfConditionFalse(1, OR_15)
     EnableFlag(74000587)
-    IfPlayerClass(-14, ClassType.Pyromancer)
-    SkipLinesIfConditionFalse(1, -14)
+    OR_14.Add(PlayerClass(ClassType.Pyromancer))
+    SkipLinesIfConditionFalse(1, OR_14)
     EnableFlag(74000465)
     EnableFlag(50006162)
     EnableFlag(50006163)
@@ -385,150 +491,167 @@ def Event700():
     EnableFlag(73501030)
     EnableFlag(73501040)
     EnableFlag(73501050)
-    IfNewGameCycleGreaterThanOrEqual(-13, completion_count=1)
-    SkipLinesIfConditionFalse(1, -13)
+    OR_13.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
+    SkipLinesIfConditionFalse(1, OR_13)
     EnableFlag(70000900)
-    IfNewGameCycleGreaterThanOrEqual(6, completion_count=6)
-    SkipLinesIfConditionFalse(2, 6)
+    AND_6.Add(NewGameCycleGreaterThanOrEqual(completion_count=6))
+    SkipLinesIfConditionFalse(2, AND_6)
     EnableFlag(56)
     End()
-    IfNewGameCycleEqual(5, completion_count=5)
-    SkipLinesIfConditionFalse(2, 5)
+    AND_5.Add(NewGameCycleEqual(completion_count=5))
+    SkipLinesIfConditionFalse(2, AND_5)
     EnableFlag(55)
     End()
-    IfNewGameCycleEqual(4, completion_count=4)
-    SkipLinesIfConditionFalse(2, 4)
+    AND_4.Add(NewGameCycleEqual(completion_count=4))
+    SkipLinesIfConditionFalse(2, AND_4)
     EnableFlag(54)
     End()
-    IfNewGameCycleEqual(3, completion_count=3)
-    SkipLinesIfConditionFalse(2, 3)
+    AND_3.Add(NewGameCycleEqual(completion_count=3))
+    SkipLinesIfConditionFalse(2, AND_3)
     EnableFlag(53)
     End()
-    IfNewGameCycleEqual(2, completion_count=2)
-    SkipLinesIfConditionFalse(2, 2)
+    AND_2.Add(NewGameCycleEqual(completion_count=2))
+    SkipLinesIfConditionFalse(2, AND_2)
     EnableFlag(52)
     End()
-    IfNewGameCycleEqual(1, completion_count=1)
-    SkipLinesIfConditionFalse(2, 1)
+    AND_1.Add(NewGameCycleEqual(completion_count=1))
+    SkipLinesIfConditionFalse(2, AND_1)
     EnableFlag(51)
     End()
     EnableFlag(50)
     End()
 
 
-def Event701():
-    """ 701: Event 701 """
+@NeverRestart(701)
+def Event_701():
+    """Event 701"""
     DisableFlag(6000)
     EnableFlag(6001)
 
 
-def Event702():
-    """ 702: Event 702 """
-    EndIfFlagEnabled(6600)
-    IfFlagEnabled(0, 6600)
+@NeverRestart(702)
+def Event_702():
+    """Event 702"""
+    if FlagEnabled(6600):
+        return
+    
+    MAIN.Await(FlagEnabled(6600))
+    
     EnableFlag(703)
 
 
-def Event710():
-    """ 710: Event 710 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfThisEventSlotFlagEnabled()
-    IfPlayerHasGood(15, 2014, including_box=False)
-    EndIfConditionTrue(15)
-    IfPlayerInOwnWorld(1)
-    IfFlagEnabled(1, 9314)
-    IfFlagEnabled(1, 9318)
-    IfCharacterInsideRegion(-1, PLAYER, region=3702890)
-    IfCharacterInsideRegion(-1, PLAYER, region=3902890)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+@NeverRestart(710)
+def Event_710():
+    """Event 710"""
+    if PlayerNotInOwnWorld():
+        return
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_15.Add(PlayerHasGood(2014))
+    if AND_15:
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(9314))
+    AND_1.Add(FlagEnabled(9318))
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=3702890))
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=3902890))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     AddSpecialEffect(PLAYER, 4900)
     AddSpecialEffect(PLAYER, 4901)
-    GotoIfInsideMap(Label.L0, IRITHYLL)
-    GotoIfInsideMap(Label.L1, PROFANED_CAPITAL)
+    GotoIfInsideMap(Label.L0, game_map=IRITHYLL)
+    GotoIfInsideMap(Label.L1, game_map=PROFANED_CAPITAL)
     Goto(Label.L2)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     Wait(3.0)
     EnableFlag(13700002)
-    IfFlagEnabled(8, 13000896)
-    IfFlagDisabled(8, 13000890)
-    SkipLinesIfConditionTrue(2, 8)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(
-        37000030,
-        CutsceneFlags.Skippable,
+    AND_8.Add(FlagEnabled(13000896))
+    AND_8.Add(FlagDisabled(13000890))
+    SkipLinesIfConditionTrue(2, AND_8)
+    PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
+        cutscene_id=37000030,
+        cutscene_flags=0,
         move_to_region=3002100,
-        move_to_map=HIGH_WALL_OF_LOTHRIC,
-        player_id=PLAYER,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
         other_region=3002890,
     )
     SkipLines(1)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(
-        37000030,
-        CutsceneFlags.Skippable,
+    PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
+        cutscene_id=37000030,
+        cutscene_flags=0,
         move_to_region=3002890,
-        move_to_map=HIGH_WALL_OF_LOTHRIC,
-        player_id=PLAYER,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
         other_region=3002890,
     )
     Goto(Label.L2)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    GotoIfFlagRangeAllDisabled(Label.L19, (1388, 1389))
-    IfFlagEnabled(-2, 73900164)
-    IfFlagEnabled(-2, 1398)
-    IfCharacterOutsideRegion(2, PLAYER, region=3902890)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    GotoIfFinishedConditionTrue(Label.L20, input_condition=2)
+    GotoIfFlagRangeAllDisabled(Label.L19, flag_range=(1388, 1389))
+    OR_2.Add(FlagEnabled(73900164))
+    OR_2.Add(FlagEnabled(1398))
+    AND_2.Add(CharacterOutsideRegion(character=PLAYER, region=3902890))
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    GotoIfFinishedConditionTrue(Label.L20, input_condition=AND_2)
 
-    # --- 19 --- #
+    # --- Label 19 --- #
     DefineLabel(19)
     Wait(3.0)
 
-    # --- 20 --- #
+    # --- Label 20 --- #
     DefineLabel(20)
     EnableFlag(13900001)
-    IfFlagEnabled(9, 13000896)
-    IfFlagDisabled(9, 13000890)
-    SkipLinesIfConditionTrue(2, 9)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(
-        39000030,
-        CutsceneFlags.Skippable,
+    AND_9.Add(FlagEnabled(13000896))
+    AND_9.Add(FlagDisabled(13000890))
+    SkipLinesIfConditionTrue(2, AND_9)
+    PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
+        cutscene_id=39000030,
+        cutscene_flags=0,
         move_to_region=3002100,
-        move_to_map=HIGH_WALL_OF_LOTHRIC,
-        player_id=PLAYER,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
         other_region=3002890,
     )
     SkipLines(1)
-    PlayCutsceneAndMovePlayer_WithSecondRegion(
-        39000030,
-        CutsceneFlags.Skippable,
+    PlayCutsceneAndMoveSpecificPlayer_WithOtherRegion(
+        cutscene_id=39000030,
+        cutscene_flags=0,
         move_to_region=3002890,
-        move_to_map=HIGH_WALL_OF_LOTHRIC,
-        player_id=PLAYER,
+        game_map=HIGH_WALL_OF_LOTHRIC,
+        player_id=10000,
         other_region=3002890,
     )
     Goto(Label.L2)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
     EnableFlag(711)
-    WaitFrames(0)
+    WaitFrames(frames=0)
     CancelSpecialEffect(PLAYER, 4900)
     CancelSpecialEffect(PLAYER, 4901)
     End()
 
 
-def Event730():
-    """ 730: Event 730 """
+@NeverRestart(730)
+def Event_730():
+    """Event 730"""
     DisableNetworkSync()
-    EndIfPlayerNotInOwnWorld()
-    IfPlayerInOwnWorld(1)
-    IfCharacterHasSpecialEffect(1, PLAYER, 100)
-    IfConditionTrue(0, input_condition=1)
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 100))
+    
+    MAIN.Await(AND_1)
+    
     CancelSpecialEffect(PLAYER, 11907)
     CancelSpecialEffect(PLAYER, 11907)
     CancelSpecialEffect(PLAYER, 11907)
@@ -563,273 +686,343 @@ def Event730():
     Restart()
 
 
-def Event740():
-    """ 740: Event 740 """
+@NeverRestart(740)
+def Event_740():
+    """Event 740"""
     DisableNetworkSync()
     ChangeCamera(normal_camera_id=-1, locked_camera_id=-1)
 
 
-def Event741():
-    """ 741: Event 741 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(2052)
+@NeverRestart(741)
+def Event_741():
+    """Event 741"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(2052):
+        return
     DisableFlag(74000013)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfMapInCeremony(1, game_map=FIRELINK_SHRINE, ceremony_id=10)
-    IfConditionFalse(0, input_condition=1)
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    AND_1.Add(MapInCeremony(game_map=FIRELINK_SHRINE, ceremony_id=10))
+    
+    MAIN.Await(not AND_1)
+    
     EnableFlag(743)
-    IfInsideMap(2, game_map=FIRELINK_SHRINE)
-    IfMapInCeremony(2, game_map=FIRELINK_SHRINE, ceremony_id=10)
-    IfPlayerStandingOnCollision(3, 4004120)
-    IfConditionFalse(2, input_condition=3)
-    IfConditionTrue(0, input_condition=2)
+    AND_2.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    AND_2.Add(MapInCeremony(game_map=FIRELINK_SHRINE, ceremony_id=10))
+    AND_3.Add(PlayerStandingOnCollision(4004120))
+    AND_2.Add(not AND_3)
+    
+    MAIN.Await(AND_2)
+    
     Restart()
 
 
-@RestartOnRest
-def Event750():
-    """ 750: Event 750 """
+@RestartOnRest(750)
+def Event_750():
+    """Event 750"""
     DisableNetworkSync()
-    EndIfPlayerNotInOwnWorld()
-    RemoveGoodFromPlayer(10110, quantity=99)
-    RemoveGoodFromPlayer(10120, quantity=99)
-    RemoveGoodFromPlayer(10200, quantity=99)
-    RemoveGoodFromPlayer(10210, quantity=99)
-    RemoveGoodFromPlayer(10220, quantity=99)
-    RemoveGoodFromPlayer(10230, quantity=99)
+    if PlayerNotInOwnWorld():
+        return
+    RemoveGoodFromPlayer(item=10110, quantity=99)
+    RemoveGoodFromPlayer(item=10120, quantity=99)
+    RemoveGoodFromPlayer(item=10200, quantity=99)
+    RemoveGoodFromPlayer(item=10210, quantity=99)
+    RemoveGoodFromPlayer(item=10220, quantity=99)
+    RemoveGoodFromPlayer(item=10230, quantity=99)
 
 
-def Event970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 970: Event 970 """
-    EndIfFlagEnabled(arg_0_3)
-    IfFlagEnabled(0, arg_0_3)
-    SkipLinesIfValueEqual(1, left=arg_4_7, right=0)
-    AwardItemLot(arg_4_7, host_only=True)
+@NeverRestart(970)
+def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
+    """Event 970"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    if ValueNotEqual(left=item_lot_param_id, right=0):
+        AwardItemLot(item_lot_param_id, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    SkipLinesIfValueEqual(1, left=arg_8_11, right=0)
-    AwardItemLot(arg_8_11, host_only=True)
-    SkipLinesIfValueEqual(1, left=arg_12_15, right=0)
-    AwardItemLot(arg_12_15, host_only=True)
+    if ValueNotEqual(left=item_lot_param_id_1, right=0):
+        AwardItemLot(item_lot_param_id_1, host_only=True)
+    if ValueNotEqual(left=item_lot_param_id_2, right=0):
+        AwardItemLot(item_lot_param_id_2, host_only=True)
 
 
-def Event6099():
-    """ 6099: Event 6099 """
+@NeverRestart(6099)
+def Event_6099():
+    """Event 6099"""
     DisableNetworkSync()
-    EndIfThisEventSlotFlagEnabled()
-    IfFlagEnabled(1, 6050)
-    IfFlagEnabled(1, 6051)
-    IfFlagEnabled(1, 6054)
-    IfFlagEnabled(1, 6056)
-    IfFlagEnabled(1, 6057)
-    IfFlagEnabled(1, 6058)
-    IfFlagEnabled(1, 6059)
-    IfFlagEnabled(1, 6062)
-    IfFlagEnabled(1, 6065)
-    IfFlagEnabled(1, 6066)
-    IfFlagEnabled(1, 6067)
-    IfFlagEnabled(1, 6068)
-    IfFlagEnabled(1, 6069)
-    IfFlagEnabled(1, 6072)
-    IfFlagEnabled(1, 6073)
-    IfFlagEnabled(1, 6074)
-    IfFlagEnabled(1, 6075)
-    IfFlagEnabled(1, 6076)
-    IfFlagEnabled(1, 6077)
-    IfFlagEnabled(1, 6078)
-    IfFlagEnabled(1, 6079)
-    IfFlagEnabled(1, 6080)
-    IfFlagEnabled(1, 6081)
-    IfFlagEnabled(1, 6082)
-    IfFlagEnabled(1, 6083)
-    IfFlagEnabled(1, 6084)
-    IfConditionTrue(0, input_condition=1)
-    AwardAchievement(14)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(6050))
+    AND_1.Add(FlagEnabled(6051))
+    AND_1.Add(FlagEnabled(6054))
+    AND_1.Add(FlagEnabled(6056))
+    AND_1.Add(FlagEnabled(6057))
+    AND_1.Add(FlagEnabled(6058))
+    AND_1.Add(FlagEnabled(6059))
+    AND_1.Add(FlagEnabled(6062))
+    AND_1.Add(FlagEnabled(6065))
+    AND_1.Add(FlagEnabled(6066))
+    AND_1.Add(FlagEnabled(6067))
+    AND_1.Add(FlagEnabled(6068))
+    AND_1.Add(FlagEnabled(6069))
+    AND_1.Add(FlagEnabled(6072))
+    AND_1.Add(FlagEnabled(6073))
+    AND_1.Add(FlagEnabled(6074))
+    AND_1.Add(FlagEnabled(6075))
+    AND_1.Add(FlagEnabled(6076))
+    AND_1.Add(FlagEnabled(6077))
+    AND_1.Add(FlagEnabled(6078))
+    AND_1.Add(FlagEnabled(6079))
+    AND_1.Add(FlagEnabled(6080))
+    AND_1.Add(FlagEnabled(6081))
+    AND_1.Add(FlagEnabled(6082))
+    AND_1.Add(FlagEnabled(6083))
+    AND_1.Add(FlagEnabled(6084))
+    
+    MAIN.Await(AND_1)
+    
+    AwardAchievement(achievement_id=14)
     EnableFlag(6099)
 
 
-def Event6900():
-    """ 6900: Event 6900 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfThisEventSlotFlagEnabled()
-    IfPlayerDoesNotHaveGood(1, 170, including_box=False)
-    IfPlayerDoesNotHaveGood(1, 171, including_box=False)
-    EndIfConditionTrue(1)
+@NeverRestart(6900)
+def Event_6900():
+    """Event 6900"""
+    if PlayerNotInOwnWorld():
+        return
+    if ThisEventSlotFlagEnabled():
+        return
+    IfPlayerDoesNotHaveGood(AND_1, 170)
+    IfPlayerDoesNotHaveGood(AND_1, 171)
+    if AND_1:
+        return
     EnableFlag(6030)
 
 
-def Event9510():
-    """ 9510: Event 9510 """
-    EndIfThisEventSlotFlagEnabled()
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(1, 13500193)
-    IfFlagEnabled(1, 8240)
-    IfConditionTrue(0, input_condition=1)
+@NeverRestart(9510)
+def Event_9510():
+    """Event 9510"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(13500193))
+    AND_1.Add(FlagEnabled(8240))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(9510)
 
 
-def Event9511():
-    """ 9511: Event 9511 """
-    EndIfThisEventSlotFlagEnabled()
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(1, 13500194)
-    IfConditionTrue(0, input_condition=1)
+@NeverRestart(9511)
+def Event_9511():
+    """Event 9511"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(13500194))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(9511)
 
 
-def Event9512():
-    """ 9512: Event 9512 """
-    EndIfThisEventSlotFlagEnabled()
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(1, 13700194)
-    IfFlagEnabled(1, 13300184)
-    IfConditionTrue(0, input_condition=1)
+@NeverRestart(9512)
+def Event_9512():
+    """Event 9512"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(13700194))
+    AND_1.Add(FlagEnabled(13300184))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(9512)
 
 
-@RestartOnRest
-def Event9520(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
-    """ 9520: Event 9520 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(0, 13304194)
-    AICommand(3300194, command_id=99, slot=2)
+@RestartOnRest(9520)
+def Event_9520(_, special_effect: int, gesture_id: ushort, item_id: int, flag: int):
+    """Event 9520"""
+    if PlayerNotInOwnWorld():
+        return
+    
+    MAIN.Await(FlagEnabled(13304194))
+    
+    AICommand(3300194, command_id=99, command_slot=2)
     ReplanAI(3300194)
-    IfCharacterHasSpecialEffect(0, 3300194, arg_0_3)
-    AICommand(3300194, command_id=-1, slot=2)
+    
+    MAIN.Await(CharacterHasSpecialEffect(3300194, special_effect))
+    
+    AICommand(3300194, command_id=-1, command_slot=2)
     ReplanAI(3300194)
-    EndIfFlagEnabled(arg_12_15)
-    AwardGestureItem(gesture_id=arg_4_5, item_type=ItemType.Good, item_id=arg_8_11)
-    EnableFlag(arg_12_15)
+    if FlagEnabled(flag):
+        return
+    AwardGestureItem(gesture_id=gesture_id, item_type=ItemType.Good, item_id=item_id)
+    EnableFlag(flag)
 
 
-@RestartOnRest
-def Event9525(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
-    """ 9525: Event 9525 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(-1, 13304195)
-    IfFlagEnabled(-1, 13704192)
-    IfFlagEnabled(-1, 14104190)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFlagDisabled(2, 13304195)
-    AICommand(3300195, command_id=99, slot=2)
-    ReplanAI(3300195)
-    SkipLinesIfFlagDisabled(2, 13704192)
-    AICommand(3700192, command_id=99, slot=2)
-    ReplanAI(3700192)
-    SkipLinesIfFlagDisabled(2, 14104190)
-    AICommand(4100190, command_id=99, slot=2)
-    ReplanAI(4100190)
-    IfCharacterHasSpecialEffect(-2, 3300195, arg_0_3)
-    IfCharacterHasSpecialEffect(-2, 3700192, arg_0_3)
-    IfCharacterHasSpecialEffect(-2, 4100191, arg_0_3)
-    IfConditionTrue(0, input_condition=-2)
-    SkipLinesIfFlagDisabled(2, 13304195)
-    AICommand(3300195, command_id=-1, slot=2)
-    ReplanAI(3300195)
-    SkipLinesIfFlagDisabled(2, 13704192)
-    AICommand(3700192, command_id=-1, slot=2)
-    ReplanAI(3700192)
-    SkipLinesIfFlagDisabled(2, 14104191)
-    AICommand(4100190, command_id=-1, slot=2)
-    ReplanAI(4100190)
-    EndIfFlagEnabled(arg_12_15)
-    AwardGestureItem(gesture_id=arg_4_5, item_type=ItemType.Good, item_id=arg_8_11)
-    EnableFlag(arg_12_15)
+@RestartOnRest(9525)
+def Event_9525(_, special_effect: int, gesture_id: ushort, item_id: int, flag: int):
+    """Event 9525"""
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(FlagEnabled(13304195))
+    OR_1.Add(FlagEnabled(13704192))
+    OR_1.Add(FlagEnabled(14104190))
+    
+    MAIN.Await(OR_1)
+    
+    if FlagEnabled(13304195):
+        AICommand(3300195, command_id=99, command_slot=2)
+        ReplanAI(3300195)
+    if FlagEnabled(13704192):
+        AICommand(3700192, command_id=99, command_slot=2)
+        ReplanAI(3700192)
+    if FlagEnabled(14104190):
+        AICommand(4100190, command_id=99, command_slot=2)
+        ReplanAI(4100190)
+    OR_2.Add(CharacterHasSpecialEffect(3300195, special_effect))
+    OR_2.Add(CharacterHasSpecialEffect(3700192, special_effect))
+    OR_2.Add(CharacterHasSpecialEffect(4100191, special_effect))
+    
+    MAIN.Await(OR_2)
+    
+    if FlagEnabled(13304195):
+        AICommand(3300195, command_id=-1, command_slot=2)
+        ReplanAI(3300195)
+    if FlagEnabled(13704192):
+        AICommand(3700192, command_id=-1, command_slot=2)
+        ReplanAI(3700192)
+    if FlagEnabled(14104191):
+        AICommand(4100190, command_id=-1, command_slot=2)
+        ReplanAI(4100190)
+    if FlagEnabled(flag):
+        return
+    AwardGestureItem(gesture_id=gesture_id, item_type=ItemType.Good, item_id=item_id)
+    EnableFlag(flag)
 
 
-@RestartOnRest
-def Event9530(_, arg_0_3: int, arg_4_5: ushort, arg_8_11: int, arg_12_15: int):
-    """ 9530: Event 9530 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(-1, 13304913)
-    IfFlagEnabled(-1, 13704191)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFlagDisabled(2, 13304913)
-    AICommand(3300193, command_id=99, slot=2)
-    ReplanAI(3300193)
-    SkipLinesIfFlagDisabled(2, 13704191)
-    AICommand(3700191, command_id=99, slot=2)
-    ReplanAI(3700191)
-    IfCharacterHasSpecialEffect(-2, 3300193, arg_0_3)
-    IfCharacterHasSpecialEffect(-2, 3700191, arg_0_3)
-    IfConditionTrue(0, input_condition=-2)
-    SkipLinesIfFlagDisabled(2, 13304913)
-    AICommand(3300193, command_id=-1, slot=2)
-    ReplanAI(3300193)
-    SkipLinesIfFlagDisabled(2, 13704191)
-    AICommand(3700191, command_id=-1, slot=2)
-    ReplanAI(3700191)
-    EndIfFlagEnabled(arg_12_15)
-    AwardGestureItem(gesture_id=arg_4_5, item_type=ItemType.Good, item_id=arg_8_11)
-    EnableFlag(arg_12_15)
+@RestartOnRest(9530)
+def Event_9530(_, special_effect: int, gesture_id: ushort, item_id: int, flag: int):
+    """Event 9530"""
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(FlagEnabled(13304913))
+    OR_1.Add(FlagEnabled(13704191))
+    
+    MAIN.Await(OR_1)
+    
+    if FlagEnabled(13304913):
+        AICommand(3300193, command_id=99, command_slot=2)
+        ReplanAI(3300193)
+    if FlagEnabled(13704191):
+        AICommand(3700191, command_id=99, command_slot=2)
+        ReplanAI(3700191)
+    OR_2.Add(CharacterHasSpecialEffect(3300193, special_effect))
+    OR_2.Add(CharacterHasSpecialEffect(3700191, special_effect))
+    
+    MAIN.Await(OR_2)
+    
+    if FlagEnabled(13304913):
+        AICommand(3300193, command_id=-1, command_slot=2)
+        ReplanAI(3300193)
+    if FlagEnabled(13704191):
+        AICommand(3700191, command_id=-1, command_slot=2)
+        ReplanAI(3700191)
+    if FlagEnabled(flag):
+        return
+    AwardGestureItem(gesture_id=gesture_id, item_type=ItemType.Good, item_id=item_id)
+    EnableFlag(flag)
 
 
-@RestartOnRest
-def Event9540(_, arg_0_1: ushort, arg_4_7: int, arg_8_11: int):
-    """ 9540: Event 9540 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(1, 13804196)
-    IfFlagDisabled(1, 13805196)
-    IfEntityWithinDistance(1, PLAYER, 3800196, radius=20.0)
-    IfHasAIStatus(2, 3800198, ai_status=AIStatusType.Battle)
-    IfEntityWithinDistance(2, PLAYER, 3800198, radius=20.0)
-    IfPlayerInOwnWorld(3)
-    IfHealthLessThanOrEqual(3, PLAYER, 0.0)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(4, input_condition=-1)
-    IfConditionTrue(4, input_condition=3)
-    IfConditionTrue(0, input_condition=4)
-    SkipLinesIfFinishedConditionFalse(2, 1)
-    AICommand(3800196, command_id=99, slot=2)
+@RestartOnRest(9540)
+def Event_9540(_, gesture_id: ushort, item_id: int, flag: int):
+    """Event 9540"""
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(13804196))
+    AND_1.Add(FlagDisabled(13805196))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3800196, radius=20.0))
+    AND_2.Add(HasAIStatus(3800198, ai_status=AIStatusType.Battle))
+    AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=3800198, radius=20.0))
+    AND_3.Add(PlayerInOwnWorld())
+    AND_3.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    AND_4.Add(OR_1)
+    AND_4.Add(AND_3)
+    
+    MAIN.Await(AND_4)
+    
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    AICommand(3800196, command_id=99, command_slot=2)
     ReplanAI(3800196)
-    SkipLinesIfFinishedConditionFalse(2, 2)
-    AICommand(3800198, command_id=99, slot=2)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    AICommand(3800198, command_id=99, command_slot=2)
     ReplanAI(3800198)
     Wait(1.0)
-    SkipLinesIfFinishedConditionFalse(2, 1)
-    AICommand(3800196, command_id=-1, slot=2)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_1)
+    AICommand(3800196, command_id=-1, command_slot=2)
     ReplanAI(3800196)
-    SkipLinesIfFinishedConditionFalse(2, 2)
-    AICommand(3800198, command_id=-1, slot=2)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_2)
+    AICommand(3800198, command_id=-1, command_slot=2)
     ReplanAI(3800198)
-    EndIfFlagEnabled(arg_8_11)
-    AwardGestureItem(gesture_id=arg_0_1, item_type=ItemType.Good, item_id=arg_4_7)
-    EnableFlag(arg_8_11)
+    if FlagEnabled(flag):
+        return
+    AwardGestureItem(gesture_id=gesture_id, item_type=ItemType.Good, item_id=item_id)
+    EnableFlag(flag)
 
 
-@RestartOnRest
-def Event9570(_, arg_0_3: int, arg_4_7: int):
-    """ 9570: Event 9570 """
+@RestartOnRest(9570)
+def Event_9570(_, item_lot_param_id: int, special_effect: int):
+    """Event 9570"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(0, PLAYER, arg_4_7)
-    AwardItemLot(arg_0_3, host_only=True)
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
+    
+    AwardItemLot(item_lot_param_id, host_only=True)
     Wait(1.5)
     Restart()
 
 
-def Event9000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 9000: Event 9000 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(-1, arg_4_7)
-    IfFlagEnabled(-1, arg_8_11)
-    IfFlagEnabled(-1, arg_12_15)
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(-2, arg_4_7)
-    IfFlagEnabled(-2, arg_8_11)
-    IfFlagEnabled(-2, arg_12_15)
-    IfConditionFalse(0, input_condition=-2)
+@NeverRestart(9000)
+def Event_9000(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
+    """Event 9000"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    OR_1.Add(FlagEnabled(flag_1))
+    OR_1.Add(FlagEnabled(flag_2))
+    OR_1.Add(FlagEnabled(flag_3))
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
+    OR_2.Add(FlagEnabled(flag_1))
+    OR_2.Add(FlagEnabled(flag_2))
+    OR_2.Add(FlagEnabled(flag_3))
+    
+    MAIN.Await(not OR_2)
+    
     Restart()
 
 
-def Event9002(_, arg_0_3: int):
-    """ 9002: Event 9002 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, arg_0_3)
-    DisableFlag(arg_0_3)
+@NeverRestart(9002)
+def Event_9002(_, flag: int):
+    """Event 9002"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    DisableFlag(flag)
     EnableFlag(70000050)
     EnableFlag(70000051)
     EnableFlag(70000052)
@@ -884,866 +1077,1042 @@ def Event9002(_, arg_0_3: int):
     Restart()
 
 
-def Event9004(_, arg_0_3: int):
-    """ 9004: Event 9004 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1016)
-    IfFlagDisabled(1, 70000052)
-    IfFlagEnabled(2, 1036)
-    IfFlagDisabled(2, 70000053)
-    IfFlagEnabled(3, 1056)
-    IfFlagDisabled(3, 70000054)
-    IfFlagEnabled(4, 1076)
-    IfFlagDisabled(4, 70000055)
-    IfFlagEnabled(5, 1096)
-    IfFlagDisabled(5, 70000056)
-    IfFlagEnabled(6, 1116)
-    IfFlagDisabled(6, 70000057)
-    IfFlagEnabled(7, 1136)
-    IfFlagDisabled(7, 70000058)
-    IfFlagEnabled(8, 1156)
-    IfFlagDisabled(8, 70000059)
-    IfFlagEnabled(9, 1176)
-    IfFlagDisabled(9, 70000060)
-    IfFlagEnabled(10, 1196)
-    IfFlagDisabled(10, 70000061)
-    IfFlagEnabled(11, 1216)
-    IfFlagDisabled(11, 70000062)
-    IfFlagEnabled(12, 1236)
-    IfFlagDisabled(12, 70000063)
-    IfFlagEnabled(13, 1256)
-    IfFlagDisabled(13, 70000064)
-    IfFlagEnabled(14, 1276)
-    IfFlagDisabled(14, 70000065)
-    IfFlagEnabled(15, 1296)
-    IfFlagDisabled(15, 70000066)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(-1, input_condition=7)
-    IfConditionTrue(-1, input_condition=8)
-    IfConditionTrue(-1, input_condition=9)
-    IfConditionTrue(-1, input_condition=10)
-    IfConditionTrue(-1, input_condition=11)
-    IfConditionTrue(-1, input_condition=12)
-    IfConditionTrue(-1, input_condition=13)
-    IfConditionTrue(-1, input_condition=14)
-    IfConditionTrue(-1, input_condition=15)
-    IfConditionTrue(0, input_condition=-1)
-    ClearMainCondition(0)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(1, 1016)
-    IfFlagDisabled(1, 70000052)
-    IfFlagEnabled(2, 1036)
-    IfFlagDisabled(2, 70000053)
-    IfFlagEnabled(3, 1056)
-    IfFlagDisabled(3, 70000054)
-    IfFlagEnabled(4, 1076)
-    IfFlagDisabled(4, 70000055)
-    IfFlagEnabled(5, 1096)
-    IfFlagDisabled(5, 70000056)
-    IfFlagEnabled(6, 1116)
-    IfFlagDisabled(6, 70000057)
-    IfFlagEnabled(7, 1136)
-    IfFlagDisabled(7, 70000058)
-    IfFlagEnabled(8, 1156)
-    IfFlagDisabled(8, 70000059)
-    IfFlagEnabled(9, 1176)
-    IfFlagDisabled(9, 70000060)
-    IfFlagEnabled(10, 1196)
-    IfFlagDisabled(10, 70000061)
-    IfFlagEnabled(11, 1216)
-    IfFlagDisabled(11, 70000062)
-    IfFlagEnabled(12, 1236)
-    IfFlagDisabled(12, 70000063)
-    IfFlagEnabled(13, 1256)
-    IfFlagDisabled(13, 70000064)
-    IfFlagEnabled(14, 1276)
-    IfFlagDisabled(14, 70000065)
-    IfFlagEnabled(15, 1296)
-    IfFlagDisabled(15, 70000066)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(-1, input_condition=7)
-    IfConditionTrue(-1, input_condition=8)
-    IfConditionTrue(-1, input_condition=9)
-    IfConditionTrue(-1, input_condition=10)
-    IfConditionTrue(-1, input_condition=11)
-    IfConditionTrue(-1, input_condition=12)
-    IfConditionTrue(-1, input_condition=13)
-    IfConditionTrue(-1, input_condition=14)
-    IfConditionTrue(-1, input_condition=15)
-    IfConditionFalse(0, input_condition=-1)
-    DisableFlag(arg_0_3)
+@NeverRestart(9004)
+def Event_9004(_, flag: int):
+    """Event 9004"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1016))
+    AND_1.Add(FlagDisabled(70000052))
+    AND_2.Add(FlagEnabled(1036))
+    AND_2.Add(FlagDisabled(70000053))
+    AND_3.Add(FlagEnabled(1056))
+    AND_3.Add(FlagDisabled(70000054))
+    AND_4.Add(FlagEnabled(1076))
+    AND_4.Add(FlagDisabled(70000055))
+    AND_5.Add(FlagEnabled(1096))
+    AND_5.Add(FlagDisabled(70000056))
+    AND_6.Add(FlagEnabled(1116))
+    AND_6.Add(FlagDisabled(70000057))
+    AND_7.Add(FlagEnabled(1136))
+    AND_7.Add(FlagDisabled(70000058))
+    AND_8.Add(FlagEnabled(1156))
+    AND_8.Add(FlagDisabled(70000059))
+    AND_9.Add(FlagEnabled(1176))
+    AND_9.Add(FlagDisabled(70000060))
+    AND_10.Add(FlagEnabled(1196))
+    AND_10.Add(FlagDisabled(70000061))
+    AND_11.Add(FlagEnabled(1216))
+    AND_11.Add(FlagDisabled(70000062))
+    AND_12.Add(FlagEnabled(1236))
+    AND_12.Add(FlagDisabled(70000063))
+    AND_13.Add(FlagEnabled(1256))
+    AND_13.Add(FlagDisabled(70000064))
+    AND_14.Add(FlagEnabled(1276))
+    AND_14.Add(FlagDisabled(70000065))
+    AND_15.Add(FlagEnabled(1296))
+    AND_15.Add(FlagDisabled(70000066))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    OR_1.Add(AND_9)
+    OR_1.Add(AND_10)
+    OR_1.Add(AND_11)
+    OR_1.Add(AND_12)
+    OR_1.Add(AND_13)
+    OR_1.Add(AND_14)
+    OR_1.Add(AND_15)
+    
+    MAIN.Await(OR_1)
+    
+    ClearMainCondition()
+    EnableFlag(flag)
+    AND_1.Add(FlagEnabled(1016))
+    AND_1.Add(FlagDisabled(70000052))
+    AND_2.Add(FlagEnabled(1036))
+    AND_2.Add(FlagDisabled(70000053))
+    AND_3.Add(FlagEnabled(1056))
+    AND_3.Add(FlagDisabled(70000054))
+    AND_4.Add(FlagEnabled(1076))
+    AND_4.Add(FlagDisabled(70000055))
+    AND_5.Add(FlagEnabled(1096))
+    AND_5.Add(FlagDisabled(70000056))
+    AND_6.Add(FlagEnabled(1116))
+    AND_6.Add(FlagDisabled(70000057))
+    AND_7.Add(FlagEnabled(1136))
+    AND_7.Add(FlagDisabled(70000058))
+    AND_8.Add(FlagEnabled(1156))
+    AND_8.Add(FlagDisabled(70000059))
+    AND_9.Add(FlagEnabled(1176))
+    AND_9.Add(FlagDisabled(70000060))
+    AND_10.Add(FlagEnabled(1196))
+    AND_10.Add(FlagDisabled(70000061))
+    AND_11.Add(FlagEnabled(1216))
+    AND_11.Add(FlagDisabled(70000062))
+    AND_12.Add(FlagEnabled(1236))
+    AND_12.Add(FlagDisabled(70000063))
+    AND_13.Add(FlagEnabled(1256))
+    AND_13.Add(FlagDisabled(70000064))
+    AND_14.Add(FlagEnabled(1276))
+    AND_14.Add(FlagDisabled(70000065))
+    AND_15.Add(FlagEnabled(1296))
+    AND_15.Add(FlagDisabled(70000066))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    OR_1.Add(AND_9)
+    OR_1.Add(AND_10)
+    OR_1.Add(AND_11)
+    OR_1.Add(AND_12)
+    OR_1.Add(AND_13)
+    OR_1.Add(AND_14)
+    OR_1.Add(AND_15)
+    
+    MAIN.Await(not OR_1)
+    
+    DisableFlag(flag)
     Restart()
 
 
-def Event9005(_, arg_0_3: int):
-    """ 9005: Event 9005 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1316)
-    IfFlagDisabled(1, 70000067)
-    IfFlagEnabled(2, 1336)
-    IfFlagDisabled(2, 70000068)
-    IfFlagEnabled(3, 1356)
-    IfFlagDisabled(3, 70000069)
-    IfFlagEnabled(4, 1376)
-    IfFlagDisabled(4, 70000070)
-    IfFlagEnabled(5, 1396)
-    IfFlagDisabled(5, 70000071)
-    IfFlagEnabled(6, 1416)
-    IfFlagDisabled(6, 70000072)
-    IfFlagEnabled(7, 1436)
-    IfFlagDisabled(7, 70000073)
-    IfFlagEnabled(8, 1456)
-    IfFlagDisabled(8, 70000074)
-    IfFlagEnabled(9, 1476)
-    IfFlagDisabled(9, 70000075)
-    IfFlagEnabled(10, 1496)
-    IfFlagDisabled(10, 70000076)
-    IfFlagEnabled(11, 1516)
-    IfFlagDisabled(11, 70000077)
-    IfFlagEnabled(12, 1536)
-    IfFlagDisabled(12, 70000078)
-    IfFlagEnabled(13, 1556)
-    IfFlagDisabled(13, 70000079)
-    IfFlagEnabled(14, 1576)
-    IfFlagDisabled(14, 70000080)
-    IfFlagEnabled(15, 1596)
-    IfFlagDisabled(15, 70000081)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(-1, input_condition=7)
-    IfConditionTrue(-1, input_condition=8)
-    IfConditionTrue(-1, input_condition=9)
-    IfConditionTrue(-1, input_condition=10)
-    IfConditionTrue(-1, input_condition=11)
-    IfConditionTrue(-1, input_condition=12)
-    IfConditionTrue(-1, input_condition=13)
-    IfConditionTrue(-1, input_condition=14)
-    IfConditionTrue(-1, input_condition=15)
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    ClearMainCondition(0)
-    IfFlagEnabled(1, 1316)
-    IfFlagDisabled(1, 70000067)
-    IfFlagEnabled(2, 1336)
-    IfFlagDisabled(2, 70000068)
-    IfFlagEnabled(3, 1356)
-    IfFlagDisabled(3, 70000069)
-    IfFlagEnabled(4, 1376)
-    IfFlagDisabled(4, 70000070)
-    IfFlagEnabled(5, 1396)
-    IfFlagDisabled(5, 70000071)
-    IfFlagEnabled(6, 1416)
-    IfFlagDisabled(6, 70000072)
-    IfFlagEnabled(7, 1436)
-    IfFlagDisabled(7, 70000073)
-    IfFlagEnabled(8, 1456)
-    IfFlagDisabled(8, 70000074)
-    IfFlagEnabled(9, 1476)
-    IfFlagDisabled(9, 70000075)
-    IfFlagEnabled(10, 1496)
-    IfFlagDisabled(10, 70000076)
-    IfFlagEnabled(11, 1516)
-    IfFlagDisabled(11, 70000077)
-    IfFlagEnabled(12, 1536)
-    IfFlagDisabled(12, 70000078)
-    IfFlagEnabled(13, 1556)
-    IfFlagDisabled(13, 70000079)
-    IfFlagEnabled(14, 1576)
-    IfFlagDisabled(14, 70000080)
-    IfFlagEnabled(15, 1596)
-    IfFlagDisabled(15, 70000081)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(-1, input_condition=7)
-    IfConditionTrue(-1, input_condition=8)
-    IfConditionTrue(-1, input_condition=9)
-    IfConditionTrue(-1, input_condition=10)
-    IfConditionTrue(-1, input_condition=11)
-    IfConditionTrue(-1, input_condition=12)
-    IfConditionTrue(-1, input_condition=13)
-    IfConditionTrue(-1, input_condition=14)
-    IfConditionTrue(-1, input_condition=15)
-    IfConditionFalse(0, input_condition=-1)
-    DisableFlag(arg_0_3)
+@NeverRestart(9005)
+def Event_9005(_, flag: int):
+    """Event 9005"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1316))
+    AND_1.Add(FlagDisabled(70000067))
+    AND_2.Add(FlagEnabled(1336))
+    AND_2.Add(FlagDisabled(70000068))
+    AND_3.Add(FlagEnabled(1356))
+    AND_3.Add(FlagDisabled(70000069))
+    AND_4.Add(FlagEnabled(1376))
+    AND_4.Add(FlagDisabled(70000070))
+    AND_5.Add(FlagEnabled(1396))
+    AND_5.Add(FlagDisabled(70000071))
+    AND_6.Add(FlagEnabled(1416))
+    AND_6.Add(FlagDisabled(70000072))
+    AND_7.Add(FlagEnabled(1436))
+    AND_7.Add(FlagDisabled(70000073))
+    AND_8.Add(FlagEnabled(1456))
+    AND_8.Add(FlagDisabled(70000074))
+    AND_9.Add(FlagEnabled(1476))
+    AND_9.Add(FlagDisabled(70000075))
+    AND_10.Add(FlagEnabled(1496))
+    AND_10.Add(FlagDisabled(70000076))
+    AND_11.Add(FlagEnabled(1516))
+    AND_11.Add(FlagDisabled(70000077))
+    AND_12.Add(FlagEnabled(1536))
+    AND_12.Add(FlagDisabled(70000078))
+    AND_13.Add(FlagEnabled(1556))
+    AND_13.Add(FlagDisabled(70000079))
+    AND_14.Add(FlagEnabled(1576))
+    AND_14.Add(FlagDisabled(70000080))
+    AND_15.Add(FlagEnabled(1596))
+    AND_15.Add(FlagDisabled(70000081))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    OR_1.Add(AND_9)
+    OR_1.Add(AND_10)
+    OR_1.Add(AND_11)
+    OR_1.Add(AND_12)
+    OR_1.Add(AND_13)
+    OR_1.Add(AND_14)
+    OR_1.Add(AND_15)
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
+    ClearMainCondition()
+    AND_1.Add(FlagEnabled(1316))
+    AND_1.Add(FlagDisabled(70000067))
+    AND_2.Add(FlagEnabled(1336))
+    AND_2.Add(FlagDisabled(70000068))
+    AND_3.Add(FlagEnabled(1356))
+    AND_3.Add(FlagDisabled(70000069))
+    AND_4.Add(FlagEnabled(1376))
+    AND_4.Add(FlagDisabled(70000070))
+    AND_5.Add(FlagEnabled(1396))
+    AND_5.Add(FlagDisabled(70000071))
+    AND_6.Add(FlagEnabled(1416))
+    AND_6.Add(FlagDisabled(70000072))
+    AND_7.Add(FlagEnabled(1436))
+    AND_7.Add(FlagDisabled(70000073))
+    AND_8.Add(FlagEnabled(1456))
+    AND_8.Add(FlagDisabled(70000074))
+    AND_9.Add(FlagEnabled(1476))
+    AND_9.Add(FlagDisabled(70000075))
+    AND_10.Add(FlagEnabled(1496))
+    AND_10.Add(FlagDisabled(70000076))
+    AND_11.Add(FlagEnabled(1516))
+    AND_11.Add(FlagDisabled(70000077))
+    AND_12.Add(FlagEnabled(1536))
+    AND_12.Add(FlagDisabled(70000078))
+    AND_13.Add(FlagEnabled(1556))
+    AND_13.Add(FlagDisabled(70000079))
+    AND_14.Add(FlagEnabled(1576))
+    AND_14.Add(FlagDisabled(70000080))
+    AND_15.Add(FlagEnabled(1596))
+    AND_15.Add(FlagDisabled(70000081))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    OR_1.Add(AND_9)
+    OR_1.Add(AND_10)
+    OR_1.Add(AND_11)
+    OR_1.Add(AND_12)
+    OR_1.Add(AND_13)
+    OR_1.Add(AND_14)
+    OR_1.Add(AND_15)
+    
+    MAIN.Await(not OR_1)
+    
+    DisableFlag(flag)
     Restart()
 
 
-def Event9006(_, arg_0_3: int):
-    """ 9006: Event 9006 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1816)
-    IfFlagDisabled(1, 70001073)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    ClearMainCondition(0)
-    IfFlagEnabled(1, 1816)
-    IfFlagDisabled(1, 70001073)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionFalse(0, input_condition=-1)
-    DisableFlag(arg_0_3)
+@NeverRestart(9006)
+def Event_9006(_, flag: int):
+    """Event 9006"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1816))
+    AND_1.Add(FlagDisabled(70001073))
+    OR_1.Add(AND_1)
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
+    ClearMainCondition()
+    AND_1.Add(FlagEnabled(1816))
+    AND_1.Add(FlagDisabled(70001073))
+    OR_1.Add(AND_1)
+    
+    MAIN.Await(not OR_1)
+    
+    DisableFlag(flag)
     Restart()
 
 
-def Event9010():
-    """ 9010: Event 9010 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(0, 70000061)
-    SkipLinesIfFlagDisabled(2, 74000295)
-    DisableFlag(74000295)
-    Goto(Label.L20)
-    SkipLinesIfFlagDisabled(2, 74000294)
-    DisableFlag(74000294)
-    Goto(Label.L20)
-    SkipLinesIfFlagDisabled(2, 74000293)
-    DisableFlag(74000293)
-    Goto(Label.L20)
-    SkipLinesIfFlagDisabled(2, 74000292)
-    DisableFlag(74000292)
-    Goto(Label.L20)
-    SkipLinesIfFlagDisabled(2, 74000291)
-    DisableFlag(74000291)
-    Goto(Label.L20)
-    SkipLinesIfFlagDisabled(4, 74000290)
-    DisableFlag(74000290)
-    SetNetworkConnectedFlagRangeState((1195, 1199), state=RangeState.AllOn)
-    SetNetworkConnectedFlagState(flag=1195, state=FlagState.On)
-    Goto(Label.L20)
+@NeverRestart(9010)
+def Event_9010():
+    """Event 9010"""
+    if PlayerNotInOwnWorld():
+        return
+    
+    MAIN.Await(FlagEnabled(70000061))
+    
+    if FlagEnabled(74000295):
+        DisableFlag(74000295)
+        Goto(Label.L20)
+    if FlagEnabled(74000294):
+        DisableFlag(74000294)
+        Goto(Label.L20)
+    if FlagEnabled(74000293):
+        DisableFlag(74000293)
+        Goto(Label.L20)
+    if FlagEnabled(74000292):
+        DisableFlag(74000292)
+        Goto(Label.L20)
+    if FlagEnabled(74000291):
+        DisableFlag(74000291)
+        Goto(Label.L20)
+    if FlagEnabled(74000290):
+        DisableFlag(74000290)
+        DisableNetworkConnectedFlagRange(flag_range=(1195, 1199))
+        SetNetworkConnectedFlagState(flag=1195, state=FlagSetting.On)
+        Goto(Label.L20)
 
-    # --- 20 --- #
+    # --- Label 20 --- #
     DefineLabel(20)
     DisableFlag(70000061)
     Restart()
 
 
-def Event9011(_, arg_0_3: int):
-    """ 9011: Event 9011 """
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(1, 700)
-    IfFlagDisabled(1, 50006020)
-    IfConditionTrue(0, input_condition=1)
-    GotoIfFlagEnabled(Label.L1, 14000110)
-    IfFlagEnabled(2, 9307)
-    IfFlagEnabled(2, 9309)
-    IfFlagEnabled(2, 9314)
-    IfFlagEnabled(2, 9318)
-    GotoIfConditionTrue(Label.L0, input_condition=2)
-    SkipLinesIfFlagEnabled(1, 9307)
-    IfFlagEnabled(-1, 9307)
-    SkipLinesIfFlagEnabled(1, 9309)
-    IfFlagEnabled(-1, 9309)
-    SkipLinesIfFlagEnabled(1, 9314)
-    IfFlagEnabled(-1, 9314)
-    SkipLinesIfFlagEnabled(1, 9318)
-    IfFlagEnabled(-1, 9318)
+@NeverRestart(9011)
+def Event_9011(_, flag: int):
+    """Event 9011"""
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagEnabled(700))
+    AND_1.Add(FlagDisabled(50006020))
+    
+    MAIN.Await(AND_1)
+    
+    GotoIfFlagEnabled(Label.L1, flag=14000110)
+    AND_2.Add(FlagEnabled(9307))
+    AND_2.Add(FlagEnabled(9309))
+    AND_2.Add(FlagEnabled(9314))
+    AND_2.Add(FlagEnabled(9318))
+    GotoIfConditionTrue(Label.L0, input_condition=AND_2)
+    if FlagDisabled(9307):
+        OR_1.Add(FlagEnabled(9307))
+    if FlagDisabled(9309):
+        OR_1.Add(FlagEnabled(9309))
+    if FlagDisabled(9314):
+        OR_1.Add(FlagEnabled(9314))
+    if FlagDisabled(9318):
+        OR_1.Add(FlagEnabled(9318))
     Goto(Label.L1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagEnabled(-1, 14000110)
+    OR_1.Add(FlagEnabled(14000110))
     Goto(Label.L1)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    IfFlagEnabled(-2, 50006020)
-    IfConditionTrue(-1, input_condition=-2)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionFalse(2, -2)
-    DisableFlag(arg_0_3)
+    OR_2.Add(FlagEnabled(50006020))
+    OR_1.Add(OR_2)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionFalse(2, input_condition=OR_2)
+    DisableFlag(flag)
     Restart()
-    EnableFlag(arg_0_3)
-    Restart()
-
-
-def Event9012():
-    """ 9012: Event 9012 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(2052)
-    IfPlayerGender(0, Gender.Male)
-    SetNetworkConnectedFlagState(flag=9013, state=FlagState.On)
-    IfPlayerGender(0, Gender.Female)
-    SetNetworkConnectedFlagState(flag=9013, state=FlagState.Off)
+    EnableFlag(flag)
     Restart()
 
 
-@RestartOnRest
-def Event9014():
-    """ 9014: Event 9014 """
-    EndIfPlayerNotInOwnWorld()
-    GotoIfFlagEnabled(Label.L0, 9014)
-    GotoIfFlagDisabled(Label.L0, 13300761)
-    DisplayDialog(
-        13007000,
-        anchor_entity=10000,
-        display_distance=0.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+@NeverRestart(9012)
+def Event_9012():
+    """Event 9012"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(2052):
+        return
+    
+    MAIN.Await(PlayerGender(gender=Gender.Male))
+    
+    SetNetworkConnectedFlagState(flag=9013, state=FlagSetting.On)
+    
+    MAIN.Await(PlayerGender(gender=Gender.Female))
+    
+    SetNetworkConnectedFlagState(flag=9013, state=FlagSetting.Off)
+    Restart()
+
+
+@RestartOnRest(9014)
+def Event_9014():
+    """Event 9014"""
+    if PlayerNotInOwnWorld():
+        return
+    GotoIfFlagEnabled(Label.L0, flag=9014)
+    GotoIfFlagDisabled(Label.L0, flag=13300761)
+    DisplayDialog(text=13007000, anchor_entity=PLAYER, display_distance=0.0, number_buttons=NumberButtons.OneButton)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagEnabled(0, 9014)
+    
+    MAIN.Await(FlagEnabled(9014))
+    
     EnableFlag(9014)
 
 
-def Event9015():
-    """ 9015: Event 9015 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(70000118)
-    IfFlagEnabled(-1, 1124)
-    IfFlagEnabled(-1, 1126)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagEnabled(1, 9303)
-    IfFlagEnabled(1, 9314)
-    IfConditionTrue(0, input_condition=1)
+@NeverRestart(9015)
+def Event_9015():
+    """Event 9015"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(70000118):
+        return
+    OR_1.Add(FlagEnabled(1124))
+    OR_1.Add(FlagEnabled(1126))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagEnabled(9303))
+    AND_1.Add(FlagEnabled(9314))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(70000118)
 
 
-@RestartOnRest
-def Event9016():
-    """ 9016: Event 9016 """
-    EndIfPlayerNotInOwnWorld()
+@RestartOnRest(9016)
+def Event_9016():
+    """Event 9016"""
+    if PlayerNotInOwnWorld():
+        return
     DisableFlag(9017)
-    IfPlayerClass(0, ClassType.Cleric)
+    
+    MAIN.Await(PlayerClass(ClassType.Cleric))
+    
     EnableFlag(9017)
-    IfPlayerClass(1, ClassType.Cleric)
-    IfConditionFalse(0, input_condition=1)
+    AND_1.Add(PlayerClass(ClassType.Cleric))
+    
+    MAIN.Await(not AND_1)
+    
     Restart()
 
 
-@RestartOnRest
-def Event9018():
-    """ 9018: Event 9018 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(73300202)
-    IfFlagEnabled(-1, 13204190)
-    IfFlagEnabled(-1, 13005710)
-    IfConditionTrue(0, input_condition=-1)
+@RestartOnRest(9018)
+def Event_9018():
+    """Event 9018"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(73300202):
+        return
+    OR_1.Add(FlagEnabled(13204190))
+    OR_1.Add(FlagEnabled(13005710))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(73300202)
 
 
-@RestartOnRest
-def Event9019(_, arg_0_3: int):
-    """ 9019: Event 9019 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(arg_0_3)
-    IfFlagEnabled(-1, 13304192)
-    IfFlagEnabled(-1, 13014192)
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
+@RestartOnRest(9019)
+def Event_9019(_, flag: int):
+    """Event 9019"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(flag):
+        return
+    OR_1.Add(FlagEnabled(13304192))
+    OR_1.Add(FlagEnabled(13014192))
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
 
 
-def Event9020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
-    """ 9020: Event 9020 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagRangeAnyEnabled((arg_4_7, arg_8_11))
-    DisableFlag(arg_0_3)
-    IfOutsideMap(-1, game_map=(arg_16_16, arg_17_17))
-    IfFlagEnabled(-1, 74000013)
-    IfFlagEnabled(1, arg_12_15)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(-2, game_map=(arg_16_16, arg_17_17))
-    IfFlagEnabled(-2, 74000013)
-    IfFlagEnabled(2, arg_12_15)
-    IfConditionTrue(2, input_condition=-2)
-    IfConditionFalse(0, input_condition=2)
+@NeverRestart(9020)
+def Event_9020(_, flag: int, first_flag: int, last_flag: int, flag_1: int, area_id: uchar, block_id: uchar):
+    """Event 9020"""
+    if PlayerNotInOwnWorld():
+        return
+    EndIfFlagRangeAnyEnabled(flag_range=(first_flag, last_flag))
+    DisableFlag(flag)
+    OR_1.Add(OutsideMap(game_map=(area_id, block_id)))
+    OR_1.Add(FlagEnabled(74000013))
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    OR_2.Add(OutsideMap(game_map=(area_id, block_id)))
+    OR_2.Add(FlagEnabled(74000013))
+    AND_2.Add(FlagEnabled(flag_1))
+    AND_2.Add(OR_2)
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9080(_, arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
-    """ 9080: Event 9080 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(2052)
-    EndIfThisEventSlotFlagEnabled()
-    IfPlayerHasItem(1, arg_4_7, item_type=arg_0_0, including_box=True)
-    EndIfConditionTrue(1)
-    DisableFlag(arg_8_11)
+@NeverRestart(9080)
+def Event_9080(_, item_type: uchar, item: int, flag: int):
+    """Event 9080"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(2052):
+        return
+    if ThisEventSlotFlagEnabled():
+        return
+    IfPlayerHasItem(AND_1, item, item_type=item_type, including_storage=True)
+    if AND_1:
+        return
+    DisableFlag(flag)
 
 
-def Event9100(_, arg_0_3: int):
-    """ 9100: Event 9100 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, 1103)
-    EnableFlag(arg_0_3)
-    IfFlagDisabled(0, 1103)
+@NeverRestart(9100)
+def Event_9100(_, flag: int):
+    """Event 9100"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(1103))
+    
+    EnableFlag(flag)
+    
+    MAIN.Await(FlagDisabled(1103))
+    
     Restart()
 
 
-def Event9101(_, arg_0_3: int):
-    """ 9101: Event 9101 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfInsideMap(-1, game_map=GRAND_ARCHIVES)
-    IfInsideMap(-1, game_map=LOTHRIC_CASTLE)
-    IfInsideMap(-1, game_map=FARRON_KEEP)
-    IfInsideMap(-1, game_map=CATHEDRAL_OF_THE_DEEP)
-    IfConditionTrue(0, input_condition=-1)
-    GotoIfInsideMap(Label.L0, GRAND_ARCHIVES)
-    GotoIfInsideMap(Label.L1, LOTHRIC_CASTLE)
-    GotoIfInsideMap(Label.L2, FARRON_KEEP)
-    GotoIfInsideMap(Label.L3, CATHEDRAL_OF_THE_DEEP)
+@NeverRestart(9101)
+def Event_9101(_, flag: int):
+    """Event 9101"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    OR_1.Add(InsideMap(game_map=GRAND_ARCHIVES))
+    OR_1.Add(InsideMap(game_map=LOTHRIC_CASTLE))
+    OR_1.Add(InsideMap(game_map=FARRON_KEEP))
+    OR_1.Add(InsideMap(game_map=CATHEDRAL_OF_THE_DEEP))
+    
+    MAIN.Await(OR_1)
+    
+    GotoIfInsideMap(Label.L0, game_map=GRAND_ARCHIVES)
+    GotoIfInsideMap(Label.L1, game_map=LOTHRIC_CASTLE)
+    GotoIfInsideMap(Label.L2, game_map=FARRON_KEEP)
+    GotoIfInsideMap(Label.L3, game_map=CATHEDRAL_OF_THE_DEEP)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagEnabled(-2, 1128)
-    IfConditionTrue(1, input_condition=-2)
-    IfFlagDisabled(1, 73500150)
-    SkipLinesIfConditionFalse(1, 1)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=GRAND_ARCHIVES)
+    OR_2.Add(FlagEnabled(1128))
+    AND_1.Add(OR_2)
+    AND_1.Add(FlagDisabled(73500150))
+    SkipLinesIfConditionFalse(1, AND_1)
+    EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=GRAND_ARCHIVES))
+    
     Restart()
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    IfFlagEnabled(-3, 1128)
-    IfConditionTrue(2, input_condition=-3)
-    IfFlagDisabled(2, 73500150)
-    SkipLinesIfConditionFalse(1, 2)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=LOTHRIC_CASTLE)
+    OR_3.Add(FlagEnabled(1128))
+    AND_2.Add(OR_3)
+    AND_2.Add(FlagDisabled(73500150))
+    SkipLinesIfConditionFalse(1, AND_2)
+    EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=LOTHRIC_CASTLE))
+    
     Restart()
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
-    IfFlagEnabled(-4, 1124)
-    IfFlagEnabled(-4, 1126)
-    IfFlagEnabled(-4, 1128)
-    IfConditionTrue(3, input_condition=-4)
-    IfFlagDisabled(3, 73500150)
-    SkipLinesIfConditionFalse(1, 3)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=FARRON_KEEP)
+    OR_4.Add(FlagEnabled(1124))
+    OR_4.Add(FlagEnabled(1126))
+    OR_4.Add(FlagEnabled(1128))
+    AND_3.Add(OR_4)
+    AND_3.Add(FlagDisabled(73500150))
+    SkipLinesIfConditionFalse(1, AND_3)
+    EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=FARRON_KEEP))
+    
     Restart()
 
-    # --- 3 --- #
+    # --- Label 3 --- #
     DefineLabel(3)
-    IfFlagEnabled(-5, 1124)
-    IfFlagEnabled(-5, 1126)
-    IfFlagEnabled(-5, 1128)
-    IfConditionTrue(4, input_condition=-5)
-    IfFlagDisabled(4, 73500150)
-    SkipLinesIfConditionFalse(1, 4)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=CATHEDRAL_OF_THE_DEEP)
+    OR_5.Add(FlagEnabled(1124))
+    OR_5.Add(FlagEnabled(1126))
+    OR_5.Add(FlagEnabled(1128))
+    AND_4.Add(OR_5)
+    AND_4.Add(FlagDisabled(73500150))
+    SkipLinesIfConditionFalse(1, AND_4)
+    EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=CATHEDRAL_OF_THE_DEEP))
+    
     Restart()
 
 
-def Event9102(_, arg_0_3: int):
-    """ 9102: Event 9102 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfInsideMap(-1, game_map=UNDEAD_SETTLEMENT)
-    IfInsideMap(-1, game_map=IRITHYLL)
-    IfConditionTrue(0, input_condition=-1)
-    GotoIfInsideMap(Label.L0, UNDEAD_SETTLEMENT)
-    GotoIfInsideMap(Label.L1, IRITHYLL)
+@NeverRestart(9102)
+def Event_9102(_, flag: int):
+    """Event 9102"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    OR_1.Add(InsideMap(game_map=UNDEAD_SETTLEMENT))
+    OR_1.Add(InsideMap(game_map=IRITHYLL))
+    
+    MAIN.Await(OR_1)
+    
+    GotoIfInsideMap(Label.L0, game_map=UNDEAD_SETTLEMENT)
+    GotoIfInsideMap(Label.L1, game_map=IRITHYLL)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfFlagDisabled(1, 1202)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=UNDEAD_SETTLEMENT)
+    if FlagEnabled(1202):
+        EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=UNDEAD_SETTLEMENT))
+    
     Restart()
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfFlagDisabled(1, 1204)
-    EnableFlag(arg_0_3)
-    IfOutsideMap(0, game_map=IRITHYLL)
+    if FlagEnabled(1204):
+        EnableFlag(flag)
+    
+    MAIN.Await(OutsideMap(game_map=IRITHYLL))
+    
     Restart()
 
 
-def Event9103(_, arg_0_3: int):
-    """ 9103: Event 9103 """
-    RestartIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, 1223)
-    EnableFlag(arg_0_3)
-    IfFlagDisabled(0, 1223)
+@NeverRestart(9103)
+def Event_9103(_, flag: int):
+    """Event 9103"""
+    if PlayerNotInOwnWorld():
+        return RESTART
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(1223))
+    
+    EnableFlag(flag)
+    
+    MAIN.Await(FlagDisabled(1223))
+    
     Restart()
 
 
-def Event9104(_, arg_0_3: int):
-    """ 9104: Event 9104 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(-1, 1301)
-    IfFlagEnabled(-1, 1303)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagEnabled(1, 1295)
-    IfFlagDisabled(1, 73101710)
-    IfFlagDisabled(1, 73101720)
-    IfFlagDisabled(1, 73101730)
-    IfFlagDisabled(1, 73101740)
-    IfFlagDisabled(1, 73101750)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(-2, 1301)
-    IfFlagEnabled(-2, 1303)
-    IfConditionTrue(2, input_condition=-2)
-    IfFlagEnabled(2, 1295)
-    IfFlagDisabled(2, 73101710)
-    IfFlagDisabled(2, 73101720)
-    IfFlagDisabled(2, 73101730)
-    IfFlagDisabled(2, 73101740)
-    IfFlagDisabled(2, 73101750)
-    IfConditionFalse(0, input_condition=2)
+@NeverRestart(9104)
+def Event_9104(_, flag: int):
+    """Event 9104"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    OR_1.Add(FlagEnabled(1301))
+    OR_1.Add(FlagEnabled(1303))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagEnabled(1295))
+    AND_1.Add(FlagDisabled(73101710))
+    AND_1.Add(FlagDisabled(73101720))
+    AND_1.Add(FlagDisabled(73101730))
+    AND_1.Add(FlagDisabled(73101740))
+    AND_1.Add(FlagDisabled(73101750))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    OR_2.Add(FlagEnabled(1301))
+    OR_2.Add(FlagEnabled(1303))
+    AND_2.Add(OR_2)
+    AND_2.Add(FlagEnabled(1295))
+    AND_2.Add(FlagDisabled(73101710))
+    AND_2.Add(FlagDisabled(73101720))
+    AND_2.Add(FlagDisabled(73101730))
+    AND_2.Add(FlagDisabled(73101740))
+    AND_2.Add(FlagDisabled(73101750))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9105(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 9105: Event 9105 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    DisableFlag(arg_4_7)
-    DisableFlag(arg_8_11)
-    IfFlagEnabled(1, 1341)
-    IfFlagDisabled(1, 9311)
-    IfConditionTrue(0, input_condition=1)
-    GotoIfFlagDisabled(Label.L10, 9013)
-    EnableFlag(arg_0_3)
+@NeverRestart(9105)
+def Event_9105(_, flag: int, flag_1: int, flag_2: int):
+    """Event 9105"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    DisableFlag(flag_1)
+    DisableFlag(flag_2)
+    AND_1.Add(FlagEnabled(1341))
+    AND_1.Add(FlagDisabled(9311))
+    
+    MAIN.Await(AND_1)
+    
+    GotoIfFlagDisabled(Label.L10, flag=9013)
+    EnableFlag(flag)
     Goto(Label.L20)
 
-    # --- 10 --- #
+    # --- Label 10 --- #
     DefineLabel(10)
-    EnableFlag(arg_4_7)
+    EnableFlag(flag_1)
     Goto(Label.L20)
 
-    # --- 20 --- #
+    # --- Label 20 --- #
     DefineLabel(20)
-    EnableFlag(arg_8_11)
-    IfFlagEnabled(2, 1341)
-    IfFlagDisabled(2, 9311)
-    IfConditionFalse(0, input_condition=2)
+    EnableFlag(flag_2)
+    AND_2.Add(FlagEnabled(1341))
+    AND_2.Add(FlagDisabled(9311))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-@RestartOnRest
-def Event9106(_, arg_0_3: int):
-    """ 9106: Event 9106 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1130)
-    IfFlagDisabled(1, 1138)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(2, 1130)
-    IfFlagDisabled(2, 1138)
-    IfConditionFalse(0, input_condition=2)
+@RestartOnRest(9106)
+def Event_9106(_, flag: int):
+    """Event 9106"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1130))
+    AND_1.Add(FlagDisabled(1138))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    AND_2.Add(FlagEnabled(1130))
+    AND_2.Add(FlagDisabled(1138))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9107(_, arg_0_3: int):
-    """ 9107: Event 9107 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1042)
-    IfFlagEnabled(1, 1055)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(2, 1042)
-    IfFlagEnabled(2, 1055)
-    IfConditionFalse(0, input_condition=2)
+@NeverRestart(9107)
+def Event_9107(_, flag: int):
+    """Event 9107"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1042))
+    AND_1.Add(FlagEnabled(1055))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    AND_2.Add(FlagEnabled(1042))
+    AND_2.Add(FlagEnabled(1055))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9108(_, arg_0_3: int):
-    """ 9108: Event 9108 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagRangeAnyEnabled(1, (1041, 1042))
-    IfFlagEnabled(1, 1055)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfFlagRangeAnyEnabled(2, (1041, 1042))
-    IfFlagEnabled(2, 1055)
-    IfConditionFalse(0, input_condition=2)
+@NeverRestart(9108)
+def Event_9108(_, flag: int):
+    """Event 9108"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagRangeAnyEnabled(flag_range=(1041, 1042)))
+    AND_1.Add(FlagEnabled(1055))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    AND_2.Add(FlagRangeAnyEnabled(flag_range=(1041, 1042)))
+    AND_2.Add(FlagEnabled(1055))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9109(_, arg_0_3: int):
-    """ 9109: Event 9109 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(1, 1042)
-    IfFlagEnabled(1, 1055)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_0_3)
-    IfFlagEnabled(2, 1042)
-    IfFlagEnabled(2, 1055)
-    IfConditionFalse(0, input_condition=2)
+@NeverRestart(9109)
+def Event_9109(_, flag: int):
+    """Event 9109"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(FlagEnabled(1042))
+    AND_1.Add(FlagEnabled(1055))
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag)
+    AND_2.Add(FlagEnabled(1042))
+    AND_2.Add(FlagEnabled(1055))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9110(_, arg_0_3: int):
-    """ 9110: Event 9110 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagRangeAnyEnabled(2, (1041, 1042))
-    IfFlagEnabled(-2, 1058)
-    IfFlagEnabled(-2, 1056)
-    IfConditionTrue(2, input_condition=-2)
-    IfConditionTrue(-1, input_condition=2)
-    IfFlagRangeAnyEnabled(-1, (1043, 1044))
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    IfFlagRangeAnyEnabled(4, (1041, 1042))
-    IfFlagEnabled(-4, 1058)
-    IfFlagEnabled(-4, 1056)
-    IfConditionTrue(4, input_condition=-4)
-    IfConditionTrue(-3, input_condition=4)
-    IfFlagRangeAnyEnabled(-3, (1043, 1044))
-    IfConditionFalse(0, input_condition=-3)
+@NeverRestart(9110)
+def Event_9110(_, flag: int):
+    """Event 9110"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_2.Add(FlagRangeAnyEnabled(flag_range=(1041, 1042)))
+    OR_2.Add(FlagEnabled(1058))
+    OR_2.Add(FlagEnabled(1056))
+    AND_2.Add(OR_2)
+    OR_1.Add(AND_2)
+    OR_1.Add(FlagRangeAnyEnabled(flag_range=(1043, 1044)))
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
+    AND_4.Add(FlagRangeAnyEnabled(flag_range=(1041, 1042)))
+    OR_4.Add(FlagEnabled(1058))
+    OR_4.Add(FlagEnabled(1056))
+    AND_4.Add(OR_4)
+    OR_3.Add(AND_4)
+    OR_3.Add(FlagRangeAnyEnabled(flag_range=(1043, 1044)))
+    
+    MAIN.Await(not OR_3)
+    
     Restart()
 
 
-def Event9111(_, arg_0_3: int, arg_4_7: int):
-    """ 9111: Event 9111 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    DisableFlag(arg_4_7)
-    IfFlagEnabled(1, 1347)
-    IfFlagEnabled(1, 1355)
-    IfFlagEnabled(1, 13700651)
-    IfConditionTrue(0, input_condition=1)
-    GotoIfFlagDisabled(Label.L10, 9013)
-    EnableFlag(arg_0_3)
+@NeverRestart(9111)
+def Event_9111(_, flag: int, flag_1: int):
+    """Event 9111"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    DisableFlag(flag_1)
+    AND_1.Add(FlagEnabled(1347))
+    AND_1.Add(FlagEnabled(1355))
+    AND_1.Add(FlagEnabled(13700651))
+    
+    MAIN.Await(AND_1)
+    
+    GotoIfFlagDisabled(Label.L10, flag=9013)
+    EnableFlag(flag)
     Goto(Label.L20)
 
-    # --- 10 --- #
+    # --- Label 10 --- #
     DefineLabel(10)
-    EnableFlag(arg_4_7)
+    EnableFlag(flag_1)
     Goto(Label.L20)
 
-    # --- 20 --- #
+    # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagEnabled(2, 1347)
-    IfFlagEnabled(2, 1355)
-    IfFlagEnabled(2, 13700651)
-    IfConditionFalse(0, input_condition=2)
+    AND_2.Add(FlagEnabled(1347))
+    AND_2.Add(FlagEnabled(1355))
+    AND_2.Add(FlagEnabled(13700651))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9112(_, arg_0_3: int):
-    """ 9112: Event 9112 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, 8200)
-    EnableFlag(arg_0_3)
-    IfFlagDisabled(0, 8200)
+@NeverRestart(9112)
+def Event_9112(_, flag: int):
+    """Event 9112"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(8200))
+    
+    EnableFlag(flag)
+    
+    MAIN.Await(FlagDisabled(8200))
+    
     Restart()
 
 
-def Event9113(_, arg_0_3: int):
-    """ 9113: Event 9113 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfInsideMap(1, game_map=DREG_HEAP)
-    IfFlagRangeAnyEnabled(1, (1803, 1804))
-    IfInsideMap(2, game_map=RINGED_CITY)
-    IfFlagEnabled(2, 1811)
-    IfInsideMap(3, game_map=(51, 1))
-    IfFlagEnabled(3, 1811)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EnableFlag(arg_0_3)
-    IfInsideMap(4, game_map=DREG_HEAP)
-    IfFlagRangeAnyEnabled(4, (1803, 1804))
-    IfInsideMap(5, game_map=RINGED_CITY)
-    IfFlagEnabled(5, 1811)
-    IfInsideMap(6, game_map=(51, 1))
-    IfFlagEnabled(6, 1811)
-    IfConditionTrue(-2, input_condition=4)
-    IfConditionTrue(-2, input_condition=5)
-    IfConditionTrue(-2, input_condition=6)
-    IfConditionFalse(0, input_condition=-2)
+@NeverRestart(9113)
+def Event_9113(_, flag: int):
+    """Event 9113"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    AND_1.Add(InsideMap(game_map=DREG_HEAP))
+    AND_1.Add(FlagRangeAnyEnabled(flag_range=(1803, 1804)))
+    AND_2.Add(InsideMap(game_map=RINGED_CITY))
+    AND_2.Add(FlagEnabled(1811))
+    AND_3.Add(InsideMap(game_map=(51, 1)))
+    AND_3.Add(FlagEnabled(1811))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EnableFlag(flag)
+    AND_4.Add(InsideMap(game_map=DREG_HEAP))
+    AND_4.Add(FlagRangeAnyEnabled(flag_range=(1803, 1804)))
+    AND_5.Add(InsideMap(game_map=RINGED_CITY))
+    AND_5.Add(FlagEnabled(1811))
+    AND_6.Add(InsideMap(game_map=(51, 1)))
+    AND_6.Add(FlagEnabled(1811))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    
+    MAIN.Await(not OR_2)
+    
     Restart()
 
 
-def Event9114(_, arg_0_3: int):
-    """ 9114: Event 9114 """
-    EndIfPlayerNotInOwnWorld()
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, 1821)
-    EnableFlag(arg_0_3)
-    IfFlagDisabled(0, 1821)
+@NeverRestart(9114)
+def Event_9114(_, flag: int):
+    """Event 9114"""
+    if PlayerNotInOwnWorld():
+        return
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(1821))
+    
+    EnableFlag(flag)
+    
+    MAIN.Await(FlagDisabled(1821))
+    
     Restart()
 
 
-@RestartOnRest
-def Event9120(
+@RestartOnRest(9120)
+def Event_9120(
     _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: uint,
-    arg_16_16: uchar,
-    arg_20_23: uint,
-    arg_24_27: int,
+    flag: int,
+    flag_1: int,
+    flag_2: int,
+    bit_count: uint,
+    bit_count_1: uchar,
+    max_value__value: uint,
+    left: int,
 ):
-    """ 9120: Event 9120 """
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(arg_4_7)
-    IfMapNotInCeremony(1, game_map=FIRELINK_SHRINE, ceremony_id=0)
-    IfFlagEnabled(1, arg_0_3)
-    IfConditionTrue(0, input_condition=1)
-    IfFlagDisabled(-1, arg_0_3)
-    SkipLinesIfFlagEnabled(1, 9300)
-    IfFlagEnabled(-1, 9300)
-    SkipLinesIfFlagEnabled(1, 9301)
-    IfFlagEnabled(-1, 9301)
-    SkipLinesIfFlagEnabled(1, 9302)
-    IfFlagEnabled(-1, 9302)
-    SkipLinesIfFlagEnabled(1, 9303)
-    IfFlagEnabled(-1, 9303)
-    SkipLinesIfFlagEnabled(1, 9304)
-    IfFlagEnabled(-1, 9304)
-    SkipLinesIfFlagEnabled(1, 9305)
-    IfFlagEnabled(-1, 9305)
-    SkipLinesIfFlagEnabled(1, 9306)
-    IfFlagEnabled(-1, 9306)
-    SkipLinesIfFlagEnabled(1, 9307)
-    IfFlagEnabled(-1, 9307)
-    SkipLinesIfFlagEnabled(1, 9308)
-    IfFlagEnabled(-1, 9308)
-    SkipLinesIfFlagEnabled(1, 9309)
-    IfFlagEnabled(-1, 9309)
-    SkipLinesIfFlagEnabled(1, 9311)
-    IfFlagEnabled(-1, 9311)
-    SkipLinesIfFlagEnabled(1, 9313)
-    IfFlagEnabled(-1, 9313)
-    SkipLinesIfFlagEnabled(1, 9314)
-    IfFlagEnabled(-1, 9314)
-    SkipLinesIfFlagEnabled(1, 9315)
-    IfFlagEnabled(-1, 9315)
-    SkipLinesIfFlagEnabled(1, 9317)
-    IfFlagEnabled(-1, 9317)
-    SkipLinesIfFlagEnabled(1, 9318)
-    IfFlagEnabled(-1, 9318)
-    SkipLinesIfFlagEnabled(1, 9319)
-    IfFlagEnabled(-1, 9319)
-    SkipLinesIfFlagEnabled(1, 9320)
-    IfFlagEnabled(-1, 9320)
-    SkipLinesIfFlagEnabled(1, 9321)
-    IfFlagEnabled(-1, 9321)
-    SkipLinesIfFlagEnabled(1, 9322)
-    IfFlagEnabled(-1, 9322)
-    SkipLinesIfFlagEnabled(1, 9323)
-    IfFlagEnabled(-1, 9323)
-    SkipLinesIfFlagEnabled(1, 9324)
-    IfFlagEnabled(-1, 9324)
-    SkipLinesIfFlagEnabled(1, 9325)
-    IfFlagEnabled(-1, 9325)
-    SkipLinesIfFlagEnabled(1, 9326)
-    IfFlagEnabled(-1, 9326)
-    SkipLinesIfFlagEnabled(1, 9327)
-    IfFlagEnabled(-1, 9327)
-    GotoIfValueComparison(Label.L0, ComparisonType.NotEqual, left=arg_24_27, right=1)
-    IfFlagRangeAllEnabled(2, (9300, 9309))
-    IfFlagEnabled(2, 9311)
-    IfFlagRangeAllEnabled(2, (9313, 9315))
-    IfFlagRangeAllEnabled(2, (9317, 9321))
-    SkipLinesIfFlagDisabled(1, 6951)
-    IfFlagRangeAllEnabled(2, (9322, 9323))
-    SkipLinesIfFlagDisabled(1, 6952)
-    IfFlagRangeAllEnabled(2, (9324, 9327))
-    IfConditionTrue(-1, input_condition=2)
+    """Event 9120"""
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(flag_1):
+        return
+    AND_1.Add(MapNotInCeremony(game_map=FIRELINK_SHRINE, ceremony_id=0))
+    AND_1.Add(FlagEnabled(flag))
+    
+    MAIN.Await(AND_1)
+    
+    OR_1.Add(FlagDisabled(flag))
+    if FlagDisabled(9300):
+        OR_1.Add(FlagEnabled(9300))
+    if FlagDisabled(9301):
+        OR_1.Add(FlagEnabled(9301))
+    if FlagDisabled(9302):
+        OR_1.Add(FlagEnabled(9302))
+    if FlagDisabled(9303):
+        OR_1.Add(FlagEnabled(9303))
+    if FlagDisabled(9304):
+        OR_1.Add(FlagEnabled(9304))
+    if FlagDisabled(9305):
+        OR_1.Add(FlagEnabled(9305))
+    if FlagDisabled(9306):
+        OR_1.Add(FlagEnabled(9306))
+    if FlagDisabled(9307):
+        OR_1.Add(FlagEnabled(9307))
+    if FlagDisabled(9308):
+        OR_1.Add(FlagEnabled(9308))
+    if FlagDisabled(9309):
+        OR_1.Add(FlagEnabled(9309))
+    if FlagDisabled(9311):
+        OR_1.Add(FlagEnabled(9311))
+    if FlagDisabled(9313):
+        OR_1.Add(FlagEnabled(9313))
+    if FlagDisabled(9314):
+        OR_1.Add(FlagEnabled(9314))
+    if FlagDisabled(9315):
+        OR_1.Add(FlagEnabled(9315))
+    if FlagDisabled(9317):
+        OR_1.Add(FlagEnabled(9317))
+    if FlagDisabled(9318):
+        OR_1.Add(FlagEnabled(9318))
+    if FlagDisabled(9319):
+        OR_1.Add(FlagEnabled(9319))
+    if FlagDisabled(9320):
+        OR_1.Add(FlagEnabled(9320))
+    if FlagDisabled(9321):
+        OR_1.Add(FlagEnabled(9321))
+    if FlagDisabled(9322):
+        OR_1.Add(FlagEnabled(9322))
+    if FlagDisabled(9323):
+        OR_1.Add(FlagEnabled(9323))
+    if FlagDisabled(9324):
+        OR_1.Add(FlagEnabled(9324))
+    if FlagDisabled(9325):
+        OR_1.Add(FlagEnabled(9325))
+    if FlagDisabled(9326):
+        OR_1.Add(FlagEnabled(9326))
+    if FlagDisabled(9327):
+        OR_1.Add(FlagEnabled(9327))
+    GotoIfValueComparison(Label.L0, comparison_type=ComparisonType.NotEqual, left=left, right=1)
+    AND_2.Add(FlagRangeAllEnabled(flag_range=(9300, 9309)))
+    AND_2.Add(FlagEnabled(9311))
+    AND_2.Add(FlagRangeAllEnabled(flag_range=(9313, 9315)))
+    AND_2.Add(FlagRangeAllEnabled(flag_range=(9317, 9321)))
+    if FlagEnabled(6951):
+        AND_2.Add(FlagRangeAllEnabled(flag_range=(9322, 9323)))
+    if FlagEnabled(6952):
+        AND_2.Add(FlagRangeAllEnabled(flag_range=(9324, 9327)))
+    OR_1.Add(AND_2)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfConditionTrue(0, input_condition=-1)
-    RestartIfFlagDisabled(arg_0_3)
-    IncrementEventValue(arg_8_11, bit_count=arg_12_15, max_value=arg_20_23)
-    IfEventValueEqual(-2, arg_8_11, bit_count=arg_16_16, value=arg_20_23)
-    RestartIfConditionFalse(-2)
-    EnableFlag(arg_4_7)
+    
+    MAIN.Await(OR_1)
+    
+    if FlagDisabled(flag):
+        return RESTART
+    IncrementEventValue(flag_2, bit_count=bit_count, max_value=max_value__value)
+    OR_2.Add(EventValueEqual(flag=flag_2, bit_count=bit_count_1, value=max_value__value))
+    if not OR_2:
+        return RESTART
+    EnableFlag(flag_1)
 
 
-def Event690(_, arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
-    """ 690: Event 690 """
-    SkipLinesIfThisEventSlotFlagEnabled(1)
-    IfFlagEnabled(0, arg_12_15)
-    SkipLinesIfFlagEnabled(1, 2)
-    IfFlagEnabled(-1, 2)
-    SkipLinesIfFlagEnabled(1, 3)
-    IfFlagEnabled(-1, 3)
-    SkipLinesIfFlagEnabled(1, 4)
-    IfFlagEnabled(-1, 4)
-    SkipLinesIfFlagEnabled(1, 5)
-    IfFlagEnabled(-1, 5)
-    SkipLinesIfFlagEnabled(1, 6)
-    IfFlagEnabled(-1, 6)
-    SkipLinesIfFlagEnabled(1, 7)
-    IfFlagEnabled(-1, 7)
-    SkipLinesIfFlagEnabled(1, 8)
-    IfFlagEnabled(-1, 8)
-    SkipLinesIfFlagEnabled(1, 9)
-    IfFlagEnabled(-1, 9)
-    SkipLinesIfFlagEnabled(1, 10)
-    IfFlagEnabled(-1, 10)
-    SkipLinesIfFlagEnabled(1, 11)
-    IfFlagEnabled(-1, 11)
-    SkipLinesIfFlagEnabled(1, 12)
-    IfFlagEnabled(-1, 12)
-    SkipLinesIfFlagEnabled(1, 13)
-    IfFlagEnabled(-1, 13)
-    SkipLinesIfFlagEnabled(1, 14)
-    IfFlagEnabled(-1, 14)
-    SkipLinesIfFlagEnabled(1, 15)
-    IfFlagEnabled(-1, 15)
-    IfConditionTrue(0, input_condition=-1)
-    IncrementEventValue(arg_0_3, bit_count=arg_4_7, max_value=arg_8_11)
+@NeverRestart(690)
+def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
+    """Event 690"""
+    if ThisEventSlotFlagDisabled():
+        MAIN.Await(FlagEnabled(flag_1))
+    if FlagDisabled(2):
+        OR_1.Add(FlagEnabled(2))
+    if FlagDisabled(3):
+        OR_1.Add(FlagEnabled(3))
+    if FlagDisabled(4):
+        OR_1.Add(FlagEnabled(4))
+    if FlagDisabled(5):
+        OR_1.Add(FlagEnabled(5))
+    if FlagDisabled(6):
+        OR_1.Add(FlagEnabled(6))
+    if FlagDisabled(7):
+        OR_1.Add(FlagEnabled(7))
+    if FlagDisabled(8):
+        OR_1.Add(FlagEnabled(8))
+    if FlagDisabled(9):
+        OR_1.Add(FlagEnabled(9))
+    if FlagDisabled(10):
+        OR_1.Add(FlagEnabled(10))
+    if FlagDisabled(11):
+        OR_1.Add(FlagEnabled(11))
+    if FlagDisabled(12):
+        OR_1.Add(FlagEnabled(12))
+    if FlagDisabled(13):
+        OR_1.Add(FlagEnabled(13))
+    if FlagDisabled(14):
+        OR_1.Add(FlagEnabled(14))
+    if FlagDisabled(15):
+        OR_1.Add(FlagEnabled(15))
+    
+    MAIN.Await(OR_1)
+    
+    IncrementEventValue(flag, bit_count=bit_count, max_value=max_value)
     Restart()
 
 
-def Event840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 840: Event 840 """
-    DisableFlag(arg_0_3)
-    IfFlagEnabled(0, arg_0_3)
+@NeverRestart(840)
+def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_1: int):
+    """Event 840"""
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     SkipLinesIfFlagEnabled(2, 844)
     SkipLinesIfFlagEnabled(1, 847)
-    RotateToFaceEntity(PLAYER, arg_8_11, animation=-1, wait_for_completion=False)
-    ForceAnimation(PLAYER, arg_4_7)
+    RotateToFaceEntity(PLAYER, target_entity)
+    ForceAnimation(PLAYER, animation_id, unknown2=1.0)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=123456789)
+    PlaySoundEffect(PLAYER, 123456789, sound_type=SoundType.s_SFX)
     Wait(4.0)
-    SkipLinesIfValueEqual(1, left=arg_12_15, right=-1)
-    ForceAnimation(PLAYER, arg_12_15, loop=True)
+    if ValueNotEqual(left=animation_id_1, right=-1):
+        ForceAnimation(PLAYER, animation_id_1, loop=True, unknown2=1.0)
     Restart()
 
 
-def Event870(_, arg_0_0: uchar, arg_4_7: int):
-    """ 870: Event 870 """
-    IfPlayerCovenant(0, arg_0_0)
-    EnableFlag(arg_4_7)
-    IfPlayerCovenant(1, arg_0_0)
-    IfConditionFalse(0, input_condition=1)
-    DisableFlag(arg_4_7)
+@NeverRestart(870)
+def Event_870(_, covenant: uchar, flag: int):
+    """Event 870"""
+    MAIN.Await(PlayerCovenant(covenant))
+    
+    EnableFlag(flag)
+    AND_1.Add(PlayerCovenant(covenant))
+    
+    MAIN.Await(not AND_1)
+    
+    DisableFlag(flag)
     Restart()

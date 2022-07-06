@@ -19,7 +19,7 @@ __all__ = [
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
-    "FlagState",
+    "FlagSetting",
     "FlagType",
     "InterpolationState",
     "ItemType",
@@ -44,11 +44,13 @@ __all__ = [
     "NPCPartType",
 ]
 
+from enum import IntEnum
+
 from soulstruct.base.events.emevd.enums import *
 from soulstruct.darksouls1ptde.events.emevd.enums import *
 
 
-# DSR extends two enums:
+# DSR extends three enums:
 
 
 class BannerType(BaseEMEVDEnum):
@@ -69,6 +71,37 @@ class BannerType(BaseEMEVDEnum):
     YouLose = 16
     Draw = 17
     BeginMatch = 18  # REMASTERED ONLY.
+
+
+class ConditionGroup(IntEnum):
+    # TODO: Check exactly how many slots QLOC added for DSR.
+    OR_7 = -7
+    OR_6 = -6
+    OR_5 = -5
+    OR_4 = -4
+    OR_3 = -3
+    OR_2 = -2
+    OR_1 = -1
+    MAIN = 0
+    AND_1 = 1
+    AND_2 = 2
+    AND_3 = 3
+    AND_4 = 4
+    AND_5 = 5
+    AND_6 = 6
+    AND_7 = 7
+    AND_8 = 8  # used by QLOC in new Battle of Stoicism code; unclear how many extra slots have been added
+
+    def Await(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
+
+        Only permitted for `MAIN`.
+        """
+        ...
+
+    def Add(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally."""
+        ...
 
 
 class MultiplayerState(BaseEMEVDEnum):

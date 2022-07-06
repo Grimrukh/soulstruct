@@ -138,6 +138,13 @@ def _process_arg_types(
                     if arg_value & flag_value == flag_value:
                         flag_enum_values.append(EnumValue(enum, flag_value))
                 args[arg_name] = Variable(" | ".join(f"{v}" for v in flag_enum_values))
+        elif enum.__name__ == "ConditionGroup":
+            # Omit enum type name from variable (e.g., just `OR_1`).
+            try:
+                enum_value = EnumValue(enum, arg_value)
+            except ValueError:
+                raise ValueError(f"Invalid {str(enum)} value: {arg_value}")
+            args[arg_name] = Variable(enum_value.name)
         else:
             try:
                 args[arg_name] = EnumValue(enum, arg_value)

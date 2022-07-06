@@ -152,7 +152,7 @@ def Preconstructor():
     SkipLinesIfClient(11)
     SkipLinesIfFlagEnabled(10, 705)
     AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
-    SkipLinesIfConditionFalse(8, 1)
+    SkipLinesIfConditionFalse(8, AND_1)
     EnableFlag(705)
     EnableFlag(50000082)
     SetRespawnPoint(respawn_point=1812900)
@@ -200,7 +200,7 @@ def Event_11810090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -400,7 +400,7 @@ def Event_11810312():
     """Event 11810312"""
     AND_1.Add(FlagDisabled(16))
     AND_1.Add(FlagEnabled(11810315))
-    IfPlayerStandingOnCollision(1, 1813120)
+    AND_1.Add(PlayerStandingOnCollision(1813120))
     
     MAIN.Await(AND_1)
     
@@ -578,7 +578,7 @@ def Event_11810150():
     MAIN.Await(OR_1)
     
     SetStandbyAnimationSettings(PLAYER)
-    SkipLinesIfFinishedConditionTrue(1, condition=2)
+    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
     ForceAnimation(PLAYER, 7817, wait_for_completion=True)
     Restart()
 
@@ -593,7 +593,9 @@ def Event_11810100(_, obj_act_id: int, obj: int, text: int):
         DisableObjectActivation(obj, obj_act_id=-1, relative_index=3)
         End()
     SkipLinesIfClient(4)
-    IfObjectActivated(0, obj_act_id=obj_act_id)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
     EnableFlag(obj_act_id)
     if ValueNotEqual(left=text, right=0):
         DisplayDialog(text=text, anchor_entity=obj, button_type=ButtonType.Yes_or_No)
@@ -629,7 +631,9 @@ def Event_11810110():
         DisableObjectActivation(1811110, obj_act_id=-1)
         EndOfAnimation(obj=1811110, animation_id=1)
         End()
-    IfObjectActivated(0, obj_act_id=11810110)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=11810110))
+    
     EnableFlag(11810110)
     if Client():
         return
@@ -639,7 +643,8 @@ def Event_11810110():
 @NeverRestart(11810111)
 def Event_11810111():
     """Event 11810111"""
-    IfObjectActivated(0, obj_act_id=11810111)
+    MAIN.Await(ObjectActivated(obj_act_id=11810111))
+    
     EnableFlag(11810112)
     Restart()
 
@@ -704,8 +709,9 @@ def Event_11810400(
     state_3: uchar,
 ):
     """Event 11810400"""
-    IfPlayerClass(1, class_type)
-    EndIfConditionFalse(1)
+    AND_1.Add(PlayerClass(class_type))
+    if not AND_1:
+        return
     DisableSoapstoneMessage(1813200)
     DisableSoapstoneMessage(1813201)
     DisableSoapstoneMessage(1813202)
@@ -870,7 +876,8 @@ def Event_11810850(_, character: int, item_lot_param_id: int):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
-    EndIfConditionFalse(-7)
+    if not OR_7:
+        return
     AwardItemLot(item_lot_param_id, host_only=True)
 
 
@@ -939,13 +946,13 @@ def Event_11810600():
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(5, condition=1)
+    SkipLinesIfFinishedConditionFalse(5, input_condition=AND_1)
     EnableFlag(11815100)
     DisableFlag(11815101)
     DisableFlag(11815102)
     DisableFlagRange((11815200, 11815202))
     Restart()
-    SkipLinesIfFinishedConditionFalse(6, condition=3)
+    SkipLinesIfFinishedConditionFalse(6, input_condition=AND_3)
     DisableFlag(11815100)
     DisableFlag(11815101)
     EnableFlag(11815102)
@@ -963,9 +970,10 @@ def Event_11810600():
 @NeverRestart(11810641)
 def Event_11810641(_, item_type: int, item: int, flag: int, flag_1: int):
     """Event 11810641"""
-    IfAnyItemDroppedInRegion(0, region=1812200)
-    IfItemDropped(2, item=item, item_type=item_type)
-    SkipLinesIfConditionTrue(2, 2)
+    MAIN.Await(AnyItemDroppedInRegion(region=1812200))
+    
+    AND_2.Add(ItemDropped(item=item, item_type=item_type))
+    SkipLinesIfConditionTrue(2, AND_2)
     EnableFlag(11815201)
     Restart()
     if FlagDisabled(flag_1):
@@ -990,15 +998,17 @@ def Event_11815110(_, flag: int, item_lot: int, flag_1: int):
 @NeverRestart(11815150)
 def Event_11815150():
     """Event 11815150"""
-    IfTimeElapsed(0, seconds=1.0)
+    MAIN.Await(TimeElapsed(seconds=1.0))
+    
     EnableFlag(11815151)
 
 
 @NeverRestart(11810050)
 def Event_11810050():
     """Event 11810050"""
-    IfPlayerCovenant(1, Covenant.DarkmoonBlade)
-    EndIfConditionFalse(1)
+    AND_1.Add(PlayerCovenant(Covenant.DarkmoonBlade))
+    if not AND_1:
+        return
     EnableFlag(71510036)
     EnableFlag(71510037)
 
@@ -1008,7 +1018,7 @@ def Event_11810510(_, character: int, flag: int):
     """Event 11810510"""
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
     AND_3.Add(FlagEnabled(flag))
@@ -1019,7 +1029,7 @@ def Event_11810510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, condition=3)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1060,7 +1070,7 @@ def Event_11810530(_, character: int):
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     Kill(character, award_souls=True)
 
 

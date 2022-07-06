@@ -282,7 +282,7 @@ class Event(abc.ABC):
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=True):
+    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=True) -> str:
         """Convert single event script to EVS."""
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
@@ -300,9 +300,8 @@ class Event(abc.ABC):
         # SIMPLE DECOMPILATION
         for i, instr_line in enumerate(instruction_lines):
             if label_match := _LABEL_RE.match(instr_line):
-                if evs_event_string[-1] != "\n":
-                    evs_event_string += "\n"
-                evs_event_string += f"\n    # --- Label {label_match.group(1)} --- #"
+                evs_event_string = evs_event_string.rstrip("\n ")  # we want exactly two newlines
+                evs_event_string += f"\n\n    # --- Label {label_match.group(1)} --- #"
             evs_event_string += self._indent_and_wrap_instruction(instr_line, wrap_limit=self.WRAP_LIMIT, indent=4)
 
         return evs_event_string
@@ -325,10 +324,10 @@ class Event(abc.ABC):
 
         if_condition_re = re.compile(
             r"^(?P<indent> *)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
-            r"(?P<condition>-?\d+), input_condition=(?P<input_condition>-?\d+)\)$"
+            r"(?P<condition>(MAIN|((AND|OR)_\d+))), input_condition=(?P<input_condition>(MAIN|((AND|OR)_\d+)))\)$"
         )
         if_re = re.compile(
-            r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>-?\d+)(?P<args>.*?)\)$"
+            r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
         )
         skip_re = re.compile(
             r"^(?P<indent> *)SkipLinesIf(?P<test>.*)\((?P<line_count>\d+)(?P<args>.*?)\)$"
@@ -339,6 +338,10 @@ class Event(abc.ABC):
         return_re = re.compile(
             r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<test>.*)\((?P<args>.*?)\)$"
         )
+        return_condition_re = re.compile(
+            r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
+            r"input_condition=(?P<condition>((AND|OR)_\d+))\)$"
+        )
 
         i = 0
         while i < len(instruction_lines):
@@ -347,29 +350,28 @@ class Event(abc.ABC):
                 m = match.groupdict()
                 indent = m["indent"]
                 finished = m["finished"] is not None
+                if finished:
+                    # TODO: Cannot yet decompile these.
+                    output_lines.append(line)
+                    i += 1
+                    continue
                 state = m["state"] == "True"
-                print(line, state)
-                condition = int(m["condition"])
-                input_condition = int(m["input_condition"])
-
-                input_condition_type = "OR" if input_condition < 0 else "AND"
-                i_condition = f"{input_condition_type}_{abs(input_condition)}"  # e.g. `AND_2`
+                condition = m["condition"]
+                input_condition = m["input_condition"]
                 if not state:
-                    i_condition = f"not {i_condition}"
+                    input_condition = f"not {input_condition}"
 
                 # TODO: If condition was just defined on previous line, we could move the whole thing here.
                 #  However, this veers into "lost info" territory, as we won't know what condition number the game
                 #  originally used (and would have to look ahead for "finished" usage).
 
-                if condition == 0:
+                if condition == "MAIN":
                     if output_lines and output_lines[-1] != "":
                         output_lines.append("")
-                    output_lines += [f"{indent}MAIN.Await({i_condition})", ""]
+                    output_lines += [f"{indent}MAIN.Await({input_condition})", ""]
                     i += 1
                 else:
-                    condition_type = "OR" if condition < 0 else "AND"
-                    condition_name = f"{condition_type}_{abs(condition)}"
-                    output_lines.append(f"{indent}{condition_name}.Add({i_condition})")
+                    output_lines.append(f"{indent}{condition}.Add({input_condition})")
                     i += 1
             elif match := if_re.match(line):
                 m = match.groupdict()
@@ -379,17 +381,15 @@ class Event(abc.ABC):
                     output_lines.append(line)
                     i += 1
                     continue  # 'if' should always be in tests dict, but just for clarity
-                condition = int(m["condition"])
+                condition = m["condition"]
                 args = m["args"].removeprefix(", ")  # no need to split or parse (and could be empty)
-                if condition == 0:
+                if condition == "MAIN":
                     if output_lines and output_lines[-1] != "":
                         output_lines.append("")
                     output_lines += [f"{indent}MAIN.Await({test}({args}))", ""]
                     i += 1
                 else:
-                    condition_type = "OR" if condition < 0 else "AND"
-                    condition_name = f"{condition_type}_{abs(condition)}"
-                    output_lines.append(f"{indent}{condition_name}.Add({test}({args}))")
+                    output_lines.append(f"{indent}{condition}.Add({test}({args}))")
                     i += 1
             elif not conditions_only and (match := skip_re.match(line)):
                 m = match.groupdict()
@@ -449,6 +449,23 @@ class Event(abc.ABC):
                     # No need for `i += 1`, as `line_count` includes the unconditional skip that `else` is replacing.
                     output_lines += self.high_level_evs_decompile(else_block_lines)
                     i += else_line_count
+            elif not conditions_only and (match := return_condition_re.match(line)):
+                m = match.groupdict()
+                indent = m["indent"]
+                return_type = m["return_type"].lower()
+                finished = m["finished"] is not None
+                if finished:
+                    # TODO: Cannot yet decompile these.
+                    output_lines.append(line)
+                    i += 1
+                    continue
+                state = m["state"] == "True"
+                condition = m["condition"]
+                if not state:
+                    condition = f"not {condition}"
+                output_lines.append(f"{indent}if {condition}:")
+                output_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
+                i += 1
             elif not conditions_only and (match := return_re.match(line)):
                 m = match.groupdict()
                 indent = m["indent"]
@@ -518,13 +535,17 @@ class Event(abc.ABC):
             if match := _CONDITION_RE.match(instr):
                 # Indent and wrap condition.
                 c_type, c_index, condition = match.group(1, 2, 3)
-                wrapped_condition = Event._indent_and_wrap_instruction(condition, wrap_limit=wrap_limit, indent=indent)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
                 wrapped_condition = wrapped_condition.lstrip("\n ")
                 return f"\n{base_indent}{existing_indent}{c_type}_{c_index}.Add({wrapped_condition})"
             elif match := _MAIN_AWAIT_RE.match(instr):
                 # Indent and wrap condition.
                 condition = match.group(1)
-                wrapped_condition = Event._indent_and_wrap_instruction(condition, wrap_limit=wrap_limit, indent=indent)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
                 wrapped_condition = wrapped_condition.lstrip("\n ")
                 return f"\n{base_indent}{existing_indent}MAIN.Await({wrapped_condition})"
             else:

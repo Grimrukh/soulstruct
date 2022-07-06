@@ -654,112 +654,174 @@ __all__ = [
     "IfActionButton",
     "DefineLabel",
     # Boolean test functions:
+    "ValueComparison",
     "ValueEqual",
     "ValueNotEqual",
     "ValueGreaterThan",
     "ValueLessThan",
     "ValueGreaterThanOrEqual",
     "ValueLessThanOrEqual",
+    "TimeElapsed",
+    "FramesElapsed",
+    "RandomTimeElapsed",
+    "RandomFramesElapsed",
+    "FlagState",
     "FlagEnabled",
     "FlagDisabled",
     "ThisEventFlagEnabled",
     "ThisEventFlagDisabled",
     "ThisEventSlotFlagEnabled",
     "ThisEventSlotFlagDisabled",
+    "FlagRangeState",
     "FlagRangeAllEnabled",
     "FlagRangeAllDisabled",
     "FlagRangeAnyEnabled",
     "FlagRangeAnyDisabled",
+    "CharacterRegionState",
     "PlayerInsideRegion",
     "PlayerOutsideRegion",
     "CharacterInsideRegion",
     "CharacterOutsideRegion",
+    "EntityDistanceState",
     "PlayerWithinDistance",
     "PlayerBeyondDistance",
     "EntityWithinDistance",
     "EntityBeyondDistance",
+    "PlayerItemStateExcludingStorage",
+    "ActionButtonBasic",
+    "MultiplayerState",
     "Host",
     "Client",
     "Multiplayer",
     "ConnectingMultiplayer",
     "Singleplayer",
+    "AllPlayersRegionState",
     "AllPlayersInsideRegion",
     "AllPlayersOutsideRegion",
+    "MapPresenceState",
     "InsideMap",
     "OutsideMap",
+    "MultiplayerEvent",
+    "TrueFlagCountComparison",
     "TrueFlagCountEqual",
     "TrueFlagCountNotEqual",
     "TrueFlagCountGreaterThan",
     "TrueFlagCountLessThan",
     "TrueFlagCountGreaterThanOrEqual",
     "TrueFlagCountLessThanOrEqual",
+    "WorldTendencyComparison",
     "WhiteWorldTendencyComparison",
     "BlackWorldTendencyComparison",
     "WhiteWorldTendencyGreaterThan",
     "BlackWorldTendencyGreaterThan",
+    "EventValueComparison",
     "EventValueEqual",
     "EventValueNotEqual",
     "EventValueGreaterThan",
     "EventValueLessThan",
     "EventValueGreaterThanOrEqual",
     "EventValueLessThanOrEqual",
+    "ActionButtonBoss",
+    "AnyItemDroppedInRegion",
+    "ItemDropped",
+    "PlayerItemStateIncludingStorage",
+    "NewGameCycleComparison",
     "NewGameCycleEqual",
     "NewGameCycleNotEqual",
     "NewGameCycleGreaterThan",
     "NewGameCycleLessThan",
     "NewGameCycleGreaterThanOrEqual",
     "NewGameCycleLessThanOrEqual",
+    "ActionButtonBasicLineIntersect",
+    "ActionButtonBossLineIntersect",
+    "EventsComparison",
+    "DLCState",
     "DLCOwned",
     "DLCNotOwned",
+    "OnlineState",
     "Online",
     "Offline",
+    "AttackedWithDamageType",
+    "ActionButtonParamActivated",
+    "PlayerArmorInRange",
+    "PlayerInsightAmountComparison",
     "PlayerInsightAmountEqual",
     "PlayerInsightAmountNotEqual",
     "PlayerInsightAmountGreaterThan",
     "PlayerInsightAmountLessThan",
     "PlayerInsightAmountGreaterThanOrEqual",
     "PlayerInsightAmountLessThanOrEqual",
+    "DialogChoice",
+    "PlayGoState",
+    "ClientTypeCountComparison",
+    "CharacterDeathState",
     "CharacterDead",
     "CharacterAlive",
+    "Attacked",
+    "HealthComparison",
     "HealthEqual",
     "HealthNotEqual",
     "HealthGreaterThan",
     "HealthLessThan",
     "HealthGreaterThanOrEqual",
     "HealthLessThanOrEqual",
+    "CharacterType",
     "CharacterHuman",
     "CharacterWhitePhantom",
     "CharacterHollow",
+    "CharacterTargetingState",
     "CharacterTargeting",
     "CharacterNotTargeting",
+    "CharacterSpecialEffectState",
     "PlayerHasSpecialEffect",
     "PlayerDoesNotHaveSpecialEffect",
     "CharacterHasSpecialEffect",
     "CharacterDoesNotHaveSpecialEffect",
+    "CharacterPartHealthComparison",
     "CharacterPartHealthLessThanOrEqual",
+    "CharacterBackreadState",
     "CharacterBackreadEnabled",
     "CharacterBackreadDisabled",
+    "CharacterTAEEventState",
     "CharacterHasTAEEvent",
     "CharacterDoesNotHaveTAEEvent",
+    "HasAIStatus",
+    "SkullLanternState",
     "SkullLanternActive",
     "SkullLanternInactive",
+    "PlayerClass",
+    "PlayerCovenant",
+    "PlayerLevelComparison",
     "PlayerLevelEqual",
     "PlayerLevelNotEqual",
     "PlayerLevelGreaterThan",
     "PlayerLevelLessThan",
     "PlayerLevelGreaterThanOrEqual",
     "PlayerLevelLessThanOrEqual",
+    "HealthValueComparison",
     "HealthValueEqual",
     "HealthValueNotEqual",
     "HealthValueGreaterThan",
     "HealthValueLessThan",
     "HealthValueGreaterThanOrEqual",
     "HealthValueLessThanOrEqual",
+    "CharacterDrawGroupState",
     "CharacterDrawGroupEnabled",
     "CharacterDrawGroupDisabled",
+    "ObjectDestructionState",
     "ObjectDestroyed",
     "ObjectNotDestroyed",
+    "ObjectDamaged",
+    "ObjectActivated",
+    "ObjectHealthValueComparison",
+    "PlayerMovingOnCollision",
+    "PlayerRunningOnCollision",
+    "PlayerStandingOnCollision",
     "ActionButton",
+    "PlayerHasWeapon",
+    "PlayerHasArmor",
+    "PlayerHasRune",
+    "PlayerHasGood",
 ]
 
 import typing as tp
@@ -787,265 +849,170 @@ class HeldCondition:
 END = ...
 RESTART = ...
 
-# The Await function. Equivalent to using the 'await' built-in Python keyword.
+# The Await function. Equivalent to using the 'await' built-in Python keyword or `MAIN.Await()`.
 def Await(condition): ...
 
-class MAIN:
-    @staticmethod
-    def Await(condition): ...
-
-class OR_1:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_2:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_3:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_4:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_5:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_6:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_7:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_8:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_9:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_10:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_11:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_12:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_13:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_14:
-    @staticmethod
-    def Add(condition): ...
-
-class OR_15:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_1:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_2:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_3:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_4:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_5:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_6:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_7:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_8:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_9:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_10:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_11:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_12:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_13:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_14:
-    @staticmethod
-    def Add(condition): ...
-
-class AND_15:
-    @staticmethod
-    def Add(condition): ...
+MAIN = ConditionGroup.MAIN
+OR_1 = ConditionGroup.OR_1
+OR_2 = ConditionGroup.OR_2
+OR_3 = ConditionGroup.OR_3
+OR_4 = ConditionGroup.OR_4
+OR_5 = ConditionGroup.OR_5
+OR_6 = ConditionGroup.OR_6
+OR_7 = ConditionGroup.OR_7
+OR_8 = ConditionGroup.OR_8
+OR_9 = ConditionGroup.OR_9
+OR_10 = ConditionGroup.OR_10
+OR_11 = ConditionGroup.OR_11
+OR_12 = ConditionGroup.OR_12
+OR_13 = ConditionGroup.OR_13
+OR_14 = ConditionGroup.OR_14
+OR_15 = ConditionGroup.OR_15
+AND_1 = ConditionGroup.AND_1
+AND_2 = ConditionGroup.AND_2
+AND_3 = ConditionGroup.AND_3
+AND_4 = ConditionGroup.AND_4
+AND_5 = ConditionGroup.AND_5
+AND_6 = ConditionGroup.AND_6
+AND_7 = ConditionGroup.AND_7
+AND_8 = ConditionGroup.AND_8
+AND_9 = ConditionGroup.AND_9
+AND_10 = ConditionGroup.AND_10
+AND_11 = ConditionGroup.AND_11
+AND_12 = ConditionGroup.AND_12
+AND_13 = ConditionGroup.AND_13
+AND_14 = ConditionGroup.AND_14
+AND_15 = ConditionGroup.AND_15
 
 
-
-
-
-def IfConditionState(condition: int, state: bool | int, input_condition: int):
+def IfConditionState(condition: ConditionGroup | int, state: bool | int, input_condition: ConditionGroup | int):
     """
     TODO
     """
 
 
-def IfConditionTrue(condition: int, input_condition: int):
+def IfConditionTrue(condition: ConditionGroup | int, input_condition: ConditionGroup | int):
     """
     Calls `IfConditionState` with `state=True`.
     """
 
 
-def IfConditionFalse(condition: int, input_condition: int):
+def IfConditionFalse(condition: ConditionGroup | int, input_condition: ConditionGroup | int):
     """
     Calls `IfConditionState` with `state=False`.
     """
 
 
-def IfValueComparison(condition: int, comparison_type: ComparisonType | int, left: int, right: int):
+def IfValueComparison(condition: ConditionGroup | int, comparison_type: ComparisonType | int, left: int, right: int):
     """
     TODO
     """
 
 
-def IfValueEqual(condition: int, left: int, right: int):
+def IfValueEqual(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=0`.
     """
 
 
-def IfValueNotEqual(condition: int, left: int, right: int):
+def IfValueNotEqual(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=1`.
     """
 
 
-def IfValueGreaterThan(condition: int, left: int, right: int):
+def IfValueGreaterThan(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=2`.
     """
 
 
-def IfValueLessThan(condition: int, left: int, right: int):
+def IfValueLessThan(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=3`.
     """
 
 
-def IfValueGreaterThanOrEqual(condition: int, left: int, right: int):
+def IfValueGreaterThanOrEqual(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=4`.
     """
 
 
-def IfValueLessThanOrEqual(condition: int, left: int, right: int):
+def IfValueLessThanOrEqual(condition: ConditionGroup | int, left: int, right: int):
     """
     Calls `IfValueComparison` with `comparison_type=5`.
     """
 
 
-def IfTimeElapsed(condition: int, seconds: float):
+def IfTimeElapsed(condition: ConditionGroup | int, seconds: float):
     """
     Time since event started.
     """
 
 
-def IfFramesElapsed(condition: int, frames: int):
+def IfFramesElapsed(condition: ConditionGroup | int, frames: int):
     """
     Frames since event started.
     """
 
 
-def IfRandomTimeElapsed(condition: int, min_seconds: float, max_seconds: float):
+def IfRandomTimeElapsed(condition: ConditionGroup | int, min_seconds: float, max_seconds: float):
     """
     Not used in vanilla DS1. Requires a random amount of time since event began.
     """
 
 
-def IfRandomFramesElapsed(condition: int, min_frames: int, max_frames: int):
+def IfRandomFramesElapsed(condition: ConditionGroup | int, min_frames: int, max_frames: int):
     """
     Not used in vanilla DS1. Requires a random amount of frames since event began.
     """
 
 
-def IfFlagState(condition: int, state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
+def IfFlagState(condition: ConditionGroup | int, state: FlagSetting | int, flag_type: FlagType | int, flag: Flag | int):
     """
     TODO
     """
 
 
-def IfFlagEnabled(condition: int, flag: Flag | int):
+def IfFlagEnabled(condition: ConditionGroup | int, flag: Flag | int):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=0`.
     """
 
 
-def IfFlagDisabled(condition: int, flag: Flag | int):
+def IfFlagDisabled(condition: ConditionGroup | int, flag: Flag | int):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=0`.
     """
 
 
-def IfThisEventFlagEnabled(condition: int):
+def IfThisEventFlagEnabled(condition: ConditionGroup | int):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=1`, `flag=0`.
     """
 
 
-def IfThisEventFlagDisabled(condition: int):
+def IfThisEventFlagDisabled(condition: ConditionGroup | int):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=1`, `flag=0`.
     """
 
 
-def IfThisEventSlotFlagEnabled(condition: int):
+def IfThisEventSlotFlagEnabled(condition: ConditionGroup | int):
     """
     Calls `IfFlagState` with `state=1`, `flag_type=2`, `flag=0`.
     """
 
 
-def IfThisEventSlotFlagDisabled(condition: int):
+def IfThisEventSlotFlagDisabled(condition: ConditionGroup | int):
     """
     Calls `IfFlagState` with `state=0`, `flag_type=2`, `flag=0`.
     """
 
 
 def IfFlagRangeState(
-    condition: int,
+    condition: ConditionGroup | int,
     state: RangeState | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1055,32 +1022,32 @@ def IfFlagRangeState(
     """
 
 
-def IfFlagRangeAllEnabled(condition: int, flag_range: FlagRange | tuple | list):
+def IfFlagRangeAllEnabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list):
     """
     Calls `IfFlagRangeState` with `state=0`, `flag_type=0`.
     """
 
 
-def IfFlagRangeAllDisabled(condition: int, flag_range: FlagRange | tuple | list):
+def IfFlagRangeAllDisabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list):
     """
     Calls `IfFlagRangeState` with `state=1`, `flag_type=0`.
     """
 
 
-def IfFlagRangeAnyEnabled(condition: int, flag_range: FlagRange | tuple | list):
+def IfFlagRangeAnyEnabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list):
     """
     Calls `IfFlagRangeState` with `state=2`, `flag_type=0`.
     """
 
 
-def IfFlagRangeAnyDisabled(condition: int, flag_range: FlagRange | tuple | list):
+def IfFlagRangeAnyDisabled(condition: ConditionGroup | int, flag_range: FlagRange | tuple | list):
     """
     Calls `IfFlagRangeState` with `state=3`, `flag_type=0`.
     """
 
 
 def IfCharacterRegionState(
-    condition: int,
+    condition: ConditionGroup | int,
     state: bool | int,
     character: Character | Object | int,
     region: Region | int,
@@ -1090,32 +1057,36 @@ def IfCharacterRegionState(
     """
 
 
-def IfPlayerInsideRegion(condition: int, region: Region | int):
+def IfPlayerInsideRegion(condition: ConditionGroup | int, region: Region | int):
     """
     Calls `IfCharacterRegionState` with `state=True`, `character=10000`.
     """
 
 
-def IfPlayerOutsideRegion(condition: int, region: Region | int):
+def IfPlayerOutsideRegion(condition: ConditionGroup | int, region: Region | int):
     """
     Calls `IfCharacterRegionState` with `state=False`, `character=10000`.
     """
 
 
-def IfCharacterInsideRegion(condition: int, character: Character | Object | int, region: Region | int):
+def IfCharacterInsideRegion(condition: ConditionGroup | int, character: Character | Object | int, region: Region | int):
     """
     Calls `IfCharacterRegionState` with `state=True`.
     """
 
 
-def IfCharacterOutsideRegion(condition: int, character: Character | Object | int, region: Region | int):
+def IfCharacterOutsideRegion(
+    condition: ConditionGroup | int,
+    character: Character | Object | int,
+    region: Region | int,
+):
     """
     Calls `IfCharacterRegionState` with `state=False`.
     """
 
 
 def IfEntityDistanceState(
-    condition: int,
+    condition: ConditionGroup | int,
     state: bool | int,
     entity: Object | Region | Character | int,
     other_entity: Object | Region | Character | int,
@@ -1126,20 +1097,28 @@ def IfEntityDistanceState(
     """
 
 
-def IfPlayerWithinDistance(condition: int, other_entity: Object | Region | Character | int, radius: float):
+def IfPlayerWithinDistance(
+    condition: ConditionGroup | int,
+    other_entity: Object | Region | Character | int,
+    radius: float,
+):
     """
     Calls `IfEntityDistanceState` with `state=True`, `entity=10000`.
     """
 
 
-def IfPlayerBeyondDistance(condition: int, other_entity: Object | Region | Character | int, radius: float):
+def IfPlayerBeyondDistance(
+    condition: ConditionGroup | int,
+    other_entity: Object | Region | Character | int,
+    radius: float,
+):
     """
     Calls `IfEntityDistanceState` with `state=False`, `entity=10000`.
     """
 
 
 def IfEntityWithinDistance(
-    condition: int,
+    condition: ConditionGroup | int,
     entity: Object | Region | Character | int,
     other_entity: Object | Region | Character | int,
     radius: float,
@@ -1150,7 +1129,7 @@ def IfEntityWithinDistance(
 
 
 def IfEntityBeyondDistance(
-    condition: int,
+    condition: ConditionGroup | int,
     entity: Object | Region | Character | int,
     other_entity: Object | Region | Character | int,
     radius: float,
@@ -1161,7 +1140,7 @@ def IfEntityBeyondDistance(
 
 
 def IfPlayerItemStateExcludingStorage(
-    condition: int,
+    condition: ConditionGroup | int,
     item: BaseItemParam | int,
     state: bool | int,
     item_type: ItemType | int = None,
@@ -1173,7 +1152,7 @@ def IfPlayerItemStateExcludingStorage(
 
 
 def IfActionButtonBasic(
-    condition: int,
+    condition: ConditionGroup | int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
@@ -1192,86 +1171,86 @@ def IfActionButtonBasic(
     """
 
 
-def IfMultiplayerState(condition: int, state: MultiplayerState | int):
+def IfMultiplayerState(condition: ConditionGroup | int, state: MultiplayerState | int):
     """
     TODO
     """
 
 
-def IfHost(condition: int):
+def IfHost(condition: ConditionGroup | int):
     """
     Calls `IfMultiplayerState` with `state=0`.
     """
 
 
-def IfClient(condition: int):
+def IfClient(condition: ConditionGroup | int):
     """
     Calls `IfMultiplayerState` with `state=1`.
     """
 
 
-def IfMultiplayer(condition: int):
+def IfMultiplayer(condition: ConditionGroup | int):
     """
     Calls `IfMultiplayerState` with `state=2`.
     """
 
 
-def IfConnectingMultiplayer(condition: int):
+def IfConnectingMultiplayer(condition: ConditionGroup | int):
     """
     Calls `IfMultiplayerState` with `state=3`.
     """
 
 
-def IfSingleplayer(condition: int):
+def IfSingleplayer(condition: ConditionGroup | int):
     """
     Calls `IfMultiplayerState` with `state=4`.
     """
 
 
-def IfAllPlayersRegionState(condition: int, state: bool | int, region: Region | int):
+def IfAllPlayersRegionState(condition: ConditionGroup | int, state: bool | int, region: Region | int):
     """
     TODO
     """
 
 
-def IfAllPlayersInsideRegion(condition: int, region: Region | int):
+def IfAllPlayersInsideRegion(condition: ConditionGroup | int, region: Region | int):
     """
     Calls `IfAllPlayersRegionState` with `state=True`.
     """
 
 
-def IfAllPlayersOutsideRegion(condition: int, region: Region | int):
+def IfAllPlayersOutsideRegion(condition: ConditionGroup | int, region: Region | int):
     """
     Calls `IfAllPlayersRegionState` with `state=False`.
     """
 
 
-def IfMapPresenceState(condition: int, state: bool | int, game_map: Map | tuple | list):
+def IfMapPresenceState(condition: ConditionGroup | int, state: bool | int, game_map: Map | tuple | list):
     """
     Conditions upon player's presence in a particular game map.
     """
 
 
-def IfInsideMap(condition: int, game_map: Map | tuple | list):
+def IfInsideMap(condition: ConditionGroup | int, game_map: Map | tuple | list):
     """
     Calls `IfMapPresenceState` with `state=True`.
     """
 
 
-def IfOutsideMap(condition: int, game_map: Map | tuple | list):
+def IfOutsideMap(condition: ConditionGroup | int, game_map: Map | tuple | list):
     """
     Calls `IfMapPresenceState` with `state=False`.
     """
 
 
-def IfMultiplayerEvent(condition: int, event_id: int):
+def IfMultiplayerEvent(condition: ConditionGroup | int, event_id: int):
     """
     TODO
     """
 
 
 def IfTrueFlagCountComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     comparison_type: ComparisonType | int,
     flag_range: FlagRange | tuple | list,
@@ -1282,14 +1261,19 @@ def IfTrueFlagCountComparison(
     """
 
 
-def IfTrueFlagCountEqual(condition: int, flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int):
+def IfTrueFlagCountEqual(
+    condition: ConditionGroup | int,
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+):
     """
     Calls `IfTrueFlagCountComparison` with `comparison_type=0`.
     """
 
 
 def IfTrueFlagCountNotEqual(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -1300,7 +1284,7 @@ def IfTrueFlagCountNotEqual(
 
 
 def IfTrueFlagCountGreaterThan(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -1311,7 +1295,7 @@ def IfTrueFlagCountGreaterThan(
 
 
 def IfTrueFlagCountLessThan(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -1322,7 +1306,7 @@ def IfTrueFlagCountLessThan(
 
 
 def IfTrueFlagCountGreaterThanOrEqual(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -1333,7 +1317,7 @@ def IfTrueFlagCountGreaterThanOrEqual(
 
 
 def IfTrueFlagCountLessThanOrEqual(
-    condition: int,
+    condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -1344,7 +1328,7 @@ def IfTrueFlagCountLessThanOrEqual(
 
 
 def IfWorldTendencyComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     world_tendency_type: WorldTendencyType | int,
     comparison_type: ComparisonType | int,
     value: int,
@@ -1354,32 +1338,32 @@ def IfWorldTendencyComparison(
     """
 
 
-def IfWhiteWorldTendencyComparison(condition: int, comparison_type: ComparisonType | int, value: int):
+def IfWhiteWorldTendencyComparison(condition: ConditionGroup | int, comparison_type: ComparisonType | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=0`.
     """
 
 
-def IfBlackWorldTendencyComparison(condition: int, comparison_type: ComparisonType | int, value: int):
+def IfBlackWorldTendencyComparison(condition: ConditionGroup | int, comparison_type: ComparisonType | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=1`.
     """
 
 
-def IfWhiteWorldTendencyGreaterThan(condition: int, value: int):
+def IfWhiteWorldTendencyGreaterThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=0`, `comparison_type=2`.
     """
 
 
-def IfBlackWorldTendencyGreaterThan(condition: int, value: int):
+def IfBlackWorldTendencyGreaterThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfWorldTendencyComparison` with `world_tendency_type=1`, `comparison_type=2`.
     """
 
 
 def IfEventValueComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     flag: Flag | int,
     bit_count: int,
     comparison_type: ComparisonType | int,
@@ -1390,44 +1374,44 @@ def IfEventValueComparison(
     """
 
 
-def IfEventValueEqual(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueEqual(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=0`.
     """
 
 
-def IfEventValueNotEqual(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueNotEqual(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=1`.
     """
 
 
-def IfEventValueGreaterThan(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueGreaterThan(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=2`.
     """
 
 
-def IfEventValueLessThan(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueLessThan(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=3`.
     """
 
 
-def IfEventValueGreaterThanOrEqual(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueGreaterThanOrEqual(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=4`.
     """
 
 
-def IfEventValueLessThanOrEqual(condition: int, flag: Flag | int, bit_count: int, value: int):
+def IfEventValueLessThanOrEqual(condition: ConditionGroup | int, flag: Flag | int, bit_count: int, value: int):
     """
     Calls `IfEventValueComparison` with `comparison_type=5`.
     """
 
 
 def IfActionButtonBoss(
-    condition: int,
+    condition: ConditionGroup | int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
@@ -1446,13 +1430,13 @@ def IfActionButtonBoss(
     """
 
 
-def IfAnyItemDroppedInRegion(condition: int, region: Region | int):
+def IfAnyItemDroppedInRegion(condition: ConditionGroup | int, region: Region | int):
     """
     Check if any item has been dropped in the specified region. Not sensitive to what the item is.
     """
 
 
-def IfItemDropped(condition: int, item: BaseItemParam | int, item_type: ItemType | int = None):
+def IfItemDropped(condition: ConditionGroup | int, item: BaseItemParam | int, item_type: ItemType | int = None):
     """
     TODO
     item_type: Auto-detected from `item` type by default.
@@ -1460,7 +1444,7 @@ def IfItemDropped(condition: int, item: BaseItemParam | int, item_type: ItemType
 
 
 def IfPlayerItemStateIncludingStorage(
-    condition: int,
+    condition: ConditionGroup | int,
     item: BaseItemParam | int,
     state: bool | int,
     item_type: ItemType | int = None,
@@ -1471,50 +1455,54 @@ def IfPlayerItemStateIncludingStorage(
     """
 
 
-def IfNewGameCycleComparison(condition: int, comparison_type: ComparisonType | int, completion_count: int):
+def IfNewGameCycleComparison(
+    condition: ConditionGroup | int,
+    comparison_type: ComparisonType | int,
+    completion_count: int,
+):
     """
     TODO
     """
 
 
-def IfNewGameCycleEqual(condition: int, completion_count: int):
+def IfNewGameCycleEqual(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=0`.
     """
 
 
-def IfNewGameCycleNotEqual(condition: int, completion_count: int):
+def IfNewGameCycleNotEqual(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=1`.
     """
 
 
-def IfNewGameCycleGreaterThan(condition: int, completion_count: int):
+def IfNewGameCycleGreaterThan(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=2`.
     """
 
 
-def IfNewGameCycleLessThan(condition: int, completion_count: int):
+def IfNewGameCycleLessThan(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=3`.
     """
 
 
-def IfNewGameCycleGreaterThanOrEqual(condition: int, completion_count: int):
+def IfNewGameCycleGreaterThanOrEqual(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=4`.
     """
 
 
-def IfNewGameCycleLessThanOrEqual(condition: int, completion_count: int):
+def IfNewGameCycleLessThanOrEqual(condition: ConditionGroup | int, completion_count: int):
     """
     Calls `IfNewGameCycleComparison` with `comparison_type=5`.
     """
 
 
 def IfActionButtonBasicLineIntersect(
-    condition: int,
+    condition: ConditionGroup | int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     line_intersects: int,
@@ -1535,7 +1523,7 @@ def IfActionButtonBasicLineIntersect(
 
 
 def IfActionButtonBossLineIntersect(
-    condition: int,
+    condition: ConditionGroup | int,
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
     line_intersects: int,
@@ -1556,7 +1544,7 @@ def IfActionButtonBossLineIntersect(
 
 
 def IfEventsComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     left_flag: Flag | int,
     left_bit_count: int,
     comparison_type: ComparisonType | int,
@@ -1568,44 +1556,44 @@ def IfEventsComparison(
     """
 
 
-def IfDLCState(condition: int, is_owned: bool):
+def IfDLCState(condition: ConditionGroup | int, is_owned: bool):
     """
     TODO
     """
 
 
-def IfDLCOwned(condition: int):
+def IfDLCOwned(condition: ConditionGroup | int):
     """
     Calls `IfDLCState` with `is_owned=True`.
     """
 
 
-def IfDLCNotOwned(condition: int):
+def IfDLCNotOwned(condition: ConditionGroup | int):
     """
     Calls `IfDLCState` with `is_owned=False`.
     """
 
 
-def IfOnlineState(condition: int, state: bool | int):
+def IfOnlineState(condition: ConditionGroup | int, state: bool | int):
     """
     TODO
     """
 
 
-def IfOnline(condition: int):
+def IfOnline(condition: ConditionGroup | int):
     """
     Calls `IfOnlineState` with `state=True`.
     """
 
 
-def IfOffline(condition: int):
+def IfOffline(condition: ConditionGroup | int):
     """
     Calls `IfOnlineState` with `state=False`.
     """
 
 
 def IfAttackedWithDamageType(
-    condition: int,
+    condition: ConditionGroup | int,
     attacked_entity: Character | int,
     attacker: Character | int = -1,
     damage_type: DamageType | int = DamageType.Unspecified,
@@ -1615,14 +1603,18 @@ def IfAttackedWithDamageType(
     """
 
 
-def IfActionButtonParamActivated(condition: int, action_button_id: int, entity: Object | Region | Character | int):
+def IfActionButtonParamActivated(
+    condition: ConditionGroup | int,
+    action_button_id: int,
+    entity: Object | Region | Character | int,
+):
     """
     TODO
     """
 
 
 def IfPlayerArmorInRange(
-    condition: int,
+    condition: ConditionGroup | int,
     armor_type: ArmorType | int,
     required_armor_range_first: ArmorParam | int,
     required_armor_range_last: ArmorParam | int,
@@ -1632,62 +1624,62 @@ def IfPlayerArmorInRange(
     """
 
 
-def IfPlayerInsightAmountComparison(condition: int, value: int, comparison_type: ComparisonType | int):
+def IfPlayerInsightAmountComparison(condition: ConditionGroup | int, value: int, comparison_type: ComparisonType | int):
     """
     TODO
     """
 
 
-def IfPlayerInsightAmountEqual(condition: int, value: int):
+def IfPlayerInsightAmountEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=0`.
     """
 
 
-def IfPlayerInsightAmountNotEqual(condition: int, value: int):
+def IfPlayerInsightAmountNotEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=1`.
     """
 
 
-def IfPlayerInsightAmountGreaterThan(condition: int, value: int):
+def IfPlayerInsightAmountGreaterThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=2`.
     """
 
 
-def IfPlayerInsightAmountLessThan(condition: int, value: int):
+def IfPlayerInsightAmountLessThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=3`.
     """
 
 
-def IfPlayerInsightAmountGreaterThanOrEqual(condition: int, value: int):
+def IfPlayerInsightAmountGreaterThanOrEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=4`.
     """
 
 
-def IfPlayerInsightAmountLessThanOrEqual(condition: int, value: int):
+def IfPlayerInsightAmountLessThanOrEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerInsightAmountComparison` with `comparison_type=5`.
     """
 
 
-def IfDialogChoice(condition: int, dialog_result: DialogResult | int):
+def IfDialogChoice(condition: ConditionGroup | int, dialog_result: DialogResult | int):
     """
     TODO
     """
 
 
-def IfPlayGoState(condition: int, playgo_state: PlayGoState | int):
+def IfPlayGoState(condition: ConditionGroup | int, playgo_state: PlayGoState | int):
     """
     Blocks off areas of the game (namely, beyond Father Gascoigne) that have not been downloaded/installed yet.
     """
 
 
 def IfClientTypeCountComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     client_type: ClientType | int,
     comparison_type: ComparisonType | int,
     value: int,
@@ -1697,98 +1689,103 @@ def IfClientTypeCountComparison(
     """
 
 
-def IfCharacterDeathState(condition: int, character: Character | int, is_dead: bool | int):
+def IfCharacterDeathState(condition: ConditionGroup | int, character: Character | int, is_dead: bool | int):
     """
     TODO
     """
 
 
-def IfCharacterDead(condition: int, character: Character | int):
+def IfCharacterDead(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterDeathState` with `is_dead=True`.
     """
 
 
-def IfCharacterAlive(condition: int, character: Character | int):
+def IfCharacterAlive(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterDeathState` with `is_dead=False`.
     """
 
 
-def IfAttacked(condition: int, attacked_entity: Character | int, attacker: Character | int):
+def IfAttacked(condition: ConditionGroup | int, attacked_entity: Character | int, attacker: Character | int):
     """
     TODO
     """
 
 
-def IfHealthComparison(condition: int, character: Character | int, comparison_type: ComparisonType | int, value: float):
+def IfHealthComparison(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    comparison_type: ComparisonType | int,
+    value: float,
+):
     """
     Conditions upon a comparison to character health ratio (0-1).
     """
 
 
-def IfHealthEqual(condition: int, character: Character | int, value: float):
+def IfHealthEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=0`.
     """
 
 
-def IfHealthNotEqual(condition: int, character: Character | int, value: float):
+def IfHealthNotEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=1`.
     """
 
 
-def IfHealthGreaterThan(condition: int, character: Character | int, value: float):
+def IfHealthGreaterThan(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=2`.
     """
 
 
-def IfHealthLessThan(condition: int, character: Character | int, value: float):
+def IfHealthLessThan(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=3`.
     """
 
 
-def IfHealthGreaterThanOrEqual(condition: int, character: Character | int, value: float):
+def IfHealthGreaterThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=4`.
     """
 
 
-def IfHealthLessThanOrEqual(condition: int, character: Character | int, value: float):
+def IfHealthLessThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
     Calls `IfHealthComparison` with `comparison_type=5`.
     """
 
 
-def IfCharacterType(condition: int, character: Character | int, character_type: CharacterType | int):
+def IfCharacterType(condition: ConditionGroup | int, character: Character | int, character_type: CharacterType | int):
     """
     TODO
     """
 
 
-def IfCharacterHuman(condition: int, character: Character | int):
+def IfCharacterHuman(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterType` with `character_type=0`.
     """
 
 
-def IfCharacterWhitePhantom(condition: int, character: Character | int):
+def IfCharacterWhitePhantom(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterType` with `character_type=1`.
     """
 
 
-def IfCharacterHollow(condition: int, character: Character | int):
+def IfCharacterHollow(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterType` with `character_type=8`.
     """
 
 
 def IfCharacterTargetingState(
-    condition: int,
+    condition: ConditionGroup | int,
     targeting_character: Character | int,
     targeted_character: Character | int,
     state: bool | int,
@@ -1798,50 +1795,67 @@ def IfCharacterTargetingState(
     """
 
 
-def IfCharacterTargeting(condition: int, targeting_character: Character | int, targeted_character: Character | int):
+def IfCharacterTargeting(
+    condition: ConditionGroup | int,
+    targeting_character: Character | int,
+    targeted_character: Character | int,
+):
     """
     Calls `IfCharacterTargetingState` with `state=True`.
     """
 
 
-def IfCharacterNotTargeting(condition: int, targeting_character: Character | int, targeted_character: Character | int):
+def IfCharacterNotTargeting(
+    condition: ConditionGroup | int,
+    targeting_character: Character | int,
+    targeted_character: Character | int,
+):
     """
     Calls `IfCharacterTargetingState` with `state=False`.
     """
 
 
-def IfCharacterSpecialEffectState(condition: int, character: Character | int, special_effect: int, state: bool | int):
+def IfCharacterSpecialEffectState(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    special_effect: int,
+    state: bool | int,
+):
     """
     TODO
     """
 
 
-def IfPlayerHasSpecialEffect(condition: int, special_effect: int):
+def IfPlayerHasSpecialEffect(condition: ConditionGroup | int, special_effect: int):
     """
     Calls `IfCharacterSpecialEffectState` with `character=10000`, `state=True`.
     """
 
 
-def IfPlayerDoesNotHaveSpecialEffect(condition: int, special_effect: int):
+def IfPlayerDoesNotHaveSpecialEffect(condition: ConditionGroup | int, special_effect: int):
     """
     Calls `IfCharacterSpecialEffectState` with `character=10000`, `state=False`.
     """
 
 
-def IfCharacterHasSpecialEffect(condition: int, character: Character | int, special_effect: int):
+def IfCharacterHasSpecialEffect(condition: ConditionGroup | int, character: Character | int, special_effect: int):
     """
     Calls `IfCharacterSpecialEffectState` with `state=True`.
     """
 
 
-def IfCharacterDoesNotHaveSpecialEffect(condition: int, character: Character | int, special_effect: int):
+def IfCharacterDoesNotHaveSpecialEffect(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    special_effect: int,
+):
     """
     Calls `IfCharacterSpecialEffectState` with `state=False`.
     """
 
 
 def IfCharacterPartHealthComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     character: Character | int,
     npc_part_id: int,
     value: float,
@@ -1852,128 +1866,138 @@ def IfCharacterPartHealthComparison(
     """
 
 
-def IfCharacterPartHealthLessThanOrEqual(condition: int, character: Character | int, npc_part_id: int, value: float):
+def IfCharacterPartHealthLessThanOrEqual(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    npc_part_id: int,
+    value: float,
+):
     """
     Calls `IfCharacterPartHealthComparison` with `comparison_type=5`.
     """
 
 
-def IfCharacterBackreadState(condition: int, character: Character | int, state: bool | int):
+def IfCharacterBackreadState(condition: ConditionGroup | int, character: Character | int, state: bool | int):
     """
     TODO
     """
 
 
-def IfCharacterBackreadEnabled(condition: int, character: Character | int):
+def IfCharacterBackreadEnabled(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterBackreadState` with `state=True`.
     """
 
 
-def IfCharacterBackreadDisabled(condition: int, character: Character | int):
+def IfCharacterBackreadDisabled(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterBackreadState` with `state=False`.
     """
 
 
-def IfCharacterTAEEventState(condition: int, character: Character | int, tae_event_id: int, state: bool | int):
+def IfCharacterTAEEventState(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    tae_event_id: int,
+    state: bool | int,
+):
     """
     TODO
     """
 
 
-def IfCharacterHasTAEEvent(condition: int, character: Character | int, tae_event_id: int):
+def IfCharacterHasTAEEvent(condition: ConditionGroup | int, character: Character | int, tae_event_id: int):
     """
     Calls `IfCharacterTAEEventState` with `state=True`.
     """
 
 
-def IfCharacterDoesNotHaveTAEEvent(condition: int, character: Character | int, tae_event_id: int):
+def IfCharacterDoesNotHaveTAEEvent(condition: ConditionGroup | int, character: Character | int, tae_event_id: int):
     """
     Calls `IfCharacterTAEEventState` with `state=False`.
     """
 
 
-def IfHasAIStatus(condition: int, character: Character | int, ai_status: AIStatusType | int):
+def IfHasAIStatus(condition: ConditionGroup | int, character: Character | int, ai_status: AIStatusType | int):
     """
     TODO
     """
 
 
-def IfSkullLanternState(condition: int, state: bool | int):
+def IfSkullLanternState(condition: ConditionGroup | int, state: bool | int):
     """
     TODO
     """
 
 
-def IfSkullLanternActive(condition: int):
+def IfSkullLanternActive(condition: ConditionGroup | int):
     """
     Calls `IfSkullLanternState` with `state=True`.
     """
 
 
-def IfSkullLanternInactive(condition: int):
+def IfSkullLanternInactive(condition: ConditionGroup | int):
     """
     Calls `IfSkullLanternState` with `state=False`.
     """
 
 
-def IfPlayerClass(condition: int, class_type: ClassType | int):
+def IfPlayerClass(condition: ConditionGroup | int, class_type: ClassType | int):
     """
     TODO
     """
 
 
-def IfPlayerCovenant(condition: int, covenant: Covenant | int):
+def IfPlayerCovenant(condition: ConditionGroup | int, covenant: Covenant | int):
     """
     TODO
     """
 
 
-def IfPlayerLevelComparison(condition: int, comparison_type: ComparisonType | int, value: int):
+def IfPlayerLevelComparison(condition: ConditionGroup | int, comparison_type: ComparisonType | int, value: int):
     """
     TODO
     """
 
 
-def IfPlayerLevelEqual(condition: int, value: int):
+def IfPlayerLevelEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=0`.
     """
 
 
-def IfPlayerLevelNotEqual(condition: int, value: int):
+def IfPlayerLevelNotEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=1`.
     """
 
 
-def IfPlayerLevelGreaterThan(condition: int, value: int):
+def IfPlayerLevelGreaterThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=2`.
     """
 
 
-def IfPlayerLevelLessThan(condition: int, value: int):
+def IfPlayerLevelLessThan(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=3`.
     """
 
 
-def IfPlayerLevelGreaterThanOrEqual(condition: int, value: int):
+def IfPlayerLevelGreaterThanOrEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=4`.
     """
 
 
-def IfPlayerLevelLessThanOrEqual(condition: int, value: int):
+def IfPlayerLevelLessThanOrEqual(condition: ConditionGroup | int, value: int):
     """
     Calls `IfPlayerLevelComparison` with `comparison_type=5`.
     """
 
 
 def IfHealthValueComparison(
-    condition: int,
+    condition: ConditionGroup | int,
     character: Character | int,
     comparison_type: ComparisonType | int,
     value: int,
@@ -1983,175 +2007,184 @@ def IfHealthValueComparison(
     """
 
 
-def IfHealthValueEqual(condition: int, character: Character | int, value: int):
+def IfHealthValueEqual(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=0`.
     """
 
 
-def IfHealthValueNotEqual(condition: int, character: Character | int, value: int):
+def IfHealthValueNotEqual(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=1`.
     """
 
 
-def IfHealthValueGreaterThan(condition: int, character: Character | int, value: int):
+def IfHealthValueGreaterThan(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=2`.
     """
 
 
-def IfHealthValueLessThan(condition: int, character: Character | int, value: int):
+def IfHealthValueLessThan(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=3`.
     """
 
 
-def IfHealthValueGreaterThanOrEqual(condition: int, character: Character | int, value: int):
+def IfHealthValueGreaterThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=4`.
     """
 
 
-def IfHealthValueLessThanOrEqual(condition: int, character: Character | int, value: int):
+def IfHealthValueLessThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: int):
     """
     Calls `IfHealthValueComparison` with `comparison_type=5`.
     """
 
 
-def IfCharacterDrawGroupState(condition: int, character: Character | int, state: bool | int):
+def IfCharacterDrawGroupState(condition: ConditionGroup | int, character: Character | int, state: bool | int):
     """
     Tests if character's draw group is currently enabled or disabled.
     """
 
 
-def IfCharacterDrawGroupEnabled(condition: int, character: Character | int):
+def IfCharacterDrawGroupEnabled(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterDrawGroupState` with `state=True`.
     """
 
 
-def IfCharacterDrawGroupDisabled(condition: int, character: Character | int):
+def IfCharacterDrawGroupDisabled(condition: ConditionGroup | int, character: Character | int):
     """
     Calls `IfCharacterDrawGroupState` with `state=False`.
     """
 
 
-def IfObjectDestructionState(condition: int, state: bool | int, obj: Object | int):
+def IfObjectDestructionState(condition: ConditionGroup | int, state: bool | int, obj: Object | int):
     """
     TODO
     """
 
 
-def IfObjectDestroyed(condition: int, obj: Object | int):
+def IfObjectDestroyed(condition: ConditionGroup | int, obj: Object | int):
     """
     Calls `IfObjectDestructionState` with `state=True`.
     """
 
 
-def IfObjectNotDestroyed(condition: int, obj: Object | int):
+def IfObjectNotDestroyed(condition: ConditionGroup | int, obj: Object | int):
     """
     Calls `IfObjectDestructionState` with `state=False`.
     """
 
 
-def IfObjectDamaged(condition: int, obj: Object | int, attacker: Character | int):
+def IfObjectDamaged(condition: ConditionGroup | int, obj: Object | int, attacker: Character | int):
     """
     TODO
     """
 
 
-def IfObjectActivated(condition: int, obj_act_id: int):
+def IfObjectActivated(condition: ConditionGroup | int, obj_act_id: int):
     """
     TODO
     """
 
 
-def IfObjectHealthValueComparison(condition: int, obj: Object | int, comparison_type: ComparisonType | int, value: int):
+def IfObjectHealthValueComparison(
+    condition: ConditionGroup | int,
+    obj: Object | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+):
     """
     TODO
     """
 
 
-def IfPlayerMovingOnCollision(condition: int, collision: Collision | int):
+def IfPlayerMovingOnCollision(condition: ConditionGroup | int, collision: Collision | int):
     """
     TODO
     """
 
 
-def IfPlayerRunningOnCollision(condition: int, collision: Collision | int):
+def IfPlayerRunningOnCollision(condition: ConditionGroup | int, collision: Collision | int):
     """
     TODO
     """
 
 
-def IfPlayerStandingOnCollision(condition: int, collision: Collision | int):
+def IfPlayerStandingOnCollision(condition: ConditionGroup | int, collision: Collision | int):
     """
     TODO
     """
 
 
-def AwaitConditionState(state: bool | int, condition: int):
+def AwaitConditionState(state: bool | int, condition: ConditionGroup | int):
     """
     Not sure if this is ever really used over `IfConditionState`.
     """
 
 
-def AwaitConditionTrue(condition: int):
+def AwaitConditionTrue(condition: ConditionGroup | int):
     """
     Calls `AwaitConditionState` with `state=True`.
     """
 
 
-def AwaitConditionFalse(condition: int):
+def AwaitConditionFalse(condition: ConditionGroup | int):
     """
     Calls `AwaitConditionState` with `state=False`.
     """
 
 
-def SkipLinesIfConditionState(line_count: int, state: bool | int, condition: int):
+def SkipLinesIfConditionState(line_count: int, state: bool | int, condition: ConditionGroup | int):
     """
     TODO
     """
 
 
-def SkipLinesIfConditionTrue(line_count: int, condition: int):
+def SkipLinesIfConditionTrue(line_count: int, condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfConditionState` with `state=True`.
     """
 
 
-def SkipLinesIfConditionFalse(line_count: int, condition: int):
+def SkipLinesIfConditionFalse(line_count: int, condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfConditionState` with `state=False`.
     """
 
 
-def ReturnIfConditionState(event_return_type: EventReturnType | int, state: bool | int, input_condition: int):
+def ReturnIfConditionState(
+    event_return_type: EventReturnType | int,
+    state: bool | int,
+    input_condition: ConditionGroup | int,
+):
     """
     TODO
     """
 
 
-def EndIfConditionTrue(input_condition: int):
+def EndIfConditionTrue(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfConditionState` with `event_return_type=0`, `state=True`.
     """
 
 
-def EndIfConditionFalse(input_condition: int):
+def EndIfConditionFalse(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfConditionState` with `event_return_type=0`, `state=False`.
     """
 
 
-def RestartIfConditionTrue(input_condition: int):
+def RestartIfConditionTrue(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfConditionState` with `event_return_type=1`, `state=True`.
     """
 
 
-def RestartIfConditionFalse(input_condition: int):
+def RestartIfConditionFalse(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfConditionState` with `event_return_type=1`, `state=False`.
     """
@@ -2306,7 +2339,7 @@ def RestartIfValueLessThanOrEqual(left: int, right: int):
     """
 
 
-def SkipLinesIfFinishedConditionState(line_count: int, state: bool | int, condition: int):
+def SkipLinesIfFinishedConditionState(line_count: int, state: bool | int, input_condition: ConditionGroup | int):
     """
     This command is used instead of 1000[01] when conditions are being checked *after* they have already been
     uploaded into the MAIN condition. For example, you might want to continue MAIN if either AND(01) or AND(02)
@@ -2315,43 +2348,47 @@ def SkipLinesIfFinishedConditionState(line_count: int, state: bool | int, condit
     """
 
 
-def SkipLinesIfFinishedConditionTrue(line_count: int, condition: int):
+def SkipLinesIfFinishedConditionTrue(line_count: int, input_condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfFinishedConditionState` with `state=True`.
     """
 
 
-def SkipLinesIfFinishedConditionFalse(line_count: int, condition: int):
+def SkipLinesIfFinishedConditionFalse(line_count: int, input_condition: ConditionGroup | int):
     """
     Calls `SkipLinesIfFinishedConditionState` with `state=False`.
     """
 
 
-def ReturnIfFinishedConditionState(event_return_type: EventReturnType | int, state: bool | int, input_condition: int):
+def ReturnIfFinishedConditionState(
+    event_return_type: EventReturnType | int,
+    state: bool | int,
+    input_condition: ConditionGroup | int,
+):
     """
     TODO
     """
 
 
-def EndIfFinishedConditionTrue(input_condition: int):
+def EndIfFinishedConditionTrue(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=True`.
     """
 
 
-def EndIfFinishedConditionFalse(input_condition: int):
+def EndIfFinishedConditionFalse(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfFinishedConditionState` with `event_return_type=0`, `state=False`.
     """
 
 
-def RestartIfFinishedConditionTrue(input_condition: int):
+def RestartIfFinishedConditionTrue(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=True`.
     """
 
 
-def RestartIfFinishedConditionFalse(input_condition: int):
+def RestartIfFinishedConditionFalse(input_condition: ConditionGroup | int):
     """
     Calls `ReturnIfFinishedConditionState` with `event_return_type=1`, `state=False`.
     """
@@ -2363,19 +2400,19 @@ def WaitForNetworkApproval(max_seconds: float):
     """
 
 
-def GotoIfConditionState(label: Label | int, required_state: bool | int, input_condition: int):
+def GotoIfConditionState(label: Label | int, required_state: bool | int, input_condition: ConditionGroup | int):
     """
     TODO
     """
 
 
-def GotoIfConditionTrue(label: Label | int, input_condition: int):
+def GotoIfConditionTrue(label: Label | int, input_condition: ConditionGroup | int):
     """
     Calls `GotoIfConditionState` with `required_state=True`.
     """
 
 
-def GotoIfConditionFalse(label: Label | int, input_condition: int):
+def GotoIfConditionFalse(label: Label | int, input_condition: ConditionGroup | int):
     """
     Calls `GotoIfConditionState` with `required_state=False`.
     """
@@ -2393,19 +2430,19 @@ def GotoIfValueComparison(label: Label | int, comparison_type: ComparisonType | 
     """
 
 
-def GotoIfFinishedConditionState(label: Label | int, required_state: bool | int, input_condition: int):
+def GotoIfFinishedConditionState(label: Label | int, required_state: bool | int, input_condition: ConditionGroup | int):
     """
     Finished version.
     """
 
 
-def GotoIfFinishedConditionTrue(label: Label | int, input_condition: int):
+def GotoIfFinishedConditionTrue(label: Label | int, input_condition: ConditionGroup | int):
     """
     Calls `GotoIfFinishedConditionState` with `required_state=True`.
     """
 
 
-def GotoIfFinishedConditionFalse(label: Label | int, input_condition: int):
+def GotoIfFinishedConditionFalse(label: Label | int, input_condition: ConditionGroup | int):
     """
     Calls `GotoIfFinishedConditionState` with `required_state=False`.
     """
@@ -2435,7 +2472,7 @@ def WaitRandomFrames(min_frames: int, max_frames: int):
     """
 
 
-def AwaitFlagState(state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
+def AwaitFlagState(state: FlagSetting | int, flag_type: FlagType | int, flag: Flag | int):
     """
     Not sure if this is really used rather than `IfFlagState` with MAIN condition (0).
     """
@@ -2477,7 +2514,7 @@ def AwaitThisEventSlotOff():
     """
 
 
-def SkipLinesIfFlagState(line_count: int, state: FlagState | int, flag_type: FlagType | int, flag: Flag | int):
+def SkipLinesIfFlagState(line_count: int, state: FlagSetting | int, flag_type: FlagType | int, flag: Flag | int):
     """
     Skip some number of lines if the specified flag (absolute, event-relative, or slot-relative) has the
     specified state.
@@ -2522,7 +2559,7 @@ def SkipLinesIfThisEventSlotFlagDisabled(line_count: int):
 
 def ReturnIfFlagState(
     event_return_type: EventReturnType | int,
-    state: FlagState | int,
+    state: FlagSetting | int,
     flag_type: FlagType | int,
     flag: Flag | int,
 ):
@@ -3363,7 +3400,7 @@ def RequestAnimation(
     """
 
 
-def SetFlagState(flag: Flag | int, state: FlagState | int):
+def SetFlagState(flag: Flag | int, state: FlagSetting | int):
     """
     Enable, disable, or toggle (change) a binary flag.
     """
@@ -3540,7 +3577,7 @@ def TriggerMultiplayerEvent(event_id: int):
     """
 
 
-def SetRandomFlagInRange(flag_range: FlagRange | tuple | list, state: FlagState | int):
+def SetRandomFlagInRange(flag_range: FlagRange | tuple | list, state: FlagSetting | int):
     """
     Set the state of a random flag from a given range (inclusive).
     """
@@ -3595,7 +3632,7 @@ def IncrementNewGameCycle(dummy_arg: int):
     """
 
 
-def SetFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagState | int):
+def SetFlagRangeState(flag_range: FlagRange | tuple | list, state: FlagSetting | int):
     """
     Set the state of an entire flag range (inclusive).
     """
@@ -5031,6 +5068,10 @@ def DisableThisFlag():
     """
 
 
+def ValueComparison(comparison_type: ComparisonType | int, left: int, right: int) -> bool:
+    ...
+
+
 def ValueEqual(left: int, right: int) -> bool:
     ...
 
@@ -5052,6 +5093,26 @@ def ValueGreaterThanOrEqual(left: int, right: int) -> bool:
 
 
 def ValueLessThanOrEqual(left: int, right: int) -> bool:
+    ...
+
+
+def TimeElapsed(seconds: float) -> bool:
+    ...
+
+
+def FramesElapsed(frames: int) -> bool:
+    ...
+
+
+def RandomTimeElapsed(min_seconds: float, max_seconds: float) -> bool:
+    ...
+
+
+def RandomFramesElapsed(min_frames: int, max_frames: int) -> bool:
+    ...
+
+
+def FlagState(state: FlagSetting | int, flag_type: FlagType | int, flag: Flag | int) -> bool:
     ...
 
 
@@ -5079,6 +5140,10 @@ def ThisEventSlotFlagDisabled() -> bool:
     ...
 
 
+def FlagRangeState(state: RangeState | int, flag_type: FlagType | int, flag_range: FlagRange | tuple | list) -> bool:
+    ...
+
+
 def FlagRangeAllEnabled(flag_range: FlagRange | tuple | list) -> bool:
     ...
 
@@ -5095,6 +5160,10 @@ def FlagRangeAnyDisabled(flag_range: FlagRange | tuple | list) -> bool:
     ...
 
 
+def CharacterRegionState(state: bool | int, character: Character | Object | int, region: Region | int) -> bool:
+    ...
+
+
 def PlayerInsideRegion(region: Region | int) -> bool:
     ...
 
@@ -5108,6 +5177,15 @@ def CharacterInsideRegion(character: Character | Object | int, region: Region | 
 
 
 def CharacterOutsideRegion(character: Character | Object | int, region: Region | int) -> bool:
+    ...
+
+
+def EntityDistanceState(
+    state: bool | int,
+    entity: Object | Region | Character | int,
+    other_entity: Object | Region | Character | int,
+    radius: float,
+) -> bool:
     ...
 
 
@@ -5135,6 +5213,27 @@ def EntityBeyondDistance(
     ...
 
 
+def PlayerItemStateExcludingStorage(item: BaseItemParam | int, state: bool | int, item_type: ItemType | int = None) -> bool:
+    ...
+
+
+def ActionButtonBasic(
+    prompt_text: EventText | int,
+    anchor_entity: Object | Region | Character | int,
+    anchor_type: CoordEntityType | int = None,
+    facing_angle: float = None,
+    model_point: int = -1,
+    max_distance: float = None,
+    trigger_attribute: TriggerAttribute | int = 48,
+    button: int = 0,
+) -> bool:
+    ...
+
+
+def MultiplayerState(state: MultiplayerState | int) -> bool:
+    ...
+
+
 def Host() -> bool:
     ...
 
@@ -5155,6 +5254,10 @@ def Singleplayer() -> bool:
     ...
 
 
+def AllPlayersRegionState(state: bool | int, region: Region | int) -> bool:
+    ...
+
+
 def AllPlayersInsideRegion(region: Region | int) -> bool:
     ...
 
@@ -5163,11 +5266,28 @@ def AllPlayersOutsideRegion(region: Region | int) -> bool:
     ...
 
 
+def MapPresenceState(state: bool | int, game_map: Map | tuple | list) -> bool:
+    ...
+
+
 def InsideMap(game_map: Map | tuple | list) -> bool:
     ...
 
 
 def OutsideMap(game_map: Map | tuple | list) -> bool:
+    ...
+
+
+def MultiplayerEvent(event_id: int) -> bool:
+    ...
+
+
+def TrueFlagCountComparison(
+    flag_type: FlagType | int,
+    comparison_type: ComparisonType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+) -> bool:
     ...
 
 
@@ -5195,6 +5315,14 @@ def TrueFlagCountLessThanOrEqual(flag_type: FlagType | int, flag_range: FlagRang
     ...
 
 
+def WorldTendencyComparison(
+    world_tendency_type: WorldTendencyType | int,
+    comparison_type: ComparisonType | int,
+    value: int,
+) -> bool:
+    ...
+
+
 def WhiteWorldTendencyComparison(comparison_type: ComparisonType | int, value: int) -> bool:
     ...
 
@@ -5208,6 +5336,10 @@ def WhiteWorldTendencyGreaterThan(value: int) -> bool:
 
 
 def BlackWorldTendencyGreaterThan(value: int) -> bool:
+    ...
+
+
+def EventValueComparison(flag: Flag | int, bit_count: int, comparison_type: ComparisonType | int, value: int) -> bool:
     ...
 
 
@@ -5235,6 +5367,35 @@ def EventValueLessThanOrEqual(flag: Flag | int, bit_count: int, value: int) -> b
     ...
 
 
+def ActionButtonBoss(
+    prompt_text: EventText | int,
+    anchor_entity: Object | Region | Character | int,
+    anchor_type: CoordEntityType | int = None,
+    facing_angle: float = None,
+    model_point: int = -1,
+    max_distance: float = None,
+    trigger_attribute: TriggerAttribute | int = 48,
+    button: int = 0,
+) -> bool:
+    ...
+
+
+def AnyItemDroppedInRegion(region: Region | int) -> bool:
+    ...
+
+
+def ItemDropped(item: BaseItemParam | int, item_type: ItemType | int = None) -> bool:
+    ...
+
+
+def PlayerItemStateIncludingStorage(item: BaseItemParam | int, state: bool | int, item_type: ItemType | int = None) -> bool:
+    ...
+
+
+def NewGameCycleComparison(comparison_type: ComparisonType | int, completion_count: int) -> bool:
+    ...
+
+
 def NewGameCycleEqual(completion_count: int) -> bool:
     ...
 
@@ -5259,6 +5420,48 @@ def NewGameCycleLessThanOrEqual(completion_count: int) -> bool:
     ...
 
 
+def ActionButtonBasicLineIntersect(
+    prompt_text: EventText | int,
+    anchor_entity: Object | Region | Character | int,
+    line_intersects: int,
+    anchor_type: CoordEntityType | int = None,
+    facing_angle: float = None,
+    model_point: int = -1,
+    max_distance: float = None,
+    trigger_attribute: TriggerAttribute | int = 48,
+    button: int = 0,
+) -> bool:
+    ...
+
+
+def ActionButtonBossLineIntersect(
+    prompt_text: EventText | int,
+    anchor_entity: Object | Region | Character | int,
+    line_intersects: int,
+    anchor_type: CoordEntityType | int = None,
+    facing_angle: float = None,
+    model_point: int = -1,
+    max_distance: float = None,
+    trigger_attribute: TriggerAttribute | int = 48,
+    button: int = 0,
+) -> bool:
+    ...
+
+
+def EventsComparison(
+    left_flag: Flag | int,
+    left_bit_count: int,
+    comparison_type: ComparisonType | int,
+    right_flag: Flag | int,
+    right_bit_count: int,
+) -> bool:
+    ...
+
+
+def DLCState(is_owned: bool) -> bool:
+    ...
+
+
 def DLCOwned() -> bool:
     ...
 
@@ -5267,11 +5470,39 @@ def DLCNotOwned() -> bool:
     ...
 
 
+def OnlineState(state: bool | int) -> bool:
+    ...
+
+
 def Online() -> bool:
     ...
 
 
 def Offline() -> bool:
+    ...
+
+
+def AttackedWithDamageType(
+    attacked_entity: Character | int,
+    attacker: Character | int = -1,
+    damage_type: DamageType | int = DamageType.Unspecified,
+) -> bool:
+    ...
+
+
+def ActionButtonParamActivated(action_button_id: int, entity: Object | Region | Character | int) -> bool:
+    ...
+
+
+def PlayerArmorInRange(
+    armor_type: ArmorType | int,
+    required_armor_range_first: ArmorParam | int,
+    required_armor_range_last: ArmorParam | int,
+) -> bool:
+    ...
+
+
+def PlayerInsightAmountComparison(value: int, comparison_type: ComparisonType | int) -> bool:
     ...
 
 
@@ -5299,11 +5530,35 @@ def PlayerInsightAmountLessThanOrEqual(value: int) -> bool:
     ...
 
 
+def DialogChoice(dialog_result: DialogResult | int) -> bool:
+    ...
+
+
+def PlayGoState(playgo_state: PlayGoState | int) -> bool:
+    ...
+
+
+def ClientTypeCountComparison(client_type: ClientType | int, comparison_type: ComparisonType | int, value: int) -> bool:
+    ...
+
+
+def CharacterDeathState(character: Character | int, is_dead: bool | int) -> bool:
+    ...
+
+
 def CharacterDead(character: Character | int) -> bool:
     ...
 
 
 def CharacterAlive(character: Character | int) -> bool:
+    ...
+
+
+def Attacked(attacked_entity: Character | int, attacker: Character | int) -> bool:
+    ...
+
+
+def HealthComparison(character: Character | int, comparison_type: ComparisonType | int, value: float) -> bool:
     ...
 
 
@@ -5331,6 +5586,10 @@ def HealthLessThanOrEqual(character: Character | int, value: float) -> bool:
     ...
 
 
+def CharacterType(character: Character | int, character_type: CharacterType | int) -> bool:
+    ...
+
+
 def CharacterHuman(character: Character | int) -> bool:
     ...
 
@@ -5343,11 +5602,23 @@ def CharacterHollow(character: Character | int) -> bool:
     ...
 
 
+def CharacterTargetingState(
+    targeting_character: Character | int,
+    targeted_character: Character | int,
+    state: bool | int,
+) -> bool:
+    ...
+
+
 def CharacterTargeting(targeting_character: Character | int, targeted_character: Character | int) -> bool:
     ...
 
 
 def CharacterNotTargeting(targeting_character: Character | int, targeted_character: Character | int) -> bool:
+    ...
+
+
+def CharacterSpecialEffectState(character: Character | int, special_effect: int, state: bool | int) -> bool:
     ...
 
 
@@ -5367,7 +5638,20 @@ def CharacterDoesNotHaveSpecialEffect(character: Character | int, special_effect
     ...
 
 
+def CharacterPartHealthComparison(
+    character: Character | int,
+    npc_part_id: int,
+    value: float,
+    comparison_type: ComparisonType | int,
+) -> bool:
+    ...
+
+
 def CharacterPartHealthLessThanOrEqual(character: Character | int, npc_part_id: int, value: float) -> bool:
+    ...
+
+
+def CharacterBackreadState(character: Character | int, state: bool | int) -> bool:
     ...
 
 
@@ -5379,6 +5663,10 @@ def CharacterBackreadDisabled(character: Character | int) -> bool:
     ...
 
 
+def CharacterTAEEventState(character: Character | int, tae_event_id: int, state: bool | int) -> bool:
+    ...
+
+
 def CharacterHasTAEEvent(character: Character | int, tae_event_id: int) -> bool:
     ...
 
@@ -5387,11 +5675,31 @@ def CharacterDoesNotHaveTAEEvent(character: Character | int, tae_event_id: int) 
     ...
 
 
+def HasAIStatus(character: Character | int, ai_status: AIStatusType | int) -> bool:
+    ...
+
+
+def SkullLanternState(state: bool | int) -> bool:
+    ...
+
+
 def SkullLanternActive() -> bool:
     ...
 
 
 def SkullLanternInactive() -> bool:
+    ...
+
+
+def PlayerClass(class_type: ClassType | int) -> bool:
+    ...
+
+
+def PlayerCovenant(covenant: Covenant | int) -> bool:
+    ...
+
+
+def PlayerLevelComparison(comparison_type: ComparisonType | int, value: int) -> bool:
     ...
 
 
@@ -5419,6 +5727,10 @@ def PlayerLevelLessThanOrEqual(value: int) -> bool:
     ...
 
 
+def HealthValueComparison(character: Character | int, comparison_type: ComparisonType | int, value: int) -> bool:
+    ...
+
+
 def HealthValueEqual(character: Character | int, value: int) -> bool:
     ...
 
@@ -5443,11 +5755,19 @@ def HealthValueLessThanOrEqual(character: Character | int, value: int) -> bool:
     ...
 
 
+def CharacterDrawGroupState(character: Character | int, state: bool | int) -> bool:
+    ...
+
+
 def CharacterDrawGroupEnabled(character: Character | int) -> bool:
     ...
 
 
 def CharacterDrawGroupDisabled(character: Character | int) -> bool:
+    ...
+
+
+def ObjectDestructionState(state: bool | int, obj: Object | int) -> bool:
     ...
 
 
@@ -5459,6 +5779,30 @@ def ObjectNotDestroyed(obj: Object | int) -> bool:
     ...
 
 
+def ObjectDamaged(obj: Object | int, attacker: Character | int) -> bool:
+    ...
+
+
+def ObjectActivated(obj_act_id: int) -> bool:
+    ...
+
+
+def ObjectHealthValueComparison(obj: Object | int, comparison_type: ComparisonType | int, value: int) -> bool:
+    ...
+
+
+def PlayerMovingOnCollision(collision: Collision | int) -> bool:
+    ...
+
+
+def PlayerRunningOnCollision(collision: Collision | int) -> bool:
+    ...
+
+
+def PlayerStandingOnCollision(collision: Collision | int) -> bool:
+    ...
+
+
 def ActionButton(
     prompt_text: EventText | int,
     anchor_entity: Object | Region | Character | int,
@@ -5466,12 +5810,40 @@ def ActionButton(
     facing_angle: float = None,
     max_distance: float = None,
     model_point: int = -1,
-    trigger_attribute: int = 48,
+    trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
     boss_version: bool = False,
-    line_intersects: NoneType = None,
+    line_intersects: Object | Region | Character | int = None,
 ) -> bool:
     """
     Calls `compiler.IfActionButton`.
+    """
+    ...
+
+
+def PlayerHasWeapon(weapon: WeaponParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerHasWeapon`.
+    """
+    ...
+
+
+def PlayerHasArmor(armor: ArmorParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerHasArmor`.
+    """
+    ...
+
+
+def PlayerHasRune(rune: AccessoryParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerHasRune`.
+    """
+    ...
+
+
+def PlayerHasGood(good: GoodParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerHasGood`.
     """
     ...

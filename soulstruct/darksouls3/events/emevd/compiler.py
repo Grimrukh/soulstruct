@@ -423,11 +423,11 @@ def IfActionButton(
     anchor_type: CoordEntityType = None,
     facing_angle: float = None,
     max_distance: float = None,
-    model_point=-1,
-    trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
-    button=0,
-    boss_version=False,
-    line_intersects=None,
+    model_point: int = -1,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human | TriggerAttribute.Hollow,
+    button: int = 0,
+    boss_version: bool = False,
+    line_intersects: CoordEntityTyping = None,
 ):
     if anchor_type is None:
         # Anchor type will never be PLAYER here.
@@ -464,7 +464,7 @@ def IfActionButton(
 
 @_compile
 def DefineLabel(label: Label | int):
-    """Wrapper for generating any valid label (0-9, inclusive)."""
-    if not 0 <= label <= 9:
-        raise ValueError(f"Label for `DefineLabel` must be between 0 and 9, inclusive, not: {label}")
+    """Wrapper for generating any valid label (0-20, inclusive)."""
+    if not 0 <= label <= 20:
+        raise ValueError(f"Label for `DefineLabel` must be between 0 and 20, inclusive, not: {label}")
     return base_compile_instruction(EMEDF_ALIASES, f"DefineLabel_{int(label)}")

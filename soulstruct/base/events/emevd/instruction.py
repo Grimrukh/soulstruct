@@ -136,8 +136,8 @@ class Instruction(abc.ABC):
         """Convert single event instruction to EVS."""
         args, opt_args = self.get_required_and_optional_args()
 
-        if self.get_called_event() is not None and opt_args and args[1] in event_arg_types:
-            opt_arg_types = event_arg_types[args[1]]
+        if (called_event_id := self.get_called_event()) is not None and opt_args and called_event_id in event_arg_types:
+            opt_arg_types = event_arg_types[called_event_id]
         else:
             opt_arg_types = ""
 
@@ -152,7 +152,10 @@ class Instruction(abc.ABC):
                 f"  args = {self.evs_args_list}"
             )
         if self.event_layers:
-            instruction = instruction[:-1] + self.event_layers.to_evs()
+            if instruction[-2:] == "()":
+                instruction = instruction[:-1] + self.event_layers.to_evs() + ")"
+            else:
+                instruction = instruction[:-1] + ", " + self.event_layers.to_evs() + ")"  # with comma
         return instruction
 
     def get_required_and_optional_args(self) -> tuple[list[str], list[str]]:

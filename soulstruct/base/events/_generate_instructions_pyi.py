@@ -40,17 +40,14 @@ class HeldCondition:
 END = ...
 RESTART = ...
 
-# The Await function. Equivalent to using the 'await' built-in Python keyword.
+# The Await function. Equivalent to using the 'await' built-in Python keyword or `MAIN.Await()`.
 def Await(condition): ...
 
-class MAIN:
-    @staticmethod
-    def Await(condition): ...
-
+MAIN = ConditionGroup.MAIN
 """
 
 
-def get_arg_string(args_dict: dict[str, dict], alias_length: int) -> str:
+def get_arg_string(args_dict: dict[str, dict], alias_length: int, add_event_layers: bool = False) -> str:
     """Formats args, types, and defaults for appearance in Python def signature."""
     arg_strings = []
     for arg_name, arg_info in args_dict.items():
@@ -74,18 +71,22 @@ def get_arg_string(args_dict: dict[str, dict], alias_length: int) -> str:
         else:
             long_default = False
         if arg_info["default"] is not None:
-            if callable(arg_info["default"]):
+            default = arg_info["default"]
+            if callable(default):
                 # PYI file says `None`. Actual code will use the default handler lambda.
                 arg_string += " = None" if long_default else "=None"
-            elif arg_info["default"] == "TODO":
+            elif default == "TODO":
                 # Mark as TO DO (in EMEDF dict).
                 arg_string += " = None" if long_default else "=None"
+            elif isinstance(default, str):
+                arg_string += f" = \"{default}\"" if long_default else f"=\"{default}\""
             else:
-                default = arg_info['default']
                 if isinstance(default, IntEnum):
                     default = f"{default.__class__.__name__}.{default.name}"
                 arg_string += f" = {default}" if long_default else f"={default}"
         arg_strings.append(arg_string)
+    if add_event_layers:
+        arg_strings.append("event_layers=()")
     one_line = ", ".join(arg_strings)
     if 7 + alias_length + len(one_line) > _MAX_LINE_WIDTH:
         return "\n    " + "\n    ".join(s + "," for s in arg_strings) + "\n"
@@ -121,6 +122,7 @@ def generate_instr_pyi(
     condition_count: int,
     pyi_path: Path | str,
     compiler_module,
+    has_event_layers: bool = False,
 ):
     compiler_names = [
         name for name in compiler_module.__all__
@@ -157,12 +159,11 @@ def generate_instr_pyi(
     pyi_funcs_str = BASICS
 
     for i in range(1, condition_count + 1):
-        pyi_funcs_str += f"class OR_{i}:\n    @staticmethod\n    def Add(condition): ...\n\n"
+        pyi_funcs_str += f"OR_{i} = ConditionGroup.OR_{i}\n"
         pyi_all_lines.append(f"\"OR_{i}\",")
     for i in range(1, condition_count + 1):
-        pyi_funcs_str += f"class AND_{i}:\n    @staticmethod\n    def Add(condition): ...\n\n"
+        pyi_funcs_str += f"AND_{i} = ConditionGroup.AND_{i}\n"
         pyi_all_lines.append(f"\"AND_{i}\",")
-    pyi_funcs_str += "\n\n"
 
     pyi_all_lines.append("# Built-in instructions:")
 
@@ -176,7 +177,7 @@ def generate_instr_pyi(
         args_dict = {}
         for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
             args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
-        args = get_arg_string(args_dict, len(alias))
+        args = get_arg_string(args_dict, len(alias), add_event_layers=has_event_layers)
         pyi_funcs_str += _DEF_TEMPLATE.format(alias=alias, args=args) + "\n"
         docstring = instr_info.get("docstring", "TODO")
         for arg_name, arg_info in args_dict.items():
@@ -190,7 +191,7 @@ def generate_instr_pyi(
                 arg_name: arg_info for arg_name, arg_info in args_dict.items()
                 if arg_name not in partial_kwargs
             }
-            partial_args = get_arg_string(partial_args_dict, len(partial_name))
+            partial_args = get_arg_string(partial_args_dict, len(partial_name), add_event_layers=has_event_layers)
             pyi_funcs_str += _DEF_TEMPLATE.format(alias=partial_name, args=partial_args) + "\n"
             partial_kwargs_str = ", ".join(f"`{k}={v}`" for k, v in partial_kwargs.items() if k != "__docstring")
             partial_docstring = f"Calls `{alias}` with {partial_kwargs_str}."
@@ -223,16 +224,15 @@ def generate_instr_pyi(
 
         # We use the 'If' instruction to generate the signatures.
         # TODO: EMEDF_TESTS generator should make sure the partial signatures are identical.
-        partial_name = test_info["if"]
-        partial_names = " or ".join(f"`{name}`" for name in test_info.values())
+        if_instr_name = test_info["if"]
         partial_docstring = ""
         try:
-            category, index, instr_info = emedf_aliases[partial_name]
+            category, index, instr_info = emedf_aliases[if_instr_name]
         except KeyError:
-            if partial_name in compiler_names:
-                test_func = getattr(compiler_module, partial_name)
+            if if_instr_name in compiler_names:
+                test_func = getattr(compiler_module, if_instr_name)
                 parameters = inspect.signature(test_func).parameters
-                partial_args_dict = {
+                test_args_dict = {
                     p.name: {
                         "type": p.annotation if p.annotation != p.empty else type(p.default),
                         "default": (lambda: None) if p.default is None
@@ -241,7 +241,7 @@ def generate_instr_pyi(
                     for name, p in parameters.items()
                     if name != "condition"
                 }
-                partial_docstring = f"Calls `compiler.{partial_name}`."
+                partial_docstring = f"Calls `compiler.{if_instr_name}`."
             else:
                 raise
         else:
@@ -249,17 +249,23 @@ def generate_instr_pyi(
             for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
                 args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
 
-            partial_kwargs = instr_info["partials"][partial_name]  # guaranteed to exist
-            partial_args_dict = {
-                arg_name: arg_info for arg_name, arg_info in args_dict.items()
-                if arg_name not in partial_kwargs and arg_name not in {"condition", "line_count", "label"}
-            }
+            if instr_info["alias"] == if_instr_name:
+                test_args_dict = {
+                    arg_name: arg_info for arg_name, arg_info in args_dict.items()
+                    if arg_name not in {"condition", "line_count", "label"}
+                }
+            else:
+                # Also remove baked kwargs, in addition to testing kwargs (condition, line_count, label).
+                partial_kwargs = instr_info["partials"][if_instr_name]  # guaranteed to exist
+                test_args_dict = {
+                    arg_name: arg_info for arg_name, arg_info in args_dict.items()
+                    if arg_name not in partial_kwargs and arg_name not in {"condition", "line_count", "label"}
+                }
+                if "__docstring" in partial_kwargs:
+                    partial_docstring = f"\n{partial_kwargs['__docstring']}"
 
-            if "__docstring" in partial_kwargs:
-                partial_docstring = f"\n{partial_kwargs['__docstring']}"
-
-        partial_args = get_arg_string(partial_args_dict, len(partial_name))
-        pyi_funcs_str += _DEF_TEMPLATE_RET_BOOL.format(alias=test_name, args=partial_args) + "\n"
+        test_args = get_arg_string(test_args_dict, len(if_instr_name), add_event_layers=has_event_layers)
+        pyi_funcs_str += _DEF_TEMPLATE_RET_BOOL.format(alias=test_name, args=test_args) + "\n"
 
         if partial_docstring:
             pyi_funcs_str += format_docstring(partial_docstring) + "\n"
@@ -326,6 +332,7 @@ def darksouls3():
         15,
         PACKAGE_PATH("darksouls3/events/instructions.pyi"),
         compiler,
+        has_event_layers=True,
     )
 
 

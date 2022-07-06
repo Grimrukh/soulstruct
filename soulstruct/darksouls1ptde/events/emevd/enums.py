@@ -21,7 +21,7 @@ __all__ = [
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
-    "FlagState",
+    "FlagSetting",
     "FlagType",
     "InterpolationState",
     "ItemType",
@@ -166,16 +166,16 @@ class EventReturnType(BaseEMEVDEnum):
     Restart = 1
 
 
-class FlagState(BaseNegatableEMEVDEnum):
+class FlagSetting(BaseNegatableEMEVDEnum):
     Off = 0
     On = 1
     Change = 2
 
     def negate(self):
-        if self == FlagState.Off:
-            return FlagState.On
-        elif self == FlagState.On:
-            return FlagState.Off
+        if self == FlagSetting.Off:
+            return FlagSetting.On
+        elif self == FlagSetting.On:
+            return FlagSetting.Off
         return super().negate()
 
 
@@ -447,6 +447,17 @@ class ConditionGroup(IntEnum):
     AND_5 = 5
     AND_6 = 6
     AND_7 = 7
+
+    def Await(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
+
+        Only permitted for `MAIN`.
+        """
+        ...
+
+    def Add(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally."""
+        ...
 
 
 class Covenant(IntEnum):

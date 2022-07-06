@@ -13,8 +13,8 @@ from soulstruct.darksouls1r.events.instructions import *
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=11020992, obj=1021960, reaction_distance=1.0, initial_kindle_level=10)
-    SkipLinesIfFlagDisabled(1, 11020108)
-    RegisterBonfire(bonfire_flag=11020992, obj=1021960, reaction_distance=1.0, initial_kindle_level=30)
+    if FlagEnabled(11020108):
+        RegisterBonfire(bonfire_flag=11020992, obj=1021960, reaction_distance=1.0, initial_kindle_level=30)
     SkipLinesIfFlagDisabled(4, 11020300)
     SkipLinesIfFlagEnabled(2, 11020302)
     EndOfAnimation(obj=1021000, animation_id=11)
@@ -55,64 +55,70 @@ def Constructor():
 @NeverRestart(11020899)
 def Event_11020899(_, first_flag: int, last_flag: int):
     """Event 11020899"""
-    EndIfClient()
-    SkipLinesIfFlagEnabled(4, 11020898)
-    EnableFlag(11020898)
-    EndOfAnimation(obj=1021690, animation_id=0)
-    SetObjectActivation(1021690, obj_act_id=-1, state=0)
-    End()
+    if Client():
+        return
+    if FlagDisabled(11020898):
+        EnableFlag(11020898)
+        EndOfAnimation(obj=1021690, animation_id=0)
+        DisableObjectActivation(1021690, obj_act_id=-1)
+        End()
     WaitFrames(frames=1)
-    SkipLinesIfFlagDisabled(20, 11025300)
-    IfObjectActivated(0, obj_act_id=11020704)
-    WaitFrames(frames=10)
-    EnableTreasure(obj=1021700)
-    EnableTreasure(obj=1021701)
-    EnableTreasure(obj=1021702)
-    EnableTreasure(obj=1021703)
-    EnableTreasure(obj=1021704)
-    EnableTreasure(obj=1021705)
-    EnableTreasure(obj=1021706)
-    EnableTreasure(obj=1021707)
-    EnableTreasureCollection(obj=1021700)
-    EnableTreasureCollection(obj=1021701)
-    EnableTreasureCollection(obj=1021702)
-    EnableTreasureCollection(obj=1021703)
-    EnableTreasureCollection(obj=1021704)
-    EnableTreasureCollection(obj=1021705)
-    EnableTreasureCollection(obj=1021706)
-    EnableTreasureCollection(obj=1021707)
-    EnableFlagRange((first_flag, last_flag))
-    End()
+    if FlagEnabled(11025300):
+        MAIN.Await(ObjectActivated(obj_act_id=11020704))
+    
+        WaitFrames(frames=10)
+        EnableTreasure(obj=1021700)
+        EnableTreasure(obj=1021701)
+        EnableTreasure(obj=1021702)
+        EnableTreasure(obj=1021703)
+        EnableTreasure(obj=1021704)
+        EnableTreasure(obj=1021705)
+        EnableTreasure(obj=1021706)
+        EnableTreasure(obj=1021707)
+        EnableTreasureCollection(obj=1021700)
+        EnableTreasureCollection(obj=1021701)
+        EnableTreasureCollection(obj=1021702)
+        EnableTreasureCollection(obj=1021703)
+        EnableTreasureCollection(obj=1021704)
+        EnableTreasureCollection(obj=1021705)
+        EnableTreasureCollection(obj=1021706)
+        EnableTreasureCollection(obj=1021707)
+        EnableFlagRange((first_flag, last_flag))
+        End()
     EndOfAnimation(obj=1021690, animation_id=0)
-    SetObjectActivation(1021690, obj_act_id=-1, state=0)
+    DisableObjectActivation(1021690, obj_act_id=-1)
 
 
 @NeverRestart(11020800)
 def Event_11020800(_, right: int, flag: int, item_type: uchar, item: int, flag_1: int):
     """Event 11020800"""
-    EndIfClient()
-    IfFlagEnabled(1, right)
-    IfFlagDisabled(1, flag)
-    IfPlayerDoesNotHaveItem(1, item, item_type=item_type, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=50000082, right=right)
-    IfPlayerDoesNotHaveGood(1, 201, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8131, right=right)
-    IfPlayerDoesNotHaveGood(1, 203, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8132, right=right)
-    IfPlayerDoesNotHaveGood(1, 205, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8133, right=right)
-    IfPlayerDoesNotHaveGood(1, 207, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8134, right=right)
-    IfPlayerDoesNotHaveGood(1, 209, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8135, right=right)
-    IfPlayerDoesNotHaveGood(1, 211, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8136, right=right)
-    IfPlayerDoesNotHaveGood(1, 213, including_storage=True)
-    SkipLinesIfValueNotEqual(1, left=8137, right=right)
-    IfPlayerDoesNotHaveGood(1, 215, including_storage=True)
-    EndIfConditionFalse(1)
+    if Client():
+        return
+    AND_1.Add(FlagEnabled(right))
+    AND_1.Add(FlagDisabled(flag))
+    IfPlayerDoesNotHaveItem(AND_1, item, item_type=item_type, including_storage=True)
+    if ValueEqual(left=50000082, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 201, including_storage=True)
+    if ValueEqual(left=8131, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 203, including_storage=True)
+    if ValueEqual(left=8132, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 205, including_storage=True)
+    if ValueEqual(left=8133, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 207, including_storage=True)
+    if ValueEqual(left=8134, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 209, including_storage=True)
+    if ValueEqual(left=8135, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 211, including_storage=True)
+    if ValueEqual(left=8136, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 213, including_storage=True)
+    if ValueEqual(left=8137, right=right):
+        IfPlayerDoesNotHaveGood(AND_1, 215, including_storage=True)
+    if not AND_1:
+        return
     EnableFlag(11025300)
-    IfObjectActivated(0, obj_act_id=11020704)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=11020704))
+    
     DisableFlag(flag_1)
 
 
@@ -216,8 +222,8 @@ def Preconstructor():
     Event_11020557(0, character=6060, first_flag=1140, last_flag=1169, flag=1142)
     Event_11020558(0, character=6060, first_flag=1140, last_flag=1169, flag=1145)
     HumanityRegistration(6070, event_flag=8358)
-    SkipLinesIfFlagEnabled(1, 1171)
-    DisableCharacter(6070)
+    if FlagDisabled(1171):
+        DisableCharacter(6070)
     Event_11020501()
     Event_11020559()
     Event_11020560()
@@ -233,12 +239,12 @@ def Preconstructor():
     Event_11020569(0, character=6080, first_flag=1190, last_flag=1209, flag=1198)
     Event_11020567(0, character=6080, first_flag=1190, last_flag=1209, flag=1196)
     HumanityRegistration(6090, event_flag=8374)
-    SkipLinesIfFlagEnabled(1, 1211)
-    DisableCharacter(6090)
+    if FlagDisabled(1211):
+        DisableCharacter(6090)
     Event_11020530(4, character=6090, first_flag=1210, last_flag=1219, flag=1214)
     HumanityRegistration(6100, event_flag=8382)
-    SkipLinesIfFlagEnabled(1, 1221)
-    DisableCharacter(6100)
+    if FlagDisabled(1221):
+        DisableCharacter(6100)
     Event_11020530(5, character=6100, first_flag=1220, last_flag=1229, flag=1224)
     HumanityRegistration(6131, event_flag=8390)
     SkipLinesIfFlagEnabled(2, 1252)
@@ -298,8 +304,8 @@ def Preconstructor():
     Event_11020510(13, character=6301, flag=1574)
     Event_11020530(13, character=6301, first_flag=1570, last_flag=1599, flag=1575)
     Event_11020587(0, character=6301, first_flag=1570, last_flag=1599, flag=1572)
-    SkipLinesIfFlagDisabled(1, 11020690)
-    Event_11020588(0, character=6301, first_flag=1570, last_flag=1599, flag=1573, flag_1=1572, flag_2=1577)
+    if FlagEnabled(11020690):
+        Event_11020588(0, character=6301, first_flag=1570, last_flag=1599, flag=1573, flag_1=1572, flag_2=1577)
     Event_11020589(0, character=6301, first_flag=1570, last_flag=1599, flag=1577)
     Event_11020410(0, character=6301, first_flag=1570, last_flag=1599, flag=1578)
     HumanityRegistration(6322, event_flag=8478)
@@ -331,58 +337,68 @@ def Preconstructor():
 @NeverRestart(11020300)
 def Event_11020300():
     """Event 11020300"""
-    SkipLinesIfThisEventFlagDisabled(2)
-    Event_11020301()
-    End()
-    IfThisEventFlagDisabled(1)
-    IfCharacterInsideRegion(1, PLAYER, region=1022003)
-    IfConditionTrue(0, input_condition=1)
+    if ThisEventFlagEnabled():
+        Event_11020301()
+        End()
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1022003))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(11020300)
     EnableFlag(11020302)
-    ForceAnimation(1021000, 0, wait_for_completion=1)
-    IfCharacterOutsideRegion(2, PLAYER, region=1022001)
-    IfCharacterOutsideRegion(2, PLAYER, region=1022002)
-    IfConditionTrue(0, input_condition=2)
-    ForceAnimation(1021000, 22, wait_for_completion=1)
+    ForceAnimation(1021000, 0, wait_for_completion=True)
+    AND_2.Add(CharacterOutsideRegion(PLAYER, region=1022001))
+    AND_2.Add(CharacterOutsideRegion(PLAYER, region=1022002))
+    
+    MAIN.Await(AND_2)
+    
+    ForceAnimation(1021000, 22, wait_for_completion=True)
     Restart()
 
 
 @NeverRestart(11020301)
 def Event_11020301():
     """Event 11020301"""
-    IfSingleplayer(1)
-    IfFlagDisabled(1, 11020302)
-    IfCharacterInsideRegion(1, PLAYER, region=1022000)
-    IfSingleplayer(2)
-    IfFlagEnabled(2, 11020302)
-    IfCharacterInsideRegion(2, PLAYER, region=1022001)
-    IfSingleplayer(3)
-    IfFlagEnabled(3, 11020302)
-    IfCharacterInsideRegion(3, PLAYER, region=1022002)
-    IfSingleplayer(4)
-    IfFlagDisabled(4, 11020302)
-    IfCharacterInsideRegion(4, PLAYER, region=1022003)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(Singleplayer())
+    AND_1.Add(FlagDisabled(11020302))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1022000))
+    AND_2.Add(Singleplayer())
+    AND_2.Add(FlagEnabled(11020302))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=1022001))
+    AND_3.Add(Singleplayer())
+    AND_3.Add(FlagEnabled(11020302))
+    AND_3.Add(CharacterInsideRegion(PLAYER, region=1022002))
+    AND_4.Add(Singleplayer())
+    AND_4.Add(FlagDisabled(11020302))
+    AND_4.Add(CharacterInsideRegion(PLAYER, region=1022003))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    
+    MAIN.Await(OR_1)
+    
     WaitForNetworkApproval(max_seconds=3.0)
-    SkipLinesIfFinishedConditionTrue(8, condition=2)
-    SkipLinesIfFinishedConditionTrue(7, condition=3)
+    SkipLinesIfFinishedConditionTrue(8, input_condition=AND_2)
+    SkipLinesIfFinishedConditionTrue(7, input_condition=AND_3)
     EnableFlag(11020302)
-    ForceAnimation(1021000, 2, wait_for_completion=1)
-    IfCharacterOutsideRegion(5, PLAYER, region=1022001)
-    IfCharacterOutsideRegion(5, PLAYER, region=1022002)
-    IfConditionTrue(0, input_condition=5)
-    ForceAnimation(1021000, 22, wait_for_completion=1)
+    ForceAnimation(1021000, 2, wait_for_completion=True)
+    AND_5.Add(CharacterOutsideRegion(PLAYER, region=1022001))
+    AND_5.Add(CharacterOutsideRegion(PLAYER, region=1022002))
+    
+    MAIN.Await(AND_5)
+    
+    ForceAnimation(1021000, 22, wait_for_completion=True)
     Restart()
     DisableFlag(11020302)
-    ForceAnimation(1021000, 1, wait_for_completion=1)
-    IfCharacterOutsideRegion(6, PLAYER, region=1022000)
-    IfCharacterOutsideRegion(6, PLAYER, region=1022003)
-    IfConditionTrue(0, input_condition=6)
-    ForceAnimation(1021000, 21, wait_for_completion=1)
+    ForceAnimation(1021000, 1, wait_for_completion=True)
+    AND_6.Add(CharacterOutsideRegion(PLAYER, region=1022000))
+    AND_6.Add(CharacterOutsideRegion(PLAYER, region=1022003))
+    
+    MAIN.Await(AND_6)
+    
+    ForceAnimation(1021000, 21, wait_for_completion=True)
     Restart()
 
 
@@ -390,8 +406,10 @@ def Event_11020301():
 def Event_11025050():
     """Event 11025050"""
     EnableImmortality(1020100)
-    IfHealthLessThanOrEqual(0, 1020100, value=0.30000001192092896)
-    ForceAnimation(1020100, 7000, wait_for_completion=1)
+    
+    MAIN.Await(HealthLessThanOrEqual(1020100, value=0.30000001192092896))
+    
+    ForceAnimation(1020100, 7000, wait_for_completion=True)
     DisableCharacter(1020100)
 
 
@@ -399,10 +417,12 @@ def Event_11025050():
 def Event_11020001():
     """Event 11020001"""
     DisableNetworkSync()
-    EndIfThisEventFlagEnabled()
-    SkipLinesIfInsideMap(2, game_map=UNDEAD_ASYLUM)
-    IfInsideMap(0, game_map=FIRELINK_SHRINE)
-    EnableFlag(11810000)
+    if ThisEventFlagEnabled():
+        return
+    if OutsideMap(game_map=UNDEAD_ASYLUM):
+        MAIN.Await(InsideMap(game_map=FIRELINK_SHRINE))
+    
+        EnableFlag(11810000)
     DisableBackread(6031)
     DisableBackread(6041)
     DisableBackread(6060)
@@ -419,7 +439,9 @@ def Event_11020001():
     DisableBackread(6322)
     DisableBackread(6330)
     DisableSoundEvent(sound_id=1023800)
-    IfFlagEnabled(0, 11810000)
+    
+    MAIN.Await(FlagEnabled(11810000))
+    
     EnableSoundEvent(sound_id=1023800)
     EnableFlag(11020001)
     Wait(3.0)
@@ -444,10 +466,12 @@ def Event_11020001():
 @RestartOnRest(11025200)
 def Event_11025200(_, other_entity: int, character: int, radius: float, seconds: float):
     """Event 11025200"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    SetStandbyAnimationSettings(character)
-    End()
-    IfEntityWithinDistance(0, entity=PLAYER, other_entity=other_entity, radius=radius)
+    if ThisEventSlotFlagEnabled():
+        SetStandbyAnimationSettings(character)
+        End()
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=other_entity, radius=radius))
+    
     DisableNetworkSync()
     Wait(seconds)
     SetStandbyAnimationSettings(character, cancel_animation=9061)
@@ -456,21 +480,34 @@ def Event_11025200(_, other_entity: int, character: int, radius: float, seconds:
 @NeverRestart(11020020)
 def Event_11020020():
     """Event 11020020"""
-    IfActionButton(0, prompt_text=10010506, anchor_entity=1022120, anchor_type=CoordEntityType.Region)
+    MAIN.Await(ActionButton(
+        prompt_text=10010506,
+        anchor_entity=1022120,
+        anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    ))
+    
     SetStandbyAnimationSettings(PLAYER, standby_animation=7816)
-    ForceAnimation(PLAYER, 7815, wait_for_completion=1)
+    ForceAnimation(PLAYER, 7815, wait_for_completion=True)
     EnableFlag(11025060)
     WaitFrames(frames=3)
-    IfActionButton(1, prompt_text=10010507, anchor_entity=1022120, anchor_type=CoordEntityType.Region)
-    IfCharacterOutsideRegion(2, PLAYER, region=1022120)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(ActionButton(
+        prompt_text=10010507,
+        anchor_entity=1022120,
+        anchor_type=CoordEntityType.Region,
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    ))
+    AND_2.Add(CharacterOutsideRegion(PLAYER, region=1022120))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     DisableFlag(11025060)
     RestartEvent(event_id=11020021)
     SetStandbyAnimationSettings(PLAYER)
-    SkipLinesIfFinishedConditionTrue(1, condition=2)
-    ForceAnimation(PLAYER, 7817, wait_for_completion=1)
+    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_2)
+    ForceAnimation(PLAYER, 7817, wait_for_completion=True)
     Restart()
 
 
@@ -478,9 +515,11 @@ def Event_11020020():
 def Event_11020021():
     """Event 11020021"""
     DisableNetworkSync()
-    IfFlagEnabled(0, 11025060)
-    SkipLinesIfFlagEnabled(1, 11020000)
-    Wait(20.0)
+    
+    MAIN.Await(FlagEnabled(11025060))
+    
+    if FlagDisabled(11020000):
+        Wait(20.0)
     PlayCutscene(100230, cutscene_flags=0, player_id=10000, move_to_region=1812110, game_map=UNDEAD_ASYLUM)
     PlayCutscene(180130, cutscene_flags=0, player_id=10000)
     WaitFrames(frames=1)
@@ -495,14 +534,20 @@ def Event_11020105():
     """Event 11020105"""
     DisableTreasure(obj=1021300)
     DisableObject(1021961)
-    EndIfFlagEnabled(11020108)
-    SkipLinesIfFlagEnabled(5, 11020101)
-    IfFlagEnabled(0, 11020100)
-    EnableFlag(102)
-    EnableTreasure(obj=1021300)
-    IfFlagEnabled(0, 11020101)
-    DisableFlag(102)
-    IfFlagEnabled(0, 11020108)
+    if FlagEnabled(11020108):
+        return
+    if FlagDisabled(11020101):
+        MAIN.Await(FlagEnabled(11020100))
+    
+        EnableFlag(102)
+        EnableTreasure(obj=1021300)
+    
+        MAIN.Await(FlagEnabled(11020101))
+    
+        DisableFlag(102)
+    
+    MAIN.Await(FlagEnabled(11020108))
+    
     RegisterBonfire(bonfire_flag=11020992, obj=1021960, reaction_distance=1.0, initial_kindle_level=30)
 
 
@@ -510,17 +555,19 @@ def Event_11020105():
 def Event_11020106():
     """Event 11020106"""
     DisableNetworkSync()
-    IfFlagEnabled(1, 11020100)
-    IfFlagDisabled(1, 11020101)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagEnabled(11020100))
+    AND_1.Add(FlagDisabled(11020101))
+    AND_1.Add(ActionButton(
         prompt_text=10010182,
         anchor_entity=1021960,
         anchor_type=CoordEntityType.Object,
         max_distance=3.4000000953674316,
         model_point=-1,
-    )
-    IfConditionTrue(0, input_condition=1)
+        trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
+    ))
+    
+    MAIN.Await(AND_1)
+    
     DisplayDialog(
         text=10010184,
         anchor_entity=1021960,
@@ -533,51 +580,58 @@ def Event_11020106():
 @NeverRestart(11020108)
 def Event_11020108():
     """Event 11020108"""
-    EndIfThisEventFlagEnabled()
-    IfFlagEnabled(-1, 71020022)
-    IfFlagEnabled(-1, 71020023)
-    IfConditionTrue(0, input_condition=-1)
+    if ThisEventFlagEnabled():
+        return
+    OR_1.Add(FlagEnabled(71020022))
+    OR_1.Add(FlagEnabled(71020023))
+    
+    MAIN.Await(OR_1)
+    
     End()
 
 
 @NeverRestart(11020120)
 def Event_11020120(_, obj_act_id: int, text: int, obj: int, text_1: int, item: int):
     """Event 11020120"""
-    SkipLinesIfThisEventSlotFlagDisabled(5)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=0, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=1, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=2, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=3, state=0)
-    End()
-    IfHost(1)
-    IfObjectActivated(1, obj_act_id=obj_act_id)
-    IfConditionTrue(0, input_condition=1)
+    if ThisEventSlotFlagEnabled():
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=0)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=1)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=2)
+        DisableObjectActivation(obj, obj_act_id=-1, relative_index=3)
+        End()
+    AND_1.Add(Host())
+    AND_1.Add(ObjectActivated(obj_act_id=obj_act_id))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(obj_act_id)
     SkipLinesIfClient(5)
-    IfPlayerHasGood(1, item)
-    SkipLinesIfConditionTrue(2, 1)
+    AND_1.Add(PlayerHasGood(item))
+    SkipLinesIfConditionTrue(2, AND_1)
     DisplayDialog(text=text_1, anchor_entity=obj, button_type=ButtonType.Yes_or_No)
     SkipLines(1)
     DisplayDialog(text=text, anchor_entity=obj, button_type=ButtonType.Yes_or_No)
     DisableNetworkSync()
     Wait(2.0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=0, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=1, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=2, state=0)
-    SetObjectActivationWithIdx(obj, obj_act_id=-1, relative_index=3, state=0)
+    DisableObjectActivation(obj, obj_act_id=-1, relative_index=0)
+    DisableObjectActivation(obj, obj_act_id=-1, relative_index=1)
+    DisableObjectActivation(obj, obj_act_id=-1, relative_index=2)
+    DisableObjectActivation(obj, obj_act_id=-1, relative_index=3)
 
 
 @NeverRestart(11020350)
 def Event_11020350():
     """Event 11020350"""
-    SkipLinesIfThisEventFlagEnabled(7)
-    DisableObject(1021481)
-    DisableMapCollision(collision=1023510)
-    IfFlagEnabled(1, 11010700)
-    IfFlagEnabled(1, 11400200)
-    IfConditionTrue(0, input_condition=1)
-    EnableObject(1021481)
-    EnableMapCollision(collision=1023510)
+    if ThisEventFlagDisabled():
+        DisableObject(1021481)
+        DisableMapCollision(collision=1023510)
+        AND_1.Add(FlagEnabled(11010700))
+        AND_1.Add(FlagEnabled(11400200))
+    
+        MAIN.Await(AND_1)
+    
+        EnableObject(1021481)
+        EnableMapCollision(collision=1023510)
     DisableObject(1021480)
     DisableMapCollision(collision=1023500)
     DisableMapPiece(map_piece_id=1023501)
@@ -587,13 +641,15 @@ def Event_11020350():
 @NeverRestart(11020351)
 def Event_11020351():
     """Event 11020351"""
-    SkipLinesIfFlagDisabled(2, 0)
-    DisableMapCollision(collision=0)
-    DisableMapCollision(collision=0)
-    IfCharacterInsideRegion(0, PLAYER, region=1022111)
-    SkipLinesIfFlagEnabled(2, 710)
-    Kill(PLAYER)
-    End()
+    if FlagEnabled(0):
+        DisableMapCollision(collision=0)
+        DisableMapCollision(collision=0)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=1022111))
+    
+    if FlagDisabled(710):
+        Kill(PLAYER)
+        End()
     PlayCutscene(180060, cutscene_flags=0, player_id=10000, move_to_region=1802110, game_map=KILN_OF_THE_FIRST_FLAME)
     WaitFrames(frames=1)
     Restart()
@@ -602,7 +658,8 @@ def Event_11020351():
 @NeverRestart(11020352)
 def Event_11020352():
     """Event 11020352"""
-    IfFlagEnabled(0, 710)
+    MAIN.Await(FlagEnabled(710))
+    
     DisableMapCollision(collision=1023600)
     DisableMapCollision(collision=1023601)
 
@@ -610,13 +667,15 @@ def Event_11020352():
 @NeverRestart(11020700)
 def Event_11020700(_, obj: int, obj_act_id: int):
     """Event 11020700"""
-    SkipLinesIfThisEventSlotFlagDisabled(4)
-    EndOfAnimation(obj=obj, animation_id=0)
-    SetObjectActivation(obj, obj_act_id=-1, state=0)
-    EnableTreasure(obj=obj)
-    End()
+    if ThisEventSlotFlagEnabled():
+        EndOfAnimation(obj=obj, animation_id=0)
+        DisableObjectActivation(obj, obj_act_id=-1)
+        EnableTreasure(obj=obj)
+        End()
     DisableTreasure(obj=obj)
-    IfObjectActivated(0, obj_act_id=obj_act_id)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
     WaitFrames(frames=10)
     EnableTreasure(obj=obj)
 
@@ -624,7 +683,8 @@ def Event_11020700(_, obj: int, obj_act_id: int):
 @RestartOnRest(11025150)
 def Event_11025150():
     """Event 11025150"""
-    IfCharacterInsideRegion(0, PLAYER, region=1022710)
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=1022710))
+    
     AICommand(1020190, command_id=1, command_slot=3)
     AICommand(1020160, command_id=1, command_slot=3)
     AICommand(1020161, command_id=1, command_slot=3)
@@ -637,7 +697,9 @@ def Event_11025150():
     ReplanAI(1020163)
     ReplanAI(1020165)
     ReplanAI(1020166)
-    IfCharacterOutsideRegion(0, PLAYER, region=1022710)
+    
+    MAIN.Await(CharacterOutsideRegion(PLAYER, region=1022710))
+    
     AICommand(1020190, command_id=-1, command_slot=3)
     AICommand(1020160, command_id=-1, command_slot=3)
     AICommand(1020161, command_id=-1, command_slot=3)
@@ -656,20 +718,24 @@ def Event_11025150():
 @NeverRestart(11020510)
 def Event_11020510(_, character: int, flag: int):
     """Event 11020510"""
-    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
-    IfHealthGreaterThan(1, character, value=0.0)
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfFlagEnabled(2, flag)
-    IfThisEventSlotFlagEnabled(2)
-    IfFlagEnabled(3, flag)
-    IfThisEventSlotFlagDisabled(3)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionFalse(2, condition=3)
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_2.Add(FlagEnabled(flag))
+    AND_2.Add(ThisEventSlotFlagEnabled())
+    AND_3.Add(FlagEnabled(flag))
+    AND_3.Add(ThisEventSlotFlagDisabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
     DisableCharacter(character)
-    IfFlagEnabled(0, 703)
+    
+    MAIN.Await(FlagEnabled(703))
+    
     EnableFlag(flag)
     SetTeamType(character, TeamType.HostileAlly)
     SaveRequest()
@@ -678,16 +744,18 @@ def Event_11020510(_, character: int, flag: int):
 @NeverRestart(11020530)
 def Event_11020530(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020530"""
-    SkipLinesIfThisEventSlotFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
-    IfHealthLessThanOrEqual(1, character, value=0.0)
-    IfCharacterInsideRegion(2, character, region=1022300)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(2, condition=1)
-    Kill(character, award_souls=1)
+    if ThisEventSlotFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterInsideRegion(character, region=1022300))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    Kill(character, award_souls=True)
     DisableGravity(character)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -696,48 +764,50 @@ def Event_11020530(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020501)
 def Event_11020501():
     """Event 11020501"""
-    IfFlagEnabled(1, 11010902)
-    IfFlagDisabled(1, 11020693)
-    IfFlagDisabled(1, 1176)
-    IfFlagRangeAllDisabled(1, flag_range=(1193, 1196))
-    IfHealthLessThanOrEqual(2, 6070, value=0.8999999761581421)
-    SkipLinesIfFlagEnabled(1, 1177)
-    IfAttacked(2, attacked_entity=6070, attacker=PLAYER)
-    IfHealthLessThanOrEqual(3, 6080, value=0.8999999761581421)
-    SkipLinesIfFlagEnabled(1, 1198)
-    IfAttacked(3, attacked_entity=6080, attacker=PLAYER)
-    IfHealthLessThanOrEqual(4, 6090, value=0.8999999761581421)
-    SkipLinesIfFlagEnabled(1, 1214)
-    IfAttacked(4, attacked_entity=6090, attacker=PLAYER)
-    IfHealthLessThanOrEqual(5, 6100, value=0.8999999761581421)
-    SkipLinesIfFlagEnabled(1, 1224)
-    IfAttacked(5, attacked_entity=6100, attacker=PLAYER)
-    IfFlagEnabled(6, 1197)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(1, input_condition=-1)
-    IfThisEventFlagEnabled(7)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=7)
-    IfConditionTrue(0, input_condition=-2)
-    SkipLinesIfFlagEnabled(2, 1177)
-    EnableFlag(1176)
-    EnableCharacter(6070)
+    AND_1.Add(FlagEnabled(11010902))
+    AND_1.Add(FlagDisabled(11020693))
+    AND_1.Add(FlagDisabled(1176))
+    AND_1.Add(FlagRangeAllDisabled(flag_range=(1193, 1196)))
+    AND_2.Add(HealthLessThanOrEqual(6070, value=0.8999999761581421))
+    if FlagDisabled(1177):
+        AND_2.Add(Attacked(attacked_entity=6070, attacker=PLAYER))
+    AND_3.Add(HealthLessThanOrEqual(6080, value=0.8999999761581421))
+    if FlagDisabled(1198):
+        AND_3.Add(Attacked(attacked_entity=6080, attacker=PLAYER))
+    AND_4.Add(HealthLessThanOrEqual(6090, value=0.8999999761581421))
+    if FlagDisabled(1214):
+        AND_4.Add(Attacked(attacked_entity=6090, attacker=PLAYER))
+    AND_5.Add(HealthLessThanOrEqual(6100, value=0.8999999761581421))
+    if FlagDisabled(1224):
+        AND_5.Add(Attacked(attacked_entity=6100, attacker=PLAYER))
+    AND_6.Add(FlagEnabled(1197))
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    AND_1.Add(OR_1)
+    AND_7.Add(ThisEventFlagEnabled())
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_7)
+    
+    MAIN.Await(OR_2)
+    
+    if FlagDisabled(1177):
+        EnableFlag(1176)
+        EnableCharacter(6070)
     SetTeamType(6070, TeamType.HostileAlly)
-    SkipLinesIfFlagEnabled(2, 1198)
-    EnableFlag(1197)
-    EnableCharacter(6080)
+    if FlagDisabled(1198):
+        EnableFlag(1197)
+        EnableCharacter(6080)
     SetTeamType(6080, TeamType.HostileAlly)
-    SkipLinesIfFlagEnabled(2, 1214)
-    EnableFlag(1213)
-    EnableCharacter(6090)
+    if FlagDisabled(1214):
+        EnableFlag(1213)
+        EnableCharacter(6090)
     SetTeamType(6090, TeamType.HostileAlly)
-    SkipLinesIfFlagEnabled(2, 1224)
-    EnableFlag(1223)
-    EnableCharacter(6100)
+    if FlagDisabled(1224):
+        EnableFlag(1223)
+        EnableCharacter(6100)
     SetTeamType(6100, TeamType.HostileAlly)
     SaveRequest()
 
@@ -745,26 +815,28 @@ def Event_11020501():
 @NeverRestart(11020502)
 def Event_11020502(_, character: int, flag: int):
     """Event 11020502"""
-    IfFlagDisabled(7, 11010902)
-    IfFlagDisabled(7, 1195)
-    IfFlagDisabled(7, 1197)
-    IfFlagEnabled(7, 1202)
-    IfFlagEnabled(6, 11010902)
-    IfFlagDisabled(6, 1195)
-    IfFlagDisabled(6, 1197)
-    IfFlagEnabled(6, 1193)
-    IfConditionTrue(-2, input_condition=7)
-    IfConditionTrue(-2, input_condition=6)
-    IfConditionTrue(1, input_condition=-2)
-    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
-    IfHealthGreaterThan(1, character, value=0.0)
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfThisEventFlagDisabled(1)
-    IfFlagEnabled(2, flag)
-    IfThisEventFlagEnabled(2)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_7.Add(FlagDisabled(11010902))
+    AND_7.Add(FlagDisabled(1195))
+    AND_7.Add(FlagDisabled(1197))
+    AND_7.Add(FlagEnabled(1202))
+    AND_6.Add(FlagEnabled(11010902))
+    AND_6.Add(FlagDisabled(1195))
+    AND_6.Add(FlagDisabled(1197))
+    AND_6.Add(FlagEnabled(1193))
+    OR_2.Add(AND_7)
+    OR_2.Add(AND_6)
+    AND_1.Add(OR_2)
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_2.Add(FlagEnabled(flag))
+    AND_2.Add(ThisEventFlagEnabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(flag)
     SetTeamType(character, TeamType.HostileAlly)
     SaveRequest()
@@ -773,16 +845,18 @@ def Event_11020502(_, character: int, flag: int):
 @NeverRestart(11020503)
 def Event_11020503(_, character: int, flag: int):
     """Event 11020503"""
-    IfFlagDisabled(1, 1197)
-    IfFlagEnabled(1, 1194)
-    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
-    IfHealthGreaterThan(1, character, value=0.0)
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfFlagEnabled(2, flag)
-    IfThisEventFlagEnabled(2)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(FlagDisabled(1197))
+    AND_1.Add(FlagEnabled(1194))
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_2.Add(FlagEnabled(flag))
+    AND_2.Add(ThisEventFlagEnabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(flag)
     SetTeamType(character, TeamType.HostileAlly)
     SaveRequest()
@@ -791,15 +865,17 @@ def Event_11020503(_, character: int, flag: int):
 @NeverRestart(11020504)
 def Event_11020504(_, character: int, flag: int):
     """Event 11020504"""
-    IfFlagDisabled(1, 1411)
-    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
-    IfHealthGreaterThan(1, character, value=0.0)
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfFlagEnabled(2, flag)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(3, condition=1)
+    AND_1.Add(FlagDisabled(1411))
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_2.Add(FlagEnabled(flag))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionTrue(3, input_condition=AND_1)
     Move(character, destination=1022700, destination_type=CoordEntityType.Region, short_move=True)
     SetNest(character, region=1022700)
     End()
@@ -807,7 +883,9 @@ def Event_11020504(_, character: int, flag: int):
     SetNest(character, region=1022700)
     AICommand(character, command_id=1, command_slot=0)
     ReplanAI(character)
-    IfCharacterInsideRegion(0, character, region=1022700)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=1022700))
+    
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     EnableFlag(flag)
@@ -816,11 +894,13 @@ def Event_11020504(_, character: int, flag: int):
 @NeverRestart(11020550)
 def Event_11020550(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020550"""
-    IfFlagDisabled(1, 1096)
-    IfFlagDisabled(1, 1099)
-    IfFlagEnabled(1, 1091)
-    IfFlagEnabled(1, 11500594)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1096))
+    AND_1.Add(FlagDisabled(1099))
+    AND_1.Add(FlagEnabled(1091))
+    AND_1.Add(FlagEnabled(11500594))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -829,12 +909,14 @@ def Event_11020550(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020551)
 def Event_11020551(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020551"""
-    IfFlagDisabled(1, 1096)
-    IfFlagDisabled(1, 1099)
-    IfFlagEnabled(1, 1092)
-    IfFlagEnabled(1, 11020603)
-    IfOutsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1096))
+    AND_1.Add(FlagDisabled(1099))
+    AND_1.Add(FlagEnabled(1092))
+    AND_1.Add(FlagEnabled(11020603))
+    AND_1.Add(OutsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableFlag(11020694)
@@ -844,11 +926,13 @@ def Event_11020551(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020552)
 def Event_11020552(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020552"""
-    IfFlagDisabled(1, 1114)
-    IfFlagDisabled(1, 1117)
-    IfFlagEnabled(1, 1111)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1114))
+    AND_1.Add(FlagDisabled(1117))
+    AND_1.Add(FlagEnabled(1111))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -857,11 +941,13 @@ def Event_11020552(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020553)
 def Event_11020553(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020553"""
-    IfFlagDisabled(1, 1114)
-    IfFlagDisabled(1, 1117)
-    IfFlagEnabled(1, 1112)
-    IfFlagEnabled(1, 11020694)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1114))
+    AND_1.Add(FlagDisabled(1117))
+    AND_1.Add(FlagEnabled(1112))
+    AND_1.Add(FlagEnabled(11020694))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -870,12 +956,13 @@ def Event_11020553(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020554)
 def Event_11020554(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020554"""
-    IfFlagDisabled(1, 1114)
-    IfFlagDisabled(1, 1117)
-    IfFlagEnabled(1, 1113)
-    IfFlagEnabled(1, 723)
-    IfInsideMap(1, game_map=SENS_FORTRESS)
-    EndIfConditionFalse(1)
+    AND_1.Add(FlagDisabled(1114))
+    AND_1.Add(FlagDisabled(1117))
+    AND_1.Add(FlagEnabled(1113))
+    AND_1.Add(FlagEnabled(723))
+    AND_1.Add(InsideMap(game_map=SENS_FORTRESS))
+    if not AND_1:
+        return
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -884,16 +971,18 @@ def Event_11020554(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020555)
 def Event_11020555(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020555"""
-    IfFlagEnabled(1, 1140)
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1575)
-    IfFlagEnabled(2, 812)
-    IfFlagEnabled(2, 813)
-    IfConditionTrue(-1, input_condition=2)
-    IfFlagEnabled(-1, 11500200)
-    IfConditionTrue(1, input_condition=-1)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1140))
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1575))
+    AND_2.Add(FlagEnabled(812))
+    AND_2.Add(FlagEnabled(813))
+    OR_1.Add(AND_2)
+    OR_1.Add(FlagEnabled(11500200))
+    AND_1.Add(OR_1)
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -901,10 +990,12 @@ def Event_11020555(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020556)
 def Event_11020556(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020556"""
-    IfFlagEnabled(1, 1141)
-    IfFlagEnabled(1, 810)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1141))
+    AND_1.Add(FlagEnabled(810))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -912,10 +1003,12 @@ def Event_11020556(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020557)
 def Event_11020557(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020557"""
-    IfFlagEnabled(1, 1146)
-    IfFlagEnabled(1, 11020609)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1146))
+    AND_1.Add(FlagEnabled(11020609))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -923,10 +1016,12 @@ def Event_11020557(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020558)
 def Event_11020558(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020558"""
-    IfFlagEnabled(1, 1142)
-    IfFlagEnabled(1, 11800200)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1142))
+    AND_1.Add(FlagEnabled(11800200))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -934,9 +1029,11 @@ def Event_11020558(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020559)
 def Event_11020559():
     """Event 11020559"""
-    IfFlagEnabled(1, 1170)
-    IfFlagEnabled(1, 11010902)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1170))
+    AND_1.Add(FlagEnabled(11010902))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1170, 1189))
     EnableFlag(1171)
     EnableCharacter(6070)
@@ -951,26 +1048,28 @@ def Event_11020559():
 @NeverRestart(11020560)
 def Event_11020560():
     """Event 11020560"""
-    IfFlagRangeAllDisabled(7, flag_range=(1176, 1181))
-    IfFlagEnabled(7, 1171)
-    IfFlagRangeAllDisabled(7, flag_range=(1195, 1198))
-    IfFlagEnabled(7, 1202)
-    IfFlagRangeAllDisabled(7, flag_range=(1213, 1215))
-    IfFlagEnabled(7, 1211)
-    IfFlagRangeAllDisabled(7, flag_range=(1223, 1225))
-    IfFlagEnabled(7, 1221)
-    IfConditionTrue(1, input_condition=7)
-    IfFlagEnabled(1, 11020600)
-    IfThisEventFlagDisabled(1)
-    IfConditionTrue(2, input_condition=7)
-    IfFlagEnabled(2, 11300005)
-    IfConditionTrue(3, input_condition=7)
-    IfThisEventFlagEnabled(3)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(input_condition=1)
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1176, 1181)))
+    AND_7.Add(FlagEnabled(1171))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1195, 1198)))
+    AND_7.Add(FlagEnabled(1202))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1213, 1215)))
+    AND_7.Add(FlagEnabled(1211))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1223, 1225)))
+    AND_7.Add(FlagEnabled(1221))
+    AND_1.Add(AND_7)
+    AND_1.Add(FlagEnabled(11020600))
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_2.Add(AND_7)
+    AND_2.Add(FlagEnabled(11300005))
+    AND_3.Add(AND_7)
+    AND_3.Add(ThisEventFlagEnabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_1)
     ClearEventValue(600, bit_count=4)
     EnableFlag(11020693)
     DisableFlagRange((1170, 1189))
@@ -990,13 +1089,14 @@ def Event_11020560():
 @NeverRestart(11020564)
 def Event_11020564(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020564"""
-    IfFlagDisabled(1, 1195)
-    IfFlagDisabled(1, 1197)
-    IfFlagEnabled(1, 1192)
-    EndIfConditionFalse(1)
-    SkipLinesIfFlagEnabled(2, 11020692)
-    EnableFlag(11020692)
-    End()
+    AND_1.Add(FlagDisabled(1195))
+    AND_1.Add(FlagDisabled(1197))
+    AND_1.Add(FlagEnabled(1192))
+    if not AND_1:
+        return
+    if FlagDisabled(11020692):
+        EnableFlag(11020692)
+        End()
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1005,11 +1105,13 @@ def Event_11020564(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020565)
 def Event_11020565(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020565"""
-    IfFlagDisabled(1, 1195)
-    IfFlagDisabled(1, 1197)
-    IfFlagEnabled(1, 1193)
-    IfFlagEnabled(1, 11020608)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1195))
+    AND_1.Add(FlagDisabled(1197))
+    AND_1.Add(FlagEnabled(1193))
+    AND_1.Add(FlagEnabled(11020608))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1018,44 +1120,50 @@ def Event_11020565(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020567)
 def Event_11020567(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020567"""
-    IfFlagEnabled(-2, 1194)
-    IfFlagEnabled(-2, 1195)
-    IfConditionTrue(1, input_condition=-2)
-    IfHealthLessThanOrEqual(1, character, value=0.0)
-    IfFlagEnabled(2, 1196)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    OR_2.Add(FlagEnabled(1194))
+    OR_2.Add(FlagEnabled(1195))
+    AND_1.Add(OR_2)
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(FlagEnabled(1196))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionTrue(input_condition=1)
+    EndIfFinishedConditionTrue(input_condition=AND_1)
     DropMandatoryTreasure(character)
 
 
 @NeverRestart(11020569)
 def Event_11020569(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020569"""
-    IfFlagDisabled(1, 1194)
-    IfFlagDisabled(1, 1195)
-    IfFlagDisabled(1, 1196)
-    IfHealthLessThanOrEqual(1, character, value=0.0)
-    IfFlagEnabled(2, 1198)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(FlagDisabled(1194))
+    AND_1.Add(FlagDisabled(1195))
+    AND_1.Add(FlagDisabled(1196))
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(FlagEnabled(1198))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionTrue(input_condition=1)
+    EndIfFinishedConditionTrue(input_condition=AND_1)
     DropMandatoryTreasure(character)
 
 
 @NeverRestart(11020574)
 def Event_11020574(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020574"""
-    IfFlagDisabled(1, 1253)
-    IfFlagEnabled(1, 1251)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1253))
+    AND_1.Add(FlagEnabled(1251))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1064,12 +1172,14 @@ def Event_11020574(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020575)
 def Event_11020575(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020575"""
-    IfFlagDisabled(1, 1253)
-    IfFlagEnabled(1, 1252)
-    IfFlagEnabled(1, 11020102)
-    IfFlagEnabled(1, 11020103)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1253))
+    AND_1.Add(FlagEnabled(1252))
+    AND_1.Add(FlagEnabled(11020102))
+    AND_1.Add(FlagEnabled(11020103))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1077,11 +1187,13 @@ def Event_11020575(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020576)
 def Event_11020576(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020576"""
-    IfFlagDisabled(1, 1314)
-    IfFlagEnabled(1, 1312)
-    IfFlagEnabled(1, 11600593)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1314))
+    AND_1.Add(FlagEnabled(1312))
+    AND_1.Add(FlagEnabled(11600593))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1090,12 +1202,14 @@ def Event_11020576(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020577)
 def Event_11020577(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020577"""
-    IfFlagDisabled(1, 1461)
-    IfFlagDisabled(1, 1464)
-    IfFlagEnabled(1, 1460)
-    IfFlagEnabled(1, 11020597)
-    IfOutsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1461))
+    AND_1.Add(FlagDisabled(1464))
+    AND_1.Add(FlagEnabled(1460))
+    AND_1.Add(FlagEnabled(11020597))
+    AND_1.Add(OutsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -1104,10 +1218,12 @@ def Event_11020577(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020579)
 def Event_11020579(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020579"""
-    IfFlagDisabled(1, 1512)
-    IfFlagEnabled(1, 1494)
-    IfFlagEnabled(1, 11510590)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1512))
+    AND_1.Add(FlagEnabled(1494))
+    AND_1.Add(FlagEnabled(11510590))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1116,12 +1232,14 @@ def Event_11020579(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020583)
 def Event_11020583(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020583"""
-    IfFlagDisabled(1, 1547)
-    IfFlagEnabled(1, 1542)
-    IfFlagEnabled(1, 11700593)
-    IfFlagDisabled(1, 1512)
-    IfFlagDisabled(1, 1513)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1547))
+    AND_1.Add(FlagEnabled(1542))
+    AND_1.Add(FlagEnabled(11700593))
+    AND_1.Add(FlagDisabled(1512))
+    AND_1.Add(FlagDisabled(1513))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1130,17 +1248,19 @@ def Event_11020583(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020584)
 def Event_11020584(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020584"""
-    IfFlagDisabled(1, 1547)
-    IfFlagEnabled(1, 1543)
-    IfFlagEnabled(1, 11020605)
-    IfThisEventFlagDisabled(1)
-    IfFlagDisabled(2, 1547)
-    IfFlagEnabled(2, 1543)
-    IfThisEventFlagEnabled(2)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(input_condition=1)
+    AND_1.Add(FlagDisabled(1547))
+    AND_1.Add(FlagEnabled(1543))
+    AND_1.Add(FlagEnabled(11020605))
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_2.Add(FlagDisabled(1547))
+    AND_2.Add(FlagEnabled(1543))
+    AND_2.Add(ThisEventFlagEnabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_1)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -1149,10 +1269,12 @@ def Event_11020584(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020585)
 def Event_11020585(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020585"""
-    IfFlagDisabled(1, 1547)
-    IfFlagEnabled(1, 1544)
-    IfFlagEnabled(1, 11410593)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1547))
+    AND_1.Add(FlagEnabled(1544))
+    AND_1.Add(FlagEnabled(11410593))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1161,28 +1283,32 @@ def Event_11020585(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020586)
 def Event_11020586(_, character: int):
     """Event 11020586"""
-    IfFlagDisabled(1, 1547)
-    IfFlagEnabled(1, 1545)
-    IfFlagEnabled(1, 11020606)
-    IfThisEventFlagDisabled(1)
-    IfFlagDisabled(2, 1547)
-    IfFlagEnabled(2, 1545)
-    IfThisEventFlagEnabled(2)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(input_condition=1)
+    AND_1.Add(FlagDisabled(1547))
+    AND_1.Add(FlagEnabled(1545))
+    AND_1.Add(FlagEnabled(11020606))
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_2.Add(FlagDisabled(1547))
+    AND_2.Add(FlagEnabled(1545))
+    AND_2.Add(ThisEventFlagEnabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_1)
     DisableCharacter(character)
 
 
 @NeverRestart(11020587)
 def Event_11020587(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020587"""
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1578)
-    IfFlagEnabled(1, 1571)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1578))
+    AND_1.Add(FlagEnabled(1571))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1193,31 +1319,35 @@ def Event_11020587(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020588)
 def Event_11020588(_, character: int, first_flag: int, last_flag: int, flag: int, flag_1: int, flag_2: int):
     """Event 11020588"""
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1578)
-    IfFlagEnabled(1, 1572)
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1578)
-    IfFlagEnabled(2, 1577)
-    IfFlagDisabled(3, 1574)
-    IfFlagDisabled(3, 1578)
-    IfFlagEnabled(3, 1573)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(6, condition=3)
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1578))
+    AND_1.Add(FlagEnabled(1572))
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1578))
+    AND_2.Add(FlagEnabled(1577))
+    AND_3.Add(FlagDisabled(1574))
+    AND_3.Add(FlagDisabled(1578))
+    AND_3.Add(FlagEnabled(1573))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionTrue(6, input_condition=AND_3)
     EnableRandomFlagInRange(flag_range=(11025120, 11025122))
-    IfFlagEnabled(0, 11025120)
+    
+    MAIN.Await(FlagEnabled(11025120))
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
     End()
-    SkipLinesIfFlagDisabled(4, 11020691)
-    DisableFlagRange((first_flag, last_flag))
-    EnableFlag(flag_1)
-    EnableCharacter(character)
-    End()
+    if FlagEnabled(11020691):
+        DisableFlagRange((first_flag, last_flag))
+        EnableFlag(flag_1)
+        EnableCharacter(character)
+        End()
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag_2)
     EnableCharacter(character)
@@ -1226,14 +1356,16 @@ def Event_11020588(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020589)
 def Event_11020589(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020589"""
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1578)
-    IfFlagEnabled(-1, 1570)
-    IfFlagEnabled(-1, 1577)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagEnabled(1, 3)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1578))
+    OR_1.Add(FlagEnabled(1570))
+    OR_1.Add(FlagEnabled(1577))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagEnabled(3))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1243,18 +1375,20 @@ def Event_11020589(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020410)
 def Event_11020410(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020410"""
-    IfFlagDisabled(1, 1574)
-    IfFlagDisabled(1, 1578)
-    IfFlagEnabled(-1, 1572)
-    IfFlagEnabled(-1, 1573)
-    IfFlagEnabled(-1, 1577)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagEnabled(2, 812)
-    IfFlagEnabled(2, 813)
-    IfConditionTrue(-2, input_condition=2)
-    IfFlagEnabled(-2, 11500200)
-    IfConditionTrue(1, input_condition=-2)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1574))
+    AND_1.Add(FlagDisabled(1578))
+    OR_1.Add(FlagEnabled(1572))
+    OR_1.Add(FlagEnabled(1573))
+    OR_1.Add(FlagEnabled(1577))
+    AND_1.Add(OR_1)
+    AND_2.Add(FlagEnabled(812))
+    AND_2.Add(FlagEnabled(813))
+    OR_2.Add(AND_2)
+    OR_2.Add(FlagEnabled(11500200))
+    AND_1.Add(OR_2)
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     DisableCharacter(character)
@@ -1263,14 +1397,16 @@ def Event_11020410(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020411)
 def Event_11020411(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020411"""
-    IfFlagDisabled(1, 1622)
-    IfFlagDisabled(1, 1625)
-    IfFlagDisabled(1, 1627)
-    IfFlagDisabled(1, 1628)
-    IfFlagEnabled(1, 1624)
-    IfFlagEnabled(1, 7)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1622))
+    AND_1.Add(FlagDisabled(1625))
+    AND_1.Add(FlagDisabled(1627))
+    AND_1.Add(FlagDisabled(1628))
+    AND_1.Add(FlagEnabled(1624))
+    AND_1.Add(FlagEnabled(7))
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1279,12 +1415,14 @@ def Event_11020411(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020412)
 def Event_11020412(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020412"""
-    IfFlagDisabled(1, 1434)
-    IfFlagDisabled(1, 1435)
-    IfFlagEnabled(1, 1430)
-    IfFlagEnabled(1, 11010700)
-    IfFlagEnabled(1, 11400200)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(1434))
+    AND_1.Add(FlagDisabled(1435))
+    AND_1.Add(FlagEnabled(1430))
+    AND_1.Add(FlagEnabled(11010700))
+    AND_1.Add(FlagEnabled(11400200))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1293,10 +1431,12 @@ def Event_11020412(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020413)
 def Event_11020413(_, character: int, flag: int):
     """Event 11020413"""
-    SkipLinesIfThisEventFlagDisabled(2)
-    DropMandatoryTreasure(character)
-    End()
-    IfHealthLessThanOrEqual(0, character, value=0.0)
+    if ThisEventFlagEnabled():
+        DropMandatoryTreasure(character)
+        End()
+    
+    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    
     DisableFlag(1434)
     EnableFlag(flag)
 
@@ -1304,15 +1444,17 @@ def Event_11020413(_, character: int, flag: int):
 @NeverRestart(11020420)
 def Event_11020420(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020420"""
-    IfFlagEnabled(1, 1640)
-    IfFlagEnabled(1, 11010700)
-    IfFlagEnabled(2, 1640)
-    IfFlagEnabled(2, 11400200)
-    IfFlagEnabled(3, 1641)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(FlagEnabled(1640))
+    AND_1.Add(FlagEnabled(11010700))
+    AND_2.Add(FlagEnabled(1640))
+    AND_2.Add(FlagEnabled(11400200))
+    AND_3.Add(FlagEnabled(1641))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1322,10 +1464,12 @@ def Event_11020420(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020421)
 def Event_11020421(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020421"""
-    IfFlagEnabled(1, 1641)
-    IfFlagEnabled(1, 11010700)
-    IfFlagEnabled(1, 11400200)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1641))
+    AND_1.Add(FlagEnabled(11010700))
+    AND_1.Add(FlagEnabled(11400200))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableCharacter(character)
@@ -1335,10 +1479,12 @@ def Event_11020421(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020422)
 def Event_11020422(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020422"""
-    IfFlagEnabled(1, 1642)
-    IfFlagEnabled(1, 710)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1642))
+    AND_1.Add(FlagEnabled(710))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1346,11 +1492,13 @@ def Event_11020422(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020423)
 def Event_11020423(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020423"""
-    IfFlagEnabled(1, 1643)
-    IfFlagEnabled(1, 820)
-    IfFlagEnabled(1, 11800100)
-    IfCharacterAlive(1, character)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1643))
+    AND_1.Add(FlagEnabled(820))
+    AND_1.Add(FlagEnabled(11800100))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1358,43 +1506,49 @@ def Event_11020423(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11020424)
 def Event_11020424(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020424"""
-    IfFlagEnabled(1, 1649)
-    IfFlagEnabled(1, 11020598)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(1649))
+    AND_1.Add(FlagEnabled(11020598))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    ForceAnimation(character, 7005, wait_for_completion=1)
+    ForceAnimation(character, 7005, wait_for_completion=True)
     DisableCharacter(character)
 
 
 @NeverRestart(11020425)
 def Event_11020425(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11020425"""
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfFlagEnabled(-1, 11020598)
-    IfHealthLessThanOrEqual(2, character, value=0.8999999761581421)
-    IfHealthGreaterThan(2, character, value=0.0)
-    IfAttacked(2, attacked_entity=character, attacker=PLAYER)
-    IfEntityBeyondDistance(2, entity=character, other_entity=PLAYER, radius=15.0)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    OR_1.Add(FlagEnabled(11020598))
+    AND_2.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_2.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
+    OR_1.Add(AND_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    ForceAnimation(character, 7005, wait_for_completion=1)
+    ForceAnimation(character, 7005, wait_for_completion=True)
     DisableCharacter(character)
 
 
 @NeverRestart(11026200)
 def Event_11026200():
     """Event 11026200"""
-    IfFlagEnabled(-1, 1643)
-    IfFlagEnabled(-1, 1644)
-    IfFlagEnabled(-1, 1645)
-    IfConditionTrue(1, input_condition=-1)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfFlagEnabled(1, 820)
-    IfConditionTrue(0, input_condition=1)
+    OR_1.Add(FlagEnabled(1643))
+    OR_1.Add(FlagEnabled(1644))
+    OR_1.Add(FlagEnabled(1645))
+    AND_1.Add(OR_1)
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    AND_1.Add(FlagEnabled(820))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(820)
     EnableFlag(830)
     EnableCharacter(6331)
@@ -1409,23 +1563,29 @@ def Event_11026200():
 def Event_11026210():
     """Event 11026210"""
     DisableFlag(1650)
-    IfInsideMap(1, game_map=FIRELINK_SHRINE)
-    IfEntityBeyondDistance(1, entity=6330, other_entity=PLAYER, radius=30.0)
-    IfFlagDisabled(1, 830)
-    IfConditionTrue(0, input_condition=1)
-    IfFlagEnabled(-1, 1643)
-    IfFlagEnabled(-1, 1644)
-    IfFlagEnabled(-1, 1645)
-    EndIfConditionFalse(-1)
+    AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
+    AND_1.Add(EntityBeyondDistance(entity=6330, other_entity=PLAYER, radius=30.0))
+    AND_1.Add(FlagDisabled(830))
+    
+    MAIN.Await(AND_1)
+    
+    OR_1.Add(FlagEnabled(1643))
+    OR_1.Add(FlagEnabled(1644))
+    OR_1.Add(FlagEnabled(1645))
+    if not OR_1:
+        return
     DisableFlagRange((11026211, 11026213))
     EnableRandomFlagInRange(flag_range=(11026211, 11026213))
-    EndIfFlagEnabled(11026211)
+    if FlagEnabled(11026211):
+        return
     EnableFlag(1650)
     SetStandbyAnimationSettings(6330, standby_animation=9001)
-    IfAttacked(0, attacked_entity=6330, attacker=PLAYER)
+    
+    MAIN.Await(Attacked(attacked_entity=6330, attacker=PLAYER))
+    
     AddSpecialEffect(6330, 5450)
     SetStandbyAnimationSettings(6330, standby_animation=7003)
-    ForceAnimation(6330, 9061, wait_for_completion=1)
+    ForceAnimation(6330, 9061, wait_for_completion=True)
     DisableFlag(1650)
 
 
@@ -1433,14 +1593,17 @@ def Event_11026210():
 def Event_11020110():
     """Event 11020110"""
     EnableImmortality(6060)
-    EndIfFlagEnabled(11020101)
-    SkipLinesIfFlagEnabled(1, 11020100)
-    IfFlagEnabled(0, 1141)
+    if FlagEnabled(11020101):
+        return
+    if FlagDisabled(11020100):
+        MAIN.Await(FlagEnabled(1141))
     EzstateAIRequest(6060, command_id=1702, command_slot=0)
     EnableFlag(11020100)
-    SkipLinesIfFlagEnabled(4, 11020111)
-    IfFlagEnabled(0, 11020609)
-    EzstateAIRequest(6060, command_id=1701, command_slot=0)
-    EnableFlag(11020111)
-    IfCharacterHasTAEEvent(0, 6060, tae_event_id=1701)
+    if FlagDisabled(11020111):
+        MAIN.Await(FlagEnabled(11020609))
+    
+        EzstateAIRequest(6060, command_id=1701, command_slot=0)
+        EnableFlag(11020111)
+    
+        MAIN.Await(CharacterHasTAEEvent(6060, tae_event_id=1701))
     EnableFlag(11020101)

@@ -352,8 +352,8 @@ def IfPlayerHasArmor(condition: int, armor: ArmorTyping, including_storage: bool
 
 
 @_compile
-def IfPlayerHasRune(condition: int, ring: AccessoryTyping, including_storage: bool = False):
-    return IfPlayerItemState(condition, True, ring, ItemType.Rune, including_storage)
+def IfPlayerHasRune(condition: int, rune: AccessoryTyping, including_storage: bool = False):
+    return IfPlayerItemState(condition, True, rune, ItemType.Rune, including_storage)
 
 
 @_compile
@@ -397,11 +397,11 @@ def IfActionButton(
     anchor_type: CoordEntityType = None,
     facing_angle: float = None,
     max_distance: float = None,
-    model_point=-1,
-    trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
-    button=0,
-    boss_version=False,
-    line_intersects=None,
+    model_point: int = -1,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human | TriggerAttribute.Hollow,
+    button: int = 0,
+    boss_version: bool = False,
+    line_intersects: CoordEntityTyping = None,
 ):
     if anchor_type is None:
         # Anchor type will never be PLAYER here.

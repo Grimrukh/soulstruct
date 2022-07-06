@@ -36,7 +36,7 @@ _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
 _CONDITION_GROUP_RE = re.compile(r"(AND|OR)_(\d+)")
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
-_BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
+_BUILTIN_NAMES = {"Condition", "MAIN", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
 _IGNORE_IMPORT_RE = re.compile(r"^import typing.*")
 
 
@@ -136,6 +136,7 @@ class EVSParser(abc.ABC):
 
         self.held_conditions = []  # These conditions won't be re-allocated.
         self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction variants.
+        self.yoked_conditions = {}  # Maps conditions to sets of other conditions that have been loaded into them.
 
         self.script_event_flags = {}
         self.current_event = None
@@ -467,7 +468,7 @@ class EVSParser(abc.ABC):
         try:
             instruction_lines[0] += format_event_layers(event_layers)
         except TypeError:
-            raise EVSSyntaxError(node, f"If given, `event_layers` must be a list, tuple, or single integer.")
+            raise EVSSyntaxError(node, "If given, `event_layers` must be a list, tuple, or single integer.")
         return instruction_lines
 
     def _check_condition_group_add(self, node: ast.Call) -> tp.Optional[int]:
@@ -764,8 +765,17 @@ class EVSParser(abc.ABC):
                     "'restart_event' are all 0 or False.",
                 )
 
-        # 4. The condition is a builtin test constant (e.g. THIS_FLAG, HOST, OFFLINE, SKULL_LANTERN_ACTIVE, ...)
-        # DEPRECATED. All test conditions must now be called, e.g., `Host()`, `FlagEnabled(flag)`.
+        # 4. The condition is a condition group such as `AND_01`. (It cannot be `MAIN`.)
+        if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
+            i = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            try:
+                return self._compile_condition_skip_or_return(node, i, negate, skip_lines, end_event, restart_event)
+            except ValueError:
+                raise EVSError(
+                    node.lineno,
+                    "(internal) Cannot resolve simple condition check: 'skip_lines, 'end_event', and "
+                    "'restart_event' are all 0 or False.",
+                )
 
         # 5. The condition is a 'compilable' game object in the global namespace that requires no arguments.
         if isinstance(node, (ast.Attribute, ast.Name)):
@@ -801,6 +811,7 @@ class EVSParser(abc.ABC):
             # Get arguments.
             args = self._parse_nodes(node.args)
             kwargs = self._parse_keyword_nodes(node.keywords)
+            # TODO: event_layers
             return self._try_compile_test(
                 node.func,
                 *args,
@@ -901,7 +912,11 @@ class EVSParser(abc.ABC):
         condition=None,
         skip_lines=0,
     ):
-        """Called on the argument of Condition() or Await(), or on a non-simple IF test node."""
+        """Called on the argument of Condition() or Await(), or on a non-simple IF test node.
+
+        Always results in the use of a condition group, but if `skip_lines` is given instead of `condition`, that group
+        may just be temporary group that is immediately used in a line skip.
+        """
         if condition is None and skip_lines == 0:
             raise ValueError("Either 'condition' index or 'skip_lines' count must be specified.")
         if condition is not None and skip_lines != 0:
@@ -955,26 +970,31 @@ class EVSParser(abc.ABC):
 
         # Existing condition (with standard name)
         if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
+            if not isinstance(condition, int):
+                raise EVSSyntaxError(
+                    node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
+                )
             i = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
             if i in self.finished_conditions:
-                raise EVSSyntaxError(
-                    node.lineno,
-                    f"Finished condition {node.id} cannot be an input condition. You must use line skips."
-                )
-            # TODO: Conditions are only finished when they are loaded into MAIN (0).
-            # self.finished_conditions.append(i)
+                # This condition slot is being used again. It is no longer considered 'finished' and cannot be used in
+                # 'IfFinishedCondition' checks.
+                self.finished_conditions.remove(i)
+            self._check_finished_conditions(condition, i)
             logic = "False" if negate else "True"
             return self._compile_instr(node, f"IfCondition{logic}", condition, i)
 
         # Existing condition (with custom name)
         if isinstance(node, ast.Name) and node.id in self.conditions:
+            if not isinstance(condition, int):
+                raise EVSSyntaxError(
+                    node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
+                )
             i = self.conditions.index(node.id)
             if i in self.finished_conditions:
-                raise EVSSyntaxError(
-                    node.lineno, f"Finished condition {node.id} cannot be an input condition. You must use line skips."
-                )
-            # TODO: Conditions are only finished when they are loaded into MAIN (0).
-            self.finished_conditions.append(i)
+                # This condition slot is being used again. It is no longer considered 'finished' and cannot be used in
+                # 'IfFinishedCondition' checks.
+                self.finished_conditions.remove(i)
+            self._check_finished_conditions(condition, i)
             logic = "False" if negate else "True"
             return self._compile_instr(node, f"IfCondition{logic}", condition, i)
 
@@ -1048,31 +1068,25 @@ class EVSParser(abc.ABC):
             if negate:
                 if condition in self.finished_conditions:
                     return self._compile_instr(node, "SkipLinesIfFinishedConditionTrue", skip_lines, condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
                 return self._compile_instr(node, "SkipLinesIfConditionTrue", skip_lines, condition)
             if condition in self.finished_conditions:
                 return self._compile_instr(node, "SkipLinesIfFinishedConditionFalse", skip_lines, condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
             return self._compile_instr(node, "SkipLinesIfConditionFalse", skip_lines, condition)
         elif end_event:
             if negate:
                 if condition in self.finished_conditions:
                     return self._compile_instr(node, "EndIfFinishedConditionFalse", condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
                 return self._compile_instr(node, "EndIfConditionFalse", condition)
             if condition in self.finished_conditions:
                 return self._compile_instr(node, "EndIfFinishedConditionTrue", condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
             return self._compile_instr(node, "EndIfConditionTrue", condition)
         elif restart_event:
             if negate:
                 if condition in self.finished_conditions:
                     return self._compile_instr(node, "RestartIfFinishedConditionFalse", condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
                 return self._compile_instr(node, "RestartIfConditionFalse", condition)
             if condition in self.finished_conditions:
                 return self._compile_instr(node, "RestartIfFinishedConditionTrue", condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
             return self._compile_instr(node, "RestartIfConditionTrue", condition)
         else:
             raise ValueError
@@ -1103,10 +1117,7 @@ class EVSParser(abc.ABC):
             logic = "False" if negate else "True"
             instr = f"IfCondition{logic}"
             condition_emevd += self._compile_instr(node, instr, condition, i)
-
-        if i not in self.finished_conditions:
-            self.finished_conditions.append(i)
-
+            self._check_finished_conditions(condition, i)
         return condition_emevd
 
     def _compile_instr(self, node, instr_name, *args, **kwargs) -> list[str]:
@@ -1115,6 +1126,19 @@ class EVSParser(abc.ABC):
             return self.COMPILE(instr_name, *args, **kwargs)
         except Exception as ex:
             raise EVSSyntaxError(node, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
+
+    def _check_finished_conditions(self, output_condition: int, input_condition: int):
+        if output_condition == 0:
+            self.finished_conditions.append(input_condition)
+            if input_condition in self.yoked_conditions:
+                for yoked in sorted(self.yoked_conditions[input_condition]):
+                    if yoked not in self.finished_conditions:
+                        self.finished_conditions.append(yoked)
+                self.yoked_conditions.pop(input_condition)
+        else:
+            # Input condition `i` is now yoked to `condition` and will be finished whenever `condition` is loaded
+            # into MAIN (0).
+            self.yoked_conditions.setdefault(output_condition, set()).add(input_condition)
 
     def _try_compile_test(
         self,
@@ -1128,11 +1152,13 @@ class EVSParser(abc.ABC):
         **kwargs,
     ):
         tests = self.EMEDF_TESTS[node.id]
+        event_layers = format_event_layers(kwargs.pop("event_layers", None))
+        instruction_lines = []
 
         if negate:
             # TODO: Look up 'negate' key of test to redirect (or raise `NoNegateError`).
             # tests = tests["negate"]
-            raise EVSError(node, f"Cannot yet support `not` keyword with tests.")
+            raise EVSError(node, f"Cannot yet support `not` keyword with test functions.")
 
         if skip_lines > 0:
             if condition is not None or end_event or restart_event:
@@ -1140,7 +1166,7 @@ class EVSParser(abc.ABC):
             if "skip" not in tests:
                 raise NoSkipOrReturnError
             # `line_count` is always the first positional argument.
-            return self._compile_instr(node, tests["skip"], skip_lines, *args, **kwargs)
+            instruction_lines = self._compile_instr(node, tests["skip"], skip_lines, *args, **kwargs)
         elif skip_lines < 0:
             raise ValueError("You cannot skip a negative number of lines.")
 
@@ -1148,19 +1174,23 @@ class EVSParser(abc.ABC):
             if end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
             # "if" is always present in tests. `condition` is always the first positional argument.
-            return self._compile_instr(node, tests["if"], condition, *args, **kwargs)
+            instruction_lines = self._compile_instr(node, tests["if"], condition, *args, **kwargs)
 
         if end_event:
             if restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
             if "end" not in tests:
                 raise NoSkipOrReturnError
-            return self._compile_instr(node, tests["end"], *args, **kwargs)
+            instruction_lines = self._compile_instr(node, tests["end"], *args, **kwargs)
 
         if restart_event:
             if "restart" not in tests:
                 raise NoSkipOrReturnError
-            return self._compile_instr(node, tests["restart"], *args, **kwargs)
+            instruction_lines = self._compile_instr(node, tests["restart"], *args, **kwargs)
+
+        if instruction_lines:
+            instruction_lines[0] += event_layers
+            return instruction_lines
 
         raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
 
@@ -1270,6 +1300,7 @@ class EVSParser(abc.ABC):
         """
         name = node.id
         if self.current_event and name in self.current_event.args:
+            # Name is an event argument.
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
             arg = EventArgumentData(
@@ -1281,6 +1312,15 @@ class EVSParser(abc.ABC):
                 # Bake arg into game type `__call__` method as 'self' (becomes a valid zero-argument test call).
                 return partial(self.current_event.arg_classes[name].__call__, arg)
             return arg
+
+        # Check if name is a condition group.
+        if name == "MAIN":
+            return 0
+        if match := _CONDITION_GROUP_RE.match(name):
+            condition = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            if condition not in self.AND_SLOTS + self.OR_SLOTS:
+                raise EVSValueError(node, f"Invalid condition group name for EMEVD: {name} (group index {condition})")
+            return condition
 
         # Look in 'for' loop variables, then globals.
         if name in self.for_vars:

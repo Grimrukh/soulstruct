@@ -18,9 +18,13 @@ EVENT_RETURN_TYPE = {
     "type": EventReturnType,
     "default": None,
 }
+CONDITION_GROUP = {
+    "type": ConditionGroup,
+    "default": None,
+}
 CUTSCENE_FLAGS = {
     "type": CutsceneFlags,
-    "default": 0,
+    "default": None,
 }
 AREA_ID = {
     "type": int,
@@ -67,7 +71,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfMultiplayerState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": {
                 "type": MultiplayerState,
                 "default": None,
@@ -86,7 +90,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "If_Unknown_3_23",
         "docstring": "Unknown command. Second and third arguments appear to both always be zero.",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
         },
@@ -95,7 +99,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "If_Unknown_3_24",
         "docstring": "'If Multiplayer Count', apparently.",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
         },
@@ -104,7 +108,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "Unknown_4_15",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "unk1": INT,
         },
     },
@@ -112,7 +116,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "Unknown_4_16",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "unk1": INT,
             "unk2": INT,
             "unk3": INT,
@@ -122,7 +126,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfArenaMatchmaking",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
         },
     },
     (1003, 5): {  # more partials for extended `MultiplayerState` enum
@@ -216,7 +220,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "PlayCutsceneAndRandomlyWarpPlayer_2002_6",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "cutscene_id": INT | HIDE_NAME,
             "cutscene_flags": CUTSCENE_FLAGS,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
@@ -224,7 +228,7 @@ EMEDF = PTDE_EMEDF | {
             "block_id": BLOCK_ID,
         },
         "evs_args": {
-            "condition": {},
+            "cutscene_id": {},
             "cutscene_flags": {},
             "first_region": {},
             "last_region": {},
@@ -235,7 +239,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "PlayCutsceneAndRandomlyWarpPlayer_2002_7",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "cutscene_id": INT | HIDE_NAME,
             "cutscene_flags": CUTSCENE_FLAGS,
             "first_region": NO_DEFAULT(RegionTyping),
             "last_region": NO_DEFAULT(RegionTyping),
@@ -243,7 +247,7 @@ EMEDF = PTDE_EMEDF | {
             "block_id": BLOCK_ID,
         },
         "evs_args": {
-            "condition": {},
+            "cutscene_id": {},
             "cutscene_flags": {},
             "first_region": {},
             "last_region": {},
@@ -437,6 +441,20 @@ add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-commo
 EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.
-EMEDF_TESTS["ActionButton"] = {
-    "if": "IfActionButton",
+EMEDF_TESTS |= {
+    "ActionButton": {
+        "if": "IfActionButton",
+    },
+    "PlayerHasWeapon": {
+        "if": "IfPlayerHasWeapon",
+    },
+    "PlayerHasArmor": {
+        "if": "IfPlayerHasArmor",
+    },
+    "PlayerHasRing": {
+        "if": "IfPlayerHasRing",
+    },
+    "PlayerHasGood": {
+        "if": "IfPlayerHasGood",
+    },
 }

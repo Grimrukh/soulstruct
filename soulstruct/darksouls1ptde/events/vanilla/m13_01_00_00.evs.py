@@ -30,7 +30,7 @@ def Constructor():
     DisableFlag(11310000)
     AND_1.Add(Client())
     AND_1.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
-    SkipLinesIfConditionTrue(2, 1)
+    SkipLinesIfConditionTrue(2, AND_1)
     DisableObject(1311994)
     DeleteVFX(1311995, erase_root_only=False)
     if FlagDisabled(11310810):
@@ -151,7 +151,7 @@ def Event_11310090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -235,36 +235,42 @@ def Event_11315042():
     AND_2.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
     OR_2.Add(AND_2)
     OR_2.Add(FlagEnabled(11310060))
-    RestartIfConditionFalse(-2)
+    if not OR_2:
+        return RESTART
     WaitFrames(frames=1)
     AND_3.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_3.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
     OR_3.Add(AND_3)
     OR_3.Add(FlagEnabled(11310060))
-    RestartIfConditionFalse(-3)
+    if not OR_3:
+        return RESTART
     WaitFrames(frames=1)
     AND_4.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_4.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
     OR_4.Add(AND_4)
     OR_4.Add(FlagEnabled(11310060))
-    RestartIfConditionFalse(-4)
+    if not OR_4:
+        return RESTART
     WaitFrames(frames=1)
     AND_5.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_5.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
     OR_5.Add(AND_5)
     OR_5.Add(FlagEnabled(11310060))
-    RestartIfConditionFalse(-5)
+    if not OR_5:
+        return RESTART
     WaitFrames(frames=1)
     AND_6.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_6.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
     OR_6.Add(AND_6)
     OR_6.Add(FlagEnabled(11310060))
-    RestartIfConditionFalse(-6)
+    if not OR_6:
+        return RESTART
     EnableFlag(11310060)
     Wait(600.0)
     AND_7.Add(BlackWorldTendencyComparison(ComparisonType.LessThanOrEqual, value=50))
     AND_7.Add(InsideMap(game_map=TOMB_OF_THE_GIANTS))
-    RestartIfConditionFalse(7)
+    if not AND_7:
+        return RESTART
     DisableFlag(11310060)
     EnableFlag(11315045)
 
@@ -608,7 +614,7 @@ def Event_11315370(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     SkipLinesIfFlagEnabled(5, 11315370)
     SetCollisionMask(1310800, bit_index=1, switch_type=OnOffChange.Off)
     SetDisplayMask(1310800, bit_index=1, switch_type=OnOffChange.On)
@@ -745,7 +751,7 @@ def Event_11315150(_, flag: int, vfx_id: int, flag_1: int):
 def Event_11315091():
     """Event 11315091"""
     AND_1.Add(SkullLanternActive())
-    IfTimeElapsed(1, seconds=2.0)
+    AND_1.Add(TimeElapsed(seconds=2.0))
     
     MAIN.Await(AND_1)
     
@@ -821,19 +827,19 @@ def Event_11315080():
         return
     DisableAI(1310250)
     AND_1.Add(EntityWithinDistance(entity=1310250, other_entity=PLAYER, radius=7.0))
-    IfAttacked(2, attacked_entity=1310250, attacker=PLAYER)
+    AND_2.Add(Attacked(attacked_entity=1310250, attacker=PLAYER))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
     MAIN.Await(OR_1)
     
     EnableAI(1310250)
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     SetStandbyAnimationSettings(1310250, standby_animation=9000)
     ForceAnimation(1310250, 9070, wait_for_completion=True)
     Move(1310250, destination=1312250, destination_type=CoordEntityType.Region, short_move=True)
     OR_1.Add(EntityWithinDistance(entity=1310251, other_entity=PLAYER, radius=5.0))
-    IfAttacked(-1, attacked_entity=1310251, attacker=PLAYER)
+    OR_1.Add(Attacked(attacked_entity=1310251, attacker=PLAYER))
     
     MAIN.Await(OR_1)
     
@@ -874,7 +880,8 @@ def Event_11310051():
 @NeverRestart(11310052)
 def Event_11310052():
     """Event 11310052"""
-    IfObjectActivated(0, obj_act_id=11315340)
+    MAIN.Await(ObjectActivated(obj_act_id=11315340))
+    
     SetStandbyAnimationSettings(PLAYER, standby_animation=7151, death_animation=6082)
     Wait(3.0)
     PlayCutscene(130121, cutscene_flags=0, player_id=10000, move_to_region=1302010, game_map=CATACOMBS)
@@ -946,7 +953,8 @@ def Event_11310820(_, character: int, item_lot_param_id: int):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
-    EndIfConditionFalse(-7)
+    if not OR_7:
+        return
     AwardItemLot(item_lot_param_id, host_only=True)
 
 
@@ -955,7 +963,7 @@ def Event_11310510(_, character: int, flag: int):
     """Event 11310510"""
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
     AND_3.Add(FlagEnabled(flag))
@@ -966,7 +974,7 @@ def Event_11310510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, condition=3)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1000,7 +1008,7 @@ def Event_11310501(_, character: int, flag: int):
     AND_1.Add(OR_7)
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1023,7 +1031,7 @@ def Event_11310502(_, character: int, flag: int):
     AND_1.Add(FlagEnabled(1173))
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)
@@ -1045,7 +1053,7 @@ def Event_11310503(_, character: int, flag: int):
     AND_1.Add(FlagEnabled(1174))
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)
@@ -1063,13 +1071,13 @@ def Event_11310503(_, character: int, flag: int):
 @NeverRestart(11310530)
 def Event_11310530():
     """Event 11310530"""
-    IfFlagRangeAllDisabled(7, flag_range=(1176, 1181))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1176, 1181)))
     AND_7.Add(FlagEnabled(1171))
-    IfFlagRangeAllDisabled(7, flag_range=(1195, 1198))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1195, 1198)))
     AND_7.Add(FlagEnabled(1202))
-    IfFlagRangeAllDisabled(7, flag_range=(1213, 1215))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1213, 1215)))
     AND_7.Add(FlagEnabled(1211))
-    IfFlagRangeAllDisabled(7, flag_range=(1223, 1225))
+    AND_7.Add(FlagRangeAllDisabled(flag_range=(1223, 1225)))
     AND_7.Add(FlagEnabled(1221))
     AND_1.Add(AND_7)
     AND_1.Add(FlagEnabled(11020600))
@@ -1151,7 +1159,7 @@ def Event_11310533(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=2)
+    EndIfFinishedConditionFalse(input_condition=AND_2)
     DropMandatoryTreasure(character)
 
 
@@ -1173,7 +1181,7 @@ def Event_11310534(_, character: int, first_flag: int, last_flag: int, flag: int
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=2)
+    EndIfFinishedConditionFalse(input_condition=AND_2)
     DropMandatoryTreasure(character)
 
 
@@ -1183,7 +1191,7 @@ def Event_11310540(_, character: int, first_flag: int, last_flag: int, flag: int
     AND_1.Add(FlagDisabled(1625))
     AND_1.Add(FlagDisabled(1627))
     AND_1.Add(FlagDisabled(1628))
-    IfFlagRangeAnyEnabled(2, flag_range=(1620, 1621))
+    AND_2.Add(FlagRangeAnyEnabled(flag_range=(1620, 1621)))
     AND_2.Add(FlagEnabled(6))
     AND_3.Add(FlagEnabled(1173))
     OR_1.Add(AND_2)
@@ -1231,7 +1239,7 @@ def Event_11310542(_, character: int, flag: int):
     DisableFlag(1625)
     DisableFlag(1627)
     EnableFlag(flag)
-    EndIfFinishedConditionFalse(input_condition=3)
+    EndIfFinishedConditionFalse(input_condition=AND_3)
     DropMandatoryTreasure(character)
 
 
@@ -1291,7 +1299,7 @@ def Event_11310810():
     SkipLinesIfHost(3)
     AND_1.Add(FlagEnabled(11315031))
     AND_1.Add(FlagDisabled(11315032))
-    SkipLinesIfConditionTrue(1, 1)
+    SkipLinesIfConditionTrue(1, AND_1)
     DisableCharacter(6551)
     if ThisEventFlagEnabled():
         return
@@ -1326,7 +1334,7 @@ def Event_11310002():
     MAIN.Await(OR_1)
     
     SkipLinesIfMultiplayer(7)
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     PlayCutscene(130111, cutscene_flags=0, player_id=10000, move_to_region=1312120, game_map=TOMB_OF_THE_GIANTS)
     SkipLines(1)
     PlayCutscene(130110, cutscene_flags=0, player_id=10000, move_to_region=1312120, game_map=TOMB_OF_THE_GIANTS)
@@ -1334,7 +1342,7 @@ def Event_11310002():
     MoveToEntity(6321, destination=1312121, destination_type=CoordEntityType.Region)
     End()
     SkipLinesIfClient(7)
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     PlayCutscene(
         130111,
         cutscene_flags=CutsceneFlags.Unskippable,
@@ -1353,7 +1361,7 @@ def Event_11310002():
     WaitFrames(frames=1)
     MoveToEntity(6321, destination=1312121, destination_type=CoordEntityType.Region)
     End()
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     PlayCutscene(130111, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
     SkipLines(1)
     PlayCutscene(130110, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)

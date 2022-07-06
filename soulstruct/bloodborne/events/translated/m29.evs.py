@@ -15759,7 +15759,7 @@ def Event12906966(
     IfPlayerHasGood(2, 4312, including_box=False)
     IfFlagDisabled(2, arg_12_15)
     IfFlagDisabled(2, arg_16_19)
-    IfFlagState(2, state=FlagState.On, flag_type=FlagType.RelativeToThisEventSlot, flag=14)
+    IfFlagState(2, state=FlagSetting.On, flag_type=FlagType.RelativeToThisEventSlot, flag=14)
     IfFlagDisabled(2, arg_24_27)
     IfActionButtonParamActivated(2, action_button_id=arg_20_23, entity=arg_4_7)
     IfConditionTrue(0, input_condition=2)

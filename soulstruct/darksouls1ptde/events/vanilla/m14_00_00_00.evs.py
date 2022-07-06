@@ -56,7 +56,7 @@ def Constructor():
     AND_1.Add(FlagEnabled(11000810))
     AND_1.Add(FlagEnabled(11410810))
     AND_1.Add(FlagEnabled(11410811))
-    SkipLinesIfConditionTrue(2, 1)
+    SkipLinesIfConditionTrue(2, AND_1)
     DisableObject(1401601)
     SkipLines(1)
     EnableTreasure(obj=1401601)
@@ -205,9 +205,9 @@ def Preconstructor():
     DisableFlag(11405022)
     SkipLinesIfFlagEnabled(8, 11405022)
     AND_1.Add(Host())
-    IfPlayerCovenant(1, Covenant.ForestHunter)
+    AND_1.Add(PlayerCovenant(Covenant.ForestHunter))
     AND_1.Add(FlagEnabled(1601))
-    SkipLinesIfConditionTrue(2, 1)
+    SkipLinesIfConditionTrue(2, AND_1)
     DisableCharacter(6311)
     DisableCharacter(6421)
     Event_11400520(5, character=6311, first_flag=1600, last_flag=1619, flag=1604)
@@ -216,7 +216,7 @@ def Preconstructor():
     Event_11400560(0, character=6311, first_flag=1600, last_flag=1619, flag=1601, character_1=6421)
     Event_11400566(0, character=6311, character_1=6421)
     Event_11400567(0, character=6311, character_1=6421)
-    SkipLinesIfConditionFalse(2, 1)
+    SkipLinesIfConditionFalse(2, AND_1)
     WaitFrames(frames=1)
     EnableFlag(11405022)
     DisableFlag(1766)
@@ -250,7 +250,7 @@ def Event_11400090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -334,36 +334,42 @@ def Event_11405092():
     AND_2.Add(InsideMap(game_map=BLIGHTTOWN))
     OR_2.Add(AND_2)
     OR_2.Add(FlagEnabled(11400080))
-    RestartIfConditionFalse(-2)
+    if not OR_2:
+        return RESTART
     WaitFrames(frames=1)
     AND_3.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_3.Add(InsideMap(game_map=BLIGHTTOWN))
     OR_3.Add(AND_3)
     OR_3.Add(FlagEnabled(11400080))
-    RestartIfConditionFalse(-3)
+    if not OR_3:
+        return RESTART
     WaitFrames(frames=1)
     AND_4.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_4.Add(InsideMap(game_map=BLIGHTTOWN))
     OR_4.Add(AND_4)
     OR_4.Add(FlagEnabled(11400080))
-    RestartIfConditionFalse(-4)
+    if not OR_4:
+        return RESTART
     WaitFrames(frames=1)
     AND_5.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_5.Add(InsideMap(game_map=BLIGHTTOWN))
     OR_5.Add(AND_5)
     OR_5.Add(FlagEnabled(11400080))
-    RestartIfConditionFalse(-5)
+    if not OR_5:
+        return RESTART
     WaitFrames(frames=1)
     AND_6.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
     AND_6.Add(InsideMap(game_map=BLIGHTTOWN))
     OR_6.Add(AND_6)
     OR_6.Add(FlagEnabled(11400080))
-    RestartIfConditionFalse(-6)
+    if not OR_6:
+        return RESTART
     EnableFlag(11400080)
     Wait(600.0)
     AND_7.Add(BlackWorldTendencyComparison(ComparisonType.LessThanOrEqual, value=50))
     AND_7.Add(InsideMap(game_map=BLIGHTTOWN))
-    RestartIfConditionFalse(7)
+    if not AND_7:
+        return RESTART
     DisableFlag(11400080)
     EnableFlag(11405095)
 
@@ -502,7 +508,7 @@ def Event_11405395():
 def Event_11405396():
     """Event 11405396"""
     AND_1.Add(CharacterAlive(1400800))
-    SkipLinesIfConditionTrue(1, 1)
+    SkipLinesIfConditionTrue(1, AND_1)
     End()
     
     MAIN.Await(CharacterBackreadEnabled(1400800))
@@ -516,7 +522,7 @@ def Event_11405396():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=3)
+    EndIfFinishedConditionTrue(input_condition=AND_3)
     ForceAnimation(1400800, 3011, wait_for_completion=True)
     Restart()
 
@@ -525,7 +531,7 @@ def Event_11405396():
 def Event_11405397():
     """Event 11405397"""
     AND_1.Add(CharacterAlive(1400800))
-    SkipLinesIfConditionTrue(1, 1)
+    SkipLinesIfConditionTrue(1, AND_1)
     End()
     
     MAIN.Await(CharacterBackreadEnabled(1400800))
@@ -539,7 +545,7 @@ def Event_11405397():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=3)
+    EndIfFinishedConditionTrue(input_condition=AND_3)
     ForceAnimation(1400800, 2007, wait_for_completion=True)
     Restart()
 
@@ -563,8 +569,9 @@ def Event_11400800():
     OR_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterHollow(PLAYER))
     AND_1.Add(OR_1)
-    IfPlayerCovenant(1, Covenant.ChaosServant)
-    EndIfConditionFalse(1)
+    AND_1.Add(PlayerCovenant(Covenant.ChaosServant))
+    if not AND_1:
+        return
     BetrayCurrentCovenant()
     IncrementPvPSin()
     EnableFlag(742)
@@ -590,7 +597,7 @@ def Event_11400900():
         DisableCharacter(1400000)
         End()
     AND_1.Add(CharacterAlive(1400000))
-    SkipLinesIfConditionTrue(2, 1)
+    SkipLinesIfConditionTrue(2, AND_1)
     EnableFlag(11400902)
     End()
     DisableNetworkSync()
@@ -652,7 +659,8 @@ def Event_11405110(_, entity: int, region: int, region_1: int, region_2: int, re
 def Event_11405250(_, character: int):
     """Event 11405250"""
     AND_1.Add(CharacterDead(character))
-    EndIfConditionTrue(1)
+    if AND_1:
+        return
     
     MAIN.Await(CharacterBackreadEnabled(character))
     
@@ -774,7 +782,7 @@ def Event_11405301(_, character: int, part_index: short, npc_part_id: short, npc
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     DisableFlagRange((11405290, 11405291))
     SkipLinesIfClient(1)
     EnableRandomFlagInRange(flag_range=(11405290, 11405291))
@@ -785,7 +793,7 @@ def Event_11405301(_, character: int, part_index: short, npc_part_id: short, npc
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=4)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_4)
     EnableFlag(11405290)
     SkipLines(1)
     EnableFlag(11405291)
@@ -807,7 +815,7 @@ def Event_11405310(_, character: int, flag: int, bit_index: uchar, bit_index_1: 
     
         MAIN.Await(OR_1)
     
-        EndIfFinishedConditionTrue(input_condition=2)
+        EndIfFinishedConditionTrue(input_condition=AND_2)
     SetDisplayMask(character, bit_index=bit_index, switch_type=OnOffChange.On)
     SetDisplayMask(character, bit_index=bit_index_1, switch_type=OnOffChange.On)
 
@@ -826,7 +834,7 @@ def Event_11405320(_, character: int, flag: int, obj: int, obj_1: int, model_poi
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     EnableObject(obj)
     EnableObject(obj_1)
     MoveObjectToCharacter(obj, character=character, model_point=model_point)
@@ -857,7 +865,7 @@ def Event_11405330(
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     ResetAnimation(character)
     Move(
         character_1,
@@ -981,7 +989,8 @@ def Event_11400850(_, character: int, item_lot_param_id: int):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
-    EndIfConditionFalse(-7)
+    if not OR_7:
+        return
     AwardItemLot(item_lot_param_id, host_only=True)
 
 
@@ -994,7 +1003,9 @@ def Event_11400600(_, obj: int, obj_act_id: int):
         EnableTreasure(obj=obj)
         End()
     DisableTreasure(obj=obj)
-    IfObjectActivated(0, obj_act_id=obj_act_id)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
     WaitFrames(frames=10)
     EnableTreasure(obj=obj)
 
@@ -1005,7 +1016,8 @@ def Event_11400200():
     if ThisEventFlagEnabled():
         DisableObjectActivation(1401110, obj_act_id=-1)
         End()
-    IfObjectActivated(0, obj_act_id=11400201)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=11400201))
     
     MAIN.Await(HealthGreaterThan(PLAYER, value=0.0))
     
@@ -1084,7 +1096,7 @@ def Event_11405200(_, character: int, obj: int):
     DisableCharacterCollision(character)
     DisableGravity(character)
     Move(character, destination=obj, destination_type=CoordEntityType.Object, model_point=100, short_move=True)
-    IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
+    OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     OR_1.Add(ObjectDestroyed(obj))
     
     MAIN.Await(OR_1)
@@ -1099,7 +1111,7 @@ def Event_11400510(_, character: int, flag: int):
     """Event 11400510"""
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
     AND_3.Add(FlagEnabled(flag))
@@ -1110,7 +1122,7 @@ def Event_11400510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, condition=3)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))
@@ -1165,7 +1177,7 @@ def Event_11400502(_, character: int, flag: int):
     AND_1.Add(OR_2)
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)
@@ -1187,7 +1199,7 @@ def Event_11400503(_, character: int, flag: int):
     AND_1.Add(FlagEnabled(1286))
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)
@@ -1207,13 +1219,13 @@ def Event_11400504(_, character: int, flag: int, character_1: int):
     AND_1.Add(FlagEnabled(1601))
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagDisabled(1763))
     AND_2.Add(FlagEnabled(1760))
     AND_2.Add(HealthLessThanOrEqual(character_1, value=0.8999999761581421))
     AND_2.Add(HealthGreaterThan(character_1, value=0.0))
-    IfAttacked(2, attacked_entity=character_1, attacker=PLAYER)
+    AND_2.Add(Attacked(attacked_entity=character_1, attacker=PLAYER))
     AND_2.Add(ThisEventFlagDisabled())
     OR_2.Add(FlagEnabled(flag))
     OR_2.Add(FlagEnabled(1763))
@@ -1229,7 +1241,7 @@ def Event_11400504(_, character: int, flag: int, character_1: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(4, condition=4)
+    SkipLinesIfFinishedConditionTrue(4, input_condition=AND_4)
     if FlagDisabled(1604):
         EnableFlag(flag)
     if FlagDisabled(1764):
@@ -1243,8 +1255,9 @@ def Event_11400504(_, character: int, flag: int, character_1: int):
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     AND_7.Add(OR_7)
-    IfPlayerCovenant(7, Covenant.ForestHunter)
-    EndIfConditionFalse(7)
+    AND_7.Add(PlayerCovenant(Covenant.ForestHunter))
+    if not AND_7:
+        return
     BetrayCurrentCovenant()
     EnableFlag(742)
     EnableFlag(746)
@@ -1284,14 +1297,14 @@ def Event_11400531(_, character: int, first_flag: int, last_flag: int, flag: int
     AICommand(character, command_id=10, command_slot=0)
     ReplanAI(character)
     AND_2.Add(CharacterInsideRegion(character, region=1402300))
-    IfAttacked(3, attacked_entity=character, attacker=PLAYER)
+    AND_3.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
     MAIN.Await(OR_1)
     
     DisableFlag(11405001)
-    SkipLinesIfFinishedConditionTrue(1, condition=3)
+    SkipLinesIfFinishedConditionTrue(1, input_condition=AND_3)
     SetTeamTypeAndExitStandbyAnimation(character, team_type=TeamType.Ally)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
@@ -1334,18 +1347,18 @@ def Event_11400536(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11400536"""
     AND_1.Add(FlagDisabled(1294))
     AND_1.Add(FlagEnabled(1290))
-    IfPlayerHasWeapon(-1, 1331000)
-    IfPlayerHasWeapon(-1, 1331100)
-    IfPlayerHasWeapon(-1, 1331200)
-    IfPlayerHasWeapon(-1, 1331300)
-    IfPlayerHasWeapon(-1, 1331400)
-    IfPlayerHasWeapon(-1, 1331500)
-    IfPlayerHasWeapon(-1, 1332000)
-    IfPlayerHasWeapon(-1, 1332100)
-    IfPlayerHasWeapon(-1, 1332200)
-    IfPlayerHasWeapon(-1, 1332300)
-    IfPlayerHasWeapon(-1, 1332400)
-    IfPlayerHasWeapon(-1, 1332500)
+    OR_1.Add(PlayerHasWeapon(1331000))
+    OR_1.Add(PlayerHasWeapon(1331100))
+    OR_1.Add(PlayerHasWeapon(1331200))
+    OR_1.Add(PlayerHasWeapon(1331300))
+    OR_1.Add(PlayerHasWeapon(1331400))
+    OR_1.Add(PlayerHasWeapon(1331500))
+    OR_1.Add(PlayerHasWeapon(1332000))
+    OR_1.Add(PlayerHasWeapon(1332100))
+    OR_1.Add(PlayerHasWeapon(1332200))
+    OR_1.Add(PlayerHasWeapon(1332300))
+    OR_1.Add(PlayerHasWeapon(1332400))
+    OR_1.Add(PlayerHasWeapon(1332500))
     AND_1.Add(OR_1)
     
     MAIN.Await(AND_1)
@@ -1469,7 +1482,7 @@ def Event_11400554(_, character: int):
 def Event_11400560(_, character: int, first_flag: int, last_flag: int, flag: int, character_1: int):
     """Event 11400560"""
     AND_1.Add(Host())
-    IfPlayerCovenant(1, Covenant.ForestHunter)
+    AND_1.Add(PlayerCovenant(Covenant.ForestHunter))
     AND_1.Add(FlagDisabled(1603))
     AND_1.Add(FlagEnabled(1600))
     AND_1.Add(FlagEnabled(11400582))
@@ -1491,7 +1504,8 @@ def Event_11400566(_, character: int, character_1: int):
     if FlagEnabled(11405022):
         return
     AND_1.Add(FlagEnabled(746))
-    EndIfConditionFalse(1)
+    if not AND_1:
+        return
     WaitFrames(frames=1)
     DisableCharacter(character)
     DisableCharacter(character_1)
@@ -1503,7 +1517,7 @@ def Event_11400566(_, character: int, character_1: int):
 def Event_11400567(_, character: int, character_1: int):
     """Event 11400567"""
     AND_1.Add(Host())
-    IfPlayerCovenant(2, Covenant.ForestHunter)
+    AND_2.Add(PlayerCovenant(Covenant.ForestHunter))
     AND_1.Add(not AND_2)
     AND_1.Add(FlagDisabled(746))
     
@@ -1548,7 +1562,7 @@ def Event_11405030():
     SkipLinesIfFlagEnabled(3, 11405033)
     AND_2.Add(Client())
     AND_2.Add(FlagEnabled(11405031))
-    SkipLinesIfConditionTrue(1, 2)
+    SkipLinesIfConditionTrue(1, AND_2)
     DisableCharacter(6531)
     if FlagEnabled(9):
         return
@@ -1624,7 +1638,7 @@ def Event_11400901():
     SkipLinesIfHost(3)
     AND_1.Add(FlagEnabled(11405036))
     AND_1.Add(FlagDisabled(11405037))
-    SkipLinesIfConditionTrue(1, 1)
+    SkipLinesIfConditionTrue(1, AND_1)
     DisableCharacter(6530)
     if ThisEventFlagEnabled():
         return

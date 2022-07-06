@@ -21,7 +21,7 @@ EVENT_RETURN_TYPE = {
     "default": None,
 }
 FLAG_STATE = {
-    "type": FlagState,
+    "type": FlagSetting,
     "default": None,
     "hide_name": True,
 }
@@ -36,6 +36,10 @@ FLAG_TYPE = {
 }
 COMPARISON_TYPE = {
     "type": ComparisonType,
+    "default": None,
+}
+CONDITION_GROUP = {
+    "type": ConditionGroup,
     "default": None,
 }
 CUTSCENE_FLAGS = {
@@ -112,9 +116,9 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfConditionState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
-            "input_condition": INT,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "IfConditionTrue": dict(state=True),
@@ -125,7 +129,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfValueComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "left": INT,
             "right": INT,
@@ -145,7 +149,7 @@ EMEDF = PTDE_EMEDF | {
             Time since event started.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "seconds": FLOAT,
         },
     },
@@ -155,7 +159,7 @@ EMEDF = PTDE_EMEDF | {
             Frames since event started.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "frames": INT,
         },
     },
@@ -165,7 +169,7 @@ EMEDF = PTDE_EMEDF | {
             Not used in vanilla DS1. Requires a random amount of time since event began.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "min_seconds": FLOAT,
             "max_seconds": FLOAT,
         },
@@ -176,7 +180,7 @@ EMEDF = PTDE_EMEDF | {
             Not used in vanilla DS1. Requires a random amount of frames since event began.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "min_frames": INT,
             "max_frames": INT,
         },
@@ -185,37 +189,37 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfFlagState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": FLAG_STATE,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
         "partials": {
             "IfFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.Absolute,
             ),
             "IfFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.Absolute,
             ),
             "IfThisEventFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "IfThisEventFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "IfThisEventSlotFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
             "IfThisEventSlotFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
@@ -225,7 +229,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfFlagRangeState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": RANGE_STATE,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "first_flag": FLAG_RANGE_FIRST,
@@ -250,7 +254,7 @@ EMEDF = PTDE_EMEDF | {
             Not sure if this works for objects.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
             "character": NO_DEFAULT(AnimatedEntityTyping) | HIDE_NAME,
             "region": NO_DEFAULT(RegionTyping),
@@ -266,7 +270,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfEntityDistanceState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
             "entity": NO_DEFAULT(CoordEntityTyping),
             "other_entity": NO_DEFAULT(CoordEntityTyping),
@@ -283,7 +287,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerItemStateExcludingStorage",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "item_type": ITEM_TYPE | HIDE_NAME,
             "item": NO_DEFAULT(ItemTyping),
             "state": BOOL | HIDE_NAME,
@@ -303,7 +307,7 @@ EMEDF = PTDE_EMEDF | {
             Basic (not "boss") version with no line intersection check.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
             "facing_angle": {
@@ -338,7 +342,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfMultiplayerState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": NO_DEFAULT(MultiplayerState),
         },
         "partials": {
@@ -363,7 +367,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfAllPlayersRegionState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
             "region": NO_DEFAULT(RegionTyping),
         },
@@ -378,7 +382,7 @@ EMEDF = PTDE_EMEDF | {
             Conditions upon player's presence in a particular game map.        
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
@@ -397,7 +401,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfMultiplayerEvent",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "event_id": INT,
         },
     },
@@ -407,7 +411,7 @@ EMEDF = PTDE_EMEDF | {
             Conditions upon a comparison with the number of enabled flags in the given range (inclusive).
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "first_flag": FLAG_RANGE_FIRST,
             "last_flag": FLAG_RANGE_LAST,
@@ -434,7 +438,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfWorldTendencyComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "world_tendency_type": {
                 "type": WorldTendencyType,
                 "default": None,
@@ -457,7 +461,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfEventValueComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "flag": FLAG,
             "bit_count": BIT_COUNT,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
@@ -480,7 +484,7 @@ EMEDF = PTDE_EMEDF | {
             Boss (not "basic") version with no line intersection check.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
             "facing_angle": {
@@ -520,7 +524,7 @@ EMEDF = PTDE_EMEDF | {
             Check if any item has been dropped in the specified region. Not sensitive to what the item is.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "region": NO_DEFAULT(RegionTyping),
         },
     },
@@ -528,7 +532,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfItemDropped",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "item_type": ITEM_TYPE,
             "item": NO_DEFAULT(ItemTyping),
         },
@@ -542,7 +546,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerItemStateIncludingStorage",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "item_type": ITEM_TYPE | HIDE_NAME,
             "item": NO_DEFAULT(ItemTyping),
             "state": BOOL | HIDE_NAME,
@@ -558,7 +562,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfNewGameCycleComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "completion_count": INT,
         },
@@ -579,7 +583,7 @@ EMEDF = PTDE_EMEDF | {
             Basic (not "boss") version with a line intersection check.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
             "facing_angle": {
@@ -623,7 +627,7 @@ EMEDF = PTDE_EMEDF | {
             Boss (not "basic") version with a line intersection check.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "anchor_type": AUTO_COORD_ENTITY_TYPE("anchor_entity"),
             "anchor_entity": NO_DEFAULT(CoordEntityTyping),
             "facing_angle": {
@@ -665,7 +669,7 @@ EMEDF = PTDE_EMEDF | {
             Check comparison of two event flag values. Haven't bothered adding shortcut functions for this.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "left_flag": FLAG,
             "left_bit_count": INT,
             "comparison_type": COMPARISON_TYPE,
@@ -677,7 +681,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfDLCState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "is_owned": {
                 "type": bool,
                 "default": None,
@@ -692,7 +696,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfOnlineState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
         },
         "partials": {
@@ -704,7 +708,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterDeathState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "is_dead": BOOL,
         },
@@ -717,7 +721,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfAttacked",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "attacked_entity": NO_DEFAULT(CharacterTyping),
             "attacker": NO_DEFAULT(CharacterTyping),
         },
@@ -726,7 +730,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfHealthComparison",
         "docstring": "Conditions upon a comparison to character health ratio (0-1).",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "value": FLOAT,
@@ -744,7 +748,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterType",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "character_type": {
                 "type": CharacterType,
@@ -761,7 +765,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterTargetingState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "targeting_character": NO_DEFAULT(CharacterTyping),
             "targeted_character": NO_DEFAULT(CharacterTyping),
             "state": BOOL | HIDE_NAME,
@@ -775,7 +779,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterSpecialEffectState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "special_effect": SPECIAL_EFFECT | {"hide_name": True},
             "state": BOOL | HIDE_NAME,
@@ -791,7 +795,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterPartHealthComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "npc_part_id": INT,
             "value": FLOAT,
@@ -805,7 +809,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterBackreadState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
         },
@@ -818,7 +822,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfCharacterTAEEventState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "tae_event_id": INT | {"internal_default": -1},
             "state": BOOL | HIDE_NAME,
@@ -832,7 +836,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfHasAIStatus",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "ai_status": {
                 "type": AIStatusType,
@@ -844,7 +848,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfSkullLanternState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
         },
         "partials": {
@@ -856,7 +860,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerClass",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "class_type": {
                 "type": ClassType,
                 "default": None,
@@ -868,7 +872,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerCovenant",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "covenant": {
                 "type": Covenant,
                 "default": None,
@@ -880,7 +884,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerLevelComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "value": BIT_COUNT,
         },
@@ -897,7 +901,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfHealthValueComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "value": INT,
@@ -915,7 +919,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfObjectDestructionState",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
             "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
         },
@@ -928,7 +932,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfObjectDamaged",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
             "attacker": NO_DEFAULT(CharacterTyping),
         },
@@ -937,7 +941,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfObjectActivated",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "obj_act_id": INT,
         },
     },
@@ -945,7 +949,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfObjectHealthValueComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
             "comparison_type": COMPARISON_TYPE | HIDE_NAME,
             "value": INT,
@@ -955,7 +959,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerMovingOnCollision",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "collision": NO_DEFAULT(CollisionTyping) | HIDE_NAME,
         },
     },
@@ -963,7 +967,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerRunningOnCollision",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "collision": NO_DEFAULT(CollisionTyping) | HIDE_NAME,
         },
     },
@@ -971,7 +975,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerStandingOnCollision",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "collision": NO_DEFAULT(CollisionTyping) | HIDE_NAME,
         },
     },
@@ -980,7 +984,7 @@ EMEDF = PTDE_EMEDF | {
         "docstring": "Not sure if this is ever really used over `IfConditionState`.",
         "args": {
             "state": BOOL | HIDE_NAME,
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "AwaitConditionTrue": dict(state=True),
@@ -993,7 +997,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "line_count": INT | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
         },
         "partials": {
             "SkipLinesIfConditionTrue": dict(state=True),
@@ -1006,7 +1010,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
             "state": BOOL | HIDE_NAME,
-            "input_condition": INT | HIDE_NAME,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "EndIfConditionTrue": dict(event_return_type=EventReturnType.End, state=True),
@@ -1124,7 +1128,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "line_count": INT | HIDE_NAME,
             "state": BOOL | HIDE_NAME,
-            "condition": INT,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "SkipLinesIfFinishedConditionTrue": dict(state=True),
@@ -1137,7 +1141,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
             "state": BOOL | HIDE_NAME,
-            "input_condition": INT,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "EndIfFinishedConditionTrue": dict(event_return_type=EventReturnType.End, state=True),
@@ -1202,12 +1206,12 @@ EMEDF = PTDE_EMEDF | {
             "flag": FLAG,
         },
         "partials": {
-            "AwaitFlagEnabled": dict(state=FlagState.On, flag_type=FlagType.Absolute),
-            "AwaitFlagDisabled": dict(state=FlagState.Off, flag_type=FlagType.Absolute),
-            "AwaitThisEventOn": dict(state=FlagState.On, flag_type=FlagType.RelativeToThisEvent, flag=0),
-            "AwaitThisEventOff": dict(state=FlagState.Off, flag_type=FlagType.RelativeToThisEvent, flag=0),
-            "AwaitThisEventSlotOn": dict(state=FlagState.On, flag_type=FlagType.RelativeToThisEventSlot, flag=0),
-            "AwaitThisEventSlotOff": dict(state=FlagState.Off, flag_type=FlagType.RelativeToThisEventSlot, flag=0),
+            "AwaitFlagEnabled": dict(state=FlagSetting.On, flag_type=FlagType.Absolute),
+            "AwaitFlagDisabled": dict(state=FlagSetting.Off, flag_type=FlagType.Absolute),
+            "AwaitThisEventOn": dict(state=FlagSetting.On, flag_type=FlagType.RelativeToThisEvent, flag=0),
+            "AwaitThisEventOff": dict(state=FlagSetting.Off, flag_type=FlagType.RelativeToThisEvent, flag=0),
+            "AwaitThisEventSlotOn": dict(state=FlagSetting.On, flag_type=FlagType.RelativeToThisEventSlot, flag=0),
+            "AwaitThisEventSlotOff": dict(state=FlagSetting.Off, flag_type=FlagType.RelativeToThisEventSlot, flag=0),
         },
     },
     (1003, 1): {
@@ -1224,30 +1228,30 @@ EMEDF = PTDE_EMEDF | {
         },
         "partials": {
             "SkipLinesIfFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.Absolute,
             ),
             "SkipLinesIfFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.Absolute,
             ),
             "SkipLinesIfThisEventFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "SkipLinesIfThisEventFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "SkipLinesIfThisEventSlotFlagEnabled": dict(
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
             "SkipLinesIfThisEventSlotFlagDisabled": dict(
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
@@ -1265,69 +1269,69 @@ EMEDF = PTDE_EMEDF | {
         "partials": {
             "EndIfFlagEnabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.Absolute,
             ),
             "EndIfFlagDisabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.Absolute,
             ),
             "EndIfThisEventFlagEnabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "EndIfThisEventFlagDisabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "EndIfThisEventSlotFlagEnabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
             "EndIfThisEventSlotFlagDisabled": dict(
                 event_return_type=EventReturnType.End,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
             "RestartIfFlagEnabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.Absolute,
             ),
             "RestartIfFlagDisabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.Absolute,
             ),
             "RestartIfThisEventFlagEnabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "RestartIfThisEventFlagDisabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEvent,
                 flag=0,
             ),
             "RestartIfThisEventSlotFlagEnabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.On,
+                state=FlagSetting.On,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
             "RestartIfThisEventSlotFlagDisabled": dict(
                 event_return_type=EventReturnType.Restart,
-                state=FlagState.Off,
+                state=FlagSetting.Off,
                 flag_type=FlagType.RelativeToThisEventSlot,
                 flag=0,
             ),
@@ -1553,6 +1557,15 @@ EMEDF = PTDE_EMEDF | {
                 "default": (0,),
             },
         },
+        "evs_args": {
+            "slot": {},
+            "event_id": {},
+            "args": {},
+            "arg_types": {
+                "type": str,
+                "default": "",
+            },
+        },
     },
     (2000, 1): {
         "alias": "TerminateEvent",
@@ -1689,9 +1702,9 @@ EMEDF = PTDE_EMEDF | {
             "state": FLAG_STATE,
         },
         "partials": {
-            "EnableFlag": dict(state=FlagState.On),
-            "DisableFlag": dict(state=FlagState.Off),
-            "ToggleFlag": dict(state=FlagState.Change),
+            "EnableFlag": dict(state=FlagSetting.On),
+            "DisableFlag": dict(state=FlagSetting.Off),
+            "ToggleFlag": dict(state=FlagSetting.Change),
         },
     },
     (2003, 3): {
@@ -1904,9 +1917,9 @@ EMEDF = PTDE_EMEDF | {
             "state": {},
         },
         "partials": {
-            "EnableRandomFlagInRange": dict(state=FlagState.On),
-            "DisableRandomFlagInRange": dict(state=FlagState.Off),
-            "ToggleRandomFlagInRange": dict(state=FlagState.Change),
+            "EnableRandomFlagInRange": dict(state=FlagSetting.On),
+            "DisableRandomFlagInRange": dict(state=FlagSetting.Off),
+            "ToggleRandomFlagInRange": dict(state=FlagSetting.Change),
         },
     },
     (2003, 18): {
@@ -1965,9 +1978,9 @@ EMEDF = PTDE_EMEDF | {
             "state": {},
         },
         "partials": {
-            "EnableFlagRange": dict(state=FlagState.On),
-            "DisableFlagRange": dict(state=FlagState.Off),
-            "ToggleFlagRange": dict(state=FlagState.Change),
+            "EnableFlagRange": dict(state=FlagSetting.On),
+            "DisableFlagRange": dict(state=FlagSetting.Off),
+            "ToggleFlagRange": dict(state=FlagSetting.Change),
         },
     },
     (2003, 23): {
@@ -3452,7 +3465,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfAttackedWithDamageType",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "attacked_entity": NO_DEFAULT(CharacterTyping),
             "attacker": {
                 "type": CharacterTyping,
@@ -3469,7 +3482,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfActionButtonParamActivated",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "action_button_id": INT | {"internal_default": -1},
             "entity": NO_DEFAULT(CoordEntityTyping) | {"internal_default": -1},
         },
@@ -3478,7 +3491,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerArmorInRange",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "armor_type": NO_DEFAULT(ArmorType),
             "required_armor_range_first": NO_DEFAULT(ArmorTyping),
             "required_armor_range_last": NO_DEFAULT(ArmorTyping),
@@ -3488,7 +3501,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfPlayerInsightAmountComparison",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "value": INT,
             "comparison_type": NO_DEFAULT(ComparisonType),
         },
@@ -3517,7 +3530,7 @@ EMEDF = PTDE_EMEDF | {
         "alias": "IfDialogChoice",
         "docstring": "TODO",
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "dialog_result": NO_DEFAULT(DialogResult),
         },
     },
@@ -3527,7 +3540,7 @@ EMEDF = PTDE_EMEDF | {
             Blocks off areas of the game (namely, beyond Father Gascoigne) that have not been downloaded/installed yet.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "playgo_state": NO_DEFAULT(PlayGoState),
         },
     },
@@ -3537,7 +3550,7 @@ EMEDF = PTDE_EMEDF | {
             Value should only range between 0 and 4 (the maximum number of clients).
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "client_type": NO_DEFAULT(ClientType),
             "comparison_type": NO_DEFAULT(ComparisonType),
             "value": INT,
@@ -3549,7 +3562,7 @@ EMEDF = PTDE_EMEDF | {
             Tests if character's draw group is currently enabled or disabled.
         """,
         "args": {
-            "condition": INT | HIDE_NAME,
+            "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
             "state": BOOL,
         },
@@ -3564,7 +3577,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "label": LABEL,
             "required_state": BOOL,
-            "input_condition": INT,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "GotoIfConditionTrue": dict(required_state=True),
@@ -3598,7 +3611,7 @@ EMEDF = PTDE_EMEDF | {
         "args": {
             "label": LABEL,
             "required_state": BOOL,
-            "input_condition": INT,
+            "input_condition": CONDITION_GROUP,
         },
         "partials": {
             "GotoIfFinishedConditionTrue": dict(required_state=True),
@@ -4486,6 +4499,20 @@ add_common_emedf_info(EMEDF, PACKAGE_PATH("bloodborne/events/emevd/bb-common.eme
 EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.
-EMEDF_TESTS["ActionButton"] = {
-    "if": "IfActionButton",
+EMEDF_TESTS |= {
+    "ActionButton": {
+        "if": "IfActionButton",
+    },
+    "PlayerHasWeapon": {
+        "if": "IfPlayerHasWeapon",
+    },
+    "PlayerHasArmor": {
+        "if": "IfPlayerHasArmor",
+    },
+    "PlayerHasRune": {
+        "if": "IfPlayerHasRune",
+    },
+    "PlayerHasGood": {
+        "if": "IfPlayerHasGood",
+    },
 }

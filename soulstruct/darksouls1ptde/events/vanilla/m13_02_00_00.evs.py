@@ -107,7 +107,7 @@ def Event_11320090(_, obj: int, vfx_id: int, destination: int, destination_1: in
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(PLAYER, destination=destination_1, destination_type=CoordEntityType.Region, short_move=True)
@@ -268,14 +268,14 @@ def Event_11325110(
     CreateNPCPart(1320700, npc_part_id=npc_part_id, part_index=part_index, part_health=270)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1320700, npc_part_id=npc_part_id_1, value=0))
     AND_1.Add(FlagDisabled(11325120))
-    IfAttacked(1, attacked_entity=1320700, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=1320700, attacker=PLAYER))
     AND_2.Add(HealthLessThanOrEqual(1320700, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     ResetAnimation(1320700)
     Move(
         character,
@@ -349,7 +349,7 @@ def Event_11325150(_, character: int, radius: float):
         return
     SetStandbyAnimationSettings(character, standby_animation=9000)
     OR_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=radius))
-    IfAttacked(-1, attacked_entity=character, attacker=PLAYER)
+    OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     
     MAIN.Await(OR_1)
     
@@ -404,7 +404,7 @@ def Event_11325001():
     
     MAIN.Await(OR_1)
     
-    EndIfFinishedConditionTrue(input_condition=2)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
     ForceAnimation(1320800, 8000)
     
     MAIN.Await(CharacterHasTAEEvent(1320800, tae_event_id=400))
@@ -424,7 +424,8 @@ def Event_11325001():
     ReplanAI(1320800)
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
-    EndIfConditionFalse(-7)
+    if not OR_7:
+        return
     AwardItemLot(34510000, host_only=True)
 
 
@@ -457,7 +458,8 @@ def Event_11320300(_, character: int, first_flag: uint, last_flag: uint, flag: i
     
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
-    EndIfConditionFalse(-7)
+    if not OR_7:
+        return
     AwardItemLot(33000000, host_only=True)
     End()
 
@@ -470,7 +472,9 @@ def Event_11320600(_, obj: int, obj_act_id: int):
         DisableObjectActivation(obj, obj_act_id=-1)
         EnableTreasure(obj=obj)
         End()
-    IfObjectActivated(0, obj_act_id=obj_act_id)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
     WaitFrames(frames=10)
     EnableTreasure(obj=obj)
 
@@ -480,7 +484,7 @@ def Event_11320510(_, character: int, flag: int):
     """Event 11320510"""
     AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(HealthGreaterThan(character, value=0.0))
-    IfAttacked(1, attacked_entity=character, attacker=PLAYER)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
     AND_3.Add(FlagEnabled(flag))
@@ -491,7 +495,7 @@ def Event_11320510(_, character: int, flag: int):
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfFinishedConditionFalse(2, condition=3)
+    SkipLinesIfFinishedConditionFalse(2, input_condition=AND_3)
     DisableCharacter(character)
     
     MAIN.Await(FlagEnabled(703))

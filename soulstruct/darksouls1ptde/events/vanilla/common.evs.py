@@ -381,8 +381,8 @@ def Event_290():
     if ThisEventFlagEnabled():
         return
     EnableFlagRange((280, 290))
-    IfPlayerClass(-1, ClassType.Knight)
-    IfPlayerClass(-1, ClassType.Cleric)
+    OR_1.Add(PlayerClass(ClassType.Knight))
+    OR_1.Add(PlayerClass(ClassType.Cleric))
     AND_1.Add(OR_1)
     AND_2.Add(not OR_1)
     OR_2.Add(AND_1)
@@ -390,7 +390,7 @@ def Event_290():
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfFinishedConditionTrue(2, condition=2)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     DisableFlag(287)
     End()
     DisableFlag(288)
@@ -437,12 +437,12 @@ def Event_717():
     DisableFlag(717)
     AND_1.Add(FlagDisabled(710))
     AND_1.Add(InsideMap(game_map=NEW_LONDO_RUINS))
-    IfPlayerStandingOnCollision(1, 1603300)
+    AND_1.Add(PlayerStandingOnCollision(1603300))
     
     MAIN.Await(AND_1)
     
     EnableFlag(717)
-    IfPlayerStandingOnCollision(2, 1603300)
+    AND_2.Add(PlayerStandingOnCollision(1603300))
     
     MAIN.Await(not AND_2)
     
@@ -484,7 +484,9 @@ def Event_710():
     """Event 710"""
     if ThisEventFlagEnabled():
         return
-    IfPlayerHasGood(0, 2510)
+    
+    MAIN.Await(PlayerHasGood(2510))
+    
     EnableFlag(710)
 
 
@@ -493,7 +495,9 @@ def Event_711(_, item: int, flag: int):
     """Event 711"""
     if ThisEventSlotFlagEnabled():
         return
-    IfPlayerHasGood(0, item)
+    
+    MAIN.Await(PlayerHasGood(item))
+    
     EnableFlag(flag)
 
 
@@ -502,16 +506,16 @@ def Event_715():
     """Event 715"""
     DisableFlag(715)
     AND_1.Add(FlagEnabled(11010595))
-    IfPlayerHasGood(1, 702)
-    IfPlayerDoesNotHaveGood(1, 5520, including_storage=True)
-    IfPlayerCovenant(1, Covenant.WarriorOfSunlight)
+    AND_1.Add(PlayerHasGood(702))
+    IfPlayerDoesNotHaveGood(AND_1, 5520, including_storage=True)
+    AND_1.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
     
     MAIN.Await(AND_1)
     
     EnableFlag(715)
-    IfPlayerDoesNotHaveGood(-1, 702)
-    IfPlayerHasGood(-1, 5520, including_storage=True)
-    IfPlayerCovenant(2, Covenant.WarriorOfSunlight)
+    IfPlayerDoesNotHaveGood(OR_1, 702)
+    OR_1.Add(PlayerHasGood(5520, including_storage=True))
+    AND_2.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
     OR_1.Add(not AND_2)
     
     MAIN.Await(OR_1)
@@ -535,8 +539,8 @@ def Event_8131(_, item: int, item_1: int):
     """Event 8131"""
     if ThisEventSlotFlagEnabled():
         return
-    IfPlayerHasGood(-1, item)
-    IfPlayerHasGood(-1, item_1)
+    OR_1.Add(PlayerHasGood(item))
+    OR_1.Add(PlayerHasGood(item_1))
     
     MAIN.Await(OR_1)
     
@@ -575,79 +579,79 @@ def Event_719():
     """Event 719"""
     if ThisEventFlagEnabled():
         return
-    IfPlayerHasGood(-1, 3000)
-    IfPlayerHasGood(-1, 3010)
-    IfPlayerHasGood(-1, 3020)
-    IfPlayerHasGood(-1, 3030)
-    IfPlayerHasGood(-1, 3040)
-    IfPlayerHasGood(-1, 3050)
-    IfPlayerHasGood(-1, 3060)
-    IfPlayerHasGood(-1, 3070)
-    IfPlayerHasGood(-1, 3100)
-    IfPlayerHasGood(-1, 3110)
-    IfPlayerHasGood(-1, 3120)
-    IfPlayerHasGood(-1, 3300)
-    IfPlayerHasGood(-1, 3310)
-    IfPlayerHasGood(-1, 3400)
-    IfPlayerHasGood(-1, 3410)
-    IfPlayerHasGood(-1, 3500)
-    IfPlayerHasGood(-1, 3510)
-    IfPlayerHasGood(-1, 3520)
-    IfPlayerHasGood(-1, 3530)
-    IfPlayerHasGood(-1, 3540)
-    IfPlayerHasGood(-1, 3550)
-    IfPlayerHasGood(-1, 3600)
-    IfPlayerHasGood(-1, 3610)
-    IfPlayerHasGood(-1, 3700)
-    IfPlayerHasGood(-1, 4000)
-    IfPlayerHasGood(-1, 4010)
-    IfPlayerHasGood(-1, 4020)
-    IfPlayerHasGood(-1, 4030)
-    IfPlayerHasGood(-1, 4040)
-    IfPlayerHasGood(-1, 4050)
-    IfPlayerHasGood(-1, 4060)
-    IfPlayerHasGood(-1, 4100)
-    IfPlayerHasGood(-1, 4110)
-    IfPlayerHasGood(-1, 4200)
-    IfPlayerHasGood(-1, 4210)
-    IfPlayerHasGood(-1, 4220)
-    IfPlayerHasGood(-1, 4300)
-    IfPlayerHasGood(-1, 4310)
-    IfPlayerHasGood(-1, 4360)
-    IfPlayerHasGood(-1, 4400)
-    IfPlayerHasGood(-1, 4500)
-    IfPlayerHasGood(-1, 4510)
-    IfPlayerHasGood(-1, 4520)
-    IfPlayerHasGood(-1, 5000)
-    IfPlayerHasGood(-1, 5010)
-    IfPlayerHasGood(-1, 5020)
-    IfPlayerHasGood(-1, 5030)
-    IfPlayerHasGood(-1, 5040)
-    IfPlayerHasGood(-1, 5050)
-    IfPlayerHasGood(-1, 5100)
-    IfPlayerHasGood(-1, 5110)
-    IfPlayerHasGood(-1, 5200)
-    IfPlayerHasGood(-1, 5210)
-    IfPlayerHasGood(-1, 5300)
-    IfPlayerHasGood(-1, 5310)
-    IfPlayerHasGood(-1, 5320)
-    IfPlayerHasGood(-1, 5400)
-    IfPlayerHasGood(-1, 5500)
-    IfPlayerHasGood(-1, 5510)
-    IfPlayerHasGood(-1, 5520)
-    IfPlayerHasGood(-1, 5600)
-    IfPlayerHasGood(-1, 5610)
-    IfPlayerHasGood(-1, 5700)
-    IfPlayerHasGood(-1, 5710)
-    IfPlayerHasGood(-1, 5800)
-    IfPlayerHasGood(-1, 5810)
-    IfPlayerHasGood(-1, 5900)
-    IfPlayerHasGood(-1, 5910)
-    IfPlayerHasGood(-1, 3710)
-    IfPlayerHasGood(-1, 3720)
-    IfPlayerHasGood(-1, 3730)
-    IfPlayerHasGood(-1, 3740)
-    IfPlayerHasGood(-1, 4530)
+    OR_1.Add(PlayerHasGood(3000))
+    OR_1.Add(PlayerHasGood(3010))
+    OR_1.Add(PlayerHasGood(3020))
+    OR_1.Add(PlayerHasGood(3030))
+    OR_1.Add(PlayerHasGood(3040))
+    OR_1.Add(PlayerHasGood(3050))
+    OR_1.Add(PlayerHasGood(3060))
+    OR_1.Add(PlayerHasGood(3070))
+    OR_1.Add(PlayerHasGood(3100))
+    OR_1.Add(PlayerHasGood(3110))
+    OR_1.Add(PlayerHasGood(3120))
+    OR_1.Add(PlayerHasGood(3300))
+    OR_1.Add(PlayerHasGood(3310))
+    OR_1.Add(PlayerHasGood(3400))
+    OR_1.Add(PlayerHasGood(3410))
+    OR_1.Add(PlayerHasGood(3500))
+    OR_1.Add(PlayerHasGood(3510))
+    OR_1.Add(PlayerHasGood(3520))
+    OR_1.Add(PlayerHasGood(3530))
+    OR_1.Add(PlayerHasGood(3540))
+    OR_1.Add(PlayerHasGood(3550))
+    OR_1.Add(PlayerHasGood(3600))
+    OR_1.Add(PlayerHasGood(3610))
+    OR_1.Add(PlayerHasGood(3700))
+    OR_1.Add(PlayerHasGood(4000))
+    OR_1.Add(PlayerHasGood(4010))
+    OR_1.Add(PlayerHasGood(4020))
+    OR_1.Add(PlayerHasGood(4030))
+    OR_1.Add(PlayerHasGood(4040))
+    OR_1.Add(PlayerHasGood(4050))
+    OR_1.Add(PlayerHasGood(4060))
+    OR_1.Add(PlayerHasGood(4100))
+    OR_1.Add(PlayerHasGood(4110))
+    OR_1.Add(PlayerHasGood(4200))
+    OR_1.Add(PlayerHasGood(4210))
+    OR_1.Add(PlayerHasGood(4220))
+    OR_1.Add(PlayerHasGood(4300))
+    OR_1.Add(PlayerHasGood(4310))
+    OR_1.Add(PlayerHasGood(4360))
+    OR_1.Add(PlayerHasGood(4400))
+    OR_1.Add(PlayerHasGood(4500))
+    OR_1.Add(PlayerHasGood(4510))
+    OR_1.Add(PlayerHasGood(4520))
+    OR_1.Add(PlayerHasGood(5000))
+    OR_1.Add(PlayerHasGood(5010))
+    OR_1.Add(PlayerHasGood(5020))
+    OR_1.Add(PlayerHasGood(5030))
+    OR_1.Add(PlayerHasGood(5040))
+    OR_1.Add(PlayerHasGood(5050))
+    OR_1.Add(PlayerHasGood(5100))
+    OR_1.Add(PlayerHasGood(5110))
+    OR_1.Add(PlayerHasGood(5200))
+    OR_1.Add(PlayerHasGood(5210))
+    OR_1.Add(PlayerHasGood(5300))
+    OR_1.Add(PlayerHasGood(5310))
+    OR_1.Add(PlayerHasGood(5320))
+    OR_1.Add(PlayerHasGood(5400))
+    OR_1.Add(PlayerHasGood(5500))
+    OR_1.Add(PlayerHasGood(5510))
+    OR_1.Add(PlayerHasGood(5520))
+    OR_1.Add(PlayerHasGood(5600))
+    OR_1.Add(PlayerHasGood(5610))
+    OR_1.Add(PlayerHasGood(5700))
+    OR_1.Add(PlayerHasGood(5710))
+    OR_1.Add(PlayerHasGood(5800))
+    OR_1.Add(PlayerHasGood(5810))
+    OR_1.Add(PlayerHasGood(5900))
+    OR_1.Add(PlayerHasGood(5910))
+    OR_1.Add(PlayerHasGood(3710))
+    OR_1.Add(PlayerHasGood(3720))
+    OR_1.Add(PlayerHasGood(3730))
+    OR_1.Add(PlayerHasGood(3740))
+    OR_1.Add(PlayerHasGood(4530))
     
     MAIN.Await(OR_1)
     
@@ -659,14 +663,14 @@ def Event_720():
     """Event 720"""
     if ThisEventFlagEnabled():
         return
-    IfPlayerHasGood(-1, 4020)
-    IfPlayerHasGood(-1, 4030)
-    IfPlayerHasGood(-1, 4040)
-    IfPlayerHasGood(-1, 4060)
-    IfPlayerHasGood(-1, 4110)
-    IfPlayerHasGood(-1, 4500)
-    IfPlayerHasGood(-1, 4510)
-    IfPlayerHasGood(-1, 4520)
+    OR_1.Add(PlayerHasGood(4020))
+    OR_1.Add(PlayerHasGood(4030))
+    OR_1.Add(PlayerHasGood(4040))
+    OR_1.Add(PlayerHasGood(4060))
+    OR_1.Add(PlayerHasGood(4110))
+    OR_1.Add(PlayerHasGood(4500))
+    OR_1.Add(PlayerHasGood(4510))
+    OR_1.Add(PlayerHasGood(4520))
     
     MAIN.Await(OR_1)
     
@@ -704,7 +708,9 @@ def Event_250(_, item: int, flag: int):
     """Event 250"""
     if ThisEventSlotFlagEnabled():
         return
-    IfPlayerHasGood(0, item)
+    
+    MAIN.Await(PlayerHasGood(item))
+    
     EnableFlag(flag)
 
 
@@ -712,8 +718,9 @@ def Event_250(_, item: int, flag: int):
 def Event_350(_, flag: int, item: int):
     """Event 350"""
     if ThisEventSlotFlagEnabled():
-        IfPlayerHasGood(1, item)
-        EndIfConditionFalse(1)
+        AND_1.Add(PlayerHasGood(item))
+        if not AND_1:
+            return
     
     MAIN.Await(FlagEnabled(flag))
     
@@ -724,18 +731,21 @@ def Event_350(_, flag: int, item: int):
 def Event_780(_, item: int, flag: int):
     """Event 780"""
     DisableFlag(flag)
-    IfPlayerHasGood(0, item)
+    
+    MAIN.Await(PlayerHasGood(item))
+    
     EnableFlag(flag)
-    IfPlayerDoesNotHaveGood(0, item)
+    IfPlayerDoesNotHaveGood(MAIN, item)
     Restart()
 
 
 @NeverRestart(870)
 def Event_870(_, covenant: uchar, flag: int):
     """Event 870"""
-    IfPlayerCovenant(0, covenant)
+    MAIN.Await(PlayerCovenant(covenant))
+    
     EnableFlag(flag)
-    IfPlayerCovenant(1, covenant)
+    AND_1.Add(PlayerCovenant(covenant))
     
     MAIN.Await(not AND_1)
     
@@ -822,9 +832,11 @@ def Event_8200(_, item_type: uchar, item: int, flag: int, flag_1: int):
     if FlagEnabled(flag):
         return
     AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, item, item_type=item_type, including_storage=True)
-    EndIfConditionFalse(2)
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
     EnableFlag(flag)
     EnableFlag(flag_1)
 
@@ -835,9 +847,11 @@ def Event_8300(_, item_type: uchar, item: int, flag: int):
     if FlagEnabled(flag):
         return
     AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, item, item_type=item_type, including_storage=True)
-    EndIfConditionFalse(2)
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
     EnableFlag(flag)
 
 
@@ -847,9 +861,11 @@ def Event_8090(_, item_type: uchar, item: int, flag: int):
     if FlagEnabled(flag):
         return
     AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, item, item_type=item_type, including_storage=True)
-    EndIfConditionFalse(2)
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
     EnableFlag(flag)
 
 
@@ -946,7 +962,7 @@ def Event_722():
     AND_1.Add(FlagEnabled(11407180))
     AND_1.Add(FlagEnabled(11407190))
     AND_1.Add(FlagEnabled(10))
-    IfPlayerHasWeapon(1, 1332500)
+    AND_1.Add(PlayerHasWeapon(1332500))
     
     MAIN.Await(AND_1)
     
@@ -1001,7 +1017,9 @@ def Event_725():
     """Event 725"""
     if ThisEventFlagEnabled():
         return
-    IfTrueFlagCountGreaterThanOrEqual(0, FlagType.Absolute, flag_range=(11707100, 11707190), value=2)
+    
+    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(11707100, 11707190), value=2))
+    
     EnableFlag(725)
 
 
@@ -1010,7 +1028,9 @@ def Event_726():
     """Event 726"""
     if ThisEventFlagEnabled():
         return
-    IfTrueFlagCountGreaterThanOrEqual(0, FlagType.Absolute, flag_range=(11607000, 11607090), value=2)
+    
+    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(11607000, 11607090), value=2))
+    
     EnableFlag(726)
 
 
@@ -1038,7 +1058,8 @@ def Event_727():
 @NeverRestart(740)
 def Event_740():
     """Event 740"""
-    IfPlayerClass(0, ClassType.Pyromancer)
+    MAIN.Await(PlayerClass(ClassType.Pyromancer))
+    
     EnableFlag(740)
 
 
@@ -1047,7 +1068,7 @@ def Event_745():
     """Event 745"""
     AND_7.Add(FlagEnabled(1604))
     AND_7.Add(FlagEnabled(1764))
-    SkipLinesIfConditionFalse(1, 7)
+    SkipLinesIfConditionFalse(1, AND_7)
     
     MAIN.Await(FlagEnabled(703))
     
@@ -1394,7 +1415,7 @@ def Event_822():
     """Event 822"""
     MAIN.Await(FlagEnabled(830))
     
-    IfTimeElapsed(1, seconds=0.5)
+    AND_1.Add(TimeElapsed(seconds=0.5))
     AND_1.Add(OutsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     
     MAIN.Await(AND_1)
@@ -1408,7 +1429,7 @@ def Event_823():
     """Event 823"""
     MAIN.Await(FlagEnabled(831))
     
-    IfTimeElapsed(1, seconds=0.5)
+    AND_1.Add(TimeElapsed(seconds=0.5))
     AND_1.Add(OutsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     
     MAIN.Await(AND_1)
@@ -1440,5 +1461,6 @@ def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_
 def Event_766():
     """Event 766"""
     AND_1.Add(Online())
-    EndIfConditionTrue(1)
+    if AND_1:
+        return
     EnableFlag(765)

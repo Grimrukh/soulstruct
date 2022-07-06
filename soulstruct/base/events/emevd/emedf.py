@@ -150,51 +150,58 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
     emedf_aliases = {v["alias"]: (category, index, v) for (category, index), v in emedf.items()}
     emedf_tests = {}
     for (category, index), v in emedf.items():
+        partials = v.get("partials", {})
 
-        if "partials" in v:
-            for partial_name in v["partials"]:
-                emedf_aliases[partial_name] = (category, index, v)
+        for partial_name in partials:
+            emedf_aliases[partial_name] = (category, index, v)
 
-            if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfFinishedConditionState"):
-                continue  # condition tests are handled with `Condition` EVS object
+        if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfFinishedConditionState"):
+            continue  # condition tests are handled with `Condition` EVS object and `ConditionGroup` enum
 
-            if v["alias"].startswith("If"):
-                for partial_name in v["partials"]:
-                    test_name = partial_name.removeprefix("If")
-                    emedf_tests.setdefault(test_name, {})["if"] = partial_name
-            elif v["alias"].startswith("SkipLinesIf"):
-                for partial_name, partial_kwargs in v["partials"].items():
-                    test_name = partial_name.removeprefix("SkipLinesIf")
-                    boolean_kwargs = [
-                        (kw, kw_v) for kw, kw_v in partial_kwargs.items()
-                        if isinstance(kw_v, (bool, BaseNegatableEMEVDEnum))
-                    ]
-                    if len(boolean_kwargs) == 1:
-                        bool_name, bool_value = boolean_kwargs[0]
-                        if isinstance(bool_value, BaseNegatableEMEVDEnum):
-                            try:
-                                negated_value = bool_value.negate()
-                            except ValueError:
-                                continue
-                        else:
-                            negated_value = not bool_value
-                        negated_kwargs = partial_kwargs.copy() | {bool_name: negated_value}
+        if v["alias"].startswith("If"):
 
-                        for check_partial_name, check_partial_kwargs in v["partials"].items():
-                            if check_partial_kwargs == negated_kwargs:
-                                emedf_tests.setdefault(test_name, {})["skip"] = check_partial_name
-            elif v["alias"].startswith("ReturnIf"):
-                for partial_name in v["partials"]:
-                    if partial_name.startswith("EndIf"):
-                        test_name = partial_name.removeprefix("EndIf")
-                        emedf_tests.setdefault(test_name, {})["end"] = partial_name
-                    elif partial_name.startswith("RestartIf"):
-                        test_name = partial_name.removeprefix("RestartIf")
-                        emedf_tests.setdefault(test_name, {})["restart"] = partial_name
-            elif v["alias"].startswith("GotoIf"):
-                for partial_name in v["partials"]:
-                    test_name = partial_name.removeprefix("GotoIf")
-                    emedf_tests.setdefault(test_name, {})["goto"] = partial_name
+            test_name = v["alias"].removeprefix("If")
+            emedf_tests.setdefault(test_name, {})["if"] = v["alias"]
+
+            for partial_name in partials:
+                test_name = partial_name.removeprefix("If")
+                emedf_tests.setdefault(test_name, {})["if"] = partial_name
+        elif v["alias"].startswith("SkipLinesIf"):
+            # Base "SkipLinesIf" instructions cannot be systematically negated, and so do not have "skip" tests.
+            for partial_name, partial_kwargs in partials.items():
+                test_name = partial_name.removeprefix("SkipLinesIf")
+                boolean_kwargs = [
+                    (kw, kw_v) for kw, kw_v in partial_kwargs.items()
+                    if isinstance(kw_v, (bool, BaseNegatableEMEVDEnum))
+                ]
+                if len(boolean_kwargs) == 1:
+                    bool_name, bool_value = boolean_kwargs[0]
+                    if isinstance(bool_value, BaseNegatableEMEVDEnum):
+                        try:
+                            negated_value = bool_value.negate()
+                        except ValueError:
+                            continue
+                    else:
+                        negated_value = not bool_value
+                    negated_kwargs = partial_kwargs.copy() | {bool_name: negated_value}
+
+                    for check_partial_name, check_partial_kwargs in partials.items():
+                        if check_partial_kwargs == negated_kwargs:
+                            emedf_tests.setdefault(test_name, {})["skip"] = check_partial_name
+        elif v["alias"].startswith("ReturnIf"):
+            # Base "ReturnIf" instructions do not need to be tests here. They always have partials.
+            for partial_name in partials:
+                if partial_name.startswith("EndIf"):
+                    test_name = partial_name.removeprefix("EndIf")
+                    emedf_tests.setdefault(test_name, {})["end"] = partial_name
+                elif partial_name.startswith("RestartIf"):
+                    test_name = partial_name.removeprefix("RestartIf")
+                    emedf_tests.setdefault(test_name, {})["restart"] = partial_name
+        elif v["alias"].startswith("GotoIf"):
+            # TODO: Should probably implement tests for base instructions here.
+            for partial_name in partials:
+                test_name = partial_name.removeprefix("GotoIf")
+                emedf_tests.setdefault(test_name, {})["goto"] = partial_name
 
     tests_to_remove = [name for name, info in emedf_tests.items() if "if" not in info]
     for test_name in tests_to_remove:

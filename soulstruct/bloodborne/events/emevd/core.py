@@ -11,7 +11,7 @@ from soulstruct.containers.dcx import DCXType
 from soulstruct.games import BloodborneType
 from soulstruct.utilities.binary import BinaryStruct
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
-from .emedf import EMEDF
+from .emedf import EMEDF, EMEDF_TESTS
 from .entity_enums_manager import EntityEnumsManager
 
 from .evs import EVSParser
@@ -53,6 +53,7 @@ class Instruction(_BaseInstruction):
 class Event(_BaseEvent):
     Instruction = Instruction
     EventArg = EventArg
+    EMEDF_TESTS = EMEDF_TESTS
     EVENT_ARG_TYPES = {}
     HEADER_STRUCT = BinaryStruct(
         ("event_id", "Q"),
