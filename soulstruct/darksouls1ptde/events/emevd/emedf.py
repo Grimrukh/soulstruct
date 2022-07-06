@@ -430,11 +430,11 @@ EMEDF = {
         "partials": {
             "IfWhiteWorldTendencyComparison": dict(world_tendency_type=WorldTendencyType.White),
             "IfBlackWorldTendencyComparison": dict(world_tendency_type=WorldTendencyType.Black),
-            "IfWhiteWorldTendencyGreaterThanOrEqual": dict(
-                world_tendency_type=WorldTendencyType.White, comparison_type=ComparisonType.GreaterThanOrEqual
+            "IfWhiteWorldTendencyGreaterThan": dict(
+                world_tendency_type=WorldTendencyType.White, comparison_type=ComparisonType.GreaterThan
             ),
-            "IfBlackWorldTendencyGreaterThanOrEqual": dict(
-                world_tendency_type=WorldTendencyType.Black, comparison_type=ComparisonType.GreaterThanOrEqual
+            "IfBlackWorldTendencyGreaterThan": dict(
+                world_tendency_type=WorldTendencyType.Black, comparison_type=ComparisonType.GreaterThan
             ),
         },
     },
@@ -3121,6 +3121,7 @@ EMEDF = {
             "anchor_entity": {
                 "type": CoordEntityTyping,
                 "default": -1,
+                "internal_default": -1,
             },
             "display_distance": {
                 "type": float,
@@ -3439,3 +3440,8 @@ EMEDF = {
 
 add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
+
+# Extra tests that use custom instructions from `compiler`.
+EMEDF_TESTS["ActionButton"] = {
+    "if": "IfActionButton",
+}

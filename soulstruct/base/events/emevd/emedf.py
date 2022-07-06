@@ -160,9 +160,11 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
 
             if v["alias"].startswith("If"):
                 for partial_name in v["partials"]:
-                    emedf_tests.setdefault(partial_name[2:], {})["if"] = partial_name
+                    test_name = partial_name.removeprefix("If")
+                    emedf_tests.setdefault(test_name, {})["if"] = partial_name
             elif v["alias"].startswith("SkipLinesIf"):
                 for partial_name, partial_kwargs in v["partials"].items():
+                    test_name = partial_name.removeprefix("SkipLinesIf")
                     boolean_kwargs = [
                         (kw, kw_v) for kw, kw_v in partial_kwargs.items()
                         if isinstance(kw_v, (bool, BaseNegatableEMEVDEnum))
@@ -180,16 +182,23 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
 
                         for check_partial_name, check_partial_kwargs in v["partials"].items():
                             if check_partial_kwargs == negated_kwargs:
-                                emedf_tests.setdefault(partial_name[11:], {})["skip"] = check_partial_name
+                                emedf_tests.setdefault(test_name, {})["skip"] = check_partial_name
             elif v["alias"].startswith("ReturnIf"):
                 for partial_name in v["partials"]:
                     if partial_name.startswith("EndIf"):
-                        emedf_tests.setdefault(partial_name[5:], {})["end"] = partial_name
+                        test_name = partial_name.removeprefix("EndIf")
+                        emedf_tests.setdefault(test_name, {})["end"] = partial_name
                     elif partial_name.startswith("RestartIf"):
-                        emedf_tests.setdefault(partial_name[9:], {})["restart"] = partial_name
+                        test_name = partial_name.removeprefix("RestartIf")
+                        emedf_tests.setdefault(test_name, {})["restart"] = partial_name
             elif v["alias"].startswith("GotoIf"):
                 for partial_name in v["partials"]:
-                    emedf_tests.setdefault(partial_name[6:], {})["goto"] = partial_name
+                    test_name = partial_name.removeprefix("GotoIf")
+                    emedf_tests.setdefault(test_name, {})["goto"] = partial_name
+
+    tests_to_remove = [name for name, info in emedf_tests.items() if "if" not in info]
+    for test_name in tests_to_remove:
+        emedf_tests.pop(test_name)
 
     return emedf_aliases, emedf_tests
 

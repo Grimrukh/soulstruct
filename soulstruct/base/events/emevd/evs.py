@@ -33,6 +33,7 @@ _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 _COMMON_FUNC_IMPORT_RE = re.compile(r"\nfrom (\.*)([\w\d_]+) +import ([\w\d_, ]+) +# *\[COMMON_FUNC] *\n")
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
+_CONDITION_GROUP_RE = re.compile(r"(AND|OR)_(\d+)")
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
 _BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
@@ -256,7 +257,7 @@ class EVSParser(abc.ABC):
         name = event_node.name
         if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
             raise EVSSyntaxError(event_node, f"Event name cannot match an instruction name ({name}).")
-        if name in _BUILTIN_NAMES:
+        if name in _BUILTIN_NAMES or _CONDITION_GROUP_RE.match(name):
             raise EVSSyntaxError(event_node, f"Event name cannot match a builtin EVS name ({name}).")
         if name in self.events:
             raise EVSSyntaxError(event_node, f"An event named {name} has already been defined in this script.")
@@ -469,10 +470,42 @@ class EVSParser(abc.ABC):
             raise EVSSyntaxError(node, f"If given, `event_layers` must be a list, tuple, or single integer.")
         return instruction_lines
 
+    def _check_condition_group_add(self, node: ast.Call) -> tp.Optional[int]:
+        """Returns condition index if this is a condition group `.Add()` or `.Await()` call, or `None` otherwise."""
+        if (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr == "Add"
+            and isinstance(node.func.value, ast.Name)
+            and (match := _CONDITION_GROUP_RE.match(node.func.value.id))
+        ):
+            return (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+        elif (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr == "Await"
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "MAIN"
+        ):
+            return 0
+        return None
+
     def _compile_function_expression(self, node: ast.Call):
 
+        if (condition := self._check_condition_group_add(node)) is not None:
+            if node.keywords or len(node.args) != 1:
+                raise EVSSyntaxError(
+                    node,
+                    ".Add() or .Await() take exactly one positional argument (Condition or boolean expression)."
+                )
+            arg = node.args[0]
+            if not isinstance(arg, ConditionNodeTypes):
+                raise EVSSyntaxError(
+                    node,
+                    f".ADd() or .Await() argument must be a Condition or boolean expression, not: {type(arg)}."
+                )
+            return self._compile_condition(arg, condition=condition)
+
         if isinstance(node.func, ast.Attribute):
-            # Method of a game object.
+            # Method of a game object or `.Add` method of a condition group.
             attr = node.func.attr
             game_object = self._parse_nodes(node.func.value)
             if not isinstance(game_object, BaseGameObject):
@@ -920,13 +953,27 @@ class EVSParser(abc.ABC):
                 f"such as `Flag` (tests for enabled state), `Region` (tests if player is inside), etc.",
             )
 
-        # Existing condition
+        # Existing condition (with standard name)
+        if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
+            i = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            if i in self.finished_conditions:
+                raise EVSSyntaxError(
+                    node.lineno,
+                    f"Finished condition {node.id} cannot be an input condition. You must use line skips."
+                )
+            # TODO: Conditions are only finished when they are loaded into MAIN (0).
+            # self.finished_conditions.append(i)
+            logic = "False" if negate else "True"
+            return self._compile_instr(node, f"IfCondition{logic}", condition, i)
+
+        # Existing condition (with custom name)
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
             if i in self.finished_conditions:
                 raise EVSSyntaxError(
                     node.lineno, f"Finished condition {node.id} cannot be an input condition. You must use line skips."
                 )
+            # TODO: Conditions are only finished when they are loaded into MAIN (0).
             self.finished_conditions.append(i)
             logic = "False" if negate else "True"
             return self._compile_instr(node, f"IfCondition{logic}", condition, i)
@@ -1092,15 +1139,16 @@ class EVSParser(abc.ABC):
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
             if "skip" not in tests:
                 raise NoSkipOrReturnError
-            return self._compile_instr(node, tests["skip"], *args, line_count=skip_lines, **kwargs)
+            # `line_count` is always the first positional argument.
+            return self._compile_instr(node, tests["skip"], skip_lines, *args, **kwargs)
         elif skip_lines < 0:
             raise ValueError("You cannot skip a negative number of lines.")
 
         if condition is not None:
             if end_event or restart_event:
                 raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
-            # "if" is always present in tests.
-            return self._compile_instr(node, tests["if"], *args, condition=condition, **kwargs)
+            # "if" is always present in tests. `condition` is always the first positional argument.
+            return self._compile_instr(node, tests["if"], condition, *args, **kwargs)
 
         if end_event:
             if restart_event:

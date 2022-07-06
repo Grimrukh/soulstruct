@@ -106,6 +106,14 @@ def _compile(func):
     return func  # no actual decoration
 
 
+def _compile_test(func):
+    """Decorator that simply adds the decorated function to the `COMPILER_TEST` dictionary under its own name."""
+    if func.__name__ in COMPILER:
+        raise ValueError(f"EVS instruction {func.__name__} appeared more than once in module.")
+    COMPILER[func.__name__] = func
+    return func  # no actual decoration
+
+
 # noinspection PyUnusedLocal
 @_compile
 def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
@@ -397,11 +405,11 @@ def IfActionButton(
     anchor_type: CoordEntityType = None,
     facing_angle: float = None,
     max_distance: float = None,
-    model_point=-1,
-    trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
-    button=0,
-    boss_version=False,
-    line_intersects=None,
+    model_point: int = -1,
+    trigger_attribute: TriggerAttribute = TriggerAttribute.Human | TriggerAttribute.Hollow,
+    button: int = 0,
+    boss_version: bool = False,
+    line_intersects: CoordEntityTyping = None,
 ):
     if anchor_type is None:
         # Anchor type will never be PLAYER here.

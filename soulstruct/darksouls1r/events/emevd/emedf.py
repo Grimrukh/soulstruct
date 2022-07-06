@@ -435,3 +435,8 @@ EMEDF |= {
 
 add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls1ptde/events/emevd/ds1-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
+
+# Extra tests that use custom instructions from `compiler`.
+EMEDF_TESTS["ActionButton"] = {
+    "if": "IfActionButton",
+}

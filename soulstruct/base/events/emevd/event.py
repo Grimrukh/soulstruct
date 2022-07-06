@@ -13,7 +13,7 @@ from .instruction import Instruction
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-    from .utils import EntityEnumsManager
+    from .entity_enums_manager import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +34,9 @@ _SPECIAL_EVENT_NAMES = {
     50: "Preconstructor",
 }
 
-_INSTRUCTION_RE = re.compile(r"([\w\d]+)\((.*)\)")  # groups = (instruction_name, args)
+_INSTRUCTION_RE = re.compile(r" *([\w\d]+)\((.*)\)")  # groups = (instruction_name, args)
+_CONDITION_RE = re.compile(r" *(AND|OR)_(\d+)\.Add\((.*)\)")  # groups = (condition_type, condition_i, condition)
+_MAIN_AWAIT_RE = re.compile(r" *MAIN\.Await\((.*)\)")  # groups = (condition_type, condition_i, condition)
 _LABEL_RE = re.compile(r"DefineLabel\((\d+)\)")
 
 
@@ -89,6 +91,7 @@ class Event(abc.ABC):
     HEADER_STRUCT: BinaryStruct = None
     Instruction: tp.Type[Instruction] = None
     EventArg: tp.Type[EventArg] = None
+    EMEDF_TESTS: dict[str, dict[str, str]] = None
     EVENT_ARG_TYPES = {}  # type: dict[int, str]  # updated on load and before each write
     EVENT_ARG_NAMES = {}  # type: dict[int, list[str]]  # updated on load and before each write
     WRAP_LIMIT = 120  # PyCharm default line length
@@ -304,54 +307,167 @@ class Event(abc.ABC):
 
         return evs_event_string
 
-    def high_level_evs_decompile(self, instruction_lines: list[str]):
+    def high_level_evs_decompile(self, instruction_lines: list[str], conditions_only=False):
         """Parses basic EVS output and replaces it with Python `if/else` tests and `Await()` calls where possible.
 
         Note that none of the input `instruction_lines` have been indented yet, so we can add our own indentation here
         as necessary and ALL of it will be indented by the rest of `to_evs()`.
+
+        TODO:
+            - Currently, only "End/RestartIf" and "SkipIf" instructions (that do NOT skip other skip instructions) are
+            being converted to `if` blocks.
+            - Work to do for "If" condition decompilation:
+                - Uses a modified condition-building EVS syntax that hasn't actually been implemented.
+                - Main struggle is with line skips that skip OTHER skips (skip chains) or condition instructions (so
+                it's ambiguous as to where the group instance should first be defined in EVS).
         """
         output_lines = []
 
-        # TODO: EMEDF marks whether (and how) an instruction has a high-level equivalent. Regex here is auto-generated
-        #  from EVS instruction name and args.
-        skip_if_slot_disabled_re = re.compile(
-            r"^(?P<indent> *)SkipLinesIfThisEventSlotFlagDisabled\((?P<line_count>\d+)\)$"
+        if_condition_re = re.compile(
+            r"^(?P<indent> *)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
+            r"(?P<condition>-?\d+), input_condition=(?P<input_condition>-?\d+)\)$"
         )
-        end_if_flag_enabled_re = re.compile(
-            r"^(?P<indent> *)EndIfThisEventFlagEnabled\(\)$"
+        if_re = re.compile(
+            r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>-?\d+)(?P<args>.*?)\)$"
         )
-        end_if_flag_slot_enabled_re = re.compile(
-            r"^(?P<indent> *)EndIfThisEventSlotFlagEnabled\(\)$"
+        skip_re = re.compile(
+            r"^(?P<indent> *)SkipLinesIf(?P<test>.*)\((?P<line_count>\d+)(?P<args>.*?)\)$"
+        )
+        unconditional_skip_re = re.compile(
+            r"^(?P<indent> *)SkipLines\((?P<line_count>\d+)\)$"
+        )
+        return_re = re.compile(
+            r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<test>.*)\((?P<args>.*?)\)$"
         )
 
         i = 0
         while i < len(instruction_lines):
             line = instruction_lines[i]
-            if match := skip_if_slot_disabled_re.match(line):
+            if match := if_condition_re.match(line):
                 m = match.groupdict()
                 indent = m["indent"]
-                line_count = int(m["line_count"])
-                output_lines.append(f"{indent}if ThisEventSlotFlagEnabled():")
-                i += 1
-                for _ in range(line_count):
-                    output_lines.append(f"{indent}    {instruction_lines[i]}")
+                finished = m["finished"] is not None
+                state = m["state"] == "True"
+                print(line, state)
+                condition = int(m["condition"])
+                input_condition = int(m["input_condition"])
+
+                input_condition_type = "OR" if input_condition < 0 else "AND"
+                i_condition = f"{input_condition_type}_{abs(input_condition)}"  # e.g. `AND_2`
+                if not state:
+                    i_condition = f"not {i_condition}"
+
+                # TODO: If condition was just defined on previous line, we could move the whole thing here.
+                #  However, this veers into "lost info" territory, as we won't know what condition number the game
+                #  originally used (and would have to look ahead for "finished" usage).
+
+                if condition == 0:
+                    if output_lines and output_lines[-1] != "":
+                        output_lines.append("")
+                    output_lines += [f"{indent}MAIN.Await({i_condition})", ""]
                     i += 1
-            elif match := end_if_flag_enabled_re.match(line):
+                else:
+                    condition_type = "OR" if condition < 0 else "AND"
+                    condition_name = f"{condition_type}_{abs(condition)}"
+                    output_lines.append(f"{indent}{condition_name}.Add({i_condition})")
+                    i += 1
+            elif match := if_re.match(line):
                 m = match.groupdict()
                 indent = m["indent"]
-                output_lines.append(f"{indent}if ThisEventFlagEnabled():")
-                output_lines.append(f"{indent}    return")
+                test = m["test"]
+                if test not in self.EMEDF_TESTS or "if" not in self.EMEDF_TESTS[test]:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # 'if' should always be in tests dict, but just for clarity
+                condition = int(m["condition"])
+                args = m["args"].removeprefix(", ")  # no need to split or parse (and could be empty)
+                if condition == 0:
+                    if output_lines and output_lines[-1] != "":
+                        output_lines.append("")
+                    output_lines += [f"{indent}MAIN.Await({test}({args}))", ""]
+                    i += 1
+                else:
+                    condition_type = "OR" if condition < 0 else "AND"
+                    condition_name = f"{condition_type}_{abs(condition)}"
+                    output_lines.append(f"{indent}{condition_name}.Add({test}({args}))")
+                    i += 1
+            elif not conditions_only and (match := skip_re.match(line)):
+                m = match.groupdict()
+                indent = m["indent"]
+                test = m["test"]
+                line_count = int(m["line_count"])
+                args = m["args"].removeprefix(", ")
+                # Find negated skip.
+                for test_name, tests in self.EMEDF_TESTS.items():
+                    if tests.get("skip", "") == f"SkipLinesIf{test}":
+                        break
+                else:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # could not find test name (possibly no negation)
+                if_block_lines = [f"{indent}{instruction_lines[i + 1 + j]}" for j in range(line_count)]
+                if any("SkipLinesIf" in instr for instr in if_block_lines):
+                    # Cannot yet skip other skips. Ignore this line, and recur on block lines for conditions only.
+                    output_lines.append(line)
+                    i += 1
+                    output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                    i += len(if_block_lines)
+                    continue
+                if any("SkipLines(" in instr for instr in (
+                    if_block_lines[:-1] if len(if_block_lines) > 1 else if_block_lines
+                )):
+                    # Cannot yet skip other unconditional skips EXCEPT as the last block instruction (`else`).
+                    output_lines.append(line)
+                    i += 1
+                    output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                    i += len(if_block_lines)
+                    continue
+                if unconditional_match := unconditional_skip_re.match(instruction_lines[i + line_count]):
+                    else_line_count = int(unconditional_match.groupdict()["line_count"])
+                    else_block_lines = [
+                        f"{indent}    {instruction_lines[i + line_count + 1 + j]}" for j in range(else_line_count)
+                    ]
+                    if any("SkipLines" in instr for instr in else_block_lines):
+                        # Cannot yet skip other skips (conditional or unconditional) in `else` block.
+                        output_lines.append(line)
+                        i += 1
+                        output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                        i += len(if_block_lines)
+                        continue
+                    if_block_lines = if_block_lines[:-1]  # ignore unconditional skip
+                else:
+                    else_line_count = 0
+                    else_block_lines = []
+                output_lines.append(f"{indent}if {test_name}({args}):")
                 i += 1
-            elif match := end_if_flag_slot_enabled_re.match(line):
+                # Recur on indented `if` block (which contains no skips, as per above).
+                output_lines += self.high_level_evs_decompile([f"    {if_line}" for if_line in if_block_lines])
+                i += line_count
+                if else_block_lines:
+                    # Recur on indented `else` block (which contains no skips, as per above).
+                    output_lines.append(f"{indent}else:")
+                    # No need for `i += 1`, as `line_count` includes the unconditional skip that `else` is replacing.
+                    output_lines += self.high_level_evs_decompile(else_block_lines)
+                    i += else_line_count
+            elif not conditions_only and (match := return_re.match(line)):
                 m = match.groupdict()
                 indent = m["indent"]
-                output_lines.append(f"{indent}if ThisEventSlotFlagEnabled():")
-                output_lines.append(f"{indent}    return")
+                return_type = m["return_type"].lower()
+                test = m["test"]
+                if test not in self.EMEDF_TESTS or return_type not in self.EMEDF_TESTS[test]:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # ignore (no end/restart test)
+                args = m["args"].removeprefix(", ")
+                output_lines.append(f"{indent}if {test}({args}):")
+                output_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
                 i += 1
             else:
                 output_lines.append(line)
                 i += 1
 
+        while output_lines[-1] == "":
+            output_lines = output_lines[:-1]
         return output_lines
 
     def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
@@ -393,16 +509,30 @@ class Event(abc.ABC):
     def _indent_and_wrap_instruction(instr: str, wrap_limit=121, indent=4):
         """Indent instruction with `indent` spaces and put each argument on a separate line if the instruction exceeds
         `wrap_limit`."""
-        name_indent = " " * indent
-        indented_instr = f"\n{name_indent}{instr}"
+        existing_indent = " " * (len(instr) - len(instr.lstrip(" ")))
+        base_indent = " " * indent
+        indented_instr = f"\n{base_indent}{instr}"
         if len(indented_instr) <= wrap_limit:
             return indented_instr
         if not (match := _INSTRUCTION_RE.match(instr)):
-            raise ValueError(f"Malformed instruction generated: {instr}")
+            if match := _CONDITION_RE.match(instr):
+                # Indent and wrap condition.
+                c_type, c_index, condition = match.group(1, 2, 3)
+                wrapped_condition = Event._indent_and_wrap_instruction(condition, wrap_limit=wrap_limit, indent=indent)
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}{c_type}_{c_index}.Add({wrapped_condition})"
+            elif match := _MAIN_AWAIT_RE.match(instr):
+                # Indent and wrap condition.
+                condition = match.group(1)
+                wrapped_condition = Event._indent_and_wrap_instruction(condition, wrap_limit=wrap_limit, indent=indent)
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}MAIN.Await({wrapped_condition})"
+            else:
+                raise ValueError(f"Cannot indent/wrap malformed instruction or condition group definition: {instr}")
         instr_name, instr_args_string = match.group(1, 2)
         if not instr_args_string:
             return indented_instr  # shouldn't happen (super-long instruction name)
-        arg_indent = name_indent + "    "
+        arg_indent = existing_indent + base_indent + "    "
         args = instr_args_string.split(", ")
         i = 0
         arg_strings = []
@@ -453,7 +583,7 @@ class Event(abc.ABC):
             i += 1
 
         arg_lines = "\n".join(arg_indent + arg_string for arg_string in arg_strings)
-        return f"\n{name_indent}{instr_name}(\n{arg_lines}\n{name_indent})"
+        return f"\n{base_indent}{existing_indent}{instr_name}(\n{arg_lines}\n{base_indent}{existing_indent})"
 
     @staticmethod
     def indent_and_wrap_function_def(function_name: str, function_args, wrap_limit=120):

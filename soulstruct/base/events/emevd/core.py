@@ -357,7 +357,6 @@ class EMEVD(GameFile, abc.ABC):
         docstring = self.get_evs_docstring()
         imports = f"from soulstruct.{self.GAME.submodule_name}.events import *"
         imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.instructions import *"
-        imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.tests import *"
         evs_events = [event.to_evs(enums_manager) for event in self.events.values()]
 
         # Add keyword argument names to `Event_{ID}(_, x, y, z)` calls and reformat call to multiple lines if necessary.

@@ -7,7 +7,6 @@ strings:
 """
 from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
-from soulstruct.darksouls1ptde.events.tests import *
 
 
 @NeverRestart(0)
@@ -19,11 +18,11 @@ def Constructor():
     RegisterLadder(start_climbing_flag=11100016, stop_climbing_flag=11100017, obj=1101143)
     SkipLinesIfClient(1)
     DisableFlag(11100410)
-    SkipLinesIfFlagEnabled(2, 11100810)
-    DisableTreasure(obj=1101610)
-    DisableObject(1101610)
-    SkipLinesIfFlagDisabled(1, 11100810)
-    EnableTreasure(obj=1101610)
+    if FlagDisabled(11100810):
+        DisableTreasure(obj=1101610)
+        DisableObject(1101610)
+    if FlagEnabled(11100810):
+        EnableTreasure(obj=1101610)
     Event_11100090(1, obj=1101702, vfx_id=1101703, destination=1102602, destination_1=1102603)
     Event_11105070()
     Event_11105071()
@@ -73,8 +72,8 @@ def Constructor():
     Event_11106200(33, 1101044, 1101044, 12, -1)
     Event_11100070(0, obj=1101120, obj_1=1101600, animation_id=120, animation_id_1=121)
     Event_11100070(1, obj=1101121, obj_1=1101601, animation_id=125, animation_id_1=126)
-    SkipLinesIfFlagDisabled(1, 11100400)
-    DisableCharacter(1100170)
+    if FlagEnabled(11100400):
+        DisableCharacter(1100170)
     Event_11105370()
     Event_11100100(0, obj=1101180, vfx_id=1103000)
     Event_11100100(1, obj=1101181, vfx_id=1103001)
@@ -83,21 +82,21 @@ def Constructor():
     DisableSoundEvent(sound_id=1103800)
     DisableObject(1101992)
     DeleteVFX(1101993, erase_root_only=False)
-    SkipLinesIfFlagDisabled(4, 4)
-    Event_11105392()
-    DisableObject(1101990)
-    DeleteVFX(1101991, erase_root_only=False)
-    SkipLines(10)
-    Event_11105390()
-    Event_11105391()
-    Event_11105393()
-    Event_11105392()
-    Event_11100000()
-    Event_11105394()
-    Event_11105395()
-    Event_11105396()
-    Event_11105397()
-    Event_11105398()
+    if FlagEnabled(4):
+        Event_11105392()
+        DisableObject(1101990)
+        DeleteVFX(1101991, erase_root_only=False)
+    else:
+        Event_11105390()
+        Event_11105391()
+        Event_11105393()
+        Event_11105392()
+        Event_11100000()
+        Event_11105394()
+        Event_11105395()
+        Event_11105396()
+        Event_11105397()
+        Event_11105398()
 
 
 @NeverRestart(50)
@@ -108,8 +107,8 @@ def Preconstructor():
     Event_11105030()
     Event_11100810()
     Event_11105010()
-    SkipLinesIfFlagEnabled(1, 1691)
-    SetTeamType(1100160, TeamType.Ally)
+    if FlagDisabled(1691):
+        SetTeamType(1100160, TeamType.Ally)
     Event_11100530(0, character=1100160, first_flag=1690, last_flag=1693, flag=1691)
     Event_11100531(0, character=1100160, first_flag=1690, last_flag=1693, flag=1692)
     HumanityRegistration(6312, event_flag=8470)
@@ -131,27 +130,27 @@ def Event_11100090(_, obj: int, vfx_id: int, destination: int, destination_1: in
         DisableObject(obj)
         DeleteVFX(vfx_id, erase_root_only=False)
         End()
-    IfActionButton(
-        1,
+    AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=destination,
         anchor_type=CoordEntityType.Region,
         model_point=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
-    )
-    IfActionButton(
-        2,
+    ))
+    AND_2.Add(ActionButton(
         prompt_text=10010407,
         anchor_entity=destination_1,
         anchor_type=CoordEntityType.Region,
         model_point=0,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         line_intersects=obj,
-    )
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    ))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     SkipLinesIfFinishedConditionTrue(2, condition=2)
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
@@ -178,8 +177,11 @@ def Event_11105070():
     DisableCharacter(1100909)
     DisableCharacter(1100910)
     DisableCharacter(1100911)
-    IfFlagEnabled(0, 11100050)
-    EndIfFlagEnabled(735)
+    
+    MAIN.Await(FlagEnabled(11100050))
+    
+    if FlagEnabled(735):
+        return
     EnableFlag(5000)
     EnableCharacter(1100900)
     EnableCharacter(1100901)
@@ -198,11 +200,13 @@ def Event_11105070():
 @RestartOnRest(11105071)
 def Event_11105071():
     """Event 11105071"""
-    IfFlagEnabled(-1, 11105075)
-    IfFlagEnabled(-1, 735)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFlagDisabled(1, 735)
-    DisableFlag(735)
+    OR_1.Add(FlagEnabled(11105075))
+    OR_1.Add(FlagEnabled(735))
+    
+    MAIN.Await(OR_1)
+    
+    if FlagEnabled(735):
+        DisableFlag(735)
     DisableFlag(11100050)
     DisableFlag(11105075)
     EnableFlag(5001)
@@ -223,46 +227,49 @@ def Event_11105071():
 @RestartOnRest(11105072)
 def Event_11105072():
     """Event 11105072"""
-    EndIfClient()
-    IfBlackWorldTendencyComparison(1, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(1, game_map=PAINTED_WORLD)
-    IfConditionTrue(-1, input_condition=1)
-    IfFlagEnabled(-1, 11100050)
-    IfConditionTrue(0, input_condition=-1)
+    if Client():
+        return
+    AND_1.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_1.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_1.Add(AND_1)
+    OR_1.Add(FlagEnabled(11100050))
+    
+    MAIN.Await(OR_1)
+    
     WaitFrames(frames=1)
-    IfBlackWorldTendencyComparison(2, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(2, game_map=PAINTED_WORLD)
-    IfConditionTrue(-2, input_condition=2)
-    IfFlagEnabled(-2, 11100050)
+    AND_2.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_2.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_2.Add(AND_2)
+    OR_2.Add(FlagEnabled(11100050))
     RestartIfConditionFalse(-2)
     WaitFrames(frames=1)
-    IfBlackWorldTendencyComparison(3, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(3, game_map=PAINTED_WORLD)
-    IfConditionTrue(-3, input_condition=3)
-    IfFlagEnabled(-3, 11100050)
+    AND_3.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_3.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_3.Add(AND_3)
+    OR_3.Add(FlagEnabled(11100050))
     RestartIfConditionFalse(-3)
     WaitFrames(frames=1)
-    IfBlackWorldTendencyComparison(4, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(4, game_map=PAINTED_WORLD)
-    IfConditionTrue(-4, input_condition=4)
-    IfFlagEnabled(-4, 11100050)
+    AND_4.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_4.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_4.Add(AND_4)
+    OR_4.Add(FlagEnabled(11100050))
     RestartIfConditionFalse(-4)
     WaitFrames(frames=1)
-    IfBlackWorldTendencyComparison(5, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(5, game_map=PAINTED_WORLD)
-    IfConditionTrue(-5, input_condition=5)
-    IfFlagEnabled(-5, 11100050)
+    AND_5.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_5.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_5.Add(AND_5)
+    OR_5.Add(FlagEnabled(11100050))
     RestartIfConditionFalse(-5)
     WaitFrames(frames=1)
-    IfBlackWorldTendencyComparison(6, ComparisonType.GreaterThan, value=50)
-    IfInsideMap(6, game_map=PAINTED_WORLD)
-    IfConditionTrue(-6, input_condition=6)
-    IfFlagEnabled(-6, 11100050)
+    AND_6.Add(BlackWorldTendencyComparison(ComparisonType.GreaterThan, value=50))
+    AND_6.Add(InsideMap(game_map=PAINTED_WORLD))
+    OR_6.Add(AND_6)
+    OR_6.Add(FlagEnabled(11100050))
     RestartIfConditionFalse(-6)
     EnableFlag(11100050)
     Wait(600.0)
-    IfBlackWorldTendencyComparison(7, ComparisonType.LessThanOrEqual, value=50)
-    IfInsideMap(7, game_map=PAINTED_WORLD)
+    AND_7.Add(BlackWorldTendencyComparison(ComparisonType.LessThanOrEqual, value=50))
+    AND_7.Add(InsideMap(game_map=PAINTED_WORLD))
     RestartIfConditionFalse(7)
     DisableFlag(11100050)
     EnableFlag(11105075)
@@ -271,17 +278,18 @@ def Event_11105072():
 @NeverRestart(11105390)
 def Event_11105390():
     """Event 11105390"""
-    IfFlagDisabled(1, 4)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagDisabled(4))
+    AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1102998,
         anchor_type=CoordEntityType.Region,
         trigger_attribute=TriggerAttribute.Human | TriggerAttribute.Hollow,
         boss_version=True,
         line_intersects=1101990,
-    )
-    IfConditionTrue(0, input_condition=1)
+    ))
+    
+    MAIN.Await(AND_1)
+    
     RotateToFaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
@@ -290,18 +298,19 @@ def Event_11105390():
 @NeverRestart(11105391)
 def Event_11105391():
     """Event 11105391"""
-    IfFlagDisabled(1, 4)
-    IfFlagEnabled(1, 11105393)
-    IfCharacterWhitePhantom(1, PLAYER)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagDisabled(4))
+    AND_1.Add(FlagEnabled(11105393))
+    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(ActionButton(
         prompt_text=10010403,
         anchor_entity=1102998,
         anchor_type=CoordEntityType.Region,
         trigger_attribute=TriggerAttribute.All,
         line_intersects=1101990,
-    )
-    IfConditionTrue(0, input_condition=1)
+    ))
+    
+    MAIN.Await(AND_1)
+    
     RotateToFaceEntity(PLAYER, target_entity=1102997)
     ForceAnimation(PLAYER, 7410)
     Restart()
@@ -310,47 +319,54 @@ def Event_11105391():
 @NeverRestart(11105393)
 def Event_11105393():
     """Event 11105393"""
-    SkipLinesIfThisEventFlagEnabled(3)
-    IfFlagDisabled(1, 4)
-    IfCharacterInsideRegion(1, PLAYER, region=1102996)
-    IfConditionTrue(0, input_condition=1)
+    if ThisEventFlagDisabled():
+        AND_1.Add(FlagDisabled(4))
+        AND_1.Add(CharacterInsideRegion(PLAYER, region=1102996))
+    
+        MAIN.Await(AND_1)
     SkipLinesIfClient(1)
     NotifyBossBattleStart()
     ActivateMultiplayerBuffs(1100160)
     EnableFlag(11105393)
-    IfFlagEnabled(0, 4)
+    
+    MAIN.Await(FlagEnabled(4))
+    
     End()
 
 
 @RestartOnRest(11105392)
 def Event_11105392():
     """Event 11105392"""
-    SkipLinesIfFlagDisabled(7, 4)
-    DisableCharacter(1100160)
-    DisableCharacter(1100161)
-    Kill(1100160)
-    Kill(1100161)
-    DisableBackread(1100160)
-    DisableBackread(1100161)
-    End()
-    SkipLinesIfFlagDisabled(1, 1691)
-    SetTeamType(1100160, TeamType.Ally)
+    if FlagEnabled(4):
+        DisableCharacter(1100160)
+        DisableCharacter(1100161)
+        Kill(1100160)
+        Kill(1100161)
+        DisableBackread(1100160)
+        DisableBackread(1100161)
+        End()
+    if FlagEnabled(1691):
+        SetTeamType(1100160, TeamType.Ally)
     DisableAI(1100160)
     DisableHealthBar(1100160)
-    IfCharacterAlive(1, 1100160)
-    IfFlagEnabled(1, 11105393)
+    AND_1.Add(CharacterAlive(1100160))
+    AND_1.Add(FlagEnabled(11105393))
     IfAttacked(1, attacked_entity=1100160, attacker=PLAYER)
-    IfFlagEnabled(2, 11105393)
-    IfCharacterInsideRegion(2, PLAYER, region=1102100)
-    IfFlagEnabled(2, 1691)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_2.Add(FlagEnabled(11105393))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=1102100))
+    AND_2.Add(FlagEnabled(1691))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     EnableAI(1100160)
     SetTeamType(1100160, TeamType.Boss)
     EnableBossHealthBar(1100160, name=2730)
     EnableFlag(11105392)
-    IfFlagEnabled(0, 4)
+    
+    MAIN.Await(FlagEnabled(4))
+    
     End()
 
 
@@ -359,7 +375,9 @@ def Event_11100000():
     """Event 11100000"""
     if ThisEventFlagEnabled():
         return
-    IfCharacterDead(0, 1100160)
+    
+    MAIN.Await(CharacterDead(1100160))
+    
     EnableFlag(4)
     KillBoss(game_area_param_id=1100160)
     SkipLinesIfClient(1)
@@ -374,15 +392,19 @@ def Event_11100000():
 def Event_11105394():
     """Event 11105394"""
     DisableNetworkSync()
-    IfFlagDisabled(1, 4)
-    IfFlagEnabled(1, 11105390)
-    IfCharacterInsideRegion(1, PLAYER, region=1102996)
+    AND_1.Add(FlagDisabled(4))
+    AND_1.Add(FlagEnabled(11105390))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1102996))
     SkipLinesIfHost(1)
-    IfFlagEnabled(1, 11105391)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(11105391))
+    
+    MAIN.Await(AND_1)
+    
     EnableSoundEvent(sound_id=1103800)
     EnableFlag(11105394)
-    IfFlagEnabled(0, 4)
+    
+    MAIN.Await(FlagEnabled(4))
+    
     End()
 
 
@@ -390,15 +412,19 @@ def Event_11105394():
 def Event_11105395():
     """Event 11105395"""
     DisableNetworkSync()
-    IfFlagEnabled(1, 4)
-    IfCharacterInsideRegion(1, PLAYER, region=1102100)
-    IfFlagEnabled(2, 11105380)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(FlagEnabled(4))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1102100))
+    AND_2.Add(FlagEnabled(11105380))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     DisableSoundEvent(sound_id=1103800)
     EnableFlag(11105395)
-    IfFlagEnabled(0, 4)
+    
+    MAIN.Await(FlagEnabled(4))
+    
     End()
 
 
@@ -406,25 +432,32 @@ def Event_11105395():
 def Event_11105396():
     """Event 11105396"""
     DisableCharacter(1100161)
-    EndIfFlagEnabled(4)
-    SkipLinesIfThisEventFlagDisabled(3)
-    SetDisplayMask(1100160, bit_index=0, switch_type=OnOffChange.On)
-    SetCollisionMask(1100160, bit_index=1, switch_type=OnOffChange.Off)
-    End()
-    IfCharacterBackreadEnabled(0, 1100160)
+    if FlagEnabled(4):
+        return
+    if ThisEventFlagEnabled():
+        SetDisplayMask(1100160, bit_index=0, switch_type=OnOffChange.On)
+        SetCollisionMask(1100160, bit_index=1, switch_type=OnOffChange.Off)
+        End()
+    
+    MAIN.Await(CharacterBackreadEnabled(1100160))
+    
     CreateNPCPart(1100160, npc_part_id=2730, part_index=NPCPartType.Part1, part_health=158)
-    IfHealthGreaterThan(1, 1100160, value=0.0)
-    IfCharacterPartHealthLessThanOrEqual(1, 1100160, npc_part_id=2730, value=0)
-    IfFlagDisabled(1, 11105381)
+    AND_1.Add(HealthGreaterThan(1100160, value=0.0))
+    AND_1.Add(CharacterPartHealthLessThanOrEqual(1100160, npc_part_id=2730, value=0))
+    AND_1.Add(FlagDisabled(11105381))
     IfAttacked(1, attacked_entity=1100160, attacker=PLAYER)
-    IfHealthLessThanOrEqual(2, 1100160, value=0.0)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_2.Add(HealthLessThanOrEqual(1100160, value=0.0))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     EndIfFinishedConditionTrue(input_condition=2)
     ResetAnimation(1100160)
     ForceAnimation(1100160, 8000)
-    IfCharacterHasTAEEvent(0, 1100160, tae_event_id=400)
+    
+    MAIN.Await(CharacterHasTAEEvent(1100160, tae_event_id=400))
+    
     EnableCharacter(1100161)
     SetDisplayMask(1100160, bit_index=0, switch_type=OnOffChange.On)
     SetCollisionMask(1100160, bit_index=1, switch_type=OnOffChange.Off)
@@ -436,19 +469,22 @@ def Event_11105396():
         copy_draw_parent=1100160,
     )
     ForceAnimation(1100161, 8100)
-    IfCharacterHuman(-7, PLAYER)
-    IfCharacterHollow(-7, PLAYER)
+    OR_7.Add(CharacterHuman(PLAYER))
+    OR_7.Add(CharacterHollow(PLAYER))
     SkipLinesIfConditionFalse(1, -7)
     AwardItemLot(27310000, host_only=True)
     EnableFlag(11105396)
-    IfFlagEnabled(0, 4)
+    
+    MAIN.Await(FlagEnabled(4))
+    
     End()
 
 
 @RestartOnRest(11105397)
 def Event_11105397():
     """Event 11105397"""
-    IfCharacterHasTAEEvent(0, 1100160, tae_event_id=600)
+    MAIN.Await(CharacterHasTAEEvent(1100160, tae_event_id=600))
+    
     DisableHealthBar(1100160)
     DisableBossHealthBar(1100160, name=2730)
     EnableFlag(11105381)
@@ -457,48 +493,50 @@ def Event_11105397():
     SetNetworkUpdateAuthority(1100160, authority_level=UpdateAuthority.Forced)
     EnableRandomFlagInRange(flag_range=(11105110, 11105119))
     SkipLinesIfFlagDisabled(3, 11105110)
-    IfCharacterInsideRegion(1, 1100160, region=1102810)
+    AND_1.Add(CharacterInsideRegion(1100160, region=1102810))
     SkipLinesIfConditionTrue(2, 1)
     Move(1100160, destination=1102810, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105111)
-    IfCharacterInsideRegion(2, 1100160, region=1102811)
+    AND_2.Add(CharacterInsideRegion(1100160, region=1102811))
     SkipLinesIfConditionTrue(2, 2)
     Move(1100160, destination=1102811, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105112)
-    IfCharacterInsideRegion(3, 1100160, region=1102812)
+    AND_3.Add(CharacterInsideRegion(1100160, region=1102812))
     SkipLinesIfConditionTrue(2, 3)
     Move(1100160, destination=1102812, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105113)
-    IfCharacterInsideRegion(4, 1100160, region=1102813)
+    AND_4.Add(CharacterInsideRegion(1100160, region=1102813))
     SkipLinesIfConditionTrue(2, 4)
     Move(1100160, destination=1102813, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105114)
-    IfCharacterInsideRegion(5, 1100160, region=1102814)
+    AND_5.Add(CharacterInsideRegion(1100160, region=1102814))
     SkipLinesIfConditionTrue(2, 5)
     Move(1100160, destination=1102814, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105115)
-    IfCharacterInsideRegion(6, 1100160, region=1102815)
+    AND_6.Add(CharacterInsideRegion(1100160, region=1102815))
     SkipLinesIfConditionTrue(2, 6)
     Move(1100160, destination=1102815, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105116)
-    IfCharacterInsideRegion(7, 1100160, region=1102816)
+    AND_7.Add(CharacterInsideRegion(1100160, region=1102816))
     SkipLinesIfConditionTrue(2, 7)
     Move(1100160, destination=1102816, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105117)
-    IfCharacterInsideRegion(-1, 1100160, region=1102817)
+    OR_1.Add(CharacterInsideRegion(1100160, region=1102817))
     SkipLinesIfConditionTrue(2, -1)
     Move(1100160, destination=1102817, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105118)
-    IfCharacterInsideRegion(-2, 1100160, region=1102818)
+    OR_2.Add(CharacterInsideRegion(1100160, region=1102818))
     SkipLinesIfConditionTrue(2, -2)
     Move(1100160, destination=1102818, destination_type=CoordEntityType.Region, short_move=True)
     SkipLinesIfFlagDisabled(3, 11105119)
-    IfCharacterInsideRegion(-3, 1100160, region=1102819)
+    OR_3.Add(CharacterInsideRegion(1100160, region=1102819))
     SkipLinesIfConditionTrue(2, -3)
     Move(1100160, destination=1102819, destination_type=CoordEntityType.Region, short_move=True)
     SkipLines(1)
     Move(1100160, destination=1102810, destination_type=CoordEntityType.Region, short_move=True)
-    IfCharacterDoesNotHaveTAEEvent(0, 1100160, tae_event_id=600)
+    
+    MAIN.Await(CharacterDoesNotHaveTAEEvent(1100160, tae_event_id=600))
+    
     Restart()
 
 
@@ -506,21 +544,29 @@ def Event_11105397():
 def Event_11105398():
     """Event 11105398"""
     DisableNetworkSync()
-    IfCharacterHasTAEEvent(0, 1100160, tae_event_id=700)
+    
+    MAIN.Await(CharacterHasTAEEvent(1100160, tae_event_id=700))
+    
     EnableHealthBar(1100160)
     EnableBossHealthBar(1100160, name=2730)
     DisableFlag(11105381)
-    IfCharacterDoesNotHaveTAEEvent(0, 1100160, tae_event_id=700)
+    
+    MAIN.Await(CharacterDoesNotHaveTAEEvent(1100160, tae_event_id=700))
+    
     Restart()
 
 
 @NeverRestart(11105399)
 def Event_11105399():
     """Event 11105399"""
-    EndIfClient()
+    if Client():
+        return
     DisableNetworkSync()
-    IfInsideMap(0, game_map=ANOR_LONDO)
-    IfInsideMap(0, game_map=PAINTED_WORLD)
+    
+    MAIN.Await(InsideMap(game_map=ANOR_LONDO))
+    
+    MAIN.Await(InsideMap(game_map=PAINTED_WORLD))
+    
     RestartEvent(event_id=11105390)
     RestartEvent(event_id=11105391)
     RestartEvent(event_id=11105392)
@@ -543,7 +589,9 @@ def Event_11105150(_, character: int):
     DisableCharacterCollision(character)
     DisableAI(character)
     DisableGravity(character)
-    IfEntityWithinDistance(0, entity=PLAYER, other_entity=character, radius=5.0)
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.0))
+    
     EnableGravity(character)
     EnableCharacterCollision(character)
     SetStandbyAnimationSettings(character, cancel_animation=9060)
@@ -559,7 +607,9 @@ def Event_11105160(_, character: int, region: int):
     DisableCharacterCollision(character)
     DisableAI(character)
     DisableGravity(character)
-    IfCharacterInsideRegion(0, PLAYER, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=region))
+    
     EnableGravity(character)
     EnableCharacterCollision(character)
     SetStandbyAnimationSettings(character, cancel_animation=9060)
@@ -575,7 +625,9 @@ def Event_11105170(_, character: int, region: int, seconds: float):
     DisableCharacterCollision(character)
     DisableAI(character)
     DisableGravity(character)
-    IfCharacterInsideRegion(0, PLAYER, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=region))
+    
     Wait(seconds)
     EnableGravity(character)
     EnableCharacterCollision(character)
@@ -587,10 +639,12 @@ def Event_11105170(_, character: int, region: int, seconds: float):
 def Event_11106200(_, obj: int, other_entity: int, animation_id: int, left: int):
     """Event 11106200"""
     DisableNetworkSync()
-    SkipLinesIfValueEqual(1, left=left, right=-1)
-    IfFlagEnabled(-1, left)
-    IfEntityWithinDistance(-1, entity=PLAYER, other_entity=other_entity, radius=7.0)
-    IfConditionTrue(0, input_condition=-1)
+    if ValueNotEqual(left=left, right=-1):
+        OR_1.Add(FlagEnabled(left))
+    OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=other_entity, radius=7.0))
+    
+    MAIN.Await(OR_1)
+    
     ForceAnimation(obj, animation_id, wait_for_completion=True)
     DisableObject(obj)
 
@@ -599,7 +653,9 @@ def Event_11106200(_, obj: int, other_entity: int, animation_id: int, left: int)
 def Event_11106299():
     """Event 11106299"""
     DisableNetworkSync()
-    IfCharacterInsideRegion(0, PLAYER, region=1102000)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=1102000))
+    
     Event_11106298(-1, 1101300, 13)
     Event_11106298(-1, 1101301, 12)
     Event_11106298(-1, 1101302, 12)
@@ -633,7 +689,9 @@ def Event_11100070(_, obj: int, obj_1: int, animation_id: int, animation_id_1: i
     SkipLinesIfClient(1)
     CreateObjectVFX(obj_1, vfx_id=90, model_point=99005)
     ForceAnimation(obj_1, animation_id, loop=True)
-    IfObjectDestroyed(0, obj)
+    
+    MAIN.Await(ObjectDestroyed(obj))
+    
     ForceAnimation(obj_1, animation_id_1, wait_for_completion=True)
     SkipLinesIfClient(1)
     DeleteObjectVFX(obj_1)
@@ -643,17 +701,19 @@ def Event_11100070(_, obj: int, obj_1: int, animation_id: int, animation_id_1: i
 @RestartOnRest(11105370)
 def Event_11105370():
     """Event 11105370"""
-    SkipLinesIfFlagDisabled(2, 11100410)
-    SetStandbyAnimationSettings(1100170)
-    End()
+    if FlagEnabled(11100410):
+        SetStandbyAnimationSettings(1100170)
+        End()
     IfCharacterType(3, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfConditionFalse(1, input_condition=3)
-    IfCharacterInsideRegion(1, PLAYER, region=1102070)
-    IfConditionFalse(2, input_condition=3)
+    AND_1.Add(not AND_3)
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1102070))
+    AND_2.Add(not AND_3)
     IfAttacked(2, attacked_entity=1100170, attacker=PLAYER)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
     EnableFlag(11100410)
     SetStandbyAnimationSettings(1100170)
     ForceAnimation(1100170, 9060)
@@ -664,12 +724,15 @@ def Event_11105370():
 def Event_11105371():
     """Event 11105371"""
     DisableCharacter(1100172)
-    SkipLinesIfThisEventFlagDisabled(4)
-    IfCharacterBackreadEnabled(0, 1100170)
-    SetDisplayMask(1100170, bit_index=0, switch_type=OnOffChange.On)
-    SetDisplayMask(1100170, bit_index=1, switch_type=OnOffChange.On)
-    End()
-    IfCharacterHasTAEEvent(0, 1100170, tae_event_id=400)
+    if ThisEventFlagEnabled():
+        MAIN.Await(CharacterBackreadEnabled(1100170))
+    
+        SetDisplayMask(1100170, bit_index=0, switch_type=OnOffChange.On)
+        SetDisplayMask(1100170, bit_index=1, switch_type=OnOffChange.On)
+        End()
+    
+    MAIN.Await(CharacterHasTAEEvent(1100170, tae_event_id=400))
+    
     SetDisplayMask(1100170, bit_index=0, switch_type=OnOffChange.On)
     SetDisplayMask(1100170, bit_index=1, switch_type=OnOffChange.On)
     Move(
@@ -692,7 +755,9 @@ def Event_11100100(_, obj: int, vfx_id: int):
         ForceAnimation(obj, 0)
         DeleteVFX(vfx_id, erase_root_only=False)
         End()
-    IfObjectDestroyed(0, obj)
+    
+    MAIN.Await(ObjectDestroyed(obj))
+    
     DeleteVFX(vfx_id)
 
 
@@ -702,12 +767,14 @@ def Event_11100400():
     EnableImmortality(1100171)
     EnableInvincibility(1100171)
     DisableHealthBar(1100171)
-    SkipLinesIfThisEventFlagDisabled(2)
-    DisableCharacter(1100170)
-    End()
+    if ThisEventFlagEnabled():
+        DisableCharacter(1100170)
+        End()
     SetBackreadStateAlternate(1100170, True)
     DisableGravity(1100170)
-    IfCharacterDead(0, 1100170)
+    
+    MAIN.Await(CharacterDead(1100170))
+    
     EnableFlag(11100400)
 
 
@@ -719,9 +786,8 @@ def Event_11100030():
         DisableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Solid)
         End()
     EnableNavmeshType(navmesh_id=1102040, navmesh_type=NavmeshType.Solid)
-    IfFlagDisabled(1, 11100700)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagDisabled(11100700))
+    AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1101130,
         anchor_type=CoordEntityType.Object,
@@ -729,8 +795,10 @@ def Event_11100030():
         max_distance=1.5,
         model_point=100,
         trigger_attribute=TriggerAttribute.All,
-    )
-    IfConditionTrue(0, input_condition=1)
+    ))
+    
+    MAIN.Await(AND_1)
+    
     Move(PLAYER, destination=1102090, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(PLAYER, 7120)
     ForceAnimation(1101130, 1, wait_for_completion=True)
@@ -741,9 +809,8 @@ def Event_11100030():
 def Event_11100031():
     """Event 11100031"""
     DisableNetworkSync()
-    IfFlagDisabled(1, 11100030)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagDisabled(11100030))
+    AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1101130,
         anchor_type=CoordEntityType.Object,
@@ -751,8 +818,10 @@ def Event_11100031():
         max_distance=1.5,
         model_point=101,
         trigger_attribute=TriggerAttribute.All,
-    )
-    IfConditionTrue(0, input_condition=1)
+    ))
+    
+    MAIN.Await(AND_1)
+    
     DisplayDialog(text=10010161, anchor_entity=1101130, button_type=ButtonType.Yes_or_No)
     Restart()
 
@@ -763,7 +832,8 @@ def Event_11100120(_, obj_act_id: int, text: int, anchor_entity: int):
     if ThisEventSlotFlagEnabled():
         return
     IfObjectActivated(0, obj_act_id=obj_act_id)
-    EndIfClient()
+    if Client():
+        return
     DisplayDialog(text=text, anchor_entity=anchor_entity, button_type=ButtonType.Yes_or_No)
 
 
@@ -775,8 +845,8 @@ def Event_11100135():
         EndOfAnimation(obj=1101170, animation_id=1)
         DisableNavmeshType(navmesh_id=1102041, navmesh_type=NavmeshType.Solid)
         End()
-    IfActionButton(
-        0,
+    
+    MAIN.Await(ActionButton(
         prompt_text=10010503,
         anchor_entity=1101150,
         anchor_type=CoordEntityType.Object,
@@ -784,7 +854,8 @@ def Event_11100135():
         max_distance=1.5,
         model_point=192,
         trigger_attribute=TriggerAttribute.All,
-    )
+    ))
+    
     DisableObject(1101018)
     DisableObject(1101019)
     DisableObject(1101020)
@@ -804,9 +875,8 @@ def Event_11100135():
 def Event_11100136():
     """Event 11100136"""
     DisableNetworkSync()
-    IfFlagDisabled(1, 11100135)
-    IfActionButton(
-        1,
+    AND_1.Add(FlagDisabled(11100135))
+    AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1101170,
         anchor_type=CoordEntityType.Object,
@@ -814,8 +884,10 @@ def Event_11100136():
         max_distance=1.5,
         model_point=100,
         trigger_attribute=TriggerAttribute.All,
-    )
-    IfConditionTrue(0, input_condition=1)
+    ))
+    
+    MAIN.Await(AND_1)
+    
     DisplayDialog(text=10010160, anchor_entity=1101170, button_type=ButtonType.Yes_or_No)
     Restart()
 
@@ -823,18 +895,20 @@ def Event_11100136():
 @RestartOnRest(11100420)
 def Event_11100420():
     """Event 11100420"""
-    SkipLinesIfThisEventFlagDisabled(3)
-    Move(1100180, destination=1102201, destination_type=CoordEntityType.Region, short_move=True)
-    SetNest(1100180, region=1102201)
-    End()
+    if ThisEventFlagEnabled():
+        Move(1100180, destination=1102201, destination_type=CoordEntityType.Region, short_move=True)
+        SetNest(1100180, region=1102201)
+        End()
     DisableAI(1100180)
-    IfCharacterInsideRegion(-1, PLAYER, region=1102200)
+    OR_1.Add(CharacterInsideRegion(PLAYER, region=1102200))
     IfAttacked(-1, attacked_entity=1100180, attacker=PLAYER)
     IfAttacked(-1, attacked_entity=1100130, attacker=PLAYER)
     IfAttacked(-1, attacked_entity=1100132, attacker=PLAYER)
     IfAttacked(-1, attacked_entity=1100135, attacker=PLAYER)
     IfAttacked(-1, attacked_entity=1100136, attacker=PLAYER)
-    IfConditionTrue(0, input_condition=-1)
+    
+    MAIN.Await(OR_1)
+    
     ForceAnimation(1100180, 500)
     EnableAI(1100180)
     SetNest(1100180, region=1102201)
@@ -844,20 +918,23 @@ def Event_11100420():
 def Event_11100710():
     """Event 11100710"""
     DisableFlag(11105380)
-    IfHost(1)
-    IfFlagDisabled(1, 1691)
-    IfCharacterInsideRegion(1, PLAYER, region=1102500)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(Host())
+    AND_1.Add(FlagDisabled(1691))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1102500))
+    
+    MAIN.Await(AND_1)
+    
     EnableImmortality(1100160)
-    EndIfClient()
+    if Client():
+        return
     DisableImmortality(1100160)
     EnableFlag(11105380)
-    SkipLinesIfFlagEnabled(1, 4)
-    IfFlagEnabled(0, 11105395)
+    if FlagDisabled(4):
+        MAIN.Await(FlagEnabled(11105395))
     PlayCutscene(110035, cutscene_flags=0, player_id=10000, move_to_region=1512500, game_map=ANOR_LONDO)
     WaitFrames(frames=1)
-    SkipLinesIfThisEventFlagEnabled(1)
-    AwardItemLot(9030, host_only=True)
+    if ThisEventFlagDisabled():
+        AwardItemLot(9030, host_only=True)
     SetRespawnPoint(respawn_point=1512960)
     SaveRequest()
     Restart()
@@ -868,20 +945,20 @@ def Event_11105010():
     """Event 11105010"""
     if ThisEventFlagEnabled():
         return
-    IfCharacterAlive(1, 1100200)
-    IfCharacterAlive(1, 1100201)
-    IfCharacterAlive(1, 1100202)
-    IfCharacterAlive(1, 1100203)
-    IfCharacterAlive(1, 1100204)
-    IfCharacterAlive(1, 1100205)
-    IfCharacterAlive(1, 1100206)
-    IfCharacterAlive(1, 1100207)
-    IfCharacterAlive(1, 1100208)
-    IfCharacterAlive(1, 1100209)
-    IfCharacterAlive(1, 1100210)
-    IfCharacterAlive(1, 1100211)
-    IfCharacterAlive(1, 1100212)
-    IfCharacterAlive(1, 1100213)
+    AND_1.Add(CharacterAlive(1100200))
+    AND_1.Add(CharacterAlive(1100201))
+    AND_1.Add(CharacterAlive(1100202))
+    AND_1.Add(CharacterAlive(1100203))
+    AND_1.Add(CharacterAlive(1100204))
+    AND_1.Add(CharacterAlive(1100205))
+    AND_1.Add(CharacterAlive(1100206))
+    AND_1.Add(CharacterAlive(1100207))
+    AND_1.Add(CharacterAlive(1100208))
+    AND_1.Add(CharacterAlive(1100209))
+    AND_1.Add(CharacterAlive(1100210))
+    AND_1.Add(CharacterAlive(1100211))
+    AND_1.Add(CharacterAlive(1100212))
+    AND_1.Add(CharacterAlive(1100213))
     EndIfConditionFalse(1)
     DisableCharacterCollision(1100200)
     DisableCharacterCollision(1100201)
@@ -967,7 +1044,9 @@ def Event_11105010():
     Move(1100211, destination=1102841, destination_type=CoordEntityType.Region, short_move=True)
     Move(1100212, destination=1102842, destination_type=CoordEntityType.Region, short_move=True)
     Move(1100213, destination=1102843, destination_type=CoordEntityType.Region, short_move=True)
-    IfCharacterInsideRegion(0, PLAYER, region=1102300)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=1102300))
+    
     EnableAI(1100200)
     EnableAI(1100201)
     EnableAI(1100202)
@@ -1338,13 +1417,15 @@ def Event_11105190(_, character: int, animation_id: int, animation_id_1: int, fl
     DisableGravity(character)
     AddSpecialEffect(character, 4160)
     SkipLinesIfClient(1)
-    IfFlagEnabled(1, 51100260)
-    IfHost(1)
-    IfCharacterInsideRegion(1, PLAYER, region=1202021)
-    IfCharacterInsideRegion(2, PLAYER, region=1102040)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(FlagEnabled(51100260))
+    AND_1.Add(Host())
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1202021))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=1102040))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
     EnableCharacterCollision(character)
     EnableGravity(character)
     SetStandbyAnimationSettings(character)
@@ -1368,8 +1449,10 @@ def Event_11105195(_, character: int, flag: int):
         return
     EnableFlag(flag)
     IfHasAIStatus(-1, character, ai_status=AIStatusType.Battle)
-    IfCharacterInsideRegion(-1, PLAYER, region=1102050)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(CharacterInsideRegion(PLAYER, region=1102050))
+    
+    MAIN.Await(OR_1)
+    
     ForceAnimation(character, 3006)
 
 
@@ -1386,51 +1469,56 @@ def Event_11105200(
     flag_5: int,
 ):
     """Event 11105200"""
-    IfFlagEnabled(0, flag)
-    IfFlagDisabled(1, flag_2)
-    IfCharacterInsideRegion(1, PLAYER, region=1102020)
-    IfFlagDisabled(2, flag_3)
-    IfCharacterInsideRegion(2, PLAYER, region=1102030)
-    IfFlagDisabled(3, flag_4)
-    IfCharacterInsideRegion(3, PLAYER, region=1102040)
-    IfFlagDisabled(4, flag_5)
-    IfCharacterInsideRegion(4, PLAYER, region=1102050)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(0, input_condition=-1)
+    MAIN.Await(FlagEnabled(flag))
+    
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=1102020))
+    AND_2.Add(FlagDisabled(flag_3))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=1102030))
+    AND_3.Add(FlagDisabled(flag_4))
+    AND_3.Add(CharacterInsideRegion(PLAYER, region=1102040))
+    AND_4.Add(FlagDisabled(flag_5))
+    AND_4.Add(CharacterInsideRegion(PLAYER, region=1102050))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(flag_1)
     RestartEvent(event_id=11105220, event_slot=event_slot)
     SkipLinesIfFinishedConditionFalse(6, condition=1)
-    SkipLinesIfFlagDisabled(1, flag_3)
-    RestartEvent(event_id=event_id, event_slot=3)
-    SkipLinesIfFlagDisabled(1, flag_4)
-    RestartEvent(event_id=event_id, event_slot=1)
-    SkipLinesIfFlagDisabled(1, flag_5)
-    RestartEvent(event_id=event_id, event_slot=5)
+    if FlagEnabled(flag_3):
+        RestartEvent(event_id=event_id, event_slot=3)
+    if FlagEnabled(flag_4):
+        RestartEvent(event_id=event_id, event_slot=1)
+    if FlagEnabled(flag_5):
+        RestartEvent(event_id=event_id, event_slot=5)
     SkipLinesIfFinishedConditionFalse(6, condition=2)
-    SkipLinesIfFlagDisabled(1, flag_2)
-    RestartEvent(event_id=event_id, event_slot=2)
-    SkipLinesIfFlagDisabled(1, flag_4)
-    RestartEvent(event_id=event_id, event_slot=1)
-    SkipLinesIfFlagDisabled(1, flag_5)
-    RestartEvent(event_id=event_id, event_slot=5)
+    if FlagEnabled(flag_2):
+        RestartEvent(event_id=event_id, event_slot=2)
+    if FlagEnabled(flag_4):
+        RestartEvent(event_id=event_id, event_slot=1)
+    if FlagEnabled(flag_5):
+        RestartEvent(event_id=event_id, event_slot=5)
     SkipLinesIfFinishedConditionFalse(6, condition=3)
-    SkipLinesIfFlagDisabled(1, flag_2)
-    RestartEvent(event_id=event_id)
-    SkipLinesIfFlagDisabled(1, flag_3)
-    RestartEvent(event_id=event_id, event_slot=3)
-    SkipLinesIfFlagDisabled(1, flag_5)
-    RestartEvent(event_id=event_id, event_slot=5)
+    if FlagEnabled(flag_2):
+        RestartEvent(event_id=event_id)
+    if FlagEnabled(flag_3):
+        RestartEvent(event_id=event_id, event_slot=3)
+    if FlagEnabled(flag_5):
+        RestartEvent(event_id=event_id, event_slot=5)
     SkipLinesIfFinishedConditionFalse(6, condition=4)
-    SkipLinesIfFlagDisabled(1, flag_2)
-    RestartEvent(event_id=event_id)
-    SkipLinesIfFlagDisabled(1, flag_3)
-    RestartEvent(event_id=event_id, event_slot=3)
-    SkipLinesIfFlagDisabled(1, flag_4)
-    RestartEvent(event_id=event_id, event_slot=4)
-    IfFlagDisabled(0, flag_1)
+    if FlagEnabled(flag_2):
+        RestartEvent(event_id=event_id)
+    if FlagEnabled(flag_3):
+        RestartEvent(event_id=event_id, event_slot=3)
+    if FlagEnabled(flag_4):
+        RestartEvent(event_id=event_id, event_slot=4)
+    
+    MAIN.Await(FlagDisabled(flag_1))
+    
     Restart()
 
 
@@ -1438,9 +1526,12 @@ def Event_11105200(
 def Event_11105220(_, character: int, flag: int, seconds: float, event_id: int):
     """Event 11105220"""
     DisableNetworkSync()
-    IfFlagEnabled(0, flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     Wait(seconds)
-    RestartIfFlagDisabled(flag)
+    if FlagDisabled(flag):
+        return RESTART
     DisableFlag(flag)
     RestartEvent(event_id=event_id)
     RestartEvent(event_id=event_id, event_slot=1)
@@ -1465,12 +1556,15 @@ def Event_11105250(
     flag_1: int,
 ):
     """Event 11105250"""
-    SkipLinesIfFlagEnabled(2, flag)
-    IfCharacterDead(0, character)
-    End()
+    if FlagDisabled(flag):
+        MAIN.Await(CharacterDead(character))
+    
+        End()
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
-    IfCharacterInsideRegion(0, character, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region))
+    
     SetNest(character, region=region)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag_1)
@@ -1492,12 +1586,15 @@ def Event_11105260(
     flag_1: int,
 ):
     """Event 11105260"""
-    SkipLinesIfFlagEnabled(2, flag)
-    IfCharacterDead(0, character)
-    End()
+    if FlagDisabled(flag):
+        MAIN.Await(CharacterDead(character))
+    
+        End()
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
-    IfCharacterInsideRegion(0, character, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region))
+    
     SetNest(character, region=region)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag_1)
@@ -1519,12 +1616,15 @@ def Event_11105270(
     flag_1: int,
 ):
     """Event 11105270"""
-    SkipLinesIfFlagEnabled(2, flag)
-    IfCharacterDead(0, character)
-    End()
+    if FlagDisabled(flag):
+        MAIN.Await(CharacterDead(character))
+    
+        End()
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
-    IfCharacterInsideRegion(0, character, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region))
+    
     SetNest(character, region=region)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag_1)
@@ -1546,12 +1646,15 @@ def Event_11105280(
     flag_1: int,
 ):
     """Event 11105280"""
-    SkipLinesIfFlagEnabled(2, flag)
-    IfCharacterDead(0, character)
-    End()
+    if FlagDisabled(flag):
+        MAIN.Await(CharacterDead(character))
+    
+        End()
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
-    IfCharacterInsideRegion(0, character, region=region)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region))
+    
     SetNest(character, region=region)
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag_1)
@@ -1578,20 +1681,24 @@ def Event_11100600(_, obj: int, obj_act_id: int):
 @NeverRestart(11100510)
 def Event_11100510(_, character: int, flag: int):
     """Event 11100510"""
-    IfHealthLessThanOrEqual(1, character, value=0.8999999761581421)
-    IfHealthGreaterThan(1, character, value=0.0)
+    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
     IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfFlagEnabled(2, flag)
-    IfThisEventSlotFlagEnabled(2)
-    IfFlagEnabled(3, flag)
-    IfThisEventSlotFlagDisabled(3)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
+    AND_2.Add(FlagEnabled(flag))
+    AND_2.Add(ThisEventSlotFlagEnabled())
+    AND_3.Add(FlagEnabled(flag))
+    AND_3.Add(ThisEventSlotFlagDisabled())
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
     SkipLinesIfFinishedConditionFalse(2, condition=3)
     DisableCharacter(character)
-    IfFlagEnabled(0, 703)
+    
+    MAIN.Await(FlagEnabled(703))
+    
     EnableFlag(flag)
     SetTeamType(character, TeamType.HostileAlly)
     SaveRequest()
@@ -1603,7 +1710,9 @@ def Event_11100520(_, character: int, first_flag: int, last_flag: int, flag: int
     if ThisEventSlotFlagEnabled():
         DropMandatoryTreasure(character)
         End()
-    IfHealthLessThanOrEqual(0, character, value=0.0)
+    
+    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1611,10 +1720,12 @@ def Event_11100520(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11100530)
 def Event_11100530(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11100530"""
-    IfFlagEnabled(1, 1690)
+    AND_1.Add(FlagEnabled(1690))
     IfAttacked(1, attacked_entity=character, attacker=PLAYER)
-    IfHealthGreaterThan(1, character, value=0.0)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1625,7 +1736,9 @@ def Event_11100531(_, character: int, first_flag: int, last_flag: int, flag: int
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
         End()
-    IfHealthLessThanOrEqual(0, character, value=0.0)
+    
+    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
 
@@ -1635,7 +1748,8 @@ def Event_11100040():
     """Event 11100040"""
     DisableNetworkSync()
     Wait(1.0)
-    EndIfFlagEnabled(11100700)
+    if FlagEnabled(11100700):
+        return
     RegisterLadder(start_climbing_flag=11100012, stop_climbing_flag=11100013, obj=1101141)
 
 
@@ -1646,12 +1760,14 @@ def Event_11100532(_, character: int, first_flag: int, last_flag: int, flag: int
     DisableMapCollision(collision=1103101)
     DisableObject(1101750)
     DeleteVFX(1101751, erase_root_only=False)
-    IfFlagEnabled(0, 11100700)
+    
+    MAIN.Await(FlagEnabled(11100700))
+    
     DisableFlagRange((first_flag, last_flag))
-    SkipLinesIfFlagDisabled(2, 8111)
-    EnableFlag(flag)
-    SkipLines(1)
-    EnableFlag(flag_1)
+    if FlagEnabled(8111):
+        EnableFlag(flag)
+    else:
+        EnableFlag(flag_1)
     EnableMapPiece(map_piece_id=1103100)
     EnableMapCollision(collision=1103101)
     DisableObject(1101141)
@@ -1684,8 +1800,10 @@ def Event_11100532(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11100533)
 def Event_11100533(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11100533"""
-    IfFlagEnabled(1, 1606)
-    IfHealthLessThanOrEqual(0, character, value=0.0)
+    AND_1.Add(FlagEnabled(1606))
+    
+    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableFlag(8110)
@@ -1694,8 +1812,10 @@ def Event_11100533(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11100534)
 def Event_11100534(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11100534"""
-    IfFlagEnabled(1, 1607)
-    IfHealthLessThanOrEqual(0, character, value=0.0)
+    AND_1.Add(FlagEnabled(1607))
+    
+    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
     EnableFlag(8110)
@@ -1706,17 +1826,19 @@ def Event_11100535(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100535"""
     if ThisEventFlagEnabled():
         return
-    IfFlagDisabled(1, 11100700)
-    IfFlagEnabled(1, 8110)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(11100700))
+    AND_1.Add(FlagEnabled(8110))
+    
+    MAIN.Await(AND_1)
+    
     RemoveGoodFromPlayer(item=116)
     EnableFlag(11100300)
     DisableCharacter(character)
     DisableFlagRange((first_flag, last_flag))
-    SkipLinesIfFlagDisabled(2, 8111)
-    EnableFlag(flag)
-    SkipLines(1)
-    EnableFlag(flag_1)
+    if FlagEnabled(8111):
+        EnableFlag(flag)
+    else:
+        EnableFlag(flag_1)
     DisableFlagRange((1760, 1769))
     EnableFlag(1764)
 
@@ -1726,28 +1848,35 @@ def Event_11100300():
     """Event 11100300"""
     if ThisEventFlagEnabled():
         return
-    IfThisEventFlagEnabled(0)
-    SkipLinesIfFlagDisabled(1, 11400400)
-    AwardItemLot(2800, host_only=False)
-    SkipLinesIfFlagDisabled(1, 11400401)
-    AwardItemLot(2810, host_only=False)
-    SkipLinesIfFlagDisabled(1, 11400402)
-    AwardItemLot(2820, host_only=False)
+    
+    MAIN.Await(ThisEventFlagEnabled())
+    
+    if FlagEnabled(11400400):
+        AwardItemLot(2800, host_only=False)
+    if FlagEnabled(11400401):
+        AwardItemLot(2810, host_only=False)
+    if FlagEnabled(11400402):
+        AwardItemLot(2820, host_only=False)
 
 
 @NeverRestart(11105030)
 def Event_11105030():
     """Event 11105030"""
     DisableNetworkSync()
-    EndIfClient()
-    EndIfFlagEnabled(11105031)
-    EndIfFlagEnabled(4)
-    IfHost(1)
-    IfCharacterHuman(1, PLAYER)
-    IfFlagDisabled(1, 11100810)
-    SkipLinesIfThisEventFlagEnabled(1)
-    IfCharacterInsideRegion(1, PLAYER, region=1102011)
-    IfConditionTrue(0, input_condition=1)
+    if Client():
+        return
+    if FlagEnabled(11105031):
+        return
+    if FlagEnabled(4):
+        return
+    AND_1.Add(Host())
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(FlagDisabled(11100810))
+    if ThisEventFlagDisabled():
+        AND_1.Add(CharacterInsideRegion(PLAYER, region=1102011))
+    
+    MAIN.Await(AND_1)
+    
     PlaceSummonSign(
         sign_type=SummonSignType.BlackEyeSign,
         character=6570,
@@ -1763,11 +1892,13 @@ def Event_11105030():
 def Event_11100810():
     """Event 11100810"""
     SkipLinesIfHost(3)
-    IfFlagEnabled(1, 11105031)
-    IfFlagDisabled(1, 11105032)
+    AND_1.Add(FlagEnabled(11105031))
+    AND_1.Add(FlagDisabled(11105032))
     SkipLinesIfConditionTrue(1, 1)
     DisableCharacter(6570)
     if ThisEventFlagEnabled():
         return
-    IfCharacterDead(0, 6570)
+    
+    MAIN.Await(CharacterDead(6570))
+    
     EnableFlag(11100810)

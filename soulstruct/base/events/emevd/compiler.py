@@ -40,7 +40,10 @@ def base_compile_instruction(emedf_aliases: dict, instr_name: str, *args, arg_ty
             signature.remove(evs_arg_name)
 
     if kwargs:
-        raise ValueError(f"Invalid argument(s) for instruction ({category}, {index}) '{instr_name}': {list(kwargs)}")
+        raise ValueError(
+            f"Invalid keyword argument(s) for instruction ({category}, {index}) '{instr_name}': {list(kwargs)}\n"
+            f"    Constructed kwargs: {evs_kwargs}"
+        )
 
     if is_partial:
         # Fill in baked keyword arguments and redirect name.

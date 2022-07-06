@@ -5,6 +5,32 @@ Make sure you also do `from soulstruct.{game}.events import *` to get all enums,
 """
 
 __all__ = [
+    # Basics:
+    "NeverRestart",
+    "RestartOnRest",
+    "UnknownRestart",
+    "EVENTS",
+    "Condition",
+    "HeldCondition",
+    "END",
+    "RESTART",
+    "Await",
+    "MAIN",
+    "OR_1",
+    "OR_2",
+    "OR_3",
+    "OR_4",
+    "OR_5",
+    "OR_6",
+    "OR_7",
+    "AND_1",
+    "AND_2",
+    "AND_3",
+    "AND_4",
+    "AND_5",
+    "AND_6",
+    "AND_7",
+    # Built-in instructions:
     "IfConditionState",  # 0[0]
     "IfConditionTrue",
     "IfConditionFalse",
@@ -65,8 +91,8 @@ __all__ = [
     "IfWorldTendencyComparison",  # 3[11]
     "IfWhiteWorldTendencyComparison",
     "IfBlackWorldTendencyComparison",
-    "IfWhiteWorldTendencyGreaterThanOrEqual",
-    "IfBlackWorldTendencyGreaterThanOrEqual",
+    "IfWhiteWorldTendencyGreaterThan",
+    "IfBlackWorldTendencyGreaterThan",
     "IfEventValueComparison",  # 3[12]
     "IfEventValueEqual",
     "IfEventValueNotEqual",
@@ -475,8 +501,7 @@ __all__ = [
     "DisableMapPiece",
     "EnableThisFlag",
     "DisableThisFlag",
-
-    # From `compiler`:
+    # Custom instructions from `compiler`:
     "compile_game_object_test",
     "RunEvent",
     "EnableObjectActivation",
@@ -496,11 +521,196 @@ __all__ = [
     "IfPlayerDoesNotHaveRing",
     "IfPlayerDoesNotHaveGood",
     "IfActionButton",
+    # Boolean test functions:
+    "ValueEqual",
+    "ValueNotEqual",
+    "ValueGreaterThan",
+    "ValueLessThan",
+    "ValueGreaterThanOrEqual",
+    "ValueLessThanOrEqual",
+    "FlagEnabled",
+    "FlagDisabled",
+    "ThisEventFlagEnabled",
+    "ThisEventFlagDisabled",
+    "ThisEventSlotFlagEnabled",
+    "ThisEventSlotFlagDisabled",
+    "FlagRangeAllEnabled",
+    "FlagRangeAllDisabled",
+    "FlagRangeAnyEnabled",
+    "FlagRangeAnyDisabled",
+    "PlayerInsideRegion",
+    "PlayerOutsideRegion",
+    "CharacterInsideRegion",
+    "CharacterOutsideRegion",
+    "PlayerWithinDistance",
+    "PlayerBeyondDistance",
+    "EntityWithinDistance",
+    "EntityBeyondDistance",
+    "Host",
+    "Client",
+    "Multiplayer",
+    "Singleplayer",
+    "AllPlayersInsideRegion",
+    "AllPlayersOutsideRegion",
+    "InsideMap",
+    "OutsideMap",
+    "TrueFlagCountEqual",
+    "TrueFlagCountNotEqual",
+    "TrueFlagCountGreaterThan",
+    "TrueFlagCountLessThan",
+    "TrueFlagCountGreaterThanOrEqual",
+    "TrueFlagCountLessThanOrEqual",
+    "WhiteWorldTendencyComparison",
+    "BlackWorldTendencyComparison",
+    "WhiteWorldTendencyGreaterThan",
+    "BlackWorldTendencyGreaterThan",
+    "EventValueEqual",
+    "EventValueNotEqual",
+    "EventValueGreaterThan",
+    "EventValueLessThan",
+    "EventValueGreaterThanOrEqual",
+    "EventValueLessThanOrEqual",
+    "NewGameCycleEqual",
+    "NewGameCycleNotEqual",
+    "NewGameCycleGreaterThan",
+    "NewGameCycleLessThan",
+    "NewGameCycleGreaterThanOrEqual",
+    "NewGameCycleLessThanOrEqual",
+    "DLCOwned",
+    "DLCNotOwned",
+    "Online",
+    "Offline",
+    "CharacterDead",
+    "CharacterAlive",
+    "HealthEqual",
+    "HealthNotEqual",
+    "HealthGreaterThan",
+    "HealthLessThan",
+    "HealthGreaterThanOrEqual",
+    "HealthLessThanOrEqual",
+    "CharacterHuman",
+    "CharacterWhitePhantom",
+    "CharacterHollow",
+    "CharacterTargeting",
+    "CharacterNotTargeting",
+    "PlayerHasSpecialEffect",
+    "PlayerDoesNotHaveSpecialEffect",
+    "CharacterHasSpecialEffect",
+    "CharacterDoesNotHaveSpecialEffect",
+    "CharacterPartHealthLessThanOrEqual",
+    "CharacterBackreadEnabled",
+    "CharacterBackreadDisabled",
+    "CharacterHasTAEEvent",
+    "CharacterDoesNotHaveTAEEvent",
+    "SkullLanternActive",
+    "SkullLanternInactive",
+    "PlayerLevelEqual",
+    "PlayerLevelNotEqual",
+    "PlayerLevelGreaterThan",
+    "PlayerLevelLessThan",
+    "PlayerLevelGreaterThanOrEqual",
+    "PlayerLevelLessThanOrEqual",
+    "HealthValueEqual",
+    "HealthValueNotEqual",
+    "HealthValueGreaterThan",
+    "HealthValueLessThan",
+    "HealthValueGreaterThanOrEqual",
+    "HealthValueLessThanOrEqual",
+    "ObjectDestroyed",
+    "ObjectNotDestroyed",
+    "ActionButton",
 ]
+
+import typing as tp
 
 from soulstruct.darksouls1ptde.game_types import *
 from .emevd.compiler import *
 from .emevd.enums import *
+
+# Restart decorators. They can be used as names (not function calls) or have an event ID argument.
+def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+
+# Dummy enum for accessing event flags defined by events.
+class EVENTS(Flag): ...
+
+# Dummy class for creating conditions.
+class Condition:
+    def __init__(self, condition, hold: bool = False): ...
+
+class HeldCondition:
+    def __init__(self, condition): ...
+
+# Terminators.
+END = ...
+RESTART = ...
+
+# The Await function. Equivalent to using the 'await' built-in Python keyword.
+def Await(condition): ...
+
+class MAIN:
+    @staticmethod
+    def Await(condition): ...
+
+class OR_1:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_2:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_3:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_4:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_5:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_6:
+    @staticmethod
+    def Add(condition): ...
+
+class OR_7:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_1:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_2:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_3:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_4:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_5:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_6:
+    @staticmethod
+    def Add(condition): ...
+
+class AND_7:
+    @staticmethod
+    def Add(condition): ...
+
+
+
 
 
 def IfConditionState(condition: int, state: bool | int, input_condition: int):
@@ -945,15 +1155,15 @@ def IfBlackWorldTendencyComparison(condition: int, comparison_type: ComparisonTy
     """
 
 
-def IfWhiteWorldTendencyGreaterThanOrEqual(condition: int, value: int):
+def IfWhiteWorldTendencyGreaterThan(condition: int, value: int):
     """
-    Calls `IfWorldTendencyComparison` with `world_tendency_type=0`, `comparison_type=4`.
+    Calls `IfWorldTendencyComparison` with `world_tendency_type=0`, `comparison_type=2`.
     """
 
 
-def IfBlackWorldTendencyGreaterThanOrEqual(condition: int, value: int):
+def IfBlackWorldTendencyGreaterThan(condition: int, value: int):
     """
-    Calls `IfWorldTendencyComparison` with `world_tendency_type=1`, `comparison_type=4`.
+    Calls `IfWorldTendencyComparison` with `world_tendency_type=1`, `comparison_type=2`.
     """
 
 
@@ -3785,3 +3995,413 @@ def DisableThisFlag():
     """
     Disables the flag ID of the current event. Does not detect slot.
     """
+
+
+def ValueEqual(left: int, right: int) -> bool:
+    ...
+
+
+def ValueNotEqual(left: int, right: int) -> bool:
+    ...
+
+
+def ValueGreaterThan(left: int, right: int) -> bool:
+    ...
+
+
+def ValueLessThan(left: int, right: int) -> bool:
+    ...
+
+
+def ValueGreaterThanOrEqual(left: int, right: int) -> bool:
+    ...
+
+
+def ValueLessThanOrEqual(left: int, right: int) -> bool:
+    ...
+
+
+def FlagEnabled(flag: Flag | int) -> bool:
+    ...
+
+
+def FlagDisabled(flag: Flag | int) -> bool:
+    ...
+
+
+def ThisEventFlagEnabled() -> bool:
+    ...
+
+
+def ThisEventFlagDisabled() -> bool:
+    ...
+
+
+def ThisEventSlotFlagEnabled() -> bool:
+    ...
+
+
+def ThisEventSlotFlagDisabled() -> bool:
+    ...
+
+
+def FlagRangeAllEnabled(flag_range: FlagRange | tuple | list) -> bool:
+    ...
+
+
+def FlagRangeAllDisabled(flag_range: FlagRange | tuple | list) -> bool:
+    ...
+
+
+def FlagRangeAnyEnabled(flag_range: FlagRange | tuple | list) -> bool:
+    ...
+
+
+def FlagRangeAnyDisabled(flag_range: FlagRange | tuple | list) -> bool:
+    ...
+
+
+def PlayerInsideRegion(region: Region | int) -> bool:
+    ...
+
+
+def PlayerOutsideRegion(region: Region | int) -> bool:
+    ...
+
+
+def CharacterInsideRegion(character: Character | Object | int, region: Region | int) -> bool:
+    ...
+
+
+def CharacterOutsideRegion(character: Character | Object | int, region: Region | int) -> bool:
+    ...
+
+
+def PlayerWithinDistance(other_entity: Object | Region | Character | int, radius: float) -> bool:
+    ...
+
+
+def PlayerBeyondDistance(other_entity: Object | Region | Character | int, radius: float) -> bool:
+    ...
+
+
+def EntityWithinDistance(
+    entity: Object | Region | Character | int,
+    other_entity: Object | Region | Character | int,
+    radius: float,
+) -> bool:
+    ...
+
+
+def EntityBeyondDistance(
+    entity: Object | Region | Character | int,
+    other_entity: Object | Region | Character | int,
+    radius: float,
+) -> bool:
+    ...
+
+
+def Host() -> bool:
+    ...
+
+
+def Client() -> bool:
+    ...
+
+
+def Multiplayer() -> bool:
+    ...
+
+
+def Singleplayer() -> bool:
+    ...
+
+
+def AllPlayersInsideRegion(region: Region | int) -> bool:
+    ...
+
+
+def AllPlayersOutsideRegion(region: Region | int) -> bool:
+    ...
+
+
+def InsideMap(game_map: Map | tuple | list) -> bool:
+    ...
+
+
+def OutsideMap(game_map: Map | tuple | list) -> bool:
+    ...
+
+
+def TrueFlagCountEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def TrueFlagCountNotEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def TrueFlagCountGreaterThan(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def TrueFlagCountLessThan(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def TrueFlagCountGreaterThanOrEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def TrueFlagCountLessThanOrEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int) -> bool:
+    ...
+
+
+def WhiteWorldTendencyComparison(comparison_type: ComparisonType | int, value: int) -> bool:
+    ...
+
+
+def BlackWorldTendencyComparison(comparison_type: ComparisonType | int, value: int) -> bool:
+    ...
+
+
+def WhiteWorldTendencyGreaterThan(value: int) -> bool:
+    ...
+
+
+def BlackWorldTendencyGreaterThan(value: int) -> bool:
+    ...
+
+
+def EventValueEqual(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def EventValueNotEqual(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def EventValueGreaterThan(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def EventValueLessThan(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def EventValueGreaterThanOrEqual(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def EventValueLessThanOrEqual(flag: Flag | int, bit_count: int, value: int) -> bool:
+    ...
+
+
+def NewGameCycleEqual(completion_count: int) -> bool:
+    ...
+
+
+def NewGameCycleNotEqual(completion_count: int) -> bool:
+    ...
+
+
+def NewGameCycleGreaterThan(completion_count: int) -> bool:
+    ...
+
+
+def NewGameCycleLessThan(completion_count: int) -> bool:
+    ...
+
+
+def NewGameCycleGreaterThanOrEqual(completion_count: int) -> bool:
+    ...
+
+
+def NewGameCycleLessThanOrEqual(completion_count: int) -> bool:
+    ...
+
+
+def DLCOwned() -> bool:
+    ...
+
+
+def DLCNotOwned() -> bool:
+    ...
+
+
+def Online() -> bool:
+    ...
+
+
+def Offline() -> bool:
+    ...
+
+
+def CharacterDead(character: Character | int) -> bool:
+    ...
+
+
+def CharacterAlive(character: Character | int) -> bool:
+    ...
+
+
+def HealthEqual(character: Character | int, value: float) -> bool:
+    ...
+
+
+def HealthNotEqual(character: Character | int, value: float) -> bool:
+    ...
+
+
+def HealthGreaterThan(character: Character | int, value: float) -> bool:
+    ...
+
+
+def HealthLessThan(character: Character | int, value: float) -> bool:
+    ...
+
+
+def HealthGreaterThanOrEqual(character: Character | int, value: float) -> bool:
+    ...
+
+
+def HealthLessThanOrEqual(character: Character | int, value: float) -> bool:
+    ...
+
+
+def CharacterHuman(character: Character | int) -> bool:
+    ...
+
+
+def CharacterWhitePhantom(character: Character | int) -> bool:
+    ...
+
+
+def CharacterHollow(character: Character | int) -> bool:
+    ...
+
+
+def CharacterTargeting(targeting_character: Character | int, targeted_character: Character | int) -> bool:
+    ...
+
+
+def CharacterNotTargeting(targeting_character: Character | int, targeted_character: Character | int) -> bool:
+    ...
+
+
+def PlayerHasSpecialEffect(special_effect: int) -> bool:
+    ...
+
+
+def PlayerDoesNotHaveSpecialEffect(special_effect: int) -> bool:
+    ...
+
+
+def CharacterHasSpecialEffect(character: Character | int, special_effect: int) -> bool:
+    ...
+
+
+def CharacterDoesNotHaveSpecialEffect(character: Character | int, special_effect: int) -> bool:
+    ...
+
+
+def CharacterPartHealthLessThanOrEqual(character: Character | int, npc_part_id: int, value: float) -> bool:
+    ...
+
+
+def CharacterBackreadEnabled(character: Character | int) -> bool:
+    ...
+
+
+def CharacterBackreadDisabled(character: Character | int) -> bool:
+    ...
+
+
+def CharacterHasTAEEvent(character: Character | int, tae_event_id: int) -> bool:
+    ...
+
+
+def CharacterDoesNotHaveTAEEvent(character: Character | int, tae_event_id: int) -> bool:
+    ...
+
+
+def SkullLanternActive() -> bool:
+    ...
+
+
+def SkullLanternInactive() -> bool:
+    ...
+
+
+def PlayerLevelEqual(value: int) -> bool:
+    ...
+
+
+def PlayerLevelNotEqual(value: int) -> bool:
+    ...
+
+
+def PlayerLevelGreaterThan(value: int) -> bool:
+    ...
+
+
+def PlayerLevelLessThan(value: int) -> bool:
+    ...
+
+
+def PlayerLevelGreaterThanOrEqual(value: int) -> bool:
+    ...
+
+
+def PlayerLevelLessThanOrEqual(value: int) -> bool:
+    ...
+
+
+def HealthValueEqual(character: Character | int, value: int) -> bool:
+    ...
+
+
+def HealthValueNotEqual(character: Character | int, value: int) -> bool:
+    ...
+
+
+def HealthValueGreaterThan(character: Character | int, value: int) -> bool:
+    ...
+
+
+def HealthValueLessThan(character: Character | int, value: int) -> bool:
+    ...
+
+
+def HealthValueGreaterThanOrEqual(character: Character | int, value: int) -> bool:
+    ...
+
+
+def HealthValueLessThanOrEqual(character: Character | int, value: int) -> bool:
+    ...
+
+
+def ObjectDestroyed(obj: Object | int) -> bool:
+    ...
+
+
+def ObjectNotDestroyed(obj: Object | int) -> bool:
+    ...
+
+
+def ActionButton(
+    prompt_text: EventText | int,
+    anchor_entity: Object | Region | Character | int,
+    anchor_type: CoordEntityType | int = None,
+    facing_angle: float = None,
+    max_distance: float = None,
+    model_point: int = -1,
+    trigger_attribute: TriggerAttribute | int = 48,
+    button: int = 0,
+    boss_version: bool = False,
+    line_intersects: Object | Region | Character | int = None,
+) -> bool:
+    """
+    Calls `compiler.IfActionButton`.
+    """
+    ...

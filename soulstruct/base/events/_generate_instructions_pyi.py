@@ -16,7 +16,38 @@ from soulstruct.utilities.files import PACKAGE_PATH
 
 
 _DEF_TEMPLATE = "\n\ndef {alias}({args}):"
+_DEF_TEMPLATE_RET_BOOL = "\n\ndef {alias}({args}) -> bool:"
 _MAX_LINE_WIDTH = 120
+
+
+BASICS = """
+# Restart decorators. They can be used as names (not function calls) or have an event ID argument.
+def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+
+# Dummy enum for accessing event flags defined by events.
+class EVENTS(Flag): ...
+
+# Dummy class for creating conditions.
+class Condition:
+    def __init__(self, condition, hold: bool = False): ...
+
+class HeldCondition:
+    def __init__(self, condition): ...
+
+# Terminators.
+END = ...
+RESTART = ...
+
+# The Await function. Equivalent to using the 'await' built-in Python keyword.
+def Await(condition): ...
+
+class MAIN:
+    @staticmethod
+    def Await(condition): ...
+
+"""
 
 
 def get_arg_string(args_dict: dict[str, dict], alias_length: int) -> str:
@@ -82,7 +113,15 @@ def format_docstring(docstring: str):
     return "    " + "\n    ".join(out_docstring_lines)  # lines are already indented
 
 
-def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path | str, compiler_module):
+def generate_instr_pyi(
+    game_module_name: str,
+    emedf_dict: dict,
+    emedf_aliases: dict,
+    emedf_tests: dict,
+    condition_count: int,
+    pyi_path: Path | str,
+    compiler_module,
+):
     compiler_names = [
         name for name in compiler_module.__all__
         if name not in {"COMPILER", "compile_instruction", "get_compile_func", "BooleanTestCompiler"}
@@ -95,14 +134,37 @@ def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path |
         "Make sure you also do `from soulstruct.{game}.events import *` to get all enums, constants, and tests.\n"
         "\"\"\"\n\n")
     pyi_imports = (
+        "import typing as tp\n\n"
         f"from soulstruct.{game_module_name}.game_types import *\n"
         "from .emevd.compiler import *\n"  # custom instructions
         "from .emevd.enums import *\n"
     )
 
-    pyi_all_lines = []
+    pyi_all_lines = [
+        "# Basics:",
+        "\"NeverRestart\",",
+        "\"RestartOnRest\",",
+        "\"UnknownRestart\",",
+        "\"EVENTS\",",
+        "\"Condition\",",
+        "\"HeldCondition\",",
+        "\"END\",",
+        "\"RESTART\",",
+        "\"Await\",",
+        "\"MAIN\",",
+    ]
 
-    pyi_funcs_str = ""
+    pyi_funcs_str = BASICS
+
+    for i in range(1, condition_count + 1):
+        pyi_funcs_str += f"class OR_{i}:\n    @staticmethod\n    def Add(condition): ...\n\n"
+        pyi_all_lines.append(f"\"OR_{i}\",")
+    for i in range(1, condition_count + 1):
+        pyi_funcs_str += f"class AND_{i}:\n    @staticmethod\n    def Add(condition): ...\n\n"
+        pyi_all_lines.append(f"\"AND_{i}\",")
+    pyi_funcs_str += "\n\n"
+
+    pyi_all_lines.append("# Built-in instructions:")
 
     for (category, index), instr_info in emedf_dict.items():
         alias = instr_info["alias"]
@@ -147,76 +209,68 @@ def generate_instr_pyi(game_module_name: str, emedf_dict: dict, pyi_path: Path |
         "    Disables the flag ID of the current event. Does not detect slot.\n"
         "    \"\"\"\n"
     )
-    pyi_all_lines.append(f"\"EnableThisFlag\",")
-    pyi_all_lines.append(f"\"DisableThisFlag\",")
+    pyi_all_lines.append("\"EnableThisFlag\",")
+    pyi_all_lines.append("\"DisableThisFlag\",")
 
     if compiler_names:
-        pyi_all = "__all__ = [\n    " + "\n    ".join(pyi_all_lines) + "\n\n    # From `compiler`:\n"
-        pyi_all += "    " + "\n    ".join(f"\"{name}\"," for name in compiler_names) + "\n]\n\n"
-    else:
-        pyi_all = "__all__ = [\n    " + "\n    ".join(pyi_all_lines) + "\n]\n\n"
-    pyi_str = pyi_docstring + pyi_all + pyi_imports + pyi_funcs_str
-    # print(pyi_str)
-    print(f"Writing {pyi_path}...")
-    Path(pyi_path).write_text(pyi_str)
+        pyi_all_lines.append("# Custom instructions from `compiler`:")
+        for name in compiler_names:
+            pyi_all_lines.append(f"\"{name}\",")
 
-
-def generate_tests_pyi(game_module_name, emedf_aliases, emedf_tests, pyi_path):
-    pyi_docstring = (
-        "\"\"\"AUTOMATICALLY GENERATED. Do not edit this module.\n"
-        "\n"
-        "Import this into any EVS script to have full access to tests.\n"
-        "Make sure you also do `from soulstruct.{game}.events import *` to get all enums and constants.\n"
-        "\"\"\"\n\n")
-    pyi_imports = (
-        f"from soulstruct.{game_module_name}.game_types import *\n"
-        "from .emevd.compiler import *\n"  # custom instructions
-        "from .emevd.enums import *\n"
-    )
-    pyi_all_lines = []
-    pyi_funcs_str = ""
+    pyi_all_lines.append("# Boolean test functions:")
 
     for test_name, test_info in emedf_tests.items():
 
         # We use the 'If' instruction to generate the signatures.
         # TODO: EMEDF_TESTS generator should make sure the partial signatures are identical.
-        print(test_name, test_info)
         partial_name = test_info["if"]
         partial_names = " or ".join(f"`{name}`" for name in test_info.values())
-        category, index, instr_info = emedf_aliases[partial_name]
-        args_dict = {}
-        for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
-            args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
+        partial_docstring = ""
+        try:
+            category, index, instr_info = emedf_aliases[partial_name]
+        except KeyError:
+            if partial_name in compiler_names:
+                test_func = getattr(compiler_module, partial_name)
+                parameters = inspect.signature(test_func).parameters
+                partial_args_dict = {
+                    p.name: {
+                        "type": p.annotation if p.annotation != p.empty else type(p.default),
+                        "default": (lambda: None) if p.default is None
+                        else (p.default if p.default != p.empty else None)
+                    }
+                    for name, p in parameters.items()
+                    if name != "condition"
+                }
+                partial_docstring = f"Calls `compiler.{partial_name}`."
+            else:
+                raise
+        else:
+            args_dict = {}
+            for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
+                args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
 
-        partial_kwargs = instr_info["partials"][partial_name]  # guaranteed to exist
-        partial_args_dict = {
-            arg_name: arg_info for arg_name, arg_info in args_dict.items()
-            if arg_name not in partial_kwargs and arg_name not in {"condition", "line_count", "label"}
-        }
+            partial_kwargs = instr_info["partials"][partial_name]  # guaranteed to exist
+            partial_args_dict = {
+                arg_name: arg_info for arg_name, arg_info in args_dict.items()
+                if arg_name not in partial_kwargs and arg_name not in {"condition", "line_count", "label"}
+            }
+
+            if "__docstring" in partial_kwargs:
+                partial_docstring = f"\n{partial_kwargs['__docstring']}"
+
         partial_args = get_arg_string(partial_args_dict, len(partial_name))
-        pyi_funcs_str += _DEF_TEMPLATE.format(alias=test_name, args=partial_args) + "\n"
-        if "__docstring" in partial_kwargs:
-            partial_docstring = f"\n{partial_kwargs['__docstring']}"
+        pyi_funcs_str += _DEF_TEMPLATE_RET_BOOL.format(alias=test_name, args=partial_args) + "\n"
+
+        if partial_docstring:
             pyi_funcs_str += format_docstring(partial_docstring) + "\n"
         pyi_funcs_str += "    ...\n"
         pyi_all_lines.append(f"\"{test_name}\",")
 
     pyi_all = "__all__ = [\n    " + "\n    ".join(pyi_all_lines) + "\n]\n\n"
     pyi_str = pyi_docstring + pyi_all + pyi_imports + pyi_funcs_str
-    print(pyi_str)
+    # print(pyi_str)
     print(f"Writing {pyi_path}...")
     Path(pyi_path).write_text(pyi_str)
-
-
-def darksouls1r():
-    from soulstruct.darksouls1r.events.emevd import compiler
-    from soulstruct.darksouls1r.events.emevd.emedf import EMEDF
-    generate_instr_pyi(
-        "darksouls1r",
-        EMEDF,
-        PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
-        compiler,
-    )
 
 
 def darksouls1ptde():
@@ -225,23 +279,37 @@ def darksouls1ptde():
     generate_instr_pyi(
         "darksouls1ptde",
         EMEDF,
+        EMEDF_ALIASES,
+        EMEDF_TESTS,
+        7,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
         compiler,
     )
-    generate_tests_pyi(
-        "darksouls1ptde",
+
+
+def darksouls1r():
+    from soulstruct.darksouls1r.events.emevd import compiler
+    from soulstruct.darksouls1r.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    generate_instr_pyi(
+        "darksouls1r",
+        EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
-        PACKAGE_PATH("darksouls1ptde/events/tests.pyi"),
+        7,
+        PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
+        compiler,
     )
 
 
 def bloodborne():
     from soulstruct.bloodborne.events.emevd import compiler
-    from soulstruct.bloodborne.events.emevd.emedf import EMEDF
+    from soulstruct.bloodborne.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
     generate_instr_pyi(
         "bloodborne",
         EMEDF,
+        EMEDF_ALIASES,
+        EMEDF_TESTS,
+        15,
         PACKAGE_PATH("bloodborne/events/instructions.pyi"),
         compiler,
     )
@@ -249,10 +317,13 @@ def bloodborne():
 
 def darksouls3():
     from soulstruct.darksouls3.events.emevd import compiler
-    from soulstruct.darksouls3.events.emevd.emedf import EMEDF
+    from soulstruct.darksouls3.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
     generate_instr_pyi(
         "darksouls3",
         EMEDF,
+        EMEDF_ALIASES,
+        EMEDF_TESTS,
+        15,
         PACKAGE_PATH("darksouls3/events/instructions.pyi"),
         compiler,
     )
