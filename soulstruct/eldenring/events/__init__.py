@@ -5,7 +5,6 @@ __all__ = [
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
     "instructions",
-    "tests",
     "enums",
     "decompiler",
     # File utilities
