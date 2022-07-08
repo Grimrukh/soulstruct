@@ -8,6 +8,7 @@ import re
 import struct
 import typing as tp
 
+from soulstruct.base.game_types.basic_types import Flag
 from .enums import RestartType
 from .instruction import Instruction
 
@@ -287,7 +288,13 @@ class Event(abc.ABC):
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
         function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
-        restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
+
+        try:
+            event_flag_enum = enums_manager.check_out_enum(self.event_id, Flag)
+            restart_type_decorator = f"@{RestartType(self.restart_type).name}({event_flag_enum})\n"
+        except enums_manager.MissingEntityError:
+            restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
+
         function_def = self.indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def

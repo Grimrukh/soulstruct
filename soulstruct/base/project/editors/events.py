@@ -27,21 +27,23 @@ class EvsTextEditor(TextEditor):
     TAGS = {
         "restart_type": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
-            "#FF7F50", r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
+            "#FF7F50", r"(^| )(class|def|if|and|or|not|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
         ),
-        "true_false": TagData("#FF7F50", r"[ =](True|False)(\n| |:|\))", (1, 1)),
+        "true_false": TagData("#FF7F50", r"[ =](True|False)(,|\n| |:|\))", (1, 1)),
         "event_def": TagData("#FF6980", r"^def [\w\d_]+", (4, 0)),
         "import": TagData("#FFAAAA", r"^(from|import) [\w\d_ .*]+", (0, 0)),
         "instruction_or_high_level_test": TagData("#E6C975", r"[ \(][\w\d_]+(?=\()", (1, 0)),
-        "low_level_test": TagData("#AAAAFF", r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "main_condition": TagData("#FF3355", r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "low_level_test": TagData("#AAAAFF", r"^ +(If|Skip|Goto)[\w\d_]+", (0, 0)),
+        "if_main_condition": TagData("#FF3355", r"^ +If[\w\d_]+(?=[(]0 *,)", (0, 0)),
+        "main_condition": TagData("#FF3355", r"^ +MAIN\.Await\(", (0, 1)),
         "await_statement": TagData("#FF3355", r" await ", (0, 0)),
-        "named_arg": TagData("#AAFFFF", r"[(,=][ \n]*(?!False)(?!True)\w[\w\d.]* *[,)]", (1, 1)),
-        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "named_arg": TagData("#AAFFFF", r"[(,=\|][ \n]*(?!False)(?!True)\w[\w\d.]* *[,)\|]", (1, 1)),
+        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+ *(?=\=)", (0, 0)),
         "event_arg_name": TagData("#FFAAFF", r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
+        "and_or_condition": TagData("#AAAAFF", r"[ \(] *(AND|OR)_[\d]+(\.Add)?", (1, 0)),
         "comment": TagData("#777777", r"#.*$", (0, 0)),
-        "docstring": TagData("#00ABA9", r"^[ ]+\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
+        "docstring": TagData("#00ABA9", r"^ +\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
         "module_docstring": TagData("#00ABA9", r'^"""(.|\n)*"""', (0, 0)),
     }
 

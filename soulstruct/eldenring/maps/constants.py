@@ -484,6 +484,7 @@ __all__ = [
     "ALL_MAPS",
     "ALL_MSB_FILE_NAMES",
     "get_map",
+    "get_map_variable_name",
 ]
 
 from soulstruct.base.maps.utilities import get_map as _get_map_base
@@ -1598,10 +1599,18 @@ ALL_OVERWORLD_MAPS = [
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 
-def get_map(source, block_id=None):
+def get_map(source, block_id=None, cc_id=None, dd_id=None):
+    if cc_id is not None:
+        if dd_id is None:
+            dd_id = 0
+        return _get_map_base((source, block_id, cc_id, dd_id), game_maps=ALL_MAPS)
+    elif dd_id is not None:
+        return _get_map_base((source, block_id, 0, dd_id), game_maps=ALL_MAPS)
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
 
 
-if __name__ == '__main__':
-    m = get_map((10, 0, 0, 0))
-    print(m.variable_name)
+def get_map_variable_name(area_id: int, block_id: int, cc_id: int, dd_id: int):
+    try:
+        return get_map((area_id, block_id, cc_id, dd_id)).variable_name
+    except (KeyError, ValueError):
+        return f"({area_id}, {block_id}, {cc_id}, {dd_id})"

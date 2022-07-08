@@ -137,6 +137,6 @@ def _generate(old_instr_module, emedf_json_path):
 
 if __name__ == '__main__':
     _generate(
-        PACKAGE_PATH("darksouls3/events/emevd/instructions.py"),
-        PACKAGE_PATH("darksouls3/events/emevd/ds3-common.emedf.json"),
+        PACKAGE_PATH("eldenring/events/emevd/instructions.py"),
+        PACKAGE_PATH("eldenring/events/emevd/er-common.emedf.json"),
     )

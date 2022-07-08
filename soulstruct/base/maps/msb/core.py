@@ -18,6 +18,7 @@ from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
+    from soulstruct.base.game_types import BaseGameObject
     from .models import BaseMSBModelList
     from .events import BaseMSBEventList
     from .regions import BaseMSBRegionList
@@ -430,8 +431,18 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             if not selected_entries or region in selected_entries:
                 region.translate += translate
 
-    def write_entities_module(self, module_path: tp.Union[str, Path] = None, area_id: int = None, block_id: int = None):
-        """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script."""
+    def write_entities_module(
+        self,
+        module_path: tp.Union[str, Path] = None,
+        area_id: int = None,
+        block_id: int = None,
+        # TODO: cc_id and dd_id for Elden Ring
+        append_to_module: str = ""
+    ):
+        """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script.
+
+        If `append_to_module` text is given, all map entities will be appended to it.
+        """
         if module_path is None:
             if self.path is None:
                 raise ValueError("Cannot auto-detect MSB entities `module_path` (MSB path not known).")
@@ -472,7 +483,20 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             return value_.name, 0
 
         module_path = Path(module_path)
-        module_text = f"from soulstruct.{self.GAME.submodule_name}.game_types import *\n"
+
+        game_types_import = f"from soulstruct.{self.GAME.submodule_name}.game_types import *\n"
+        if append_to_module:
+            if game_types_import not in append_to_module:
+                # Add game type start import to module. (Very rare that it wouldn't already be there.)
+                first_class_def_index = append_to_module.find("\nclass")
+                if first_class_def_index != -1:
+                    append_to_module = append_to_module.replace("\nclass", game_types_import + "\n\nclass", 1)
+                else:
+                    append_to_module += game_types_import
+            module_text = append_to_module.rstrip("\n") + "\n"
+        else:
+            module_text = game_types_import
+
         for entry_type_name, entry_subtypes in self.ENTITY_GAME_TYPES.items():
             for entry_subtype in entry_subtypes:
                 class_name = entry_subtype.get_msb_entry_type_subtype(pluralized_subtype=True)[1]

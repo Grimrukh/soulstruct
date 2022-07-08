@@ -7,6 +7,7 @@ from .enums import ProtectedEntities
 class EntityEnumsManager(_BaseEntityEnumsManager):
 
     ENTITY_ID_SUBCLASSES = {
+        "flags": (Flag,),
         "parts": (MapPiece, Object, Character, PlayerStart, Collision),
         "events": (SoundEvent, VFXEvent, SpawnerEvent, MessageEvent, SpawnPointEvent, NavigationEvent),
         "regions": (RegionPoint, RegionCircle, RegionCylinder, RegionSphere, RegionRect, RegionBox),

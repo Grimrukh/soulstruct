@@ -2,6 +2,8 @@ from __future__ import annotations
 
 __all__ = ["GameDirectoryProject"]
 
+import logging
+import shutil
 import typing as tp
 
 from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryProject
@@ -13,9 +15,12 @@ from soulstruct.darksouls1r.params import GameParamBND
 from soulstruct.darksouls1r.params import DrawParamDirectory
 from soulstruct.darksouls1r.text import MSGDirectory
 from soulstruct.games import DarkSoulsDSRType
+from soulstruct.utilities.files import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
     from .window import ProjectWindow
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
@@ -58,9 +63,39 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
 
         if "events" in self.DATA_TYPES:
             self.import_events(force_import=yes_to_all, with_window=with_window)
+            self.offer_events_submodule_copy(with_window=with_window)
 
         if "talk" in self.DATA_TYPES:
             self.import_talk(force_import=yes_to_all, with_window=with_window)
+
+    def offer_events_submodule_copy(self, with_window: ProjectWindow = None):
+        """Offer to copy `soulstruct.events.darksouls1r` into project `events` folder for IDE purposes."""
+        if with_window:
+            result = with_window.CustomDialog(
+                title="Events Module Copy",
+                message="Would you like to copy the game events submodule for IDE autocomplete?",
+                button_names=("Yes, copy it", "No, don't bother"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+        else:
+            result = 1 if (
+                input(
+                    "Would you like to copy the game events submodule for IDE autocomplete? [y]/n",
+                ).lower() == "n"
+            ) else 0
+        if result == 0:
+            # We need both PTDE and DSR submodules for DSR.
+            dsr_events_submodule = PACKAGE_PATH("darksouls1r/events")
+            (self.project_root / "events/soulstruct/darksouls1r").mkdir(parents=True, exist_ok=True)
+            shutil.copytree(dsr_events_submodule, self.project_root / "events/soulstruct/darksouls1r/events")
+
+            dsr_events_submodule = PACKAGE_PATH("darksouls1ptde/events")
+            (self.project_root / "events/soulstruct/darksouls1ptde").mkdir(parents=True, exist_ok=True)
+            shutil.copytree(dsr_events_submodule, self.project_root / "events/soulstruct/darksouls1ptde/events")
+
+            _LOGGER.info("Copied `soulstruct.darksouls1r.events` submodule (and PTDE) into project events folder.")
 
     def offer_fix_broken_regions(self, with_window: ProjectWindow = None):
         """Offer to fix broken regions in Duke's Archives."""
@@ -139,9 +174,58 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
                 ).lower() == "n"
             ) else 0
         if result == 0:
+
+            if with_window:
+                write_vanilla_entities_result = with_window.CustomDialog(
+                    title="Entities Export",
+                    message="Would you also like to include pre-identified game IDs in the 'entities' module?\n",
+                    button_names=("Yes, include them", "No, just write entities in entities"),
+                    button_kwargs=("YES", "NO"),
+                    cancel_output=1,
+                    default_output=1,
+                )
+            else:
+                write_vanilla_entities_result = 1 if (
+                    input(
+                        "Would you also like to include pre-identified game IDs in the 'entities' module?\n",
+                    ).lower() == "n"
+                ) else 0
+
+            # NOTE: Vanilla entities are read from PTDE directory.
+
+            if write_vanilla_entities_result == 0:
+                # Write vanilla `common` entities, if it exists.
+                try:
+                    vanilla_common_entities = PACKAGE_PATH(
+                        f"darksouls1ptde/events/vanilla_entities/common_entities.py"
+                    ).read_text()
+                except FileNotFoundError:
+                    _LOGGER.warning("Could not find `common_entities.py` in Soulstruct for this game. Ignoring.")
+                    pass
+                else:
+                    _LOGGER.info("Writing `common_entities.py` to project from Soulstruct.")
+                    common_entities_path = self.project_root / f"entities/common_entities.py"
+                    common_entities_path.parent.mkdir(parents=True, exist_ok=True)
+                    common_entities_path.write_text(vanilla_common_entities)
+                    # `EMEVDDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
+
             for map_name, msb in self.maps.msbs.items():
                 game_map = self.maps.GET_MAP(map_name)
-                msb.write_entities_module(self.project_root / f"entities/{game_map.emevd_file_stem}_entities.py")
+
+                if write_vanilla_entities_result == 0:
+                    try:
+                        vanilla_module = PACKAGE_PATH(
+                            f"darksouls1ptde/events/vanilla_entities/{game_map.emevd_file_stem}_entities.py"
+                        ).read_text()
+                    except FileNotFoundError:
+                        vanilla_module = ""
+                else:
+                    vanilla_module = ""
+
+                msb.write_entities_module(
+                    self.project_root / f"entities/{game_map.emevd_file_stem}_entities.py",
+                    append_to_module=vanilla_module,
+                )
             return True
         else:
             return False

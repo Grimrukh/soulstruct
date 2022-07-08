@@ -1,6 +1,4 @@
-from enum import IntEnum
-
-from soulstruct.base.events.emevd.enums import *
+from __future__ import annotations
 
 __all__ = [
     # Basic enums
@@ -11,12 +9,7 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "CLIENT_PLAYER_1",
-    "CLIENT_PLAYER_2",
-    "CLIENT_PLAYER_3",
-    "CLIENT_PLAYER_4",
-    "CLIENT_PLAYER_5",
-    "PlayerEntity",
+    "ProtectedEntities",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -28,7 +21,7 @@ __all__ = [
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
-    "FlagState",
+    "FlagSetting",
     "FlagType",
     "InterpolationState",
     "ItemType",
@@ -69,6 +62,377 @@ __all__ = [
     "HollowArenaResult",
 ]
 
+from enum import IntEnum
+
+from soulstruct.base.events.emevd.enums import *
+
+
+class ProtectedEntities(IntEnum):
+    Player = PLAYER
+    ClientPlayer1 = 10001
+    ClientPlayer2 = 10002
+    ClientPlayer3 = 10003
+    ClientPlayer4 = 10004
+    ClientPlayer5 = 10005
+
+
+class AIStatusType(BaseEMEVDEnum):
+    Normal = 0
+    Caution = 1
+    Search = 2
+    Battle = 3
+
+
+class BitOperation(BaseEMEVDEnum):
+    Add = 0
+    Delete = 1
+    Invert = 2
+
+
+class ButtonType(BaseEMEVDEnum):
+    Yes_or_No = 0
+    OK_or_Cancel = 1
+
+
+class CharacterType(BaseEMEVDEnum):
+    Human = 0  # Also called "Survival" in some resources.
+    WhitePhantom = 1
+    BlackPhantom = 2
+    Hollow = 8  # Also called "Gray Ghost" in some resources.
+    Intruder = 12
+
+
+class CharacterUpdateRate(BaseEMEVDEnum):
+    Never = -1
+    Always = 0
+    EveryTwoFrames = 2
+    EveryFiveFrames = 5
+    Unknown105 = 105  # TODO: Move to `eldenring`
+
+
+class ClassType(BaseEMEVDEnum):
+    Warrior = 0
+    Knight = 1
+    Wanderer = 2
+    Thief = 3
+    Bandit = 4
+    Hunter = 5
+    Sorcerer = 6
+    Pyromancer = 7
+    Cleric = 8
+    Deprived = 9
+    # Prototype classes (unused):
+    Temp_Warrior = 20
+    Temp_Knight = 21
+    Temp_Sorcerer = 22
+    Temp_Pyromancer = 23
+    Chi_Warrior = 24
+    Chi_Knight = 25
+    Chi_Sorcerer = 26
+    Chi_Pyromancer = 27
+
+
+class ComparisonType(BaseNegatableEMEVDEnum):
+    Equal = 0
+    NotEqual = 1
+    GreaterThan = 2
+    LessThan = 3
+    GreaterThanOrEqual = 4
+    LessThanOrEqual = 5
+
+    def negate(self):
+        if self == ComparisonType.Equal:
+            return ComparisonType.NotEqual
+        elif self == ComparisonType.NotEqual:
+            return ComparisonType.Equal
+        elif self == ComparisonType.GreaterThan:
+            return ComparisonType.LessThanOrEqual
+        elif self == ComparisonType.LessThan:
+            return ComparisonType.GreaterThanOrEqual
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ComparisonType.LessThan
+        elif self == ComparisonType.LessThanOrEqual:
+            return ComparisonType.GreaterThan
+        return super().negate()
+
+
+class CutsceneFlags(BaseEMEVDFlags):
+    """Bit flags, stored in one byte."""
+    Unskippable = 0b0000_0010  # 2
+    FadeOut = 0b0000_1000  # 8
+    # TODO: These could have been introduced in Sekiro?
+    Unknown16 = 0b0001_0000  # 16
+    Unknown32 = 0b0010_0000  # 32
+    Unknown64 = 0b0100_0000  # 64
+
+
+class DamageTargetType(BaseEMEVDEnum):
+    Character = 1
+    Map = 2
+    Character_and_Map = 3
+
+
+class EventReturnType(BaseEMEVDEnum):
+    End = 0
+    Restart = 1
+
+
+class FlagSetting(BaseNegatableEMEVDEnum):
+    Off = 0
+    On = 1
+    Change = 2
+
+    def negate(self):
+        if self == FlagSetting.Off:
+            return FlagSetting.On
+        elif self == FlagSetting.On:
+            return FlagSetting.Off
+        return super().negate()
+
+
+class FlagType(BaseEMEVDEnum):
+    Absolute = 0
+    RelativeToThisEvent = 1
+    RelativeToThisEventSlot = 2
+
+
+class InterpolationState(BaseNegatableEMEVDEnum):
+    Interpolated = 0
+    NotInterpolated = 1
+
+    def negate(self):
+        if self == InterpolationState.Interpolated:
+            return InterpolationState.NotInterpolated
+        elif self == InterpolationState.NotInterpolated:
+            return InterpolationState.Interpolated
+        return super().negate()
+
+
+class ItemType(BaseEMEVDEnum):
+    Weapon = 0
+    Armor = 1
+    Ring = 2
+    Good = 3
+
+
+class RangeState(BaseNegatableEMEVDEnum):
+    AllOn = 0
+    AllOff = 1
+    AnyOn = 2  # or "not all off"
+    AnyOff = 3  # or "not all on"
+
+    def negate(self):
+        if self == RangeState.AllOn:
+            return RangeState.AnyOff
+        elif self == RangeState.AllOff:
+            return RangeState.AnyOn
+        elif self == RangeState.AnyOn:
+            return RangeState.AllOff
+        elif self == RangeState.AnyOff:
+            return RangeState.AllOn
+        return super().negate()
+
+
+class CoordEntityType(BaseEMEVDEnum):
+    """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
+
+    Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
+    are the big three types/subtypes.
+    """
+    Object = 0
+    Region = 1
+    Character = 2
+
+
+class NavmeshType(BaseEMEVDEnum):
+    """Bit flags for Navmesh types."""
+
+    Solid = 0b00000000000001
+    Exit = 0b00000000000010
+    Obstacle = 0b00000000000100
+    Wall = 0b00000000001000
+    # Note enum 16 (fifth bit) is missing.
+    WallTouchingFloor = 0b00000000100000
+    LandingPoint = 0b00000001000000
+    Event = 0b00000010000000
+    Cliff = 0b00000100000000
+    WideSpace = 0b00001000000000
+    Ladder = 0b00010000000000
+    Hole = 0b00100000000000
+    Door = 0b01000000000000
+    ClosedDoor = 0b10000000000000
+
+
+class NumberButtons(BaseEMEVDEnum):
+    OneButton = 1
+    TwoButton = 2
+    NoButton = 6
+
+
+class OnOffChange(BaseNegatableEMEVDEnum):
+    On = 0
+    Off = 1
+    Change = 2
+
+    def negate(self):
+        if self == OnOffChange.On:
+            return OnOffChange.Off
+        elif self == OnOffChange.Off:
+            return OnOffChange.On
+        return super().negate()
+
+
+class RestartType(BaseEMEVDEnum):
+    NeverRestart = 0
+    RestartOnRest = 1
+    UnknownRestart = 2
+
+
+class SummonSignType(BaseEMEVDEnum):
+    BlueEyeSign = 0  # Used for NPC summons.
+    BlackEyeSign = 1  # Used for NPC invasions.
+    RedEyeSign = 2
+    DetectionSign = 3
+    WhiteHelpSign = 4
+    BlackHelpSign = 5
+
+
+class SoundType(BaseEMEVDEnum):
+    # The initial letter is prefixed to the sound ID to find the sound file in the FEV.
+    a_Ambient = 0
+    c_CharacterMotion = 1
+    f_MenuEffect = 2
+    o_Object = 3
+    p_Cutscene = 4  # the 'p' stands for 'poly play' or 'poly-scn'.
+    s_SFX = 5
+    m_Music = 6
+    v_Voice = 7
+    x_FloorMaterialDependent = 8
+    b_ArmorMaterialDependent = 9
+    g_Ghost = 10
+
+
+class StatueType(BaseEMEVDEnum):
+    Stone = 0  # e.g. in the Depths, from Basilisk breath
+    Crystal = 1  # e.g. in Crystal Cave, from Seath crystals
+
+
+class TriggerAttribute(BaseEMEVDFlags):
+    """Bit flags that determine which categories of player are able to use a given action button trigger.
+
+    If you want multiple player types to be able to use it, simply add those enums together. The vanilla events almost
+    always use Human + Hollow (48), for which I have provided a shortcut enum name, or All (255).
+
+    Fairly confident that these are base by all games, but not completely confirmed.
+    """
+
+    Session = 0b00000001
+    NoSession = 0b00000010
+    Host = 0b00000100
+    Client = 0b00001000
+    Human = 0b00010000  # "Live"
+    Hollow = 0b00100000  # "Gray"
+    WhitePhantom = 0b01000000
+    BlackPhantom = 0b10000000
+    All = 0b11111111
+
+
+class WorldTendencyType(BaseEMEVDEnum):
+    White = 0
+    Black = 1
+
+
+class UpdateAuthority(BaseEMEVDEnum):
+    Normal = 0
+    Forced = 4095
+
+
+# EXTRA ENUMS (unused in EMEVD)
+
+LOCAL_PLAYER = 10000
+NET_PLAYER = 10001
+
+
+class MessageCategory(IntEnum):
+    Sample = 0
+    Talk = 1
+    Soapstone = 2
+    Item = 10
+    Weapon = 11
+    Armor = 12
+    Ring = 13
+    GoodExp = 14
+    WeaponExp = 15
+    ArmorExp = 16
+    RingExp = 17
+    Event = 30
+    Dialog = 78  # Not sure how this differs from 'Talk'.
+
+
+class InfoMenuType(IntEnum):
+    List = 0
+    Simple = 1
+
+
+class TalkAttribute(IntEnum):
+    """Bit flags with unknown purpose. Doc in Demon's Souls suggests they are "conversation setting relation" flags."""
+
+    Repeat = 0b00000001
+    Pad = 0b00000010
+    Draw = 0b00000100
+    Voice = 0b00001000
+    # Fifth through eighth flags are unused/unknown.
+    All = 0b11111111
+
+
+class PlayerDeathType(IntEnum):
+    """Type of player death. Originally called "DEATH_STATE". Original value names:
+
+    DEATH_STATE_Normal = 0
+    DEATH_STATE_MagicResurrection = 1
+    DEATH_STATE_RingNormalResurrection = 2
+    DEATH_STATE_RingCurseResurrection = 3
+    """
+
+    Normal = 0
+    MagicRevival = 1  # from unused 'Escape Death' miracle
+    RingRevival = 2
+    RareRingRevival = 3
+
+
+class SummonParamType(IntEnum):
+    NoType = 0
+    White = -1
+    Black = -2
+    ForceJoinBlack = -3  # Fixed typo in original ("FroceJoinBlack")
+    DetectBlack = -4
+    InvadeNito = -7  # Gravelord Servant
+    Dragonewt = -10  # Path of the Dragon
+    InvadeBounty = -11  # Darkmoon Blades
+    Coliseum = -12
+
+
+class InvadeType(IntEnum):
+    NoType = 0
+    NormalWhite = 1
+    NormalBlack = 2
+    ForceJoinBlack = 3
+    DetectBlack = 4
+    WhiteRescue = 5  # Unused covenant?
+    BlackRescue = 6  # Unused covenant?
+    Nito = 7
+    ThievesGuilds = 8  # Unused covenant?
+    OtoutoUmbasa = 9  # Unused covenant?
+    Dragonewt = 10
+    InvadeBounty = 11
+    ColiseumOneB = 12  # 1v1
+    ColiseumTwoA2 = 13  # 2v2
+    ColiseumTwoB1 = 14
+    ColiseumTwoB2 = 15
+    ColiseumBrB = 16  # Battle Royale
+    ColiseumBrC = 17
+    ColiseumBrD = 18
+
 
 class ArmorType(IntEnum):
     Head = 0
@@ -78,13 +442,22 @@ class ArmorType(IntEnum):
 
 
 class BannerType(IntEnum):
-    """TODO: More to add here."""
+    HeirOfFireDestroyed = 1
     YouDied = 2
-    HostVanquished = 5
-    BloodyFingerVanquished = 7
-    EnemyFelled = 16
-    GreatEnemyFelled = 17
-    MapFound = 22
+    Revival = 3
+    SoulRecovery = 4
+    TargetedDefeated = 5
+    PhantomDeath = 6  # Phantom version of "YOU DIED"
+    BlackPhantomDestroyed = 7
+    AreaName = 8  # Name determined by current floor Collision.
+    BeginMatch = 12
+    HollowArenaDraw = 14
+    HollowArenaWin = 15
+    HollowArenaLoss = 16
+    Unknown = 17
+    DutyFulfilled = 18
+    LordOfCinderFallen = 19
+    UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
 
 
 class CalculationType(IntEnum):
@@ -134,6 +507,17 @@ class ConditionGroup(IntEnum):
     AND_13 = 13
     AND_14 = 14
     AND_15 = 15
+
+    def Await(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
+
+        Only permitted for `MAIN`.
+        """
+        ...
+
+    def Add(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally."""
+        ...
 
 
 class Covenant(IntEnum):

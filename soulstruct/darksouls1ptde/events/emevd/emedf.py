@@ -19,7 +19,7 @@ EVENT_RETURN_TYPE = {
     "type": EventReturnType,
     "default": None,
 }
-FLAG_STATE = {
+FLAG_SETTING = {
     "type": FlagSetting,
     "default": None,
     "hide_name": True,
@@ -183,7 +183,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -1186,7 +1186,7 @@ EMEDF = {
         "alias": "AwaitFlagState",
         "docstring": "Not sure if this is really used rather than `IfFlagState` with MAIN condition (0).",
         "args": {
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG,
         },
@@ -1207,7 +1207,7 @@ EMEDF = {
         """,
         "args": {
             "line_count": INT | HIDE_NAME,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -1247,7 +1247,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "event_return_type": EVENT_RETURN_TYPE,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -1700,7 +1700,7 @@ EMEDF = {
         """,
         "args": {
             "flag": FLAG | HIDE_NAME,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
         },
         "partials": {
             "EnableFlag": dict(state=FlagSetting.On),
@@ -1910,7 +1910,7 @@ EMEDF = {
         "args": {
             "first_flag": FLAG_RANGE_FIRST,
             "last_flag": FLAG_RANGE_LAST,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
         },
         "evs_args": {
             "flag_range": FLAG_RANGE,
@@ -1971,7 +1971,7 @@ EMEDF = {
         "args": {
             "first_flag": FLAG_RANGE_FIRST,
             "last_flag": FLAG_RANGE_LAST,
-            "state": FLAG_STATE,
+            "state": FLAG_SETTING,
         },
         "evs_args": {
             "flag_range": FLAG_RANGE | HIDE_NAME,
@@ -3180,7 +3180,7 @@ EMEDF = {
     (2007, 4): {
         "alias": "DisplayBattlefieldMessage",
         "docstring": """
-            Used in the Battle of Stoicism. Probably useless to you.
+            Displays a flashing messages at the bottom of the screen that does not block player input.
         """,
         "args": {
             "text": NO_DEFAULT(EventTextTyping) | HIDE_NAME,

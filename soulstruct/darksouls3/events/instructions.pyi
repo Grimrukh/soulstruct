@@ -4585,7 +4585,7 @@ def DisplayStatus(text: EventText | int, pad_enabled: bool = True, event_layers=
 
 def DisplayBattlefieldMessage(text: EventText | int, display_location_index: int, event_layers=()):
     """
-    Used in the Battle of Stoicism. Probably useless to you.
+    Displays a flashing messages at the bottom of the screen that does not block player input.
     """
 
 

@@ -35,13 +35,18 @@ class EntityEnumInfo:
         #  a properly named module (e.g. `from m10_02_entities import Characters as m10_02_Characters`).
         if self.is_star:
             return self.class_name
+        elif self.module_name.startswith("common") and self.class_name.lower().startswith("common"):
+            return self.class_name
         return f"{self.module_name[:6]}_{self.class_name}"
 
     @property
     def import_string(self):
-        if self.is_star:
+        if self.class_alias == self.class_name:
             return f"{self.class_name}"
         return f"{self.class_name} as {self.class_alias}"
+
+    def __repr__(self):
+        return f"EntityEnumInfo({self.class_name}, alias={self.class_alias}, is_star={self.is_star})"
 
 
 class EntityEnumsManager(abc.ABC):
@@ -159,7 +164,7 @@ class EntityEnumsManager(abc.ABC):
             # Entity ID not found under any of the given classes.
             all_cls_names = "Any" if any_class else " | ".join(entity_cls_names)
             self.missing_enums.add((all_cls_names, entity_id))
-            raise EntityEnumsManager.MissingEntityError(f"Missing `{all_cls_names}` entity ID: {entity_id}")
+            raise self.MissingEntityError(f"Missing `{all_cls_names}` entity ID: {entity_id}")
 
         if enum_info.is_star:
             self.used_star_modules.add(enum_info.module_name)
@@ -201,7 +206,7 @@ class EntityEnumsManager(abc.ABC):
                     _LOGGER.info(
                         f"Entity ID {member.value} in enum `{enum_name}` (in {entry_type}) is already "
                         f"defined by enum `{existing_enum_name}` (in {existing_entry_type}). This "
-                        f"shouldn't cause an issue, but it may cause you headaches."
+                        f"shouldn't cause a fatal issue, but it may cause you headaches."
                     )
                 if member.value in [p.value for p in self.PROTECTED_ENTITIES]:
                     raise ValueError(
