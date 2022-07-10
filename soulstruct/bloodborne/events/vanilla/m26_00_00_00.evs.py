@@ -766,7 +766,7 @@ def Event_12604730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -935,7 +935,7 @@ def Event_12601800():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthLessThanOrEqual(2600802, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(2600802, value=0.0))
     
     ResetAnimation(2600800, disable_interpolation=True)
     ResetAnimation(2600801, disable_interpolation=True)
@@ -1007,7 +1007,7 @@ def Event_12601801():
         return
     AND_1.Add(FlagEnabled(12601800))
     AND_2.Add(CharacterBackreadDisabled(2600800))
-    AND_2.Add(HealthLessThanOrEqual(2600802, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2600802, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1265,7 +1265,7 @@ def Event_12604803():
     EnableBossMusic(sound_id=2603802)
     EnableFlag(12604815)
     
-    MAIN.Await(HealthLessThan(2600802, value=0.699999988079071))
+    MAIN.Await(HealthRatioLessThan(2600802, value=0.699999988079071))
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1357,7 +1357,7 @@ def Event_12604815():
     DisableNetworkSync()
     AND_1.Add(ThisEventFlagEnabled())
     AND_2.Add(FlagEnabled(12601800))
-    AND_3.Add(HealthLessThanOrEqual(2600800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2600800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1477,7 +1477,7 @@ def Event_12601850():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthEqual(2600850, value=0.0))
+    MAIN.Await(HealthRatioEqual(2600850, value=0.0))
     
     EnableFlag(12604858)
     
@@ -1552,7 +1552,7 @@ def Event_12601851():
         return
     AND_1.Add(FlagEnabled(12601800))
     AND_2.Add(CharacterBackreadDisabled(2600850))
-    AND_2.Add(HealthLessThanOrEqual(2600850, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2600850, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1923,7 +1923,7 @@ def Event_12604856():
     EnableImmortality(2600850)
     GotoIfThisEventFlagEnabled(Label.L0)
     
-    MAIN.Await(HealthLessThanOrEqual(2600850, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(2600850, value=0.5))
     
     DisableBossHealthBar(2600850, name=899000)
     EnableFlag(12604985)
@@ -2108,7 +2108,7 @@ def Event_12604877():
     if FlagEnabled(12601850):
         return
     AND_1.Add(FlagDisabled(12604856))
-    AND_1.Add(HealthLessThan(2600850, value=0.699999988079071))
+    AND_1.Add(HealthRatioLessThan(2600850, value=0.699999988079071))
     AND_1.Add(FlagDisabled(12604946))
     AND_2.Add(FlagDisabled(12604856))
     AND_2.Add(CharacterInsideRegion(2600850, region=2602046))
@@ -2319,7 +2319,7 @@ def Event_12604888():
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600850))
     AND_1.Add(FlagDisabled(12604946))
     AND_1.Add(FlagDisabled(12604856))
-    AND_1.Add(HealthGreaterThan(2600850, value=0.5))
+    AND_1.Add(HealthRatioGreaterThan(2600850, value=0.5))
     
     MAIN.Await(AND_1)
     
@@ -2376,7 +2376,7 @@ def Event_12604889():
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600850))
     AND_1.Add(FlagDisabled(12604956))
     AND_1.Add(FlagEnabled(12604856))
-    AND_1.Add(HealthGreaterThan(2600850, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2600850, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2858,7 +2858,7 @@ def Event_12600029():
     if Client():
         return
     AND_1.Add(FlagEnabled(12600027))
-    AND_1.Add(HealthEqual(2600129, value=0.0))
+    AND_1.Add(HealthRatioEqual(2600129, value=0.0))
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600129, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -2907,7 +2907,7 @@ def Event_12600030():
     DefineLabel(1)
     ForceAnimation(2600500, 0)
     AND_1.Add(EntityWithinDistance(entity=2600500, other_entity=PLAYER, radius=10.0))
-    AND_1.Add(HealthGreaterThan(2600500, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2600500, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2964,7 +2964,7 @@ def Event_12600040(_, region: int, character: int, region_1: int, character_1: i
     SetNest(character, region=region_1)
     AICommand(character, command_id=20, command_slot=0)
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthLessThan(character, value=1.0))
+    OR_1.Add(HealthRatioLessThan(character, value=1.0))
     OR_1.Add(CharacterInsideRegion(character, region=region_1))
     
     MAIN.Await(OR_1)
@@ -3501,7 +3501,7 @@ def Event_12605200(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()

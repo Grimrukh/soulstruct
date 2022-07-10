@@ -2,6 +2,7 @@ __all__ = ["EVSParser", "EVSError"]
 
 import abc
 import ast
+import copy
 import importlib
 import importlib.util  # TODO: needed? IDE doesn't think so...
 import logging
@@ -30,7 +31,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
-_COMMON_FUNC_IMPORT_RE = re.compile(r"\nfrom (\.*)([\w\d_]+) +import ([\w\d_, ]+) +# *\[COMMON_FUNC] *\n")
+_COMMON_FUNC_IMPORT_RE = re.compile(
+    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[\w\d_, \n]+)\)?\n"
+)
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
 _CONDITION_GROUP_RE = re.compile(r"(AND|OR)_(\d+)")
@@ -64,6 +67,7 @@ class EVSParser(abc.ABC):
     GAME: Game = None  # mixed in by subclasses
     EMEDF_ALIASES: dict[str, tp.Any] = None
     EMEDF_TESTS: dict[str, tp.Any] = None
+    EMEDF_COMPARISON_TESTS: dict[str, tp.Any] = None
     EVENTS_MODULE = None  # type: tp.Any
     GAME_TYPES = None  # type: tp.Any
     OR_SLOTS = []  # type: list[int, ...]
@@ -154,11 +158,12 @@ class EVSParser(abc.ABC):
 
     def _import_common_funcs(self, evs_string: str):
         for common_func_import_match in re.finditer(_COMMON_FUNC_IMPORT_RE, evs_string):
-            level = len(common_func_import_match.group(1))
+            groups = common_func_import_match.groupdict()
+            level = len(groups["dots"])
             if level == 1:
                 level = 0  # single dot is the same as no dot (same directory)
-            cf_module_name = common_func_import_match.group(2)
-            cf_imported_names = [name.strip() for name in common_func_import_match.group(3).split(",")]
+            cf_module_name = groups["module"]
+            cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
             cf_module_path = self.script_directory / ("../" * level + cf_module_name.replace(".", "/") + ".py")
             if not cf_module_path.is_file():
                 raise EVSCommonFuncImportError(
@@ -757,6 +762,9 @@ class EVSParser(abc.ABC):
         # 3. The condition is a previously-defined `Condition` or `HeldCondition` instance.
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
+            if i > len(self.AND_SLOTS):
+                # Negative OR slot, e.g., 9 -> -6 for MAIN/7/7 slot games
+                i -= len(self.conditions)
             try:
                 return self._compile_condition_skip_or_return(node, i, negate, skip_lines, end_event, restart_event)
             except ValueError:
@@ -927,7 +935,7 @@ class EVSParser(abc.ABC):
 
         emevd_args = []
         emevd_kwargs = {}
-        node_to_recur = node
+        node_to_recur = copy.deepcopy(node)  # ignore any modifications made here
 
         # NOT (recurred)
         if isinstance(node, ast.UnaryOp):
@@ -946,7 +954,25 @@ class EVSParser(abc.ABC):
         # Compare
         if isinstance(node, ast.Compare):
             node, op_node, comparison_value = self._validate_comparison_node(node)
-            emevd_args += [op_node, comparison_value]
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+                if node.func.id not in self.EMEDF_COMPARISON_TESTS:
+                    print(self.EMEDF_COMPARISON_TESTS)
+                    raise EVSSyntaxError(node.lineno, f"Invalid test function for binary comparison: {node.func.id}")
+                emevd_args += self._parse_nodes(node.args)
+                emevd_kwargs.update(self._parse_keyword_nodes(node.keywords))
+                emevd_kwargs.update(
+                    comparison_type=(NEG_COMPARISON_NODES if negate else COMPARISON_NODES)[op_node],
+                    value=comparison_value,
+                )
+                node = node.func  # `Name` node handled below.
+                # Modify test name, e.g., `Health` -> `HealthComparison`, so 'Test function' section below catches it.
+                node.id = self.EMEDF_COMPARISON_TESTS[node.id]["test_name"]
+            else:
+                raise EVSSyntaxError(
+                    node.lineno,
+                    "Left value in a binary comparison must be a test function call, "
+                    "such as `if Health(character) <= 0.1: ...`."
+                )
 
         # Testable event argument
         if isinstance(node, ast.Name) and node.id in self.current_event.args:
@@ -991,6 +1017,9 @@ class EVSParser(abc.ABC):
                     node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
                 )
             i = self.conditions.index(node.id)
+            if i > len(self.AND_SLOTS):
+                # Negative OR slot, e.g., 9 -> -6 for MAIN/7/7 slot games
+                i -= len(self.conditions)
             if i in self.finished_conditions:
                 # This condition slot is being used again. It is no longer considered 'finished' and cannot be used in
                 # 'IfFinishedCondition' checks.
@@ -1132,14 +1161,21 @@ class EVSParser(abc.ABC):
         if output_condition == 0:
             self.finished_conditions.append(input_condition)
             if input_condition in self.yoked_conditions:
-                for yoked in sorted(self.yoked_conditions[input_condition]):
-                    if yoked not in self.finished_conditions:
-                        self.finished_conditions.append(yoked)
-                self.yoked_conditions.pop(input_condition)
+                # We pop condition keys first, as some dodgy vanilla events do create loops of condition groups.
+                yoked_conditions = sorted(self.yoked_conditions.pop(input_condition))
+                self._finish_yoked_conditions(*yoked_conditions)  # recursive
         else:
             # Input condition `i` is now yoked to `condition` and will be finished whenever `condition` is loaded
             # into MAIN (0).
             self.yoked_conditions.setdefault(output_condition, set()).add(input_condition)
+
+    def _finish_yoked_conditions(self, *conditions: int):
+        for condition in conditions:
+            if condition not in self.finished_conditions:
+                self.finished_conditions.append(condition)
+            if condition in self.yoked_conditions:
+                yoked_conditions = sorted(self.yoked_conditions.pop(condition))
+                self._finish_yoked_conditions(*yoked_conditions)
 
     def _try_compile_test(
         self,
@@ -1545,7 +1581,7 @@ class EVSParser(abc.ABC):
         raise ConditionLimitError(node, "No available OR conditions left in this event.")
 
     def _check_out_AND(self, node: ast.AST, name="_", hold=False):
-        """ Check out next available AND condition register index. """
+        """Check out next available AND condition register index."""
         if name != "_" and name in self.conditions:
             raise ConditionNameError(node, f"A condition named '{name}' already exists in this event.")
         for i in self.AND_SLOTS:

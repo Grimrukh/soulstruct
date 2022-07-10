@@ -457,7 +457,7 @@ def Event_11600001():
     DisableTreasure(obj=1601600)
     DisableObject(1601600)
     DisableObject(1601950)
-    AND_1.Add(HealthLessThanOrEqual(1600800, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(1600800, value=0.0))
     AND_1.Add(FlagEnabled(11605395))
     
     MAIN.Await(AND_1)
@@ -524,7 +524,7 @@ def Event_11605394():
 def Event_11605395():
     """Event 11605395"""
     DisableNetworkSync()
-    AND_1.Add(HealthLessThanOrEqual(1600800, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(1600800, value=0.0))
     AND_1.Add(FlagEnabled(11605394))
     
     MAIN.Await(AND_1)
@@ -537,7 +537,7 @@ def Event_11605396():
     """Event 11605396"""
     MAIN.Await(FlagEnabled(11605392))
     
-    AND_7.Add(HealthLessThanOrEqual(1600800, value=0.0))
+    AND_7.Add(HealthRatioLessThanOrEqual(1600800, value=0.0))
     if AND_7:
         return
     AND_1.Add(CharacterAlive(1600801))
@@ -667,16 +667,16 @@ def Event_11605360(_, character: int):
 def Event_11605350(_, character: int):
     """Event 11605350"""
     AND_7.Add(Host())
-    AND_7.Add(HealthGreaterThan(character, value=0.0))
+    AND_7.Add(HealthRatioGreaterThan(character, value=0.0))
     
     MAIN.Await(AND_7)
     
     EnableImmortality(character)
     AND_1.Add(Host())
     AND_1.Add(TimeElapsed(seconds=1.0))
-    AND_1.Add(HealthGreaterThan(1600800, value=0.0))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.009999999776482582))
-    AND_2.Add(HealthLessThanOrEqual(1600800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(1600800, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.009999999776482582))
+    AND_2.Add(HealthRatioLessThanOrEqual(1600800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1663,8 +1663,8 @@ def Event_11600650(_, obj: int, obj_1: int):
 @NeverRestart(11600510)
 def Event_11600510(_, character: int, flag: int):
     """Event 11600510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1693,7 +1693,7 @@ def Event_11600520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1809,8 +1809,8 @@ def Event_11600541(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11600541"""
     AND_1.Add(InsideMap(game_map=NEW_LONDO_RUINS))
     OR_1.Add(FlagEnabled(11600590))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_1.Add(AND_2)

@@ -176,6 +176,8 @@ class TalkEditor(BaseEditor):
         self.esp_file_paths = {}
         self.esp_text = {}
         for map_directory in self.esp_directory.glob("*"):
+            if not map_directory.is_dir():
+                continue
             try:
                 game_map = self.talk.GET_MAP(map_directory.name)
             except ValueError:

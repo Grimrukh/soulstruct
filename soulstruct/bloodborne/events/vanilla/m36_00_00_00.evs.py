@@ -469,7 +469,7 @@ def Event_13604730(
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     OR_2.Add(FlagEnabled(flag_3))
     OR_2.Add(FlagEnabled(flag_6))
     OR_1.Add(AND_2)
@@ -1523,7 +1523,7 @@ def Event_13604820():
     DefineLabel(0)
     DisableGravity(3600801)
     
-    MAIN.Await(HealthLessThan(3600800, value=0.5))
+    MAIN.Await(HealthRatioLessThan(3600800, value=0.5))
     
     AICommand(3600800, command_id=100, command_slot=0)
     ReplanAI(3600800)
@@ -1853,7 +1853,7 @@ def Event_13605600(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()
@@ -2079,7 +2079,7 @@ def Event_13605760():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthLessThan(3600302, value=0.5))
+    MAIN.Await(HealthRatioLessThan(3600302, value=0.5))
     
     SetNest(3600302, region=3602303)
     AICommand(3600302, command_id=10, command_slot=0)
@@ -2102,8 +2102,8 @@ def Event_13605761():
     OR_1.Add(CharacterWhitePhantom(PLAYER))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=3602304))
-    AND_1.Add(HealthLessThan(3600302, value=0.5))
-    AND_2.Add(HealthLessThan(3600302, value=0.4000000059604645))
+    AND_1.Add(HealthRatioLessThan(3600302, value=0.5))
+    AND_2.Add(HealthRatioLessThan(3600302, value=0.4000000059604645))
     AND_3.Add(AttackedWithDamageType(attacked_entity=3600303))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
@@ -2338,7 +2338,7 @@ def Event_13605930(_, character: int, flag: int, flag_1: int, region: int, regio
     if FlagEnabled(flag_1):
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region_1))
@@ -2602,14 +2602,14 @@ def Event_13600951(_, character: int, flag: int, flag_1: int):
     DisableFlag(flag)
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
     ForceAnimation(character, 103152)
     AND_2.Add(FlagEnabled(flag_1))
     AND_2.Add(FlagDisabled(flag))
-    AND_2.Add(HealthNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_2)
     

@@ -1711,7 +1711,7 @@ def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: i
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(InsideMap(game_map=(area_id, block_id)))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)

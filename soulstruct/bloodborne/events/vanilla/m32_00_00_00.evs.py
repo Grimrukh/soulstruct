@@ -941,7 +941,7 @@ def Event_13200108():
     OR_1.Add(FlagEnabled(1421))
     OR_1.Add(FlagEnabled(1422))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthLessThan(3200101, value=0.5))
+    AND_1.Add(HealthRatioLessThan(3200101, value=0.5))
     AND_1.Add(Attacked(attacked_entity=3200101, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -1191,7 +1191,7 @@ def Event_13201801():
         return
     AND_1.Add(FlagEnabled(13201800))
     AND_2.Add(CharacterBackreadDisabled(3200800))
-    AND_2.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1574,13 +1574,13 @@ def Event_13204804():
     DisableNetworkSync()
     if FlagEnabled(13201800):
         return
-    AND_1.Add(HealthGreaterThan(3200800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(3200800, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3200800, radius=4.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=BYRGENWERTH, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(3200800, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(3200800, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=3200800, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -1609,7 +1609,7 @@ def Event_13204807():
     if FlagEnabled(13201800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3200800, value=0.75))
+    MAIN.Await(HealthRatioLessThanOrEqual(3200800, value=0.75))
     
     AICommand(3200800, command_id=100, command_slot=0)
     ReplanAI(3200800)
@@ -1625,7 +1625,7 @@ def Event_13204807():
     ReplanAI(3200800)
     EnableFlag(13204811)
     
-    MAIN.Await(HealthLessThanOrEqual(3200800, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(3200800, value=0.5))
     
     AICommand(3200800, command_id=110, command_slot=0)
     ReplanAI(3200800)
@@ -1650,7 +1650,7 @@ def Event_13204808():
     CreateNPCPart(3200800, npc_part_id=3201, part_index=NPCPartType.Part2, part_health=100)
     SetNPCPartEffects(3200800, npc_part_id=3201, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3201, value=0))
-    AND_2.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1664,7 +1664,7 @@ def Event_13204808():
     ForceAnimation(3200800, 7000)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=50, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3201, value=0))
-    AND_5.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -1678,7 +1678,7 @@ def Event_13204808():
     ForceAnimation(3200800, 7001)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=25, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3201, value=0))
-    AND_8.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -1718,7 +1718,7 @@ def Event_13204809():
     CreateNPCPart(3200800, npc_part_id=3202, part_index=NPCPartType.Part3, part_health=100)
     SetNPCPartEffects(3200800, npc_part_id=3202, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3202, value=0))
-    AND_2.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1732,7 +1732,7 @@ def Event_13204809():
     ForceAnimation(3200800, 7005)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=50, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3202, value=0))
-    AND_5.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -1746,7 +1746,7 @@ def Event_13204809():
     ForceAnimation(3200800, 7006)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=25, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(3200800, npc_part_id=3, value=0))
-    AND_8.Add(HealthLessThanOrEqual(3200800, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(3200800, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -2003,7 +2003,7 @@ def Event_13205200():
     """Event 13205200"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     DisableCharacter(3200621)
-    AND_1.Add(HealthEqual(3200620, value=0.0))
+    AND_1.Add(HealthRatioEqual(3200620, value=0.0))
     AND_1.Add(CharacterHasTAEEvent(3200620, tae_event_id=10))
     
     MAIN.Await(AND_1)
@@ -2056,7 +2056,7 @@ def Event_13205600(
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)

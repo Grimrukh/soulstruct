@@ -879,8 +879,8 @@ def Event_13015555():
     CreateNPCPart(3010830, npc_part_id=10, part_index=NPCPartType.Part3, part_health=100)
     OR_1.Add(CharacterPartHealthLessThanOrEqual(3010830, npc_part_id=10, value=1))
     OR_1.Add(CharacterPartHealthLessThanOrEqual(3010831, npc_part_id=10, value=1))
-    OR_1.Add(HealthLessThanOrEqual(3010830, value=0.0010000000474974513))
-    OR_1.Add(HealthLessThanOrEqual(3010831, value=0.0010000000474974513))
+    OR_1.Add(HealthRatioLessThanOrEqual(3010830, value=0.0010000000474974513))
+    OR_1.Add(HealthRatioLessThanOrEqual(3010831, value=0.0010000000474974513))
     
     MAIN.Await(OR_1)
     
@@ -889,9 +889,9 @@ def Event_13015555():
     GotoIfConditionTrue(Label.L0, input_condition=AND_1)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(3010831, npc_part_id=10, value=0))
     GotoIfConditionTrue(Label.L1, input_condition=AND_2)
-    AND_3.Add(HealthLessThanOrEqual(3010830, value=0.0010000000474974513))
+    AND_3.Add(HealthRatioLessThanOrEqual(3010830, value=0.0010000000474974513))
     GotoIfConditionTrue(Label.L0, input_condition=AND_3)
-    AND_4.Add(HealthLessThanOrEqual(3010831, value=0.0010000000474974513))
+    AND_4.Add(HealthRatioLessThanOrEqual(3010831, value=0.0010000000474974513))
     GotoIfConditionTrue(Label.L1, input_condition=AND_4)
 
     # --- Label 0 --- #
@@ -963,7 +963,7 @@ def Event_13015556(_, character: int, flag: int, flag_1: int, flag_2: int):
     DisableInvincibility(character)
     EnableHealthBar(character)
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     EnableFlag(flag)
     SetNetworkUpdateRate(3010830, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1016,7 +1016,7 @@ def Event_13015557(_, character: int, flag: int, flag_1: int):
     EnableHealthBar(character)
     SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     EnableFlag(flag)
     SetNetworkUpdateRate(3010831, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -1211,7 +1211,7 @@ def Event_13015811():
         return
     EnableInvincibility(3010801)
     EnableInvincibility(3010802)
-    AND_1.Add(HealthLessThanOrEqual(3010800, value=0.699999988079071))
+    AND_1.Add(HealthRatioLessThanOrEqual(3010800, value=0.699999988079071))
     AND_1.Add(Attacked(attacked_entity=3010800, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -1231,7 +1231,7 @@ def Event_13015812():
     if FlagEnabled(13010800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3010800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3010800, value=0.0))
     
     Wait(3.5)
     PlaySoundEffect(3010800, 777777777, sound_type=SoundType.s_SFX)

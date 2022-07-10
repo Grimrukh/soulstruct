@@ -286,7 +286,7 @@ def Event_14100800():
     if FlagEnabled(14100800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(4100800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(4100800, value=0.0))
     
     Wait(3.0)
     PlaySoundEffect(4100800, 777777777, sound_type=SoundType.s_SFX)
@@ -350,7 +350,7 @@ def Event_14105811():
     if FlagEnabled(14105802):
         return
     EnableImmortality(4100800)
-    AND_1.Add(HealthLessThanOrEqual(4100800, value=0.05000000074505806))
+    AND_1.Add(HealthRatioLessThanOrEqual(4100800, value=0.05000000074505806))
     AND_1.Add(AttackedWithDamageType(attacked_entity=4100800, attacker=PLAYER))
     
     MAIN.Await(AND_1)

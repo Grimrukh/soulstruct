@@ -16,7 +16,7 @@ from soulstruct.utilities.files import PACKAGE_PATH
 
 
 _DEF_TEMPLATE = "\n\ndef {alias}({args}):"
-_DEF_TEMPLATE_RET_BOOL = "\n\ndef {alias}({args}) -> bool:"
+_DEF_TEMPLATE_RET = "\n\ndef {alias}({args}) -> {ret_type}:"
 _MAX_LINE_WIDTH = 120
 
 
@@ -119,6 +119,7 @@ def generate_instr_pyi(
     emedf_dict: dict,
     emedf_aliases: dict,
     emedf_tests: dict,
+    emedf_comparison_tests: dict,
     condition_count: int,
     pyi_path: Path | str,
     compiler_module,
@@ -243,7 +244,8 @@ def generate_instr_pyi(
                 }
                 partial_docstring = f"Calls `compiler.{if_instr_name}`."
             else:
-                raise
+                print(compiler_names)
+                raise KeyError(f"No instruction named `{if_instr_name}` in EMEDF or compiler module.")
         else:
             args_dict = {}
             for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
@@ -265,12 +267,34 @@ def generate_instr_pyi(
                     partial_docstring = f"\n{partial_kwargs['__docstring']}"
 
         test_args = get_arg_string(test_args_dict, len(if_instr_name), add_event_layers=has_event_layers)
-        pyi_funcs_str += _DEF_TEMPLATE_RET_BOOL.format(alias=test_name, args=test_args) + "\n"
+        pyi_funcs_str += _DEF_TEMPLATE_RET.format(alias=test_name, args=test_args, ret_type="bool") + "\n"
 
         if partial_docstring:
             pyi_funcs_str += format_docstring(partial_docstring) + "\n"
         pyi_funcs_str += "    ...\n"
         pyi_all_lines.append(f"\"{test_name}\",")
+
+    for comparison_test_name, comparison_test_info in emedf_comparison_tests.items():
+        test_name = comparison_test_info["test_name"]
+        if_instr_name = emedf_tests[test_name]["if"]  # must be present
+        category, index, instr_info = emedf_aliases[if_instr_name]  # must be present
+        partial_docstring = f"Compare output to a value as a shortcut for calling `{test_name}(...)`."
+        args_dict = {}
+        for evs_arg_name, evs_arg_info in instr_info.get("evs_args", instr_info["args"]).items():
+            args_dict[evs_arg_name] = instr_info["args"][evs_arg_name] if not evs_arg_info else evs_arg_info
+        test_args_dict = {
+            arg_name: arg_info for arg_name, arg_info in args_dict.items()
+            if arg_name not in {"condition", "line_count", "label", "comparison_type", "value"}
+        }
+
+        test_args = get_arg_string(test_args_dict, len(if_instr_name), add_event_layers=has_event_layers)
+        ret_type = comparison_test_info["return_type"].__name__
+        pyi_funcs_str += _DEF_TEMPLATE_RET.format(alias=comparison_test_name, args=test_args, ret_type=ret_type) + "\n"
+
+        if partial_docstring:
+            pyi_funcs_str += format_docstring(partial_docstring) + "\n"
+        pyi_funcs_str += "    ...\n"
+        pyi_all_lines.append(f"\"{comparison_test_name}\",")
 
     pyi_all = "__all__ = [\n    " + "\n    ".join(pyi_all_lines) + "\n]\n\n"
     pyi_str = pyi_docstring + pyi_all + pyi_imports + pyi_funcs_str
@@ -281,12 +305,13 @@ def generate_instr_pyi(
 
 def darksouls1ptde():
     from soulstruct.darksouls1ptde.events.emevd import compiler
-    from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1ptde",
         EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
+        EMEDF_COMPARISON_TESTS,
         7,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
         compiler,
@@ -295,12 +320,13 @@ def darksouls1ptde():
 
 def darksouls1r():
     from soulstruct.darksouls1r.events.emevd import compiler
-    from soulstruct.darksouls1r.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    from soulstruct.darksouls1r.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1r",
         EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
+        EMEDF_COMPARISON_TESTS,
         7,
         PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
         compiler,
@@ -309,12 +335,13 @@ def darksouls1r():
 
 def bloodborne():
     from soulstruct.bloodborne.events.emevd import compiler
-    from soulstruct.bloodborne.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    from soulstruct.bloodborne.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "bloodborne",
         EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
+        EMEDF_COMPARISON_TESTS,
         15,
         PACKAGE_PATH("bloodborne/events/instructions.pyi"),
         compiler,
@@ -323,12 +350,13 @@ def bloodborne():
 
 def darksouls3():
     from soulstruct.darksouls3.events.emevd import compiler
-    from soulstruct.darksouls3.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    from soulstruct.darksouls3.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls3",
         EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
+        EMEDF_COMPARISON_TESTS,
         15,
         PACKAGE_PATH("darksouls3/events/instructions.pyi"),
         compiler,
@@ -338,12 +366,13 @@ def darksouls3():
 
 def eldenring():
     from soulstruct.eldenring.events.emevd import compiler
-    from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "eldenring",
         EMEDF,
         EMEDF_ALIASES,
         EMEDF_TESTS,
+        EMEDF_COMPARISON_TESTS,
         15,
         PACKAGE_PATH("eldenring/events/instructions.pyi"),
         compiler,

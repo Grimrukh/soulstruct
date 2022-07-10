@@ -485,7 +485,7 @@ def Event_12201801():
         return
     AND_1.Add(FlagEnabled(12201800))
     AND_2.Add(CharacterBackreadDisabled(2200800))
-    AND_2.Add(HealthLessThanOrEqual(2200800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2200800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -840,7 +840,7 @@ def Event_12204810():
     DisableHealthBar(2200801)
     DisableCharacter(2200801)
     
-    MAIN.Await(HealthLessThanOrEqual(2200800, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(2200800, value=0.5))
     
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
@@ -1152,10 +1152,10 @@ def Event_12204839():
     AND_2.Add(FlagDisabled(12201810))
     AND_3.Add(EventValueEqual(flag=12204860, bit_count=10, value=3))
     AND_3.Add(FlagDisabled(12204875))
-    AND_4.Add(HealthLessThanOrEqual(2200800, value=0.30000001192092896))
+    AND_4.Add(HealthRatioLessThanOrEqual(2200800, value=0.30000001192092896))
     AND_4.Add(EventValueLessThanOrEqual(flag=12204860, bit_count=10, value=2))
     AND_4.Add(FlagDisabled(12204875))
-    AND_5.Add(HealthLessThanOrEqual(2200801, value=0.5))
+    AND_5.Add(HealthRatioLessThanOrEqual(2200801, value=0.5))
     AND_5.Add(EventValueLessThanOrEqual(flag=12204860, bit_count=10, value=2))
     AND_5.Add(FlagDisabled(12204875))
     OR_3.Add(AND_3)
@@ -1731,7 +1731,7 @@ def Event_12200132():
     if FlagEnabled(12507810):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(2201310, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(2201310, value=0.0))
     
     StopEvent(event_id=12200131)
 
@@ -2540,7 +2540,7 @@ def Event_12205220(_, character: int, region: int, animation_id: int, region_1: 
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
     AND_1.Add(CharacterInsideRegion(character, region=region))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_3.Add(AND_3)
     OR_3.Add(AND_1)
     
@@ -2553,7 +2553,7 @@ def Event_12205220(_, character: int, region: int, animation_id: int, region_1: 
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     AND_2.Add(CharacterOutsideRegion(character, region=region_1))
-    AND_4.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_4.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_2.Add(OR_1)
     OR_2.Add(AND_2)
     OR_2.Add(AND_4)

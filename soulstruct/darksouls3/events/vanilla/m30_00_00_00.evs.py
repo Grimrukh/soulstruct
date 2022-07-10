@@ -913,7 +913,7 @@ def Event_13005481():
         return
     if FlagEnabled(9420):
         return
-    AND_1.Add(HealthLessThanOrEqual(3000850, value=0.20000000298023224))
+    AND_1.Add(HealthRatioLessThanOrEqual(3000850, value=0.20000000298023224))
     AND_2.Add(FlagEnabled(9420))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1406,7 +1406,7 @@ def Event_13005811():
     if FlagEnabled(13000800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3000800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3000800, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3000800, 777777777, sound_type=SoundType.s_SFX)
@@ -1660,7 +1660,7 @@ def Event_13005831():
     if FlagEnabled(13000830):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3000830, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3000830, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3000830, 777777777, sound_type=SoundType.s_SFX)
@@ -2041,7 +2041,7 @@ def Event_13005895():
     if FlagEnabled(13000890):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3000899, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3000899, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3000899, 777777777, sound_type=SoundType.s_SFX)

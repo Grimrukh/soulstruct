@@ -881,7 +881,7 @@ def Event_12100113():
     if not AND_15:
         return
     WaitFrames(frames=1)
-    OR_1.Add(HealthEqual(2100700, value=0.0))
+    OR_1.Add(HealthRatioEqual(2100700, value=0.0))
     OR_1.Add(FlagEnabled(12105100))
     GotoIfConditionFalse(Label.L0, input_condition=OR_1)
     EnableFlag(72100102)
@@ -934,7 +934,7 @@ def Event_12100115():
     
     MAIN.Await(AND_1)
     
-    OR_1.Add(HealthEqual(2100700, value=0.0))
+    OR_1.Add(HealthRatioEqual(2100700, value=0.0))
     OR_1.Add(FlagEnabled(12105100))
     OR_1.Add(FlagEnabled(72100105))
     if OR_1:
@@ -1043,7 +1043,9 @@ def Event_12100121():
     MAIN.Await(PlayerHasGood(4300, including_storage=True))
     
     EnableFlag(12100122)
-    IfPlayerDoesNotHaveGood(MAIN, 4300, including_storage=True)
+    
+    MAIN.Await(PlayerDoesNotHaveGood(4300, including_storage=True))
+    
     DisableFlag(12100122)
     Restart()
 
@@ -1494,46 +1496,46 @@ def Event_12100450():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    IfPlayerDoesNotHaveGood(AND_1, 4103)
+    AND_1.Add(PlayerDoesNotHaveGood(4103))
     SkipLinesIfConditionTrue(1, AND_1)
     EnableFlag(6630)
-    IfPlayerDoesNotHaveGood(AND_2, 4104)
+    AND_2.Add(PlayerDoesNotHaveGood(4104))
     SkipLinesIfConditionTrue(1, AND_2)
     EnableFlag(6631)
-    IfPlayerDoesNotHaveGood(AND_3, 4105)
+    AND_3.Add(PlayerDoesNotHaveGood(4105))
     SkipLinesIfConditionTrue(1, AND_3)
     EnableFlag(6632)
-    IfPlayerDoesNotHaveGood(AND_4, 4102)
+    AND_4.Add(PlayerDoesNotHaveGood(4102))
     SkipLinesIfConditionTrue(1, AND_4)
     EnableFlag(6633)
-    IfPlayerDoesNotHaveGood(AND_5, 4110)
+    AND_5.Add(PlayerDoesNotHaveGood(4110))
     SkipLinesIfConditionTrue(1, AND_5)
     EnableFlag(6640)
-    IfPlayerDoesNotHaveGood(AND_6, 4112)
+    AND_6.Add(PlayerDoesNotHaveGood(4112))
     SkipLinesIfConditionTrue(1, AND_6)
     EnableFlag(6641)
-    IfPlayerDoesNotHaveGood(AND_7, 4113)
+    AND_7.Add(PlayerDoesNotHaveGood(4113))
     SkipLinesIfConditionTrue(1, AND_7)
     EnableFlag(6642)
-    IfPlayerDoesNotHaveGood(AND_8, 4111)
+    AND_8.Add(PlayerDoesNotHaveGood(4111))
     SkipLinesIfConditionTrue(1, AND_8)
     EnableFlag(6643)
-    IfPlayerDoesNotHaveGood(AND_9, 4118)
+    AND_9.Add(PlayerDoesNotHaveGood(4118))
     SkipLinesIfConditionTrue(1, AND_9)
     EnableFlag(6644)
-    IfPlayerDoesNotHaveGood(AND_10, 4114)
+    AND_10.Add(PlayerDoesNotHaveGood(4114))
     SkipLinesIfConditionTrue(1, AND_10)
     EnableFlag(6645)
-    IfPlayerDoesNotHaveGood(AND_11, 4115)
+    AND_11.Add(PlayerDoesNotHaveGood(4115))
     SkipLinesIfConditionTrue(1, AND_11)
     EnableFlag(6646)
-    IfPlayerDoesNotHaveGood(AND_12, 4116)
+    AND_12.Add(PlayerDoesNotHaveGood(4116))
     SkipLinesIfConditionTrue(1, AND_12)
     EnableFlag(6647)
-    IfPlayerDoesNotHaveGood(AND_13, 4119)
+    AND_13.Add(PlayerDoesNotHaveGood(4119))
     SkipLinesIfConditionTrue(1, AND_13)
     EnableFlag(6648)
-    IfPlayerDoesNotHaveGood(AND_14, 4117)
+    AND_14.Add(PlayerDoesNotHaveGood(4117))
     SkipLinesIfConditionTrue(1, AND_14)
     EnableFlag(6649)
     End()
@@ -1765,7 +1767,7 @@ def Event_12101800():
     DefineLabel(0)
     DisableFlag(12104809)
     
-    MAIN.Await(HealthEqual(2100800, value=0.0))
+    MAIN.Await(HealthRatioEqual(2100800, value=0.0))
     
     EnableFlag(12104809)
     AND_1.Add(CharacterDead(2100800))
@@ -1831,7 +1833,7 @@ def Event_12101801():
         return
     AND_1.Add(FlagEnabled(12101800))
     AND_2.Add(CharacterBackreadDisabled(2100800))
-    AND_2.Add(HealthLessThanOrEqual(2100800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2100800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2048,13 +2050,13 @@ def Event_12104804():
     DisableNetworkSync()
     if FlagEnabled(12101800):
         return
-    AND_1.Add(HealthGreaterThan(2100800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2100800, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100800, radius=8.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=HUNTERS_DREAM, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2100800, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2100800, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2100800, radius=10.0))
     
     MAIN.Await(AND_2)
@@ -2083,7 +2085,7 @@ def Event_12104807():
     if FlagEnabled(12101800):
         return
     
-    MAIN.Await(HealthLessThan(2100800, value=0.5))
+    MAIN.Await(HealthRatioLessThan(2100800, value=0.5))
     
     AICommand(2100800, command_id=100, command_slot=0)
     
@@ -2173,7 +2175,7 @@ def Event_12101851():
         return
     AND_1.Add(FlagEnabled(12101850))
     AND_2.Add(CharacterBackreadDisabled(2100810))
-    AND_2.Add(HealthLessThanOrEqual(2100810, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2100810, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2432,13 +2434,13 @@ def Event_12104854():
     DisableNetworkSync()
     if FlagEnabled(12101850):
         return
-    AND_1.Add(HealthGreaterThan(2100810, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2100810, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100810, radius=8.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=HUNTERS_DREAM, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2100810, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2100810, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2100810, radius=12.0))
     
     MAIN.Await(AND_2)
@@ -2478,7 +2480,7 @@ def Event_12104860(
     CreateNPCPart(2100810, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2100810, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(2100810, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(2100810, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2100810, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     

@@ -570,7 +570,7 @@ def Event_11000111():
     """Event 11000111"""
     DisableNetworkSync()
     OR_1.Add(FlagEnabled(11000110))
-    IfPlayerDoesNotHaveGood(AND_1, 2007)
+    AND_1.Add(PlayerDoesNotHaveGood(2007))
     AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1001200,
@@ -785,8 +785,8 @@ def Event_11000600(_, obj: int, obj_act_id: int):
 @NeverRestart(11000510)
 def Event_11000510(_, character: int, flag: int):
     """Event 11000510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -815,7 +815,7 @@ def Event_11000520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -827,7 +827,7 @@ def Event_11000530(_, character: int, first_flag: int, last_flag: int, flag: int
     if FlagDisabled(11000580):
         AND_1.Add(FlagDisabled(1253))
         AND_1.Add(FlagEnabled(1250))
-        AND_1.Add(HealthGreaterThan(character, value=0.0))
+        AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
         OR_1.Add(ObjectDestroyed(1001250))
         OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
         AND_1.Add(OR_1)
@@ -878,7 +878,7 @@ def Event_11000533(_, character: int, flag: int):
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlag(1434)
     EnableFlag(flag)

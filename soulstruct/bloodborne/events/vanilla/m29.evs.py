@@ -2984,7 +2984,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
     
     MAIN.Await(OR_1)
     
@@ -3116,7 +3116,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
     
     MAIN.Await(OR_1)
     
@@ -3249,7 +3249,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__miniboss_id))
-    OR_1.Add(HealthEqual(character__miniboss_id, value=0.0))
+    OR_1.Add(HealthRatioEqual(character__miniboss_id, value=0.0))
     
     MAIN.Await(OR_1)
     
@@ -4024,9 +4024,9 @@ def Event_12901723(
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
     OR_2.Add(CharacterDead(character))
-    OR_2.Add(HealthEqual(character, value=0.0))
+    OR_2.Add(HealthRatioEqual(character, value=0.0))
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     
@@ -4175,11 +4175,11 @@ def Event_12901725(
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
     OR_2.Add(CharacterDead(character))
-    OR_2.Add(HealthEqual(character, value=0.0))
+    OR_2.Add(HealthRatioEqual(character, value=0.0))
     OR_3.Add(CharacterDead(character_1))
-    OR_3.Add(HealthEqual(character_1, value=0.0))
+    OR_3.Add(HealthRatioEqual(character_1, value=0.0))
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     AND_1.Add(OR_3)
@@ -4391,7 +4391,7 @@ def Event_12901754(_, character: int):
 def Event_12904000(_, character: int, character_1: int):
     """Event 12904000"""
     DisableCharacter(character_1)
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_1.Add(CharacterHasTAEEvent(character, tae_event_id=10))
     
     MAIN.Await(AND_1)
@@ -4456,7 +4456,7 @@ def Event_12904028(_, character: int, character_1: int, character_2: int, flag: 
     if FlagEnabled(flag):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.4000000059604645))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.4000000059604645))
     
     AICommand(character_1, command_id=100, command_slot=1)
     AICommand(character_2, command_id=100, command_slot=1)
@@ -4754,7 +4754,7 @@ def Event_12904041(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()
@@ -5410,7 +5410,7 @@ def Event_12904361(_, character: int, character_1: int):
     SetNPCPartEffects(character, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
     DisableCharacter(character_1)
     OR_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=10, value=0))
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     
     MAIN.Await(OR_1)
     
@@ -5983,7 +5983,7 @@ def Event_12904487(_, character: int, character_1: int):
     """Event 12904487"""
     DisableGravity(character_1)
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     Wait(1.0)
     ForceAnimation(character_1, 2200, wait_for_completion=True)
@@ -6020,7 +6020,7 @@ def Event_12904506(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -6078,7 +6078,7 @@ def Event_12904540(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=60, material_vfx_id=60)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -6360,7 +6360,7 @@ def Event_12904643(_, character: int):
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     AND_3.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=8.800000190734863))
-    AND_4.Add(HealthEqual(character, value=1.0))
+    AND_4.Add(HealthRatioEqual(character, value=1.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     AND_5.Add(OR_1)
@@ -6382,7 +6382,7 @@ def Event_12904643(_, character: int):
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    AND_7.Add(HealthNotEqual(character, value=1.0))
+    AND_7.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(5, AND_7)
     ShootProjectile(
         owner_entity=2900000,
@@ -6394,7 +6394,7 @@ def Event_12904643(_, character: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_8.Add(HealthNotEqual(character, value=1.0))
+    AND_8.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(1, AND_8)
     ShootProjectile(
         owner_entity=2900000,
@@ -6721,13 +6721,13 @@ def Event_12904778(_, character: int, flag: int):
     if FlagEnabled(flag):
         return
     DisableNetworkSync()
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     
     MAIN.Await(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=6.0))
     
@@ -6848,7 +6848,7 @@ def Event_12904861(_, character: int, destination: int):
 @NeverRestart(12904862)
 def Event_12904862(_, character: int, character_1: int, character_2: int):
     """Event 12904862"""
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     Kill(character_1)
     Kill(character_2)
@@ -6930,7 +6930,7 @@ def Event_12904865(_, character: int, value: float, character_1: int):
     """Event 12904865"""
     DisableCharacter(character)
     AND_1.Add(CharacterHasTAEEvent(character_1, tae_event_id=20))
-    AND_1.Add(HealthLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
     
     MAIN.Await(AND_1)
     
@@ -6964,7 +6964,7 @@ def Event_12904867(_, character: int, region: int):
 @NeverRestart(12904868)
 def Event_12904868(_, character: int, destination: int, destination_1: int):
     """Event 12904868"""
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.75))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.75))
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
@@ -6979,7 +6979,7 @@ def Event_12904868(_, character: int, destination: int, destination_1: int):
     AICommand(character, command_id=101, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.5))
     
     AICommand(character, command_id=110, command_slot=0)
     ReplanAI(character)
@@ -7003,7 +7003,7 @@ def Event_12904869(_, character: int):
     CreateNPCPart(character, npc_part_id=2, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -7017,7 +7017,7 @@ def Event_12904869(_, character: int):
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_5.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -7031,7 +7031,7 @@ def Event_12904869(_, character: int):
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_8.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -7071,7 +7071,7 @@ def Event_12904870(_, character: int):
     CreateNPCPart(character, npc_part_id=3, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -7085,7 +7085,7 @@ def Event_12904870(_, character: int):
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_5.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -7099,7 +7099,7 @@ def Event_12904870(_, character: int):
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_8.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -7361,13 +7361,13 @@ def Event_12904883(_, character: int, flag: int):
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -7395,7 +7395,7 @@ def Event_12904887(_, character: int, character_1: int, flag: int, destination: 
     """Event 12904887"""
     DisableCharacter(character)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
     
     MAIN.Await(AND_1)
     
@@ -7415,7 +7415,7 @@ def Event_12904887(_, character: int, character_1: int, flag: int, destination: 
 @RestartOnRest(12904888)
 def Event_12904888(_, character: int):
     """Event 12904888"""
-    MAIN.Await(HealthLessThan(character, value=0.5))
+    MAIN.Await(HealthRatioLessThan(character, value=0.5))
     
     AICommand(character, command_id=1, command_slot=1)
     
@@ -7509,7 +7509,7 @@ def Event_12904892(_, sound_id: int, sound_id_1: int):
 @NeverRestart(12904893)
 def Event_12904893(_, character: int):
     """Event 12904893"""
-    MAIN.Await(HealthLessThan(character, value=0.5))
+    MAIN.Await(HealthRatioLessThan(character, value=0.5))
     
     AICommand(character, command_id=1, command_slot=1)
     
@@ -7704,7 +7704,7 @@ def Event_12904898(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7775,7 +7775,7 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=130)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7833,7 +7833,7 @@ def Event_12904900(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7912,7 +7912,7 @@ def Event_12904901(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7983,7 +7983,7 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8041,7 +8041,7 @@ def Event_12904903(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8120,7 +8120,7 @@ def Event_12904904(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8191,7 +8191,7 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8249,7 +8249,7 @@ def Event_12904906(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8328,7 +8328,7 @@ def Event_12904907(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8399,7 +8399,7 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8457,7 +8457,7 @@ def Event_12904909(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8536,7 +8536,7 @@ def Event_12904910(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8607,7 +8607,7 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8665,7 +8665,7 @@ def Event_12904911(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8726,7 +8726,7 @@ def Event_12904911(
 @RestartOnRest(12904912)
 def Event_12904912(_, character: int):
     """Event 12904912"""
-    MAIN.Await(HealthLessThan(character, value=0.6700000166893005))
+    MAIN.Await(HealthRatioLessThan(character, value=0.6700000166893005))
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -8739,7 +8739,7 @@ def Event_12904912(_, character: int):
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthLessThan(character, value=0.33000001311302185))
+    MAIN.Await(HealthRatioLessThan(character, value=0.33000001311302185))
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -8818,7 +8818,7 @@ def Event_12904917(
     MAIN.Await(AND_1)
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=1)
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -9943,7 +9943,7 @@ def Event_12905314(_, character: int, flag: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    MAIN.Await(HealthEqual(character, value=1.0))
+    MAIN.Await(HealthRatioEqual(character, value=1.0))
     
     WaitFrames(frames=1)
     End()
@@ -9956,7 +9956,7 @@ def Event_12905337(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(3, AND_1)
     DisableAI(character)
     ForceAnimation(character, 3002, wait_for_completion=True)
@@ -10000,7 +10000,7 @@ def Event_12905357(
     SetAIParamID(character, ai_param_id=ai_param_id)
     ForceAnimation(character, animation_id, loop=True)
     OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthNotEqual(character, value=1.0))
+    OR_1.Add(HealthRatioNotEqual(character, value=1.0))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Search))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -10021,7 +10021,7 @@ def Event_12905369(_, character: int, animation_id: int, animation_id_1: int):
         End()
     ForceAnimation(character, animation_id, loop=True)
     OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthNotEqual(character, value=1.0))
+    OR_1.Add(HealthRatioNotEqual(character, value=1.0))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     MAIN.Await(OR_1)
@@ -12217,7 +12217,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
     """Event 12906656"""
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    AND_1.Add(HealthEqual(character, value=1.0))
+    AND_1.Add(HealthRatioEqual(character, value=1.0))
     AND_2.Add(OR_1)
     AND_2.Add(AND_1)
     
@@ -12244,7 +12244,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    AND_4.Add(HealthNotEqual(character, value=1.0))
+    AND_4.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(17, AND_4)
     ShootProjectile(
         owner_entity=2900000,
@@ -12256,7 +12256,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=90)
-    AND_5.Add(HealthNotEqual(character, value=1.0))
+    AND_5.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(13, AND_5)
     ShootProjectile(
         owner_entity=2900000,
@@ -12268,7 +12268,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=90)
-    AND_6.Add(HealthNotEqual(character, value=1.0))
+    AND_6.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(9, AND_6)
     ShootProjectile(
         owner_entity=2900000,
@@ -12280,7 +12280,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_7.Add(HealthNotEqual(character, value=1.0))
+    AND_7.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(5, AND_7)
     ShootProjectile(
         owner_entity=2900000,
@@ -12292,7 +12292,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_8.Add(HealthNotEqual(character, value=1.0))
+    AND_8.Add(HealthRatioNotEqual(character, value=1.0))
     SkipLinesIfConditionTrue(1, AND_8)
     ShootProjectile(
         owner_entity=2900000,
@@ -12487,7 +12487,7 @@ def Event_12906738(_, character: int):
 def Event_12906740(_, character: int, flag: int):
     """Event 12906740"""
     EndIfFlagRangeAnyEnabled(flag_range=(1431, 1432))
-    AND_1.Add(HealthLessThan(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioLessThan(character, value=0.8999999761581421))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
@@ -12544,7 +12544,7 @@ def Event_12906748(_, character: int):
     """Event 12906748"""
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(CharacterHasSpecialEffect(character, 5543))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -12596,7 +12596,7 @@ def Event_12906764(
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12648,7 +12648,7 @@ def Event_12906765(
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12688,7 +12688,7 @@ def Event_12906766(_, character: int, flag: int, flag_1: int):
     if ThisEventSlotFlagEnabled():
         return
     
-    MAIN.Await(HealthLessThan(character, value=0.699999988079071))
+    MAIN.Await(HealthRatioLessThan(character, value=0.699999988079071))
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -12709,7 +12709,7 @@ def Event_12906767(_, character: int, flag: int, flag_1: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_1.Add(HealthLessThan(character, value=0.30000001192092896))
+    AND_1.Add(HealthRatioLessThan(character, value=0.30000001192092896))
     AND_1.Add(FlagEnabled(flag_1))
     
     MAIN.Await(AND_1)
@@ -12782,7 +12782,7 @@ def Event_12906769(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12861,7 +12861,7 @@ def Event_12906770(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12940,7 +12940,7 @@ def Event_12906771(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13019,7 +13019,7 @@ def Event_12906772(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13098,7 +13098,7 @@ def Event_12906773(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13177,7 +13177,7 @@ def Event_12906774(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13256,7 +13256,7 @@ def Event_12906775(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13335,7 +13335,7 @@ def Event_12906776(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13414,7 +13414,7 @@ def Event_12906777(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13493,7 +13493,7 @@ def Event_12906778(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13572,7 +13572,7 @@ def Event_12906779(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13651,7 +13651,7 @@ def Event_12906780(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13730,7 +13730,7 @@ def Event_12906781(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13809,7 +13809,7 @@ def Event_12906782(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13888,7 +13888,7 @@ def Event_12906783(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13967,7 +13967,7 @@ def Event_12906784(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14046,7 +14046,7 @@ def Event_12906785(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14125,7 +14125,7 @@ def Event_12906786(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14204,7 +14204,7 @@ def Event_12906787(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14283,7 +14283,7 @@ def Event_12906788(
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14355,7 +14355,7 @@ def Event_12906827(
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=100)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14412,7 +14412,7 @@ def Event_12906828(
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -14622,13 +14622,13 @@ def Event_12906794(_, character: int, flag: int, radius: float, radius_1: float)
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     
     MAIN.Await(AND_2)
@@ -14988,13 +14988,13 @@ def Event_12906818(_, character: int, flag: int, radius: float, radius_1: float)
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     
     MAIN.Await(AND_2)
@@ -15009,11 +15009,11 @@ def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float,
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_2.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character_1, value=0.0))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius))
-    AND_3.Add(HealthGreaterThan(character_2, value=0.0))
+    AND_3.Add(HealthRatioGreaterThan(character_2, value=0.0))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_2, radius=radius))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -15022,11 +15022,11 @@ def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float,
     MAIN.Await(OR_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_4.Add(HealthGreaterThan(character, value=0.0))
+    AND_4.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
-    AND_5.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_5.Add(HealthRatioGreaterThan(character_1, value=0.0))
     AND_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius_1))
-    AND_6.Add(HealthGreaterThan(character_2, value=0.0))
+    AND_6.Add(HealthRatioGreaterThan(character_2, value=0.0))
     AND_6.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_2, radius=radius_1))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -15044,9 +15044,9 @@ def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float,
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_2.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character_1, value=0.0))
     AND_2.Add(FlagEnabled(flag_1))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius))
     OR_1.Add(AND_1)
@@ -15055,9 +15055,9 @@ def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float,
     MAIN.Await(OR_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_3.Add(HealthGreaterThan(character, value=0.0))
+    AND_3.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
-    AND_4.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_4.Add(HealthRatioGreaterThan(character_1, value=0.0))
     AND_4.Add(FlagEnabled(flag_1))
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius_1))
     OR_2.Add(AND_3)
@@ -15099,7 +15099,7 @@ def Event_12906825(
     GotoIfFlagEnabled(Label.L1, flag=flag_1)
     DisableCharacter(character)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
     
     MAIN.Await(AND_1)
     
@@ -15127,7 +15127,7 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15170,7 +15170,7 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=80)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15213,7 +15213,7 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=80)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15256,7 +15256,7 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=280)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15299,7 +15299,7 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=280)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15361,7 +15361,7 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=100)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15404,7 +15404,7 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15447,7 +15447,7 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15490,7 +15490,7 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15533,7 +15533,7 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15576,7 +15576,7 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15619,7 +15619,7 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15662,7 +15662,7 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15705,7 +15705,7 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15748,7 +15748,7 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15820,8 +15820,8 @@ def Event_12906869(_, character: int, flag: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_2.Add(HealthLessThan(character, value=0.699999988079071))
-    AND_2.Add(HealthNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThan(character, value=0.699999988079071))
+    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_2)
     
@@ -15846,8 +15846,8 @@ def Event_12906870(_, character: int, flag: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_2.Add(HealthLessThan(character, value=0.33000001311302185))
-    AND_2.Add(HealthNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThan(character, value=0.33000001311302185))
+    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
     AND_2.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_2)
@@ -15918,7 +15918,7 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15972,7 +15972,7 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16020,7 +16020,7 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16068,7 +16068,7 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=230)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16116,7 +16116,7 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part6, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16164,7 +16164,7 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part7, part_health=170)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16212,7 +16212,7 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part8, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16260,7 +16260,7 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part9, part_health=170)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16308,7 +16308,7 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part10, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16362,7 +16362,7 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16416,7 +16416,7 @@ def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16459,7 +16459,7 @@ def Event_12904889(_, character: int):
     if AND_1:
         return
     AICommand(character, command_id=2, command_slot=1)
-    AND_2.Add(HealthLessThan(character, value=0.6700000166893005))
+    AND_2.Add(HealthRatioLessThan(character, value=0.6700000166893005))
     AND_2.Add(CharacterHasSpecialEffect(character, 5402))
     
     MAIN.Await(AND_2)
@@ -16489,7 +16489,7 @@ def Event_12904723(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=180)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16539,7 +16539,7 @@ def Event_12904724(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16589,7 +16589,7 @@ def Event_12904725(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16639,7 +16639,7 @@ def Event_12904726(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16689,7 +16689,7 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16760,15 +16760,15 @@ def Event_12906863(_, character: int, destination: int, destination_1: int, flag
     AND_1.Add(CharacterDead(character))
     if AND_1:
         return
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.75))
-    AND_2.Add(HealthNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.75))
+    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_2)
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=10))
-    AND_3.Add(HealthNotEqual(character, value=0.0))
+    AND_3.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_3)
     
@@ -16780,15 +16780,15 @@ def Event_12906863(_, character: int, destination: int, destination_1: int, flag
     AICommand(character, command_id=101, command_slot=0)
     ReplanAI(character)
     EnableFlag(flag)
-    AND_4.Add(HealthLessThanOrEqual(character, value=0.5))
-    AND_4.Add(HealthNotEqual(character, value=0.0))
+    AND_4.Add(HealthRatioLessThanOrEqual(character, value=0.5))
+    AND_4.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_4)
     
     AICommand(character, command_id=110, command_slot=0)
     ReplanAI(character)
     AND_5.Add(CharacterHasTAEEvent(character, tae_event_id=10))
-    AND_5.Add(HealthNotEqual(character, value=0.0))
+    AND_5.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_5)
     
@@ -16828,7 +16828,7 @@ def Event_12906864(_, character: int):
     CreateNPCPart(character, npc_part_id=2, part_index=NPCPartType.Part2, part_health=250)
     SetNPCPartEffects(character, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -16842,7 +16842,7 @@ def Event_12906864(_, character: int):
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_5.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -16856,7 +16856,7 @@ def Event_12906864(_, character: int):
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_8.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -16894,7 +16894,7 @@ def Event_12906867(_, character: int):
     CreateNPCPart(character, npc_part_id=3, part_index=NPCPartType.Part3, part_health=250)
     SetNPCPartEffects(character, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -16908,7 +16908,7 @@ def Event_12906867(_, character: int):
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
     AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_5.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -16922,7 +16922,7 @@ def Event_12906867(_, character: int):
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
     AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_8.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -16970,7 +16970,7 @@ def Event_12906868(_, character: int):
     )
     SetNPCPartEffects(character, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -17021,7 +17021,7 @@ def Event_12904875(_, character: int, entity: int, flag: int):
     if FlagEnabled(flag):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.5))
     
     ForceAnimation(entity, 3000)
 
@@ -17034,7 +17034,7 @@ def Event_12904884(_, character: int):
     if AND_1:
         return
     
-    MAIN.Await(HealthLessThan(character, value=0.6700000166893005))
+    MAIN.Await(HealthRatioLessThan(character, value=0.6700000166893005))
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -17047,7 +17047,7 @@ def Event_12904884(_, character: int):
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthLessThan(character, value=0.33000001311302185))
+    MAIN.Await(HealthRatioLessThan(character, value=0.33000001311302185))
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -17094,7 +17094,7 @@ def Event_12904735(_, character: int):
     if AND_1:
         return
     
-    MAIN.Await(HealthLessThan(character, value=0.5))
+    MAIN.Await(HealthRatioLessThan(character, value=0.5))
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
@@ -17124,7 +17124,7 @@ def Event_12904728(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17172,7 +17172,7 @@ def Event_12904729(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17220,7 +17220,7 @@ def Event_12904730(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17268,7 +17268,7 @@ def Event_12904731(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17316,7 +17316,7 @@ def Event_12904732(_, character: int, npc_part_id: short, npc_part_id_1: int):
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17672,7 +17672,7 @@ def Event_12907409(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag_2))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -17706,7 +17706,7 @@ def Event_12907413(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag_2))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)

@@ -467,7 +467,7 @@ def Event_11305392():
 @NeverRestart(11300001)
 def Event_11300001():
     """Event 11300001"""
-    MAIN.Await(HealthLessThanOrEqual(1300800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1300800, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(1300800, 777777777, sound_type=SoundType.s_SFX)
@@ -637,7 +637,7 @@ def Event_11305397():
 @NeverRestart(11305398)
 def Event_11305398():
     """Event 11305398"""
-    MAIN.Await(HealthLessThanOrEqual(1300800, value=0.30000001192092896))
+    MAIN.Await(HealthRatioLessThanOrEqual(1300800, value=0.30000001192092896))
     
     EnableFlag(11305399)
     AICommand(1300800, command_id=1, command_slot=1)
@@ -757,7 +757,7 @@ def Event_11305370(_, character: int, flag: int):
     """Event 11305370"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasTAEEvent(character, tae_event_id=710))
-    AND_2.Add(HealthLessThanOrEqual(1300800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1300800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1240,7 +1240,7 @@ def Event_11305000():
     AND_6.Add(CharacterInsideRegion(PLAYER, region=1302700))
     if not AND_6:
         return RESTART
-    AND_7.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    AND_7.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
     if AND_7:
         return RESTART
     EnableFlag(11310050)
@@ -1647,8 +1647,8 @@ def Event_11300850(_, character: int, item_lot_param_id: int):
 @NeverRestart(11300510)
 def Event_11300510(_, character: int, flag: int):
     """Event 11300510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1677,7 +1677,7 @@ def Event_11300520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1704,9 +1704,9 @@ def Event_11300530(_, character: int, first_flag: int, last_flag: int, flag: int
 def Event_11300531(_, character: int, flag: int):
     """Event 11300531"""
     AND_1.Add(FlagEnabled(1620))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_2.Add(FlagEnabled(1621))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag))
     AND_3.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)

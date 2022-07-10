@@ -1813,7 +1813,7 @@ def Event_13305800():
     """Event 13305800"""
     if FlagEnabled(13300800):
         return
-    AND_1.Add(HealthLessThanOrEqual(3300801, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(3300801, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1913,7 +1913,7 @@ def Event_13305811():
     
     MAIN.Await(FlagEnabled(13304810))
     
-    OR_1.Add(HealthLessThanOrEqual(3300801, value=0.800000011920929))
+    OR_1.Add(HealthRatioLessThanOrEqual(3300801, value=0.800000011920929))
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1954,7 +1954,7 @@ def Event_13305812():
     
     MAIN.Await(FlagEnabled(13304810))
     
-    OR_1.Add(HealthLessThanOrEqual(3300801, value=0.6000000238418579))
+    OR_1.Add(HealthRatioLessThanOrEqual(3300801, value=0.6000000238418579))
     OR_1.Add(TimeElapsed(seconds=40.0))
     SkipLines(2)
 
@@ -2102,7 +2102,7 @@ def Event_13305850():
     if FlagEnabled(13300850):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3300850, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3300850, value=0.0))
     
     Kill(3305851)
     Wait(1.0)
@@ -2417,9 +2417,9 @@ def Event_13305885(
     MAIN.Await(AND_1)
     
     DisableFlag(flag)
-    AND_2.Add(HealthLessThanOrEqual(3300850, value=0.20000000298023224))
+    AND_2.Add(HealthRatioLessThanOrEqual(3300850, value=0.20000000298023224))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    AND_3.Add(HealthLessThanOrEqual(3300850, value=0.4000000059604645))
+    AND_3.Add(HealthRatioLessThanOrEqual(3300850, value=0.4000000059604645))
     GotoIfConditionTrue(Label.L1, input_condition=AND_3)
     Goto(Label.L2)
 
@@ -2788,24 +2788,24 @@ def Event_13305741(_, character: int, character_1: int, character_2: int, flag: 
         return
     DisableFlag(flag)
     DisableFlag(flag_1)
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
-    AND_1.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character_1, value=0.0))
     AND_1.Add(FlagRangeAllDisabled(flag_range=(1356, 1357)))
     AND_1.Add(FlagEnabled(1340))
     AND_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    AND_2.Add(HealthLessThan(character, value=value))
+    AND_2.Add(HealthRatioLessThan(character, value=value))
     OR_1.Add(AND_2)
     AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=PLAYER))
-    AND_3.Add(HealthLessThan(character_1, value=value))
+    AND_3.Add(HealthRatioLessThan(character_1, value=value))
     OR_1.Add(AND_3)
     OR_1.Add(FlagEnabled(flag))
     AND_1.Add(OR_1)
     OR_3.Add(AND_1)
-    AND_4.Add(HealthGreaterThan(character_2, value=0.0))
+    AND_4.Add(HealthRatioGreaterThan(character_2, value=0.0))
     AND_4.Add(FlagRangeAllDisabled(flag_range=(1496, 1497)))
     AND_4.Add(FlagEnabled(1480))
     AND_5.Add(AttackedWithDamageType(attacked_entity=character_2, attacker=PLAYER))
-    AND_5.Add(HealthLessThan(character_2, value=value))
+    AND_5.Add(HealthRatioLessThan(character_2, value=value))
     OR_2.Add(AND_5)
     OR_2.Add(FlagEnabled(flag_1))
     AND_4.Add(OR_2)
@@ -2850,9 +2850,9 @@ def Event_13305742(
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagDisabled(flag_1))
     AND_1.Add(FlagEnabled(flag_4))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    AND_2.Add(HealthLessThan(character, value=value))
+    AND_2.Add(HealthRatioLessThan(character, value=value))
     OR_1.Add(AND_2)
     OR_1.Add(FlagEnabled(flag_2))
     OR_1.Add(FlagEnabled(flag_3))
@@ -2890,8 +2890,8 @@ def Event_13300743(
     OR_1.Add(FlagEnabled(flag))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterDead(character_2))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
-    AND_1.Add(HealthGreaterThan(character_1, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character_1, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2957,7 +2957,7 @@ def Event_13300745(
     OR_2.Add(CharacterDead(character_1))
     OR_2.Add(CharacterDead(character_2))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -3140,9 +3140,9 @@ def Event_13300761(_, character: int):
         return
     if FlagEnabled(13300761):
         return
-    AND_1.Add(HealthNotEqual(3300720, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(3300720, value=0.0))
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    AND_1.Add(HealthEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioEqual(PLAYER, value=0.0))
     AND_1.Add(PlayerHasGood(388))
     
     MAIN.Await(AND_1)

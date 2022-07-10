@@ -145,10 +145,11 @@ def add_common_emedf_info(emedf: dict, common_emedf_path: Path | str):
                 )
 
 
-def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
+def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict, dict]:
     # Retrieve instruction information by EVS instruction alias name (or partial name) and build test dictionary.
     emedf_aliases = {v["alias"]: (category, index, v) for (category, index), v in emedf.items()}
     emedf_tests = {}
+    emedf_comparison_tests = {}
     for (category, index), v in emedf.items():
         partials = v.get("partials", {})
 
@@ -158,7 +159,7 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
         if v["alias"].endswith("IfConditionState") or v["alias"].endswith("IfFinishedConditionState"):
             continue  # condition tests are handled with `Condition` EVS object and `ConditionGroup` enum
 
-        if v["alias"].startswith("If"):
+        if v["alias"].startswith("If") and not v["alias"].startswith("If_Unknown"):
 
             test_name = v["alias"].removeprefix("If")
             emedf_tests.setdefault(test_name, {})["if"] = v["alias"]
@@ -166,6 +167,14 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
             for partial_name in partials:
                 test_name = partial_name.removeprefix("If")
                 emedf_tests.setdefault(test_name, {})["if"] = partial_name
+
+            if v["alias"].endswith("Comparison") and "comparison_type" in v["args"] and "value" in v["args"]:
+                comparator_test_name = v["alias"].removeprefix("If").removesuffix("Comparison")
+                emedf_comparison_tests[comparator_test_name] = {
+                    "test_name": v["alias"].removeprefix("If"),  # test defined above, e.g., `HealthComparison()`.
+                    "return_type": v["args"]["value"]["type"],
+                }
+
         elif v["alias"].startswith("SkipLinesIf"):
             # Base "SkipLinesIf" instructions cannot be systematically negated, and so do not have "skip" tests.
             for partial_name, partial_kwargs in partials.items():
@@ -207,7 +216,7 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict]:
     for test_name in tests_to_remove:
         emedf_tests.pop(test_name)
 
-    return emedf_aliases, emedf_tests
+    return emedf_aliases, emedf_tests, emedf_comparison_tests
 
 
 HIDE_NAME = {

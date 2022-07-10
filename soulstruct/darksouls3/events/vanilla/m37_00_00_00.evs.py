@@ -1525,7 +1525,7 @@ def Event_13705541():
     if FlagEnabled(13700540):
         return
     AND_1.Add(ActionButtonParamActivated(action_button_id=9310, entity=3701540))
-    IfPlayerDoesNotHaveGood(AND_1, 2005)
+    AND_1.Add(PlayerDoesNotHaveGood(2005))
     
     MAIN.Await(AND_1)
     
@@ -1609,7 +1609,7 @@ def Event_13700800():
     if FlagEnabled(13700800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3700800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3700800, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3700800, 777777777, sound_type=SoundType.s_SFX)
@@ -1789,7 +1789,7 @@ def Event_13700861():
     if FlagEnabled(13700850):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3700850, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3700850, value=0.0))
     
     Kill(3700851)
     Wait(1.0)
@@ -1959,7 +1959,7 @@ def Event_13705885():
     if FlagEnabled(13700850):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3700850, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3700850, value=0.0))
     
     DisableImmortality(3700851)
     Kill(3700851)
@@ -3014,7 +3014,7 @@ def Event_13705647(_, character: int, animation_id: int, flag: int):
         return
     DisableFlag(flag)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -3159,7 +3159,7 @@ def Event_13705651(_, character: int, character_1: int):
 @NeverRestart(13705652)
 def Event_13705652(_, character: int):
     """Event 13705652"""
-    MAIN.Await(HealthEqual(3700800, value=0.0))
+    MAIN.Await(HealthRatioEqual(3700800, value=0.0))
     
     SetAIParamID(character, ai_param_id=1)
     ReplanAI(character)

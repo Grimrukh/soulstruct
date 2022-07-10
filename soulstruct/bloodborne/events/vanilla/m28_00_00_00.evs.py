@@ -1049,7 +1049,7 @@ def Event_12805470(
     MAIN.Await(FlagEnabled(flag))
     
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -2236,7 +2236,7 @@ def Event_12801800():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthLessThanOrEqual(2800803, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(2800803, value=0.0))
     
     ResetAnimation(2800800, disable_interpolation=True)
     ResetAnimation(2800801, disable_interpolation=True)
@@ -2311,7 +2311,7 @@ def Event_12801801():
         return
     AND_1.Add(FlagEnabled(12801800))
     AND_2.Add(CharacterBackreadDisabled(2800800))
-    AND_2.Add(HealthLessThanOrEqual(2800803, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2800803, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2619,13 +2619,13 @@ def Event_12804804():
     DisableNetworkSync()
     if FlagEnabled(12801800):
         return
-    AND_1.Add(HealthGreaterThan(2800803, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2800803, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2800800, radius=12.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=YAHARGUL, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2800803, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2800803, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2800800, radius=12.5))
     
     MAIN.Await(AND_2)
@@ -2705,7 +2705,7 @@ def Event_12804820(
     CreateNPCPart(2800800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2800800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(2800800, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(2800800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2800800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -3013,7 +3013,7 @@ def Event_12804850(_, character: int):
 def Event_12804870():
     """Event 12804870"""
     AND_1.Add(FlagEnabled(12804802))
-    AND_1.Add(HealthLessThan(2800803, value=1.0))
+    AND_1.Add(HealthRatioLessThan(2800803, value=1.0))
     
     MAIN.Await(AND_1)
     
@@ -3042,7 +3042,7 @@ def Event_12804870():
 def Event_12804871():
     """Event 12804871"""
     AND_1.Add(FlagEnabled(12804802))
-    OR_1.Add(HealthLessThan(2800803, value=0.5))
+    OR_1.Add(HealthRatioLessThan(2800803, value=0.5))
     OR_1.Add(EventValueGreaterThanOrEqual(flag=12804860, bit_count=4, value=3))
     AND_1.Add(OR_1)
     
@@ -3170,7 +3170,7 @@ def Event_12800908():
     if not AND_15:
         return
     AND_1.Add(AttackedWithDamageType(attacked_entity=2800670))
-    AND_1.Add(HealthNotEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(2800670, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -3185,7 +3185,7 @@ def Event_12800909():
     if not AND_15:
         return
     AND_1.Add(FlagDisabled(1310))
-    AND_1.Add(HealthEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatioEqual(2800670, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -3199,7 +3199,7 @@ def Event_12800910():
     if not AND_15:
         return
     AND_1.Add(CharacterHasSpecialEffect(2800670, 151))
-    AND_1.Add(HealthNotEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(2800670, value=0.0))
     
     MAIN.Await(AND_1)
     

@@ -823,7 +823,7 @@ def Event_13805366(_, character: int, character_1: int):
     DisableGravity(character_1)
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -3485,7 +3485,7 @@ def Event_13800800():
     DefineLabel(0)
     GotoIfFlagEnabled(Label.L1, flag=13800800)
     
-    MAIN.Await(HealthLessThanOrEqual(3800800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3800800, value=0.0))
     
     CancelSpecialEffect(3805800, 5830)
     CancelSpecialEffect(3805800, 5832)
@@ -3738,7 +3738,7 @@ def Event_13805811():
     if FlagEnabled(13800800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3800800, value=0.800000011920929))
+    MAIN.Await(HealthRatioLessThanOrEqual(3800800, value=0.800000011920929))
     
     EnableFlag(13805802)
 
@@ -4006,7 +4006,7 @@ def Event_13800830():
     if FlagEnabled(13800830):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3800830, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3800830, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3800830, 777777777, sound_type=SoundType.s_SFX)
@@ -4064,7 +4064,7 @@ def Event_13805841():
     if FlagEnabled(13800830):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3800830, value=0.5))
+    MAIN.Await(HealthRatioLessThanOrEqual(3800830, value=0.5))
     
     EnableFlag(13805832)
 
@@ -4086,7 +4086,7 @@ def Event_13805843():
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_1.Add(HealthLessThanOrEqual(3800830, value=0.15000000596046448))
+    AND_1.Add(HealthRatioLessThanOrEqual(3800830, value=0.15000000596046448))
     AND_1.Add(AttackedWithDamageType(attacked_entity=3800830, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -4596,7 +4596,7 @@ def Event_13800702(_, attacked_entity: int, collision: int):
         return
     AND_1.Add(FlagEnabled(1484))
     AND_1.Add(PlayerStandingOnCollision(collision))
-    AND_2.Add(HealthGreaterThan(PLAYER, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(PLAYER, value=0.0))
     AND_2.Add(EntityWithinDistance(entity=attacked_entity, other_entity=PLAYER, radius=30.0))
     OR_1.Add(AND_2)
     OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=PLAYER))

@@ -448,11 +448,11 @@ def Event_11105396():
     MAIN.Await(CharacterBackreadEnabled(1100160))
     
     CreateNPCPart(1100160, npc_part_id=2730, part_index=NPCPartType.Part1, part_health=158)
-    AND_1.Add(HealthGreaterThan(1100160, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(1100160, value=0.0))
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1100160, npc_part_id=2730, value=0))
     AND_1.Add(FlagDisabled(11105381))
     AND_1.Add(Attacked(attacked_entity=1100160, attacker=PLAYER))
-    AND_2.Add(HealthLessThanOrEqual(1100160, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1100160, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1692,8 +1692,8 @@ def Event_11100600(_, obj: int, obj_act_id: int):
 @NeverRestart(11100510)
 def Event_11100510(_, character: int, flag: int):
     """Event 11100510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1722,7 +1722,7 @@ def Event_11100520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1733,7 +1733,7 @@ def Event_11100530(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100530"""
     AND_1.Add(FlagEnabled(1690))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1748,7 +1748,7 @@ def Event_11100531(_, character: int, first_flag: int, last_flag: int, flag: int
         DisableCharacter(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1813,7 +1813,7 @@ def Event_11100533(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100533"""
     AND_1.Add(FlagEnabled(1606))
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1825,7 +1825,7 @@ def Event_11100534(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100534"""
     AND_1.Add(FlagEnabled(1607))
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

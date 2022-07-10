@@ -2324,7 +2324,7 @@ def Event_20005415(
     AND_2.Add(OR_2)
     AND_2.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=5.0))
     OR_3.Add(AND_2)
-    OR_3.Add(HealthEqual(character, value=0.0))
+    OR_3.Add(HealthRatioEqual(character, value=0.0))
     OR_3.Add(AttackedWithDamageType(attacked_entity=character))
     OR_3.Add(TimeElapsed(seconds=8.0))
     AND_3.Add(OR_3)
@@ -2464,7 +2464,7 @@ def Event_20005417(
     AND_2.Add(OR_2)
     AND_2.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=5.0))
     OR_3.Add(AND_2)
-    OR_3.Add(HealthEqual(character, value=0.0))
+    OR_3.Add(HealthRatioEqual(character, value=0.0))
     OR_3.Add(AttackedWithDamageType(attacked_entity=character))
     OR_3.Add(TimeElapsed(seconds=8.0))
     AND_3.Add(OR_3)
@@ -2583,7 +2583,7 @@ def Event_20005431(_, character: int):
     OR_1.Add(AND_3)
     AND_4.Add(OR_1)
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 30))
-    AND_4.Add(HealthGreaterThan(character, value=0.0))
+    AND_4.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_4.Add(CharacterAlive(character))
     
     MAIN.Await(AND_4)
@@ -4760,7 +4760,7 @@ def Event_20005713(_, flag: int, flag_1: int, flag_2: int, flag_3: int, characte
         return
     AND_1.Add(FlagEnabled(flag_2))
     AND_1.Add(FlagDisabled(flag_3))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     AND_1.Add(FlagEnabled(flag_1))
     
     MAIN.Await(AND_1)
@@ -6204,9 +6204,9 @@ def Event_20006000(
     DisableFlag(flag_2)
     AND_1.Add(FlagDisabled(flag))
     AND_1.Add(FlagDisabled(flag_1))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    AND_2.Add(HealthLessThan(character, value=value))
+    AND_2.Add(HealthRatioLessThan(character, value=value))
     OR_1.Add(AND_2)
     OR_1.Add(FlagEnabled(flag_2))
     AND_1.Add(OR_1)
@@ -6375,7 +6375,7 @@ def Event_20006003(
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     AND_1.Add(PlayerInOwnWorld())
     
     MAIN.Await(AND_1)
@@ -6423,7 +6423,7 @@ def Event_20006004(
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag_2))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     
     MAIN.Await(AND_1)
@@ -6780,7 +6780,7 @@ def Event_20006032(_, character: int, obj: int):
     """Event 20006032"""
     if PlayerNotInOwnWorld():
         return
-    OR_15.Add(HealthEqual(character, value=0.0))
+    OR_15.Add(HealthRatioEqual(character, value=0.0))
     GotoIfConditionTrue(Label.L0, input_condition=OR_15)
     
     MAIN.Await(CharacterDead(character))

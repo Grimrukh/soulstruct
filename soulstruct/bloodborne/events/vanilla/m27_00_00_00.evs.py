@@ -752,9 +752,9 @@ def Event_12701801():
     AND_2.Add(CharacterBackreadDisabled(2420800))
     AND_2.Add(CharacterBackreadDisabled(2420801))
     AND_2.Add(CharacterBackreadDisabled(2420802))
-    AND_2.Add(HealthLessThanOrEqual(2420800, value=0.0))
-    AND_2.Add(HealthLessThanOrEqual(2420801, value=0.0))
-    AND_2.Add(HealthLessThanOrEqual(2420802, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2420801, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2420802, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1070,9 +1070,9 @@ def Event_12704806():
     AND_3.Add(CharacterDead(2700802))
     AND_3.Add(CharacterDead(2700800))
     AND_3.Add(CharacterHasSpecialEffect(2700801, 5536))
-    AND_4.Add(HealthLessThanOrEqual(2700800, value=0.30000001192092896))
-    AND_4.Add(HealthLessThanOrEqual(2700801, value=0.30000001192092896))
-    AND_4.Add(HealthLessThanOrEqual(2700802, value=0.30000001192092896))
+    AND_4.Add(HealthRatioLessThanOrEqual(2700800, value=0.30000001192092896))
+    AND_4.Add(HealthRatioLessThanOrEqual(2700801, value=0.30000001192092896))
+    AND_4.Add(HealthRatioLessThanOrEqual(2700802, value=0.30000001192092896))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1206,13 +1206,13 @@ def Event_12704811():
 @RestartOnRest(12704812)
 def Event_12704812(_, character: int, character_1: int, character_2: int):
     """Event 12704812"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.5))
-    AND_1.Add(HealthLessThanOrEqual(character_1, value=0.5))
-    AND_1.Add(HealthLessThanOrEqual(character_2, value=0.5))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.5))
+    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=0.5))
+    AND_1.Add(HealthRatioLessThanOrEqual(character_2, value=0.5))
     OR_1.Add(AND_1)
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.30000001192092896))
-    OR_1.Add(HealthLessThanOrEqual(character_1, value=0.30000001192092896))
-    OR_1.Add(HealthLessThanOrEqual(character_2, value=0.30000001192092896))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.30000001192092896))
+    OR_1.Add(HealthRatioLessThanOrEqual(character_1, value=0.30000001192092896))
+    OR_1.Add(HealthRatioLessThanOrEqual(character_2, value=0.30000001192092896))
     
     MAIN.Await(OR_1)
     
@@ -1252,7 +1252,7 @@ def Event_12704815(_, character: int, character__set_draw_parent: int, model_poi
         DisableGravity(character)
     
         MAIN.Await(CharacterHasTAEEvent(character__set_draw_parent, tae_event_id=50))
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(1, AND_1)
     Kill(character)
     EnableCharacter(character)
@@ -1286,9 +1286,9 @@ def Event_12704825(_, character: int, special_effect_id: int):
 @RestartOnRest(12704830)
 def Event_12704830(_, character: int, entity: int, event_slot: int):
     """Event 12704830"""
-    AND_1.Add(HealthLessThanOrEqual(2700800, value=0.0))
-    AND_1.Add(HealthLessThanOrEqual(2700801, value=0.0))
-    AND_1.Add(HealthLessThanOrEqual(2700802, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(2700800, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(2700801, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(2700802, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1794,7 +1794,7 @@ def Event_12700180(_, character: int, character_1: int):
 @RestartOnRest(12700190)
 def Event_12700190(_, character: int, character_1: int):
     """Event 12700190"""
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     Wait(1.0)
     ForceAnimation(character_1, 2200, wait_for_completion=True)
@@ -1816,7 +1816,7 @@ def Event_12700500():
         return
     AND_1.Add(CharacterAlive(2700680))
     AND_1.Add(Attacked(attacked_entity=PLAYER, attacker=2700680))
-    AND_1.Add(HealthEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioEqual(PLAYER, value=0.0))
     AND_1.Add(FlagEnabled(9401))
     AND_1.Add(FlagEnabled(9404))
     
@@ -1935,8 +1935,8 @@ def Event_12700703():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthLessThan(2700755, value=0.5))
-    AND_1.Add(HealthNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatioLessThan(2700755, value=0.5))
+    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1969,7 +1969,7 @@ def Event_12700706():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatioEqual(2700755, value=0.0))
     AND_1.Add(CharacterHasSpecialEffect(2700755, 151))
     OR_1.Add(FlagEnabled(1200))
     OR_1.Add(FlagEnabled(1204))
@@ -1988,8 +1988,8 @@ def Event_12700707():
     if not AND_15:
         return
     AND_1.Add(AttackedWithDamageType(attacked_entity=2700755))
-    AND_1.Add(HealthGreaterThanOrEqual(2700755, value=0.5))
-    AND_1.Add(HealthNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(2700755, value=0.5))
+    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2018,7 +2018,7 @@ def Event_12700708():
         return
     AND_1.Add(CharacterHasSpecialEffect(2700755, 154))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthGreaterThanOrEqual(2700755, value=0.5))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(2700755, value=0.5))
     
     MAIN.Await(AND_1)
     
@@ -2086,7 +2086,7 @@ def Event_12700722():
     OR_1.Add(AttackedWithDamageType(attacked_entity=2700755, attacker=PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=2702301))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2110,7 +2110,7 @@ def Event_12700723():
     
     WaitFrames(frames=1)
     AND_3.Add(AttackedWithDamageType(attacked_entity=2700755, attacker=PLAYER))
-    AND_3.Add(HealthNotEqual(2700755, value=0.0))
+    AND_3.Add(HealthRatioNotEqual(2700755, value=0.0))
     
     MAIN.Await(AND_3)
     
@@ -2264,9 +2264,9 @@ def Event_12700905(_, character: int, flag: int, first_flag: int, last_flag: int
         return
     DisableFlag(flag)
     OR_1.Add(FlagEnabled(flag))
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2917,7 +2917,7 @@ def Event_12705490():
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2702040))
     AND_1.Add(CharacterInsideRegion(2700145, region=2702045))
-    AND_1.Add(HealthGreaterThan(2700145, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2700145, value=0.0))
     AND_1.Add(FlagDisabled(12700173))
     AND_1.Add(FlagDisabled(12700174))
     AND_2.Add(FlagEnabled(12700175))
@@ -2957,7 +2957,7 @@ def Event_12705491():
     AND_1.Add(FlagDisabled(12700174))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2702040))
     AND_1.Add(CharacterInsideRegion(2700145, region=2702045))
-    AND_1.Add(HealthGreaterThan(2700145, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2700145, value=0.0))
     AND_2.Add(FlagEnabled(12700175))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
@@ -3128,7 +3128,7 @@ def Event_12705600(
     AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_2.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)

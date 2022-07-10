@@ -269,7 +269,7 @@ def Event_11325110(
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1320700, npc_part_id=npc_part_id_1, value=0))
     AND_1.Add(FlagDisabled(11325120))
     AND_1.Add(Attacked(attacked_entity=1320700, attacker=PLAYER))
-    AND_2.Add(HealthLessThanOrEqual(1320700, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1320700, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -398,7 +398,7 @@ def Event_11325001():
     
     CreateNPCPart(1320800, npc_part_id=3451, part_index=NPCPartType.Part1, part_health=200)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1320800, npc_part_id=3451, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1320800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1320800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -482,8 +482,8 @@ def Event_11320600(_, obj: int, obj_act_id: int):
 @NeverRestart(11320510)
 def Event_11320510(_, character: int, flag: int):
     """Event 11320510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -512,7 +512,7 @@ def Event_11320520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

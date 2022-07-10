@@ -1010,7 +1010,7 @@ def Event_15105231():
     """Event 15105231"""
     if FlagEnabled(15100200):
         return
-    AND_1.Add(HealthLessThanOrEqual(5100200, value=0.20000000298023224))
+    AND_1.Add(HealthRatioLessThanOrEqual(5100200, value=0.20000000298023224))
     OR_1.Add(AND_1)
     AND_9.Add(OR_1)
     AND_9.Add(CharacterDoesNotHaveSpecialEffect(5100200, 16210))
@@ -2053,7 +2053,7 @@ def Event_15105800():
     AND_1.Add(FlagDisabled(2100))
     AND_1.Add(FlagEnabled(15104830))
     AND_2.Add(FlagEnabled(2100))
-    AND_2.Add(HealthEqual(5100800, value=0.0))
+    AND_2.Add(HealthRatioEqual(5100800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2340,8 +2340,8 @@ def Event_15105814():
         value=0,
     )
     SetNetworkUpdateAuthority(5100803, authority_level=UpdateAuthority.Forced)
-    OR_1.Add(HealthLessThanOrEqual(30000, value=0.6499999761581421))
-    OR_1.Add(HealthLessThanOrEqual(5100800, value=0.6499999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(30000, value=0.6499999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(5100800, value=0.6499999761581421))
     
     MAIN.Await(OR_1)
     
@@ -2544,98 +2544,98 @@ def Event_15105830():
     SetNetworkConnectedFlagState(flag=15104838, state=FlagSetting.Off)
     SetNetworkConnectedFlagState(flag=15104839, state=FlagSetting.Off)
     if ThisEventSlotFlagDisabled():
-        AND_15.Add(HealthGreaterThan(30000, value=0.8999999761581421))
+        AND_15.Add(HealthRatioGreaterThan(30000, value=0.8999999761581421))
     AND_15.Add(FlagEnabled(15105803))
     
     MAIN.Await(AND_15)
     
     Wait(1.0)
-    OR_9.Add(HealthLessThanOrEqual(30000, value=0.8999999761581421))
+    OR_9.Add(HealthRatioLessThanOrEqual(30000, value=0.8999999761581421))
     
     MAIN.Await(OR_9)
     
-    AND_9.Add(HealthEqual(30000, value=1.0))
+    AND_9.Add(HealthRatioEqual(30000, value=1.0))
     if AND_9:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104839, state=FlagSetting.On)
-    OR_8.Add(HealthGreaterThan(30000, value=0.8999999761581421))
-    OR_8.Add(HealthLessThanOrEqual(30000, value=0.800000011920929))
+    OR_8.Add(HealthRatioGreaterThan(30000, value=0.8999999761581421))
+    OR_8.Add(HealthRatioLessThanOrEqual(30000, value=0.800000011920929))
     
     MAIN.Await(OR_8)
     
-    AND_8.Add(HealthGreaterThan(30000, value=0.8999999761581421))
+    AND_8.Add(HealthRatioGreaterThan(30000, value=0.8999999761581421))
     if AND_8:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104838, state=FlagSetting.On)
-    OR_7.Add(HealthGreaterThan(30000, value=0.800000011920929))
-    OR_7.Add(HealthLessThanOrEqual(30000, value=0.699999988079071))
+    OR_7.Add(HealthRatioGreaterThan(30000, value=0.800000011920929))
+    OR_7.Add(HealthRatioLessThanOrEqual(30000, value=0.699999988079071))
     
     MAIN.Await(OR_7)
     
-    AND_7.Add(HealthGreaterThan(30000, value=0.800000011920929))
+    AND_7.Add(HealthRatioGreaterThan(30000, value=0.800000011920929))
     if AND_7:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104837, state=FlagSetting.On)
-    OR_6.Add(HealthGreaterThan(30000, value=0.699999988079071))
-    OR_6.Add(HealthLessThanOrEqual(30000, value=0.6000000238418579))
+    OR_6.Add(HealthRatioGreaterThan(30000, value=0.699999988079071))
+    OR_6.Add(HealthRatioLessThanOrEqual(30000, value=0.6000000238418579))
     
     MAIN.Await(OR_6)
     
-    AND_6.Add(HealthGreaterThan(30000, value=0.699999988079071))
+    AND_6.Add(HealthRatioGreaterThan(30000, value=0.699999988079071))
     if AND_6:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104836, state=FlagSetting.On)
-    OR_5.Add(HealthGreaterThan(30000, value=0.6000000238418579))
-    OR_5.Add(HealthLessThanOrEqual(30000, value=0.5))
+    OR_5.Add(HealthRatioGreaterThan(30000, value=0.6000000238418579))
+    OR_5.Add(HealthRatioLessThanOrEqual(30000, value=0.5))
     
     MAIN.Await(OR_5)
     
-    AND_5.Add(HealthGreaterThan(30000, value=0.6000000238418579))
+    AND_5.Add(HealthRatioGreaterThan(30000, value=0.6000000238418579))
     if AND_5:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104835, state=FlagSetting.On)
-    OR_4.Add(HealthGreaterThan(30000, value=0.5))
-    OR_4.Add(HealthLessThanOrEqual(30000, value=0.4000000059604645))
+    OR_4.Add(HealthRatioGreaterThan(30000, value=0.5))
+    OR_4.Add(HealthRatioLessThanOrEqual(30000, value=0.4000000059604645))
     
     MAIN.Await(OR_4)
     
-    AND_4.Add(HealthGreaterThan(30000, value=0.5))
+    AND_4.Add(HealthRatioGreaterThan(30000, value=0.5))
     if AND_4:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104834, state=FlagSetting.On)
-    OR_3.Add(HealthGreaterThan(30000, value=0.4000000059604645))
-    OR_3.Add(HealthLessThanOrEqual(30000, value=0.30000001192092896))
+    OR_3.Add(HealthRatioGreaterThan(30000, value=0.4000000059604645))
+    OR_3.Add(HealthRatioLessThanOrEqual(30000, value=0.30000001192092896))
     
     MAIN.Await(OR_3)
     
-    AND_3.Add(HealthGreaterThan(30000, value=0.4000000059604645))
+    AND_3.Add(HealthRatioGreaterThan(30000, value=0.4000000059604645))
     if AND_3:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104833, state=FlagSetting.On)
-    OR_2.Add(HealthGreaterThan(30000, value=0.30000001192092896))
-    OR_2.Add(HealthLessThanOrEqual(30000, value=0.20000000298023224))
+    OR_2.Add(HealthRatioGreaterThan(30000, value=0.30000001192092896))
+    OR_2.Add(HealthRatioLessThanOrEqual(30000, value=0.20000000298023224))
     
     MAIN.Await(OR_2)
     
-    AND_2.Add(HealthGreaterThan(30000, value=0.30000001192092896))
+    AND_2.Add(HealthRatioGreaterThan(30000, value=0.30000001192092896))
     if AND_2:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104832, state=FlagSetting.On)
-    OR_1.Add(HealthGreaterThan(30000, value=0.20000000298023224))
-    OR_1.Add(HealthLessThanOrEqual(30000, value=0.10000000149011612))
+    OR_1.Add(HealthRatioGreaterThan(30000, value=0.20000000298023224))
+    OR_1.Add(HealthRatioLessThanOrEqual(30000, value=0.10000000149011612))
     
     MAIN.Await(OR_1)
     
-    AND_1.Add(HealthGreaterThan(30000, value=0.20000000298023224))
+    AND_1.Add(HealthRatioGreaterThan(30000, value=0.20000000298023224))
     if AND_1:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104831, state=FlagSetting.On)
-    OR_10.Add(HealthGreaterThan(30000, value=0.10000000149011612))
+    OR_10.Add(HealthRatioGreaterThan(30000, value=0.10000000149011612))
     OR_10.Add(CharacterDead(30000))
     
     MAIN.Await(OR_10)
     
-    AND_10.Add(HealthGreaterThan(30000, value=0.10000000149011612))
+    AND_10.Add(HealthRatioGreaterThan(30000, value=0.10000000149011612))
     if AND_10:
         return RESTART
     SetNetworkConnectedFlagState(flag=15104830, state=FlagSetting.On)
@@ -2825,7 +2825,7 @@ def Event_15105850():
     """Event 15105850"""
     if FlagEnabled(15100850):
         return
-    AND_1.Add(HealthEqual(5100850, value=0.0))
+    AND_1.Add(HealthRatioEqual(5100850, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2864,7 +2864,7 @@ def Event_15105860():
         AND_9.Add(EntityWithinDistance(entity=PLAYER, other_entity=5100850, radius=120.0))
     AND_9.Add(CharacterInsideRegion(character=PLAYER, region=5102851))
     OR_1.Add(AND_9)
-    OR_1.Add(HealthLessThanOrEqual(5100850, value=0.8999999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(5100850, value=0.8999999761581421))
     
     MAIN.Await(OR_1)
     
@@ -3092,7 +3092,7 @@ def Event_15105704(_, character: int):
     Wait(30.0)
     if FlagEnabled(15100723):
         Wait(1.600000023841858)
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     if not AND_2:
         return
     ForceAnimation(character, 3030, unknown2=1.0)
@@ -3107,7 +3107,7 @@ def Event_15105705(_, character: int):
     MAIN.Await(FlagEnabled(75100101))
     
     Wait(39.0)
-    AND_2.Add(HealthGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
     if not AND_2:
         return
     ForceAnimation(character, 3011, unknown2=1.0)
@@ -3698,7 +3698,7 @@ def Event_15105740(
     if FlagEnabled(flag):
         DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))
         SetNetworkConnectedFlagState(flag=first_flag, state=FlagSetting.On)
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(FlagEnabled(flag_1))
     SkipLinesIfConditionFalse(2, AND_1)
     DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))

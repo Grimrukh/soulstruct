@@ -128,13 +128,13 @@ __all__ = [
     "IfCharacterDead",
     "IfCharacterAlive",
     "IfAttacked",  # 4[1]
-    "IfHealthComparison",  # 4[2]
-    "IfHealthEqual",
-    "IfHealthNotEqual",
-    "IfHealthGreaterThan",
-    "IfHealthLessThan",
-    "IfHealthGreaterThanOrEqual",
-    "IfHealthLessThanOrEqual",
+    "IfHealthRatioComparison",  # 4[2]
+    "IfHealthRatioEqual",
+    "IfHealthRatioNotEqual",
+    "IfHealthRatioGreaterThan",
+    "IfHealthRatioLessThan",
+    "IfHealthRatioGreaterThanOrEqual",
+    "IfHealthRatioLessThanOrEqual",
     "IfCharacterType",  # 4[3]
     "IfCharacterHuman",
     "IfCharacterWhitePhantom",
@@ -647,19 +647,17 @@ __all__ = [
     "OnlineState",
     "Online",
     "Offline",
-    "_Unknown_3_23",
-    "_Unknown_3_24",
     "CharacterDeathState",
     "CharacterDead",
     "CharacterAlive",
     "Attacked",
-    "HealthComparison",
-    "HealthEqual",
-    "HealthNotEqual",
-    "HealthGreaterThan",
-    "HealthLessThan",
-    "HealthGreaterThanOrEqual",
-    "HealthLessThanOrEqual",
+    "HealthRatioComparison",
+    "HealthRatioEqual",
+    "HealthRatioNotEqual",
+    "HealthRatioGreaterThan",
+    "HealthRatioLessThan",
+    "HealthRatioGreaterThanOrEqual",
+    "HealthRatioLessThanOrEqual",
     "CharacterType",
     "CharacterHuman",
     "CharacterWhitePhantom",
@@ -715,6 +713,18 @@ __all__ = [
     "PlayerHasArmor",
     "PlayerHasRing",
     "PlayerHasGood",
+    "PlayerDoesNotHaveWeapon",
+    "PlayerDoesNotHaveArmor",
+    "PlayerDoesNotHaveRing",
+    "PlayerDoesNotHaveGood",
+    "TrueFlagCount",
+    "WorldTendency",
+    "EventValue",
+    "HealthRatio",
+    "CharacterPartHealth",
+    "PlayerLevel",
+    "HealthValue",
+    "ObjectHealthValue",
 ]
 
 import typing as tp
@@ -1511,7 +1521,7 @@ def IfAttacked(condition: ConditionGroup | int, attacked_entity: Character | int
     """
 
 
-def IfHealthComparison(
+def IfHealthRatioComparison(
     condition: ConditionGroup | int,
     character: Character | int,
     comparison_type: ComparisonType | int,
@@ -1522,39 +1532,39 @@ def IfHealthComparison(
     """
 
 
-def IfHealthEqual(condition: ConditionGroup | int, character: Character | int, value: float):
+def IfHealthRatioEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
-    Calls `IfHealthComparison` with `comparison_type=0`.
-    """
-
-
-def IfHealthNotEqual(condition: ConditionGroup | int, character: Character | int, value: float):
-    """
-    Calls `IfHealthComparison` with `comparison_type=1`.
+    Calls `IfHealthRatioComparison` with `comparison_type=0`.
     """
 
 
-def IfHealthGreaterThan(condition: ConditionGroup | int, character: Character | int, value: float):
+def IfHealthRatioNotEqual(condition: ConditionGroup | int, character: Character | int, value: float):
     """
-    Calls `IfHealthComparison` with `comparison_type=2`.
-    """
-
-
-def IfHealthLessThan(condition: ConditionGroup | int, character: Character | int, value: float):
-    """
-    Calls `IfHealthComparison` with `comparison_type=3`.
+    Calls `IfHealthRatioComparison` with `comparison_type=1`.
     """
 
 
-def IfHealthGreaterThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
+def IfHealthRatioGreaterThan(condition: ConditionGroup | int, character: Character | int, value: float):
     """
-    Calls `IfHealthComparison` with `comparison_type=4`.
+    Calls `IfHealthRatioComparison` with `comparison_type=2`.
     """
 
 
-def IfHealthLessThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
+def IfHealthRatioLessThan(condition: ConditionGroup | int, character: Character | int, value: float):
     """
-    Calls `IfHealthComparison` with `comparison_type=5`.
+    Calls `IfHealthRatioComparison` with `comparison_type=3`.
+    """
+
+
+def IfHealthRatioGreaterThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
+    """
+    Calls `IfHealthRatioComparison` with `comparison_type=4`.
+    """
+
+
+def IfHealthRatioLessThanOrEqual(condition: ConditionGroup | int, character: Character | int, value: float):
+    """
+    Calls `IfHealthRatioComparison` with `comparison_type=5`.
     """
 
 
@@ -4791,14 +4801,6 @@ def Offline() -> bool:
     ...
 
 
-def _Unknown_3_23(unk1: int, unk2: int) -> bool:
-    ...
-
-
-def _Unknown_3_24(unk1: int, unk2: int) -> bool:
-    ...
-
-
 def CharacterDeathState(character: Character | int, is_dead: bool | int) -> bool:
     ...
 
@@ -4815,31 +4817,31 @@ def Attacked(attacked_entity: Character | int, attacker: Character | int) -> boo
     ...
 
 
-def HealthComparison(character: Character | int, comparison_type: ComparisonType | int, value: float) -> bool:
+def HealthRatioComparison(character: Character | int, comparison_type: ComparisonType | int, value: float) -> bool:
     ...
 
 
-def HealthEqual(character: Character | int, value: float) -> bool:
+def HealthRatioEqual(character: Character | int, value: float) -> bool:
     ...
 
 
-def HealthNotEqual(character: Character | int, value: float) -> bool:
+def HealthRatioNotEqual(character: Character | int, value: float) -> bool:
     ...
 
 
-def HealthGreaterThan(character: Character | int, value: float) -> bool:
+def HealthRatioGreaterThan(character: Character | int, value: float) -> bool:
     ...
 
 
-def HealthLessThan(character: Character | int, value: float) -> bool:
+def HealthRatioLessThan(character: Character | int, value: float) -> bool:
     ...
 
 
-def HealthGreaterThanOrEqual(character: Character | int, value: float) -> bool:
+def HealthRatioGreaterThanOrEqual(character: Character | int, value: float) -> bool:
     ...
 
 
-def HealthLessThanOrEqual(character: Character | int, value: float) -> bool:
+def HealthRatioLessThanOrEqual(character: Character | int, value: float) -> bool:
     ...
 
 
@@ -5094,5 +5096,89 @@ def PlayerHasRing(ring: AccessoryParam | int, including_storage: bool = False) -
 def PlayerHasGood(good: GoodParam | int, including_storage: bool = False) -> bool:
     """
     Calls `compiler.IfPlayerHasGood`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveWeapon(weapon: WeaponParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveWeapon`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveArmor(armor: ArmorParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveArmor`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveRing(ring: AccessoryParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveRing`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveGood(good: GoodParam | int, including_storage: bool = False) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveGood`.
+    """
+    ...
+
+
+def TrueFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list) -> int:
+    """
+    Compare output to a value as a shortcut for calling `TrueFlagCountComparison(...)`.
+    """
+    ...
+
+
+def WorldTendency(world_tendency_type: WorldTendencyType | int) -> int:
+    """
+    Compare output to a value as a shortcut for calling `WorldTendencyComparison(...)`.
+    """
+    ...
+
+
+def EventValue(flag: Flag | int, bit_count: int) -> int:
+    """
+    Compare output to a value as a shortcut for calling `EventValueComparison(...)`.
+    """
+    ...
+
+
+def HealthRatio(character: Character | int) -> float:
+    """
+    Compare output to a value as a shortcut for calling `HealthRatioComparison(...)`.
+    """
+    ...
+
+
+def CharacterPartHealth(character: Character | int, npc_part_id: int) -> float:
+    """
+    Compare output to a value as a shortcut for calling `CharacterPartHealthComparison(...)`.
+    """
+    ...
+
+
+def PlayerLevel() -> int:
+    """
+    Compare output to a value as a shortcut for calling `PlayerLevelComparison(...)`.
+    """
+    ...
+
+
+def HealthValue(character: Character | int) -> int:
+    """
+    Compare output to a value as a shortcut for calling `HealthValueComparison(...)`.
+    """
+    ...
+
+
+def ObjectHealthValue(obj: Object | int) -> int:
+    """
+    Compare output to a value as a shortcut for calling `ObjectHealthValueComparison(...)`.
     """
     ...

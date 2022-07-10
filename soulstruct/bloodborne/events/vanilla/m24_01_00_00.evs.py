@@ -930,7 +930,7 @@ def Event_12415080(
     EnableGravity(character)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_3)
     WaitRandomFrames(min_frames=20, max_frames=100)
-    AND_4.Add(HealthLessThan(character, value=1.0))
+    AND_4.Add(HealthRatioLessThan(character, value=1.0))
     GotoIfConditionTrue(Label.L1, input_condition=AND_4)
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
 
@@ -1632,7 +1632,7 @@ def Event_12411701():
         return
     AND_1.Add(FlagEnabled(12411700))
     AND_2.Add(CharacterBackreadDisabled(2410800))
-    AND_2.Add(HealthLessThanOrEqual(2410800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2410800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1884,13 +1884,13 @@ def Event_12414704():
     DisableNetworkSync()
     if FlagEnabled(12411700):
         return
-    AND_1.Add(HealthGreaterThan(2410800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2410800, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2410800, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CENTRAL_YHARNAM, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2410800, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2410800, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2410800, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -1919,7 +1919,7 @@ def Event_12414707():
     if FlagEnabled(12411700):
         return
     
-    MAIN.Await(HealthLessThan(2410800, value=0.699999988079071))
+    MAIN.Await(HealthRatioLessThan(2410800, value=0.699999988079071))
     
     AICommand(2410800, command_id=1, command_slot=1)
     ReplanAI(2410800)
@@ -1961,7 +1961,7 @@ def Event_12414710(
     CreateNPCPart(2410800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2410800, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(2410800, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(2410800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2410800, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -2104,9 +2104,9 @@ def Event_12411801():
         return
     AND_1.Add(FlagEnabled(12411800))
     AND_2.Add(CharacterBackreadDisabled(2410810))
-    AND_2.Add(HealthLessThanOrEqual(2410810, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2410810, value=0.0))
     AND_3.Add(CharacterBackreadDisabled(2410811))
-    AND_3.Add(HealthLessThanOrEqual(2410811, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2410811, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -2380,13 +2380,13 @@ def Event_12414804():
     if FlagEnabled(12411800):
         return
     GotoIfFlagEnabled(Label.L0, flag=12414807)
-    AND_1.Add(HealthGreaterThan(2410810, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2410810, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2410810, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CENTRAL_YHARNAM, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2410810, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2410810, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2410810, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -2396,13 +2396,13 @@ def Event_12414804():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_3.Add(HealthGreaterThan(2410811, value=0.0))
+    AND_3.Add(HealthRatioGreaterThan(2410811, value=0.0))
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=2410811, radius=5.5))
     
     MAIN.Await(AND_3)
     
     SetLockedCameraSlot(game_map=CENTRAL_YHARNAM, camera_slot=1)
-    AND_4.Add(HealthGreaterThan(2410811, value=0.0))
+    AND_4.Add(HealthRatioGreaterThan(2410811, value=0.0))
     AND_4.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2410811, radius=6.0))
     
     MAIN.Await(AND_4)
@@ -2437,7 +2437,7 @@ def Event_12414807():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableGravity(2410811)
-    AND_1.Add(HealthLessThan(2410810, value=0.3400000035762787))
+    AND_1.Add(HealthRatioLessThan(2410810, value=0.3400000035762787))
     AND_2.Add(CharacterHasTAEEvent(2410810, tae_event_id=30))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -2473,7 +2473,7 @@ def Event_12414807():
 def Event_12414808():
     """Event 12414808"""
     AND_1.Add(CharacterHasSpecialEffect(2410810, 4640))
-    AND_1.Add(HealthGreaterThanOrEqual(2410810, value=0.3400000035762787))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(2410810, value=0.3400000035762787))
     
     MAIN.Await(AND_1)
     
@@ -2486,7 +2486,7 @@ def Event_12414808():
     ReplanAI(2410810)
     Wait(10.0)
     AND_1.Add(CharacterHasSpecialEffect(2410810, 4640))
-    AND_1.Add(HealthGreaterThanOrEqual(2410810, value=0.3400000035762787))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(2410810, value=0.3400000035762787))
     
     MAIN.Await(AND_1)
     
@@ -2499,7 +2499,7 @@ def Event_12414808():
     ReplanAI(2410810)
     Wait(10.0)
     AND_1.Add(CharacterHasSpecialEffect(2410810, 4640))
-    AND_1.Add(HealthGreaterThanOrEqual(2410810, value=0.3400000035762787))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(2410810, value=0.3400000035762787))
     
     MAIN.Await(AND_1)
     
@@ -2640,7 +2640,7 @@ def Event_12415236(_, flag: int, character: int, character_1: int, character_2: 
     AND_1.Add(FlagEnabled(12415234))
     AND_1.Add(CharacterAlive(character_1))
     AND_1.Add(AllPlayersInsideRegion(region=2412143))
-    OR_2.Add(HealthLessThanOrEqual(character, value=0.5))
+    OR_2.Add(HealthRatioLessThanOrEqual(character, value=0.5))
     OR_2.Add(TimeElapsed(seconds=40.0))
     AND_1.Add(OR_2)
     
@@ -3485,8 +3485,8 @@ def Event_12410040(
     
     GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
     ForceAnimation(character_1, animation_id, wait_for_completion=True)
-    AND_1.Add(HealthEqual(character_1, value=1.0))
-    AND_2.Add(HealthLessThan(character_1, value=1.0))
+    AND_1.Add(HealthRatioEqual(character_1, value=1.0))
+    AND_2.Add(HealthRatioLessThan(character_1, value=1.0))
     OR_4.Add(AND_1)
     OR_4.Add(AND_2)
     
@@ -3835,7 +3835,7 @@ def Event_12410658():
     """Event 12410658"""
     if FlagEnabled(1149):
         return
-    AND_1.Add(HealthLessThanOrEqual(2410710, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(2410710, value=0.0))
     AND_1.Add(FlagEnabled(1145))
     
     MAIN.Await(AND_1)
@@ -4257,7 +4257,7 @@ def Event_12410713():
     
     MAIN.Await(OR_1)
     
-    IfPlayerDoesNotHaveGood(AND_1, 4904)
+    AND_1.Add(PlayerDoesNotHaveGood(4904))
     
     MAIN.Await(AND_1)
     
@@ -5279,7 +5279,7 @@ def Event_12410810():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthEqual(2410901, value=0.0))
+    MAIN.Await(HealthRatioEqual(2410901, value=0.0))
     
     SetAIParamID(2410900, ai_param_id=6163)
     AICommand(2410900, command_id=11, command_slot=0)
@@ -5470,8 +5470,8 @@ def Event_12410833():
         return
     if FlagEnabled(1236):
         return
-    AND_1.Add(HealthEqual(2410771, value=0.0))
-    AND_1.Add(HealthNotEqual(2410770, value=0.0))
+    AND_1.Add(HealthRatioEqual(2410771, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(2410770, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -5555,7 +5555,7 @@ def Event_12410860(_, character: int, animation_id: int):
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     AND_1.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(AND_1)
@@ -5571,7 +5571,7 @@ def Event_12410870(_, character: int, animation_id: int, special_effect: int):
     if not AND_15:
         return
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -5586,7 +5586,7 @@ def Event_12410880(_, character: int, animation_id: int):
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -6546,7 +6546,7 @@ def Event_12414610():
         return
     AND_1.Add(FlagEnabled(12414600))
     AND_1.Add(FlagDisabled(12414601))
-    AND_1.Add(HealthGreaterThan(2410158, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2410158, value=0.0))
     AND_1.Add(CharacterHasSpecialEffect(2410158, 4640))
     
     MAIN.Await(AND_1)
@@ -6554,7 +6554,7 @@ def Event_12414610():
     Wait(2.0)
     AND_2.Add(FlagEnabled(12414600))
     AND_2.Add(FlagDisabled(12414601))
-    AND_2.Add(HealthGreaterThan(2410158, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2410158, value=0.0))
     if not AND_2:
         return
     PlaySoundEffect(2410158, 242100402, sound_type=SoundType.v_Voice)
@@ -6587,7 +6587,7 @@ def Event_12410237(_, flag: int, character: int, character_1: int, character_2: 
     
     MAIN.Await(FlagEnabled(flag))
     
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.5))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.5))
     OR_1.Add(TimeElapsed(seconds=40.0))
     AND_1.Add(FlagEnabled(12410235))
     AND_1.Add(CharacterAlive(character_1))

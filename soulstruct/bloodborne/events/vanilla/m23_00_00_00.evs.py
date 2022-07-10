@@ -1036,7 +1036,7 @@ def Event_12301801():
         return
     AND_1.Add(FlagEnabled(12301800))
     AND_2.Add(CharacterBackreadDisabled(2300800))
-    AND_2.Add(HealthLessThanOrEqual(2300800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2300800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1304,7 +1304,7 @@ def Event_12304807():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthLessThan(2300800, value=0.6700000166893005))
+    MAIN.Await(HealthRatioLessThan(2300800, value=0.6700000166893005))
     
     Wait(0.10000000149011612)
     ResetAnimation(2300800, disable_interpolation=True)
@@ -1325,7 +1325,7 @@ def Event_12304808():
         return
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(HealthLessThan(2300800, value=0.33000001311302185))
+    AND_1.Add(HealthRatioLessThan(2300800, value=0.33000001311302185))
     AND_1.Add(FlagEnabled(12304807))
     
     MAIN.Await(AND_1)
@@ -1424,7 +1424,7 @@ def Event_12301701():
         return
     AND_1.Add(FlagEnabled(12301700))
     AND_2.Add(CharacterBackreadDisabled(2300810))
-    AND_2.Add(HealthLessThanOrEqual(2300810, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2300810, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1670,13 +1670,13 @@ def Event_12304704():
     DisableNetworkSync()
     if FlagEnabled(12301700):
         return
-    AND_1.Add(HealthGreaterThan(2300810, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(2300810, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2300810, radius=10.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=OLD_YHARNAM, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2300810, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2300810, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2300810, radius=12.0))
     
     MAIN.Await(AND_2)
@@ -1705,7 +1705,7 @@ def Event_12304707():
     if FlagEnabled(12301700):
         return
     AICommand(2300810, command_id=2, command_slot=1)
-    AND_1.Add(HealthLessThan(2300810, value=0.6700000166893005))
+    AND_1.Add(HealthRatioLessThan(2300810, value=0.6700000166893005))
     AND_1.Add(CharacterHasSpecialEffect(2300810, 5402))
     
     MAIN.Await(AND_1)
@@ -1739,7 +1739,7 @@ def Event_12304715(
     CreateNPCPart(2300810, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2300810, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(2300810, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(2300810, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2300810, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     

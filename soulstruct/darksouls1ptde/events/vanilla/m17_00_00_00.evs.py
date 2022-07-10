@@ -845,9 +845,9 @@ def Event_11705397():
     MAIN.Await(CharacterBackreadEnabled(1700800))
     
     CreateNPCPart(1700800, npc_part_id=5290, part_index=NPCPartType.Part1, part_health=330)
-    AND_1.Add(HealthGreaterThan(1700800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(1700800, value=0.0))
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1700800, npc_part_id=5290, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1700800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1700800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1376,7 +1376,7 @@ def Event_11700141():
     """Event 11700141"""
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(11700140))
-    IfPlayerDoesNotHaveGood(AND_1, 2005)
+    AND_1.Add(PlayerDoesNotHaveGood(2005))
     AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1701300,
@@ -1770,8 +1770,8 @@ def Event_11700700():
 @NeverRestart(11700510)
 def Event_11700510(_, character: int, flag: int):
     """Event 11700510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1800,7 +1800,7 @@ def Event_11700520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

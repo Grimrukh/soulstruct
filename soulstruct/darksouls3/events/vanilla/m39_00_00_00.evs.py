@@ -582,7 +582,7 @@ def Event_13905363():
     OR_2.Add(AND_1)
     OR_2.Add(Attacked(attacked_entity=3900363, attacker=PLAYER))
     OR_2.Add(CharacterDead(3905390))
-    OR_2.Add(HealthLessThanOrEqual(3900364, value=0.5))
+    OR_2.Add(HealthRatioLessThanOrEqual(3900364, value=0.5))
     
     MAIN.Await(OR_2)
     
@@ -1259,7 +1259,7 @@ def Event_13900723(_, character: int, radius: float):
         return
     AND_1.Add(FlagEnabled(73900164))
     AND_1.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     AND_1.Add(FlagEnabled(1395))
     
     MAIN.Await(AND_1)
@@ -1285,7 +1285,7 @@ def Event_13900726():
     """Event 13900726"""
     if PlayerNotInOwnWorld():
         return
-    AND_1.Add(HealthEqual(3900800, value=0.0))
+    AND_1.Add(HealthRatioEqual(3900800, value=0.0))
     AND_1.Add(FlagEnabled(1388))
     
     MAIN.Await(AND_1)
@@ -1480,7 +1480,7 @@ def Event_13905811():
     if FlagEnabled(13900800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3900800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3900800, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3900800, 777777777, sound_type=SoundType.s_SFX)
@@ -1592,9 +1592,9 @@ def Event_13905850():
     if FlagEnabled(13900800):
         return
     AND_1.Add(AttackedWithDamageType(attacked_entity=3900800))
-    AND_1.Add(HealthLessThanOrEqual(3900800, value=0.6000000238418579))
+    AND_1.Add(HealthRatioLessThanOrEqual(3900800, value=0.6000000238418579))
     OR_1.Add(AND_1)
-    AND_2.Add(HealthLessThanOrEqual(3900800, value=0.7900000214576721))
+    AND_2.Add(HealthRatioLessThanOrEqual(3900800, value=0.7900000214576721))
     AND_2.Add(CharacterHasSpecialEffect(3900800, 11421))
     OR_1.Add(AND_2)
     AND_3.Add(OR_1)

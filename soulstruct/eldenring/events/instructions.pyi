@@ -138,13 +138,13 @@ __all__ = [
     "IfCharacterDead",
     "IfCharacterAlive",
     "IfAttacked",  # 4[1]
-    "IfHealthComparison",  # 4[2]
-    "IfHealthEqual",
-    "IfHealthNotEqual",
-    "IfHealthGreaterThan",
-    "IfHealthLessThan",
-    "IfHealthGreaterThanOrEqual",
-    "IfHealthLessThanOrEqual",
+    "IfHealthRatioComparison",  # 4[2]
+    "IfHealthRatioEqual",
+    "IfHealthRatioNotEqual",
+    "IfHealthRatioGreaterThan",
+    "IfHealthRatioLessThan",
+    "IfHealthRatioGreaterThanOrEqual",
+    "IfHealthRatioLessThanOrEqual",
     "IfCharacterType",  # 4[3]
     "IfCharacterHuman",
     "IfCharacterWhitePhantom",
@@ -854,13 +854,13 @@ __all__ = [
     "CharacterDead",
     "CharacterAlive",
     "Attacked",
-    "HealthComparison",
-    "HealthEqual",
-    "HealthNotEqual",
-    "HealthGreaterThan",
-    "HealthLessThan",
-    "HealthGreaterThanOrEqual",
-    "HealthLessThanOrEqual",
+    "HealthRatioComparison",
+    "HealthRatioEqual",
+    "HealthRatioNotEqual",
+    "HealthRatioGreaterThan",
+    "HealthRatioLessThan",
+    "HealthRatioGreaterThanOrEqual",
+    "HealthRatioLessThanOrEqual",
     "CharacterType",
     "CharacterHuman",
     "CharacterWhitePhantom",
@@ -951,6 +951,18 @@ __all__ = [
     "PlayerHasArmor",
     "PlayerHasRing",
     "PlayerHasGood",
+    "PlayerDoesNotHaveWeapon",
+    "PlayerDoesNotHaveArmor",
+    "PlayerDoesNotHaveRing",
+    "PlayerDoesNotHaveGood",
+    "TrueFlagCount",
+    "EventValue",
+    "HealthRatio",
+    "CharacterPartHealth",
+    "PlayerLevel",
+    "HealthValue",
+    "ObjectHealthValue",
+    "AllyPhantomCount",
 ]
 
 import typing as tp
@@ -1850,7 +1862,7 @@ def IfAttacked(
     """
 
 
-def IfHealthComparison(
+def IfHealthRatioComparison(
     condition: ConditionGroup | int,
     character: Character | int,
     comparison_type: ComparisonType | int,
@@ -1864,7 +1876,7 @@ def IfHealthComparison(
     """
 
 
-def IfHealthEqual(
+def IfHealthRatioEqual(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1873,11 +1885,11 @@ def IfHealthEqual(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=0`.
+    Calls `IfHealthRatioComparison` with `comparison_type=0`.
     """
 
 
-def IfHealthNotEqual(
+def IfHealthRatioNotEqual(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1886,11 +1898,11 @@ def IfHealthNotEqual(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=1`.
+    Calls `IfHealthRatioComparison` with `comparison_type=1`.
     """
 
 
-def IfHealthGreaterThan(
+def IfHealthRatioGreaterThan(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1899,11 +1911,11 @@ def IfHealthGreaterThan(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=2`.
+    Calls `IfHealthRatioComparison` with `comparison_type=2`.
     """
 
 
-def IfHealthLessThan(
+def IfHealthRatioLessThan(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1912,11 +1924,11 @@ def IfHealthLessThan(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=3`.
+    Calls `IfHealthRatioComparison` with `comparison_type=3`.
     """
 
 
-def IfHealthGreaterThanOrEqual(
+def IfHealthRatioGreaterThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1925,11 +1937,11 @@ def IfHealthGreaterThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=4`.
+    Calls `IfHealthRatioComparison` with `comparison_type=4`.
     """
 
 
-def IfHealthLessThanOrEqual(
+def IfHealthRatioLessThanOrEqual(
     condition: ConditionGroup | int,
     character: Character | int,
     value: float,
@@ -1938,7 +1950,7 @@ def IfHealthLessThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfHealthComparison` with `comparison_type=5`.
+    Calls `IfHealthRatioComparison` with `comparison_type=5`.
     """
 
 
@@ -6436,7 +6448,7 @@ def Unknown_2004_60(character: Character | int, obj: Object | int, event_layers=
 
 def Unknown_2004_61(unk_0_4: int, event_layers=()):
     """
-    TODO
+    Used only once: in Stranded Graveyard with argument 9999.
     """
 
 
@@ -6641,7 +6653,8 @@ def DisplayUnknownMessage_16(text: EventText | int, unknown2: int, event_layers=
 def UnknownCamera_4(unknown1: float, unknown2: float, event_layers=()):
     """
     Very common camera instruction with unknown purpose.
-    First argument could be a param. Second could be an angle (between -180 and 180).
+    First argument is often 5.0 but can also be negative, so is probably not a distance.
+    Second argument could be an angle (between -180 and 180).
     """
 
 
@@ -7231,7 +7244,7 @@ def Attacked(attacked_entity: Character | int, attacker: Character | int, event_
     ...
 
 
-def HealthComparison(
+def HealthRatioComparison(
     character: Character | int,
     comparison_type: ComparisonType | int,
     value: float,
@@ -7242,7 +7255,7 @@ def HealthComparison(
     ...
 
 
-def HealthEqual(
+def HealthRatioEqual(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7252,7 +7265,7 @@ def HealthEqual(
     ...
 
 
-def HealthNotEqual(
+def HealthRatioNotEqual(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7262,7 +7275,7 @@ def HealthNotEqual(
     ...
 
 
-def HealthGreaterThan(
+def HealthRatioGreaterThan(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7272,7 +7285,7 @@ def HealthGreaterThan(
     ...
 
 
-def HealthLessThan(
+def HealthRatioLessThan(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7282,7 +7295,7 @@ def HealthLessThan(
     ...
 
 
-def HealthGreaterThanOrEqual(
+def HealthRatioGreaterThanOrEqual(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7292,7 +7305,7 @@ def HealthGreaterThanOrEqual(
     ...
 
 
-def HealthLessThanOrEqual(
+def HealthRatioLessThanOrEqual(
     character: Character | int,
     value: float,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
@@ -7939,5 +7952,99 @@ def PlayerHasRing(ring: AccessoryParam | int, including_storage: bool = False, e
 def PlayerHasGood(good: GoodParam | int, including_storage: bool = False, event_layers=()) -> bool:
     """
     Calls `compiler.IfPlayerHasGood`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveWeapon(weapon: WeaponParam | int, including_storage: bool = False, event_layers=()) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveWeapon`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveArmor(armor: ArmorParam | int, including_storage: bool = False, event_layers=()) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveArmor`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveRing(ring: AccessoryParam | int, including_storage: bool = False, event_layers=()) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveRing`.
+    """
+    ...
+
+
+def PlayerDoesNotHaveGood(good: GoodParam | int, including_storage: bool = False, event_layers=()) -> bool:
+    """
+    Calls `compiler.IfPlayerDoesNotHaveGood`.
+    """
+    ...
+
+
+def TrueFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, event_layers=()) -> int:
+    """
+    Compare output to a value as a shortcut for calling `TrueFlagCountComparison(...)`.
+    """
+    ...
+
+
+def EventValue(flag: Flag | int, bit_count: int, event_layers=()) -> int:
+    """
+    Compare output to a value as a shortcut for calling `EventValueComparison(...)`.
+    """
+    ...
+
+
+def HealthRatio(
+    character: Character | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> float:
+    """
+    Compare output to a value as a shortcut for calling `HealthRatioComparison(...)`.
+    """
+    ...
+
+
+def CharacterPartHealth(character: Character | int, npc_part_id: int, event_layers=()) -> float:
+    """
+    Compare output to a value as a shortcut for calling `CharacterPartHealthComparison(...)`.
+    """
+    ...
+
+
+def PlayerLevel(event_layers=()) -> int:
+    """
+    Compare output to a value as a shortcut for calling `PlayerLevelComparison(...)`.
+    """
+    ...
+
+
+def HealthValue(
+    character: Character | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> int:
+    """
+    Compare output to a value as a shortcut for calling `HealthValueComparison(...)`.
+    """
+    ...
+
+
+def ObjectHealthValue(obj: Object | int, event_layers=()) -> int:
+    """
+    Compare output to a value as a shortcut for calling `ObjectHealthValueComparison(...)`.
+    """
+    ...
+
+
+def AllyPhantomCount(comparison_state: bool | int, event_layers=()) -> int:
+    """
+    Compare output to a value as a shortcut for calling `AllyPhantomCountComparison(...)`.
     """
     ...

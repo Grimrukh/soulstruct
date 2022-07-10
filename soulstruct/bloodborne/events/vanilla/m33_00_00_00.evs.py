@@ -340,7 +340,7 @@ def Event_13304730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -434,7 +434,7 @@ def Event_13301801():
         return
     AND_1.Add(FlagEnabled(13301800))
     AND_2.Add(CharacterBackreadDisabled(3300800))
-    AND_2.Add(HealthLessThanOrEqual(3300800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -685,13 +685,13 @@ def Event_13304804():
     if FlagEnabled(13301800):
         return
     DisableNetworkSync()
-    AND_1.Add(HealthGreaterThan(3300800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(3300800, value=0.0))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3300800, radius=14.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=NIGHTMARE_FRONTIER, camera_slot=1)
-    AND_1.Add(HealthGreaterThan(3300800, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(3300800, value=0.0))
     
     MAIN.Await(EntityBeyondDistance(entity=PLAYER, other_entity=3300800, radius=17.0))
     
@@ -723,7 +723,7 @@ def Event_13304807():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthLessThan(3300800, value=0.699999988079071))
+    MAIN.Await(HealthRatioLessThan(3300800, value=0.699999988079071))
     
     Wait(0.10000000149011612)
     ResetAnimation(3300800, disable_interpolation=True)
@@ -743,7 +743,7 @@ def Event_13304808():
         return
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(HealthLessThan(3300800, value=0.30000001192092896))
+    AND_1.Add(HealthRatioLessThan(3300800, value=0.30000001192092896))
     AND_1.Add(FlagEnabled(13304807))
     
     MAIN.Await(AND_1)
@@ -811,7 +811,7 @@ def Event_13304830(
     )
     SetNPCPartEffects(3300800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(3300800, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(3300800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -860,7 +860,7 @@ def Event_13304840():
     )
     SetNPCPartEffects(3300800, npc_part_id=3300, material_sfx_id=60, material_vfx_id=60)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(3300800, npc_part_id=3300, value=0))
-    AND_3.Add(HealthLessThanOrEqual(3300800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -1188,7 +1188,7 @@ def Event_13305030(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()

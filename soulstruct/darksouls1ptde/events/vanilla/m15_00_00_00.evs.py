@@ -828,7 +828,7 @@ def Event_11505353():
     """Event 11505353"""
     AND_1.Add(CharacterHasTAEEvent(1500800, tae_event_id=400))
     AND_2.Add(CharacterHasTAEEvent(1500800, tae_event_id=300))
-    AND_3.Add(HealthLessThanOrEqual(1500800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(1500800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1703,7 +1703,7 @@ def Event_11500103():
     """Event 11500103"""
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(11500102))
-    IfPlayerDoesNotHaveGood(AND_1, 2003)
+    AND_1.Add(PlayerDoesNotHaveGood(2003))
     AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=1501011,
@@ -2250,7 +2250,7 @@ def Event_11505080():
         SetStandbyAnimationSettings(1500122)
         End()
     OR_1.Add(Attacked(attacked_entity=1500122, attacker=PLAYER))
-    OR_1.Add(HealthNotEqual(1500122, value=1.0))
+    OR_1.Add(HealthRatioNotEqual(1500122, value=1.0))
     
     MAIN.Await(OR_1)
     
@@ -2492,8 +2492,8 @@ def Event_11500600(_, obj: int, obj_act_id: int):
 @NeverRestart(11500510)
 def Event_11500510(_, character: int, flag: int):
     """Event 11500510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2522,7 +2522,7 @@ def Event_11500520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

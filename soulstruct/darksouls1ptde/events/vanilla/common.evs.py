@@ -507,13 +507,13 @@ def Event_715():
     DisableFlag(715)
     AND_1.Add(FlagEnabled(11010595))
     AND_1.Add(PlayerHasGood(702))
-    IfPlayerDoesNotHaveGood(AND_1, 5520, including_storage=True)
+    AND_1.Add(PlayerDoesNotHaveGood(5520, including_storage=True))
     AND_1.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
     
     MAIN.Await(AND_1)
     
     EnableFlag(715)
-    IfPlayerDoesNotHaveGood(OR_1, 702)
+    OR_1.Add(PlayerDoesNotHaveGood(702))
     OR_1.Add(PlayerHasGood(5520, including_storage=True))
     AND_2.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
     OR_1.Add(not AND_2)
@@ -735,7 +735,9 @@ def Event_780(_, item: int, flag: int):
     MAIN.Await(PlayerHasGood(item))
     
     EnableFlag(flag)
-    IfPlayerDoesNotHaveGood(MAIN, item)
+    
+    MAIN.Await(PlayerDoesNotHaveGood(item))
+    
     Restart()
 
 
@@ -1337,7 +1339,7 @@ def Event_758():
         DisplayStatus(10010670)
     DisableFlag(758)
     AND_1.Add(Host())
-    AND_1.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2130))
     
     MAIN.Await(AND_1)
@@ -1358,7 +1360,7 @@ def Event_759():
         DisplayStatus(10010680)
     DisableFlag(759)
     AND_1.Add(Host())
-    AND_1.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2131))
     
     MAIN.Await(AND_1)

@@ -856,7 +856,7 @@ def Event_13504730(
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     OR_2.Add(FlagEnabled(flag_3))
     OR_2.Add(FlagEnabled(flag_6))
     OR_1.Add(AND_2)
@@ -1485,7 +1485,7 @@ def Event_13501850():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthEqual(3500850, value=0.0))
+    MAIN.Await(HealthRatioEqual(3500850, value=0.0))
     
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3501810)
@@ -1993,7 +1993,7 @@ def Event_13504895(_, character: int):
     if FlagEnabled(13501850):
         return
     
-    MAIN.Await(HealthEqual(3500850, value=0.0))
+    MAIN.Await(HealthRatioEqual(3500850, value=0.0))
     
     Kill(character, award_souls=True)
 
@@ -2095,7 +2095,7 @@ def Event_13505655():
     
     GotoIfFlagEnabled(Label.L1, flag=13504895)
     EnableFlag(13505668)
-    OR_15.Add(HealthLessThan(3500850, value=0.6000000238418579))
+    OR_15.Add(HealthRatioLessThan(3500850, value=0.6000000238418579))
     SkipLinesIfConditionFalse(1, OR_15)
     EnableFlag(13504869)
     Restart()
@@ -2613,7 +2613,7 @@ def Event_13501140():
     AND_1.Add(CharacterHuman(PLAYER))
     if not AND_1:
         return
-    IfPlayerDoesNotHaveGood(AND_1, 4017)
+    AND_1.Add(PlayerDoesNotHaveGood(4017))
     AND_1.Add(FlagDisabled(13501105))
     AND_1.Add(ActionButtonParamActivated(action_button_id=3500100, entity=3501100))
     
@@ -4204,9 +4204,9 @@ def Event_13500920(_, character: int, flag: int, first_flag: int, last_flag: int
         return
     DisableFlag(flag)
     OR_1.Add(FlagEnabled(flag))
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -4311,14 +4311,14 @@ def Event_13500943(_, character: int):
     
     MAIN.Await(FlagEnabled(73500411))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     ForceAnimation(character, 103161, loop=True, skip_transition=True)
     
     MAIN.Await(FlagDisabled(73500411))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     Restart()
@@ -4449,14 +4449,14 @@ def Event_13500949(_, character: int, flag: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     ForceAnimation(character, 7003, loop=True, skip_transition=True)
     
     MAIN.Await(FlagDisabled(flag))
     
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     if AND_2:
         return
     ForceAnimation(character, 7000, loop=True, skip_transition=True)
@@ -4764,14 +4764,14 @@ def Event_13500967(_, character: int):
     
     MAIN.Await(FlagDisabled(73500325))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     ForceAnimation(character, 0, loop=True, skip_transition=True)
     
     MAIN.Await(FlagEnabled(73500325))
     
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     if AND_2:
         return
     ForceAnimation(character, 7000, loop=True, skip_transition=True)
@@ -4788,14 +4788,14 @@ def Event_13500968(_, character: int):
     
     MAIN.Await(FlagEnabled(73500326))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     ForceAnimation(character, 7001, loop=True)
     
     MAIN.Await(FlagDisabled(73500326))
     
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     if AND_2:
         return
     ForceAnimation(character, 0, loop=True, skip_transition=True)
@@ -4869,7 +4869,7 @@ def Event_13500990(_, character: int, flag: int, flag_1: int):
     
     MAIN.Await(FlagDisabled(flag))
     
-    AND_1.Add(HealthEqual(character, value=0.0))
+    AND_1.Add(HealthRatioEqual(character, value=0.0))
     if AND_1:
         return
     ForceAnimation(character, 7013, loop=True, skip_transition=True)
@@ -4878,7 +4878,7 @@ def Event_13500990(_, character: int, flag: int, flag_1: int):
     
     if FlagDisabled(flag_1):
         return
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     if AND_2:
         return
     ForceAnimation(character, 9002, loop=True, skip_transition=True)
@@ -5169,7 +5169,7 @@ def Event_13505903(_, character: int, flag: int, flag_1: int, region: int, regio
     if FlagEnabled(flag_1):
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region_1))

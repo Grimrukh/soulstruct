@@ -755,7 +755,7 @@ def Event_11415397():
     
     DisableInvincibility(1410802)
     
-    MAIN.Await(HealthLessThanOrEqual(1410802, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1410802, value=0.0))
     
     DisableInvincibility(1410800)
     DisableInvincibility(1410801)
@@ -1195,7 +1195,7 @@ def Event_11415379():
     if FlagEnabled(11410900):
         return
     AND_1.Add(FlagRangeAllEnabled(flag_range=(11415310, 11415314)))
-    AND_2.Add(HealthLessThanOrEqual(1410600, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1410600, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1242,7 +1242,7 @@ def Event_11410800():
     
     Wait(5.0)
     AND_1.Add(Host())
-    AND_1.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
     if AND_1:
         return
     if Client():
@@ -1458,11 +1458,11 @@ def Event_11415320(_, flag: int, character: int):
     """Event 11415320"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasTAEEvent(1410700, tae_event_id=400))
-    AND_1.Add(HealthGreaterThan(1410700, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(1410700, value=0.0))
     
     MAIN.Await(AND_1)
     
-    MAIN.Await(HealthLessThanOrEqual(1410700, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1410700, value=0.0))
     
     Kill(character, award_souls=True)
 
@@ -1482,7 +1482,7 @@ def Event_11415350(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     
     CreateNPCPart(1410700, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=part_health)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1410700, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1410700, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1410700, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1531,7 +1531,7 @@ def Event_11415360(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     
     CreateNPCPart(1410700, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=part_health)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1410700, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1410700, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1410700, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2217,8 +2217,8 @@ def Event_11410260():
 @NeverRestart(11410510)
 def Event_11410510(_, character: int, flag: int):
     """Event 11410510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2247,7 +2247,7 @@ def Event_11410520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -2261,8 +2261,8 @@ def Event_11410501(_, character: int, flag: int):
     OR_2.Add(FlagEnabled(1506))
     OR_2.Add(FlagEnabled(1507))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2366,7 +2366,7 @@ def Event_11410534(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410534"""
     AND_1.Add(FlagDisabled(1004))
     AND_1.Add(FlagEnabled(1002))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -2439,8 +2439,8 @@ def Event_11410543(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410543"""
     AND_1.Add(FlagDisabled(1512))
     AND_1.Add(FlagEnabled(1504))
-    AND_1.Add(HealthLessThan(character, value=0.5))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThan(character, value=0.5))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(CharacterDead(1410410))
     AND_1.Add(CharacterDead(1410411))
     AND_1.Add(CharacterDead(1410412))
@@ -2458,7 +2458,7 @@ def Event_11410544(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410544"""
     AND_1.Add(FlagDisabled(1512))
     AND_1.Add(FlagEnabled(1504))
-    AND_1.Add(HealthGreaterThanOrEqual(character, value=0.5))
+    AND_1.Add(HealthRatioGreaterThanOrEqual(character, value=0.5))
     AND_1.Add(CharacterDead(1410410))
     AND_1.Add(CharacterDead(1410411))
     AND_1.Add(CharacterDead(1410412))
@@ -2503,7 +2503,7 @@ def Event_11410546(_, character: int, first_flag: int, last_flag: int, flag: int
         End()
     AND_1.Add(FlagDisabled(1506))
     AND_1.Add(FlagDisabled(1508))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     

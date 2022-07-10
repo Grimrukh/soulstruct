@@ -983,7 +983,7 @@ def Event_13415831():
     """Event 13415831"""
     if FlagEnabled(13410830):
         return
-    AND_1.Add(HealthLessThan(3410832, value=0.009999999776482582))
+    AND_1.Add(HealthRatioLessThan(3410832, value=0.009999999776482582))
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(3410832, 11602))
     AND_1.Add(FlagEnabled(13415835))
     
@@ -1032,8 +1032,8 @@ def Event_13410832():
     """Event 13410832"""
     if FlagEnabled(13410830):
         return
-    AND_1.Add(HealthLessThanOrEqual(3410831, value=0.0))
-    AND_2.Add(HealthLessThanOrEqual(3410831, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(3410831, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3410831, value=0.0))
     AND_2.Add(CharacterHasSpecialEffect(3410830, 11607))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1117,14 +1117,14 @@ def Event_13415843():
     if FlagEnabled(13410830):
         return
     EnableImmortality(3410830)
-    AND_1.Add(HealthLessThan(3410830, value=0.009999999776482582))
+    AND_1.Add(HealthRatioLessThan(3410830, value=0.009999999776482582))
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(3410830, 11603))
     AND_1.Add(CharacterAlive(3410831))
     
     MAIN.Await(AND_1)
     
     WaitFrames(frames=1)
-    AND_2.Add(HealthLessThanOrEqual(3410831, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3410831, value=0.0))
     if AND_2:
         return
     EnableFlag(73410100)

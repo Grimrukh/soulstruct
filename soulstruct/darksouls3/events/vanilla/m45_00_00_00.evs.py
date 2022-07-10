@@ -706,7 +706,7 @@ def Event_14505200():
     AND_2.Add(CharacterBackreadEnabled(4500201))
     AND_2.Add(FlagEnabled(14505202))
     OR_2.Add(AND_2)
-    OR_2.Add(HealthLessThanOrEqual(4500201, value=0.6000000238418579))
+    OR_2.Add(HealthRatioLessThanOrEqual(4500201, value=0.6000000238418579))
     AND_3.Add(CharacterOutsideRegion(character=4500201, region=4502205))
     AND_3.Add(CharacterOutsideRegion(character=4500201, region=4502206))
     OR_2.Add(AND_3)
@@ -718,7 +718,7 @@ def Event_14505200():
     
     MAIN.Await(OR_3)
     
-    AND_5.Add(HealthLessThanOrEqual(4500201, value=0.6000000238418579))
+    AND_5.Add(HealthRatioLessThanOrEqual(4500201, value=0.6000000238418579))
     GotoIfConditionTrue(Label.L0, input_condition=AND_5)
     AICommand(4500201, command_id=10, command_slot=0)
     SkipLinesIfClientTypeCountComparison(
@@ -949,7 +949,7 @@ def Event_14505210():
     AND_2.Add(CharacterOutsideRegion(character=PLAYER, region=4502217))
     AND_2.Add(CharacterBackreadEnabled(4500202))
     OR_2.Add(AND_2)
-    OR_2.Add(HealthLessThanOrEqual(4500202, value=0.6000000238418579))
+    OR_2.Add(HealthRatioLessThanOrEqual(4500202, value=0.6000000238418579))
     OR_2.Add(HasAIStatus(4500860, ai_status=AIStatusType.Battle))
     OR_2.Add(CharacterOutsideRegion(character=4500202, region=4502215))
     OR_2.Add(CharacterInsideRegion(character=4500202, region=4502216))
@@ -958,7 +958,7 @@ def Event_14505210():
     
     MAIN.Await(AND_3)
     
-    AND_4.Add(HealthLessThanOrEqual(4500202, value=0.6000000238418579))
+    AND_4.Add(HealthRatioLessThanOrEqual(4500202, value=0.6000000238418579))
     GotoIfConditionTrue(Label.L0, input_condition=AND_4)
     AICommand(4500202, command_id=10, command_slot=0)
     SkipLinesIfClientTypeCountComparison(
@@ -1547,7 +1547,7 @@ def Event_14505400(_, character: int, animation_id: int, animation_id_1: int, re
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
     OR_2.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    OR_2.Add(HealthLessThanOrEqual(character, value=0.9900000095367432))
+    OR_2.Add(HealthRatioLessThanOrEqual(character, value=0.9900000095367432))
     
     MAIN.Await(OR_2)
     
@@ -2433,7 +2433,7 @@ def Event_14500800():
     if FlagEnabled(14500800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(4500800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(4500800, value=0.0))
     
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=4500800, special_effect=13146)
     Wait(2.0)
@@ -2996,8 +2996,8 @@ def Event_14500860():
     """Event 14500860"""
     if FlagEnabled(14500860):
         return
-    AND_1.Add(HealthLessThanOrEqual(4500860, value=0.0))
-    AND_1.Add(HealthLessThanOrEqual(4500861, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(4500860, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(4500861, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -3086,7 +3086,7 @@ def Event_14505871():
     OR_4.Add(FlagEnabled(14505219))
     AND_1.Add(OR_3)
     AND_1.Add(OR_4)
-    AND_1.Add(HealthLessThan(4500860, value=0.44999998807907104))
+    AND_1.Add(HealthRatioLessThan(4500860, value=0.44999998807907104))
     
     MAIN.Await(AND_1)
     
@@ -3131,7 +3131,7 @@ def Event_14505872():
     if FlagEnabled(14500860):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(4500860, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(4500860, value=0.0))
     
     AddSpecialEffect(4500861, 13103)
 
@@ -3142,7 +3142,7 @@ def Event_14505873():
     if FlagEnabled(14500860):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(4500861, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(4500861, value=0.0))
     
     CancelSpecialEffect(4500860, 13102)
 
@@ -3355,8 +3355,8 @@ def Event_14505710(_, character: int, character_1: int, obj: int, obj_1: int):
     DisableNetworkConnectedFlagRange(flag_range=(1675, 1679))
     SetNetworkConnectedFlagState(flag=1675, state=FlagSetting.On)
     AND_2.Add(FlagEnabled(1678))
-    AND_2.Add(HealthNotEqual(character, value=0.0))
-    AND_2.Add(HealthNotEqual(character_1, value=0.0))
+    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatioNotEqual(character_1, value=0.0))
     SkipLinesIfConditionFalse(3, AND_2)
     DisableNetworkConnectedFlagRange(flag_range=(1675, 1679))
     SetNetworkConnectedFlagState(flag=1675, state=FlagSetting.On)

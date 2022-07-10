@@ -633,7 +633,7 @@ def Event_11210000():
         Kill(1210810)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(1210800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1210800, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(1210800, 777777777, sound_type=SoundType.s_SFX)
@@ -665,7 +665,7 @@ def Event_11215006(_, character: int, character_1: int, item_lot_param_id: int):
     
     CreateNPCPart(character_1, npc_part_id=3471, part_index=NPCPartType.Part1, part_health=200)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(character_1, npc_part_id=3471, value=0))
-    AND_3.Add(HealthLessThanOrEqual(character_1, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character_1, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -920,7 +920,7 @@ def Event_11210001():
     DisableCharacter(1210801)
     DisableCharacter(1210802)
     
-    MAIN.Await(HealthLessThanOrEqual(1210820, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1210820, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(1210820, 777777777, sound_type=SoundType.s_SFX)
@@ -1117,7 +1117,7 @@ def Event_11210002():
         EnableObject(1211950)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(1210840, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1210840, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(1210840, 777777777, sound_type=SoundType.s_SFX)
@@ -1288,7 +1288,7 @@ def Event_11210005():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthLessThanOrEqual(1210401, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(1210401, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(1210401, 777777777, sound_type=SoundType.s_SFX)
@@ -1574,7 +1574,7 @@ def Event_11210020():
 def Event_11215043():
     """Event 11215043"""
     if ThisEventFlagDisabled():
-        MAIN.Await(HealthLessThanOrEqual(1210500, value=0.30000001192092896))
+        MAIN.Await(HealthRatioLessThanOrEqual(1210500, value=0.30000001192092896))
     AddSpecialEffect(1210500, 5401)
 
 
@@ -2369,7 +2369,7 @@ def Event_11210052():
     SkipLinesIfClient(1)
     EnableRandomFlagInRange(flag_range=(11210070, 11210073))
     EnableFlag(11210068)
-    AND_1.Add(HealthLessThanOrEqual(1210402, value=0.009999999776482582))
+    AND_1.Add(HealthRatioLessThanOrEqual(1210402, value=0.009999999776482582))
     AND_1.Add(FlagEnabled(11210062))
     AND_1.Add(FlagDisabled(11210535))
     AND_1.Add(FlagDisabled(11210067))
@@ -2446,7 +2446,7 @@ def Event_11210054():
     else:
         ForceAnimation(1210402, 7002, skip_transition=True)
         WaitFrames(frames=461)
-    AND_2.Add(HealthLessThanOrEqual(1210402, value=0.009999999776482582))
+    AND_2.Add(HealthRatioLessThanOrEqual(1210402, value=0.009999999776482582))
     SkipLinesIfConditionTrue(26, AND_2)
     SkipLinesIfFlagEnabled(3, 11210070)
     SkipLinesIfFlagEnabled(7, 11210071)
@@ -2493,7 +2493,7 @@ def Event_11210055():
     else:
         ForceAnimation(1210402, 7003, skip_transition=True)
         WaitFrames(frames=414)
-    AND_2.Add(HealthLessThanOrEqual(1210402, value=0.009999999776482582))
+    AND_2.Add(HealthRatioLessThanOrEqual(1210402, value=0.009999999776482582))
     SkipLinesIfConditionTrue(26, AND_2)
     SkipLinesIfFlagEnabled(3, 11210070)
     SkipLinesIfFlagEnabled(7, 11210071)
@@ -2744,7 +2744,7 @@ def Event_11215051():
     CreateNPCPart(1210401, npc_part_id=4510, part_index=NPCPartType.Part1, part_health=200)
     DisableFlag(11215054)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1210401, npc_part_id=4510, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1210401, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1210401, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2794,7 +2794,7 @@ def Event_11215052():
 @RestartOnRest(11215160)
 def Event_11215160(_, character: int):
     """Event 11215160"""
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(CharacterHasSpecialEffect(character, 5421))
     AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -3020,8 +3020,8 @@ def Event_11210230(_, obj: int, obj_1: int, animation_id: int, animation_id_1: i
 @NeverRestart(11210510)
 def Event_11210510(_, character: int, flag: int):
     """Event 11210510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -3093,7 +3093,7 @@ def Event_11210520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -3266,7 +3266,7 @@ def Event_11210541():
         End()
     EnableImmortality(6700)
     
-    MAIN.Await(HealthLessThanOrEqual(6700, value=0.009999999776482582))
+    MAIN.Await(HealthRatioLessThanOrEqual(6700, value=0.009999999776482582))
     
     ForceAnimation(6700, 7917, wait_for_completion=True)
     DisableCharacter(6700)
@@ -3752,7 +3752,7 @@ def Event_11210710(_, anchor_entity: int, player_start: int, prompt_text: int, r
     Wait(0.699999988079071)
     CreateTemporaryVFX(vfx_id=90021, anchor_entity=PLAYER, model_point=17, anchor_type=CoordEntityType.Character)
     Wait(1.5)
-    AND_1.Add(HealthEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatioEqual(PLAYER, value=0.0))
     if AND_1:
         return
     if ValueNotEqual(left=0, right=right):

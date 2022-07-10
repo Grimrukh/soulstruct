@@ -6,7 +6,6 @@ __all__ = [
     "EMEVDDirectory",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
-    "instructions",
     "enums",
     "decompiler",
     # File utilities

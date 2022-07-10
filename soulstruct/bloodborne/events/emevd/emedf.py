@@ -13,7 +13,7 @@ from soulstruct.bloodborne.game_types import *
 from soulstruct.utilities.files import PACKAGE_PATH
 from .enums import *
 
-__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS"]
+__all__ = ["EMEDF", "EMEDF_ALIASES", "EMEDF_TESTS", "EMEDF_COMPARISON_TESTS"]
 
 
 EVENT_RETURN_TYPE = {
@@ -727,7 +727,7 @@ EMEDF = PTDE_EMEDF | {
         },
     },
     (4, 2): {
-        "alias": "IfHealthComparison",
+        "alias": "IfHealthRatioComparison",
         "docstring": "Conditions upon a comparison to character health ratio (0-1).",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -736,12 +736,12 @@ EMEDF = PTDE_EMEDF | {
             "value": FLOAT,
         },
         "partials": {
-            "IfHealthEqual": dict(comparison_type=ComparisonType.Equal),
-            "IfHealthNotEqual": dict(comparison_type=ComparisonType.NotEqual),
-            "IfHealthGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
-            "IfHealthLessThan": dict(comparison_type=ComparisonType.LessThan),
-            "IfHealthGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
-            "IfHealthLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
+            "IfHealthRatioEqual": dict(comparison_type=ComparisonType.Equal),
+            "IfHealthRatioNotEqual": dict(comparison_type=ComparisonType.NotEqual),
+            "IfHealthRatioGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
+            "IfHealthRatioLessThan": dict(comparison_type=ComparisonType.LessThan),
+            "IfHealthRatioGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
+            "IfHealthRatioLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
     (4, 3): {
@@ -4491,7 +4491,7 @@ EMEDF = {k: EMEDF[k] for k in sorted(EMEDF.keys())}
 
 
 add_common_emedf_info(EMEDF, PACKAGE_PATH("bloodborne/events/emevd/bb-common.emedf.json"))
-EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
+EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.
 EMEDF_TESTS |= {
@@ -4509,5 +4509,17 @@ EMEDF_TESTS |= {
     },
     "PlayerHasGood": {
         "if": "IfPlayerHasGood",
+    },
+    "PlayerDoesNotHaveWeapon": {
+        "if": "IfPlayerDoesNotHaveWeapon",
+    },
+    "PlayerDoesNotHaveArmor": {
+        "if": "IfPlayerDoesNotHaveArmor",
+    },
+    "PlayerDoesNotHaveRune": {
+        "if": "IfPlayerDoesNotHaveRune",
+    },
+    "PlayerDoesNotHaveGood": {
+        "if": "IfPlayerDoesNotHaveGood",
     },
 }

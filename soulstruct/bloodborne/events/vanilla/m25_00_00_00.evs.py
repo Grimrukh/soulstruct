@@ -679,7 +679,7 @@ def Event_12500020():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=2500020, entity=2501016))
     
-    IfPlayerDoesNotHaveGood(AND_1, 4305)
+    AND_1.Add(PlayerDoesNotHaveGood(4305))
     GotoIfConditionTrue(Label.L0, input_condition=AND_1)
     DisplayDialog(text=10010150, number_buttons=NumberButtons.OneButton)
     Restart()
@@ -841,9 +841,9 @@ def Event_12500053(_, character: int, flag: int, flag_1: int):
     if Client():
         return
     OR_1.Add(FlagEnabled(flag_1))
-    OR_1.Add(HealthLessThanOrEqual(2500790, value=0.8999999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(2500790, value=0.8999999761581421))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(2500790, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(2500790, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1680,7 +1680,7 @@ def Event_12501801():
         return
     AND_1.Add(FlagEnabled(12501800))
     AND_2.Add(CharacterBackreadDisabled(2500800))
-    AND_2.Add(HealthLessThanOrEqual(2500800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2500800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     

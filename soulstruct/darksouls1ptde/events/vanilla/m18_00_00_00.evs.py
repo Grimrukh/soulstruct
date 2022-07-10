@@ -419,7 +419,7 @@ def Event_11800101():
     """Event 11800101"""
     DisableNetworkSync()
     AND_1.Add(FlagDisabled(11800100))
-    IfPlayerDoesNotHaveGood(AND_1, 2510)
+    AND_1.Add(PlayerDoesNotHaveGood(2510))
     AND_1.Add(ActionButton(
         prompt_text=10010105,
         anchor_entity=1801960,
@@ -598,8 +598,8 @@ def Event_11805100(_, character: int, item_lot_param_id: int):
 @NeverRestart(11800510)
 def Event_11800510(_, character: int, flag: int):
     """Event 11800510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -628,7 +628,7 @@ def Event_11800520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -727,8 +727,8 @@ def Event_11800539(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11800539"""
     AND_1.Add(InsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     OR_7.Add(FlagEnabled(11020598))
-    AND_7.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_7.Add(HealthGreaterThan(character, value=0.0))
+    AND_7.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_7.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_7.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_7.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_7.Add(AND_7)
@@ -753,8 +753,8 @@ def Event_11800540(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11800540"""
     AND_1.Add(InsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     OR_7.Add(FlagEnabled(11600590))
-    AND_7.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_7.Add(HealthGreaterThan(character, value=0.0))
+    AND_7.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_7.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_7.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_7.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_7.Add(AND_7)

@@ -416,7 +416,7 @@ def Event_12421801():
         return
     AND_1.Add(FlagEnabled(12421800))
     AND_2.Add(CharacterBackreadDisabled(2420800))
-    AND_2.Add(HealthLessThanOrEqual(2420800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -710,7 +710,7 @@ def Event_12424870(
     )
     SetNPCPartEffects(2420800, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(2420800, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(2420800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -757,7 +757,7 @@ def Event_12424871(
     CreateNPCPart(2420800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2420800, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(2420800, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthLessThanOrEqual(2420800, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -797,7 +797,7 @@ def Event_12424980():
     if AND_1:
         return
     AND_2.Add(FlagEnabled(12424800))
-    AND_2.Add(HealthLessThan(2420800, value=0.5))
+    AND_2.Add(HealthRatioLessThan(2420800, value=0.5))
     
     MAIN.Await(AND_2)
     
@@ -931,7 +931,7 @@ def Event_12421701():
         return
     AND_1.Add(FlagEnabled(12421800))
     AND_2.Add(CharacterBackreadDisabled(2420800))
-    AND_2.Add(HealthLessThanOrEqual(2420800, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1267,14 +1267,14 @@ def Event_12424703():
 def Event_12424704():
     """Event 12424704"""
     DisableNetworkSync()
-    AND_1.Add(HealthGreaterThan(2420811, value=0.0))
-    AND_1.Add(HealthLessThanOrEqual(2420811, value=0.6000000238418579))
+    AND_1.Add(HealthRatioGreaterThan(2420811, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(2420811, value=0.6000000238418579))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2420811, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=UPPER_CATHEDRAL_WARD, camera_slot=1)
-    AND_2.Add(HealthGreaterThan(2420811, value=0.0))
+    AND_2.Add(HealthRatioGreaterThan(2420811, value=0.0))
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2420811, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -1359,7 +1359,7 @@ def Event_12424785(_, character: int, region: int, command_id: int, flag: int):
 def Event_12424787(_, character: int, region: int, command_id: int, flag: int, character_1: int):
     """Event 12424787"""
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthGreaterThan(character_1, value=0.6000000238418579))
+    AND_1.Add(HealthRatioGreaterThan(character_1, value=0.6000000238418579))
     AND_1.Add(CharacterOutsideRegion(character, region=region))
     
     MAIN.Await(AND_1)
@@ -1410,8 +1410,8 @@ def Event_12424790():
     ReferDamageToEntity(2420810, target_entity=2420811)
     DisableGravity(2420750)
     DisableGravity(2420751)
-    AND_1.Add(HealthLessThan(2420810, value=0.6000000238418579))
-    AND_1.Add(HealthGreaterThan(2420811, value=0.0))
+    AND_1.Add(HealthRatioLessThan(2420810, value=0.6000000238418579))
+    AND_1.Add(HealthRatioGreaterThan(2420811, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1440,7 +1440,7 @@ def Event_12424790():
 @RestartOnRest(12424791)
 def Event_12424791():
     """Event 12424791"""
-    MAIN.Await(HealthLessThanOrEqual(2420811, value=0.30000001192092896))
+    MAIN.Await(HealthRatioLessThanOrEqual(2420811, value=0.30000001192092896))
     
     if ThisEventFlagDisabled():
         WaitFrames(frames=135)
@@ -1464,7 +1464,7 @@ def Event_12424791():
 @RestartOnRest(12424792)
 def Event_12424792(_, character: int):
     """Event 12424792"""
-    MAIN.Await(HealthLessThanOrEqual(2420811, value=0.30000001192092896))
+    MAIN.Await(HealthRatioLessThanOrEqual(2420811, value=0.30000001192092896))
     
     if ThisEventSlotFlagDisabled():
         WaitFrames(frames=145)
@@ -2370,7 +2370,7 @@ def Event_12425601():
 @RestartOnRest(12425602)
 def Event_12425602():
     """Event 12425602"""
-    MAIN.Await(HealthLessThanOrEqual(2420402, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(2420402, value=0.0))
     
     Wait(1.0)
     ForceAnimation(2420731, 2200, wait_for_completion=True)

@@ -1409,9 +1409,9 @@ def Event_15005800():
     if FlagEnabled(15000800):
         return
     AND_1.Add(FlagEnabled(15005803))
-    AND_1.Add(HealthLessThanOrEqual(5000801, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(5000801, value=0.0))
     AND_2.Add(FlagEnabled(15005804))
-    AND_2.Add(HealthLessThanOrEqual(5000802, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(5000802, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1519,7 +1519,7 @@ def Event_15005811():
     OR_1.Add(AND_1)
     OR_1.Add(FlagEnabled(15005811))
     OR_1.Add(AttackedWithDamageType(attacked_entity=5000802))
-    OR_1.Add(HealthLessThanOrEqual(5000801, value=0.6499999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(5000801, value=0.6499999761581421))
     OR_1.Add(CharacterHasSpecialEffect(5000801, 15025))
     
     MAIN.Await(OR_1)

@@ -1474,7 +1474,7 @@ def Event_13501800():
     if FlagEnabled(13500800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3500800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3500800, value=0.0))
     
     DeleteVFX(3503800)
     DeleteVFX(3503801)
@@ -1564,7 +1564,7 @@ def Event_13505812(_, first_flag: int, last_flag: int):
     """Event 13505812"""
     if FlagEnabled(13500800):
         return
-    AND_1.Add(HealthLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_1.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
     AND_1.Add(FlagRangeAllDisabled(flag_range=(first_flag, last_flag)))
     
     MAIN.Await(AND_1)
@@ -1728,7 +1728,7 @@ def Event_13505820(_, first_flag: int, last_flag: int, first_flag_1: uint, last_
     if FlagEnabled(13505802):
         return
     AND_1.Add(PlayerInOwnWorld())
-    AND_1.Add(HealthGreaterThan(3500800, value=0.6499999761581421))
+    AND_1.Add(HealthRatioGreaterThan(3500800, value=0.6499999761581421))
     AND_1.Add(FlagEnabled(13505805))
     AND_1.Add(FlagEnabled(13505810))
     AND_1.Add(FlagRangeAllDisabled(flag_range=(first_flag, last_flag)))
@@ -1775,7 +1775,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     CreateTemporaryVFX(vfx_id=652231, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
     Wait(2.0)
     AddSpecialEffect(character, 11521)
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.0))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_2.Add(TimeElapsed(seconds=25.0))
     OR_2.Add(FlagEnabled(flag_1))
     OR_2.Add(OR_1)
@@ -1784,7 +1784,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     
     GotoIfFinishedConditionFalse(Label.L0, input_condition=OR_1)
     AddSpecialEffect(3500800, special_effect_id)
-    AND_3.Add(HealthLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_3.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
     SkipLinesIfConditionTrue(2, AND_3)
     PlaySoundEffect(character, 522008010, sound_type=SoundType.c_CharacterMotion)
     SkipLines(1)
@@ -1793,7 +1793,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     # --- Label 0 --- #
     DefineLabel(0)
     Wait(0.5)
-    AND_4.Add(HealthLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_4.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
     SkipLinesIfConditionTrue(2, AND_4)
     CreateTemporaryVFX(vfx_id=652230, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
     SkipLines(1)
@@ -1981,7 +1981,7 @@ def Event_13505603(_, character: int, flag: int):
     MAIN.Await(FlagEnabled(flag))
     
     OR_1.Add(FlagEnabled(1501))
-    OR_1.Add(HealthEqual(character, value=0.0))
+    OR_1.Add(HealthRatioEqual(character, value=0.0))
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     ForceAnimation(character, 20003, wait_for_completion=True, unknown2=1.0)
     Restart()
@@ -2198,7 +2198,7 @@ def Event_13505728():
     OR_1.Add(FlagEnabled(13900002))
     OR_1.Add(FlagEnabled(9318))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(3500850, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(3500850, value=0.0))
     if not AND_1:
         return
     DisableNetworkConnectedFlagRange(flag_range=(1140, 1154))
@@ -2314,7 +2314,7 @@ def Event_13505750(_, character: int, obj: int):
     SetNetworkConnectedFlagState(flag=1635, state=FlagSetting.On)
     AND_1.Add(FlagRangeAnyEnabled(flag_range=(1620, 1621)))
     AND_1.Add(FlagEnabled(1638))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     SkipLinesIfConditionFalse(3, AND_1)
     DisableNetworkConnectedFlagRange(flag_range=(1635, 1639))
     SetNetworkConnectedFlagState(flag=1635, state=FlagSetting.On)

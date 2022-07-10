@@ -668,7 +668,7 @@ def Event_11205395():
 def Event_11205396():
     """Event 11205396"""
     if ThisEventFlagDisabled():
-        MAIN.Await(HealthLessThanOrEqual(1200800, value=0.10000000149011612))
+        MAIN.Await(HealthRatioLessThanOrEqual(1200800, value=0.10000000149011612))
     AddSpecialEffect(1200800, 5401)
 
 
@@ -845,7 +845,7 @@ def Event_11200110(_, flag: int, line_intersects: int, anchor_entity: int, left:
     if ValueNotEqual(left=left, right=0):
         AND_1.Add(FlagEnabled(703))
     if ValueNotEqual(left=left, right=1):
-        IfPlayerDoesNotHaveGood(AND_1, 2002)
+        AND_1.Add(PlayerDoesNotHaveGood(2002))
     AND_1.Add(ActionButton(
         prompt_text=10010400,
         anchor_entity=anchor_entity,
@@ -887,7 +887,7 @@ def Event_11200120():
 @RestartOnRest(11205150)
 def Event_11205150(_, character: int):
     """Event 11205150"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.800000011920929))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.800000011920929))
     AND_1.Add(CharacterBackreadEnabled(character))
     
     MAIN.Await(AND_1)
@@ -908,7 +908,7 @@ def Event_11205180(_, character: int, left: int):
         SetStandbyAnimationSettings(character, standby_animation=9000)
         DisableAI(character)
     
-        MAIN.Await(HealthLessThanOrEqual(1200350, value=0.4000000059604645))
+        MAIN.Await(HealthRatioLessThanOrEqual(1200350, value=0.4000000059604645))
     
         WaitRandomSeconds(min_seconds=0.0, max_seconds=1.0)
         SetStandbyAnimationSettings(character, cancel_animation=9060)
@@ -1133,7 +1133,7 @@ def Event_11205300(
     
     CreateNPCPart(1200010, npc_part_id=npc_part_id, part_index=part_index, part_health=176)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(1200010, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(1200010, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(1200010, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1235,8 +1235,8 @@ def Event_11200690():
 @NeverRestart(11200510)
 def Event_11200510(_, character: int, flag: int):
     """Event 11200510"""
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1265,7 +1265,7 @@ def Event_11200520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1276,14 +1276,14 @@ def Event_11200501(_, character: int, flag: int):
     """Event 11200501"""
     AND_1.Add(FlagDisabled(1603))
     AND_1.Add(FlagEnabled(1600))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagDisabled(1763))
     AND_2.Add(FlagEnabled(1760))
-    AND_2.Add(HealthLessThanOrEqual(6420, value=0.8999999761581421))
-    AND_2.Add(HealthGreaterThan(6420, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(6420, value=0.8999999761581421))
+    AND_2.Add(HealthRatioGreaterThan(6420, value=0.0))
     AND_2.Add(Attacked(attacked_entity=6420, attacker=PLAYER))
     AND_2.Add(ThisEventFlagDisabled())
     AND_3.Add(FlagEnabled(746))
@@ -1376,7 +1376,7 @@ def Event_11200533():
     DeleteVFX(1203103, erase_root_only=False)
     if Client():
         return
-    IfPlayerDoesNotHaveGood(AND_1, 2520)
+    AND_1.Add(PlayerDoesNotHaveGood(2520))
     AND_1.Add(FlagEnabled(1122))
     AND_2.Add(FlagEnabled(1129))
     OR_1.Add(AND_1)
@@ -1745,7 +1745,7 @@ def Event_11205060(_, character: int):
     AND_1.Add(OR_7)
     AND_1.Add(PlayerCovenant(Covenant.ForestHunter))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    AND_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
     
     MAIN.Await(AND_1)
     

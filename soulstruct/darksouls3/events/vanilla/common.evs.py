@@ -795,8 +795,8 @@ def Event_6900():
         return
     if ThisEventSlotFlagEnabled():
         return
-    IfPlayerDoesNotHaveGood(AND_1, 170)
-    IfPlayerDoesNotHaveGood(AND_1, 171)
+    AND_1.Add(PlayerDoesNotHaveGood(170))
+    AND_1.Add(PlayerDoesNotHaveGood(171))
     if AND_1:
         return
     EnableFlag(6030)
@@ -952,7 +952,7 @@ def Event_9540(_, gesture_id: ushort, item_id: int, flag: int):
     AND_2.Add(HasAIStatus(3800198, ai_status=AIStatusType.Battle))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=3800198, radius=20.0))
     AND_3.Add(PlayerInOwnWorld())
-    AND_3.Add(HealthLessThanOrEqual(PLAYER, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     AND_4.Add(OR_1)

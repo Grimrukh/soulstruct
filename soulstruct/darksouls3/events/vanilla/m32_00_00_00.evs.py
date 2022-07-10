@@ -582,7 +582,7 @@ def Event_13205340():
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     AND_2.Add(Attacked(attacked_entity=3200300, attacker=PLAYER))
-    AND_2.Add(HealthLessThanOrEqual(3200300, value=0.30000001192092896))
+    AND_2.Add(HealthRatioLessThanOrEqual(3200300, value=0.30000001192092896))
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     AND_3.Add(FlagEnabled(13205331))
@@ -747,7 +747,7 @@ def Event_13205370(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_9.Add(HealthNotEqual(character, value=0.0))
+    AND_9.Add(HealthRatioNotEqual(character, value=0.0))
     SkipLinesIfConditionTrue(1, AND_9)
     MakeEnemyAppear(character=character_2)
     Wait(1.100000023841858)
@@ -802,7 +802,7 @@ def Event_13205375(_, character: int, flag: int, flag_1: int, destination: int, 
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_9.Add(HealthNotEqual(character, value=0.0))
+    AND_9.Add(HealthRatioNotEqual(character, value=0.0))
     SkipLinesIfConditionTrue(1, AND_9)
     MakeEnemyAppear(character=character_2)
     Wait(1.100000023841858)
@@ -1148,7 +1148,7 @@ def Event_13200811():
     if FlagEnabled(13200800):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3200800, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3200800, value=0.0))
     
     Wait(0.5)
     PlaySoundEffect(3200800, 777777777, sound_type=SoundType.s_SFX)
@@ -1227,7 +1227,7 @@ def Event_13205861():
     """Event 13205861"""
     if FlagEnabled(13200850):
         return
-    AND_1.Add(HealthLessThanOrEqual(3200850, value=0.009999999776482582))
+    AND_1.Add(HealthRatioLessThanOrEqual(3200850, value=0.009999999776482582))
     AND_1.Add(PlayerInOwnWorld())
     
     MAIN.Await(AND_1)
@@ -1366,7 +1366,7 @@ def Event_13200863():
     if FlagEnabled(13200850):
         return
     
-    MAIN.Await(HealthLessThanOrEqual(3200851, value=0.0))
+    MAIN.Await(HealthRatioLessThanOrEqual(3200851, value=0.0))
     
     Wait(1.0)
     PlaySoundEffect(3200851, 777777777, sound_type=SoundType.s_SFX)

@@ -1122,7 +1122,7 @@ def Event_13404730(
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthEqual(character, value=0.0))
+    AND_2.Add(HealthRatioEqual(character, value=0.0))
     OR_1.Add(FlagEnabled(flag_3))
     OR_1.Add(FlagEnabled(13404860))
     OR_1.Add(FlagEnabled(flag_6))
@@ -1706,10 +1706,10 @@ def Event_13404820():
     if FlagEnabled(9471):
         return
     AND_1.Add(FlagEnabled(13400999))
-    AND_1.Add(HealthLessThan(3400800, value=0.8999999761581421))
+    AND_1.Add(HealthRatioLessThan(3400800, value=0.8999999761581421))
     OR_1.Add(AND_1)
     AND_2.Add(FlagDisabled(13400999))
-    AND_2.Add(HealthLessThan(3400800, value=0.8999999761581421))
+    AND_2.Add(HealthRatioLessThan(3400800, value=0.8999999761581421))
     OR_1.Add(AND_2)
     AND_3.Add(OR_1)
     AND_3.Add(CharacterHasTAEEvent(3400800, tae_event_id=10))
@@ -1733,10 +1733,10 @@ def Event_13404821():
     if FlagEnabled(9471):
         return
     AND_1.Add(FlagEnabled(13400999))
-    AND_1.Add(HealthLessThan(3400800, value=0.800000011920929))
+    AND_1.Add(HealthRatioLessThan(3400800, value=0.800000011920929))
     OR_1.Add(AND_1)
     AND_2.Add(FlagDisabled(13400999))
-    AND_2.Add(HealthLessThan(3400800, value=0.8500000238418579))
+    AND_2.Add(HealthRatioLessThan(3400800, value=0.8500000238418579))
     OR_1.Add(AND_2)
     AND_3.Add(OR_1)
     AND_3.Add(CharacterHasTAEEvent(3400800, tae_event_id=10))
@@ -1761,10 +1761,10 @@ def Event_13404822():
     if FlagEnabled(9471):
         return
     AND_1.Add(FlagEnabled(13400999))
-    AND_1.Add(HealthLessThan(3400800, value=0.699999988079071))
+    AND_1.Add(HealthRatioLessThan(3400800, value=0.699999988079071))
     OR_1.Add(AND_1)
     AND_2.Add(FlagDisabled(13400999))
-    AND_2.Add(HealthLessThan(3400800, value=0.800000011920929))
+    AND_2.Add(HealthRatioLessThan(3400800, value=0.800000011920929))
     OR_1.Add(AND_2)
     AND_3.Add(OR_1)
     AND_3.Add(CharacterHasTAEEvent(3400800, tae_event_id=10))
@@ -1789,10 +1789,10 @@ def Event_13404823():
     if FlagEnabled(9471):
         return
     AND_1.Add(FlagEnabled(13400999))
-    AND_1.Add(HealthLessThan(3400800, value=0.5))
+    AND_1.Add(HealthRatioLessThan(3400800, value=0.5))
     OR_1.Add(AND_1)
     AND_2.Add(FlagDisabled(13400999))
-    AND_2.Add(HealthLessThan(3400800, value=0.75))
+    AND_2.Add(HealthRatioLessThan(3400800, value=0.75))
     OR_1.Add(AND_2)
     AND_3.Add(OR_1)
     AND_3.Add(CharacterHasTAEEvent(3400800, tae_event_id=10))
@@ -1818,8 +1818,8 @@ def Event_13404824():
         return
     if FlagEnabled(13404825):
         return
-    AND_1.Add(HealthLessThan(3400800, value=0.5))
-    AND_1.Add(HealthGreaterThan(3400800, value=0.0))
+    AND_1.Add(HealthRatioLessThan(3400800, value=0.5))
+    AND_1.Add(HealthRatioGreaterThan(3400800, value=0.0))
     
     MAIN.Await(AND_1)
     
@@ -1892,7 +1892,7 @@ def Event_13404830(
     CreateNPCPart(3400800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(3400800, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
     AND_2.Add(CharacterPartHealthLessThanOrEqual(3400800, npc_part_id=npc_part_id_1, value=0))
-    OR_1.Add(HealthLessThanOrEqual(3400800, value=0.0))
+    OR_1.Add(HealthRatioLessThanOrEqual(3400800, value=0.0))
     OR_1.Add(FlagEnabled(13404825))
     OR_2.Add(AND_2)
     OR_2.Add(OR_1)
@@ -1906,7 +1906,7 @@ def Event_13404830(
     AddSpecialEffect(3400800, special_effect_id)
     WaitFrames(frames=frames)
     AND_3.Add(FramesElapsed(frames=frames))
-    OR_3.Add(HealthLessThanOrEqual(3400800, value=0.0))
+    OR_3.Add(HealthRatioLessThanOrEqual(3400800, value=0.0))
     OR_3.Add(FlagEnabled(13404825))
     OR_4.Add(AND_3)
     OR_4.Add(OR_3)
@@ -1916,7 +1916,7 @@ def Event_13404830(
     EndIfFinishedConditionTrue(input_condition=OR_3)
     ReplanAI(3400800)
     AND_4.Add(TimeElapsed(seconds=5.0))
-    OR_5.Add(HealthLessThanOrEqual(3400800, value=0.0))
+    OR_5.Add(HealthRatioLessThanOrEqual(3400800, value=0.0))
     OR_5.Add(FlagEnabled(13404825))
     OR_6.Add(AND_4)
     OR_6.Add(OR_5)
@@ -1928,7 +1928,7 @@ def Event_13404830(
     CancelSpecialEffect(3400800, special_effect_id)
     WaitFrames(frames=10)
     AND_5.Add(FramesElapsed(frames=10))
-    OR_7.Add(HealthLessThanOrEqual(3400800, value=0.0))
+    OR_7.Add(HealthRatioLessThanOrEqual(3400800, value=0.0))
     OR_7.Add(FlagEnabled(13404825))
     OR_8.Add(AND_5)
     OR_8.Add(OR_7)
@@ -1944,22 +1944,22 @@ def Event_13404835():
     """Event 13404835"""
     if FlagEnabled(9471):
         return
-    AND_1.Add(HealthLessThan(3400801, value=0.3499999940395355))
-    AND_1.Add(HealthGreaterThan(3400801, value=0.0))
+    AND_1.Add(HealthRatioLessThan(3400801, value=0.3499999940395355))
+    AND_1.Add(HealthRatioGreaterThan(3400801, value=0.0))
     
     MAIN.Await(AND_1)
     
     ForceAnimation(3400801, 7002)
     AICommand(3400801, command_id=110, command_slot=0)
     ReplanAI(3400801)
-    AND_3.Add(HealthLessThan(3400801, value=0.06700000166893005))
-    AND_3.Add(HealthGreaterThan(3400801, value=0.0))
+    AND_3.Add(HealthRatioLessThan(3400801, value=0.06700000166893005))
+    AND_3.Add(HealthRatioGreaterThan(3400801, value=0.0))
     
     MAIN.Await(AND_3)
     
     ForceAnimation(3400801, 7003)
-    AND_4.Add(HealthLessThan(3400801, value=0.032999999821186066))
-    AND_4.Add(HealthGreaterThan(3400801, value=0.0))
+    AND_4.Add(HealthRatioLessThan(3400801, value=0.032999999821186066))
+    AND_4.Add(HealthRatioGreaterThan(3400801, value=0.0))
     
     MAIN.Await(AND_4)
     
@@ -2430,7 +2430,7 @@ def Event_13404870(
     CreateNPCPart(3400850, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(3400850, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
     AND_1.Add(CharacterPartHealthLessThanOrEqual(3400850, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthLessThanOrEqual(3400850, value=0.0))
+    AND_2.Add(HealthRatioLessThanOrEqual(3400850, value=0.0))
     AND_3.Add(CharacterHasSpecialEffect(3400850, 5402))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -3169,7 +3169,7 @@ def Event_13405200(_, character: int, region: int, animation_id: int, region_1: 
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
     AND_1.Add(CharacterInsideRegion(character, region=region))
-    AND_3.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_3.Add(AND_3)
     OR_3.Add(AND_1)
     
@@ -3182,7 +3182,7 @@ def Event_13405200(_, character: int, region: int, animation_id: int, region_1: 
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     AND_2.Add(CharacterOutsideRegion(character, region=region_1))
-    AND_4.Add(HealthLessThanOrEqual(character, value=0.0))
+    AND_4.Add(HealthRatioLessThanOrEqual(character, value=0.0))
     OR_2.Add(OR_1)
     OR_2.Add(AND_2)
     OR_2.Add(AND_4)
@@ -3813,7 +3813,7 @@ def Event_13400944():
     
     MAIN.Await(FlagEnabled(73400510))
     
-    OR_2.Add(HealthEqual(3400900, value=0.0))
+    OR_2.Add(HealthRatioEqual(3400900, value=0.0))
     OR_2.Add(FlagEnabled(73400512))
     OR_2.Add(FlagEnabled(1670))
     if OR_2:
@@ -3822,7 +3822,7 @@ def Event_13400944():
     
     MAIN.Await(FlagDisabled(73400510))
     
-    OR_3.Add(HealthEqual(3400900, value=0.0))
+    OR_3.Add(HealthRatioEqual(3400900, value=0.0))
     OR_3.Add(FlagEnabled(73400512))
     OR_3.Add(FlagEnabled(1670))
     if OR_3:
@@ -3877,9 +3877,9 @@ def Event_13400920(_, character: int, flag: int, first_flag: int, last_flag: int
         return
     DisableFlag(flag)
     OR_1.Add(FlagEnabled(flag))
-    OR_1.Add(HealthLessThanOrEqual(character, value=0.8999999761581421))
+    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
     
     MAIN.Await(AND_1)
     
