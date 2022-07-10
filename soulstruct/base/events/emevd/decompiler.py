@@ -106,9 +106,15 @@ def _process_arg_types(
         if union_types or issubclass(arg_type, MapEntity):
 
             try:
-                args[arg_name] = Variable(EnumValue(enums_manager.PROTECTED_ENTITIES, arg_value).name.upper())
+                protected_value = EnumValue(enums_manager.PROTECTED_ENTITIES, arg_value)
             except ValueError:
                 pass  # check enums below
+            else:
+                if protected_value == 10000:
+                    args[arg_name] = Variable("PLAYER")
+                else:
+                    args[arg_name] = Variable(protected_value)
+                continue
 
             # Look up entity ID from imported module enums (generally parsed in `EMEVD.to_evs()`).
 
@@ -310,7 +316,7 @@ def base_decompile_run_event(
 
 
 def base_decompile_run_common_event(
-    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None, unknown=None,
 ):
     """Shared across games from Dark Souls 3 onward.
 
@@ -327,6 +333,8 @@ def base_decompile_run_common_event(
     """
     if not opt_args and first_arg == 0:
         # `args` and `arg_types` omitted. (Yes, there are common events called without arguments).
+        if unknown is not None:
+            return f"RunCommonEvent({unknown}, {event_id})"
         return f"RunCommonEvent({event_id})"
 
     event_args = (first_arg, *opt_args)
@@ -362,5 +370,9 @@ def base_decompile_run_common_event(
 
     if not arg_types or not arg_types.strip("i"):
         # No arg types, or all signed integers (default). "arg_types" keyword omitted.
+        if unknown is not None:
+            return f"RunCommonEvent({unknown}, {event_id}, args={event_args})"
         return f"RunCommonEvent({event_id}, args={event_args})"
+    if unknown is not None:
+        return f"RunCommonEvent({unknown}, {event_id}, args={event_args}, arg_types=\"{arg_types}\")"
     return f"RunCommonEvent({event_id}, args={event_args}, arg_types=\"{arg_types}\")"

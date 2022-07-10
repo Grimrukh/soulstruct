@@ -753,10 +753,10 @@ def Constructor():
     Event_12805900(9, character=2800571)
     Event_12805900(10, character=2800572)
     Event_12805900(11, character=2800573)
-    Event_12805920(0, obj__source_entity=2801600, flag=12805942)
-    Event_12805920(1, obj__source_entity=2801601, flag=12805947)
-    Event_12805920(2, obj__source_entity=2801602, flag=12805952)
-    Event_12805920(3, obj__source_entity=2801603, flag=12805957)
+    Event_12805920(0, obj=2801600, flag=12805942)
+    Event_12805920(1, obj=2801601, flag=12805947)
+    Event_12805920(2, obj=2801602, flag=12805952)
+    Event_12805920(3, obj=2801603, flag=12805957)
     Event_12805930(0, flag=12805940, flag_1=12805942, other_entity=2801600)
     Event_12805930(1, flag=12805945, flag_1=12805947, other_entity=2801601)
     Event_12805930(2, flag=12805950, flag_1=12805952, other_entity=2801602)
@@ -1380,19 +1380,19 @@ def Event_12805918():
 
 
 @RestartOnRest(12805920)
-def Event_12805920(_, obj__source_entity: int, flag: int):
+def Event_12805920(_, obj: int, flag: int):
     """Event 12805920"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    DeleteObjectVFX(obj__source_entity)
+    DeleteObjectVFX(obj)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     if ThisEventSlotFlagDisabled():
-        CreateObjectVFX(obj__source_entity, vfx_id=100, model_point=928020)
+        CreateObjectVFX(obj, vfx_id=100, model_point=928020)
     ShootProjectile(
         owner_entity=2800560,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=100,
         behavior_id=6032,
         launch_angle_x=0,

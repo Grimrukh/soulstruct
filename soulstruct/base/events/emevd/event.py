@@ -96,6 +96,7 @@ class Event(abc.ABC):
     EVENT_ARG_TYPES = {}  # type: dict[int, str]  # updated on load and before each write
     EVENT_ARG_NAMES = {}  # type: dict[int, list[str]]  # updated on load and before each write
     WRAP_LIMIT = 120  # PyCharm default line length
+    USE_HIGH_LEVEL_LANGUAGE = True
 
     DEFAULT_ARG_SIZE_TYPE = {1: "B", 2: "H", 4: "I"}
 
@@ -227,7 +228,7 @@ class Event(abc.ABC):
             # Remove non-preferred arg names.
             for vague_arg_name in (
                 "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
-                "destination", "copy_draw_parent", "line_intersects", "flag", "left", "right",
+                "destination", "source_entity", "copy_draw_parent", "line_intersects", "flag", "left", "right",
             ):
                 if len(arg_names) >= 2 and vague_arg_name in arg_names:
                     arg_names.remove(vague_arg_name)
@@ -283,7 +284,7 @@ class Event(abc.ABC):
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self, enums_manager: EntityEnumsManager, use_high_level_language=True) -> str:
+    def to_evs(self, enums_manager: EntityEnumsManager) -> str:
         """Convert single event script to EVS."""
         function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event_{self.event_id}")
         function_docstring = f'"""Event {self.event_id}"""'
@@ -301,7 +302,7 @@ class Event(abc.ABC):
 
         instruction_lines = [instr.to_evs(self.EVENT_ARG_TYPES, enums_manager) for instr in self.instructions]
 
-        if use_high_level_language:
+        if self.USE_HIGH_LEVEL_LANGUAGE:
             instruction_lines = self.high_level_evs_decompile(instruction_lines)
 
         # SIMPLE DECOMPILATION

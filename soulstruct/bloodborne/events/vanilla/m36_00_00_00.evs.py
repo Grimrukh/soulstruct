@@ -86,56 +86,56 @@ def Constructor():
     Event_13601140(2, entity=3601112, collision=3604112)
     Event_13601140(3, entity=3601113, collision=3604113)
     Event_13601400()
-    Event_13604400(0, obj__source_entity=3601400)
-    Event_13604400(1, obj__source_entity=3601401)
-    Event_13604400(2, obj__source_entity=3601402)
-    Event_13604400(3, obj__source_entity=3601403)
-    Event_13604400(4, obj__source_entity=3601404)
-    Event_13604400(5, obj__source_entity=3601405)
-    Event_13604400(6, obj__source_entity=3601406)
-    Event_13604400(7, obj__source_entity=3601407)
-    Event_13604400(8, obj__source_entity=3601408)
-    Event_13604400(9, obj__source_entity=3601409)
-    Event_13604400(10, obj__source_entity=3601410)
-    Event_13604400(11, obj__source_entity=3601411)
-    Event_13604400(12, obj__source_entity=3601412)
-    Event_13604400(13, obj__source_entity=3601413)
-    Event_13604400(20, obj__source_entity=3601420)
-    Event_13604400(21, obj__source_entity=3601421)
-    Event_13604400(22, obj__source_entity=3601422)
-    Event_13604400(23, obj__source_entity=3601423)
-    Event_13604400(24, obj__source_entity=3601424)
-    Event_13604400(25, obj__source_entity=3601425)
-    Event_13604400(26, obj__source_entity=3601426)
-    Event_13604400(27, obj__source_entity=3601427)
-    Event_13604400(28, obj__source_entity=3601428)
-    Event_13604400(29, obj__source_entity=3601429)
-    Event_13604400(30, obj__source_entity=3601430)
-    Event_13604400(31, obj__source_entity=3601431)
-    Event_13604400(40, obj__source_entity=3601440)
-    Event_13604400(41, obj__source_entity=3601441)
-    Event_13604400(42, obj__source_entity=3601442)
-    Event_13604400(43, obj__source_entity=3601443)
-    Event_13604400(44, obj__source_entity=3601444)
-    Event_13604400(45, obj__source_entity=3601445)
-    Event_13604400(46, obj__source_entity=3601446)
-    Event_13604400(47, obj__source_entity=3601447)
-    Event_13604400(50, obj__source_entity=3601450)
-    Event_13604400(51, obj__source_entity=3601451)
-    Event_13604400(52, obj__source_entity=3601452)
-    Event_13604400(53, obj__source_entity=3601453)
-    Event_13604400(54, obj__source_entity=3601454)
-    Event_13604400(55, obj__source_entity=3601455)
-    Event_13604400(56, obj__source_entity=3601456)
-    Event_13604400(57, obj__source_entity=3601457)
-    Event_13604400(60, obj__source_entity=3601460)
-    Event_13604400(61, obj__source_entity=3601461)
-    Event_13604400(62, obj__source_entity=3601462)
-    Event_13604400(63, obj__source_entity=3601463)
-    Event_13604400(64, obj__source_entity=3601464)
-    Event_13604400(65, obj__source_entity=3601465)
-    Event_13604400(66, obj__source_entity=3601466)
-    Event_13604400(67, obj__source_entity=3601467)
+    Event_13604400(0, obj=3601400)
+    Event_13604400(1, obj=3601401)
+    Event_13604400(2, obj=3601402)
+    Event_13604400(3, obj=3601403)
+    Event_13604400(4, obj=3601404)
+    Event_13604400(5, obj=3601405)
+    Event_13604400(6, obj=3601406)
+    Event_13604400(7, obj=3601407)
+    Event_13604400(8, obj=3601408)
+    Event_13604400(9, obj=3601409)
+    Event_13604400(10, obj=3601410)
+    Event_13604400(11, obj=3601411)
+    Event_13604400(12, obj=3601412)
+    Event_13604400(13, obj=3601413)
+    Event_13604400(20, obj=3601420)
+    Event_13604400(21, obj=3601421)
+    Event_13604400(22, obj=3601422)
+    Event_13604400(23, obj=3601423)
+    Event_13604400(24, obj=3601424)
+    Event_13604400(25, obj=3601425)
+    Event_13604400(26, obj=3601426)
+    Event_13604400(27, obj=3601427)
+    Event_13604400(28, obj=3601428)
+    Event_13604400(29, obj=3601429)
+    Event_13604400(30, obj=3601430)
+    Event_13604400(31, obj=3601431)
+    Event_13604400(40, obj=3601440)
+    Event_13604400(41, obj=3601441)
+    Event_13604400(42, obj=3601442)
+    Event_13604400(43, obj=3601443)
+    Event_13604400(44, obj=3601444)
+    Event_13604400(45, obj=3601445)
+    Event_13604400(46, obj=3601446)
+    Event_13604400(47, obj=3601447)
+    Event_13604400(50, obj=3601450)
+    Event_13604400(51, obj=3601451)
+    Event_13604400(52, obj=3601452)
+    Event_13604400(53, obj=3601453)
+    Event_13604400(54, obj=3601454)
+    Event_13604400(55, obj=3601455)
+    Event_13604400(56, obj=3601456)
+    Event_13604400(57, obj=3601457)
+    Event_13604400(60, obj=3601460)
+    Event_13604400(61, obj=3601461)
+    Event_13604400(62, obj=3601462)
+    Event_13604400(63, obj=3601463)
+    Event_13604400(64, obj=3601464)
+    Event_13604400(65, obj=3601465)
+    Event_13604400(66, obj=3601466)
+    Event_13604400(67, obj=3601467)
     Event_13601800()
     Event_13604811()
     Event_13601801()
@@ -931,21 +931,21 @@ def Event_13601400():
 
 
 @RestartOnRest(13604400)
-def Event_13604400(_, obj__source_entity: int):
+def Event_13604400(_, obj: int):
     """Event 13604400"""
     if ThisEventSlotFlagEnabled():
         return
-    RestoreObject(obj__source_entity)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Fire))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.NoType))
+    RestoreObject(obj)
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Fire))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.NoType))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Magic))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Lightning))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Blunt))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Slash))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Thrust))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Magic))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Lightning))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Blunt))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Slash))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Thrust))
     AND_2.Add(OR_2)
-    AND_2.Add(ObjectHealthValueComparison(obj__source_entity, ComparisonType.LessThanOrEqual, value=999))
+    AND_2.Add(ObjectHealthValueComparison(obj, ComparisonType.LessThanOrEqual, value=999))
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     
@@ -954,22 +954,22 @@ def Event_13604400(_, obj__source_entity: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=3600799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6310,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=3600799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6310,
         launch_angle_x=0,
@@ -978,15 +978,15 @@ def Event_13604400(_, obj__source_entity: int):
     )
     ShootProjectile(
         owner_entity=3600799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6320,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
 
 
 @NeverRestart(13601800)

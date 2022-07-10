@@ -519,7 +519,7 @@ __all__ = [
     "IfHollowArenaSoloResults",  # 3[33]
     "IfHollowArenaSoloScoreComparison",  # 3[34]
     "IfHollowArenaTeamResults",  # 3[35]
-    "IfSteamDisconnected",  # 3[38]
+    "IfSteamConnectionState",  # 3[38]
     "IfAllyPhantomCountComparison",  # 3[39]
     "IfCharacterDrawGroupState",  # 4[15]
     "IfCharacterDrawGroupEnabled",
@@ -941,7 +941,7 @@ __all__ = [
     "HollowArenaSoloResults",
     "HollowArenaSoloScoreComparison",
     "HollowArenaTeamResults",
-    "SteamDisconnected",
+    "SteamConnectionState",
     "AllyPhantomCountComparison",
     "CharacterDrawGroupState",
     "CharacterDrawGroupEnabled",
@@ -4943,7 +4943,7 @@ def IfHollowArenaTeamResults(condition: ConditionGroup | int, result: HollowAren
     """
 
 
-def IfSteamDisconnected(condition: ConditionGroup | int, is_disconnected: bool | int, event_layers=()):
+def IfSteamConnectionState(condition: ConditionGroup | int, is_disconnected: bool | int, event_layers=()):
     """
     TODO
     """
@@ -6012,8 +6012,8 @@ def GotoIfHollowArenaMatchType(label: Label | int, match_type: HollowArenaMatchT
 
 def GotoIfObjectDestructionState(
     label: Label | int,
-    obj: Object | int,
     state: bool | int,
+    obj: Object | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7903,7 +7903,7 @@ def HollowArenaTeamResults(result: HollowArenaResult | int, event_layers=()) -> 
     ...
 
 
-def SteamDisconnected(is_disconnected: bool | int, event_layers=()) -> bool:
+def SteamConnectionState(is_disconnected: bool | int, event_layers=()) -> bool:
     ...
 
 

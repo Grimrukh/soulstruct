@@ -1458,35 +1458,35 @@ def Event_12415480(_, character: int, animation_id: int, animation_id_1: int, ai
 
 
 @RestartOnRest(12415498)
-def Event_12415498(_, character__source_entity: int, behavior_id: int):
+def Event_12415498(_, character: int, behavior_id: int):
     """Event 12415498"""
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Search))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Search))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     MAIN.Await(OR_1)
     
     WaitRandomFrames(min_frames=0, max_frames=30)
-    ForceAnimation(character__source_entity, 3010, wait_for_completion=True)
+    ForceAnimation(character, 3010, wait_for_completion=True)
     OR_2.Add(FramesElapsed(frames=51))
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character__source_entity, attacker=PLAYER))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
     
     SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
     ShootProjectile(
-        owner_entity=character__source_entity,
-        source_entity=character__source_entity,
+        owner_entity=character,
+        source_entity=character,
         model_point=7,
         behavior_id=behavior_id,
         launch_angle_x=90,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, 7004, wait_for_completion=True)
+    ForceAnimation(character, 7004, wait_for_completion=True)
     
-    MAIN.Await(HasAIStatus(character__source_entity, ai_status=AIStatusType.Normal))
+    MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Normal))
     
     Restart()
 

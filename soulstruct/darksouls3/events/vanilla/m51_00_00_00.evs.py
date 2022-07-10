@@ -2793,7 +2793,7 @@ def Event_15105848():
         return
     AND_1.Add(Offline())
     GotoIfConditionTrue(Label.L0, input_condition=AND_1)
-    AND_2.Add(SteamDisconnected(is_disconnected=True))
+    AND_2.Add(SteamConnectionState(is_disconnected=True))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     GotoIfFlagEnabled(Label.L0, flag=2110)
     DisableFlag(2100)

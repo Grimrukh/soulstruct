@@ -1360,7 +1360,7 @@ def Event_13105290(_, character: int):
 @RestartOnRest(13105295)
 def Event_13105295():
     """Event 13105295"""
-    GotoIfObjectDestroyed(Label.L0, obj=1)
+    GotoIfObjectDestroyed(Label.L0, obj=3101680)
     
     MAIN.Await(ObjectDestroyed(3101680))
     

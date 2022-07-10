@@ -12,7 +12,6 @@ from soulstruct.base.events.emevd.decompiler import (
     base_decompile_run_common_event,
 )
 from soulstruct.eldenring.game_types.map_types import *
-from soulstruct.eldenring.maps.constants import get_map_variable_name
 
 from . import enums
 from .entity_enums_manager import EntityEnumsManager
@@ -85,42 +84,17 @@ def _RunEvent(
 
 @_decompile(2000, 6, uses_opt_args=True)
 def _RunCommonEvent(
-    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    unknown: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
 ):
     return base_decompile_run_common_event(
-        event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
+        event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager, unknown=unknown
     )
-
-
-@_decompile(2002, 2)
-def _PlayCutsceneAndMovePlayer(
-    cutscene_id: int, cutscene_flags: CutsceneFlags, move_to_region: Region, area_id: int, block_id: int
-):
-    """Wrapper is always allowable."""
-    game_map = get_map_variable_name(area_id, block_id)
-    return f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {move_to_region=}, game_map={game_map})"
 
 
 @_decompile(2002, 3)
 def _PlayCutsceneToPlayer(cutscene_id, cutscene_flags: CutsceneFlags, player_id: Character):
     """Wrapper is always allowable."""
     return f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=})"
-
-
-@_decompile(2002, 4)
-def _PlayCutsceneAndMoveSpecificPlayer(
-    cutscene_id: int,
-    cutscene_flags: int,
-    move_to_region: Region,
-    area_id: int,
-    block_id: int,
-    player_id: Character,
-):
-    """Wrapper is always allowable."""
-    game_map = get_map_variable_name(area_id, block_id)
-    return (
-        f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=}, {move_to_region=}, game_map={game_map})"
-    )
 
 
 @_decompile(2002, 5)

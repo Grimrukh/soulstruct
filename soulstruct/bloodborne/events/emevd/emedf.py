@@ -3926,14 +3926,9 @@ EMEDF = PTDE_EMEDF | {
         "docstring": "TODO",
         "args": {
             "label": LABEL,
-            "obj": NO_DEFAULT(ObjectTyping),
             "state": BOOL | {"internal_default": -1},
+            "obj": NO_DEFAULT(ObjectTyping),
         },
-        "evs_args": {
-            "label": {},
-            "state": {},
-            "obj": {},
-        }
     },
     # All of these `DefineLabel_label()` variants can be generated from custom wrapper `DefineLabel(label)`.
     (1014, 0): {

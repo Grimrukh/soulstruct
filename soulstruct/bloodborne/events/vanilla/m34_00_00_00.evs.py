@@ -271,18 +271,10 @@ def Constructor():
     Event_13400320()
     Event_13404799()
     Event_13405100(0, obj=3401400, region=3402531, region_1=3402554)
-    Event_13405105(
-        0,
-        region=3402370,
-        entity=3401350,
-        obj__source_entity=3401351,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0
-    )
+    Event_13405105(0, region=3402370, entity=3401350, obj=3401351, launch_angle_x=0, launch_angle_y=0, launch_angle_z=0)
     Event_13405115(
         0,
-        obj__source_entity=3401366,
+        obj=3401366,
         flag=13405130,
         frames=0,
         frames_1=50,
@@ -293,7 +285,7 @@ def Constructor():
     )
     Event_13405115(
         1,
-        obj__source_entity=3401356,
+        obj=3401356,
         flag=13405131,
         frames=0,
         frames_1=60,
@@ -304,7 +296,7 @@ def Constructor():
     )
     Event_13405115(
         2,
-        obj__source_entity=3401359,
+        obj=3401359,
         flag=13405132,
         frames=0,
         frames_1=70,
@@ -315,7 +307,7 @@ def Constructor():
     )
     Event_13405115(
         3,
-        obj__source_entity=3401363,
+        obj=3401363,
         flag=13405132,
         frames=20,
         frames_1=80,
@@ -326,7 +318,7 @@ def Constructor():
     )
     Event_13405115(
         4,
-        obj__source_entity=3401364,
+        obj=3401364,
         flag=13405132,
         frames=10,
         frames_1=40,
@@ -337,7 +329,7 @@ def Constructor():
     )
     Event_13405115(
         5,
-        obj__source_entity=3401365,
+        obj=3401365,
         flag=13405132,
         frames=30,
         frames_1=50,
@@ -348,7 +340,7 @@ def Constructor():
     )
     Event_13405115(
         6,
-        obj__source_entity=3401364,
+        obj=3401364,
         flag=13405133,
         frames=10,
         frames_1=60,
@@ -359,7 +351,7 @@ def Constructor():
     )
     Event_13405115(
         7,
-        obj__source_entity=3401359,
+        obj=3401359,
         flag=13405135,
         frames=20,
         frames_1=40,
@@ -370,7 +362,7 @@ def Constructor():
     )
     Event_13405115(
         9,
-        obj__source_entity=3401363,
+        obj=3401363,
         flag=13405135,
         frames=10,
         frames_1=70,
@@ -381,7 +373,7 @@ def Constructor():
     )
     Event_13405115(
         10,
-        obj__source_entity=3401364,
+        obj=3401364,
         flag=13405135,
         frames=17,
         frames_1=60,
@@ -392,7 +384,7 @@ def Constructor():
     )
     Event_13405115(
         11,
-        obj__source_entity=3401365,
+        obj=3401365,
         flag=13405135,
         frames=6,
         frames_1=50,
@@ -403,7 +395,7 @@ def Constructor():
     )
     Event_13405113(
         0,
-        obj__source_entity=3401360,
+        obj=3401360,
         flag=13405136,
         frames=6,
         frames_1=50,
@@ -420,21 +412,21 @@ def Constructor():
     Event_13405145(2, region=3402371, entity=3401367, flag=13405135)
     Event_13405145(3, region=3402374, entity=3401368, flag=13405136)
     Event_13405155(0, region=3402515)
-    Event_13405160(0, obj__source_entity=3401330)
-    Event_13405160(1, obj__source_entity=3401331)
-    Event_13405160(2, obj__source_entity=3401332)
-    Event_13405160(3, obj__source_entity=3401333)
-    Event_13405160(4, obj__source_entity=3401334)
-    Event_13405160(5, obj__source_entity=3401335)
-    Event_13405160(6, obj__source_entity=3401336)
-    Event_13405160(7, obj__source_entity=3401337)
-    Event_13405160(8, obj__source_entity=3401338)
-    Event_13405160(9, obj__source_entity=3401339)
-    Event_13405160(10, obj__source_entity=3401340)
-    Event_13405160(11, obj__source_entity=3401341)
-    Event_13405160(12, obj__source_entity=3401342)
-    Event_13405160(13, obj__source_entity=3401343)
-    Event_13405160(14, obj__source_entity=3401344)
+    Event_13405160(0, obj=3401330)
+    Event_13405160(1, obj=3401331)
+    Event_13405160(2, obj=3401332)
+    Event_13405160(3, obj=3401333)
+    Event_13405160(4, obj=3401334)
+    Event_13405160(5, obj=3401335)
+    Event_13405160(6, obj=3401336)
+    Event_13405160(7, obj=3401337)
+    Event_13405160(8, obj=3401338)
+    Event_13405160(9, obj=3401339)
+    Event_13405160(10, obj=3401340)
+    Event_13405160(11, obj=3401341)
+    Event_13405160(12, obj=3401342)
+    Event_13405160(13, obj=3401343)
+    Event_13405160(14, obj=3401344)
     Event_13405110()
     Event_13405112()
     Event_13405200(0, character=3400300, region=3402600, animation_id=3004, region_1=3402601)
@@ -2761,7 +2753,7 @@ def Event_13405105(
     _,
     region: int,
     entity: int,
-    obj__source_entity: int,
+    obj: int,
     launch_angle_x: int,
     launch_angle_y: int,
     launch_angle_z: int,
@@ -2771,12 +2763,12 @@ def Event_13405105(
     
     ForceAnimation(entity, 1, wait_for_completion=True)
     
-    MAIN.Await(ObjectNotDestroyed(obj__source_entity))
+    MAIN.Await(ObjectNotDestroyed(obj))
     
-    ForceAnimation(obj__source_entity, 1)
+    ForceAnimation(obj, 1)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
@@ -2786,7 +2778,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=6281,
         launch_angle_x=launch_angle_x,
@@ -2796,7 +2788,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=6282,
         launch_angle_x=launch_angle_x,
@@ -2806,7 +2798,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=6283,
         launch_angle_x=launch_angle_x,
@@ -2816,7 +2808,7 @@ def Event_13405105(
     WaitFrames(frames=2)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=6280,
         launch_angle_x=launch_angle_x,
@@ -2887,7 +2879,7 @@ def Event_13405112():
 @RestartOnRest(13405113)
 def Event_13405113(
     _,
-    obj__source_entity: int,
+    obj: int,
     flag: int,
     frames: int,
     frames_1: int,
@@ -2898,16 +2890,16 @@ def Event_13405113(
 ):
     """Event 13405113"""
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(ObjectNotDestroyed(obj__source_entity))
+    AND_1.Add(ObjectNotDestroyed(obj))
     
     MAIN.Await(AND_1)
     
     MAIN.Await(FramesElapsed(frames=frames))
     
-    ForceAnimation(obj__source_entity, 1)
+    ForceAnimation(obj, 1)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
@@ -2919,7 +2911,7 @@ def Event_13405113(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_1,
         launch_angle_x=340,
@@ -2931,7 +2923,7 @@ def Event_13405113(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_2,
         launch_angle_x=340,
@@ -2943,7 +2935,7 @@ def Event_13405113(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_3,
         launch_angle_x=340,
@@ -2955,7 +2947,7 @@ def Event_13405113(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=340,
@@ -2973,7 +2965,7 @@ def Event_13405113(
 @RestartOnRest(13405115)
 def Event_13405115(
     _,
-    obj__source_entity: int,
+    obj: int,
     flag: int,
     frames: int,
     frames_1: int,
@@ -2984,16 +2976,16 @@ def Event_13405115(
 ):
     """Event 13405115"""
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(ObjectNotDestroyed(obj__source_entity))
+    AND_1.Add(ObjectNotDestroyed(obj))
     
     MAIN.Await(AND_1)
     
     MAIN.Await(FramesElapsed(frames=frames))
     
-    ForceAnimation(obj__source_entity, 1)
+    ForceAnimation(obj, 1)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
@@ -3005,7 +2997,7 @@ def Event_13405115(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_1,
         launch_angle_x=0,
@@ -3017,7 +3009,7 @@ def Event_13405115(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_2,
         launch_angle_x=0,
@@ -3029,7 +3021,7 @@ def Event_13405115(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id_3,
         launch_angle_x=0,
@@ -3041,7 +3033,7 @@ def Event_13405115(
     
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=200,
         behavior_id=behavior_id,
         launch_angle_x=0,
@@ -3123,20 +3115,20 @@ def Event_13405155(_, region: int):
 
 
 @RestartOnRest(13405160)
-def Event_13405160(_, obj__source_entity: int):
+def Event_13405160(_, obj: int):
     """Event 13405160"""
     if ThisEventSlotFlagEnabled():
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Fire))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.NoType))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Fire))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.NoType))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Magic))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Lightning))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Blunt))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Slash))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Thrust))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Magic))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Lightning))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Blunt))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Slash))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Thrust))
     AND_2.Add(OR_2)
-    AND_2.Add(ObjectHealthValueComparison(obj__source_entity, ComparisonType.LessThanOrEqual, value=999))
+    AND_2.Add(ObjectHealthValueComparison(obj, ComparisonType.LessThanOrEqual, value=999))
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     
@@ -3145,30 +3137,30 @@ def Event_13405160(_, obj__source_entity: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=3400799,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6292,
         launch_angle_x=0,
         launch_angle_y=90,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(13405200)

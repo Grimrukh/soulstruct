@@ -51,6 +51,11 @@ def build_numeric(numeric_string: str, event_class):
             continue
 
         event_lines = text_event.splitlines()
+
+        if not event_lines:
+            # No events (e.g., some overworld tiles in Elden Ring).
+            return events, linked_offsets, strings
+
         header_line = event_lines[0]
         m = EVENT_HEADER_RE.match(header_line)
         if not m:
@@ -106,7 +111,10 @@ def build_numeric(numeric_string: str, event_class):
                     else:
                         parsed_arg = int(arg)
                         min_value, max_value = arg_type.get_type_min_max()
+                        if min_value == 0 and parsed_arg == -1:
+                            parsed_arg = max_value  # -1 is still acceptable for unsigned types
                         if min_value <= parsed_arg <= max_value:
+                            # `-1` is acceptable even for signed types (e.g., as a default).
                             args_list.append(parsed_arg)
                         else:
                             _LOGGER.error(
@@ -117,8 +125,10 @@ def build_numeric(numeric_string: str, event_class):
                             )
                             raise NumericEmevdError(
                                 lineno,
-                                f"Argument '{arg}' with value {parsed_arg} is not inside the permitted range of data "
-                                f"type '{fmt}': ({min_value}, {max_value}).",
+                                f"Argument '{arg}' is not inside the permitted range of data type "
+                                f"'{fmt}': ({min_value}, {max_value}) (line {lineno}) "
+                                f"(instruction = {category}[{index}], "
+                                f"args_format = {display_arg_types}, args_list = {args_list_string})"
                             )
 
                 instr = event_class.Instruction(category, index, display_arg_types, args_list, event_layers)

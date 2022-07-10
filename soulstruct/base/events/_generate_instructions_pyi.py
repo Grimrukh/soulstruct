@@ -336,8 +336,24 @@ def darksouls3():
     )
 
 
+def eldenring():
+    from soulstruct.eldenring.events.emevd import compiler
+    from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS
+    generate_instr_pyi(
+        "eldenring",
+        EMEDF,
+        EMEDF_ALIASES,
+        EMEDF_TESTS,
+        15,
+        PACKAGE_PATH("eldenring/events/instructions.pyi"),
+        compiler,
+        has_event_layers=True,
+    )
+
+
 if __name__ == '__main__':
     darksouls1ptde()
     darksouls1r()
     bloodborne()
     darksouls3()
+    eldenring()

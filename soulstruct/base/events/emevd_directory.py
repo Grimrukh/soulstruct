@@ -126,6 +126,7 @@ class EMEVDDirectory(abc.ABC):
                     setattr(self, game_map.name, self.emevds[game_map.name])
                     break
             else:
-                raise FileNotFoundError(
-                    f"Could not find EMEVD file for map {game_map.name} ({game_map.emevd_file_stem} in given directory."
+                _LOGGER.warning(
+                    f"Could not find EMEVD file for map {game_map.name} ({game_map.emevd_file_stem}) "
+                    f"in given directory. Ignoring map name."
                 )

@@ -607,6 +607,11 @@ class MSBCharacter(MSBPart):
         "disable_point_light_effect",
     )
 
+    REFERENCE_FIELDS = MSBPart.REFERENCE_FIELDS | {
+        "parts": ["draw_parent_name"],
+        "regions": ["patrol_region_names"],
+    }
+
     ai_id: int
     character_id: int
     talk_id: int

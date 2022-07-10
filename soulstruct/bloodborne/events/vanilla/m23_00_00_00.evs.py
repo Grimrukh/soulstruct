@@ -484,8 +484,8 @@ def Constructor():
     Event_12300310(0, obj=2301050, obj_act_id=12300900, obj_act_id_1=9942)
     Event_12305000()
     Event_12305001()
-    Event_12305010(0, character__source_entity=2300304, animation_id=7008, event_slot=1, ai_param_id=109000)
-    Event_12305010(1, character__source_entity=2300402, animation_id=7002, event_slot=2, ai_param_id=109010)
+    Event_12305010(0, character=2300304, animation_id=7008, event_slot=1, ai_param_id=109000)
+    Event_12305010(1, character=2300402, animation_id=7002, event_slot=2, ai_param_id=109010)
     Event_12305020()
     Event_12305021()
     Event_12305022()
@@ -494,23 +494,23 @@ def Constructor():
     Event_12305030(1, region=2302033, obj=2301266, region_1=2300911)
     Event_12305030(2, region=2302034, obj=2301265, region_1=2300913)
     Event_12305030(3, region=2302035, obj=2301261, region_1=2300913)
-    Event_12305040(0, obj__source_entity=2301256, owner_entity=2300900)
-    Event_12305040(1, obj__source_entity=2301257, owner_entity=2300900)
-    Event_12305040(2, obj__source_entity=2301258, owner_entity=2300900)
-    Event_12305040(3, obj__source_entity=2301259, owner_entity=2300900)
-    Event_12305040(4, obj__source_entity=2301260, owner_entity=2300900)
-    Event_12305040(5, obj__source_entity=2301261, owner_entity=2300900)
-    Event_12305040(6, obj__source_entity=2301262, owner_entity=2300900)
-    Event_12305040(7, obj__source_entity=2301263, owner_entity=2300900)
-    Event_12305040(8, obj__source_entity=2301264, owner_entity=2300900)
-    Event_12305040(9, obj__source_entity=2301265, owner_entity=2300900)
-    Event_12305040(10, obj__source_entity=2301266, owner_entity=2300900)
-    Event_12305040(11, obj__source_entity=2301267, owner_entity=2300900)
-    Event_12305040(12, obj__source_entity=2301268, owner_entity=2300900)
-    Event_12305040(13, obj__source_entity=2301269, owner_entity=2300900)
+    Event_12305040(0, obj=2301256, owner_entity=2300900)
+    Event_12305040(1, obj=2301257, owner_entity=2300900)
+    Event_12305040(2, obj=2301258, owner_entity=2300900)
+    Event_12305040(3, obj=2301259, owner_entity=2300900)
+    Event_12305040(4, obj=2301260, owner_entity=2300900)
+    Event_12305040(5, obj=2301261, owner_entity=2300900)
+    Event_12305040(6, obj=2301262, owner_entity=2300900)
+    Event_12305040(7, obj=2301263, owner_entity=2300900)
+    Event_12305040(8, obj=2301264, owner_entity=2300900)
+    Event_12305040(9, obj=2301265, owner_entity=2300900)
+    Event_12305040(10, obj=2301266, owner_entity=2300900)
+    Event_12305040(11, obj=2301267, owner_entity=2300900)
+    Event_12305040(12, obj=2301268, owner_entity=2300900)
+    Event_12305040(13, obj=2301269, owner_entity=2300900)
     Event_12305070()
-    Event_12305075(0, character__source_entity=2300309, animation_id=7008, event_slot=3, ai_param_id=109000)
-    Event_12305075(1, character__source_entity=2300310, animation_id=7002, event_slot=4, ai_param_id=109000)
+    Event_12305075(0, character=2300309, animation_id=7008, event_slot=3, ai_param_id=109000)
+    Event_12305075(1, character=2300310, animation_id=7002, event_slot=4, ai_param_id=109000)
     Event_12305080()
     Event_12305081()
     Event_12305082()
@@ -525,13 +525,13 @@ def Constructor():
     Event_12305110(3, character=2300323, frames=5)
     Event_12305110(4, character=2300324, frames=55)
     Event_12305120()
-    Event_12305121(0, character__source_entity=2300325, animation_id=7005, event_slot=12, ai_param_id=109000)
-    Event_12305121(1, character__source_entity=2300326, animation_id=7005, event_slot=13, ai_param_id=109000)
-    Event_12305121(2, character__source_entity=2300327, animation_id=7002, event_slot=14, ai_param_id=109000)
+    Event_12305121(0, character=2300325, animation_id=7005, event_slot=12, ai_param_id=109000)
+    Event_12305121(1, character=2300326, animation_id=7005, event_slot=13, ai_param_id=109000)
+    Event_12305121(2, character=2300327, animation_id=7002, event_slot=14, ai_param_id=109000)
     Event_12305125()
     Event_12305130()
-    Event_12305135(0, character__source_entity=2300413, animation_id=7002, event_slot=15, ai_param_id=109010)
-    Event_12305135(1, character__source_entity=2300414, animation_id=7008, event_slot=16, ai_param_id=109010)
+    Event_12305135(0, character=2300413, animation_id=7002, event_slot=15, ai_param_id=109010)
+    Event_12305135(1, character=2300414, animation_id=7008, event_slot=16, ai_param_id=109010)
     Event_12305140(
         0,
         character=2300303,
@@ -692,26 +692,26 @@ def Constructor():
         ai_param_id=109015,
         ai_param_id_1=109015
     )
-    Event_12305160(0, character__source_entity=2300303, animation_id=7002, event_slot=0, ai_param_id=109000)
-    Event_12305160(1, character__source_entity=2300304, animation_id=7002, event_slot=1, ai_param_id=109000)
-    Event_12305160(2, character__source_entity=2300402, animation_id=7002, event_slot=2, ai_param_id=109010)
-    Event_12305160(3, character__source_entity=2300309, animation_id=7008, event_slot=3, ai_param_id=109000)
-    Event_12305160(4, character__source_entity=2300310, animation_id=7002, event_slot=4, ai_param_id=109000)
-    Event_12305160(5, character__source_entity=2300312, animation_id=7002, event_slot=5, ai_param_id=109000)
-    Event_12305160(6, character__source_entity=2300315, animation_id=7005, event_slot=6, ai_param_id=109000)
-    Event_12305160(7, character__source_entity=2300316, animation_id=7008, event_slot=7, ai_param_id=109000)
-    Event_12305160(8, character__source_entity=2300317, animation_id=7002, event_slot=8, ai_param_id=109000)
-    Event_12305160(9, character__source_entity=2300403, animation_id=7008, event_slot=9, ai_param_id=109010)
-    Event_12305160(10, character__source_entity=2300404, animation_id=7005, event_slot=10, ai_param_id=109010)
-    Event_12305160(11, character__source_entity=2300405, animation_id=7008, event_slot=11, ai_param_id=109010)
-    Event_12305160(12, character__source_entity=2300325, animation_id=7005, event_slot=12, ai_param_id=109000)
-    Event_12305160(13, character__source_entity=2300326, animation_id=7005, event_slot=13, ai_param_id=109000)
-    Event_12305160(14, character__source_entity=2300327, animation_id=7002, event_slot=14, ai_param_id=109000)
-    Event_12305160(15, character__source_entity=2300413, animation_id=7002, event_slot=15, ai_param_id=109010)
-    Event_12305160(16, character__source_entity=2300414, animation_id=7008, event_slot=16, ai_param_id=109010)
-    Event_12305160(17, character__source_entity=2300500, animation_id=7002, event_slot=17, ai_param_id=109010)
-    Event_12305160(18, character__source_entity=2300501, animation_id=7002, event_slot=18, ai_param_id=109010)
-    Event_12305160(19, character__source_entity=2300502, animation_id=7002, event_slot=19, ai_param_id=109010)
+    Event_12305160(0, character=2300303, animation_id=7002, event_slot=0, ai_param_id=109000)
+    Event_12305160(1, character=2300304, animation_id=7002, event_slot=1, ai_param_id=109000)
+    Event_12305160(2, character=2300402, animation_id=7002, event_slot=2, ai_param_id=109010)
+    Event_12305160(3, character=2300309, animation_id=7008, event_slot=3, ai_param_id=109000)
+    Event_12305160(4, character=2300310, animation_id=7002, event_slot=4, ai_param_id=109000)
+    Event_12305160(5, character=2300312, animation_id=7002, event_slot=5, ai_param_id=109000)
+    Event_12305160(6, character=2300315, animation_id=7005, event_slot=6, ai_param_id=109000)
+    Event_12305160(7, character=2300316, animation_id=7008, event_slot=7, ai_param_id=109000)
+    Event_12305160(8, character=2300317, animation_id=7002, event_slot=8, ai_param_id=109000)
+    Event_12305160(9, character=2300403, animation_id=7008, event_slot=9, ai_param_id=109010)
+    Event_12305160(10, character=2300404, animation_id=7005, event_slot=10, ai_param_id=109010)
+    Event_12305160(11, character=2300405, animation_id=7008, event_slot=11, ai_param_id=109010)
+    Event_12305160(12, character=2300325, animation_id=7005, event_slot=12, ai_param_id=109000)
+    Event_12305160(13, character=2300326, animation_id=7005, event_slot=13, ai_param_id=109000)
+    Event_12305160(14, character=2300327, animation_id=7002, event_slot=14, ai_param_id=109000)
+    Event_12305160(15, character=2300413, animation_id=7002, event_slot=15, ai_param_id=109010)
+    Event_12305160(16, character=2300414, animation_id=7008, event_slot=16, ai_param_id=109010)
+    Event_12305160(17, character=2300500, animation_id=7002, event_slot=17, ai_param_id=109010)
+    Event_12305160(18, character=2300501, animation_id=7002, event_slot=18, ai_param_id=109010)
+    Event_12305160(19, character=2300502, animation_id=7002, event_slot=19, ai_param_id=109010)
     Event_12305180(0, 2300300, 2302140, 15.0, 0.0)
     Event_12305180(1, 2300301, 2302141, 5.0, 0.0)
     Event_12305180(2, 2300302, 2302141, 5.0, 2.5)
@@ -2633,10 +2633,10 @@ def Event_12305001():
 
 
 @RestartOnRest(12305010)
-def Event_12305010(_, character__source_entity: int, animation_id: int, event_slot: int, ai_param_id: int):
+def Event_12305010(_, character: int, animation_id: int, event_slot: int, ai_param_id: int):
     """Event 12305010"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
     End()
@@ -2658,24 +2658,24 @@ def Event_12305010(_, character__source_entity: int, animation_id: int, event_sl
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2302147))
     AND_1.Add(OR_2)
     OR_1.Add(AND_1)
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
-    OR_1.Add(CharacterHasSpecialEffect(character__source_entity, 4670))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(CharacterHasSpecialEffect(character, 4670))
     
     MAIN.Await(OR_1)
     
     Wait(3.0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     ShootProjectile(
         owner_entity=2300900,
-        source_entity=character__source_entity,
+        source_entity=character,
         model_point=90,
         behavior_id=6031,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, animation_id)
+    ForceAnimation(character, animation_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
 
@@ -2766,20 +2766,20 @@ def Event_12305030(_, region: int, obj: int, region_1: int):
 
 
 @NeverRestart(12305040)
-def Event_12305040(_, obj__source_entity: int, owner_entity: int):
+def Event_12305040(_, obj: int, owner_entity: int):
     """Event 12305040"""
     if ThisEventSlotFlagEnabled():
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Fire))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.NoType))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Fire))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.NoType))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Magic))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Lightning))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Blunt))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Slash))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Thrust))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Magic))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Lightning))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Blunt))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Slash))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Thrust))
     AND_2.Add(OR_2)
-    AND_2.Add(ObjectHealthValueComparison(obj__source_entity, ComparisonType.LessThanOrEqual, value=999))
+    AND_2.Add(ObjectHealthValueComparison(obj, ComparisonType.LessThanOrEqual, value=999))
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     
@@ -2788,22 +2788,22 @@ def Event_12305040(_, obj__source_entity: int, owner_entity: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6055,
         launch_angle_x=270,
@@ -2812,15 +2812,15 @@ def Event_12305040(_, obj__source_entity: int, owner_entity: int):
     )
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6071,
         launch_angle_x=0,
         launch_angle_y=90,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(12305070)
@@ -2856,10 +2856,10 @@ def Event_12305070():
 
 
 @RestartOnRest(12305075)
-def Event_12305075(_, character__source_entity: int, animation_id: int, event_slot: int, ai_param_id: int):
+def Event_12305075(_, character: int, animation_id: int, event_slot: int, ai_param_id: int):
     """Event 12305075"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
     End()
@@ -2867,23 +2867,23 @@ def Event_12305075(_, character__source_entity: int, animation_id: int, event_sl
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(FlagEnabled(12305070))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
-    OR_1.Add(CharacterHasSpecialEffect(character__source_entity, 4670))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(CharacterHasSpecialEffect(character, 4670))
     
     MAIN.Await(OR_1)
     
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     ShootProjectile(
         owner_entity=2300900,
-        source_entity=character__source_entity,
+        source_entity=character,
         model_point=90,
         behavior_id=6031,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, animation_id)
+    ForceAnimation(character, animation_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
 
@@ -3017,10 +3017,10 @@ def Event_12305120():
 
 
 @RestartOnRest(12305121)
-def Event_12305121(_, character__source_entity: int, animation_id: int, event_slot: int, ai_param_id: int):
+def Event_12305121(_, character: int, animation_id: int, event_slot: int, ai_param_id: int):
     """Event 12305121"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
     End()
@@ -3030,23 +3030,23 @@ def Event_12305121(_, character__source_entity: int, animation_id: int, event_sl
     OR_1.Add(HasAIStatus(2300201, ai_status=AIStatusType.Battle))
     OR_1.Add(HasAIStatus(2300202, ai_status=AIStatusType.Battle))
     OR_2.Add(AND_1)
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
-    OR_1.Add(CharacterHasSpecialEffect(character__source_entity, 4670))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(CharacterHasSpecialEffect(character, 4670))
     
     MAIN.Await(OR_1)
     
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     ShootProjectile(
         owner_entity=2300900,
-        source_entity=character__source_entity,
+        source_entity=character,
         model_point=90,
         behavior_id=6031,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, animation_id)
+    ForceAnimation(character, animation_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
 
@@ -3090,10 +3090,10 @@ def Event_12305130():
 
 
 @RestartOnRest(12305135)
-def Event_12305135(_, character__source_entity: int, animation_id: int, event_slot: int, ai_param_id: int):
+def Event_12305135(_, character: int, animation_id: int, event_slot: int, ai_param_id: int):
     """Event 12305135"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
     End()
@@ -3105,23 +3105,23 @@ def Event_12305135(_, character__source_entity: int, animation_id: int, event_sl
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2302148))
     OR_2.Add(AND_1)
-    OR_2.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_2.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
-    OR_2.Add(CharacterHasSpecialEffect(character__source_entity, 4670))
+    OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_2.Add(CharacterHasSpecialEffect(character, 4670))
     
     MAIN.Await(OR_2)
     
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     ShootProjectile(
         owner_entity=2300900,
-        source_entity=character__source_entity,
+        source_entity=character,
         model_point=90,
         behavior_id=6031,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, animation_id)
+    ForceAnimation(character, animation_id)
     StopEvent(event_id=12305140, event_slot=event_slot)
     StopEvent(event_id=12305160, event_slot=event_slot)
 
@@ -3145,33 +3145,33 @@ def Event_12305140(_, character: int, animation_id: int, animation_id_1: int, ai
 
 
 @RestartOnRest(12305160)
-def Event_12305160(_, character__source_entity: int, animation_id: int, event_slot: int, ai_param_id: int):
+def Event_12305160(_, character: int, animation_id: int, event_slot: int, ai_param_id: int):
     """Event 12305160"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Caution))
-    OR_1.Add(HasAIStatus(character__source_entity, ai_status=AIStatusType.Battle))
-    OR_1.Add(CharacterHasSpecialEffect(character__source_entity, 4670))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(CharacterHasSpecialEffect(character, 4670))
     
     MAIN.Await(OR_1)
     
     StopEvent(event_id=12305140, event_slot=event_slot)
     WaitFrames(frames=1)
-    SetAIParamID(character__source_entity, ai_param_id=ai_param_id)
+    SetAIParamID(character, ai_param_id=ai_param_id)
     ShootProjectile(
         owner_entity=2300900,
-        source_entity=character__source_entity,
+        source_entity=character,
         model_point=90,
         behavior_id=6031,
         launch_angle_x=0,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    ForceAnimation(character__source_entity, animation_id)
+    ForceAnimation(character, animation_id)
 
 
 @RestartOnRest(12305180)

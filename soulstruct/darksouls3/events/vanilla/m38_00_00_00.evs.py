@@ -2997,7 +2997,7 @@ def Event_13805553():
     """Event 13805553"""
     DisableObject(3801390)
     DisableTreasure(obj=3801390)
-    GotoIfObjectDestroyed(Label.L9, obj=1)
+    GotoIfObjectDestroyed(Label.L9, obj=3801240)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,
@@ -3222,7 +3222,7 @@ def Event_13805557():
     DisableTreasure(obj=3801391)
     DisableCharacter(3800498)
     DisableAnimations(3800498)
-    GotoIfObjectDestroyed(Label.L9, obj=1)
+    GotoIfObjectDestroyed(Label.L9, obj=3801241)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Invader,

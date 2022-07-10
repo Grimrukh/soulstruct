@@ -264,6 +264,7 @@ class DarkSouls3Type(GameSpecificType):
 SEKIRO = Game(
     "SEKIRO",
     "Sekiro",
+    submodule_name="sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
     default_dcx=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
@@ -277,6 +278,7 @@ class SekiroType(GameSpecificType):
 ELDEN_RING = Game(
     "ELDEN_RING",
     "Elden Ring",
+    submodule_name="eldenring",
     aliases=("eldenring", "er"),
     default_dcx=DCXType.DCX_KRAK,
     default_game_path=ELDEN_RING_PATH,

@@ -3554,7 +3554,7 @@ EMEDF = {
         },
     },
     (3, 38): {
-        "alias": "IfSteamDisconnected",
+        "alias": "IfSteamConnectionState",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -4182,8 +4182,8 @@ EMEDF = {
         """,
         "args": {
             "label": LABEL,
-            "obj": NO_DEFAULT(ObjectTyping),
             "state": BOOL,
+            "obj": NO_DEFAULT(ObjectTyping),
             "target_comparison_type": TARGET_COMPARISON_TYPE,
             "target_count": TARGET_COUNT_FLOAT,
         },
@@ -5022,8 +5022,6 @@ EMEDF = {
         "alias": "Unknown_2010_07",
         "docstring": """
             Unknown SoundEvent instruction.
-            
-            Could be 'SuppressSoundEvent'?
         """,
         "args": {
             "sound_id": INT,

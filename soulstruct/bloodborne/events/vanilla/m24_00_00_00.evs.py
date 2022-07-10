@@ -2095,27 +2095,18 @@ def Event_12405100(_, character: int, region: int, region_1: int):
 
 
 @RestartOnRest(12405110)
-def Event_12405110(
-    _,
-    region: int,
-    obj: int,
-    vfx_id: int,
-    obj__source_entity: int,
-    launch_angle_y: int,
-    flag: int,
-    name: int,
-):
+def Event_12405110(_, region: int, obj: int, vfx_id: int, obj_1: int, launch_angle_y: int, flag: int, name: int):
     """Event 12405110"""
-    MAIN.Await(ObjectNotDestroyed(obj__source_entity))
+    MAIN.Await(ObjectNotDestroyed(obj_1))
     
     DisableFlag(flag)
     SkipLinesIfFlagDisabled(2, flag)
     EndOfAnimation(obj=obj, animation_id=0)
     SkipLines(9)
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
-    AND_1.Add(ObjectNotDestroyed(obj__source_entity))
+    AND_1.Add(ObjectNotDestroyed(obj_1))
     AND_1.Add(OR_1)
-    AND_2.Add(ObjectDestroyed(obj__source_entity))
+    AND_2.Add(ObjectDestroyed(obj_1))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     
@@ -2135,62 +2126,47 @@ def Event_12405110(
     CreatePlayLog(name=name)
     ShootProjectile(
         owner_entity=2400000,
-        source_entity=obj__source_entity,
+        source_entity=obj_1,
         model_point=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
-    PlaySoundEffect(obj__source_entity, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(
-        vfx_id=929208,
-        anchor_entity=obj__source_entity,
-        model_point=101,
-        anchor_type=CoordEntityType.Object,
-    )
+    PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
-        source_entity=obj__source_entity,
+        source_entity=obj_1,
         model_point=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
-    PlaySoundEffect(obj__source_entity, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(
-        vfx_id=929208,
-        anchor_entity=obj__source_entity,
-        model_point=101,
-        anchor_type=CoordEntityType.Object,
-    )
+    PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
     Wait(0.699999988079071)
     ShootProjectile(
         owner_entity=2400000,
-        source_entity=obj__source_entity,
+        source_entity=obj_1,
         model_point=101,
         behavior_id=5071,
         launch_angle_x=0,
         launch_angle_y=launch_angle_y,
         launch_angle_z=0,
     )
-    PlaySoundEffect(obj__source_entity, 243007000, sound_type=SoundType.a_Ambient)
-    CreateTemporaryVFX(
-        vfx_id=929208,
-        anchor_entity=obj__source_entity,
-        model_point=101,
-        anchor_type=CoordEntityType.Object,
-    )
+    PlaySoundEffect(obj_1, 243007000, sound_type=SoundType.a_Ambient)
+    CreateTemporaryVFX(vfx_id=929208, anchor_entity=obj_1, model_point=101, anchor_type=CoordEntityType.Object)
     Wait(3.0)
     AND_3.Add(CharacterOutsideRegion(PLAYER, region=region))
-    AND_3.Add(ObjectNotDestroyed(obj__source_entity))
+    AND_3.Add(ObjectNotDestroyed(obj_1))
     
     MAIN.Await(AND_3)
     
     DisableFlag(flag)
-    PlaySoundEffect(obj__source_entity, 243007001, sound_type=SoundType.a_Ambient)
+    PlaySoundEffect(obj_1, 243007001, sound_type=SoundType.a_Ambient)
     PlaySoundEffect(obj, 990100001, sound_type=SoundType.o_Object)
     ForceAnimation(obj, 1, wait_for_completion=True)
     Restart()

@@ -22,7 +22,6 @@ EVENT_RETURN_TYPE = {
 FLAG_SETTING = {
     "type": FlagSetting,
     "default": None,
-    "hide_name": True,
 }
 RANGE_STATE = {
     "type": RangeState,
@@ -271,7 +270,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "state": FLAG_SETTING,
+            "state": FLAG_SETTING | HIDE_NAME,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -510,29 +509,6 @@ EMEDF = {
             "IfTrueFlagCountLessThan": dict(comparison_type=ComparisonType.LessThan),
             "IfTrueFlagCountGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
             "IfTrueFlagCountLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
-        },
-    },
-    (3, 11): {
-        "alias": "IfWorldTendencyComparison",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "world_tendency_type": {
-                "type": WorldTendencyType,
-                "default": None,
-            },
-            "comparison_type": COMPARISON_TYPE | HIDE_NAME,
-            "value": INT,
-        },
-        "partials": {
-            "IfWhiteWorldTendencyComparison": dict(world_tendency_type=WorldTendencyType.White),
-            "IfBlackWorldTendencyComparison": dict(world_tendency_type=WorldTendencyType.Black),
-            "IfWhiteWorldTendencyGreaterThan": dict(
-                world_tendency_type=WorldTendencyType.White, comparison_type=ComparisonType.GreaterThan
-            ),
-            "IfBlackWorldTendencyGreaterThan": dict(
-                world_tendency_type=WorldTendencyType.Black, comparison_type=ComparisonType.GreaterThan
-            ),
         },
     },
     (3, 12): {
@@ -838,6 +814,8 @@ EMEDF = {
             "targeting_character": NO_DEFAULT(CharacterTyping),
             "targeted_character": NO_DEFAULT(CharacterTyping),
             "state": BOOL | HIDE_NAME,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_FLOAT,
         },
         "partials": {
             "IfCharacterTargeting": dict(state=True),
@@ -916,42 +894,6 @@ EMEDF = {
             "ai_status": NO_DEFAULT(AIStatusType),
             "target_comparison_type": TARGET_COMPARISON_TYPE,
             "target_count": TARGET_COUNT_FLOAT,
-        },
-    },
-    (4, 10): {
-        "alias": "IfSkullLanternState",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "state": BOOL | HIDE_NAME,
-        },
-        "partials": {
-            "IfSkullLanternActive": dict(state=True),
-            "IfSkullLanternInactive": dict(state=False),
-        },
-    },
-    (4, 11): {
-        "alias": "IfPlayerClass",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "class_type": {
-                "type": ClassType,
-                "default": None,
-                "hide_name": True,
-            },
-        },
-    },
-    (4, 12): {
-        "alias": "IfPlayerCovenant",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "covenant": {
-                "type": Covenant,
-                "default": None,
-                "hide_name": True,
-            },
         },
     },
     (4, 13): {
@@ -1279,7 +1221,7 @@ EMEDF = {
         "alias": "AwaitFlagState",
         "docstring": "Not sure if this is really used rather than `IfFlagState` with MAIN condition (0).",
         "args": {
-            "state": FLAG_SETTING,
+            "state": FLAG_SETTING | HIDE_NAME,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG,
         },
@@ -1300,7 +1242,7 @@ EMEDF = {
         """,
         "args": {
             "line_count": INT | HIDE_NAME,
-            "state": FLAG_SETTING,
+            "state": FLAG_SETTING | HIDE_NAME,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -1339,8 +1281,8 @@ EMEDF = {
         "alias": "ReturnIfFlagState",
         "docstring": "TODO",
         "args": {
-            "event_return_type": EVENT_RETURN_TYPE,
-            "state": FLAG_SETTING,
+            "event_return_type": EVENT_RETURN_TYPE | HIDE_NAME,
+            "state": FLAG_SETTING | HIDE_NAME,
             "flag_type": FLAG_TYPE | HIDE_NAME,
             "flag": FLAG | HIDE_NAME,
         },
@@ -1543,18 +1485,6 @@ EMEDF = {
             "RestartIfOutsideMap": dict(event_return_type=EventReturnType.Restart, state=False),
         },
     },
-    (1005, 0): {
-        "alias": "AwaitObjectDestructionState",
-        "docstring": "TODO",
-        "args": {
-            "state": BOOL | HIDE_NAME,
-            "obj": NO_DEFAULT(ObjectTyping) | HIDE_NAME,
-        },
-        "partials": {
-            "AwaitObjectDestroyed": dict(state=True),
-            "AwaitObjectNotDestroyed": dict(state=False),
-        },
-    },
     (1005, 1): {
         "alias": "SkipLinesIfObjectDestructionState",
         "docstring": "TODO",
@@ -1653,6 +1583,7 @@ EMEDF = {
         "alias": "RunCommonEvent",
         "docstring": "Initialize an instance of an event script from `common_func` with the given arguments.",
         "args": {
+            "unknown": INT,
             "event_id": INT | HIDE_NAME,
             # Default argument is a single 32-bit zero, but more packed data can be passed.
             "args": {
@@ -1661,6 +1592,7 @@ EMEDF = {
             },
         },
         "evs_args": {
+            "unknown": {},
             "event_id": {},
             "args": {},
             "arg_types": {
@@ -1691,23 +1623,6 @@ EMEDF = {
             "cutscene_flags": CUTSCENE_FLAGS,
         },
     },
-    (2002, 2): {  # TODO: Still used in ER?
-        "alias": "PlayCutsceneAndMovePlayer",
-        "docstring": "TODO",
-        "args": {
-            "cutscene_id": INT,
-            "cutscene_flags": CUTSCENE_FLAGS,
-            "move_to_region": NO_DEFAULT(RegionTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-        },
-        "evs_args": {
-            "cutscene_id": {},
-            "cutscene_flags": {},
-            "move_to_region": {},
-            "game_map": GAME_MAP_EVS,
-        },
-    },
     (2002, 3): {
         "alias": "PlayCutsceneToPlayer",
         "docstring": "TODO",
@@ -1715,70 +1630,6 @@ EMEDF = {
             "cutscene_id": INT,
             "cutscene_flags": CUTSCENE_FLAGS,
             "player_id": INT,
-        },
-    },
-    (2002, 4): {  # TODO: Still used in ER?
-        "alias": "PlayCutsceneAndMoveSpecificPlayer",
-        "docstring": "TODO",
-        "args": {
-            "cutscene_id": INT,
-            "cutscene_flags": CUTSCENE_FLAGS,
-            "move_to_region": NO_DEFAULT(RegionTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "player_id": INT,
-        },
-        "evs_args": {
-            "cutscene_id": {},
-            "cutscene_flags": {},
-            "move_to_region": {},
-            "game_map": GAME_MAP_EVS,
-            "player_id": {},
-        },
-    },
-    (2002, 5): {
-        "alias": "PlayCutsceneAndRotatePlayer",
-        "docstring": "TODO",
-        "args": {
-            "cutscene_id": INT,
-            "cutscene_flags": CUTSCENE_FLAGS,
-            "relative_rotation_axis_x": FLOAT | {"default": 0.0},
-            "relative_rotation_axis_z": FLOAT | {"default": 0.0},
-            "rotation": FLOAT | {"default": 0.0},
-            "vertical_translation": FLOAT | {"default": 0.0},
-            "player_id": {
-                "type": int,
-                "default": PLAYER,
-            },
-        },
-    },
-    (2003, 1): {
-        "alias": "RequestAnimation",
-        "docstring": """
-            Not used very often, in favor of ForceAnimation below.
-        """,
-        "args": {
-            "entity": NO_DEFAULT(AnimatedEntityTyping) | HIDE_NAME,
-            "animation_id": INT,
-            "loop": BOOL | {"default": False},
-            "wait_for_completion": BOOL | {"default": False},
-        },
-    },
-    (2003, 2): {
-        "alias": "SetFlagState_OLD",
-        "docstring": """
-            Enable, disable, or toggle (change) a binary flag.
-            
-            Elden Ring seems to ALWAYS use 2003[66] or 2003[69] instead, so I have renamed this instruction.
-        """,
-        "args": {
-            "flag": FLAG | HIDE_NAME,
-            "state": FLAG_SETTING,
-        },
-        "partials": {
-            "EnableFlag_OLD": dict(state=FlagSetting.On),
-            "DisableFlag_OLD": dict(state=FlagSetting.Off),
-            "ToggleFlag_OLD": dict(state=FlagSetting.Change),
         },
     },
     (2003, 3): {
@@ -1821,41 +1672,6 @@ EMEDF = {
             "launch_angle_z": INT,
         },
     },
-    # TODO: Could not find [2003, 6]: (De)activate Map Hit. Seems redundant with (2011, 1).
-    # TODO: Could not find [2003, 7]: Set Map Visibility. Seems redundant with (2012, 1).
-    (2003, 8): {
-        "alias": "SetEventState",
-        "docstring": """
-            Stop or restart a particular slot (default of 0) of the given event ID. Note that you cannot restart events 
-            that have already ended.
-        """,
-        "args": {
-            "event_id": INT,
-            "event_slot": INT | {"default": 0},
-            "event_return_type": EVENT_RETURN_TYPE,
-        },
-        "partials": {
-            "StopEvent": dict(
-                event_return_type=EventReturnType.End,
-                __docstring="Force a running event to stop.",
-            ),
-            "RestartEvent": dict(
-                event_return_type=EventReturnType.Restart,
-                __docstring="""
-                    Force a running event to restart. Note that the event must be active (i.e. not finished) for this 
-                    to work. If you plan to have an event restarted, make sure it doesn't return until you no longer 
-                    need it.
-                """,
-            ),
-        },
-        "evs_args": {
-            "event_id": {},
-            "event_return_type": {},
-            "event_slot": {},
-        }
-    },
-    # TODO: Could not find [2003, 9]: Invert Event Flag
-    # TODO: Could not find [2003, 10]: Set Event Navimesh
     (2003, 11): {
         "alias": "SetBossHealthBarState",
         "docstring": """
@@ -1894,21 +1710,11 @@ EMEDF = {
         },
     },
     (2003, 12): {
-        "alias": "KillBoss",
-        "docstring": """
-            The name is slightly misleading, as this doesn't actually kill any entity. Instead, it marks that you have
-            cleared an 'area', as defined by the Game Area params, and is always manually called in EMEVD when you kill 
-            the boss of that area.
-
-            Among other things, this awards your souls for killing the boss (which is why they are delayed and why the 
-            game will keep trying to give them to you on map load) and prevents you from summoning other players.
-
-            The Game Area params ID is generally identical to the entity ID of the appropriate boss. This is just 
-            convention, but it's one you should stick to for a sensible setup (and for the name of the instruction to 
-            make sense).
-        """,
+        "alias": "KillBossAndDisplayBanner",
+        "docstring": "TODO",
         "args": {
-            "game_area_param_id": INT,
+            "character": NO_DEFAULT(CharacterTyping),
+            "banner_type": NO_DEFAULT(BannerType),
         },
     },
     (2003, 13): {
@@ -1958,18 +1764,7 @@ EMEDF = {
         "evs_args": {
             "game_map": GAME_MAP_EVS,
             "player_start": {},
-        },
-    },
-    (2003, 15): {
-        "alias": "HandleMinibossDefeat",
-        "docstring": """
-            Called instead of `KillBoss` for bosses that aren't the final boss of the area.
-
-            Note that outside of Chalice Dungeons, this is ONLY used when you have defeated Gehrman and are about to 
-            fight Moon Presence.
-        """,
-        "args": {
-            "miniboss_id": INT,
+            "unknown1": {},
         },
     },
     (2003, 16): {
@@ -2015,33 +1810,6 @@ EMEDF = {
             "skip_transition": BOOL | {"default": False},
             "unknown1": INT | {"default": 0},
             "unknown2": FLOAT | {"default": 0.0},
-        },
-    },
-    (2003, 19): {
-        "alias": "SetMapDrawParamSlot",
-        "docstring": """
-            Each map area (NOT each map) can have two sets of DrawParams (0 and 1), and this can be used to switch
-            between them. Originally only used for Dark Anor Londo.
-
-            Note that there's some funny business with how this works in m15 in Dark Souls Remastered, presumably 
-            because the developers didn't want to bother modifying both slots when they re-did all the DrawParams.
-        """,
-        "args": {
-            "map_area_id": INT,
-            "draw_param_slot": INT,
-        },
-    },
-    # TODO: Could not find [2003, 20]: Set Temporary Player Respawn Point
-    (2003, 21): {
-        "alias": "IncrementNewGameCycle",
-        "docstring": """
-            This is manually called at the end of the game. You can call it anytime, but note that there is no way to
-            decrement it with events.
-
-            The dummy argument is always 0 or 1; not sure if or how it matters.
-        """,
-        "args": {
-            "dummy_arg": INT,
         },
     },
     (2003, 22): {
@@ -2101,6 +1869,8 @@ EMEDF = {
         "alias": "PlaceSummonSign",
         "docstring": """
             If you set a black summon sign, the specified NPC will try to invade automatically.
+            
+            New unknown argument in Elden Ring.
         """,
         "args": {
             "sign_type": {
@@ -2111,23 +1881,9 @@ EMEDF = {
             "region": NO_DEFAULT(RegionTyping),
             "summon_flag": FLAG,
             "dismissal_flag": FLAG,
+            "unknown": INT,
         },
     },
-    (2003, 26): {
-        "alias": "SetSoapstoneMessageState",
-        "docstring": """
-            Enable or disable developer message.
-        """,
-        "args": {
-            "message_id": INT | HIDE_NAME,
-            "state": BOOL | HIDE_NAME,
-        },
-        "partials": {
-            "EnableSoapstoneMessage": dict(state=True),
-            "DisableSoapstoneMessage": dict(state=False),
-        },
-    },
-    # TODO: Could not find [2003, 27]: [[MISSING]]
     (2003, 28): {
         "alias": "AwardAchievement",
         "docstring": """
@@ -2136,20 +1892,6 @@ EMEDF = {
         """,
         "args": {
             "achievement_id": INT,
-        },
-    },
-    # TODO: Could not find [2003, 29]: Change World Tendency
-    (2003, 30): {
-        "alias": "SetVagrantSpawningState",
-        "docstring": """
-            Note inverted bool.
-        """,
-        "args": {
-            "spawning_disabled": BOOL,
-        },
-        "partials": {
-            "EnableVagrantSpawning": dict(spawning_disabled=False),  # Note reversed bool.
-            "DisableVagrantSpawning": dict(spawning_disabled=True),
         },
     },
     (2003, 31): {
@@ -2183,28 +1925,6 @@ EMEDF = {
             "bit_count": INT,
         },
     },
-    (2003, 33): {
-        "alias": "SetNextSnugglyTrade",
-        "docstring": """
-            Sets the flag for the next drop based on the item you deposit into the nest.
-        """,
-        "args": {
-            "flag": FLAG,
-        },
-    },
-    (2003, 34): {
-        "alias": "SnugglyItemDrop",
-        "docstring": """
-            Makes Snuggly drop an item. There are complex limitations to this in the engine, so be careful. (The list of
-            available Snuggly flags is a hard-coded limit, for example.)
-        """,
-        "args": {
-            "item_lot": NO_DEFAULT(ItemLotTyping),
-            "region": NO_DEFAULT(RegionTyping),
-            "flag": FLAG,
-            "collision": NO_DEFAULT(CollisionTyping),
-        },
-    },
     (2003, 35): {
         "alias": "MoveRemains",
         "docstring": """
@@ -2225,26 +1945,6 @@ EMEDF = {
         "args": {
             "item_lot_param_id": INT,
         },
-    },
-    (2003, 37): {
-        "alias": "ArenaRankingRequest1v1",
-        "docstring": "TODO",
-        "args": {},
-    },
-    (2003, 38): {
-        "alias": "ArenaRankingRequest2v2",
-        "docstring": "TODO",
-        "args": {},
-    },
-    (2003, 39): {
-        "alias": "ArenaRankingRequestFFA",
-        "docstring": "TODO",
-        "args": {},
-    },
-    (2003, 40): {
-        "alias": "ArenaExitRequest",
-        "docstring": "TODO",
-        "args": {},
     },
     (2003, 41): {
         "alias": "ActivateKillplaneForModel",
@@ -2585,6 +2285,9 @@ EMEDF = {
             "npc_part_id": INT,
             "material_sfx_id": INT,
             "material_vfx_id": INT,
+            "unk_16_20": INT,
+            "unk_20_24": INT,
+            "unk_24_28": INT,
         },
     },
     (2004, 25): {
@@ -2741,22 +2444,6 @@ EMEDF = {
             "state": BOOL | HIDE_NAME,
         },
     },
-    (2004, 36): {
-        "alias": "HellkiteBreathControl",
-        "docstring": """
-            I don't recommend you mess with this. It seems to be used to create the fire VFX and damaging effect when 
-            the Hellkite breathes fire on the bridge, with (otherwise invisible) object model o1060. It may simply 
-            trigger a certain behavior param ID.
-
-            Unclear whether the animation applies to the character or object (which is probably an invisible "burning" 
-            plane).
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "obj": NO_DEFAULT(ObjectTyping),
-            "animation_id": INT,
-        },
-    },
     (2004, 37): {
         "alias": "DropMandatoryTreasure",
         "docstring": """
@@ -2765,15 +2452,6 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-        },
-    },
-    (2004, 38): {
-        "alias": "BetrayCurrentCovenant",
-        "docstring": """
-            Dummy argument does nothing.
-        """,
-        "args": {
-            "dummy": INT | {"default": 0},
         },
     },
     (2004, 39): {
@@ -2864,30 +2542,6 @@ EMEDF = {
                 "type": TeamType,
                 "default": None,
             },
-        },
-    },
-    (2004, 45): {
-        "alias": "HumanityRegistration",
-        "docstring": """
-            I believe this designates the first event flag in a range of eight, which tracks how much humanity an NPC 
-            has for draining with Dark Hand. These flags are all in the 8000 range, and tightly packed, so you'll need 
-            to find your own range if you want to replicate this.
-
-            I can confirm that NOT doing this for a new NPC means you can't drain any humanity from them, rather than 
-            being able to drain unlimited humanity.
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "event_flag": FLAG,
-        },
-    },
-    (2004, 46): {
-        "alias": "IncrementPvPSin",
-        "docstring": """
-            Normally only happens when you kill an NPC.
-        """,
-        "args": {
-            "dummy": INT | {"default": 0},
         },
     },
     (2004, 47): {
@@ -3032,26 +2686,6 @@ EMEDF = {
             "radius": FLOAT,
             "life": FLOAT,
             "repetition_time": FLOAT,
-        },
-    },
-    (2005, 10): {
-        "alias": "RegisterStatue",
-        "docstring": """
-            Creates a petrified or crystallized statue. I believe this is so it can be seen by other players online.
-        """,
-        "args": {
-            "obj": NO_DEFAULT(ObjectTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "statue_type": {
-                "type": StatueType,
-                "default": None,
-            },
-        },
-        "evs_args": {
-            "obj": {},
-            "game_map": GAME_MAP_EVS,
-            "statue_type": {},
         },
     },
     (2005, 11): {
@@ -3202,8 +2836,8 @@ EMEDF = {
             },
             "anchor_entity": {
                 "type": CoordEntityTyping,
-                "default": -1,
-                "internal_default": -1,
+                "default": 2 ** 32 - 1,
+                "internal_default": 2 ** 32 - 1,
             },
             "display_distance": {
                 "type": float,
@@ -3224,7 +2858,7 @@ EMEDF = {
             Display a pre-rendered banner. You'll have to change the textures (in menu_local.tpf) to change them.
         """,
         "args": {
-            "banner_type": NO_DEFAULT(BannerType) | HIDE_NAME,
+            "banner_type": NO_DEFAULT(BannerType) | HIDE_NAME | {"internal_default": 13},
         },
     },
     (2007, 3): {
@@ -3249,39 +2883,10 @@ EMEDF = {
         """,
         "args": {
             "text": NO_DEFAULT(EventTextTyping) | HIDE_NAME,
-            "display_location_index": INT,
-        },
-    },
-    (2007, 5): {
-        "alias": "ArenaSetNametag1",
-        "docstring": "TODO",
-        "args": {
-            "player_id": INT,
-        },
-    },
-    (2007, 6): {
-        "alias": "ArenaSetNametag2",
-        "docstring": "TODO",
-        "args": {
-            "player_id": INT,
-        },
-    },
-    (2007, 7): {
-        "alias": "ArenaSetNametag3",
-        "docstring": "TODO",
-        "args": {
-            "player_id": INT,
-        },
-    },
-    (2007, 8): {
-        "alias": "ArenaSetNametag4",
-        "docstring": "TODO",
-        "args": {
-            "player_id": INT,
         },
     },
     (2007, 9): {
-        "alias": "DisplayArenaDissolutionMessage",
+        "alias": "UnknownText_2007_9",
         "docstring": "TODO",
         "args": {
             "text": NO_DEFAULT(EventTextTyping),
@@ -3325,15 +2930,13 @@ EMEDF = {
         "alias": "SetLockedCameraSlot",
         "docstring": """
             Switch between one of two camera slots associated with the player's current collision in the MSB.
+            
+            Applies to area and block, not specific map CC/DD values.
         """,
         "args": {
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
+            "area_id": INT,
+            "block_id": INT,
             "camera_slot": INT,
-        },
-        "evs_args": {
-            "game_map": GAME_MAP_EVS,
-            "camera_slot": {},
         },
     },
     (2009, 0): {
@@ -3348,26 +2951,8 @@ EMEDF = {
             "obj": NO_DEFAULT(ObjectTyping),
         },
     },
-    (2009, 1): {
-        "alias": "InitializeWanderingDemon",
-        "docstring": "Unused. Probably a Demon's Souls remnant.",
-        "args": {
-            "flag": FLAG,
-            "demon_entity": NO_DEFAULT(CharacterTyping),  # guess
-            "appearance_flag": FLAG,
-        },
-    },
-    (2009, 2): {
-        "alias": "RegisterWanderingDemon",
-        "docstring": "Unused. Probably a Demon's Souls remnant.",
-        "args": {
-            "flag": FLAG,
-            "demon_entity": NO_DEFAULT(CharacterTyping),  # guess
-            "unknown_entity": NO_DEFAULT(CoordEntityTyping),  # guess
-        },
-    },
     (2009, 3): {
-        "alias": "RegisterBonfire",
+        "alias": "RegisterGrace",
         "docstring": """
             Register a bonfire, which creates the flame VFX and allows you to interact with it (via the MSB entity with 
             ID (obj + 1000).
@@ -3384,17 +2969,18 @@ EMEDF = {
             register.
         """,
         "args": {
-            "bonfire_flag": FLAG,
+            "grace_flag": FLAG,
             "obj": NO_DEFAULT(ObjectTyping),
             "reaction_distance": {
                 "type": float,
-                "default": 2.0,
+                "default": 0.0,
             },
             "reaction_angle": {
                 "type": float,
-                "default": 180.0,
+                "default": 0.0,
             },
             "initial_kindle_level": INT | {"default": 0},
+            "unknown": FLOAT | {"default": 0},  # TODO: often 5.0; maybe new "default distance"
         },
     },
     (2009, 4): {
@@ -3407,36 +2993,11 @@ EMEDF = {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
         },
     },
-    (2009, 5): {
-        "alias": "RegisterHealingFountain",
-        "docstring": """
-            No idea what this is. Apparently DS1 also has a version of this with less arguments.
-        """,
-        "args": {
-            "flag": FLAG,
-            "obj": NO_DEFAULT(ObjectTyping),
-            "reaction_distance": FLOAT,
-            "reaction_angle": FLOAT,
-            "initial_sword_number": INT,
-            "sword_level": INT,
-        },
-    },
     (2009, 6): {
         "alias": "NotifyBossBattleStart",
         "docstring": "Sends the message to all summons that the host has challenged the boss.",
         "args": {
             "dummy": INT | {"default": 0},
-        },
-    },
-    (2010, 1): {
-        "alias": "SetBackgroundMusic",
-        "docstring": "TODO",
-        "args": {
-            "state": BOOL | HIDE_NAME,
-            "music_slot": INT,
-            "entity": NO_DEFAULT(CoordEntityTyping),
-            "sound_type": NO_DEFAULT(SoundType),
-            "sound_id": INT,
         },
     },
     (2010, 2): {
@@ -3454,20 +3015,6 @@ EMEDF = {
             "anchor_entity": {},
             "sound_id": {},
             "sound_type": {},
-        },
-    },
-    (2010, 3): {
-        "alias": "SetSoundEventState",
-        "docstring": """
-            The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
-        """,
-        "args": {
-            "sound_id": INT,
-            "state": BOOL | HIDE_NAME,
-        },
-        "partials": {
-            "EnableSoundEvent": dict(state=True),
-            "DisableSoundEvent": dict(state=False),
         },
     },
     (2011, 1): {
@@ -3514,6 +3061,28 @@ EMEDF = {
             "DisableMapPiece": dict(state=False),
         },
     },
+
+    # NEW
+
+    (0, 2): {
+        "alias": "IfUnsignedComparison",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "comparison_type": NO_DEFAULT(ComparisonType),
+            "left": INT,
+            "right": INT,
+        },
+        "partials": {
+            "IfUnsignedEqual": dict(comparison_type=ComparisonType.Equal),
+            "IfUnsignedNotEqual": dict(comparison_type=ComparisonType.NotEqual),
+            "IfUnsignedGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
+            "IfUnsignedLessThan": dict(comparison_type=ComparisonType.LessThan),
+            "IfUnsignedGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
+            "IfUnsignedLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
+        },
+    },
+
     (3, 23): {
         "alias": "IfAttackedWithDamageType",
         "docstring": "TODO",
@@ -3537,7 +3106,7 @@ EMEDF = {
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
             "action_button_id": INT | {"internal_default": -1},
-            "entity": NO_DEFAULT(CoordEntityTyping) | {"internal_default": -1},
+            "entity": NO_DEFAULT(CoordEntityTyping) | {"internal_default": 2 ** 32 - 1},
         },
     },
 
@@ -3576,13 +3145,6 @@ EMEDF = {
             "IfMapNotInCeremony": dict(state=False),
         },
     },
-    (3, 29): {
-        "alias": "IfMultiplayerNetworkPenalized",
-        "docstring": "TODO",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-        },
-    },
     (3, 30): {
         "alias": "IfInsideMapTile",
         "docstring": """
@@ -3611,11 +3173,12 @@ EMEDF = {
         },
     },
     (3, 32): {
-        "alias": "IfHollowArenaMatchReadyState",
+        "alias": "IfUnknown_3_32",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "is_ready": BOOL,
+            "unk_1_2": INT,
+            "unk_4_8": INT,
         },
     },
     (3, 33): {
@@ -3623,30 +3186,30 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "unknown1": INT,
-            "unknown2": BOOL,
+            "unk_4_8": INT,
+            "unk_8_9": BOOL,
         },
     },
     (3, 34): {
-        "alias": "IfHollowArenaSoloScoreComparison",
-        "docstring": "Unknown fourth argument.",
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
-            "unknown": INT,
-        },
-    },
-    (3, 35): {
-        "alias": "IfHollowArenaTeamResults",
+        "alias": "IfUnknownCondition_34",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "result": NO_DEFAULT(HollowArenaResult),
+            "unk_4_8": INT,
+            "unk_8_12": INT,
+        },
+    },
+    (3, 35): {
+        "alias": "IfUnknownCondition_35",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "unk_1_2": INT,
+            "unk_4_8": INT,
         },
     },
     (3, 37): {
-        "alias": "IfUnknownFlagCheck",
+        "alias": "IfUnknownFlagCheck_37",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -3655,7 +3218,7 @@ EMEDF = {
         },
     },
     (3, 38): {
-        "alias": "IfSteamDisconnected",
+        "alias": "IfSteamConnectionState",
         "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
@@ -3692,15 +3255,16 @@ EMEDF = {
             "IfCharacterDrawGroupDisabled": dict(state=False),
         },
     },
-    (4, 26): {
-        "alias": "IfPlayerRemainingYoelLevelComparison",
-        "docstring": """
-            Tests the number of remaining levels available from Yoel, I presume.
-        """,
+    (4, 19): {
+        "alias": "IfUnknownCharacterCondition_19",
+        "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_8_12": INT,
+            "unk_12_13": INT,
+            "unk_13_14": INT,
+            "unk_16_20": FLOAT,
         },
     },
     (4, 27): {
@@ -3722,23 +3286,73 @@ EMEDF = {
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
-            "unknown1": INT,
-            "unknown2": INT,
+            "unk_8_12": INT,
+            "unk_12_16": INT,
         },
     },
-    (5, 9): {
-        "alias": "IfObjectBurnState",
-        "docstring": """
-            This test is used exactly once, in the High Wall of Lothric, where the 'comparison_type' is GreaterThan. I 
-            have no idea what that argument does. However, it's possible that 'state' isn't actually a bool, but some 
-            measure of the intensity of the burn state, because the event it's used in strongly suggests that a fire 
-            effect is created as long as the burn state is 'greater than zero'.
-        """,
+    (4, 30): {
+        "alias": "IfUnknownCharacterCondition_30",
+        "docstring": "TODO",
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "npc_part_id": INT,
+            "unk_12_16": INT,
+            "unk_16_20": INT,
+        },
+    },
+    (4, 31): {
+        "alias": "IfUnknownCharacterCondition_31",
+        "docstring": "Possibly still 'IfCharacterInvadeType'.",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_4_8": INT,
+            "unk_8_12": FLOAT,  # TODO: usually -1
+        },
+    },
+    (4, 32): {
+        "alias": "IfCharacterMountState",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "is_mounted": BOOL,
+        },
+        "partials": {
+            "IfCharacterMounted": dict(is_mounted=True),
+            "IfCharacterNotMounted": dict(is_mounted=False),
+        },
+    },
+    (4, 34): {
+        "alias": "IfUnknownCharacterCondition_34",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_8_12": INT,
+            "unk_12_16": INT,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_FLOAT,
+        },
+    },
+    (4, 35): {
+        "alias": "IfUnknownCharacterCondition_35",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_8_12": INT,
+        },
+    },
+
+    (5, 6): {
+        "alias": "IfUnknownObjectCondition_6",
+        "docstring": "TODO",
+        "args": {
+            "condition": CONDITION_GROUP | HIDE_NAME,
+            "unk_4_5": INT,
             "obj": NO_DEFAULT(ObjectTyping),
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "state": BOOL,
             "target_comparison_type": TARGET_COMPARISON_TYPE,
             "target_count": TARGET_COUNT_FLOAT,
         },
@@ -3756,20 +3370,6 @@ EMEDF = {
         "partials": {
             "IfObjectBackreadEnabled": dict(state=True),
             "IfObjectBackreadDisabled": dict(state=False),
-        },
-    },
-    (5, 11): {
-        "alias": "IfObjectBackreadState_Alternate",
-        "docstring": """
-            The fact they added this suggests that the 'alternate' version that already existed for characters is 
-            actually useful in some way (and they did use it in DS1).
-        """,
-        "args": {
-            "condition": CONDITION_GROUP | HIDE_NAME,
-            "obj": NO_DEFAULT(ObjectTyping),
-            "state": BOOL,
-            "target_comparison_type": TARGET_COMPARISON_TYPE,
-            "target_count": TARGET_COUNT_FLOAT,
         },
     },
 
@@ -3898,14 +3498,70 @@ EMEDF = {
             "GotoIfFinishedConditionFalse": dict(required_state=False),
         }
     },
-    (1001, 4): {
-        "alias": "WaitHollowArenaHalftime",
-        "docstring": """
-            'StayParam lookup'.
-        """,
+    (1000, 108): {
+        "alias": "GotoIfUnsignedComparison",
+        "docstring": "TODO",
         "args": {
-            "match_type": NO_DEFAULT(HollowArenaMatchType),
-            "is_second_half": BOOL,
+            "label": LABEL,
+            "comparison_type": NO_DEFAULT(ComparisonType),
+            "left": INT,
+            "right": INT,
+        },
+        "partials": {
+            "GotoIfUnsignedEqual": dict(comparison_type=ComparisonType.Equal),
+            "GotoIfUnsignedNotEqual": dict(comparison_type=ComparisonType.NotEqual),
+            "GotoIfUnsignedGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
+            "GotoIfUnsignedLessThan": dict(comparison_type=ComparisonType.LessThan),
+            "GotoIfUnsignedGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
+            "GotoIfUnsignedLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
+        },
+    },
+    (1001, 5): {
+        "alias": "WaitUntilRandomTimeOfDay",
+        "docstring": "Pause event script until a random time of day chosen between the given earliest/latest times.",
+        "args": {
+            "earliest_hour": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["earliest"][0],
+            },
+            "earliest_minute": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["earliest"][1],
+            },
+            "earliest_second": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["earliest"][2],
+            },
+            "latest_hour": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["latest"][0],
+            },
+            "latest_minute": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["latest"][1],
+            },
+            "latest_second": {
+                "type": int,
+                "default": None,
+                "from_evs": lambda args: args["latest"][2],
+            },
+        },
+        "evs_args": {
+            "earliest": {
+                "type": tuple,
+                "default": None,
+                "to_evs": lambda args: (args["earliest_hour"], args["earliest_minute"], args["earliest_second"]),
+            },
+            "latest": {
+                "type": tuple,
+                "default": None,
+                "to_evs": lambda args: (args["latest_hour"], args["latest_minute"], args["latest_second"]),
+            },
         },
     },
     (1001, 6): {
@@ -4013,27 +3669,19 @@ EMEDF = {
             "RestartIfCoopClientCountComparison": dict(event_return_type=EventReturnType.Restart),
         },
     },
-    (1003, 11): {
-        "alias": "GotoIfCharacterSpecialEffectState",
-        "docstring": """
-            Note that 'target_count' is now an integer again...
-        """,
+    (1003, 12): {
+        "alias": "SkipLinesIfPlayerOwnWorldState",
+        "docstring": "TODO",
         "args": {
-            "label": LABEL,
-            "character": NO_DEFAULT(CharacterTyping),
-            "special_effect": INT,
-            "state": BOOL,
-            "target_comparison_type": TARGET_COMPARISON_TYPE,
-            "target_count": TARGET_COUNT_INT,
+            "line_count": INT | HIDE_NAME,
+            "not_in_own_world": BOOL,
         },
         "partials": {
-            "GotoIfPlayerHasSpecialEffect": dict(character=PLAYER, state=True),
-            "GotoIfPlayerDoesNotHaveSpecialEffect": dict(character=PLAYER, state=False),
-            "GotoIfCharacterHasSpecialEffect": dict(state=True),
-            "GotoIfCharacterDoesNotHaveSpecialEffect": dict(state=False),
+            "SkipLinesIfPlayerInOwnWorld": dict(not_in_own_world=False),
+            "SkipLinesIfPlayerNotInOwnWorld": dict(not_in_own_world=True),
         },
     },
-    (1003, 12): {
+    (1003, 13): {
         "alias": "GotoIfPlayerOwnWorldState",
         "docstring": "TODO",
         "args": {
@@ -4045,7 +3693,7 @@ EMEDF = {
             "GotoIfPlayerNotInOwnWorld": dict(not_in_own_world=True),
         },
     },
-    (1003, 13): {
+    (1003, 14): {
         "alias": "ReturnIfPlayerOwnWorldState",
         "docstring": "TODO",
         "args": {
@@ -4057,46 +3705,6 @@ EMEDF = {
             "EndIfPlayerNotInOwnWorld": dict(event_return_type=EventReturnType.End, not_in_own_world=True),
             "RestartIfPlayerInOwnWorld": dict(event_return_type=EventReturnType.Restart, not_in_own_world=False),
             "RestartIfPlayerNotInOwnWorld": dict(event_return_type=EventReturnType.Restart, not_in_own_world=True),
-        },
-    },
-    (1003, 14): {
-        "alias": "SkipLinesIfClientTypeCountComparison",
-        "docstring": """
-            Value from 0 to 4.
-        """,
-        "args": {
-            "skip_lines": INT,
-            "client_type": NO_DEFAULT(ClientType),
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
-        },
-    },
-    (1003, 15): {
-        "alias": "GotoIfClientTypeCountComparison",
-        "docstring": """
-            Value from 0 to 4.
-        """,
-        "args": {
-            "label": LABEL,
-            "client_type": NO_DEFAULT(ClientType),
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
-        },
-    },
-    (1003, 16): {
-        "alias": "ReturnIfClientTypeCountComparison",
-        "docstring": """
-            Value from 0 to 4.
-        """,
-        "args": {
-            "event_return_type": NO_DEFAULT(EventReturnType),
-            "client_type": NO_DEFAULT(ClientType),
-            "comparison_type": NO_DEFAULT(ComparisonType),
-            "value": INT,
-        },
-        "partials": {
-            "EndIfClientTypeCountComparison": dict(event_return_type=EventReturnType.End),
-            "RestartIfClientTypeCountComparison": dict(event_return_type=EventReturnType.Restart),
         },
     },
     (1003, 101): {
@@ -4186,6 +3794,8 @@ EMEDF = {
             "state": BOOL,
             "area_id": AREA_ID,
             "block_id": BLOCK_ID,
+            "cc_id": CC_ID,
+            "dd_id": DD_ID,
         },
         "evs_args": {
             "label": {},
@@ -4204,55 +3814,6 @@ EMEDF = {
             "label": LABEL,
             "comparison_type": NO_DEFAULT(ComparisonType),
             "value": INT,
-        },
-    },
-    # TODO: up to (1003, 111) in printout
-    (1003, 111): {
-        "alias": "ReturnIfCharacterSpecialEffectState",
-        "docstring": "TODO",
-        "args": {
-            "event_return_type": NO_DEFAULT(EventReturnType),
-            "character": NO_DEFAULT(CharacterTyping),
-            "special_effect": INT,
-            "state": BOOL,
-            "target_comparison_type": TARGET_COMPARISON_TYPE,
-            "target_count": TARGET_COUNT_INT,
-        },
-        "partials": {
-            "EndIfPlayerHasSpecialEffect": dict(
-                event_return_type=EventReturnType.End, character=PLAYER, state=True
-            ),
-            "EndIfPlayerDoesNotHaveSpecialEffect": dict(
-                event_return_type=EventReturnType.End, character=PLAYER, state=False
-            ),
-            "RestartIfPlayerHasSpecialEffect": dict(
-                event_return_type=EventReturnType.Restart, character=PLAYER, state=True
-            ),
-            "RestartIfPlayerDoesNotHaveSpecialEffect": dict(
-                event_return_type=EventReturnType.Restart, character=PLAYER, state=False
-            ),
-            "EndIfCharacterHasSpecialEffect": dict(event_return_type=EventReturnType.End, state=True),
-            "EndIfCharacterDoesNotHaveSpecialEffect": dict(event_return_type=EventReturnType.End, state=False),
-            "RestartIfCharacterHasSpecialEffect": dict(event_return_type=EventReturnType.Restart, state=True),
-            "RestartIfCharacterDoesNotHaveSpecialEffect": dict(event_return_type=EventReturnType.Restart, state=False),
-        },
-    },
-    (1003, 112): {
-        "alias": "SkipLinesIfCharacterSpecialEffectState",
-        "docstring": "TODO",
-        "args": {
-            "line_count": INT,
-            "character": NO_DEFAULT(CharacterTyping),
-            "special_effect": SPECIAL_EFFECT,
-            "state": BOOL,
-            "target_comparison_type": TARGET_COMPARISON_TYPE,
-            "target_count": TARGET_COUNT_INT,
-        },
-        "partials": {
-            "SkipLinesIfPlayerHasSpecialEffect": dict(character=PLAYER, state=True),
-            "SkipLinesIfPlayerDoesNotHaveSpecialEffect": dict(character=PLAYER, state=False),
-            "SkipLinesIfCharacterHasSpecialEffect": dict(state=True),
-            "SkipLinesIfCharacterDoesNotHaveSpecialEffect": dict(state=False),
         },
     },
     (1003, 200): {
@@ -4320,12 +3881,135 @@ EMEDF = {
             "SkipLinesIfCharacterOutsideRegion": dict(state=False),
         },
     },
-    (1003, 211): {
-        "alias": "GotoIfHollowArenaMatchType",
+    (1003, 203): {
+        "alias": "SkipLinesIfUnknown_203",
+        "docstring": "TODO",
+        "args": {
+            "line_count": INT,
+            "state": BOOL,
+            "unk_2_3": INT,
+            "unk_3_2": INT,
+            "unk_4_3": INT,
+            "unk_5_4": INT,
+            "unk_6_5": INT,
+        },
+    },
+    (1003, 204): {
+        "alias": "GotoIfUnknown_204",
         "docstring": "TODO",
         "args": {
             "label": LABEL,
-            "match_type": NO_DEFAULT(HollowArenaMatchType),
+            "state": BOOL,
+            "unk_2_3": INT,
+            "unk_3_2": INT,
+            "unk_4_3": INT,
+            "unk_5_4": INT,
+            "unk_6_5": INT,
+        },
+    },
+    (1003, 206): {
+        "alias": "SkipOrGotoIfUnknown_206",
+        "docstring": "TODO",
+        "args": {
+            "label_or_goto": INT,  # TODO: figure out
+            "unk_4_8": INT,
+        },
+    },
+    (1003, 208): {
+        "alias": "ReturnIfUnknown_208",
+        "docstring": "TODO",
+        "args": {
+            "return_type": EVENT_RETURN_TYPE,
+            "state": BOOL,
+            "unk_2_3": INT,
+            "unk_3_2": INT,
+            "unk_4_3": INT,
+            "unk_5_4": INT,
+            "unk_6_5": INT,
+        },
+    },
+    (1004, 0): {
+        "alias": "SkipLinesIfCharacterSpecialEffectState",
+        "docstring": "Note that the same instruction appeared in DS3 as 1003[112].",
+        "args": {
+            "line_count": INT,
+            "character": NO_DEFAULT(CharacterTyping),
+            "special_effect": SPECIAL_EFFECT,
+            "state": BOOL,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_INT,
+        },
+        "partials": {
+            "SkipLinesIfPlayerHasSpecialEffect": dict(character=PLAYER, state=True),
+            "SkipLinesIfPlayerDoesNotHaveSpecialEffect": dict(character=PLAYER, state=False),
+            "SkipLinesIfCharacterHasSpecialEffect": dict(state=True),
+            "SkipLinesIfCharacterDoesNotHaveSpecialEffect": dict(state=False),
+        },
+    },
+    (1004, 1): {
+        "alias": "GotoIfCharacterSpecialEffectState",
+        "docstring": "Note that the same instruction appeared in DS3 as 1003[11].",
+        "args": {
+            "label": LABEL,
+            "character": NO_DEFAULT(CharacterTyping),
+            "special_effect": INT,
+            "state": BOOL,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_INT,
+        },
+        "partials": {
+            "GotoIfPlayerHasSpecialEffect": dict(character=PLAYER, state=True),
+            "GotoIfPlayerDoesNotHaveSpecialEffect": dict(character=PLAYER, state=False),
+            "GotoIfCharacterHasSpecialEffect": dict(state=True),
+            "GotoIfCharacterDoesNotHaveSpecialEffect": dict(state=False),
+        },
+    },
+    (1004, 2): {
+        "alias": "ReturnIfCharacterSpecialEffectState",
+        "docstring": "Note that the same instruction appeared in DS3 as 1003[111].",
+        "args": {
+            "event_return_type": NO_DEFAULT(EventReturnType),
+            "character": NO_DEFAULT(CharacterTyping),
+            "special_effect": INT,
+            "state": BOOL,
+            "target_comparison_type": TARGET_COMPARISON_TYPE,
+            "target_count": TARGET_COUNT_INT,
+        },
+        "partials": {
+            "EndIfPlayerHasSpecialEffect": dict(
+                event_return_type=EventReturnType.End, character=PLAYER, state=True
+            ),
+            "EndIfPlayerDoesNotHaveSpecialEffect": dict(
+                event_return_type=EventReturnType.End, character=PLAYER, state=False
+            ),
+            "RestartIfPlayerHasSpecialEffect": dict(
+                event_return_type=EventReturnType.Restart, character=PLAYER, state=True
+            ),
+            "RestartIfPlayerDoesNotHaveSpecialEffect": dict(
+                event_return_type=EventReturnType.Restart, character=PLAYER, state=False
+            ),
+            "EndIfCharacterHasSpecialEffect": dict(event_return_type=EventReturnType.End, state=True),
+            "EndIfCharacterDoesNotHaveSpecialEffect": dict(event_return_type=EventReturnType.End, state=False),
+            "RestartIfCharacterHasSpecialEffect": dict(event_return_type=EventReturnType.Restart, state=True),
+            "RestartIfCharacterDoesNotHaveSpecialEffect": dict(event_return_type=EventReturnType.Restart, state=False),
+        },
+    },
+    (1004, 4): {
+        "alias": "Unknown_1004_04",
+        "docstring": "Probably 'SkipLinesIfCharacterSomething'.",
+        "args": {
+            "line_count": INT,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_8_12": INT,
+        },
+    },
+    (1004, 5): {
+        "alias": "GotoIfUnknown_1004_05",
+        "docstring": "TODO",
+        "args": {
+            "label": LABEL,
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_8_12": BOOL,
         },
     },
     (1005, 1): {
@@ -4367,8 +4051,8 @@ EMEDF = {
         """,
         "args": {
             "label": LABEL,
-            "obj": NO_DEFAULT(ObjectTyping),
             "state": BOOL,
+            "obj": NO_DEFAULT(ObjectTyping),
             "target_comparison_type": TARGET_COMPARISON_TYPE,
             "target_count": TARGET_COUNT_FLOAT,
         },
@@ -4505,86 +4189,6 @@ EMEDF = {
             "unknown1": INT,
         },
     },
-    (2002, 6): {
-        "alias": "PlayCutsceneAndMovePlayerAndSetTimePeriod",
-        "docstring": """
-            Warp a particular player to a region and set the time period. I assume that this must be a map that is
-            already loaded, like in DS1, but possibly not.
-    
-            It's used only twice: to play the cutscene when you first reach Cathedral Ward (time period 1) and when you 
-            examine Laurence's skull after defeating Vicar Amelia (time period 2). It's NOT used after you defeat Rom, 
-            when the blood moon begins. The time period ID may in fact be unused.
-        """,
-        "args": {
-            "cutscene": INT | {"internal_default": -1},
-            "cutscene_flags": NO_DEFAULT(CutsceneFlags),
-            "move_to_region": NO_DEFAULT(RegionTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "player_id": INT | {"internal_default": -1},
-            "time_period_id": INT,
-        },
-        "evs_args": {
-            "cutscene": {},
-            "cutscene_flags": {},
-            "move_to_region": {},
-            "game_map": GAME_MAP_EVS,
-            "player_id": {},
-            "time_period_id": {},
-        },
-    },
-    (2002, 7): {
-        "alias": "PlayCutsceneAndSetTimePeriod",
-        "docstring": """
-            Probably used when you examine Laurence's skull, etc.
-        """,
-        "args": {
-            "cutscene": INT | {"internal_default": -1},
-            "cutscene_flags": NO_DEFAULT(CutsceneFlags),
-            "player_id": INT | {"internal_default": -1},
-            "time_period_id": INT,
-        },
-    },
-    (2002, 8): {
-        "alias": "PlayCutsceneAndMovePlayer_Dummy",
-        "docstring": "Likely not used, doesn't even take a cutscene ID argument.",
-        "args": {
-            "move_to_region": NO_DEFAULT(RegionTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-        },
-        "evs_args": {
-            "move_to_region": {},
-            "game_map": GAME_MAP_EVS,
-        },
-    },
-    (2002, 9): {
-        "alias": "PlayCutsceneAndMovePlayerAndSetMapCeremony",
-        "docstring": """
-            I assume that this must be a map that is already loaded, like in DS1, but possibly not.
-
-            Contains an unknown argument that may always be zero. TODO: Check.
-        """,
-        "args": {
-            "cutscene": INT | {"internal_default": -1},
-            "cutscene_flags": CUTSCENE_FLAGS,
-            "ceremony_id": INT | {"internal_default": -1},
-            "unknown": INT,
-            "move_to_region": NO_DEFAULT(RegionTyping),
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "player_id": INT | {"internal_default": -1},
-        },
-        "evs_args": {
-            "cutscene": {},
-            "cutscene_flags": {},
-            "ceremony_id": {},
-            "unknown": {},
-            "move_to_region": {},
-            "game_map": GAME_MAP_EVS,
-            "player_id": {},
-        },
-    },
     (2002, 10): {
         "alias": "UnknownCutscene_10",
         "docstring": "TODO",
@@ -4594,7 +4198,7 @@ EMEDF = {
             "player_id": INT | {"internal_default": -1},
             "hours": INT,
             "unknown1": INT,
-            "unknown2": INT,
+            "unknown2": FLOAT,
             "unknown3": INT,
             "unknown4": INT,
             "unknown5": INT,
@@ -4606,14 +4210,11 @@ EMEDF = {
         "args": {
             "cutscene_id": INT,
             "cutscene_flags": CUTSCENE_FLAGS,
-            "unknown1": INT,
-            "move_to_region": NO_DEFAULT(RegionTyping),
+            "move_to_region": NO_DEFAULT(RegionTyping),  # TODO: can be 0
+            "map_base_id": INT,  # TODO: e.g., 11050000, a 32-bit encoding of m11_05_00_00 (or 0)
             "player_id": INT | {"internal_default": -1},
-            "unknown2": INT,
-            "unknown3": INT,
-            "unknown4": INT,
-            "unknown5": INT,
-            "unknown6": INT,
+            "unknown2": INT,  # TODO: either 0 or 13000
+            "unknown3": INT,  # TODO: probably bool, either 1 (with 13000 above) or 0
         },
     },
     (2002, 12): {
@@ -4625,24 +4226,25 @@ EMEDF = {
             "respawn_point": INT,
             "move_to_region": NO_DEFAULT(RegionTyping),
             "player_id": INT | {"internal_default": -1},
-            "unknown2": INT,
-            "unknown3": INT,
-            "unknown4": INT,
-            "unknown5": INT,
-            "unknown6": INT,
-            "unknown7": INT,
-            "unknown8": INT,
-            "unknown9": INT,
+            "unk_20_24": INT,
+            "unk_24_25": INT,
+            "unk_25_26": INT,
+            "unk_26_27": INT,
+            "unk_28_32": FLOAT,  # TODO: default -1.0, or can be 200.0 or 300.0
+            "unk_32_36": INT,  # TODO: default 0
         },
     },
-    (2003, 27): {
-        "alias": "Unknown_2003_27",
-        "docstring": """
-            No information. Used exactly once, after the cutscene that played when Ludwig's first phase was defeated 
-            with the Old Hunters DLC demo flag enabled. Unknown effect. Maybe just terminated the whole DLC demo.
-        """,
+    (2002, 13): {
+        "alias": "UnknownCutscene_13",
+        "docstring": "TODO",
         "args": {
-            "arg1": INT,
+            "cutscene_id": INT,
+            "cutscene_flags": CUTSCENE_FLAGS,
+            "respawn_point": INT,
+            "move_to_region": NO_DEFAULT(RegionTyping),
+            "player_id": INT | {"internal_default": -1},
+            "unk_16_20": INT,
+            "unk_20_24": INT,
         },
     },
     (2003, 41): {
@@ -4684,79 +4286,23 @@ EMEDF = {
             "bit_count": INT,
         },
     },
-    (2003, 44): {
-        "alias": "SetDirectionDisplayState",
-        "docstring": """
-            Not sure what this is.
-        """,
-        "args": {
-            "state": BOOL,
-        },
-        "partials": {
-            "EnableDirectionDisplayState": dict(state=True),
-            "DisableDirectionDisplayState": dict(state=False),
-        },
-    },
-    (2003, 45): {
-        "alias": "SetMapHitGridCorrespondence",
-        "docstring": "TODO",
-        "args": {
-            "collision": NO_DEFAULT(CollisionTyping),
-            "level": INT,
-            "grid_coord_x": INT,
-            "grid_coord_y": INT,
-            "state": BOOL,
-        },
-        "partials": {
-            "EnableMapHitGridCorrespondence": dict(state=True),
-            "DisableMapHitGridCorrespondence": dict(state=False),
-        },
-    },
-    (2003, 46): {
-        "alias": "SetMapContentImageDisplayState",
-        "docstring": "TODO",
-        "args": {
-            "content_image_part_id": INT,
-            "state": BOOL,
-        },
-    },
-    (2003, 47): {
-        "alias": "SetMapBoundariesDisplay",
-        "docstring": "TODO",
-        "args": {
-            "hierarchy": INT,
-            "grid_coord_x": INT,
-            "grid_coord_y": INT,
-            "state": BOOL,
-        },
-    },
-    (2003, 48): {
-        "alias": "SetAreaWind",
-        "docstring": "TODO",
-        "args": {
-            "region": NO_DEFAULT(RegionTyping),
-            "state": BOOL,
-            "duration": FLOAT,
-            "wind_parameter_id": INT,
-        },
-    },
     (2003, 49): {
         "alias": "WarpPlayerToRespawnPoint",
-        "docstring": "TODO",
+        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
         "args": {
             "respawn_point_id": INT | HIDE_NAME,
         },
     },
     (2003, 50): {
         "alias": "StartEnemySpawner",
-        "docstring": "TODO",
+        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
         "args": {
             "spawner_id": INT | {"internal_default": -1},
         },
     },
     (2003, 51): {
         "alias": "SummonNPC",
-        "docstring": "TODO",
+        "docstring": "Not used in vanilla Elden Ring events, but keeping in case it still works (seems useful).",
         "args": {
             "sign_type": NO_DEFAULT(SingleplayerSummonSignType) | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
@@ -4766,10 +4312,12 @@ EMEDF = {
         },
     },
     (2003, 52): {
-        "alias": "InitializeWarpObject",
+        "alias": "TriggerAISound",
         "docstring": "TODO",
         "args": {
-            "warp_object_id": INT,
+            "ai_sound_param_id": INT,
+            "anchor_entity": NO_DEFAULT(CoordEntityTyping),
+            "unk_8_12": INT,
         },
     },
     (2003, 54): {
@@ -4777,41 +4325,6 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "character": NO_DEFAULT(CharacterTyping),
-        },
-    },
-    (2003, 57): {
-        "alias": "SetCurrentMapCeremony",
-        "docstring": "TODO",
-        "args": {
-            "ceremony_id": INT,
-        },
-    },
-    (2003, 59): {
-        "alias": "SetMapCeremony",
-        "docstring": "TODO",
-        "args": {
-            "area_id": AREA_ID,
-            "block_id": BLOCK_ID,
-            "ceremony_id": INT,
-        },
-        "evs_args": {
-            "game_map": GAME_MAP_EVS,
-            "ceremony_id": {},
-        },
-    },
-    (2003, 61): {
-        "alias": "DisplayEpitaphMessage",
-        "docstring": "TODO",
-        "args": {
-            "message": NO_DEFAULT(EventTextTyping),
-        },
-    },
-    (2003, 62): {
-        "alias": "SetNetworkConnectedFlagState",
-        "docstring": "TODO",
-        "args": {
-            "flag": FLAG,
-            "state": NO_DEFAULT(FlagSetting),
         },
     },
     (2003, 63): {
@@ -4832,45 +4345,23 @@ EMEDF = {
             "ToggleNetworkConnectedFlagRange": dict(state=FlagSetting.Change),
         },
     },
-    (2003, 64): {
-        "alias": "SetOmissionModeCounts",
-        "docstring": "TODO",
-        "args": {
-            "level_1_count": INT,
-            "level_2_count": INT,
-        },
-    },
-    (2003, 65): {
-        "alias": "ResetOmissionModeCountsToDefault",
-        "docstring": "TODO",
-        "args": {},
-    },
     (2003, 66): {
         "alias": "SetFlagState",
         "docstring": """
-            Predominant flag-setting instruction in Elden Ring. It can set relative flags, unlike 2003[2].
+            Predominant flag-setting instruction in Elden Ring. It can set relative flags, unlike the old 2003[2].
         """,
         "args": {
-            "flag_type": NO_DEFAULT(FlagType),
-            "flag": FLAG,
+            "flag_type": NO_DEFAULT(FlagType) | HIDE_NAME,
+            "flag": FLAG | HIDE_NAME,
             "state": FLAG_SETTING,
         },
         "partials": {
+            "EnableFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.On),
+            "DisableFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
+            "ToggleFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
             "SetAbsoluteFlagState": dict(flag_type=FlagType.Absolute),
-            "EnableAbsoluteFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.On),
-            "DisableAbsoluteFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
-            "ToggleAbsoluteFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
-            "EnableEventRelativeFlag": dict(flag_type=FlagType.RelativeToThisEvent, state=FlagSetting.On),
-            "DisableEventRelativeFlag": dict(flag_type=FlagType.RelativeToThisEvent, state=FlagSetting.Off),
-            "EnableEventSlotRelativeFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, state=FlagSetting.On),
-            "DisableEventSlotRelativeFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, state=FlagSetting.Off),
-        },
-    },
-    (2003, 67): {
-        "alias": "InitializeCrowTradeRegion",
-        "docstring": "Almost certainly unused in Elden Ring.",
-        "args": {
-            "region": NO_DEFAULT(RegionTyping),
+            "EnableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.Off),
+            "DisableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.On),
         },
     },
     (2003, 68): {
@@ -4890,15 +4381,15 @@ EMEDF = {
             Enable, disable, or toggle (change) a binary flag for all network-connected players.
         """,
         "args": {
-            "flag_type": NO_DEFAULT(FlagType),
-            "flag": FLAG,
+            "flag_type": NO_DEFAULT(FlagType) | HIDE_NAME,
+            "flag": FLAG | HIDE_NAME,
             "state": FLAG_SETTING,
         },
         "partials": {
+            "EnableNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.On),
+            "DisableNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
+            "ToggleNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
             "SetAbsoluteNetworkFlagState": dict(flag_type=FlagType.Absolute),
-            "EnableAbsoluteNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.On),
-            "DisableAbsoluteNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
-            "ToggleAbsoluteNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
             # Haven't bothered with relative flag partials for this one.
         },
     },
@@ -4910,110 +4401,97 @@ EMEDF = {
         },
     },
     (2003, 71): {
-        "alias": "SetHUDVisibilityState",
+        "alias": "Unknown_2003_71",
         "docstring": "TODO",
         "args": {
-            "is_invisible": BOOL,
-        },
-        "partials": {
-            "EnableHUDVisibility": dict(is_invisible=False),
-            "DisableHUDVisibility": dict(is_invisible=True),
+            "unk_0_4": INT,
         },
     },
     (2003, 72): {
-        "alias": "SetBonfireWarpingState",
+        "alias": "Unknown_2003_72",
         "docstring": "TODO",
         "args": {
-            "bonfire_obj": NO_DEFAULT(ObjectTyping),
-            "animation": INT,
-            "state": BOOL,
-        },
-        "partials": {
-            "EnableBonfireWarping": dict(state=True),
-            "DisableBonfireWarping": dict(state=False),
+            "unk_0_4": FLOAT,
+            "unk_4_8": INT,  # always 0 or -1
         },
     },
     (2003, 73): {
-        "alias": "SetAutogeneratedEventSpecificFlag_1",
-        "docstring": """
-            No idea, but probably relates to setting the flag whose ID matches the event ID.
-        """,
+        "alias": "Unknown_2003_73",
+        "docstring": "TODO",
         "args": {
-            "unknown1": INT,
-            "unknown2": INT,
+            "unk_4_8": NO_DEFAULT(CoordEntityTyping),
+            "unk_8_12": INT,  # TODO: always zero
+            "unk_12_16": INT,  # TODO: always zero
         },
     },
     (2003, 74): {
-        "alias": "HandleBossDefeatAndDisplayBanner",
-        "docstring": """
-            Not sure if the 'boss' is a GameAreaParam or just Character.
-        """,
+        "alias": "Unknown_2003_74",
+        "docstring": "TODO",
         "args": {
-            "boss": INT,
-            "banner": NO_DEFAULT(BannerType),
+            "unk_0_4": INT,  # TOOD: always 1
         },
     },
     (2003, 75): {
-        "alias": "SetAutogeneratedEventSpecificFlag_2",
-        "docstring": """
-            No idea, but probably relates to setting the flag whose ID matches the event ID.
-        """,
+        "alias": "Unknown_2003_75",
+        "docstring": "Unknown. Only called once with arguments 0, 0, -1.",
         "args": {
-            "unknown1": INT,
-            "unknown2": INT,
+            "unknown1": INT,  # TODO: zero
+            "unknown2": INT,  # TODO: zero
+            "unknown3": INT,  # TODO: -1
         },
     },
     (2003, 76): {
-        "alias": "SetLoadingScreenTipsState",
+        "alias": "Unknown_2003_76",
         "docstring": "TODO",
         "args": {
-            "tips_disabled": BOOL,
-        },
-        "partials": {
-            "EnableLoadingScreenTips": dict(tips_disabled=False),
-            "DisableLoadingScreenTips": dict(tips_disabled=True),
+            "unk_0_4": INT,  # TODO: possibly BBH
+            "unk_4_8": INT,  # TODO: always zero
+            "unk_8_12": FLOAT,  # TODO: almost certainly three XYZ angles (deg)
+            "unk_12_16": FLOAT,
+            "unk_16_20": FLOAT,
         },
     },
     (2003, 77): {
-        "alias": "AwardGestureItem",
-        "docstring": """
-            Not sure if this awards an actual gesture (then why multiple args?) or awards it based on a gesture (but 
-            then why not region-specific?).
-        """,
+        "alias": "Unknown_2003_77",
+        "docstring": "TODO",
         "args": {
-            "gesture_id": INT,
-            "item_type": NO_DEFAULT(ItemType),
-            "item_id": INT,
+            "entity_id": INT,  # TODO: sometimes zero
         },
     },
     (2003, 78): {
-        "alias": "SendNPCSummonHome",
-        "docstring": """
-            Identical to Bloodborne version, but with different index.
-        """,
+        "alias": "Unknown_2003_78",
+        "docstring": "TODO",
         "args": {
-            "character": NO_DEFAULT(CharacterTyping) | {"internal_default": -1},
+            "unk_0_4": INT,
+            "unk_4_8": FLOAT,
         },
     },
     (2003, 79): {
         "alias": "Unknown_2003_79",
         "docstring": "TODO",
         "args": {
-            "unknown1": INT,
+            "unk_0_4": INT,  # TODO: always zero
         },
     },
     (2003, 80): {
         "alias": "Unknown_2003_80",
         "docstring": "TODO",
         "args": {
-            "unknown1": INT,
+            "unk_0_4": INT,
         },
     },
     (2003, 81): {
         "alias": "Unknown_2003_81",
         "docstring": "TODO",
         "args": {
-            "unknown1": INT,
+            "unk_0_4": INT,  # TODO: used once with 108 and once with 109 (could be B)
+        },
+    },
+    (2003, 82): {
+        "alias": "Unknown_2003_82",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
         },
     },
 
@@ -5047,140 +4525,191 @@ EMEDF = {
             "state": BOOL,
         },
     },
-    (2004, 51): {
-        "alias": "Test_RequestRagdollRestraint",
-        "docstring": "TODO",
-        "args": {
-            "recipient_character": NO_DEFAULT(CharacterTyping),
-            "recipient_target_rigid_index": INT,
-            "recipient_model_point": INT,
-            "attachment_character": NO_DEFAULT(CharacterTyping),
-            "attachment_target_rigid_index": INT,
-            "attachment_model_point": INT,
-        },
-    },
-    (2004, 52): {
-        "alias": "ChangePlayerCharacterInitParam",
-        "docstring": """
-            I assume this affects the player.
-        """,
-        "args": {
-            "character_init_param": INT,
-        },
-    },
-    (2004, 53): {
-        "alias": "AdaptSpecialEffectHealthChangeToNPCPart",
-        "docstring": "TODO",
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping) | {"internal_default": -1},
-        },
-    },
-    (2004, 54): {
-        "alias": "ImmediateActivate",
-        "docstring": """
-            Not sure. Sets draw state *really* quickly?
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping),
-            "state": BOOL,
-        },
-    },
     (2004, 55): {
         "alias": "SetCharacterTalkRange",
         "docstring": "TODO",
         "args": {
             "character": NO_DEFAULT(CharacterTyping),
-            "distance": FLOAT,
-        },
-    },
-    (2004, 57): {
-        "alias": "IncrementCharacterNewGameCycle",
-        "docstring": """
-            Interesting - apparently you can increase the NG+ level of a specific character. (No reset function, but it
-            would probably reset on map reload.)
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping),
-        },
-    },
-    (2004, 58): {
-        "alias": "SetMultiplayerBuffs_NonBoss",
-        "docstring": "TODO",
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping),
-            "state": BOOL,
-        },
-    },
-    (2004, 59): {
-        "alias": "Unknown_2004_59",
-        "docstring": """
-            Examine usage.
-        """,
-        "args": {
-            "character": NO_DEFAULT(CharacterTyping),
-            "state": BOOL,
+            "distance": FLOAT | {"internal_default": 17.0},
         },
     },
     (2004, 60): {
-        "alias": "SetPlayerRemainingYoelLevels",
-        "docstring": "TODO",
-        "args": {
-            "level_count": INT,
-        },
-    },
-    (2004, 74): {
-        "alias": "UnknownCharacter_74",
+        "alias": "Unknown_2004_60",
         "docstring": "TODO",
         "args": {
             "character": NO_DEFAULT(CharacterTyping),
+            "obj": NO_DEFAULT(ObjectTyping),
+        },
+    },
+    (2004, 61): {
+        "alias": "Unknown_2004_61",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,
+        },
+    },
+    (2004, 63): {
+        "alias": "Unknown_2004_63",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: always zero
+            "unk_4_8": FLOAT,
+        },
+    },
+    (2004, 67): {
+        "alias": "Unknown_2004_67",
+        "docstring": "Possibly 'attaches' second entity to first character?",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+            "entity": NO_DEFAULT(CoordEntityTyping),  # TODO: More limited type?
+        },
+    },
+    (2004, 68): {
+        "alias": "AttachObjectToCharacter",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+            "model_point": INT | {"internal_default": -1},  # TODO: can't use default with `obj` after it
+            "obj": NO_DEFAULT(ObjectTyping),
+        },
+    },
+    (2004, 69): {
+        "alias": "Unknown_2004_69",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: always zero
+            "unk_4_8": INT,  # TODO: always zero
+        },
+    },
+    (2004, 70): {
+        "alias": "Unknown_2004_70",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,
+            "unk_4_8": INT,  # TODO: always 1
+        },
+    },
+    (2004, 71): {
+        "alias": "Unknown_2004_71",
+        "docstring": "Unknown. Called once, with all zeroes.",
+        "args": {
+            "unk_0_4": INT,
+            "unk_4_8": INT,
+            "unk_8_12": INT,
+        },
+    },
+    (2004, 73): {
+        "alias": "Unknown_2004_73",
+        "docstring": "TODO",
+        "args": {
+            "entity": NO_DEFAULT(CoordEntityTyping),
+            "unk_4_8": INT,  # TODO: seems to be always 1 or 0
+        },
+    },
+    (2004, 74): {
+        "alias": "Unknown_2004_74",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),  # TODO: usually PLAYER
             "unknown1": INT,
             "region": NO_DEFAULT(RegionTyping),
-            "unknown2": INT,
-            "character_2": NO_DEFAULT(CharacterTyping),
+            "unknown2": INT,  # TODO: Always -1?
+            "character_2": NO_DEFAULT(CharacterTyping),  # TODO: usually zero or PLAYER
             "unknown3": INT,
             "unknown4": INT,
         },
     },
     (2004, 75): {
-        "alias": "UnknownCharacter_75",
+        "alias": "Unknown_2004_75",
         "docstring": "TODO",
         "args": {
-            "character": NO_DEFAULT(CharacterTyping),
+            "character": NO_DEFAULT(CharacterTyping),  # TODO: always PLAYER
             "unknown1": INT,
             "unknown2": INT,
         },
     },
     (2004, 76): {
-        "alias": "UnknownCharacter_76",
+        "alias": "Unknown_2004_76",
         "docstring": "TODO",
         "args": {
-            "flag": FLAG,
-            "item_lot": INT,
+            "flag": FLAG,  # TODO: always zero
+            "item_lot": INT,  # TODO: always zero
         },
     },
     (2004, 77): {
-        "alias": "UnknownCharacter_77",
+        "alias": "Unknown_2004_77",
         "docstring": "TODO",
         "args": {
-            "unknown1": INT,
-            "unknown2": INT,
-            "unknown3": INT,
-            "unknown4": INT,
+            "unknown1": FLOAT,
+            "unknown2": FLOAT,
+            "unknown3": INT,  # TODO: always 0 or 1
+            "unknown4": FLOAT,
+        },
+    },
+    (2004, 78): {
+        "alias": "Unknown_2004_78",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: always zero?
+            "unk_4_8": INT,
+            "unk_8_12": INT,
+        },
+    },
+    (2004, 79): {
+        "alias": "Unknown_2004_79",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: 0 or 1
+            "unk_4_8": INT,  # TODO: always 3
+        },
+    },
+    (2004, 80): {
+        "alias": "Unknown_2004_80",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: 0 or 1
+        },
+    },
+    (2004, 81): {
+        "alias": "Unknown_2004_81",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+        },
+    },
+    (2004, 83): {
+        "alias": "Unknown_2004_83",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_4_8": INT,  # TODO: 1
+        },
+    },
+    (2004, 84): {
+        "alias": "Unknown_2004_84",
+        "docstring": "TODO",
+        "args": {
+            "character": NO_DEFAULT(CharacterTyping),
+            "unk_4_8": FLOAT,  # TODO: once with 220.0
+            "unk_8_12": FLOAT,  # TODO: once with 40.0
         },
     },
 
-    (2005, 16): {
-        "alias": "ExtinguishBurningObjects",
-        "docstring": "TODO",
-        "args": {},
-    },
     (2005, 17): {
-        "alias": "ShowObjectByMapCeremony",
+        "alias": "Unknown_2005_17",
         "docstring": "TODO",
         "args": {
-            "obj": NO_DEFAULT(ObjectTyping),
-            "ceremony_id": INT,
-            "unknown": INT,
+            "obj_1": NO_DEFAULT(ObjectTyping),  # TODO: once with 0
+            "obj_2": NO_DEFAULT(ObjectTyping),  # TODO: once with 0
+        },
+    },
+    (2005, 18): {
+        "alias": "Unknown_2005_18",
+        "docstring": "TODO",
+        "args": {
+            "obj_1": NO_DEFAULT(ObjectTyping),
+            "obj_2": NO_DEFAULT(ObjectTyping),
+            "unk_8_12": INT,  # TODO: always 151
         },
     },
     (2005, 19): {
@@ -5190,6 +4719,21 @@ EMEDF = {
         """,
         "args": {
             "obj": NO_DEFAULT(ObjectTyping),
+        },
+    },
+    (2005, 20): {
+        "alias": "CreateBigHazardousObject",
+        "docstring": "TODO",
+        "args": {
+            "obj_flag": FLAG,
+            "obj": INT,
+            "model_point_start": INT | {"internal_default": -1},
+            "model_point_end": INT | {"internal_default": -1},
+            "behaviour_id": INT,
+            "target_type": NO_DEFAULT(DamageTargetType),
+            "radius": FLOAT,
+            "life": FLOAT,
+            "repetition_time": FLOAT,
         },
     },
 
@@ -5217,22 +4761,26 @@ EMEDF = {
             "cancel_flag": FLAG,
         },
     },
-    (2007, 11): {
-        "alias": "DisplayAreaWelcomeMessage",
-        "docstring": """
-            Not sure what this looks like exactly.
-        """,
-        "args": {
-            "message": NO_DEFAULT(EventTextTyping),
-        },
-    },
     (2007, 12): {
         "alias": "DisplayUnknownMessage_12",
         "docstring": "Appears to be a variant of DisplayBattlefieldMessage.",
         "args": {
-            "text": NO_DEFAULT(EventTextTyping) | HIDE_NAME,
-            "display_location_index": INT,
+            "text": NO_DEFAULT(EventTextTyping),
             "unknown1": INT,
+        },
+    },
+    (2007, 13): {
+        "alias": "DisplayUnknownMessage_13",
+        "docstring": "TODO",
+        "args": {
+            "text": NO_DEFAULT(EventTextTyping),  # TODO: used once with 0
+        },
+    },
+    (2007, 14): {
+        "alias": "DisplayUnknownMessage_14",
+        "docstring": "TODO",
+        "args": {
+            "text": NO_DEFAULT(EventTextTyping),
         },
     },
     (2007, 15): {
@@ -5240,15 +4788,15 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "tutorial_param_id": INT,
-            "unknown1": BOOL,
-            "unknown2": BOOL,
+            "unk_4_5": BOOL,
+            "unk_5_6": BOOL,
         },
     },
     (2007, 16): {
         "alias": "DisplayUnknownMessage_16",
         "docstring": "TODO",
         "args": {
-            "unknown1": INT,
+            "text": NO_DEFAULT(EventTextTyping),
             "unknown2": INT,
         },
     },
@@ -5272,13 +4820,6 @@ EMEDF = {
             "unknown": INT,
         },
     },
-    (2009, 10): {
-        "alias": "BanishPhantomsAndUpdateServerPvPStats",
-        "docstring": "TODO",
-        "args": {
-            "unknown": INT,
-        },
-    },
     (2009, 11): {
         "alias": "BanishPhantoms",
         "docstring": "TODO",
@@ -5286,72 +4827,53 @@ EMEDF = {
             "unknown": INT,
         },
     },
-    (2010, 4): {
-        "alias": "SetBossMusicState",
-        "docstring": """
-            Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music 
-            out rather than abruptly stopping it.
-    
-            TODO: Can probably be used to fade out ANY music. Not sure why it would only work for boss music.
-            TODO: Argument -1 is sometimes used. Fades out ALL music?
-        """,
-        "args": {
-            "sound_id": INT,
-            "state": BOOL,
-        },
-        "partials": {
-            "EnableBossMusic": dict(state=True),
-            "DisableBossMusic": dict(state=False),
-        },
-    },
-    (2010, 5): {
-        "alias": "NotifyDoorEventSoundDampening",
-        "docstring": """
-            No idea what this is or what entity the first argument is. Probably the door object.
-        """,
-        "args": {
-            "obj": NO_DEFAULT(ObjectTyping),
-            "state": NO_DEFAULT(DoorState),
-        },
-    },
-    (2010, 6): {
-        "alias": "SetSoundEventWithFade",
-        "docstring": "TODO",
-        "args": {
-            "sound_id": INT,
-            "state": BOOL,
-            "fade_duration": FLOAT,
-        },
-        "partials": {
-            "EnableSoundEventWithFade": dict(state=True),
-            "DisableSoundEventWithFade": dict(state=False),
-        },
-    },
+
     (2010, 7): {
-        "alias": "SetSoundEventSuppression",
+        "alias": "SuppressSoundEvent",
         "docstring": "TODO",
         "args": {
             "sound_id": INT,
-            "unknown1": INT,
-            "is_suppressed": BOOL,
+            "unk_4_8": INT,
+            "suppression_active": BOOL,
         },
     },
-    (2011, 3): {
-        "alias": "SetCollisionResState",
-        "docstring": """
-            No idea what this is.
-        """,
-        "args": {
-            "collision": NO_DEFAULT(CollisionTyping) | {"internal_default": -1},
-            "state": BOOL,
-        },
-    },
-    (2011, 4): {
-        "alias": "ActivateCollisionAndCreateNavmesh",
+    (2010, 8): {
+        "alias": "UnknownSound_2010_8",
         "docstring": "TODO",
         "args": {
-            "collision": NO_DEFAULT(CollisionTyping),
-            "state": BOOL,
+            "sound_id": INT,
+        },
+    },
+    (2010, 10): {
+        "alias": "UnknownSound_2010_10",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,
+            "unk_4_8": INT,
+        },
+    },
+    (2010, 11): {
+        "alias": "UnknownSound_2010_11",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": FLOAT,  # TODO: usually 5.0
+        },
+    },
+    (2010, 12): {
+        "alias": "UnknownSound_2010_12",
+        "docstring": "TODO",
+        "args": {
+            "entity_id": NO_DEFAULT(CoordEntityTyping) | {"internal_default": 2},
+            "unk_4_8": INT,
+        },
+    },
+
+    (2011, 2): {
+        "alias": "UnknownCollision_2011_2",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,  # TODO: once 0
+            "unk_4_8": INT,  # TODO: once 0
         },
     },
 
@@ -5362,50 +4884,25 @@ EMEDF = {
             "state": BOOL,
         },
     },
+    (2012, 11): {
+        "alias": "UnknownMap_11",
+        "docstring": "TODO",
+        "args": {
+            "unk_0_4": INT,
+            "unk_4_8": FLOAT,
+        },
+    },
     (2012, 12): {
         "alias": "UnknownMap_12",
         "docstring": "TODO",
         "args": {
-            "unk_1": FLOAT,
-        },
-    },
-
-    (2013, 1): {
-        "alias": "CreatePlayLog",
-        "docstring": "TODO",
-        "args": {
-            "name": NO_DEFAULT(StringOffsetTyping),
-        },
-    },
-    (2013, 2): {
-        "alias": "StartPlayLogMeasurement",
-        "docstring": "TODO",
-        "args": {
-            "measurement_id": INT,
-            "name": NO_DEFAULT(StringOffsetTyping),
-            "overwrite": BOOL,
-        },
-    },
-    (2013, 3): {
-        "alias": "StopPlayLogMeasurement",
-        "docstring": "TODO",
-        "args": {
-            "measurement_id": INT,
-        },
-    },
-    (2013, 4): {
-        "alias": "PlayLogParameterOutput",
-        "docstring": "TODO",
-        "args": {
-            "category": NO_DEFAULT(PlayerPlayLogParameter),
-            "name": NO_DEFAULT(StringOffsetTyping),
-            "output_multiplayer_state": NO_DEFAULT(PlayLogMultiplayerType),
+            "unk_0_4": FLOAT,
         },
     },
 }
 
 
-add_common_emedf_info(EMEDF, PACKAGE_PATH("darksouls3/events/emevd/ds3-common.emedf.json"))
+add_common_emedf_info(EMEDF, PACKAGE_PATH("eldenring/events/emevd/er-common.emedf.json"))
 EMEDF_ALIASES, EMEDF_TESTS = build_emedf_aliases_tests(EMEDF)
 
 # Extra tests that use custom instructions from `compiler`.

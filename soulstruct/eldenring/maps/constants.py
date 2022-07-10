@@ -2,9 +2,6 @@ __all__ = [
     "COMMON",
     "COMMON_FUNC",
 
-    "MapTileException",
-    "MapTile",
-
     # Legacy/unique dungeons
     "STORMVEIL_CASTLE",
     "CHAPEL_OF_ANTICIPATION",

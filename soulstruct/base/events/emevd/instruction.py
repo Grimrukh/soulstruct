@@ -185,7 +185,8 @@ class Instruction(abc.ABC):
             event argument is used for multiple arguments within the same instruction, which would be very unusual.
         """
 
-        permitted = [0, 0.0, -1, 1, 10]  # NOTE: Strings are permitted to overwrite anything.
+        # Elden Ring overwrites value 10000 a lot.
+        permitted = [0, 0.0, -1, 1, 10, 10000]  # NOTE: Strings are permitted to overwrite anything.
         arg_offset_dict = get_byte_offset_from_struct(self.display_arg_types)
 
         instruction_arg_types_names = {}
@@ -221,15 +222,13 @@ class Instruction(abc.ABC):
             default_arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
 
             if value_to_overwrite not in permitted and argument_byte_type != "s":
-                _LOGGER.error(
-                    f"Event argument '{default_arg_name}' ({evs_arg_name}) is overwriting non-zero value "
-                    f"{value_to_overwrite} (position {argument_index}) in instruction {self.category}[{self.index}] "
-                    f"with args {self.args_list} (types '{self.display_arg_types}')"
-                )
-                # raise ValueError(
-                #     f"Parameter {arg_name} is overwriting non-zero value {value_to_overwrite} "
-                #     f"(position {argument_index})."
-                # )
+                arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
+                if value_to_overwrite != arg_info.get("internal_default", None):
+                    _LOGGER.error(
+                        f"Event argument '{default_arg_name}' ({evs_arg_name}) is overwriting non-zero value "
+                        f"{value_to_overwrite} (position {argument_index}) in instruction {self.category}[{self.index}] "
+                        f"with args {self.args_list} (types '{self.display_arg_types}')"
+                    )
 
             self.evs_args_list[argument_index] = default_arg_name  # will generally be replaced with an EVS name later
 

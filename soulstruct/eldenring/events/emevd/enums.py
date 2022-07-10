@@ -81,6 +81,9 @@ class AIStatusType(BaseEMEVDEnum):
     Caution = 1
     Search = 2
     Battle = 3
+    Unknown4 = 4
+    Unknown5 = 5
+    Unknown6 = 6
 
 
 class BitOperation(BaseEMEVDEnum):
@@ -100,6 +103,10 @@ class CharacterType(BaseEMEVDEnum):
     BlackPhantom = 2
     Hollow = 8  # Also called "Gray Ghost" in some resources.
     Intruder = 12
+    Unknown15 = 15
+    Unknown16 = 16
+    Unknown17 = 17
+    Unknown18 = 18
 
 
 class CharacterUpdateRate(BaseEMEVDEnum):
@@ -107,7 +114,8 @@ class CharacterUpdateRate(BaseEMEVDEnum):
     Always = 0
     EveryTwoFrames = 2
     EveryFiveFrames = 5
-    Unknown105 = 105  # TODO: Move to `eldenring`
+    Unknown102 = 102
+    Unknown105 = 105
 
 
 class ClassType(BaseEMEVDEnum):
@@ -295,6 +303,7 @@ class SummonSignType(BaseEMEVDEnum):
     DetectionSign = 3
     WhiteHelpSign = 4
     BlackHelpSign = 5
+    Unknown20 = 20
 
 
 class SoundType(BaseEMEVDEnum):
@@ -310,6 +319,7 @@ class SoundType(BaseEMEVDEnum):
     x_FloorMaterialDependent = 8
     b_ArmorMaterialDependent = 9
     g_Ghost = 10
+    Unknown14 = 14
 
 
 class StatueType(BaseEMEVDEnum):
@@ -343,8 +353,14 @@ class WorldTendencyType(BaseEMEVDEnum):
 
 
 class UpdateAuthority(BaseEMEVDEnum):
+
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "H"
+
     Normal = 0
     Forced = 4095
+    Unknown8192 = 8192
 
 
 # EXTRA ENUMS (unused in EMEVD)
@@ -451,6 +467,7 @@ class BannerType(IntEnum):
     BlackPhantomDestroyed = 7
     AreaName = 8  # Name determined by current floor Collision.
     BeginMatch = 12
+    DefaultBanner = 13
     HollowArenaDraw = 14
     HollowArenaWin = 15
     HollowArenaLoss = 16
@@ -458,6 +475,8 @@ class BannerType(IntEnum):
     DutyFulfilled = 18
     LordOfCinderFallen = 19
     UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
+    Unknown26 = 26
+    Unknown27 = 27
 
 
 class CalculationType(IntEnum):
@@ -597,6 +616,7 @@ class MultiplayerState(IntEnum):
     TryingToJoinSession = 3
     LeavingSession = 4
     FailedToCreateSession = 5
+    Unknown6 = 6
 
 
 class NPCPartType(IntEnum):

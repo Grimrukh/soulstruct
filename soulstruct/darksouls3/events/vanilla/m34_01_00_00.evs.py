@@ -681,8 +681,8 @@ def Event_13415450(_, character: int, animation_id: int, seconds: float):
 @RestartOnRest(13417500)
 def Event_13417500(
     _,
-    obj__state: int,
     obj: int,
+    obj_1: int,
     animation_id: int,
     animation_id_1: int,
     animation_id_2: int,
@@ -692,8 +692,8 @@ def Event_13417500(
     flag: int,
 ):
     """Event 13417500"""
-    ForceAnimation(obj, animation_id, loop=True, unknown2=1.0)
-    GotoIfObjectDestructionState(Label.L1, obj=1, state=obj__state)
+    ForceAnimation(obj_1, animation_id, loop=True, unknown2=1.0)
+    GotoIfObjectDestroyed(Label.L1, obj=obj)
     GotoIfFlagEnabled(Label.L0, flag=flag)
     AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -701,19 +701,19 @@ def Event_13417500(
     OR_2.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterWhitePhantom(PLAYER))
     OR_2.Add(CharacterHollow(PLAYER))
-    OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj, radius=radius))
-    OR_1.Add(ObjectDestroyed(obj__state))
+    OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj_1, radius=radius))
+    OR_1.Add(ObjectDestroyed(obj))
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
     
-    GotoIfObjectDestructionState(Label.L1, obj=1, state=obj__state)
-    ForceAnimation(obj, animation_id_1, unknown2=1.0)
+    GotoIfObjectDestroyed(Label.L1, obj=obj)
+    ForceAnimation(obj_1, animation_id_1, unknown2=1.0)
     Wait(0.800000011920929)
     CreateHazard(
         obj_flag=obj_flag,
-        obj=obj,
+        obj=obj_1,
         model_point=210,
         behavior_param_id=5210,
         target_type=DamageTargetType.Character,
@@ -726,17 +726,17 @@ def Event_13417500(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    ForceAnimation(obj, animation_id_2, loop=True, unknown2=1.0)
+    ForceAnimation(obj_1, animation_id_2, loop=True, unknown2=1.0)
     OR_3.Add(FramesElapsed(frames=210))
-    OR_3.Add(ObjectDestroyed(obj__state))
+    OR_3.Add(ObjectDestroyed(obj))
     
     MAIN.Await(OR_3)
     
-    if ObjectNotDestroyed(obj__state):
-        AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj, radius=radius))
+    if ObjectNotDestroyed(obj):
+        AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj_1, radius=radius))
         if AND_3:
             return RESTART
-    ForceAnimation(obj, animation_id_3, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(obj_1, animation_id_3, wait_for_completion=True, unknown2=1.0)
     RemoveObjectFlag(obj_flag=obj_flag)
     DisableFlag(flag)
     WaitFrames(frames=1)
@@ -744,15 +744,15 @@ def Event_13417500(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    DestroyObject(obj)
+    DestroyObject(obj_1)
     End()
 
 
 @RestartOnRest(13417600)
 def Event_13417600(
     _,
-    obj__state: int,
     obj: int,
+    obj_1: int,
     animation_id: int,
     animation_id_1: int,
     animation_id_2: int,
@@ -762,8 +762,8 @@ def Event_13417600(
     flag: int,
 ):
     """Event 13417600"""
-    ForceAnimation(obj, animation_id, loop=True, unknown2=1.0)
-    GotoIfObjectDestructionState(Label.L1, obj=1, state=obj__state)
+    ForceAnimation(obj_1, animation_id, loop=True, unknown2=1.0)
+    GotoIfObjectDestroyed(Label.L1, obj=obj)
     GotoIfFlagEnabled(Label.L0, flag=flag)
     AND_14.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -771,19 +771,19 @@ def Event_13417600(
     OR_2.Add(CharacterHuman(PLAYER))
     OR_2.Add(CharacterWhitePhantom(PLAYER))
     OR_2.Add(CharacterHollow(PLAYER))
-    OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj, radius=radius))
-    OR_1.Add(ObjectDestroyed(obj__state))
+    OR_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj_1, radius=radius))
+    OR_1.Add(ObjectDestroyed(obj))
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     
     MAIN.Await(AND_1)
     
-    GotoIfObjectDestructionState(Label.L1, obj=1, state=obj__state)
-    ForceAnimation(obj, animation_id_1, unknown2=1.0)
+    GotoIfObjectDestroyed(Label.L1, obj=obj)
+    ForceAnimation(obj_1, animation_id_1, unknown2=1.0)
     Wait(0.800000011920929)
     CreateHazard(
         obj_flag=obj_flag,
-        obj=obj,
+        obj=obj_1,
         model_point=210,
         behavior_param_id=5210,
         target_type=DamageTargetType.Character,
@@ -796,17 +796,17 @@ def Event_13417600(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    ForceAnimation(obj, animation_id_2, loop=True, unknown2=1.0)
+    ForceAnimation(obj_1, animation_id_2, loop=True, unknown2=1.0)
     OR_3.Add(FramesElapsed(frames=210))
-    OR_3.Add(ObjectDestroyed(obj__state))
+    OR_3.Add(ObjectDestroyed(obj))
     
     MAIN.Await(OR_3)
     
-    if ObjectNotDestroyed(obj__state):
-        AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj, radius=radius))
+    if ObjectNotDestroyed(obj):
+        AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=obj_1, radius=radius))
         if AND_3:
             return RESTART
-    ForceAnimation(obj, animation_id_3, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(obj_1, animation_id_3, wait_for_completion=True, unknown2=1.0)
     RemoveObjectFlag(obj_flag=obj_flag)
     DisableFlag(flag)
     WaitFrames(frames=1)
@@ -814,7 +814,7 @@ def Event_13417600(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    DestroyObject(obj)
+    DestroyObject(obj_1)
     End()
 
 

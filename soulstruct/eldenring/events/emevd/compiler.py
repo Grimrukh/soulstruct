@@ -134,7 +134,7 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
 
 # noinspection PyUnusedLocal
 @_compile
-def RunCommonEvent(event_id, args=(0,), arg_types="", event_layers=None):
+def RunCommonEvent(unknown, event_id, args=(0,), arg_types="", event_layers=None):
     """Run the given `event_id`, which must be defined in `common_func.emevd`.
 
     You can omit `arg_types` if all the arguments are unsigned integers (which is usually the case).
@@ -150,11 +150,11 @@ def RunCommonEvent(event_id, args=(0,), arg_types="", event_layers=None):
         arg_types = "I" if args == (0,) else "i" * len(args)
     if len(args) != len(arg_types):
         raise ValueError("Number of event arguments does not match length of argument type string in RunEvent.")
-    full_arg_types = "i" + str(arg_types[0])
+    full_arg_types = "iI" + str(arg_types[0])
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
     return base_compile_instruction(
-        EMEDF_ALIASES, "RunCommonEvent", event_id=event_id, args=args, arg_types=full_arg_types
+        EMEDF_ALIASES, "RunCommonEvent", unknown=unknown, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 
@@ -196,6 +196,7 @@ def AwardItemLot(item_lot_param_id: int, host_only=True):
     return compile_instruction("AwardItemLotToAllPlayers", item_lot_param_id=item_lot_param_id)
 
 
+# TODO: Only use new Cutscene instruction set.
 @_compile
 def PlayCutscene(
     cutscene_id: int,

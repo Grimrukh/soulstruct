@@ -4,7 +4,6 @@ __all__ = [
     "EMEVDDirectory",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
-    "instructions",
     "enums",
     "decompiler",
     # File utilities
@@ -487,17 +486,6 @@ __all__ = [
     "NORTHEAST_ALTUS_PLATEAU_ASHEN",
     "NORTHEAST_ALTUS_PLATEAU_ASHEN_SW",
     "NORTHEAST_ALTUS_PLATEAU_ASHEN_SW_SE",
-
-    # Names processed directly by EVS parser
-    "NeverRestart",
-    "RestartOnRest",
-    "UnknownRestart",
-    "EVENTS",
-    "Condition",
-    "HeldCondition",
-    "END",
-    "RESTART",
-    "Await",
     # Basic enums
     "RestartType",
     "uint",
@@ -506,12 +494,7 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "CLIENT_PLAYER_1",
-    "CLIENT_PLAYER_2",
-    "CLIENT_PLAYER_3",
-    "CLIENT_PLAYER_4",
-    "CLIENT_PLAYER_5",
-    "PlayerEntity",
+    "ProtectedEntities",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -523,7 +506,7 @@ __all__ = [
     "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
-    "FlagState",
+    "FlagSetting",
     "FlagType",
     "InterpolationState",
     "ItemType",
@@ -566,9 +549,7 @@ __all__ = [
 
 from ..maps import constants
 from ..maps.constants import *
-from .emevd import EMEVD, decompiler, enums, instructions, tests
-from .emevd.instructions import *
-from .emevd.tests import *
+from .emevd import EMEVD, decompiler, enums
 from .emevd.enums import *
 from .emevd_directory import EMEVDDirectory
 from .utilities import convert_events, compare_events

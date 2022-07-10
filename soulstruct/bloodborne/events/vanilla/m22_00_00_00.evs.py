@@ -312,34 +312,34 @@ def Constructor():
     Event_12205150(4, 2200212, 7014, 0, 0.0)
     Event_12205160(0, region=2202040, obj=2201401, character=2200410, region_1=2200400)
     Event_12205160(1, region=2202041, obj=2201406, character=2200411, region_1=2200401)
-    Event_12205170(0, obj__source_entity=2201400, owner_entity=2200420)
-    Event_12205170(1, obj__source_entity=2201401, owner_entity=2200420)
-    Event_12205170(2, obj__source_entity=2201402, owner_entity=2200420)
-    Event_12205170(3, obj__source_entity=2201403, owner_entity=2200420)
-    Event_12205170(4, obj__source_entity=2201404, owner_entity=2200420)
-    Event_12205170(5, obj__source_entity=2201405, owner_entity=2200420)
-    Event_12205170(6, obj__source_entity=2201406, owner_entity=2200420)
-    Event_12205170(7, obj__source_entity=2201407, owner_entity=2200422)
-    Event_12205170(8, obj__source_entity=2201408, owner_entity=2200422)
-    Event_12205170(9, obj__source_entity=2201409, owner_entity=2200422)
-    Event_12205170(10, obj__source_entity=2201410, owner_entity=2200421)
-    Event_12205170(11, obj__source_entity=2201411, owner_entity=2200421)
-    Event_12205170(12, obj__source_entity=2201412, owner_entity=2200421)
-    Event_12205170(13, obj__source_entity=2201413, owner_entity=2200421)
-    Event_12205170(14, obj__source_entity=2201414, owner_entity=2200421)
-    Event_12205170(15, obj__source_entity=2201415, owner_entity=2200421)
-    Event_12205170(16, obj__source_entity=2201416, owner_entity=2200421)
-    Event_12205170(17, obj__source_entity=2201417, owner_entity=2200421)
-    Event_12205170(18, obj__source_entity=2201418, owner_entity=2200421)
-    Event_12205170(19, obj__source_entity=2201419, owner_entity=2200421)
-    Event_12205170(20, obj__source_entity=2201420, owner_entity=2200420)
-    Event_12205170(21, obj__source_entity=2201421, owner_entity=2200420)
-    Event_12205170(22, obj__source_entity=2201422, owner_entity=2200421)
-    Event_12205170(23, obj__source_entity=2201423, owner_entity=2200421)
-    Event_12205170(24, obj__source_entity=2201424, owner_entity=2200421)
-    Event_12205170(25, obj__source_entity=2201425, owner_entity=2200421)
-    Event_12205170(26, obj__source_entity=2201426, owner_entity=2200421)
-    Event_12205170(27, obj__source_entity=2201427, owner_entity=2200421)
+    Event_12205170(0, obj=2201400, owner_entity=2200420)
+    Event_12205170(1, obj=2201401, owner_entity=2200420)
+    Event_12205170(2, obj=2201402, owner_entity=2200420)
+    Event_12205170(3, obj=2201403, owner_entity=2200420)
+    Event_12205170(4, obj=2201404, owner_entity=2200420)
+    Event_12205170(5, obj=2201405, owner_entity=2200420)
+    Event_12205170(6, obj=2201406, owner_entity=2200420)
+    Event_12205170(7, obj=2201407, owner_entity=2200422)
+    Event_12205170(8, obj=2201408, owner_entity=2200422)
+    Event_12205170(9, obj=2201409, owner_entity=2200422)
+    Event_12205170(10, obj=2201410, owner_entity=2200421)
+    Event_12205170(11, obj=2201411, owner_entity=2200421)
+    Event_12205170(12, obj=2201412, owner_entity=2200421)
+    Event_12205170(13, obj=2201413, owner_entity=2200421)
+    Event_12205170(14, obj=2201414, owner_entity=2200421)
+    Event_12205170(15, obj=2201415, owner_entity=2200421)
+    Event_12205170(16, obj=2201416, owner_entity=2200421)
+    Event_12205170(17, obj=2201417, owner_entity=2200421)
+    Event_12205170(18, obj=2201418, owner_entity=2200421)
+    Event_12205170(19, obj=2201419, owner_entity=2200421)
+    Event_12205170(20, obj=2201420, owner_entity=2200420)
+    Event_12205170(21, obj=2201421, owner_entity=2200420)
+    Event_12205170(22, obj=2201422, owner_entity=2200421)
+    Event_12205170(23, obj=2201423, owner_entity=2200421)
+    Event_12205170(24, obj=2201424, owner_entity=2200421)
+    Event_12205170(25, obj=2201425, owner_entity=2200421)
+    Event_12205170(26, obj=2201426, owner_entity=2200421)
+    Event_12205170(27, obj=2201427, owner_entity=2200421)
     Event_12205200(0, character=2200200)
     Event_12205200(1, character=2200201)
     Event_12205200(2, character=2200202)
@@ -2391,24 +2391,24 @@ def Event_12205160(_, region: int, obj: int, character: int, region_1: int):
 
 
 @RestartOnRest(12205170)
-def Event_12205170(_, obj__source_entity: int, owner_entity: int):
+def Event_12205170(_, obj: int, owner_entity: int):
     """Event 12205170"""
     GotoIfThisEventSlotFlagDisabled(Label.L1)
-    PostDestruction(obj__source_entity)
+    PostDestruction(obj)
     End()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Fire))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.NoType))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Fire))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.NoType))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Magic))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Lightning))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Blunt))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Slash))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=obj__source_entity, damage_type=DamageType.Thrust))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Magic))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Lightning))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Blunt))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Slash))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=obj, damage_type=DamageType.Thrust))
     AND_2.Add(OR_2)
-    AND_2.Add(ObjectHealthValueComparison(obj__source_entity, ComparisonType.LessThanOrEqual, value=999))
+    AND_2.Add(ObjectHealthValueComparison(obj, ComparisonType.LessThanOrEqual, value=999))
     OR_3.Add(AND_1)
     OR_3.Add(AND_2)
     
@@ -2417,22 +2417,22 @@ def Event_12205170(_, obj__source_entity: int, owner_entity: int):
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6051,
         launch_angle_x=270,
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6055,
         launch_angle_x=270,
@@ -2441,15 +2441,15 @@ def Event_12205170(_, obj__source_entity: int, owner_entity: int):
     )
     ShootProjectile(
         owner_entity=owner_entity,
-        source_entity=obj__source_entity,
+        source_entity=obj,
         model_point=-1,
         behavior_id=6071,
         launch_angle_x=0,
         launch_angle_y=90,
         launch_angle_z=0,
     )
-    DestroyObject(obj__source_entity)
-    PlaySoundEffect(obj__source_entity, 299961000, sound_type=SoundType.o_Object)
+    DestroyObject(obj)
+    PlaySoundEffect(obj, 299961000, sound_type=SoundType.o_Object)
 
 
 @RestartOnRest(12205200)

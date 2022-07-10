@@ -218,6 +218,136 @@
           ]
         },
         {
+          "name": "IF Elapsed Frames",
+          "index": 1,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Number Of Frames",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Random Elapsed Seconds",
+          "index": 2,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Seconds Min",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 0.009999999776482582,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Seconds Max",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 0.009999999776482582,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Random Elapsed Frames",
+          "index": 3,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Frames Min",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Frames Max",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF Time Of Day",
           "index": 5,
           "args": [
@@ -694,6 +824,138 @@
           ]
         },
         {
+          "name": "IF Action Button",
+          "index": 5,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity Type",
+              "type": 5,
+              "enum_name": "Target Entity Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Angle (deg)",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dummypoly ID",
+              "type": 4,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Distance",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Help Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Type",
+              "type": 0,
+              "enum_name": "Reaction Type",
+              "default": 255,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Pad ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF Multiplayer State",
           "index": 6,
           "args": [
@@ -1066,6 +1328,220 @@
           ]
         },
         {
+          "name": "IF Action Button (Boss Fog)",
+          "index": 13,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity Type",
+              "type": 5,
+              "enum_name": "Target Entity Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Angle (deg)",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dummypoly ID",
+              "type": 4,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Distance",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Help Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Type",
+              "type": 0,
+              "enum_name": "Reaction Type",
+              "default": 255,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Pad ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Dropped Items In Area",
+          "index": 14,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Area Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Dropped Item",
+          "index": 15,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Item Type",
+              "type": 5,
+              "enum_name": "Item Type",
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Item ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF Player Has/Doesn't Have Item Including BBox",
           "index": 16,
           "args": [
@@ -1167,6 +1643,456 @@
               "min": 0,
               "max": 255,
               "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Action Button (Line Segment)",
+          "index": 18,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity Type",
+              "type": 5,
+              "enum_name": "Target Entity Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Angle (deg)",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dummypoly ID",
+              "type": 4,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Distance",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Help Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Type",
+              "type": 0,
+              "enum_name": "Reaction Type",
+              "default": 255,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Pad ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Line Segment Defined By Entity ID ",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Action Button (Line Segment) - Boss Room",
+          "index": 19,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity Type",
+              "type": 5,
+              "enum_name": "Target Entity Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Angle (deg)",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dummypoly ID",
+              "type": 4,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Distance",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Help Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Reaction Type",
+              "type": 0,
+              "enum_name": "Reaction Type",
+              "default": 255,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Pad ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Line Segment Defined By Entity ID ",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Compare Event Values",
+          "index": 20,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Left-side Base Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Left-side Number of Used Flag Bits",
+              "type": 0,
+              "enum_name": null,
+              "default": 1,
+              "min": 1,
+              "max": 32,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 0,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Right-side Base Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Right-side Number of Used Flag Bits",
+              "type": 0,
+              "enum_name": null,
+              "default": 1,
+              "min": 1,
+              "max": 32,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Owns DLC",
+          "index": 21,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Owns DLC",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Online Mode",
+          "index": 22,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Online Mode",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
@@ -1320,6 +2246,158 @@
           ]
         },
         {
+          "name": "IF Map Ceremony State",
+          "index": 28,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Desired State",
+              "type": 0,
+              "enum_name": "Disabled/Enabled",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Area ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Block ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Ceremony ID",
+              "type": 1,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Player Is In Map Tile",
+          "index": 30,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Area ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 10,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Block ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Region ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Index ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "UNKNOWN 3[31]",
           "index": 31,
           "args": [
@@ -1381,6 +2459,54 @@
             }
           ]
         },
+                {
+          "name": "UNKNOWN 3[32]",
+          "index": 32,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
         {
           "name": "UNKNOWN 3[33]",
           "index": 33,
@@ -1400,7 +2526,7 @@
               "unk4": 0
             },
             {
-              "name": "Unknown4",
+              "name": "Entity ID",
               "type": 2,
               "enum_name": null,
               "default": 0,
@@ -1421,6 +2547,246 @@
               "min": 0,
               "max": 0,
               "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 3[34]",
+          "index": 34,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 3[35]",
+          "index": 35,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+             "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 3[37]",
+          "index": 37,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Flag State",
+              "type": 0,
+              "enum_name": "ON/OFF",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Steam Disconnected",
+          "index": 38,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Disconnected",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Friendly Phantom Count Comparison",
+          "index": 39,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Desired Comparison State",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 3,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Count",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
@@ -1504,6 +2870,54 @@
               "max": 100000000.0,
               "increment": 1.0,
               "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Character Damaged By",
+          "index": 1,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Attacker Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -2010,6 +3424,96 @@
           ]
         },
         {
+          "name": "IF Character Has Event Message",
+          "index": 8,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Event Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Should Have",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 3,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Number of Target Characters",
+              "type": 6,
+              "enum_name": null,
+              "default": 1.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF Character AI State",
           "index": 9,
           "args": [
@@ -2080,6 +3584,54 @@
               "format_string": "%0.3f",
               "unk1": 0,
               "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Player's Soul Level",
+          "index": 13,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 0,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Soul Level",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 1,
               "unk3": 0,
               "unk4": 0
             }
@@ -2252,6 +3804,234 @@
           ]
         },
         {
+          "name": "IF UNKNOWN 4[19]",
+          "index": 19,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown0A",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown0B",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown10",
+              "type": 6,
+              "enum_name": null,
+              "default": 1.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Character Invade Type",
+          "index": 27,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Invade Type (Unknown)",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 3,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Number of Target Characters",
+              "type": 6,
+              "enum_name": null,
+              "default": 1.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF UNKNOWN 4[28]",
+          "index": 28,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Character Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown12",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF UNKNOWN 4[30]",
           "index": 30,
           "args": [
@@ -2328,7 +4108,7 @@
           ]
         },
         {
-          "name": "IF Character Invade Type",
+          "name": "IF UNKNOWN 4[31]",
           "index": 31,
           "args": [
             {
@@ -2360,13 +4140,13 @@
               "unk4": 0
             },
             {
-              "name": "Invade Type (Unknown)",
-              "type": 0,
+              "name": "Unknown8",
+              "type": 5,
               "enum_name": null,
               "default": 0,
               "min": 0,
-              "max": 0,
-              "increment": 0,
+              "max": 1000000000,
+              "increment": 1,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
@@ -2374,21 +4154,7 @@
               "unk4": 0
             },
             {
-              "name": "Comparison Type",
-              "type": 3,
-              "enum_name": "Comparison Type",
-              "default": 0,
-              "min": 0,
-              "max": 0,
-              "increment": 0,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Number of Target Characters",
+              "name": "Unknown0A",
               "type": 6,
               "enum_name": null,
               "default": 1.0,
@@ -2470,7 +4236,7 @@
               "unk4": 0
             },
             {
-              "name": "Target Entity ID",
+              "name": "Character Entity ID",
               "type": 2,
               "enum_name": null,
               "default": 0,
@@ -2534,6 +4300,54 @@
               "max": 100000000.0,
               "increment": 1.0,
               "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF UNKNOWN 4[35]",
+          "index": 35,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown08",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 2,
+              "increment": 1,
+              "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -2624,6 +4438,54 @@
           ]
         },
         {
+          "name": "IF Object Hit By",
+          "index": 1,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Attacker Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "IF ObjAct Event Flag",
           "index": 2,
           "args": [
@@ -2648,6 +4510,68 @@
               "default": 0,
               "min": 0,
               "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Object HP",
+          "index": 3,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 3,
+              "enum_name": "Comparison Type",
+              "default": 4,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "HP Threshold",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
               "increment": 1,
               "format_string": "%d",
               "unk1": 0,
@@ -2815,6 +4739,74 @@
       "name": "Condition - Hit",
       "index": 11,
       "instrs": [
+        {
+          "name": "IF Player Moving On Hit",
+          "index": 0,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Hit Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "IF Player Attacking On Hit",
+          "index": 1,
+          "args": [
+            {
+              "name": "Result Condition Group",
+              "type": 3,
+              "enum_name": "Condition Group",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Hit Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
         {
           "name": "IF Player Standing On Hit",
           "index": 2,
@@ -3248,6 +5240,26 @@
               "max": 0,
               "increment": 0,
               "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "WAIT For Network Approval",
+          "index": 9,
+          "args": [
+            {
+              "name": "Timeout (s)",
+              "type": 6,
+              "enum_name": null,
+              "default": 3.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 0.009999999776482582,
+              "format_string": "%0.3f",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -3700,6 +5712,40 @@
           ]
         },
         {
+          "name": "WAIT Random Time (Frames)",
+          "index": 3,
+          "args": [
+            {
+              "name": "Min Number Of Frames",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Max Number Of Frames",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "WAIT Until Random Time Of Day",
           "index": 5,
           "args": [
@@ -3780,6 +5826,26 @@
               "default": 0,
               "min": 0,
               "max": 59,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "WAIT Fixed Time (Frames) After Cutscene",
+          "index": 6,
+          "args": [
+            {
+              "name": "Number Of Frames",
+              "type": 5,
+              "enum_name": null,
+              "default": 1,
+              "min": 0,
+              "max": 99999,
               "increment": 1,
               "format_string": "%d",
               "unk1": 0,
@@ -4188,6 +6254,96 @@
           ]
         },
         {
+          "name": "SKIP IF Player In/Out Map",
+          "index": 7,
+          "args": [
+            {
+              "name": "Number Of Skipped Lines",
+              "type": 0,
+              "enum_name": null,
+              "default": 1,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Should Player Be Inside",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Area ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 10,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Block ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 10,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Region ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Index ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "END IF Player In/Out Map",
           "index": 8,
           "args": [
@@ -4306,6 +6462,54 @@
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Number of Clients",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 4,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "END IF Number of Co-op Clients",
+          "index": 10,
+          "args": [
+            {
+              "name": "Execution End Type",
+              "type": 0,
+              "enum_name": "Event End Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 0,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
               "unk3": 0,
               "unk4": 0
             },
@@ -4591,6 +6795,144 @@
               "min": 0,
               "max": 0,
               "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "GOTO IF Player In/Out Map",
+          "index": 107,
+          "args": [
+            {
+              "name": "Label",
+              "type": 0,
+              "enum_name": "Label",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Should Player Be Inside",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Area ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 10,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Block ID",
+              "type": 0,
+              "enum_name": null,
+              "default": 10,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Region ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Index ID",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "GOTO IF Number of Co-op Clients",
+          "index": 109,
+          "args": [
+            {
+              "name": "Label",
+              "type": 0,
+              "enum_name": "Label",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 0,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Number of Clients",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 4,
+              "increment": 1,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
@@ -5034,6 +7376,144 @@
               "unk4": 0
             }
           ]
+        },
+                {
+          "name": "GOTO/SKIP IF UNKNOWN 1003[206]",
+          "index": 206,
+          "args": [
+            {
+              "name": "Label or Line Count",
+              "type": 0,
+              "enum_name": "Label",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "END IF UNKNOWN 1003[208]",
+          "index": 208,
+          "args": [
+            {
+              "name": "Execution End Type",
+              "type": 0,
+              "enum_name": "Event End Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Should Have",
+              "type": 0,
+              "enum_name": "BOOL",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown2",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown3",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown5",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown6",
+              "type": 3,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
         }
       ]
     },
@@ -5310,6 +7790,102 @@
               "unk4": 0
             }
           ]
+        },
+        {
+          "name": "UNKNOWN 1004[04]",
+          "index": 4,
+          "args": [
+            {
+              "name": "Number Of Skipped Lines",
+              "type": 0,
+              "enum_name": null,
+              "default": 1,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Character Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 1004[05]",
+          "index": 5,
+          "args": [
+            {
+              "name": "Label",
+              "type": 0,
+              "enum_name": "Label",
+              "default": 1,
+              "min": 0,
+              "max": 99,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
         }
       ]
     },
@@ -5434,6 +8010,82 @@
               "max": 100000000,
               "increment": 1,
               "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Comparison Type",
+              "type": 3,
+              "enum_name": "Comparison Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Number of Target Objects",
+              "type": 6,
+              "enum_name": null,
+              "default": 1.0,
+              "min": 0.0,
+              "max": 100000000.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "GOTO IF Object Destroyed",
+          "index": 101,
+          "args": [
+            {
+              "name": "Label",
+              "type": 0,
+              "enum_name": "Label",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Damage State",
+              "type": 0,
+              "enum_name": "Destruction State",
+              "default": 1,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Target Object Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -5635,6 +8287,40 @@
           ]
         },
         {
+          "name": "Terminate Event",
+          "index": 1,
+          "args": [
+            {
+              "name": "Event Slot ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 999,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Event ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "Set Network Sync State",
           "index": 2,
           "args": [
@@ -5669,6 +8355,26 @@
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Prefetch Request",
+          "index": 4,
+          "args": [
+            {
+              "name": "Request ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 1,
               "unk3": 0,
               "unk4": 0
             }
@@ -6029,284 +8735,6 @@
           ]
         },
         {
-          "name": "Play Cutscene to Player + UNKNOWN 2002[04]",
-          "index": 4,
-          "args": [
-            {
-              "name": "Cutscene ID",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Playback Method",
-              "type": 2,
-              "enum_name": "Cutscene Play Mode",
-              "default": 0,
-              "min": 0,
-              "max": 0,
-              "increment": 0,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Area Entity ID",
-              "type": 2,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown0C",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Entity ID",
-              "type": 2,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown14",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            }
-          ]
-        },
-        {
-          "name": "Play Cutscene to Player + UNKNOWN 2002[09]",
-          "index": 9,
-          "args": [
-            {
-              "name": "Cutscene ID",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Playback Method",
-              "type": 2,
-              "enum_name": "Cutscene Play Mode",
-              "default": 0,
-              "min": 0,
-              "max": 0,
-              "increment": 0,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown08",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown0C",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Player Entity ID",
-              "type": 2,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 100000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown14",
-              "type": 5,
-              "enum_name": null,
-              "default": 0,
-              "min": -1,
-              "max": 1000000000,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown18",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 23,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown19",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 99,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown1C",
-              "type": 6,
-              "enum_name": null,
-              "default": 0.0,
-              "min": 0.0,
-              "max": 9999.0,
-              "increment": 1.0,
-              "format_string": "%0.3f",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown20",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 99,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown21",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 99,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown22",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 99,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            },
-            {
-              "name": "Unknown23",
-              "type": 3,
-              "enum_name": null,
-              "default": 0,
-              "min": 0,
-              "max": 99,
-              "increment": 1,
-              "format_string": "%d",
-              "unk1": 0,
-              "unk2": 0,
-              "unk3": 0,
-              "unk4": 0
-            }
-          ]
-        },
-        {
           "name": "Play Cutscene to Player + UNKNOWN 2002[10]",
           "index": 10,
           "args": [
@@ -6432,6 +8860,374 @@
               "increment": 1,
               "format_string": "%d",
               "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Play Ongoing Cutscene and Warp Player",
+          "index": 11,
+          "args": [
+            {
+              "name": "Cutscene ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Playback Method",
+              "type": 2,
+              "enum_name": "Cutscene Play Mode",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Point Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Map Base ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Player Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1C",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown20",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Play Cutscene and Warp Player + UNKNOWN 2002[12]",
+          "index": 12,
+          "args": [
+            {
+              "name": "Cutscene ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Playback Method",
+              "type": 2,
+              "enum_name": "Cutscene Play Mode",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Respawn Point ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Point Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Player Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown14",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown18",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown19",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1A",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1C",
+              "type": 6,
+              "enum_name": null,
+              "default": 0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown20",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Play Cutscene and Warp Player + UNKNOWN 2002[13]",
+          "index": 13,
+          "args": [
+            {
+              "name": "Cutscene ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Playback Method",
+              "type": 2,
+              "enum_name": "Cutscene Play Mode",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Respawn Point ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Point Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Player Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown1C",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown20",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
               "unk2": 0,
               "unk3": 0,
               "unk4": 0
@@ -7585,6 +10381,122 @@
           ]
         },
         {
+          "name": "Warp Player to Respawn Point",
+          "index": 49,
+          "args": [
+            {
+              "name": "Respawn Point Parameter ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Start Enemy Generator",
+          "index": 50,
+          "args": [
+            {
+              "name": "Enemy Spawner ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Summon NPC",
+          "index": 51,
+          "args": [
+            {
+              "name": "Sign Type",
+              "type": 5,
+              "enum_name": "Singleplayer Summon Sign Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Summoned NPC Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Spawn Point Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Summon Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dismissal Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "Trigger AISound",
           "index": 52,
           "args": [
@@ -7967,6 +10879,26 @@
           ]
         },
         {
+          "name": "UNKNOWN 2003[74]",
+          "index": 74,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 1,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "UNKNOWN 2003[75]",
           "index": 75,
           "args": [
@@ -8015,11 +10947,201 @@
           ]
         },
         {
+          "name": "UNKNOWN 2003[76]",
+          "index": 76,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown0C",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown20",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2003[77]",
+          "index": 77,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 1,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2003[78]",
+          "index": 78,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "UNKNOWN 2003[79]",
           "index": 79,
           "args": [
             {
               "name": "Unknown Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2003[80]",
+          "index": 80,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2003[81]",
+          "index": 81,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2003[82]",
+          "index": 82,
+          "args": [
+            {
+              "name": "Character Entity ID",
               "type": 2,
               "enum_name": null,
               "default": 0,
@@ -8102,6 +11224,68 @@
               "increment": 0,
               "format_string": "%d",
               "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Character Warp Request",
+          "index": 3,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Warp Type",
+              "type": 0,
+              "enum_name": "Target Entity Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Warp Destination Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Dummypoly ID",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 255,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
               "unk2": 0,
               "unk3": 0,
               "unk4": 0
@@ -8272,6 +11456,96 @@
               "increment": 1,
               "format_string": "%d",
               "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Set Special Animation(s)",
+          "index": 9,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Waiting Animation",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Damage Animation",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Cancel Animation",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Death Animation",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Return Animation",
+              "type": 5,
+              "enum_name": null,
+              "default": -1,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
               "unk2": 0,
               "unk3": 0,
               "unk4": 0
@@ -8999,6 +12273,54 @@
           ]
         },
         {
+          "name": "Set NPC Part Bullet Damage Multiplier",
+          "index": 25,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "NPC Part ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 10000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Bullet Damage Multiplier",
+              "type": 6,
+              "enum_name": null,
+              "default": 1.0,
+              "min": 0.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "Change Character DispMask",
           "index": 26,
           "args": [
@@ -9223,6 +12545,82 @@
               "max": 0,
               "increment": 0,
               "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Request Character AI Command + Event Value",
+          "index": 32,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Command ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Slot Number",
+              "type": 0,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 3,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Starting Target Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Ending Target Event Flag ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 100000000,
+              "increment": 1,
+              "format_string": "%08d",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -9649,6 +13047,45 @@
           ]
         },
         {
+          "name": "Change Character Team Type and Force Exit Special Animations",
+          "index": 44,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Team Type",
+              "type": 0,
+              "enum_name": "Team Type",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Bonfire-like Recovery",
+          "index": 47,
+          "args": []
+        },
+        {
           "name": "Change Character's Cloth",
           "index": 48,
           "args": [
@@ -9847,6 +13284,26 @@
           ]
         },
         {
+          "name": "UNKNOWN 2004[61]",
+          "index": 61,
+          "args": [
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "UNKNOWN 2004[63]",
           "index": 63,
           "args": [
@@ -9873,6 +13330,40 @@
               "max": 9999.0,
               "increment": 1.0,
               "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[67]",
+          "index": 67,
+          "args": [
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
               "unk3": 0,
@@ -10312,6 +13803,210 @@
             },
             {
               "name": "UnknownC",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": -9999.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[78]",
+          "index": 78,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[79]",
+          "index": 79,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[80]",
+          "index": 80,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[81]",
+          "index": 81,
+          "args": [
+            {
+              "name": "Character Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[83]",
+          "index": 83,
+          "args": [
+            {
+              "name": "Character ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2004[84]",
+          "index": 84,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 6,
+              "enum_name": null,
+              "default": 0.0,
+              "min": -9999.0,
+              "max": 9999.0,
+              "increment": 1.0,
+              "format_string": "%0.3f",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown8",
               "type": 6,
               "enum_name": null,
               "default": 0.0,
@@ -10901,6 +14596,26 @@
           ]
         },
         {
+          "name": "Reroll Object Treasure",
+          "index": 15,
+          "args": [
+            {
+              "name": "Target Object Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
           "name": "UNKNOWN 2005[17]",
           "index": 17,
           "args": [
@@ -10976,6 +14691,26 @@
               "increment": 1,
               "format_string": "%d",
               "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Destroy Object",
+          "index": 19,
+          "args": [
+            {
+              "name": "Target Object Entity ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
               "unk2": 0,
               "unk3": 0,
               "unk4": 0
@@ -11317,6 +15052,26 @@
               "unk4": 0
             }
           ]
+        },
+        {
+          "name": "Unknown SFX 2006[06]",
+          "index": 6,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
         }
       ]
     },
@@ -11414,6 +15169,40 @@
               "increment": 0,
               "format_string": "%d",
               "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Display Status Message",
+          "index": 3,
+          "args": [
+            {
+              "name": "Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 1,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Pad State",
+              "type": 0,
+              "enum_name": "Disabled/Enabled",
+              "default": 0,
+              "min": 0,
+              "max": 0,
+              "increment": 0,
+              "format_string": "%d",
+              "unk1": 1,
               "unk2": 0,
               "unk3": 0,
               "unk4": 0
@@ -11692,6 +15481,40 @@
               "min": 0,
               "max": 0,
               "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "Display Message UNKNOWN 2007[16]",
+          "index": 16,
+          "args": [
+            {
+              "name": "Message ID",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": 0,
+              "max": 1000000000,
+              "increment": 1,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,
@@ -12311,6 +16134,40 @@
               "unk4": 0
             }
           ]
+        },
+        {
+          "name": "UNKNOWN 2010[12]",
+          "index": 12,
+          "args": [
+            {
+              "name": "Entity ID",
+              "type": 2,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
         }
       ]
     },
@@ -12344,6 +16201,40 @@
               "min": 0,
               "max": 0,
               "increment": 0,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            }
+          ]
+        },
+        {
+          "name": "UNKNOWN 2011[02]",
+          "index": 2,
+          "args": [
+            {
+              "name": "Unknown0",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
+              "format_string": "%d",
+              "unk1": 0,
+              "unk2": 0,
+              "unk3": 0,
+              "unk4": 0
+            },
+            {
+              "name": "Unknown4",
+              "type": 5,
+              "enum_name": null,
+              "default": 0,
+              "min": -1,
+              "max": 1000000000,
+              "increment": 1,
               "format_string": "%d",
               "unk1": 0,
               "unk2": 0,

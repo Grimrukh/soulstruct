@@ -471,7 +471,8 @@ class EVSParser(abc.ABC):
             raise EVSSyntaxError(node, "If given, `event_layers` must be a list, tuple, or single integer.")
         return instruction_lines
 
-    def _check_condition_group_add(self, node: ast.Call) -> tp.Optional[int]:
+    @staticmethod
+    def _check_condition_group_add(node: ast.Call) -> tp.Optional[int]:
         """Returns condition index if this is a condition group `.Add()` or `.Await()` call, or `None` otherwise."""
         if (
             isinstance(node.func, ast.Attribute)
