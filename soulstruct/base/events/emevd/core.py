@@ -103,7 +103,10 @@ class EMEVD(GameFile, abc.ABC):
             if emevd_path.suffix in {".evs", ".py"}:
                 if script_directory is None:
                     script_directory = emevd_path.parent
-                parsed = self.EVS_PARSER(emevd_path, script_directory=script_directory)
+                try:
+                    parsed = self.EVS_PARSER(emevd_path, script_directory=script_directory)
+                except Exception as ex:
+                    raise ValueError(f"Error while parsing EVS file: {emevd_path}\n  Error: {ex}")
                 self.map_name = parsed.map_name
                 try:
                     events, self.linked_file_offsets, self.packed_strings = build_numeric(

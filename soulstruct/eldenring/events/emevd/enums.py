@@ -458,13 +458,14 @@ class ArmorType(IntEnum):
 
 
 class BannerType(IntEnum):
+    # TODO: Test ER banners.
     HeirOfFireDestroyed = 1
     YouDied = 2
     Revival = 3
     SoulRecovery = 4
     TargetedDefeated = 5
     PhantomDeath = 6  # Phantom version of "YOU DIED"
-    BlackPhantomDestroyed = 7
+    BloodyFingerVanquished = 7
     AreaName = 8  # Name determined by current floor Collision.
     BeginMatch = 12
     DefaultBanner = 13

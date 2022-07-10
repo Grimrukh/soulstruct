@@ -4543,7 +4543,7 @@ EMEDF = {
     },
     (2004, 61): {
         "alias": "Unknown_2004_61",
-        "docstring": "TODO",
+        "docstring": "Used only once: in Stranded Graveyard with argument 9999.",
         "args": {
             "unk_0_4": INT,
         },
@@ -4805,7 +4805,8 @@ EMEDF = {
         "alias": "UnknownCamera_4",
         "docstring": """
             Very common camera instruction with unknown purpose.
-            First argument could be a param. Second could be an angle (between -180 and 180).
+            First argument is often 5.0 but can also be negative, so is probably not a distance. 
+            Second argument could be an angle (between -180 and 180).
         """,
         "args": {
             "unknown1": FLOAT,
