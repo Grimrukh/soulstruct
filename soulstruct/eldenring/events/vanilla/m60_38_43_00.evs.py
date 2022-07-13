@@ -291,7 +291,7 @@ def Event_1038430701(_, character: uint):
     EndIfPlayerNotInOwnWorld()
     WaitFrames(frames=1)
     IfAttackedWithDamageType(OR_1, attacked_entity=character, attacker=PLAYER)
-    IfHealthLessThanOrEqual(OR_1, character, value=0.0)
+    IfHealthRatioLessThanOrEqual(OR_1, character, value=0.0)
     IfFlagRangeAnyEnabled(AND_1, flag_range=(1041389320, 1041389322))
     IfConditionTrue(AND_1, input_condition=OR_1)
     IfConditionTrue(MAIN, input_condition=AND_1)

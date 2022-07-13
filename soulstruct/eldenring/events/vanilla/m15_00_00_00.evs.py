@@ -446,11 +446,11 @@ def Event_15002520():
             15002522,
             15000521,
             15002522,
-            0,
+            15000523,
         ),
         arg_types="IIIIIIIIIIIII",
     )
-    RunCommonEvent(0, 90005502, args=(15000523, 15001521, 15002522), arg_types="III")
+    RunCommonEvent(0, 90015502, args=(15000523, 15001521, 15002522), arg_types="III")
     RunCommonEvent(
         0,
         90005500,
@@ -676,10 +676,6 @@ def Event_15002811():
     IfHealthValueLessThanOrEqual(AND_1, 15000800, value=1)
     IfCharacterDoesNotHaveSpecialEffect(AND_1, 15000800, 18480)
     IfAttackedWithDamageType(OR_1, attacked_entity=15000800, attacker=0)
-    IfUnknownCharacterCondition_34(OR_1, character=15000800, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=15000800, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=15000800, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=15000800, unk_8_12=260, unk_12_16=1)
     IfConditionTrue(AND_1, input_condition=OR_1)
     IfConditionTrue(MAIN, input_condition=AND_1)
     SkipLinesIfPlayerNotInOwnWorld(2)
@@ -972,7 +968,7 @@ def Event_15002860():
 def Event_15002861():
     """Event 15002861"""
     EndIfFlagEnabled(15000850)
-    IfHealthLessThanOrEqual(AND_1, 15000850, value=0.550000011920929)
+    IfHealthRatioLessThanOrEqual(AND_1, 15000850, value=0.550000011920929)
     IfConditionTrue(MAIN, input_condition=AND_1)
     WaitFrames(frames=1)
 

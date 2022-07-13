@@ -419,7 +419,7 @@ def Event_1044363711(
     IfAttackedWithDamageType(OR_1, attacked_entity=character, attacker=PLAYER)
     IfAttackedWithDamageType(OR_1, attacked_entity=character, attacker=40000)
     IfConditionTrue(AND_2, input_condition=OR_1)
-    IfHealthLessThan(AND_2, character, value=value)
+    IfHealthRatioLessThan(AND_2, character, value=value)
     IfConditionTrue(OR_2, input_condition=AND_2)
     IfFlagEnabled(OR_2, flag_2)
     IfConditionTrue(AND_1, input_condition=OR_2)

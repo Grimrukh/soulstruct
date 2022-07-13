@@ -245,13 +245,14 @@ def Event_30162810():
     SetNetworkUpdateRate(30160800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(4.300000190734863)
     EnableBossHealthBar(30160800, name=904640300)
+    EnableNetworkFlag(30162803)
 
 
 @RestartOnRest(30162811)
 def Event_30162811():
     """Event 30162811"""
     EndIfFlagEnabled(30160800)
-    IfHealthLessThanOrEqual(AND_1, 30160800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 30160800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(30162802)
 
@@ -267,7 +268,12 @@ def Event_30162849():
     )
     RunCommonEvent(0, 9005801, args=(30160800, 30161800, 30162800, 30162805, 30162806, 10000), arg_types="IIIIIi")
     RunCommonEvent(0, 9005811, args=(30160800, 30161800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30160800, 920600, 30162805, 30162806, 0, 30162802, 0, 0), arg_types="IiIIIIii")
+    RunCommonEvent(
+        0,
+        9005822,
+        args=(30160800, 920600, 30162805, 30162806, 30162803, 30162802, 0, 0),
+        arg_types="IiIIIIii",
+    )
 
 
 @RestartOnRest(30162900)

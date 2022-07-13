@@ -289,7 +289,7 @@ def Event_12092848():
 def Event_12092800():
     """Event 12092800"""
     EndIfFlagEnabled(12090800)
-    IfHealthLessThanOrEqual(MAIN, 12090800, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 12090800, value=0.0)
     DisableFlag(12092907)
     DisableFlag(12092908)
     DisableFlag(12092909)
@@ -347,7 +347,7 @@ def Event_12092849():
 def Event_12092200(_, character: uint, flag: uint):
     """Event 12092200"""
     IfCharacterHasSpecialEffect(AND_1, character, 13605)
-    IfHealthEqual(AND_1, character, value=0.0)
+    IfHealthRatioEqual(AND_1, character, value=0.0)
     IfConditionTrue(MAIN, input_condition=AND_1)
     CancelSpecialEffect(character, 13605)
     EnableFlag(flag)

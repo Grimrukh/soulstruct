@@ -1599,7 +1599,7 @@ def Event_14002849():
 def Event_14002850():
     """Event 14002850"""
     EndIfFlagEnabled(14000850)
-    IfHealthLessThanOrEqual(MAIN, 14000850, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 14000850, value=0.0)
     Wait(2.0)
     PlaySoundEffect(14000850, 77777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(MAIN, 14000850)
@@ -1684,7 +1684,7 @@ def Event_14002820(_, character: uint):
 def Event_14002821(_, character: uint):
     """Event 14002821"""
     IfEntityWithinDistance(OR_1, entity=20000, other_entity=character, radius=30.0)
-    IfHealthEqual(OR_1, character, value=1.0, target_comparison_type=ComparisonType.NotEqual)
+    IfHealthRatioEqual(OR_1, character, value=1.0, target_comparison_type=ComparisonType.NotEqual)
     IfConditionTrue(MAIN, input_condition=OR_1)
     SetNetworkUpdateRate(14000801, is_fixed=False, update_rate=CharacterUpdateRate.Always)
     EnableAI(character)
@@ -3185,7 +3185,7 @@ def Event_14003880(
     IfCharacterType(OR_15, 20000, character_type=CharacterType.BlackPhantom)
     SkipLinesIfConditionFalse(1, OR_15)
     End()
-    IfHealthLessThanOrEqual(MAIN, character, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, character, value=0.0)
     WaitFrames(frames=1)
     DisableAI(14000800)
     SetNetworkUpdateRate(14005810, is_fixed=True, update_rate=CharacterUpdateRate.Never)

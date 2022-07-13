@@ -253,7 +253,7 @@ def Event_31192810():
 def Event_31192811():
     """Event 31192811"""
     EndIfFlagEnabled(31190800)
-    IfHealthLessThanOrEqual(AND_1, 31190800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 31190800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(31192802)
 
@@ -327,7 +327,7 @@ def Event_31192861():
     """Event 31192861"""
     DisableNetworkSync()
     EndIfFlagEnabled(31190850)
-    IfHealthLessThanOrEqual(AND_1, 31190850, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 31190850, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(31192852)
     EndIfFlagEnabled(31190850)

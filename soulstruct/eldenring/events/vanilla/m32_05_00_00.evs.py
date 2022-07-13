@@ -527,8 +527,8 @@ def Event_32052810():
 def Event_32052811():
     """Event 32052811"""
     EndIfFlagEnabled(32050800)
-    IfHealthLessThanOrEqual(AND_1, 32050800, value=0.6000000238418579)
-    IfHealthLessThanOrEqual(AND_1, 32050800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 32050800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 32050800, value=0.6000000238418579)
     IfConditionTrue(OR_1, input_condition=AND_1)
     IfCharacterDead(OR_1, 32050800)
     IfCharacterDead(OR_1, 32050801)

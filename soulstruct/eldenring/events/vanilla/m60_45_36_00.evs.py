@@ -30,6 +30,7 @@ def Constructor():
     RunCommonEvent(0, 90005464, args=(1045362212, 1045360211, 1045360215, 3), arg_types="IIII")
     RunCommonEvent(0, 90005464, args=(1045362212, 1045360211, 1045360216, 4), arg_types="IIII")
     Event_1045362200()
+    Event_1045362400()
     RunCommonEvent(
         0,
         90005725,
@@ -78,6 +79,17 @@ def Preconstructor():
 def Event_1045362200():
     """Event 1045362200"""
     AddSpecialEffect(1045360211, 11771)
+
+
+@RestartOnRest(1045362400)
+def Event_1045362400():
+    """Event 1045362400"""
+    EndIfFlagEnabled(1045360500)
+    EndIfPlayerNotInOwnWorld()
+    IfFlagEnabled(AND_1, 310)
+    IfCharacterInsideRegion(AND_1, character=PLAYER, region=1045362400)
+    IfConditionTrue(MAIN, input_condition=AND_1)
+    EnableFlag(1045360500)
 
 
 @RestartOnRest(1045363700)

@@ -222,7 +222,7 @@ def Event_31102802():
 def Event_31102830():
     """Event 31102830"""
     EndIfFlagEnabled(31100800)
-    IfHealthLessThanOrEqual(MAIN, 31100800, value=0.8500000238418579)
+    IfHealthRatioLessThanOrEqual(MAIN, 31100800, value=0.8500000238418579)
     ChangePatrolBehavior(31100801, patrol_information_id=31103830)
     CancelSpecialEffect(31100801, 8085)
     AddSpecialEffect(31100801, 8090)

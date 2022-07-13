@@ -1420,7 +1420,7 @@ def Event_31003704(_, character: uint, seconds: float):
     DisableFlag(31009811)
     GotoIfFlagEnabled(Label.L1, flag=31002704)
     EnableImmortality(character)
-    IfHealthLessThanOrEqual(MAIN, character, value=0.5)
+    IfHealthRatioLessThanOrEqual(MAIN, character, value=0.5)
     DisableImmortality(character)
     EndIfFlagEnabled(3683)
     EnableFlag(31002704)

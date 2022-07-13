@@ -813,7 +813,7 @@ def Event_18002650(_, region: uint, tutorial_param_id: int, flag: uint):
     EndIfPlayerNotInOwnWorld()
     IfFlagDisabled(AND_1, flag)
     IfCharacterInsideRegion(AND_1, character=PLAYER, region=region)
-    IfHealthLessThan(AND_1, PLAYER, value=100.0)
+    IfHealthRatioLessThan(AND_1, PLAYER, value=100.0)
     IfPlayerInOwnWorld(AND_1)
     IfConditionTrue(MAIN, input_condition=AND_1)
     Wait(2.0)

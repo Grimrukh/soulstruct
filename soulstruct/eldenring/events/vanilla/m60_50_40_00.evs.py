@@ -61,7 +61,7 @@ def Event_1050402201(_, character: uint):
     EndIfFlagEnabled(1050400599)
     AddSpecialEffect(character, 4405)
     IfCharacterDead(MAIN, character)
-    IfHealthGreaterThan(AND_1, 1050400800, value=3.0)
+    IfHealthRatioGreaterThan(AND_1, 1050400800, value=3.0)
     GotoIfConditionTrue(Label.L0, input_condition=AND_1)
     AddSpecialEffect(1050400800, 4402)
     End()

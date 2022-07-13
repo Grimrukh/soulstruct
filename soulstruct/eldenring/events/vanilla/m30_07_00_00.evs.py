@@ -20,8 +20,6 @@ from soulstruct.eldenring.events.instructions import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=300700, obj=30071950, unknown=5.0)
-    RunCommonEvent(0, 90005920, args=(30070200, 30071200, 30073200), arg_types="III")
-    Event_30072520(0, flag=30070520, obj=30071200, flag_1=30070800)
     RunCommonEvent(
         0,
         90005501,
@@ -374,6 +372,7 @@ def Constructor():
     Event_30072800()
     Event_30072810()
     Event_30072849()
+    Event_30072811()
 
 
 @NeverRestart(50)
@@ -4818,6 +4817,15 @@ def Event_30072810():
     EnableBossHealthBar(30070800, name=904260303)
 
 
+@RestartOnRest(30072811)
+def Event_30072811():
+    """Event 30072811"""
+    EndIfFlagEnabled(30070800)
+    IfHealthRatioLessThanOrEqual(AND_1, 30070800, value=0.6000000238418579)
+    IfConditionTrue(MAIN, input_condition=AND_1)
+    EnableFlag(30072802)
+
+
 @RestartOnRest(30072849)
 def Event_30072849():
     """Event 30072849"""
@@ -4829,4 +4837,4 @@ def Event_30072849():
     )
     RunCommonEvent(0, 9005801, args=(30070800, 30071800, 30072800, 30072805, 30072806, 10000), arg_types="IIIIIi")
     RunCommonEvent(0, 9005811, args=(30070800, 30071800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30070800, 930000, 30072805, 30072806, 0, 11002852, 0, 0), arg_types="IiIIIIii")
+    RunCommonEvent(0, 9005822, args=(30070800, 930000, 30072805, 30072806, 0, 30072802, 0, 0), arg_types="IiIIIIii")

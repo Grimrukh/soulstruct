@@ -223,7 +223,6 @@ def Constructor():
     Event_9300(37, 37, 12080800, 0.0)
     Event_9300(38, 38, 1051570800, 0.0)
     Event_9300(39, 39, 105, 0.0)
-    Event_9300(40, 40, 161, 0.0)
     Event_9300(41, 41, 110, 0.0)
     Event_9360(0, 0, 100, 0.0)
     Event_9360(1, 1, 9390, 0.0)
@@ -596,6 +595,25 @@ def Preconstructor():
     Event_3059()
     Event_3089()
     Event_4612()
+    Event_60701(0, flag=11109751, flag_1=60701)
+    Event_60701(1, flag=11109752, flag_1=60702)
+    Event_60701(2, flag=11109753, flag_1=60703)
+    Event_60701(3, flag=11109754, flag_1=60704)
+    Event_60701(4, flag=11109755, flag_1=60705)
+    Event_60701(5, flag=11109756, flag_1=60706)
+    Event_60701(6, flag=11109757, flag_1=60707)
+    Event_60701(7, flag=11109758, flag_1=60708)
+    Event_60701(8, flag=11109759, flag_1=60709)
+    Event_60701(9, flag=11109760, flag_1=60710)
+    Event_60701(10, flag=11109761, flag_1=60711)
+    Event_60701(11, flag=11109762, flag_1=60712)
+    Event_60701(12, flag=11109763, flag_1=60713)
+    Event_60701(13, flag=11109764, flag_1=60714)
+    Event_60701(14, flag=11109765, flag_1=60715)
+    Event_60701(29, flag=11109745, flag_1=60730)
+    Event_60701(30, flag=11109746, flag_1=60731)
+    Event_60701(31, flag=11109747, flag_1=60732)
+    Event_60701(32, flag=11109748, flag_1=60733)
     Event_3081(
         0,
         flag=1037429202,
@@ -648,6 +666,7 @@ def Preconstructor():
     Event_6905()
     Event_6906()
     Event_6907()
+    Event_6908()
     End()
 
 
@@ -1522,6 +1541,10 @@ def Event_910():
     Unknown_2003_68(unknown1=5, unknown2=-1.0, unknown3=1)
     AddSpecialEffect(PLAYER, 4280)
     AddSpecialEffect(PLAYER, 4282)
+    SkipLinesIfFlagEnabled(3, 9417)
+    Wait(0.5)
+    DisplayDialog(text=30140, anchor_entity=0, display_distance=5.0, number_buttons=NumberButtons.OneButton)
+    EnableFlag(9417)
     IfFlagEnabled(OR_13, 76422)
     IfFlagEnabled(OR_13, 73016)
     IfConditionTrue(MAIN, input_condition=OR_13)
@@ -3468,6 +3491,24 @@ def Event_6907():
     ReplanAI(0)
 
 
+@RestartOnRest(6908)
+def Event_6908():
+    """Event 6908"""
+    EndIfThisEventSlotFlagEnabled()
+    GotoIfPlayerNotInOwnWorld(Label.L15)
+    SkipLinesIfFlagDisabled(1, 73207)
+    EnableFlag(73257)
+    DisableThisSlotFlag()
+    End()
+
+    # --- Label 15 --- #
+    DefineLabel(15)
+    IfPlayerInOwnWorld(AND_15)
+    IfConditionTrue(MAIN, input_condition=AND_15)
+    Wait(1.0)
+    ReplanAI(0)
+
+
 @RestartOnRest(9300)
 def Event_9300(_, achievement_id: int, flag: uint, seconds: float):
     """Event 9300"""
@@ -4905,7 +4946,11 @@ def Event_4611(_, flag: uint, flag_1: uint):
     DisableFlag(flag)
     DisableFlag(flag_1)
     IfFlagRangeAnyEnabled(AND_1, flag_range=(4208, 4209))
-    IfFlagEnabled(AND_1, 11009554)
+    IfFlagEnabled(OR_1, 11009554)
+    IfFlagDisabled(AND_5, 11009555)
+    IfFlagEnabled(AND_5, 118)
+    IfConditionTrue(OR_1, input_condition=AND_5)
+    IfConditionTrue(AND_1, input_condition=OR_1)
     IfFlagEnabled(AND_1, 11009460)
     IfFlagDisabled(AND_1, 1051569454)
     SkipLinesIfConditionFalse(1, AND_1)
@@ -4920,6 +4965,8 @@ def Event_4611(_, flag: uint, flag_1: uint):
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 4208)
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 4209)
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 11009554)
+    IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 11009555)
+    IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 118)
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 11009460)
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 1040549254)
     IfFlagState(OR_15, FlagSetting.Change, FlagType.Absolute, 1040549205)
@@ -5253,10 +5300,10 @@ def Event_3679():
     EnableNetworkFlag(3665)
     GotoIfFlagDisabled(Label.L0, flag=3660)
     IfFlagEnabled(AND_3, 3665)
-    IfFlagEnabled(AND_3, 1043399307)
+    IfFlagEnabled(OR_3, 1043399307)
     IfFlagEnabled(OR_3, 32009203)
-    IfConditionTrue(OR_3, input_condition=AND_3)
-    SkipLinesIfConditionFalse(2, OR_3)
+    IfConditionTrue(AND_3, input_condition=OR_3)
+    SkipLinesIfConditionFalse(2, AND_3)
     DisableNetworkConnectedFlagRange(flag_range=(3665, 3671))
     EnableNetworkFlag(3666)
     IfFlagEnabled(OR_4, 3665)
@@ -5275,7 +5322,6 @@ def Event_3679():
     EnableNetworkFlag(3668)
     IfFlagEnabled(AND_6, 3668)
     IfFlagEnabled(AND_6, 1051369266)
-    IfFlagDisabled(AND_6, 1035539204)
     SkipLinesIfConditionFalse(4, AND_6)
     DisableNetworkConnectedFlagRange(flag_range=(3665, 3671))
     EnableNetworkFlag(3669)
@@ -7733,6 +7779,26 @@ def Event_3839():
     # --- Label 0 --- #
     DefineLabel(0)
     End()
+
+
+@NeverRestart(60701)
+def Event_60701(_, flag: uint, flag_1: uint):
+    """Event 60701"""
+    GotoIfPlayerNotInOwnWorld(Label.L15)
+    IfFlagEnabled(OR_1, flag)
+    IfFlagEnabled(OR_1, flag_1)
+    IfConditionTrue(MAIN, input_condition=OR_1)
+    EnableFlag(flag)
+    EnableFlag(flag_1)
+    End()
+
+    # --- Label 15 --- #
+    DefineLabel(15)
+    IfFlagEnabled(AND_15, 6000)
+    IfFlagDisabled(AND_15, 6000)
+    IfConditionTrue(MAIN, input_condition=AND_15)
+    Wait(1.0)
+    ReplanAI(0)
 
 
 @NeverRestart(9930)

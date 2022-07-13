@@ -82,7 +82,7 @@ def Constructor():
         args=(1044350800, 1044352160, 1044352161, 1044350702, 20, 1044352720, 1044349257, 0, 0),
         arg_types="IIIIiIIBi",
     )
-    RunCommonEvent(0, 90005781, args=(1044350800, 1044352160, 39202161, 1044350702), arg_types="IIII")
+    RunCommonEvent(0, 90005781, args=(1044350800, 1044352160, 1044352161, 1044350702), arg_types="IIII")
     RunCommonEvent(
         0,
         90005783,

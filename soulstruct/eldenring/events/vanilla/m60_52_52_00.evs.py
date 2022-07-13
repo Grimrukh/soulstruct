@@ -138,7 +138,7 @@ def Event_1052522810():
 def Event_1052522811():
     """Event 1052522811"""
     EndIfFlagEnabled(1252520800)
-    IfHealthLessThanOrEqual(MAIN, 1052520801, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 1052520801, value=0.0)
     SetTeamType(1052520801, TeamType.Object)
     SkipLinesIfPlayerNotInOwnWorld(2)
     UnknownCutscene_13(

@@ -69,7 +69,7 @@ def Event_1035542210(_, character: uint):
     IfFlagEnabled(AND_1, 1037520350)
     EndIfConditionTrue(input_condition=AND_1)
     DisableCharacter(character)
-    IfHealthLessThan(MAIN, 1037520350, value=0.699999988079071)
+    IfHealthRatioLessThan(MAIN, 1037520350, value=0.699999988079071)
     EnableCharacter(character)
     AddSpecialEffect(character, 8971)
 

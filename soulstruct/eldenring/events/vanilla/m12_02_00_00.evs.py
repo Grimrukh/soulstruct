@@ -252,15 +252,22 @@ def Preconstructor():
 @RestartOnRest(12022699)
 def Event_12022699():
     """Event 12022699"""
-    EndIfFlagDisabled(12020801)
+    IfFlagEnabled(MAIN, 12022805)
+    IfCharacterInsideRegion(AND_1, character=12020715, region=12022717)
+    GotoIfConditionTrue(Label.L10, input_condition=AND_1)
     RunCommonEvent(0, 90005784, args=(12022160, 12022805, 12020715, 12022800, 12022809, 0), arg_types="IIIIIi")
+    End()
+
+    # --- Label 10 --- #
+    DefineLabel(10)
+    End()
 
 
 @RestartOnRest(12022698)
 def Event_12022698():
     """Event 12022698"""
     EndIfFlagEnabled(12020800)
-    IfFlagEnabled(OR_1, 12029019)
+    IfFlagEnabled(OR_1, 12022160)
     IfConditionTrue(MAIN, input_condition=OR_1)
     DisableMapCollision(collision=12021698)
 
@@ -362,7 +369,7 @@ def Event_12022601(_, flag: uint, obj: uint, obj_1: uint):
     CreateObjectVFX(obj, vfx_id=200, model_point=812070)
     CreateObjectVFX(obj, vfx_id=201, model_point=812070)
     CreateObjectVFX(obj_1, vfx_id=200, model_point=812070)
-    Wait(1.7000000476837158)
+    Wait(2.0)
     EnableAnimations(PLAYER)
     End()
 
@@ -465,7 +472,7 @@ def Event_12022621(_, flag: uint, obj: uint, obj_1: uint):
     CreateObjectVFX(obj, vfx_id=200, model_point=812070)
     CreateObjectVFX(obj, vfx_id=201, model_point=812070)
     CreateObjectVFX(obj_1, vfx_id=200, model_point=812070)
-    Wait(1.7000000476837158)
+    Wait(2.0)
     EnableAnimations(PLAYER)
     End()
 
@@ -1396,7 +1403,7 @@ def Event_12022820():
     EndIfFlagEnabled(12020800)
     ForceAnimation(12020801, 30003, loop=True, unknown2=1.0)
     DisableFlag(12022820)
-    IfHealthLessThanOrEqual(AND_1, 12020800, value=0.550000011920929)
+    IfHealthRatioLessThanOrEqual(AND_1, 12020800, value=0.550000011920929)
     IfConditionTrue(MAIN, input_condition=AND_1)
     ForceAnimation(12020801, 20003, loop=True, unknown2=1.0)
     WaitFrames(frames=1)
@@ -1425,12 +1432,6 @@ def Event_12022821():
 @RestartOnRest(12022849)
 def Event_12022849():
     """Event 12022849"""
-    RunCommonEvent(
-        0,
-        9005800,
-        args=(12020800, 12021800, 12022800, 12022805, 12025800, 10000, 12021801, 12022801),
-        arg_types="IIIIIiII",
-    )
     RunCommonEvent(0, 9005811, args=(12020800, 12021801, 5, 12020801), arg_types="IIiI")
     RunCommonEvent(0, 9005822, args=(12020800, 931000, 12022805, 12022806, 0, 12022820, 0, 0), arg_types="IiIIIIii")
     RunCommonEvent(

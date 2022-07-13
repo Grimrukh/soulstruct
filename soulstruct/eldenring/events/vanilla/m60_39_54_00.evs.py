@@ -284,7 +284,7 @@ def Event_1039542498():
 def Event_1039542811():
     """Event 1039542811"""
     EndIfFlagEnabled(1039540800)
-    IfHealthLessThanOrEqual(AND_1, 1039540800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 1039540800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(1039542802)
 
@@ -425,7 +425,7 @@ def Event_1039542849():
 def Event_1039542800():
     """Event 1039542800"""
     EndIfFlagEnabled(1039540800)
-    IfHealthLessThanOrEqual(MAIN, 1039540800, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 1039540800, value=0.0)
     CreateVFX(1039540820)
     CreateVFX(1039540821)
     CreateVFX(1039540822)

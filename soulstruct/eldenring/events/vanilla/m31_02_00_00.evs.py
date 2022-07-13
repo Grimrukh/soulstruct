@@ -379,14 +379,14 @@ def Event_31022810():
     DefineLabel(2)
     EnableAI(31020800)
     SetNetworkUpdateRate(31020800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(31020800, name=904480310)
+    EnableBossHealthBar(31020800, name=904480311)
 
 
 @RestartOnRest(31022811)
 def Event_31022811():
     """Event 31022811"""
     EndIfFlagEnabled(31020800)
-    IfHealthLessThanOrEqual(AND_1, 31020800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 31020800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(31022802)
 

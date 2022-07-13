@@ -944,8 +944,8 @@ def Event_30182810():
     IfConditionTrue(OR_1, input_condition=AND_1)
     IfAttackedWithDamageType(OR_1, attacked_entity=30180800, attacker=PLAYER)
     IfConditionTrue(MAIN, input_condition=OR_1)
-    EnableNetworkFlag(30180801)
     ForceAnimation(30180800, 20002, unknown2=1.0)
+    EnableNetworkFlag(30180801)
     Goto(Label.L2)
 
     # --- Label 1 --- #
@@ -962,13 +962,14 @@ def Event_30182810():
     SetNetworkUpdateRate(30180800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(4.300000190734863)
     EnableBossHealthBar(30180800, name=904640301)
+    EnableNetworkFlag(30182803)
 
 
 @RestartOnRest(30182811)
 def Event_30182811():
     """Event 30182811"""
     EndIfFlagEnabled(30180800)
-    IfHealthLessThanOrEqual(AND_1, 30180800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 30180800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(30182802)
 
@@ -984,4 +985,9 @@ def Event_30182849():
     )
     RunCommonEvent(0, 9005801, args=(30180800, 30181800, 30182800, 30182805, 30182806, 10000), arg_types="IIIIIi")
     RunCommonEvent(0, 9005811, args=(30180800, 30181800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30180800, 920600, 30182805, 30182806, 0, 30182802, 0, 0), arg_types="IiIIIIii")
+    RunCommonEvent(
+        0,
+        9005822,
+        args=(30180800, 920600, 30182805, 30182806, 30182803, 30182802, 0, 0),
+        arg_types="IiIIIIii",
+    )

@@ -161,7 +161,7 @@ def Event_31052810():
 def Event_31052811():
     """Event 31052811"""
     EndIfFlagEnabled(31050800)
-    IfHealthLessThanOrEqual(AND_1, 31050800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 31050800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(31052802)
 

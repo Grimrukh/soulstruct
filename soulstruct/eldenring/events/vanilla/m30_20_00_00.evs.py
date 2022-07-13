@@ -79,6 +79,20 @@ def Constructor():
     Event_30202200()
 
 
+@NeverRestart(50)
+def Preconstructor():
+    """Event 50"""
+    RunCommonEvent(0, 90005460, args=(30200200,))
+    RunCommonEvent(0, 90005461, args=(30200200,))
+    RunCommonEvent(0, 90005462, args=(30200200,))
+    RunCommonEvent(0, 90005460, args=(30200201,))
+    RunCommonEvent(0, 90005461, args=(30200201,))
+    RunCommonEvent(0, 90005462, args=(30200201,))
+    RunCommonEvent(0, 90005460, args=(30200202,))
+    RunCommonEvent(0, 90005461, args=(30200202,))
+    RunCommonEvent(0, 90005462, args=(30200202,))
+
+
 @NeverRestart(30202510)
 def Event_30202510():
     """Event 30202510"""
@@ -191,7 +205,7 @@ def Event_30202810():
 def Event_30202811():
     """Event 30202811"""
     EndIfFlagEnabled(30200800)
-    IfHealthLessThanOrEqual(AND_1, 30200800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 30200800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(30202802)
 

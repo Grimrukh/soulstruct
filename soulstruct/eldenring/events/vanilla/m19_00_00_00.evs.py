@@ -366,7 +366,7 @@ def Event_19002800():
     SetRespawnPoint(respawn_point=19002814)
     SaveRequest()
     Wait(7.5)
-    IfHealthEqual(AND_2, PLAYER, value=0.0)
+    IfHealthRatioEqual(AND_2, PLAYER, value=0.0)
     EndIfConditionTrue(input_condition=AND_2)
 
     # --- Label 0 --- #
@@ -469,7 +469,6 @@ def Event_19002812():
         unk_12_16=102.3499984741211,
         unk_16_20=-607.0599975585938,
     )
-    EnableFlag(9021)
     SkipLinesIfPlayerNotInOwnWorld(2)
     UnknownCutscene_11(
         cutscene_id=19000000,

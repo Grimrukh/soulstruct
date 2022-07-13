@@ -48,8 +48,6 @@ def Constructor():
     RunCommonEvent(0, 90005200, args=(12010211, 30009, 20022, 12012211, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
     RunCommonEvent(0, 90005200, args=(12010212, 30009, 20022, 12012211, 10.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
     RunCommonEvent(0, 90005251, args=(12010216, 3.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(12015210, 3.0, 1.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(12015214, 3.0, 1.0, -1), arg_types="Iffi")
     RunCommonEvent(0, 90005201, args=(12010222, 30001, 20001, 8.0, 0.0, 1, 0, 0, 0), arg_types="IiiffIIII")
     RunCommonEvent(0, 90005300, args=(12010240, 12010240, 12010105, 3.5, 0), arg_types="IIifi")
     Event_12012220(0, character=12010231)

@@ -479,14 +479,12 @@ def Event_12052251(_, character: uint, frames: int, entity: uint, animation_id: 
 def Event_12052360(_, character: uint, character_1: uint):
     """Event 12052360"""
     IfCharacterDead(OR_15, character_1)
-    IfHealthLessThanOrEqual(MAIN, character_1, value=0.699999988079071)
+    IfHealthRatioLessThanOrEqual(OR_15, character_1, value=0.5)
     SkipLinesIfConditionFalse(2, OR_15)
     Kill(character)
     End()
-    SetTeamType(character, TeamType.Enemy)
-    SetTeamType(character_1, TeamType.Enemy)
     IfCharacterDead(OR_12, character_1)
-    IfHealthLessThanOrEqual(OR_12, character_1, value=0.699999988079071)
+    IfHealthRatioLessThanOrEqual(OR_12, character_1, value=0.5)
     IfConditionTrue(MAIN, input_condition=OR_12)
     Kill(character)
     End()
@@ -514,7 +512,6 @@ def Event_12052680():
     DeleteVFX(12053680)
     Wait(1.0)
     Restart()
-    SetTeamType(0, TeamType.Enemy2)
 
 
 @RestartOnRest(12052690)
@@ -599,9 +596,11 @@ def Event_12052810():
 
     # --- Label 1 --- #
     DefineLabel(1)
+    DisableAnimations(12050800)
     IfFlagEnabled(AND_2, 12052805)
     IfCharacterInsideRegion(AND_2, character=PLAYER, region=12052800)
     IfConditionTrue(MAIN, input_condition=AND_2)
+    EnableAnimations(12050800)
 
     # --- Label 2 --- #
     DefineLabel(2)

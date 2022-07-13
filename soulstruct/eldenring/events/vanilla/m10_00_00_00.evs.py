@@ -1109,7 +1109,7 @@ def Event_10003500(_, region: uint):
 def Event_10002800():
     """Event 10002800"""
     EndIfFlagEnabled(10000800)
-    IfHealthLessThanOrEqual(MAIN, 10000800, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 10000800, value=0.0)
     Kill(10005810)
     Kill(10005820)
     CreateVFX(10003820)

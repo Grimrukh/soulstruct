@@ -506,7 +506,7 @@ def Event_1051572274(
     IfCharacterInsideRegion(OR_3, character=PLAYER, region=region)
     IfEntityWithinDistance(OR_3, entity=PLAYER, other_entity=character, radius=radius)
     IfConditionTrue(AND_1, input_condition=OR_3)
-    IfHealthLessThanOrEqual(AND_1, 1051570272, value=0.4000000059604645)
+    IfHealthRatioLessThanOrEqual(AND_1, 1051570272, value=0.4000000059604645)
     IfCharacterBackreadEnabled(AND_1, character)
     IfCharacterHasSpecialEffect(OR_11, character, 5080)
     IfCharacterHasSpecialEffect(OR_11, character, 5450)
@@ -612,7 +612,7 @@ def Event_1051572310(
     SkipLinesIfUnsignedEqual(1, left=0, right=region)
     IfCharacterInsideRegion(OR_3, character=PLAYER, region=region)
     IfEntityWithinDistance(OR_3, entity=PLAYER, other_entity=character, radius=radius)
-    IfHealthLessThanOrEqual(OR_3, 1051570310, value=0.5)
+    IfHealthRatioLessThanOrEqual(OR_3, 1051570310, value=0.5)
     IfConditionTrue(AND_1, input_condition=OR_3)
     IfCharacterBackreadEnabled(AND_1, character)
     IfCharacterHasSpecialEffect(OR_11, character, 5080)
@@ -808,7 +808,7 @@ def Event_1051572580():
 def Event_1051572800():
     """Event 1051572800"""
     EndIfFlagEnabled(1051570800)
-    IfHealthLessThanOrEqual(MAIN, 1051570800, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 1051570800, value=0.0)
     IfCharacterDead(MAIN, 1051570800)
     KillBossAndDisplayBanner(character=1051570800, banner_type=BannerType.Unknown)
     EnableFlag(1051570800)

@@ -68,6 +68,12 @@ def Preconstructor():
     RunCommonEvent(0, 90005261, args=(1037420225, 1037422200, 2.0, 1.0, -1), arg_types="IIffi")
     RunCommonEvent(0, 90005251, args=(1037420213, 10.0, 0.0, -1), arg_types="Iffi")
     RunCommonEvent(0, 90005261, args=(1037420340, 1037422340, 10.0, 0.0, 1700), arg_types="IIffi")
+    RunCommonEvent(0, 90005460, args=(1037420300,))
+    RunCommonEvent(0, 90005461, args=(1037420300,))
+    RunCommonEvent(0, 90005462, args=(1037420300,))
+    RunCommonEvent(0, 90005460, args=(1037420301,))
+    RunCommonEvent(0, 90005461, args=(1037420301,))
+    RunCommonEvent(0, 90005462, args=(1037420301,))
 
 
 @RestartOnRest(1037422610)

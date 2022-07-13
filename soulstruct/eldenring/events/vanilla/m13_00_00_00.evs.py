@@ -145,7 +145,7 @@ def Constructor():
         args=(13000850, 13002160, 13002161, 13000720, 20, 13002721, 13002720, 1, 0),
         arg_types="IIIIiIIBi",
     )
-    RunCommonEvent(0, 90005781, args=(13000850, 13002160, 10002161, 13000720), arg_types="IIII")
+    RunCommonEvent(0, 90005781, args=(13000850, 13002160, 13002161, 13000720), arg_types="IIII")
     Event_13002859()
     RunCommonEvent(
         0,
@@ -153,7 +153,7 @@ def Constructor():
         args=(13000850, 13002164, 13002165, 13000725, 20, 13002726, 13002721, 1, 0),
         arg_types="IIIIiIIBi",
     )
-    RunCommonEvent(0, 90005781, args=(13000850, 13002164, 10002165, 13000725), arg_types="IIII")
+    RunCommonEvent(0, 90005781, args=(13000850, 13002164, 13002165, 13000725), arg_types="IIII")
     RunCommonEvent(0, 90005782, args=(13002164, 13002855, 13000725, 13002853, 13002869, 0), arg_types="IIIIIi")
     RunCommonEvent(
         0,
@@ -695,12 +695,11 @@ def Event_13002810():
 def Event_13002811():
     """Event 13002811"""
     EndIfFlagEnabled(13000800)
-    IfHealthLessThanOrEqual(AND_1, 13000801, value=0.550000011920929)
+    IfHealthRatioLessThanOrEqual(AND_1, 13000801, value=0.550000011920929)
     IfConditionTrue(MAIN, input_condition=AND_1)
     IfHealthValueLessThanOrEqual(OR_15, PLAYER, value=0)
     IfCharacterInsideRegion(OR_15, character=PLAYER, region=13002815)
     EndIfConditionTrue(input_condition=OR_15)
-    EnableFlag(13002802)
     Unknown_2004_73(entity=13000800, unk_4_8=0)
     SkipLinesIfPlayerNotInOwnWorld(2)
     UnknownCutscene_11(
@@ -715,6 +714,7 @@ def Event_13002811():
     SkipLines(1)
     PlayCutscene(13000040, cutscene_flags=0, player_id=10000)
     WaitFramesAfterCutscene(frames=1)
+    EnableFlag(13002802)
     DisableCharacter(13000801)
     SetNetworkUpdateRate(13000801, is_fixed=False, update_rate=CharacterUpdateRate.Never)
     DisableAI(13000801)
@@ -739,7 +739,7 @@ def Event_13002819():
 @RestartOnRest(13002820)
 def Event_13002820():
     """Event 13002820"""
-    IfHealthNotEqual(AND_1, 13000800, value=0.0)
+    IfHealthRatioNotEqual(AND_1, 13000800, value=0.0)
     IfFlagEnabled(AND_1, 13002821)
     SkipLinesIfFlagDisabled(1, 13002822)
     SetEventPoint(13000800, region=13002810, reaction_range=200.0)
@@ -807,6 +807,7 @@ def Event_13002830():
     EnableFlag(9115)
     SkipLinesIfPlayerNotInOwnWorld(1)
     EnableFlag(61115)
+    SkipLinesIfPlayerNotInOwnWorld(1)
     EnableFlag(71301)
 
 
@@ -921,6 +922,11 @@ def Event_13002835():
     IfCharacterInsideRegion(AND_1, character=PLAYER, region=13002831)
     IfConditionTrue(OR_1, input_condition=AND_1)
     IfAttackedWithDamageType(OR_1, attacked_entity=13000830, attacker=0)
+    IfUnknownCharacterCondition_34(OR_1, character=13000830, unk_8_12=436, unk_12_16=1)
+    IfUnknownCharacterCondition_34(OR_1, character=13000830, unk_8_12=2, unk_12_16=1)
+    IfUnknownCharacterCondition_34(OR_1, character=13000830, unk_8_12=5, unk_12_16=1)
+    IfUnknownCharacterCondition_34(OR_1, character=13000830, unk_8_12=6, unk_12_16=1)
+    IfUnknownCharacterCondition_34(OR_1, character=13000830, unk_8_12=260, unk_12_16=1)
     IfConditionTrue(MAIN, input_condition=OR_1)
     ForceAnimation(13000830, 20000, unknown2=1.0)
     EnableAI(13000830)
@@ -1102,7 +1108,7 @@ def Event_13002860():
 def Event_13002861():
     """Event 13002861"""
     EndIfFlagEnabled(13000850)
-    IfHealthLessThanOrEqual(OR_1, 13000850, value=0.5)
+    IfHealthRatioLessThanOrEqual(OR_1, 13000850, value=0.5)
     IfFlagEnabled(OR_1, 13002873)
     IfFlagEnabled(OR_1, 13002874)
     IfConditionTrue(MAIN, input_condition=OR_1)

@@ -263,8 +263,12 @@ def Event_1034502801():
     EndIfFlagEnabled(1034500800)
     EndIfCharacterHasSpecialEffect(character=1034500800, special_effect=10207)
     EnableImmortality(1034500800)
-    IfHealthLessThan(OR_1, 1034500800, value=0.5)
+    IfHealthRatioLessThan(OR_1, 1034500800, value=0.5)
     IfConditionTrue(MAIN, input_condition=OR_1)
+    Wait(0.5)
+    IfHealthRatioLessThan(OR_2, 1034500800, value=0.5)
+    SkipLinesIfConditionTrue(1, OR_2)
+    Restart()
     EnableInvincibility(1034500800)
     ReplanAI(1034500800)
     ForceAnimation(1034500800, 20009, unknown2=1.0)
@@ -298,7 +302,7 @@ def Event_1034502803():
 def Event_1034502804():
     """Event 1034502804"""
     EndIfFlagEnabled(1034500800)
-    IfHealthLessThan(AND_1, 1034500800, value=0.5)
+    IfHealthRatioLessThan(AND_1, 1034500800, value=0.5)
     IfCharacterHasSpecialEffect(AND_1, 1034500800, 10207)
     IfConditionTrue(MAIN, input_condition=AND_1)
     Wait(4.699999809265137)

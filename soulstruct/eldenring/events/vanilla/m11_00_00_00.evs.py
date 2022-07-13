@@ -1378,6 +1378,7 @@ def Event_11002810():
     DisableAI(11005800)
     DisableObject(11001820)
     DisableMapCollision(collision=11004820)
+    DisableAnimations(11000800)
     IfCharacterType(OR_15, PLAYER, character_type=CharacterType.BlackPhantom)
     IfCharacterType(OR_15, PLAYER, character_type=CharacterType.Unknown15)
     IfCharacterType(OR_15, PLAYER, character_type=CharacterType.Unknown16)
@@ -1422,6 +1423,7 @@ def Event_11002810():
 
     # --- Label 2 --- #
     DefineLabel(2)
+    EnableAnimations(11000800)
     EnableAI(11005800)
     SetNetworkUpdateRate(11005800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(11000800, name=902130002)
@@ -1513,7 +1515,7 @@ def Event_11002860():
 def Event_11002861():
     """Event 11002861"""
     EndIfFlagEnabled(11000850)
-    IfHealthLessThanOrEqual(AND_1, 11000850, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 11000850, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(11002852)
 

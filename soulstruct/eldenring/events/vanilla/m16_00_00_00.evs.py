@@ -625,11 +625,18 @@ def Event_16002580():
 @RestartOnRest(16002590)
 def Event_16002590():
     """Event 16002590"""
+    SkipLinesIfFlagDisabled(1, 16000520)
+    EnableObjectActivation(16001522, obj_act_id=277021)
     EndIfFlagEnabled(16000850)
-    WaitFrames(frames=1)
     ForceAnimation(16001520, 20, loop=True, unknown2=1.0)
-    Wait(1.0)
-    Restart()
+    EnableFlag(16000520)
+    EnableFlag(16001520)
+    Wait(2.5)
+    DisableObjectActivation(16001522, obj_act_id=277021)
+    IfFlagEnabled(MAIN, 16000850)
+    Wait(4.0)
+    DisableFlag(16001520)
+    DisableFlag(16000520)
 
 
 @RestartOnRest(16002620)
@@ -847,8 +854,12 @@ def Event_16002811():
     """Event 16002811"""
     EndIfFlagEnabled(16000800)
     IfPlayerInOwnWorld(AND_1)
-    IfHealthLessThanOrEqual(AND_1, 16000801, value=0.009999999776482582)
+    IfHealthRatioLessThanOrEqual(AND_1, 16000801, value=0.009999999776482582)
+    IfCharacterDoesNotHaveSpecialEffect(AND_1, 16000801, 11955)
     IfConditionTrue(MAIN, input_condition=AND_1)
+    Wait(0.10000000149011612)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=16000801, special_effect=11955)
+    Restart()
     ForceAnimation(16000801, 20001, unknown2=1.0)
     IfPlayerInOwnWorld(AND_2)
     IfCharacterAlive(AND_2, PLAYER)
@@ -857,7 +868,7 @@ def Event_16002811():
     ForceAnimation(16000801, 30001, loop=True, unknown2=1.0)
     CancelSpecialEffect(16000801, 11943)
     CancelSpecialEffect(16000801, 11948)
-    IfHealthEqual(OR_9, PLAYER, value=0.0)
+    IfHealthRatioEqual(OR_9, PLAYER, value=0.0)
     IfCharacterDead(OR_9, PLAYER)
     EndIfConditionTrue(input_condition=OR_9)
     SkipLinesIfPlayerNotInOwnWorld(2)
@@ -902,7 +913,7 @@ def Event_16002811():
 def Event_16002812():
     """Event 16002812"""
     EndIfFlagEnabled(16000800)
-    IfHealthLessThanOrEqual(AND_1, 16000800, value=0.5)
+    IfHealthRatioLessThanOrEqual(AND_1, 16000800, value=0.5)
     IfConditionTrue(MAIN, input_condition=AND_1)
     AddSpecialEffect(16000800, 11902)
 
@@ -1300,10 +1311,6 @@ def Event_16002850():
     EnableFlag(61121)
     EnableTreasure(obj=16001681)
     DeleteObjectVFX(16001682)
-    Wait(4.0)
-    ForceAnimation(16001520, 21, wait_for_completion=True, unknown2=1.0)
-    ForceAnimation(16001520, 110, wait_for_completion=True, unknown2=1.0)
-    ForceAnimation(16001520, 10, loop=True, unknown2=1.0)
 
 
 @RestartOnRest(16002855)

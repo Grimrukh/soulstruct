@@ -149,6 +149,11 @@ def Event_1051372599():
     """Event 1051372599"""
     DisableNetworkSync()
     EndIfPlayerInOwnWorld()
+    IfUnknownCharacterCondition_31(OR_15, character=PLAYER, unk_4_8=2, unk_8_12=1.0)
+    IfUnknownCharacterCondition_31(OR_15, character=PLAYER, unk_4_8=3, unk_8_12=1.0)
+    IfUnknownCharacterCondition_31(OR_15, character=PLAYER, unk_4_8=4, unk_8_12=1.0)
+    IfUnknownCharacterCondition_31(OR_15, character=PLAYER, unk_4_8=5, unk_8_12=1.0)
+    EndIfConditionTrue(input_condition=OR_15)
     IfFlagEnabled(MAIN, 1052382602)
     Unknown_2004_74(
         character=20000,

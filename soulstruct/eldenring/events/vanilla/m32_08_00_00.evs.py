@@ -227,6 +227,7 @@ def Event_32082810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(32080800)
+    EnableInvincibility(32080800)
     GotoIfFlagEnabled(Label.L1, flag=32080801)
     ForceAnimation(32080800, 30008, loop=True, unknown2=1.0)
     IfFlagEnabled(AND_2, 32082805)
@@ -247,6 +248,7 @@ def Event_32082810():
     # --- Label 2 --- #
     DefineLabel(2)
     EnableAI(32080800)
+    DisableInvincibility(32080800)
     SetNetworkUpdateRate(32080800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(32080800, name=904680320)
 

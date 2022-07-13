@@ -1826,7 +1826,7 @@ def Event_35002810():
     Wait(1.0)
     EnableAI(35000800)
     EndIfFlagEnabled(35000800)
-    IfHealthLessThanOrEqual(AND_1, 35000800, value=0.6000000238418579)
+    IfHealthRatioLessThanOrEqual(AND_1, 35000800, value=0.6000000238418579)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EnableFlag(35002802)
 
@@ -2275,7 +2275,7 @@ def Event_35003725():
     EndIfPlayerNotInOwnWorld()
     EndIfFlagEnabled(400382)
     SkipLinesIfFlagEnabled(2, 4243)
-    IfHealthLessThan(AND_1, 35000716, value=0.10000000149011612)
+    IfHealthRatioLessThan(AND_1, 35000716, value=0.10000000149011612)
     AwaitConditionTrue(AND_1)
     DisableNetworkConnectedFlagRange(flag_range=(4240, 4243))
     EnableFlag(4243)

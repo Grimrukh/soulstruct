@@ -59,7 +59,7 @@ def Event_1052552270(
     SkipLinesIfUnsignedEqual(1, left=0, right=region)
     IfCharacterInsideRegion(OR_3, character=PLAYER, region=region)
     IfEntityWithinDistance(OR_3, entity=PLAYER, other_entity=character, radius=radius)
-    IfHealthLessThanOrEqual(OR_3, 1052550390, value=0.550000011920929)
+    IfHealthRatioLessThanOrEqual(OR_3, 1052550390, value=0.550000011920929)
     IfConditionTrue(AND_1, input_condition=OR_3)
     IfCharacterBackreadEnabled(AND_1, character)
     IfCharacterHasSpecialEffect(OR_11, character, 5080)

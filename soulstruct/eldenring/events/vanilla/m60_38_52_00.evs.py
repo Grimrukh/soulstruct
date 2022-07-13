@@ -479,7 +479,7 @@ def Event_1038522346(
     """Event 1038522346"""
     EndIfFlagEnabled(flag)
     IfCharacterHasSpecialEffect(MAIN, character, special_effect)
-    IfHealthLessThanOrEqual(AND_1, character, value=0.5)
+    IfHealthRatioLessThanOrEqual(AND_1, character, value=0.5)
     SkipLinesIfConditionFalse(1, AND_1)
     EnableNetworkFlag(flag_1)
     GotoIfCharacterHasSpecialEffect(Label.L1, character=character, special_effect=special_effect_1)

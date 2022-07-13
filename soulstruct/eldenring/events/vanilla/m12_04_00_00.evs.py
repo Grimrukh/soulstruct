@@ -101,7 +101,7 @@ def Event_12042680():
 def Event_12042800():
     """Event 12042800"""
     EndIfFlagEnabled(12040800)
-    IfHealthLessThanOrEqual(MAIN, 12040800, value=0.0)
+    IfHealthRatioLessThanOrEqual(MAIN, 12040800, value=0.0)
     Wait(5.0)
     PlaySoundEffect(12040800, 77777777, sound_type=SoundType.s_SFX)
     IfCharacterDead(MAIN, 12040800)

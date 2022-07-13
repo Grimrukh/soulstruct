@@ -286,11 +286,8 @@ def Event_1051362220():
 def Event_1051362230():
     """Event 1051362230"""
     EndIfFlagEnabled(1051360230)
-    IfFlagEnabled(AND_1, 9413)
+    IfFlagEnabled(AND_1, 9412)
     IfFlagEnabled(AND_1, 1051360800)
-    IfFlagEnabled(OR_1, 73016)
-    IfFlagEnabled(OR_1, 76422)
-    IfConditionTrue(AND_1, input_condition=OR_1)
     IfCharacterInsideRegion(AND_1, character=PLAYER, region=1051362230)
     IfConditionTrue(MAIN, input_condition=AND_1)
     EndOfAnimation(obj=1051361520, animation_id=2)
@@ -619,7 +616,7 @@ def Event_1051362810():
     EnableAI(1051360801)
     SetNetworkUpdateRate(1051360801, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(1051360801, name=903460501)
-    IfHealthLessThan(OR_1, 1051360801, value=0.5)
+    IfHealthRatioLessThan(OR_1, 1051360801, value=0.5)
     IfCharacterDead(OR_1, 1051360801)
     IfTimeElapsed(OR_1, seconds=30.0)
     IfAttackedWithDamageType(OR_1, attacked_entity=1051360800, attacker=PLAYER)
