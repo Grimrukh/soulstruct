@@ -147,8 +147,8 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32040519()
-    CommonFunc_90005250(0, 32040200, 32042200, 0.0, -1)
-    CommonFunc_90005250(0, 32040217, 32042217, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=32042200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32042217, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.TunnelMiner6,
@@ -161,15 +161,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 32040250, 15.0, 0.0, -1)
-    CommonFunc_90005250(0, 32040302, 32042213, 0.0, -1)
-    CommonFunc_90005250(0, 32040303, 32042213, 0.0, -1)
-    CommonFunc_90005250(0, 32040306, 32042305, 0.0, -1)
-    CommonFunc_90005250(0, 32040350, 32042305, 0.0, -1)
-    CommonFunc_90005250(0, 32040351, 32042351, 0.0, -1)
-    CommonFunc_90005250(0, 32040400, 32042200, 0.0, -1)
-    CommonFunc_90005250(0, 32040410, 32042410, 0.0, -1)
-    CommonFunc_90005250(0, 32040411, 32042410, 0.0, -1)
+    CommonFunc_90005251(0, character=32040250, radius=15.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32040302, region=32042213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier0, region=32042213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier1, region=32042305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellKnight0, region=32042305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LeyndellKnight1, region=32042351, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32042200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog3, region=32042410, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog4, region=32042410, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32040412, 32042217, 0.0, -1)
 
 

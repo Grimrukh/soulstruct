@@ -134,11 +134,11 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32082820()
-    CommonFunc_90005250(0, 32080211, 32082211, 0.0, -1)
-    CommonFunc_90005250(0, 32080216, 32082302, 0.0, -1)
-    CommonFunc_90005250(0, 32080217, 32082217, 0.0, -1)
-    CommonFunc_90005250(0, 32080218, 32082217, 0.0, -1)
-    CommonFunc_90005250(0, 32080250, 32082250, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner5, region=32082211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner6, region=32082302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32082217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32082217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BigGlintstoneMiner, region=32082250, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.KindredofRot0,
@@ -187,9 +187,9 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32080305, 32082305, 0.0, -1)
-    CommonFunc_90005250(0, 32080306, 32082306, 0.0, -1)
-    CommonFunc_90005250(0, 32080307, 32082306, 0.0, -1)
+    CommonFunc_90005250(0, character=32080305, region=32082305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot4, region=32082306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot5, region=32082306, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32080308, 32082308, 0.0, 3008)
 
 

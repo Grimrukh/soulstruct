@@ -394,9 +394,16 @@ def Constructor():
     Event_1051362200()
     Event_1051362220()
     Event_1051362230()
-    CommonFunc_90005261(0, 1051360200, 1051362200, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 1051360210, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 1051360211, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.IronVirgin,
+        region=1051362200,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(0, character=Characters.Commoner0, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner1, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=1051360291,
@@ -414,11 +421,11 @@ def Constructor():
         left=0,
     )
     Event_1051362340(0, character=Characters.Troll)
-    CommonFunc_90005250(0, 1051360422, 1051362422, 0.0, -1)
-    CommonFunc_90005250(0, 1051360474, 1051362422, 0.0, -1)
-    CommonFunc_90005250(0, 1051360475, 1051362422, 0.0, -1)
-    CommonFunc_90005250(0, 1051360476, 1051362422, 0.0, -1)
-    CommonFunc_90005250(0, 1051360490, 1051362490, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier0, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier1, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnFootSoldier2, region=1051362422, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=1051362490, seconds=0.0, animation_id=-1)
     CommonFunc_90005501(
         0,
         flag=1051360510,

@@ -264,13 +264,13 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Commoner)
-    CommonFunc_90005251(0, 18000201, 2.0, 0.0, -1)
-    CommonFunc_90005250(0, 18000300, 18002300, 0.0, -1)
-    CommonFunc_90005251(0, 18000313, 4.0, 0.0, -1)
-    CommonFunc_90005251(0, 18000330, 8.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.WanderingNoble1, radius=2.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=18000300, region=18002300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.CastleGuard, radius=4.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.BanishedKnight, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Imp0, radius=4.0, seconds=0.0, animation_id=3000)
-    CommonFunc_90005251(0, 18000343, 7.0, 0.0, -1)
-    CommonFunc_90005251(0, 18000344, 5.0, 2.0, -1)
+    CommonFunc_90005251(0, character=Characters.Imp1, radius=7.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Imp2, radius=5.0, seconds=2.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.GraftedScion0,

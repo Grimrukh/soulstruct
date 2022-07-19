@@ -30,7 +30,7 @@ def Constructor():
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=1248550300, asset=Assets.AEG100_101_9000, flag=1248558301)
+    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1248558301)
     CommonFunc_90005422(0, flag=1248558301, asset=Assets.AEG100_120_9000, obj_act_id=1248553301)
     CommonFunc_90005424(
         0,

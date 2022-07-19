@@ -56,23 +56,44 @@ def Constructor():
     Event_1038513703()
     CommonFunc_90005740(
         0,
-        1038512725,
-        1038512726,
-        1038512727,
-        1038510700,
-        703,
-        1038511701,
-        703,
-        0.20000000298023224,
-        90203,
-        -1,
-        -1,
-        1.2000000476837158,
+        flag=1038512725,
+        flag_1=1038512726,
+        left=1038512727,
+        character=Characters.RyatheScout,
+        model_point=703,
+        asset=Assets.AEG099_090_9002,
+        model_point_1=703,
+        radius=0.20000000298023224,
+        animation=90203,
+        animation_id=-1,
+        special_effect=-1,
+        radius_1=1.2000000476837158,
     )
-    CommonFunc_90005741(0, 1038512728, 1038512729, 1038512727, 1038510700, 90201, 0, -1, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=1038512728,
+        flag_1=1038512729,
+        left=1038512727,
+        character=Characters.RyatheScout,
+        animation__animation_id=90201,
+        left_1=0,
+        animation_id=-1,
+        special_effect=-1,
+        seconds=0.5,
+    )
     Event_1038513705(0, character=Characters.Millicent)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent, flag=4181, flag_1=4180, flag_2=1038519251, right=3)
-    CommonFunc_90005703(0, 1038510705, 4181, 4182, 1038519251, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1038519251,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent, flag=4183, first_flag=4180, last_flag=4184)
     CommonFunc_90005771(0, 1038510950, 1038512700)
 
@@ -83,7 +104,7 @@ def Preconstructor():
     DisableBackread(Characters.RyatheScout)
     DisableBackread(Characters.Millicent)
     DisableAsset(Assets.AEG099_320_9000)
-    CommonFunc_90005261(0, 1038510301, 1038512301, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1038510301, region=1038512301, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1038510302, region=1038512301, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,

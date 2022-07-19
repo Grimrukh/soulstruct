@@ -81,8 +81,8 @@ def Constructor():
         animation_id=0,
     )
     CommonFunc_90005261(0, character=Characters.Marionette5, region=1036542220, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, 1036540425, 1036542425, 0.0, -1)
-    CommonFunc_90005250(1, 1036540426, 1036542425, 2.0, -1)
+    CommonFunc_90005250(0, character=Characters.Marionette2, region=1036542425, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=Characters.Marionette7, region=1036542425, seconds=2.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Avionette, region=1036542414, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,
@@ -149,9 +149,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1036540305, 1036542305, 0.0, -1)
-    CommonFunc_90005250(1, 1036540306, 1036542305, 0.0, -1)
-    CommonFunc_90005250(2, 1036540307, 1036542305, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.LeyndellSoldier, region=1036542305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=Characters.LeyndellFootSoldier0, region=1036542305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(2, character=Characters.LeyndellFootSoldier1, region=1036542305, seconds=0.0, animation_id=-1)
     CommonFunc_90005391(
         0,
         flag=1036540350,

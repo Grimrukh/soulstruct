@@ -80,7 +80,17 @@ def Constructor():
     Event_1037423711(0, character=Characters.Patches, flag=1037422731, flag_1=1038419251)
     Event_1037423712()
     CommonFunc_90005704(0, attacked_entity=Characters.Patches, flag=3681, flag_1=3680, flag_2=1038419251, right=3)
-    CommonFunc_90005703(0, 1037420720, 3681, 3682, 1038419251, 3681, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches,
+        flag=3681,
+        flag_1=3682,
+        flag_2=1038419251,
+        flag_3=3681,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     CommonFunc_90005702(0, 1037420720, 3683, 3680, 3684)
 
 
@@ -101,8 +111,15 @@ def Preconstructor():
     CommonFunc_90005261(0, character=1037420222, region=1037422200, radius=2.0, seconds=1.0, animation_id=0)
     CommonFunc_90005261(0, character=1037420223, region=1037422200, radius=2.0, seconds=1.0, animation_id=0)
     CommonFunc_90005261(0, character=1037420224, region=1037422200, radius=2.0, seconds=1.0, animation_id=0)
-    CommonFunc_90005261(0, 1037420225, 1037422200, 2.0, 1.0, -1)
-    CommonFunc_90005251(0, 1037420213, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower7,
+        region=1037422200,
+        radius=2.0,
+        seconds=1.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(0, character=Characters.RevenantFollower3, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.DeathRiteBird,

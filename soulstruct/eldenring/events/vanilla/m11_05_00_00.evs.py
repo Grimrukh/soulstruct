@@ -184,7 +184,17 @@ def Constructor():
     )
     Event_11053705(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040529251, right=3)
-    CommonFunc_90005703(0, 11050710, 4201, 4202, 1040529251, 4201, 4200, 4203, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.BrotherCorhyn,
+        flag=4201,
+        flag_1=4202,
+        flag_2=1040529251,
+        flag_3=4201,
+        first_flag=4200,
+        last_flag=4203,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.BrotherCorhyn, flag=4203, first_flag=4200, last_flag=4204)
     Event_11053706(0, character=Characters.Goldmask)
     CommonFunc_90005750(

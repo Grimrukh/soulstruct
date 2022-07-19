@@ -78,8 +78,8 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DemiHumanShaman)
-    CommonFunc_90005250(0, 31150800, 31152800, 0.0, -1)
-    CommonFunc_90005250(0, 31150801, 31152800, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman0, region=31152800, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DemiHumanBeastman1, region=31152800, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.DemiHuman0, radius=7.0, seconds=0.0, animation_id=0)
     CommonFunc_90005211(
         0,

@@ -56,20 +56,31 @@ def Constructor():
     Event_1038503703()
     CommonFunc_90005740(
         0,
-        1038502705,
-        1038502706,
-        1038502707,
-        1038500700,
-        703,
-        1038501701,
-        703,
-        0.20000000298023224,
-        90203,
-        -1,
-        -1,
-        1.2000000476837158,
+        flag=1038502705,
+        flag_1=1038502706,
+        left=1038502707,
+        character=Characters.RyatheScout,
+        model_point=703,
+        asset=Assets.AEG099_090_9003,
+        model_point_1=703,
+        radius=0.20000000298023224,
+        animation=90203,
+        animation_id=-1,
+        special_effect=-1,
+        radius_1=1.2000000476837158,
     )
-    CommonFunc_90005741(0, 1038502708, 1038502709, 1038502707, 1038500700, 90201, 0, -1, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=1038502708,
+        flag_1=1038502709,
+        left=1038502707,
+        character=Characters.RyatheScout,
+        animation__animation_id=90201,
+        left_1=0,
+        animation_id=-1,
+        special_effect=-1,
+        seconds=0.5,
+    )
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1038502710)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy2, flag=1038502711)
     CommonFunc_90005706(0, 1038500710, 930023, 0)

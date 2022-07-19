@@ -113,7 +113,17 @@ def Constructor():
         flag_2=1035469201,
         right=3,
     )
-    CommonFunc_90005703(0, 1035460710, 3621, 3622, 1035469201, 3621, 3620, 3624, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.YuraHunterofBloodyFingers1,
+        flag=3621,
+        flag_1=3622,
+        flag_2=1035469201,
+        flag_3=3621,
+        first_flag=3620,
+        last_flag=3624,
+        right=-1,
+    )
     CommonFunc_90005702(
         0,
         character=Characters.YuraHunterofBloodyFingers1,
@@ -133,7 +143,7 @@ def Preconstructor():
     DisableBackread(Characters.YuraHunterofBloodyFingers1)
     DisableBackread(Characters.YuraHunterofBloodyFingers0)
     DisableBackread(Characters.BloodyFingerRavenmountAssassin)
-    CommonFunc_90005251(0, 1035460212, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Wolf0, radius=7.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, 1035460213, 7.0, 0.0, -1)
 
 

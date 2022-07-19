@@ -51,7 +51,17 @@ def Constructor():
     CommonFunc_900005610(0, asset=1049531600, vfx_id=100, model_point=800, right=0)
     Event_1049532200(0, character=1049535200)
     CommonFunc_90005704(0, attacked_entity=Characters.Shabriri, flag=3621, flag_1=3620, flag_2=1049539201, right=3)
-    CommonFunc_90005703(0, 1049530700, 3621, 3622, 1049539201, 3621, 3620, 3624, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Shabriri,
+        flag=3621,
+        flag_1=3622,
+        flag_2=1049539201,
+        flag_3=3621,
+        first_flag=3620,
+        last_flag=3624,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Shabriri, flag=3623, first_flag=3620, last_flag=3624)
     Event_1049533700(0, character=Characters.Shabriri)
     Event_1049533701()

@@ -54,7 +54,17 @@ def Constructor():
     )
     Event_1036492610()
     CommonFunc_90005704(0, attacked_entity=Characters.Hyetta, flag=3381, flag_1=3380, flag_2=1036499201, right=3)
-    CommonFunc_90005703(0, 1036490700, 3381, 3382, 1036499201, 3381, 3380, 3384, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Hyetta,
+        flag=3381,
+        flag_1=3382,
+        flag_2=1036499201,
+        flag_3=3381,
+        first_flag=3380,
+        last_flag=3384,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3384)
     Event_1036493700(0, character=Characters.Hyetta)
     CommonFunc_90005725(

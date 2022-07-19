@@ -110,7 +110,7 @@ def Constructor():
     CommonFunc_90005691(0, region=34132592)
     CommonFunc_90005690(0, region=34132593)
     CommonFunc_90005691(0, region=34132593)
-    CommonFunc_90005250(0, 34130299, 34132299, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, 34130298, 10.0, 0.0, -1)
 
 

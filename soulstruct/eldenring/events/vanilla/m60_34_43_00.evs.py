@@ -58,7 +58,7 @@ def Constructor():
     )
     Event_1034432262(
         0,
-        character=1034430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -72,7 +72,7 @@ def Constructor():
     )
     Event_1034432262(
         1,
-        character=1034430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -90,9 +90,9 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, 1034430300, 1034432300, 0.0, -1)
-    CommonFunc_90005250(0, 1034430302, 1034432302, 0.0, -1)
-    CommonFunc_90005250(0, 1034430303, 1034432300, 0.0, -1)
+    CommonFunc_90005250(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 1034430305, 1034432305, 0.0, -1)
 
 

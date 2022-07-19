@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78418,
         flag_11=78419,
     )
-    CommonFunc_90005250(0, 1048360201, 1048362201, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight, region=1048362201, seconds=0.0, animation_id=-1)
     Event_1048360700(0, character=Characters.Dummy)
     Event_1048360701()
 

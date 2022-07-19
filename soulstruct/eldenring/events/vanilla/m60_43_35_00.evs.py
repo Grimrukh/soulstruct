@@ -43,7 +43,17 @@ def Constructor():
         flag_2=1043359251,
         right=3,
     )
-    CommonFunc_90005703(0, 1043350710, 3621, 3622, 1043359251, 3621, 3620, 3624, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.YuraHunterofBloodyFingers,
+        flag=3621,
+        flag_1=3622,
+        flag_2=1043359251,
+        flag_3=3621,
+        first_flag=3620,
+        last_flag=3624,
+        right=-1,
+    )
     CommonFunc_90005702(
         0,
         character=Characters.YuraHunterofBloodyFingers,

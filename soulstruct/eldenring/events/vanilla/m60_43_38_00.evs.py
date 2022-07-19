@@ -27,7 +27,7 @@ def Constructor():
     RegisterGrace(grace_flag=1043380000, asset=Assets.AEG099_060_9000)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=1043388540)
     CommonFunc_90005683(0, flag=62105, asset=Assets.AEG099_055_1000, vfx_id=208, flag_1=78194, flag_2=78194)
-    CommonFunc_90005251(0, 1043380260, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.KaidenSellsword, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)

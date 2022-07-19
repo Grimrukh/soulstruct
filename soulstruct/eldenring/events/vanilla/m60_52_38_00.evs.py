@@ -48,11 +48,31 @@ def Constructor():
     )
     Event_1252380700(0, character=Characters.Blaidd1)
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd1, flag=3601, flag_1=3600, flag_2=1052389301, right=3)
-    CommonFunc_90005703(0, 1052380726, 3601, 3602, 1052389301, 3603, 3600, 3603, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blaidd1,
+        flag=3601,
+        flag_1=3602,
+        flag_2=1052389301,
+        flag_3=3603,
+        first_flag=3600,
+        last_flag=3603,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Blaidd1, flag=3603, first_flag=3600, last_flag=3604)
     Event_1252380705(0, character=Characters.LivingPot1)
     CommonFunc_90005704(0, attacked_entity=Characters.LivingPot1, flag=3661, flag_1=3660, flag_2=1043399301, right=3)
-    CommonFunc_90005703(0, 1052380706, 3661, 3662, 1043399301, 3661, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot1,
+        flag=3661,
+        flag_1=3662,
+        flag_2=1043399301,
+        flag_3=3661,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.LivingPot1, flag=3663, first_flag=3660, last_flag=3664)
     Event_1252380710()
     Event_1252380720()

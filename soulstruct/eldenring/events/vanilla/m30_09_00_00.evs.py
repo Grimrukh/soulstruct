@@ -191,8 +191,8 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.Page3, region=30092254, seconds=0.0, animation_id=3010)
     CommonFunc_90005250(0, character=Characters.CemeteryShade, region=30092270, seconds=0.0, animation_id=5003)
     CommonFunc_90005250(1, character=30090301, region=30092301, seconds=0.0, animation_id=5003)
-    CommonFunc_90005250(0, 30090300, 30092300, 0.0, -1)
-    CommonFunc_90005250(0, 30090400, 30092400, 1.0, -1)
+    CommonFunc_90005250(0, character=Characters.BloodhoundKnight, region=30092300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot0, region=30092400, seconds=1.0, animation_id=-1)
     Event_30092400(0, character=Characters.MercilessChariot0)
     Event_30092410(
         0,
@@ -202,7 +202,7 @@ def Constructor():
         region_1=30092421,
         patrol_information_id_1=30093421,
     )
-    CommonFunc_90005250(0, 30090410, 30092410, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.MercilessChariot1, region=30092410, seconds=0.0, animation_id=-1)
     Event_30092400(1, character=Characters.MercilessChariot1)
     Event_30092399()
     Event_30092410(

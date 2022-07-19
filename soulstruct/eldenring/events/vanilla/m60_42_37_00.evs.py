@@ -74,18 +74,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1042370800,
-        1042370805,
-        1042372800,
-        1042370800,
-        1042372806,
-        1042375810,
-        1042371800,
-        1042370810,
-        1042372810,
-        902500520,
-        -1,
-        20000,
+        flag=1042370800,
+        flag_1=1042370805,
+        flag_2=1042372800,
+        character=Characters.CrucibleKnight,
+        flag_3=1042372806,
+        character_1=1042375810,
+        asset=Assets.AEG099_120_1000,
+        owner_entity=Characters.Dummy,
+        source_entity=1042372810,
+        name=902500520,
+        animation_id=-1,
+        animation_id_1=20000,
     )
     CommonFunc_90005883(0, flag=1042370800, flag_1=1042370805, entity=Assets.AEG099_170_1000)
     CommonFunc_90005885(

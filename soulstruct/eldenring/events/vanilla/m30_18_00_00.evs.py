@@ -102,8 +102,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30180207, 30182218, 0.0, -1)
-    CommonFunc_90005250(0, 30180208, 30182300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp11, region=30182218, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp4, region=30182300, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30180213,
@@ -152,7 +152,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30180203, 30182300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp10, region=30182300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Imp12, region=30182221, seconds=0.0, animation_id=3004)
     CommonFunc_90005250(0, character=Characters.Imp13, region=30182221, seconds=1.0, animation_id=3004)
     CommonFunc_90005200(
@@ -294,14 +294,28 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.LivingPot4, region=30182250, seconds=0.0, animation_id=3004)
     CommonFunc_90005250(0, character=30180327, region=30182250, seconds=2.5, animation_id=3003)
     CommonFunc_90005250(0, character=30180328, region=30182250, seconds=3.0, animation_id=3003)
-    CommonFunc_90005260(0, 30180324, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 30180325, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 30180326, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 30180327, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 30180328, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 30180354, 30182301, 5.0, 0.0, -1)
-    CommonFunc_90005250(0, 30180305, 30182305, 0.0, -1)
-    CommonFunc_90005250(0, 30180306, 30182305, 1.0, -1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.SmallLivingPot7,
+        region=30182301,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005260(
+        0,
+        character=Characters.SmallLivingPot8,
+        region=30182301,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005260(0, character=Characters.LivingPot4, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(0, character=30180327, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(0, character=30180328, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(0, character=30180354, region=30182301, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot5, region=30182305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot6, region=30182305, seconds=1.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.SmallLivingPot16,
@@ -419,9 +433,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30180355, 30182212, 0.0, -1)
-    CommonFunc_90005250(0, 30180342, 30182229, 0.0, -1)
-    CommonFunc_90005250(0, 30180343, 30182229, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.LivingPot2, region=30182212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180342, region=30182229, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180343, region=30182229, seconds=0.0, animation_id=-1)
     Event_30182218(0, character=Characters.Imp6, animation_id=30010)
     Event_30182218(1, character=Characters.Imp7, animation_id=30010)
     Event_30182218(2, character=Characters.Imp9, animation_id=30001)
@@ -482,7 +496,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30180317, 30172317, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot13, region=30172317, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=30180319,
@@ -519,7 +533,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30180351, 30182254, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.LivingPot1, region=30182254, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingPot3,
@@ -549,11 +563,11 @@ def Constructor():
         seconds=1.2999999523162842,
         animation_id=3011,
     )
-    CommonFunc_90005261(0, 30180347, 30182254, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 30180348, 30182344, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=30180347, region=30182254, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=30180348, region=30182344, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog1, region=30182257, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, 30180255, 30182255, 0.0, -1)
-    CommonFunc_90005250(0, 30180256, 30182255, 0.0, -1)
+    CommonFunc_90005250(0, character=30180255, region=30182255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30180256, region=30182255, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=30180400, region=30182401, seconds=0.0, animation_id=3001)
     CommonFunc_90005250(0, character=Characters.FungalPod1, region=30182401, seconds=0.5, animation_id=3001)
     CommonFunc_90005250(
@@ -689,7 +703,16 @@ def Constructor():
         asset=Assets.AEG027_156_0501,
     )
     Event_30180050()
-    CommonFunc_90005540(0, 30180530, 30181530, 30181531, 30183531, -1, 1, 2)
+    CommonFunc_90005540(
+        0,
+        flag=30180530,
+        asset=Assets.AEG027_015_0500,
+        asset_1=30181531,
+        obj_act_id=30183531,
+        obj_act_id_1=-1,
+        animation_id=1,
+        animation_id_1=2,
+    )
     Event_30182800()
     Event_30182810()
     Event_30182849()

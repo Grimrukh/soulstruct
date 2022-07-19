@@ -234,10 +234,26 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    Event_32002300(5, 32000305, 32002305, 0.0, -1)
-    Event_32002300(6, 32000306, 32002305, 0.0, -1)
-    Event_32002310(15, 32000315, 32002315, 0.0, -1, 32000316, 32000318)
-    Event_32002310(16, 32000316, 32002315, 0.0, -1, 32000315, 32000318)
+    Event_32002300(5, character=Characters.Misbegotten2, region=32002305, seconds=0.0, animation_id=-1)
+    Event_32002300(6, character=Characters.Misbegotten3, region=32002305, seconds=0.0, animation_id=-1)
+    Event_32002310(
+        15,
+        character=Characters.Misbegotten5,
+        region=32002315,
+        seconds=0.0,
+        animation_id=-1,
+        attacked_entity=Characters.Misbegotten6,
+        attacked_entity_1=Characters.Misbegotten8,
+    )
+    Event_32002310(
+        16,
+        character=Characters.Misbegotten6,
+        region=32002315,
+        seconds=0.0,
+        animation_id=-1,
+        attacked_entity=Characters.Misbegotten5,
+        attacked_entity_1=Characters.Misbegotten8,
+    )
     Event_32002310(18, 32000318, 32002315, 0.0, -1, 32000315, 32000316)
 
 
@@ -245,12 +261,12 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32000519()
-    CommonFunc_90005250(0, 32000207, 32002207, 0.0, -1)
-    CommonFunc_90005250(0, 32000208, 32002207, 1.0, -1)
-    CommonFunc_90005250(0, 32000210, 32002210, 0.0, -1)
-    CommonFunc_90005250(0, 32000211, 32002211, 0.0, -1)
-    CommonFunc_90005250(0, 32000212, 32002212, 0.0, -1)
-    CommonFunc_90005251(0, 32000301, 27.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner3, region=32002207, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=32002207, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32002210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner6, region=32002211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner7, region=32002212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Misbegotten0, radius=27.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Misbegotten1,
@@ -263,7 +279,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32000317, 32002317, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten7, region=32002317, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32000319, 32002315, 0.0, -1)
 
 

@@ -26,10 +26,10 @@ from .entities.m60_45_37_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005251(0, 1045370201, 80.0, 0.0, -1)
-    CommonFunc_90005251(0, 1045370207, 50.0, 0.0, -1)
-    CommonFunc_90005251(0, 1045370214, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 1045370216, 50.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1045370201, radius=80.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1045370207, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1045370214, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1045370216, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005511(
         0,
         flag=1045370560,
@@ -41,12 +41,19 @@ def Constructor():
     CommonFunc_90005512(0, flag=1045370560, region=1045372550, region_1=1045372551)
     CommonFunc_90005640(0, flag=1045370560, asset=Assets.AEG239_001_2000)
     Event_1045372230()
-    CommonFunc_90005261(0, 1045370240, 1045372240, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1045370230, 1045372240, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1045370231, 1045372240, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1045370232, 1045372240, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1045370233, 1045372240, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 1045370340, 4.0, 1.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.LargeDemiHuman,
+        region=1045372240,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=Characters.DemiHuman0, region=1045372240, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.DemiHuman1, region=1045372240, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.DemiHuman2, region=1045372240, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.DemiHuman3, region=1045372240, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Runebear2, radius=4.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.Runebear1,
@@ -66,18 +73,28 @@ def Constructor():
     CommonFunc_90005637(0, flag=1045378601, character=Characters.WanderingNoble, region=1045371620)
     CommonFunc_90005636(
         0,
-        1045378601,
-        1045370620,
-        1045371620,
-        4470,
-        1045372620,
-        1045372621,
-        1045372620,
-        1045373620,
-        -1,
+        flag=1045378601,
+        character=Characters.WanderingNoble,
+        entity=Assets.AEG099_374_9000,
+        special_effect_id=4470,
+        destination=1045372620,
+        region=1045372621,
+        flag_1=1045372620,
+        patrol_information_id=1045373620,
+        right=-1,
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd, flag=3601, flag_1=3600, flag_2=1045379201, right=3)
-    CommonFunc_90005703(0, 1045370700, 3601, 3602, 1045379201, 3603, 3600, 3603, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blaidd,
+        flag=3601,
+        flag_1=3602,
+        flag_2=1045379201,
+        flag_3=3603,
+        first_flag=3600,
+        last_flag=3603,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3604)
     Event_1045370710(0, character=Characters.Blaidd)
     Event_1045370711(0, character=Characters.Blaidd, destination=1045372700)

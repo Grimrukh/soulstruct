@@ -35,7 +35,14 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Commoner)
-    CommonFunc_90005261(0, 1034440200, 1034442200, 3.0, 2.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Albinauric0,
+        region=1034442200,
+        radius=3.0,
+        seconds=2.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.Albinauric0,
@@ -62,7 +69,14 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1034440202, 1034442200, 3.0, 1.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Albinauric2,
+        region=1034442200,
+        radius=3.0,
+        seconds=1.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(0, 1034440202, 30002, 20002, 1034442200, 3.0, 1.0, 0, 0, 0, 0)
 
 

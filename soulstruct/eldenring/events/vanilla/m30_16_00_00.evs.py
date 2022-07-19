@@ -56,7 +56,7 @@ def Constructor():
         left_3=0,
     )
     Event_30162622()
-    CommonFunc_90005250(0, 30160221, 30162221, 0.0, -1)
+    CommonFunc_90005250(0, character=30160221, region=30162221, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30160540,

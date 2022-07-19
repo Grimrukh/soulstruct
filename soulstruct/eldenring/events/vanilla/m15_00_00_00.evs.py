@@ -285,7 +285,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000360, 15002360, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Misbegotten0, region=15002360, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Misbegotten1,
@@ -325,7 +325,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000364, 15002364, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Misbegotten4, region=15002364, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Misbegotten5,
@@ -339,9 +339,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000366, 15002387, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000367, 15002387, 1.0, 0.0, -1)
-    CommonFunc_90005251(0, 15000368, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Misbegotten6, region=15002387, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Misbegotten7, region=15002387, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Misbegotten8, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.Misbegotten9,
@@ -350,7 +350,14 @@ def Constructor():
         seconds=0.30000001192092896,
         animation_id=3008,
     )
-    CommonFunc_90005261(0, 15000371, 15002371, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Misbegotten10,
+        region=15002371,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.Misbegotten11,
@@ -363,8 +370,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000380, 15002380, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000381, 15002381, 0.10000000149011612, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.ScalyMisbegotten0,
+        region=15002380,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.ScalyMisbegotten1,
+        region=15002381,
+        radius=0.10000000149011612,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.ScalyMisbegotten2,
@@ -377,7 +398,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000383, 15002383, 0.10000000149011612, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.ScalyMisbegotten3,
+        region=15002383,
+        radius=0.10000000149011612,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.LeonineMisbegotten1,
@@ -391,7 +419,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000340, 15002340, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.BattleMage0, region=15002340, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(
         0,
         character=Characters.PutridCorpse0,
@@ -697,7 +725,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 15000217, 2.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.HaligtreeSoldier13, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.HaligtreeSoldier14,
@@ -724,10 +752,38 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000221, 15002221, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000222, 15002221, 1.0, 0.10000000149011612, -1)
-    CommonFunc_90005261(0, 15000226, 15002226, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000227, 15002227, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeSoldier17,
+        region=15002221,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeSoldier18,
+        region=15002221,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeSoldier19,
+        region=15002226,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeSoldier20,
+        region=15002227,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.HaligtreeSoldier21,
@@ -754,7 +810,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 15000233, 1.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.HaligtreeSoldier25, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.HaligtreeSoldier26,
@@ -867,7 +923,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 15000257, 1.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.HaligtreeSoldier42, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.HaligtreeSoldier43,
@@ -894,10 +950,38 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000260, 15002260, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000261, 15002260, 1.0, 0.30000001192092896, -1)
-    CommonFunc_90005261(0, 15000262, 15002260, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000263, 15002260, 1.0, 0.30000001192092896, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeFootSoldier0,
+        region=15002260,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeFootSoldier1,
+        region=15002260,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeFootSoldier2,
+        region=15002260,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeFootSoldier3,
+        region=15002260,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.HaligtreeFootSoldier6,
@@ -963,8 +1047,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000275, 15002275, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000276, 15002275, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeKnight5,
+        region=15002275,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.HaligtreeKnight6,
+        region=15002275,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_15002310(0, character=Characters.Crystalian0, character_1=Characters.Snail0)
     Event_15002310(1, character=Characters.Crystalian1, character_1=Characters.Snail1)
     Event_15002310(2, character=Characters.Crystalian2, character_1=Characters.Snail2)
@@ -1079,9 +1177,30 @@ def Constructor():
     Event_15002344(0, character=Characters.Snail0, entity=15003344)
     Event_15002344(1, character=Characters.Snail1, entity=15003345)
     Event_15002344(2, character=Characters.Snail2, entity=15003346)
-    CommonFunc_90005261(0, 15000280, 15002280, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000281, 15002281, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000282, 15002282, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot0,
+        region=15002280,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot1,
+        region=15002281,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot2,
+        region=15002282,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.KindredofRot14,
@@ -1095,7 +1214,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000296, 15002296, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot15,
+        region=15002296,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.KindredofRot16,
@@ -1135,10 +1261,38 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000283, 15002283, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000284, 15002284, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000285, 15002285, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000287, 15002280, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot3,
+        region=15002283,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot4,
+        region=15002284,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot5,
+        region=15002285,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot7,
+        region=15002280,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.KindredofRot8,
@@ -1191,8 +1345,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000292, 15002292, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000293, 15002291, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot12,
+        region=15002292,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.KindredofRot13,
+        region=15002291,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.KindredofRotLarva9,
@@ -1283,12 +1451,54 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 15000300, 15002300, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000356, 15002356, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000515, 15002356, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000516, 15002356, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000517, 15002356, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 15000392, 15002392, 3.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.CleanrotKnight0,
+        region=15002300,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.GiantMirandaRotFlower6,
+        region=15002356,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaRotFlower3,
+        region=15002356,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaRotFlower4,
+        region=15002356,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaRotFlower5,
+        region=15002356,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridAvatar0,
+        region=15002392,
+        radius=3.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.UlceratedTreeSpirit,
@@ -1373,7 +1583,17 @@ def Constructor():
     Event_15000702(0, asset=Assets.AEG099_332_9000, asset_1=Assets.AEG099_090_9001)
     Event_15000710(0, character=Characters.Millicent0)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent0, flag=4181, flag_1=4180, flag_2=15002901, right=3)
-    CommonFunc_90005703(0, 15000700, 4181, 4182, 15002901, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent0,
+        flag=4181,
+        flag_1=4182,
+        flag_2=15002901,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent0, flag=4183, first_flag=4180, last_flag=4184)
     Event_15000711(0, character=Characters.Millicent3)
     CommonFunc_90005708(0, character=Characters.Millicent3, flag=4180, left=0)

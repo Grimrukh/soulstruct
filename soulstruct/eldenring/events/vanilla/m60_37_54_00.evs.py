@@ -28,7 +28,7 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542342, seconds=0.0, animation_id=0)
     Event_1037542500()
     CommonFunc_90005300(0, flag=1037540341, character=Characters.GraftedScion, item_lot_param_id=0, seconds=3.0, left=0)
-    CommonFunc_90005271(0, 1037540253, 0.0, -1)
+    CommonFunc_90005271(0, character=Characters.LeyndellSoldier0, seconds=0.0, animation_id=-1)
     Event_1037542260()
     CommonFunc_90005250(0, character=Characters.Marionette2, region=1037542250, seconds=0.0, animation_id=0)
     CommonFunc_90005250(1, character=Characters.Marionette3, region=1037542250, seconds=0.0, animation_id=0)
@@ -46,8 +46,15 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=1037540235, region=1037542235, radius=5.0, seconds=0.0, animation_id=3004)
-    CommonFunc_90005261(0, 1037540351, 1037542351, 0.0, 0.0, -1)
-    CommonFunc_90005261(1, 1037540352, 1037542351, 0.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Marionette1,
+        region=1037542351,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(1, character=1037540352, region=1037542351, radius=0.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Basilisk0, region=1037542210, seconds=0.0, animation_id=0)
     CommonFunc_90005250(1, character=Characters.Basilisk2, region=1037542210, seconds=0.0, animation_id=0)
     CommonFunc_90005250(
@@ -122,11 +129,39 @@ def Constructor():
     Event_1037542220(13, character=1037540273, region=1037542360, destination=1037542273, seconds=2.5)
     Event_1037542220(14, character=1037540274, region=1037542360, destination=1037542274, seconds=2.0999999046325684)
     Event_1037542220(15, character=1037540275, region=1037542360, destination=1037542275, seconds=2.200000047683716)
-    CommonFunc_90005251(0, 1037540370, 6.0, 0.0, -1)
-    CommonFunc_90005261(0, 1037540301, 1037542304, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 1037540302, 1037542304, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 1037540306, 1037542306, 10.0, 0.0, -1)
-    CommonFunc_90005261(1, 1037540303, 1037542306, 15.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.LeyndellFootSoldier2, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellSoldier1,
+        region=1037542304,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellSoldier2,
+        region=1037542304,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellSoldier3,
+        region=1037542306,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.LeyndellKnight1,
+        region=1037542306,
+        radius=15.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_1037542250(0, character=Characters.LeyndellFootSoldier0)
     Event_1037542250(1, character=Characters.LeyndellFootSoldier1)
     Event_1037542250(2, character=Characters.LeyndellKnight1)
@@ -198,10 +233,30 @@ def Constructor():
     Event_1037543705()
     Event_1037543706()
     CommonFunc_90005704(0, attacked_entity=Characters.Patches0, flag=3681, flag_1=3680, flag_2=1037549201, right=3)
-    CommonFunc_90005703(0, 1037540700, 3681, 3682, 1037549201, 3681, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches0,
+        flag=3681,
+        flag_1=3682,
+        flag_2=1037549201,
+        flag_3=3681,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Patches0, flag=3683, first_flag=3680, last_flag=3684)
     CommonFunc_90005704(0, attacked_entity=Characters.Patches1, flag=3681, flag_1=3680, flag_2=1037549216, right=3)
-    CommonFunc_90005703(0, 1037540701, 3681, 3682, 1037549216, 3681, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches1,
+        flag=3681,
+        flag_1=3682,
+        flag_2=1037549216,
+        flag_3=3681,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Patches1, flag=3683, first_flag=3680, last_flag=3684)
     CommonFunc_90005725(
         0,
@@ -272,9 +327,9 @@ def Preconstructor():
     DisableBackread(Characters.Patches1)
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
-    CommonFunc_90005261(0, 1037540360, 1037542450, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1037540361, 1037542452, 5.0, 0.0, -1)
-    CommonFunc_90005261(1, 1037540362, 1037542452, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Avionette0, region=1037542450, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Avionette1, region=1037542452, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(1, character=Characters.Avionette2, region=1037542452, radius=5.0, seconds=0.0, animation_id=-1)
     Event_1037542400(0, character=Characters.Avionette0)
     Event_1037542400(2, character=Characters.Avionette1)
     Event_1037542400(3, character=Characters.Avionette2)

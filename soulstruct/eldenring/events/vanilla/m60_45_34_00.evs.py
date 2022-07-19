@@ -29,21 +29,74 @@ def Constructor():
     Event_1045342250(0, character=1045340204)
     Event_1045342250(1, character=1045340250)
     Event_1045342250(2, character=1045340251)
-    CommonFunc_90005201(0, 1045340702, 30028, -1, 0.0, 0.0, 0, 0, 0, 0)
-    CommonFunc_90005201(0, 1045340703, 30028, -1, 0.0, 0.0, 0, 0, 0, 0)
-    CommonFunc_90005201(0, 1045340704, 30029, -1, 0.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.GodrickSoldier0,
+        animation_id=30028,
+        animation_id_1=-1,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.GodrickSoldier1,
+        animation_id=30028,
+        animation_id_1=-1,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.GodrickSoldier2,
+        animation_id=30029,
+        animation_id_1=-1,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
     CommonFunc_90005461(0, character=1045340207)
     CommonFunc_90005462(1, character=1045340207)
     CommonFunc_90005460(0, character=1045340207)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=1045348540)
     CommonFunc_90005683(0, flag=62151, asset=Assets.AEG099_055_1000, vfx_id=208, flag_1=78198, flag_2=78198)
     CommonFunc_90005704(0, attacked_entity=Characters.IrinaofMorne0, flag=3381, flag_1=3380, flag_2=1045349201, right=3)
-    CommonFunc_90005703(0, 1045340700, 3381, 3382, 1045349201, 3381, 3380, 3384, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.IrinaofMorne0,
+        flag=3381,
+        flag_1=3382,
+        flag_2=1045349201,
+        flag_3=3381,
+        first_flag=3380,
+        last_flag=3384,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.IrinaofMorne0, flag=3383, first_flag=3380, last_flag=3384)
     Event_1045340700(0, character=Characters.IrinaofMorne0)
     Event_1045340701(0, character=Characters.IrinaofMorne1, asset=Assets.AEG099_400_9000)
     CommonFunc_90005704(0, attacked_entity=Characters.Edgar, flag=3401, flag_1=3400, flag_2=1045349251, right=3)
-    CommonFunc_90005703(0, 1045340705, 3401, 3402, 1045349251, 3401, 3400, 3403, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Edgar,
+        flag=3401,
+        flag_1=3402,
+        flag_2=1045349251,
+        flag_3=3401,
+        first_flag=3400,
+        last_flag=3403,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Edgar, flag=3403, first_flag=3400, last_flag=3403)
     Event_1045340705(0, character=Characters.Edgar)
     CommonFunc_90005750(

@@ -466,11 +466,11 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.Imp5, region=30072510, radius=7.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, 30070215, 30072216, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp6, region=30072216, seconds=0.0, animation_id=-1)
     Event_30072500()
     Event_30072501()
     CommonFunc_90005250(0, character=Characters.Imp7, region=30072215, seconds=1.0, animation_id=3005)
-    CommonFunc_90005250(0, 30070300, 30072300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=30072300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(1, character=Characters.PutridCorpse1, region=30072300, seconds=0.0, animation_id=0)
     CommonFunc_90005250(2, character=30070302, region=30072300, seconds=0.0, animation_id=0)
     CommonFunc_90005250(3, character=30070303, region=30072300, seconds=0.0, animation_id=0)

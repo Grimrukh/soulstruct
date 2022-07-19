@@ -24,7 +24,14 @@ from .entities.m60_37_47_00_entities import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005261(0, 1037470200, 1037472200, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.AncestralFollower,
+        region=1037472200,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.WildMouflon,
@@ -49,6 +56,6 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1037470211, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 1037470212, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.WildMouflon, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Runebear, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_900005610(0, 1037471680, 100, 800, 0)

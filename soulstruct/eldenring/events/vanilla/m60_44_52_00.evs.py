@@ -33,7 +33,17 @@ def Constructor():
     Event_1044523706()
     Event_1044523707(0, asset=Assets.AEG099_315_9000, asset_1=Assets.AEG099_090_9000)
     CommonFunc_90005704(0, attacked_entity=Characters.Blackguard0, flag=4141, flag_1=4140, flag_2=1044529251, right=3)
-    CommonFunc_90005703(0, 1044520700, 4141, 4142, 1044529251, 4141, 4140, 4144, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blackguard0,
+        flag=4141,
+        flag_1=4142,
+        flag_2=1044529251,
+        flag_3=4141,
+        first_flag=4140,
+        last_flag=4144,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Blackguard0, flag=4143, first_flag=4140, last_flag=4144)
     CommonFunc_90005702(0, character=Characters.Blackguard1, flag=4143, first_flag=4140, last_flag=4144)
     CommonFunc_90005750(

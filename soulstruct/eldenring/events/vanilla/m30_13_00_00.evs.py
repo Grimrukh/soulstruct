@@ -214,7 +214,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30130307, 30132307, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp3, region=30132307, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Imp4, region=30132308, seconds=0.0, animation_id=3004)
     CommonFunc_90005250(0, character=Characters.Imp5, region=30132309, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Imp7, region=30132315, radius=5.0, seconds=0.0, animation_id=0)

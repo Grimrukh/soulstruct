@@ -175,9 +175,9 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.GreatHornedTragoth1)
-    CommonFunc_90005250(0, 39200268, 39202268, 0.0, -1)
-    CommonFunc_90005271(0, 39200254, 0.0, -1)
-    CommonFunc_90005271(0, 39200277, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=39202268, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.TunnelMiner1, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.TunnelMiner7, seconds=0.0, animation_id=-1)
     Event_39202280(
         0,
         character=Characters.TunnelMiner2,
@@ -251,26 +251,47 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 39200205, 39202214, 0.0, -1)
-    CommonFunc_90005261(0, 39200203, 39202203, 2.0, 0.0, -1)
-    CommonFunc_90005261(0, 39200204, 39202203, 2.0, 0.0, -1)
-    CommonFunc_90005261(0, 39200213, 39202203, 2.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia2, region=39202214, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia0,
+        region=39202203,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia1,
+        region=39202203,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia7,
+        region=39202203,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_39202200()
-    CommonFunc_90005250(0, 39200206, 39202356, 0.0, -1)
-    CommonFunc_90005250(0, 39200216, 39202356, 0.0, -1)
-    CommonFunc_90005250(0, 39200300, 39202301, 0.0, -1)
-    CommonFunc_90005250(0, 39200301, 39202301, 0.0, -1)
-    CommonFunc_90005250(0, 39200303, 39202301, 0.0, -1)
-    CommonFunc_90005250(0, 39200304, 39202301, 0.0, -1)
-    CommonFunc_90005250(0, 39200307, 39202350, 0.0, -1)
-    CommonFunc_90005250(0, 39200308, 39202350, 0.0, -1)
-    CommonFunc_90005250(0, 39200309, 39202350, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia3, region=39202356, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia8, region=39202356, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat0, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat1, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat3, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat4, region=39202301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat5, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat6, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Bat7, region=39202350, seconds=0.0, animation_id=-1)
     Event_39202302()
     Event_39202351()
     Event_39202318()
-    CommonFunc_90005250(0, 39200350, 39202350, 0.0, -1)
-    CommonFunc_90005250(0, 39200360, 39202360, 0.0, -1)
-    CommonFunc_90005250(0, 39200364, 39202360, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.OldWomanBat0, region=39202350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus0, region=39202360, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus1, region=39202360, seconds=0.0, animation_id=-1)
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)

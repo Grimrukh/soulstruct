@@ -84,11 +84,11 @@ def Constructor():
         region=1046402182,
         left=0,
     )
-    CommonFunc_90005250(0, 1046400300, 1046402303, 0.0, -1)
-    CommonFunc_90005250(0, 1046400301, 1046402301, 0.0, -1)
-    CommonFunc_90005250(0, 1046400303, 1046402303, 0.0, -1)
-    CommonFunc_90005250(0, 1046400304, 1046402303, 0.0, -1)
-    CommonFunc_90005251(0, 1046400400, 2.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1046402301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1046402303, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.LivingMass, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
     CommonFunc_90005631(0, 1046401640, 61011)
 

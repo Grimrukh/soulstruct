@@ -128,25 +128,36 @@ def Constructor():
         flag=4048,
         model_point=0,
     )
-    CommonFunc_90005775(0, 81463900, 1045399206, -1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=81463900, flag=1045399206, distance=-1.0)
     Event_11100735(0, character=Characters.FiaDeathbedCompanion0)
     Event_11100736(0, character=Characters.FiaDeathbedCompanion1)
     CommonFunc_90005740(
         0,
-        11102845,
-        11102846,
-        11102847,
-        11100740,
-        702,
-        11101741,
-        702,
-        0.4000000059604645,
-        90300,
-        90302,
-        -1,
-        1.2999999523162842,
+        flag=11102845,
+        flag_1=11102846,
+        left=11102847,
+        character=Characters.FiaDeathbedCompanion0,
+        model_point=702,
+        asset=Assets.AEG099_090_9000,
+        model_point_1=702,
+        radius=0.4000000059604645,
+        animation=90300,
+        animation_id=90302,
+        special_effect=-1,
+        radius_1=1.2999999523162842,
     )
-    CommonFunc_90005741(0, 11102848, 11102849, 11102847, 11100740, 90320, 0, 90322, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=11102848,
+        flag_1=11102849,
+        left=11102847,
+        character=Characters.FiaDeathbedCompanion0,
+        animation__animation_id=90320,
+        left_1=0,
+        animation_id=90322,
+        special_effect=-1,
+        seconds=0.5,
+    )
     Event_11100737(0, entity=Characters.FiaDeathbedCompanion1)
     CommonFunc_90005733(0, flag=11102844)
     Event_11100750(0, character=Characters.SorcererRogier, asset=Assets.AEG221_531_4500)
@@ -174,7 +185,7 @@ def Constructor():
     )
     Event_11100740(0, character=Characters.SirGideonOfnir0)
     Event_11100741(0, character=Characters.SirGideonOfnir1)
-    CommonFunc_90005775(0, 85495300, 11109687, -1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=85495300, flag=11109687, distance=-1.0)
     Event_11100745(0, character=Characters.BrotherCorhyn)
     Event_11100755(0, character=Characters.DungEater0)
     Event_11100756(0, character=Characters.DungEater1)

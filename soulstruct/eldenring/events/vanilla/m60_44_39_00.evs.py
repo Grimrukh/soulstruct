@@ -55,7 +55,17 @@ def Constructor():
         flag_2=1044399201,
         right=3,
     )
-    CommonFunc_90005703(0, 1044390700, 4041, 4042, 1044399201, 4041, 4040, 4043, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.DHunteroftheDead,
+        flag=4041,
+        flag_1=4042,
+        flag_2=1044399201,
+        flag_3=4041,
+        first_flag=4040,
+        last_flag=4043,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.DHunteroftheDead, flag=4043, first_flag=4040, last_flag=4043)
     Event_1044390715(
         0,

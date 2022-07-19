@@ -43,7 +43,14 @@ def Constructor():
         flag_10=78358,
         flag_11=78359,
     )
-    CommonFunc_90005261(0, 1039530350, 1039532350, 60.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellSoldier1,
+        region=1039532350,
+        radius=60.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005200(
         0,
         character=Characters.MadPumpkinHead,

@@ -71,15 +71,45 @@ def Constructor():
     )
     Event_1050383710(0, character=Characters.Millicent0)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent0, flag=4181, flag_1=4180, flag_2=1050389251, right=3)
-    CommonFunc_90005703(0, 1050380705, 4181, 4182, 1050389251, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent0,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1050389251,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent0, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383711(0, character=Characters.Millicent2)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent2, flag=4181, flag_1=4180, flag_2=1050389251, right=3)
-    CommonFunc_90005703(0, 1050380710, 4181, 4182, 1050389251, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent2,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1050389251,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent2, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383712(0, character=Characters.Millicent1)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent1, flag=4181, flag_1=4180, flag_2=1050389261, right=3)
-    CommonFunc_90005703(0, 1050380706, 4181, 4182, 1050389261, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent1,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1050389261,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent1, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383713()
     Event_1050383714()

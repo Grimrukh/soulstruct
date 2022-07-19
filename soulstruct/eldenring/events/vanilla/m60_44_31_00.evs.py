@@ -106,5 +106,5 @@ def Event_1044312350():
 def Event_250():
     """Event 250"""
     CommonFunc_90005485(0, character=Characters.GuardianGolem)
-    CommonFunc_90005251(0, 1044310350, 340.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GuardianGolem, radius=340.0, seconds=0.0, animation_id=-1)
     Event_1044312350()

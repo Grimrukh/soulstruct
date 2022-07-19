@@ -62,7 +62,7 @@ def Constructor():
     Event_30082400(0, character=Characters.Imp0)
     Event_30082400(1, character=Characters.Imp1)
     Event_30082400(2, character=30080302)
-    CommonFunc_90005261(0, 30080300, 30082312, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Imp0, region=30082312, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Imp1,
@@ -84,10 +84,31 @@ def Constructor():
     Event_30082400(5, character=Characters.Imp3)
     Event_30082400(6, character=30080305)
     Event_30082400(7, character=30080306)
-    CommonFunc_90005261(0, 30080307, 30082307, 2.0, 0.800000011920929, -1)
-    CommonFunc_90005261(1, 30080308, 30082307, 2.0, 6.300000190734863, -1)
-    CommonFunc_90005261(2, 30080309, 30082307, 2.0, 0.5, -1)
-    CommonFunc_90005261(3, 30080310, 30082307, 2.0, 4.300000190734863, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Imp4,
+        region=30082307,
+        radius=2.0,
+        seconds=0.800000011920929,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.Imp5,
+        region=30082307,
+        radius=2.0,
+        seconds=6.300000190734863,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(2, character=Characters.Imp6, region=30082307, radius=2.0, seconds=0.5, animation_id=-1)
+    CommonFunc_90005261(
+        3,
+        character=Characters.Imp7,
+        region=30082307,
+        radius=2.0,
+        seconds=4.300000190734863,
+        animation_id=-1,
+    )
     Event_30082400(8, character=Characters.Imp4)
     Event_30082400(9, character=Characters.Imp5)
     Event_30082400(10, character=Characters.Imp6)
@@ -121,7 +142,14 @@ def Constructor():
         animation_id=3022,
     )
     CommonFunc_90005250(1, character=Characters.RevenantFollower4, region=30082410, seconds=0.0, animation_id=3022)
-    CommonFunc_90005261(0, 30080412, 30082412, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower5,
+        region=30082412,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_30082300(0, character=Characters.RevenantFollower5)
     CommonFunc_90005261(0, character=Characters.PutridCorpse0, region=30082200, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(1, character=Characters.PutridCorpse1, region=30082200, radius=5.0, seconds=0.0, animation_id=0)

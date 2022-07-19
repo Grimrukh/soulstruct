@@ -124,18 +124,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1049390850,
-        1049390855,
-        1049392850,
-        1049390850,
-        1049392856,
-        1049395860,
-        1049391850,
-        1049390860,
-        1049392860,
-        903704520,
-        -1,
-        20004,
+        flag=1049390850,
+        flag_1=1049390855,
+        flag_2=1049392850,
+        character=Characters.BattleMage,
+        flag_3=1049392856,
+        character_1=1049395860,
+        asset=Assets.AEG099_120_1000,
+        owner_entity=Characters.TalkDummy3,
+        source_entity=1049392860,
+        name=903704520,
+        animation_id=-1,
+        animation_id_1=20004,
     )
     CommonFunc_90005883(0, flag=1049390850, flag_1=1049390855, entity=Assets.AEG099_170_1000)
     CommonFunc_90005885(
@@ -147,9 +147,9 @@ def Constructor():
         left=0,
         left_1=1,
     )
-    CommonFunc_90005251(0, 1049390200, 17.0, 0.0, -1)
-    CommonFunc_90005251(0, 1049390204, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 1049390208, 17.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.RayaLucariaScholar0, radius=17.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.RayaLucariaScholar4, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.RayaLucariaScholar7, radius=17.0, seconds=0.0, animation_id=-1)
     Event_1049392200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14809)
     Event_1049392200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14807)
     Event_1049392200(2, character=Characters.RayaLucariaScholar2, special_effect_id=14809)

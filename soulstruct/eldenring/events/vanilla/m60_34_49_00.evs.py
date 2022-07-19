@@ -76,12 +76,38 @@ def Constructor():
     Event_1034492270(2, seconds=2.5, flag=1034492283)
     Event_1034492270(3, seconds=2.4000000953674316, flag=1034492284)
     CommonFunc_90005704(0, attacked_entity=Characters.Iji0, flag=3761, flag_1=3760, flag_2=1034499201, right=3)
-    CommonFunc_90005707(0, 1034490700, 3761, 3762, 1034499201, 3763, 3760, 3763, -1, 20046, 1034492703, 1034492704)
+    CommonFunc_90005707(
+        0,
+        character=Characters.Iji0,
+        flag=3761,
+        flag_1=3762,
+        flag_2=1034499201,
+        flag_3=3763,
+        first_flag=3760,
+        last_flag=3763,
+        right=-1,
+        animation_id=20046,
+        left=1034492703,
+        flag_4=1034492704,
+    )
     Event_1034490700(0, character=Characters.Iji0)
     CommonFunc_90005709(0, attacked_entity=Characters.Iji0, model_point=905, vfx_id=603002)
     CommonFunc_90005709(0, attacked_entity=Characters.Iji0, model_point=960, vfx_id=603052)
     CommonFunc_90005704(0, attacked_entity=Characters.Iji1, flag=3761, flag_1=3760, flag_2=1034499203, right=3)
-    CommonFunc_90005707(0, 1034490711, 3761, 3762, 1034499203, 3763, 3760, 3763, -1, 20046, 1034492703, 1034492704)
+    CommonFunc_90005707(
+        0,
+        character=Characters.Iji1,
+        flag=3761,
+        flag_1=3762,
+        flag_2=1034499203,
+        flag_3=3763,
+        first_flag=3760,
+        last_flag=3763,
+        right=-1,
+        animation_id=20046,
+        left=1034492703,
+        flag_4=1034492704,
+    )
     Event_1034490701(
         0,
         character=Characters.Iji1,

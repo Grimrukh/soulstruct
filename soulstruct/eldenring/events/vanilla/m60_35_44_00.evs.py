@@ -36,22 +36,32 @@ def Constructor():
         flag_2=1035449201,
         right=3,
     )
-    CommonFunc_90005703(0, 1053440700, 3181, 3182, 1035449201, 3181, 3180, 3184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.WhiteMaskVarre,
+        flag=3181,
+        flag_1=3182,
+        flag_2=1035449201,
+        flag_3=3181,
+        first_flag=3180,
+        last_flag=3184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.WhiteMaskVarre, flag=3183, first_flag=3180, last_flag=3184)
     CommonFunc_90005740(
         0,
-        1035442705,
-        1035442706,
-        1035442707,
-        1053440700,
-        700,
-        1035441700,
-        700,
-        0.20000000298023224,
-        90201,
-        -1,
-        -1,
-        1.100000023841858,
+        flag=1035442705,
+        flag_1=1035442706,
+        left=1035442707,
+        character=Characters.WhiteMaskVarre,
+        model_point=700,
+        asset=Assets.AEG099_090_9002,
+        model_point_1=700,
+        radius=0.20000000298023224,
+        animation=90201,
+        animation_id=-1,
+        special_effect=-1,
+        radius_1=1.100000023841858,
     )
     CommonFunc_90005741(0, 1035442708, 1035442709, 1035442707, 1053440700, 90203, 0, -1, -1, 0.5)
 

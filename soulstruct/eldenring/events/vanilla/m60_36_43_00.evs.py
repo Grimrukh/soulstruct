@@ -29,7 +29,17 @@ def Constructor():
     RegisterGrace(grace_flag=1036430001, asset=Assets.AEG099_060_9001)
     Event_1036433700(0, character=Characters.Blackguard, asset=Assets.AEG099_316_1000)
     CommonFunc_90005704(0, attacked_entity=Characters.Blackguard, flag=4141, flag_1=4140, flag_2=1036439201, right=3)
-    CommonFunc_90005703(0, 1036430700, 4141, 4142, 1036439201, 4141, 4140, 4144, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blackguard,
+        flag=4141,
+        flag_1=4142,
+        flag_2=1036439201,
+        flag_3=4141,
+        first_flag=4140,
+        last_flag=4144,
+        right=-1,
+    )
     CommonFunc_90005702(0, 1036430700, 4143, 4140, 4144)
 
 

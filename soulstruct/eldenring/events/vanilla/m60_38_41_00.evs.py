@@ -72,18 +72,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1038410800,
-        1038410805,
-        1038412800,
-        1038410800,
-        1038412806,
-        1038415810,
-        1038411800,
-        1038410810,
-        1038412810,
-        900000520,
-        -1,
-        90005,
+        flag=1038410800,
+        flag_1=1038410805,
+        flag_2=1038412800,
+        character=Characters.AdanThiefofFire,
+        flag_3=1038412806,
+        character_1=1038415810,
+        asset=Assets.AEG099_120_1000,
+        owner_entity=Characters.TalkDummy0,
+        source_entity=1038412810,
+        name=900000520,
+        animation_id=-1,
+        animation_id_1=90005,
     )
     CommonFunc_90005883(0, flag=1038410800, flag_1=1038410805, entity=Assets.AEG099_170_1000)
     CommonFunc_90005885(
@@ -96,7 +96,17 @@ def Constructor():
         left_1=1,
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Hyetta, flag=3381, flag_1=3380, flag_2=1038419201, right=3)
-    CommonFunc_90005703(0, 1038410710, 3381, 3382, 1038419201, 3381, 3380, 3384, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Hyetta,
+        flag=3381,
+        flag_1=3382,
+        flag_2=1038419201,
+        flag_3=3381,
+        first_flag=3380,
+        last_flag=3384,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3384)
     Event_1038413700(0, character=Characters.Hyetta)
     CommonFunc_90005706(0, character=1038410720, animation_id=30018, left=0)

@@ -43,7 +43,14 @@ def Constructor():
         flag_10=78218,
         flag_11=78219,
     )
-    CommonFunc_90005261(0, 1036480200, 1036482200, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.WanderingNoble,
+        region=1036482200,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005300(
         0,
         flag=1036480800,

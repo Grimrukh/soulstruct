@@ -27,14 +27,45 @@ def Constructor():
     CommonFunc_90005600(0, grace_flag=76355, asset=Assets.AEG099_060_9000, enemy_block_distance=5.0, character=0)
     Event_1035532200(0, attacker__character=1035535200, region=1035532200)
     Event_1035532210()
-    CommonFunc_90005251(0, 1035530250, 10.0, 0.20000000298023224, -1)
-    CommonFunc_90005251(1, 1035530251, 10.0, 0.30000001192092896, -1)
-    CommonFunc_90005251(2, 1035530252, 10.0, 0.30000001192092896, -1)
-    CommonFunc_90005251(3, 1035530253, 10.0, 0.4000000059604645, -1)
-    CommonFunc_90005251(4, 1035530254, 10.0, 0.4000000059604645, -1)
-    CommonFunc_90005261(0, 1035530230, 1035532230, 30.0, 0.0, -1)
-    CommonFunc_90005261(0, 1035530231, 1035532230, 30.0, 0.0, -1)
-    CommonFunc_90005261(0, 1035530400, 1035532400, 5.0, 0.0, -1)
+    CommonFunc_90005251(
+        0,
+        character=Characters.ThornSorcerer1,
+        radius=10.0,
+        seconds=0.20000000298023224,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(
+        1,
+        character=Characters.ThornSorcerer6,
+        radius=10.0,
+        seconds=0.30000001192092896,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(
+        2,
+        character=Characters.ThornSorcerer7,
+        radius=10.0,
+        seconds=0.30000001192092896,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(
+        3,
+        character=Characters.ThornSorcerer0,
+        radius=10.0,
+        seconds=0.4000000059604645,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(4, character=1035530254, radius=10.0, seconds=0.4000000059604645, animation_id=-1)
+    CommonFunc_90005261(0, character=1035530230, region=1035532230, radius=30.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1035530231, region=1035532230, radius=30.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.ManeuverableFlamethrower,
+        region=1035532400,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005200(
         0,
         character=Characters.MagmaWyrm,
@@ -65,7 +96,17 @@ def Constructor():
     Event_1035532450(1, asset=Assets.AEG007_434_9001)
     Event_1035532450(2, asset=Assets.AEG007_434_9002)
     CommonFunc_90005704(0, attacked_entity=Characters.LivingPot, flag=3661, flag_1=3660, flag_2=1043399301, right=3)
-    CommonFunc_90005703(0, 1035530700, 3661, 3662, 1043399301, 3661, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot,
+        flag=3661,
+        flag_1=3662,
+        flag_2=1043399301,
+        flag_3=3661,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.LivingPot, flag=3663, first_flag=3660, last_flag=3663)
     Event_1035533700(0, character=Characters.LivingPot)
     Event_1035533701()

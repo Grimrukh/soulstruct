@@ -25,7 +25,7 @@ from .entities.m60_36_52_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=76356, asset=Assets.AEG099_060_9000, enemy_block_distance=0.0, character=0)
-    CommonFunc_90005271(0, 1036520400, 0.0, -1)
+    CommonFunc_90005271(0, character=Characters.Scarab, seconds=0.0, animation_id=-1)
     Event_1036522200(0, character=Characters.DemiHuman7)
     Event_1036522200(1, character=Characters.DemiHuman8)
     Event_1036522200(2, character=Characters.DemiHuman5)
@@ -38,14 +38,28 @@ def Constructor():
         seconds=0.30000001192092896,
         animation_id=3021,
     )
-    CommonFunc_90005261(0, 1036520220, 1036522220, 5.0, 0.0, -1)
-    CommonFunc_90005261(1, 1036520221, 1036522220, 5.0, 0.0, -1)
-    CommonFunc_90005261(2, 1036520222, 1036522220, 5.0, 0.0, -1)
-    CommonFunc_90005261(1, 1036520205, 1036522300, 6.0, 0.4000000059604645, -1)
-    CommonFunc_90005261(2, 1036520206, 1036522300, 6.0, 0.0, -1)
-    CommonFunc_90005261(2, 1036520207, 1036522300, 6.0, 0.20000000298023224, -1)
+    CommonFunc_90005261(0, character=Characters.DemiHuman2, region=1036522220, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(1, character=Characters.DemiHuman3, region=1036522220, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(2, character=Characters.DemiHuman4, region=1036522220, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        1,
+        character=1036520205,
+        region=1036522300,
+        radius=6.0,
+        seconds=0.4000000059604645,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(2, character=Characters.DemiHuman5, region=1036522300, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        2,
+        character=Characters.DemiHuman6,
+        region=1036522300,
+        radius=6.0,
+        seconds=0.20000000298023224,
+        animation_id=-1,
+    )
     Event_1036522215(0, character=Characters.Runebear, region=1036522300, radius=10.0, seconds=0.5, animation_id=20003)
-    CommonFunc_90005261(0, 1036520250, 1036522250, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036520250, region=1036522250, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=1036520250,
@@ -59,7 +73,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1036520251, 1036522251, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036520251, region=1036522251, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=1036520251,
@@ -73,7 +87,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1036520252, 1036522252, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036520252, region=1036522252, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=1036520252,

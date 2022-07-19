@@ -107,7 +107,7 @@ def Preconstructor():
     DisableBackread(Characters.Roderika)
     DisableBackread(1041380730)
     DisableAsset(Assets.AEG099_320_9000)
-    CommonFunc_90005251(0, 1041380220, 100.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GodrickFootSoldier, radius=100.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, 1041380216, 25.0, 0.0, 1704)
 
 

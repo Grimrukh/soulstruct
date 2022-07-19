@@ -205,18 +205,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1053560800,
-        1053560805,
-        1053562800,
-        1053560800,
-        1053562806,
-        1053565810,
-        1053561800,
-        1053560810,
-        1053562810,
-        130401,
-        -1,
-        90005,
+        flag=1053560800,
+        flag_1=1053560805,
+        flag_2=1053562800,
+        character=Characters.RoundtableKnightVyke,
+        flag_3=1053562806,
+        character_1=1053565810,
+        asset=Assets.AEG099_120_1000,
+        owner_entity=Characters.TalkDummy,
+        source_entity=1053562810,
+        name=130401,
+        animation_id=-1,
+        animation_id_1=90005,
     )
     CommonFunc_90005883(0, flag=1053560800, flag_1=1053560805, entity=Assets.AEG099_171_1000)
     CommonFunc_90005885(

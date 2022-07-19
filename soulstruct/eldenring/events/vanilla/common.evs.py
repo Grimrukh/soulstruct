@@ -75,8 +75,30 @@ def Constructor():
         move_to_region_1=0,
         unk_20_24=65002,
     )
-    Event_936(0, 60490000, 60490001, 1049532500, 60495300, 1049532500, 63003, 0, 0, -1.0)
-    Event_936(1, 60490020, 60490021, 1049532504, 60485400, 1049532504, 63003, 0, 0, -1.0)
+    Event_936(
+        0,
+        cutscene_id=60490000,
+        cutscene_id_1=60490001,
+        flag=1049532500,
+        map_id=60495300,
+        move_to_region=1049532500,
+        unk_20_24=63003,
+        change_weather=0,
+        weather=0,
+        weather_duration=-1.0,
+    )
+    Event_936(
+        1,
+        cutscene_id=60490020,
+        cutscene_id_1=60490021,
+        flag=1049532504,
+        map_id=60485400,
+        move_to_region=1049532504,
+        unk_20_24=63003,
+        change_weather=0,
+        weather=0,
+        weather_duration=-1.0,
+    )
     Event_970()
     Event_9820(0, right=8820, item_lot_param_id=4820, special_effect=3600)
     Event_1020()

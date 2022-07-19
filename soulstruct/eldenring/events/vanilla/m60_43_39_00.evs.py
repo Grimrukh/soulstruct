@@ -88,7 +88,17 @@ def Constructor():
         flag_2=1043399246,
     )
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
-    CommonFunc_90005703(0, 1043390710, 3661, 3662, 1043399301, 1043399314, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot,
+        flag=3661,
+        flag_1=3662,
+        flag_2=1043399301,
+        flag_3=1043399314,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.LivingPot,

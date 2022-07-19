@@ -75,8 +75,8 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_1043330050()
-    CommonFunc_90005261(0, 1043330210, 1043332210, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1043330211, 1043332211, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1043330210, region=1043332210, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1043330211, region=1043332211, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Rat0, radius=5.0, seconds=0.0, animation_id=3005)
     CommonFunc_90005261(0, character=Characters.Rat1, region=1043332200, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat2, region=1043332200, radius=5.0, seconds=0.0, animation_id=0)

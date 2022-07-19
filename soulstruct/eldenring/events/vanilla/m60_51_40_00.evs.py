@@ -45,8 +45,8 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
-    CommonFunc_90005250(0, 1051400200, 1051402200, 0.0, -1)
-    CommonFunc_90005250(0, 1051400201, 1051402200, 0.0, -1)
-    CommonFunc_90005250(0, 1051400202, 1051402200, 0.0, -1)
-    CommonFunc_90005250(0, 1051400299, 1051402300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeGuardian0, region=1051402200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeGuardian1, region=1051402200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeGuardian2, region=1051402200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GuardianGolem, region=1051402300, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, 1051400300, 7.0, 0.0, -1)

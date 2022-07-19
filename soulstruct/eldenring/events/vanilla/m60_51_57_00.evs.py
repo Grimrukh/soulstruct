@@ -110,10 +110,16 @@ def Constructor():
         special_effect=11130,
         animation_id=20015,
     )
-    Event_1051572821(0, character=1051570800, character_1=1051575801, special_effect=11136, animation_id=20016)
+    Event_1051572821(
+        0,
+        character=Characters.Commander,
+        character_1=1051575801,
+        special_effect=11136,
+        animation_id=20016,
+    )
     Event_1051572822(
         0,
-        character=1051570800,
+        character=Characters.Commander,
         character_1=Characters.BanishedKnight5,
         character_2=Characters.BanishedKnight6,
         special_effect_id=11135,
@@ -185,8 +191,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1051570205, 1051572205, 3.0, 0.699999988079071, -1)
-    CommonFunc_90005261(0, 1051570206, 1051572206, 3.0, 0.30000001192092896, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.CastleGuard4,
+        region=1051572205,
+        radius=3.0,
+        seconds=0.699999988079071,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.CastleGuard5,
+        region=1051572206,
+        radius=3.0,
+        seconds=0.30000001192092896,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.CastleGuard6,
@@ -914,7 +934,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=1051570395, region=1051572275, radius=3.0, seconds=0.0, animation_id=3005)
-    CommonFunc_90005261(0, 1051570315, 1051572315, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1051570315, region=1051572315, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, flag=1051570315, character=1051570315, item_lot_param_id=40508, seconds=0.0, left=0)
     Event_1051572310(
         0,

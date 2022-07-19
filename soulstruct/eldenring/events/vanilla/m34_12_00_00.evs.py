@@ -157,35 +157,70 @@ def Preconstructor():
     """Event 50"""
     Event_34120519()
     CommonFunc_90005250(0, character=Characters.VulgarMilitia0, region=34122201, seconds=0.5, animation_id=3020)
-    CommonFunc_90005251(0, 34120203, 2.0, 0.0, -1)
-    CommonFunc_90005261(0, 34120210, 34122210, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 34120211, 34122211, 0.0, -1)
-    CommonFunc_90005250(0, 34120212, 34122211, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.VulgarMilitia0, radius=2.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia1,
+        region=34122210,
+        radius=8.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia2, region=34122211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.VulgarMilitia3, region=34122211, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.VulgarMilitia4, radius=16.0, seconds=0.0, animation_id=3020)
     CommonFunc_90005250(0, character=Characters.VulgarMilitia5, region=34122210, seconds=0.5, animation_id=3020)
-    CommonFunc_90005261(0, 34120216, 34122216, 15.0, 0.0, -1)
-    CommonFunc_90005250(0, 34120250, 34122250, 0.0, -1)
-    CommonFunc_90005250(0, 34120251, 34122250, 0.0, -1)
-    CommonFunc_90005250(0, 34120255, 34122255, 0.20000000298023224, -1)
-    CommonFunc_90005250(0, 34120256, 34122255, 0.0, -1)
-    CommonFunc_90005250(0, 34120257, 34122255, 0.5, -1)
-    CommonFunc_90005250(0, 34120258, 34122258, 0.0, -1)
-    CommonFunc_90005250(0, 34120259, 34122258, 1.0, -1)
-    CommonFunc_90005250(0, 34120260, 34122260, 0.0, -1)
-    CommonFunc_90005250(0, 34120261, 34122261, 0.0, -1)
-    CommonFunc_90005250(0, 34120262, 34122263, 0.0, -1)
-    CommonFunc_90005250(0, 34120263, 34122263, 0.0, -1)
-    CommonFunc_90005250(0, 34120264, 34122263, 0.0, -1)
-    CommonFunc_90005260(0, 34120265, 34122265, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 34120266, 34122265, 5.0, 0.0, -1)
-    CommonFunc_90005260(0, 34120267, 34122265, 5.0, 0.0, -1)
-    CommonFunc_90005250(0, 34120268, 34122268, 0.0, -1)
-    CommonFunc_90005250(0, 34120270, 34122270, 0.0, -1)
-    CommonFunc_90005250(0, 34120271, 34122270, 0.0, -1)
-    CommonFunc_90005250(0, 34120272, 34122270, 0.0, -1)
-    CommonFunc_90005250(0, 34120273, 34122270, 0.0, -1)
-    CommonFunc_90005250(0, 34120300, 34122300, 0.0, -1)
-    CommonFunc_90005250(0, 34120305, 34122305, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia6,
+        region=34122216,
+        radius=15.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=34120250, region=34122250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120251, region=34122250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120255, region=34122255, seconds=0.20000000298023224, animation_id=-1)
+    CommonFunc_90005250(0, character=34120256, region=34122255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=34120257, region=34122255, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster0, region=34122258, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster1, region=34122258, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster2, region=34122260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster3, region=34122261, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster4, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster5, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster6, region=34122263, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.AbnormalStoneCluster7,
+        region=34122265,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005260(
+        0,
+        character=Characters.AbnormalStoneCluster8,
+        region=34122265,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005260(
+        0,
+        character=Characters.AbnormalStoneCluster9,
+        region=34122265,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster10, region=34122268, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster11, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster12, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster13, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster14, region=34122270, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=34122300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=34122305, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 34120350, 34122350, 0.0, -1)
 
 

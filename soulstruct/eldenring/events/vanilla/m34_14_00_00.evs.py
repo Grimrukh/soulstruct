@@ -29,7 +29,14 @@ def Constructor():
     Event_34142850()
     Event_34140860()
     Event_34142899()
-    CommonFunc_90005261(0, 34140300, 34142300, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellSoldier,
+        region=34142300,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_34142250(
         0,
         flag=34140250,

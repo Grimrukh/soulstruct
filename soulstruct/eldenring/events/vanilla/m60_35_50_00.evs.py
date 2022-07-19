@@ -108,7 +108,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1035500217, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.LesserFingercreeper3, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.LesserFingercreeper4,
@@ -478,10 +478,10 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1035500303, 15.0, 0.0, -1)
-    CommonFunc_90005261(0, 1035500310, 1035502311, 18.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035500313, 1035502313, 0.0, -1)
-    CommonFunc_90005250(0, 1035500314, 1035502314, 0.0, -1)
+    CommonFunc_90005251(0, character=1035500303, radius=15.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Page0, region=1035502311, radius=18.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page1, region=1035502313, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page2, region=1035502314, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.BigWolf, region=1035502342, seconds=0.0, animation_id=0)
     CommonFunc_90005200(
         0,
@@ -533,17 +533,24 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1035500390, 1035502390, 0.0, -1)
-    CommonFunc_90005250(0, 1035500391, 1035502391, 0.0, -1)
-    CommonFunc_90005251(0, 1035500395, 5.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035500400, 1035502400, 0.0, -1)
-    CommonFunc_90005250(0, 1035500401, 1035502400, 0.0, -1)
-    CommonFunc_90005250(0, 1035500402, 1035502402, 0.0, -1)
-    CommonFunc_90005250(0, 1035500409, 1035502409, 0.0, -1)
-    CommonFunc_90005260(0, 1035500410, 1035502410, 42.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035500411, 1035502411, 0.0, -1)
-    CommonFunc_90005250(0, 1035500412, 1035502412, 0.0, -1)
-    CommonFunc_90005250(0, 1035500413, 1035502412, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.LargeCrabSnow, region=1035502390, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.LiurniaTroll, region=1035502391, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.IronVirgin, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier0, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier1, region=1035502400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier2, region=1035502402, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier5, region=1035502409, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.RayaLucariaSoldier6,
+        region=1035502410,
+        radius=42.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier7, region=1035502411, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier8, region=1035502412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier9, region=1035502412, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaSoldier10,
@@ -556,35 +563,42 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1035500415, 17.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035500416, 1035502416, 0.0, -1)
-    CommonFunc_90005260(0, 1035500423, 1035502410, 40.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier11, radius=17.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaSoldier12, region=1035502416, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.RayaLucariaSoldier17,
+        region=1035502410,
+        radius=40.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_1035502401()
-    Event_1035502400(0, 1035500407, 1035502407, 0.0, -1)
-    Event_1035502400(1, 1035500408, 1035502407, 0.0, -1)
-    Event_1035502400(2, 1035500419, 1035502419, 0.0, -1)
-    Event_1035502400(3, 1035500420, 1035502420, 0.0, -1)
-    Event_1035502400(4, 1035500421, 1035502420, 0.0, -1)
-    Event_1035502400(5, 1035500422, 1035502422, 0.0, -1)
-    Event_1035502400(6, 1035500424, 1035502422, 5.0, -1)
-    Event_1035502400(7, 1035500425, 1035502425, 0.0, -1)
-    Event_1035502400(8, 1035500426, 1035502420, 0.0, -1)
-    Event_1035502400(9, 1035500427, 1035502419, 0.0, -1)
-    Event_1035502400(10, 1035500428, 1035502420, 0.0, -1)
+    Event_1035502400(0, character=Characters.RayaLucariaSoldier3, region=1035502407, seconds=0.0, animation_id=-1)
+    Event_1035502400(1, character=Characters.RayaLucariaSoldier4, region=1035502407, seconds=0.0, animation_id=-1)
+    Event_1035502400(2, character=Characters.RayaLucariaSoldier13, region=1035502419, seconds=0.0, animation_id=-1)
+    Event_1035502400(3, character=Characters.RayaLucariaSoldier14, region=1035502420, seconds=0.0, animation_id=-1)
+    Event_1035502400(4, character=Characters.RayaLucariaSoldier15, region=1035502420, seconds=0.0, animation_id=-1)
+    Event_1035502400(5, character=Characters.RayaLucariaSoldier16, region=1035502422, seconds=0.0, animation_id=-1)
+    Event_1035502400(6, character=Characters.RayaLucariaSoldier18, region=1035502422, seconds=5.0, animation_id=-1)
+    Event_1035502400(7, character=Characters.RayaLucariaSoldier19, region=1035502425, seconds=0.0, animation_id=-1)
+    Event_1035502400(8, character=Characters.RayaLucariaSoldier20, region=1035502420, seconds=0.0, animation_id=-1)
+    Event_1035502400(9, character=Characters.RayaLucariaSoldier21, region=1035502419, seconds=0.0, animation_id=-1)
+    Event_1035502400(10, character=Characters.RayaLucariaSoldier22, region=1035502420, seconds=0.0, animation_id=-1)
     Event_1035502849()
     Event_1035500800()
     Event_1035502810()
     Event_1035502840()
     Event_1035502841()
     Event_1035502842()
-    Event_1035502210(0, asset=1035501600, flag=1035502600, owner_entity=Characters.Dummy)
-    Event_1035502210(1, asset=1035501601, flag=1035502601, owner_entity=Characters.Dummy)
-    Event_1035502210(2, asset=1035501602, flag=1035502602, owner_entity=Characters.Dummy)
-    Event_1035502210(3, asset=1035501603, flag=1035502603, owner_entity=Characters.Dummy)
-    Event_1035502210(4, asset=1035501604, flag=1035502604, owner_entity=Characters.Dummy)
-    Event_1035502210(5, asset=1035501605, flag=1035502605, owner_entity=Characters.Dummy)
-    Event_1035502210(6, asset=1035501606, flag=1035502606, owner_entity=Characters.Dummy)
-    Event_1035502210(7, asset=1035501608, flag=1035502608, owner_entity=Characters.Dummy)
+    Event_1035502210(0, asset=Assets.AEG099_045_9000, flag=1035502600, owner_entity=Characters.Dummy)
+    Event_1035502210(1, asset=Assets.AEG099_045_9001, flag=1035502601, owner_entity=Characters.Dummy)
+    Event_1035502210(2, asset=Assets.AEG099_045_9002, flag=1035502602, owner_entity=Characters.Dummy)
+    Event_1035502210(3, asset=Assets.AEG099_045_9003, flag=1035502603, owner_entity=Characters.Dummy)
+    Event_1035502210(4, asset=Assets.AEG099_045_9004, flag=1035502604, owner_entity=Characters.Dummy)
+    Event_1035502210(5, asset=Assets.AEG099_045_9005, flag=1035502605, owner_entity=Characters.Dummy)
+    Event_1035502210(6, asset=Assets.AEG099_045_9006, flag=1035502606, owner_entity=Characters.Dummy)
+    Event_1035502210(7, asset=Assets.AEG099_045_9008, flag=1035502608, owner_entity=Characters.Dummy)
     Event_1035500700(
         0,
         character=Characters.AlbinauricLookout0,

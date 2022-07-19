@@ -46,7 +46,17 @@ def Constructor():
     CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot_param_id=40312, seconds=0.0, left=0)
     Event_1040542700(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040549201, right=3)
-    CommonFunc_90005703(0, 1040540705, 4201, 4202, 1040549201, 4201, 4200, 4204, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.BrotherCorhyn,
+        flag=4201,
+        flag_1=4202,
+        flag_2=1040549201,
+        flag_3=4201,
+        first_flag=4200,
+        last_flag=4204,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.BrotherCorhyn, flag=4203, first_flag=4200, last_flag=4204)
     Event_1040542705(0, character=Characters.Goldmask)
     Event_1040542706(0, character=Characters.Goldmask)
@@ -77,7 +87,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1040540340, 0.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1040540340, radius=0.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(0, 1040540402, 30000, 20000, 10.0, 0.0, 0, 0, 0, 0)
 
 

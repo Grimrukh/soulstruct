@@ -52,7 +52,7 @@ def Constructor():
     Event_14002811()
     Event_14002849()
     Event_140028121()
-    Event_140028122(0, character=14000800, special_effect=14585, special_effect_1=14575)
+    Event_140028122(0, character=Characters.RennalaPhaseTwo, special_effect=14585, special_effect_1=14575)
     Event_14002606()
     Event_14002689()
     Event_14003500(0, region=14002700, flag=14000800)
@@ -581,7 +581,17 @@ def Constructor():
     Event_14000714()
     Event_14000720()
     Event_14000730(0, character=Characters.WitchHunterJerren2)
-    CommonFunc_90005703(0, 14000717, 3361, 3362, 14009351, 3361, 3360, 3363, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.WitchHunterJerren2,
+        flag=3361,
+        flag_1=3362,
+        flag_2=14009351,
+        flag_3=3361,
+        first_flag=3360,
+        last_flag=3363,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.WitchHunterJerren2,
@@ -617,8 +627,8 @@ def Preconstructor():
     DisableBackread(Characters.SorcererThops)
     DisableAsset(14006710)
     Event_14000519()
-    CommonFunc_90005250(0, 14000200, 14002200, 0.0, -1)
-    CommonFunc_90005250(0, 14000201, 14002200, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=14002200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=14002200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.RayaLucariaScholar2,
@@ -644,7 +654,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000229, 14002228, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar7, region=14002228, seconds=0.0, animation_id=-1)
     CommonFunc_90005210(
         0,
         character=Characters.RayaLucariaScholar8,
@@ -658,28 +668,42 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000231, 14002228, 0.0, -1)
-    CommonFunc_90005250(0, 14000221, 14002222, 0.0, -1)
-    CommonFunc_90005250(0, 14000233, 14002222, 0.0, -1)
-    CommonFunc_90005250(0, 14000250, 14002251, 0.5, -1)
-    CommonFunc_90005250(0, 14000251, 14002251, 0.0, -1)
-    CommonFunc_90005250(0, 14000252, 14002252, 0.0, -1)
-    CommonFunc_90005250(0, 14000260, 14002260, 0.0, -1)
-    CommonFunc_90005251(0, 14000261, 10.0, 0.0, -1)
-    CommonFunc_90005250(0, 14000262, 14002260, 0.0, -1)
-    CommonFunc_90005250(0, 14000263, 14002260, 0.0, -1)
-    CommonFunc_90005250(0, 14000257, 14002267, 0.0, -1)
-    CommonFunc_90005250(0, 14000265, 14002267, 0.0, -1)
-    CommonFunc_90005250(0, 14000267, 14002267, 0.0, -1)
-    CommonFunc_90005250(0, 14000266, 14002266, 0.0, -1)
-    CommonFunc_90005261(0, 14000268, 14002268, 3.0, 1.0, -1)
-    CommonFunc_90005261(0, 14000269, 14002268, 3.0, 0.0, -1)
-    CommonFunc_90005250(0, 14000276, 14002276, 0.0, -1)
-    CommonFunc_90005250(0, 14000277, 14002276, 0.0, -1)
-    CommonFunc_90005250(0, 14000285, 14002285, 0.0, -1)
-    CommonFunc_90005250(0, 14000286, 14002285, 0.0, -1)
-    CommonFunc_90005250(0, 14000287, 14002285, 0.0, -1)
-    CommonFunc_90005250(0, 14000300, 14002300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar9, region=14002228, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar3, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar11, region=14002222, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar13, region=14002251, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar14, region=14002251, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar15, region=14002252, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=14000260, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=14000261, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar17, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=14000263, region=14002260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar16, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar18, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar20, region=14002267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar19, region=14002266, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RayaLucariaScholar21,
+        region=14002268,
+        radius=3.0,
+        seconds=1.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RayaLucariaScholar22,
+        region=14002268,
+        radius=3.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar23, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar24, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar25, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar26, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar27, region=14002285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=14002300, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse1,
@@ -692,7 +716,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000310, 14002310, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=14002310, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.PutridCorpse3,
@@ -801,7 +825,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000323, 14002323, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse12, region=14002323, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse13,
@@ -826,7 +850,14 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 14000335, 14002335, 3.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridCorpse18,
+        region=14002335,
+        radius=3.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse15,
@@ -993,8 +1024,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 14000383, 16.0, 0.0, -1)
-    CommonFunc_90005250(0, 14000388, 14002345, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.PutridCorpseBare0, radius=16.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=14000392,
@@ -1056,7 +1087,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000290, 14002345, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=14002345, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.SmallerDog1,
@@ -1180,7 +1211,7 @@ def Preconstructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005250(0, 14000443, 14002267, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.WanderingNoble13, region=14002267, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.WanderingNoble12,
@@ -1405,9 +1436,9 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 14000461, 14002461, 20.0, 0.0, -1)
-    CommonFunc_90005251(0, 14000474, 3.0, 0.0, -1)
-    CommonFunc_90005251(0, 14000477, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Marionette4, region=14002461, radius=20.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Marionette9, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Marionette10, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Marionette7,
@@ -1432,8 +1463,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000480, 14002487, 0.0, -1)
-    CommonFunc_90005250(0, 14000481, 14002487, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Marionette11, region=14002487, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Marionette12, region=14002487, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Avionette5,
@@ -1447,12 +1478,12 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 14000483, 14002396, 0.0, -1)
-    CommonFunc_90005250(0, 14000484, 14002396, 0.0, -1)
-    CommonFunc_90005250(0, 14000675, 14002675, 0.0, -1)
-    CommonFunc_90005250(0, 14000295, 14002276, 0.0, -1)
-    CommonFunc_90005250(0, 14000293, 14002293, 0.0, -1)
-    CommonFunc_90005250(0, 14000294, 14002294, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Avionette8, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Avionette9, region=14002396, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Page, region=14002675, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 14000499, 14002499, 0.0, -1)
 
 

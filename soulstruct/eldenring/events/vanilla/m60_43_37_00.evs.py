@@ -152,7 +152,17 @@ def Constructor():
         flag_2=1043379351,
         right=3,
     )
-    CommonFunc_90005703(0, 1043370750, 3941, 3942, 1043379351, 3941, 3940, 3944, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.DemiHumanShaman,
+        flag=3941,
+        flag_1=3942,
+        flag_2=1043379351,
+        flag_3=3941,
+        first_flag=3940,
+        last_flag=3944,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.DemiHumanShaman, flag=3943, first_flag=3940, last_flag=3944)
     Event_1043373730(0, character=Characters.DemiHumanShaman, asset=Assets.AEG801_480_9000)
     Event_1043373731(0, seconds=13.0, seconds_1=13.0, seconds_2=25.0)

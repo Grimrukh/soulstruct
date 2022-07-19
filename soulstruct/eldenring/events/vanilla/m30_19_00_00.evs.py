@@ -53,8 +53,8 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.Imp4, region=30192220, seconds=0.0, animation_id=3004)
-    CommonFunc_90005250(0, 30190210, 30192210, 0.0, -1)
-    CommonFunc_90005250(0, 30190211, 30192210, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp7, region=30192210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190211, region=30192210, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=30190212,
@@ -116,10 +116,10 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=30190214, region=30192210, seconds=0.0, animation_id=3005)
-    CommonFunc_90005250(0, 30190225, 30192225, 1.5, -1)
-    CommonFunc_90005250(0, 30190226, 30192225, 2.0, -1)
-    CommonFunc_90005250(0, 30190227, 30192225, 0.0, -1)
-    CommonFunc_90005250(0, 30190228, 30192225, 0.5, -1)
+    CommonFunc_90005250(0, character=30190225, region=30192225, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(0, character=30190226, region=30192225, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190227, region=30192225, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190228, region=30192225, seconds=0.5, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30190225,
@@ -168,9 +168,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30190222, 30192203, 0.0, -1)
+    CommonFunc_90005250(0, character=30190222, region=30192203, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Imp9, region=30192204, seconds=0.0, animation_id=3003)
-    CommonFunc_90005250(0, 30190303, 30192302, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog1, region=30192302, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30190235,
@@ -237,8 +237,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30190403, 30192400, 0.0, -1)
-    CommonFunc_90005250(0, 30190302, 30192400, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight2, region=30192400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30190302, region=30192400, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         1,
         character=Characters.CleanrotKnight1,
@@ -251,7 +251,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 301900401, 30192401, 0.0, -1)
+    CommonFunc_90005250(0, character=301900401, region=30192401, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30190540,

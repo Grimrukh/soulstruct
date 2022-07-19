@@ -60,7 +60,17 @@ def Constructor():
     CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
     Event_1042383700(0, character=Characters.KnightBernahl)
     CommonFunc_90005704(0, attacked_entity=Characters.KnightBernahl, flag=3881, flag_1=3880, flag_2=1042389251, right=3)
-    CommonFunc_90005703(0, 1042380710, 3881, 3882, 1042389251, 3881, 3880, 3884, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.KnightBernahl,
+        flag=3881,
+        flag_1=3882,
+        flag_2=1042389251,
+        flag_3=3881,
+        first_flag=3880,
+        last_flag=3884,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.KnightBernahl, flag=3883, first_flag=3880, last_flag=3884)
     CommonFunc_90005630(0, far_view_id=61423800, asset=1042381500, model_point=127)
     CommonFunc_90005560(0, 1042380600, 1042381600, 0)
@@ -71,15 +81,43 @@ def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.KnightBernahl)
     CommonFunc_90005251(0, character=Characters.WolfPackLeader, radius=40.0, seconds=0.0, animation_id=3011)
-    CommonFunc_90005261(0, 1042380240, 1042382240, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380241, 1042382240, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380242, 1042382240, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380243, 1042382240, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380254, 1042382254, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380255, 1042382254, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380256, 1042382254, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380262, 1042382254, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1042380263, 1042382254, 1.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GodrickSoldier0,
+        region=1042382240,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.GodrickSoldier1,
+        region=1042382240,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.GodrickSoldier2,
+        region=1042382240,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.GodrickSoldier3,
+        region=1042382240,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=1042380254, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1042380255, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1042380256, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1042380262, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1042380263, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
     Event_1042382300()
     CommonFunc_90005211(0, 1042380800, 30000, 20000, 1042382340, 10.0, 0.0, 0, 0, 0, 0)
 

@@ -65,9 +65,9 @@ def Preconstructor():
     DisableBackread(Characters.SorceressSellen)
     DisableBackread(Characters.TalkDummy0)
     CommonFunc_90005251(0, character=Characters.GiantMirandaFlower, radius=30.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005251(0, 1044360231, 3.0, 0.0, -1)
-    CommonFunc_90005251(0, 1044360234, 3.0, 0.0, -1)
-    CommonFunc_90005251(0, 1044360235, 3.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.MirandaFlower0, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.MirandaFlower1, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.MirandaFlower2, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1044360211, region=1044362211, radius=1.0, seconds=0.0, animation_id=1701)
     CommonFunc_90005261(
         0,
@@ -93,14 +93,14 @@ def Preconstructor():
         seconds=0.699999988079071,
         animation_id=1701,
     )
-    CommonFunc_90005261(0, 1044360200, 1044362200, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1044360200, region=1044362200, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(0, 1044360200, 30014, 20014, 1044362200, 10.0, 0.0, 0, 0, 0, 0)
 
 
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=1044360300, asset=Assets.AEG100_101_9000, flag=1044368301)
+    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1044368301)
     CommonFunc_90005422(0, flag=1044368301, asset=Assets.AEG100_100_9000, obj_act_id=1044363301)
     CommonFunc_90005424(
         0,

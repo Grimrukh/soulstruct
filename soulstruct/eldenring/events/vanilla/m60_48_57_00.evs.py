@@ -161,7 +161,14 @@ def Constructor():
     Event_1048572370(1, asset=Assets.AEG110_029_2001, asset_1=Assets.AEG110_039_2001, flag=1048570371)
     Event_1048572370(2, asset=Assets.AEG110_029_2002, asset_1=Assets.AEG110_039_2002, flag=1048570372)
     Event_1048572370(3, asset=Assets.AEG110_029_2003, asset_1=Assets.AEG110_039_2003, flag=1048570373)
-    CommonFunc_90005261(0, 1048570250, 1048572250, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BlackKnifeAssassin0,
+        region=1048572250,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_1048572256()
     Event_1048572260()
     Event_1048572270()

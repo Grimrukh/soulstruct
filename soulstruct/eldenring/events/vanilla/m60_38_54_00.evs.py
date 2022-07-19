@@ -59,14 +59,28 @@ def Constructor():
         item_lot__item_lot_param_id=0,
         seconds=0.0,
     )
-    CommonFunc_90005250(0, 1038540229, 1038542229, 0.0, -1)
-    CommonFunc_90005250(1, 1038540227, 1038542229, 1.0, -1)
-    CommonFunc_90005250(2, 1038540228, 1038542229, 6.0, -1)
+    CommonFunc_90005250(0, character=Characters.Dog, region=1038542229, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=1038540227, region=1038542229, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(2, character=Characters.SmallerDog1, region=1038542229, seconds=6.0, animation_id=-1)
     Event_1038542260(0, character=Characters.Dog)
     Event_1038542260(1, character=1038540227)
     Event_1038542260(2, character=Characters.SmallerDog1)
-    CommonFunc_90005261(0, 1038540200, 1038542220, 5.0, 0.0, -1)
-    CommonFunc_90005261(1, 1038540201, 1038542220, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.SmallerDog0,
+        region=1038542220,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.SmallerDog2,
+        region=1038542220,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005790(
         0,
         right=0,
@@ -108,9 +122,30 @@ def Constructor():
         region=1038542702,
         left=0,
     )
-    CommonFunc_90005261(0, 1038540370, 1038542370, 5.0, 3.0, -1)
-    CommonFunc_90005261(1, 1038540371, 1038542370, 5.0, 3.0999999046325684, -1)
-    CommonFunc_90005261(2, 1038540372, 1038542370, 5.0, 3.200000047683716, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.LeyndellFootSoldier2,
+        region=1038542370,
+        radius=5.0,
+        seconds=3.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.LeyndellFootSoldier3,
+        region=1038542370,
+        radius=5.0,
+        seconds=3.0999999046325684,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        2,
+        character=Characters.LeyndellFootSoldier1,
+        region=1038542370,
+        radius=5.0,
+        seconds=3.200000047683716,
+        animation_id=-1,
+    )
     Event_1038542270(0, character=Characters.LeyndellFootSoldier2)
     Event_1038542270(1, character=Characters.LeyndellFootSoldier3)
     Event_1038542270(2, character=Characters.LeyndellFootSoldier1)
@@ -556,10 +591,10 @@ def Constructor():
         left_3=0,
     )
     Event_1038542250(0, attacker__character=1038545200, region=1038542200)
-    CommonFunc_90005261(0, 1038540340, 1039532350, 10.0, 1.0, -1)
-    CommonFunc_90005261(1, 1038540341, 1039532350, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1038540340, region=1039532350, radius=10.0, seconds=1.0, animation_id=-1)
+    CommonFunc_90005261(1, character=1038540341, region=1039532350, radius=10.0, seconds=0.0, animation_id=-1)
     Event_1038542340()
-    CommonFunc_90005251(0, 1038540330, 8.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.LeyndellSoldier3, radius=8.0, seconds=0.0, animation_id=-1)
     Event_1038542580()
     CommonFunc_90005300(
         0,

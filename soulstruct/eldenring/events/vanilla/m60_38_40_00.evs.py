@@ -42,5 +42,5 @@ def Constructor():
         flag_10=78208,
         flag_11=78209,
     )
-    CommonFunc_90005251(0, 1038400210, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1038400210, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005630(0, 61384000, 1038401500, 122)

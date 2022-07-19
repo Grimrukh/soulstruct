@@ -315,13 +315,34 @@ def Constructor():
         )
     CommonFunc_90005300(0, flag=1047390299, character=Characters.Scarab0, item_lot_param_id=40410, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=1047390298, character=Characters.Scarab1, item_lot_param_id=40422, seconds=0.0, left=0)
-    CommonFunc_90005261(0, 1047390304, 1047392304, 35.0, 0.0, -1)
-    CommonFunc_90005261(0, 1047390307, 1047392304, 25.0, 0.0, -1)
-    CommonFunc_90005250(0, 1047390401, 1047392450, 0.0, -1)
-    CommonFunc_90005250(0, 1047390402, 1047392450, 2.0, -1)
-    CommonFunc_90005261(0, 1047390405, 1047392406, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 1047390406, 1047392406, 0.0, -1)
-    CommonFunc_90005250(0, 1047390407, 1047392406, 0.0, -1)
-    CommonFunc_90005250(0, 1047390450, 1047392450, 0.0, -1)
-    CommonFunc_90005250(0, 1047390451, 1047392450, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.MonstrousCrow0,
+        region=1047392304,
+        radius=35.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MonstrousCrow1,
+        region=1047392304,
+        radius=25.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=1047392450, seconds=2.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RadahnSoldier2,
+        region=1047392406,
+        radius=8.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=1047392406, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=1047392406, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=1047392450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner1, region=1047392450, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 1047390452, 1047392450, 0.0, -1)

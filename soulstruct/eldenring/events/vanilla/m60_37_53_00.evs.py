@@ -39,10 +39,38 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.DemiHumanQueen, npc_threat_level=16, right=0)
-    Event_1037532450(0, 1037530800, 1037532400, 10.0, 0.0, -1)
-    CommonFunc_90005261(1, 1037530350, 1037532400, 5.0, 2.0, -1)
-    CommonFunc_90005261(2, 1037530351, 1037532400, 5.0, 2.0, -1)
-    CommonFunc_90005261(3, 1037530352, 1037532400, 5.0, 10.0, -1)
+    Event_1037532450(
+        0,
+        character=Characters.DemiHumanQueen,
+        region=1037532400,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.RayaLucariaScholar1,
+        region=1037532400,
+        radius=5.0,
+        seconds=2.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        2,
+        character=Characters.RayaLucariaScholar2,
+        region=1037532400,
+        radius=5.0,
+        seconds=2.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        3,
+        character=Characters.RayaLucariaScholar0,
+        region=1037532400,
+        radius=5.0,
+        seconds=10.0,
+        animation_id=-1,
+    )
     CommonFunc_90005300(
         0,
         flag=1037530400,
@@ -64,7 +92,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1037540370, 1037542370, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=m60_37_Characters.LeyndellFootSoldier2,
+        region=1037542370,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         1,
         character=1037540371,
@@ -78,7 +113,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(1, 1037540371, 1037542370, 5.0, 1.5, -1)
+    CommonFunc_90005261(1, character=1037540371, region=1037542370, radius=5.0, seconds=1.5, animation_id=-1)
     CommonFunc_90005211(
         2,
         character=1037540372,
@@ -92,7 +127,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(2, 1037540372, 1037542370, 5.0, 4.0, -1)
+    CommonFunc_90005261(2, character=1037540372, region=1037542370, radius=5.0, seconds=4.0, animation_id=-1)
     CommonFunc_90005211(
         3,
         character=1037540373,
@@ -106,7 +141,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(3, 1037540373, 1037542370, 5.0, 1.0, -1)
+    CommonFunc_90005261(3, character=1037540373, region=1037542370, radius=5.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005211(
         4,
         character=1037540374,
@@ -120,7 +155,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(4, 1037540374, 1037542370, 5.0, 2.0, -1)
+    CommonFunc_90005261(4, character=1037540374, region=1037542370, radius=5.0, seconds=2.0, animation_id=-1)
     CommonFunc_90005211(
         5,
         character=1037540375,
@@ -134,7 +169,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(5, 1037540375, 1037542370, 5.0, 3.299999952316284, -1)
+    CommonFunc_90005261(
+        5,
+        character=1037540375,
+        region=1037542370,
+        radius=5.0,
+        seconds=3.299999952316284,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.WolfPackLeader,

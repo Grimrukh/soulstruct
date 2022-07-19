@@ -24,11 +24,25 @@ from .entities.m60_35_54_00_entities import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005261(0, 1035540400, 1035542400, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1035540200, 1035542200, 8.0, 0.5, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.ManeuverableFlamethrower,
+        region=1035542400,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.FirePrelate,
+        region=1035542200,
+        radius=8.0,
+        seconds=0.5,
+        animation_id=-1,
+    )
     Event_1035542200(0, character=Characters.FirePrelate)
-    CommonFunc_90005261(0, 1035540210, 1035542210, 5.0, 0.0, -1)
-    CommonFunc_90005261(1, 1035540211, 1035542210, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.FireMonk, region=1035542210, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(1, character=1035540211, region=1035542210, radius=5.0, seconds=0.0, animation_id=-1)
     Event_1035542201(0, attacker__character=1035545201, region=1035542201)
     Event_1035542236(0, character=1035540450)
     Event_1035542236(1, character=1035540451)
@@ -279,8 +293,8 @@ def Constructor():
         seconds=1.2000000476837158,
         animation_id=20004,
     )
-    CommonFunc_90005250(4, 1035540270, 1035542301, 1.5, -1)
-    CommonFunc_90005250(5, 1035540271, 1035542301, 1.5, -1)
+    CommonFunc_90005250(4, character=Characters.LesserFingercreeper1, region=1035542301, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(5, character=Characters.LesserFingercreeper9, region=1035542301, seconds=1.5, animation_id=-1)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     Event_1035542230()
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)

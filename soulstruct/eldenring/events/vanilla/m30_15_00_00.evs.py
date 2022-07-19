@@ -125,9 +125,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30150307, 30152200, 0.0, -1)
-    CommonFunc_90005250(0, 30150308, 30152200, 0.0, -1)
-    CommonFunc_90005250(0, 30150309, 30152200, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower7, region=30152200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower8, region=30152200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.MirandaRotFlower9, region=30152200, seconds=0.0, animation_id=-1)
     CommonFunc_90005650(
         0,
         flag=30150540,

@@ -57,13 +57,13 @@ def Preconstructor():
     DisableBackread(12070700)
     DisableBackread(12070701)
     Event_12070519()
-    CommonFunc_90005250(0, 12070250, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070251, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070252, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070253, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070254, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070255, 12072250, 0.0, -1)
-    CommonFunc_90005250(0, 12070256, 12072250, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Clayman0, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman1, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman2, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman3, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman4, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman5, region=12072250, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Clayman6, region=12072250, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Clayman7,
@@ -220,7 +220,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 12070320, 12072300, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.SilverTear6, region=12072300, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.SilverTear7,
@@ -344,7 +344,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 12070380, 60.0, 0.0, -1)
+    CommonFunc_90005251(0, character=12070380, radius=60.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=12070385,
@@ -357,7 +357,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 12070382, 12072382, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Dummy, region=12072382, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, flag=12070402, character=Characters.Scarab1, item_lot_param_id=40652, seconds=1.5, left=0)
     Event_12073700(0, 12070700, 12070701)
 

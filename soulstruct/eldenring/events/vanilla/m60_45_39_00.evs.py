@@ -47,7 +47,7 @@ def Constructor():
     CommonFunc_90005621(0, flag=1045390570, asset=Assets.AEG099_272_9000)
     Event_1045392341(
         0,
-        character=1045390800,
+        character=Characters.TibiaMariner,
         entity=1045393240,
         entity_1=1045393241,
         entity_2=1045393242,
@@ -104,7 +104,17 @@ def Constructor():
         flag_2=1044399201,
         right=3,
     )
-    CommonFunc_90005703(0, 1045390700, 4041, 4042, 1044399201, 4041, 4040, 4043, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.DHunteroftheDead,
+        flag=4041,
+        flag_1=4042,
+        flag_2=1044399201,
+        flag_3=4041,
+        first_flag=4040,
+        last_flag=4043,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.DHunteroftheDead, flag=4043, first_flag=4040, last_flag=4043)
     Event_1045390700(0, character=Characters.DHunteroftheDead)
     Event_1045390701()

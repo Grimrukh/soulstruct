@@ -72,18 +72,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1044350800,
-        1044350805,
-        1044352800,
-        1044350800,
-        1044352806,
-        1044355810,
-        1044351800,
-        1044350810,
-        1044352810,
-        904290520,
-        -1,
-        20021,
+        flag=1044350800,
+        flag_1=1044350805,
+        flag_2=1044352800,
+        character=Characters.BloodhoundKnight,
+        flag_3=1044352806,
+        character_1=1044355810,
+        asset=Assets.AEG099_120_9000,
+        owner_entity=Characters.Dummy,
+        source_entity=1044352810,
+        name=904290520,
+        animation_id=-1,
+        animation_id_1=20021,
     )
     CommonFunc_90005883(0, flag=1044350800, flag_1=1044350805, entity=Assets.AEG099_170_1000)
     CommonFunc_90005885(
@@ -113,7 +113,17 @@ def Constructor():
         left=1,
     )
     CommonFunc_90005701(0, attacked_entity=1044350720, flag=3981, flag_1=3982, flag_2=1044359301, right=3)
-    CommonFunc_90005700(0, 1044350720, 3981, 3982, 1044359301, 0.6499999761581421, 3980, 3983, -1)
+    CommonFunc_90005700(
+        0,
+        character=1044350720,
+        flag=3981,
+        flag_1=3982,
+        flag_2=1044359301,
+        value=0.6499999761581421,
+        first_flag=3980,
+        last_flag=3983,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=1044350720, flag=3983, first_flag=3980, last_flag=3983)
     Event_1044353720(0, asset__character=1044350720)
     Event_1044352740(0, character=1044350710, character_1=1044350705)
@@ -152,7 +162,17 @@ def Constructor():
     )
     Event_1044350710(0, character=Characters.Blaidd0, character_1=Characters.TalkDummy3)
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd0, flag=3601, flag_1=3600, flag_2=1044359251, right=3)
-    CommonFunc_90005703(0, 1044350700, 3601, 3602, 1044359251, 3603, 3600, 3603, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blaidd0,
+        flag=3601,
+        flag_1=3602,
+        flag_2=1044359251,
+        flag_3=3603,
+        first_flag=3600,
+        last_flag=3603,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Blaidd0, flag=3603, first_flag=3600, last_flag=3604)
     Event_1044350715(0, character=Characters.Blaidd0, character_1=Characters.TalkDummy3)
     CommonFunc_90005730(

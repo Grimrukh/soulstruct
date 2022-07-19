@@ -35,8 +35,22 @@ def Constructor():
         right=1038522572,
     )
     CommonFunc_90005621(0, flag=1038520570, asset=Assets.AEG099_272_9000)
-    CommonFunc_90005261(0, 1038520340, 1038522300, 30.0, 0.0, -1)
-    CommonFunc_90005261(1, 1038520350, 1038522300, 20.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.TibiaMariner,
+        region=1038522300,
+        radius=30.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        1,
+        character=Characters.GiantSkeletonTorso,
+        region=1038522300,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_1038522350()
     Event_1038522347(
         0,
@@ -251,7 +265,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1038520250, 1038522250, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton12,
+        region=1038522250,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.Skeleton13,

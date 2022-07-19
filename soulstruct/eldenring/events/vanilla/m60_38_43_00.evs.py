@@ -55,7 +55,7 @@ def Constructor():
     )
     Event_1038432262(
         0,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -69,7 +69,7 @@ def Constructor():
     )
     Event_1038432262(
         1,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -83,7 +83,7 @@ def Constructor():
     )
     Event_1038432262(
         3,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -96,7 +96,17 @@ def Constructor():
         flag=1038432250,
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Hyetta, flag=3381, flag_1=3380, flag_2=1038439201, right=3)
-    CommonFunc_90005703(0, 1038430700, 3381, 3382, 1038439201, 3381, 3380, 3384, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Hyetta,
+        flag=3381,
+        flag_1=3382,
+        flag_2=1038439201,
+        flag_3=3381,
+        first_flag=3380,
+        last_flag=3384,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3384)
     Event_1038430700(0, character=Characters.Hyetta)
     Event_1038430701(0, 1038430700)

@@ -18,10 +18,11 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_50_37_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005251(0, 1050370299, 100.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Troll, radius=100.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, 1050370299, 1050370299, 0, 0.0, 0)

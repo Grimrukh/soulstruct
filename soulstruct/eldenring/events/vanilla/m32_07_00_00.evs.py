@@ -132,7 +132,17 @@ def Constructor():
     )
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005703(0, 32070700, 3661, 3662, 1043399301, 3661, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot,
+        flag=3661,
+        flag_1=3662,
+        flag_2=1043399301,
+        flag_3=3661,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005704(0, attacked_entity=Characters.LivingPot, flag=3661, flag_1=3660, flag_2=1043399301, right=3)
     CommonFunc_90005702(0, character=Characters.LivingPot, flag=3663, first_flag=3660, last_flag=3663)
     Event_32073700(0, character=Characters.LivingPot)
@@ -144,16 +154,16 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_32072820()
-    CommonFunc_90005250(0, 32070204, 32072204, 0.0, -1)
-    CommonFunc_90005250(0, 32070350, 32072306, 0.0, -1)
-    CommonFunc_90005250(0, 32070300, 32072300, 0.0, -1)
-    CommonFunc_90005250(0, 32070301, 32072300, 0.0, -1)
-    CommonFunc_90005250(0, 32070306, 32072306, 0.0, -1)
-    CommonFunc_90005250(0, 32070307, 32072306, 0.0, -1)
-    CommonFunc_90005250(0, 32070308, 32072308, 0.0, -1)
-    CommonFunc_90005250(0, 32070309, 32072309, 0.0, -1)
-    CommonFunc_90005250(0, 32070310, 32072309, 0.0, -1)
-    CommonFunc_90005250(0, 32070315, 32072315, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=32072204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Octopus, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier0, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier1, region=32072300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier3, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=32072306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier5, region=32072308, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32070316, 32072316, 0.0, -1)
 
 

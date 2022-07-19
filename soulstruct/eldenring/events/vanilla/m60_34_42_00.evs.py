@@ -50,7 +50,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1034420340, 17.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GlintstoneDragon1, radius=17.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=1034420340,
@@ -59,21 +59,31 @@ def Constructor():
         seconds=0.0,
         left=0,
     )
-    Event_1034422600(0, asset=1034421600, flag=1034422600, owner_entity=Characters.Dummy)
-    Event_1034422600(1, asset=1034421601, flag=1034422601, owner_entity=Characters.Dummy)
-    Event_1034422600(2, asset=1034421602, flag=1034422602, owner_entity=Characters.Dummy)
-    Event_1034422600(3, asset=1034421603, flag=1034422603, owner_entity=Characters.Dummy)
-    Event_1034422600(4, asset=1034421604, flag=1034422604, owner_entity=Characters.Dummy)
-    Event_1034422600(5, asset=1034421605, flag=1034422605, owner_entity=Characters.Dummy)
-    Event_1034422600(6, asset=1034421606, flag=1034422606, owner_entity=Characters.Dummy)
-    Event_1034422600(7, asset=1034421607, flag=1034422607, owner_entity=Characters.Dummy)
-    Event_1034422600(8, asset=1034421608, flag=1034422608, owner_entity=Characters.Dummy)
-    Event_1034422600(9, asset=1034421609, flag=1034422609, owner_entity=Characters.Dummy)
+    Event_1034422600(0, asset=Assets.AEG099_045_9000, flag=1034422600, owner_entity=Characters.Dummy)
+    Event_1034422600(1, asset=Assets.AEG099_045_9001, flag=1034422601, owner_entity=Characters.Dummy)
+    Event_1034422600(2, asset=Assets.AEG099_045_9002, flag=1034422602, owner_entity=Characters.Dummy)
+    Event_1034422600(3, asset=Assets.AEG099_045_9003, flag=1034422603, owner_entity=Characters.Dummy)
+    Event_1034422600(4, asset=Assets.AEG099_045_9004, flag=1034422604, owner_entity=Characters.Dummy)
+    Event_1034422600(5, asset=Assets.AEG099_045_9005, flag=1034422605, owner_entity=Characters.Dummy)
+    Event_1034422600(6, asset=Assets.AEG099_045_9006, flag=1034422606, owner_entity=Characters.Dummy)
+    Event_1034422600(7, asset=Assets.AEG099_045_9007, flag=1034422607, owner_entity=Characters.Dummy)
+    Event_1034422600(8, asset=Assets.AEG099_045_9008, flag=1034422608, owner_entity=Characters.Dummy)
+    Event_1034422600(9, asset=Assets.AEG099_045_9009, flag=1034422609, owner_entity=Characters.Dummy)
     CommonFunc_90005525(0, flag=1034420650, asset=Assets.AEG004_983_1000)
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930023, left=0)
     Event_1034420700(0, character=Characters.NepheliLoux, asset=Assets.AEG007_360_2000)
     CommonFunc_90005704(0, attacked_entity=Characters.NepheliLoux, flag=4221, flag_1=4220, flag_2=10009701, right=3)
-    CommonFunc_90005703(0, 1034420700, 4221, 4222, 10009701, 4221, 4220, 4224, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.NepheliLoux,
+        flag=4221,
+        flag_1=4222,
+        flag_2=10009701,
+        flag_3=4221,
+        first_flag=4220,
+        last_flag=4224,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.NepheliLoux, flag=4223, first_flag=4220, last_flag=4224)
     Event_1034420701()
 
@@ -84,14 +94,14 @@ def Preconstructor():
     DisableBackread(Characters.NepheliLoux)
     DisableBackread(Characters.Commoner)
     Event_1034422230()
-    CommonFunc_90005251(0, 1034420200, 10.0, 0.0, -1)
-    CommonFunc_90005250(0, 1034420203, 1034422203, 0.0, -1)
-    CommonFunc_90005251(0, 1034420206, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 1034420208, 1034422208, 0.0, -1)
-    CommonFunc_90005250(0, 1034420209, 1034422208, 0.0, -1)
-    CommonFunc_90005250(0, 1034420210, 1034422208, 0.0, -1)
-    CommonFunc_90005251(0, 1034420222, 20.0, 0.0, -1)
-    CommonFunc_90005251(0, 1034420228, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout0, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout2, region=1034422203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1034422208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1034420222, radius=20.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1034420228, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.LargeCrabSnow0,
@@ -104,7 +114,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1034420373, 16.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.LargeCrabSnow1, radius=16.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, 1034420390, 30.0, 0.0, -1)
 
 

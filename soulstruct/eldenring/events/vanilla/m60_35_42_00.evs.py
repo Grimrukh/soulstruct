@@ -68,7 +68,17 @@ def Constructor():
         flag_2=1035429201,
         right=3,
     )
-    CommonFunc_90005703(0, 1035420700, 3541, 3542, 1035429201, 3541, 3540, 3544, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.AlbinauricLookout0,
+        flag=3541,
+        flag_1=3542,
+        flag_2=1035429201,
+        flag_3=3541,
+        first_flag=3540,
+        last_flag=3544,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.AlbinauricLookout0, flag=3543, first_flag=3540, last_flag=3544)
     Event_1035423700(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
     Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
@@ -113,11 +123,18 @@ def Preconstructor():
     DisableBackread(Characters.AlbinauricLookout0)
     DisableBackread(1035420705)
     DisableBackread(Characters.Ranni)
-    CommonFunc_90005260(0, 1035420800, 1035422800, 42.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035420201, 1035422204, 0.0, -1)
-    CommonFunc_90005251(0, 1035420202, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 1035420203, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035420204, 1035422204, 0.0, -1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.Omenkiller,
+        region=1035422800,
+        radius=42.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=1035420201, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout1, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout2, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420204, region=1035422204, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=1035420205,
@@ -130,15 +147,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1035420206, 1035422204, 0.0, -1)
-    CommonFunc_90005250(0, 1035420207, 1035422204, 0.0, -1)
-    CommonFunc_90005251(0, 1035420208, 5.0, 0.0, -1)
-    CommonFunc_90005250(0, 1035420209, 1035422204, 0.0, -1)
-    CommonFunc_90005250(0, 1035420210, 1035422204, 0.0, -1)
-    CommonFunc_90005250(0, 1035420211, 1035422204, 0.0, -1)
-    CommonFunc_90005250(0, 1035420212, 1035422204, 0.0, -1)
-    CommonFunc_90005250(0, 1035420315, 1035422315, 0.0, -1)
-    CommonFunc_90005250(0, 1035420317, 1035422317, 0.0, -1)
+    CommonFunc_90005250(0, character=1035420206, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1035420207, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout4, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout5, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout6, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AlbinauricLookout7, region=1035422204, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal0, region=1035422315, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallCrabCrystal1, region=1035422317, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LargeCrabSnow0,

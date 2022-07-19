@@ -51,9 +51,9 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1036440220, 1036442220, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 1036440230, 1036442220, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 1036440231, 1036442220, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036440220, region=1036442220, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1036440230, region=1036442220, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1036440231, region=1036442220, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier0, radius=15.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, 1036440242, 15.0, 0.0, 0)
 

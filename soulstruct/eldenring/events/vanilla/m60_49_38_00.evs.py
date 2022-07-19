@@ -96,13 +96,13 @@ def Constructor():
     Event_1049382211(6, source_entity=Assets.AEG099_046_9041, seconds=8.0)
     Event_1049382211(7, source_entity=Assets.AEG099_046_9042, seconds=5.0)
     Event_1049382211(8, source_entity=Assets.AEG099_046_9043, seconds=4.0)
-    CommonFunc_90005250(0, 1049380399, 1049382399, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
     Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14807)
     Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14807)
     Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect_id=14807)
-    CommonFunc_90005250(0, 1049380200, 1049382200, 0.0, -1)
-    CommonFunc_90005250(0, 1049380201, 1049382200, 0.0, -1)
-    CommonFunc_90005250(0, 1049380202, 1049382200, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.CleanrotKnight2,
@@ -115,11 +115,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1049380306, 1049382311, 82.0, -1)
-    CommonFunc_90005250(0, 1049380310, 1049382311, 22.0, -1)
-    CommonFunc_90005250(0, 1049380312, 1049382311, 115.0, -1)
-    CommonFunc_90005250(0, 1049380313, 1049382311, 50.0, -1)
-    CommonFunc_90005251(0, 1049380800, 35.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight0, region=1049382311, seconds=82.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight1, region=1049382311, seconds=22.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight3, region=1049382311, seconds=115.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CleanrotKnight4, region=1049382311, seconds=50.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commander, radius=35.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005870(0, character=Characters.Commander, name=903050600, npc_threat_level=11)
     CommonFunc_90005860(
         0,

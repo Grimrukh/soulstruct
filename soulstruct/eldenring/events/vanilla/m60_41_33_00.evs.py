@@ -25,15 +25,15 @@ from .entities.m60_41_33_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1041330000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005251(0, 1041330233, 8.0, 1.0, -1)
-    CommonFunc_90005251(0, 1041330234, 8.0, 0.5, -1)
-    CommonFunc_90005251(0, 1041330235, 8.0, 1.100000023841858, -1)
-    CommonFunc_90005251(0, 1041330236, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 1041330237, 8.0, 0.5, -1)
-    CommonFunc_90005251(0, 1041330238, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 1041330239, 8.0, 1.0, -1)
-    CommonFunc_90005251(0, 1041330240, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 1041330241, 8.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1041330233, radius=8.0, seconds=1.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330234, radius=8.0, seconds=0.5, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330235, radius=8.0, seconds=1.100000023841858, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330236, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330237, radius=8.0, seconds=0.5, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330238, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330239, radius=8.0, seconds=1.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330240, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1041330241, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.GravenSchool,
@@ -47,7 +47,17 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005920(0, flag=1041330900, asset=1041331900, obj_act_id=1041333900)
-    CommonFunc_90005703(0, 1041330700, 3461, 3462, 1044369204, 3461, 3460, 3464, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SorceressSellen0,
+        flag=3461,
+        flag_1=3462,
+        flag_2=1044369204,
+        flag_3=3461,
+        first_flag=3460,
+        last_flag=3464,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.SorceressSellen0,
@@ -59,22 +69,43 @@ def Constructor():
     Event_1041333700(0, character=Characters.SorceressSellen0, character_1=Characters.SorceressSellen1)
     CommonFunc_90005740(
         0,
-        1044362702,
-        1044362703,
-        1044362704,
-        1041330700,
-        704,
-        1041331700,
-        704,
-        0.20000000298023224,
-        90204,
-        -1,
-        -1,
-        1.2000000476837158,
+        flag=1044362702,
+        flag_1=1044362703,
+        left=1044362704,
+        character=Characters.SorceressSellen0,
+        model_point=704,
+        asset=Assets.AEG099_090_9001,
+        model_point_1=704,
+        radius=0.20000000298023224,
+        animation=90204,
+        animation_id=-1,
+        special_effect=-1,
+        radius_1=1.2000000476837158,
     )
-    CommonFunc_90005741(0, 1044362708, 1044362709, 1044362704, 1041330700, 90201, 0, -1, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=1044362708,
+        flag_1=1044362709,
+        left=1044362704,
+        character=Characters.SorceressSellen0,
+        animation__animation_id=90201,
+        left_1=0,
+        animation_id=-1,
+        special_effect=-1,
+        seconds=0.5,
+    )
     Event_1041333705(0, character=Characters.WitchHunterJerren)
-    CommonFunc_90005703(0, 1041330710, 3361, 3362, 1041339251, 3361, 3360, 3363, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.WitchHunterJerren,
+        flag=3361,
+        flag_1=3362,
+        flag_2=1041339251,
+        flag_3=3361,
+        first_flag=3360,
+        last_flag=3363,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.WitchHunterJerren,

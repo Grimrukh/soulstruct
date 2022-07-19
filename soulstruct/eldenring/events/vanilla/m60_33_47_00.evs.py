@@ -101,7 +101,7 @@ def Preconstructor():
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=1033470300, asset=Assets.AEG100_101_9000, flag=1033478301)
+    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1033478301)
     CommonFunc_90005422(0, flag=1033478301, asset=Assets.AEG100_100_9000, obj_act_id=1033473301)
     CommonFunc_90005424(
         0,

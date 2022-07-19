@@ -82,12 +82,12 @@ def Constructor():
     Event_12032241(11, character=Characters.GiantAnt27, seconds=28.0)
     Event_12032241(12, character=Characters.GiantAnt28, seconds=25.0)
     Event_12032241(13, character=Characters.GiantAnt29, seconds=20.0)
-    CommonFunc_90005261(0, 12030200, 12032200, 50.0, 0.0, -1)
-    CommonFunc_90005261(0, 12030210, 12032200, 50.0, 0.0, -1)
-    CommonFunc_90005261(0, 12030211, 12032200, 50.0, 0.0, -1)
-    CommonFunc_90005261(0, 12030212, 12032200, 50.0, 0.0, -1)
-    CommonFunc_90005261(0, 12030213, 12032200, 50.0, 0.0, -1)
-    CommonFunc_90005261(0, 12030214, 12032200, 50.0, 0.0, -1)
+    CommonFunc_90005261(0, character=12030200, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.GiantAnt1, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.GiantAnt2, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.GiantAnt3, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.GiantAnt4, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.GiantAnt5, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=12030240,
@@ -136,7 +136,7 @@ def Constructor():
         seconds=1.5,
         left=0,
     )
-    CommonFunc_90005251(0, 12030303, 8.0, 0.0, -1)
+    CommonFunc_90005251(0, character=12030303, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot_param_id=40660, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot_param_id=40668, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12030355, character=Characters.Scarab2, item_lot_param_id=40670, seconds=1.5, left=0)
@@ -159,10 +159,10 @@ def Constructor():
         seconds=1.5,
         left=0,
     )
-    CommonFunc_90005250(0, 12030391, 12032391, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeAvatar, region=12032391, seconds=0.0, animation_id=-1)
     Event_12032504()
     Event_12032509()
-    CommonFunc_90005251(0, 12030400, 200.0, 10.0, -1)
+    CommonFunc_90005251(0, character=Characters.WalkingMausoleum, radius=200.0, seconds=10.0, animation_id=-1)
     CommonFunc_90005451(0, character=Characters.WalkingMausoleum, asset_group=12036420)
     CommonFunc_90005452(0, character=Characters.WalkingMausoleum, flag=12030400)
     CommonFunc_90005454(0, character=Characters.WalkingMausoleum, flag=12032400, flag_1=12030400)
@@ -249,7 +249,17 @@ def Constructor():
         flag_2=12039001,
         right=3,
     )
-    CommonFunc_90005703(0, 12030710, 4061, 4062, 12039001, 4061, 4060, 4063, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.DHunteroftheDead,
+        flag=4061,
+        flag_1=4062,
+        flag_2=12039001,
+        flag_3=4061,
+        first_flag=4060,
+        last_flag=4063,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.DHunteroftheDead, flag=4063, first_flag=4060, last_flag=4063)
     Event_12030710(0, character=Characters.DHunteroftheDead)
     CommonFunc_90005750(
@@ -270,7 +280,17 @@ def Constructor():
         flag_2=12039051,
         right=3,
     )
-    CommonFunc_90005703(0, 12030702, 4121, 4122, 12039051, 4121, 4120, 4123, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.FiaDeathbedCompanion2,
+        flag=4121,
+        flag_1=4122,
+        flag_2=12039051,
+        flag_3=4121,
+        first_flag=4120,
+        last_flag=4123,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.FiaDeathbedCompanion2, flag=4123, first_flag=4120, last_flag=4123)
     Event_12030700(0, character=Characters.FiaDeathbedCompanion2)
     Event_12030701(0, character=Characters.FiaDeathbedCompanion0, asset=Assets.AEG099_320_9003)
@@ -287,20 +307,31 @@ def Constructor():
     Event_12030706()
     CommonFunc_90005740(
         0,
-        12032715,
-        12032716,
-        12032717,
-        12030702,
-        702,
-        12031731,
-        702,
-        0.4000000059604645,
-        90305,
-        90307,
-        -1,
-        1.2999999523162842,
+        flag=12032715,
+        flag_1=12032716,
+        left=12032717,
+        character=Characters.FiaDeathbedCompanion2,
+        model_point=702,
+        asset=Assets.AEG099_090_9003,
+        model_point_1=702,
+        radius=0.4000000059604645,
+        animation=90305,
+        animation_id=90307,
+        special_effect=-1,
+        radius_1=1.2999999523162842,
     )
-    CommonFunc_90005741(0, 12032718, 12032719, 12032717, 12030702, 90330, 0, 90332, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=12032718,
+        flag_1=12032719,
+        left=12032717,
+        character=Characters.FiaDeathbedCompanion2,
+        animation__animation_id=90330,
+        left_1=0,
+        animation_id=90332,
+        special_effect=-1,
+        seconds=0.5,
+    )
     Event_12030707()
     Event_12030708(0, entity=Characters.FiaDeathbedCompanion2)
     CommonFunc_90005750(
@@ -326,18 +357,18 @@ def Constructor():
     CommonFunc_90005733(0, flag=12032714)
     CommonFunc_90005740(
         0,
-        12032725,
-        12032726,
-        0,
-        12030700,
-        0,
-        0,
-        0,
-        1.2999999523162842,
-        90305,
-        90307,
-        -1,
-        1.2999999523162842,
+        flag=12032725,
+        flag_1=12032726,
+        left=0,
+        character=Characters.FiaDeathbedCompanion0,
+        model_point=0,
+        asset=0,
+        model_point_1=0,
+        radius=1.2999999523162842,
+        animation=90305,
+        animation_id=90307,
+        special_effect=-1,
+        radius_1=1.2999999523162842,
     )
     CommonFunc_90005752(0, asset=Assets.AEG099_320_9003, vfx_id=200, model_point=120, seconds=3.0)
     Event_12030720(0, 12030725)

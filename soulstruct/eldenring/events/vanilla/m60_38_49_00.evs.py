@@ -32,8 +32,8 @@ def Constructor():
     Event_1038492304()
     Event_1038492320()
     Event_1038492580()
-    CommonFunc_90005250(0, 1038490302, 1038492302, 0.0, -1)
-    CommonFunc_90005250(0, 1038490313, 1038492313, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=1038492302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=1038492313, seconds=0.0, animation_id=-1)
     CommonFunc_90005706(0, 1038490700, 930018, 0)
 
 

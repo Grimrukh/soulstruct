@@ -231,7 +231,7 @@ def Constructor():
     )
     Event_16002185(
         0,
-        character=16000180,
+        character=Characters.InquisitorGhiza,
         flag=16002181,
         flag_1=16002182,
         flag_2=16000180,
@@ -329,11 +329,11 @@ def Constructor():
         flag=16009269,
         model_point=6101,
     )
-    CommonFunc_90005775(0, 80110000, 400290, -1.0)
-    CommonFunc_90005775(0, 80392000, 400180, -1.0)
-    CommonFunc_90005775(0, 81423900, 400073, -1.0)
-    CommonFunc_90005775(0, 83395300, 400074, -1.0)
-    CommonFunc_90005775(0, 85505600, 400075, -1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=80110000, flag=400290, distance=-1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=80392000, flag=400180, distance=-1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=81423900, flag=400073, distance=-1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=83395300, flag=400074, distance=-1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=85505600, flag=400075, distance=-1.0)
     Event_16003710(0, character=Characters.Patches)
     Event_16003712()
     CommonFunc_90005702(0, character=Characters.RyatheScout1, flag=3423, first_flag=3420, last_flag=3424)
@@ -428,45 +428,45 @@ def Preconstructor():
     EnableAssetInvulnerability(Assets.AEG277_030_9001)
     EnableAssetInvulnerability(Assets.AEG277_037_6000)
     Event_16000519()
-    CommonFunc_90005250(0, 16000345, 16002345, 0.0, -1)
-    CommonFunc_90005250(0, 16000346, 16002345, 0.0, -1)
-    CommonFunc_90005250(0, 16000348, 16002345, 0.0, -1)
-    CommonFunc_90005250(0, 16000355, 16002355, 0.0, -1)
-    CommonFunc_90005250(0, 16000344, 16002344, 0.0, -1)
-    CommonFunc_90005250(0, 16000343, 16002343, 0.0, -1)
-    CommonFunc_90005250(0, 16000349, 16002343, 0.0, -1)
-    CommonFunc_90005250(0, 16000350, 16002343, 0.0, -1)
-    CommonFunc_90005250(0, 16000354, 16002343, 0.0, -1)
-    CommonFunc_90005251(0, 16000520, 8.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Snail2, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail3, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail4, region=16002345, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail8, region=16002355, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail1, region=16002344, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail0, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail5, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail6, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Snail7, region=16002343, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.BloodhoundKnight, radius=8.0, seconds=0.0, animation_id=-1)
     RunCommonEvent(16002310, slot=0, args=(16000316, 18.0, 0.0, -1), arg_types="Iffi")
-    CommonFunc_90005251(0, 16000311, 25.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000224, 8.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000225, 16002225, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000226, 16002225, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000212, 16002225, 8.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000227, 16002227, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000216, 13.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000210, 20.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000219, 8.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000220, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 16000410, 16002410, 0.0, -1)
-    CommonFunc_90005250(0, 16000411, 16002410, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.ManSerpent2, radius=25.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner13, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Commoner14, region=16002225, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Commoner15, region=16002225, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Commoner7, region=16002225, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Commoner16, region=16002227, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner9, radius=13.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=16000210, radius=20.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner10, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner11, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=16002410, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=16002410, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.IronVirgin0, region=16002460, seconds=0.0, animation_id=3012)
-    CommonFunc_90005250(0, 16000500, 16002500, 0.0, -1)
-    CommonFunc_90005250(0, 16000462, 16002462, 0.0, -1)
-    CommonFunc_90005250(0, 16000203, 16002203, 0.0, -1)
-    CommonFunc_90005250(0, 16000204, 16002203, 0.0, -1)
-    CommonFunc_90005250(0, 16000205, 16002203, 0.0, -1)
-    CommonFunc_90005250(0, 16000206, 16002203, 0.0, -1)
-    CommonFunc_90005250(0, 16000207, 16002203, 0.0, -1)
-    CommonFunc_90005251(0, 16000322, 20.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000314, 16002314, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000270, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000271, 6.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000272, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000273, 6.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Omenkiller, region=16002500, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin2, region=16002462, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Commoner1, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Commoner2, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Commoner3, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Commoner4, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Commoner5, region=16002203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.ManSerpent3, radius=20.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.ManSerpent0, region=16002314, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout0, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout1, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=16000272, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout2, radius=6.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout3, radius=3.0, seconds=0.0, animation_id=3015)
-    CommonFunc_90005251(0, 16000275, 6.0, 1.0, -1)
+    CommonFunc_90005251(0, character=Characters.AlbinauricLookout5, radius=6.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.AlbinauricLookout6, radius=3.0, seconds=0.0, animation_id=3015)
     CommonFunc_90005211(
         0,
@@ -481,17 +481,52 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 16000278, 16002278, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000279, 16002278, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000280, 16002278, 3.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000281, 16002278, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000282, 16002278, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000283, 16002278, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000235, 14.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000238, 15.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000236, 12.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.AlbinauricLookout7,
+        region=16002278,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.AlbinauricLookout8,
+        region=16002278,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.AlbinauricLookout9,
+        region=16002278,
+        radius=3.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.AlbinauricLookout10,
+        region=16002278,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.AlbinauricLookout11,
+        region=16002278,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=16000283, region=16002278, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner22, radius=14.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Commoner24, radius=15.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=16000236, radius=12.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Commoner23, radius=5.0, seconds=0.0, animation_id=3002)
-    CommonFunc_90005251(0, 16000240, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Commoner26, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.MagmaWyrm,
@@ -513,12 +548,12 @@ def Preconstructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005261(0, 16000461, 16002461, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000338, 16002338, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000328, 16002339, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 16000339, 16002339, 3.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000440, 3.0, 0.0, -1)
-    CommonFunc_90005251(0, 16000441, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.IronVirgin1, region=16002461, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.ManSerpent8, region=16002338, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.ManSerpent7, region=16002339, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.ManSerpent9, region=16002339, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.WanderingNoble0, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.WanderingNoble1, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=16000443,

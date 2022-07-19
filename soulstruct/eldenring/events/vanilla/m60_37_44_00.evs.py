@@ -50,7 +50,17 @@ def Constructor():
     Event_1037443700(0, character=Characters.KnightDiallos, character_1=Characters.Human)
     Event_1037443701(0, flag=1037449206, flag_1=1037449200)
     CommonFunc_90005704(0, attacked_entity=Characters.KnightDiallos, flag=3441, flag_1=3440, flag_2=1037449201, right=3)
-    CommonFunc_90005703(0, 1037440700, 3441, 3442, 1037449201, 3441, 3440, 3444, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.KnightDiallos,
+        flag=3441,
+        flag_1=3442,
+        flag_2=1037449201,
+        flag_3=3441,
+        first_flag=3440,
+        last_flag=3444,
+        right=-1,
+    )
     CommonFunc_90005702(0, 1037440700, 3443, 3440, 3444)
 
 
@@ -71,10 +81,31 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1037440220, 15.0, 0.0, -1)
-    CommonFunc_90005261(0, 1037440200, 1037442200, 1.0, 0.5, -1)
-    CommonFunc_90005261(0, 1037440201, 1037442200, 1.0, 1.0, -1)
-    CommonFunc_90005261(0, 1037440202, 1037442200, 1.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1037440220, radius=15.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Albinauric0,
+        region=1037442200,
+        radius=1.0,
+        seconds=0.5,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Albinauric1,
+        region=1037442200,
+        radius=1.0,
+        seconds=1.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Albinauric2,
+        region=1037442200,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005261(0, 1037440203, 1037442200, 1.0, 1.5, -1)
 
 

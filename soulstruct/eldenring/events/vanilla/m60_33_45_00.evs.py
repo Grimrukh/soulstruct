@@ -53,18 +53,18 @@ def Constructor():
     )
     CommonFunc_90005882(
         0,
-        1033450800,
-        1033450805,
-        1033452800,
-        1033450800,
-        1033452806,
-        1033455810,
-        1033451800,
-        1033450810,
-        1033452810,
-        904600520,
-        -1,
-        20005,
+        flag=1033450800,
+        flag_1=1033450805,
+        flag_2=1033452800,
+        character=Characters.LiurniaTroll,
+        flag_3=1033452806,
+        character_1=1033455810,
+        asset=Assets.AEG099_120_1000,
+        owner_entity=Characters.TalkDummy,
+        source_entity=1033452810,
+        name=904600520,
+        animation_id=-1,
+        animation_id_1=20005,
     )
     CommonFunc_90005883(0, flag=1033450800, flag_1=1033450805, entity=Assets.AEG099_170_1000)
     CommonFunc_90005885(

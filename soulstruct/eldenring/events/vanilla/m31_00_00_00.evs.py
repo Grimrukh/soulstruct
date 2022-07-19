@@ -66,16 +66,56 @@ def Constructor():
     Event_31003714(0, character=Characters.Patches2, seconds=10.0)
     Event_31003715(0, attacked_entity=Characters.Patches2)
     CommonFunc_90005704(0, attacked_entity=Characters.Patches0, flag=31009219, flag_1=3680, flag_2=31009201, right=3)
-    CommonFunc_90005703(0, 31000800, 3681, 3682, 31009201, 31009219, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches0,
+        flag=3681,
+        flag_1=3682,
+        flag_2=31009201,
+        flag_3=31009219,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     Event_31003706(0, character=Characters.Patches0, flag=3683, first_flag=3680, last_flag=3684)
     CommonFunc_90005704(0, attacked_entity=Characters.Patches1, flag=31009219, flag_1=3680, flag_2=31009201, right=3)
-    CommonFunc_90005703(0, 31000701, 3681, 3682, 31009201, 31009219, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches1,
+        flag=3681,
+        flag_1=3682,
+        flag_2=31009201,
+        flag_3=31009219,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Patches1, flag=3683, first_flag=3680, last_flag=3684)
     CommonFunc_90005704(0, attacked_entity=Characters.Patches3, flag=3681, flag_1=3680, flag_2=31009201, right=3)
-    CommonFunc_90005703(0, 31000703, 3681, 3682, 31009201, 3681, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches3,
+        flag=3681,
+        flag_1=3682,
+        flag_2=31009201,
+        flag_3=3681,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Patches3, flag=3683, first_flag=3680, last_flag=3684)
     CommonFunc_90005704(0, attacked_entity=Characters.Patches2, flag=31009269, flag_1=3680, flag_2=31009201, right=3)
-    CommonFunc_90005703(0, 31000850, 3681, 3682, 31009201, 31009269, 3680, 3684, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Patches2,
+        flag=3681,
+        flag_1=3682,
+        flag_2=31009201,
+        flag_3=31009269,
+        first_flag=3680,
+        last_flag=3684,
+        right=-1,
+    )
     Event_31003716(0, 31000850, 3683, 3680, 3684)
 
 

@@ -305,7 +305,7 @@ def Event_1049543700(_, character: uint, region: uint, distance: float):
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=1249540300, asset=Assets.AEG100_101_9000, flag=1249548301)
+    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1249548301)
     CommonFunc_90005422(0, flag=1249548301, asset=Assets.AEG100_120_9000, obj_act_id=1249543301)
     CommonFunc_90005424(
         0,

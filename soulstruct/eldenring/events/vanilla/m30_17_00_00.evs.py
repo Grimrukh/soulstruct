@@ -120,7 +120,7 @@ def Constructor():
     Event_30172400(6, character=Characters.Imp5)
     Event_30172400(7, character=Characters.Imp6)
     Event_30172400(8, character=Characters.Imp4)
-    CommonFunc_90005250(0, 30170219, 30172315, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp4, region=30172315, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Imp4, region=30172217, seconds=0.0, animation_id=3005)
     CommonFunc_90005200(
         0,
@@ -149,26 +149,26 @@ def Constructor():
     Event_30172400(9, character=30170215)
     Event_30172402(0, character=30170216, region=30172202)
     Event_30172400(10, character=30170316)
-    CommonFunc_90005250(0, 30170215, 30172221, 0.0, -1)
-    CommonFunc_90005250(0, 30170216, 30172201, 0.0, -1)
+    CommonFunc_90005250(0, character=30170215, region=30172221, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170216, region=30172201, seconds=0.0, animation_id=-1)
     Event_30172311()
-    CommonFunc_90005250(0, 30170317, 30172318, 0.0, -1)
-    CommonFunc_90005250(0, 30170316, 30172318, 0.0, -1)
-    CommonFunc_90005250(0, 30170215, 30172214, 0.0, -1)
-    CommonFunc_90005250(0, 30170300, 30172300, 0.0, -1)
-    CommonFunc_90005250(1, 30170301, 30172300, 0.0, -1)
-    CommonFunc_90005250(0, 30170305, 30172305, 0.0, -1)
-    CommonFunc_90005250(0, 30170306, 30172306, 0.0, -1)
-    CommonFunc_90005250(0, 30170309, 30172309, 0.0, -1)
-    CommonFunc_90005250(0, 30170310, 30172350, 0.0, -1)
+    CommonFunc_90005250(0, character=30170317, region=30172318, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170316, region=30172318, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170215, region=30172214, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170300, region=30172300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=30170301, region=30172300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170305, region=30172305, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170306, region=30172306, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170309, region=30172309, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.FireMonk1, region=30172350, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.FireMonk0, region=30172310, seconds=0.0, animation_id=3015)
-    CommonFunc_90005261(0, 30170314, 30172315, 2.0, 0.0, -1)
-    CommonFunc_90005261(1, 30170315, 30172315, 5.0, 0.0, -1)
-    CommonFunc_90005250(0, 30170350, 30172315, 0.0, -1)
-    CommonFunc_90005250(0, 30170201, 30172223, 0.0, -1)
-    CommonFunc_90005250(0, 30170200, 30172223, 0.0, -1)
-    CommonFunc_90005250(1, 30170311, 30172353, 0.0, -1)
-    CommonFunc_90005250(2, 30170312, 30172353, 0.0, -1)
+    CommonFunc_90005261(0, character=30170314, region=30172315, radius=2.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(1, character=30170315, region=30172315, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.FireMonk2, region=30172315, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp1, region=30172223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp0, region=30172223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(1, character=30170311, region=30172353, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(2, character=30170312, region=30172353, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.FireMonk0,
@@ -184,11 +184,11 @@ def Constructor():
     Event_30172400(12, character=Characters.ErdtreeBurialWatchdog0)
     Event_30172400(13, character=Characters.ErdtreeBurialWatchdog1)
     Event_30172400(14, character=Characters.ErdtreeBurialWatchdog2)
-    CommonFunc_90005250(1, 30170250, 30172451, 0.0, -1)
+    CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog0, region=30172451, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog1, region=30172216, seconds=0.0, animation_id=3025)
-    CommonFunc_90005250(1, 30170252, 30172450, 0.0, -1)
-    CommonFunc_90005250(0, 30170351, 30172351, 0.0, -1)
-    CommonFunc_90005250(0, 30170351, 30172352, 0.0, -1)
+    CommonFunc_90005250(1, character=Characters.ErdtreeBurialWatchdog2, region=30172450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170351, region=30172351, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30170351, region=30172352, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.FireMonk2,
@@ -201,7 +201,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30170352, 30172353, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.FirePrelate, region=30172353, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=30170450,

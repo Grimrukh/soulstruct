@@ -54,8 +54,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30140268, 30142251, 0.0, -1)
-    CommonFunc_90005250(0, 30140202, 30142202, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp1, region=30142251, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30140202, region=30142202, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Imp4,
@@ -178,9 +178,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30140216, 30142215, 0.0, -1)
-    CommonFunc_90005250(0, 30140217, 30142215, 0.0, -1)
-    CommonFunc_90005250(0, 30140264, 30142215, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp10, region=30142215, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30140217, region=30142215, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Imp9, region=30142215, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingMass2,
@@ -253,10 +253,10 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 30140219, 30142219, 1.0, -1)
-    CommonFunc_90005250(0, 30140220, 30142219, 0.0, -1)
-    CommonFunc_90005250(0, 30140222, 30142219, 0.5, -1)
-    CommonFunc_90005250(0, 30140223, 30142223, 0.0, -1)
+    CommonFunc_90005250(0, character=30140219, region=30142219, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30140220, region=30142219, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=30140222, region=30142219, seconds=0.5, animation_id=-1)
+    CommonFunc_90005250(0, character=30140223, region=30142223, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.LivingMass0,

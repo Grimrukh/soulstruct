@@ -51,7 +51,14 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1034450800, 1034452800, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GlintstoneDragon,
+        region=1034452800,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005251(0, character=Characters.Scarab4, radius=7.0, seconds=0.0, animation_id=1701)
     CommonFunc_90005251(0, character=Characters.Scarab5, radius=7.0, seconds=0.0, animation_id=1701)
     CommonFunc_90005251(0, character=Characters.Scarab6, radius=7.0, seconds=0.0, animation_id=1701)
@@ -76,7 +83,18 @@ def Constructor():
     CommonFunc_90005462(0, character=1034450203)
     CommonFunc_90005461(0, character=1034450204)
     CommonFunc_90005462(0, character=1034450204)
-    CommonFunc_90005201(0, 1034450200, 30010, -1, 0.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.RayaLucariaScholar,
+        animation_id=30010,
+        animation_id_1=-1,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
     CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_90005620(
         0,

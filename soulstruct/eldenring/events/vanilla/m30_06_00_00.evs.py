@@ -294,7 +294,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 30060301, 30062301, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Omen1, region=30062301, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Omen2,
@@ -308,7 +308,7 @@ def Preconstructor():
         left_3=0,
     )
     RunCommonEvent(30062300, slot=0, args=(30060303, 30000, 20000, 30062303, 3.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    CommonFunc_90005261(0, 30060304, 30062304, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Omen4, region=30062304, radius=5.0, seconds=0.0, animation_id=-1)
     Event_30062304()
     CommonFunc_90005200(0, 30060305, 30000, 20000, 30062305, 0.0, 0, 0, 0, 0)
 

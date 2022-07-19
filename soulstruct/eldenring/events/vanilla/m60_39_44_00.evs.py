@@ -26,10 +26,10 @@ from .entities.m60_39_44_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1039440000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005261(0, 1039440200, 1039442200, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039440201, 1039442200, 5.0, 1.5, -1)
-    CommonFunc_90005261(0, 1039440202, 1039442200, 5.0, 1.0, -1)
-    CommonFunc_90005261(0, 1039440203, 1039442200, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Skeleton0, region=1039442200, radius=5.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Skeleton1, region=1039442200, radius=5.0, seconds=1.5, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Skeleton2, region=1039442200, radius=5.0, seconds=1.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Skeleton3, region=1039442200, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005616(0, flag=530240, region=1039442710)
     CommonFunc_90005780(
         0,
@@ -54,7 +54,17 @@ def Constructor():
         region=1039442160,
         left=0,
     )
-    CommonFunc_90005703(0, 1039440700, 3661, 3662, 1043399301, 1043399314, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot0,
+        flag=3661,
+        flag_1=3662,
+        flag_2=1043399301,
+        flag_3=1043399314,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.LivingPot0,
@@ -79,7 +89,17 @@ def Constructor():
         flag_2=1039449251,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440705, 3821, 3822, 1039449251, 3821, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot0,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449251,
+        flag_3=3821,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.SmallLivingPot8,
@@ -88,7 +108,17 @@ def Constructor():
         flag_2=1039449251,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440708, 3821, 3822, 1039449251, 3821, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot8,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449251,
+        flag_3=3821,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443721(0, character=Characters.SmallLivingPot1)
     CommonFunc_90005704(
         0,
@@ -98,7 +128,17 @@ def Constructor():
         flag_2=1039449251,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440706, 3821, 3822, 1039449251, 3821, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot1,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449251,
+        flag_3=3821,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443722(0, character=Characters.SmallLivingPot7)
     CommonFunc_90005704(
         0,
@@ -108,7 +148,17 @@ def Constructor():
         flag_2=1039449251,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440707, 3821, 3822, 1039449251, 3821, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot7,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449251,
+        flag_3=3821,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443724(0, character=Characters.SmallLivingPot0)
     CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, model_point=905, vfx_id=603000)
     CommonFunc_90005709(0, attacked_entity=Characters.SmallLivingPot0, model_point=200, vfx_id=603051)
@@ -155,7 +205,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440730, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot1,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443741(0, character=Characters.LivingPot2)
     CommonFunc_90005702(
         0,
@@ -172,7 +232,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440731, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot2,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443742(0, character=Characters.SmallLivingPot2)
     CommonFunc_90005702(
         0,
@@ -189,7 +259,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440740, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot2,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443743(0, character=Characters.SmallLivingPot3)
     CommonFunc_90005702(
         0,
@@ -206,7 +286,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440741, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot3,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443744(0, character=Characters.SmallLivingPot4)
     CommonFunc_90005702(
         0,
@@ -223,7 +313,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440742, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot4,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443745(0, character=Characters.SmallLivingPot5)
     CommonFunc_90005702(
         0,
@@ -240,7 +340,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440743, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot5,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443746(0, character=Characters.SmallLivingPot6)
     CommonFunc_90005702(
         0,
@@ -257,7 +367,17 @@ def Constructor():
         flag_2=1039449294,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440744, 3821, 3822, 1039449294, 1039449284, 3820, 3823, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SmallLivingPot6,
+        flag=3821,
+        flag_1=3822,
+        flag_2=1039449294,
+        flag_3=1039449284,
+        first_flag=3820,
+        last_flag=3823,
+        right=-1,
+    )
     Event_1039443729()
     Event_1039443730()
     Event_1039443731()
@@ -269,7 +389,17 @@ def Constructor():
         flag_2=1039449301,
         right=3,
     )
-    CommonFunc_90005703(0, 1039440710, 3441, 3442, 1039449301, 3441, 3440, 3444, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.KnightDiallos0,
+        flag=3441,
+        flag_1=3442,
+        flag_2=1039449301,
+        flag_3=3441,
+        first_flag=3440,
+        last_flag=3444,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.KnightDiallos0, flag=3443, first_flag=3440, last_flag=3444)
     CommonFunc_90005702(0, character=Characters.KnightDiallos1, flag=3443, first_flag=3440, last_flag=3444)
     Event_1039443710(0, character=Characters.KnightDiallos0)
@@ -278,7 +408,7 @@ def Constructor():
     Event_1039443713()
     Event_1039442341(
         0,
-        character=1039440800,
+        character=Characters.TibiaMariner,
         entity=1039443240,
         entity_1=1039443241,
         entity_2=1039443242,
@@ -316,7 +446,7 @@ def Constructor():
         special_effect_id_2=15312,
     )
     Event_1039442344(0, flag=1039440800, character=Characters.TibiaMariner, character_1=1039445250)
-    Event_1039442345(0, character__targeting_character=1039440800, region=1039442810)
+    Event_1039442345(0, character__targeting_character=Characters.TibiaMariner, region=1039442810)
     CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950601, npc_threat_level=24)
     CommonFunc_90005860(0, 1039440800, 0, 1039440800, 0, 30240, 0.0)
 

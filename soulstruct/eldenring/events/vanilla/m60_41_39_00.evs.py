@@ -36,8 +36,8 @@ def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.FingerReader)
     DisableBackread(1041390720)
-    CommonFunc_90005261(0, 1041390200, 1041382200, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 1041390201, 1041382200, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Bat0, region=1041382200, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Bat1, region=1041382200, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, 1041390202, 1041382200, 10.0, 0.0, -1)
 
 

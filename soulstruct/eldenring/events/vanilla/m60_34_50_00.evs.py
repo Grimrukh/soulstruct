@@ -125,7 +125,17 @@ def Constructor():
         flag_2=1034502711,
         right=3,
     )
-    CommonFunc_90005703(0, 1034500705, 3461, 3462, 1034502711, 1034509258, 3460, 3463, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SorceressSellen,
+        flag=3461,
+        flag_1=3462,
+        flag_2=1034502711,
+        flag_3=1034509258,
+        first_flag=3460,
+        last_flag=3463,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.SorceressSellen, flag=3463, first_flag=3460, last_flag=3463)
     Event_1034503705(0, character=Characters.SorceressSellen)
     Event_1034503706()

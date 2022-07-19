@@ -24,7 +24,7 @@ from .entities.m60_36_53_00_entities import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005261(0, 1036530200, 1036532200, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036530200, region=1036532200, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=1036530200,
@@ -38,7 +38,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1036530201, 1036532200, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1036530201, region=1036532200, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=1036530201,

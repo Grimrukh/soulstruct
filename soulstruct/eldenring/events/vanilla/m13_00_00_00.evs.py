@@ -298,7 +298,17 @@ def Constructor():
     )
     Event_13003700()
     CommonFunc_90005704(0, attacked_entity=Characters.LivingPot, flag=13009256, flag_1=3660, flag_2=13009251, right=3)
-    CommonFunc_90005703(0, 13000700, 3661, 3662, 13009251, 13009256, 3660, 3663, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.LivingPot,
+        flag=3661,
+        flag_1=3662,
+        flag_2=13009251,
+        flag_3=13009256,
+        first_flag=3660,
+        last_flag=3663,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.LivingPot, flag=3663, first_flag=3660, last_flag=3663)
     Event_13003710(0, character=Characters.LivingPot)
     Event_13003711(0, character=Characters.LivingPot)
@@ -368,10 +378,17 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000203, 13002203, 20.0, 0.0, -1)
-    CommonFunc_90005250(0, 13000204, 13002201, 0.0, -1)
-    CommonFunc_90005250(0, 13000250, 13002201, 3.5, -1)
-    CommonFunc_90005250(0, 13000217, 13002217, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula3,
+        region=13002203,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula4, region=13002201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula33, region=13002201, seconds=3.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula15, region=13002217, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula16,
@@ -384,8 +401,22 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000206, 13002205, 10.0, 0.0, -1)
-    CommonFunc_90005261(0, 13000209, 13002209, 10.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula5,
+        region=13002205,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula7,
+        region=13002209,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005211(
         0,
         character=Characters.BeastmanofFarumAzula6,
@@ -400,20 +431,27 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula8, region=13002210, seconds=0.0, animation_id=3001)
-    CommonFunc_90005251(0, 13000210, 3.0, 0.0, -1)
-    CommonFunc_90005250(0, 13000211, 13002207, 0.0, -1)
-    CommonFunc_90005250(0, 13000212, 13002207, 1.0, -1)
-    CommonFunc_90005271(0, 13000212, 0.0, -1)
-    CommonFunc_90005250(0, 13000213, 13002212, 0.0, -1)
-    CommonFunc_90005250(0, 13000214, 13002215, 0.0, -1)
-    CommonFunc_90005250(0, 13000215, 13002215, 0.0, -1)
-    CommonFunc_90005250(0, 13000216, 13002215, 0.0, -1)
-    CommonFunc_90005250(0, 13000219, 13002214, 0.0, -1)
-    CommonFunc_90005250(0, 13000251, 13002214, 0.0, -1)
-    CommonFunc_90005250(0, 13000221, 13002220, 0.0, -1)
-    CommonFunc_90005250(0, 13000222, 13002222, 0.0, -1)
-    CommonFunc_90005250(0, 13000223, 13002223, 0.0, -1)
-    CommonFunc_90005261(0, 13000225, 13002225, 20.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.BeastmanofFarumAzula8, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula9, region=13002207, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula10, region=13002207, seconds=1.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.BeastmanofFarumAzula10, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula11, region=13002212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula12, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula13, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula14, region=13002215, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula17, region=13002214, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula34, region=13002214, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula18, region=13002220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula19, region=13002222, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula20, region=13002223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula21,
+        region=13002225,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005210(
         0,
         character=Characters.BeastmanofFarumAzula22,
@@ -428,7 +466,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula23, region=13002228, seconds=0.0, animation_id=3002)
-    CommonFunc_90005250(0, 13000230, 13002230, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula24, region=13002230, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula25,
@@ -441,8 +479,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000232, 13002230, 0.0, -1)
-    CommonFunc_90005250(0, 13000234, 13002234, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula26, region=13002230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula28, region=13002234, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BeastmanofFarumAzula27,
@@ -455,8 +493,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000235, 13002235, 20.0, 0.0, -1)
-    CommonFunc_90005251(0, 13000236, 5.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula29,
+        region=13002235,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(0, character=Characters.BeastmanofFarumAzula30, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.BeastmanofFarumAzula31,
@@ -469,7 +514,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000245, 13002245, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula32, region=13002245, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.BeastmanofFarumAzula39,
@@ -506,14 +551,21 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 13000270, 40.0, 0.0, -1)
-    CommonFunc_90005250(0, 13000260, 13002296, 0.0, -1)
-    CommonFunc_90005250(0, 13000261, 13002296, 1.0, -1)
-    CommonFunc_90005250(0, 13000262, 13002296, 0.0, -1)
-    CommonFunc_90005261(0, 13000278, 13002278, 30.0, 0.0, -1)
-    CommonFunc_90005250(0, 13000275, 13002277, 0.0, -1)
-    CommonFunc_90005250(0, 13000276, 13002277, 0.0, -1)
-    CommonFunc_90005250(0, 13000277, 13002277, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.BeastmanofFarumAzula43, radius=40.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula36, region=13002296, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula37, region=13002296, seconds=1.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula38, region=13002296, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.BeastmanofFarumAzula47,
+        region=13002278,
+        radius=30.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula44, region=13002277, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula45, region=13002277, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BeastmanofFarumAzula46, region=13002277, seconds=0.0, animation_id=-1)
     CommonFunc_90005221(
         0,
         character=Characters.BeastmanofFarumAzula48,
@@ -566,10 +618,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000410, 13002412, 0.0, -1)
-    CommonFunc_90005250(0, 13000412, 13002412, 0.0, -1)
-    CommonFunc_90005250(0, 13000400, 13002412, 0.0, -1)
-    CommonFunc_90005250(0, 13000409, 13002408, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Skeleton5, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Skeleton7, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Skeleton0, region=13002412, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Skeleton4, region=13002408, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton2,
@@ -595,10 +647,10 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.Skeleton8, region=13002416, seconds=0.0, animation_id=3014)
-    CommonFunc_90005251(0, 13000417, 1.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Skeleton9, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=13000418, region=13002418, seconds=0.0, animation_id=3003)
     CommonFunc_90005250(0, character=13000419, region=13002418, seconds=0.5, animation_id=3003)
-    CommonFunc_90005261(0, 13000420, 13002420, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Skeleton10, region=13002420, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton11,
@@ -647,7 +699,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000441, 13002435, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Skeleton15, region=13002435, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton17,
@@ -684,8 +736,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000298, 13002323, 35.0, 0.0, -1)
-    CommonFunc_90005261(0, 13000299, 13002323, 35.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Dummy1, region=13002323, radius=35.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Dummy2, region=13002323, radius=35.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton24,
@@ -790,7 +842,7 @@ def Preconstructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005251(0, 13000460, 3.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Skeleton28, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.UndeadAzulaBeastman1, region=13002481, seconds=0.0, animation_id=3003)
     CommonFunc_90005250(0, character=Characters.UndeadAzulaBeastman2, region=13002418, seconds=0.5, animation_id=3003)
     CommonFunc_90005200(
@@ -829,7 +881,14 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000489, 13002488, 2.0, 0.5, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.UndeadAzulaBeastman7,
+        region=13002488,
+        radius=2.0,
+        seconds=0.5,
+        animation_id=-1,
+    )
     CommonFunc_90005200(
         0,
         character=Characters.FarumAzulaDog2_0,
@@ -878,7 +937,14 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000314, 13002314, 20.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.FarumAzulaDog2_4,
+        region=13002314,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.FarumAzulaDog2_5,
@@ -915,8 +981,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000330, 13002355, 0.0, -1)
-    CommonFunc_90005250(0, 13000331, 13002355, 0.0, -1)
+    CommonFunc_90005250(0, character=13000330, region=13002355, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=13000331, region=13002355, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BladedTalonEagle0,
@@ -941,7 +1007,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000352, 13002352, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BladedTalonEagle2, region=13002352, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.BladedTalonEagle2,
@@ -1101,20 +1167,20 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000381, 13002381, 0.0, -1)
-    CommonFunc_90005250(0, 13000382, 13002382, 0.0, -1)
-    CommonFunc_90005250(0, 13000384, 13002384, 0.0, -1)
-    CommonFunc_90005251(0, 13000385, 10.0, 0.0, -1)
-    CommonFunc_90005250(0, 13000380, 13002380, 0.0, -1)
-    CommonFunc_90005250(0, 13000383, 13002380, 0.0, -1)
-    CommonFunc_90005250(0, 13000390, 13002390, 0.0, -1)
-    CommonFunc_90005251(0, 13000386, 55.0, 6.0, -1)
-    CommonFunc_90005250(0, 13000388, 13002388, 0.0, -1)
-    CommonFunc_90005250(0, 13000389, 13002389, 0.0, -1)
-    CommonFunc_90005250(0, 13000392, 13002392, 0.0, -1)
-    CommonFunc_90005250(0, 13000395, 13002395, 0.0, -1)
-    CommonFunc_90005250(0, 13000396, 13002396, 0.0, -1)
-    CommonFunc_90005250(0, 13000398, 13002398, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight0, region=13002381, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight1, region=13002382, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight2, region=13002384, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.BanishedKnight3, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=13000380, region=13002380, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=13000383, region=13002380, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight8, region=13002390, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.BanishedKnight4, radius=55.0, seconds=6.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight6, region=13002388, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight7, region=13002389, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight10, region=13002392, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight11, region=13002395, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=13000396, region=13002396, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BanishedKnight13, region=13002398, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Wormface1,
@@ -1163,7 +1229,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 13000374, 13002374, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Wormface4, region=13002374, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Wormface5,
@@ -1176,7 +1242,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000377, 13002377, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Wormface7, region=13002377, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Wormface8,
@@ -1237,7 +1303,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000495, 13002495, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.AncientDragon3, region=13002495, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.AncientDragon5,
@@ -1250,8 +1316,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 13000295, 13002295, 0.0, -1)
-    CommonFunc_90005250(0, 13000296, 13002296, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.CrucibleKnight0, region=13002295, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.CrucibleKnight1, region=13002296, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, 13000496, 13002496, 40.0, 0.0, -1)
 
 

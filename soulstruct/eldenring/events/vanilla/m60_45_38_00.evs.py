@@ -24,7 +24,17 @@ from .entities.m60_45_38_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005704(0, attacked_entity=Characters.KennethHaight, flag=3581, flag_1=3580, flag_2=1045389201, right=3)
-    CommonFunc_90005703(0, 1045380700, 3581, 3582, 1045389201, 3581, 3580, 3583, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.KennethHaight,
+        flag=3581,
+        flag_1=3582,
+        flag_2=1045389201,
+        flag_3=3581,
+        first_flag=3580,
+        last_flag=3583,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.KennethHaight, flag=3583, first_flag=3580, last_flag=3583)
     Event_1045383700(0, 1045380700)
 

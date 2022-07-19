@@ -280,16 +280,16 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32010212, 32012300, 0.0, -1)
-    CommonFunc_90005250(0, 32010212, 32012301, 0.0, -1)
-    CommonFunc_90005250(0, 32010217, 32012220, 0.0, -1)
-    CommonFunc_90005250(0, 32010219, 32012219, 0.0, -1)
-    CommonFunc_90005250(0, 32010220, 32012220, 0.0, -1)
-    CommonFunc_90005250(0, 32010300, 32012300, 0.0, -1)
-    CommonFunc_90005250(0, 32010300, 32012301, 0.0, -1)
-    CommonFunc_90005250(0, 32010301, 32012301, 0.0, -1)
-    CommonFunc_90005250(0, 32010350, 32012350, 0.0, -1)
-    CommonFunc_90005250(0, 32010351, 32012350, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32012300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner5, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner7, region=32012220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner9, region=32012219, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner10, region=32012220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32012300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=32012301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=32012350, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=32012350, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32010352, 32012350, 0.0, -1)
 
 

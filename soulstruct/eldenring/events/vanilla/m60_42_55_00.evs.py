@@ -67,7 +67,17 @@ def Constructor():
     )
     Event_1042553710(0, character=Characters.Millicent0)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent0, flag=4181, flag_1=4180, flag_2=1042559201, right=3)
-    CommonFunc_90005703(0, 1042550700, 4181, 4182, 1042559201, 1059481190, 4180, 4184, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent0,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1042559201,
+        flag_3=1059481190,
+        first_flag=4180,
+        last_flag=4184,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent0, flag=4183, first_flag=4180, last_flag=4184)
     Event_1042553711()
     Event_1042553712()

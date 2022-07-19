@@ -19,14 +19,15 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_37_43_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005251(0, 1037430200, 12.0, 0.0, -1)
-    CommonFunc_90005251(0, 1037430201, 12.0, 0.0, -1)
-    CommonFunc_90005251(0, 1037430203, 12.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster0, radius=12.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster1, radius=12.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster2, radius=12.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=1037430204, radius=12.0, seconds=0.0, animation_id=1701)
     CommonFunc_90005251(0, character=1037430210, radius=12.0, seconds=0.0, animation_id=1701)
     CommonFunc_90005251(0, character=1037430211, radius=12.0, seconds=0.0, animation_id=1701)

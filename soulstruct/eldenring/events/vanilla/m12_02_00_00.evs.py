@@ -169,28 +169,28 @@ def Constructor():
     Event_12022621(5, flag=12020625, asset=Assets.AEG237_055_9012, asset_1=Assets.AEG237_039_3001)
     Event_12022621(6, flag=12020626, asset=12021626, asset_1=12021636)
     Event_12022621(7, flag=12020627, asset=12021627, asset_1=12021637)
-    CommonFunc_90005250(0, 12020211, 12022211, 0.0, -1)
-    CommonFunc_90005261(0, 12020220, 12022220, 70.0, 0.0, -1)
-    CommonFunc_90005261(0, 12020221, 12022220, 70.0, 0.0, -1)
-    CommonFunc_90005300(0, 12020221, 12020221, 0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.NoxFighter, region=12022211, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=12020220, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.RedWolf, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005300(0, flag=12020221, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=-1)
     Event_12022300(0, character=12020300, region=12022300, seconds=0.0)
     Event_12022300(1, character=12020301, region=12022300, seconds=0.0)
     Event_12022300(2, character=Characters.AncestralFollower3, region=12022302, seconds=0.0)
     CommonFunc_90005250(0, character=Characters.AncestralFollower3, region=12022302, seconds=0.0, animation_id=3006)
     Event_12022300(3, character=12025303, region=12022303, seconds=0.0)
     Event_12022300(4, character=12025304, region=12022304, seconds=0.0)
-    CommonFunc_90005250(0, 12020304, 12022304, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Dummy0, region=12022304, seconds=0.0, animation_id=-1)
     Event_12022300(5, character=12025305, region=12022305, seconds=0.0)
     CommonFunc_90005250(0, character=Characters.AncestralFollower6, region=12022305, seconds=2.0, animation_id=3011)
     Event_12022300(6, character=12025306, region=12022306, seconds=0.0)
     Event_12022300(7, character=12025307, region=12022307, seconds=0.0)
     Event_12022300(8, character=12025308, region=12022308, seconds=0.0)
     Event_12022300(9, character=12025309, region=12022309, seconds=0.0)
-    CommonFunc_90005251(0, 12020340, 6.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020341, 6.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020342, 6.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020343, 6.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020344, 6.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Springhare0, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Springhare1, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Springhare2, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Springhare3, radius=6.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Springhare4, radius=6.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=0, region=0, radius=0.0, seconds=0.0, animation_id=0)
     Event_12022300(10, character=12025310, region=12022310, seconds=0.0)
     Event_12022300(11, character=12025311, region=12022311, seconds=0.0)
@@ -202,7 +202,7 @@ def Constructor():
     Event_12022300(17, character=Characters.AncestralFollower4, region=12022317, seconds=0.0)
     Event_12022300(18, character=12025318, region=12022318, seconds=0.0)
     Event_12022300(19, character=Characters.AncestralFollower0, region=12022319, seconds=0.0)
-    CommonFunc_90005250(0, 12020319, 12022319, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower0, region=12022319, seconds=0.0, animation_id=-1)
     Event_12022300(20, character=Characters.AncestralFollower7, region=12022331, seconds=0.0)
     Event_12022300(21, character=Characters.AncestralFollower9, region=12022334, seconds=0.0)
     Event_12022300(22, character=Characters.AncestralFollower10, region=12022334, seconds=0.0)
@@ -261,22 +261,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 12020348, 100.0, 0.0, -1)
+    CommonFunc_90005251(0, character=12020348, radius=100.0, seconds=0.0, animation_id=-1)
     Event_12022350(0, character=12020390, character_1=12025350)
     Event_12022360(0, character=12020390, character_1=12025350)
     Event_12022370()
     Event_12022371()
-    CommonFunc_90005250(0, 12020390, 12022350, 3.0, -1)
+    CommonFunc_90005250(0, character=12020390, region=12022350, seconds=3.0, animation_id=-1)
     Event_12022372()
     Event_12022373()
     Event_12022350(1, character=Characters.AncestralFollowerShaman0, character_1=12025351)
     Event_12022360(1, character=Characters.AncestralFollowerShaman0, character_1=12025351)
     Event_12022350(2, character=Characters.AncestralFollowerShaman1, character_1=12025352)
     Event_12022360(2, character=Characters.AncestralFollowerShaman1, character_1=12025352)
-    CommonFunc_90005250(0, 12020350, 12022350, 3.0, -1)
-    CommonFunc_90005250(0, 12020351, 12022350, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower11, region=12022350, seconds=3.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower12, region=12022350, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.AncestralFollower16, region=12022366, seconds=0.0, animation_id=3006)
-    CommonFunc_90005250(0, 12020368, 12022368, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.AncestralFollower16, region=12022368, seconds=0.0, animation_id=-1)
     CommonFunc_90005860(
         0,
         flag=12020830,
@@ -293,12 +293,12 @@ def Constructor():
     CommonFunc_90005300(0, flag=12020474, character=Characters.Scarab4, item_lot_param_id=40610, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12020477, character=Characters.Scarab3, item_lot_param_id=40642, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12020479, character=Characters.Scarab1, item_lot_param_id=40646, seconds=1.5, left=0)
-    CommonFunc_90005250(0, 12020420, 12022420, 0.0, -1)
-    CommonFunc_90005251(0, 12020421, 60.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020424, 100.0, 0.0, -1)
-    CommonFunc_90005261(0, 12020422, 12022422, 45.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020424, 60.0, 0.0, -1)
-    CommonFunc_90005251(0, 12020431, 10.0, 0.0, -1)
+    CommonFunc_90005250(0, character=12020420, region=12022420, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=12020421, radius=60.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Dummy1, radius=100.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=Characters.Dummy3, region=12022422, radius=45.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Dummy1, radius=60.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.CrucibleKnight1, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=12020430,
@@ -323,8 +323,22 @@ def Constructor():
         seconds=1.5,
         left=0,
     )
-    CommonFunc_90005261(0, 12020440, 12022440, 15.0, 0.0, -1)
-    CommonFunc_90005261(0, 12020442, 12022442, 15.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.FallenHawksSoldier0,
+        region=12022440,
+        radius=15.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.FallenHawksSoldier2,
+        region=12022442,
+        radius=15.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     Event_12022440(
         0,
         character=Characters.CrucibleKnight1,
@@ -373,18 +387,18 @@ def Constructor():
         character_1=Characters.FallenHawksSoldier8,
         patrol_information_id=12023444,
     )
-    CommonFunc_90005250(0, 12020450, 12022450, 1.5, -1)
-    CommonFunc_90005250(0, 12020451, 12022450, 2.0, -1)
-    CommonFunc_90005250(0, 12020452, 12022450, 3.0, -1)
-    CommonFunc_90005250(0, 12020453, 12022450, 2.5, -1)
-    CommonFunc_90005250(0, 12020454, 12022450, 0.0, -1)
-    CommonFunc_90005250(0, 12020455, 12022450, 0.0, -1)
-    CommonFunc_90005251(0, 12025461, 20.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Rat0, region=12022450, seconds=1.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat1, region=12022450, seconds=2.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat2, region=12022450, seconds=3.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat3, region=12022450, seconds=2.5, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat4, region=12022450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Rat5, region=12022450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=12025461, radius=20.0, seconds=0.0, animation_id=-1)
     Event_12022419(0, character=Characters.SilverTear5, character_1=Characters.Troll, region=12022400)
     Event_12022400(1, character=Characters.SilverTear6, character_1=Characters.SilverTear0, region=12022401)
-    CommonFunc_90005261(0, 12020380, 12022411, 20.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.SilverTear6, region=12022411, radius=20.0, seconds=0.0, animation_id=-1)
     Event_12022400(2, character=Characters.SilverTear7, character_1=Characters.SilverTear1, region=12022402)
-    CommonFunc_90005261(0, 12020402, 12022412, 20.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.SilverTear7, region=12022412, radius=20.0, seconds=0.0, animation_id=-1)
     Event_12022400(3, character=12020403, character_1=12020493, region=12022403)
     Event_12022400(4, character=12020404, character_1=12020494, region=12022404)
     Event_12022400(5, character=12020405, character_1=12020495, region=12022405)
@@ -401,7 +415,17 @@ def Constructor():
     Event_12020701(0, entity=12022716)
     CommonFunc_90005752(0, asset=Assets.AEG099_320_9001, vfx_id=200, model_point=120, seconds=3.0)
     Event_12023720(0, character=Characters.Blaidd)
-    CommonFunc_90005703(0, 12020720, 3601, 3602, 12029151, 3603, 3600, 3603, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blaidd,
+        flag=3601,
+        flag_1=3602,
+        flag_2=12029151,
+        flag_3=3603,
+        first_flag=3600,
+        last_flag=3603,
+        right=-1,
+    )
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd, flag=3601, flag_1=3600, flag_2=12029151, right=3)
     CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3603)
     Event_12023721(0, other_entity=Assets.AEG099_631_9000, radius=3.0, special_effect_id=9710, flag=1034509410)

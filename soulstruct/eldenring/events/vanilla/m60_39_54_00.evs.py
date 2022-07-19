@@ -325,9 +325,30 @@ def Constructor():
         seconds=0.4000000059604645,
         animation_id=3002,
     )
-    CommonFunc_90005261(0, 1039540230, 1039542619, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540231, 1039542619, 1.0, 0.800000011920929, -1)
-    CommonFunc_90005261(0, 1039540232, 1039542619, 1.0, 0.800000011920929, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridCorpse18,
+        region=1039542619,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridCorpse19,
+        region=1039542619,
+        radius=1.0,
+        seconds=0.800000011920929,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridCorpse20,
+        region=1039542619,
+        radius=1.0,
+        seconds=0.800000011920929,
+        animation_id=-1,
+    )
     CommonFunc_90005200(
         0,
         character=Characters.CleanrotKnight0,
@@ -525,17 +546,17 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.WanderingNoble3, region=1039542343, seconds=0.0, animation_id=3006)
     CommonFunc_90005250(0, character=Characters.Page1, region=1039542322, seconds=0.0, animation_id=0)
     CommonFunc_90005250(0, character=Characters.CleanrotKnight2, region=1039542312, seconds=0.0, animation_id=0)
-    CommonFunc_90005261(0, 1039540370, 1039542636, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540371, 1039542636, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540372, 1039542636, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540400, 1039542654, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540401, 1039542654, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540402, 1039542654, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540403, 1039542654, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540404, 1039542860, 1.0, 10.0, -1)
-    CommonFunc_90005261(0, 1039540680, 1039542860, 1.0, 2.0, -1)
-    CommonFunc_90005261(0, 1039540681, 1039542860, 1.0, 4.0, -1)
-    CommonFunc_90005261(0, 1039540682, 1039542860, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1039540370, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540371, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540372, region=1039542636, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540400, region=1039542654, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540401, region=1039542654, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540402, region=1039542654, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540403, region=1039542654, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540404, region=1039542860, radius=1.0, seconds=10.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540680, region=1039542860, radius=1.0, seconds=2.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540681, region=1039542860, radius=1.0, seconds=4.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540682, region=1039542860, radius=1.0, seconds=0.0, animation_id=-1)
     AddSpecialEffect(1039540680, 4801)
     AddSpecialEffect(1039540681, 4801)
     CommonFunc_90005261(
@@ -546,10 +567,10 @@ def Constructor():
         seconds=0.30000001192092896,
         animation_id=3002,
     )
-    CommonFunc_90005261(0, 1039540430, 1039542615, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540431, 1039542615, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540440, 1039542641, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540441, 1039542641, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1039540430, region=1039542615, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540431, region=1039542615, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540440, region=1039542641, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540441, region=1039542641, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1039540442, region=1039542641, radius=1.0, seconds=0.0, animation_id=3002)
     CommonFunc_90005261(
         0,
@@ -585,18 +606,53 @@ def Constructor():
         seconds=0.4000000059604645,
         animation_id=3016,
     )
-    CommonFunc_90005261(0, 1039540449, 1039542641, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540440, 1039542642, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540441, 1039542642, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540442, 1039542642, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540443, 1039542642, 1.0, 0.4000000059604645, -1)
-    CommonFunc_90005261(0, 1039540444, 1039542642, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540445, 1039542642, 1.0, 1.2000000476837158, -1)
-    CommonFunc_90005261(0, 1039540446, 1039542642, 1.0, 0.4000000059604645, -1)
-    CommonFunc_90005261(0, 1039540447, 1039542642, 1.0, 0.6000000238418579, -1)
-    CommonFunc_90005261(0, 1039540448, 1039542642, 1.0, 0.4000000059604645, -1)
-    CommonFunc_90005261(0, 1039540449, 1039542642, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039540470, 1039542658, 1.0, 3.0, -1)
+    CommonFunc_90005261(0, character=1039540449, region=1039542641, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540440, region=1039542642, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540441, region=1039542642, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540442, region=1039542642, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=1039540443,
+        region=1039542642,
+        radius=1.0,
+        seconds=0.4000000059604645,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=1039540444, region=1039542642, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=1039540445,
+        region=1039542642,
+        radius=1.0,
+        seconds=1.2000000476837158,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=1039540446,
+        region=1039542642,
+        radius=1.0,
+        seconds=0.4000000059604645,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=1039540447,
+        region=1039542642,
+        radius=1.0,
+        seconds=0.6000000238418579,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=1039540448,
+        region=1039542642,
+        radius=1.0,
+        seconds=0.4000000059604645,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=1039540449, region=1039542642, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039540470, region=1039542658, radius=1.0, seconds=3.0, animation_id=-1)
     CommonFunc_90005261(0, character=1039540471, region=1039542680, radius=1.0, seconds=0.0, animation_id=3002)
     CommonFunc_90005261(
         0,
@@ -638,7 +694,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005261(0, 1039540556, 1039542704, 20.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1039540556, region=1039542704, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005501(
         0,
         flag=1039540510,
@@ -654,9 +710,9 @@ def Constructor():
     Event_1039542810()
     Event_1039542849()
     Event_1039542811()
-    CommonFunc_90005261(0, 1039544680, 1039546680, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039544681, 1039546680, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039544650, 1039546680, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1039544680, region=1039546680, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039544681, region=1039546680, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=1039544650, region=1039546680, radius=1.0, seconds=0.0, animation_id=-1)
     AddSpecialEffect(1039544680, 8087)
     AddSpecialEffect(1039544681, 8087)
     AddSpecialEffect(1039544680, 5000)
@@ -675,9 +731,16 @@ def Constructor():
     AddSpecialEffect(1039544604, 8035)
     AddSpecialEffect(1039544605, 8035)
     AddSpecialEffect(1039544606, 8035)
-    CommonFunc_90005261(0, 1039544252, 1039546250, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039544253, 1039546250, 1.0, 0.0, -1)
-    CommonFunc_90005261(0, 1039544254, 1039546250, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1039544252, region=1039546250, radius=1.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.PutridCorpse28,
+        region=1039546250,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(0, character=1039544254, region=1039546250, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1039544550, region=1039546550, radius=1.0, seconds=0.0, animation_id=3010)
     CommonFunc_90005261(0, character=1039544551, region=1039546550, radius=1.0, seconds=0.0, animation_id=3010)
     CommonFunc_90005261(0, character=1039544552, region=1039546550, radius=1.0, seconds=0.0, animation_id=3010)

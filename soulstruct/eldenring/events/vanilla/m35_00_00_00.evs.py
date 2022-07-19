@@ -75,9 +75,36 @@ def Constructor():
     CommonFunc_90005525(2, flag=35000572, asset=Assets.AEG027_157_0502)
     CommonFunc_90005525(3, flag=35000573, asset=Assets.AEG027_157_0503)
     CommonFunc_90005525(4, flag=35000574, asset=Assets.AEG027_157_0504)
-    CommonFunc_90005540(0, 35000530, 35001530, 35001531, 35003531, -1, 1, 2)
-    CommonFunc_90005540(0, 35000565, 35001532, 35001533, 35003533, -1, 1, 2)
-    CommonFunc_90005540(0, 35000566, 35001534, 35001535, 35003535, -1, 1, 2)
+    CommonFunc_90005540(
+        0,
+        flag=35000530,
+        asset=Assets.AEG027_015_0500,
+        asset_1=Assets.AEG027_002_0502,
+        obj_act_id=35003531,
+        obj_act_id_1=-1,
+        animation_id=1,
+        animation_id_1=2,
+    )
+    CommonFunc_90005540(
+        0,
+        flag=35000565,
+        asset=Assets.AEG027_018_0500,
+        asset_1=Assets.AEG027_002_0503,
+        obj_act_id=35003533,
+        obj_act_id_1=-1,
+        animation_id=1,
+        animation_id_1=2,
+    )
+    CommonFunc_90005540(
+        0,
+        flag=35000566,
+        asset=Assets.AEG027_018_0501,
+        asset_1=Assets.AEG027_002_0507,
+        obj_act_id=35003535,
+        obj_act_id_1=-1,
+        animation_id=1,
+        animation_id_1=2,
+    )
     CommonFunc_90005511(0, flag=35000560, asset=Assets.AEG027_019_0500, obj_act_id=35003560, obj_act_id_1=27019, left=0)
     CommonFunc_90005512(0, flag=35000560, region=35002560, region_1=35002561)
     CommonFunc_90005511(0, flag=35000562, asset=Assets.AEG027_019_0501, obj_act_id=35003562, obj_act_id_1=27019, left=0)
@@ -169,20 +196,31 @@ def Constructor():
     Event_35000700(0, character=Characters.Hyetta, asset=Assets.AEG099_090_9006)
     CommonFunc_90005740(
         0,
-        35002705,
-        35002706,
-        35002707,
-        35000700,
-        701,
-        35001700,
-        701,
-        0.4000000059604645,
-        90202,
-        -1,
-        -1,
-        1.100000023841858,
+        flag=35002705,
+        flag_1=35002706,
+        left=35002707,
+        character=Characters.Hyetta,
+        model_point=701,
+        asset=Assets.AEG099_090_9003,
+        model_point_1=701,
+        radius=0.4000000059604645,
+        animation=90202,
+        animation_id=-1,
+        special_effect=-1,
+        radius_1=1.100000023841858,
     )
-    CommonFunc_90005741(0, 35002708, 35002709, 35002707, 35000700, 90202, 1, -1, 0, 0.0)
+    CommonFunc_90005741(
+        0,
+        flag=35002708,
+        flag_1=35002709,
+        left=35002707,
+        character=Characters.Hyetta,
+        animation__animation_id=90202,
+        left_1=1,
+        animation_id=-1,
+        special_effect=0,
+        seconds=0.0,
+    )
     CommonFunc_90005750(
         0,
         asset=Assets.AEG099_090_9007,
@@ -196,7 +234,17 @@ def Constructor():
     Event_35000703(0, seconds=7.5)
     Event_35003720(0, character=Characters.DungEater1)
     CommonFunc_90005704(0, attacked_entity=Characters.DungEater1, flag=4241, flag_1=4240, flag_2=35009251, right=3)
-    CommonFunc_90005703(0, 35000715, 4241, 4242, 35009251, 4241, 4240, 4244, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.DungEater1,
+        flag=4241,
+        flag_1=4242,
+        flag_2=35009251,
+        flag_3=4241,
+        first_flag=4240,
+        last_flag=4244,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.DungEater1, flag=4243, first_flag=4240, last_flag=4244)
     Event_35003721(0, character=Characters.DungEater0)
     Event_35003722(0, entity=Characters.DungEater0)
@@ -255,7 +303,7 @@ def Preconstructor():
     Event_35000050()
     Event_35000519()
     Event_35002600()
-    CommonFunc_90005261(0, 35000200, 35002200, 2.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Imp0, region=35002200, radius=2.0, seconds=0.0, animation_id=-1)
     Event_35002200()
     CommonFunc_90005211(
         0,
@@ -364,7 +412,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 35000211, 35002211, 2.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Imp11, region=35002211, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005211(
         0,
         character=Characters.Imp12,
@@ -616,7 +664,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat8, region=35002237, radius=2.0, seconds=0.0, animation_id=0)
     Event_35002239(0, character=Characters.Rat9, region=35002239, radius=0.0, seconds=0.0, animation_id=3002)
     CommonFunc_90005261(0, character=Characters.Rat10, region=35002240, radius=2.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005261(0, 35000243, 35002243, 2.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Rat11, region=35002243, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantRat, region=35002248, radius=2.0, seconds=0.0, animation_id=0)
     Event_35002240(0, character=Characters.Rat11)
     Event_35002240(1, character=Characters.GiantRat)
@@ -1315,15 +1363,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 35005435, 35002614, 3.0, 0.0, -1)
-    CommonFunc_90005271(0, 35000449, 0.0, -1)
-    CommonFunc_90005271(0, 35000439, 0.0, -1)
-    CommonFunc_90005271(0, 35000440, 0.0, -1)
-    CommonFunc_90005271(0, 35000441, 0.0, -1)
-    CommonFunc_90005271(0, 35000442, 0.0, -1)
-    CommonFunc_90005271(0, 35000447, 0.0, -1)
-    CommonFunc_90005271(0, 35000458, 0.0, -1)
-    CommonFunc_90005271(0, 35000451, 0.0, -1)
+    CommonFunc_90005261(0, character=35005435, region=35002614, radius=3.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.PutridCorpse16, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000439, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000440, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000441, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000442, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000447, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=35000458, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.PutridCorpse18, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse9,
@@ -1385,7 +1433,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.PutridCorpse18, region=35002222, seconds=0.0, animation_id=3023)
-    CommonFunc_90005250(0, 35000449, 35002449, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse16, region=35002449, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.PutridCorpse23,
@@ -1434,7 +1482,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 35000484, 35002365, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Omen11, region=35002365, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Omen11,
@@ -1459,9 +1507,9 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 35000367, 35002366, 0.0, 0.0, -1)
-    CommonFunc_90005250(0, 35000483, 35002483, 0.0, -1)
-    CommonFunc_90005250(0, 35000480, 35002483, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Omen6, region=35002366, radius=0.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Omen10, region=35002483, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Omen8, region=35002483, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 35000485, 35002483, 0.0, -1)
 
 

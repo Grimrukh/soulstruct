@@ -24,15 +24,15 @@ from .entities.m60_48_39_00_entities import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005250(0, 1048390203, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390204, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390205, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390402, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390403, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390404, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390405, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390406, 1048392203, 0.0, -1)
-    CommonFunc_90005250(0, 1048390407, 1048392203, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse1, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpse3, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare0, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare1, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare2, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare3, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare4, region=1048392203, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.PutridCorpseBare5, region=1048392203, seconds=0.0, animation_id=-1)
     RegisterGrace(grace_flag=1048390000, asset=Assets.AEG099_060_9001)
     CommonFunc_90005100(
         0,

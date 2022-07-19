@@ -47,83 +47,90 @@ def Constructor():
     RegisterGrace(grace_flag=1043310002, asset=Assets.AEG099_060_9002)
     Event_1043312580()
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005250(0, 1043310205, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310206, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310207, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310208, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310209, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310212, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310213, 1043312200, 0.0, -1)
-    CommonFunc_90005250(0, 1043310203, 1043312201, 0.0, -1)
-    CommonFunc_90005250(0, 1043310204, 1043312201, 0.0, -1)
-    CommonFunc_90005250(0, 1043310211, 1043312201, 0.0, -1)
-    CommonFunc_90005250(0, 1043310280, 1043312201, 0.0, -1)
-    CommonFunc_90005250(0, 1043310205, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310206, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310207, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310208, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310209, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310212, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310213, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310203, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310204, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310211, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310280, 1043312280, 0.0, -1)
-    CommonFunc_90005250(0, 1043310214, 1043312218, 0.0, -1)
-    CommonFunc_90005250(0, 1043310215, 1043312213, 0.0, -1)
-    CommonFunc_90005250(0, 1043310216, 1043312213, 0.0, -1)
-    CommonFunc_90005250(0, 1043310218, 1043312218, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten2, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten3, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten4, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten5, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten6, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310212, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310213, region=1043312200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten0, region=1043312201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten1, region=1043312201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten8, region=1043312201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten0, region=1043312201, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten2, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten3, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten4, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten5, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten6, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310212, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310213, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten0, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten1, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten8, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten0, region=1043312280, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310214, region=1043312218, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten9, region=1043312213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten10, region=1043312213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten12, region=1043312218, seconds=0.0, animation_id=-1)
     Event_1043312443(0, character=Characters.Misbegotten9, region=1043312213)
     Event_1043312443(1, character=Characters.Misbegotten10, region=1043312213)
     Event_1043312443(2, character=Characters.Misbegotten12, region=1043312213)
-    CommonFunc_90005250(0, 1043310217, 1043312213, 5.0, -1)
-    CommonFunc_90005250(0, 1043310220, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310221, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310222, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310223, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310224, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310225, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310226, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310227, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310228, 1043312223, 0.0, -1)
-    CommonFunc_90005271(0, 1043310245, 0.0, -1)
-    CommonFunc_90005271(0, 1043310246, 0.0, -1)
-    CommonFunc_90005271(0, 1043310267, 0.0, -1)
-    CommonFunc_90005271(0, 1043310268, 0.0, -1)
-    CommonFunc_90005250(0, 1043310281, 1043312250, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten11, region=1043312213, seconds=5.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten13, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310221, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten14, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten15, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten16, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten17, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310226, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten18, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten19, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.Misbegotten24, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=1043310246, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=1043310267, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=1043310268, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten1, region=1043312250, seconds=0.0, animation_id=-1)
     Event_1043312443(3, character=Characters.ScalyMisbegotten1, region=1043312250)
-    CommonFunc_90005271(0, 1043310252, 0.0, -1)
-    CommonFunc_90005271(1, 1043310271, 0.0, -1)
-    CommonFunc_90005271(2, 1043310272, 0.0, -1)
-    CommonFunc_90005251(0, 1043310255, 5.0, 0.0, -1)
+    CommonFunc_90005271(0, character=Characters.Misbegotten25, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(1, character=Characters.Misbegotten30, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(2, character=Characters.Misbegotten31, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Misbegotten26, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Misbegotten27, region=1043312256, seconds=0.0, animation_id=3023)
     CommonFunc_90005250(0, character=1043310262, region=1043312262, seconds=1.0, animation_id=3031)
     Event_1043312443(4, character=1043310262, region=1043312262)
-    CommonFunc_90005271(0, 1043310264, 0.0, -1)
-    CommonFunc_90005250(0, 1043310285, 1043312285, 0.0, -1)
-    CommonFunc_90005250(0, 1043310269, 1043312285, 0.0, -1)
-    CommonFunc_90005250(0, 1043310270, 1043312285, 0.0, -1)
+    CommonFunc_90005271(0, character=Characters.Misbegotten28, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.ScalyMisbegotten2, region=1043312285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten29, region=1043312285, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310270, region=1043312285, seconds=0.0, animation_id=-1)
     Event_1043312242(0, attacker__character=1043315240, region=1043312242)
     Event_1043312223(0, attacker__character=1043315223, region=1043312223)
-    CommonFunc_90005250(0, 1043310304, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310305, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310306, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310307, 1043312220, 0.0, -1)
-    CommonFunc_90005250(0, 1043310311, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310312, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310313, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310314, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310315, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310316, 1043312223, 0.0, -1)
-    CommonFunc_90005271(0, 1043310352, 0.0, -1)
-    CommonFunc_90005250(0, 1043310353, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310354, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310357, 1043312223, 0.0, -1)
-    CommonFunc_90005250(0, 1043310400, 1043312400, 0.0, -1)
-    CommonFunc_90005250(0, 1043310401, 1043312400, 0.0, -1)
-    CommonFunc_90005250(0, 1043310402, 1043312400, 0.0, -1)
-    CommonFunc_90005250(0, 1043310403, 1043312403, 0.0, -1)
-    CommonFunc_90005260(0, 1043310405, 1043312403, 5.0, 0.0, -1)
+    CommonFunc_90005250(0, character=1043310304, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310305, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310306, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310307, region=1043312220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310311, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier0, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier1, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310314, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310315, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310316, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005271(0, character=Characters.GodrickSoldier0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GodrickSoldier1, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GodrickSoldier2, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310357, region=1043312223, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=1043312400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog1, region=1043312400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog2, region=1043312400, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.SmallerDog3, region=1043312403, seconds=0.0, animation_id=-1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.SmallerDog4,
+        region=1043312403,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
     CommonFunc_90005201(
         0,
         character=Characters.MadPumpkinHead,
@@ -148,10 +155,10 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1043310434, 1043312430, 0.0, -1)
-    CommonFunc_90005250(0, 1043310440, 1043312442, 0.0, -1)
-    CommonFunc_90005250(0, 1043310441, 1043312442, 0.0, -1)
-    CommonFunc_90005251(0, 1043310442, 5.0, 0.0, -1)
+    CommonFunc_90005250(0, character=1043310434, region=1043312430, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310440, region=1043312442, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1043310441, region=1043312442, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1043310442, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005501(
         0,
         flag=1043310510,
@@ -166,7 +173,7 @@ def Constructor():
     if FlagEnabled(57):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -178,7 +185,7 @@ def Constructor():
     if FlagEnabled(56):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -190,7 +197,7 @@ def Constructor():
     if FlagEnabled(55):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -202,7 +209,7 @@ def Constructor():
     if FlagEnabled(54):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -214,7 +221,7 @@ def Constructor():
     if FlagEnabled(53):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -226,7 +233,7 @@ def Constructor():
     if FlagEnabled(52):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -238,7 +245,7 @@ def Constructor():
     if FlagEnabled(51):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -250,7 +257,7 @@ def Constructor():
     if FlagEnabled(50):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=1043311600,
+            asset__asset_flag=Assets.AEG030_924_2000,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -261,7 +268,17 @@ def Constructor():
         )
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
     CommonFunc_90005704(0, attacked_entity=Characters.Edgar, flag=3401, flag_1=3400, flag_2=1043309201, right=3)
-    CommonFunc_90005703(0, 1043310705, 3401, 3402, 1043309201, 3401, 3400, 3403, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Edgar,
+        flag=3401,
+        flag_1=3402,
+        flag_2=1043309201,
+        flag_3=3401,
+        first_flag=3400,
+        last_flag=3403,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Edgar, flag=3403, first_flag=3400, last_flag=3403)
     Event_1043310705(0, character=Characters.Edgar, asset=Assets.AEG003_061_2019)
     CommonFunc_90005750(

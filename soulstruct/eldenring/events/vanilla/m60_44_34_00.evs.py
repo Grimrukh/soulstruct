@@ -43,7 +43,18 @@ def Constructor():
         flag_11=78119,
     )
     CommonFunc_90005637(0, flag=31018600, character=Characters.WanderingNoble, region=1044341620)
-    CommonFunc_90005636(0, 31018600, 1044340620, 1044341620, 4470, 1044342620, 1044342621, 1044342620, 1044343620, -1)
+    CommonFunc_90005636(
+        0,
+        flag=31018600,
+        character=Characters.WanderingNoble,
+        entity=Assets.AEG099_374_9000,
+        special_effect_id=4470,
+        destination=1044342620,
+        region=1044342621,
+        flag_1=1044342620,
+        patrol_information_id=1044343620,
+        right=-1,
+    )
     Event_1044342502()
     Event_1044342200()
     Event_1044340650(
@@ -55,20 +66,34 @@ def Constructor():
         flag_2=69090,
         flag_3=69370,
     )
-    Event_1044342300(0, character=Characters.DemiHuman4, asset=1044341300, region=1044342300)
-    Event_1044342300(1, character=Characters.DemiHuman5, asset=1044341302, region=1044342301)
-    Event_1044342300(2, character=Characters.DemiHuman6, asset=1044341301, region=1044342301)
+    Event_1044342300(0, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9000, region=1044342300)
+    Event_1044342300(1, character=Characters.DemiHuman5, asset=Assets.AEG801_480_9002, region=1044342301)
+    Event_1044342300(2, character=Characters.DemiHuman6, asset=Assets.AEG801_480_9001, region=1044342301)
     Event_1044342203(0, character=Characters.GodrickFootSoldier1)
-    CommonFunc_90005250(0, 1044340203, 1044342280, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier1, region=1044342280, seconds=0.0, animation_id=-1)
     Event_1044342280()
-    CommonFunc_90005261(0, 1044340270, 1044342270, 5.0, 0.0, -1)
-    CommonFunc_90005261(0, 1044340271, 1044342270, 5.0, 1.5, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Misbegotten0,
+        region=1044342270,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Misbegotten1,
+        region=1044342270,
+        radius=5.0,
+        seconds=1.5,
+        animation_id=-1,
+    )
     Event_1044342230(0, character=1044340230)
     Event_1044342230(1, character=1044340231)
     Event_1044342230(2, character=1044340232)
     Event_1044342230(3, character=1044340240)
     CommonFunc_90005251(0, character=Characters.GodrickFootSoldier2, radius=8.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, 1044340250, 1044342600, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.GodrickFootSoldier0, region=1044342600, seconds=0.0, animation_id=-1)
     CommonFunc_90005630(0, far_view_id=61443400, asset=1044341500, model_point=127)
     Event_1044343700(0, character=1044340700, character_1=1044340701, character_2=1044340702, asset=1044346700)
     Event_1044343702(0, character=1044340700)
@@ -113,7 +138,17 @@ def Constructor():
     )
     Event_1044343707(0, flag=4740, flag_1=1041369201, flag_2=1044349226)
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd, flag=3601, flag_1=3600, flag_2=1044349251, right=3)
-    CommonFunc_90005703(0, 1044340710, 3601, 3602, 1044349251, 3603, 3600, 3603, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Blaidd,
+        flag=3601,
+        flag_1=3602,
+        flag_2=1044349251,
+        flag_3=3603,
+        first_flag=3600,
+        last_flag=3603,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3604)
     Event_1044343710(0, 1044340710)
 

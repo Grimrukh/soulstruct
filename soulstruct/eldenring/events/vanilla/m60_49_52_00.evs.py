@@ -48,7 +48,7 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)
-    CommonFunc_90005261(0, 1049520550, 1049522550, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=1049520550, region=1049522550, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005780(
         0,
         flag=1049520800,

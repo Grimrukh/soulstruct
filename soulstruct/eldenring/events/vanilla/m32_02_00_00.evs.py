@@ -356,21 +356,28 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005250(0, 32020201, 32022200, 0.0, -1)
-    CommonFunc_90005251(0, 32020202, 26.0, 0.0, -1)
-    CommonFunc_90005250(0, 32020208, 32022208, 0.0, -1)
-    CommonFunc_90005250(0, 32020210, 32022210, 0.0, -1)
-    CommonFunc_90005250(0, 32020211, 32022210, 0.0, -1)
-    CommonFunc_90005250(0, 32020212, 32022213, 0.0, -1)
-    CommonFunc_90005250(0, 32020212, 32022212, 0.0, -1)
-    CommonFunc_90005250(0, 32020213, 32022210, 0.0, -1)
-    CommonFunc_90005250(0, 32020213, 32022213, 0.0, -1)
-    CommonFunc_90005250(0, 32020217, 32022217, 0.0, -1)
-    CommonFunc_90005250(0, 32020220, 32022220, 0.0, -1)
-    CommonFunc_90005250(0, 32020400, 32022230, 0.0, -1)
-    CommonFunc_90005250(0, 32020235, 32022230, 5.0, -1)
-    CommonFunc_90005260(0, 32020236, 32022230, 5.0, 0.0, -1)
-    CommonFunc_90005251(0, 32020309, 18.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner0, region=32022200, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GlintstoneMiner1, radius=26.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner5, region=32022208, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner6, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner7, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner8, region=32022212, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022210, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner9, region=32022213, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner13, region=32022217, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=32020220, region=32022220, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.BigGlintstoneMiner, region=32022230, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.GlintstoneMiner21, region=32022230, seconds=5.0, animation_id=-1)
+    CommonFunc_90005260(
+        0,
+        character=Characters.GlintstoneMiner22,
+        region=32022230,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
+    CommonFunc_90005251(0, character=Characters.Marionette3, radius=18.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.Marionette4,
@@ -395,7 +402,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32020305, 32022305, 2.0, -1)
+    CommonFunc_90005250(0, character=32020305, region=32022305, seconds=2.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.Marionette0,

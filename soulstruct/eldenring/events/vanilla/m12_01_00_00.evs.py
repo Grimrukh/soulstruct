@@ -53,11 +53,11 @@ def Constructor():
     )
     Event_12012569(0, flag=12010570, asset=Assets.AEG099_271_9000)
     Event_12012569(1, flag=12010570, asset=Assets.AEG099_271_9001)
-    CommonFunc_90005251(0, 12010201, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010202, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010204, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010207, 10.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010214, 40.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GiantAnt0, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantAnt1, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantAnt2, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=12010207, radius=10.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantAnt5, radius=40.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.GiantAnt4,
@@ -82,7 +82,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 12010210, 12012200, 0.5, -1)
+    CommonFunc_90005250(0, character=Characters.GiantAnt3, region=12012200, seconds=0.5, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.GiantAnt8,
@@ -107,7 +107,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 12010216, 3.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GiantAnt7, radius=3.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.GiantAnt18,
@@ -143,8 +143,8 @@ def Constructor():
     Event_12012231(4, character=Characters.GiantAnt15, seconds=12.0)
     Event_12012231(5, character=Characters.GiantAnt16, seconds=12.0)
     Event_12012231(6, character=Characters.GiantAnt17, seconds=16.0)
-    CommonFunc_90005261(0, 12010245, 12012245, 30.0, 0.0, -1)
-    CommonFunc_90005250(0, 12010246, 12012246, 1.0, -1)
+    CommonFunc_90005261(0, character=Characters.GiantBall0, region=12012245, radius=30.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=12010246, region=12012246, seconds=1.0, animation_id=-1)
     Event_12012239()
     Event_12012249()
     Event_12012240()
@@ -152,12 +152,12 @@ def Constructor():
     Event_12012257()
     Event_12012288(0, character=Characters.SilverTear5, character_1=Characters.SilverTear0, region=12022298)
     Event_12012288(1, character=Characters.SilverTear6, character_1=Characters.SilverTear1, region=12022299)
-    CommonFunc_90005261(0, 12010251, 12012251, 10.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.NoxFighter1, region=12012251, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=12010260, region=12012260, seconds=0.5, animation_id=3006)
-    CommonFunc_90005250(0, 12010263, 12012260, 0.0, -1)
-    CommonFunc_90005250(0, 12010264, 12012260, 0.0, -1)
-    CommonFunc_90005251(0, 12010276, 25.0, 0.0, -1)
-    CommonFunc_90005261(0, 12015280, 12012280, 10.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.NoxFighter2, region=12012260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.NoxFighter3, region=12012260, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.NoxFighter0, radius=25.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005261(0, character=12015280, region=12012280, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.SilverTear2,
@@ -219,7 +219,7 @@ def Constructor():
         left_3=0,
     )
     Event_12012301()
-    CommonFunc_90005251(0, 12010305, 5.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Clayman0, radius=5.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=12010320,
@@ -326,9 +326,9 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 12010850, 20.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010373, 12.0, 0.0, -1)
-    CommonFunc_90005251(0, 12010375, 18.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.DragonkinSoldier3, radius=20.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=12010373, radius=12.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.Basilisk0, radius=18.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Basilisk1, region=12012377, seconds=0.0, animation_id=3000)
     CommonFunc_90005250(0, character=Characters.Basilisk2, region=12012377, seconds=2.0, animation_id=3001)
     CommonFunc_90005250(0, character=Characters.Basilisk3, region=12012377, seconds=2.0, animation_id=3001)

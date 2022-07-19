@@ -133,7 +133,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32110206, 32112206, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner3, region=32112206, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner4,
@@ -158,7 +158,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32110208, 32112208, 0.0, -1)
+    CommonFunc_90005250(0, character=32110208, region=32112208, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner5,
@@ -183,7 +183,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32110210, 32112209, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner6, region=32112209, seconds=0.0, animation_id=-1)
     CommonFunc_90005201(
         0,
         character=Characters.TunnelMiner7,
@@ -208,7 +208,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32110215, 32112215, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner8, region=32112215, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
         character=Characters.TunnelMiner9,
@@ -221,7 +221,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 32110300, 32112300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.OnyxLord0, region=32112300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, 32110301, 32112301, 0.0, -1)
 
 

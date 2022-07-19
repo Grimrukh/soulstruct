@@ -36,7 +36,17 @@ def Constructor():
         flag_2=1036419201,
         right=3,
     )
-    CommonFunc_90005703(0, 1036410700, 4101, 4102, 1036419201, 4101, 4100, 4104, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.AlbinauricArcher,
+        flag=4101,
+        flag_1=4102,
+        flag_2=1036419201,
+        flag_3=4101,
+        first_flag=4100,
+        last_flag=4104,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.AlbinauricArcher, flag=4103, first_flag=4100, last_flag=4104)
     CommonFunc_90005750(0, 1036411700, 4350, 104100, 400410, 400410, 1036419215, 0)
 

@@ -165,8 +165,8 @@ def Constructor():
         right=0,
     )
     CommonFunc_90005637(0, flag=31218690, character=Characters.WanderingNoble, region=1047382625)
-    CommonFunc_90005251(0, 1047380294, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 1047380296, 1047382296, 0.0, -1)
+    CommonFunc_90005251(0, character=1047380294, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=1047380299,
@@ -175,14 +175,14 @@ def Constructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005250(0, 1047380301, 1047382453, 0.0, -1)
-    CommonFunc_90005250(0, 1047380302, 1047382302, 0.0, -1)
-    CommonFunc_90005250(0, 1047380306, 1047382302, 0.0, -1)
-    CommonFunc_90005251(0, 1047380307, 8.0, 0.0, -1)
-    CommonFunc_90005250(0, 1047380312, 1047382302, 0.0, -1)
-    CommonFunc_90005250(0, 1047380450, 1047382450, 0.0, -1)
-    CommonFunc_90005251(0, 1047382459, 15.0, 0.0, -1)
-    CommonFunc_90005250(0, 1047380474, 1047382474, 0.0, -1)
+    CommonFunc_90005250(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=1047380307, radius=8.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.KindredofRot2, region=1047382302, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.FungalSorcerer0, region=1047382450, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer1, radius=15.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.RedmaneKnight, region=1047382474, seconds=0.0, animation_id=-1)
     CommonFunc_90005513(
         0,
         flag=1047380540,

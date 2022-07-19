@@ -43,10 +43,10 @@ def Constructor():
         flag_10=78228,
         flag_11=78229,
     )
-    CommonFunc_90005251(0, 1033460200, 7.0, 0.0, -1)
-    CommonFunc_90005251(0, 1033460201, 7.0, 0.0, -1)
-    CommonFunc_90005251(0, 1033460203, 7.0, 0.0, -1)
-    CommonFunc_90005251(0, 1033460204, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster0, radius=7.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster1, radius=7.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster2, radius=7.0, seconds=0.0, animation_id=-1)
+    CommonFunc_90005251(0, character=Characters.GiantLobster3, radius=7.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,

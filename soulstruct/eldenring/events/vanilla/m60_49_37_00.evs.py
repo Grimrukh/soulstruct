@@ -25,7 +25,7 @@ from .entities.m60_49_37_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049370000, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005251(0, 1049370200, 20.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1049370200, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(
         0,
         flag=1049370800,

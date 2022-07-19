@@ -37,9 +37,19 @@ def Constructor():
     )
     CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)
     Event_1051432209()
-    Event_1051432200(0, 1051430800, 55.0, 0.0, -1)
+    Event_1051432200(0, character=Characters.Gargoyle, radius=55.0, seconds=0.0, animation_id=-1)
     Event_1051430700(0, character=Characters.BeastClergyman)
-    CommonFunc_90005703(0, 1051430700, 3641, 3642, 1051439201, 1051439212, 3640, 3643, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.BeastClergyman,
+        flag=3641,
+        flag_1=3642,
+        flag_2=1051439201,
+        flag_3=1051439212,
+        first_flag=3640,
+        last_flag=3643,
+        right=-1,
+    )
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.BeastClergyman,

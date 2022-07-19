@@ -83,7 +83,17 @@ def Constructor():
         flag_2=1042369201,
         right=3,
     )
-    CommonFunc_90005703(0, 1042360700, 3181, 3182, 1042369201, 3181, 3180, 3183, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.WhiteMaskVarre,
+        flag=3181,
+        flag_1=3182,
+        flag_2=1042369201,
+        flag_3=3181,
+        first_flag=3180,
+        last_flag=3183,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.WhiteMaskVarre, flag=3183, first_flag=3180, last_flag=3183)
     RunCommonEvent(1042363701)
     RunCommonEvent(1042363702)
@@ -108,7 +118,17 @@ def Constructor():
     CommonFunc_90005708(0, character=Characters.Ranni, flag=3746, left=0)
     Event_1042363720(0, character=Characters.Merchant, character_1=Characters.NomadMule)
     CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4701, flag_1=4700, flag_2=1042369301, right=3)
-    CommonFunc_90005703(0, 1042360710, 4701, 4702, 1042369301, 4701, 4700, 4704, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Merchant,
+        flag=4701,
+        flag_1=4702,
+        flag_2=1042369301,
+        flag_3=4701,
+        first_flag=4700,
+        last_flag=4704,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Merchant, flag=4703, first_flag=4700, last_flag=4704)
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4701, flag_1=4700, flag_2=1042369327, right=3)
     CommonFunc_90005703(

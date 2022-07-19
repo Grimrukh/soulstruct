@@ -62,7 +62,17 @@ def Constructor():
         flag_2=1051569201,
         right=1,
     )
-    CommonFunc_90005703(0, 1051560700, 3841, 3842, 1051569201, 3841, 3840, 3844, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.SpiritJellyfish,
+        flag=3841,
+        flag_1=3842,
+        flag_2=1051569201,
+        flag_3=3841,
+        first_flag=3840,
+        last_flag=3844,
+        right=-1,
+    )
     Event_1051563700(0, character=Characters.SpiritJellyfish)
     Event_1051563701(0, character=Characters.SpiritJellyfish, radius=7.0)
     Event_1051563702(0, seconds=10.0, seconds_1=12.0, seconds_2=20.0, flag=1051569206)
@@ -70,11 +80,31 @@ def Constructor():
     Event_1051563704(0, character=Characters.SpiritJellyfish)
     Event_1051563710(0, character=Characters.Millicent)
     CommonFunc_90005704(0, attacked_entity=Characters.Millicent, flag=4181, flag_1=4180, flag_2=1051569251, right=3)
-    CommonFunc_90005703(0, 1051560705, 4181, 4182, 1051569251, 4181, 4180, 4182, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Millicent,
+        flag=4181,
+        flag_1=4182,
+        flag_2=1051569251,
+        flag_3=4181,
+        first_flag=4180,
+        last_flag=4182,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.Millicent, flag=4183, first_flag=4180, last_flag=4184)
     Event_1051563715(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040529251, right=3)
-    CommonFunc_90005703(0, 1051560720, 4201, 4202, 1040529251, 4201, 4200, 4203, -1)
+    CommonFunc_90005703(
+        0,
+        character=Characters.BrotherCorhyn,
+        flag=4201,
+        flag_1=4202,
+        flag_2=1040529251,
+        flag_3=4201,
+        first_flag=4200,
+        last_flag=4203,
+        right=-1,
+    )
     CommonFunc_90005702(0, character=Characters.BrotherCorhyn, flag=4203, first_flag=4200, last_flag=4204)
     Event_1051563716(0, character=Characters.Goldmask)
     Event_1051563717(0, character=Characters.Goldmask)

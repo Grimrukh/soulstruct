@@ -24,7 +24,7 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d,. \n]+)\) *\n")
+_EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *\n")
 
 
 class EMEVD(GameFile, abc.ABC):
