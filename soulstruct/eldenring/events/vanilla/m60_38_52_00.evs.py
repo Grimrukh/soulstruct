@@ -1,4 +1,6 @@
 """
+West Altus Plateau (SE) (SW)
+
 linked:
 0
 82
@@ -41,14 +43,14 @@ def Constructor():
         character__region__targeting_character=1038520340,
         region=1038522400,
         flag=1038520800,
-        character__region=Characters.GiantSkeletonTorso,
+        character__region=1038520350,
     )
     Event_1038522347(
         1,
         character__region__targeting_character=1038520350,
         region=1038522400,
         flag=1038520800,
-        character__region=Characters.TibiaMariner,
+        character__region=1038520340,
     )
     CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950602, npc_threat_level=24)
     CommonFunc_90005860(
@@ -60,7 +62,7 @@ def Constructor():
         item_lot__item_lot_param_id=30385,
         seconds=0.0,
     )
-    Event_1038522339(0, character__region=1038520340, character__region_1=Characters.GiantSkeletonTorso)
+    Event_1038522339(0, character__region=1038520340, character__region_1=1038520350)
     Event_1038522349()
     CommonFunc_90005616(0, flag=530385, region=1038522700)
     Event_1038522346(

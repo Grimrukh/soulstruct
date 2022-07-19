@@ -1,4 +1,6 @@
 """
+Academy of Raya Lucaria
+
 linked:
 0
 82
@@ -50,7 +52,7 @@ def Constructor():
     Event_14002811()
     Event_14002849()
     Event_140028121()
-    Event_140028122(0, character=Characters.RennalaPhaseTwo, special_effect=14585, special_effect_1=14575)
+    Event_140028122(0, character=14000800, special_effect=14585, special_effect_1=14575)
     Event_14002606()
     Event_14002689()
     Event_14003500(0, region=14002700, flag=14000800)
@@ -561,7 +563,7 @@ def Constructor():
     Event_14000701()
     Event_14000702()
     Event_14000703()
-    Event_14000710(0, asset__character=Characters.SorceressSellen0, asset__character_1=14000711)
+    Event_14000710(0, asset__character=14000710, asset__character_1=14000711)
     Event_14000711()
     CommonFunc_90005702(0, character=Characters.SorceressSellen2, flag=3463, first_flag=3460, last_flag=3463)
     CommonFunc_90005750(

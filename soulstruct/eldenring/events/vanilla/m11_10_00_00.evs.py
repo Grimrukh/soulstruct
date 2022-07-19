@@ -1,4 +1,6 @@
 """
+Roundtable Hold
+
 linked:
 0
 82
@@ -91,8 +93,8 @@ def Constructor():
     CommonFunc_90005621(0, flag=11100575, asset=Assets.AEG099_270_9001)
     Event_11102680()
     Event_11103700(0, character=Characters.ScalyMisbegotten)
-    RunCommonEvent(11103702, slot=0)
-    RunCommonEvent(11103703, slot=0)
+    RunCommonEvent(11103702)
+    RunCommonEvent(11103703)
     Event_11103705(0, character=Characters.FingerReaderEnia)
     CommonFunc_90005708(0, character=Characters.FingerReaderEnia, flag=3480, left=0)
     Event_11103706(0, entity=Characters.TheTwoFingers)
@@ -190,9 +192,9 @@ def Constructor():
         flag=11109656,
         model_point=0,
     )
-    RunCommonEvent(11103770, slot=0)
-    RunCommonEvent(11103771, slot=0)
-    RunCommonEvent(11103772, slot=0)
+    RunCommonEvent(11103770)
+    RunCommonEvent(11103771)
+    RunCommonEvent(11103772)
     Event_11103775()
     Event_11100790()
     Event_11100791(0, flag=400282, flag_1=11109770)

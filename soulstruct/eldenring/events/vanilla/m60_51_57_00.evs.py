@@ -1,4 +1,6 @@
 """
+Northwest Mountaintops (SE) (NE)
+
 linked:
 0
 82
@@ -108,16 +110,10 @@ def Constructor():
         special_effect=11130,
         animation_id=20015,
     )
-    Event_1051572821(
-        0,
-        character=Characters.Commander,
-        character_1=1051575801,
-        special_effect=11136,
-        animation_id=20016,
-    )
+    Event_1051572821(0, character=1051570800, character_1=1051575801, special_effect=11136, animation_id=20016)
     Event_1051572822(
         0,
-        character=Characters.Commander,
+        character=1051570800,
         character_1=Characters.BanishedKnight5,
         character_2=Characters.BanishedKnight6,
         special_effect_id=11135,

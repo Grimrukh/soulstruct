@@ -1,4 +1,6 @@
 """
+West Liurnia (SE) (SW)
+
 linked:
 0
 82
@@ -24,7 +26,7 @@ from .entities.m60_34_44_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034440000, asset=Assets.AEG099_060_9000)
-    RunCommonEvent(1034442200, slot=0)
+    RunCommonEvent(1034442200)
     CommonFunc_90005300(0, flag=1034440220, character=Characters.Scarab, item_lot_param_id=40218, seconds=0.0, left=0)
     Event_1034440700(0, 1034440700, 930023, 3409)
 

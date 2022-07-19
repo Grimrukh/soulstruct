@@ -1,4 +1,6 @@
 """
+West Limgrave (SE) (SW)
+
 linked:
 0
 82
@@ -83,9 +85,9 @@ def Constructor():
     )
     CommonFunc_90005703(0, 1042360700, 3181, 3182, 1042369201, 3181, 3180, 3183, -1)
     CommonFunc_90005702(0, character=Characters.WhiteMaskVarre, flag=3183, first_flag=3180, last_flag=3183)
-    RunCommonEvent(1042363701, slot=0)
-    RunCommonEvent(1042363702, slot=0)
-    RunCommonEvent(1042363703, slot=0)
+    RunCommonEvent(1042363701)
+    RunCommonEvent(1042363702)
+    RunCommonEvent(1042363703)
     Event_1042360710(0, character=Characters.Ranni, asset=Assets.AEG099_090_9018)
     CommonFunc_90005704(0, attacked_entity=Characters.Ranni, flag=1042369401, flag_1=3746, flag_2=1042369401, right=3)
     CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=905, vfx_id=603000)

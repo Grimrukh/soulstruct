@@ -1,4 +1,6 @@
 """
+Regal Ancestor (Upper)
+
 linked:
 0
 82

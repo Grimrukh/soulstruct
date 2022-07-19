@@ -1,4 +1,6 @@
 """
+Northwest Liurnia (SE) (SW)
+
 linked:
 0
 82
@@ -53,12 +55,12 @@ def Constructor():
     Event_1034482800()
     Event_1034482810()
     Event_1034482849()
-    Event_1034482610(0, asset=Assets.AEG099_045_9000, flag=1034482640, owner_entity=Characters.Dummy)
-    Event_1034482610(1, asset=Assets.AEG099_045_9001, flag=1034482641, owner_entity=Characters.Dummy)
-    Event_1034482610(2, asset=Assets.AEG099_045_9002, flag=1034482642, owner_entity=Characters.Dummy)
+    Event_1034482610(0, asset=1034481640, flag=1034482640, owner_entity=Characters.Dummy)
+    Event_1034482610(1, asset=1034481641, flag=1034482641, owner_entity=Characters.Dummy)
+    Event_1034482610(2, asset=1034481642, flag=1034482642, owner_entity=Characters.Dummy)
     Event_1034482610(3, asset=1034481643, flag=1034482643, owner_entity=Characters.Dummy)
-    Event_1034482610(4, asset=Assets.AEG099_045_9004, flag=1034482644, owner_entity=Characters.Dummy)
-    Event_1034482610(5, asset=Assets.AEG099_045_9005, flag=1034482645, owner_entity=Characters.Dummy)
+    Event_1034482610(4, asset=1034481644, flag=1034482644, owner_entity=Characters.Dummy)
+    Event_1034482610(5, asset=1034481645, flag=1034482645, owner_entity=Characters.Dummy)
     Event_1034482610(6, asset=1034481646, flag=1034482646, owner_entity=Characters.Dummy)
     Event_1034482610(7, asset=1034481647, flag=1034482647, owner_entity=Characters.Dummy)
     Event_1034482610(8, asset=1034481648, flag=1034482648, owner_entity=Characters.Dummy)
@@ -119,7 +121,7 @@ def Constructor():
     )
     Event_1034482262(
         0,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -133,7 +135,7 @@ def Constructor():
     )
     Event_1034482262(
         1,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -147,7 +149,7 @@ def Constructor():
     )
     Event_1034482262(
         3,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -161,7 +163,7 @@ def Constructor():
     )
     Event_1034482262(
         4,
-        character=Characters.Balloon1,
+        character=1034480251,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,
@@ -175,7 +177,7 @@ def Constructor():
     )
     Event_1034482262(
         5,
-        character=Characters.Balloon1,
+        character=1034480251,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,

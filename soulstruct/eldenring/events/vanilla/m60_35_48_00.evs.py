@@ -1,4 +1,6 @@
 """
+Northwest Liurnia (SE) (SE)
+
 linked:
 0
 
@@ -57,7 +59,7 @@ def Constructor():
     )
     Event_1035482262(
         0,
-        character=Characters.Balloon,
+        character=1035480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -71,7 +73,7 @@ def Constructor():
     )
     Event_1035482262(
         1,
-        character=Characters.Balloon,
+        character=1035480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,

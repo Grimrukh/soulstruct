@@ -1,4 +1,6 @@
 """
+Northwest Mountaintops (SW) (SW)
+
 linked:
 0
 82
@@ -32,8 +34,8 @@ def Constructor():
         left_1=1,
         left_2=1,
     )
-    Event_1048562350(2, character__region=Characters.AlbinauricArcher0, character=Characters.BigWolf0)
-    Event_1048562350(5, character__region=Characters.AlbinauricArcher2, character=Characters.BigWolf1)
+    Event_1048562350(2, character__region=1048560352, character=Characters.BigWolf0)
+    Event_1048562350(5, character__region=1048560355, character=Characters.BigWolf1)
     CommonFunc_90005790(
         0,
         right=0,

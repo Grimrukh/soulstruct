@@ -1,4 +1,6 @@
 """
+Stormveil Castle
+
 linked:
 0
 82
@@ -410,7 +412,7 @@ def Constructor():
     Event_10003724()
     Event_10003726()
     Event_10003728(0, region=10002716)
-    RunCommonEvent(10003710, slot=0)
+    RunCommonEvent(10003710)
     Event_10003711(0, first_flag=10002732, last_flag=10002735, flag=10002732, region=10002700)
     Event_10003711(1, first_flag=10002732, last_flag=10002735, flag=10002733, region=10002702)
     Event_10003711(2, first_flag=10002732, last_flag=10002735, flag=10002734, region=10002704)

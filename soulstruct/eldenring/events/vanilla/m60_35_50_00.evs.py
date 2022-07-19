@@ -1,4 +1,6 @@
 """
+Northwest Liurnia (NE) (SE)
+
 linked:
 0
 82
@@ -575,14 +577,14 @@ def Constructor():
     Event_1035502840()
     Event_1035502841()
     Event_1035502842()
-    Event_1035502210(0, asset=Assets.AEG099_045_9000, flag=1035502600, owner_entity=Characters.Dummy)
-    Event_1035502210(1, asset=Assets.AEG099_045_9001, flag=1035502601, owner_entity=Characters.Dummy)
-    Event_1035502210(2, asset=Assets.AEG099_045_9002, flag=1035502602, owner_entity=Characters.Dummy)
-    Event_1035502210(3, asset=Assets.AEG099_045_9003, flag=1035502603, owner_entity=Characters.Dummy)
-    Event_1035502210(4, asset=Assets.AEG099_045_9004, flag=1035502604, owner_entity=Characters.Dummy)
-    Event_1035502210(5, asset=Assets.AEG099_045_9005, flag=1035502605, owner_entity=Characters.Dummy)
-    Event_1035502210(6, asset=Assets.AEG099_045_9006, flag=1035502606, owner_entity=Characters.Dummy)
-    Event_1035502210(7, asset=Assets.AEG099_045_9008, flag=1035502608, owner_entity=Characters.Dummy)
+    Event_1035502210(0, asset=1035501600, flag=1035502600, owner_entity=Characters.Dummy)
+    Event_1035502210(1, asset=1035501601, flag=1035502601, owner_entity=Characters.Dummy)
+    Event_1035502210(2, asset=1035501602, flag=1035502602, owner_entity=Characters.Dummy)
+    Event_1035502210(3, asset=1035501603, flag=1035502603, owner_entity=Characters.Dummy)
+    Event_1035502210(4, asset=1035501604, flag=1035502604, owner_entity=Characters.Dummy)
+    Event_1035502210(5, asset=1035501605, flag=1035502605, owner_entity=Characters.Dummy)
+    Event_1035502210(6, asset=1035501606, flag=1035502606, owner_entity=Characters.Dummy)
+    Event_1035502210(7, asset=1035501608, flag=1035502608, owner_entity=Characters.Dummy)
     Event_1035500700(
         0,
         character=Characters.AlbinauricLookout0,

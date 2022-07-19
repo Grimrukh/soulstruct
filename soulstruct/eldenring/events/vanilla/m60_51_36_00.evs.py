@@ -1,4 +1,6 @@
 """
+South Caelid (SE) (SE)
+
 linked:
 0
 82
@@ -465,8 +467,8 @@ def Constructor():
     Event_1051363711()
     Event_1051360720(0, character=Characters.Blaidd)
     Event_1051360721()
-    Event_1051363725(0, asset__character=Characters.WitchHunterJerren0)
-    Event_1051363726(0, asset__character=Characters.WitchHunterJerren1)
+    Event_1051363725(0, asset__character=1051360700)
+    Event_1051363726(0, asset__character=1051360701)
     Event_1051363727()
     CommonFunc_90005708(0, character=Characters.WitchHunterJerren0, flag=3360, left=1051362700)
     Event_1051360730(0, character=Characters.Human, animation_id=0, left=1)

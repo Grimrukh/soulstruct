@@ -1,4 +1,6 @@
 """
+Southwest Mountaintops (NW) (SE)
+
 linked:
 0
 82
@@ -66,7 +68,7 @@ def Constructor():
     Event_1049542216(0, character=Characters.WanderingNoble3)
     CommonFunc_90005261(0, character=Characters.Wolf, region=1049542260, radius=10.0, seconds=0.0, animation_id=20010)
     CommonFunc_90005261(0, character=1049540373, region=1049542260, radius=10.0, seconds=0.0, animation_id=20002)
-    Event_1049542350(0, character__region=Characters.AlbinauricArcher, character=Characters.BigWolf)
+    Event_1049542350(0, character__region=1049540350, character=Characters.BigWolf)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
     Event_1049543700(0, character=Characters.TalkDummy1, region=1049542700, distance=155.0)
     CommonFunc_90005706(0, 1049540710, 930023, 0)

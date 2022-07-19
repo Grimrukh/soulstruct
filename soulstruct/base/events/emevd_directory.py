@@ -91,6 +91,7 @@ class EMEVDDirectory(abc.ABC):
                 warn_missing_enums=warn_missing_enums,
                 entity_module_prefix=entity_module_prefix,
                 is_common_func=True,
+                docstring="Common functions that can be imported and used in other EVS scripts.",
             )
             _LOGGER.info(f"Wrote EVS for COMMON_FUNC map: {emevd.map_name}")
 
@@ -115,6 +116,7 @@ class EMEVDDirectory(abc.ABC):
                 warn_missing_enums=warn_missing_enums,
                 entity_module_prefix=entity_module_prefix,
                 is_common_func=False,
+                docstring=self.GET_MAP(map_name).verbose_name,
             )
             _LOGGER.info(f"Wrote EVS for map {emevd.map_name} successfully.")
 

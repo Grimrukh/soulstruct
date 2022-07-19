@@ -1,4 +1,6 @@
 """
+East Weeping Peninsula (NW) (SW)
+
 linked:
 0
 72
@@ -53,9 +55,9 @@ def Constructor():
         flag_2=69090,
         flag_3=69370,
     )
-    Event_1044342300(0, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9000, region=1044342300)
-    Event_1044342300(1, character=Characters.DemiHuman5, asset=Assets.AEG801_480_9002, region=1044342301)
-    Event_1044342300(2, character=Characters.DemiHuman6, asset=Assets.AEG801_480_9001, region=1044342301)
+    Event_1044342300(0, character=Characters.DemiHuman4, asset=1044341300, region=1044342300)
+    Event_1044342300(1, character=Characters.DemiHuman5, asset=1044341302, region=1044342301)
+    Event_1044342300(2, character=Characters.DemiHuman6, asset=1044341301, region=1044342301)
     Event_1044342203(0, character=Characters.GodrickFootSoldier1)
     CommonFunc_90005250(0, 1044340203, 1044342280, 0.0, -1)
     Event_1044342280()

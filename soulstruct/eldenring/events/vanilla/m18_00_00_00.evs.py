@@ -1,4 +1,6 @@
 """
+Stranded Graveyard
+
 linked:
 0
 82

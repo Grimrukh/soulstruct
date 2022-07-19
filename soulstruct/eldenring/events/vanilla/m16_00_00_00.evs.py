@@ -1,4 +1,6 @@
 """
+Volcano Manor
+
 linked:
 0
 82
@@ -229,7 +231,7 @@ def Constructor():
     )
     Event_16002185(
         0,
-        character=Characters.InquisitorGhiza,
+        character=16000180,
         flag=16002181,
         flag_1=16002182,
         flag_2=16000180,
@@ -387,7 +389,7 @@ def Constructor():
         flag_1=16002805,
         distance=195.0,
     )
-    Event_16003760(0, asset__character=Characters.RykardHatingSpirit)
+    Event_16003760(0, asset__character=16000770)
     Event_16003761(0, character=Characters.RykardHatingSpirit)
     Event_16003762(
         0,

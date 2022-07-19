@@ -1,4 +1,6 @@
 """
+Firelink Shrine / Cemetery of Ash
+
 linked:
 0
 

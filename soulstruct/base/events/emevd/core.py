@@ -328,8 +328,10 @@ class EMEVD(GameFile, abc.ABC):
         numeric_output += "\n\nstrings:\n" + "\n".join(s[0] + ": " + s[1] for s in self.unpack_strings())
         return numeric_output
 
-    def get_evs_docstring(self):
+    def get_evs_docstring(self, actual_docstring=""):
         docstring = '"""'
+        if actual_docstring:
+            docstring += "\n" + actual_docstring.rstrip("\n") + "\n"
         docstring += "\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
         docstring += "\n\nstrings:\n" + "\n".join(s[0] + ": " + repr(s[1]).strip("'") for s in self.unpack_strings())
         docstring += '\n"""'
@@ -342,6 +344,7 @@ class EMEVD(GameFile, abc.ABC):
         warn_missing_enums=True,
         entity_module_prefix=".",
         is_common_func=False,
+        docstring="",
     ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
@@ -379,7 +382,7 @@ class EMEVD(GameFile, abc.ABC):
         for event in self.events.values():
             event.process_all_event_args()
 
-        docstring = self.get_evs_docstring()
+        docstring = self.get_evs_docstring(docstring)
         imports = f"from soulstruct.{self.GAME.submodule_name}.events import *"
         imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.instructions import *"
         evs_events = [
@@ -606,6 +609,7 @@ class EMEVD(GameFile, abc.ABC):
         warn_missing_enums=True,
         entity_module_prefix=".",
         is_common_func=False,
+        docstring="",
     ):
         if not evs_path:
             evs_path = self.map_name
@@ -620,6 +624,7 @@ class EMEVD(GameFile, abc.ABC):
             warn_missing_enums,
             entity_module_prefix,
             is_common_func,
+            docstring,
         )
         with evs_path.open("w", encoding="utf-8") as f:
             f.write(evs_string)

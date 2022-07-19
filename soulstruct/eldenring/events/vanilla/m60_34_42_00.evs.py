@@ -1,4 +1,6 @@
 """
+Southwest Liurnia (NE) (SW)
+
 linked:
 0
 82
@@ -57,16 +59,16 @@ def Constructor():
         seconds=0.0,
         left=0,
     )
-    Event_1034422600(0, asset=Assets.AEG099_045_9000, flag=1034422600, owner_entity=Characters.Dummy)
-    Event_1034422600(1, asset=Assets.AEG099_045_9001, flag=1034422601, owner_entity=Characters.Dummy)
-    Event_1034422600(2, asset=Assets.AEG099_045_9002, flag=1034422602, owner_entity=Characters.Dummy)
-    Event_1034422600(3, asset=Assets.AEG099_045_9003, flag=1034422603, owner_entity=Characters.Dummy)
-    Event_1034422600(4, asset=Assets.AEG099_045_9004, flag=1034422604, owner_entity=Characters.Dummy)
-    Event_1034422600(5, asset=Assets.AEG099_045_9005, flag=1034422605, owner_entity=Characters.Dummy)
-    Event_1034422600(6, asset=Assets.AEG099_045_9006, flag=1034422606, owner_entity=Characters.Dummy)
-    Event_1034422600(7, asset=Assets.AEG099_045_9007, flag=1034422607, owner_entity=Characters.Dummy)
-    Event_1034422600(8, asset=Assets.AEG099_045_9008, flag=1034422608, owner_entity=Characters.Dummy)
-    Event_1034422600(9, asset=Assets.AEG099_045_9009, flag=1034422609, owner_entity=Characters.Dummy)
+    Event_1034422600(0, asset=1034421600, flag=1034422600, owner_entity=Characters.Dummy)
+    Event_1034422600(1, asset=1034421601, flag=1034422601, owner_entity=Characters.Dummy)
+    Event_1034422600(2, asset=1034421602, flag=1034422602, owner_entity=Characters.Dummy)
+    Event_1034422600(3, asset=1034421603, flag=1034422603, owner_entity=Characters.Dummy)
+    Event_1034422600(4, asset=1034421604, flag=1034422604, owner_entity=Characters.Dummy)
+    Event_1034422600(5, asset=1034421605, flag=1034422605, owner_entity=Characters.Dummy)
+    Event_1034422600(6, asset=1034421606, flag=1034422606, owner_entity=Characters.Dummy)
+    Event_1034422600(7, asset=1034421607, flag=1034422607, owner_entity=Characters.Dummy)
+    Event_1034422600(8, asset=1034421608, flag=1034422608, owner_entity=Characters.Dummy)
+    Event_1034422600(9, asset=1034421609, flag=1034422609, owner_entity=Characters.Dummy)
     CommonFunc_90005525(0, flag=1034420650, asset=Assets.AEG004_983_1000)
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930023, left=0)
     Event_1034420700(0, character=Characters.NepheliLoux, asset=Assets.AEG007_360_2000)

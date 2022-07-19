@@ -1,4 +1,6 @@
 """
+East Weeping Peninsula (SW) (SW)
+
 linked:
 0
 82
@@ -50,7 +52,7 @@ def Constructor():
         left=0,
     )
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
-    RunCommonEvent(90005477, slot=0)
+    RunCommonEvent(90005477)
     Event_1044322340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     CommonFunc_90005860(
         0,

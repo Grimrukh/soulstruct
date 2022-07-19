@@ -1,4 +1,6 @@
 """
+South Weeping Peninsula (NE) (NE)
+
 linked:
 0
 82
@@ -164,7 +166,7 @@ def Constructor():
     if FlagEnabled(57):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -176,7 +178,7 @@ def Constructor():
     if FlagEnabled(56):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -188,7 +190,7 @@ def Constructor():
     if FlagEnabled(55):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -200,7 +202,7 @@ def Constructor():
     if FlagEnabled(54):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -212,7 +214,7 @@ def Constructor():
     if FlagEnabled(53):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -224,7 +226,7 @@ def Constructor():
     if FlagEnabled(52):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -236,7 +238,7 @@ def Constructor():
     if FlagEnabled(51):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -248,7 +250,7 @@ def Constructor():
     if FlagEnabled(50):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,

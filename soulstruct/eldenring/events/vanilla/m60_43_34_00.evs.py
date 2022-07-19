@@ -1,4 +1,6 @@
 """
+West Weeping Peninsula (NE) (SE)
+
 linked:
 0
 82
@@ -26,11 +28,11 @@ def Constructor():
     CommonFunc_90005461(0, character=1043340204)
     CommonFunc_90005462(1, character=1043340204)
     CommonFunc_90005460(0, character=1043340204)
-    Event_1043342220(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1043342220)
-    Event_1043342220(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1043342220)
-    Event_1043342220(2, character=Characters.DemiHuman2, asset=Assets.AEG801_480_9002, region=1043342220)
-    Event_1043342220(3, character=Characters.DemiHuman3, asset=Assets.AEG801_480_9003, region=1043342223)
-    Event_1043342220(4, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9004, region=1043342223)
+    Event_1043342220(0, character=Characters.DemiHuman0, asset=1043341220, region=1043342220)
+    Event_1043342220(1, character=Characters.DemiHuman1, asset=1043341221, region=1043342220)
+    Event_1043342220(2, character=Characters.DemiHuman2, asset=1043341222, region=1043342220)
+    Event_1043342220(3, character=Characters.DemiHuman3, asset=1043341223, region=1043342223)
+    Event_1043342220(4, character=Characters.DemiHuman4, asset=1043341224, region=1043342223)
     Event_1043342220(5, character=1043340225, asset=1043341225, region=1043342223)
     CommonFunc_90005683(0, flag=62150, asset=Assets.AEG099_055_1001, vfx_id=210, flag_1=78196, flag_2=78196)
     CommonFunc_90005300(

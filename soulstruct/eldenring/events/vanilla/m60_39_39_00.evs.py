@@ -1,4 +1,6 @@
 """
+Far West Limgrave (NE) (NE)
+
 linked:
 0
 82
@@ -25,7 +27,7 @@ def Constructor():
     CommonFunc_90005704(0, attacked_entity=Characters.SorcererThops, flag=3801, flag_1=3800, flag_2=1039399201, right=3)
     CommonFunc_90005703(0, 1039390700, 3801, 3802, 1039399201, 3801, 3800, 3803, -1)
     CommonFunc_90005702(0, character=Characters.SorcererThops, flag=3803, first_flag=3800, last_flag=3803)
-    Event_1039393700(0, asset__character=Characters.SorcererThops)
+    Event_1039393700(0, asset__character=1039390700)
     Event_1039393701()
     Event_1039393702(0, character=Characters.SorcererThops, asset=Assets.AEG003_061_9000)
     CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot_param_id=40206, seconds=0.0, left=0)

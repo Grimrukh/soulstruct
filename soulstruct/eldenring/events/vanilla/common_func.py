@@ -1,4 +1,6 @@
 """
+Common functions that can be imported and used in other EVS scripts.
+
 linked:
 
 
