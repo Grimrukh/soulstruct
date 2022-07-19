@@ -292,7 +292,7 @@ def Event_11815392():
 @NeverRestart(11810001)
 def Event_11810001():
     """Event 11810001"""
-    MAIN.Await(HealthRatioLessThanOrEqual(1810800, value=0.0))
+    MAIN.Await(HealthRatio(1810800) <= 0.0)
     
     PlaySoundEffect(1810800, 777777777, sound_type=SoundType.s_SFX)
     
@@ -373,7 +373,7 @@ def Event_11810310():
     AddSpecialEffect(1810800, 4160)
     SetStandbyAnimationSettings(1810800)
     ForceAnimation(1810800, 9060, wait_for_completion=True)
-    CancelSpecialEffect(1810800, 4160)
+    RemoveSpecialEffect(1810800, 4160)
     SetNest(1810800, region=1812300)
     EnableObject(1811990)
     CreateVFX(1811991)
@@ -853,7 +853,7 @@ def Event_11810300():
         EnableFlag(11810301)
     AND_1.Add(FlagDisabled(16))
     AND_1.Add(FlagDisabled(11810090))
-    AND_1.Add(HealthRatioLessThanOrEqual(1810800, value=0.0))
+    AND_1.Add(HealthRatio(1810800) <= 0.0)
     
     MAIN.Await(AND_1)
     
@@ -1016,8 +1016,8 @@ def Event_11810050():
 @NeverRestart(11810510)
 def Event_11810510(_, character: int, flag: int):
     """Event 11810510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1046,7 +1046,7 @@ def Event_11810520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1094,7 +1094,7 @@ def Event_11810532(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     AND_1.Add(FlagEnabled(1061))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_1.Add(InsideMap(game_map=UNDEAD_ASYLUM))
     
     MAIN.Await(AND_1)

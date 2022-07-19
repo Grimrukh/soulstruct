@@ -84,10 +84,10 @@ def _RunEvent(
 
 @_decompile(2000, 6, uses_opt_args=True)
 def _RunCommonEvent(
-    unknown: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
 ):
     return base_decompile_run_common_event(
-        event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager, unknown=unknown
+        event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager, slot=slot
     )
 
 
@@ -125,29 +125,29 @@ def _AwardItemLotToHostOnly(item_lot_id: int):
 
 
 @_decompile(2005, 6)
-def _SetObjectActivation(obj: Object, obj_act_id: int, state: bool):
+def _SetAssetActivation(obj: Asset, obj_act_id: int, state: bool):
     if state is True:
-        return f"EnableObjectActivation({obj}, {obj_act_id=})"
+        return f"EnableAssetActivation({obj}, {obj_act_id=})"
     elif state is False:
-        return f"DisableObjectActivation({obj}, {obj_act_id=})"
-    return f"SetObjectActivation({obj}, {obj_act_id=}, {state=})"
+        return f"DisableAssetActivation({obj}, {obj_act_id=})"
+    return f"SetAssetActivation({obj}, {obj_act_id=}, {state=})"
 
 
 @_decompile(2005, 14)
-def _SetObjectActivationWithIdx(obj: Object, obj_act_id, relative_index, state: bool):
+def _SetAssetActivationWithIdx(obj: Asset, obj_act_id, relative_index, state: bool):
     """Defers to a wrapper instruction shared with (2005, 6) if `state` is not an event argument."""
     if state is True:
-        return f"EnableObjectActivation({obj}, {obj_act_id=}, {relative_index=})"
+        return f"EnableAssetActivation({obj}, {obj_act_id=}, {relative_index=})"
     elif state is False:
-        return f"DisableObjectActivation({obj}, {obj_act_id=}, {relative_index=})"
-    return f"SetObjectActivationWithIdx({obj}, {obj_act_id=}, {relative_index=}, {state=})"
+        return f"DisableAssetActivation({obj}, {obj_act_id=}, {relative_index=})"
+    return f"SetAssetActivationWithIdx({obj}, {obj_act_id=}, {relative_index=}, {state=})"
 
 
 @_decompile(2004, 40)
 def _MoveAndSetDrawParent(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Object, Region],
+    destination: tp.Union[Character, Asset, Region],
     model_point: int,
     set_draw_parent: MapPart,
 ):
@@ -164,7 +164,7 @@ def _MoveAndSetDrawParent(
 def _ShortMove(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Object, Region],
+    destination: tp.Union[Character, Asset, Region],
     model_point: int,
 ):
     if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
@@ -180,9 +180,9 @@ def _ShortMove(
 def _MoveAndCopyDrawParent(
     character: Character,
     destination_type: CoordEntityType,
-    destination: tp.Union[Character, Object, Region],
+    destination: tp.Union[Character, Asset, Region],
     model_point: int,
-    copy_draw_parent: tp.Union[Character, Object],
+    copy_draw_parent: tp.Union[Character, Asset],
 ):
     if not isinstance(destination_type, str) and destination_type.name == "Region" and model_point == -1:
         if isinstance(destination, MapEntity):  # `destination_type` is implicit
@@ -219,7 +219,7 @@ def _IfPlayerItemStateIncludingStorage(condition: int, item_type: ItemType, item
 def _IfActionButton(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Object, Region],
+    anchor_entity: tp.Union[Character, Asset, Region],
     facing_angle: float,
     model_point: int,
     max_distance: float,
@@ -266,7 +266,7 @@ def _IfActionButton(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Object, Region],
+    anchor_entity: tp.Union[Character, Asset, Region],
     facing_angle: float,
     model_point: int,
     max_distance: float,
@@ -293,7 +293,7 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Object, Region],
+    anchor_entity: tp.Union[Character, Asset, Region],
     facing_angle: float,
     model_point: int,
     max_distance: float,
@@ -320,14 +320,14 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Object, Region],
+    anchor_entity: tp.Union[Character, Asset, Region],
     facing_angle: float,
     model_point: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
     button: int,
-    line_intersects: tp.Union[Character, Object, Region],
+    line_intersects: tp.Union[Character, Asset, Region],
 ):
     return _IfActionButton(
         condition,
@@ -348,14 +348,14 @@ def _IfActionButtonBasic(
 def _IfActionButtonBasic(
     condition: int,
     anchor_type: CoordEntityType,
-    anchor_entity: tp.Union[Character, Object, Region],
+    anchor_entity: tp.Union[Character, Asset, Region],
     facing_angle: float,
     model_point: int,
     max_distance: float,
     prompt_text: int,
     trigger_attribute: TriggerAttribute,
     button: int,
-    line_intersects: tp.Union[Character, Object, Region],
+    line_intersects: tp.Union[Character, Asset, Region],
 ):
     return _IfActionButton(
         condition,

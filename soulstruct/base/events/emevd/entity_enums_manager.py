@@ -14,7 +14,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 
 from soulstruct.utilities.files import import_arbitrary_file
-from soulstruct.darksouls1ptde.game_types import *
+from soulstruct.base.game_types import *
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,7 +57,11 @@ class EntityEnumsManager(abc.ABC):
     ENTITY_ID_SUBCLASSES: dict[str, tuple[tp.Type[MapEntity], ...]]
     PROTECTED_ENTITIES: tp.Type[IntEnum]
 
+    __CACHED_MODULE_CLASSES = {}
+
     enums: dict[str, dict[int, EntityEnumInfo]]
+    all_event_ids: list[int]
+    all_common_event_ids: list[int]
 
     def __init__(
         self,
@@ -80,6 +84,7 @@ class EntityEnumsManager(abc.ABC):
         }
         self.enums = {}
         self.all_event_ids = all_event_ids
+        self.all_common_event_ids = []  # added separately
 
         self.used_star_modules = set()  # type: set[str]
         self.used_non_star_imports = {name: set() for name in self.non_star_modules}  # `modules: {EntityEnumInfo, ...}`
@@ -87,9 +92,11 @@ class EntityEnumsManager(abc.ABC):
 
         self.all_entity_ids = {}  # for warnings
 
-        if not (self.star_modules or self.non_star_modules):
-            return  # no enums
+        if self.star_modules or self.non_star_modules:
+            self.refresh_enums()
 
+    def refresh_enums(self):
+        self.enums = {}
         for entry_type, entity_classes in self.ENTITY_ID_SUBCLASSES.items():
             star_entry_type_ids = {}
             non_star_entry_type_ids = {}
@@ -221,10 +228,16 @@ class EntityEnumsManager(abc.ABC):
                     non_star_entry_type_ids[member.value] = enum_name
                 self.enums[entity_cls.__name__][member.value] = enum_info
 
-    @staticmethod
+    @classmethod
     def _get_subclasses_in_module(
+        cls,
         module: types.ModuleType,
         entity_class: tp.Type[MapEntity],
     ) -> list[tuple[str, tp.Type[MapEntity]]]:
-        """Return a dictionary of `entity_class` subclasses from given `module`"""
-        return inspect.getmembers(module, lambda o: inspect.isclass(o) and issubclass(o, entity_class))
+        """Return a dictionary of `entity_class` subclasses from given `module`."""
+        if (module.__file__, entity_class) in cls.__CACHED_MODULE_CLASSES:
+            return cls.__CACHED_MODULE_CLASSES[module.__file__, entity_class]
+        enum_names_classes = cls.__CACHED_MODULE_CLASSES[module.__file__, entity_class] = inspect.getmembers(
+            module, lambda o: inspect.isclass(o) and issubclass(o, entity_class)
+        )
+        return enum_names_classes

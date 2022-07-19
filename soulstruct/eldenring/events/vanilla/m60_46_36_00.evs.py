@@ -12,38 +12,55 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_46_36_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005261, args=(1046360250, 1046362250, 10.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1046360240, 1046362240, 10.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1046360300, 1046362300, 10.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 900005610, args=(1046361650, 100, 800, 0), arg_types="IiiI")
+    CommonFunc_90005261(
+        0,
+        character=Characters.GodrickKnight,
+        region=1046362250,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(0, character=Characters.Commoner, region=1046362240, radius=10.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(
+        0,
+        character=Characters.MadPumpkinHead,
+        region=1046362300,
+        radius=10.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
     Event_1046362260(0, attacker__character=1046365260, region=1046362260)
     Event_1046362203()
     Event_1046362300()
     Event_1046362310()
-    RunCommonEvent(0, 90005704, args=(1046360700, 3581, 3580, 1046369201, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1046360700, 3581, 3582, 1046369201, 3581, 3580, 3583, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1046360700, 3583, 3580, 3583), arg_types="IIII")
+    CommonFunc_90005704(0, attacked_entity=Characters.KennethHaight, flag=3581, flag_1=3580, flag_2=1046369201, right=3)
+    CommonFunc_90005703(0, 1046360700, 3581, 3582, 1046369201, 3581, 3580, 3583, -1)
+    CommonFunc_90005702(0, character=Characters.KennethHaight, flag=3583, first_flag=3580, last_flag=3583)
     Event_1046360700(0, 1046360700)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1046360700)
+    DisableBackread(Characters.KennethHaight)
     Event_1046362220()
 
 
 @NeverRestart(1046362203)
 def Event_1046362203():
     """Event 1046362203"""
-    RegisterLadder(start_climbing_flag=46360580, stop_climbing_flag=46360851, obj=1046361580)
+    RegisterLadder(start_climbing_flag=46360580, stop_climbing_flag=46360851, asset=Assets.AEG030_902_2001)
 
 
 @RestartOnRest(1046362220)
@@ -55,38 +72,41 @@ def Event_1046362220():
 @RestartOnRest(1046362260)
 def Event_1046362260(_, attacker__character: uint, region: uint):
     """Event 1046362260"""
-    CancelSpecialEffect(attacker__character, 4800)
-    CancelSpecialEffect(attacker__character, 5650)
+    RemoveSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 5650)
     AddSpecialEffect(attacker__character, 4802)
-    EndIfFlagEnabled(1046362260)
+    if FlagEnabled(1046362260):
+        return
     AddSpecialEffect(attacker__character, 4800)
     AddSpecialEffect(attacker__character, 5650)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=35000)
-    IfAttackedWithDamageType(OR_2, attacked_entity=35000, attacker=attacker__character)
-    IfEntityWithinDistance(OR_2, entity=PLAYER, other_entity=attacker__character, radius=10.0)
-    IfEntityWithinDistance(OR_2, entity=35000, other_entity=attacker__character, radius=10.0)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfCharacterInsideRegion(OR_2, character=35000, region=region)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(OR_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    AND_1.Add(OR_2)
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1046362260)
-    CancelSpecialEffect(attacker__character, 4800)
-    CancelSpecialEffect(attacker__character, 5650)
+    RemoveSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 5650)
 
 
 @RestartOnRest(1046362300)
 def Event_1046362300():
     """Event 1046362300"""
-    IfFlagEnabled(AND_1, 1046360705)
-    IfFlagDisabled(AND_1, 1046362320)
+    AND_1.Add(FlagEnabled(1046360705))
+    AND_1.Add(FlagDisabled(1046362320))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     EnableNetworkFlag(1046360320)
 
@@ -103,9 +123,11 @@ def Event_1046362300():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfPlayerInOwnWorld(AND_2)
-    IfCharacterDead(AND_2, 1046360250)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(PlayerInOwnWorld())
+    AND_2.Add(CharacterDead(Characters.GodrickKnight))
+    
+    MAIN.Await(AND_2)
+    
     EnableNetworkFlag(1046360705)
     AwardItemLot(1046360700, host_only=True)
 
@@ -118,8 +140,8 @@ def Event_1046362310():
     DisableAI(1046365310)
     EnableCharacterCollision(1046365310)
     DisableGravity(1046365310)
-    IfFlagEnabled(AND_1, 1046360706)
-    IfFlagDisabled(AND_1, 1046362330)
+    AND_1.Add(FlagEnabled(1046360706))
+    AND_1.Add(FlagDisabled(1046362330))
     GotoIfConditionFalse(Label.L0, input_condition=AND_1)
     EnableNetworkFlag(1046360330)
 
@@ -146,10 +168,13 @@ def Event_1046362310():
 @RestartOnRest(1046362620)
 def Event_1046362620(_, tutorial_param_id: int, flag: uint):
     """Event 1046362620"""
-    EndIfPlayerNotInOwnWorld()
-    IfPlayerHasGood(AND_1, 9500)
-    IfPlayerInOwnWorld(AND_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(PlayerHasGood(9500))
+    AND_1.Add(PlayerInOwnWorld())
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=False)
@@ -161,8 +186,8 @@ def Event_1046360700(_, character: uint):
     WaitFrames(frames=1)
     DisableNetworkSync()
     GotoIfPlayerNotInOwnWorld(Label.L19)
-    IfFlagEnabled(AND_1, 3580)
-    IfFlagEnabled(AND_1, 1045389203)
+    AND_1.Add(FlagEnabled(3580))
+    AND_1.Add(FlagEnabled(1045389203))
     SkipLinesIfConditionFalse(1, AND_1)
     DisableFlag(1045389203)
 
@@ -171,7 +196,9 @@ def Event_1046360700(_, character: uint):
     GotoIfFlagEnabled(Label.L6, flag=3586)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, 3586)
+    
+    MAIN.Await(FlagEnabled(3586))
+    
     Restart()
 
     # --- Label 6 --- #
@@ -184,7 +211,7 @@ def Event_1046360700(_, character: uint):
     DefineLabel(1)
     EnableCharacter(character)
     EnableBackread(character)
-    ForceAnimation(character, 90101, unknown2=1.0)
+    ForceAnimation(character, 90101)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -203,5 +230,7 @@ def Event_1046360700(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3586)
+    
+    MAIN.Await(FlagDisabled(3586))
+    
     Restart()

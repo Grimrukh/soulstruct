@@ -12,57 +12,312 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_44_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005870, args=(1044530800, 904980605, 24), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1044530800, 0, 1044530800, 0, 1044530300, 0.0), arg_types="IIIIif")
+    CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980605, npc_threat_level=24)
+    CommonFunc_90005860(0, 1044530800, 0, 1044530800, 0, 1044530300, 0.0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(1044530450, 30000, 20000, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530400, 30000, 20000, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530401, 30001, 20001, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530402, 30000, 20000, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530403, 30001, 20001, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530404, 30000, 20000, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530405, 30001, 20001, 1044532450, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005201, args=(1044530200, 30014, 20014, 30.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530201, 30014, 20014, 20.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530220, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530223, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530224, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530225, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530226, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530227, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530213, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530217, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1044530231, 30016, 20016, 20.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1044530232, 30016, 20016, 1044532237, 2.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Omen,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1044530233, 30016, 20016, 1044532237, 2.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Commoner0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1044530234, 30016, 20016, 1044532237, 2.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Commoner1,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(1044530205, 30018, 20018, 1044532237, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530206, 30018, 20018, 1044532237, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1044530237, 30018, 20018, 1044532237, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005201, args=(1044530800, 30000, 20000, 30.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
+    CommonFunc_90005200(
+        0,
+        character=Characters.Commoner2,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Commoner3,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Commoner4,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Commoner5,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1044532450,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton0,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=30.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton1,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=20.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton4,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton5,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton6,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton7,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton8,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton9,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1044530213,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1044530217,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton10,
+        animation_id=30016,
+        animation_id_1=20016,
+        radius=20.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton11,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1044532237,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=1044530233,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1044532237,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton12,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1044532237,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton2,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=1044532237,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton3,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=1044532237,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton13,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=1044532237,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(0, 1044530800, 30000, 20000, 30.0, 0.0, 0, 0, 0, 0)

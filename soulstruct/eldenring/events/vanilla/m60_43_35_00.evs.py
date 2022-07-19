@@ -11,14 +11,17 @@ strings:
 156: N:\\GR\\data\\Param\\event\\common_func.emevd
 238: N:\\GR\\data\\Param\\event\\m60.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_35_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1043350000, obj=1043351950, unknown=5.0)
+    RegisterGrace(grace_flag=1043350000, asset=Assets.AEG099_060_9000)
     Event_1043352270(0, attacker__character=1043355270, region=1043352270)
     Event_1043350652(
         0,
@@ -27,20 +30,33 @@ def Constructor():
         tutorial_param_id_1=1770,
         flag_1=710770,
         flag_2=69090,
-        flag_3=69370
+        flag_3=69370,
     )
     Event_1043353750(0, character=1043350700, character_1=1043350703)
-    RunCommonEvent(0, 90005704, args=(1043350710, 3621, 3620, 1043359251, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1043350710, 3621, 3622, 1043359251, 3621, 3620, 3624, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1043350710, 1043359259, 1043359259, 1043359259), arg_types="IIII")
-    Event_1043353710(0, character=1043350710)
+    CommonFunc_90005704(
+        0,
+        attacked_entity=Characters.YuraHunterofBloodyFingers,
+        flag=3621,
+        flag_1=3620,
+        flag_2=1043359251,
+        right=3,
+    )
+    CommonFunc_90005703(0, 1043350710, 3621, 3622, 1043359251, 3621, 3620, 3624, -1)
+    CommonFunc_90005702(
+        0,
+        character=Characters.YuraHunterofBloodyFingers,
+        flag=1043359259,
+        first_flag=1043359259,
+        last_flag=1043359259,
+    )
+    Event_1043353710(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1043353711(0, 1043350710)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1043350710)
+    DisableBackread(Characters.YuraHunterofBloodyFingers)
     Event_1043352200()
 
 
@@ -54,31 +70,34 @@ def Event_1043352200():
 def Event_1043352270(_, attacker__character: uint, region: uint):
     """Event 1043352270"""
     EnableNetworkSync()
-    CancelSpecialEffect(attacker__character, 4800)
-    CancelSpecialEffect(attacker__character, 5653)
+    RemoveSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 5653)
     AddSpecialEffect(attacker__character, 4802)
-    EndIfFlagEnabled(1043352270)
+    if FlagEnabled(1043352270):
+        return
     AddSpecialEffect(attacker__character, 4800)
     AddSpecialEffect(attacker__character, 5653)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=35000)
-    IfAttackedWithDamageType(OR_2, attacked_entity=35000, attacker=attacker__character)
-    IfEntityWithinDistance(OR_2, entity=PLAYER, other_entity=attacker__character, radius=10.0)
-    IfEntityWithinDistance(OR_2, entity=35000, other_entity=attacker__character, radius=10.0)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfCharacterInsideRegion(OR_2, character=35000, region=region)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(OR_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    AND_1.Add(OR_2)
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1043352270)
-    CancelSpecialEffect(attacker__character, 4800)
-    CancelSpecialEffect(attacker__character, 5653)
+    RemoveSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 5653)
 
 
 @RestartOnRest(1043350652)
@@ -93,23 +112,27 @@ def Event_1043350652(
 ):
     """Event 1043350652"""
     DisableNetworkSync()
-    EndIfPlayerNotInOwnWorld()
-    IfPlayerInOwnWorld(AND_1)
-    IfPlayerHasGood(AND_1, 130)
-    IfInsideMap(AND_1, game_map=WEST_WEEPING_PENINSULA_NE_NE)
-    IfPlayerDoesNotHaveGood(AND_1, 9109)
-    IfTryingToCreateSession(OR_1)
-    IfTryingToJoinSession(OR_1)
-    IfConditionFalse(AND_1, input_condition=OR_1)
-    IfCharacterDoesNotHaveSpecialEffect(AND_1, PLAYER, 100690)
-    IfCharacterDoesNotHaveSpecialEffect(AND_1, PLAYER, 9640)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(PlayerHasGood(130))
+    AND_1.Add(InsideMap(game_map=WEST_WEEPING_PENINSULA_NE_NE))
+    AND_1.Add(PlayerDoesNotHaveGood(9109))
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 100690))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9640))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
     EnableFlag(flag_1)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id_1, unk_4_5=True, unk_5_6=True)
-    EndIfFlagEnabled(flag_2)
+    if FlagEnabled(flag_2):
+        return
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9109, flag=flag, bit_count=1)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9137, flag=flag_1, bit_count=1)
     EnableFlag(flag_2)
@@ -122,23 +145,25 @@ def Event_1043353710(_, character: uint):
     WaitFrames(frames=1)
     DisableNetworkSync()
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagDisabled(1, 3620)
-    DisableFlag(1043379255)
+    if FlagEnabled(3620):
+        DisableFlag(1043379255)
 
     # --- Label 10 --- #
     DefineLabel(10)
-    IfFlagDisabled(OR_1, 1043369200)
-    IfFlagEnabled(OR_1, 1043360800)
-    IfFlagEnabled(AND_1, 3626)
-    IfConditionTrue(AND_1, input_condition=OR_1)
+    OR_1.Add(FlagDisabled(1043369200))
+    OR_1.Add(FlagEnabled(1043360800))
+    AND_1.Add(FlagEnabled(3626))
+    AND_1.Add(OR_1)
     GotoIfConditionTrue(Label.L5, input_condition=AND_1)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagDisabled(OR_3, 1043369200)
-    IfFlagEnabled(OR_3, 1043360800)
-    IfFlagEnabled(AND_3, 3626)
-    IfConditionTrue(AND_3, input_condition=OR_3)
-    IfConditionTrue(MAIN, input_condition=AND_3)
+    OR_3.Add(FlagDisabled(1043369200))
+    OR_3.Add(FlagEnabled(1043360800))
+    AND_3.Add(FlagEnabled(3626))
+    AND_3.Add(OR_3)
+    
+    MAIN.Await(AND_3)
+    
     Restart()
 
     # --- Label 5 --- #
@@ -153,7 +178,7 @@ def Event_1043353710(_, character: uint):
     EnableBackread(character)
     EnableCharacter(character)
     SetTeamType(character, TeamType.FriendlyNPC)
-    ForceAnimation(character, 90100, unknown2=1.0)
+    ForceAnimation(character, 90100)
     GotoIfConditionTrue(Label.L20, input_condition=MAIN)
 
     # --- Label 2 --- #
@@ -179,23 +204,31 @@ def Event_1043353710(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(OR_4, 1043369200)
-    IfFlagEnabled(OR_4, 1043360800)
-    IfFlagEnabled(AND_4, 3626)
-    IfConditionTrue(AND_4, input_condition=OR_4)
-    IfConditionFalse(MAIN, input_condition=AND_4)
+    OR_4.Add(FlagDisabled(1043369200))
+    OR_4.Add(FlagEnabled(1043360800))
+    AND_4.Add(FlagEnabled(3626))
+    AND_4.Add(OR_4)
+    
+    MAIN.Await(not AND_4)
+    
     Restart()
 
 
 @RestartOnRest(1043353711)
 def Event_1043353711(_, character: uint):
     """Event 1043353711"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1044389209)
-    EndIfFlagEnabled(1035469209)
-    EndIfFlagEnabled(1039529209)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1044389209):
+        return
+    if FlagEnabled(1035469209):
+        return
+    if FlagEnabled(1039529209):
+        return
     GotoIfFlagEnabled(Label.L1, flag=1043359259)
-    IfFlagEnabled(MAIN, 1043359259)
+    
+    MAIN.Await(FlagEnabled(1043359259))
+    
     DisableNetworkConnectedFlagRange(flag_range=(3620, 3624))
     EnableNetworkFlag(3623)
     SaveRequest()
@@ -204,7 +237,8 @@ def Event_1043353711(_, character: uint):
     # --- Label 1 --- #
     DefineLabel(1)
     WaitFrames(frames=1)
-    EndIfFlagEnabled(3626)
+    if FlagEnabled(3626):
+        return
     DropMandatoryTreasure(character)
     DisableCharacter(character)
     DisableBackread(character)

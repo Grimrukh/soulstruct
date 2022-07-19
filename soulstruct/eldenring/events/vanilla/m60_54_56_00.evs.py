@@ -12,8 +12,11 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_54_56_00_entities import *
 
 
 @NeverRestart(0)
@@ -34,15 +37,25 @@ def Event_1054562200(_, character: uint):
 @RestartOnRest(1054562500)
 def Event_1054562500():
     """Event 1054562500"""
-    EndIfFlagEnabled(1254560800)
-    SetCharacterTalkRange(character=1054560100, distance=300.0)
+    if FlagEnabled(1254560800):
+        return
+    SetCharacterTalkRange(character=Characters.Dummy, distance=300.0)
 
 
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    RunCommonEvent(0, 90005870, args=(1054560800, 904503600, 25), arg_types="IiI")
-    RunCommonEvent(0, 90005861, args=(1254560800, 0, 1054560800, 1, 30510, 30066, 0.0), arg_types="IIIIiif")
+    CommonFunc_90005870(0, character=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)
+    CommonFunc_90005861(
+        0,
+        flag=1254560800,
+        left=0,
+        character=Characters.BorealistheFreezingFog,
+        left_1=1,
+        item_lot__item_lot_param_id=30510,
+        text=30066,
+        seconds=0.0,
+    )
     Event_1054562815()
     Event_1054562820(
         0,
@@ -67,28 +80,28 @@ def Event_200():
 @RestartOnRest(1054562815)
 def Event_1054562815():
     """Event 1054562815"""
-    IfCharacterInsideRegion(OR_1, character=PLAYER, region=1054562811)
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1054562811))
     AwaitConditionTrue(OR_1)
     DisableNetworkSync()
     GotoIfFlagEnabled(Label.L0, flag=1254560800)
-    Unknown_1004_04(line_count=1, character=1054560800, unk_8_12=1)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=1054562810)
+    GotoIfSpecialStandbyEndedFlagEnabled(Label.L1, character=Characters.BorealistheFreezingFog)
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=1054562810))
     GotoIfConditionTrue(Label.L2, input_condition=OR_2)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=1054562812)
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=1054562812))
     GotoIfConditionFalse(Label.L3, input_condition=OR_3)
     Wait(1.0)
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
-    CancelSpecialEffect(PLAYER, 4213)
-    Unknown_2003_68(unknown1=10, unknown2=30.0, unknown3=0)
+    RemoveSpecialEffect(PLAYER, 4213)
+    SetWeather(weather=Weather.HeavySnow, duration=30.0, immediate_change=False)
     Wait(1.0)
     Restart()
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Unknown_2003_68(unknown1=16, unknown2=-1.0, unknown3=0)
+    SetWeather(weather=Weather.SnowyHeavyFog, duration=-1.0, immediate_change=False)
     Wait(5.0)
     AddSpecialEffect(PLAYER, 4213)
     Wait(1.0)
@@ -96,16 +109,16 @@ def Event_1054562815():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    Unknown_2003_68(unknown1=10, unknown2=30.0, unknown3=0)
+    SetWeather(weather=Weather.HeavySnow, duration=30.0, immediate_change=False)
     Wait(3.0)
-    CancelSpecialEffect(PLAYER, 4213)
+    RemoveSpecialEffect(PLAYER, 4213)
     Wait(1.0)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CancelSpecialEffect(PLAYER, 4213)
-    Unknown_2003_68(unknown1=-1, unknown2=-1.0, unknown3=0)
+    RemoveSpecialEffect(PLAYER, 4213)
+    SetWeather(weather=Weather.Null, duration=-1.0, immediate_change=False)
     End()
 
 
@@ -129,76 +142,78 @@ def Event_1054562820(
     region_5: uint,
 ):
     """Event 1054562820"""
-    GotoIfUnknown_1004_05(Label.L0, character=character, unk_8_12=True)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    DisableGravity(character)
-    EnableCharacterCollision(character)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    SkipLinesIfUnsignedEqual(1, left=0, right=region)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region_1)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region_2)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region_3)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region_4)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region_5)
-    IfEntityWithinDistance(OR_3, entity=PLAYER, other_entity=character, radius=radius)
-    IfConditionTrue(AND_1, input_condition=OR_3)
-    IfOutsideMap(AND_1, game_map=SPIRITCALLER_CAVE)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfUnknownCondition_31(AND_1, hours=16, unknown1=3.0, unknown2=0)
-    IfCharacterHasSpecialEffect(OR_11, character, 5080)
-    IfCharacterHasSpecialEffect(OR_11, character, 5450)
-    IfConditionTrue(AND_1, input_condition=OR_11)
-    IfUnsignedEqual(AND_9, left=left_1, right=0)
-    IfUnsignedEqual(AND_9, left=left_2, right=0)
-    IfUnsignedEqual(AND_9, left=left_3, right=0)
+    EndIffSpecialStandbyEndedFlagEnabled(character=character)
+    if UnsignedNotEqual(left=left, right=0):
+        DisableGravity(character)
+        EnableCharacterCollision(character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    if UnsignedNotEqual(left=0, right=region):
+        OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region_2))
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region_3))
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region_4))
+    OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region_5))
+    OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
+    AND_1.Add(OR_3)
+    AND_1.Add(OutsideMap(game_map=SPIRITCALLER_CAVE))
+    AND_1.Add(CharacterBackreadEnabled(character))
+    AND_1.Add(WeatherState(weather=Weather.SnowyHeavyFog, unk_4_8=3.0, unk_8_12=0.0))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5080))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5450))
+    AND_1.Add(OR_11)
+    AND_9.Add(UnsignedEqual(left=left_1, right=0))
+    AND_9.Add(UnsignedEqual(left=left_2, right=0))
+    AND_9.Add(UnsignedEqual(left=left_3, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    SkipLinesIfUnsignedEqual(1, left=left_1, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfUnsignedEqual(1, left=left_2, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown5)
-    SkipLinesIfUnsignedEqual(1, left=left_3, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown4)
-    IfConditionTrue(AND_1, input_condition=OR_9)
+    if UnsignedNotEqual(left=left_1, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    if UnsignedNotEqual(left=left_2, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
+    if UnsignedNotEqual(left=left_3, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
+    AND_1.Add(OR_9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    
+    MAIN.Await(OR_2)
+    
     Wait(0.10000000149011612)
-    Unknown_2004_83(character=character, unk_4_8=1)
+    SetSpecialStandbyEndedFlag(character=character, state=True)
     EnableNetworkFlag(1054562820)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5080)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5450)
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     Wait(seconds)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
-    IfCharacterInsideRegion(OR_5, character=PLAYER, region=region)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
+    OR_5.Add(CharacterInsideRegion(character=PLAYER, region=region))
     GotoIfConditionTrue(Label.L5, input_condition=OR_5)
-    IfCharacterInsideRegion(OR_6, character=PLAYER, region=region_1)
+    OR_6.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
     GotoIfConditionTrue(Label.L6, input_condition=OR_6)
-    IfCharacterInsideRegion(OR_7, character=PLAYER, region=region_2)
+    OR_7.Add(CharacterInsideRegion(character=PLAYER, region=region_2))
     GotoIfConditionTrue(Label.L7, input_condition=OR_7)
-    IfCharacterInsideRegion(OR_8, character=PLAYER, region=region_3)
+    OR_8.Add(CharacterInsideRegion(character=PLAYER, region=region_3))
     GotoIfConditionTrue(Label.L8, input_condition=OR_8)
-    IfCharacterInsideRegion(OR_8, character=PLAYER, region=region_4)
+    OR_8.Add(CharacterInsideRegion(character=PLAYER, region=region_4))
     GotoIfConditionTrue(Label.L9, input_condition=OR_8)
-    IfCharacterInsideRegion(OR_8, character=PLAYER, region=region_5)
+    OR_8.Add(CharacterInsideRegion(character=PLAYER, region=region_5))
     GotoIfConditionTrue(Label.L10, input_condition=OR_8)
     Goto(Label.L14)
 
@@ -235,12 +250,12 @@ def Event_1054562820(
     # --- Label 14 --- #
     DefineLabel(14)
     AddSpecialEffect(character, 10206)
-    ForceAnimation(character, animation_id_1, loop=True, unknown2=1.0)
+    ForceAnimation(character, animation_id_1, loop=True)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     End()

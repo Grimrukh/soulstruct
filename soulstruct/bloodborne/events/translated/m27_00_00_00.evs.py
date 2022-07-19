@@ -1035,7 +1035,7 @@ def ShadowOfYharnamSummonSmallSnake(_, small_snake: int, shadow: int, model_poin
 def GiveShadowEffectWhenAttacked(_, shadow: int, effect: int):
     """ 12704825: Event 12704825 """
     IfCharacterHasTAEEvent(0, shadow, tae_event_id=40)
-    CancelSpecialEffect(shadow, effect)
+    RemoveSpecialEffect(shadow, effect)
     IfFramesElapsed(-1, 70)
     IfAttackedWithDamageType(-1, attacked_entity=shadow, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
@@ -2265,7 +2265,7 @@ def Event12705300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     AddSpecialEffect(arg_4_7, 5580, affect_npc_part_hp=False)
     ForceAnimation(arg_8_11, 1)
     Wait(1.0)
-    CancelSpecialEffect(arg_4_7, 5580)
+    RemoveSpecialEffect(arg_4_7, 5580)
     WaitFrames(30)
     EnableObjectActivation(arg_8_11, obj_act_id=9800)
     Restart()
@@ -2686,7 +2686,7 @@ def Event12705600(
     IfCharacterHasTAEEvent(0, arg_28_31, tae_event_id=300)
     SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
-    CancelSpecialEffect(arg_28_31, arg_16_19)
+    RemoveSpecialEffect(arg_28_31, arg_16_19)
     AICommand(arg_28_31, command_id=-1, slot=0)
     ReplanAI(arg_28_31)
     WaitFrames(10)
@@ -2864,8 +2864,8 @@ def Event12704410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
     SummonNPC(arg_0_3, arg_4_7, arg_8_11, summon_flag=arg_12_15, dismissal_flag=arg_16_19)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

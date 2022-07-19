@@ -11,6 +11,8 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
@@ -29,22 +31,54 @@ def Constructor():
     Event_14105811()
     Event_14105812()
     Event_14005829()
-    RunCommonEvent(20005840, args=(4101800,))
-    RunCommonEvent(20005841, args=(4101800,))
+    CommonFunc_20005840(0, other_entity=4101800)
+    CommonFunc_20005841(0, other_entity=4101800)
     Event_14105520(1, text=10012051, anchor_entity=4101521)
     Event_14105520(2, text=10012052, anchor_entity=4101522)
     Event_14105520(3, text=10012053, anchor_entity=4101523)
     Event_14105520(4, text=10012054, anchor_entity=4101524)
     Event_14105520(5, text=10012055, anchor_entity=4101525)
-    RunCommonEvent(20005701, args=(14100800, 14104190, 14105190, 4100190, 4102190, 70000001))
-    RunCommonEvent(20005720, args=(14104190, 14105190, 14100800, 4100190))
-    RunCommonEvent(20005711, args=(14104190, 14105805, 4100190, 4102800, 4102805, 14100801))
-    RunCommonEvent(20005713, args=(74000640, 14100800, 14104190, 14105190, 4100190))
-    RunCommonEvent(20005714, args=(14104190, 14105805, 4100190, 4102806, 14100801))
-    RunCommonEvent(20005701, args=(14100800, 14104191, 14105191, 4100191, 4102191, 70000003))
-    RunCommonEvent(20005720, args=(14104191, 14105191, 14100800, 4100191))
-    RunCommonEvent(20005711, args=(14104191, 14105805, 4100191, 4102800, 4102805, 14100801))
-    RunCommonEvent(20005714, args=(14104191, 14105805, 4100191, 4102806, 14100801))
+    CommonFunc_20005701(
+        0,
+        left=14100800,
+        summon_flag=14104190,
+        dismissal_flag=14105190,
+        character=4100190,
+        region=4102190,
+        left_1=70000001,
+    )
+    CommonFunc_20005720(0, flag=14104190, flag_1=14105190, flag_2=14100800, character=4100190)
+    CommonFunc_20005711(
+        0,
+        flag=14104190,
+        flag_1=14105805,
+        character=4100190,
+        region=4102800,
+        region_1=4102805,
+        flag_2=14100801,
+    )
+    CommonFunc_20005713(0, flag=74000640, flag_1=14100800, flag_2=14104190, flag_3=14105190, character=4100190)
+    CommonFunc_20005714(0, flag=14104190, flag_1=14105805, character=4100190, region=4102806, flag_2=14100801)
+    CommonFunc_20005701(
+        0,
+        left=14100800,
+        summon_flag=14104191,
+        dismissal_flag=14105191,
+        character=4100191,
+        region=4102191,
+        left_1=70000003,
+    )
+    CommonFunc_20005720(0, flag=14104191, flag_1=14105191, flag_2=14100800, character=4100191)
+    CommonFunc_20005711(
+        0,
+        flag=14104191,
+        flag_1=14105805,
+        character=4100191,
+        region=4102800,
+        region_1=4102805,
+        flag_2=14100801,
+    )
+    CommonFunc_20005714(0, 14104191, 14105805, 4100191, 4102806, 14100801)
 
 
 @NeverRestart(50)
@@ -145,7 +179,7 @@ def Event_14100100():
     EnableFlag(9922)
     EnableFlag(22)
     EnableFlag(6400)
-    CancelSpecialEffect(PLAYER, 4902)
+    RemoveSpecialEffect(PLAYER, 4902)
     End()
 
     # --- Label 0 --- #
@@ -159,7 +193,7 @@ def Event_14100100():
     EnableFlag(9923)
     EnableFlag(23)
     EnableFlag(6400)
-    CancelSpecialEffect(PLAYER, 4902)
+    RemoveSpecialEffect(PLAYER, 4902)
     End()
 
 
@@ -199,7 +233,7 @@ def Event_14100101():
     ForceAnimation(4101952, 1, unknown2=1.0)
     StoreItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=490, flag=9230, bit_count=4)
     WaitFrames(frames=1)
-    AND_9.Add(EventValueEqual(flag=9230, bit_count=4, value=8))
+    AND_9.Add(EventValue(flag=9230, bit_count=4) == 8)
     GotoIfConditionTrue(Label.L0, input_condition=AND_9)
     PlayCutscene(41000000, cutscene_flags=CutsceneFlags.Unskippable, player_id=10000)
     WaitFrames(frames=1)
@@ -286,7 +320,7 @@ def Event_14100800():
     if FlagEnabled(14100800):
         return
     
-    MAIN.Await(HealthRatioLessThanOrEqual(4100800, value=0.0))
+    MAIN.Await(HealthRatio(4100800) <= 0.0)
     
     Wait(3.0)
     PlaySoundEffect(4100800, 777777777, sound_type=SoundType.s_SFX)
@@ -350,7 +384,7 @@ def Event_14105811():
     if FlagEnabled(14105802):
         return
     EnableImmortality(4100800)
-    AND_1.Add(HealthRatioLessThanOrEqual(4100800, value=0.05000000074505806))
+    AND_1.Add(HealthRatio(4100800) <= 0.05000000074505806)
     AND_1.Add(AttackedWithDamageType(attacked_entity=4100800, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -420,19 +454,55 @@ def Event_14105813(_, flag: int, flag_1: int, flag_2: int, region: int, sound_id
 @RestartOnRest(14005829)
 def Event_14005829():
     """Event 14005829"""
-    RunCommonEvent(20005800, args=(14100800, 4101800, 4102800, 14105805, 4101800, 4100800, 14100801, 0))
-    RunCommonEvent(20005801, args=(14100800, 4101800, 4102800, 14105805, 4101800, 14105806))
+    CommonFunc_20005800(
+        0,
+        flag=14100800,
+        entity=4101800,
+        region=4102800,
+        flag_1=14105805,
+        action_button_id=4101800,
+        character=4100800,
+        left=14100801,
+        region_1=0,
+    )
+    CommonFunc_20005801(
+        0,
+        flag=14100800,
+        entity=4101800,
+        region=4102800,
+        flag_1=14105805,
+        action_button_id=4101800,
+        flag_2=14105806,
+    )
     SkipLinesIfClientTypeCountComparison(
         skip_lines=2,
         client_type=ClientType.Invader,
         comparison_type=ComparisonType.Equal,
         value=0,
     )
-    RunCommonEvent(20001836, args=(14100800, 14105805, 14105806, 14105807, 4104800, 4104801, 14105802))
+    CommonFunc_20001836(
+        0,
+        flag=14100800,
+        flag_1=14105805,
+        flag_2=14105806,
+        flag_3=14105807,
+        sound_id=4104800,
+        sound_id_1=4104801,
+        flag_4=14105802,
+    )
     SkipLines(1)
-    RunCommonEvent(20005831, args=(14100800, 14105805, 14105806, 4102800, 4104800, 4104801, 14105802))
-    RunCommonEvent(20005820, args=(14100800, 4101800, 4, 14100801))
-    RunCommonEvent(20005810, args=(14100800, 4101800, 4102800, 10000))
+    CommonFunc_20005831(
+        0,
+        flag=14100800,
+        flag_1=14105805,
+        flag_2=14105806,
+        region=4102800,
+        sound_id=4104800,
+        sound_id_1=4104801,
+        flag_3=14105802,
+    )
+    CommonFunc_20005820(0, flag=14100800, obj=4101800, model_point=4, left=14100801)
+    CommonFunc_20005810(0, 14100800, 4101800, 4102800, 10000)
 
 
 @RestartOnRest(14005900)
@@ -440,8 +510,8 @@ def Event_14005900():
     """Event 14005900"""
     EnableFlag(74000120)
     EnableFlag(14101100)
-    CancelSpecialEffect(PLAYER, 4900)
-    CancelSpecialEffect(PLAYER, 4901)
+    RemoveSpecialEffect(PLAYER, 4900)
+    RemoveSpecialEffect(PLAYER, 4901)
     SetNetworkInteractionState(state=True)
     DisableHUDVisibility()
     OR_1.Add(FlagEnabled(100))

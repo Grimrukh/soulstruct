@@ -12,16 +12,27 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_43_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005870, args=(1033430800, 904810600, 18), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1033430800, 0, 1033430800, 0, 30205, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005251, args=(1033430800, 20.0, 0.0, 0), arg_types="Iffi")
-    RunCommonEvent(0, 90005872, args=(1033430800, 18, 0), arg_types="III")
-    RunCommonEvent(0, 900005610, args=(1033431680, 100, 800, 1033438600), arg_types="IiiI")
-    RunCommonEvent(0, 90005300, args=(1033430200, 1033430200, 40238, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810600, npc_threat_level=18)
+    CommonFunc_90005860(
+        0,
+        flag=1033430800,
+        left=0,
+        character=Characters.ErdtreeAvatar,
+        left_1=0,
+        item_lot__item_lot_param_id=30205,
+        seconds=0.0,
+    )
+    CommonFunc_90005251(0, character=Characters.ErdtreeAvatar, radius=20.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=1033438600)
+    CommonFunc_90005300(0, 1033430200, 1033430200, 40238, 0.0, 0)

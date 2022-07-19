@@ -1809,7 +1809,7 @@ def Event12205041():
     IfCharacterInsideRegion(-1, 2200211, region=2202320)
     IfConditionTrue(0, input_condition=-1)
     IfHasAIStatus(0, 2200211, ai_status=AIStatusType.Normal)
-    CancelSpecialEffect(2200211, 5000)
+    RemoveSpecialEffect(2200211, 5000)
     ChangePatrolBehavior(2200211, patrol_information_id=2203031)
     ReplanAI(2200211)
 

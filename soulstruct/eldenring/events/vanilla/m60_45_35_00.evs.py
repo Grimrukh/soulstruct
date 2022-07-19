@@ -19,17 +19,20 @@ from soulstruct.eldenring.events.instructions import *
 @RestartOnRest(1045352200)
 def Event_1045352200():
     """Event 1045352200"""
-    EndIfThisEventSlotFlagEnabled()
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfEntityWithinDistance(AND_3, entity=PLAYER, other_entity=1045350200, radius=30.0)
-    IfConditionTrue(AND_1, input_condition=AND_3)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=1045350200, radius=30.0))
+    AND_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    ForceAnimation(1045350200, 3011, unknown2=1.0)
+    ForceAnimation(1045350200, 3011)
     End()

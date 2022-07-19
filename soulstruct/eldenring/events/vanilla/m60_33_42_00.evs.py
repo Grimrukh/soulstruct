@@ -13,8 +13,11 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_42_00_entities import *
 
 
 @NeverRestart(0)
@@ -22,74 +25,91 @@ def Constructor():
     """Event 0"""
     Event_1033422211()
     Event_1033422611()
-    RunCommonEvent(0, 90005300, args=(1033420610, 1033420610, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005880(
         0,
-        90005880,
-        args=(1033420800, 1033420805, 1033422800, 1033420800, 30265, 60, 33, 42, 0, 1033422805),
-        arg_types="IIIIiBBbbI",
+        flag=1033420800,
+        flag_1=1033420805,
+        flag_2=1033422800,
+        character=Characters.BlackKnifeAssassin,
+        item_lot_param_id=30265,
+        area_id=60,
+        block_id=33,
+        cc_id=42,
+        dd_id=0,
+        player_start=1033422805,
     )
-    RunCommonEvent(
+    CommonFunc_90005881(
         0,
-        90005881,
-        args=(1033420800, 1033420805, 1033422801, 1033422802, 20300, 1033421805, 60, 33, 42, 0, 1033422805),
-        arg_types="IIIIiIBBbbI",
+        flag=1033420800,
+        flag_1=1033420805,
+        left_flag=1033422801,
+        cancel_flag__right_flag=1033422802,
+        message=20300,
+        anchor_entity=Assets.AEG099_170_1000,
+        area_id=60,
+        block_id=33,
+        cc_id=42,
+        dd_id=0,
+        player_start=1033422805,
     )
-    RunCommonEvent(
+    CommonFunc_90005882(
         0,
-        90005882,
-        args=(
-            1033420800,
-            1033420805,
-            1033422800,
-            1033420800,
-            1033422806,
-            1033425810,
-            1033421800,
-            1033420810,
-            1033422810,
-            902100521,
-            -1,
-            20020,
-        ),
-        arg_types="IIIIIIIIIiii",
+        1033420800,
+        1033420805,
+        1033422800,
+        1033420800,
+        1033422806,
+        1033425810,
+        1033421800,
+        1033420810,
+        1033422810,
+        902100521,
+        -1,
+        20020,
     )
-    RunCommonEvent(0, 90005883, args=(1033420800, 1033420805, 1033421805), arg_types="III")
-    RunCommonEvent(0, 90005885, args=(1033420800, 0, 1033422806, 1033422807, 0, 1), arg_types="IiIIii")
+    CommonFunc_90005883(0, flag=1033420800, flag_1=1033420805, entity=Assets.AEG099_170_1000)
+    CommonFunc_90005885(0, 1033420800, 0, 1033422806, 1033422807, 0, 1)
 
 
 @RestartOnRest(1033422211)
 def Event_1033422211():
     """Event 1033422211"""
-    EndIfFlagEnabled(1033420610)
-    DisableAI(1033420610)
-    ForceAnimation(1033420610, 30008, unknown2=1.0)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=1033420610, attacker=PLAYER)
-    IfEntityWithinDistance(OR_2, entity=1033420610, other_entity=40000, radius=7.0)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(1033420610):
+        return
+    DisableAI(Characters.GiantTurtle)
+    ForceAnimation(Characters.GiantTurtle, 30008)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantTurtle, attacker=PLAYER))
+    OR_2.Add(EntityWithinDistance(entity=Characters.GiantTurtle, other_entity=40000, radius=7.0))
+    AND_1.Add(OR_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(1033420610)
-    ForceAnimation(1033420610, 20016, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(Characters.GiantTurtle, 20016, wait_for_completion=True)
 
 
 @RestartOnRest(1033422611)
 def Event_1033422611():
     """Event 1033422611"""
-    EndIfFlagEnabled(1033420610)
-    DisableCharacter(1033420610)
-    DisableAnimations(1033420610)
-    SkipLinesIfPlayerInOwnWorld(1)
-    EnableInvincibility(1033420610)
-    IfFlagEnabled(AND_1, 1034432616)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    EnableCharacter(1033420610)
-    EnableAnimations(1033420610)
-    EnableImmortality(1033420610)
-    DisableHealthBar(1033420610)
+    if FlagEnabled(1033420610):
+        return
+    DisableCharacter(Characters.GiantTurtle)
+    DisableAnimations(Characters.GiantTurtle)
+    if PlayerNotInOwnWorld():
+        EnableInvincibility(Characters.GiantTurtle)
+    AND_1.Add(FlagEnabled(1034432616))
+    
+    MAIN.Await(AND_1)
+    
+    EnableCharacter(Characters.GiantTurtle)
+    EnableAnimations(Characters.GiantTurtle)
+    EnableImmortality(Characters.GiantTurtle)
+    DisableHealthBar(Characters.GiantTurtle)

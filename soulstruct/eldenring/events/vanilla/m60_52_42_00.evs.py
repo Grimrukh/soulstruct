@@ -14,9 +14,10 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_52_42_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1052420000, obj=1052421950, unknown=5.0)
+    RegisterGrace(grace_flag=1052420000, asset=Assets.AEG099_060_9000)

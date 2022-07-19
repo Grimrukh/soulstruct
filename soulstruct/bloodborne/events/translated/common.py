@@ -1001,7 +1001,7 @@ def Event6815():
     IfFlagDisabled(-1, 6813)
     IfCharacterDoesNotHaveSpecialEffect(-1, PLAYER, 6142)
     IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(PLAYER, 6150)
+    RemoveSpecialEffect(PLAYER, 6150)
     Restart()
 
 
@@ -1015,7 +1015,7 @@ def Event6816():
     IfFlagDisabled(-1, 6814)
     IfCharacterDoesNotHaveSpecialEffect(-1, PLAYER, 6142)
     IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(PLAYER, 6140)
+    RemoveSpecialEffect(PLAYER, 6140)
     Restart()
 
 
@@ -1102,7 +1102,7 @@ def Event9030(_, arg_0_3: int, arg_4_7: int):
     IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
     AddSpecialEffect(PLAYER, arg_4_7, affect_npc_part_hp=False)
     IfCharacterDoesNotHaveSpecialEffect(0, PLAYER, arg_0_3)
-    CancelSpecialEffect(PLAYER, arg_4_7)
+    RemoveSpecialEffect(PLAYER, arg_4_7)
     Restart()
 
 
@@ -1116,7 +1116,7 @@ def Event9035(_, arg_0_3: int, arg_4_7: int):
     IfCharacterHasSpecialEffect(2, PLAYER, arg_0_3)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
     IfConditionFalse(0, input_condition=2)
-    CancelSpecialEffect(PLAYER, arg_4_7)
+    RemoveSpecialEffect(PLAYER, arg_4_7)
     Restart()
 
 
@@ -1219,7 +1219,7 @@ def Event9190():
     IfMultiplayer(2)
     IfHost(2)
     IfConditionFalse(0, input_condition=2)
-    CancelSpecialEffect(PLAYER, 9001)
+    RemoveSpecialEffect(PLAYER, 9001)
     Restart()
 
 
@@ -1263,7 +1263,7 @@ def Event9193():
     IfFlagEnabled(0, 6006)
     AddSpecialEffect(PLAYER, 6130, affect_npc_part_hp=False)
     IfFlagDisabled(0, 6006)
-    CancelSpecialEffect(PLAYER, 6130)
+    RemoveSpecialEffect(PLAYER, 6130)
     Restart()
 
 
@@ -1392,8 +1392,8 @@ def Event9260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(arg_0_3, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(arg_0_3, 9100)
     ReplanAI(arg_0_3)
     DisableFlag(arg_12_15)
     Restart()

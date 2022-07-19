@@ -31,10 +31,10 @@ def Constructor():
     RunEvent(7600, slot=50, args=(2701999, 2703999))
     RunEvent(7600, slot=51, args=(2701998, 2703998))
     RunEvent(9200, slot=7, args=(2703900,))
-    RunEvent(9220, slot=6, args=(2700710, 12704220, 12704221, 2700, 27, 0), arg_types="iiiiBB")
-    RunEvent(9240, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types="iiiiBB")
-    RunEvent(9260, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27, 0), arg_types="iiiiBB")
-    RunEvent(9280, slot=6, args=(2700710, 12704220, 12704221, 2700, 12704800, 27, 0), arg_types="iiiiiBB")
+    RunEvent(9220, slot=6, args=(2700710, 12704220, 12704221, 2700, 27))
+    RunEvent(9240, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27))
+    RunEvent(9260, slot=6, args=(2700710, 12704220, 12704221, 12704222, 27))
+    RunEvent(9280, slot=6, args=(2700710, 12704220, 12704221, 2700, 12704800, 27))
     DeleteVFX(2703910, erase_root_only=False)
     DeleteVFX(2703911, erase_root_only=False)
     DeleteVFX(2703912, erase_root_only=False)
@@ -49,7 +49,7 @@ def Constructor():
         dismissal_flag=12704430,
         flag=12704440,
         flag_1=12701800,
-        action_button_id=10561
+        action_button_id=10561,
     )
     Event_12704410(
         1,
@@ -60,7 +60,7 @@ def Constructor():
         dismissal_flag=12704431,
         flag=12704441,
         flag_1=12701800,
-        action_button_id=10565
+        action_button_id=10565,
     )
     Event_12704450(0, character=2700920, region=2702914, flag=12704420, flag_1=12704430, flag_2=12704800)
     Event_12704450(1, character=2700921, region=2702911, flag=12704421, flag_1=12704431, flag_2=12704800)
@@ -72,7 +72,7 @@ def Constructor():
         region_2=2702801,
         animation=101130,
         flag=12704800,
-        region_3=2702801
+        region_3=2702801,
     )
     Event_12704460(
         1,
@@ -82,7 +82,7 @@ def Constructor():
         region_2=2702801,
         animation=101130,
         flag=12704800,
-        region_3=2702801
+        region_3=2702801,
     )
     RegisterLadder(start_climbing_flag=12700602, stop_climbing_flag=12700603, obj=2701071)
     RegisterLadder(start_climbing_flag=12700604, stop_climbing_flag=12700605, obj=2701072)
@@ -377,51 +377,67 @@ def Constructor():
     Event_12705552()
     Event_12700710()
     Event_12705175()
-    Event_12705000(0, 2700655, 2702020, 5.0)
-    Event_12705000(1, 2700103, 2702022, 5.0)
-    Event_12705000(2, 2700104, 2702022, 5.0)
-    Event_12705000(3, 2700653, 2702022, 15.0)
-    Event_12705000(4, 2700110, 2702023, 10.0)
-    Event_12705000(5, 2700111, 2702023, 10.0)
-    Event_12705000(6, 2700651, 2702024, 5.0)
-    Event_12705000(7, 2700320, 2702025, 5.0)
-    Event_12705000(8, 2700321, 2702025, 5.0)
-    Event_12705000(9, 2700513, 2702027, 10.0)
-    Event_12705000(10, 2700500, 2702028, 5.0)
-    Event_12705000(11, 2700700, 2702030, 10.0)
-    Event_12705000(12, 2700435, 2702030, 5.0)
-    Event_12705000(13, 2700401, 2702030, 5.0)
-    Event_12705000(14, 2700352, 2702031, 5.0)
-    Event_12705000(15, 2700904, 2702032, 15.0)
-    Event_12705000(16, 2700915, 2702033, 15.0)
-    Event_12705000(17, 2700450, 2702034, 15.0)
-    Event_12705000(18, 2700451, 2702035, 15.0)
-    Event_12705000(19, 2700555, 2702036, 10.0)
-    Event_12705000(20, 2700131, 2702037, 12.0)
-    Event_12705000(21, 2700652, 2702038, 5.0)
-    Event_12705000(22, 2700134, 2702039, 5.0)
-    Event_12705000(23, 2700100, 2702042, 8.0)
-    Event_12705000(24, 2700146, 2702043, 7.0)
-    Event_12705000(25, 2700660, 2702044, 7.0)
-    Event_12705000(26, 2700659, 2702044, 7.0)
-    Event_12705000(28, 2700440, 2702212, 5.0)
-    Event_12705000(29, 2700441, 2702212, 5.0)
-    Event_12705000(30, 2700113, 2702231, 8.0)
-    Event_12705000(31, 2700611, 2702237, 6.0)
-    Event_12705000(32, 2700620, 2702237, 6.0)
-    Event_12705000(33, 2700616, 2702237, 6.0)
-    Event_12705000(34, 2700618, 2702237, 6.0)
-    Event_12705000(35, 2700625, 2702238, 8.0)
-    Event_12705000(36, 2700621, 2702238, 8.0)
-    Event_12705000(37, 2700613, 2702238, 8.0)
-    Event_12705000(38, 2700614, 2702238, 8.0)
-    Event_12705000(39, 2700615, 2702238, 8.0)
-    Event_12705000(40, 2700751, 2702240, 8.0)
-    Event_12705000(41, 2700752, 2702240, 8.0)
-    Event_12705000(42, 2700705, 2702241, 6.0)
-    Event_12705000(43, 2700515, 2702243, 8.0)
-    Event_12705090(0, 2701000, 12705060, 12705061, 12705062, 2702050, 9.0)
-    Event_12705090(1, 2701001, 12705063, 12705064, 12705065, 2702051, 5.0)
+    Event_12705000(0, character=2700655, region=2702020, radius=5.0)
+    Event_12705000(1, character=2700103, region=2702022, radius=5.0)
+    Event_12705000(2, character=2700104, region=2702022, radius=5.0)
+    Event_12705000(3, character=2700653, region=2702022, radius=15.0)
+    Event_12705000(4, character=2700110, region=2702023, radius=10.0)
+    Event_12705000(5, character=2700111, region=2702023, radius=10.0)
+    Event_12705000(6, character=2700651, region=2702024, radius=5.0)
+    Event_12705000(7, character=2700320, region=2702025, radius=5.0)
+    Event_12705000(8, character=2700321, region=2702025, radius=5.0)
+    Event_12705000(9, character=2700513, region=2702027, radius=10.0)
+    Event_12705000(10, character=2700500, region=2702028, radius=5.0)
+    Event_12705000(11, character=2700700, region=2702030, radius=10.0)
+    Event_12705000(12, character=2700435, region=2702030, radius=5.0)
+    Event_12705000(13, character=2700401, region=2702030, radius=5.0)
+    Event_12705000(14, character=2700352, region=2702031, radius=5.0)
+    Event_12705000(15, character=2700904, region=2702032, radius=15.0)
+    Event_12705000(16, character=2700915, region=2702033, radius=15.0)
+    Event_12705000(17, character=2700450, region=2702034, radius=15.0)
+    Event_12705000(18, character=2700451, region=2702035, radius=15.0)
+    Event_12705000(19, character=2700555, region=2702036, radius=10.0)
+    Event_12705000(20, character=2700131, region=2702037, radius=12.0)
+    Event_12705000(21, character=2700652, region=2702038, radius=5.0)
+    Event_12705000(22, character=2700134, region=2702039, radius=5.0)
+    Event_12705000(23, character=2700100, region=2702042, radius=8.0)
+    Event_12705000(24, character=2700146, region=2702043, radius=7.0)
+    Event_12705000(25, character=2700660, region=2702044, radius=7.0)
+    Event_12705000(26, character=2700659, region=2702044, radius=7.0)
+    Event_12705000(28, character=2700440, region=2702212, radius=5.0)
+    Event_12705000(29, character=2700441, region=2702212, radius=5.0)
+    Event_12705000(30, character=2700113, region=2702231, radius=8.0)
+    Event_12705000(31, character=2700611, region=2702237, radius=6.0)
+    Event_12705000(32, character=2700620, region=2702237, radius=6.0)
+    Event_12705000(33, character=2700616, region=2702237, radius=6.0)
+    Event_12705000(34, character=2700618, region=2702237, radius=6.0)
+    Event_12705000(35, character=2700625, region=2702238, radius=8.0)
+    Event_12705000(36, character=2700621, region=2702238, radius=8.0)
+    Event_12705000(37, character=2700613, region=2702238, radius=8.0)
+    Event_12705000(38, character=2700614, region=2702238, radius=8.0)
+    Event_12705000(39, character=2700615, region=2702238, radius=8.0)
+    Event_12705000(40, character=2700751, region=2702240, radius=8.0)
+    Event_12705000(41, character=2700752, region=2702240, radius=8.0)
+    Event_12705000(42, character=2700705, region=2702241, radius=6.0)
+    Event_12705000(43, character=2700515, region=2702243, radius=8.0)
+    Event_12705090(
+        0,
+        obj=2701000,
+        obj_flag=12705060,
+        obj_flag_1=12705061,
+        obj_flag_2=12705062,
+        region=2702050,
+        life=9.0,
+    )
+    Event_12705090(
+        1,
+        obj=2701001,
+        obj_flag=12705063,
+        obj_flag_1=12705064,
+        obj_flag_2=12705065,
+        region=2702051,
+        life=5.0,
+    )
     Event_12705070(0, entity=2701000, region=2702050, entity_1=2701100, animation_id=1, animation_id_1=2)
     Event_12705070(1, entity=2701001, region=2702051, entity_1=2701101, animation_id=3, animation_id_1=4)
     Event_12705080(0, flag=12705070, obj_flag=12705060, obj_flag_1=12705061, obj_flag_2=12705062)
@@ -430,8 +446,26 @@ def Constructor():
     Event_12701191(0, region=2702131, obj=2701051)
     Event_12705200()
     Event_12705201()
-    Event_12705290(0, 2700137, 2702142, 2.0, 7012, 7013, 263098, 263052)
-    Event_12705290(1, 2700138, 2702142, 2.0, 7014, 7015, 263098, 263052)
+    Event_12705290(
+        0,
+        character=2700137,
+        region=2702142,
+        radius=2.0,
+        animation_id=7012,
+        animation_id_1=7013,
+        ai_param_id=263098,
+        ai_param_id_1=263052,
+    )
+    Event_12705290(
+        1,
+        character=2700138,
+        region=2702142,
+        radius=2.0,
+        animation_id=7014,
+        animation_id_1=7015,
+        ai_param_id=263098,
+        ai_param_id_1=263052,
+    )
     Event_12705098()
     Event_12705099()
     Event_12705100(0, character=2700750, character_1=2700751)
@@ -457,29 +491,29 @@ def Constructor():
     Event_12705100(20, character=2700750, character_1=2700629)
     Event_12705100(21, character=2700750, character_1=2700630)
     Event_12705300(0, obj_act_id=12705095, character=2700900, obj=2701200)
-    Event_12705301(0, 2700139, 2701200, 5.0, 2702244)
-    Event_12705320(0, 2700427, 2702161, 0.5, 7000)
+    Event_12705301(0, character=2700139, obj=2701200, radius=5.0, region=2702244)
+    Event_12705320(0, character=2700427, region=2702161, seconds=0.5, animation_id=7000)
     Event_12705350()
     Event_12705360()
-    Event_12705370(0, 2700400, 0.0, 2700501, 2700907)
-    Event_12705370(1, 2700403, 0.30000001192092896, 2700501, 2700908)
-    Event_12705370(2, 2700406, 0.20000000298023224, 2700501, 2700909)
-    Event_12705370(3, 2700413, 0.6000000238418579, 2700501, 2700910)
-    Event_12705370(4, 2700414, 0.30000001192092896, 2700502, 2700916)
-    Event_12705370(5, 2700415, 1.0, 2700502, 2700917)
-    Event_12705370(6, 2700424, 0.5, 2700502, 2700918)
-    Event_12705370(7, 2700431, 0.6000000238418579, 2700502, 2700919)
+    Event_12705370(0, character=2700400, seconds=0.0, character_1=2700501, copy_draw_parent=2700907)
+    Event_12705370(1, character=2700403, seconds=0.30000001192092896, character_1=2700501, copy_draw_parent=2700908)
+    Event_12705370(2, character=2700406, seconds=0.20000000298023224, character_1=2700501, copy_draw_parent=2700909)
+    Event_12705370(3, character=2700413, seconds=0.6000000238418579, character_1=2700501, copy_draw_parent=2700910)
+    Event_12705370(4, character=2700414, seconds=0.30000001192092896, character_1=2700502, copy_draw_parent=2700916)
+    Event_12705370(5, character=2700415, seconds=1.0, character_1=2700502, copy_draw_parent=2700917)
+    Event_12705370(6, character=2700424, seconds=0.5, character_1=2700502, copy_draw_parent=2700918)
+    Event_12705370(7, character=2700431, seconds=0.6000000238418579, character_1=2700502, copy_draw_parent=2700919)
     Event_12705400()
-    Event_12705440(0, 2700116, 2702230, 5.0, 7004, 7005)
-    Event_12705440(1, 2700117, 2702231, 5.0, 7005, 7006)
+    Event_12705440(0, character=2700116, region=2702230, radius=5.0, animation_id=7004, animation_id_1=7005)
+    Event_12705440(1, character=2700117, region=2702231, radius=5.0, animation_id=7005, animation_id_1=7006)
     Event_12705460(0, character=2700513)
     Event_12705460(1, character=2700515)
-    Event_12705480(0, 2700301, 3021, 125, 2702250, 4.0)
-    Event_12705480(1, 2700302, 3021, 150, 2702251, 10.0)
-    Event_12705480(2, 2700303, 3021, 100, 2702252, 10.0)
-    Event_12705480(3, 2700308, 3021, 175, 2702253, 10.0)
-    Event_12705480(4, 2700309, 3021, 200, 2702254, 10.0)
-    Event_12705480(5, 2700310, 3021, 225, 2702255, 10.0)
+    Event_12705480(0, character=2700301, animation_id=3021, frames=125, destination=2702250, radius=4.0)
+    Event_12705480(1, character=2700302, animation_id=3021, frames=150, destination=2702251, radius=10.0)
+    Event_12705480(2, character=2700303, animation_id=3021, frames=100, destination=2702252, radius=10.0)
+    Event_12705480(3, character=2700308, animation_id=3021, frames=175, destination=2702253, radius=10.0)
+    Event_12705480(4, character=2700309, animation_id=3021, frames=200, destination=2702254, radius=10.0)
+    Event_12705480(5, character=2700310, animation_id=3021, frames=225, destination=2702255, radius=10.0)
     Event_12705490()
     Event_12705491()
     Event_12705500(0, flag=12705480, character=2700301, event_slot=0, entity=2701110)
@@ -507,7 +541,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705700,
         flag_1=12705760,
-        character=2700750
+        character=2700750,
     )
     Event_12705600(
         1,
@@ -518,7 +552,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705700,
         flag_1=12705760,
-        character=2700750
+        character=2700750,
     )
     Event_12705600(
         2,
@@ -529,7 +563,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705700,
         flag_1=12705760,
-        character=2700750
+        character=2700750,
     )
     Event_12705600(
         3,
@@ -540,7 +574,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705701,
         flag_1=12705761,
-        character=2700751
+        character=2700751,
     )
     Event_12705600(
         4,
@@ -551,7 +585,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705701,
         flag_1=12705761,
-        character=2700751
+        character=2700751,
     )
     Event_12705600(
         5,
@@ -562,7 +596,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12705701,
         flag_1=12705761,
-        character=2700751
+        character=2700751,
     )
     Event_12705630(
         0,
@@ -571,7 +605,7 @@ def Constructor():
         part_index=8,
         part_health=40,
         flag=12705700,
-        character=2700750
+        character=2700750,
     )
     Event_12705630(
         1,
@@ -580,7 +614,7 @@ def Constructor():
         part_index=9,
         part_health=40,
         flag=12705700,
-        character=2700750
+        character=2700750,
     )
     Event_12705630(
         2,
@@ -589,7 +623,7 @@ def Constructor():
         part_index=10,
         part_health=40,
         flag=12705700,
-        character=2700750
+        character=2700750,
     )
     Event_12705630(
         3,
@@ -598,7 +632,7 @@ def Constructor():
         part_index=8,
         part_health=40,
         flag=12705701,
-        character=2700751
+        character=2700751,
     )
     Event_12705630(
         4,
@@ -607,7 +641,7 @@ def Constructor():
         part_index=9,
         part_health=40,
         flag=12705701,
-        character=2700751
+        character=2700751,
     )
     Event_12705630(
         5,
@@ -616,7 +650,7 @@ def Constructor():
         part_index=10,
         part_health=40,
         flag=12705701,
-        character=2700751
+        character=2700751,
     )
     Event_12705660(0, tae_event_id=30, tae_event_id_1=40, flag=12705760, character=2700750, bit_index=1, bit_index_1=11)
     Event_12705660(1, tae_event_id=50, tae_event_id_1=40, flag=12705760, character=2700750, bit_index=2, bit_index_1=12)
@@ -752,9 +786,9 @@ def Event_12701801():
     AND_2.Add(CharacterBackreadDisabled(2420800))
     AND_2.Add(CharacterBackreadDisabled(2420801))
     AND_2.Add(CharacterBackreadDisabled(2420802))
-    AND_2.Add(HealthRatioLessThanOrEqual(2420800, value=0.0))
-    AND_2.Add(HealthRatioLessThanOrEqual(2420801, value=0.0))
-    AND_2.Add(HealthRatioLessThanOrEqual(2420802, value=0.0))
+    AND_2.Add(HealthRatio(2420800) <= 0.0)
+    AND_2.Add(HealthRatio(2420801) <= 0.0)
+    AND_2.Add(HealthRatio(2420802) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1070,9 +1104,9 @@ def Event_12704806():
     AND_3.Add(CharacterDead(2700802))
     AND_3.Add(CharacterDead(2700800))
     AND_3.Add(CharacterHasSpecialEffect(2700801, 5536))
-    AND_4.Add(HealthRatioLessThanOrEqual(2700800, value=0.30000001192092896))
-    AND_4.Add(HealthRatioLessThanOrEqual(2700801, value=0.30000001192092896))
-    AND_4.Add(HealthRatioLessThanOrEqual(2700802, value=0.30000001192092896))
+    AND_4.Add(HealthRatio(2700800) <= 0.30000001192092896)
+    AND_4.Add(HealthRatio(2700801) <= 0.30000001192092896)
+    AND_4.Add(HealthRatio(2700802) <= 0.30000001192092896)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1206,13 +1240,13 @@ def Event_12704811():
 @RestartOnRest(12704812)
 def Event_12704812(_, character: int, character_1: int, character_2: int):
     """Event 12704812"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.5))
-    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=0.5))
-    AND_1.Add(HealthRatioLessThanOrEqual(character_2, value=0.5))
+    AND_1.Add(HealthRatio(character) <= 0.5)
+    AND_1.Add(HealthRatio(character_1) <= 0.5)
+    AND_1.Add(HealthRatio(character_2) <= 0.5)
     OR_1.Add(AND_1)
-    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.30000001192092896))
-    OR_1.Add(HealthRatioLessThanOrEqual(character_1, value=0.30000001192092896))
-    OR_1.Add(HealthRatioLessThanOrEqual(character_2, value=0.30000001192092896))
+    OR_1.Add(HealthRatio(character) <= 0.30000001192092896)
+    OR_1.Add(HealthRatio(character_1) <= 0.30000001192092896)
+    OR_1.Add(HealthRatio(character_2) <= 0.30000001192092896)
     
     MAIN.Await(OR_1)
     
@@ -1252,7 +1286,7 @@ def Event_12704815(_, character: int, character__set_draw_parent: int, model_poi
         DisableGravity(character)
     
         MAIN.Await(CharacterHasTAEEvent(character__set_draw_parent, tae_event_id=50))
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(1, AND_1)
     Kill(character)
     EnableCharacter(character)
@@ -1273,7 +1307,7 @@ def Event_12704825(_, character: int, special_effect_id: int):
     """Event 12704825"""
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=40))
     
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     OR_1.Add(FramesElapsed(frames=70))
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     
@@ -1286,9 +1320,9 @@ def Event_12704825(_, character: int, special_effect_id: int):
 @RestartOnRest(12704830)
 def Event_12704830(_, character: int, entity: int, event_slot: int):
     """Event 12704830"""
-    AND_1.Add(HealthRatioLessThanOrEqual(2700800, value=0.0))
-    AND_1.Add(HealthRatioLessThanOrEqual(2700801, value=0.0))
-    AND_1.Add(HealthRatioLessThanOrEqual(2700802, value=0.0))
+    AND_1.Add(HealthRatio(2700800) <= 0.0)
+    AND_1.Add(HealthRatio(2700801) <= 0.0)
+    AND_1.Add(HealthRatio(2700802) <= 0.0)
     
     MAIN.Await(AND_1)
     
@@ -1794,7 +1828,7 @@ def Event_12700180(_, character: int, character_1: int):
 @RestartOnRest(12700190)
 def Event_12700190(_, character: int, character_1: int):
     """Event 12700190"""
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     Wait(1.0)
     ForceAnimation(character_1, 2200, wait_for_completion=True)
@@ -1816,7 +1850,7 @@ def Event_12700500():
         return
     AND_1.Add(CharacterAlive(2700680))
     AND_1.Add(Attacked(attacked_entity=PLAYER, attacker=2700680))
-    AND_1.Add(HealthRatioEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatio(PLAYER) == 0.0)
     AND_1.Add(FlagEnabled(9401))
     AND_1.Add(FlagEnabled(9404))
     
@@ -1935,8 +1969,8 @@ def Event_12700703():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthRatioLessThan(2700755, value=0.5))
-    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatio(2700755) < 0.5)
+    AND_1.Add(HealthRatio(2700755) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -1969,7 +2003,7 @@ def Event_12700706():
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
         return
-    AND_1.Add(HealthRatioEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatio(2700755) == 0.0)
     AND_1.Add(CharacterHasSpecialEffect(2700755, 151))
     OR_1.Add(FlagEnabled(1200))
     OR_1.Add(FlagEnabled(1204))
@@ -1988,8 +2022,8 @@ def Event_12700707():
     if not AND_15:
         return
     AND_1.Add(AttackedWithDamageType(attacked_entity=2700755))
-    AND_1.Add(HealthRatioGreaterThanOrEqual(2700755, value=0.5))
-    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatio(2700755) >= 0.5)
+    AND_1.Add(HealthRatio(2700755) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2018,7 +2052,7 @@ def Event_12700708():
         return
     AND_1.Add(CharacterHasSpecialEffect(2700755, 154))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthRatioGreaterThanOrEqual(2700755, value=0.5))
+    AND_1.Add(HealthRatio(2700755) >= 0.5)
     
     MAIN.Await(AND_1)
     
@@ -2086,7 +2120,7 @@ def Event_12700722():
     OR_1.Add(AttackedWithDamageType(attacked_entity=2700755, attacker=PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=2702301))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthRatioNotEqual(2700755, value=0.0))
+    AND_1.Add(HealthRatio(2700755) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2110,7 +2144,7 @@ def Event_12700723():
     
     WaitFrames(frames=1)
     AND_3.Add(AttackedWithDamageType(attacked_entity=2700755, attacker=PLAYER))
-    AND_3.Add(HealthRatioNotEqual(2700755, value=0.0))
+    AND_3.Add(HealthRatio(2700755) != 0.0)
     
     MAIN.Await(AND_3)
     
@@ -2264,9 +2298,9 @@ def Event_12700905(_, character: int, flag: int, first_flag: int, last_flag: int
         return
     DisableFlag(flag)
     OR_1.Add(FlagEnabled(flag))
-    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    OR_1.Add(HealthRatio(character) <= 0.8999999761581421)
     AND_1.Add(OR_1)
-    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2686,7 +2720,7 @@ def Event_12705300(_, obj_act_id: int, character: int, obj: int):
     AddSpecialEffect(character, 5580)
     ForceAnimation(obj, 1)
     Wait(1.0)
-    CancelSpecialEffect(character, 5580)
+    RemoveSpecialEffect(character, 5580)
     WaitFrames(frames=30)
     EnableObjectActivation(obj, obj_act_id=9800)
     Restart()
@@ -2893,12 +2927,12 @@ def Event_12705480(_, character: int, animation_id: int, frames: int, destinatio
     MAIN.Await(AND_1)
     
     if ThisEventSlotFlagDisabled():
-        MAIN.Await(HealthValueLessThan(character, value=0))
+        MAIN.Await(HealthValue(character) < 0)
     
         ForceAnimation(character, 7001, wait_for_completion=True)
     WaitFrames(frames=60)
     
-    MAIN.Await(HealthValueLessThan(character, value=0))
+    MAIN.Await(HealthValue(character) < 0)
     
     ForceAnimation(character, animation_id, wait_for_completion=True)
     Move(character, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
@@ -2917,7 +2951,7 @@ def Event_12705490():
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2702040))
     AND_1.Add(CharacterInsideRegion(2700145, region=2702045))
-    AND_1.Add(HealthRatioGreaterThan(2700145, value=0.0))
+    AND_1.Add(HealthRatio(2700145) > 0.0)
     AND_1.Add(FlagDisabled(12700173))
     AND_1.Add(FlagDisabled(12700174))
     AND_2.Add(FlagEnabled(12700175))
@@ -2957,7 +2991,7 @@ def Event_12705491():
     AND_1.Add(FlagDisabled(12700174))
     AND_1.Add(CharacterInsideRegion(PLAYER, region=2702040))
     AND_1.Add(CharacterInsideRegion(2700145, region=2702045))
-    AND_1.Add(HealthRatioGreaterThan(2700145, value=0.0))
+    AND_1.Add(HealthRatio(2700145) > 0.0)
     AND_2.Add(FlagEnabled(12700175))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
@@ -3125,10 +3159,10 @@ def Event_12705600(
     """Event 12705600"""
     MAIN.Await(FlagEnabled(flag))
     
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(FlagEnabled(flag_1))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -3153,7 +3187,7 @@ def Event_12705600(
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -3379,8 +3413,8 @@ def Event_12704410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)
     SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

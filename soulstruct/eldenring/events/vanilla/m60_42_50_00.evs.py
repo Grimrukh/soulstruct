@@ -12,19 +12,44 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_42_50_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1042500300, 1042500300, 1042500020, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 1042500300, 1042500300, 1042500020, 0.0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005201, args=(1042500300, 30000, 20000, 30.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1042500401, 30001, 20001, 30.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(1042500351, 100.0, 0.0, 0), arg_types="Iffi")
+    CommonFunc_90005201(
+        0,
+        character=Characters.UlceratedTreeSpirit,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=30.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier1,
+        animation_id=30001,
+        animation_id_1=20001,
+        radius=30.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 1042500351, 100.0, 0.0, 0)

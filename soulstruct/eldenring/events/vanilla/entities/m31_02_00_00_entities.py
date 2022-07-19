@@ -1,0 +1,37 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy0 = 31020950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 31020100  # c1000_9001 npc 10001000 think 1 talk 2000
+    Rat0 = 31020260  # c4080_9000 col h000300 npc 40800010 think 40800000
+    Rat1 = 31020261  # c4080_9001 col h000300 npc 40800010 think 40800000
+    Rat2 = 31020266  # c4080_9006 col h000300 npc 40800010 think 40800000
+    GiantRat0 = 31020250  # c4090_9000 col h000300 npc 40900010 think 40900000
+    GiantRat1 = 31020251  # c4090_9001 col h000300 npc 40900010 think 40900000
+    LivingMass0 = 31020303  # c4170_9003 col h000300 npc 41700312 think 41700000
+    LivingMass1 = 31020304  # c4170_9004 col h000300 npc 41700312 think 41700000
+    FungalSorcerer0 = 31020200  # c4385_9000 col h000300 npc 43850012 think 43850000
+    FungalSorcerer1 = 31020201  # c4385_9001 col h000300 npc 43850112 think 43850000
+    FungalSorcerer2 = 31020205  # c4385_9005 col h000300 npc 43850012 think 43850000
+    FungalSorcerer3 = 31020206  # c4385_9006 col h000300 npc 43850112 think 43850000
+    FungalSorcerer4 = 31020207  # c4385_9007 col h000300 npc 43850212 think 43850000
+    FungalSorcerer5 = 31020211  # c4385_9011 col h000300 npc 43850112 think 43850000
+    FungalSorcerer6 = 31020212  # c4385_9012 col h000300 npc 43850212 think 43850000
+    FungalSorcerer7 = 31020218  # c4385_9018 col h000300 npc 43850012 think 43850000
+    FungalSorcerer8 = 31020219  # c4385_9019 col h000300 npc 43850112 think 43850000
+    FungalSorcerer9 = 31020220  # c4385_9020 col h000300 npc 43850212 think 43850000
+    GiantMirandaFlower = 31020800  # c4480_9000 col h000400 npc 44800912 think 44800000 group 31025100,31025800
+    MirandaFlower0 = 31020350  # c4481_9000 col h000300 npc 44810012 think 44810000
+    MirandaFlower1 = 31020351  # c4481_9001 col h000300 npc 44810012 think 44810000
+    MirandaFlower2 = 31020357  # c4481_9007 col h000300 npc 44810012 think 44810000
+    MirandaFlower3 = 31020358  # c4481_9008 col h000300 npc 44810012 think 44810000
+    MirandaFlower4 = 31020359  # c4481_9009 col h000300 npc 44810012 think 44810000
+
+
+class Assets(Asset):
+    AEG099_003_9000 = 31021800  # AEG099
+    AEG099_053_9000 = 31021100  # AEG099
+    AEG099_060_9000 = 31021950  # AEG099
+    AEG099_065_9000 = 31021840  # AEG099
+    AEG099_090_9000 = 31021200  # AEG099

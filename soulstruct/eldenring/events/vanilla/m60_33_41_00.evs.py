@@ -12,29 +12,64 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_41_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1033410350, 1033410350, 1033410400, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005300, args=(1033410351, 1033410351, 1033410410, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005300, args=(1033410340, 1033410340, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005920, args=(1033410600, 1033411600, 1033413600), arg_types="III")
-    RunCommonEvent(0, 90005920, args=(1033410601, 1033411601, 1033413601), arg_types="III")
-    RunCommonEvent(0, 90005920, args=(1033410602, 1033411602, 1033413602), arg_types="III")
+    CommonFunc_90005300(
+        0,
+        flag=1033410350,
+        character=Characters.GlintstoneDragon0,
+        item_lot_param_id=1033410400,
+        seconds=0.0,
+        left=0,
+    )
+    CommonFunc_90005300(
+        0,
+        flag=1033410351,
+        character=Characters.GlintstoneDragon1,
+        item_lot_param_id=1033410410,
+        seconds=0.0,
+        left=0,
+    )
+    CommonFunc_90005300(0, flag=1033410340, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005920(0, flag=1033410600, asset=1033411600, obj_act_id=1033413600)
+    CommonFunc_90005920(0, flag=1033410601, asset=1033411601, obj_act_id=1033413601)
+    CommonFunc_90005920(0, 1033410602, 1033411602, 1033413602)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1033410340, 30001, 20001, 1033412340, 20.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.RedWolf,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1033412340,
+        radius=20.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005201, args=(1033410350, 30000, 20000, 17.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(1033410350, 17.0, 0.0, -1), arg_types="Iffi")
+    CommonFunc_90005201(
+        0,
+        character=Characters.GlintstoneDragon0,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=17.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 1033410350, 17.0, 0.0, -1)

@@ -11,6 +11,8 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
@@ -27,36 +29,36 @@ def Constructor():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RunCommonEvent(20005920, args=(0, 14705300, 10020000, 10020010), arg_types="Biii")
-    RunCommonEvent(20005930, args=(14705300,))
-    RunCommonEvent(20005941, args=(14705300,))
+    CommonFunc_20005920(0, match_type=0, flag=14705300, message=10020000, message_1=10020010)
+    CommonFunc_20005930(0, flag=14705300)
+    CommonFunc_20005941(0, flag=14705300)
     End()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    RunCommonEvent(20005920, args=(1, 14705300, 10020001, 10020011), arg_types="Biii")
+    CommonFunc_20005920(0, match_type=1, flag=14705300, message=10020001, message_1=10020011)
     Goto(Label.L9)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    RunCommonEvent(20005920, args=(2, 14705300, 10020002, 10020012), arg_types="Biii")
+    CommonFunc_20005920(0, match_type=2, flag=14705300, message=10020002, message_1=10020012)
     Goto(Label.L9)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    RunCommonEvent(20005920, args=(3, 14705300, 10020003, 10020013), arg_types="Biii")
+    CommonFunc_20005920(0, match_type=3, flag=14705300, message=10020003, message_1=10020013)
     Goto(Label.L9)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    RunCommonEvent(20005920, args=(4, 14705300, 10020004, 10020014), arg_types="Biii")
+    CommonFunc_20005920(0, match_type=4, flag=14705300, message=10020004, message_1=10020014)
     Goto(Label.L9)
 
     # --- Label 5 --- #
     DefineLabel(5)
-    RunCommonEvent(20005920, args=(5, 14705300, 10020005, 10020015), arg_types="Biii")
+    CommonFunc_20005920(0, match_type=5, flag=14705300, message=10020005, message_1=10020015)
     Goto(Label.L9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    RunCommonEvent(20005940, args=(14705300,))
+    CommonFunc_20005940(0, 14705300)

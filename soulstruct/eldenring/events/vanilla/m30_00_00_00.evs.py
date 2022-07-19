@@ -12,145 +12,339 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_00_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=73000, obj=30001950, unknown=5.0)
+    RegisterGrace(grace_flag=73000, asset=Assets.AEG099_060_9000)
     Event_30002800()
     Event_30002810()
     Event_30002829()
     Event_30002811()
-    RunCommonEvent(0, 90005550, args=(30000620, 30001620, 30003620), arg_types="III")
-    RunCommonEvent(0, 90005550, args=(30000621, 30001621, 30003621), arg_types="III")
-    RunCommonEvent(0, 90005550, args=(30000622, 30001622, 30003622), arg_types="III")
-    RunCommonEvent(0, 90005550, args=(30000623, 30001623, 30003623), arg_types="III")
-    RunCommonEvent(0, 90005650, args=(30000540, 30001540, 30001541, 30003541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30000540, 30001540), arg_types="II")
-    RunCommonEvent(0, 90005680, args=(30000500, 30000501, 30000502, 30000503, 30001500), arg_types="IIIII")
+    CommonFunc_90005550(0, flag=30000620, asset=30001620, obj_act_id=30003620)
+    CommonFunc_90005550(0, flag=30000621, asset=30001621, obj_act_id=30003621)
+    CommonFunc_90005550(0, flag=30000622, asset=30001622, obj_act_id=30003622)
+    CommonFunc_90005550(0, flag=30000623, asset=30001623, obj_act_id=30003623)
+    CommonFunc_90005650(
+        0,
+        flag=30000540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_1000,
+        obj_act_id=30003541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30000540, anchor_entity=Assets.AEG027_041_0500)
+    CommonFunc_90005680(
+        0,
+        flag=30000500,
+        flag_1=30000501,
+        flag_2=30000502,
+        flag_3=30000503,
+        asset=Assets.AEG027_155_0500,
+    )
     Event_30002510()
-    RunCommonEvent(
+    CommonFunc_90005620(
         0,
-        90005620,
-        args=(30000570, 30001570, 30001571, 0, 30002571, 30002572, 30002573),
-        arg_types="IIIIIIi",
+        flag=30000570,
+        asset=Assets.AEG027_079_9000,
+        asset_1=Assets.AEG027_216_9000,
+        asset_2=0,
+        left_flag=30002571,
+        cancel_flag__right_flag=30002572,
+        right=30002573,
     )
-    RunCommonEvent(0, 90005621, args=(30000570, 30001573), arg_types="II")
-    RunCommonEvent(
-        0,
-        90005646,
-        args=(30000800, 30002840, 30002841, 30001840, 30002840, 30, 0, 0, 0),
-        arg_types="IIIIIBBbb",
-    )
+    CommonFunc_90005621(0, flag=30000570, asset=Assets.AEG099_270_9001)
+    CommonFunc_90005646(0, 30000800, 30002840, 30002841, 30001840, 30002840, 30, 0, 0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     Event_30000050()
-    RunCommonEvent(0, 90005211, args=(30000200, 30003, 20003, 30002200, 1.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30000201, 30003, 20003, 30002201, 1.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005201, args=(30000204, 30003, 20003, 8.0, 0.0, 0, 1, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000205, 30003, 20003, 30002205, 1.0, 0.6000000238418579, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton0,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002200,
+        radius=1.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000206, 30003, 20003, 30002205, 1.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton1,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002201,
+        radius=1.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005211, args=(30000207, 30003, 20003, 30002207, 1.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30000208, 30003, 20003, 30002207, 1.0, 1.5, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005201, args=(30000211, 30003, 20003, 5.0, 0.0, 0, 1, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    CommonFunc_90005201(
         0,
-        90005211,
-        args=(30000212, 30003, 20003, 30002212, 1.0, 0.8999999761581421, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton3,
+        animation_id=30003,
+        animation_id_1=20003,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005211, args=(30000213, 30003, 20003, 30002215, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005201, args=(30000214, 30003, 20003, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000215, 30003, 20003, 30002215, 1.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton4,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002205,
+        radius=1.0,
+        seconds=0.6000000238418579,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000216, 30003, 20003, 30002215, 1.0, 1.2000000476837158, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton5,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002205,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000217, 30003, 20003, 30002215, 1.0, 1.2000000476837158, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=30000207,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002207,
+        radius=1.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30000218, 30003, 20003, 30002215, 1.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.CatacombsSkeleton6,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002207,
+        radius=1.0,
+        seconds=1.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(30000223, 30003, 20003, 30002223, 3.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(
+    CommonFunc_90005201(
         0,
-        90005200,
-        args=(30000224, 30003, 20003, 30002223, 0.20000000298023224, 0, 0, 0, 0),
-        arg_types="IiiIfIIII",
+        character=Characters.CatacombsSkeleton8,
+        animation_id=30003,
+        animation_id_1=20003,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005201, args=(30000225, 30003, 20003, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(30000226, 3.0, 0.0, 0), arg_types="Iffi")
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton9,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002212,
+        radius=1.0,
+        seconds=0.8999999761581421,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton10,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002215,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.CatacombsSkeleton11,
+        animation_id=30003,
+        animation_id_1=20003,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton12,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002215,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton13,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002215,
+        radius=1.0,
+        seconds=1.2000000476837158,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton14,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002215,
+        radius=1.0,
+        seconds=1.2000000476837158,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton15,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002215,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.CatacombsSkeleton16,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002223,
+        seconds=3.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.CatacombsSkeleton17,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30002223,
+        seconds=0.20000000298023224,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=30000225,
+        animation_id=30003,
+        animation_id_1=20003,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 30000226, 3.0, 0.0, 0)
 
 
 @NeverRestart(30000050)
 def Event_30000050():
     """Event 30000050"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(30000500)
 
 
 @NeverRestart(30002500)
 def Event_30002500():
     """Event 30002500"""
-    SkipLinesIfThisEventSlotFlagEnabled(1)
-    EndOfAnimation(obj=30001500, animation_id=12)
+    if ThisEventSlotFlagDisabled():
+        EndOfAnimation(asset=Assets.AEG027_155_0500, animation_id=12)
     GotoIfFlagEnabled(Label.L0, flag=30000500)
-    IfFlagDisabled(AND_1, 30000500)
-    IfAttackedWithDamageType(AND_1, attacked_entity=30001500, attacker=20000)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    ForceAnimation(30001500, 12, wait_for_completion=True, unknown2=1.0)
+    AND_1.Add(FlagDisabled(30000500))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=20000))
+    
+    MAIN.Await(AND_1)
+    
+    ForceAnimation(Assets.AEG027_155_0500, 12, wait_for_completion=True)
     EnableFlag(30000500)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagEnabled(AND_2, 30000500)
-    IfAttackedWithDamageType(AND_2, attacked_entity=30001500, attacker=20000)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(FlagEnabled(30000500))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=30001500, attacker=20000))
+    
+    MAIN.Await(AND_2)
+    
     DisableFlag(30000500)
-    ForceAnimation(30001500, 21, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(Assets.AEG027_155_0500, 21, wait_for_completion=True)
     Restart()
 
 
 @RestartOnRest(30009570)
 def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint, seconds: float):
     """Event 30009570"""
-    IfFlagEnabled(OR_1, flag)
-    IfPlayerNotInOwnWorld(OR_1)
-    EndIfConditionTrue(input_condition=OR_1)
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(PlayerNotInOwnWorld())
+    if OR_1:
+        return
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    IfActionButtonParamActivated(MAIN, action_button_id=9220, entity=destination)
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=9220, entity=destination))
+    
     DisplayDialogAndSetFlags(
         message=108000,
         button_type=ButtonType.Yes_or_No,
@@ -167,10 +361,10 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfPlayerHasGood(AND_2, 8000)
+    AND_2.Add(PlayerHasGood(8000))
     GotoIfConditionTrue(Label.L2, input_condition=AND_2)
     WaitFrames(frames=1)
-    ForceAnimation(PLAYER, 50050, unknown2=1.0)
+    ForceAnimation(PLAYER, 50050)
     Wait(1.399999976158142)
     DisplayDialog(text=308000, anchor_entity=destination)
     Wait(1.0)
@@ -178,7 +372,7 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
     RotateToFaceEntity(PLAYER, destination, animation=60010)
     Wait(seconds)
     DisplayDialog(text=208000, anchor_entity=destination)
@@ -187,22 +381,25 @@ def Event_30009570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
 
 @RestartOnRest(30002570)
-def Event_30002570(_, flag: uint, obj: uint, obj_1: uint, obj_2: uint):
+def Event_30002570(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint):
     """Event 30002570"""
-    EndIfFlagEnabled(30002570)
-    DeleteObjectVFX(obj)
-    DeleteObjectVFX(obj_1)
-    DisableObject(obj_2)
-    CreateObjectVFX(obj, vfx_id=200, model_point=806040)
-    CreateObjectVFX(obj_1, vfx_id=101, model_point=806041)
-    IfFlagEnabled(MAIN, flag)
-    DeleteObjectVFX(obj_1, erase_root=False)
+    if FlagEnabled(30002570):
+        return
+    DeleteAssetVFX(asset)
+    DeleteAssetVFX(asset_1)
+    DisableAsset(asset_2)
+    CreateAssetVFX(asset, vfx_id=200, model_point=806040)
+    CreateAssetVFX(asset_1, vfx_id=101, model_point=806041)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    DeleteAssetVFX(asset_1, erase_root=False)
     Wait(2.0)
-    DisableObject(obj_1)
-    DisableObject(30001572)
-    EnableObject(obj_2)
-    DeleteObjectVFX(obj)
-    DeleteObjectVFX(obj_1, erase_root=False)
+    DisableAsset(asset_1)
+    DisableAsset(30001572)
+    EnableAsset(asset_2)
+    DeleteAssetVFX(asset)
+    DeleteAssetVFX(asset_1, erase_root=False)
 
 
 @NeverRestart(30002610)
@@ -220,184 +417,186 @@ def Event_30002610(
     model_point_3: int,
 ):
     """Event 30002610"""
-    IfFlagEnabled(AND_1, flag)
-    SkipLinesIfUnsignedEqual(1, left=region, right=0)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=region)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(FlagEnabled(flag))
+    if UnsignedNotEqual(left=region, right=0):
+        AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    
+    MAIN.Await(AND_1)
+    
     CreateProjectileOwner(entity=owner_entity)
     GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=model_point, right=0)
-    SkipLinesIfValueEqual(2, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point,
-        behavior_id=801101200,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfValueEqual(2, left=behavior_id_1, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point,
-        behavior_id=behavior_id_1,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point,
-        behavior_id=801101205,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point,
+            behavior_id=801101200,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if ValueNotEqual(left=behavior_id_1, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point,
+            behavior_id=behavior_id_1,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point,
+            behavior_id=801101205,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 1 --- #
     DefineLabel(1)
     GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=model_point_1, right=0)
-    SkipLinesIfValueEqual(2, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_1,
-        behavior_id=801101200,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfValueEqual(2, left=behavior_id_1, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_1,
-        behavior_id=behavior_id_1,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_1,
-        behavior_id=801101205,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_1,
+            behavior_id=801101200,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if ValueNotEqual(left=behavior_id_1, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_1,
+            behavior_id=behavior_id_1,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_1,
+            behavior_id=801101205,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 2 --- #
     DefineLabel(2)
     GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=model_point_2, right=0)
-    SkipLinesIfValueEqual(2, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_2,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_2,
-        behavior_id=801101200,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfValueEqual(2, left=behavior_id_1, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_2,
-        behavior_id=behavior_id_1,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_2,
-        behavior_id=801101205,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_2,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_2,
+            behavior_id=801101200,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if ValueNotEqual(left=behavior_id_1, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_2,
+            behavior_id=behavior_id_1,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_2,
+            behavior_id=801101205,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 3 --- #
     DefineLabel(3)
     GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=model_point_3, right=0)
-    SkipLinesIfValueEqual(2, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_3,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_3,
-        behavior_id=801101200,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfValueEqual(2, left=behavior_id_1, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_3,
-        behavior_id=behavior_id_1,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLines(1)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=model_point_3,
-        behavior_id=801101205,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_3,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_3,
+            behavior_id=801101200,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if ValueNotEqual(left=behavior_id_1, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_3,
+            behavior_id=behavior_id_1,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    else:
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=model_point_3,
+            behavior_id=801101205,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 4 --- #
     DefineLabel(4)
@@ -408,13 +607,15 @@ def Event_30002610(
 @NeverRestart(30002611)
 def Event_30002611():
     """Event 30002611"""
-    IfFlagEnabled(AND_1, 30000500)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=30002500)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    CreateProjectileOwner(entity=30000500)
+    AND_1.Add(FlagEnabled(30000500))
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30002500))
+    
+    MAIN.Await(AND_1)
+    
+    CreateProjectileOwner(entity=Characters.Dummy)
     ShootProjectile(
-        owner_entity=30000500,
-        source_entity=30001500,
+        owner_entity=Characters.Dummy,
+        source_entity=Assets.AEG027_155_0500,
         model_point=100,
         behavior_id=101100,
         launch_angle_x=0,
@@ -422,8 +623,8 @@ def Event_30002611():
         launch_angle_z=0,
     )
     ShootProjectile(
-        owner_entity=30000500,
-        source_entity=30001500,
+        owner_entity=Characters.Dummy,
+        source_entity=Assets.AEG027_155_0500,
         model_point=100,
         behavior_id=101102,
         launch_angle_x=0,
@@ -431,8 +632,8 @@ def Event_30002611():
         launch_angle_z=0,
     )
     ShootProjectile(
-        owner_entity=30000500,
-        source_entity=30001500,
+        owner_entity=Characters.Dummy,
+        source_entity=Assets.AEG027_155_0500,
         model_point=101,
         behavior_id=101100,
         launch_angle_x=0,
@@ -440,8 +641,8 @@ def Event_30002611():
         launch_angle_z=0,
     )
     ShootProjectile(
-        owner_entity=30000500,
-        source_entity=30001500,
+        owner_entity=Characters.Dummy,
+        source_entity=Assets.AEG027_155_0500,
         model_point=101,
         behavior_id=101102,
         launch_angle_x=0,
@@ -455,78 +656,134 @@ def Event_30002611():
 @NeverRestart(30002510)
 def Event_30002510():
     """Event 30002510"""
-    RunCommonEvent(0, 90005681, args=(30000500, 30000501, 30000502, 30000503, 30001500), arg_types="IIIII")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(
+    CommonFunc_90005681(
         0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101270, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
+        flag=30000500,
+        flag_1=30000501,
+        flag_2=30000502,
+        flag_3=30000503,
+        attacked_entity=Assets.AEG027_155_0500,
     )
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101260, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101250, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101240, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101230, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101220, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101210, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30000502, 30001500, 30002500, 30000500, 801101200, 801101205, 100, 101, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
+    if FlagEnabled(57):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101270,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101260,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101250,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101240,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101230,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101220,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005682(
+            0,
+            flag=30000502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30002500,
+            owner_entity=Characters.Dummy,
+            behavior_id=801101210,
+            behavior_id_1=801101205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005682(0, 30000502, 30001500, 30002500, 30000500, 801101200, 801101205, 100, 101, 0, 0)
 
 
 @RestartOnRest(30002800)
 def Event_30002800():
     """Event 30002800"""
-    EndIfFlagEnabled(30000800)
-    IfHealthValueLessThanOrEqual(MAIN, 30000800, value=0)
+    if FlagEnabled(30000800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.CemeteryShade) <= 0)
+    
     Wait(4.0)
     PlaySoundEffect(30008000, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30000800)
-    KillBossAndDisplayBanner(character=30000800, banner_type=BannerType.DutyFulfilled)
+    
+    MAIN.Await(CharacterDead(Characters.CemeteryShade))
+    
+    KillBossAndDisplayBanner(character=Characters.CemeteryShade, banner_type=BannerType.EnemyFelled)
     EnableFlag(30000800)
     EnableFlag(9200)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61200)
+    if PlayerInOwnWorld():
+        EnableFlag(61200)
 
 
 @RestartOnRest(30002810)
@@ -541,32 +798,50 @@ def Event_30002810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(30005800)
-    IfFlagEnabled(AND_2, 30002805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30002800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(FlagEnabled(30002805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30002800))
+    
+    MAIN.Await(AND_2)
+    
     EnableAI(30005800)
     SetNetworkUpdateRate(30005800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(30000800, name=903664300)
+    EnableBossHealthBar(Characters.CemeteryShade, name=903664300)
 
 
 @RestartOnRest(30002811)
 def Event_30002811():
     """Event 30002811"""
-    EndIfFlagEnabled(30000800)
-    IfHealthRatioLessThanOrEqual(AND_1, 30000800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30000800):
+        return
+    AND_1.Add(HealthRatio(Characters.CemeteryShade) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(30002802)
 
 
 @RestartOnRest(30002829)
 def Event_30002829():
     """Event 30002829"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30000800, 30001800, 30002800, 30002805, 30005800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30000800,
+        entity=Assets.AEG099_001_9000,
+        region=30002800,
+        flag_1=30002805,
+        character=30005800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30000800, 30001800, 30002800, 30002805, 30002806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30000800, 30001800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30000800, 930000, 30002805, 30002806, 0, 30002802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=30000800,
+        entity=Assets.AEG099_001_9000,
+        region=30002800,
+        flag_1=30002805,
+        flag_2=30002806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=30000800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30000800, 930000, 30002805, 30002806, 0, 30002802, 0, 0)

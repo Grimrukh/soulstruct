@@ -1,0 +1,18 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Dummy = 1050540100  # c0100_9000 npc 1000000 think 1000000 talk 2000
+    FirePrelate = 1050540300  # c3910_9000 npc 39101150 think 39101100
+    ThornSorcerer0 = 1050540200  # c4381_9000 npc 43811150 think 43810150
+    ThornSorcerer1 = 1050540203  # c4381_9003 npc 43811150 think 43810150
+    ThornSorcerer2 = 1050540204  # c4381_9004 npc 43811150 think 43810150
+    ThornSorcerer3 = 1050540206  # c4381_9006 npc 43811150 think 43810150
+    Eagle0 = 1050540251  # c6001_9006 npc 60010050 think 60010000 group 1050545200
+    Eagle1 = 1050540252  # c6001_9007 npc 60010050 think 60010000 group 1050545200
+    Deer0 = 1050540253  # c6010_9000 npc 60100050 think 60100000 group 1050545200
+    Deer1 = 1050540254  # c6010_9001 npc 60100050 think 60100000 group 1050545200
+
+
+class Assets(Asset):
+    AEG099_053_9000 = 1050541100  # AEG099

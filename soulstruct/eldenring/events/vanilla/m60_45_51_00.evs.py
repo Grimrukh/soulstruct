@@ -12,27 +12,32 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_45_51_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
     Event_1045512620()
-    RunCommonEvent(0, 900005610, args=(1045511680, 100, 800, 1045518620), arg_types="IiiI")
+    CommonFunc_900005610(0, 1045511680, 100, 800, 1045518620)
 
 
 @RestartOnRest(1045512620)
 def Event_1045512620():
     """Event 1045512620"""
     GotoIfFlagEnabled(Label.L0, flag=1045510620)
-    IfObjectActivated(MAIN, obj_act_id=1145513620)
+    
+    MAIN.Await(AssetActivated(obj_act_id=1145513620))
+    
     EnableFlag(1045510620)
     Wait(3.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableObjectActivation(1145511620, obj_act_id=-1)
-    EndOfAnimation(obj=1145511620, animation_id=0)
+    DisableAssetActivation(Assets.AEG110_064_2000, obj_act_id=-1)
+    EndOfAnimation(asset=Assets.AEG110_064_2000, animation_id=0)
     End()

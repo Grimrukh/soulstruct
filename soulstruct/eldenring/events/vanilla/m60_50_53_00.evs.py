@@ -12,32 +12,46 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_50_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
     Event_1050532200(0, character=1050535200)
-    RunCommonEvent(0, 90005300, args=(1050530210, 1050530210, 1050530700, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 900005610, args=(1050531680, 100, 800, 1050538620), arg_types="IiiI")
-    RunCommonEvent(0, 90005683, args=(62511, 1050531600, 211, 78592, 0), arg_types="IIiII")
-    RunCommonEvent(0, 900005610, args=(1050531685, 100, 800, 1050538600), arg_types="IiiI")
-    RunCommonEvent(
+    CommonFunc_90005300(
         0,
-        90005620,
-        args=(1050530570, 1050531570, 1050531571, 1050531572, 1050532570, 1050532571, 1050532572),
-        arg_types="IIIIIIi",
+        flag=1050530210,
+        character=Characters.Scarab,
+        item_lot_param_id=1050530700,
+        seconds=0.0,
+        left=0,
     )
-    RunCommonEvent(0, 90005621, args=(1050530570, 1050531573), arg_types="II")
-    RunCommonEvent(0, 90005631, args=(1050531500, 61050), arg_types="Ii")
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1050538620)
+    CommonFunc_90005683(0, flag=62511, asset=Assets.AEG099_057_1000, vfx_id=211, flag_1=78592, flag_2=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=1050538600)
+    CommonFunc_90005620(
+        0,
+        flag=1050530570,
+        asset=1050531570,
+        asset_1=1050531571,
+        asset_2=1050531572,
+        left_flag=1050532570,
+        cancel_flag__right_flag=1050532571,
+        right=1050532572,
+    )
+    CommonFunc_90005621(0, flag=1050530570, asset=1050531573)
+    CommonFunc_90005631(0, 1050531500, 61050)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(1050530201, 30004, 20004, 1050532201, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(0, 1050530201, 30004, 20004, 1050532201, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1050532200)

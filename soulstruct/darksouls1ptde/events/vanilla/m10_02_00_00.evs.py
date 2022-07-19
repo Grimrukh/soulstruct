@@ -37,18 +37,18 @@ def Constructor():
     Event_11020700(1, obj=1021651, obj_act_id=11020701)
     Event_11020700(2, obj=1021652, obj_act_id=11020702)
     Event_11020700(3, obj=1021653, obj_act_id=11020703)
-    Event_11025200(0, 1020203, 1020203, 4.0, 0.0)
-    Event_11025200(1, 1020203, 1020204, 4.0, 0.8999999761581421)
-    Event_11025200(2, 1020205, 1020205, 3.0, 0.0)
-    Event_11025200(3, 1020205, 1020206, 3.0, 0.699999988079071)
-    Event_11025200(6, 1020200, 1020200, 11.0, 0.0)
-    Event_11025200(7, 1020200, 1020201, 11.0, 1.5)
-    Event_11025200(8, 1020202, 1020202, 7.0, 0.0)
-    Event_11025200(9, 1020202, 1020214, 7.0, 1.100000023841858)
-    Event_11025200(10, 1020209, 1020209, 11.0, 0.0)
-    Event_11025200(11, 1020209, 1020210, 11.0, 0.800000011920929)
-    Event_11025200(12, 1020209, 1020211, 11.0, 1.5)
-    Event_11025200(13, 1020209, 1020212, 11.0, 2.200000047683716)
+    Event_11025200(0, other_entity=1020203, character=1020203, radius=4.0, seconds=0.0)
+    Event_11025200(1, other_entity=1020203, character=1020204, radius=4.0, seconds=0.8999999761581421)
+    Event_11025200(2, other_entity=1020205, character=1020205, radius=3.0, seconds=0.0)
+    Event_11025200(3, other_entity=1020205, character=1020206, radius=3.0, seconds=0.699999988079071)
+    Event_11025200(6, other_entity=1020200, character=1020200, radius=11.0, seconds=0.0)
+    Event_11025200(7, other_entity=1020200, character=1020201, radius=11.0, seconds=1.5)
+    Event_11025200(8, other_entity=1020202, character=1020202, radius=7.0, seconds=0.0)
+    Event_11025200(9, other_entity=1020202, character=1020214, radius=7.0, seconds=1.100000023841858)
+    Event_11025200(10, other_entity=1020209, character=1020209, radius=11.0, seconds=0.0)
+    Event_11025200(11, other_entity=1020209, character=1020210, radius=11.0, seconds=0.800000011920929)
+    Event_11025200(12, other_entity=1020209, character=1020211, radius=11.0, seconds=1.5)
+    Event_11025200(13, other_entity=1020209, character=1020212, radius=11.0, seconds=2.200000047683716)
     Event_11025200(14, 1020213, 1020213, 3.0, 0.0)
 
 
@@ -406,7 +406,7 @@ def Event_11025050():
     """Event 11025050"""
     EnableImmortality(1020100)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1020100, value=0.30000001192092896))
+    MAIN.Await(HealthRatio(1020100) <= 0.30000001192092896)
     
     ForceAnimation(1020100, 7000, wait_for_completion=True)
     DisableCharacter(1020100)
@@ -717,8 +717,8 @@ def Event_11025150():
 @NeverRestart(11020510)
 def Event_11020510(_, character: int, flag: int):
     """Event 11020510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -746,7 +746,7 @@ def Event_11020530(_, character: int, first_flag: int, last_flag: int, flag: int
     if ThisEventSlotFlagEnabled():
         DropMandatoryTreasure(character)
         End()
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(CharacterInsideRegion(character, region=1022300))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -767,16 +767,16 @@ def Event_11020501():
     AND_1.Add(FlagDisabled(11020693))
     AND_1.Add(FlagDisabled(1176))
     AND_1.Add(FlagRangeAllDisabled(flag_range=(1193, 1196)))
-    AND_2.Add(HealthRatioLessThanOrEqual(6070, value=0.8999999761581421))
+    AND_2.Add(HealthRatio(6070) <= 0.8999999761581421)
     if FlagDisabled(1177):
         AND_2.Add(Attacked(attacked_entity=6070, attacker=PLAYER))
-    AND_3.Add(HealthRatioLessThanOrEqual(6080, value=0.8999999761581421))
+    AND_3.Add(HealthRatio(6080) <= 0.8999999761581421)
     if FlagDisabled(1198):
         AND_3.Add(Attacked(attacked_entity=6080, attacker=PLAYER))
-    AND_4.Add(HealthRatioLessThanOrEqual(6090, value=0.8999999761581421))
+    AND_4.Add(HealthRatio(6090) <= 0.8999999761581421)
     if FlagDisabled(1214):
         AND_4.Add(Attacked(attacked_entity=6090, attacker=PLAYER))
-    AND_5.Add(HealthRatioLessThanOrEqual(6100, value=0.8999999761581421))
+    AND_5.Add(HealthRatio(6100) <= 0.8999999761581421)
     if FlagDisabled(1224):
         AND_5.Add(Attacked(attacked_entity=6100, attacker=PLAYER))
     AND_6.Add(FlagEnabled(1197))
@@ -825,8 +825,8 @@ def Event_11020502(_, character: int, flag: int):
     OR_2.Add(AND_7)
     OR_2.Add(AND_6)
     AND_1.Add(OR_2)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagEnabled(flag))
@@ -846,8 +846,8 @@ def Event_11020503(_, character: int, flag: int):
     """Event 11020503"""
     AND_1.Add(FlagDisabled(1197))
     AND_1.Add(FlagEnabled(1194))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -865,8 +865,8 @@ def Event_11020503(_, character: int, flag: int):
 def Event_11020504(_, character: int, flag: int):
     """Event 11020504"""
     AND_1.Add(FlagDisabled(1411))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
@@ -1122,7 +1122,7 @@ def Event_11020567(_, character: int, first_flag: int, last_flag: int, flag: int
     OR_2.Add(FlagEnabled(1194))
     OR_2.Add(FlagEnabled(1195))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(1196))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1141,7 +1141,7 @@ def Event_11020569(_, character: int, first_flag: int, last_flag: int, flag: int
     AND_1.Add(FlagDisabled(1194))
     AND_1.Add(FlagDisabled(1195))
     AND_1.Add(FlagDisabled(1196))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(1198))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1434,7 +1434,7 @@ def Event_11020413(_, character: int, flag: int):
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlag(1434)
     EnableFlag(flag)
@@ -1521,8 +1521,8 @@ def Event_11020425(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11020425"""
     AND_1.Add(InsideMap(game_map=FIRELINK_SHRINE))
     OR_1.Add(FlagEnabled(11020598))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_2.Add(HealthRatio(character) > 0.0)
     AND_2.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_1.Add(AND_2)

@@ -12,17 +12,20 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_47_57_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005706, args=(1047570701, 930021, 0), arg_types="IiI")
+    CommonFunc_90005706(0, 1047570701, 930021, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1047570701)
+    DisableBackread(Characters.WanderingNoble)

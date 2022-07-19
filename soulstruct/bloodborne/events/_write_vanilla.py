@@ -6,6 +6,7 @@ def main():
 
     ed = EMEVDDirectory(BB_PATH + "/event")
     ed.write_evs("vanilla")
+    # TODO: When `common` is actually used, pass it to m29 EMEVD here as well.
     chalice_dungeon = EMEVD(BB_PATH + "/event/m29.emevd.dcx")
     chalice_dungeon.write_evs("vanilla/m29.evs.py")
 

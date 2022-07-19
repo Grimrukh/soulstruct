@@ -47,7 +47,7 @@ def Constructor():
         flag_3=13604810,
         flag_4=999,
         flag_5=999,
-        flag_6=13604712
+        flag_6=13604712,
     )
     Event_13604730(
         5,
@@ -58,7 +58,7 @@ def Constructor():
         flag_3=13604810,
         flag_4=999,
         flag_5=999,
-        flag_6=13604711
+        flag_6=13604711,
     )
     Event_13604740()
     Event_13604742()
@@ -153,99 +153,807 @@ def Constructor():
     Event_13601802()
     Event_13601803()
     Event_13601804()
-    Event_13605200(0, 3600200, 3602200, 0, 3603200, 0.0, 0)
-    Event_13605200(1, 3600202, 3602202, 0, 3603202, 0.0, 0)
-    Event_13605200(2, 3600203, 3602202, 3602203, 3603203, 0.0, 0)
-    Event_13605200(3, 3600204, 3602202, 3602203, 3603204, 0.0, 0)
-    Event_13605200(4, 3600208, 3602208, 0, 3603208, 0.0, 0)
-    Event_13605200(5, 3600209, 3602208, 0, 3603209, 0.0, 0)
-    Event_13605200(6, 3600210, 3602210, 0, 3603210, 0.0, 0)
-    Event_13605200(7, 3600300, 3602300, 0, 3603300, 0.0, 0)
-    Event_13605200(8, 3600213, 3602213, 0, 3603213, 0.0, 0)
-    Event_13605200(9, 3600214, 3602213, 0, 3603214, 0.0, 0)
-    Event_13605200(10, 3600217, 3602215, 0, 3603217, 0.0, 0)
-    Event_13605200(11, 3600229, 3602229, 0, 3603229, 0.0, 0)
-    Event_13605200(12, 3600231, 3602231, 3602232, 3603231, 0.0, 0)
-    Event_13605200(13, 3600232, 3602231, 3602232, 3603232, 0.0, 0)
-    Event_13605200(14, 3600233, 3602231, 3602232, 3603233, 0.0, 0)
-    Event_13605200(15, 3600610, 3602610, 0, 3603610, 0.0, 0)
-    Event_13605200(16, 3600611, 3602231, 3602232, 3603611, 0.0, 0)
-    Event_13605200(17, 3600301, 3602301, 0, 3603301, 0.0, 1)
-    Event_13605200(18, 3600310, 3602310, 0, 3603310, 0.0, 1)
-    Event_13605200(19, 3600700, 3602700, 0, 3603700, 0.0, 0)
-    Event_13605200(20, 3600710, 3602710, 0, 3603710, 0.0, 0)
-    Event_13605200(21, 3600251, 3602251, 0, 3603251, 0.0, 0)
-    Event_13605200(23, 3600253, 3602252, 0, 3603253, 0.0, 0)
-    Event_13605200(25, 3600314, 3602314, 0, 3603314, 0.0, 0)
-    Event_13605200(26, 3600455, 3602455, 0, 3603455, 0.0, 0)
-    Event_13605200(27, 3600456, 3602455, 0, 3603456, 1.0, 1)
-    Event_13605200(28, 3600474, 3602474, 0, 3603474, 0.0, 0)
-    Event_13605200(29, 3600475, 3602474, 0, 3603475, 1.0, 1)
-    Event_13605200(30, 3600302, 3602302, 0, 3603302, 0.0, 0)
-    Event_13605200(31, 3600312, 3602312, 0, 3603312, 0.0, 0)
-    Event_13605200(32, 3600470, 3602470, 0, 3603470, 0.0, 1)
-    Event_13605200(33, 3600500, 3602470, 0, 3603500, 0.0, 0)
-    Event_13605200(34, 3600501, 3602501, 0, 3603501, 0.0, 0)
-    Event_13605200(35, 3600920, 3602940, 0, 3603920, 0.0, 0)
-    Event_13605400(0, 3600206, 7004, 404002, 7005, 404002, 3602206, 0.0, 0.0)
-    Event_13605400(1, 3600211, 7012, 404000, 7013, 404000, 3602211, 0.0, 0.0)
-    Event_13605400(2, 3600218, 0, 404011, 3005, 404010, 3602218, 0.0, 0.0)
-    Event_13605400(3, 3600222, 7016, 404031, 7017, 404030, 3602222, 0.0, 0.0)
-    Event_13605400(4, 3600230, 7004, 404000, 7005, 404000, 3602230, 0.0, 0.0)
-    Event_13605400(5, 3600239, 7012, 404008, 7013, 404008, 3602240, 0.75, 0.75)
-    Event_13605400(6, 3600240, 7012, 404004, 7013, 404004, 3602240, 0.25, 0.25)
-    Event_13605400(7, 3600241, 7012, 404008, 7013, 404008, 3602240, 0.0, 0.0)
-    Event_13605400(8, 3600242, 7012, 404004, 7013, 404004, 3602240, 0.5, 0.5)
-    Event_13605400(9, 3600244, 7014, 404014, 7015, 404014, 3602244, 0.0, 0.0)
-    Event_13605400(10, 3600245, 0, 404035, 3026, 404034, 3602245, 0.0, 0.0)
-    Event_13605400(11, 3600246, 7018, 404034, 7019, 404034, 3602246, 0.0, 0.0)
-    Event_13605400(12, 3600247, 7018, 404014, 7019, 404014, 3602246, 0.5, 0.5)
-    Event_13605400(13, 3600260, 7012, 404018, 7013, 404019, 3602260, 0.0, 0.0)
-    Event_13605400(14, 3600261, 7012, 404018, 7013, 404019, 3602261, 0.0, 0.0)
-    Event_13605400(15, 3600262, 7012, 404018, 7013, 404019, 3602262, 0.0, 0.0)
-    Event_13605400(16, 3600265, 7012, 404018, 7013, 404019, 3602265, 0.0, 0.0)
-    Event_13605400(17, 3600400, 7010, 407022, 3001, 407020, 3602400, 0.0, 1.0)
-    Event_13605400(18, 3600401, 7010, 407012, 7001, 407010, 3602400, 0.0, 1.0)
-    Event_13605400(19, 3600402, 7010, 407012, 7001, 407010, 3602400, 0.0, 1.0)
-    Event_13605400(20, 3600403, 7010, 407012, 7001, 407010, 3602400, 0.0, 1.0)
-    Event_13605400(21, 3600404, 7010, 407022, 3001, 407020, 3602400, 0.0, 1.0)
-    Event_13605400(22, 3600405, 7010, 407012, 7001, 407010, 3602400, 0.0, 1.0)
-    Event_13605400(25, 3600408, 7010, 407022, 3001, 407020, 3602408, 0.0, 1.0)
-    Event_13605400(26, 3600409, 7010, 407012, 7001, 407010, 3602408, 0.0, 1.0)
-    Event_13605400(27, 3600410, 7010, 407022, 3001, 407020, 3602408, 0.0, 1.0)
-    Event_13605400(28, 3600411, 7010, 407012, 7001, 407010, 3602408, 0.0, 1.0)
-    Event_13605400(29, 3600412, 7010, 407012, 7001, 407010, 3602412, 0.0, 0.0)
-    Event_13605400(30, 3600413, 7010, 407012, 7001, 407010, 3602412, 1.0, 1.0)
-    Event_13605400(33, 3600416, 7010, 407022, 3001, 407020, 3602416, 0.0, 0.0)
-    Event_13605400(34, 3600417, 7010, 407012, 7001, 407010, 3602416, 1.0, 1.0)
-    Event_13605400(35, 3600418, 7010, 407012, 7001, 407010, 3602416, 0.5, 0.5)
-    Event_13605400(36, 3600419, 7010, 407012, 7001, 407010, 3602419, 0.0, 0.0)
-    Event_13605400(37, 3600424, 7010, 407022, 3001, 407020, 3602424, 0.5, 0.5)
-    Event_13605400(38, 3600425, 7010, 407012, 7001, 407010, 3602424, 0.0, 0.0)
-    Event_13605400(39, 3600426, 7010, 407012, 7001, 407010, 3602424, 1.0, 1.0)
-    Event_13605400(40, 3600440, 7010, 407022, 7001, 407020, 3602440, 0.0, 0.0)
-    Event_13605400(41, 3600441, 7010, 407022, 3001, 407020, 3602440, 0.0, 0.0)
-    Event_13605480(0, 3600223, 7008, 404032, 7009, 404030, 3602223, 0.0, 33)
-    Event_13605480(1, 3600476, 7012, 407000, 7013, 407000, 3602476, 0.0, 30)
-    Event_13605480(2, 3600477, 7014, 407000, 7015, 407000, 3602476, 0.5, 30)
-    Event_13605480(3, 3600478, 7016, 407000, 7017, 407000, 3602478, 0.0, 30)
-    Event_13605490(0, 3600313, 9000, 405003, 9060, 405003, 3600314, 0.0, 0.0)
-    Event_13605490(1, 3600266, 7012, 404018, 7013, 404019, 3600314, 0.5, 0.5)
-    Event_13605490(2, 3600267, 7014, 404018, 7015, 404019, 3600314, 1.0, 1.0)
-    Event_13605490(3, 3600263, 7012, 404018, 7013, 404019, 3600265, 0.5, 0.5)
-    Event_13605490(4, 3600264, 7012, 404018, 7013, 404019, 3600265, 1.0, 1.0)
-    Event_13605500(1, 3600207, 7006, 404002, 7007, 404002, 3602206, 4.0, 4.0)
-    Event_13605500(2, 3600212, 7006, 404016, 7007, 404010, 3602211, 0.0, 0.0)
-    Event_13605500(3, 3600216, 7006, 404003, 7007, 404000, 3602215, 0.0, 0.0)
+    Event_13605200(0, character=3600200, region=3602200, region_1=0, patrol_information_id=3603200, seconds=0.0, left=0)
+    Event_13605200(1, character=3600202, region=3602202, region_1=0, patrol_information_id=3603202, seconds=0.0, left=0)
+    Event_13605200(
+        2,
+        character=3600203,
+        region=3602202,
+        region_1=3602203,
+        patrol_information_id=3603203,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        3,
+        character=3600204,
+        region=3602202,
+        region_1=3602203,
+        patrol_information_id=3603204,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(4, character=3600208, region=3602208, region_1=0, patrol_information_id=3603208, seconds=0.0, left=0)
+    Event_13605200(5, character=3600209, region=3602208, region_1=0, patrol_information_id=3603209, seconds=0.0, left=0)
+    Event_13605200(6, character=3600210, region=3602210, region_1=0, patrol_information_id=3603210, seconds=0.0, left=0)
+    Event_13605200(7, character=3600300, region=3602300, region_1=0, patrol_information_id=3603300, seconds=0.0, left=0)
+    Event_13605200(8, character=3600213, region=3602213, region_1=0, patrol_information_id=3603213, seconds=0.0, left=0)
+    Event_13605200(9, character=3600214, region=3602213, region_1=0, patrol_information_id=3603214, seconds=0.0, left=0)
+    Event_13605200(
+        10,
+        character=3600217,
+        region=3602215,
+        region_1=0,
+        patrol_information_id=3603217,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        11,
+        character=3600229,
+        region=3602229,
+        region_1=0,
+        patrol_information_id=3603229,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        12,
+        character=3600231,
+        region=3602231,
+        region_1=3602232,
+        patrol_information_id=3603231,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        13,
+        character=3600232,
+        region=3602231,
+        region_1=3602232,
+        patrol_information_id=3603232,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        14,
+        character=3600233,
+        region=3602231,
+        region_1=3602232,
+        patrol_information_id=3603233,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        15,
+        character=3600610,
+        region=3602610,
+        region_1=0,
+        patrol_information_id=3603610,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        16,
+        character=3600611,
+        region=3602231,
+        region_1=3602232,
+        patrol_information_id=3603611,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        17,
+        character=3600301,
+        region=3602301,
+        region_1=0,
+        patrol_information_id=3603301,
+        seconds=0.0,
+        left=1,
+    )
+    Event_13605200(
+        18,
+        character=3600310,
+        region=3602310,
+        region_1=0,
+        patrol_information_id=3603310,
+        seconds=0.0,
+        left=1,
+    )
+    Event_13605200(
+        19,
+        character=3600700,
+        region=3602700,
+        region_1=0,
+        patrol_information_id=3603700,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        20,
+        character=3600710,
+        region=3602710,
+        region_1=0,
+        patrol_information_id=3603710,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        21,
+        character=3600251,
+        region=3602251,
+        region_1=0,
+        patrol_information_id=3603251,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        23,
+        character=3600253,
+        region=3602252,
+        region_1=0,
+        patrol_information_id=3603253,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        25,
+        character=3600314,
+        region=3602314,
+        region_1=0,
+        patrol_information_id=3603314,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        26,
+        character=3600455,
+        region=3602455,
+        region_1=0,
+        patrol_information_id=3603455,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        27,
+        character=3600456,
+        region=3602455,
+        region_1=0,
+        patrol_information_id=3603456,
+        seconds=1.0,
+        left=1,
+    )
+    Event_13605200(
+        28,
+        character=3600474,
+        region=3602474,
+        region_1=0,
+        patrol_information_id=3603474,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        29,
+        character=3600475,
+        region=3602474,
+        region_1=0,
+        patrol_information_id=3603475,
+        seconds=1.0,
+        left=1,
+    )
+    Event_13605200(
+        30,
+        character=3600302,
+        region=3602302,
+        region_1=0,
+        patrol_information_id=3603302,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        31,
+        character=3600312,
+        region=3602312,
+        region_1=0,
+        patrol_information_id=3603312,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        32,
+        character=3600470,
+        region=3602470,
+        region_1=0,
+        patrol_information_id=3603470,
+        seconds=0.0,
+        left=1,
+    )
+    Event_13605200(
+        33,
+        character=3600500,
+        region=3602470,
+        region_1=0,
+        patrol_information_id=3603500,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        34,
+        character=3600501,
+        region=3602501,
+        region_1=0,
+        patrol_information_id=3603501,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605200(
+        35,
+        character=3600920,
+        region=3602940,
+        region_1=0,
+        patrol_information_id=3603920,
+        seconds=0.0,
+        left=0,
+    )
+    Event_13605400(
+        0,
+        character=3600206,
+        animation_id=7004,
+        ai_param_id=404002,
+        animation=7005,
+        ai_param_id_1=404002,
+        region=3602206,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        1,
+        character=3600211,
+        animation_id=7012,
+        ai_param_id=404000,
+        animation=7013,
+        ai_param_id_1=404000,
+        region=3602211,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        2,
+        character=3600218,
+        animation_id=0,
+        ai_param_id=404011,
+        animation=3005,
+        ai_param_id_1=404010,
+        region=3602218,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        3,
+        character=3600222,
+        animation_id=7016,
+        ai_param_id=404031,
+        animation=7017,
+        ai_param_id_1=404030,
+        region=3602222,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        4,
+        character=3600230,
+        animation_id=7004,
+        ai_param_id=404000,
+        animation=7005,
+        ai_param_id_1=404000,
+        region=3602230,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        5,
+        character=3600239,
+        animation_id=7012,
+        ai_param_id=404008,
+        animation=7013,
+        ai_param_id_1=404008,
+        region=3602240,
+        min_seconds=0.75,
+        max_seconds=0.75,
+    )
+    Event_13605400(
+        6,
+        character=3600240,
+        animation_id=7012,
+        ai_param_id=404004,
+        animation=7013,
+        ai_param_id_1=404004,
+        region=3602240,
+        min_seconds=0.25,
+        max_seconds=0.25,
+    )
+    Event_13605400(
+        7,
+        character=3600241,
+        animation_id=7012,
+        ai_param_id=404008,
+        animation=7013,
+        ai_param_id_1=404008,
+        region=3602240,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        8,
+        character=3600242,
+        animation_id=7012,
+        ai_param_id=404004,
+        animation=7013,
+        ai_param_id_1=404004,
+        region=3602240,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605400(
+        9,
+        character=3600244,
+        animation_id=7014,
+        ai_param_id=404014,
+        animation=7015,
+        ai_param_id_1=404014,
+        region=3602244,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        10,
+        character=3600245,
+        animation_id=0,
+        ai_param_id=404035,
+        animation=3026,
+        ai_param_id_1=404034,
+        region=3602245,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        11,
+        character=3600246,
+        animation_id=7018,
+        ai_param_id=404034,
+        animation=7019,
+        ai_param_id_1=404034,
+        region=3602246,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        12,
+        character=3600247,
+        animation_id=7018,
+        ai_param_id=404014,
+        animation=7019,
+        ai_param_id_1=404014,
+        region=3602246,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605400(
+        13,
+        character=3600260,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        region=3602260,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        14,
+        character=3600261,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        region=3602261,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        15,
+        character=3600262,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        region=3602262,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        16,
+        character=3600265,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        region=3602265,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        17,
+        character=3600400,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        18,
+        character=3600401,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        19,
+        character=3600402,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        20,
+        character=3600403,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        21,
+        character=3600404,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        22,
+        character=3600405,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602400,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        25,
+        character=3600408,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602408,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        26,
+        character=3600409,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602408,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        27,
+        character=3600410,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602408,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        28,
+        character=3600411,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602408,
+        min_seconds=0.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        29,
+        character=3600412,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602412,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        30,
+        character=3600413,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602412,
+        min_seconds=1.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        33,
+        character=3600416,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602416,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        34,
+        character=3600417,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602416,
+        min_seconds=1.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        35,
+        character=3600418,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602416,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605400(
+        36,
+        character=3600419,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602419,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        37,
+        character=3600424,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602424,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605400(
+        38,
+        character=3600425,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602424,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        39,
+        character=3600426,
+        animation_id=7010,
+        ai_param_id=407012,
+        animation=7001,
+        ai_param_id_1=407010,
+        region=3602424,
+        min_seconds=1.0,
+        max_seconds=1.0,
+    )
+    Event_13605400(
+        40,
+        character=3600440,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=7001,
+        ai_param_id_1=407020,
+        region=3602440,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605400(
+        41,
+        character=3600441,
+        animation_id=7010,
+        ai_param_id=407022,
+        animation=3001,
+        ai_param_id_1=407020,
+        region=3602440,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605480(
+        0,
+        character=3600223,
+        animation_id=7008,
+        ai_param_id=404032,
+        animation=7009,
+        ai_param_id_1=404030,
+        region=3602223,
+        seconds=0.0,
+        frames=33,
+    )
+    Event_13605480(
+        1,
+        character=3600476,
+        animation_id=7012,
+        ai_param_id=407000,
+        animation=7013,
+        ai_param_id_1=407000,
+        region=3602476,
+        seconds=0.0,
+        frames=30,
+    )
+    Event_13605480(
+        2,
+        character=3600477,
+        animation_id=7014,
+        ai_param_id=407000,
+        animation=7015,
+        ai_param_id_1=407000,
+        region=3602476,
+        seconds=0.5,
+        frames=30,
+    )
+    Event_13605480(
+        3,
+        character=3600478,
+        animation_id=7016,
+        ai_param_id=407000,
+        animation=7017,
+        ai_param_id_1=407000,
+        region=3602478,
+        seconds=0.0,
+        frames=30,
+    )
+    Event_13605490(
+        0,
+        character=3600313,
+        animation_id=9000,
+        ai_param_id=405003,
+        animation=9060,
+        ai_param_id_1=405003,
+        character_1=3600314,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605490(
+        1,
+        character=3600266,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        character_1=3600314,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605490(
+        2,
+        character=3600267,
+        animation_id=7014,
+        ai_param_id=404018,
+        animation=7015,
+        ai_param_id_1=404019,
+        character_1=3600314,
+        min_seconds=1.0,
+        max_seconds=1.0,
+    )
+    Event_13605490(
+        3,
+        character=3600263,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        character_1=3600265,
+        min_seconds=0.5,
+        max_seconds=0.5,
+    )
+    Event_13605490(
+        4,
+        character=3600264,
+        animation_id=7012,
+        ai_param_id=404018,
+        animation=7013,
+        ai_param_id_1=404019,
+        character_1=3600265,
+        min_seconds=1.0,
+        max_seconds=1.0,
+    )
+    Event_13605500(
+        1,
+        character=3600207,
+        animation_id=7006,
+        ai_param_id=404002,
+        animation=7007,
+        ai_param_id_1=404002,
+        region=3602206,
+        min_seconds=4.0,
+        max_seconds=4.0,
+    )
+    Event_13605500(
+        2,
+        character=3600212,
+        animation_id=7006,
+        ai_param_id=404016,
+        animation=7007,
+        ai_param_id_1=404010,
+        region=3602211,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
+    Event_13605500(
+        3,
+        character=3600216,
+        animation_id=7006,
+        ai_param_id=404003,
+        animation=7007,
+        ai_param_id_1=404000,
+        region=3602215,
+        min_seconds=0.0,
+        max_seconds=0.0,
+    )
     Event_13605520(1, character=3600310, region=3602310, ai_param_id=405001, ai_param_id_1=405000)
-    Event_13605540(0, 3600210, 0, 8.0, 404040, 404000)
-    Event_13605540(1, 3600300, 0, 8.0, 406001, 406000)
-    Event_13605540(2, 3600500, 3602470, 4.0, 256901, 256900)
-    Event_13605540(3, 3600501, 3602470, 4.0, 256901, 256900)
-    Event_13605540(4, 3600218, 0, 1.0, 404011, 404010)
-    Event_13605540(5, 3600220, 0, 4.0, 404011, 404010)
-    Event_13605540(6, 3600221, 0, 4.0, 404011, 404010)
-    Event_13605560(0, 3600331, 3602331, 4.0)
+    Event_13605540(0, character=3600210, region=0, radius=8.0, ai_param_id=404040, ai_param_id_1=404000)
+    Event_13605540(1, character=3600300, region=0, radius=8.0, ai_param_id=406001, ai_param_id_1=406000)
+    Event_13605540(2, character=3600500, region=3602470, radius=4.0, ai_param_id=256901, ai_param_id_1=256900)
+    Event_13605540(3, character=3600501, region=3602470, radius=4.0, ai_param_id=256901, ai_param_id_1=256900)
+    Event_13605540(4, character=3600218, region=0, radius=1.0, ai_param_id=404011, ai_param_id_1=404010)
+    Event_13605540(5, character=3600220, region=0, radius=4.0, ai_param_id=404011, ai_param_id_1=404010)
+    Event_13605540(6, character=3600221, region=0, radius=4.0, ai_param_id=404011, ai_param_id_1=404010)
+    Event_13605560(0, character=3600331, region=3602331, radius=4.0)
     Event_13605600(0, character__set_draw_parent=3600500, character=3600510)
     Event_13605600(1, character__set_draw_parent=3600501, character=3600511)
     Event_13605605()
@@ -253,9 +961,9 @@ def Constructor():
     Event_13605799()
     Event_13605720(0, character=3600206)
     Event_13605720(1, character=3600314)
-    Event_13605740(0, 3600215, 3602215, 3600720, 2.0)
-    Event_13605740(1, 3600219, 3602218, 3600721, 2.0)
-    Event_13605740(2, 3600250, 3602250, 3600722, 2.0)
+    Event_13605740(0, character=3600215, region=3602215, region_1=3600720, radius=2.0)
+    Event_13605740(1, character=3600219, region=3602218, region_1=3600721, radius=2.0)
+    Event_13605740(2, character=3600250, region=3602250, region_1=3600722, radius=2.0)
     Event_13605750()
     Event_13605751()
     Event_13605752()
@@ -276,7 +984,7 @@ def Constructor():
         region_1=3602905,
         flag_2=13605950,
         flag_3=13605980,
-        destination=3602906
+        destination=3602906,
     )
     Event_13605921(
         0,
@@ -287,7 +995,7 @@ def Constructor():
         region_1=3602915,
         flag_2=13605951,
         flag_3=13605981,
-        destination=3602916
+        destination=3602916,
     )
     Event_13605920(
         2,
@@ -298,7 +1006,7 @@ def Constructor():
         region_1=0,
         flag_2=13605952,
         flag_3=13605982,
-        destination=3602926
+        destination=3602926,
     )
     Event_13605930(
         0,
@@ -307,7 +1015,7 @@ def Constructor():
         flag_1=13605970,
         region=3602908,
         region_1=3602909,
-        flag_2=13605980
+        flag_2=13605980,
     )
     Event_13605930(
         1,
@@ -316,14 +1024,14 @@ def Constructor():
         flag_1=13605971,
         region=3602918,
         region_1=3602909,
-        flag_2=13605981
+        flag_2=13605981,
     )
     Event_13605930(2, character=3600902, flag=13605962, flag_1=13605972, region=3602928, region_1=0, flag_2=13605982)
     Event_13605940(0, character=3600900, flag=13605960, flag_1=13605970, item_lot_param_id=43730, character_1=3600910)
     Event_13605940(1, character=3600901, flag=13605961, flag_1=13605971, item_lot_param_id=43740, character_1=3600911)
     Event_13605940(2, character=3600902, flag=13605962, flag_1=13605972, item_lot_param_id=43720, character_1=3600912)
     Event_13600995()
-    Event_13600942(0, 6.0, 10.0)
+    Event_13600942(0, min_seconds=6.0, max_seconds=10.0)
     Event_13600943(0, flag=73600300, item_lot_param_id=43600)
     Event_13600944()
     Event_13600951(0, character=3600905, flag=73600520, flag_1=1723)
@@ -372,7 +1080,7 @@ def Event_13604700(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(InsideMap(game_map=FISHING_HAMLET))
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     if FlagEnabled(flag_3):
         AND_2.Add(ClientTypeCountComparison(
             client_type=ClientType.Coop,
@@ -442,8 +1150,8 @@ def Event_13604720(_, character: int, flag: int, flag_1: int, flag_2: int):
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     DisableFlag(flag_2)
     Restart()
@@ -469,7 +1177,7 @@ def Event_13604730(
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     OR_2.Add(FlagEnabled(flag_3))
     OR_2.Add(FlagEnabled(flag_6))
     OR_1.Add(AND_2)
@@ -1523,7 +2231,7 @@ def Event_13604820():
     DefineLabel(0)
     DisableGravity(3600801)
     
-    MAIN.Await(HealthRatioLessThan(3600800, value=0.5))
+    MAIN.Await(HealthRatio(3600800) < 0.5)
     
     AICommand(3600800, command_id=100, command_slot=0)
     ReplanAI(3600800)
@@ -1545,7 +2253,7 @@ def Event_13604820():
     
     MAIN.Await(CharacterHasTAEEvent(3600801, tae_event_id=50))
     
-    CancelSpecialEffect(3600801, 5300)
+    RemoveSpecialEffect(3600801, 5300)
     AddSpecialEffect(3600801, 5333)
     EnableAI(3600801)
 
@@ -1569,7 +2277,7 @@ def Event_13604830():
     MAIN.Await(CharacterHasTAEEvent(3600803, tae_event_id=10))
     
     AICommand(3600803, command_id=-1, command_slot=0)
-    CancelSpecialEffect(3600803, 5020)
+    RemoveSpecialEffect(3600803, 5020)
     ReplanAI(3600803)
     Restart()
 
@@ -1592,7 +2300,7 @@ def Event_13604840():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(PLAYER, 8054)
+    RemoveSpecialEffect(PLAYER, 8054)
     Restart()
 
 
@@ -1853,7 +2561,7 @@ def Event_13605600(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()
@@ -1901,7 +2609,7 @@ def Event_13605606():
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(PLAYER, 4691)
+    RemoveSpecialEffect(PLAYER, 4691)
     Restart()
 
 
@@ -2079,7 +2787,7 @@ def Event_13605760():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthRatioLessThan(3600302, value=0.5))
+    MAIN.Await(HealthRatio(3600302) < 0.5)
     
     SetNest(3600302, region=3602303)
     AICommand(3600302, command_id=10, command_slot=0)
@@ -2102,8 +2810,8 @@ def Event_13605761():
     OR_1.Add(CharacterWhitePhantom(PLAYER))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(PLAYER, region=3602304))
-    AND_1.Add(HealthRatioLessThan(3600302, value=0.5))
-    AND_2.Add(HealthRatioLessThan(3600302, value=0.4000000059604645))
+    AND_1.Add(HealthRatio(3600302) < 0.5)
+    AND_2.Add(HealthRatio(3600302) < 0.4000000059604645)
     AND_3.Add(AttackedWithDamageType(attacked_entity=3600303))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
@@ -2247,7 +2955,7 @@ def Event_13605920(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     AddSpecialEffect(character, 8060)
     PlaySoundEffect(PLAYER, 777777777, sound_type=SoundType.s_SFX)
     ForceAnimation(character, 101203)
@@ -2258,7 +2966,7 @@ def Event_13605920(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     EnableFlag(flag)
     DisableFlag(flag_3)
     
@@ -2310,7 +3018,7 @@ def Event_13605921(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     AddSpecialEffect(character, 8060)
     PlaySoundEffect(PLAYER, 777777777, sound_type=SoundType.s_SFX)
     ForceAnimation(character, 101203)
@@ -2321,7 +3029,7 @@ def Event_13605921(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     EnableFlag(flag)
     DisableFlag(flag_3)
     
@@ -2338,7 +3046,7 @@ def Event_13605930(_, character: int, flag: int, flag_1: int, region: int, regio
     if FlagEnabled(flag_1):
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region_1))
@@ -2352,9 +3060,9 @@ def Event_13605930(_, character: int, flag: int, flag_1: int, region: int, regio
     EnableInvincibility(character)
     DisableAnimations(character)
     AddSpecialEffect(character, 5560)
-    CancelSpecialEffect(character, 8060)
-    CancelSpecialEffect(character, 1130)
-    CancelSpecialEffect(character, 1150)
+    RemoveSpecialEffect(character, 8060)
+    RemoveSpecialEffect(character, 1130)
+    RemoveSpecialEffect(character, 1150)
     PlaySoundEffect(PLAYER, 122, sound_type=SoundType.s_SFX)
     Wait(4.0)
     EnableFlag(flag_2)
@@ -2382,9 +3090,9 @@ def Event_13605940(_, character: int, flag: int, flag_1: int, item_lot_param_id:
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(character, 8060)
-    CancelSpecialEffect(character, 1130)
-    CancelSpecialEffect(character, 1150)
+    RemoveSpecialEffect(character, 8060)
+    RemoveSpecialEffect(character, 1130)
+    RemoveSpecialEffect(character, 1150)
     PlaySoundEffect(PLAYER, 122, sound_type=SoundType.s_SFX)
     EnableFlag(flag_1)
     AND_2.Add(CharacterHuman(PLAYER))
@@ -2602,14 +3310,14 @@ def Event_13600951(_, character: int, flag: int, flag_1: int):
     DisableFlag(flag)
     AND_1.Add(FlagEnabled(flag_1))
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_1)
     
     ForceAnimation(character, 103152)
     AND_2.Add(FlagEnabled(flag_1))
     AND_2.Add(FlagDisabled(flag))
-    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_2)
     

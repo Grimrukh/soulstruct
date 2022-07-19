@@ -12,20 +12,29 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_03_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(30030800, 30032840, 30032841, 30031840, 30032840, 30, 3, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=30030800,
+        left_flag=30032840,
+        cancel_flag__right_flag=30032841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30032840,
+        area_id=30,
+        block_id=3,
+        cc_id=0,
+        dd_id=0,
     )
-    RegisterGrace(grace_flag=300300, obj=30031950, unknown=5.0)
+    RegisterGrace(grace_flag=300300, asset=Assets.AEG099_060_9001)
     Event_30032800()
     Event_30032810()
     Event_30032849()
@@ -33,73 +42,139 @@ def Constructor():
     Event_30032838()
     Event_30032890()
     Event_30032845()
-    Event_30032870(0, character=30030801, flag=30032882)
-    Event_30032871(0, character=30030802, flag=30032883)
-    Event_30032871(1, character=30030803, flag=30032884)
-    Event_30032871(2, character=30030804, flag=30032884)
-    Event_30032871(3, character=30030805, flag=30032885)
-    Event_30032871(4, character=30030806, flag=30032885)
-    Event_30032871(5, character=30030807, flag=30032886)
-    Event_30032871(6, character=30030808, flag=30032886)
-    Event_30032871(7, character=30030809, flag=30032887)
-    Event_30032871(8, character=30030810, flag=30032887)
-    RunCommonEvent(0, 90005650, args=(30030540, 30031540, 30031541, 30033541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30030540, 30031540), arg_types="II")
+    Event_30032870(0, character=Characters.CrucibleKnight0, flag=30032882)
+    Event_30032871(0, character=Characters.CrucibleKnight3, flag=30032883)
+    Event_30032871(1, character=Characters.CrucibleKnight4, flag=30032884)
+    Event_30032871(2, character=Characters.CrucibleKnight5, flag=30032884)
+    Event_30032871(3, character=Characters.CrucibleKnight1, flag=30032885)
+    Event_30032871(4, character=Characters.CrucibleKnight2, flag=30032885)
+    Event_30032871(5, character=Characters.CrucibleKnight6, flag=30032886)
+    Event_30032871(6, character=Characters.CrucibleKnight7, flag=30032886)
+    Event_30032871(7, character=Characters.CrucibleKnight8, flag=30032887)
+    Event_30032871(8, character=Characters.CrucibleKnight9, flag=30032887)
+    CommonFunc_90005650(
+        0,
+        flag=30030540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_0500,
+        obj_act_id=30033541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30030540, anchor_entity=Assets.AEG027_041_0500)
     Event_30032400(
         0,
-        owner_entity=30030600,
-        entity=30031600,
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0500,
         region=30032600,
         behavior_id=0,
         source_entity=30032601,
         source_entity_1=30032602,
-        source_entity_2=30032603
+        source_entity_2=30032603,
     )
-    RunCommonEvent(0, 90005525, args=(30030570, 30031570), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030571, 30031571), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030572, 30031572), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030573, 30031573), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030574, 30031574), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030575, 30031575), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030576, 30031576), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30030577, 30031577), arg_types="II")
+    CommonFunc_90005525(0, flag=30030570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30030571, asset=Assets.AEG027_157_0501)
+    CommonFunc_90005525(0, flag=30030572, asset=Assets.AEG027_157_0502)
+    CommonFunc_90005525(0, flag=30030573, asset=Assets.AEG027_157_0503)
+    CommonFunc_90005525(0, flag=30030574, asset=Assets.AEG027_157_0504)
+    CommonFunc_90005525(0, flag=30030575, asset=Assets.AEG027_157_0505)
+    CommonFunc_90005525(0, flag=30030576, asset=Assets.AEG027_157_0506)
+    CommonFunc_90005525(0, flag=30030577, asset=Assets.AEG027_157_0507)
     Event_30032579()
-    RunCommonEvent(0, 90005410, args=(30032100, 30031100, 30035100), arg_types="III")
-    RunCommonEvent(0, 90005411, args=(30031100, 30030100, 10), arg_types="III")
-    RunCommonEvent(0, 91005600, args=(30030800, 30031695, 3), arg_types="IIi")
-    RunCommonEvent(0, 90005920, args=(30030520, 30031520, 30033520), arg_types="III")
+    CommonFunc_90005410(0, flag=30032100, character=30031100, entity_b=30035100)
+    CommonFunc_90005411(0, asset=Assets.AEG099_053_9000, character=Characters.TalkDummy1, left=10)
+    CommonFunc_91005600(0, flag=30030800, asset=30031695, model_point=3)
+    CommonFunc_90005920(0, 30030520, 30031520, 30033520)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     Event_30030050()
-    RunCommonEvent(0, 90005250, args=(30030200, 30032200, 0.0, 3005), arg_types="IIfi")
-    RunCommonEvent(0, 90005261, args=(30030201, 30032201, 1.0, 0.0, 3012), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(30030202, 30010, 20010, 30032202, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005200, args=(30030203, 30001, 20001, 30032203, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005201, args=(30030204, 30010, 20010, 15.0, 2.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    Event_30032205(0, 30030205, 30010, 20010, 30032204, 1.0, 0.0, 0, 0, 0, 0)
-    Event_30032205(1, 30030206, 30010, 20010, 30032204, 1.0, 0.0, 0, 0, 0, 0)
-    RunCommonEvent(0, 90005250, args=(30030207, 30032207, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30030208, 30032208, 0.0, 0), arg_types="IIfi")
-    Event_30032207(0, character=30030207, region=30032307)
-    Event_30032207(1, character=30030208, region=30032308)
-    Event_30032207(2, character=30030209, region=30032307)
-    RunCommonEvent(0, 90005200, args=(30030209, 30002, 20002, 30032207, 3.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005250(0, character=Characters.Imp0, region=30032200, seconds=0.0, animation_id=3005)
+    CommonFunc_90005261(0, character=Characters.Imp1, region=30032201, radius=1.0, seconds=0.0, animation_id=3012)
+    CommonFunc_90005211(
+        0,
+        character=Characters.Imp2,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30032202,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp3,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30032203,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Imp4,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=15.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    Event_30032205(
+        0,
+        character=Characters.Imp5,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30032204,
+        radius=1.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    Event_30032205(
+        1,
+        character=Characters.Imp6,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30032204,
+        radius=1.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.Imp7, region=30032207, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.Imp8, region=30032208, seconds=0.0, animation_id=0)
+    Event_30032207(0, character=Characters.Imp7, region=30032307)
+    Event_30032207(1, character=Characters.Imp8, region=30032308)
+    Event_30032207(2, character=Characters.Imp9, region=30032307)
+    CommonFunc_90005200(0, 30030209, 30002, 20002, 30032207, 3.0, 0, 0, 0, 0)
 
 
 @NeverRestart(30030050)
 def Event_30030050():
     """Event 30030050"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(30030500)
 
 
 @RestartOnRest(30032579)
 def Event_30032579():
     """Event 30032579"""
-    DisableObject(30031575)
+    DisableAsset(Assets.AEG027_157_0505)
 
 
 @RestartOnRest(30032400)
@@ -115,783 +190,787 @@ def Event_30032400(
 ):
     """Event 30032400"""
     CreateProjectileOwner(entity=owner_entity)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=region)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    ForceAnimation(entity, 1, wait_for_completion=True, unknown2=1.0)
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    
+    MAIN.Await(AND_1)
+    
+    ForceAnimation(entity, 1, wait_for_completion=True)
     Wait(0.5)
-    SkipLinesIfValueEqual(4, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Goto(Label.L0)
-    SkipLinesIfFlagDisabled(3, 50)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 51)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 52)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 53)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 54)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 55)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 56)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 57)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Goto(Label.L0)
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 0 --- #
     DefineLabel(0)
     Wait(0.6000000238418579)
-    SkipLinesIfValueEqual(4, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Goto(Label.L1)
-    SkipLinesIfFlagDisabled(3, 50)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 51)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 52)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 53)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 54)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 55)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 56)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 57)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Goto(Label.L1)
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 1 --- #
     DefineLabel(1)
     Wait(0.6000000238418579)
-    SkipLinesIfValueEqual(4, left=behavior_id, right=0)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=behavior_id,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Goto(Label.L2)
-    SkipLinesIfFlagDisabled(3, 50)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 51)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 52)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 53)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 54)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 55)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 56)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(3, 57)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_1,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity_2,
-        model_point=-1,
-        behavior_id=801032070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if ValueNotEqual(left=behavior_id, right=0):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=behavior_id,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Goto(Label.L2)
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_1,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity_2,
+            model_point=-1,
+            behavior_id=801032070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
 
     # --- Label 2 --- #
     DefineLabel(2)
     Wait(3.0)
-    IfAllPlayersOutsideRegion(MAIN, region=region)
-    ForceAnimation(entity, 3, wait_for_completion=True, unknown2=1.0)
+    
+    MAIN.Await(AllPlayersOutsideRegion(region=region))
+    
+    ForceAnimation(entity, 3, wait_for_completion=True)
     Restart()
 
 
@@ -910,135 +989,143 @@ def Event_30032205(
     left_3: uint,
 ):
     """Event 30032205"""
-    GotoIfUnknown_1004_05(Label.L0, character=character, unk_8_12=True)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    DisableGravity(character)
-    EnableCharacterCollision(character)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterType(OR_1, PLAYER, character_type=CharacterType.Unknown17)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    SkipLinesIfUnsignedEqual(1, left=0, right=region)
-    IfCharacterInsideRegion(OR_3, character=PLAYER, region=region)
-    IfEntityWithinDistance(OR_3, entity=PLAYER, other_entity=character, radius=radius)
-    IfConditionTrue(AND_1, input_condition=OR_3)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfCharacterHasSpecialEffect(OR_11, character, 5080)
-    IfCharacterHasSpecialEffect(OR_11, character, 5450)
-    IfConditionTrue(AND_1, input_condition=OR_11)
-    IfUnsignedEqual(AND_9, left=left_1, right=0)
-    IfUnsignedEqual(AND_9, left=left_2, right=0)
-    IfUnsignedEqual(AND_9, left=left_3, right=0)
+    EndIffSpecialStandbyEndedFlagEnabled(character=character)
+    if UnsignedNotEqual(left=left, right=0):
+        DisableGravity(character)
+        EnableCharacterCollision(character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    if UnsignedNotEqual(left=0, right=region):
+        OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
+    AND_1.Add(OR_3)
+    AND_1.Add(CharacterBackreadEnabled(character))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5080))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5450))
+    AND_1.Add(OR_11)
+    AND_9.Add(UnsignedEqual(left=left_1, right=0))
+    AND_9.Add(UnsignedEqual(left=left_2, right=0))
+    AND_9.Add(UnsignedEqual(left=left_3, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    SkipLinesIfUnsignedEqual(1, left=left_1, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfUnsignedEqual(1, left=left_2, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown5)
-    SkipLinesIfUnsignedEqual(1, left=left_3, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown4)
-    IfConditionTrue(AND_1, input_condition=OR_9)
+    if UnsignedNotEqual(left=left_1, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    if UnsignedNotEqual(left=left_2, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
+    if UnsignedNotEqual(left=left_3, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
+    AND_1.Add(OR_9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(OR_2, input_condition=AND_4)
-    IfConditionTrue(OR_2, input_condition=AND_5)
-    IfConditionTrue(OR_2, input_condition=AND_6)
-    IfConditionTrue(OR_2, input_condition=AND_7)
-    IfConditionTrue(OR_2, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    OR_2.Add(AND_7)
+    OR_2.Add(AND_8)
+    
+    MAIN.Await(OR_2)
+    
     Wait(0.10000000149011612)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    Unknown_2004_83(character=character, unk_4_8=1)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5080)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5450)
+    SetSpecialStandbyEndedFlag(character=character, state=True)
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     Wait(seconds)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
-    ForceAnimation(character, animation_id_1, loop=True, unknown2=1.0)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
+    ForceAnimation(character, animation_id_1, loop=True)
     Wait(2.0)
-    ForceAnimation(character, 3016, loop=True, unknown2=1.0)
+    ForceAnimation(character, 3016, loop=True)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     End()
 
 
 @RestartOnRest(30032207)
 def Event_30032207(_, character: uint, region: uint):
     """Event 30032207"""
-    IfCharacterDead(OR_15, character)
-    IfThisEventSlotFlagEnabled(OR_15)
-    EndIfConditionTrue(input_condition=OR_15)
+    OR_15.Add(CharacterDead(character))
+    OR_15.Add(ThisEventSlotFlagEnabled())
+    if OR_15:
+        return
     AddSpecialEffect(character, 17155)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfConditionTrue(MAIN, input_condition=OR_2)
-    CancelSpecialEffect(character, 17155)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(OR_1)
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    
+    MAIN.Await(OR_2)
+    
+    RemoveSpecialEffect(character, 17155)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
 
 
 @RestartOnRest(30032800)
 def Event_30032800():
     """Event 30032800"""
-    EndIfFlagEnabled(30030800)
-    IfHealthValueLessThanOrEqual(MAIN, 30030800, value=0)
-    Kill(30030801)
-    Kill(30030802)
-    Kill(30030803)
-    Kill(30030804)
-    Kill(30030805)
-    Kill(30030806)
-    Kill(30030807)
-    Kill(30030808)
-    Kill(30030809)
-    Kill(30030810)
+    if FlagEnabled(30030800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.Snail) <= 0)
+    
+    Kill(Characters.CrucibleKnight0)
+    Kill(Characters.CrucibleKnight3)
+    Kill(Characters.CrucibleKnight4)
+    Kill(Characters.CrucibleKnight5)
+    Kill(Characters.CrucibleKnight1)
+    Kill(Characters.CrucibleKnight2)
+    Kill(Characters.CrucibleKnight6)
+    Kill(Characters.CrucibleKnight7)
+    Kill(Characters.CrucibleKnight8)
+    Kill(Characters.CrucibleKnight9)
     DisableSpawner(entity=30033801)
     DisableSpawner(entity=30033802)
     DisableSpawner(entity=30033803)
@@ -1046,12 +1133,14 @@ def Event_30032800():
     DisableSpawner(entity=30033805)
     DisableSpawner(entity=30033806)
     Wait(4.0)
-    PlaySoundEffect(30030800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30030800)
-    KillBossAndDisplayBanner(character=30030800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.Snail, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.Snail))
+    
+    KillBossAndDisplayBanner(character=Characters.Snail, banner_type=BannerType.EnemyFelled)
     EnableFlag(30030800)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61206)
+    if PlayerInOwnWorld():
+        EnableFlag(61206)
     EnableFlag(9206)
 
 
@@ -1059,10 +1148,10 @@ def Event_30032800():
 def Event_30032810():
     """Event 30032810"""
     GotoIfFlagDisabled(Label.L0, flag=30030800)
-    DisableCharacter(30030800)
-    DisableAnimations(30030800)
-    Kill(30030800)
-    Kill(30030801)
+    DisableCharacter(Characters.Snail)
+    DisableAnimations(Characters.Snail)
+    Kill(Characters.Snail)
+    Kill(Characters.CrucibleKnight0)
     DisableSpawner(entity=30033801)
     DisableSpawner(entity=30033802)
     DisableSpawner(entity=30033803)
@@ -1073,15 +1162,17 @@ def Event_30032810():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(30030800)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    ForceAnimation(30030800, 30013, unknown2=1.0)
-    IfFlagEnabled(AND_2, 30032805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30032800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    EnableAI(30030800)
-    SetNetworkUpdateRate(30030800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(30030800, name=904140300)
+    DisableAI(Characters.Snail)
+    if PlayerInOwnWorld():
+        ForceAnimation(Characters.Snail, 30013)
+    AND_2.Add(FlagEnabled(30032805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30032800))
+    
+    MAIN.Await(AND_2)
+    
+    EnableAI(Characters.Snail)
+    SetNetworkUpdateRate(Characters.Snail, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.Snail, name=904140300)
     GotoIfPlayerNotInOwnWorld(Label.L1)
     DisableNetworkConnectedFlagRange(flag_range=(30032822, 30032839))
     EnableNetworkFlag(30032822)
@@ -1090,7 +1181,7 @@ def Event_30032810():
     EnableFlag(30032812)
     MakeEnemyAppear(character=30033801)
     EnableNetworkFlag(30032882)
-    ForceAnimation(30030800, 20013, unknown2=1.0)
+    ForceAnimation(Characters.Snail, 20013)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -1099,29 +1190,46 @@ def Event_30032810():
 @RestartOnRest(30032849)
 def Event_30032849():
     """Event 30032849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30030800, 30031800, 30032800, 30032805, 30035800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30030800,
+        entity=Assets.AEG099_001_9000,
+        region=30032800,
+        flag_1=30032805,
+        character=30035800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30030800, 30031800, 30032800, 30032805, 30032806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30030800, 30031800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30030800, 920200, 30032805, 30032806, 0, 30032860, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=30030800,
+        entity=Assets.AEG099_001_9000,
+        region=30032800,
+        flag_1=30032805,
+        flag_2=30032806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=30030800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30030800, 920200, 30032805, 30032806, 0, 30032860, 0, 0)
 
 
 @RestartOnRest(30032890)
 def Event_30032890():
     """Event 30032890"""
     DisableNetworkSync()
-    EndIfFlagEnabled(30030800)
-    EndIfPlayerNotInOwnWorld()
+    if FlagEnabled(30030800):
+        return
+    if PlayerNotInOwnWorld():
+        return
     AwaitFlagEnabled(flag=30032805)
     GotoIfFlagEnabled(Label.L1, flag=30032813)
-    IfCharacterDead(MAIN, 30030801)
+    
+    MAIN.Await(CharacterDead(Characters.CrucibleKnight0))
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
-    IfHealthRatioLessThan(AND_1, 30030800, value=0.8999999761581421)
+    AddSpecialEffect(Characters.Snail, 15044)
+    AND_1.Add(HealthRatio(Characters.Snail) < 0.8999999761581421)
     SkipLinesIfConditionTrue(4, AND_1)
     DisableNetworkConnectedFlagRange(flag_range=(30032822, 30032839))
     EnableNetworkFlag(30032822)
@@ -1134,95 +1242,115 @@ def Event_30032890():
     # --- Label 1 --- #
     DefineLabel(1)
     GotoIfFlagEnabled(Label.L2, flag=30032814)
-    IfCharacterDead(MAIN, 30030802)
+    
+    MAIN.Await(CharacterDead(Characters.CrucibleKnight3))
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
+    AddSpecialEffect(Characters.Snail, 15044)
     EnableNetworkFlag(30032814)
     Goto(Label.L0)
 
     # --- Label 2 --- #
     DefineLabel(2)
     GotoIfFlagEnabled(Label.L10, flag=30032815)
-    IfCharacterDead(AND_9, 30030803)
-    IfCharacterDead(AND_9, 30030804)
-    IfConditionTrue(MAIN, input_condition=AND_9)
+    AND_9.Add(CharacterDead(Characters.CrucibleKnight4))
+    AND_9.Add(CharacterDead(Characters.CrucibleKnight5))
+    
+    MAIN.Await(AND_9)
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
+    AddSpecialEffect(Characters.Snail, 15044)
     EnableNetworkFlag(30032815)
     Goto(Label.L0)
 
     # --- Label 10 --- #
     DefineLabel(10)
     GotoIfFlagEnabled(Label.L11, flag=30032816)
-    IfCharacterDead(AND_10, 30030805)
-    IfCharacterDead(AND_10, 30030806)
-    IfConditionTrue(MAIN, input_condition=AND_10)
+    AND_10.Add(CharacterDead(Characters.CrucibleKnight1))
+    AND_10.Add(CharacterDead(Characters.CrucibleKnight2))
+    
+    MAIN.Await(AND_10)
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
+    AddSpecialEffect(Characters.Snail, 15044)
     EnableNetworkFlag(30032816)
     Goto(Label.L0)
 
     # --- Label 11 --- #
     DefineLabel(11)
     GotoIfFlagEnabled(Label.L12, flag=30032817)
-    IfCharacterDead(AND_2, 30030807)
-    IfCharacterDead(AND_2, 30030808)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(CharacterDead(Characters.CrucibleKnight6))
+    AND_2.Add(CharacterDead(Characters.CrucibleKnight7))
+    
+    MAIN.Await(AND_2)
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
+    AddSpecialEffect(Characters.Snail, 15044)
     EnableNetworkFlag(30032817)
     Goto(Label.L0)
 
     # --- Label 12 --- #
     DefineLabel(12)
-    IfCharacterDead(AND_11, 30030809)
-    IfCharacterDead(AND_11, 30030810)
-    IfConditionTrue(MAIN, input_condition=AND_11)
+    AND_11.Add(CharacterDead(Characters.CrucibleKnight8))
+    AND_11.Add(CharacterDead(Characters.CrucibleKnight9))
+    
+    MAIN.Await(AND_11)
+    
     Wait(1.0)
-    AddSpecialEffect(30030800, 15044)
+    AddSpecialEffect(Characters.Snail, 15044)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterHasSpecialEffect(MAIN, 30030800, 15007)
-    IfHealthRatioGreaterThanOrEqual(AND_3, 30030800, value=0.8999999761581421)
+    
+    MAIN.Await(CharacterHasSpecialEffect(Characters.Snail, 15007))
+    
+    AND_3.Add(HealthRatio(Characters.Snail) >= 0.8999999761581421)
     GotoIfConditionFalse(Label.L3, input_condition=AND_3)
     MakeEnemyAppear(character=30033801)
-    IfCharacterAlive(MAIN, 30030801)
+    
+    MAIN.Await(CharacterAlive(Characters.CrucibleKnight0))
+    
     EnableNetworkFlag(30032882)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
     GotoIfFlagDisabled(Label.L9, flag=30032817)
     MakeEnemyAppear(character=30033806)
-    IfCharacterAlive(AND_8, 30030809)
-    IfCharacterAlive(AND_8, 30030810)
-    IfConditionTrue(MAIN, input_condition=AND_8)
+    AND_8.Add(CharacterAlive(Characters.CrucibleKnight8))
+    AND_8.Add(CharacterAlive(Characters.CrucibleKnight9))
+    
+    MAIN.Await(AND_8)
+    
     EnableNetworkFlag(30032887)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 9 --- #
     DefineLabel(9)
     GotoIfFlagDisabled(Label.L8, flag=30032816)
     MakeEnemyAppear(character=30033805)
-    IfCharacterAlive(AND_6, 30030807)
-    IfCharacterAlive(AND_6, 30030808)
-    IfConditionTrue(MAIN, input_condition=AND_6)
+    AND_6.Add(CharacterAlive(Characters.CrucibleKnight6))
+    AND_6.Add(CharacterAlive(Characters.CrucibleKnight7))
+    
+    MAIN.Await(AND_6)
+    
     EnableNetworkFlag(30032886)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 8 --- #
     DefineLabel(8)
     GotoIfFlagDisabled(Label.L4, flag=30032815)
     MakeEnemyAppear(character=30033804)
-    IfCharacterAlive(AND_5, 30030805)
-    IfCharacterAlive(AND_5, 30030806)
-    IfConditionTrue(MAIN, input_condition=AND_5)
+    AND_5.Add(CharacterAlive(Characters.CrucibleKnight1))
+    AND_5.Add(CharacterAlive(Characters.CrucibleKnight2))
+    
+    MAIN.Await(AND_5)
+    
     EnableNetworkFlag(30032885)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 4 --- #
@@ -1230,20 +1358,24 @@ def Event_30032890():
     GotoIfFlagDisabled(Label.L5, flag=30032814)
     MakeEnemyAppear(character=30033803)
     EnableFlag(30032860)
-    IfCharacterAlive(AND_7, 30030803)
-    IfCharacterAlive(AND_7, 30030804)
-    IfConditionTrue(MAIN, input_condition=AND_7)
+    AND_7.Add(CharacterAlive(Characters.CrucibleKnight4))
+    AND_7.Add(CharacterAlive(Characters.CrucibleKnight5))
+    
+    MAIN.Await(AND_7)
+    
     EnableNetworkFlag(30032884)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 5 --- #
     DefineLabel(5)
     GotoIfFlagDisabled(Label.L6, flag=30032813)
     MakeEnemyAppear(character=30033802)
-    IfCharacterAlive(MAIN, 30030802)
+    
+    MAIN.Await(CharacterAlive(Characters.CrucibleKnight3))
+    
     EnableNetworkFlag(30032883)
-    AddSpecialEffect(30030800, 15045)
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 6 --- #
@@ -1251,8 +1383,10 @@ def Event_30032890():
     GotoIfFlagDisabled(Label.L7, flag=30032812)
     MakeEnemyAppear(character=30033801)
     EnableNetworkFlag(30032882)
-    IfCharacterAlive(MAIN, 30030801)
-    AddSpecialEffect(30030800, 15045)
+    
+    MAIN.Await(CharacterAlive(Characters.CrucibleKnight0))
+    
+    AddSpecialEffect(Characters.Snail, 15045)
     Restart()
 
     # --- Label 7 --- #
@@ -1263,9 +1397,13 @@ def Event_30032890():
 def Event_30032845():
     """Event 30032845"""
     DisableNetworkSync()
-    EndIfFlagEnabled(30030800)
-    EndIfPlayerNotInOwnWorld()
-    IfHealthRatioLessThan(MAIN, 30030800, value=0.8999999761581421)
+    if FlagEnabled(30030800):
+        return
+    if PlayerNotInOwnWorld():
+        return
+    
+    MAIN.Await(HealthRatio(Characters.Snail) < 0.8999999761581421)
+    
     DisableNetworkFlag(30032822)
     EnableNetworkFlag(30032834)
 
@@ -1274,12 +1412,16 @@ def Event_30032845():
 def Event_30032821():
     """Event 30032821"""
     DisableNetworkSync()
-    EndIfFlagEnabled(30030800)
-    EndIfPlayerNotInOwnWorld()
-    IfCharacterHasSpecialEffect(AND_15, 30030800, 15046)
-    IfFlagEnabled(AND_15, 30032839)
-    IfConditionTrue(MAIN, input_condition=AND_15)
-    IfHealthRatioGreaterThanOrEqual(OR_15, 30030800, value=0.8999999761581421)
+    if FlagEnabled(30030800):
+        return
+    if PlayerNotInOwnWorld():
+        return
+    AND_15.Add(CharacterHasSpecialEffect(Characters.Snail, 15046))
+    AND_15.Add(FlagEnabled(30032839))
+    
+    MAIN.Await(AND_15)
+    
+    OR_15.Add(HealthRatio(Characters.Snail) >= 0.8999999761581421)
     GotoIfConditionTrue(Label.L0, input_condition=OR_15)
     GotoIfFlagEnabled(Label.L0, flag=30032822)
     GotoIfFlagEnabled(Label.L1, flag=30032823)
@@ -1297,7 +1439,9 @@ def Event_30032821():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 1 --- #
@@ -1305,7 +1449,9 @@ def Event_30032821():
     DisableNetworkConnectedFlagRange(flag_range=(30032823, 30032834))
     EnableRandomFlagInRange(flag_range=(30032829, 30032834))
     DisableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 2 --- #
@@ -1313,7 +1459,9 @@ def Event_30032821():
     DisableNetworkConnectedFlagRange(flag_range=(30032823, 30032834))
     EnableRandomFlagInRange(flag_range=(30032829, 30032834))
     DisableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 3 --- #
@@ -1321,7 +1469,9 @@ def Event_30032821():
     DisableNetworkConnectedFlagRange(flag_range=(30032823, 30032834))
     EnableRandomFlagInRange(flag_range=(30032823, 30032828))
     DisableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 4 --- #
@@ -1329,7 +1479,9 @@ def Event_30032821():
     DisableNetworkConnectedFlagRange(flag_range=(30032823, 30032834))
     EnableRandomFlagInRange(flag_range=(30032823, 30032828))
     DisableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
 
@@ -1337,12 +1489,16 @@ def Event_30032821():
 def Event_30032838():
     """Event 30032838"""
     DisableNetworkSync()
-    EndIfFlagEnabled(30030800)
-    EndIfPlayerNotInOwnWorld()
-    IfFlagRangeAnyEnabled(AND_1, flag_range=(30032823, 30032834))
-    IfFlagDisabled(AND_1, 30032839)
-    IfCharacterHasSpecialEffect(AND_1, 30030800, 15046)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30030800):
+        return
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagRangeAnyEnabled(flag_range=(30032823, 30032834)))
+    AND_1.Add(FlagDisabled(30032839))
+    AND_1.Add(CharacterHasSpecialEffect(Characters.Snail, 15046))
+    
+    MAIN.Await(AND_1)
+    
     GotoIfFlagEnabled(Label.L0, flag=30032822)
     GotoIfFlagEnabled(Label.L1, flag=30032823)
     GotoIfFlagEnabled(Label.L2, flag=30032824)
@@ -1361,121 +1517,155 @@ def Event_30032838():
     DefineLabel(0)
     EnableNetworkFlag(30032839)
     DisableNetworkFlag(30032822)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    Move(30030800, destination=30032823, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032823, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(30030800, destination=30032824, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032824, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
-    Move(30030800, destination=30032825, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032825, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 4 --- #
     DefineLabel(4)
-    Move(30030800, destination=30032826, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032826, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 5 --- #
     DefineLabel(5)
-    Move(30030800, destination=30032827, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032827, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 6 --- #
     DefineLabel(6)
-    Move(30030800, destination=30032828, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032828, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 7 --- #
     DefineLabel(7)
-    Move(30030800, destination=30032829, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032829, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 8 --- #
     DefineLabel(8)
-    Move(30030800, destination=30032830, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032830, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 9 --- #
     DefineLabel(9)
-    Move(30030800, destination=30032831, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032831, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 10 --- #
     DefineLabel(10)
-    Move(30030800, destination=30032832, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032832, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 11 --- #
     DefineLabel(11)
-    Move(30030800, destination=30032833, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032833, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
     # --- Label 12 --- #
     DefineLabel(12)
-    Move(30030800, destination=30032834, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
+    Move(Characters.Snail, destination=30032834, destination_type=CoordEntityType.Region, set_draw_parent=30034200)
     EnableNetworkFlag(30032839)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, 30030800, 15046)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15046))
+    
     Restart()
 
 
 @RestartOnRest(30032870)
 def Event_30032870(_, character: uint, flag: uint):
     """Event 30032870"""
-    EndIfFlagEnabled(30030800)
-    IfFlagEnabled(AND_1, flag)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30030800):
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     Wait(1.0)
     ActivateMultiplayerBuffs(character)
-    IfCharacterDead(MAIN, character)
+    
+    MAIN.Await(CharacterDead(character))
+    
     Restart()
 
 
 @RestartOnRest(30032871)
 def Event_30032871(_, character: uint, flag: uint):
     """Event 30032871"""
-    EndIfFlagEnabled(30030800)
-    IfFlagEnabled(AND_1, flag)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(AND_2, input_condition=AND_1)
-    IfLeavingSession(AND_3)
-    IfConditionFalse(AND_2, input_condition=AND_3)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    if FlagEnabled(30030800):
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(CharacterAlive(character))
+    AND_2.Add(AND_1)
+    AND_3.Add(Singleplayer())
+    AND_2.Add(not AND_3)
+    
+    MAIN.Await(AND_2)
+    
     ActivateMultiplayerBuffs(character)
     Wait(1.0)
-    IfCharacterHasSpecialEffect(OR_1, character, 7820)
-    IfCharacterHasSpecialEffect(OR_1, character, 7821)
-    IfCharacterHasSpecialEffect(OR_1, character, 7822)
+    OR_1.Add(CharacterHasSpecialEffect(character, 7820))
+    OR_1.Add(CharacterHasSpecialEffect(character, 7821))
+    OR_1.Add(CharacterHasSpecialEffect(character, 7822))
     SkipLinesIfConditionTrue(1, OR_1)
     Restart()

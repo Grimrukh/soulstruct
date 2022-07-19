@@ -10,9 +10,9 @@ __all__ = [
     "uchar",
     "PLAYER",
     "ProtectedEntities",
-    # Enums identical in all games
     "AIStatusType",
     "BitOperation",
+    "BossMusicState",
     "ButtonType",
     "CharacterType",
     "CharacterUpdateRate",
@@ -35,15 +35,12 @@ __all__ = [
     "StatueType",
     "SummonSignType",
     "TriggerAttribute",
-    "WorldTendencyType",
     "UpdateAuthority",
-    # Enums in Dark Souls 3 only
     "ArmorType",
     "BannerType",
     "CalculationType",
     "ClientType",
     "ConditionGroup",
-    "Covenant",
     "DamageType",
     "DeleteOrAdd",
     "DialogResult",
@@ -53,13 +50,9 @@ __all__ = [
     "Label",
     "MultiplayerState",
     "NPCPartType",
-    "PlayGoState",
-    "PlayLogMultiplayerType",
-    "PlayerPlayLogParameter",
     "SingleplayerSummonSignType",
     "TeamType",
-    "HollowArenaMatchType",
-    "HollowArenaResult",
+    "Weather",
 ]
 
 from enum import IntEnum
@@ -92,21 +85,27 @@ class BitOperation(BaseEMEVDEnum):
     Invert = 2
 
 
+class BossMusicState(BaseEMEVDEnum):
+    Stop1 = -2
+    Stop2 = -1
+    Start = 0
+    HeatUp = 1
+
+
 class ButtonType(BaseEMEVDEnum):
     Yes_or_No = 0
     OK_or_Cancel = 1
 
 
 class CharacterType(BaseEMEVDEnum):
-    Human = 0  # Also called "Survival" in some resources.
+    Alive = 0
     WhitePhantom = 1
     BlackPhantom = 2
-    Hollow = 8  # Also called "Gray Ghost" in some resources.
-    Intruder = 12
-    Unknown15 = 15
-    Unknown16 = 16
-    Unknown17 = 17
-    Unknown18 = 18
+    GrayPhantom = 8
+    Invader = 15
+    Invader2 = 16
+    BluePhantom = 17
+    Invader3 = 18
 
 
 class CharacterUpdateRate(BaseEMEVDEnum):
@@ -114,30 +113,21 @@ class CharacterUpdateRate(BaseEMEVDEnum):
     Always = 0
     EveryTwoFrames = 2
     EveryFiveFrames = 5
-    Unknown102 = 102
-    Unknown105 = 105
+    AtLeastEveryTwoFrames = 102
+    AtLeastEveryFiveFrames = 105
 
 
 class ClassType(BaseEMEVDEnum):
-    Warrior = 0
-    Knight = 1
-    Wanderer = 2
-    Thief = 3
-    Bandit = 4
-    Hunter = 5
-    Sorcerer = 6
-    Pyromancer = 7
-    Cleric = 8
-    Deprived = 9
-    # Prototype classes (unused):
-    Temp_Warrior = 20
-    Temp_Knight = 21
-    Temp_Sorcerer = 22
-    Temp_Pyromancer = 23
-    Chi_Warrior = 24
-    Chi_Knight = 25
-    Chi_Sorcerer = 26
-    Chi_Pyromancer = 27
+    Vagabond = 0
+    Warrior = 1
+    Hero = 2
+    Bandit = 3
+    Astrologer = 4
+    Prophet = 5
+    Confessor = 6
+    Samurai = 7
+    Prisoner = 8
+    Wretch = 9
 
 
 class ComparisonType(BaseNegatableEMEVDEnum):
@@ -162,6 +152,20 @@ class ComparisonType(BaseNegatableEMEVDEnum):
         elif self == ComparisonType.LessThanOrEqual:
             return ComparisonType.GreaterThan
         return super().negate()
+
+    def get_operator(self):
+        if self == ComparisonType.Equal:
+            return "=="
+        elif self == ComparisonType.NotEqual:
+            return "!="
+        elif self == ComparisonType.GreaterThan:
+            return ">"
+        elif self == ComparisonType.LessThan:
+            return "<"
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ">="
+        elif self == ComparisonType.LessThanOrEqual:
+            return "<="
 
 
 class CutsceneFlags(BaseEMEVDFlags):
@@ -247,7 +251,7 @@ class CoordEntityType(BaseEMEVDEnum):
     Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
     are the big three types/subtypes.
     """
-    Object = 0
+    Asset = 0
     Region = 1
     Character = 2
 
@@ -297,13 +301,10 @@ class RestartType(BaseEMEVDEnum):
 
 
 class SummonSignType(BaseEMEVDEnum):
-    BlueEyeSign = 0  # Used for NPC summons.
-    BlackEyeSign = 1  # Used for NPC invasions.
-    RedEyeSign = 2
-    DetectionSign = 3
-    WhiteHelpSign = 4
-    BlackHelpSign = 5
-    Unknown20 = 20
+    WhiteSign = 0
+    BlackSign = 1
+    RedSign = 2
+    NPCWhiteSign = 20
 
 
 class SoundType(BaseEMEVDEnum):
@@ -347,137 +348,40 @@ class TriggerAttribute(BaseEMEVDFlags):
     All = 0b11111111
 
 
-class WorldTendencyType(BaseEMEVDEnum):
-    White = 0
-    Black = 1
-
-
 class UpdateAuthority(BaseEMEVDEnum):
 
     @classmethod
     def get_event_arg_fmt(cls):
-        return "H"
+        return "i"
 
     Normal = 0
-    Forced = 4095
-    Unknown8192 = 8192
+    Forced = 8192
 
 
-# EXTRA ENUMS (unused in EMEVD)
-
-LOCAL_PLAYER = 10000
-NET_PLAYER = 10001
-
-
-class MessageCategory(IntEnum):
-    Sample = 0
-    Talk = 1
-    Soapstone = 2
-    Item = 10
-    Weapon = 11
-    Armor = 12
-    Ring = 13
-    GoodExp = 14
-    WeaponExp = 15
-    ArmorExp = 16
-    RingExp = 17
-    Event = 30
-    Dialog = 78  # Not sure how this differs from 'Talk'.
-
-
-class InfoMenuType(IntEnum):
-    List = 0
-    Simple = 1
-
-
-class TalkAttribute(IntEnum):
-    """Bit flags with unknown purpose. Doc in Demon's Souls suggests they are "conversation setting relation" flags."""
-
-    Repeat = 0b00000001
-    Pad = 0b00000010
-    Draw = 0b00000100
-    Voice = 0b00001000
-    # Fifth through eighth flags are unused/unknown.
-    All = 0b11111111
-
-
-class PlayerDeathType(IntEnum):
-    """Type of player death. Originally called "DEATH_STATE". Original value names:
-
-    DEATH_STATE_Normal = 0
-    DEATH_STATE_MagicResurrection = 1
-    DEATH_STATE_RingNormalResurrection = 2
-    DEATH_STATE_RingCurseResurrection = 3
-    """
-
-    Normal = 0
-    MagicRevival = 1  # from unused 'Escape Death' miracle
-    RingRevival = 2
-    RareRingRevival = 3
-
-
-class SummonParamType(IntEnum):
-    NoType = 0
-    White = -1
-    Black = -2
-    ForceJoinBlack = -3  # Fixed typo in original ("FroceJoinBlack")
-    DetectBlack = -4
-    InvadeNito = -7  # Gravelord Servant
-    Dragonewt = -10  # Path of the Dragon
-    InvadeBounty = -11  # Darkmoon Blades
-    Coliseum = -12
-
-
-class InvadeType(IntEnum):
-    NoType = 0
-    NormalWhite = 1
-    NormalBlack = 2
-    ForceJoinBlack = 3
-    DetectBlack = 4
-    WhiteRescue = 5  # Unused covenant?
-    BlackRescue = 6  # Unused covenant?
-    Nito = 7
-    ThievesGuilds = 8  # Unused covenant?
-    OtoutoUmbasa = 9  # Unused covenant?
-    Dragonewt = 10
-    InvadeBounty = 11
-    ColiseumOneB = 12  # 1v1
-    ColiseumTwoA2 = 13  # 2v2
-    ColiseumTwoB1 = 14
-    ColiseumTwoB2 = 15
-    ColiseumBrB = 16  # Battle Royale
-    ColiseumBrC = 17
-    ColiseumBrD = 18
-
-
-class ArmorType(IntEnum):
+class ArmorType(BaseEMEVDEnum):
     Head = 0
     Body = 1
     Arms = 2
     Legs = 3
 
 
-class BannerType(IntEnum):
-    # TODO: Test ER banners.
-    HeirOfFireDestroyed = 1
+class BannerType(BaseEMEVDEnum):
     YouDied = 2
-    Revival = 3
-    SoulRecovery = 4
-    TargetedDefeated = 5
-    PhantomDeath = 6  # Phantom version of "YOU DIED"
+    HostVanquished = 5
     BloodyFingerVanquished = 7
-    AreaName = 8  # Name determined by current floor Collision.
-    BeginMatch = 12
-    DefaultBanner = 13
-    HollowArenaDraw = 14
-    HollowArenaWin = 15
-    HollowArenaLoss = 16
-    Unknown = 17
-    DutyFulfilled = 18
-    LordOfCinderFallen = 19
-    UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
-    Unknown26 = 26
-    Unknown27 = 27
+    LostGraceDiscovered = 13
+    Unknown14 = 14
+    LegendFelled = 15
+    DemigodFelled = 16
+    GreatEnemyFelled = 17
+    EnemyFelled = 18
+    DutyFulfilled = 20
+    MapFound = 22
+    GreatRuneRestored = 26
+    GodSlain = 27
+    DuelistVanquished = 28
+    RecusantVanquished = 29
+    InvaderVanquished = 30
 
 
 class CalculationType(IntEnum):
@@ -538,11 +442,6 @@ class ConditionGroup(IntEnum):
     def Add(self, condition: bool | int | ConditionGroup):
         """For EVS intellisense. Handled internally."""
         ...
-
-
-class Covenant(IntEnum):
-    # TODO
-    pass
 
 
 class DamageType(IntEnum):
@@ -613,11 +512,11 @@ class Label(IntEnum):
 class MultiplayerState(IntEnum):
     Host = 0
     Client = 1
-    TryingToCreateSession = 2
-    TryingToJoinSession = 3
-    LeavingSession = 4
-    FailedToCreateSession = 5
-    Unknown6 = 6
+    Multiplayer = 2
+    MultiplayerPending = 3
+    Singleplayer = 4
+    Invasion = 5
+    InvasionPending = 6
 
 
 class NPCPartType(IntEnum):
@@ -654,25 +553,6 @@ class NPCPartType(IntEnum):
     Part29 = 29
     Part30 = 30
     WeakPoint = 31
-
-
-class PlayGoState(IntEnum):
-    DownloadedFirstChunk = 0
-    BDInstalling = 1
-    Installed = 2
-
-
-class PlayLogMultiplayerType(IntEnum):
-    HostOnly = 0
-    GuestOnly = 1
-    BothHostAndGuest = 2
-
-
-class PlayerPlayLogParameter(IntEnum):
-    PrimaryParameters = 0
-    TemporaryParameters = 1
-    Weapon = 2
-    Armor = 3
 
 
 class SingleplayerSummonSignType(IntEnum):
@@ -721,15 +601,29 @@ class TeamType(IntEnum):
     ArchEnemyTeam = 33
 
 
-class HollowArenaMatchType(IntEnum):
-    Duel = 0
-    TwoPlayerBrawl = 1
-    FourPlayerBrawl = 2
-    SixPlayerBrawl = 3
-    TwoVsTwo = 4
-    ThreeVsThree = 5
-
-
-class HollowArenaResult(IntEnum):
-    Win = 0
-    Draw = 1
+class Weather(IntEnum):
+    Null = -1
+    Default = 0
+    Rain = 1
+    Snow = 2
+    WindyRain = 3
+    Fog = 4
+    Cloudless = 5
+    FlatClouds = 6
+    PuffyClouds = 7
+    RainyClouds = 8
+    WindyFog = 9
+    HeavySnow = 10
+    HeavyFog = 11
+    WindyPuffyClouds = 12
+    Default2 = 13
+    Default3 = 14
+    RainyHeavyFog = 15
+    SnowyHeavyFog = 16
+    ScatteredRain = 17
+    Unknown18 = 18
+    Unknown19 = 19
+    Unknown20 = 20
+    Unknown21 = 21
+    Unknown22 = 22
+    Unknown23 = 23

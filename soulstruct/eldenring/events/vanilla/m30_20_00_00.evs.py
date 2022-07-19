@@ -12,152 +12,389 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_20_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=30200000, obj=30201950, unknown=5.0)
+    RegisterGrace(grace_flag=30200000, asset=Assets.AEG099_060_9000)
     Event_30202800()
     Event_30202810()
     Event_30202811()
     Event_30202829()
-    RunCommonEvent(0, 90005616, args=(30207910, 30202700), arg_types="II")
-    RunCommonEvent(0, 90005211, args=(30200200, 30002, 20002, 30202200, 1.0, 0.0, 1, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200201, 30002, 20002, 30202201, 1.0, 0.0, 1, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200202, 30002, 20002, 30202202, 1.0, 1.0, 1, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(30200210, 30202200, 1.0, 0.10000000149011612, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200211, 30202200, 1.0, 0.30000001192092896, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200214, 30202257, 1.0, 0.10000000149011612, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200215, 30202257, 1.0, 0.30000001192092896, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200216, 30202257, 1.0, 0.5, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200217, 30202257, 1.0, 0.30000001192092896, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200218, 30202257, 1.0, 0.20000000298023224, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(30200243, 30002, 20002, 30202243, 1.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200244, 30002, 20002, 30202243, 1.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200245, 30002, 20002, 30202243, 1.0, 2.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200250, 30002, 20002, 30202250, 1.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200251, 30002, 20002, 30202250, 2.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(30200252, 30000, 20000, 30202250, 2.0, 2.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(30200253, 30202253, 0.0, 0.800000011920929, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200254, 30202254, 0.0, 0.800000011920929, 0), arg_types="IIffi")
-    RunCommonEvent(
+    CommonFunc_90005616(0, flag=30207910, region=30202700)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30200255, 30001, 20001, 30202202, 1.0, 0.10000000149011612, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.GiantOctopus0,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202200,
+        radius=1.0,
+        seconds=0.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(30200256, 30001, 20001, 30202202, 1.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.GiantOctopus1,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202201,
+        radius=1.0,
+        seconds=0.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005261, args=(30200257, 30202257, 0.0, 0.800000011920929, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200260, 30202260, 1.0, 0.10000000149011612, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200261, 30202260, 1.0, 0.20000000298023224, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200262, 30202260, 1.0, 0.10000000149011612, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30200263, 30202260, 1.0, 0.20000000298023224, 0), arg_types="IIffi")
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005646,
-        args=(30200800, 30202840, 30202841, 30201840, 30202840, 30, 20, 0, 0),
-        arg_types="IIIIIBBbb",
+        character=Characters.GiantOctopus2,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202202,
+        radius=1.0,
+        seconds=1.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005525, args=(30200560, 30201560), arg_types="II")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005501,
-        args=(30200510, 30200511, 4, 30201510, 30201511, 30201512, 30200512),
-        arg_types="IIIIIII",
+        character=Characters.Octopus0,
+        region=30202200,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Octopus1,
+        region=30202200,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Octopus4,
+        region=30202257,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Octopus5,
+        region=30202257,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        animation_id=0,
+    )
+    CommonFunc_90005261(0, character=Characters.Octopus6, region=30202257, radius=1.0, seconds=0.5, animation_id=0)
+    CommonFunc_90005261(
+        0,
+        character=Characters.Octopus7,
+        region=30202257,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Octopus8,
+        region=30202257,
+        radius=1.0,
+        seconds=0.20000000298023224,
+        animation_id=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia2,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202243,
+        radius=1.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia3,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202243,
+        radius=1.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia4,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202243,
+        radius=1.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia6,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202250,
+        radius=1.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia7,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30202250,
+        radius=2.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia8,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30202250,
+        radius=2.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia9,
+        region=30202253,
+        radius=0.0,
+        seconds=0.800000011920929,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia10,
+        region=30202254,
+        radius=0.0,
+        seconds=0.800000011920929,
+        animation_id=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia11,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30202202,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.VulgarMilitia12,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30202202,
+        radius=1.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia13,
+        region=30202257,
+        radius=0.0,
+        seconds=0.800000011920929,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia14,
+        region=30202260,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia15,
+        region=30202260,
+        radius=1.0,
+        seconds=0.20000000298023224,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia16,
+        region=30202260,
+        radius=1.0,
+        seconds=0.10000000149011612,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.VulgarMilitia17,
+        region=30202260,
+        radius=1.0,
+        seconds=0.20000000298023224,
+        animation_id=0,
+    )
+    CommonFunc_90005646(
+        0,
+        flag=30200800,
+        left_flag=30202840,
+        cancel_flag__right_flag=30202841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30202840,
+        area_id=30,
+        block_id=20,
+        cc_id=0,
+        dd_id=0,
+    )
+    CommonFunc_90005525(0, flag=30200560, asset=Assets.AEG027_157_9000)
+    CommonFunc_90005501(
+        0,
+        flag=30200510,
+        flag_1=30200511,
+        left=4,
+        asset=Assets.AEG027_016_0500,
+        asset_1=Assets.AEG027_002_0500,
+        asset_2=Assets.AEG027_002_0501,
+        flag_2=30200512,
     )
     Event_30202510()
-    RunCommonEvent(0, 90005650, args=(30200540, 30201540, 30201541, 30203541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30200540, 30201540), arg_types="II")
+    CommonFunc_90005650(
+        0,
+        flag=30200540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_9000,
+        obj_act_id=30203541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30200540, anchor_entity=Assets.AEG027_041_0500)
     Event_30202200()
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005460, args=(30200200,))
-    RunCommonEvent(0, 90005461, args=(30200200,))
-    RunCommonEvent(0, 90005462, args=(30200200,))
-    RunCommonEvent(0, 90005460, args=(30200201,))
-    RunCommonEvent(0, 90005461, args=(30200201,))
-    RunCommonEvent(0, 90005462, args=(30200201,))
-    RunCommonEvent(0, 90005460, args=(30200202,))
-    RunCommonEvent(0, 90005461, args=(30200202,))
-    RunCommonEvent(0, 90005462, args=(30200202,))
+    CommonFunc_90005460(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005460(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005460(0, character=Characters.GiantOctopus2)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus2)
+    CommonFunc_90005462(0, 30200202)
 
 
 @NeverRestart(30202510)
 def Event_30202510():
     """Event 30202510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            30200510,
-            30200511,
-            4,
-            30201510,
-            30201511,
-            30203511,
-            30201512,
-            30203512,
-            30202511,
-            30202512,
-            30200512,
-            30200513,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        30200510,
+        30200511,
+        4,
+        30201510,
+        30201511,
+        30203511,
+        30201512,
+        30203512,
+        30202511,
+        30202512,
+        30200512,
+        30200513,
+        0,
     )
 
 
 @RestartOnRest(30202520)
-def Event_30202520(_, flag: uint, obj: uint, flag_1: uint):
+def Event_30202520(_, flag: uint, asset: uint, flag_1: uint):
     """Event 30202520"""
-    EndIfFlagEnabled(flag)
-    DisableObjectActivation(obj, obj_act_id=-1)
+    if FlagEnabled(flag):
+        return
+    DisableAssetActivation(asset, obj_act_id=-1)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(AND_1, flag_1)
-    IfFlagDisabled(AND_1, flag)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(FlagDisabled(flag))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
 
 
 @RestartOnRest(30202200)
 def Event_30202200():
     """Event 30202200"""
-    DisableObject(30201200)
+    DisableAsset(Assets.AEG020_940_1000)
     End()
 
 
 @RestartOnRest(30202800)
 def Event_30202800():
     """Event 30202800"""
-    EndIfFlagEnabled(30200800)
-    IfHealthValueLessThanOrEqual(MAIN, 30200800, value=0)
+    if FlagEnabled(30200800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.StrayMimicTear) <= 0)
+    
     Wait(4.0)
     PlaySoundEffect(30208000, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30200800)
-    KillBossAndDisplayBanner(character=30200800, banner_type=BannerType.DutyFulfilled)
-    EnableObjectActivation(30201671, obj_act_id=-1)
+    
+    MAIN.Await(CharacterDead(Characters.StrayMimicTear))
+    
+    KillBossAndDisplayBanner(character=Characters.StrayMimicTear, banner_type=BannerType.EnemyFelled)
+    EnableAssetActivation(Assets.AEG099_630_9001, obj_act_id=-1)
     EnableFlag(30200800)
     EnableFlag(9220)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61220)
+    if PlayerInOwnWorld():
+        EnableFlag(61220)
 
 
 @RestartOnRest(30202810)
@@ -172,53 +409,73 @@ def Event_30202810():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(30205800)
-    DisableCharacter(30200800)
-    DisableAnimations(30200800)
-    DisableHealthBar(30200800)
-    DisableObjectActivation(30201671, obj_act_id=-1)
-    IfFlagEnabled(AND_2, 30202805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30202800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    SetNetworkUpdateRate(30200800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    ForceAnimation(30200801, 20010, unknown2=1.0)
-    Unknown_2004_67(character=PLAYER, entity=30200800)
-    IfCharacterHasSpecialEffect(MAIN, 30200801, 16307)
-    EnableCharacter(30200800)
-    EnableAnimations(30200800)
-    DisableAnimations(30200801)
+    DisableCharacter(Characters.StrayMimicTear)
+    DisableAnimations(Characters.StrayMimicTear)
+    DisableHealthBar(Characters.StrayMimicTear)
+    DisableAssetActivation(Assets.AEG099_630_9001, obj_act_id=-1)
+    AND_2.Add(FlagEnabled(30202805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30202800))
+    
+    MAIN.Await(AND_2)
+    
+    SetNetworkUpdateRate(Characters.StrayMimicTear, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    ForceAnimation(Characters.SilverTear, 20010)
+    CopyPlayerCharacterData(source_character=PLAYER, dest_characterentity=Characters.StrayMimicTear)
+    
+    MAIN.Await(CharacterHasSpecialEffect(Characters.SilverTear, 16307))
+    
+    EnableCharacter(Characters.StrayMimicTear)
+    EnableAnimations(Characters.StrayMimicTear)
+    DisableAnimations(Characters.SilverTear)
     Wait(0.5)
     Move(
-        30200800,
-        destination=30200801,
+        Characters.StrayMimicTear,
+        destination=Characters.SilverTear,
         destination_type=CoordEntityType.Character,
         model_point=900,
-        copy_draw_parent=30200801,
+        copy_draw_parent=Characters.SilverTear,
     )
-    ForceAnimation(30200800, 63010, skip_transition=True, unknown2=1.0)
+    ForceAnimation(Characters.StrayMimicTear, 63010, skip_transition=True)
     Wait(4.0)
     EnableAI(30205800)
     SetNetworkUpdateRate(30205800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(30200800, name=903320300)
+    EnableBossHealthBar(Characters.StrayMimicTear, name=903320300)
 
 
 @RestartOnRest(30202811)
 def Event_30202811():
     """Event 30202811"""
-    EndIfFlagEnabled(30200800)
-    IfHealthRatioLessThanOrEqual(AND_1, 30200800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30200800):
+        return
+    AND_1.Add(HealthRatio(Characters.StrayMimicTear) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(30202802)
 
 
 @RestartOnRest(30202829)
 def Event_30202829():
     """Event 30202829"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30200800, 30201800, 30202800, 30202805, 30205800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30200800,
+        entity=Assets.AEG099_001_9000,
+        region=30202800,
+        flag_1=30202805,
+        character=30205800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30200800, 30201800, 30202800, 30202805, 30202806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30200800, 30201800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30200800, 921100, 30202805, 30202806, 0, 30202802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=30200800,
+        entity=Assets.AEG099_001_9000,
+        region=30202800,
+        flag_1=30202805,
+        flag_2=30202806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=30200800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30200800, 921100, 30202805, 30202806, 0, 30202802, 0, 0)

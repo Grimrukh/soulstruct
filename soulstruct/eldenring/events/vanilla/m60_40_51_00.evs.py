@@ -12,23 +12,26 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_40_51_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1040510500, 1040510500, 40310, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005706, args=(1040510700, 930023, 0), arg_types="IiI")
+    CommonFunc_90005300(0, flag=1040510500, character=Characters.Scarab, item_lot_param_id=40310, seconds=0.0, left=0)
+    CommonFunc_90005706(0, 1040510700, 930023, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1040510700)
-    RunCommonEvent(0, 90005250, args=(1040510407, 1040512407, 0.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1040510408, 1040512407, 0.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1040510407, 1040512408, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1040510408, 1040512408, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(1040510406, 30001, 20001, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
+    DisableBackread(Characters.Commoner)
+    CommonFunc_90005250(0, character=Characters.LeyndellFootSoldier1, region=1040512407, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.LeyndellFootSoldier2, region=1040512407, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.LeyndellFootSoldier1, region=1040512408, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=Characters.LeyndellFootSoldier2, region=1040512408, seconds=0.0, animation_id=0)
+    CommonFunc_90005201(0, 1040510406, 30001, 20001, 5.0, 0.0, 0, 0, 0, 0)

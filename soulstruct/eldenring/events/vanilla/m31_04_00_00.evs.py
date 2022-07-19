@@ -12,106 +12,373 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m31_04_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=31040000, obj=31041950, unknown=5.0)
+    RegisterGrace(grace_flag=31040000, asset=Assets.AEG099_060_9000)
     Event_31042800()
     Event_31042810()
     Event_31042849()
     Event_31042811()
-    RunCommonEvent(
-        0,
-        90005646,
-        args=(31040800, 31042840, 31042841, 31041840, 31042840, 31, 4, 0, 0),
-        arg_types="IIIIIBBbb",
-    )
+    CommonFunc_90005646(0, 31040800, 31042840, 31042841, 31041840, 31042840, 31, 4, 0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(31040200, 31042200, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040205, 31042205, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040206, 31042205, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040207, 31042207, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040208, 31042207, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040209, 31042207, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040211, 31042211, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040212, 31042212, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040216, 31042216, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040217, 31042216, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005251, args=(31040219, 1.5, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(31040220, 1.5, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(31040221, 1.5, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(31040222, 1.5, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005261, args=(31040223, 31042223, 1.5, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005251, args=(31040219, 1.5, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005261, args=(31040250, 31042250, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31040253, 30001, 20001, 31042207, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040254, 30001, 20001, 31042207, 2.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer0,
+        region=31042200,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    RunCommonEvent(0, 90005211, args=(31040257, 30001, 20001, 31042257, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(31040260, 31042260, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040261, 31042260, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040262, 31042260, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040263, 31042260, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31040264, 31042260, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31040275, 30001, 20001, 31042275, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040276, 30001, 20001, 31042275, 2.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer1,
+        region=31042205,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    RunCommonEvent(0, 90005211, args=(31040277, 30001, 20001, 31042275, 2.0, 0.5, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040278, 30001, 20001, 31042275, 2.0, 0.8999999761581421, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer2,
+        region=31042205,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040279, 30001, 20001, 31042275, 2.0, 0.699999988079071, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer3,
+        region=31042207,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    RunCommonEvent(0, 90005211, args=(31040300, 30000, 20000, 31042300, 2.0, 10.0, 1, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(31040310, 31042310, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31040311, 30000, 20000, 31042311, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(31040312, 31042312, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31040318, 30000, 20000, 31042318, 2.0, 0.0, 2, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040319, 30000, 20000, 31042318, 2.0, 0.30000001192092896, 2, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer4,
+        region=31042207,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    RunCommonEvent(0, 90005211, args=(31040320, 30000, 20000, 31042318, 2.0, 0.5, 2, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(31040323, 30000, 20000, 31042323, 2.0, 5.0, 1, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31040324, 30000, 20000, 31042323, 2.0, 5.199999809265137, 1, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.FungalSorcerer5,
+        region=31042207,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
     )
-    Event_31042310(0, character=31040300)
+    CommonFunc_90005261(
+        0,
+        character=Characters.FungalSorcerer6,
+        region=31042211,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.FungalSorcerer7,
+        region=31042212,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.FungalSorcerer8,
+        region=31042216,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.FungalSorcerer9,
+        region=31042216,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer10, radius=1.5, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer11, radius=1.5, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer12, radius=1.5, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer13, radius=1.5, seconds=0.0, animation_id=1701)
+    CommonFunc_90005261(
+        0,
+        character=Characters.FungalSorcerer14,
+        region=31042223,
+        radius=1.5,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005251(0, character=Characters.FungalSorcerer10, radius=1.5, seconds=0.0, animation_id=1701)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GiantMirandaFlower0,
+        region=31042250,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.GiantMirandaFlower1,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042207,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.GiantMirandaFlower2,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042207,
+        radius=2.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.GiantMirandaFlower3,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042257,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaFlower0,
+        region=31042260,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaFlower1,
+        region=31042260,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaFlower2,
+        region=31042260,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaFlower3,
+        region=31042260,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.MirandaFlower4,
+        region=31042260,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MirandaFlower5,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042275,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MirandaFlower6,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042275,
+        radius=2.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MirandaFlower7,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042275,
+        radius=2.0,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MirandaFlower8,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042275,
+        radius=2.0,
+        seconds=0.8999999761581421,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MirandaFlower9,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31042275,
+        radius=2.0,
+        seconds=0.699999988079071,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.OldWomanBat,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042300,
+        radius=2.0,
+        seconds=10.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=31040310, region=31042310, radius=2.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042311,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=31040312, region=31042312, radius=2.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat1,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042318,
+        radius=2.0,
+        seconds=0.0,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat2,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042318,
+        radius=2.0,
+        seconds=0.30000001192092896,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042318,
+        radius=2.0,
+        seconds=0.5,
+        left=2,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat4,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042323,
+        radius=2.0,
+        seconds=5.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Bat5,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31042323,
+        radius=2.0,
+        seconds=5.199999809265137,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    Event_31042310(0, character=Characters.OldWomanBat)
     Event_31042310(1, character=31040310)
-    Event_31042310(2, character=31040311)
+    Event_31042310(2, character=Characters.Bat0)
     Event_31042310(3, character=31040312)
-    Event_31042310(4, character=31040318)
-    Event_31042310(5, character=31040319)
-    Event_31042310(6, character=31040320)
-    Event_31042310(7, character=31040323)
+    Event_31042310(4, character=Characters.Bat1)
+    Event_31042310(5, character=Characters.Bat2)
+    Event_31042310(6, character=Characters.Bat3)
+    Event_31042310(7, character=Characters.Bat4)
     Event_31042310(8, 31040324)
 
 
@@ -124,63 +391,85 @@ def Event_31042310(_, character: uint):
 @RestartOnRest(31042800)
 def Event_31042800():
     """Event 31042800"""
-    EndIfFlagEnabled(31040800)
-    IfHealthValueLessThanOrEqual(MAIN, 31040800, value=0)
+    if FlagEnabled(31040800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.CleanrotKnight) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(31040800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 31040800)
-    KillBossAndDisplayBanner(character=31040800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.CleanrotKnight, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.CleanrotKnight))
+    
+    KillBossAndDisplayBanner(character=Characters.CleanrotKnight, banner_type=BannerType.EnemyFelled)
     EnableFlag(31040800)
     EnableFlag(9236)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61236)
+    if PlayerInOwnWorld():
+        EnableFlag(61236)
 
 
 @RestartOnRest(31042810)
 def Event_31042810():
     """Event 31042810"""
     GotoIfFlagDisabled(Label.L0, flag=31040800)
-    DisableCharacter(31040800)
-    DisableAnimations(31040800)
-    Kill(31040800)
+    DisableCharacter(Characters.CleanrotKnight)
+    DisableAnimations(Characters.CleanrotKnight)
+    Kill(Characters.CleanrotKnight)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(31040800)
-    AddSpecialEffect(31040800, 90000)
-    ForceAnimation(31040800, 30001, unknown2=1.0)
-    IfFlagEnabled(AND_2, 31042805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=31042800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    DisableAI(Characters.CleanrotKnight)
+    AddSpecialEffect(Characters.CleanrotKnight, 90000)
+    ForceAnimation(Characters.CleanrotKnight, 30001)
+    AND_2.Add(FlagEnabled(31042805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=31042800))
+    
+    MAIN.Await(AND_2)
 
     # --- Label 2 --- #
     DefineLabel(2)
     Wait(1.0)
-    ForceAnimation(31040800, 20001, unknown2=1.0)
-    EnableAI(31040800)
-    SetNetworkUpdateRate(31040800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(31040800, name=903800310)
+    ForceAnimation(Characters.CleanrotKnight, 20001)
+    EnableAI(Characters.CleanrotKnight)
+    SetNetworkUpdateRate(Characters.CleanrotKnight, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.CleanrotKnight, name=903800310)
 
 
 @RestartOnRest(31042811)
 def Event_31042811():
     """Event 31042811"""
-    EndIfFlagEnabled(31040800)
-    IfHealthRatioLessThanOrEqual(AND_1, 31040800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(31040800):
+        return
+    AND_1.Add(HealthRatio(Characters.CleanrotKnight) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(31042802)
 
 
 @RestartOnRest(31042849)
 def Event_31042849():
     """Event 31042849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(31040800, 31041800, 31042800, 31042805, 31045800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=31040800,
+        entity=Assets.AEG099_002_9000,
+        region=31042800,
+        flag_1=31042805,
+        character=31045800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(31040800, 31041800, 31042800, 31042805, 31042806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(31040800, 31041800, 5, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(31040800, 931000, 31042805, 31042806, 0, 31042802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=31040800,
+        entity=Assets.AEG099_002_9000,
+        region=31042800,
+        flag_1=31042805,
+        flag_2=31042806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=31040800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
+    CommonFunc_9005822(0, 31040800, 931000, 31042805, 31042806, 0, 31042802, 0, 0)

@@ -495,9 +495,9 @@ __all__ = [
     "uchar",
     "PLAYER",
     "ProtectedEntities",
-    # Enums identical in all games
     "AIStatusType",
     "BitOperation",
+    "BossMusicState",
     "ButtonType",
     "CharacterType",
     "CharacterUpdateRate",
@@ -520,15 +520,13 @@ __all__ = [
     "StatueType",
     "SummonSignType",
     "TriggerAttribute",
-    "WorldTendencyType",
     "UpdateAuthority",
-    # Enums in Dark Souls 3 only
+    "Weather",
     "ArmorType",
     "BannerType",
     "CalculationType",
     "ClientType",
     "ConditionGroup",
-    "Covenant",
     "DamageType",
     "DeleteOrAdd",
     "DialogResult",
@@ -538,13 +536,8 @@ __all__ = [
     "Label",
     "MultiplayerState",
     "NPCPartType",
-    "PlayGoState",
-    "PlayLogMultiplayerType",
-    "PlayerPlayLogParameter",
     "SingleplayerSummonSignType",
     "TeamType",
-    "HollowArenaMatchType",
-    "HollowArenaResult",
 ]
 
 from ..maps import constants

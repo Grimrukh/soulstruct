@@ -11,51 +11,88 @@ strings:
 154: N:\\GR\\data\\Param\\event\\m60.emevd
 220: N:\\GR\\data\\Param\\event\\common_macro.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_46_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1046400000, obj=1046401950, unknown=5.0)
-    RegisterGrace(grace_flag=1046400001, obj=1046401951, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1046400000, asset=Assets.AEG099_060_9000)
+    RegisterGrace(grace_flag=1046400001, asset=Assets.AEG099_060_9001)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76418, 76401, 1046401981, 77400, 0, 78400, 78401, 78402, 78403, 78404, 78405, 78406, 78407, 78408, 78409),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76418,
+        flag_1=76401,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77400,
+        value=0,
+        flag_2=78400,
+        flag_3=78401,
+        flag_4=78402,
+        flag_5=78403,
+        flag_6=78404,
+        flag_7=78405,
+        flag_8=78406,
+        flag_9=78407,
+        flag_10=78408,
+        flag_11=78409,
     )
-    RunCommonEvent(
+    CommonFunc_90005790(
         0,
-        90005790,
-        args=(0, 1046400180, 1046402181, 1046402182, 1046400701, 22, 1046402701, 1046402700, 0.0, 0, 0, 0),
-        arg_types="IIIIIiIIfIBi",
+        right=0,
+        flag=1046400180,
+        summon_flag=1046402181,
+        dismissal_flag=1046402182,
+        character=Characters.AnastasiaTarnishedEater,
+        sign_type=22,
+        region=1046402701,
+        region_1=1046402700,
+        seconds=0.0,
+        right_1=0,
+        unknown=0,
+        right_2=0,
     )
-    RunCommonEvent(0, 90005791, args=(1046400180, 1046402181, 1046402182, 1046400701), arg_types="IIII")
-    RunCommonEvent(
+    CommonFunc_90005791(
         0,
-        90005792,
-        args=(1046400180, 1046402181, 1046402182, 1046400701, 1046400700, 0.0),
-        arg_types="IIIIif",
+        flag=1046400180,
+        flag_1=1046402181,
+        flag_2=1046402182,
+        character=Characters.AnastasiaTarnishedEater,
     )
-    RunCommonEvent(
+    CommonFunc_90005792(
         0,
-        90005793,
-        args=(1046400180, 1046402181, 1046402182, 1046400701, 1046402701, 1046402182, 0),
-        arg_types="IIIIIIi",
+        flag=1046400180,
+        flag_1=1046402181,
+        flag_2=1046402182,
+        character=Characters.AnastasiaTarnishedEater,
+        item_lot_param_id=1046400700,
+        seconds=0.0,
     )
-    RunCommonEvent(0, 90005250, args=(1046400300, 1046402303, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1046400301, 1046402301, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1046400303, 1046402303, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1046400304, 1046402303, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1046400400, 2.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005706, args=(1046400710, 930025, 0), arg_types="IiI")
-    RunCommonEvent(0, 90005631, args=(1046401640, 61011), arg_types="Ii")
+    CommonFunc_90005793(
+        0,
+        flag=1046400180,
+        flag_1=1046402181,
+        flag_2=1046402182,
+        character=Characters.AnastasiaTarnishedEater,
+        other_entity=1046402701,
+        region=1046402182,
+        left=0,
+    )
+    CommonFunc_90005250(0, 1046400300, 1046402303, 0.0, -1)
+    CommonFunc_90005250(0, 1046400301, 1046402301, 0.0, -1)
+    CommonFunc_90005250(0, 1046400303, 1046402303, 0.0, -1)
+    CommonFunc_90005250(0, 1046400304, 1046402303, 0.0, -1)
+    CommonFunc_90005251(0, 1046400400, 2.0, 0.0, -1)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
+    CommonFunc_90005631(0, 1046401640, 61011)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1046400700)
-    DisableBackread(1046400710)
+    DisableBackread(Characters.WanderingNoble)

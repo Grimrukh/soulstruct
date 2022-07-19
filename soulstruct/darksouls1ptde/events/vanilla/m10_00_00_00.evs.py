@@ -75,14 +75,14 @@ def Constructor():
     Event_11005200(8, character=1000112, region=1002022)
     Event_11005200(9, character=1000113, region=1002022)
     Event_11005200(10, character=1000126, region=1002022)
-    Event_11005100(0, 1002100, 1000100, 0.0)
-    Event_11005100(1, 1002101, 1000101, 0.0)
-    Event_11005100(2, 1002102, 1000102, 0.0)
-    Event_11005100(3, 1002102, 1000103, 0.6000000238418579)
-    Event_11005100(4, 1002103, 1000104, 0.0)
-    Event_11005100(5, 1002103, 1000105, 0.20000000298023224)
-    Event_11005100(6, 1002103, 1000106, 0.8999999761581421)
-    Event_11005100(7, 1002107, 1000107, 0.0)
+    Event_11005100(0, region=1002100, character=1000100, seconds=0.0)
+    Event_11005100(1, region=1002101, character=1000101, seconds=0.0)
+    Event_11005100(2, region=1002102, character=1000102, seconds=0.0)
+    Event_11005100(3, region=1002102, character=1000103, seconds=0.6000000238418579)
+    Event_11005100(4, region=1002103, character=1000104, seconds=0.0)
+    Event_11005100(5, region=1002103, character=1000105, seconds=0.20000000298023224)
+    Event_11005100(6, region=1002103, character=1000106, seconds=0.8999999761581421)
+    Event_11005100(7, region=1002107, character=1000107, seconds=0.0)
     Event_11005150(0, character=1000150, obj=1001100)
     Event_11005150(1, character=1000151, obj=1001101)
     Event_11005150(2, character=1000152, obj=1001102)
@@ -423,7 +423,7 @@ def Event_11005396():
     
     CreateNPCPart(1000800, npc_part_id=5260, part_index=NPCPartType.Part1, part_health=300)
     
-    MAIN.Await(CharacterPartHealthLessThanOrEqual(1000800, npc_part_id=5260, value=0))
+    MAIN.Await(CharacterPartHealth(1000800, npc_part_id=5260) <= 0)
     
     EzstateAIRequest(1000800, command_id=1001, command_slot=0)
     
@@ -467,7 +467,7 @@ def Event_11005398():
     
     CreateNPCPart(1000800, npc_part_id=5262, part_index=NPCPartType.Part3, part_health=1)
     
-    MAIN.Await(CharacterPartHealthLessThanOrEqual(1000800, npc_part_id=5262, value=0))
+    MAIN.Await(CharacterPartHealth(1000800, npc_part_id=5262) <= 0)
     
     AICommand(1000800, command_id=1, command_slot=0)
     DisableNetworkSync()
@@ -785,8 +785,8 @@ def Event_11000600(_, obj: int, obj_act_id: int):
 @NeverRestart(11000510)
 def Event_11000510(_, character: int, flag: int):
     """Event 11000510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -815,7 +815,7 @@ def Event_11000520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -827,7 +827,7 @@ def Event_11000530(_, character: int, first_flag: int, last_flag: int, flag: int
     if FlagDisabled(11000580):
         AND_1.Add(FlagDisabled(1253))
         AND_1.Add(FlagEnabled(1250))
-        AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+        AND_1.Add(HealthRatio(character) > 0.0)
         OR_1.Add(ObjectDestroyed(1001250))
         OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
         AND_1.Add(OR_1)
@@ -878,7 +878,7 @@ def Event_11000533(_, character: int, flag: int):
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlag(1434)
     EnableFlag(flag)

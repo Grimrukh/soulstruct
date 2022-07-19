@@ -12,55 +12,79 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_44_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1033440000, obj=1033441950, unknown=5.0)
-    RunCommonEvent(0, 90005460, args=(1033440200,))
-    RunCommonEvent(0, 90005461, args=(1033440200,))
-    RunCommonEvent(0, 90005462, args=(1033440200,))
-    RunCommonEvent(0, 90005460, args=(1033440201,))
-    RunCommonEvent(0, 90005461, args=(1033440201,))
-    RunCommonEvent(0, 90005462, args=(1033440201,))
-    RunCommonEvent(0, 90005460, args=(1033440204,))
-    RunCommonEvent(0, 90005461, args=(1033440204,))
-    RunCommonEvent(0, 90005462, args=(1033440204,))
-    RunCommonEvent(0, 90005460, args=(1033440205,))
-    RunCommonEvent(0, 90005461, args=(1033440205,))
-    RunCommonEvent(0, 90005462, args=(1033440205,))
-    RunCommonEvent(0, 90005460, args=(1033440206,))
-    RunCommonEvent(0, 90005461, args=(1033440206,))
-    RunCommonEvent(0, 90005462, args=(1033440206,))
-    RunCommonEvent(0, 90005683, args=(62202, 1033441684, 209, 78292, 78292), arg_types="IIiII")
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1033440000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005460(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus0)
+    CommonFunc_90005460(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus1)
+    CommonFunc_90005460(0, character=1033440204)
+    CommonFunc_90005461(0, character=1033440204)
+    CommonFunc_90005462(0, character=1033440204)
+    CommonFunc_90005460(0, character=1033440205)
+    CommonFunc_90005461(0, character=1033440205)
+    CommonFunc_90005462(0, character=1033440205)
+    CommonFunc_90005460(0, character=1033440206)
+    CommonFunc_90005461(0, character=1033440206)
+    CommonFunc_90005462(0, character=1033440206)
+    CommonFunc_90005683(0, flag=62202, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78292, flag_2=78292)
+    CommonFunc_90005790(
         0,
-        90005790,
-        args=(0, 1033440180, 1033442181, 1033442182, 1033440700, 23, 1033442701, 1033442700, 0.0, 1045349259, 0, 0),
-        arg_types="IIIIIiIIfIBi",
+        right=0,
+        flag=1033440180,
+        summon_flag=1033442181,
+        dismissal_flag=1033442182,
+        character=Characters.Edgar,
+        sign_type=23,
+        region=1033442701,
+        region_1=1033442700,
+        seconds=0.0,
+        right_1=1045349259,
+        unknown=0,
+        right_2=0,
     )
-    RunCommonEvent(0, 90005791, args=(1033440180, 1033442181, 1033442182, 1033440700), arg_types="IIII")
-    RunCommonEvent(0, 90005792, args=(1033440180, 1033442181, 1033442182, 1033440700, 100610, 0.0), arg_types="IIIIif")
-    RunCommonEvent(
+    CommonFunc_90005791(0, flag=1033440180, flag_1=1033442181, flag_2=1033442182, character=Characters.Edgar)
+    CommonFunc_90005792(
         0,
-        90005793,
-        args=(1033440180, 1033442181, 1033442182, 1033440700, 1033442701, 0, 0),
-        arg_types="IIIIIIi",
+        flag=1033440180,
+        flag_1=1033442181,
+        flag_2=1033442182,
+        character=Characters.Edgar,
+        item_lot_param_id=100610,
+        seconds=0.0,
     )
-    Event_1033440700(0, character=1033440701, animation_id=930027)
-    Event_1033440700(1, character=1033440702, animation_id=930029)
-    Event_1033440700(2, character=1033440703, animation_id=930028)
-    Event_1033440705(0, obj=1033441700)
-    Event_1033440705(1, obj=1033441701)
-    Event_1033440705(2, obj=1033441702)
-    Event_1033440705(3, obj=1033441703)
-    Event_1033440705(4, obj=1033441704)
-    Event_1033440710(0, obj=1033441710)
-    Event_1033440710(1, obj=1033441711)
-    Event_1033440710(2, obj=1033441715)
+    CommonFunc_90005793(
+        0,
+        flag=1033440180,
+        flag_1=1033442181,
+        flag_2=1033442182,
+        character=Characters.Edgar,
+        other_entity=1033442701,
+        region=0,
+        left=0,
+    )
+    Event_1033440700(0, character=Characters.ScalyMisbegotten0, animation_id=930027)
+    Event_1033440700(1, character=Characters.ScalyMisbegotten1, animation_id=930029)
+    Event_1033440700(2, character=Characters.ScalyMisbegotten2, animation_id=930028)
+    Event_1033440705(0, asset=Assets.AEG099_620_9004)
+    Event_1033440705(1, asset=Assets.AEG099_610_9001)
+    Event_1033440705(2, asset=Assets.AEG099_610_9000)
+    Event_1033440705(3, asset=Assets.AEG099_610_9002)
+    Event_1033440705(4, asset=Assets.AEG099_610_9003)
+    Event_1033440710(0, asset=Assets.AEG099_407_9000)
+    Event_1033440710(1, asset=Assets.AEG099_408_9000)
+    Event_1033440710(2, asset=Assets.AEG099_410_9001)
     Event_1033440710(3, 1033441713)
 
 
@@ -76,7 +100,9 @@ def Event_1033440700(_, character: uint, animation_id: int):
     GotoIfFlagEnabled(Label.L9, flag=3409)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, 3409)
+    
+    MAIN.Await(FlagEnabled(3409))
+    
     Restart()
 
     # --- Label 9 --- #
@@ -84,17 +110,19 @@ def Event_1033440700(_, character: uint, animation_id: int):
     EnableBackread(character)
     EnableCharacter(character)
     DisableAnimations(character)
-    ForceAnimation(character, animation_id, unknown2=1.0)
+    ForceAnimation(character, animation_id)
     Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3409)
+    
+    MAIN.Await(FlagDisabled(3409))
+    
     Restart()
 
 
 @RestartOnRest(1033440705)
-def Event_1033440705(_, obj: uint):
+def Event_1033440705(_, asset: uint):
     """Event 1033440705"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -103,25 +131,29 @@ def Event_1033440705(_, obj: uint):
     # --- Label 19 --- #
     DefineLabel(19)
     GotoIfFlagEnabled(Label.L9, flag=3409)
-    DisableObject(obj)
-    DisableTreasure(obj=obj)
-    IfFlagEnabled(MAIN, 3409)
+    DisableAsset(asset)
+    DisableTreasure(asset=asset)
+    
+    MAIN.Await(FlagEnabled(3409))
+    
     Restart()
 
     # --- Label 9 --- #
     DefineLabel(9)
-    EnableObject(obj)
-    EnableTreasure(obj=obj)
+    EnableAsset(asset)
+    EnableTreasure(asset=asset)
     Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3409)
+    
+    MAIN.Await(FlagDisabled(3409))
+    
     Restart()
 
 
 @RestartOnRest(1033440710)
-def Event_1033440710(_, obj: uint):
+def Event_1033440710(_, asset: uint):
     """Event 1033440710"""
     DisableNetworkSync()
     WaitFrames(frames=1)
@@ -130,16 +162,20 @@ def Event_1033440710(_, obj: uint):
     # --- Label 19 --- #
     DefineLabel(19)
     GotoIfFlagEnabled(Label.L9, flag=3409)
-    DisableObject(obj)
-    IfFlagEnabled(MAIN, 3409)
+    DisableAsset(asset)
+    
+    MAIN.Await(FlagEnabled(3409))
+    
     Restart()
 
     # --- Label 9 --- #
     DefineLabel(9)
-    EnableObject(obj)
+    EnableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3409)
+    
+    MAIN.Await(FlagDisabled(3409))
+    
     Restart()

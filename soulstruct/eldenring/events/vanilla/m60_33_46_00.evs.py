@@ -12,36 +12,62 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_46_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1033460000, obj=1033461950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1033460000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76214, 76210, 1033461980, 77220, 0, 78220, 78221, 78222, 78223, 78224, 78225, 78226, 78227, 78228, 78229),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76214,
+        flag_1=76210,
+        asset=Assets.AEG099_090_9001,
+        source_flag=77220,
+        value=0,
+        flag_2=78220,
+        flag_3=78221,
+        flag_4=78222,
+        flag_5=78223,
+        flag_6=78224,
+        flag_7=78225,
+        flag_8=78226,
+        flag_9=78227,
+        flag_10=78228,
+        flag_11=78229,
     )
-    RunCommonEvent(0, 90005251, args=(1033460200, 7.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1033460201, 7.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1033460203, 7.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1033460204, 7.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(
+    CommonFunc_90005251(0, 1033460200, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, 1033460201, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, 1033460203, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, 1033460204, 7.0, 0.0, -1)
+    CommonFunc_90005605(
         0,
-        90005605,
-        args=(1033461610, 13, 0, 0, 0, 13002509, 0, 1033462610, 1033462611, 1033462612, 1033460610, 0, 0.0, 0.0),
-        arg_types="IBBbbIiIIIIiff",
+        asset=Assets.AEG099_510_9000,
+        area_id=13,
+        block_id=0,
+        cc_id=0,
+        dd_id=0,
+        player_start=13002509,
+        unk_8_12=0,
+        flag=1033462610,
+        left_flag=1033462611,
+        cancel_flag__right_flag=1033462612,
+        left=1033460610,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
     )
     Event_1033462611(
         0,
         flag=1033460611,
-        destination=1033461611,
+        destination=Assets.AEG099_295_9000,
         left_flag=1033462613,
-        cancel_flag__right_flag=1033462614
+        cancel_flag__right_flag=1033462614,
     )
     Event_1033462612(0, 1033460611, 1033461612)
 
@@ -49,12 +75,15 @@ def Constructor():
 @RestartOnRest(1033462611)
 def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint):
     """Event 1033462611"""
-    IfFlagEnabled(OR_1, flag)
-    IfPlayerNotInOwnWorld(OR_1)
-    EndIfConditionTrue(input_condition=OR_1)
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(PlayerNotInOwnWorld())
+    if OR_1:
+        return
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    IfActionButtonParamActivated(MAIN, action_button_id=9523, entity=destination)
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=9523, entity=destination))
+    
     DisplayDialogAndSetFlags(
         message=108186,
         button_type=ButtonType.Yes_or_No,
@@ -71,10 +100,10 @@ def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfPlayerHasGood(AND_2, 8186)
+    AND_2.Add(PlayerHasGood(8186))
     GotoIfConditionTrue(Label.L2, input_condition=AND_2)
     WaitFrames(frames=1)
-    ForceAnimation(PLAYER, 50050, unknown2=1.0)
+    ForceAnimation(PLAYER, 50050)
     Wait(1.5)
     DisplayDialog(text=308186, anchor_entity=destination)
     Wait(1.0)
@@ -82,8 +111,8 @@ def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
-    ForceAnimation(PLAYER, 60810, unknown2=1.0)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    ForceAnimation(PLAYER, 60810)
     Wait(2.5)
     EnableNetworkFlag(flag)
     EnableNetworkFlag(1033460610)
@@ -92,14 +121,16 @@ def Event_1033462611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
 
 @RestartOnRest(1033462612)
-def Event_1033462612(_, flag: uint, obj: uint):
+def Event_1033462612(_, flag: uint, asset: uint):
     """Event 1033462612"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    EnableObject(obj)
+    EnableAsset(asset)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableObject(obj)
-    IfFlagEnabled(MAIN, flag)
-    EnableObject(obj)
+    DisableAsset(asset)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    EnableAsset(asset)

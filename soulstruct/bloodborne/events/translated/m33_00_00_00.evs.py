@@ -284,7 +284,7 @@ def Event13304710(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfClientTypeCountComparison(-1, ClientType.Invader, ComparisonType.GreaterThanOrEqual, value=1)
     IfConditionTrue(0, input_condition=-1)
     IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(PLAYER, 9020)
     Restart()
 
 
@@ -299,8 +299,8 @@ def Event13304720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(arg_0_3, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(arg_0_3, 9100)
     ReplanAI(arg_0_3)
     DisableFlag(arg_12_15)
     Restart()
@@ -721,7 +721,7 @@ def AmygdalaLimbDamage(
     ReplanAI(Characters.Amygdala)
     IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
     SetNPCPartHealth(Characters.Amygdala, npc_part_id=effect_part_id, desired_health=-1, overwrite_max=True)
-    CancelSpecialEffect(Characters.Amygdala, wounded_effect)
+    RemoveSpecialEffect(Characters.Amygdala, wounded_effect)
     AICommand(Characters.Amygdala, command_id=-1, slot=1)
     ReplanAI(Characters.Amygdala)
     WaitFrames(10)
@@ -770,7 +770,7 @@ def AmygdalaHeadDamage():
     ReplanAI(Characters.Amygdala)
     IfCharacterHasTAEEvent(0, Characters.Amygdala, tae_event_id=300)
     SetNPCPartHealth(Characters.Amygdala, npc_part_id=3300, desired_health=-1, overwrite_max=True)
-    CancelSpecialEffect(Characters.Amygdala, 480)
+    RemoveSpecialEffect(Characters.Amygdala, 480)
     AICommand(Characters.Amygdala, command_id=-1, slot=1)
     ReplanAI(Characters.Amygdala)
     WaitFrames(10)
@@ -1090,7 +1090,7 @@ def Event13305041():
     IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 4690)
     IfCharacterHasSpecialEffect(1, PLAYER, 4691)
     IfConditionTrue(0, input_condition=1)
-    CancelSpecialEffect(PLAYER, 4691)
+    RemoveSpecialEffect(PLAYER, 4691)
     Restart()
 
 

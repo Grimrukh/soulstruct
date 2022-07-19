@@ -1,13 +1,24 @@
+from pathlib import Path
+
 from soulstruct.eldenring.events import EMEVDDirectory
 from soulstruct.config import ELDEN_RING_PATH
 
+VANILLA_EVENT_PATH = Path(ELDEN_RING_PATH) / "../../ELDEN RING (Vanilla Unpacked)/Game/event"
+ENTITIES_DIR = Path(__file__).parent / "vanilla/entities"
+
 
 def main():
-    ed = EMEVDDirectory(ELDEN_RING_PATH + "/../../ELDEN RING (Vanilla Unpacked)/Game/event")
-    ed.write_evs("vanilla")
+    print("Loading vanilla events...")
+    ed = EMEVDDirectory(VANILLA_EVENT_PATH)
+    print("Writing vanilla EVS scripts...")
+    ed.write_evs(
+        "vanilla",
+        entities_directory=ENTITIES_DIR if ENTITIES_DIR.is_dir() else None,
+        warn_missing_enums=False,
+        entity_module_prefix=".entities.",
+    )
 
     # For fun.
-    from pathlib import Path
     lines = 0
     for evs_file in Path("vanilla").glob("*.evs.py"):
         lines += len(evs_file.read_text().splitlines())

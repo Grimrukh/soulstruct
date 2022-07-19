@@ -1,0 +1,19 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    LivingPot0 = 1052530700  # c4490_9000 npc 44909850 think 44900052
+    LivingPot1 = 1052530701  # c4490_9001 npc 44909850 think 44900052
+    Dummy = 1052530100  # c0100_9000 npc 1000000 think 1000000 talk 2000
+    TalkDummy0 = 1052530950  # c1000_9001 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 1052530102  # c1000_9002 npc 10001000 think 1 talk 2000
+
+
+class Assets(Asset):
+    AEG099_002_9000 = 1052531800  # AEG099
+    AEG099_003_9001 = 1052531801  # AEG099
+    AEG099_017_1000 = 1052531802  # AEG099
+    AEG099_060_9001 = 1052531950  # AEG099
+    AEG099_053_9000 = 1052531100  # AEG099
+    AEG099_053_9001 = 1052551102  # AEG099
+    AEG099_090_9001 = 1052531980  # AEG099

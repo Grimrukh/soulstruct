@@ -391,7 +391,7 @@ EMEDF = {
         },
     },
     (3, 10): {
-        "alias": "IfTrueFlagCountComparison",
+        "alias": "IfEnabledFlagCountComparison",
         "docstring": """
             Conditions upon a comparison with the number of enabled flags in the given range (inclusive).
         """,
@@ -411,12 +411,12 @@ EMEDF = {
             "value": {},
         },
         "partials": {
-            "IfTrueFlagCountEqual": dict(comparison_type=ComparisonType.Equal),
-            "IfTrueFlagCountNotEqual": dict(comparison_type=ComparisonType.NotEqual),
-            "IfTrueFlagCountGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
-            "IfTrueFlagCountLessThan": dict(comparison_type=ComparisonType.LessThan),
-            "IfTrueFlagCountGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
-            "IfTrueFlagCountLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
+            "IfEnabledFlagCountEqual": dict(comparison_type=ComparisonType.Equal),
+            "IfEnabledFlagCountNotEqual": dict(comparison_type=ComparisonType.NotEqual),
+            "IfEnabledFlagCountGreaterThan": dict(comparison_type=ComparisonType.GreaterThan),
+            "IfEnabledFlagCountLessThan": dict(comparison_type=ComparisonType.LessThan),
+            "IfEnabledFlagCountGreaterThanOrEqual": dict(comparison_type=ComparisonType.GreaterThanOrEqual),
+            "IfEnabledFlagCountLessThanOrEqual": dict(comparison_type=ComparisonType.LessThanOrEqual),
         },
     },
     (3, 11): {
@@ -1559,8 +1559,8 @@ EMEDF = {
             },
         },
         "evs_args": {
-            "slot": {},
             "event_id": {},
+            "slot": {},
             "args": {},
             "arg_types": {
                 "type": str,
@@ -2446,7 +2446,7 @@ EMEDF = {
         },
     },
     (2004, 21): {
-        "alias": "CancelSpecialEffect",
+        "alias": "RemoveSpecialEffect",
         "docstring": """
             'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
         """,

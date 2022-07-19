@@ -95,7 +95,7 @@ def Constructor():
         region_1=1402021,
         region_2=1402022,
         region_3=1402023,
-        region_4=1402024
+        region_4=1402024,
     )
     Event_11405350(
         0,
@@ -105,7 +105,7 @@ def Constructor():
         character_3=1400413,
         character_4=1400414,
         character_5=1400415,
-        left=1
+        left=1,
     )
     Event_11405350(
         3,
@@ -115,7 +115,7 @@ def Constructor():
         character_3=1400428,
         character_4=1400429,
         character_5=1400430,
-        left=0
+        left=0,
     )
     Event_11405350(
         4,
@@ -125,7 +125,7 @@ def Constructor():
         character_3=1400433,
         character_4=1400434,
         character_5=1400435,
-        left=0
+        left=0,
     )
     Event_11400100(0, flag=11405340, region=1402200, entity=1403000)
     Event_11400100(1, flag=11405341, region=1402201, entity=1403001)
@@ -515,8 +515,8 @@ def Event_11405396():
     
     CreateNPCPart(1400800, npc_part_id=5281, part_index=NPCPartType.Part2, part_health=300)
     SetNPCPartEffects(1400800, npc_part_id=5281, material_sfx_id=75, material_vfx_id=75)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(1400800, npc_part_id=5281, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(1400800, value=0.0))
+    AND_2.Add(CharacterPartHealth(1400800, npc_part_id=5281) <= 0)
+    AND_3.Add(HealthRatio(1400800) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -538,8 +538,8 @@ def Event_11405397():
     
     CreateNPCPart(1400800, npc_part_id=5280, part_index=NPCPartType.Part1, part_health=1)
     SetNPCPartEffects(1400800, npc_part_id=5280, material_sfx_id=60, material_vfx_id=60)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(1400800, npc_part_id=5280, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(1400800, value=0.0))
+    AND_2.Add(CharacterPartHealth(1400800, npc_part_id=5280) <= 0)
+    AND_3.Add(HealthRatio(1400800) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -585,7 +585,7 @@ def Event_11405000():
         AddSpecialEffect(1400700, 5401)
         End()
     
-    MAIN.Await(HealthRatioNotEqual(1400700, value=1.0))
+    MAIN.Await(HealthRatio(1400700) != 1.0)
     
     AddSpecialEffect(1400700, 5401)
 
@@ -602,7 +602,7 @@ def Event_11400900():
     End()
     DisableNetworkSync()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1400000, value=0.0))
+    MAIN.Await(HealthRatio(1400000) <= 0.0)
     
     EnableNetworkSync()
     EzstateAIRequest(1400000, command_id=1200, command_slot=0)
@@ -676,7 +676,7 @@ def Event_11405250(_, character: int):
     SetNPCPartBulletDamageScaling(character, npc_part_id=2811, desired_scaling=0.0)
     SetNPCPartEffects(character, npc_part_id=2811, material_sfx_id=1, material_vfx_id=1)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     SetNPCPartHealth(character, npc_part_id=2811, desired_health=0, overwrite_max=False)
 
@@ -696,7 +696,7 @@ def Event_11405300():
         character_1=1400600,
         character_2=1400601,
         model_point=120,
-        model_point_1=123
+        model_point_1=123,
     )
     Event_11405330(
         1,
@@ -705,7 +705,7 @@ def Event_11405300():
         character_1=1400602,
         character_2=1400603,
         model_point=126,
-        model_point_1=129
+        model_point_1=129,
     )
     Event_11405301(1, character=1400500, part_index=2, npc_part_id=3291, npc_part_id_1=3291, flag=11405302)
     Event_11405310(2, character=1400500, flag=11405302, bit_index=5, bit_index_1=11)
@@ -717,7 +717,7 @@ def Event_11405300():
         character_1=1400604,
         character_2=1400605,
         model_point=135,
-        model_point_1=137
+        model_point_1=137,
     )
     Event_11405330(
         3,
@@ -726,7 +726,7 @@ def Event_11405300():
         character_1=1400606,
         character_2=1400607,
         model_point=153,
-        model_point_1=155
+        model_point_1=155,
     )
     Event_11405301(2, character=1400500, part_index=3, npc_part_id=3292, npc_part_id_1=3292, flag=11405303)
     Event_11405310(3, character=1400500, flag=11405303, bit_index=6, bit_index_1=7)
@@ -740,7 +740,7 @@ def Event_11405300():
         character_1=1400608,
         character_2=1400609,
         model_point=138,
-        model_point_1=141
+        model_point_1=141,
     )
     Event_11405330(
         5,
@@ -749,7 +749,7 @@ def Event_11405300():
         character_1=1400610,
         character_2=1400611,
         model_point=144,
-        model_point_1=150
+        model_point_1=150,
     )
     Event_11405301(3, character=1400500, part_index=4, npc_part_id=3293, npc_part_id_1=3293, flag=11405304)
     Event_11405310(5, character=1400500, flag=11405304, bit_index=4, bit_index_1=9)
@@ -761,7 +761,7 @@ def Event_11405300():
         character_1=1400612,
         character_2=1400613,
         model_point=132,
-        model_point_1=134
+        model_point_1=134,
     )
     Event_11405330(7, 1400500, 11405304, 1400614, 1400615, 150, 152)
 
@@ -775,7 +775,7 @@ def Event_11405301(_, character: int, part_index: short, npc_part_id: short, npc
     MAIN.Await(CharacterBackreadEnabled(character))
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=100)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_2.Add(CharacterDead(character))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1019,7 +1019,7 @@ def Event_11400200():
     
     MAIN.Await(ObjectActivated(obj_act_id=11400201))
     
-    MAIN.Await(HealthRatioGreaterThan(PLAYER, value=0.0))
+    MAIN.Await(HealthRatio(PLAYER) > 0.0)
     
     DisableBackread(1400800)
     DisableBackread(1400700)
@@ -1109,8 +1109,8 @@ def Event_11405200(_, character: int, obj: int):
 @NeverRestart(11400510)
 def Event_11400510(_, character: int, flag: int):
     """Event 11400510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1139,7 +1139,7 @@ def Event_11400520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1175,8 +1175,8 @@ def Event_11400502(_, character: int, flag: int):
     OR_2.Add(FlagEnabled(1280))
     OR_2.Add(FlagEnabled(1281))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1197,8 +1197,8 @@ def Event_11400503(_, character: int, flag: int):
     AND_1.Add(FlagDisabled(1283))
     AND_1.Add(FlagDisabled(1287))
     AND_1.Add(FlagEnabled(1286))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1217,14 +1217,14 @@ def Event_11400504(_, character: int, flag: int, character_1: int):
     """Event 11400504"""
     AND_1.Add(FlagDisabled(1603))
     AND_1.Add(FlagEnabled(1601))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagDisabled(1763))
     AND_2.Add(FlagEnabled(1760))
-    AND_2.Add(HealthRatioLessThanOrEqual(character_1, value=0.8999999761581421))
-    AND_2.Add(HealthRatioGreaterThan(character_1, value=0.0))
+    AND_2.Add(HealthRatio(character_1) <= 0.8999999761581421)
+    AND_2.Add(HealthRatio(character_1) > 0.0)
     AND_2.Add(Attacked(attacked_entity=character_1, attacker=PLAYER))
     AND_2.Add(ThisEventFlagDisabled())
     OR_2.Add(FlagEnabled(flag))

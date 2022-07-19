@@ -1,0 +1,16 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    GiantTurtle = 1033400610  # c6091_9000 npc 60911022 think 60910000
+    TalkDummy = 1033400950  # c1000_9000 npc 10000000 think 1 talk 1000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1033401950  # AEG099
+    AEG099_004_2001 = 1034431611  # AEG099
+    AEG099_182_2000 = 1033401512  # AEG099
+    AEG099_182_2001 = 1033401511  # AEG099
+    AEG099_251_2000 = 1033401610  # AEG099
+    AEG099_630_9000 = 1033401600  # AEG099
+    AEG110_112_2000 = 1033401510  # AEG110

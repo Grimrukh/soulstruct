@@ -19,3 +19,4 @@ class EVSParser(DarkSouls3Type, _BaseEVSParser):
     COMPILER = COMPILER
     COMPILE = staticmethod(compile_instruction)
     COMPILE_OBJECT_TEST = staticmethod(compile_game_object_test)
+    SUPPORTS_COMMON_FUNC = True

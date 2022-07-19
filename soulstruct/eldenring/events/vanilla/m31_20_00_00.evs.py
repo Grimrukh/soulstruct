@@ -12,8 +12,11 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m31_20_00_00_entities import *
 
 
 @NeverRestart(0)
@@ -25,228 +28,308 @@ def Constructor():
     Event_31202810()
     Event_31202811()
     Event_31092849()
-    RunCommonEvent(0, 900005610, args=(31201200, 100, 800, 0), arg_types="IiiI")
-    RegisterGrace(grace_flag=31200000, obj=31201950, unknown=5.0)
-    RunCommonEvent(
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    RegisterGrace(grace_flag=31200000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(31200800, 31202840, 31202841, 31201840, 31202840, 31, 20, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=31200800,
+        left_flag=31202840,
+        cancel_flag__right_flag=31202841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31202840,
+        area_id=31,
+        block_id=20,
+        cc_id=0,
+        dd_id=0,
     )
-    Event_31202550(0, 31200455, 31201555, 5.0, 0.0)
-    Event_31202550(2, 31200465, 31201565, 5.0, 0.0)
-    Event_31202550(3, 31200470, 31201570, 5.0, 1.0)
-    Event_31202550(5, 31200475, 31201575, 5.0, 2.0)
+    Event_31202550(0, owner_entity=Characters.Dummy4, source_entity=Assets.AEG099_046_9005, seconds=5.0, seconds_1=0.0)
+    Event_31202550(2, owner_entity=Characters.Dummy6, source_entity=Assets.AEG099_046_9015, seconds=5.0, seconds_1=0.0)
+    Event_31202550(3, owner_entity=Characters.Dummy7, source_entity=Assets.AEG099_046_9020, seconds=5.0, seconds_1=1.0)
+    Event_31202550(5, owner_entity=Characters.Dummy1, source_entity=Assets.AEG099_046_9001, seconds=5.0, seconds_1=2.0)
     Event_31202550(1, 31200480, 31201580, 5.0, 3.0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(31200240, 30000, 20000, 31202240, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(1, 90005200, args=(31200241, 30000, 20000, 31202240, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(2, 90005200, args=(31200242, 30000, 20000, 31202240, 1.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(3, 90005200, args=(31200243, 30000, 20000, 31202240, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(31200230, 31202230, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(1, 90005250, args=(31200231, 31202230, 0.0, 0), arg_types="IIfi")
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31202240,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        1,
+        character=Characters.MirandaRotFlower1,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31202240,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        2,
+        character=Characters.MirandaRotFlower2,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31202240,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        3,
+        character=Characters.MirandaRotFlower3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31202240,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.Rat1, region=31202230, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(1, 31200231, 31202230, 0.0, 0)
 
 
 @RestartOnRest(31202520)
-def Event_31202520(_, flag: uint, flag_1: uint, obj: uint):
+def Event_31202520(_, flag: uint, flag_1: uint, asset: uint):
     """Event 31202520"""
-    DisableObjectActivation(obj, obj_act_id=-1)
+    DisableAssetActivation(asset, obj_act_id=-1)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(AND_1, flag_1)
-    IfFlagDisabled(AND_1, flag)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(FlagDisabled(flag))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
 
 
 @RestartOnRest(31202550)
 def Event_31202550(_, owner_entity: uint, source_entity: uint, seconds: float, seconds_1: float):
     """Event 31202550"""
     Wait(seconds)
-    IfEntityWithinDistance(MAIN, entity=PLAYER, other_entity=source_entity, radius=70.0)
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=source_entity, radius=70.0))
+    
     Wait(seconds_1)
-    SkipLinesIfFlagDisabled(1, 50)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 55)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 56)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 57)
-    ShootProjectile(
-        owner_entity=owner_entity,
-        source_entity=source_entity,
-        model_point=-1,
-        behavior_id=802730070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=owner_entity,
+            source_entity=source_entity,
+            model_point=-1,
+            behavior_id=802730070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
     Restart()
 
 
 @RestartOnRest(31202800)
 def Event_31202800():
     """Event 31202800"""
-    EndIfFlagEnabled(31200800)
-    IfCharacterDead(AND_1, 31200800)
-    IfCharacterDead(AND_1, 31200801)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(31200800):
+        return
+    AND_1.Add(CharacterDead(Characters.CleanrotKnight0))
+    AND_1.Add(CharacterDead(Characters.CleanrotKnight1))
+    
+    MAIN.Await(AND_1)
+    
     Wait(4.0)
-    KillBossAndDisplayBanner(character=31200800, banner_type=BannerType.DutyFulfilled)
+    KillBossAndDisplayBanner(character=Characters.CleanrotKnight0, banner_type=BannerType.EnemyFelled)
     EnableFlag(31200800)
     EnableFlag(9245)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61245)
+    if PlayerInOwnWorld():
+        EnableFlag(61245)
 
 
 @RestartOnRest(31202801)
 def Event_31202801():
     """Event 31202801"""
-    EndIfFlagEnabled(31200800)
-    IfHealthValueLessThanOrEqual(MAIN, 31200800, value=0)
+    if FlagEnabled(31200800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.CleanrotKnight0) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(31200800, 888880000, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(Characters.CleanrotKnight0, 888880000, sound_type=SoundType.s_SFX)
 
 
 @RestartOnRest(31202802)
 def Event_31202802():
     """Event 31202802"""
-    EndIfFlagEnabled(31200800)
-    IfHealthValueLessThanOrEqual(MAIN, 31200801, value=0)
+    if FlagEnabled(31200800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.CleanrotKnight1) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(31200801, 888880000, sound_type=SoundType.s_SFX)
+    PlaySoundEffect(Characters.CleanrotKnight1, 888880000, sound_type=SoundType.s_SFX)
 
 
 @RestartOnRest(31202810)
 def Event_31202810():
     """Event 31202810"""
     GotoIfFlagDisabled(Label.L0, flag=31200800)
-    DisableCharacter(31200800)
-    DisableCharacter(31200801)
-    DisableAnimations(31200800)
-    DisableAnimations(31200801)
-    Kill(31200800)
-    Kill(31200801)
+    DisableCharacter(Characters.CleanrotKnight0)
+    DisableCharacter(Characters.CleanrotKnight1)
+    DisableAnimations(Characters.CleanrotKnight0)
+    DisableAnimations(Characters.CleanrotKnight1)
+    Kill(Characters.CleanrotKnight0)
+    Kill(Characters.CleanrotKnight1)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(31200800)
-    DisableAI(31200801)
-    ForceAnimation(31200800, 30001, unknown2=1.0)
-    IfFlagEnabled(AND_2, 31202805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=31202800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    DisableAI(Characters.CleanrotKnight0)
+    DisableAI(Characters.CleanrotKnight1)
+    ForceAnimation(Characters.CleanrotKnight0, 30001)
+    AND_2.Add(FlagEnabled(31202805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=31202800))
+    
+    MAIN.Await(AND_2)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableAI(31200800)
-    SetNetworkUpdateRate(31200800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableAI(Characters.CleanrotKnight0)
+    SetNetworkUpdateRate(Characters.CleanrotKnight0, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(1.0)
-    EnableBossHealthBar(31200800, name=903800311)
-    ForceAnimation(31200800, 20001, unknown2=1.0)
+    EnableBossHealthBar(Characters.CleanrotKnight0, name=903800311)
+    ForceAnimation(Characters.CleanrotKnight0, 20001)
     Wait(5.0)
-    EnableAI(31200801)
-    SetNetworkUpdateRate(31200801, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    IfAttackedWithDamageType(OR_15, attacked_entity=31200801, attacker=0)
-    IfTimeElapsed(OR_15, seconds=7.0)
+    EnableAI(Characters.CleanrotKnight1)
+    SetNetworkUpdateRate(Characters.CleanrotKnight1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    OR_15.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight1, attacker=0))
+    OR_15.Add(TimeElapsed(seconds=7.0))
     AwaitConditionTrue(OR_15)
-    EnableBossHealthBar(31200801, name=903800312, bar_slot=1)
+    EnableBossHealthBar(Characters.CleanrotKnight1, name=903800312, bar_slot=1)
 
 
 @RestartOnRest(31202811)
 def Event_31202811():
     """Event 31202811"""
-    EndIfFlagEnabled(31200800)
-    IfCharacterDead(OR_15, 31200800)
-    IfCharacterDead(OR_15, 31200801)
-    IfConditionTrue(MAIN, input_condition=OR_15)
+    if FlagEnabled(31200800):
+        return
+    OR_15.Add(CharacterDead(Characters.CleanrotKnight0))
+    OR_15.Add(CharacterDead(Characters.CleanrotKnight1))
+    
+    MAIN.Await(OR_15)
+    
     EnableFlag(31202842)
 
 
 @RestartOnRest(31092849)
 def Event_31092849():
     """Event 31092849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(31200800, 31201800, 31202800, 31202805, 31205800, 10010, 0, 0),
-        arg_types="IIIIIiII",
+        flag=31200800,
+        entity=Assets.AEG099_001_9000,
+        region=31202800,
+        flag_1=31202805,
+        character=31205800,
+        action_button_id=10010,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(31200800, 31201800, 31202800, 31202805, 31202806, 10010), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(31200800, 31201800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(31200800, 931000, 31202805, 31202806, 0, 31202842, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=31200800,
+        entity=Assets.AEG099_001_9000,
+        region=31202800,
+        flag_1=31202805,
+        flag_2=31202806,
+        action_button_id=10010,
+    )
+    CommonFunc_9005811(0, flag=31200800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 31200800, 931000, 31202805, 31202806, 0, 31202842, 0, 0)

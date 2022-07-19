@@ -55,10 +55,10 @@ def Constructor():
     Event_12800140()
     RunEvent(9200, slot=8, args=(2803900,))
     Event_12800160()
-    RunEvent(9220, slot=7, args=(2800710, 12804220, 12804221, 2800, 28, 0), arg_types="iiiiBB")
-    RunEvent(9240, slot=7, args=(2800710, 12804220, 12804221, 12804222, 28, 0), arg_types="iiiiBB")
-    RunEvent(9260, slot=7, args=(2800710, 12804220, 12804221, 12804222, 28, 0), arg_types="iiiiBB")
-    RunEvent(9280, slot=7, args=(2800710, 12804220, 12804221, 2800, 12804223, 28, 0), arg_types="iiiiiBB")
+    RunEvent(9220, slot=7, args=(2800710, 12804220, 12804221, 2800, 28))
+    RunEvent(9240, slot=7, args=(2800710, 12804220, 12804221, 12804222, 28))
+    RunEvent(9260, slot=7, args=(2800710, 12804220, 12804221, 12804222, 28))
+    RunEvent(9280, slot=7, args=(2800710, 12804220, 12804221, 2800, 12804223, 28))
     Event_12800999()
     Event_12800435()
     Event_12800436()
@@ -134,7 +134,7 @@ def Constructor():
         dismissal_flag=12804430,
         flag=12804440,
         flag_1=12801800,
-        action_button_id=10564
+        action_button_id=10564,
     )
     Event_12804410(
         1,
@@ -145,7 +145,7 @@ def Constructor():
         dismissal_flag=12804431,
         flag=12804441,
         flag_1=12801800,
-        action_button_id=10568
+        action_button_id=10568,
     )
     Event_12804450(0, character=2800910, region=2802911, flag=12804420, flag_1=12804430, flag_2=12804800)
     Event_12804450(1, character=2800911, region=2802914, flag=12804421, flag_1=12804431, flag_2=12804800)
@@ -157,7 +157,7 @@ def Constructor():
         region_2=2802801,
         animation=101130,
         flag=12804450,
-        region_3=2802801
+        region_3=2802801,
     )
     Event_12804460(
         1,
@@ -167,7 +167,7 @@ def Constructor():
         region_2=2802801,
         animation=101130,
         flag=12804451,
-        region_3=2802801
+        region_3=2802801,
     )
     Event_12804882()
     Event_12804883()
@@ -191,7 +191,7 @@ def Constructor():
         part_health=100,
         special_effect_id=480,
         special_effect_id_1=490,
-        animation_id=7000
+        animation_id=7000,
     )
     Event_12804820(
         1,
@@ -201,7 +201,7 @@ def Constructor():
         part_health=200,
         special_effect_id=481,
         special_effect_id_1=491,
-        animation_id=7001
+        animation_id=7001,
     )
     Event_12804820(
         2,
@@ -211,7 +211,7 @@ def Constructor():
         part_health=200,
         special_effect_id=482,
         special_effect_id_1=492,
-        animation_id=7002
+        animation_id=7002,
     )
     Event_12804820(
         3,
@@ -221,7 +221,7 @@ def Constructor():
         part_health=100,
         special_effect_id=483,
         special_effect_id_1=493,
-        animation_id=7003
+        animation_id=7003,
     )
     Event_12804820(
         4,
@@ -231,7 +231,7 @@ def Constructor():
         part_health=200,
         special_effect_id=484,
         special_effect_id_1=494,
-        animation_id=7004
+        animation_id=7004,
     )
     Event_12804820(
         5,
@@ -241,7 +241,7 @@ def Constructor():
         part_health=200,
         special_effect_id=485,
         special_effect_id_1=495,
-        animation_id=7005
+        animation_id=7005,
     )
     Event_12804820(
         6,
@@ -251,7 +251,7 @@ def Constructor():
         part_health=100,
         special_effect_id=486,
         special_effect_id_1=496,
-        animation_id=7006
+        animation_id=7006,
     )
     Event_12804830()
     Event_12804831()
@@ -293,9 +293,9 @@ def Constructor():
     Event_12800432()
     Event_12800433(0, character=2800740)
     Event_12800433(1, character=2800745)
-    Event_12805160(0, 2800244, 2802230, 1.0)
-    Event_12805160(1, 2800245, 2802230, 1.0)
-    Event_12805160(2, 2800243, 2802230, 1.0)
+    Event_12805160(0, character=2800244, region=2802230, radius=1.0)
+    Event_12805160(1, character=2800245, region=2802230, radius=1.0)
+    Event_12805160(2, character=2800243, region=2802230, radius=1.0)
     Event_12805180(2, character=2800210, region=2802270)
     Event_12805470(
         0,
@@ -306,7 +306,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12805655,
         flag_1=12805665,
-        character=2800210
+        character=2800210,
     )
     Event_12805470(
         1,
@@ -317,7 +317,7 @@ def Constructor():
         special_effect_id=5907,
         flag=12805655,
         flag_1=12805665,
-        character=2800210
+        character=2800210,
     )
     Event_12805480(0, npc_part_id=11, npc_part_id_1=11, part_index=7, part_health=80, flag=12805655, character=2800210)
     Event_12805480(1, npc_part_id=12, npc_part_id_1=12, part_index=8, part_health=80, flag=12805655, character=2800210)
@@ -336,7 +336,7 @@ def Constructor():
         flag_3=12800612,
         obj=2801400,
         obj_1=2801401,
-        obj_2=2801402
+        obj_2=2801402,
     )
     Event_12800601(0, flag=12804700, flag_1=12800610, flag_2=12800611, flag_3=12800612)
     Event_12800602(
@@ -346,7 +346,7 @@ def Constructor():
         flag_2=12800611,
         flag_3=12800612,
         region=2802102,
-        obj_act_id=12800280
+        obj_act_id=12800280,
     )
     Event_12800604(
         0,
@@ -355,7 +355,7 @@ def Constructor():
         flag_2=12800611,
         flag_3=12800612,
         region=2802101,
-        obj_act_id=12800281
+        obj_act_id=12800281,
     )
     Event_12800606(0, flag=12804700, flag_1=12800610, flag_2=12800612, entity=2801401, entity_1=2801402)
     Event_12800607(0, flag=12800612, region=2802100, obj=2801401, obj_1=2801402)
@@ -369,30 +369,30 @@ def Constructor():
     Event_12800700(0, character=2800700)
     Event_12800700(1, character=2800701)
     Event_12800700(2, character=2800702)
-    Event_12805500(0, 2800482, 2802483, 2803482, 0.0)
-    Event_12805500(1, 2800483, 2802483, 2803483, 0.0)
-    Event_12805500(2, 2800562, 2802562, 2803562, 0.0)
-    Event_12805500(3, 2800570, 2802570, 2803570, 0.0)
-    Event_12805500(4, 2800571, 2802570, 2803571, 0.0)
-    Event_12805500(5, 2800540, 2802540, 2803540, 0.0)
-    Event_12805500(6, 2800542, 2802542, 2803542, 0.0)
-    Event_12805500(7, 2800543, 2802543, 2803543, 0.0)
-    Event_12805500(8, 2800301, 2802301, 2803301, 0.0)
-    Event_12805500(9, 2800308, 2802602, 2803308, 0.0)
-    Event_12805500(10, 2800309, 2802602, 2803309, 0.0)
-    Event_12805500(11, 2800310, 2802602, 2803310, 0.0)
-    Event_12805500(12, 2800311, 2802602, 2803311, 0.0)
-    Event_12805500(13, 2800312, 2802602, 2803312, 0.0)
-    Event_12805500(14, 2800313, 2802602, 2803313, 0.0)
-    Event_12805500(15, 2800314, 2802602, 2803314, 0.0)
-    Event_12805500(16, 2800315, 2802602, 2803315, 0.0)
-    Event_12805500(17, 2800316, 2802502, 2803316, 1.0)
-    Event_12805500(18, 2800317, 2802502, 2803317, 3.0)
-    Event_12805500(19, 2800404, 2802507, 2803404, 0.0)
-    Event_12805500(20, 2800405, 2802507, 2803405, 0.0)
-    Event_12805500(21, 2800406, 2802507, 2803406, 0.0)
-    Event_12805500(22, 2800407, 2802507, 2803407, 0.0)
-    Event_12805500(23, 2800461, 2802461, 2803461, 0.0)
+    Event_12805500(0, character=2800482, region=2802483, patrol_information_id=2803482, seconds=0.0)
+    Event_12805500(1, character=2800483, region=2802483, patrol_information_id=2803483, seconds=0.0)
+    Event_12805500(2, character=2800562, region=2802562, patrol_information_id=2803562, seconds=0.0)
+    Event_12805500(3, character=2800570, region=2802570, patrol_information_id=2803570, seconds=0.0)
+    Event_12805500(4, character=2800571, region=2802570, patrol_information_id=2803571, seconds=0.0)
+    Event_12805500(5, character=2800540, region=2802540, patrol_information_id=2803540, seconds=0.0)
+    Event_12805500(6, character=2800542, region=2802542, patrol_information_id=2803542, seconds=0.0)
+    Event_12805500(7, character=2800543, region=2802543, patrol_information_id=2803543, seconds=0.0)
+    Event_12805500(8, character=2800301, region=2802301, patrol_information_id=2803301, seconds=0.0)
+    Event_12805500(9, character=2800308, region=2802602, patrol_information_id=2803308, seconds=0.0)
+    Event_12805500(10, character=2800309, region=2802602, patrol_information_id=2803309, seconds=0.0)
+    Event_12805500(11, character=2800310, region=2802602, patrol_information_id=2803310, seconds=0.0)
+    Event_12805500(12, character=2800311, region=2802602, patrol_information_id=2803311, seconds=0.0)
+    Event_12805500(13, character=2800312, region=2802602, patrol_information_id=2803312, seconds=0.0)
+    Event_12805500(14, character=2800313, region=2802602, patrol_information_id=2803313, seconds=0.0)
+    Event_12805500(15, character=2800314, region=2802602, patrol_information_id=2803314, seconds=0.0)
+    Event_12805500(16, character=2800315, region=2802602, patrol_information_id=2803315, seconds=0.0)
+    Event_12805500(17, character=2800316, region=2802502, patrol_information_id=2803316, seconds=1.0)
+    Event_12805500(18, character=2800317, region=2802502, patrol_information_id=2803317, seconds=3.0)
+    Event_12805500(19, character=2800404, region=2802507, patrol_information_id=2803404, seconds=0.0)
+    Event_12805500(20, character=2800405, region=2802507, patrol_information_id=2803405, seconds=0.0)
+    Event_12805500(21, character=2800406, region=2802507, patrol_information_id=2803406, seconds=0.0)
+    Event_12805500(22, character=2800407, region=2802507, patrol_information_id=2803407, seconds=0.0)
+    Event_12805500(23, character=2800461, region=2802461, patrol_information_id=2803461, seconds=0.0)
     Event_12805600(
         0,
         character=2800400,
@@ -402,7 +402,7 @@ def Constructor():
         ai_param_id_1=261800,
         region=2802400,
         flag=12805042,
-        left=1
+        left=1,
     )
     Event_12805600(
         1,
@@ -413,7 +413,7 @@ def Constructor():
         ai_param_id_1=261840,
         region=2802400,
         flag=12805042,
-        left=1
+        left=1,
     )
     Event_12805600(
         2,
@@ -424,7 +424,7 @@ def Constructor():
         ai_param_id_1=261811,
         region=2802400,
         flag=12805042,
-        left=1
+        left=1,
     )
     Event_12805600(
         3,
@@ -435,7 +435,7 @@ def Constructor():
         ai_param_id_1=261810,
         region=2802400,
         flag=12805042,
-        left=1
+        left=1,
     )
     Event_12805600(
         4,
@@ -446,7 +446,7 @@ def Constructor():
         ai_param_id_1=261800,
         region=0,
         flag=12805042,
-        left=0
+        left=0,
     )
     Event_12805600(
         6,
@@ -457,7 +457,7 @@ def Constructor():
         ai_param_id_1=261840,
         region=0,
         flag=12805042,
-        left=0
+        left=0,
     )
     Event_12805600(
         7,
@@ -468,7 +468,7 @@ def Constructor():
         ai_param_id_1=261810,
         region=0,
         flag=12805042,
-        left=0
+        left=0,
     )
     Event_12805600(
         10,
@@ -479,7 +479,7 @@ def Constructor():
         ai_param_id_1=264800,
         region=0,
         flag=12805042,
-        left=0
+        left=0,
     )
     Event_12805600(
         30,
@@ -490,7 +490,7 @@ def Constructor():
         ai_param_id_1=263850,
         region=0,
         flag=12805040,
-        left=1
+        left=1,
     )
     Event_12805600(
         31,
@@ -501,7 +501,7 @@ def Constructor():
         ai_param_id_1=263850,
         region=0,
         flag=12805040,
-        left=1
+        left=1,
     )
     Event_12805650(0, character=2800400, region=2802400, region_1=2802401, command_id=10, flag=12805660)
     Event_12805650(1, character=2800401, region=2802400, region_1=2802402, command_id=10, flag=12805661)
@@ -515,13 +515,13 @@ def Constructor():
     Event_12805660(3, character=2800403, region=2802404)
     Event_12805660(4, character=2800480, region=2802481)
     Event_12805660(6, character=2800329, region=2802330)
-    Event_12805670(0, 2800400, 10, 12805660, 0, 0.0)
-    Event_12805670(1, 2800401, 10, 12805661, 0, 0.0)
-    Event_12805670(2, 2800402, 10, 12805662, 0, 0.0)
-    Event_12805670(3, 2800403, 10, 12805663, 0, 0.0)
-    Event_12805670(4, 2800480, 10, 12805664, 0, 0.0)
-    Event_12805670(6, 2800329, 10, 12805666, 1, 2.0)
-    Event_12805680(0, 2800501, 2802506, 1.0)
+    Event_12805670(0, character=2800400, command_id=10, flag=12805660, left=0, radius=0.0)
+    Event_12805670(1, character=2800401, command_id=10, flag=12805661, left=0, radius=0.0)
+    Event_12805670(2, character=2800402, command_id=10, flag=12805662, left=0, radius=0.0)
+    Event_12805670(3, character=2800403, command_id=10, flag=12805663, left=0, radius=0.0)
+    Event_12805670(4, character=2800480, command_id=10, flag=12805664, left=0, radius=0.0)
+    Event_12805670(6, character=2800329, command_id=10, flag=12805666, left=1, radius=2.0)
+    Event_12805680(0, character=2800501, region=2802506, radius=1.0)
     DisableSpawner(entity=2803000)
     DisableSpawner(entity=2803001)
     DisableSpawner(entity=2803002)
@@ -573,57 +573,66 @@ def Constructor():
     DisableSpawner(entity=2803181)
     DisableSpawner(entity=2803182)
     DisableSpawner(entity=2803183)
-    Event_12804500(2, 12805030, 2803002, 12805040, 2800302, 0, 0, 0.0)
-    Event_12804500(3, 12805030, 2803003, 12805040, 2800303, 0, 0, 1.0)
-    Event_12804500(1, 9802, 2803001, 12805040, 2800301, 0, 0, 0.0)
-    Event_12804500(0, 9802, 2803000, 12805040, 2800300, 0, 0, 0.0)
-    Event_12804500(160, 9802, 2803160, 12805040, 2800460, 0, 0, 1.0)
-    Event_12804500(4, 9802, 2803004, 12805044, 2800304, 0, 0, 1.0)
-    Event_12804500(5, 9802, 2803005, 12805044, 2800305, 0, 0, 0.0)
-    Event_12804500(6, 9802, 2803006, 12805044, 2800306, 0, 0, 0.0)
-    Event_12804500(7, 9802, 2803007, 12805044, 2800307, 0, 0, 1.0)
-    Event_12804500(182, 9802, 2803182, 12805044, 2800482, 0, 0, 0.0)
-    Event_12804500(183, 9802, 2803183, 12805044, 2800483, 0, 0, 0.0)
-    Event_12804500(8, 9802, 2803008, 12805040, 2800308, 0, 0, 0.0)
-    Event_12804500(9, 9802, 2803009, 12805040, 2800309, 0, 0, 0.0)
-    Event_12804500(10, 9802, 2803010, 12805040, 2800310, 0, 0, 0.0)
-    Event_12804500(11, 9802, 2803011, 12805040, 2800311, 0, 0, 0.0)
-    Event_12804500(12, 9802, 2803012, 12805040, 2800312, 0, 0, 0.0)
-    Event_12804500(13, 9802, 2803013, 12805040, 2800313, 0, 0, 0.0)
-    Event_12804500(14, 9802, 2803014, 12805040, 2800314, 0, 0, 0.0)
-    Event_12804500(15, 9802, 2803015, 12805040, 2800315, 0, 0, 0.0)
-    Event_12804500(16, 12805031, 2803016, 12805040, 2800316, 0, 0, 0.0)
-    Event_12804500(17, 12805031, 2803017, 12805040, 2800317, 0, 0, 1.0)
-    Event_12804500(18, 9802, 2803018, 12805040, 2800318, 0, 0, 0.0)
-    Event_12804500(20, 12805021, 2803020, 12805041, 2800320, 0, 0, 0.0)
-    Event_12804500(21, 12805021, 2803021, 12805041, 2800321, 0, 0, 0.5)
-    Event_12804500(80, 12805021, 2803080, 12805041, 2800380, 0, 0, 1.0)
-    Event_12804500(19, 12805022, 2803019, 12805041, 2800319, 0, 0, 0.0)
-    Event_12804500(162, 12805022, 2803162, 12805041, 2800462, 0, 0, 1.0)
-    Event_12804500(100, 9802, 2803100, 12805042, 2800400, 0, 0, 0.0)
-    Event_12804500(101, 9802, 2803101, 12805042, 2800401, 0, 0, 0.0)
-    Event_12804500(102, 9802, 2803102, 12805042, 2800402, 0, 0, 0.0)
-    Event_12804500(103, 9802, 2803103, 12805042, 2800403, 0, 0, 0.0)
-    Event_12804500(108, 9802, 2803108, 12805042, 2800408, 0, 0, 0.0)
-    Event_12804500(110, 9802, 2803110, 12805042, 2800410, 0, 0, 0.0)
-    Event_12804500(111, 9802, 2803111, 12805042, 2800411, 0, 0, 0.0)
-    Event_12804500(82, 9802, 2803082, 12805042, 2800382, 0, 0, 0.0)
-    Event_12804500(83, 9802, 2803083, 12805042, 2800383, 0, 0, 0.0)
-    Event_12804500(161, 9802, 2803161, 12805042, 2800461, 0, 0, 0.0)
-    Event_12804500(104, 9802, 2803104, 12805042, 2800404, 0, 0, 0.0)
-    Event_12804500(105, 9802, 2803105, 12805042, 2800405, 0, 0, 0.5)
-    Event_12804500(106, 9802, 2803106, 12805042, 2800406, 0, 0, 1.0)
-    Event_12804500(107, 9802, 2803107, 12805042, 2800407, 0, 0, 1.5)
-    Event_12804500(22, 12805023, 2803022, 12805043, 2800322, 0, 0, 0.5)
-    Event_12804500(23, 12805023, 2803023, 12805043, 2800323, 0, 0, 0.0)
-    Event_12804500(84, 12805023, 2803084, 12805043, 2800384, 0, 0, 1.0)
-    Event_12804500(24, 9802, 2803024, 12805043, 2800324, 0, 0, 0.0)
-    Event_12804500(25, 9802, 2803025, 12805043, 2800325, 0, 0, 0.0)
-    Event_12804500(180, 9802, 2803180, 12805043, 2800480, 0, 0, 0.0)
-    Event_12804500(181, 9802, 2803181, 12805043, 2800481, 0, 0, 0.0)
-    Event_12804500(26, 12805033, 2803026, 12805045, 2800326, 0, 0, 0.0)
-    Event_12804500(27, 12805033, 2803027, 12805045, 2800327, 0, 0, 0.5)
-    Event_12804500(28, 12805025, 2803028, 12805045, 2800328, 0, 0, 1.0)
+    Event_12804500(2, flag=12805030, entity=2803002, flag_1=12805040, character=2800302, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(3, flag=12805030, entity=2803003, flag_1=12805040, character=2800303, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(1, flag=9802, entity=2803001, flag_1=12805040, character=2800301, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(0, flag=9802, entity=2803000, flag_1=12805040, character=2800300, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(160, flag=9802, entity=2803160, flag_1=12805040, character=2800460, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(4, flag=9802, entity=2803004, flag_1=12805044, character=2800304, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(5, flag=9802, entity=2803005, flag_1=12805044, character=2800305, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(6, flag=9802, entity=2803006, flag_1=12805044, character=2800306, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(7, flag=9802, entity=2803007, flag_1=12805044, character=2800307, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(182, flag=9802, entity=2803182, flag_1=12805044, character=2800482, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(183, flag=9802, entity=2803183, flag_1=12805044, character=2800483, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(8, flag=9802, entity=2803008, flag_1=12805040, character=2800308, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(9, flag=9802, entity=2803009, flag_1=12805040, character=2800309, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(10, flag=9802, entity=2803010, flag_1=12805040, character=2800310, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(11, flag=9802, entity=2803011, flag_1=12805040, character=2800311, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(12, flag=9802, entity=2803012, flag_1=12805040, character=2800312, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(13, flag=9802, entity=2803013, flag_1=12805040, character=2800313, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(14, flag=9802, entity=2803014, flag_1=12805040, character=2800314, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(15, flag=9802, entity=2803015, flag_1=12805040, character=2800315, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(16, flag=12805031, entity=2803016, flag_1=12805040, character=2800316, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(17, flag=12805031, entity=2803017, flag_1=12805040, character=2800317, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(18, flag=9802, entity=2803018, flag_1=12805040, character=2800318, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(20, flag=12805021, entity=2803020, flag_1=12805041, character=2800320, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(21, flag=12805021, entity=2803021, flag_1=12805041, character=2800321, left=0, flag_2=0, seconds=0.5)
+    Event_12804500(80, flag=12805021, entity=2803080, flag_1=12805041, character=2800380, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(19, flag=12805022, entity=2803019, flag_1=12805041, character=2800319, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(
+        162,
+        flag=12805022,
+        entity=2803162,
+        flag_1=12805041,
+        character=2800462,
+        left=0,
+        flag_2=0,
+        seconds=1.0,
+    )
+    Event_12804500(100, flag=9802, entity=2803100, flag_1=12805042, character=2800400, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(101, flag=9802, entity=2803101, flag_1=12805042, character=2800401, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(102, flag=9802, entity=2803102, flag_1=12805042, character=2800402, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(103, flag=9802, entity=2803103, flag_1=12805042, character=2800403, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(108, flag=9802, entity=2803108, flag_1=12805042, character=2800408, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(110, flag=9802, entity=2803110, flag_1=12805042, character=2800410, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(111, flag=9802, entity=2803111, flag_1=12805042, character=2800411, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(82, flag=9802, entity=2803082, flag_1=12805042, character=2800382, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(83, flag=9802, entity=2803083, flag_1=12805042, character=2800383, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(161, flag=9802, entity=2803161, flag_1=12805042, character=2800461, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(104, flag=9802, entity=2803104, flag_1=12805042, character=2800404, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(105, flag=9802, entity=2803105, flag_1=12805042, character=2800405, left=0, flag_2=0, seconds=0.5)
+    Event_12804500(106, flag=9802, entity=2803106, flag_1=12805042, character=2800406, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(107, flag=9802, entity=2803107, flag_1=12805042, character=2800407, left=0, flag_2=0, seconds=1.5)
+    Event_12804500(22, flag=12805023, entity=2803022, flag_1=12805043, character=2800322, left=0, flag_2=0, seconds=0.5)
+    Event_12804500(23, flag=12805023, entity=2803023, flag_1=12805043, character=2800323, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(84, flag=12805023, entity=2803084, flag_1=12805043, character=2800384, left=0, flag_2=0, seconds=1.0)
+    Event_12804500(24, flag=9802, entity=2803024, flag_1=12805043, character=2800324, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(25, flag=9802, entity=2803025, flag_1=12805043, character=2800325, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(180, flag=9802, entity=2803180, flag_1=12805043, character=2800480, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(181, flag=9802, entity=2803181, flag_1=12805043, character=2800481, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(26, flag=12805033, entity=2803026, flag_1=12805045, character=2800326, left=0, flag_2=0, seconds=0.0)
+    Event_12804500(27, flag=12805033, entity=2803027, flag_1=12805045, character=2800327, left=0, flag_2=0, seconds=0.5)
+    Event_12804500(28, flag=12805025, entity=2803028, flag_1=12805045, character=2800328, left=0, flag_2=0, seconds=1.0)
     Event_12805020(0, character=2800500, region=2802504)
     Event_12805020(1, character=2800501, region=2802505)
     Event_12805020(2, character=2800501, region=2802506)
@@ -767,20 +776,68 @@ def Constructor():
     # --- Label 4 --- #
     DefineLabel(4)
     Event_12800608()
-    Event_12805460(4, 2800104, 7012, 7013, 2.0, 263899, 263890)
-    Event_12805460(5, 2800105, 7014, 7015, 2.0, 263899, 263890)
-    Event_12805460(6, 2800106, 7010, 7011, 2.0, 263899, 263890)
-    Event_12805460(7, 2800107, 7012, 7013, 2.0, 263899, 263890)
-    Event_12805460(8, 2800108, 7014, 7015, 2.0, 263899, 263890)
-    Event_12805460(9, 2800109, 7010, 7011, 2.0, 263899, 263890)
-    Event_12805500(30, 2800160, 2802160, 2803160, 0.0)
-    Event_12805500(31, 2800140, 2802140, 2803140, 0.0)
-    Event_12805500(32, 2800141, 2802140, 2803141, 0.0)
-    Event_12805500(33, 2800200, 2802200, 2803200, 0.0)
-    Event_12805550(6, 2800608, 2802608, 8.0)
+    Event_12805460(
+        4,
+        character=2800104,
+        animation_id=7012,
+        animation_id_1=7013,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805460(
+        5,
+        character=2800105,
+        animation_id=7014,
+        animation_id_1=7015,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805460(
+        6,
+        character=2800106,
+        animation_id=7010,
+        animation_id_1=7011,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805460(
+        7,
+        character=2800107,
+        animation_id=7012,
+        animation_id_1=7013,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805460(
+        8,
+        character=2800108,
+        animation_id=7014,
+        animation_id_1=7015,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805460(
+        9,
+        character=2800109,
+        animation_id=7010,
+        animation_id_1=7011,
+        radius=2.0,
+        ai_param_id=263899,
+        ai_param_id_1=263890,
+    )
+    Event_12805500(30, character=2800160, region=2802160, patrol_information_id=2803160, seconds=0.0)
+    Event_12805500(31, character=2800140, region=2802140, patrol_information_id=2803140, seconds=0.0)
+    Event_12805500(32, character=2800141, region=2802140, patrol_information_id=2803141, seconds=0.0)
+    Event_12805500(33, character=2800200, region=2802200, patrol_information_id=2803200, seconds=0.0)
+    Event_12805550(6, character=2800608, region=2802608, radius=8.0)
     Event_12805650(6, character=2800160, region=2802160, region_1=2802161, command_id=10, flag=12805666)
     Event_12805660(6, character=2800160, region=2802161)
-    Event_12805670(6, 2800160, 10, 12805666, 0, 0.0)
+    Event_12805670(6, character=2800160, command_id=10, flag=12805666, left=0, radius=0.0)
 
     # --- Label 5 --- #
     DefineLabel(5)
@@ -1048,8 +1105,8 @@ def Event_12805470(
     """Event 12805470"""
     MAIN.Await(FlagEnabled(flag))
     
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -1074,7 +1131,7 @@ def Event_12805470(
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -1321,7 +1378,7 @@ def Event_12805700(_, character: int, character_1: int, left: int, character_2: 
     """Event 12805700"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
     AddSpecialEffect(character_1, 4672)
-    CancelSpecialEffect(character_1, 4671)
+    RemoveSpecialEffect(character_1, 4671)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1331,7 +1388,7 @@ def Event_12805700(_, character: int, character_1: int, left: int, character_2: 
     
     WaitRandomSeconds(min_seconds=0.0, max_seconds=1.0)
     AddSpecialEffect(character_1, 4672)
-    CancelSpecialEffect(character_1, 4671)
+    RemoveSpecialEffect(character_1, 4671)
     WaitFrames(frames=1)
     ForceAnimation(character_1, 7025, wait_for_completion=True)
     Goto(Label.L2)
@@ -1345,7 +1402,7 @@ def Event_12805700(_, character: int, character_1: int, left: int, character_2: 
     
     WaitRandomSeconds(min_seconds=0.0, max_seconds=1.0)
     AddSpecialEffect(character_1, 4672)
-    CancelSpecialEffect(character_1, 4671)
+    RemoveSpecialEffect(character_1, 4671)
     WaitFrames(frames=1)
     ForceAnimation(character_1, 7025, wait_for_completion=True)
 
@@ -1436,7 +1493,7 @@ def Event_12805930(_, flag: int, flag_1: int, other_entity: int):
     MAIN.Await(AND_1)
     
     IncrementEventValue(flag, bit_count=2, max_value=3)
-    AND_1.Add(EventValueEqual(flag=flag, bit_count=2, value=3))
+    AND_1.Add(EventValue(flag=flag, bit_count=2) == 3)
     SkipLinesIfConditionFalse(1, AND_1)
     EnableFlag(flag_1)
     WaitFrames(frames=1)
@@ -1448,7 +1505,7 @@ def Event_12804000(_, character: int):
     """Event 12804000"""
     DisableNetworkSync()
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    CancelSpecialEffect(character, 4673)
+    RemoveSpecialEffect(character, 4673)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1522,8 +1579,8 @@ def Event_12800160():
     
     MAIN.Await(not AND_2)
     
-    CancelSpecialEffect(PLAYER, 9120)
-    CancelSpecialEffect(PLAYER, 9121)
+    RemoveSpecialEffect(PLAYER, 9120)
+    RemoveSpecialEffect(PLAYER, 9121)
     Restart()
 
 
@@ -1722,7 +1779,7 @@ def Event_12800400():
 def Event_12800401():
     """Event 12800401"""
     OR_1.Add(FlagEnabled(9802))
-    OR_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=40))
+    OR_1.Add(PlayerInsightAmount() >= 40)
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     SetDisplayMask(2800745, bit_index=0, switch_type=OnOffChange.On)
     SetDisplayMask(2800745, bit_index=2, switch_type=OnOffChange.On)
@@ -1835,13 +1892,13 @@ def Event_12800432():
     SetDisplayMask(2800745, bit_index=2, switch_type=OnOffChange.Off)
     SetDisplayMask(2800745, bit_index=10, switch_type=OnOffChange.Off)
     AddSpecialEffect(2800745, 5687)
-    CancelSpecialEffect(2800745, 5686)
+    RemoveSpecialEffect(2800745, 5686)
     AND_2.Add(CharacterHasTAEEvent(2800745, tae_event_id=30))
     
     MAIN.Await(AND_2)
     
     AddSpecialEffect(2800745, 5686)
-    CancelSpecialEffect(2800745, 5687)
+    RemoveSpecialEffect(2800745, 5687)
     Restart()
 
 
@@ -2236,7 +2293,7 @@ def Event_12801800():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(2800803, value=0.0))
+    MAIN.Await(HealthRatio(2800803) <= 0.0)
     
     ResetAnimation(2800800, disable_interpolation=True)
     ResetAnimation(2800801, disable_interpolation=True)
@@ -2311,7 +2368,7 @@ def Event_12801801():
         return
     AND_1.Add(FlagEnabled(12801800))
     AND_2.Add(CharacterBackreadDisabled(2800800))
-    AND_2.Add(HealthRatioLessThanOrEqual(2800803, value=0.0))
+    AND_2.Add(HealthRatio(2800803) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2619,13 +2676,13 @@ def Event_12804804():
     DisableNetworkSync()
     if FlagEnabled(12801800):
         return
-    AND_1.Add(HealthRatioGreaterThan(2800803, value=0.0))
+    AND_1.Add(HealthRatio(2800803) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2800800, radius=12.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=YAHARGUL, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(2800803, value=0.0))
+    AND_2.Add(HealthRatio(2800803) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2800800, radius=12.5))
     
     MAIN.Await(AND_2)
@@ -2704,8 +2761,8 @@ def Event_12804820(
         return
     CreateNPCPart(2800800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2800800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(2800800, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(2800800, value=0.0))
+    AND_1.Add(CharacterPartHealth(2800800, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(2800800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2728,7 +2785,7 @@ def Event_12804820(
     ForceAnimation(2800800, animation_id)
     ForceAnimation(2800801, 7000)
     AddSpecialEffect(2800800, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(2800800, special_effect_id_1)
+    RemoveSpecialEffect(2800800, special_effect_id_1)
     AND_3.Add(CharacterHasSpecialEffect(2800800, 489))
     SkipLinesIfConditionTrue(1, AND_3)
     ReplanAI(2800800)
@@ -2742,7 +2799,7 @@ def Event_12804820(
     CreateNPCPart(2800800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2800800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
     AddSpecialEffect(2800800, special_effect_id_1, affect_npc_part_hp=True)
-    CancelSpecialEffect(2800800, special_effect_id)
+    RemoveSpecialEffect(2800800, special_effect_id)
     AND_5.Add(CharacterHasSpecialEffect(2800800, 489))
     SkipLinesIfConditionTrue(1, AND_5)
     ReplanAI(2800800)
@@ -2805,7 +2862,7 @@ def Event_12804832():
     
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
-    CancelSpecialEffect(2800800, 5585)
+    RemoveSpecialEffect(2800800, 5585)
     Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=10, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
@@ -2830,7 +2887,7 @@ def Event_12804834():
     
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
-    CancelSpecialEffect(2800800, 5586)
+    RemoveSpecialEffect(2800800, 5586)
     Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=15, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
@@ -2855,7 +2912,7 @@ def Event_12804835():
     
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
-    CancelSpecialEffect(2800800, 5587)
+    RemoveSpecialEffect(2800800, 5587)
     Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=50, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
@@ -2880,7 +2937,7 @@ def Event_12804836():
     
     MAIN.Await(TimeElapsed(seconds=1.100000023841858))
     
-    CancelSpecialEffect(2800800, 5588)
+    RemoveSpecialEffect(2800800, 5588)
     Move(2800802, destination=2800800, destination_type=CoordEntityType.Character, model_point=55, short_move=True)
     AICommand(2800802, command_id=220, command_slot=0)
     ReplanAI(2800802)
@@ -3013,7 +3070,7 @@ def Event_12804850(_, character: int):
 def Event_12804870():
     """Event 12804870"""
     AND_1.Add(FlagEnabled(12804802))
-    AND_1.Add(HealthRatioLessThan(2800803, value=1.0))
+    AND_1.Add(HealthRatio(2800803) < 1.0)
     
     MAIN.Await(AND_1)
     
@@ -3042,8 +3099,8 @@ def Event_12804870():
 def Event_12804871():
     """Event 12804871"""
     AND_1.Add(FlagEnabled(12804802))
-    OR_1.Add(HealthRatioLessThan(2800803, value=0.5))
-    OR_1.Add(EventValueGreaterThanOrEqual(flag=12804860, bit_count=4, value=3))
+    OR_1.Add(HealthRatio(2800803) < 0.5)
+    OR_1.Add(EventValue(flag=12804860, bit_count=4) >= 3)
     AND_1.Add(OR_1)
     
     MAIN.Await(AND_1)
@@ -3170,7 +3227,7 @@ def Event_12800908():
     if not AND_15:
         return
     AND_1.Add(AttackedWithDamageType(attacked_entity=2800670))
-    AND_1.Add(HealthRatioNotEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatio(2800670) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -3185,7 +3242,7 @@ def Event_12800909():
     if not AND_15:
         return
     AND_1.Add(FlagDisabled(1310))
-    AND_1.Add(HealthRatioEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatio(2800670) == 0.0)
     
     MAIN.Await(AND_1)
     
@@ -3199,7 +3256,7 @@ def Event_12800910():
     if not AND_15:
         return
     AND_1.Add(CharacterHasSpecialEffect(2800670, 151))
-    AND_1.Add(HealthRatioNotEqual(2800670, value=0.0))
+    AND_1.Add(HealthRatio(2800670) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -3474,8 +3531,8 @@ def Event_12804410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)
     SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

@@ -14,19 +14,21 @@ strings:
 """
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_35_52_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    Event_1035522200(0, character=1035520200)
-    Event_1035522200(1, character=1035520201)
+    Event_1035522200(0, character=Characters.DemiHuman2)
+    Event_1035522200(1, character=Characters.DemiHuman0)
     Event_1035522200(2, 1035520202)
 
 
 @RestartOnRest(1035522200)
 def Event_1035522200(_, character: uint):
     """Event 1035522200"""
-    IfHasAIStatus(MAIN, character, ai_status=AIStatusType.Battle)
-    ForceAnimation(character, 3015, skip_transition=True, unknown2=1.0)
+    MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    
+    ForceAnimation(character, 3015, skip_transition=True)
     End()

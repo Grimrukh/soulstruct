@@ -1,0 +1,25 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1043390950  # c1000_9002 npc 10000000 think 1 talk 1000
+    GiantOctopus0 = 1043390250  # c4220_9000 npc 42200010 think 42200000
+    GiantOctopus1 = 1043390251  # c4220_9001 npc 42200010 think 42200000
+    GiantOctopus2 = 1043390252  # c4220_9002 npc 42200010 think 42200000
+    GiantOctopus3 = 1043390253  # c4220_9003 npc 42200010 think 42200000
+    GiantOctopus4 = 1043390254  # c4220_9004 npc 42200010 think 42200000
+    WanderingNoble = 1043370720  # c4300_9000 npc 43009110 think 500000000 talk 700056000
+    GodrickKnight = 1043390280  # c4351_9000 npc 43511110 think 43511000
+    GodrickKnightsHorse = 1043390281  # c4361_9000 npc 43610010 think 43610000
+    LivingPot = 1043390710  # c4490_9000 npc 44909310 think 44900000 talk 220006000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1043391950  # AEG099
+    AEG003_316_9000 = 1043391680  # AEG003
+    AEG099_055_1000 = 1043391684  # AEG099
+    AEG099_090_9001 = 1043391280  # AEG099
+    AEG099_090_9002 = 1043391690  # AEG099
+    AEG099_090_9003 = 1043391682  # AEG099
+    AEG099_280_9000 = 1043391610  # AEG099
+    AEG099_280_9001 = 1043391611  # AEG099

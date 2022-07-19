@@ -12,112 +12,267 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_42_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1042530501, 1042530501, 1042530300, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    CommonFunc_90005300(0, flag=1042530501, character=1042530501, item_lot_param_id=1042530300, seconds=0.0, left=0)
+    CommonFunc_90005390(
         0,
-        90005390,
-        args=(1042530350, 1042532350, 1042530365, 1042530350, 0, 1043530100),
-        arg_types="IIIIii",
+        flag=1042530350,
+        flag_1=1042532350,
+        anchor_entity=Characters.WanderingNoble,
+        character=Characters.LionGuardian,
+        left=0,
+        item_lot_param_id=1043530100,
     )
-    RunCommonEvent(0, 90005391, args=(1042530350, 1042532350, 1042530365, 1042530350, 0), arg_types="IIIIi")
+    CommonFunc_90005391(0, 1042530350, 1042532350, 1042530365, 1042530350, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(1042530202, 1042532202, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005200, args=(1042530201, 30002, 20002, 1042532300, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(0, character=1042530202, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1042530305, 30010, 20010, 1042532305, 5.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=1042530201,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1042532300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1042530317, 30010, 20010, 1042532305, 5.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellFootSoldier1,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=1042532305,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1042530318, 30010, 20010, 1042532305, 5.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellFootSoldier6,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=1042532305,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005261, args=(1042530319, 1042532202, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1042530320, 1042532202, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1042530323, 1042532202, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005200, args=(1042530300, 30005, 20021, 1042532300, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1042530308, 30010, 20010, 1042532300, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1042530309, 30010, 20010, 1042532300, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005261, args=(1042530322, 1042532300, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005201, args=(1042530314, 30005, 20021, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1042530403, 30010, 20010, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1042530407, 30010, 20010, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1042530409, 30010, 20010, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1042530413, 30010, 20010, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
+    CommonFunc_90005211(
+        0,
+        character=Characters.LeyndellFootSoldier7,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=1042532305,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=1042530319, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(0, character=1042530320, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(0, character=1042530323, region=1042532202, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005200(
+        0,
+        character=1042530300,
+        animation_id=30005,
+        animation_id_1=20021,
+        region=1042532300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=1042530308,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=1042532300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=1042530309,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=1042532300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=1042530322, region=1042532300, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier5,
+        animation_id=30005,
+        animation_id_1=20021,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier0,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier2,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier3,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellFootSoldier4,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
     Event_1042532365(0, 1042530365)
 
 
 @RestartOnRest(1042532365)
 def Event_1042532365(_, character: uint):
     """Event 1042532365"""
-    GotoIfUnknown_1004_05(Label.L0, character=character, unk_8_12=True)
+    EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableAI(character)
-    ForceAnimation(character, 30012, loop=True, unknown2=1.0)
-    IfAttackedWithDamageType(OR_1, attacked_entity=character, attacker=0)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(OR_1, input_condition=AND_4)
-    IfConditionTrue(OR_1, input_condition=AND_5)
-    IfConditionTrue(OR_1, input_condition=AND_6)
-    IfConditionTrue(OR_1, input_condition=AND_7)
-    IfConditionTrue(OR_1, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_1)
+    ForceAnimation(character, 30012, loop=True)
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    
+    MAIN.Await(OR_1)
+    
     Wait(0.10000000149011612)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    Unknown_2004_83(character=character, unk_4_8=1)
+    SetSpecialStandbyEndedFlag(character=character, state=True)
     EnableAI(character)
 
 
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    RunCommonEvent(0, 90005490, args=(1042530402, 1042530403, 1042531402, 0, 0, 1042532402, 0), arg_types="IIIIIII")
-    RunCommonEvent(0, 90005490, args=(1042530406, 1042530407, 1042531406, 0, 0, 1042532406, 1), arg_types="IIIIIII")
-    RunCommonEvent(0, 90005490, args=(1042530408, 1042530409, 1042531408, 0, 0, 1042532408, 1), arg_types="IIIIIII")
-    RunCommonEvent(0, 90005490, args=(1042530412, 1042530413, 1042531412, 0, 0, 1042532412, 1), arg_types="IIIIIII")
+    CommonFunc_90005490(
+        0,
+        character=Characters.BulletDummy1,
+        character_1=Characters.LeyndellFootSoldier0,
+        asset=Assets.AEG110_181_9001,
+        asset_1=0,
+        obj_act_id=0,
+        region=1042532402,
+        left=0,
+    )
+    CommonFunc_90005490(
+        0,
+        character=Characters.BulletDummy3,
+        character_1=Characters.LeyndellFootSoldier2,
+        asset=Assets.AEG110_181_9003,
+        asset_1=0,
+        obj_act_id=0,
+        region=1042532406,
+        left=1,
+    )
+    CommonFunc_90005490(
+        0,
+        character=Characters.BulletDummy4,
+        character_1=Characters.LeyndellFootSoldier3,
+        asset=Assets.AEG110_181_9004,
+        asset_1=0,
+        obj_act_id=0,
+        region=1042532408,
+        left=1,
+    )
+    CommonFunc_90005490(0, 1042530412, 1042530413, 1042531412, 0, 0, 1042532412, 1)

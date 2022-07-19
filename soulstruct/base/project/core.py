@@ -183,6 +183,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
         if "events" in self.DATA_TYPES:
             self.import_events(force_import=yes_to_all, with_window=with_window)
+            self.offer_events_submodule_copy(with_window=with_window)
 
         if "talk" in self.DATA_TYPES:
             self.import_talk(force_import=yes_to_all, with_window=with_window)
@@ -684,6 +685,35 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             return root / self.GAME.default_file_paths[data_class_name]
         except KeyError:
             raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {self.GAME.name}")
+
+    def offer_events_submodule_copy(self, with_window: ProjectWindow = None):
+        """Offer to copy `soulstruct.events.{game}` into project `events` folder for IDE purposes."""
+        if (self.project_root / "events").is_dir() and (self.project_root / "events").glob("*"):
+            return  # don't offer if `events` already imported/exist
+        if with_window:
+            result = with_window.CustomDialog(
+                title="Events Module Copy",
+                message="Would you like to copy the game events submodule for IDE autocomplete?",
+                button_names=("Yes, copy it", "No, don't bother"),
+                button_kwargs=("YES", "NO"),
+                cancel_output=1,
+                default_output=1,
+            )
+        else:
+            result = 1 if (
+                    input(
+                        "Would you like to copy the game events submodule for IDE autocomplete? [y]/n",
+                    ).lower() == "n"
+            ) else 0
+        if result == 0:
+            self.copy_events_submodule()
+
+    def copy_events_submodule(self):
+        name = self.GAME.submodule_name
+        events_submodule = PACKAGE_PATH(f"{name}/events")
+        (self.project_root / f"events/soulstruct/{name}").mkdir(parents=True, exist_ok=True)
+        shutil.copytree(events_submodule, self.project_root / f"events/soulstruct/{name}/events")
+        _LOGGER.info(f"Copied `soulstruct.{name}.events` submodule into project events folder.")
 
     def run_script(self, script_path: Path, stdout=None, stderr=None) -> subprocess.CompletedProcess:
         """Run given `script_path` Python script in a subprocess and wait for it to return.

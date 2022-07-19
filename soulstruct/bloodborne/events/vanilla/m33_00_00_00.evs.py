@@ -61,16 +61,116 @@ def Constructor():
     Event_13301803()
     Event_13304820(0, npc_part_id=3311, npc_part_id_1=3311, part_index=13, bit_index=9, bit_index_1=13)
     Event_13304820(1, npc_part_id=3322, npc_part_id_1=3322, part_index=14, bit_index=8, bit_index_1=14)
-    Event_13304830(0, 3301, 3301, 4, 482, 200, 8020, 1.0, 1.5)
-    Event_13304830(1, 3302, 3302, 6, 482, 180, 8020, 1.0, 1.5)
-    Event_13304830(2, 3303, 3303, 8, 482, 150, 8020, 1.0, 1.5)
-    Event_13304830(3, 3304, 3304, 5, 481, 200, 8010, 1.0, 1.5)
-    Event_13304830(4, 3305, 3305, 7, 481, 150, 8010, 1.0, 1.5)
-    Event_13304830(5, 3306, 3306, 9, 481, 120, 8010, 1.0, 1.5)
-    Event_13304830(6, 3307, 3307, 10, 481, 120, 8010, 1.0, 1.5)
-    Event_13304830(7, 3308, 3308, 3, 483, 200, 8030, 0.20000000298023224, 0.30000001192092896)
-    Event_13304830(8, 3309, 3309, 11, 484, 100, 8040, 0.20000000298023224, 0.30000001192092896)
-    Event_13304830(9, 3310, 3310, 12, 483, 100, 8030, 0.20000000298023224, 0.30000001192092896)
+    Event_13304830(
+        0,
+        npc_part_id=3301,
+        npc_part_id_1=3301,
+        part_index=4,
+        special_effect_id=482,
+        part_health=200,
+        animation_id=8020,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        1,
+        npc_part_id=3302,
+        npc_part_id_1=3302,
+        part_index=6,
+        special_effect_id=482,
+        part_health=180,
+        animation_id=8020,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        2,
+        npc_part_id=3303,
+        npc_part_id_1=3303,
+        part_index=8,
+        special_effect_id=482,
+        part_health=150,
+        animation_id=8020,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        3,
+        npc_part_id=3304,
+        npc_part_id_1=3304,
+        part_index=5,
+        special_effect_id=481,
+        part_health=200,
+        animation_id=8010,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        4,
+        npc_part_id=3305,
+        npc_part_id_1=3305,
+        part_index=7,
+        special_effect_id=481,
+        part_health=150,
+        animation_id=8010,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        5,
+        npc_part_id=3306,
+        npc_part_id_1=3306,
+        part_index=9,
+        special_effect_id=481,
+        part_health=120,
+        animation_id=8010,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        6,
+        npc_part_id=3307,
+        npc_part_id_1=3307,
+        part_index=10,
+        special_effect_id=481,
+        part_health=120,
+        animation_id=8010,
+        body_damage_correction__damage_correction=1.0,
+        body_damage_correction=1.5,
+    )
+    Event_13304830(
+        7,
+        npc_part_id=3308,
+        npc_part_id_1=3308,
+        part_index=3,
+        special_effect_id=483,
+        part_health=200,
+        animation_id=8030,
+        body_damage_correction__damage_correction=0.20000000298023224,
+        body_damage_correction=0.30000001192092896,
+    )
+    Event_13304830(
+        8,
+        npc_part_id=3309,
+        npc_part_id_1=3309,
+        part_index=11,
+        special_effect_id=484,
+        part_health=100,
+        animation_id=8040,
+        body_damage_correction__damage_correction=0.20000000298023224,
+        body_damage_correction=0.30000001192092896,
+    )
+    Event_13304830(
+        9,
+        npc_part_id=3310,
+        npc_part_id_1=3310,
+        part_index=12,
+        special_effect_id=483,
+        part_health=100,
+        animation_id=8030,
+        body_damage_correction__damage_correction=0.20000000298023224,
+        body_damage_correction=0.30000001192092896,
+    )
     Event_13304840()
     Event_13300100()
     Event_13300110()
@@ -113,23 +213,47 @@ def Constructor():
     Event_13300210()
     Event_13300220(0, character=3300721)
     Event_13300220(1, character=3300722)
-    Event_13305150(0, 3300411, 3302205, 5.0, 0)
-    Event_13305150(1, 3300412, 3302205, 5.0, 0)
-    Event_13305150(2, 3300452, 3302205, 5.0, 0)
-    Event_13305150(3, 3300459, 3302205, 5.0, 0)
-    Event_13305150(4, 3300500, 3302206, 15.0, 0)
-    Event_13305150(5, 3300502, 3302207, 2.0, 450)
-    Event_13305150(6, 3300413, 3302210, 5.0, 0)
-    Event_13305150(7, 3300460, 3302210, 5.0, 0)
-    Event_13305150(8, 3300413, 3302211, 5.0, 0)
-    Event_13305150(9, 3300460, 3302211, 5.0, 0)
-    Event_13305210(0, 3300102, 2.0, 7000, 7001, 0.0, 218300)
-    Event_13305210(1, 3300103, 2.0, 7000, 7001, 0.0, 218300)
-    Event_13305210(2, 3300104, 2.0, 7000, 7001, 0.0, 218300)
+    Event_13305150(0, character=3300411, region=3302205, radius=5.0, frames=0)
+    Event_13305150(1, character=3300412, region=3302205, radius=5.0, frames=0)
+    Event_13305150(2, character=3300452, region=3302205, radius=5.0, frames=0)
+    Event_13305150(3, character=3300459, region=3302205, radius=5.0, frames=0)
+    Event_13305150(4, character=3300500, region=3302206, radius=15.0, frames=0)
+    Event_13305150(5, character=3300502, region=3302207, radius=2.0, frames=450)
+    Event_13305150(6, character=3300413, region=3302210, radius=5.0, frames=0)
+    Event_13305150(7, character=3300460, region=3302210, radius=5.0, frames=0)
+    Event_13305150(8, character=3300413, region=3302211, radius=5.0, frames=0)
+    Event_13305150(9, character=3300460, region=3302211, radius=5.0, frames=0)
+    Event_13305210(
+        0,
+        character=3300102,
+        radius=2.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=0.0,
+        ai_param_id=218300,
+    )
+    Event_13305210(
+        1,
+        character=3300103,
+        radius=2.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=0.0,
+        ai_param_id=218300,
+    )
+    Event_13305210(
+        2,
+        character=3300104,
+        radius=2.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=0.0,
+        ai_param_id=218300,
+    )
     Event_13305220()
     Event_13305230()
-    Event_13305200(1, 3300459, 3302301, 3300461, 5.0, 3306001)
-    Event_13305200(2, 3300452, 3302302, 3300460, 5.0, 3306002)
+    Event_13305200(1, character=3300459, region=3302301, character_1=3300461, radius=5.0, patrol_information_id=3306001)
+    Event_13305200(2, character=3300452, region=3302302, character_1=3300460, radius=5.0, patrol_information_id=3306002)
     Event_13305250(0, character=3300584, region=3302410, flag=13305255)
     Event_13305250(1, character=3300593, region=3302411, flag=13305256)
     Event_13305255(0, character=3300584, region=3302410)
@@ -245,7 +369,7 @@ def Event_13304700(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     AND_1.Add(FlagDisabled(flag_1))
     AND_1.Add(FlagDisabled(flag_2))
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     if FlagEnabled(flag_3):
         AND_2.Add(ClientTypeCountComparison(
             client_type=ClientType.Coop,
@@ -301,7 +425,7 @@ def Event_13304710(_, character: int, flag: int, flag_1: int, flag_2: int):
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(PLAYER, 9020)
     Restart()
 
 
@@ -324,8 +448,8 @@ def Event_13304720(_, character: int, flag: int, flag_1: int, flag_2: int):
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     DisableFlag(flag_2)
     Restart()
@@ -340,7 +464,7 @@ def Event_13304730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -434,7 +558,7 @@ def Event_13301801():
         return
     AND_1.Add(FlagEnabled(13301800))
     AND_2.Add(CharacterBackreadDisabled(3300800))
-    AND_2.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
+    AND_2.Add(HealthRatio(3300800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -685,13 +809,13 @@ def Event_13304804():
     if FlagEnabled(13301800):
         return
     DisableNetworkSync()
-    AND_1.Add(HealthRatioGreaterThan(3300800, value=0.0))
+    AND_1.Add(HealthRatio(3300800) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3300800, radius=14.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=NIGHTMARE_FRONTIER, camera_slot=1)
-    AND_1.Add(HealthRatioGreaterThan(3300800, value=0.0))
+    AND_1.Add(HealthRatio(3300800) > 0.0)
     
     MAIN.Await(EntityBeyondDistance(entity=PLAYER, other_entity=3300800, radius=17.0))
     
@@ -723,7 +847,7 @@ def Event_13304807():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthRatioLessThan(3300800, value=0.699999988079071))
+    MAIN.Await(HealthRatio(3300800) < 0.699999988079071)
     
     Wait(0.10000000149011612)
     ResetAnimation(3300800, disable_interpolation=True)
@@ -743,7 +867,7 @@ def Event_13304808():
         return
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(HealthRatioLessThan(3300800, value=0.30000001192092896))
+    AND_1.Add(HealthRatio(3300800) < 0.30000001192092896)
     AND_1.Add(FlagEnabled(13304807))
     
     MAIN.Await(AND_1)
@@ -810,8 +934,8 @@ def Event_13304830(
         body_damage_correction=body_damage_correction__damage_correction,
     )
     SetNPCPartEffects(3300800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(3300800, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
+    AND_2.Add(CharacterPartHealth(3300800, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(3300800) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -838,7 +962,7 @@ def Event_13304830(
     MAIN.Await(CharacterHasTAEEvent(3300800, tae_event_id=300))
     
     SetNPCPartHealth(3300800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    CancelSpecialEffect(3300800, special_effect_id)
+    RemoveSpecialEffect(3300800, special_effect_id)
     AICommand(3300800, command_id=-1, command_slot=1)
     ReplanAI(3300800)
     WaitFrames(frames=10)
@@ -859,8 +983,8 @@ def Event_13304840():
         body_damage_correction=1.399999976158142,
     )
     SetNPCPartEffects(3300800, npc_part_id=3300, material_sfx_id=60, material_vfx_id=60)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(3300800, npc_part_id=3300, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(3300800, value=0.0))
+    AND_2.Add(CharacterPartHealth(3300800, npc_part_id=3300) <= 0)
+    AND_3.Add(HealthRatio(3300800) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -887,7 +1011,7 @@ def Event_13304840():
     MAIN.Await(CharacterHasTAEEvent(3300800, tae_event_id=300))
     
     SetNPCPartHealth(3300800, npc_part_id=3300, desired_health=-1, overwrite_max=True)
-    CancelSpecialEffect(3300800, 480)
+    RemoveSpecialEffect(3300800, 480)
     AICommand(3300800, command_id=-1, command_slot=1)
     ReplanAI(3300800)
     WaitFrames(frames=10)
@@ -1188,7 +1312,7 @@ def Event_13305030(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()
@@ -1236,7 +1360,7 @@ def Event_13305041():
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(PLAYER, 4691)
+    RemoveSpecialEffect(PLAYER, 4691)
     Restart()
 
 

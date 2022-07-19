@@ -1,0 +1,19 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy0 = 1048400950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 1048400951  # c1000_9001 npc 10000000 think 1 talk 1000
+    TalkDummy2 = 1048400100  # c1000_9002 npc 10001000 think 1 talk 2000
+    MadPumpkinHead0 = 1048400800  # c4340_9000 npc 43401940 think 43401900 group 1048405800,1048405100
+    MadPumpkinHead1 = 1048400801  # c4340_9001 npc 43400940 think 43400900 group 1048405800,1048405100
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1048401950  # AEG099
+    AEG099_060_9001 = 1048401951  # AEG099
+    AEG004_970_2000 = 1048401550  # AEG004
+    AEG099_003_9000 = 1048401800  # AEG099
+    AEG099_003_9001 = 1048401801  # AEG099
+    AEG099_053_9000 = 1048401100  # AEG099
+    AEG099_630_9000 = 1048401600  # AEG099

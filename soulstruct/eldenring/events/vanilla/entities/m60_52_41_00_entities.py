@@ -1,0 +1,23 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Dummy = 1052410270  # c0100_9000 npc 1000000 think 1000000
+    TalkDummy0 = 1052410950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 1052410100  # c1000_9001 npc 10001000 think 1 talk 2000
+    NightsCavalry = 1052410850  # c3150_9002 npc 31500042 think 31500000
+    NightsCavalryHorse = 1052410851  # c3160_9002 npc 31600042 think 31600000
+    GiantBall = 1052410210  # c3330_9000 npc 33300042 think 33300020
+    GravenSchool = 1052410399  # c3730_9000 npc 37300042 think 37300000
+    FlyingDragon = 1052410800  # c4500_9000 npc 45000042 think 45000942 group 1052415100
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1052411950  # AEG099
+    AEG099_053_9000 = 1052411100  # AEG099
+    AEG099_090_9000 = 1052411210  # AEG099
+    AEG099_182_2000 = 1052411512  # AEG099
+    AEG099_182_2001 = 1052411511  # AEG099
+    AEG099_251_2000 = 1052411200  # AEG099
+    AEG099_630_9000 = 1052411600  # AEG099
+    AEG110_112_2000 = 1052411510  # AEG110

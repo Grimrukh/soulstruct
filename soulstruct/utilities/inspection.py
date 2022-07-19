@@ -47,6 +47,7 @@ def profile_function(print_count: int, sort="tottime", strip_dirs=True):
 
         @wraps(func)
         def decorated(*args, **kwargs):
+            print(f"Profiling function: {func.__name__}")
             with cProfile.Profile() as pr:
                 func(*args, **kwargs)
             p = pstats.Stats(pr)

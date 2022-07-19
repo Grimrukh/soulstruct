@@ -12,50 +12,95 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_35_42_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
     Event_1035422150()
-    RegisterGrace(grace_flag=1035420000, obj=1035421950, unknown=5.0)
-    RunCommonEvent(0, 90005870, args=(1035420800, 904820600, 5), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1035420800, 0, 1035420800, 0, 30225, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005300, args=(1035420220, 1035420220, 40208, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1035420000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005870(0, character=Characters.Omenkiller, name=904820600, npc_threat_level=5)
+    CommonFunc_90005860(
         0,
-        90005780,
-        args=(1035420800, 1035422160, 1035422161, 1035420710, 20, 1035422700, 1034429209, 1, 0),
-        arg_types="IIIIiIIBi",
+        flag=1035420800,
+        left=0,
+        character=Characters.Omenkiller,
+        left_1=0,
+        item_lot__item_lot_param_id=30225,
+        seconds=0.0,
     )
-    RunCommonEvent(0, 90005781, args=(1035420800, 1035422160, 1035422161, 1035420710), arg_types="IIII")
-    RunCommonEvent(
+    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot_param_id=40208, seconds=0.0, left=0)
+    CommonFunc_90005780(
         0,
-        90005783,
-        args=(1035420800, 1035422160, 1035422161, 1035420710, 1035422700, 1035422160, 0),
-        arg_types="IIIIIIi",
+        flag=1035420800,
+        summon_flag=1035422160,
+        dismissal_flag=1035422161,
+        character=Characters.NepheliLoux,
+        sign_type=20,
+        region=1035422700,
+        right=1034429209,
+        unknown=1,
+        right_1=0,
     )
-    RunCommonEvent(0, 90005704, args=(1035420700, 3541, 3540, 1035429201, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1035420700, 3541, 3542, 1035429201, 3541, 3540, 3544, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1035420700, 3543, 3540, 3544), arg_types="IIII")
-    Event_1035423700(0, character=1035420700, obj=1035421700)
-    Event_1035420701(0, character=1035420700, obj=1035421700)
-    Event_1035423702(0, character=1035420700)
-    Event_1035423703(0, entity=1035420700)
-    Event_1035420710(0, character=1035420706)
-    RunCommonEvent(0, 90005704, args=(1035420706, 3741, 3740, 1035429251, 3), arg_types="IIIIi")
-    RunCommonEvent(
+    CommonFunc_90005781(0, flag=1035420800, flag_1=1035422160, flag_2=1035422161, character=Characters.NepheliLoux)
+    CommonFunc_90005783(
         0,
-        90005707,
-        args=(1035420706, 3741, 3742, 1035429251, 3741, 3740, 3743, 0, 20007, 1035422712, 1035422713),
-        arg_types="IIIIIIIiiII",
+        flag=1035420800,
+        flag_1=1035422160,
+        flag_2=1035422161,
+        character=Characters.NepheliLoux,
+        other_entity=1035422700,
+        region=1035422160,
+        left=0,
     )
-    RunCommonEvent(0, 90005709, args=(1035420706, 905, 603000), arg_types="Iii")
-    RunCommonEvent(0, 90005709, args=(1035420706, 960, 603050), arg_types="Iii")
-    RunCommonEvent(0, 90005750, args=(1035421710, 4350, 103930, 400393, 400393, 1035429255, 0), arg_types="IiiIIIi")
-    Event_1035420711(0, entity=1035420706)
+    CommonFunc_90005704(
+        0,
+        attacked_entity=Characters.AlbinauricLookout0,
+        flag=3541,
+        flag_1=3540,
+        flag_2=1035429201,
+        right=3,
+    )
+    CommonFunc_90005703(0, 1035420700, 3541, 3542, 1035429201, 3541, 3540, 3544, -1)
+    CommonFunc_90005702(0, character=Characters.AlbinauricLookout0, flag=3543, first_flag=3540, last_flag=3544)
+    Event_1035423700(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
+    Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
+    Event_1035423702(0, character=Characters.AlbinauricLookout0)
+    Event_1035423703(0, entity=Characters.AlbinauricLookout0)
+    Event_1035420710(0, character=Characters.Ranni)
+    CommonFunc_90005704(0, attacked_entity=Characters.Ranni, flag=3741, flag_1=3740, flag_2=1035429251, right=3)
+    CommonFunc_90005707(
+        0,
+        character=Characters.Ranni,
+        flag=3741,
+        flag_1=3742,
+        flag_2=1035429251,
+        flag_3=3741,
+        first_flag=3740,
+        last_flag=3743,
+        right=0,
+        animation_id=20007,
+        left=1035422712,
+        flag_4=1035422713,
+    )
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=905, vfx_id=603000)
+    CommonFunc_90005709(0, attacked_entity=Characters.Ranni, model_point=960, vfx_id=603050)
+    CommonFunc_90005750(
+        0,
+        asset=Assets.AEG099_990_9000,
+        action_button_id=4350,
+        item_lot_param_id=103930,
+        first_flag=400393,
+        last_flag=400393,
+        flag=1035429255,
+        model_point=0,
+    )
+    Event_1035420711(0, entity=Characters.Ranni)
     Event_1035420712()
     Event_1035422151()
 
@@ -63,80 +108,104 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1035420700)
+    DisableBackread(Characters.AlbinauricLookout0)
     DisableBackread(1035420705)
-    DisableBackread(1035420706)
-    RunCommonEvent(0, 90005260, args=(1035420800, 1035422800, 42.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005250, args=(1035420201, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1035420202, 8.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1035420203, 8.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005250, args=(1035420204, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(1035420205, 30004, 20004, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005250, args=(1035420206, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420207, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1035420208, 5.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005250, args=(1035420209, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420210, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420211, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420212, 1035422204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420315, 1035422315, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1035420317, 1035422317, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(1035420370, 30003, 20003, 1035422370, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1035420374, 30003, 20003, 1035422374, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    DisableBackread(Characters.Ranni)
+    CommonFunc_90005260(0, 1035420800, 1035422800, 42.0, 0.0, -1)
+    CommonFunc_90005250(0, 1035420201, 1035422204, 0.0, -1)
+    CommonFunc_90005251(0, 1035420202, 8.0, 0.0, -1)
+    CommonFunc_90005251(0, 1035420203, 8.0, 0.0, -1)
+    CommonFunc_90005250(0, 1035420204, 1035422204, 0.0, -1)
+    CommonFunc_90005201(
+        0,
+        character=1035420205,
+        animation_id=30004,
+        animation_id_1=20004,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 1035420206, 1035422204, 0.0, -1)
+    CommonFunc_90005250(0, 1035420207, 1035422204, 0.0, -1)
+    CommonFunc_90005251(0, 1035420208, 5.0, 0.0, -1)
+    CommonFunc_90005250(0, 1035420209, 1035422204, 0.0, -1)
+    CommonFunc_90005250(0, 1035420210, 1035422204, 0.0, -1)
+    CommonFunc_90005250(0, 1035420211, 1035422204, 0.0, -1)
+    CommonFunc_90005250(0, 1035420212, 1035422204, 0.0, -1)
+    CommonFunc_90005250(0, 1035420315, 1035422315, 0.0, -1)
+    CommonFunc_90005250(0, 1035420317, 1035422317, 0.0, -1)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LargeCrabSnow0,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=1035422370,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 1035420374, 30003, 20003, 1035422374, 0.0, 0, 0, 0, 0)
 
 
 @NeverRestart(1035422150)
 def Event_1035422150():
     """Event 1035422150"""
     GotoIfFlagDisabled(Label.L0, flag=1035420150)
-    ForceAnimation(1035420150, 30011, unknown2=1.0)
+    ForceAnimation(1035420150, 30011)
     EnableInvincibility(1035420150)
     SetDisplayMask(1042350150, bit_index=10, switch_type=OnOffChange.Off)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    DisableNetworkConnectedFlagRange(flag_range=(780000, 780009))
-    ForceAnimation(1035420150, 30010, unknown2=1.0)
+    if PlayerInOwnWorld():
+        DisableNetworkConnectedFlagRange(flag_range=(780000, 780009))
+    ForceAnimation(1035420150, 30010)
     EnableInvincibility(1035420150)
-    IfPlayerInOwnWorld(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=9630, entity=1035421152)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=9630, entity=Assets.AEG099_090_9000))
+    
+    MAIN.Await(AND_1)
+    
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    IfUnknownCondition_34(OR_10, unk_4_8=90100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=91100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=630100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=631100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=890100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=900100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=901100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=902100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=903100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=960100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=961100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=962100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=990100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=991100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1000100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=963100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=964100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=220100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=221100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1990100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1991100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=290100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=291100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=292100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=390100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=430100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1010100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1011100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=293100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=294100, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=260200, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1070200, unk_8_12=-1)
-    IfUnknownCondition_34(OR_10, unk_4_8=1890200, unk_8_12=-1)
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=90100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=91100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=630100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=631100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=890100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=900100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=901100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=902100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=903100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=960100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=961100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=962100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=990100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=991100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=1000100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=963100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=964100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=220100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=221100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=1990100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=1991100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=290100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=291100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=292100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=390100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=430100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=1010100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=1011100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=293100))
+    OR_10.Add(PlayerHasBodyArmorEquipped(armor=294100))
+    OR_10.Add(PlayerHasArmsArmorEquipped(armor=260200))
+    OR_10.Add(PlayerHasArmsArmorEquipped(armor=1070200))
+    OR_10.Add(PlayerHasArmsArmorEquipped(armor=1890200))
     SkipLinesIfConditionTrue(3, OR_10)
     EnableNetworkFlag(780000)
     DisableNetworkFlag(780001)
@@ -147,23 +216,23 @@ def Event_1035422150():
     # --- Label 10 --- #
     DefineLabel(10)
     EnableFlag(9021)
-    SkipLinesIfPlayerNotInOwnWorld(2)
-    UnknownCutscene_11(
-        cutscene_id=12060000,
-        cutscene_flags=0,
-        move_to_region=1035422152,
-        map_base_id=60354200,
-        player_id=10000,
-        unknown2=0,
-        unknown3=0,
-    )
-    SkipLines(1)
-    PlayCutscene(12060000, cutscene_flags=0, player_id=10000)
+    if PlayerInOwnWorld():
+        PlayCutsceneToPlayerAndWarp(
+            cutscene_id=12060000,
+            cutscene_flags=0,
+            move_to_region=1035422152,
+            map_id=60354200,
+            player_id=10000,
+            unk_20_24=0,
+            unk_24_25=False,
+        )
+    else:
+        PlayCutscene(12060000, cutscene_flags=0, player_id=10000)
     WaitFramesAfterCutscene(frames=1)
-    UnknownCamera_4(unknown1=34.79999923706055, unknown2=-136.3699951171875)
+    SetCameraAngle(x_angle=34.79999923706055, y_angle=-136.3699951171875)
     WaitFramesAfterCutscene(frames=1)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    ForceAnimation(PLAYER, 67100, unknown2=1.0)
+    if PlayerInOwnWorld():
+        ForceAnimation(PLAYER, 67100)
     DisableNetworkConnectedFlagRange(flag_range=(780000, 780009))
     RemoveGoodFromPlayer(item=8121, quantity=1)
     EnableFlag(1035420150)
@@ -173,36 +242,39 @@ def Event_1035422150():
 def Event_1035422151():
     """Event 1035422151"""
     GotoIfFlagDisabled(Label.L0, flag=1035420150)
-    DisableObject(1035421151)
+    DisableAsset(Assets.AEG110_243_2000)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(MAIN, 1035420150)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    DisableObject(1035421151)
+    AND_1.Add(PlayerInOwnWorld())
+    
+    MAIN.Await(FlagEnabled(1035420150))
+    
+    MAIN.Await(AND_1)
+    
+    DisableAsset(Assets.AEG110_243_2000)
 
 
 @NeverRestart(1035420200)
 def Event_1035420200():
     """Event 1035420200"""
-    IfOutsideMap(AND_2, game_map=SOUTHWEST_LIURNIA_NE_SE)
+    AND_2.Add(OutsideMap(game_map=SOUTHWEST_LIURNIA_NE_SE))
     GotoIfConditionTrue(Label.L2, input_condition=AND_2)
-    IfCharacterInsideRegion(OR_1, character=PLAYER, region=1035422300)
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1035422300))
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
-    IfCharacterOutsideRegion(AND_1, character=PLAYER, region=1035422300)
+    AND_1.Add(CharacterOutsideRegion(character=PLAYER, region=1035422300))
     GotoIfConditionTrue(Label.L1, input_condition=AND_1)
     Goto(Label.L2)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    Unknown_2003_68(unknown1=11, unknown2=-1.0, unknown3=1)
+    SetWeather(weather=Weather.HeavyFog, duration=-1.0, immediate_change=True)
     Goto(Label.L2)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    Unknown_2003_68(unknown1=-1, unknown2=-1.0, unknown3=1)
+    SetWeather(weather=Weather.Null, duration=-1.0, immediate_change=True)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -211,22 +283,24 @@ def Event_1035420200():
 
 
 @RestartOnRest(1035423700)
-def Event_1035423700(_, character: uint, obj: uint):
+def Event_1035423700(_, character: uint, asset: uint):
     """Event 1035423700"""
     WaitFrames(frames=1)
     DisableNetworkSync()
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagDisabled(1, 3540)
-    DisableFlag(1035429205)
+    if FlagEnabled(3540):
+        DisableFlag(1035429205)
 
     # --- Label 10 --- #
     DefineLabel(10)
     GotoIfFlagEnabled(Label.L5, flag=3545)
     DisableCharacter(character)
     DisableBackread(character)
-    DisableObject(obj)
-    IfFlagEnabled(OR_3, 3545)
-    IfConditionTrue(MAIN, input_condition=OR_3)
+    DisableAsset(asset)
+    OR_3.Add(FlagEnabled(3545))
+    
+    MAIN.Await(OR_3)
+    
     Restart()
 
     # --- Label 5 --- #
@@ -246,9 +320,9 @@ def Event_1035423700(_, character: uint, obj: uint):
     EnableBackread(character)
     DisableCharacter(character)
     SetTeamType(character, TeamType.FriendlyNPC)
-    EnableObject(obj)
+    EnableAsset(asset)
     DisableAnimations(character)
-    ForceAnimation(character, 930022, unknown2=1.0)
+    ForceAnimation(character, 930022)
     GotoIfConditionTrue(Label.L20, input_condition=MAIN)
 
     # --- Label 12 --- #
@@ -256,7 +330,7 @@ def Event_1035423700(_, character: uint, obj: uint):
     EnableBackread(character)
     EnableCharacter(character)
     SetTeamType(character, TeamType.FriendlyNPC)
-    ForceAnimation(character, 930020, unknown2=1.0)
+    ForceAnimation(character, 930020)
     GotoIfConditionTrue(Label.L20, input_condition=MAIN)
 
     # --- Label 2 --- #
@@ -282,29 +356,33 @@ def Event_1035423700(_, character: uint, obj: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagEnabled(OR_4, 3545)
-    IfConditionFalse(MAIN, input_condition=OR_4)
+    OR_4.Add(FlagEnabled(3545))
+    
+    MAIN.Await(not OR_4)
+    
     Restart()
 
 
 @RestartOnRest(1035420701)
-def Event_1035420701(_, character: uint, obj: uint):
+def Event_1035420701(_, character: uint, asset: uint):
     """Event 1035420701"""
-    DisableObject(1035421701)
+    DisableAsset(Assets.AEG099_090_9020)
     GotoIfFlagEnabled(Label.L1, flag=1035420701)
-    EnableObject(1035421701)
-    CreateObjectVFX(1035421701, vfx_id=100, model_point=600904)
-    IfPlayerInOwnWorld(AND_1)
-    IfAttackedWithDamageType(AND_1, attacked_entity=obj, attacker=20000)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    EnableAsset(Assets.AEG099_090_9020)
+    CreateAssetVFX(Assets.AEG099_090_9020, vfx_id=100, model_point=600904)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1035420701)
     DisableGravity(character)
     DisableAnimations(character)
     EnableCharacterCollision(character)
-    ForceAnimation(obj, 1, unknown2=1.0)
+    ForceAnimation(asset, 1)
     Wait(1.0)
-    DeleteObjectVFX(1035421701)
-    ForceAnimation(character, 20042, unknown2=1.0)
+    DeleteAssetVFX(Assets.AEG099_090_9020)
+    ForceAnimation(character, 20042)
     EnableCharacter(character)
     WaitFrames(frames=1)
     CreateTemporaryVFX(vfx_id=302603, anchor_entity=character, model_point=220, anchor_type=CoordEntityType.Character)
@@ -312,7 +390,7 @@ def Event_1035420701(_, character: uint, obj: uint):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    DisableObject(obj)
+    DisableAsset(asset)
     WaitFrames(frames=1)
     EnableGravity(character)
     EnableAnimations(character)
@@ -324,11 +402,15 @@ def Event_1035420701(_, character: uint, obj: uint):
 def Event_1035423702(_, character: uint):
     """Event 1035423702"""
     WaitFrames(frames=1)
-    EndIfFlagDisabled(3540)
-    EndIfFlagDisabled(3545)
-    IfFlagEnabled(MAIN, 1035429210)
+    if FlagDisabled(3540):
+        return
+    if FlagDisabled(3545):
+        return
+    
+    MAIN.Await(FlagEnabled(1035429210))
+    
     DisableAnimations(character)
-    ForceAnimation(character, 20054, unknown2=1.0)
+    ForceAnimation(character, 20054)
     Wait(5.0)
     DisableNetworkConnectedFlagRange(flag_range=(3540, 3544))
     EnableNetworkFlag(3543)
@@ -343,11 +425,16 @@ def Event_1035423702(_, character: uint):
 def Event_1035423703(_, entity: uint):
     """Event 1035423703"""
     WaitFrames(frames=1)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagDisabled(3545)
-    EndIfFlagDisabled(3540)
-    IfFlagEnabled(MAIN, 3541)
-    ForceAnimation(entity, 20052, unknown2=1.0)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(3545):
+        return
+    if FlagDisabled(3540):
+        return
+    
+    MAIN.Await(FlagEnabled(3541))
+    
+    ForceAnimation(entity, 20052)
     Restart()
 
 
@@ -357,15 +444,17 @@ def Event_1035420710(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L19)
-    SkipLinesIfFlagDisabled(1, 3740)
-    DisableFlag(1035429252)
+    if FlagEnabled(3740):
+        DisableFlag(1035429252)
 
     # --- Label 19 --- #
     DefineLabel(19)
     GotoIfFlagEnabled(Label.L10, flag=3750)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, 3750)
+    
+    MAIN.Await(FlagEnabled(3750))
+    
     Restart()
 
     # --- Label 10 --- #
@@ -379,11 +468,11 @@ def Event_1035420710(_, character: uint):
     DefineLabel(0)
     EnableBackread(character)
     EnableCharacter(character)
-    SkipLinesIfFlagEnabled(2, 1035422714)
-    ForceAnimation(character, 930002, unknown2=1.0)
-    SkipLines(2)
-    ForceAnimation(character, 20009, unknown2=1.0)
-    Unknown_2004_73(entity=character, unk_4_8=0)
+    if FlagDisabled(1035422714):
+        ForceAnimation(character, 930002)
+    else:
+        ForceAnimation(character, 20009)
+        SetCharacterFadeOnEnable(character=character, state=False)
     Goto(Label.L20)
 
     # --- Label 1 --- #
@@ -401,17 +490,23 @@ def Event_1035420710(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3750)
+    
+    MAIN.Await(FlagDisabled(3750))
+    
     Restart()
 
 
 @RestartOnRest(1035420711)
 def Event_1035420711(_, entity: uint):
     """Event 1035420711"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1034509406)
-    IfFlagEnabled(MAIN, 1034509406)
-    ForceAnimation(entity, 20007, unknown2=1.0)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1034509406):
+        return
+    
+    MAIN.Await(FlagEnabled(1034509406))
+    
+    ForceAnimation(entity, 20007)
     Wait(6.0)
     EnableFlag(1035429255)
 
@@ -419,34 +514,38 @@ def Event_1035420711(_, entity: uint):
 @RestartOnRest(1035420712)
 def Event_1035420712():
     """Event 1035420712"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1035420150)
-    IfFlagEnabled(MAIN, 1035420150)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1035420150):
+        return
+    
+    MAIN.Await(FlagEnabled(1035420150))
+    
     EnableFlag(3758)
     EnableNetworkFlag(1035422714)
 
 
 @RestartOnRest(1035420720)
-def Event_1035420720(_, character: uint, obj: uint):
+def Event_1035420720(_, character: uint, asset: uint):
     """Event 1035420720"""
     WaitFrames(frames=1)
     DisableNetworkSync()
     GotoIfPlayerNotInOwnWorld(Label.L19)
-    SkipLinesIfFlagEnabled(1, 4220)
-    DisableFlag(10009703)
+    if FlagDisabled(4220):
+        DisableFlag(10009703)
 
     # --- Label 19 --- #
     DefineLabel(19)
-    IfFlagEnabled(AND_1, 4227)
-    IfFlagDisabled(OR_1, 1035422160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
+    AND_1.Add(FlagEnabled(4227))
+    OR_1.Add(FlagDisabled(1035422160))
+    AND_1.Add(OR_1)
     GotoIfConditionTrue(Label.L6, input_condition=AND_1)
     DisableCharacter(character)
     DisableBackread(character)
-    DisableObject(obj)
-    IfFlagEnabled(AND_2, 4227)
-    IfFlagDisabled(OR_2, 1035422160)
-    IfConditionTrue(AND_2, input_condition=OR_2)
+    DisableAsset(asset)
+    AND_2.Add(FlagEnabled(4227))
+    OR_2.Add(FlagDisabled(1035422160))
+    AND_2.Add(OR_2)
     AwaitConditionTrue(AND_2)
     Restart()
 
@@ -460,8 +559,8 @@ def Event_1035420720(_, character: uint, obj: uint):
     DefineLabel(1)
     EnableCharacter(character)
     EnableBackread(character)
-    ForceAnimation(character, 90101, unknown2=1.0)
-    EnableObject(obj)
+    ForceAnimation(character, 90101)
+    EnableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -469,7 +568,7 @@ def Event_1035420720(_, character: uint, obj: uint):
     EnableCharacter(character)
     EnableBackread(character)
     SetTeamType(character, TeamType.HostileNPC)
-    EnableObject(obj)
+    EnableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 4 --- #
@@ -481,8 +580,8 @@ def Event_1035420720(_, character: uint, obj: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(OR_15, 4227)
-    IfFlagEnabled(OR_15, 1035422160)
+    OR_15.Add(FlagDisabled(4227))
+    OR_15.Add(FlagEnabled(1035422160))
     AwaitConditionTrue(OR_15)
     Restart()
 
@@ -490,8 +589,9 @@ def Event_1035420720(_, character: uint, obj: uint):
 @RestartOnRest(1035420721)
 def Event_1035420721():
     """Event 1035420721"""
-    EndIfPlayerNotInOwnWorld()
-    IfFlagRangeAnyEnabled(AND_1, flag_range=(4221, 4223))
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(FlagRangeAnyEnabled(flag_range=(4221, 4223)))
     AwaitConditionTrue(AND_1)
     DisableNetworkFlag(1034429209)
     End()

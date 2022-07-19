@@ -12,32 +12,67 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_48_37_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1048370000, obj=1048371950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1048370000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76458, 76405, 1048371980, 77410, 0, 78410, 78411, 78412, 78413, 78414, 78415, 78416, 78417, 78418, 78419),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76458,
+        flag_1=76405,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77410,
+        value=0,
+        flag_2=78410,
+        flag_3=78411,
+        flag_4=78412,
+        flag_5=78413,
+        flag_6=78414,
+        flag_7=78415,
+        flag_8=78416,
+        flag_9=78417,
+        flag_10=78418,
+        flag_11=78419,
     )
-    RunCommonEvent(0, 90005201, args=(1048370800, 30000, 20000, 50.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005870, args=(1048370800, 904501600, 25), arg_types="IiI")
-    RunCommonEvent(0, 90005861, args=(1048370800, 0, 1048370800, 1, 30400, 30064, 0.0), arg_types="IIIIiif")
+    CommonFunc_90005201(
+        0,
+        character=Characters.DecayingEkzykes,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=50.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005870(0, character=Characters.DecayingEkzykes, name=904501600, npc_threat_level=25)
+    CommonFunc_90005861(
+        0,
+        flag=1048370800,
+        left=0,
+        character=Characters.DecayingEkzykes,
+        left_1=1,
+        item_lot__item_lot_param_id=30400,
+        text=30064,
+        seconds=0.0,
+    )
     Event_1048372200(
         0,
-        character=1048370299,
+        character=Characters.Scarab,
         special_effect=12603,
         region=1048372299,
         region_1=1048372298,
-        region_2=1048372297
+        region_2=1048372297,
     )
-    RunCommonEvent(0, 90005300, args=(1048370299, 1048370299, 40406, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 1048370299, 1048370299, 40406, 0.0, 0)
 
 
 @NeverRestart(50)
@@ -49,11 +84,14 @@ def Preconstructor():
 @NeverRestart(1048372200)
 def Event_1048372200(_, character: uint, special_effect: int, region: uint, region_1: uint, region_2: uint):
     """Event 1048372200"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
-    IfCharacterHasSpecialEffect(AND_2, character, special_effect)
-    IfCharacterAlive(AND_2, character)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
+    AND_2.Add(CharacterHasSpecialEffect(character, special_effect))
+    AND_2.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_2)
+    
     DisableFlag(1048372201)
     DisableFlag(1048372202)
     WaitFrames(frames=1)
@@ -68,10 +106,10 @@ def Event_1048372200(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1048372201)
     SkipLines(3)
     Move(character, destination=region_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
     Move(character, destination=region_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
 
     # --- Label 2 --- #
@@ -79,10 +117,10 @@ def Event_1048372200(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1048372201)
     SkipLines(3)
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
     Move(character, destination=region_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
 
     # --- Label 3 --- #
@@ -90,10 +128,10 @@ def Event_1048372200(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1048372201)
     SkipLines(3)
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
     Move(character, destination=region_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True, wait_for_completion=True)
     Goto(Label.L0)
 
     # --- Label 0 --- #

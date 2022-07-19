@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["Instruction"]
+__all__ = ["Instruction", "EventArg"]
 
 import abc
 import logging
@@ -13,9 +13,145 @@ from .utils import get_byte_offset_from_struct, get_instruction_args
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
     from .entity_enums_manager import EntityEnumsManager
-    from .event import EventArg
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class EventArg(abc.ABC):
+    DEFAULT_ARG_SIZE_TYPE = {1: "B", 2: "H", 4: "I"}
+    HEADER_STRUCT: BinaryStruct = None
+
+    names: set[str]
+    fmts: set[str]  # format characters such as 'i', 'B', 'H'
+    py_types: set[type]  # EMEDF game types or unions such as `Flag`, `int`, `CharacterTyping`
+
+    def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, unknown=0):
+        """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
+        self.line = instruction_line
+        self.write_from_byte = write_from_byte
+        self.read_from_byte = read_from_byte
+        self.bytes_to_write = bytes_to_write
+        self.unknown = unknown
+
+        self.names = set()
+        self.fmts = set()
+        self.py_types = set()
+
+    @classmethod
+    def unpack(cls, reader: BinaryReader, count=1):
+        event_args = []
+        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
+        for d in struct_dicts:
+            event_args.append(cls(**d))
+        return event_args
+
+    @property
+    def arg_range(self) -> tuple[int, int]:
+        return self.read_from_byte, self.read_from_byte + self.bytes_to_write - 1
+
+    @classmethod
+    def generic(cls, arg_range: tuple[int, int]):
+        """Return an `EventArg` that only contains information needed for EVS decompilation, not EMEVD packing."""
+        return cls(0, 0, arg_range[0], arg_range[1] - arg_range[0], 0)
+
+    def to_numeric(self):
+        # TODO: Should include `unknown`, since (as of Elden Ring?) it is not always zero.
+        return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
+
+    def to_binary(self):
+        return self.HEADER_STRUCT.pack(
+            instruction_line=self.line,
+            write_from_byte=self.write_from_byte,
+            read_from_byte=self.read_from_byte,
+            bytes_to_write=self.bytes_to_write,
+            unknown=self.unknown,
+        )
+
+    def add_info(self, other: EventArg):
+        """Merge in name, fmt, and py_type sets."""
+        self.names |= other.names
+        self.fmts |= other.fmts
+        self.py_types |= other.py_types
+
+    def remove_generic_names(self):
+        # Remove non-preferred arg names.
+        # TODO: Should check 'classes' of names, so 'character__flag' doesn't just become 'character', etc.
+        for vague_arg_name in (
+            "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
+            "destination", "source_entity", "copy_draw_parent", "line_intersects", "flag", "left", "right",
+            "model_point",
+        ):
+            if len(self.names) >= 2 and vague_arg_name in self.names:
+                self.names.remove(vague_arg_name)
+
+    def get_combined_arg_name(self, existing_arg_names: tp.Iterable[str]):
+        try_arg_name = "__".join(sorted(self.names))
+
+        # Add suffix to distinguish duplicate event arg names.
+        if try_arg_name in existing_arg_names:
+            arg_duplicate_index = 1
+            arg_name = try_arg_name + f"_{arg_duplicate_index}"
+            while arg_name in existing_arg_names:
+                arg_duplicate_index += 1
+                arg_name = try_arg_name + f"_{arg_duplicate_index}"
+        else:
+            arg_name = try_arg_name
+        return arg_name
+
+    def get_combined_fmt(self, event_id: int | str = "unknown", arg_name: str = "unknown") -> str:
+        if len(self.fmts) > 1:
+            # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
+            sizes = {struct.calcsize(fmt) for fmt in self.fmts}
+            if len(sizes) == 1:
+                arg_size = next(iter(sizes))
+                fmt = self.DEFAULT_ARG_SIZE_TYPE[arg_size]
+                _LOGGER.warning(
+                    f"Detected multiple types for event arg '{fmt}' in event {event_id}: {self.fmts}. "
+                    f"Using default type '{fmt}' for this arg size ({arg_size})."
+                )
+                return fmt
+            else:
+                raise ValueError(
+                    f"Detected multiple types for event arg '{arg_name}' in event {event_id}: {self.fmts}. "
+                    f"They have incompatible sizes, which is not permitted."
+                )
+        else:
+            return next(iter(self.fmts))
+
+    def get_combined_py_types(self) -> tuple[tp.Type, ...]:
+        """Returns a tuple of types for checking by breaking up Union objects."""
+        all_py_types = []
+        for py_type in self.py_types:
+            try:
+                origin = tp.get_origin(py_type)
+            except AttributeError:
+                all_py_types.append(py_type)  # implies `py_type` is a real Python type
+            else:
+                union_types = tp.get_args(py_type) if origin is tp.Union else ()
+                for union_type in union_types:
+                    if union_type not in all_py_types:
+                        all_py_types.append(union_type)
+        return tuple(all_py_types)
+
+    def get_combined_info(
+        self, existing_arg_names: tp.Iterable[str], event_id: int
+    ) -> tuple[str, str, tuple[tp.Type, ...]]:
+        arg_name = self.get_combined_arg_name(existing_arg_names)
+        fmt = self.get_combined_fmt(event_id, arg_name)
+        py_types = self.get_combined_py_types()
+
+        return arg_name, fmt, py_types
+
+    def __repr__(self) -> str:
+        if self.unknown == 0:
+            return (
+                f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
+                f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write})"
+            )
+        return (
+            f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
+            f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write}, unknown={self.unknown})"
+        )
 
 
 class Instruction(abc.ABC):
@@ -132,12 +268,15 @@ class Instruction(abc.ABC):
             numeric.append("    ^" + replacement.to_numeric())
         return numeric
 
-    def to_evs(self, event_arg_types, enums_manager: EntityEnumsManager = None) -> str:
+    def to_evs(self, enums_manager: EntityEnumsManager, all_event_arg_fmts: dict[int, str]) -> str:
         """Convert single event instruction to EVS."""
         args, opt_args = self.get_required_and_optional_args()
 
-        if (called_event_id := self.get_called_event()) is not None and opt_args and called_event_id in event_arg_types:
-            opt_arg_types = event_arg_types[called_event_id]
+        if (
+            (called_event_id := self.get_called_event()) is not None
+            and opt_args and called_event_id in all_event_arg_fmts
+        ):
+            opt_arg_types = all_event_arg_fmts[called_event_id]
         else:
             opt_arg_types = ""
 
@@ -168,28 +307,17 @@ class Instruction(abc.ABC):
             optional_args = self.evs_args_list[separator_index:]
         return required_args, optional_args
 
-    def process_event_args(self) -> dict[tuple[int, int], tuple[set[str], set[str]]]:
-        """Inserts arg replacements into the appropriate places in their instructions for readability.
+    def process_event_args(self):
+        """Adds name, fmt, and Python type information to `EventArg` replacements in this instruction.
 
-        By default, the arg replacements are represented as "arg_i_j", where i and j specify the start and end
-        (exclusive) of the byte range read from the arguments passed to the `RunEvent` instruction. The `Event` class
-        may replace these default names with more useful argument names, detected from the corresponding argument names
-        across the full set of instructions in the event that actually use them.
-
-        Returns a dictionary mapping start-stop bytes for reading the arg `(i, j)` to two sets:
-            - a set of format characters (e.g, `"i"`, "f"`) determined from the instruction's known arg format. The set
-            values in this dictionary will generally only contain one format string, unless the event argument is used
-            for inconsistently-sized fields within the same instruction.
-            - a set of argument names taken from the instructions in `EMEDF`, which are used to generate a more useful
-            name for the event arg than the default 'arg_i_j'. Again, this will only contain multiple names if the same
-            event argument is used for multiple arguments within the same instruction, which would be very unusual.
+        Also builds `evs_args_list`, using `arg_i_j` names for event arguments. These default names may be overwritten
+        later based on how ALL the different Instructions in the same event use them.
         """
 
         # Elden Ring overwrites value 10000 a lot.
-        permitted = [0, 0.0, -1, 1, 10, 10000]  # NOTE: Strings are permitted to overwrite anything.
+        # TODO: More systematic. Really, instruction args should only be able to override their own `internal_default`.
+        permitted = [0, 0.0, -1, 2 ** 32 - 1, 1, 10, 10000]  # NOTE: Strings are permitted to overwrite anything.
         arg_offset_dict = get_byte_offset_from_struct(self.display_arg_types)
-
-        instruction_arg_types_names = {}
 
         self.evs_args_list = self.args_list.copy()
 
@@ -221,25 +349,24 @@ class Instruction(abc.ABC):
                 evs_arg_name = "event_slot"
             default_arg_name = f"arg_{arg_r.read_from_byte}_{arg_r.read_from_byte + arg_r.bytes_to_write - 1}"
 
+            arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
+            arg_py_type = arg_info["type"]
+
             if value_to_overwrite not in permitted and argument_byte_type != "s":
-                arg_info = self.EMEDF[self.category, self.index]["args"][evs_arg_name]
                 if value_to_overwrite != arg_info.get("internal_default", None):
                     _LOGGER.error(
-                        f"Event argument '{default_arg_name}' ({evs_arg_name}) is overwriting non-zero value "
-                        f"{value_to_overwrite} (position {argument_index}) in instruction {self.category}[{self.index}] "
+                        f"Event argument '{default_arg_name}' ({evs_arg_name}) is overwriting unusual default value "
+                        f"{value_to_overwrite} (position {argument_index}) in instruction {self.instruction_id} "
                         f"with args {self.args_list} (types '{self.display_arg_types}')"
                     )
 
             self.evs_args_list[argument_index] = default_arg_name  # will generally be replaced with an EVS name later
+            arg_r.names.add(evs_arg_name)
+            arg_r.fmts.add(argument_byte_type)
+            arg_r.py_types.add(arg_py_type)
 
-            arg_range = (arg_r.read_from_byte, arg_r.read_from_byte + arg_r.bytes_to_write - 1)
-
-            if arg_range not in instruction_arg_types_names:
-                instruction_arg_types_names[arg_range] = (set(), set())
-            instruction_arg_types_names[arg_range][0].add(argument_byte_type)
-            instruction_arg_types_names[arg_range][1].add(evs_arg_name)
-
-        return {arg_range: instruction_arg_types_names[arg_range] for arg_range in sorted(instruction_arg_types_names)}
+        # Sort event args by arg range.
+        self.event_args = sorted(self.event_args, key=lambda x: x.arg_range)
 
     def args_list_to_binary(self):
         if self.args_list:

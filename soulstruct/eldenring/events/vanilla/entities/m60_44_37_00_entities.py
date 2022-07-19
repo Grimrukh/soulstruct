@@ -1,0 +1,24 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1044370950  # c1000_9000 npc 10000000 think 1 talk 1000
+    Skeleton0 = 1044370200  # c3500_9000 npc 35002010 think 35002000
+    Skeleton1 = 1044370201  # c3500_9001 npc 35002010 think 35002000
+    DemiHuman0 = 1044370211  # c4100_9011 npc 41000010 think 41000000
+    DemiHuman1 = 1044370212  # c4100_9012 npc 41000010 think 41000000
+    DemiHuman2 = 1044370213  # c4100_9013 npc 41000010 think 41000000
+    DemiHuman3 = 1044370214  # c4100_9014 npc 41000010 think 41000000
+    WanderingNoble = 1044370700  # c4300_9000 npc 43009010 think 500000000 talk 700016000
+    GodrickFootSoldier0 = 1044370260  # c4371_9000 npc 43710010 think 43700000
+    GodrickFootSoldier1 = 1044370261  # c4371_9001 npc 43710010 think 43700000
+    GodrickFootSoldier2 = 1044370262  # c4371_9002 npc 43711010 think 43700100
+    Runebear = 1044370350  # c4630_9000 npc 46300010 think 46300000 group 1044375102
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1044371950  # AEG099
+    AEG801_480_9000 = 1044371211  # AEG801
+    AEG801_480_9001 = 1044371212  # AEG801
+    AEG801_480_9002 = 1044371213  # AEG801
+    AEG801_480_9003 = 1044371214  # AEG801

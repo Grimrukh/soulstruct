@@ -12,24 +12,39 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_51_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005633(
         0,
-        90005633,
-        args=(580360, 580060, 1051400298, 30017, 20017, 1051401500, 1051401501),
-        arg_types="IIIiiII",
+        character=580360,
+        flag=580060,
+        character_1=Characters.WanderingNoble,
+        animation_id=30017,
+        animation_id_1=20017,
+        asset=Assets.AEG099_166_9000,
+        asset_1=Assets.AEG099_990_9000,
     )
-    RunCommonEvent(0, 90005870, args=(1051400800, 904811601, 18), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1051400800, 0, 1051400800, 0, 30415, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005872, args=(1051400800, 18, 0), arg_types="III")
-    RunCommonEvent(0, 90005250, args=(1051400200, 1051402200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051400201, 1051402200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051400202, 1051402200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051400299, 1051402300, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1051400300, 7.0, 0.0, -1), arg_types="Iffi")
+    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811601, npc_threat_level=18)
+    CommonFunc_90005860(
+        0,
+        flag=1051400800,
+        left=0,
+        character=Characters.PutridAvatar,
+        left_1=0,
+        item_lot__item_lot_param_id=30415,
+        seconds=0.0,
+    )
+    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
+    CommonFunc_90005250(0, 1051400200, 1051402200, 0.0, -1)
+    CommonFunc_90005250(0, 1051400201, 1051402200, 0.0, -1)
+    CommonFunc_90005250(0, 1051400202, 1051402200, 0.0, -1)
+    CommonFunc_90005250(0, 1051400299, 1051402300, 0.0, -1)
+    CommonFunc_90005251(0, 1051400300, 7.0, 0.0, -1)

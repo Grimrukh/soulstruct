@@ -12,66 +12,77 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_39_50_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005620(
         0,
-        90005620,
-        args=(1039500570, 1039501570, 1039501571, 0, 1039502571, 1039502572, 1039502573),
-        arg_types="IIIIIIi",
+        flag=1039500570,
+        asset=Assets.AEG027_079_9000,
+        asset_1=Assets.AEG027_216_9000,
+        asset_2=0,
+        left_flag=1039502571,
+        cancel_flag__right_flag=1039502572,
+        right=1039502573,
     )
     Event_1039502580(
         0,
         flag=1039500800,
         flag_1=1039500805,
         flag_2=1039502800,
-        character=1039500800,
+        character=Characters.GodricktheGrafted,
         item_lot_param_id=1039500100,
         area_id=60,
         block_id=39,
         cc_id=50,
         dd_id=0,
-        player_start=1039502805
+        player_start=1039502805,
     )
-    RunCommonEvent(
-        0,
-        90005882,
-        args=(
-            1039500800,
-            1039500805,
-            1039502800,
-            1039500800,
-            1039502806,
-            1039505810,
-            1039501800,
-            1039500810,
-            1039502810,
-            904750520,
-            -1,
-            20012,
-        ),
-        arg_types="IIIIIIIIIiii",
-    )
-    RunCommonEvent(0, 90005885, args=(1039500800, 921100, 1039502806, 1039502807, 0, 1), arg_types="IiIIii")
-    Event_1039502575(
+    CommonFunc_90005882(
         0,
         1039500800,
         1039500805,
-        1039502801,
-        1039502802,
-        20300,
-        1039501805,
-        60,
-        39,
-        50,
+        1039502800,
+        1039500800,
+        1039502806,
+        1039505810,
+        1039501800,
+        1039500810,
+        1039502810,
+        904750520,
+        -1,
+        20012,
+    )
+    CommonFunc_90005885(
         0,
-        1039502805,
-        1039500570,
+        flag=1039500800,
+        bgm_boss_conv_param_id=921100,
+        flag_1=1039502806,
+        flag_2=1039502807,
+        left=0,
+        left_1=1,
+    )
+    Event_1039502575(
+        0,
+        flag=1039500800,
+        flag_1=1039500805,
+        left_flag=1039502801,
+        cancel_flag__right_flag=1039502802,
+        message=20300,
+        anchor_entity=Assets.AEG099_170_3000,
+        area_id=60,
+        block_id=39,
+        cc_id=50,
+        dd_id=0,
+        player_start=1039502805,
+        flag_2=1039500570,
     )
     Event_1039502576(0, 1039500800, 1039500805, 1039501805, 1039500570)
 
@@ -79,17 +90,35 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005251, args=(1039500400, 30.0, 1.0, 3022), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1039500450, 20.0, 0.0, 3020), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1039500451, 20.0, 0.0, 3020), arg_types="Iffi")
-    RunCommonEvent(
+    CommonFunc_90005251(0, character=Characters.RevenantFollower, radius=30.0, seconds=1.0, animation_id=3022)
+    CommonFunc_90005251(0, character=Characters.VulgarMilitia0, radius=20.0, seconds=0.0, animation_id=3020)
+    CommonFunc_90005251(0, character=Characters.VulgarMilitia1, radius=20.0, seconds=0.0, animation_id=3020)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1039500307, 30000, 20000, 1039502300, 5.0, 0.5, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Misbegotten,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1039502300,
+        radius=5.0,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(1039500302, 30000, 20000, 1039502300, 1.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1039500303, 30000, 20000, 1039502300, 1.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(
+        0,
+        character=1039500302,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1039502300,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 1039500303, 30000, 20000, 1039502300, 1.5, 0, 0, 0, 0)
 
 
 @RestartOnRest(1039502575)
@@ -105,20 +134,25 @@ def Event_1039502575(
     block_id: uchar,
     cc_id: char,
     dd_id: char,
-    player_start__region: uint,
+    player_start: uint,
     flag_2: uint,
 ):
     """Event 1039502575"""
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(flag)
-    EndIfFlagEnabled(flag_1)
-    IfTryingToJoinSession(AND_2)
-    IfConditionFalse(AND_1, input_condition=AND_2)
-    IfLeavingSession(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=9230, entity=anchor_entity)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(flag):
+        return
+    if FlagEnabled(flag_1):
+        return
+    AND_2.Add(MultiplayerPending())
+    AND_1.Add(not AND_2)
+    AND_1.Add(Singleplayer())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=9230, entity=anchor_entity))
+    
+    MAIN.Await(AND_1)
+    
     DisplayDialogAndSetFlags(
         message=message,
         button_type=ButtonType.Yes_or_No,
@@ -129,51 +163,60 @@ def Event_1039502575(
         right_flag=cancel_flag__right_flag,
         cancel_flag=cancel_flag__right_flag,
     )
-    RestartIfFlagEnabled(cancel_flag__right_flag)
-    IfTryingToCreateSession(OR_3)
-    IfTryingToJoinSession(OR_3)
-    RestartIfConditionTrue(input_condition=OR_3)
-    SkipLinesIfFlagEnabled(4, flag_2)
-    Wait(0.5)
-    DisplayDialog(text=20510, anchor_entity=anchor_entity, display_distance=5.0)
-    Wait(3.0)
-    Restart()
+    if FlagEnabled(cancel_flag__right_flag):
+        return RESTART
+    OR_3.Add(Multiplayer())
+    OR_3.Add(MultiplayerPending())
+    if OR_3:
+        return RESTART
+    if FlagDisabled(flag_2):
+        Wait(0.5)
+        DisplayDialog(text=20510, anchor_entity=anchor_entity, display_distance=5.0)
+        Wait(3.0)
+        Restart()
     EnableNetworkFlag(flag_1)
     WaitFrames(frames=1)
-    ForceAnimation(PLAYER, 60450, unknown2=1.0)
+    ForceAnimation(PLAYER, 60450)
     Wait(1.5)
-    Unknown_2004_74(
+    MoveCharacterAndCopyDrawParentWitHFadeout(
         character=PLAYER,
-        unknown1=1,
-        region=player_start__region,
-        unknown2=-1,
-        character_2=PLAYER,
-        unknown3=1,
-        unknown4=1,
+        destination_type=CoordEntityType.Region,
+        destination=player_start,
+        model_point=-1,
+        copy_draw_parent=PLAYER,
+        use_bonfire_effect=True,
+        reset_camera=True,
     )
     EnableFlag(9021)
     End()
-    WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start__region)
+    WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
 
 
 @RestartOnRest(1039502576)
 def Event_1039502576(_, flag: uint, flag_1: uint, entity: uint, flag_2: uint):
     """Event 1039502576"""
-    ForceAnimation(entity, 0, loop=True, unknown2=1.0)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(flag)
-    EndIfFlagEnabled(flag_1)
-    IfLeavingSession(AND_1)
-    IfTryingToJoinSession(AND_2)
-    IfConditionFalse(AND_1, input_condition=AND_2)
-    IfFlagEnabled(AND_1, flag_2)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    ForceAnimation(entity, 0, loop=True)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(flag):
+        return
+    if FlagEnabled(flag_1):
+        return
+    AND_1.Add(Singleplayer())
+    AND_2.Add(MultiplayerPending())
+    AND_1.Add(not AND_2)
+    AND_1.Add(FlagEnabled(flag_2))
+    
+    MAIN.Await(AND_1)
+    
     WaitFrames(frames=1)
-    ForceAnimation(entity, 1, loop=True, unknown2=1.0)
-    IfLeavingSession(AND_11)
-    IfTryingToJoinSession(AND_12)
-    IfConditionFalse(AND_11, input_condition=AND_12)
-    IfConditionFalse(MAIN, input_condition=AND_11)
+    ForceAnimation(entity, 1, loop=True)
+    AND_11.Add(Singleplayer())
+    AND_12.Add(MultiplayerPending())
+    AND_11.Add(not AND_12)
+    
+    MAIN.Await(not AND_11)
+    
     WaitFrames(frames=1)
     Restart()
 
@@ -193,14 +236,19 @@ def Event_1039502580(
     player_start: uint,
 ):
     """Event 1039502580"""
-    EndIfFlagEnabled(flag)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagDisabled(flag_1)
-    IfCharacterDead(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(flag):
+        return
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(flag_1):
+        return
+    AND_1.Add(CharacterDead(character))
+    
+    MAIN.Await(AND_1)
+    
     Wait(3.0)
-    KillBossAndDisplayBanner(character=character, banner_type=BannerType.Unknown)
-    UnknownMap_12(unk_0_4=10.0)
+    KillBossAndDisplayBanner(character=character, banner_type=BannerType.GreatEnemyFelled)
+    DeactivateGparamOverride(change_duration=10.0)
     AwardItemLot(item_lot_param_id, host_only=True)
     EnableNetworkFlag(flag)
     Wait(5.0)

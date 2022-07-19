@@ -12,117 +12,391 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=76311, obj=1043531950, unknown=5.0)
-    RegisterGrace(grace_flag=76312, obj=1043531951, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=76311, asset=Assets.AEG099_060_9000)
+    RegisterGrace(grace_flag=76312, asset=Assets.AEG099_060_9002)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76314, 76312, 1043531981, 77300, 4, 78300, 78301, 78302, 78303, 78304, 78305, 78306, 78307, 78308, 78309),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76314,
+        flag_1=76312,
+        asset=Assets.AEG099_060_9003,
+        source_flag=77300,
+        value=4,
+        flag_2=78300,
+        flag_3=78301,
+        flag_4=78302,
+        flag_5=78303,
+        flag_6=78304,
+        flag_7=78305,
+        flag_8=78306,
+        flag_9=78307,
+        flag_10=78308,
+        flag_11=78309,
     )
-    RunCommonEvent(0, 90005300, args=(1043530500, 1043530500, 40318, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    CommonFunc_90005300(0, flag=1043530500, character=Characters.Scarab, item_lot_param_id=40318, seconds=0.0, left=0)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043530354, 30005, 20021, 1043532350, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellFootSoldier0,
+        animation_id=30005,
+        animation_id_1=20021,
+        region=1043532350,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043530355, 30005, 20021, 1043532350, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellFootSoldier1,
+        animation_id=30005,
+        animation_id_1=20021,
+        region=1043532350,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043530350, 30000, 20000, 1043532350, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellSoldier,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1043532350,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005870, args=(1043530800, 903100602, 10), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1043530800, 0, 1043530800, 0, 1043530400, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005760, args=(1043530800, 1043530800, 1043532400, 1043532708), arg_types="IIII")
-    RunCommonEvent(0, 90005872, args=(1043530800, 10, 0), arg_types="III")
-    RunCommonEvent(0, 90005702, args=(1043530700, 4763, 4760, 4763), arg_types="IIII")
-    RunCommonEvent(0, 90005703, args=(1043530700, 4761, 4762, 1043530702, 4761, 4760, 4763, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1043530700, 4761, 4760, 1043530702, 3), arg_types="IIIIi")
-    Event_1043530700(0, character=1043530700, character_1=1043530701, obj=1043536700)
-    RunCommonEvent(0, 90005770, args=(1043530701,))
-    RunCommonEvent(0, 90005727, args=(4761, 1043530700, 1043530701, 4760, 4763), arg_types="IIIII")
-    RunCommonEvent(0, 90005728, args=(1043530701, 1043532706, 1043532707), arg_types="III")
-    RunCommonEvent(0, 90005703, args=(1043530701, 4761, 4762, 1043530702, 4761, 4760, 4763, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1043530701, 4761, 4760, 1043530702, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005771, args=(1043530951, 1043532710), arg_types="II")
+    CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100602, npc_threat_level=10)
+    CommonFunc_90005860(
+        0,
+        flag=1043530800,
+        left=0,
+        character=Characters.BellBearingHunter,
+        left_1=0,
+        item_lot__item_lot_param_id=1043530400,
+        seconds=0.0,
+    )
+    CommonFunc_90005760(
+        0,
+        flag=1043530800,
+        character=Characters.BellBearingHunter,
+        region=1043532400,
+        flag_1=1043532708,
+    )
+    CommonFunc_90005872(0, character=Characters.BellBearingHunter, npc_threat_level=10, right=0)
+    CommonFunc_90005702(0, character=Characters.Merchant, flag=4763, first_flag=4760, last_flag=4763)
+    CommonFunc_90005703(
+        0,
+        character=Characters.Merchant,
+        flag=4761,
+        flag_1=4762,
+        flag_2=1043530702,
+        flag_3=4761,
+        first_flag=4760,
+        last_flag=4763,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4761, flag_1=4760, flag_2=1043530702, right=3)
+    Event_1043530700(0, character=Characters.Merchant, character_1=Characters.NomadMule, asset=1043536700)
+    CommonFunc_90005770(0, flag=1043530701)
+    CommonFunc_90005727(
+        0,
+        flag=4761,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4760,
+        last_flag=4763,
+    )
+    CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1043532706, flag_1=1043532707)
+    CommonFunc_90005703(
+        0,
+        character=Characters.NomadMule,
+        flag=4761,
+        flag_1=4762,
+        flag_2=1043530702,
+        flag_3=4761,
+        first_flag=4760,
+        last_flag=4763,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4761, flag_1=4760, flag_2=1043530702, right=3)
+    CommonFunc_90005771(0, 1043530951, 1043532710)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1043530700)
-    DisableBackread(1043530701)
-    RunCommonEvent(
+    DisableBackread(Characters.Merchant)
+    DisableBackread(Characters.NomadMule)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043530202, 30016, 20016, 1043532203, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Skeleton0,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1043532203,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(1043530203, 30016, 20016, 1043532203, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043530204, 30016, 20016, 1043532204, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1043530206, 30014, 20014, 1043532206, 8.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Skeleton1,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1043532203,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005200(
         0,
-        90005211,
-        args=(1043530207, 30014, 20014, 1043532206, 8.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Skeleton2,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1043532204,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(1043530208, 30014, 20014, 1043532208, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005201, args=(1043530218, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530219, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530221, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530222, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530228, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530229, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530209, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530210, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530211, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530214, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530215, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1043530216, 30014, 20014, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005200, args=(1043530230, 30014, 20014, 1043532230, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043530212, 30016, 20016, 1043532212, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton3,
+        animation_id=30014,
+        animation_id_1=20014,
+        region=1043532206,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton4,
+        animation_id=30014,
+        animation_id_1=20014,
+        region=1043532206,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton5,
+        animation_id=30014,
+        animation_id_1=20014,
+        region=1043532208,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1043530218,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1043530219,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton12,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1043530222,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton13,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton14,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton6,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton7,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton8,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton10,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton11,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=1043530216,
+        animation_id=30014,
+        animation_id_1=20014,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton15,
+        animation_id=30014,
+        animation_id_1=20014,
+        region=1043532230,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 1043530212, 30016, 20016, 1043532212, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1043530700)
-def Event_1043530700(_, character: uint, character_1: uint, obj: uint):
+def Event_1043530700(_, character: uint, character_1: uint, asset: uint):
     """Event 1043530700"""
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    SkipLinesIfFlagDisabled(1, 4760)
-    DisableFlag(1043539205)
+    if FlagEnabled(4760):
+        DisableFlag(1043539205)
 
     # --- Label 10 --- #
     DefineLabel(10)
     GotoIfFlagEnabled(Label.L4, flag=1043532709)
     DisableNetworkFlag(1043532708)
-    IfFlagEnabled(OR_1, 1043530701)
-    IfFlagEnabled(OR_1, 4761)
-    IfFlagEnabled(OR_1, 4763)
-    IfTimeOfDay(AND_1, earliest=(20, 0, 0), latest=(5, 30, 0))
-    IfFlagDisabled(AND_1, 1043530800)
-    IfConditionTrue(AND_1, input_condition=OR_1)
+    OR_1.Add(FlagEnabled(1043530701))
+    OR_1.Add(FlagEnabled(4761))
+    OR_1.Add(FlagEnabled(4763))
+    AND_1.Add(TimeOfDayInRange(earliest=(20, 0, 0), latest=(5, 30, 0)))
+    AND_1.Add(FlagDisabled(1043530800))
+    AND_1.Add(OR_1)
     GotoIfConditionFalse(Label.L4, input_condition=AND_1)
     EnableNetworkFlag(1043532708)
 
@@ -135,37 +409,37 @@ def Event_1043530700(_, character: uint, character_1: uint, obj: uint):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfFlagDisabled(6, 1043532708)
-    DisableCharacter(character)
-    DisableBackread(character)
-    DisableCharacter(character_1)
-    DisableBackread(character_1)
-    DisableObject(obj)
-    Goto(Label.L20)
+    if FlagEnabled(1043532708):
+        DisableCharacter(character)
+        DisableBackread(character)
+        DisableCharacter(character_1)
+        DisableBackread(character_1)
+        DisableAsset(asset)
+        Goto(Label.L20)
     EnableCharacter(character)
     EnableBackread(character)
-    ForceAnimation(character, 930003, unknown2=1.0)
+    ForceAnimation(character, 930003)
     EnableCharacter(character_1)
     EnableBackread(character_1)
-    EnableObject(obj)
+    EnableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfFlagDisabled(6, 1043532708)
-    DisableCharacter(character)
-    DisableBackread(character)
-    DisableCharacter(character_1)
-    DisableBackread(character_1)
-    DisableObject(obj)
-    Goto(Label.L20)
+    if FlagEnabled(1043532708):
+        DisableCharacter(character)
+        DisableBackread(character)
+        DisableCharacter(character_1)
+        DisableBackread(character_1)
+        DisableAsset(asset)
+        Goto(Label.L20)
     EnableCharacter(character)
     EnableBackread(character)
     SetTeamType(character, TeamType.HostileNPC)
     EnableCharacter(character_1)
     EnableBackread(character_1)
     SetTeamType(character_1, TeamType.HostileNPC)
-    EnableObject(obj)
+    EnableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 3 --- #
@@ -175,7 +449,7 @@ def Event_1043530700(_, character: uint, character_1: uint, obj: uint):
     DisableBackread(character)
     DisableCharacter(character_1)
     DisableBackread(character_1)
-    DisableObject(obj)
+    DisableAsset(asset)
     Goto(Label.L20)
 
     # --- Label 20 --- #

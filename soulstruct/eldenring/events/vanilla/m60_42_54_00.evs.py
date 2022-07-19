@@ -12,118 +12,145 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_42_54_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterLadder(start_climbing_flag=1042540580, stop_climbing_flag=1042540581, obj=1042541580)
-    RegisterLadder(start_climbing_flag=1042540582, stop_climbing_flag=1042540583, obj=1042541582)
-    RegisterLadder(start_climbing_flag=1042540584, stop_climbing_flag=1042540585, obj=1042541584)
-    RunCommonEvent(
+    RegisterLadder(start_climbing_flag=1042540580, stop_climbing_flag=1042540581, asset=Assets.AEG110_012_1000)
+    RegisterLadder(start_climbing_flag=1042540582, stop_climbing_flag=1042540583, asset=Assets.AEG110_012_1001)
+    RegisterLadder(start_climbing_flag=1042540584, stop_climbing_flag=1042540585, asset=Assets.AEG110_012_1002)
+    CommonFunc_90005633(
         0,
-        90005633,
-        args=(580350, 580050, 1042540400, 30017, 20017, 1042541400, 1042541410),
-        arg_types="IIIiiII",
+        character=580350,
+        flag=580050,
+        character_1=Characters.WanderingNoble,
+        animation_id=30017,
+        animation_id_1=20017,
+        asset=Assets.AEG099_166_9000,
+        asset_1=Assets.AEG099_990_9000,
     )
-    RunCommonEvent(0, 90005706, args=(1042540700, 30025, 0), arg_types="IiI")
+    CommonFunc_90005706(0, 1042540700, 30025, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1042540700)
-    RunCommonEvent(0, 90005250, args=(1042540200, 1042542200, 0.0, 3005), arg_types="IIfi")
-    Event_1042542350(0, character=1042540300, region=1042542300, character_1=1042545300)
-    Event_1042542350(1, character=1042540301, region=1042542301, character_1=1042545300)
-    Event_1042542350(2, character=1042540302, region=1042542302, character_1=1042545300)
-    Event_1042542350(3, character=1042540310, region=1042542310, character_1=1042545310)
-    Event_1042542350(4, character=1042540311, region=1042542311, character_1=1042545310)
-    Event_1042542350(5, character=1042540312, region=1042542312, character_1=1042545310)
-    Event_1042542350(6, character=1042540313, region=1042542313, character_1=1042545310)
-    Event_1042542350(7, character=1042540314, region=1042542314, character_1=1042545310)
-    Event_1042542350(8, character=1042540315, region=1042542315, character_1=1042545310)
-    Event_1042542350(9, character=1042540316, region=1042542316, character_1=1042545310)
-    Event_1042542350(10, character=1042540317, region=1042542317, character_1=1042545310)
-    Event_1042542350(11, character=1042540318, region=1042542318, character_1=1042545310)
-    Event_1042542350(12, character=1042540327, region=1042542327, character_1=1042545327)
-    Event_1042542350(13, character=1042540328, region=1042542328, character_1=1042545327)
-    Event_1042542350(14, character=1042540329, region=1042542329, character_1=1042545327)
-    RunCommonEvent(0, 90005251, args=(1042540331, 4.0, 0.0, 3004), arg_types="Iffi")
-    Event_1042542350(15, character=1042540338, region=1042542338, character_1=1042545338)
-    Event_1042542350(16, character=1042540339, region=1042542339, character_1=1042545338)
-    Event_1042542350(17, character=1042540303, region=1042542303, character_1=1042545303)
-    Event_1042542350(18, character=1042540304, region=1042542304, character_1=1042545303)
-    Event_1042542350(19, character=1042540305, region=1042542305, character_1=1042545303)
-    RunCommonEvent(0, 90005200, args=(1042540651, 30004, 20004, 1042542651, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1042540652, 30004, 20004, 1042542651, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1042540653, 30004, 20004, 1042542651, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005250(0, character=Characters.SmallerDog0, region=1042542200, seconds=0.0, animation_id=3005)
+    Event_1042542350(0, character=Characters.DominulaCelebrant0, region=1042542300, character_1=1042545300)
+    Event_1042542350(1, character=Characters.DominulaCelebrant1, region=1042542301, character_1=1042545300)
+    Event_1042542350(2, character=Characters.DominulaCelebrant2, region=1042542302, character_1=1042545300)
+    Event_1042542350(3, character=Characters.DominulaCelebrant6, region=1042542310, character_1=1042545310)
+    Event_1042542350(4, character=Characters.DominulaCelebrant7, region=1042542311, character_1=1042545310)
+    Event_1042542350(5, character=Characters.DominulaCelebrant8, region=1042542312, character_1=1042545310)
+    Event_1042542350(6, character=Characters.DominulaCelebrant9, region=1042542313, character_1=1042545310)
+    Event_1042542350(7, character=Characters.DominulaCelebrant10, region=1042542314, character_1=1042545310)
+    Event_1042542350(8, character=Characters.DominulaCelebrant11, region=1042542315, character_1=1042545310)
+    Event_1042542350(9, character=Characters.DominulaCelebrant12, region=1042542316, character_1=1042545310)
+    Event_1042542350(10, character=Characters.DominulaCelebrant13, region=1042542317, character_1=1042545310)
+    Event_1042542350(11, character=Characters.DominulaCelebrant14, region=1042542318, character_1=1042545310)
+    Event_1042542350(12, character=Characters.DominulaCelebrant17, region=1042542327, character_1=1042545327)
+    Event_1042542350(13, character=Characters.DominulaCelebrant18, region=1042542328, character_1=1042545327)
+    Event_1042542350(14, character=Characters.DominulaCelebrant19, region=1042542329, character_1=1042545327)
+    CommonFunc_90005251(0, character=Characters.DominulaCelebrant20, radius=4.0, seconds=0.0, animation_id=3004)
+    Event_1042542350(15, character=Characters.DominulaCelebrant23, region=1042542338, character_1=1042545338)
+    Event_1042542350(16, character=Characters.DominulaCelebrant24, region=1042542339, character_1=1042545338)
+    Event_1042542350(17, character=Characters.DominulaCelebrant3, region=1042542303, character_1=1042545303)
+    Event_1042542350(18, character=Characters.DominulaCelebrant4, region=1042542304, character_1=1042545303)
+    Event_1042542350(19, character=Characters.DominulaCelebrant5, region=1042542305, character_1=1042545303)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LeyndellSoldier0,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1042542651,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.LeyndellSoldier1,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1042542651,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 1042540653, 30004, 20004, 1042542651, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1042542350)
 def Event_1042542350(_, character: uint, region: uint, character_1: uint):
     """Event 1042542350"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
     GotoIfThisEventSlotFlagDisabled(Label.L0)
-    ForceAnimation(character, 20018, unknown2=1.0)
+    ForceAnimation(character, 20018)
     Wait(1.600000023841858)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    ForceAnimation(character, 30008, loop=True, unknown2=1.0)
+    ForceAnimation(character, 30008, loop=True)
     DisableAI(character)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfAttackedWithDamageType(OR_1, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=character, unk_8_12=260, unk_12_16=1)
-    IfHasAIStatus(
-        OR_1,
-        character_1,
-        ai_status=AIStatusType.Battle,
-        target_comparison_type=ComparisonType.GreaterThanOrEqual,
-    )
-    IfConditionTrue(OR_1, input_condition=AND_4)
-    IfConditionTrue(OR_1, input_condition=AND_5)
-    IfConditionTrue(OR_1, input_condition=AND_6)
-    IfConditionTrue(OR_1, input_condition=AND_7)
-    IfConditionTrue(OR_1, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_1)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_1.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_1.Add(HasAIStatus(character_1, ai_status=AIStatusType.Battle, target_comparison_type=ComparisonType.GreaterThanOrEqual))
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    OR_1.Add(AND_7)
+    OR_1.Add(AND_8)
+    
+    MAIN.Await(OR_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
     Wait(0.10000000149011612)
-    ForceAnimation(character, 20008, unknown2=1.0)
+    ForceAnimation(character, 20008)
     EnableAI(character)
     Wait(5.0)
-    IfHasAIStatus(AND_2, character, ai_status=AIStatusType.Normal)
-    IfCharacterInsideRegion(AND_2, character=character, region=region)
-    IfConditionTrue(OR_2, input_condition=AND_2)
-    IfCharacterDead(OR_2, character)
+    AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
+    AND_2.Add(CharacterInsideRegion(character=character, region=region))
+    OR_2.Add(AND_2)
+    OR_2.Add(CharacterDead(character))
     AwaitConditionTrue(OR_2)
     Restart()

@@ -1,0 +1,19 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Balloon = 1034430250  # c0130_9000 npc 1300000 think 1300000
+    TalkDummy = 1034430950  # c1000_9000 npc 10000000 think 1 talk 1000
+    Marionette0 = 1034430260  # c3850_9020 npc 38500020 think 38500000 group 1034435260
+    Marionette1 = 1034430261  # c3850_9021 npc 38501020 think 38501000 group 1034435260
+    Marionette2 = 1034430262  # c3850_9022 npc 38501020 think 38501000 group 1034435260
+    Scarab = 1034430310  # c4191_9000 npc 41915020 think 41910000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1034431950  # AEG099
+    AEG099_090_9000 = 1034431200  # AEG099
+    AEG099_160_9000 = 1034431250  # AEG099
+    AEG099_251_2000 = 1034431610  # AEG099
+    AEG099_630_9000 = 1034431600  # AEG099
+    AEG110_500_2000 = 1034431580  # AEG110

@@ -13,94 +13,267 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_48_38_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1048380000, obj=1048381950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1048380000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76418, 76406, 1048381980, 77400, 4, 78400, 78401, 78402, 78403, 78404, 78405, 78406, 78407, 78408, 78409),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76418,
+        flag_1=76406,
+        asset=Assets.AEG099_090_9001,
+        source_flag=77400,
+        value=4,
+        flag_2=78400,
+        flag_3=78401,
+        flag_4=78402,
+        flag_5=78403,
+        flag_6=78404,
+        flag_7=78405,
+        flag_8=78406,
+        flag_9=78407,
+        flag_10=78408,
+        flag_11=78409,
     )
-    RegisterGrace(grace_flag=1048380001, obj=1048381951, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1048380001, asset=Assets.AEG099_060_9001)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76418, 76407, 1048381981, 77400, 3, 78400, 78401, 78402, 78403, 78404, 78405, 78406, 78407, 78408, 78409),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76418,
+        flag_1=76407,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77400,
+        value=3,
+        flag_2=78400,
+        flag_3=78401,
+        flag_4=78402,
+        flag_5=78403,
+        flag_6=78404,
+        flag_7=78405,
+        flag_8=78406,
+        flag_9=78407,
+        flag_10=78408,
+        flag_11=78409,
     )
-    RunCommonEvent(0, 90005631, args=(1048381600, 61040), arg_types="Ii")
-    RunCommonEvent(
+    CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61040)
+    CommonFunc_90005790(
         0,
-        90005790,
-        args=(0, 1048380180, 1048382181, 1048382182, 1048380700, 23, 1048382705, 1048382706, 0.0, 1050389259, 0, 0),
-        arg_types="IIIIIiIIfIBi",
+        right=0,
+        flag=1048380180,
+        summon_flag=1048382181,
+        dismissal_flag=1048382182,
+        character=Characters.Millicent,
+        sign_type=23,
+        region=1048382705,
+        region_1=1048382706,
+        seconds=0.0,
+        right_1=1050389259,
+        unknown=0,
+        right_2=0,
     )
-    RunCommonEvent(0, 90005791, args=(1048380180, 1048382181, 1048382182, 1048380700), arg_types="IIII")
-    RunCommonEvent(
+    CommonFunc_90005791(0, flag=1048380180, flag_1=1048382181, flag_2=1048382182, character=Characters.Millicent)
+    CommonFunc_90005792(
         0,
-        90005792,
-        args=(1048380180, 1048382181, 1048382182, 1048380700, 1048380500, 0.0),
-        arg_types="IIIIif",
+        flag=1048380180,
+        flag_1=1048382181,
+        flag_2=1048382182,
+        character=Characters.Millicent,
+        item_lot_param_id=1048380500,
+        seconds=0.0,
     )
-    RunCommonEvent(
+    CommonFunc_90005793(
         0,
-        90005793,
-        args=(1048380180, 1048382181, 1048382182, 1048380700, 1048382705, 0, 0),
-        arg_types="IIIIIIi",
+        flag=1048380180,
+        flag_1=1048382181,
+        flag_2=1048382182,
+        character=Characters.Millicent,
+        other_entity=1048382705,
+        region=0,
+        left=0,
     )
-    RunCommonEvent(0, 90005300, args=(1048380290, 1048380290, 40402, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, flag=1048380290, character=Characters.Scarab, item_lot_param_id=40402, seconds=0.0, left=0)
     Event_1048382201()
-    Event_1048382200(0, 1048381200, 2.0)
-    Event_1048382200(1, 1048381201, 4.0)
-    Event_1048382200(2, 1048381202, 14.0)
-    Event_1048382200(3, 1048381203, 5.0)
-    Event_1048382200(4, 1048381204, 9.0)
-    RunCommonEvent(0, 90005250, args=(1048380200, 1048382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1048380201, 1048382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1048380202, 1048382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(1048380203, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380204, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380205, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380206, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380207, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380208, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380209, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380210, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1048380211, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(1048380212, 12.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1048380213, 10.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005250, args=(1048380300, 1048382300, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(
+    Event_1048382200(0, source_entity=Assets.AEG099_046_1000, seconds=2.0)
+    Event_1048382200(1, source_entity=Assets.AEG099_046_1001, seconds=4.0)
+    Event_1048382200(2, source_entity=Assets.AEG099_046_1002, seconds=14.0)
+    Event_1048382200(3, source_entity=Assets.AEG099_046_1003, seconds=5.0)
+    Event_1048382200(4, source_entity=Assets.AEG099_046_1004, seconds=9.0)
+    CommonFunc_90005250(0, 1048380200, 1048382200, 0.0, -1)
+    CommonFunc_90005250(0, 1048380201, 1048382200, 0.0, -1)
+    CommonFunc_90005250(0, 1048380202, 1048382200, 0.0, -1)
+    CommonFunc_90005201(
         0,
-        90005725,
-        args=(4775, 4776, 4778, 1048389205, 1048380705, 1048380706, 1048386700),
-        arg_types="IIIIIII",
+        character=Characters.MirandaRotFlower3,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005703, args=(1048380705, 4776, 4777, 1048389206, 4776, 4775, 4779, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1048380705, 4776, 4775, 1048389206, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005702, args=(1048380705, 4778, 4775, 4779), arg_types="IIII")
-    RunCommonEvent(0, 90005703, args=(1048380706, 4776, 4777, 1048389207, 4776, 4775, 4779, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1048380706, 4776, 4775, 1048389207, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005728, args=(1048380706, 1048382706, 1048382707), arg_types="III")
-    RunCommonEvent(0, 90005727, args=(4776, 1048380705, 1048380706, 4775, 4778), arg_types="IIIII")
-    RunCommonEvent(0, 90005729, args=(1048389200, 1048380705, 54.0, 1048382702), arg_types="IIfI")
-    RunCommonEvent(0, 90005706, args=(1048380701, 930023, 0), arg_types="IiI")
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower4,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower5,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower6,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower7,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower8,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower9,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower10,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.MirandaRotFlower11,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 1048380212, 12.0, 0.0, -1)
+    CommonFunc_90005251(0, 1048380213, 10.0, 0.0, -1)
+    CommonFunc_90005250(0, 1048380300, 1048382300, 0.0, -1)
+    CommonFunc_90005725(
+        0,
+        flag=4775,
+        flag_1=4776,
+        flag_2=4778,
+        flag_3=1048389205,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        asset=1048386700,
+    )
+    CommonFunc_90005703(
+        0,
+        character=Characters.Merchant,
+        flag=4776,
+        flag_1=4777,
+        flag_2=1048389206,
+        flag_3=4776,
+        first_flag=4775,
+        last_flag=4779,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4776, flag_1=4775, flag_2=1048389206, right=3)
+    CommonFunc_90005702(0, character=Characters.Merchant, flag=4778, first_flag=4775, last_flag=4779)
+    CommonFunc_90005703(
+        0,
+        character=Characters.NomadMule,
+        flag=4776,
+        flag_1=4777,
+        flag_2=1048389207,
+        flag_3=4776,
+        first_flag=4775,
+        last_flag=4779,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4776, flag_1=4775, flag_2=1048389207, right=3)
+    CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1048382706, flag_1=1048382707)
+    CommonFunc_90005727(
+        0,
+        flag=4776,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4775,
+        last_flag=4778,
+    )
+    CommonFunc_90005729(0, flag=1048389200, character=Characters.Merchant, distance=54.0, flag_1=1048382702)
+    CommonFunc_90005706(0, 1048380701, 930023, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1048380700)
-    DisableBackread(1048380705)
-    DisableBackread(1048380706)
+    DisableBackread(Characters.Millicent)
+    DisableBackread(Characters.Merchant)
+    DisableBackread(Characters.NomadMule)
     DisableBackread(1048380710)
-    DisableBackread(1048380701)
+    DisableBackread(Characters.WanderingNoble)
 
 
 @RestartOnRest(1048382200)
@@ -108,12 +281,14 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
     """Event 1048382200"""
     EnableNetworkSync()
     Wait(8.0)
-    IfEntityWithinDistance(MAIN, entity=PLAYER, other_entity=source_entity, radius=70.0)
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=source_entity, radius=70.0))
+    
     Wait(seconds)
-    IfNewGameCycleEqual(AND_1, completion_count=0)
+    AND_1.Add(NewGameCycleEqual(completion_count=0))
     SkipLinesIfConditionFalse(2, AND_1)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700000,
@@ -122,10 +297,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_2, completion_count=1)
+    AND_2.Add(NewGameCycleEqual(completion_count=1))
     SkipLinesIfConditionFalse(2, AND_2)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700010,
@@ -134,10 +309,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_3, completion_count=2)
+    AND_3.Add(NewGameCycleEqual(completion_count=2))
     SkipLinesIfConditionFalse(2, AND_3)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700020,
@@ -146,10 +321,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_4, completion_count=3)
+    AND_4.Add(NewGameCycleEqual(completion_count=3))
     SkipLinesIfConditionFalse(2, AND_4)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700030,
@@ -158,10 +333,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_5, completion_count=4)
+    AND_5.Add(NewGameCycleEqual(completion_count=4))
     SkipLinesIfConditionFalse(2, AND_5)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700040,
@@ -170,10 +345,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_6, completion_count=5)
+    AND_6.Add(NewGameCycleEqual(completion_count=5))
     SkipLinesIfConditionFalse(2, AND_6)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700050,
@@ -182,10 +357,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_7, completion_count=6)
+    AND_7.Add(NewGameCycleEqual(completion_count=6))
     SkipLinesIfConditionFalse(2, AND_7)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700060,
@@ -194,10 +369,10 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleGreaterThanOrEqual(AND_8, completion_count=7)
+    AND_8.Add(NewGameCycleGreaterThanOrEqual(completion_count=7))
     SkipLinesIfConditionFalse(2, AND_8)
     ShootProjectile(
-        owner_entity=1048380299,
+        owner_entity=Characters.Dummy,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700070,
@@ -215,4 +390,4 @@ def Event_1048382200(_, source_entity: uint, seconds: float):
 @RestartOnRest(1048382201)
 def Event_1048382201():
     """Event 1048382201"""
-    CreateProjectileOwner(entity=1048380299)
+    CreateProjectileOwner(entity=Characters.Dummy)

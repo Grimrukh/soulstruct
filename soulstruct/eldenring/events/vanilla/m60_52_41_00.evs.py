@@ -12,33 +12,69 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_52_41_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1052410000, obj=1052411950, unknown=5.0)
+    RegisterGrace(grace_flag=1052410000, asset=Assets.AEG099_060_9000)
     Event_1052412220()
     Event_1052412270()
     Event_1052412270(slot=1)
-    Event_1052412200(0, character=1052410210, obj=1052411210, region=1052412210)
-    RunCommonEvent(0, 90005300, args=(1052410850, 1052410851, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005476, args=(1052410850, 1052410851), arg_types="II")
-    Event_1052412291(0, character=1052410850, character_1=1052410851)
-    RunCommonEvent(0, 90005871, args=(1052410850, 903150606, 10, 1052410851), arg_types="IiII")
-    RunCommonEvent(0, 90005860, args=(1052410850, 0, 1052410850, 0, 1052410100, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005872, args=(1052410850, 10, 0), arg_types="III")
-    Event_1052412510()
-    RunCommonEvent(
+    Event_1052412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1052412210)
+    CommonFunc_90005300(
         0,
-        90005501,
-        args=(1052410510, 1052410511, 0, 1052411510, 1052411511, 1052411512, 1052410512),
-        arg_types="IIIIIII",
+        flag=1052410850,
+        character=Characters.NightsCavalryHorse,
+        item_lot_param_id=0,
+        seconds=0.0,
+        left=0,
     )
-    RunCommonEvent(0, 90005870, args=(1052410800, 904500601, 25), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1052410800, 0, 1052410800, 1, 30420, 0.0), arg_types="IIIIif")
+    CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
+    Event_1052412291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
+    CommonFunc_90005871(
+        0,
+        character=Characters.NightsCavalry,
+        name=903150606,
+        npc_threat_level=10,
+        character_1=Characters.NightsCavalryHorse,
+    )
+    CommonFunc_90005860(
+        0,
+        flag=1052410850,
+        left=0,
+        character=Characters.NightsCavalry,
+        left_1=0,
+        item_lot__item_lot_param_id=1052410100,
+        seconds=0.0,
+    )
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
+    Event_1052412510()
+    CommonFunc_90005501(
+        0,
+        flag=1052410510,
+        flag_1=1052410511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        asset_2=Assets.AEG099_182_2000,
+        flag_2=1052410512,
+    )
+    CommonFunc_90005870(0, character=Characters.FlyingDragon, name=904500601, npc_threat_level=25)
+    CommonFunc_90005860(
+        0,
+        flag=1052410800,
+        left=0,
+        character=Characters.FlyingDragon,
+        left_1=1,
+        item_lot__item_lot_param_id=30420,
+        seconds=0.0,
+    )
     Event_1052412230()
 
 
@@ -49,32 +85,36 @@ def Preconstructor():
 
 
 @RestartOnRest(1052412200)
-def Event_1052412200(_, character: uint, obj: uint, region: uint):
+def Event_1052412200(_, character: uint, asset: uint, region: uint):
     """Event 1052412200"""
     DisableCharacter(character)
-    EndIfFlagEnabled(region)
-    IfCharacterDead(AND_3, character)
-    EndIfConditionTrue(input_condition=AND_3)
+    if FlagEnabled(region):
+        return
+    AND_3.Add(CharacterDead(character))
+    if AND_3:
+        return
     DisableHealthBar(character)
-    IfCharacterType(AND_1, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_1, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_1)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=region)
-    IfConditionTrue(AND_2, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    CreateObjectVFX(obj, vfx_id=100, model_point=620383)
+    AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_1)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    AND_2.Add(OR_1)
+    
+    MAIN.Await(AND_2)
+    
+    CreateAssetVFX(asset, vfx_id=100, model_point=620383)
     EnableCharacter(character)
     EnableNetworkFlag(region)
     Wait(2.0)
-    DeleteObjectVFX(obj)
-    ForceAnimation(character, 20001, unknown2=1.0)
+    DeleteAssetVFX(asset)
+    ForceAnimation(character, 20001)
     Wait(1.899999976158142)
-    ForceAnimation(character, 20004, unknown2=1.0)
+    ForceAnimation(character, 20004)
     Wait(2.0)
-    ForceAnimation(character, 20004, unknown2=1.0)
+    ForceAnimation(character, 20004)
     Wait(1.0)
     DisableCharacter(character)
     Kill(character)
@@ -84,33 +124,41 @@ def Event_1052412200(_, character: uint, obj: uint, region: uint):
 @RestartOnRest(1052412220)
 def Event_1052412220():
     """Event 1052412220"""
-    CreateObjectVFX(1052411200, vfx_id=200, model_point=1500)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1500)
 
 
 @RestartOnRest(1052412230)
 def Event_1052412230():
     """Event 1052412230"""
-    Unknown_2004_84(character=1052410800, unk_4_8=220.0, unk_8_12=40.0)
+    SetCharacterEnableDistanceWithUnknown(
+        character=Characters.FlyingDragon,
+        enable_distance=220.0,
+        unknown_distance=40.0,
+    )
 
 
 @RestartOnRest(1052412291)
 def Event_1052412291(_, character: uint, character_1: uint):
     """Event 1052412291"""
-    IfCharacterAlive(AND_1, character)
+    AND_1.Add(CharacterAlive(character))
     SkipLinesIfConditionTrue(1, AND_1)
     End()
-    IfCharacterHasSpecialEffect(AND_2, character, 11825)
+    AND_2.Add(CharacterHasSpecialEffect(character, 11825))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    IfCharacterBackreadEnabled(AND_3, character_1)
-    IfConditionTrue(MAIN, input_condition=AND_3)
+    AND_3.Add(CharacterBackreadEnabled(character_1))
+    
+    MAIN.Await(AND_3)
+    
     AddSpecialEffect(character, 11825)
     Wait(1.0)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterBackreadDisabled(AND_4, character_1)
-    IfConditionTrue(MAIN, input_condition=AND_4)
+    AND_4.Add(CharacterBackreadDisabled(character_1))
+    
+    MAIN.Await(AND_4)
+    
     AddSpecialEffect(character, 11826)
     Wait(1.0)
     Restart()
@@ -119,32 +167,29 @@ def Event_1052412291(_, character: uint, character_1: uint):
 @NeverRestart(1052412510)
 def Event_1052412510():
     """Event 1052412510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            1052410510,
-            1052410511,
-            0,
-            1052411510,
-            1052411511,
-            1052413511,
-            1052411512,
-            1052413512,
-            1052412511,
-            1052412512,
-            1052410512,
-            1052410513,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        1052410510,
+        1052410511,
+        0,
+        1052411510,
+        1052411511,
+        1052413511,
+        1052411512,
+        1052413512,
+        1052412511,
+        1052412512,
+        1052410512,
+        1052410513,
+        0,
     )
 
 
 @NeverRestart(1052410519)
 def Event_1052410519():
     """Event 1052410519"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     DisableFlag(1052410510)
 
 
@@ -152,13 +197,15 @@ def Event_1052410519():
 def Event_1052412270():
     """Event 1052412270"""
     DisableNetworkSync()
-    CreateProjectileOwner(entity=1052410270)
-    IfEntityWithinDistance(MAIN, entity=PLAYER, other_entity=1052410270, radius=60.0)
+    CreateProjectileOwner(entity=Characters.Dummy)
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=Characters.Dummy, radius=60.0))
+    
     WaitRandomSeconds(min_seconds=1.0, max_seconds=8.0)
-    IfNewGameCycleEqual(AND_2, completion_count=0)
+    AND_2.Add(NewGameCycleEqual(completion_count=0))
     SkipLinesIfConditionFalse(2, AND_2)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104200,
@@ -167,10 +214,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_3, completion_count=1)
+    AND_3.Add(NewGameCycleEqual(completion_count=1))
     SkipLinesIfConditionFalse(2, AND_3)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104210,
@@ -179,10 +226,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_4, completion_count=2)
+    AND_4.Add(NewGameCycleEqual(completion_count=2))
     SkipLinesIfConditionFalse(2, AND_4)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104220,
@@ -191,10 +238,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_5, completion_count=3)
+    AND_5.Add(NewGameCycleEqual(completion_count=3))
     SkipLinesIfConditionFalse(2, AND_5)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104230,
@@ -203,10 +250,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_6, completion_count=4)
+    AND_6.Add(NewGameCycleEqual(completion_count=4))
     SkipLinesIfConditionFalse(2, AND_6)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104240,
@@ -215,10 +262,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_7, completion_count=5)
+    AND_7.Add(NewGameCycleEqual(completion_count=5))
     SkipLinesIfConditionFalse(2, AND_7)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104250,
@@ -227,10 +274,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_8, completion_count=6)
+    AND_8.Add(NewGameCycleEqual(completion_count=6))
     SkipLinesIfConditionFalse(2, AND_8)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104260,
@@ -239,10 +286,10 @@ def Event_1052412270():
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleGreaterThanOrEqual(AND_10, completion_count=7)
+    AND_10.Add(NewGameCycleGreaterThanOrEqual(completion_count=7))
     SkipLinesIfConditionFalse(2, AND_10)
     ShootProjectile(
-        owner_entity=1052410270,
+        owner_entity=Characters.Dummy,
         source_entity=1052412271,
         model_point=900,
         behavior_id=802104270,

@@ -124,7 +124,7 @@ def Constructor():
         flag_3=13504810,
         flag_4=999,
         flag_5=999,
-        flag_6=13504712
+        flag_6=13504712,
     )
     Event_13504730(
         5,
@@ -135,7 +135,7 @@ def Constructor():
         flag_3=13504860,
         flag_4=999,
         flag_5=999,
-        flag_6=13504711
+        flag_6=13504711,
     )
     Event_13504740()
     Event_13504742()
@@ -224,7 +224,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504271,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(
         8,
@@ -233,7 +233,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504272,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(
         9,
@@ -242,7 +242,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504273,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(
         10,
@@ -251,7 +251,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504274,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(
         11,
@@ -260,7 +260,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504275,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(
         12,
@@ -269,7 +269,7 @@ def Constructor():
         animation_id=1,
         obj_act_id_1=3500062,
         obj_act_id_2=13504276,
-        obj_act_id_3=3500063
+        obj_act_id_3=3500063,
     )
     Event_13501200(13, 3501170, 13504270, 1, 3500070, 0, -1)
     Event_13501250()
@@ -387,7 +387,7 @@ def Constructor():
     Event_13505300(57, character=3500502)
     Event_13505300(58, character=3500771)
     Event_13505300(59, character=3500777)
-    Event_13505400(0, 3500658, 3502251, 0.0, 3502255)
+    Event_13505400(0, character=3500658, region=3502251, radius=0.0, region_1=3502255)
     Event_13505470(0, character=3500312, animation_id=9005, animation_id_1=2004, ai_param_id=402020)
     Event_13505470(2, character=3500390, animation_id=9001, animation_id_1=2004, ai_param_id=402020)
     Event_13505470(3, character=3500396, animation_id=9003, animation_id_1=2004, ai_param_id=402020)
@@ -395,54 +395,54 @@ def Constructor():
     Event_13505470(5, character=3500398, animation_id=9002, animation_id_1=2004, ai_param_id=402020)
     Event_13505470(6, character=3500502, animation_id=7001, animation_id_1=0, ai_param_id=402035)
     Event_13505470(7, character=3500503, animation_id=7001, animation_id_1=0, ai_param_id=402035)
-    Event_13505510(0, 3500350, 3502301, 2.0, 0.0)
-    Event_13505510(2, 3500360, 3502301, 2.0, 0.0)
-    Event_13505510(3, 3500361, 3502301, 2.0, 0.0)
-    Event_13505510(4, 3500363, 3502301, 2.0, 0.0)
-    Event_13505510(5, 3500364, 3502301, 2.0, 0.0)
-    Event_13505510(6, 3500366, 3502301, 2.0, 0.0)
-    Event_13505510(7, 3500301, 3502312, 2.0, 0.0)
-    Event_13505510(8, 3500302, 3502312, 2.0, 0.0)
-    Event_13505510(9, 3500303, 3502305, 2.0, 0.0)
-    Event_13505510(10, 3500409, 3502305, 2.0, 0.0)
-    Event_13505510(11, 3500450, 3502305, 2.0, 0.0)
-    Event_13505510(12, 3500346, 3502306, 2.0, 0.0)
-    Event_13505510(13, 3500347, 3502306, 2.0, 0.0)
-    Event_13505510(14, 3500348, 3502306, 2.0, 0.0)
-    Event_13505510(15, 3500349, 3502306, 2.0, 0.0)
-    Event_13505510(16, 3500371, 3502306, 2.0, 0.0)
-    Event_13505510(17, 3500750, 3502307, 2.0, 0.0)
-    Event_13505510(18, 3500760, 3502307, 2.0, 0.0)
-    Event_13505510(19, 3500313, 3502309, 2.0, 0.0)
-    Event_13505510(20, 3500314, 3502309, 2.0, 0.0)
-    Event_13505510(21, 3500313, 3502310, 2.0, 0.0)
-    Event_13505510(22, 3500314, 3502310, 2.0, 0.0)
-    Event_13505510(23, 3500452, 3502313, 5.0, 0.0)
-    Event_13505510(24, 3500356, 3502314, 2.0, 0.0)
-    Event_13505510(25, 3500357, 3502314, 2.0, 0.0)
-    Event_13505510(26, 3500359, 3502314, 2.0, 0.0)
-    Event_13505510(27, 3500933, 3502304, 2.0, 0.0)
-    Event_13505510(28, 3500935, 3502304, 2.0, 0.0)
-    Event_13505510(35, 3500315, 3502321, 2.0, 1.0)
-    Event_13505510(36, 3500316, 3502321, 2.0, 1.0)
-    Event_13505510(37, 3500353, 3502325, 1.0, 0.0)
-    Event_13505510(38, 3500770, 3502311, 5.0, 1.0)
-    Event_13505510(39, 3500772, 3502311, 5.0, 1.0)
-    Event_13505510(40, 3500311, 3502302, 2.0, 0.0)
-    Event_13505510(41, 3500773, 3502329, 3.0, 0.0)
-    Event_13505510(43, 3500776, 3502329, 3.0, 0.0)
-    Event_13505510(44, 3500335, 3502315, 2.0, 0.0)
-    Event_13505510(46, 3500334, 3502315, 2.0, 0.0)
-    Event_13505510(47, 3500601, 3502336, 2.0, 0.0)
-    Event_13505510(48, 3500607, 3502337, 2.0, 0.0)
-    Event_13505510(49, 3500610, 3502337, 2.0, 1.0)
-    Event_13505510(50, 3500606, 3502337, 2.0, 1.0)
-    Event_13505510(51, 3500613, 3502339, 3.0, 0.0)
-    Event_13505510(52, 3500614, 3502339, 3.0, 0.0)
-    Event_13505510(53, 3500400, 3502341, 2.0, 0.0)
-    Event_13505510(54, 3500401, 3502335, 2.0, 0.0)
-    Event_13505510(55, 3500600, 3502391, 2.0, 1.0)
-    Event_13505510(56, 3500329, 3502312, 2.0, 0.0)
+    Event_13505510(0, character=3500350, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(2, character=3500360, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(3, character=3500361, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(4, character=3500363, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(5, character=3500364, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(6, character=3500366, region=3502301, radius=2.0, seconds=0.0)
+    Event_13505510(7, character=3500301, region=3502312, radius=2.0, seconds=0.0)
+    Event_13505510(8, character=3500302, region=3502312, radius=2.0, seconds=0.0)
+    Event_13505510(9, character=3500303, region=3502305, radius=2.0, seconds=0.0)
+    Event_13505510(10, character=3500409, region=3502305, radius=2.0, seconds=0.0)
+    Event_13505510(11, character=3500450, region=3502305, radius=2.0, seconds=0.0)
+    Event_13505510(12, character=3500346, region=3502306, radius=2.0, seconds=0.0)
+    Event_13505510(13, character=3500347, region=3502306, radius=2.0, seconds=0.0)
+    Event_13505510(14, character=3500348, region=3502306, radius=2.0, seconds=0.0)
+    Event_13505510(15, character=3500349, region=3502306, radius=2.0, seconds=0.0)
+    Event_13505510(16, character=3500371, region=3502306, radius=2.0, seconds=0.0)
+    Event_13505510(17, character=3500750, region=3502307, radius=2.0, seconds=0.0)
+    Event_13505510(18, character=3500760, region=3502307, radius=2.0, seconds=0.0)
+    Event_13505510(19, character=3500313, region=3502309, radius=2.0, seconds=0.0)
+    Event_13505510(20, character=3500314, region=3502309, radius=2.0, seconds=0.0)
+    Event_13505510(21, character=3500313, region=3502310, radius=2.0, seconds=0.0)
+    Event_13505510(22, character=3500314, region=3502310, radius=2.0, seconds=0.0)
+    Event_13505510(23, character=3500452, region=3502313, radius=5.0, seconds=0.0)
+    Event_13505510(24, character=3500356, region=3502314, radius=2.0, seconds=0.0)
+    Event_13505510(25, character=3500357, region=3502314, radius=2.0, seconds=0.0)
+    Event_13505510(26, character=3500359, region=3502314, radius=2.0, seconds=0.0)
+    Event_13505510(27, character=3500933, region=3502304, radius=2.0, seconds=0.0)
+    Event_13505510(28, character=3500935, region=3502304, radius=2.0, seconds=0.0)
+    Event_13505510(35, character=3500315, region=3502321, radius=2.0, seconds=1.0)
+    Event_13505510(36, character=3500316, region=3502321, radius=2.0, seconds=1.0)
+    Event_13505510(37, character=3500353, region=3502325, radius=1.0, seconds=0.0)
+    Event_13505510(38, character=3500770, region=3502311, radius=5.0, seconds=1.0)
+    Event_13505510(39, character=3500772, region=3502311, radius=5.0, seconds=1.0)
+    Event_13505510(40, character=3500311, region=3502302, radius=2.0, seconds=0.0)
+    Event_13505510(41, character=3500773, region=3502329, radius=3.0, seconds=0.0)
+    Event_13505510(43, character=3500776, region=3502329, radius=3.0, seconds=0.0)
+    Event_13505510(44, character=3500335, region=3502315, radius=2.0, seconds=0.0)
+    Event_13505510(46, character=3500334, region=3502315, radius=2.0, seconds=0.0)
+    Event_13505510(47, character=3500601, region=3502336, radius=2.0, seconds=0.0)
+    Event_13505510(48, character=3500607, region=3502337, radius=2.0, seconds=0.0)
+    Event_13505510(49, character=3500610, region=3502337, radius=2.0, seconds=1.0)
+    Event_13505510(50, character=3500606, region=3502337, radius=2.0, seconds=1.0)
+    Event_13505510(51, character=3500613, region=3502339, radius=3.0, seconds=0.0)
+    Event_13505510(52, character=3500614, region=3502339, radius=3.0, seconds=0.0)
+    Event_13505510(53, character=3500400, region=3502341, radius=2.0, seconds=0.0)
+    Event_13505510(54, character=3500401, region=3502335, radius=2.0, seconds=0.0)
+    Event_13505510(55, character=3500600, region=3502391, radius=2.0, seconds=1.0)
+    Event_13505510(56, character=3500329, region=3502312, radius=2.0, seconds=0.0)
     Event_13505200(0, character=3500301, patrol_information_id=3503431)
     Event_13505200(1, character=3500302, patrol_information_id=3503431)
     Event_13505200(2, character=3500313, patrol_information_id=3503431)
@@ -450,29 +450,243 @@ def Constructor():
     Event_13505200(4, character=3500364, patrol_information_id=3503430)
     Event_13505200(5, character=3500366, patrol_information_id=3503430)
     Event_13505200(6, character=3500452, patrol_information_id=3503432)
-    Event_13505570(0, 3500310, 3502301, 2.0, 0.0, 3502380, 3502306, 3503380)
-    Event_13505570(2, 3500362, 3502301, 2.0, 0.0, 3502381, 3502321, 3503380)
-    Event_13505570(3, 3500365, 3502301, 2.0, 0.0, 3502381, 3502321, 3503380)
-    Event_13505450(0, 3500781, 3502317, 2.0, 3001)
-    Event_13505590(0, 3500389, 3502303, 2.0, 9006, 0, 0.0, 0.0, 0)
-    Event_13505590(1, 3500780, 3502316, 2.0, 0, 3005, 0.0, 0.0, 0)
-    Event_13505590(7, 3500360, 3502326, 2.0, 9000, 9060, 0.0, 0.0, 0)
-    Event_13505590(8, 3500306, 3502302, 3.0, 9006, 0, 0.0, 0.0, 3502321)
-    Event_13505590(10, 3500308, 3502302, 3.0, 9000, 9060, 0.0, 0.0, 3502321)
-    Event_13505590(11, 3500309, 3502302, 3.0, 9002, 0, 0.0, 0.0, 3502321)
-    Event_13505590(12, 3500337, 3502301, 3.0, 9002, 0, 0.0, 0.0, 0)
-    Event_13505590(13, 3500605, 3502337, 0.0, 7000, 7001, 1.0, 2.0, 0)
-    Event_13505590(14, 3500609, 3502337, 0.0, 7000, 7001, 2.0, 3.0, 0)
-    Event_13505590(15, 3500612, 3502337, 0.0, 7000, 7001, 2.0, 3.0, 0)
-    Event_13505590(16, 3500342, 3502319, 6.0, 9006, 0, 0.0, 0.0, 0)
-    Event_13505590(17, 3500343, 3502319, 6.0, 9003, 0, 3.0, 0.0, 0)
-    Event_13505590(18, 3500344, 3502319, 6.0, 9005, 0, 3.0, 0.0, 0)
-    Event_13505590(19, 3500336, 0, 7.0, 9006, 0, 2.0, 0.0, 0)
-    Event_13505590(20, 3500351, 3502301, 7.0, 9006, 0, 0.0, 0.0, 0)
-    Event_13505590(22, 3500340, 0, 10.0, 9006, 0, 0.0, 0.0, 0)
-    Event_13505610(0, 3500659, 3502251, 2.0, 9001, 9061, 1.0, 1.0)
-    Event_13505610(1, 3500655, 3502251, 2.0, 9001, 9061, 3.0, 3.0)
-    Event_13505610(2, 3500656, 3502251, 2.0, 9001, 9061, 2.0, 2.0)
+    Event_13505570(
+        0,
+        character=3500310,
+        region=3502301,
+        radius=2.0,
+        seconds=0.0,
+        region_1=3502380,
+        region_2=3502306,
+        patrol_information_id=3503380,
+    )
+    Event_13505570(
+        2,
+        character=3500362,
+        region=3502301,
+        radius=2.0,
+        seconds=0.0,
+        region_1=3502381,
+        region_2=3502321,
+        patrol_information_id=3503380,
+    )
+    Event_13505570(
+        3,
+        character=3500365,
+        region=3502301,
+        radius=2.0,
+        seconds=0.0,
+        region_1=3502381,
+        region_2=3502321,
+        patrol_information_id=3503380,
+    )
+    Event_13505450(0, character=3500781, region=3502317, radius=2.0, animation_id=3001)
+    Event_13505590(
+        0,
+        character=3500389,
+        region=3502303,
+        radius=2.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        1,
+        character=3500780,
+        region=3502316,
+        radius=2.0,
+        animation_id=0,
+        animation_id_1=3005,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        7,
+        character=3500360,
+        region=3502326,
+        radius=2.0,
+        animation_id=9000,
+        animation_id_1=9060,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        8,
+        character=3500306,
+        region=3502302,
+        radius=3.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=3502321,
+    )
+    Event_13505590(
+        10,
+        character=3500308,
+        region=3502302,
+        radius=3.0,
+        animation_id=9000,
+        animation_id_1=9060,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=3502321,
+    )
+    Event_13505590(
+        11,
+        character=3500309,
+        region=3502302,
+        radius=3.0,
+        animation_id=9002,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=3502321,
+    )
+    Event_13505590(
+        12,
+        character=3500337,
+        region=3502301,
+        radius=3.0,
+        animation_id=9002,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        13,
+        character=3500605,
+        region=3502337,
+        radius=0.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=1.0,
+        seconds_1=2.0,
+        region_1=0,
+    )
+    Event_13505590(
+        14,
+        character=3500609,
+        region=3502337,
+        radius=0.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=2.0,
+        seconds_1=3.0,
+        region_1=0,
+    )
+    Event_13505590(
+        15,
+        character=3500612,
+        region=3502337,
+        radius=0.0,
+        animation_id=7000,
+        animation_id_1=7001,
+        seconds=2.0,
+        seconds_1=3.0,
+        region_1=0,
+    )
+    Event_13505590(
+        16,
+        character=3500342,
+        region=3502319,
+        radius=6.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        17,
+        character=3500343,
+        region=3502319,
+        radius=6.0,
+        animation_id=9003,
+        animation_id_1=0,
+        seconds=3.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        18,
+        character=3500344,
+        region=3502319,
+        radius=6.0,
+        animation_id=9005,
+        animation_id_1=0,
+        seconds=3.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        19,
+        character=3500336,
+        region=0,
+        radius=7.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=2.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        20,
+        character=3500351,
+        region=3502301,
+        radius=7.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505590(
+        22,
+        character=3500340,
+        region=0,
+        radius=10.0,
+        animation_id=9006,
+        animation_id_1=0,
+        seconds=0.0,
+        seconds_1=0.0,
+        region_1=0,
+    )
+    Event_13505610(
+        0,
+        character=3500659,
+        region=3502251,
+        radius=2.0,
+        animation_id=9001,
+        animation_id_1=9061,
+        seconds=1.0,
+        seconds_1=1.0,
+    )
+    Event_13505610(
+        1,
+        character=3500655,
+        region=3502251,
+        radius=2.0,
+        animation_id=9001,
+        animation_id_1=9061,
+        seconds=3.0,
+        seconds_1=3.0,
+    )
+    Event_13505610(
+        2,
+        character=3500656,
+        region=3502251,
+        radius=2.0,
+        animation_id=9001,
+        animation_id_1=9061,
+        seconds=2.0,
+        seconds_1=2.0,
+    )
     Event_13505640(0, character=3500550, animation_id=9013)
     Event_13505640(1, character=3500551, animation_id=9014)
     Event_13505640(3, character=3500553, animation_id=9001)
@@ -481,9 +695,9 @@ def Constructor():
     Event_13505640(6, character=3500556, animation_id=9010)
     Event_13505700(0, character=3500400, animation_id=3022)
     Event_13505700(1, character=3500401, animation_id=3022)
-    Event_13505750(4, 3500303, 3502312, 0, 3503420, 0.0, 0)
-    Event_13505750(8, 3500380, 3502312, 0, 3503420, 8.0, 0)
-    Event_13505750(9, 3500381, 3502312, 0, 3503420, 7.0, 0)
+    Event_13505750(4, character=3500303, region=3502312, region_1=0, patrol_information_id=3503420, seconds=0.0, left=0)
+    Event_13505750(8, character=3500380, region=3502312, region_1=0, patrol_information_id=3503420, seconds=8.0, left=0)
+    Event_13505750(9, character=3500381, region=3502312, region_1=0, patrol_information_id=3503420, seconds=7.0, left=0)
     Event_13505780(1, character=3500601)
     Event_13505780(2, character=3500602)
     Event_13505780(3, character=3500603)
@@ -515,7 +729,7 @@ def Constructor():
         obj=0,
         source_entity=3501631,
         source_entity_1=3501621,
-        character=3500764
+        character=3500764,
     )
     Event_13505820(
         0,
@@ -524,7 +738,7 @@ def Constructor():
         animation_id_1=9064,
         frames=10,
         patrol_information_id=3503421,
-        region=3502431
+        region=3502431,
     )
     Event_13505820(
         1,
@@ -533,7 +747,7 @@ def Constructor():
         animation_id_1=0,
         frames=80,
         patrol_information_id=3503422,
-        region=3502432
+        region=3502432,
     )
     Event_13505820(
         2,
@@ -542,7 +756,7 @@ def Constructor():
         animation_id_1=9064,
         frames=5,
         patrol_information_id=3503423,
-        region=3502433
+        region=3502433,
     )
     Event_13505820(
         3,
@@ -551,7 +765,7 @@ def Constructor():
         animation_id_1=0,
         frames=45,
         patrol_information_id=3503424,
-        region=3502434
+        region=3502434,
     )
     Event_13505820(
         4,
@@ -560,7 +774,7 @@ def Constructor():
         animation_id_1=9064,
         frames=8,
         patrol_information_id=3503425,
-        region=3502435
+        region=3502435,
     )
     Event_13505820(
         5,
@@ -569,7 +783,7 @@ def Constructor():
         animation_id_1=9064,
         frames=3,
         patrol_information_id=3503426,
-        region=3502436
+        region=3502436,
     )
     Event_13505820(
         6,
@@ -578,7 +792,7 @@ def Constructor():
         animation_id_1=0,
         frames=62,
         patrol_information_id=3503427,
-        region=3502437
+        region=3502437,
     )
     Event_13505820(
         7,
@@ -587,7 +801,7 @@ def Constructor():
         animation_id_1=9064,
         frames=12,
         patrol_information_id=3503428,
-        region=3502438
+        region=3502438,
     )
     Event_13500942(0, character=10000, region=3502902, flag=73500410)
     Event_13500943(0, character=3500901)
@@ -605,7 +819,7 @@ def Constructor():
         region_1=3502896,
         flag_2=13505910,
         flag_3=13505913,
-        destination=3502893
+        destination=3502893,
     )
     Event_13505903(
         0,
@@ -614,7 +828,7 @@ def Constructor():
         flag_1=13505912,
         region=3502894,
         region_1=3502895,
-        flag_2=13505913
+        flag_2=13505913,
     )
     Event_13505904(0, character=3500936, flag=13505911, flag_1=13505912, item_lot_param_id=43710, character_1=3500937)
     Event_13501960()
@@ -631,16 +845,56 @@ def Constructor():
     Event_13500948(0, entity=3501905)
     Event_13500949(0, character=3500905, flag=73500505)
     SetDistanceLimitForConversationStateChanges(character=3500552, distance=25.0)
-    Event_13500980(0, 73500910, 73500911, 10.0)
-    Event_13500980(1, 73500945, 73500946, 10.0)
+    Event_13500980(0, flag=73500910, flag_1=73500911, seconds=10.0)
+    Event_13500980(1, flag=73500945, flag_1=73500946, seconds=10.0)
     Event_13500990(0, character=3500661, flag=73500971, flag_1=6000)
     Event_13500990(1, character=3500662, flag=73500976, flag_1=6000)
     Event_13500990(2, character=3500911, flag=73500327, flag_1=1762)
     Event_13500990(3, character=3500663, flag=73500971, flag_1=6000)
-    Event_13500994(0, 3500661, 3500921, 50002400, 73500974, 6000, 2.0, 2.0, 7010)
-    Event_13500994(1, 3500662, 3500920, 50002450, 73500979, 6000, 2.0, 2.0, 7010)
-    Event_13500994(2, 3500911, 3500922, 50002270, 73500339, 1762, 2.0, 2.0, 7010)
-    Event_13500994(3, 3500663, 3500921, 50002400, 73500974, 6000, 2.0, 2.0, 7010)
+    Event_13500994(
+        0,
+        destination=3500661,
+        character=3500921,
+        flag=50002400,
+        flag_1=73500974,
+        flag_2=6000,
+        seconds=2.0,
+        seconds_1=2.0,
+        animation_id=7010,
+    )
+    Event_13500994(
+        1,
+        destination=3500662,
+        character=3500920,
+        flag=50002450,
+        flag_1=73500979,
+        flag_2=6000,
+        seconds=2.0,
+        seconds_1=2.0,
+        animation_id=7010,
+    )
+    Event_13500994(
+        2,
+        destination=3500911,
+        character=3500922,
+        flag=50002270,
+        flag_1=73500339,
+        flag_2=1762,
+        seconds=2.0,
+        seconds_1=2.0,
+        animation_id=7010,
+    )
+    Event_13500994(
+        3,
+        destination=3500663,
+        character=3500921,
+        flag=50002400,
+        flag_1=73500974,
+        flag_2=6000,
+        seconds=2.0,
+        seconds_1=2.0,
+        animation_id=7010,
+    )
     EnableImmortality(3500661)
     EnableImmortality(3500662)
     EnableImmortality(3500911)
@@ -688,7 +942,7 @@ def Constructor():
         dismissal_flag=13504430,
         flag=13504440,
         flag_1=13501850,
-        action_button_id=10564
+        action_button_id=10564,
     )
     Event_13504450(0, character=3500940, region=3502930, flag=13504420, flag_1=13504430, flag_2=13504858)
     Event_13504460(
@@ -699,7 +953,7 @@ def Constructor():
         region_2=3502811,
         animation=101130,
         flag=13504450,
-        region_3=3502813
+        region_3=3502813,
     )
     Event_13500000()
 
@@ -717,11 +971,11 @@ def Preconstructor():
         obj_2=3501907,
         obj_3=3501908,
         obj_4=3501909,
-        flag=13501801
+        flag=13501801,
     )
     Event_13500960(0, character=3500910, character_1=3500911)
     Event_13500400(0, character=3500331, destination=3502354, region=3502350)
-    Event_13505630(0, 3500771, 3502318, 0.0, 5.0)
+    Event_13505630(0, character=3500771, region=3502318, seconds=0.0, seconds_1=5.0)
     Event_13505630(1, 3500777, 3502318, 3.0, 5.0)
 
 
@@ -759,7 +1013,7 @@ def Event_13504700(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(InsideMap(game_map=RESEARCH_HALL))
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     if FlagEnabled(flag_3):
         AND_2.Add(ClientTypeCountComparison(
             client_type=ClientType.Coop,
@@ -829,8 +1083,8 @@ def Event_13504720(_, character: int, flag: int, flag_1: int, flag_2: int):
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     DisableFlag(flag_2)
     Restart()
@@ -856,7 +1110,7 @@ def Event_13504730(
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     OR_2.Add(FlagEnabled(flag_3))
     OR_2.Add(FlagEnabled(flag_6))
     OR_1.Add(AND_2)
@@ -1459,7 +1713,7 @@ def Event_13504822():
     
     MAIN.Await(CharacterHasTAEEvent(3500800, tae_event_id=20))
     
-    CancelSpecialEffect(3500800, 5526)
+    RemoveSpecialEffect(3500800, 5526)
     Wait(0.10000000149011612)
     Restart()
 
@@ -1485,7 +1739,7 @@ def Event_13501850():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthRatioEqual(3500850, value=0.0))
+    MAIN.Await(HealthRatio(3500850) == 0.0)
     
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3501810)
@@ -1871,7 +2125,7 @@ def Event_13504865():
     # --- Label 0 --- #
     DefineLabel(0)
     DeleteVFX(3503854)
-    CancelSpecialEffect(PLAYER, 8035)
+    RemoveSpecialEffect(PLAYER, 8035)
     Restart()
 
 
@@ -1993,7 +2247,7 @@ def Event_13504895(_, character: int):
     if FlagEnabled(13501850):
         return
     
-    MAIN.Await(HealthRatioEqual(3500850, value=0.0))
+    MAIN.Await(HealthRatio(3500850) == 0.0)
     
     Kill(character, award_souls=True)
 
@@ -2010,7 +2264,7 @@ def Event_13505655():
     EnableFlag(13505669)
     Wait(3.0)
     OR_1.Add(TimeElapsed(seconds=5.0))
-    AND_1.Add(EventValueEqual(flag=13505690, bit_count=3, value=0))
+    AND_1.Add(EventValue(flag=13505690, bit_count=3) == 0)
     AND_1.Add(FlagDisabled(13505669))
     OR_1.Add(AND_1)
     
@@ -2021,9 +2275,9 @@ def Event_13505655():
     Wait(1.0)
     OR_3.Add(TimeElapsed(seconds=20.0))
     AND_2.Add(TimeElapsed(seconds=10.0))
-    AND_2.Add(EventValueEqual(flag=13505690, bit_count=3, value=1))
+    AND_2.Add(EventValue(flag=13505690, bit_count=3) == 1)
     AND_2.Add(FlagDisabled(13505669))
-    AND_3.Add(EventValueEqual(flag=13505690, bit_count=3, value=0))
+    AND_3.Add(EventValue(flag=13505690, bit_count=3) == 0)
     AND_3.Add(FlagDisabled(13505669))
     OR_3.Add(AND_2)
     OR_3.Add(AND_3)
@@ -2035,12 +2289,12 @@ def Event_13505655():
     Wait(1.0)
     OR_5.Add(TimeElapsed(seconds=20.0))
     AND_4.Add(TimeElapsed(seconds=10.0))
-    AND_4.Add(EventValueEqual(flag=13505690, bit_count=3, value=2))
+    AND_4.Add(EventValue(flag=13505690, bit_count=3) == 2)
     AND_4.Add(FlagDisabled(13505669))
     AND_5.Add(TimeElapsed(seconds=5.0))
-    AND_5.Add(EventValueEqual(flag=13505690, bit_count=3, value=1))
+    AND_5.Add(EventValue(flag=13505690, bit_count=3) == 1)
     AND_5.Add(FlagDisabled(13505669))
-    AND_6.Add(EventValueEqual(flag=13505690, bit_count=3, value=0))
+    AND_6.Add(EventValue(flag=13505690, bit_count=3) == 0)
     AND_6.Add(FlagDisabled(13505669))
     OR_5.Add(AND_4)
     OR_5.Add(AND_5)
@@ -2052,15 +2306,15 @@ def Event_13505655():
     EnableFlag(13505668)
     Wait(1.0)
     AND_7.Add(TimeElapsed(seconds=15.0))
-    AND_7.Add(EventValueEqual(flag=13505690, bit_count=3, value=3))
+    AND_7.Add(EventValue(flag=13505690, bit_count=3) == 3)
     AND_7.Add(FlagDisabled(13505669))
     AND_8.Add(TimeElapsed(seconds=10.0))
-    AND_8.Add(EventValueEqual(flag=13505690, bit_count=3, value=2))
+    AND_8.Add(EventValue(flag=13505690, bit_count=3) == 2)
     AND_8.Add(FlagDisabled(13505669))
     AND_9.Add(TimeElapsed(seconds=5.0))
-    AND_9.Add(EventValueEqual(flag=13505690, bit_count=3, value=1))
+    AND_9.Add(EventValue(flag=13505690, bit_count=3) == 1)
     AND_9.Add(FlagDisabled(13505669))
-    AND_10.Add(EventValueEqual(flag=13505690, bit_count=3, value=0))
+    AND_10.Add(EventValue(flag=13505690, bit_count=3) == 0)
     AND_10.Add(FlagDisabled(13505669))
     OR_7.Add(AND_7)
     OR_7.Add(AND_8)
@@ -2076,15 +2330,15 @@ def Event_13505655():
     DefineLabel(0)
     Wait(1.0)
     AND_12.Add(TimeElapsed(seconds=9.0))
-    AND_12.Add(EventValueEqual(flag=13505690, bit_count=3, value=3))
+    AND_12.Add(EventValue(flag=13505690, bit_count=3) == 3)
     AND_12.Add(FlagDisabled(13505669))
     AND_13.Add(TimeElapsed(seconds=6.0))
-    AND_13.Add(EventValueEqual(flag=13505690, bit_count=3, value=2))
+    AND_13.Add(EventValue(flag=13505690, bit_count=3) == 2)
     AND_13.Add(FlagDisabled(13505669))
     AND_14.Add(TimeElapsed(seconds=3.0))
-    AND_14.Add(EventValueEqual(flag=13505690, bit_count=3, value=1))
+    AND_14.Add(EventValue(flag=13505690, bit_count=3) == 1)
     AND_14.Add(FlagDisabled(13505669))
-    AND_15.Add(EventValueEqual(flag=13505690, bit_count=3, value=0))
+    AND_15.Add(EventValue(flag=13505690, bit_count=3) == 0)
     AND_15.Add(FlagDisabled(13505669))
     OR_13.Add(AND_12)
     OR_13.Add(AND_13)
@@ -2095,7 +2349,7 @@ def Event_13505655():
     
     GotoIfFlagEnabled(Label.L1, flag=13504895)
     EnableFlag(13505668)
-    OR_15.Add(HealthRatioLessThan(3500850, value=0.6000000238418579))
+    OR_15.Add(HealthRatio(3500850) < 0.6000000238418579)
     SkipLinesIfConditionFalse(1, OR_15)
     EnableFlag(13504869)
     Restart()
@@ -2241,16 +2495,16 @@ def Event_13505680():
     OR_4.Add(CharacterHasSpecialEffect(3500854, 8070))
     SkipLinesIfConditionFalse(1, OR_4)
     IncrementEventValue(13505694, bit_count=3, max_value=10)
-    AND_1.Add(EventValueEqual(flag=13505694, bit_count=3, value=1))
+    AND_1.Add(EventValue(flag=13505694, bit_count=3) == 1)
     SkipLinesIfConditionFalse(1, AND_1)
     AICommand(3500860, command_id=10, command_slot=0)
-    AND_2.Add(EventValueEqual(flag=13505694, bit_count=3, value=2))
+    AND_2.Add(EventValue(flag=13505694, bit_count=3) == 2)
     SkipLinesIfConditionFalse(1, AND_2)
     AICommand(3500860, command_id=20, command_slot=0)
-    AND_3.Add(EventValueEqual(flag=13505694, bit_count=3, value=3))
+    AND_3.Add(EventValue(flag=13505694, bit_count=3) == 3)
     SkipLinesIfConditionFalse(1, AND_3)
     AICommand(3500860, command_id=30, command_slot=0)
-    AND_4.Add(EventValueEqual(flag=13505694, bit_count=3, value=4))
+    AND_4.Add(EventValue(flag=13505694, bit_count=3) == 4)
     SkipLinesIfConditionFalse(1, AND_4)
     AICommand(3500860, command_id=40, command_slot=0)
     ReplanAI(3500860)
@@ -3528,7 +3782,7 @@ def Event_13505050(_, character: int):
     
     MAIN.Await(OR_3)
     
-    CancelSpecialEffect(character, 5410)
+    RemoveSpecialEffect(character, 5410)
     SetCharacterEventTarget(character, region=PLAYER)
     SetAIParamID(character, ai_param_id=402005)
     ReplanAI(character)
@@ -3565,7 +3819,7 @@ def Event_13505100(_, character: int):
     
     MAIN.Await(OR_2)
     
-    CancelSpecialEffect(character, 8014)
+    RemoveSpecialEffect(character, 8014)
     Restart()
 
 
@@ -3962,7 +4216,7 @@ def Event_13505650(_, character: int):
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(character, 5410)
+    RemoveSpecialEffect(character, 5410)
 
 
 @RestartOnRest(13505700)
@@ -4204,9 +4458,9 @@ def Event_13500920(_, character: int, flag: int, first_flag: int, last_flag: int
         return
     DisableFlag(flag)
     OR_1.Add(FlagEnabled(flag))
-    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
+    OR_1.Add(HealthRatio(character) <= 0.8999999761581421)
     AND_1.Add(OR_1)
-    AND_1.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_1)
     
@@ -4311,14 +4565,14 @@ def Event_13500943(_, character: int):
     
     MAIN.Await(FlagEnabled(73500411))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     ForceAnimation(character, 103161, loop=True, skip_transition=True)
     
     MAIN.Await(FlagDisabled(73500411))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     Restart()
@@ -4449,14 +4703,14 @@ def Event_13500949(_, character: int, flag: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     ForceAnimation(character, 7003, loop=True, skip_transition=True)
     
     MAIN.Await(FlagDisabled(flag))
     
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     if AND_2:
         return
     ForceAnimation(character, 7000, loop=True, skip_transition=True)
@@ -4764,14 +5018,14 @@ def Event_13500967(_, character: int):
     
     MAIN.Await(FlagDisabled(73500325))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     ForceAnimation(character, 0, loop=True, skip_transition=True)
     
     MAIN.Await(FlagEnabled(73500325))
     
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     if AND_2:
         return
     ForceAnimation(character, 7000, loop=True, skip_transition=True)
@@ -4788,14 +5042,14 @@ def Event_13500968(_, character: int):
     
     MAIN.Await(FlagEnabled(73500326))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     ForceAnimation(character, 7001, loop=True)
     
     MAIN.Await(FlagDisabled(73500326))
     
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     if AND_2:
         return
     ForceAnimation(character, 0, loop=True, skip_transition=True)
@@ -4869,7 +5123,7 @@ def Event_13500990(_, character: int, flag: int, flag_1: int):
     
     MAIN.Await(FlagDisabled(flag))
     
-    AND_1.Add(HealthRatioEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) == 0.0)
     if AND_1:
         return
     ForceAnimation(character, 7013, loop=True, skip_transition=True)
@@ -4878,7 +5132,7 @@ def Event_13500990(_, character: int, flag: int, flag_1: int):
     
     if FlagDisabled(flag_1):
         return
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     if AND_2:
         return
     ForceAnimation(character, 9002, loop=True, skip_transition=True)
@@ -5141,7 +5395,7 @@ def Event_13505902(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     AddSpecialEffect(character, 8060)
     PlaySoundEffect(PLAYER, 777777777, sound_type=SoundType.s_SFX)
     ForceAnimation(character, 101203)
@@ -5152,7 +5406,7 @@ def Event_13505902(
     ReplanAI(character)
     DisableInvincibility(character)
     EnableAnimations(character)
-    CancelSpecialEffect(character, 5560)
+    RemoveSpecialEffect(character, 5560)
     EnableFlag(flag)
     DisableFlag(flag_3)
     
@@ -5169,7 +5423,7 @@ def Event_13505903(_, character: int, flag: int, flag_1: int, region: int, regio
     if FlagEnabled(flag_1):
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region))
     OR_1.Add(CharacterInsideRegion(PLAYER, region=region_1))
@@ -5184,9 +5438,9 @@ def Event_13505903(_, character: int, flag: int, flag_1: int, region: int, regio
     EnableInvincibility(character)
     DisableAnimations(character)
     AddSpecialEffect(character, 5560)
-    CancelSpecialEffect(character, 8060)
-    CancelSpecialEffect(character, 1130)
-    CancelSpecialEffect(character, 1150)
+    RemoveSpecialEffect(character, 8060)
+    RemoveSpecialEffect(character, 1130)
+    RemoveSpecialEffect(character, 1150)
     PlaySoundEffect(PLAYER, 122, sound_type=SoundType.s_SFX)
     Wait(4.0)
     EnableFlag(flag_2)
@@ -5218,7 +5472,7 @@ def Event_13505904(_, character: int, flag: int, flag_1: int, item_lot_param_id:
     MAIN.Await(OR_1)
     
     GotoIfFinishedConditionTrue(Label.L1, input_condition=AND_2)
-    CancelSpecialEffect(character, 8060)
+    RemoveSpecialEffect(character, 8060)
     PlaySoundEffect(PLAYER, 122, sound_type=SoundType.s_SFX)
     EnableFlag(flag_1)
     AND_2.Add(CharacterHuman(PLAYER))
@@ -5313,8 +5567,8 @@ def Event_13504410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)
     SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

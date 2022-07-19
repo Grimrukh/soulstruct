@@ -12,201 +12,354 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_04_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(30040800, 30042840, 30042841, 30041840, 30042840, 30, 4, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=30040800,
+        left_flag=30042840,
+        cancel_flag__right_flag=30042841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30042840,
+        area_id=30,
+        block_id=4,
+        cc_id=0,
+        dd_id=0,
     )
-    RegisterGrace(grace_flag=300400, obj=30041950, unknown=5.0)
+    RegisterGrace(grace_flag=300400, asset=Assets.AEG099_060_9000)
     Event_30042800()
     Event_30042810()
     Event_30042849()
     Event_30042811()
-    RunCommonEvent(0, 90005650, args=(30040540, 30041540, 30041541, 30043541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30040540, 30041540), arg_types="II")
+    CommonFunc_90005650(
+        0,
+        flag=30040540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_0500,
+        obj_act_id=30043541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30040540, anchor_entity=Assets.AEG027_041_0500)
     Event_30042500()
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(30040200, 30001, 20001, 30042200, 0.0, 1, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040201, 30002, 20002, 30042201, 1.0, 1, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040202, 30010, 20010, 30042202, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040205, 30010, 20010, 30042205, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040206, 30010, 20010, 30042205, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005261, args=(30040207, 30042207, 1.0, 0.0, 3004), arg_types="IIffi")
-    RunCommonEvent(0, 90005200, args=(30040210, 30010, 20010, 30042210, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040211, 30010, 20010, 30042210, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30040212, 30003, 20003, 30042212, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp0,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30042200,
+        seconds=0.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp1,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30042201,
+        seconds=1.0,
+        left=1,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp2,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30042202,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp3,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30042205,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp4,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30042205,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=Characters.Imp5, region=30042207, radius=1.0, seconds=0.0, animation_id=3004)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp6,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30042210,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp7,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30042210,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 30040212, 30003, 20003, 30042212, 0.0, 0, 0, 0, 0)
 
 
 @NeverRestart(30040050)
 def Event_30040050():
     """Event 30040050"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
 
 
 @NeverRestart(30042500)
 def Event_30042500():
     """Event 30042500"""
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001070, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001070,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001060, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001060,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001050, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001050,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001040, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001040,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001030, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001030,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001020, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0501,
+        region=30042600,
+        behavior_id=801001020,
+        source_entity=30042601,
+        source_entity_1=30042602,
+        source_entity_2=30042603,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001010, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30040600, 30041600, 30042600, 801001000, 30042601, 30042602, 30042603),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy2,
+            entity=Assets.AEG027_044_0501,
+            region=30042600,
+            behavior_id=801001010,
+            source_entity=30042601,
+            source_entity_1=30042602,
+            source_entity_2=30042603,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy2,
+            entity=Assets.AEG027_044_0501,
+            region=30042600,
+            behavior_id=801001000,
+            source_entity=30042601,
+            source_entity_1=30042602,
+            source_entity_2=30042603,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001070, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001070,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001060, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001060,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001050, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001050,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001040, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001040,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001030, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001030,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001020, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0500,
+        region=30042605,
+        behavior_id=801001020,
+        source_entity=30042606,
+        source_entity_1=30042607,
+        source_entity_2=30042608,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001010, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30040605, 30041605, 30042605, 801001000, 30042606, 30042607, 30042608),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy3,
+            entity=Assets.AEG027_044_0500,
+            region=30042605,
+            behavior_id=801001010,
+            source_entity=30042606,
+            source_entity_1=30042607,
+            source_entity_2=30042608,
+        )
+    else:
+        CommonFunc_90005660(0, 30040605, 30041605, 30042605, 801001000, 30042606, 30042607, 30042608)
 
 
 @RestartOnRest(30042650)
 def Event_30042650(_, tutorial_param_id: int, flag: uint):
     """Event 30042650"""
-    EndIfTryingToCreateSession()
-    IfPlayerHasGood(OR_1, 215000, including_storage=True)
-    IfPlayerHasGood(OR_1, 213000, including_storage=True)
-    IfPlayerHasGood(OR_1, 240000, including_storage=True)
-    IfPlayerHasGood(OR_1, 243000, including_storage=True)
-    IfPlayerHasGood(OR_1, 234000, including_storage=True)
-    IfPlayerHasGood(OR_1, 244000, including_storage=True)
-    IfPlayerHasGood(OR_1, 236000, including_storage=True)
-    IfPlayerHasGood(OR_1, 232000, including_storage=True)
-    IfPlayerHasGood(OR_1, 212000, including_storage=True)
-    IfPlayerHasGood(OR_1, 241000, including_storage=True)
-    IfPlayerHasGood(OR_1, 213000, including_storage=True)
-    IfPlayerHasGood(OR_1, 233000, including_storage=True)
-    IfPlayerHasGood(OR_1, 245000, including_storage=True)
-    IfLeavingSession(AND_1)
-    IfPlayerDoesNotHaveGood(AND_1, 9111, including_storage=True)
-    IfInsideMap(AND_1, game_map=MURKWATER_CATACOMBS)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    EndIfTryingToCreateSession()
+    if Multiplayer():
+        return
+    OR_1.Add(PlayerHasGood(215000, including_storage=True))
+    OR_1.Add(PlayerHasGood(213000, including_storage=True))
+    OR_1.Add(PlayerHasGood(240000, including_storage=True))
+    OR_1.Add(PlayerHasGood(243000, including_storage=True))
+    OR_1.Add(PlayerHasGood(234000, including_storage=True))
+    OR_1.Add(PlayerHasGood(244000, including_storage=True))
+    OR_1.Add(PlayerHasGood(236000, including_storage=True))
+    OR_1.Add(PlayerHasGood(232000, including_storage=True))
+    OR_1.Add(PlayerHasGood(212000, including_storage=True))
+    OR_1.Add(PlayerHasGood(241000, including_storage=True))
+    OR_1.Add(PlayerHasGood(213000, including_storage=True))
+    OR_1.Add(PlayerHasGood(233000, including_storage=True))
+    OR_1.Add(PlayerHasGood(245000, including_storage=True))
+    AND_1.Add(Singleplayer())
+    AND_1.Add(PlayerDoesNotHaveGood(9111, including_storage=True))
+    AND_1.Add(InsideMap(game_map=MURKWATER_CATACOMBS))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    if Multiplayer():
+        return
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9111, flag=flag, bit_count=1)
@@ -215,74 +368,101 @@ def Event_30042650(_, tutorial_param_id: int, flag: uint):
 @RestartOnRest(30042800)
 def Event_30042800():
     """Event 30042800"""
-    EndIfFlagEnabled(30040800)
-    IfHealthValueLessThanOrEqual(MAIN, 30040800, value=0)
+    if FlagEnabled(30040800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.GraveWardenDuelist) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(30040800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30040800)
-    KillBossAndDisplayBanner(character=30040800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.GraveWardenDuelist, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.GraveWardenDuelist))
+    
+    KillBossAndDisplayBanner(character=Characters.GraveWardenDuelist, banner_type=BannerType.EnemyFelled)
     EnableFlag(30040800)
     EnableFlag(9204)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61204)
+    if PlayerInOwnWorld():
+        EnableFlag(61204)
 
 
 @RestartOnRest(30042810)
 def Event_30042810():
     """Event 30042810"""
     GotoIfFlagDisabled(Label.L0, flag=30040800)
-    DisableCharacter(30040800)
-    DisableAnimations(30040800)
-    Kill(30040800)
+    DisableCharacter(Characters.GraveWardenDuelist)
+    DisableAnimations(Characters.GraveWardenDuelist)
+    Kill(Characters.GraveWardenDuelist)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(30040800)
-    IfFlagEnabled(AND_2, 30042805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30042800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableNetworkFlag(30040801)
+    DisableAI(Characters.GraveWardenDuelist)
+    AND_2.Add(FlagEnabled(30042805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30042800))
+    
+    MAIN.Await(AND_2)
+    
+    if PlayerInOwnWorld():
+        EnableNetworkFlag(30040801)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableAI(30040800)
-    SetNetworkUpdateRate(30040800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(30040800, name=903400300)
+    EnableAI(Characters.GraveWardenDuelist)
+    SetNetworkUpdateRate(Characters.GraveWardenDuelist, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.GraveWardenDuelist, name=903400300)
 
 
 @RestartOnRest(30042811)
 def Event_30042811():
     """Event 30042811"""
-    EndIfFlagEnabled(30040800)
-    IfHealthRatioLessThanOrEqual(AND_1, 30040800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30040800):
+        return
+    AND_1.Add(HealthRatio(Characters.GraveWardenDuelist) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(30042802)
 
 
 @RestartOnRest(30042849)
 def Event_30042849():
     """Event 30042849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30040800, 30041800, 30042800, 30042805, 30045800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30040800,
+        entity=Assets.AEG099_001_9000,
+        region=30042800,
+        flag_1=30042805,
+        character=30045800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30040800, 30041800, 30042800, 30042805, 30042806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30040800, 30041800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30040800, 930000, 30042805, 30042806, 0, 30042802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=30040800,
+        entity=Assets.AEG099_001_9000,
+        region=30042800,
+        flag_1=30042805,
+        flag_2=30042806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30040800, 930000, 30042805, 30042806, 0, 30042802, 0, 0)
 
 
 @RestartOnRest(30042900)
 def Event_30042900(_, tutorial_param_id: int, flag: uint, flag_1: uint):
     """Event 30042900"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(700690)
-    IfFlagEnabled(AND_1, flag_1)
-    IfFlagDisabled(AND_1, 700690)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(700690):
+        return
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(FlagDisabled(700690))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)

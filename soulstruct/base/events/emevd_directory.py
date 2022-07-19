@@ -22,6 +22,7 @@ class EMEVDDirectory(abc.ABC):
 
     _FILE_RE = r"{map_name}(\.evs\.py|\.evs|\.py|\.emevd|\.txt)"
 
+    COMMON_FUNC: Map = None
     ALL_MAPS: tuple[Map] = None
     GET_MAP: GET_MAP_TYPING = None
     IS_DCX: bool = None
@@ -59,7 +60,11 @@ class EMEVDDirectory(abc.ABC):
         _LOGGER.info("All binary EMEVD files written successfully.")
 
     def write_evs(
-        self, emevd_directory=None, entities_directory=None, warn_missing_enums=True, entity_module_prefix="."
+        self,
+        emevd_directory=None,
+        entities_directory=None,
+        warn_missing_enums=True,
+        entity_module_prefix=".",
     ):
         """Write EVS scripts for all EMEVD files.
 
@@ -75,16 +80,27 @@ class EMEVDDirectory(abc.ABC):
         emevd_directory = Path(emevd_directory)
         if entities_directory is not None:
             entities_directory = Path(entities_directory)
+
+        if self.COMMON_FUNC and self.COMMON_FUNC.name in self.emevds:
+            # Write `common_func` first.
+            emevd = self.emevds[self.COMMON_FUNC.name]
+            emevd.write_evs(
+                evs_path=emevd_directory / f"{emevd.map_name}.py",  # no '.evs' extension (for importing)
+                entity_star_module_paths=[],
+                entity_non_star_module_paths=[],
+                warn_missing_enums=warn_missing_enums,
+                entity_module_prefix=entity_module_prefix,
+                is_common_func=True,
+            )
+            _LOGGER.info(f"Wrote EVS for COMMON_FUNC map: {emevd.map_name}")
+
         for map_name, emevd in self.emevds.items():
+            if self.COMMON_FUNC and map_name == self.COMMON_FUNC.name:
+                continue  # already done above
             entity_star_module_paths = []
             entity_non_star_module_paths = []
 
-            # TODO: Can I somehow support imports in Common?
-
-            # TODO: Would be more efficient to share a single `EntityEnumsManager` across all EMEVDs here, with
-            #  different modules being marked as star imports for each EMEVD.
-
-            if entities_directory and map_name != "Common":
+            if entities_directory and map_name != "Common":  # TODO: why not allow 'common_entities' import?
                 matching_map_module_name = f"{emevd.map_name}_entities.py"
                 for module_path in entities_directory.glob("*_entities.py"):
                     if module_path.name == matching_map_module_name:
@@ -98,7 +114,10 @@ class EMEVDDirectory(abc.ABC):
                 entity_non_star_module_paths=entity_non_star_module_paths,
                 warn_missing_enums=warn_missing_enums,
                 entity_module_prefix=entity_module_prefix,
+                is_common_func=False,
             )
+            _LOGGER.info(f"Wrote EVS for map {emevd.map_name} successfully.")
+
         _LOGGER.info("All EMEVD files written to decompiled EVS scripts successfully.")
 
     def write_numeric(self, emevd_directory=None):
@@ -115,18 +134,31 @@ class EMEVDDirectory(abc.ABC):
         emevd_directory = Path(emevd_directory)
         if self._directory is None:
             self._directory = emevd_directory
+        missing_map_names = []
+        files = list(emevd_directory.glob("*"))
+
+        common_func_emevd = self.load_map_emevd(self.COMMON_FUNC, files) if self.COMMON_FUNC else None
+
         for game_map in [m for m in self.ALL_MAPS if m.emevd_file_stem]:
-            events_path = re.compile(self._FILE_RE.format(map_name=game_map.emevd_file_stem))
-            for file_path in emevd_directory.glob("*"):
-                if events_path.match(file_path.name):
-                    try:
-                        self.emevds[game_map.name] = self.EMEVD_CLASS(file_path)
-                    except Exception as ex:
-                        raise ValueError(f"Error while loading '{file_path}': {ex}")
-                    setattr(self, game_map.name, self.emevds[game_map.name])
-                    break
-            else:
-                _LOGGER.warning(
-                    f"Could not find EMEVD file for map {game_map.name} ({game_map.emevd_file_stem}) "
-                    f"in given directory. Ignoring map name."
-                )
+            _LOGGER.info(f"Loading EMEVD source for {game_map.emevd_file_stem} ({game_map.verbose_name})")
+            emevd = self.load_map_emevd(game_map, files, common_func_emevd)
+            if emevd is None:
+                missing_map_names.append(game_map.name)
+        if missing_map_names:
+            _LOGGER.warning(f"Could not find EMEVD source files for {len(missing_map_names)} maps.")
+
+    def load_map_emevd(self, game_map: Map, emevd_files: list[Path], common_func_emevd: EMEVD = None) -> EMEVD | None:
+        events_path = re.compile(self._FILE_RE.format(map_name=game_map.emevd_file_stem))
+        for file_path in emevd_files:
+            if events_path.match(file_path.name):
+                try:
+                    emevd = self.emevds[game_map.name] = self.EMEVD_CLASS(
+                        file_path, common_func_emevd=common_func_emevd
+                    )
+                except Exception as ex:
+                    raise ValueError(f"Error while loading '{file_path}': {ex}")
+                setattr(self, game_map.name, self.emevds[game_map.name])
+                break
+        else:
+            return None
+        return emevd

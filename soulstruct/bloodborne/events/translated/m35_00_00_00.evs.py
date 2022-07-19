@@ -624,8 +624,8 @@ def Event13504720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(arg_0_3, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(arg_0_3, 9100)
     ReplanAI(arg_0_3)
     DisableFlag(arg_12_15)
     Restart()
@@ -1142,7 +1142,7 @@ def CancelLadyMariaBuff():
     """ 13504822: Event 13504822 """
     EndIfFlagEnabled(Flags.LadyMariaDead)
     IfCharacterHasTAEEvent(0, Characters.LadyMaria, tae_event_id=20)
-    CancelSpecialEffect(Characters.LadyMaria, 5526)
+    RemoveSpecialEffect(Characters.LadyMaria, 5526)
     Wait(0.10000000149011612)
     Restart()
 
@@ -1475,7 +1475,7 @@ def LivingFailuresMeteorAttackRequest():
     # --- 0 --- #
     DefineLabel(0)
     DeleteVFX(3503854, erase_root_only=True)
-    CancelSpecialEffect(PLAYER, 8035)
+    RemoveSpecialEffect(PLAYER, 8035)
     Restart()
 
 
@@ -2909,7 +2909,7 @@ def Event13505050(_, arg_0_3: int):
     IfConditionTrue(-3, input_condition=-1)
     IfConditionTrue(-3, input_condition=-2)
     IfConditionTrue(0, input_condition=-3)
-    CancelSpecialEffect(arg_0_3, 5410)
+    RemoveSpecialEffect(arg_0_3, 5410)
     SetCharacterEventTarget(arg_0_3, 10000)
     SetAIParamID(arg_0_3, 402005)
     ReplanAI(arg_0_3)
@@ -2940,7 +2940,7 @@ def Event13505100(_, arg_0_3: int):
     IfCharacterDead(-2, arg_0_3)
     IfCharacterBackreadDisabled(-2, arg_0_3)
     IfConditionTrue(0, input_condition=-2)
-    CancelSpecialEffect(arg_0_3, 8014)
+    RemoveSpecialEffect(arg_0_3, 8014)
     Restart()
 
 
@@ -3260,7 +3260,7 @@ def Event13505650(_, arg_0_3: int):
     IfHasAIStatus(-1, 0, ai_status=AIStatusType.Search)
     IfHasAIStatus(-1, 0, ai_status=AIStatusType.Battle)
     IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(arg_0_3, 5410)
+    RemoveSpecialEffect(arg_0_3, 5410)
 
 
 @RestartOnRest
@@ -4179,7 +4179,7 @@ def Event13505902(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     ReplanAI(arg_0_3)
     DisableInvincibility(arg_0_3)
     EnableAnimations(arg_0_3)
-    CancelSpecialEffect(arg_0_3, 5560)
+    RemoveSpecialEffect(arg_0_3, 5560)
     AddSpecialEffect(arg_0_3, 8060, affect_npc_part_hp=False)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=777777777)
     ForceAnimation(arg_0_3, 101203)
@@ -4190,7 +4190,7 @@ def Event13505902(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     ReplanAI(arg_0_3)
     DisableInvincibility(arg_0_3)
     EnableAnimations(arg_0_3)
-    CancelSpecialEffect(arg_0_3, 5560)
+    RemoveSpecialEffect(arg_0_3, 5560)
     EnableFlag(arg_4_7)
     DisableFlag(arg_24_27)
     IfFlagEnabled(0, arg_24_27)
@@ -4216,9 +4216,9 @@ def Event13505903(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     EnableInvincibility(arg_0_3)
     DisableAnimations(arg_0_3)
     AddSpecialEffect(arg_0_3, 5560, affect_npc_part_hp=False)
-    CancelSpecialEffect(arg_0_3, 8060)
-    CancelSpecialEffect(arg_0_3, 1130)
-    CancelSpecialEffect(arg_0_3, 1150)
+    RemoveSpecialEffect(arg_0_3, 8060)
+    RemoveSpecialEffect(arg_0_3, 1130)
+    RemoveSpecialEffect(arg_0_3, 1150)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=122)
     Wait(4.0)
     EnableFlag(arg_20_23)
@@ -4245,7 +4245,7 @@ def Event13505904(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     GotoIfFinishedConditionTrue(Label.L1, input_condition=2)
-    CancelSpecialEffect(arg_0_3, 8060)
+    RemoveSpecialEffect(arg_0_3, 8060)
     PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=122)
     EnableFlag(arg_8_11)
     IfCharacterHuman(2, PLAYER)
@@ -4322,8 +4322,8 @@ def Event13504410(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
     SummonNPC(arg_0_3, arg_4_7, arg_8_11, summon_flag=arg_12_15, dismissal_flag=arg_16_19)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

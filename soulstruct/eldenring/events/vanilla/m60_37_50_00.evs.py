@@ -12,6 +12,8 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
@@ -19,4 +21,4 @@ from soulstruct.eldenring.events.instructions import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005221, args=(1037500200, 30005, 20020, 0.0, 0), arg_types="IiifI")
+    CommonFunc_90005221(0, 1037500200, 30005, 20020, 0.0, 0)

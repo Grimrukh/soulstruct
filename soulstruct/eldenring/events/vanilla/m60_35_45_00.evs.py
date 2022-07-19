@@ -12,37 +12,83 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_35_45_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1035450000, obj=1035451950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1035450000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76206, 76205, 1035451980, 77200, 5, 78200, 78201, 78202, 78203, 78204, 78205, 78206, 78207, 78208, 78209),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76206,
+        flag_1=76205,
+        asset=Assets.AEG099_090_9001,
+        source_flag=77200,
+        value=5,
+        flag_2=78200,
+        flag_3=78201,
+        flag_4=78202,
+        flag_5=78203,
+        flag_6=78204,
+        flag_7=78205,
+        flag_8=78206,
+        flag_9=78207,
+        flag_10=78208,
+        flag_11=78209,
     )
-    RunCommonEvent(
+    CommonFunc_90005725(
         0,
-        90005725,
-        args=(4750, 4751, 4753, 1035459205, 1035450700, 1035450701, 1035456700),
-        arg_types="IIIIIII",
+        flag=4750,
+        flag_1=4751,
+        flag_2=4753,
+        flag_3=1035459205,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        asset=1035456700,
     )
-    RunCommonEvent(0, 90005703, args=(1035450700, 4751, 4752, 1035459206, 4751, 4750, 4754, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1035450700, 4751, 4750, 1035459206, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005702, args=(1035450700, 4753, 4750, 4754), arg_types="IIII")
-    RunCommonEvent(0, 90005703, args=(1035450701, 4751, 4752, 1035459207, 4751, 4750, 4754, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1035450701, 4751, 4750, 1035459207, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005728, args=(1035450701, 1035452706, 1035452707), arg_types="III")
-    RunCommonEvent(0, 90005727, args=(4751, 1035450700, 1035450701, 4750, 4753), arg_types="IIIII")
+    CommonFunc_90005703(
+        0,
+        character=Characters.Merchant,
+        flag=4751,
+        flag_1=4752,
+        flag_2=1035459206,
+        flag_3=4751,
+        first_flag=4750,
+        last_flag=4754,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4751, flag_1=4750, flag_2=1035459206, right=3)
+    CommonFunc_90005702(0, character=Characters.Merchant, flag=4753, first_flag=4750, last_flag=4754)
+    CommonFunc_90005703(
+        0,
+        character=Characters.NomadMule,
+        flag=4751,
+        flag_1=4752,
+        flag_2=1035459207,
+        flag_3=4751,
+        first_flag=4750,
+        last_flag=4754,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4751, flag_1=4750, flag_2=1035459207, right=3)
+    CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1035452706, flag_1=1035452707)
+    CommonFunc_90005727(
+        0,
+        flag=4751,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4750,
+        last_flag=4753,
+    )
     Event_1035452500()
     Event_1035452600(
         0,
-        anchor_entity=1035451600,
+        anchor_entity=Assets.AEG099_090_9000,
         area_id=60,
         block_id=35,
         cc_id=46,
@@ -51,7 +97,7 @@ def Constructor():
         flag=1035460605,
         target_entity=1035452611,
         animation_id=60470,
-        action_button_id=9522
+        action_button_id=9522,
     )
     Event_1035452605(0, 1035450605, 1035452601, 60471)
 
@@ -59,25 +105,24 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1035450700)
-    DisableBackread(1035450701)
-    RunCommonEvent(0, 90005251, args=(1035450200, 10.0, 0.0, 3011), arg_types="Iffi")
-    RunCommonEvent(
-        0,
-        90005211,
-        args=(1035450210, 30002, 20002, 1035452210, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
-    )
+    DisableBackread(Characters.Merchant)
+    DisableBackread(Characters.NomadMule)
+    CommonFunc_90005251(0, character=Characters.WolfPackLeader, radius=10.0, seconds=0.0, animation_id=3011)
+    CommonFunc_90005211(0, 1035450210, 30002, 20002, 1035452210, 3.0, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1035452500)
 def Event_1035452500():
     """Event 1035452500"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1035457100)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(AND_1, 1035457100)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1035457100):
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(1035457100))
+    
+    MAIN.Await(AND_1)
+    
     Wait(2.0)
     DisplayDialog(text=30100, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
 
@@ -97,15 +142,18 @@ def Event_1035452600(
     action_button_id: int,
 ):
     """Event 1035452600"""
-    EndIfPlayerNotInOwnWorld()
-    IfTryingToCreateSession(OR_1)
-    IfTryingToJoinSession(OR_1)
-    IfConditionFalse(AND_1, input_condition=OR_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
     SkipLinesIfConditionTrue(7, OR_1)
-    IfPlayerInOwnWorld(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=action_button_id, entity=anchor_entity)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    IfPlayerHasGood(AND_9, 8109)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=anchor_entity))
+    
+    MAIN.Await(AND_1)
+    
+    AND_9.Add(PlayerHasGood(8109))
     GotoIfConditionTrue(Label.L1, input_condition=AND_9)
     Wait(0.10000000149011612)
     DisplayDialog(text=20030, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
@@ -114,7 +162,7 @@ def Event_1035452600(
     # --- Label 1 --- #
     DefineLabel(1)
     RotateToFaceEntity(PLAYER, target_entity, wait_for_completion=True)
-    ForceAnimation(PLAYER, animation_id, unknown2=1.0)
+    ForceAnimation(PLAYER, animation_id)
     Wait(2.5)
     EnableFlag(flag)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
@@ -123,8 +171,11 @@ def Event_1035452600(
 @RestartOnRest(1035452605)
 def Event_1035452605(_, flag: uint, target_entity: uint, animation: int):
     """Event 1035452605"""
-    EndIfFlagDisabled(flag)
-    IfFlagEnabled(MAIN, flag)
+    if FlagDisabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     WaitFrames(frames=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)

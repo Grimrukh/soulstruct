@@ -25,6 +25,7 @@ setup(
         "Graphs": ["numpy", "matplotlib"],
         "Translate": ["googletrans>=3.1.0a0"],
         "Regulation": ["aes"],
+        "Sound": ["pydub"],
     },
     author="Scott Mooney (Grimrukh)",
     author_email="grimrukh@gmail.com",

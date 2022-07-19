@@ -13,8 +13,9 @@ __all__ = [
     "compile_game_object_test",
 
     "RunEvent",
-    "EnableObjectActivation",
-    "DisableObjectActivation",
+    "RunCommonEvent",
+    "EnableAssetActivation",
+    "DisableAssetActivation",
     "AwardItemLot",
     "PlayCutscene",
     "Move",
@@ -37,7 +38,7 @@ import logging
 import typing as tp
 
 from soulstruct.base.events.emevd.compiler import base_compile_instruction, BooleanTestCompiler
-from soulstruct.darksouls3.game_types import *
+from soulstruct.eldenring.game_types import *
 
 from .emedf import EMEDF_ALIASES
 from .enums import *
@@ -78,13 +79,13 @@ def compile_game_object_test(
         test.if_false = "IfPlayerOutsideRegion"
     elif issubclass(game_object_type, Region):
         raise TypeError(f"Only `RegionVolume` subclasses can be used as direct booleans, not just `Region`.")
-    elif issubclass(game_object_type, Object):
-        test.set_all("ObjectNotDestroyed", "ObjectDestroyed")  # True == object NOT destroyed
+    elif issubclass(game_object_type, Asset):
+        test.set_all("AssetNotDestroyed", "AssetDestroyed")  # True == asset NOT destroyed
     elif issubclass(game_object_type, Character):
         test.if_true = "IfCharacterAlive"
         test.if_false = "IfCharacterDead"
     elif issubclass(game_object_type, ObjActEvent):
-        test.if_true = "IfObjectActivated"
+        test.if_true = "IfAssetActivated"
     else:
         raise TypeError(f"Type `{game_object_type.__name__}` cannot be used as a boolean directly in EVS script.")
 
@@ -134,7 +135,7 @@ def RunEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
 
 # noinspection PyUnusedLocal
 @_compile
-def RunCommonEvent(unknown, event_id, args=(0,), arg_types="", event_layers=None):
+def RunCommonEvent(event_id, slot=0, args=(0,), arg_types="", event_layers=None):
     """Run the given `event_id`, which must be defined in `common_func.emevd`.
 
     You can omit `arg_types` if all the arguments are unsigned integers (which is usually the case).
@@ -154,37 +155,37 @@ def RunCommonEvent(unknown, event_id, args=(0,), arg_types="", event_layers=None
     if len(arg_types) > 1:
         full_arg_types += f"|{arg_types[1:]}"
     return base_compile_instruction(
-        EMEDF_ALIASES, "RunCommonEvent", unknown=unknown, event_id=event_id, args=args, arg_types=full_arg_types
+        EMEDF_ALIASES, "RunCommonEvent", slot=slot, event_id=event_id, args=args, arg_types=full_arg_types
     )
 
 
 @_compile
-def EnableObjectActivation(obj: ObjectTyping, obj_act_id: int, relative_index=None):
+def EnableAssetActivation(asset: AssetTyping, obj_act_id: int, relative_index=None):
     """
-    Allows the given ObjAct to be performed with the object, optionally only at the given relative_index.
+    Allows the given ObjAct to be performed with the asset, optionally only at the given relative_index.
 
     I've combined two instructions into one here, as they're very similar.
     """
     if relative_index is None:
         return compile_instruction(
-            "SetObjectActivation", obj=obj, obj_act_id=obj_act_id, state=True
+            "SetAssetActivation", asset=asset, obj_act_id=obj_act_id, state=True
         )
     return compile_instruction(
-        "SetObjectActivationWithIdx", obj=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=True
+        "SetAssetActivationWithIdx", asset=asset, obj_act_id=obj_act_id, relative_index=relative_index, state=True
     )
 
 
 @_compile
-def DisableObjectActivation(obj: ObjectTyping, obj_act_id, relative_index=None):
+def DisableAssetActivation(asset: AssetTyping, obj_act_id, relative_index=None):
     """
     Prevents the given ObjAct from being performed with the object.
 
     Used for doors that you can only open once, for example. Again, I've combined the relative index version here.
     """
     if relative_index is None:
-        return compile_instruction("SetObjectActivation", obj=obj, obj_act_id=obj_act_id, state=False)
+        return compile_instruction("SetAssetActivation", asset=asset, obj_act_id=obj_act_id, state=False)
     return compile_instruction(
-        "SetObjectActivationWithIdx", obj=obj, obj_act_id=obj_act_id, relative_index=relative_index, state=False
+        "SetAssetActivationWithIdx", asset=asset, obj_act_id=obj_act_id, relative_index=relative_index, state=False
     )
 
 
@@ -436,7 +437,7 @@ def IfActionButton(
             anchor_type = anchor_entity.get_coord_entity_type()
         except AttributeError:
             raise ValueError(
-                "The `anchor_type` keyword is needed if `anchor_entity` is not an `Object`, `Region`, or `Character`."
+                "The `anchor_type` keyword is needed if `anchor_entity` is not an `Asset`, `Region`, or `Character`."
             )
 
     kwargs = dict(

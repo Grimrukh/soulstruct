@@ -2984,7 +2984,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatio(character__game_area_param_id) == 0.0)
     
     MAIN.Await(OR_1)
     
@@ -3116,7 +3116,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatio(character__game_area_param_id) == 0.0)
     
     MAIN.Await(OR_1)
     
@@ -3249,7 +3249,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__miniboss_id))
-    OR_1.Add(HealthRatioEqual(character__miniboss_id, value=0.0))
+    OR_1.Add(HealthRatio(character__miniboss_id) == 0.0)
     
     MAIN.Await(OR_1)
     
@@ -4024,9 +4024,9 @@ def Event_12901723(
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatio(character__game_area_param_id) == 0.0)
     OR_2.Add(CharacterDead(character))
-    OR_2.Add(HealthRatioEqual(character, value=0.0))
+    OR_2.Add(HealthRatio(character) == 0.0)
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     
@@ -4175,11 +4175,11 @@ def Event_12901725(
     # --- Label 0 --- #
     DefineLabel(0)
     OR_1.Add(CharacterDead(character__game_area_param_id))
-    OR_1.Add(HealthRatioEqual(character__game_area_param_id, value=0.0))
+    OR_1.Add(HealthRatio(character__game_area_param_id) == 0.0)
     OR_2.Add(CharacterDead(character))
-    OR_2.Add(HealthRatioEqual(character, value=0.0))
+    OR_2.Add(HealthRatio(character) == 0.0)
     OR_3.Add(CharacterDead(character_1))
-    OR_3.Add(HealthRatioEqual(character_1, value=0.0))
+    OR_3.Add(HealthRatio(character_1) == 0.0)
     AND_1.Add(OR_1)
     AND_1.Add(OR_2)
     AND_1.Add(OR_3)
@@ -4391,7 +4391,7 @@ def Event_12901754(_, character: int):
 def Event_12904000(_, character: int, character_1: int):
     """Event 12904000"""
     DisableCharacter(character_1)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_1.Add(CharacterHasTAEEvent(character, tae_event_id=10))
     
     MAIN.Await(AND_1)
@@ -4417,7 +4417,7 @@ def Event_12904013(_, character: int):
     """Event 12904013"""
     MAIN.Await(CharacterHasSpecialEffect(character, 5676))
     
-    CancelSpecialEffect(character, 5333)
+    RemoveSpecialEffect(character, 5333)
 
 
 @NeverRestart(12904026)
@@ -4444,7 +4444,7 @@ def Event_12904027(_, character: int, character_1: int, character_2: int, flag: 
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthValueEqual(character, value=0))
+    MAIN.Await(HealthValue(character) == 0)
     
     Kill(character_1)
     Kill(character_2)
@@ -4456,7 +4456,7 @@ def Event_12904028(_, character: int, character_1: int, character_2: int, flag: 
     if FlagEnabled(flag):
         return
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.4000000059604645))
+    MAIN.Await(HealthRatio(character) <= 0.4000000059604645)
     
     AICommand(character_1, command_id=100, command_slot=1)
     AICommand(character_2, command_id=100, command_slot=1)
@@ -4473,15 +4473,15 @@ def Event_12904029(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=100))
     
     IncrementEventValue(flag, bit_count=10, max_value=9)
-    OR_1.Add(EventValueEqual(flag=flag, bit_count=10, value=1))
-    OR_1.Add(EventValueEqual(flag=flag, bit_count=10, value=3))
-    OR_1.Add(EventValueEqual(flag=flag, bit_count=10, value=7))
-    OR_2.Add(EventValueEqual(flag=flag, bit_count=10, value=2))
-    OR_2.Add(EventValueEqual(flag=flag, bit_count=10, value=5))
-    OR_2.Add(EventValueEqual(flag=flag, bit_count=10, value=9))
-    OR_3.Add(EventValueEqual(flag=flag, bit_count=10, value=4))
-    OR_3.Add(EventValueEqual(flag=flag, bit_count=10, value=6))
-    OR_3.Add(EventValueEqual(flag=flag, bit_count=10, value=8))
+    OR_1.Add(EventValue(flag=flag, bit_count=10) == 1)
+    OR_1.Add(EventValue(flag=flag, bit_count=10) == 3)
+    OR_1.Add(EventValue(flag=flag, bit_count=10) == 7)
+    OR_2.Add(EventValue(flag=flag, bit_count=10) == 2)
+    OR_2.Add(EventValue(flag=flag, bit_count=10) == 5)
+    OR_2.Add(EventValue(flag=flag, bit_count=10) == 9)
+    OR_3.Add(EventValue(flag=flag, bit_count=10) == 4)
+    OR_3.Add(EventValue(flag=flag, bit_count=10) == 6)
+    OR_3.Add(EventValue(flag=flag, bit_count=10) == 8)
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     GotoIfConditionTrue(Label.L1, input_condition=OR_2)
     GotoIfConditionTrue(Label.L2, input_condition=OR_3)
@@ -4502,7 +4502,7 @@ def Event_12904029(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
 
     # --- Label 3 --- #
     DefineLabel(3)
-    AND_1.Add(EventValueEqual(flag=flag, bit_count=10, value=9))
+    AND_1.Add(EventValue(flag=flag, bit_count=10) == 9)
     SkipLinesIfConditionFalse(1, AND_1)
     ClearEventValue(flag, bit_count=10)
     DisableCharacter(character)
@@ -4526,18 +4526,18 @@ def Event_12904030(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     MAIN.Await(FlagEnabled(flag))
     
     IncrementEventValue(flag_1, bit_count=10, max_value=12)
-    OR_1.Add(EventValueEqual(flag=flag_1, bit_count=10, value=4))
-    OR_1.Add(EventValueEqual(flag=flag_1, bit_count=10, value=6))
-    OR_1.Add(EventValueEqual(flag=flag_1, bit_count=10, value=8))
-    OR_1.Add(EventValueEqual(flag=flag_1, bit_count=10, value=11))
-    OR_2.Add(EventValueEqual(flag=flag_1, bit_count=10, value=1))
-    OR_2.Add(EventValueEqual(flag=flag_1, bit_count=10, value=5))
-    OR_2.Add(EventValueEqual(flag=flag_1, bit_count=10, value=9))
-    OR_2.Add(EventValueEqual(flag=flag_1, bit_count=10, value=12))
-    OR_3.Add(EventValueEqual(flag=flag_1, bit_count=10, value=2))
-    OR_3.Add(EventValueEqual(flag=flag_1, bit_count=10, value=3))
-    OR_3.Add(EventValueEqual(flag=flag_1, bit_count=10, value=7))
-    OR_3.Add(EventValueEqual(flag=flag_1, bit_count=10, value=10))
+    OR_1.Add(EventValue(flag=flag_1, bit_count=10) == 4)
+    OR_1.Add(EventValue(flag=flag_1, bit_count=10) == 6)
+    OR_1.Add(EventValue(flag=flag_1, bit_count=10) == 8)
+    OR_1.Add(EventValue(flag=flag_1, bit_count=10) == 11)
+    OR_2.Add(EventValue(flag=flag_1, bit_count=10) == 1)
+    OR_2.Add(EventValue(flag=flag_1, bit_count=10) == 5)
+    OR_2.Add(EventValue(flag=flag_1, bit_count=10) == 9)
+    OR_2.Add(EventValue(flag=flag_1, bit_count=10) == 12)
+    OR_3.Add(EventValue(flag=flag_1, bit_count=10) == 2)
+    OR_3.Add(EventValue(flag=flag_1, bit_count=10) == 3)
+    OR_3.Add(EventValue(flag=flag_1, bit_count=10) == 7)
+    OR_3.Add(EventValue(flag=flag_1, bit_count=10) == 10)
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     GotoIfConditionTrue(Label.L1, input_condition=OR_2)
     GotoIfConditionTrue(Label.L2, input_condition=OR_3)
@@ -4558,7 +4558,7 @@ def Event_12904030(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
 
     # --- Label 3 --- #
     DefineLabel(3)
-    AND_1.Add(EventValueEqual(flag=flag_1, bit_count=10, value=12))
+    AND_1.Add(EventValue(flag=flag_1, bit_count=10) == 12)
     SkipLinesIfConditionFalse(1, AND_1)
     ClearEventValue(flag_1, bit_count=10)
     
@@ -4754,7 +4754,7 @@ def Event_12904041(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()
@@ -4897,7 +4897,7 @@ def Event_12904210(_, flag: int, character: int, flag_1: int, flag_2: int):
     # --- Label 0 --- #
     DefineLabel(0)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(EventValueGreaterThanOrEqual(flag=flag_1, bit_count=3, value=3))
+    AND_1.Add(EventValue(flag=flag_1, bit_count=3) >= 3)
     
     MAIN.Await(AND_1)
     
@@ -4981,7 +4981,7 @@ def Event_12904274(_, flag: int, character: int, flag_1: int):
     # --- Label 0 --- #
     DefineLabel(0)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(EventValueLessThanOrEqual(flag=flag_1, bit_count=3, value=2))
+    AND_1.Add(EventValue(flag=flag_1, bit_count=3) <= 2)
     
     MAIN.Await(AND_1)
     
@@ -5409,8 +5409,8 @@ def Event_12904361(_, character: int, character_1: int):
     CreateNPCPart(character, npc_part_id=10, part_index=NPCPartType.Part1, part_health=30)
     SetNPCPartEffects(character, npc_part_id=10, material_sfx_id=59, material_vfx_id=59)
     DisableCharacter(character_1)
-    OR_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=10, value=0))
-    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    OR_1.Add(CharacterPartHealth(character, npc_part_id=10) <= 0)
+    OR_1.Add(HealthRatio(character) <= 0.0)
     
     MAIN.Await(OR_1)
     
@@ -5488,7 +5488,7 @@ def Event_12904374(_, obj_act_id: int, character: int, obj: int):
     AddSpecialEffect(character, 5580)
     ForceAnimation(obj, 1)
     Wait(1.0)
-    CancelSpecialEffect(character, 5580)
+    RemoveSpecialEffect(character, 5580)
     WaitFrames(frames=30)
     EnableObjectActivation(obj, obj_act_id=9800)
     Restart()
@@ -5983,7 +5983,7 @@ def Event_12904487(_, character: int, character_1: int):
     """Event 12904487"""
     DisableGravity(character_1)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     Wait(1.0)
     ForceAnimation(character_1, 2200, wait_for_completion=True)
@@ -6019,8 +6019,8 @@ def Event_12904506(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -6038,7 +6038,7 @@ def Event_12904506(
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id_1)
+    RemoveSpecialEffect(character, special_effect_id_1)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -6053,7 +6053,7 @@ def Event_12904506(
         overwrite_max=True,
     )
     AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -6077,8 +6077,8 @@ def Event_12904540(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=60, material_vfx_id=60)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -6360,7 +6360,7 @@ def Event_12904643(_, character: int):
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     AND_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     AND_3.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=8.800000190734863))
-    AND_4.Add(HealthRatioEqual(character, value=1.0))
+    AND_4.Add(HealthRatio(character) == 1.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     AND_5.Add(OR_1)
@@ -6382,7 +6382,7 @@ def Event_12904643(_, character: int):
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    AND_7.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_7.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(5, AND_7)
     ShootProjectile(
         owner_entity=2900000,
@@ -6394,7 +6394,7 @@ def Event_12904643(_, character: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_8.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_8.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(1, AND_8)
     ShootProjectile(
         owner_entity=2900000,
@@ -6436,7 +6436,7 @@ def Event_12904733(_, region: int, obj: int):
     
     MAIN.Await(ObjectDestroyed(obj))
     
-    CancelSpecialEffect(PLAYER, 71)
+    RemoveSpecialEffect(PLAYER, 71)
     CreateTemporaryVFX(vfx_id=851, anchor_entity=PLAYER, model_point=200, anchor_type=CoordEntityType.Character)
 
 
@@ -6721,13 +6721,13 @@ def Event_12904778(_, character: int, flag: int):
     if FlagEnabled(flag):
         return
     DisableNetworkSync()
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     
     MAIN.Await(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=6.0))
     
@@ -6848,7 +6848,7 @@ def Event_12904861(_, character: int, destination: int):
 @NeverRestart(12904862)
 def Event_12904862(_, character: int, character_1: int, character_2: int):
     """Event 12904862"""
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     Kill(character_1)
     Kill(character_2)
@@ -6930,7 +6930,7 @@ def Event_12904865(_, character: int, value: float, character_1: int):
     """Event 12904865"""
     DisableCharacter(character)
     AND_1.Add(CharacterHasTAEEvent(character_1, tae_event_id=20))
-    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatio(character_1) <= value)
     
     MAIN.Await(AND_1)
     
@@ -6964,7 +6964,7 @@ def Event_12904867(_, character: int, region: int):
 @NeverRestart(12904868)
 def Event_12904868(_, character: int, destination: int, destination_1: int):
     """Event 12904868"""
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.75))
+    MAIN.Await(HealthRatio(character) <= 0.75)
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
@@ -6979,7 +6979,7 @@ def Event_12904868(_, character: int, destination: int, destination_1: int):
     AICommand(character, command_id=101, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.5))
+    MAIN.Await(HealthRatio(character) <= 0.5)
     
     AICommand(character, command_id=110, command_slot=0)
     ReplanAI(character)
@@ -7002,8 +7002,8 @@ def Event_12904869(_, character: int):
     
     CreateNPCPart(character, npc_part_id=2, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -7016,8 +7016,8 @@ def Event_12904869(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
-    AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_4.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_5.Add(HealthRatio(character) <= 0.0)
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -7030,8 +7030,8 @@ def Event_12904869(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
-    AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_7.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_8.Add(HealthRatio(character) <= 0.0)
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -7070,8 +7070,8 @@ def Event_12904870(_, character: int):
     
     CreateNPCPart(character, npc_part_id=3, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -7084,8 +7084,8 @@ def Event_12904870(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
-    AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_4.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_5.Add(HealthRatio(character) <= 0.0)
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -7098,8 +7098,8 @@ def Event_12904870(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
-    AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_7.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_8.Add(HealthRatio(character) <= 0.0)
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -7361,13 +7361,13 @@ def Event_12904883(_, character: int, flag: int):
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=5.5))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatio(character) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=6.0))
     
     MAIN.Await(AND_2)
@@ -7395,7 +7395,7 @@ def Event_12904887(_, character: int, character_1: int, flag: int, destination: 
     """Event 12904887"""
     DisableCharacter(character)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatio(character_1) <= value)
     
     MAIN.Await(AND_1)
     
@@ -7415,7 +7415,7 @@ def Event_12904887(_, character: int, character_1: int, flag: int, destination: 
 @RestartOnRest(12904888)
 def Event_12904888(_, character: int):
     """Event 12904888"""
-    MAIN.Await(HealthRatioLessThan(character, value=0.5))
+    MAIN.Await(HealthRatio(character) < 0.5)
     
     AICommand(character, command_id=1, command_slot=1)
     
@@ -7509,7 +7509,7 @@ def Event_12904892(_, sound_id: int, sound_id_1: int):
 @NeverRestart(12904893)
 def Event_12904893(_, character: int):
     """Event 12904893"""
-    MAIN.Await(HealthRatioLessThan(character, value=0.5))
+    MAIN.Await(HealthRatio(character) < 0.5)
     
     AICommand(character, command_id=1, command_slot=1)
     
@@ -7567,9 +7567,9 @@ def Event_12904896(
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_2.Add(CharacterHasSpecialEffect(character, 5021))
-    AND_3.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_3.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 5021))
     AND_4.Add(FlagEnabled(flag_1))
     OR_1.Add(AND_2)
@@ -7596,7 +7596,7 @@ def Event_12904896(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(character, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id_1)
+    RemoveSpecialEffect(character, special_effect_id_1)
     WaitFrames(frames=1)
     ResetAnimation(character)
     ForceAnimation(character, 7003)
@@ -7607,9 +7607,9 @@ def Event_12904896(
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
-    CancelSpecialEffect(character, 5021)
+    RemoveSpecialEffect(character, 5021)
     AddSpecialEffect(character, special_effect_id_1)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     WaitFrames(frames=10)
     Restart()
 
@@ -7636,9 +7636,9 @@ def Event_12904897(
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_2.Add(CharacterHasSpecialEffect(character, 5021))
-    AND_3.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_3.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 5021))
     AND_4.Add(FlagEnabled(flag_1))
     OR_1.Add(AND_2)
@@ -7665,7 +7665,7 @@ def Event_12904897(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(character, 5021, affect_npc_part_hp=True)
     AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id_1)
+    RemoveSpecialEffect(character, special_effect_id_1)
     WaitFrames(frames=1)
     ResetAnimation(character)
     ForceAnimation(character, 7000)
@@ -7676,9 +7676,9 @@ def Event_12904897(
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
-    CancelSpecialEffect(character, 5021)
+    RemoveSpecialEffect(character, 5021)
     AddSpecialEffect(character, special_effect_id_1)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     WaitFrames(frames=10)
     Restart()
 
@@ -7703,8 +7703,8 @@ def Event_12904898(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7731,7 +7731,7 @@ def Event_12904898(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -7755,7 +7755,7 @@ def Event_12904898(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -7774,8 +7774,8 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=130)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7795,7 +7795,7 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -7805,7 +7805,7 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=130, overwrite_max=True)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -7832,8 +7832,8 @@ def Event_12904900(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7860,7 +7860,7 @@ def Event_12904900(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -7884,7 +7884,7 @@ def Event_12904900(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -7911,8 +7911,8 @@ def Event_12904901(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -7939,7 +7939,7 @@ def Event_12904901(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -7963,7 +7963,7 @@ def Event_12904901(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -7982,8 +7982,8 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8003,7 +8003,7 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -8013,7 +8013,7 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=150, overwrite_max=True)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -8040,8 +8040,8 @@ def Event_12904903(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8068,7 +8068,7 @@ def Event_12904903(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8092,7 +8092,7 @@ def Event_12904903(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8119,8 +8119,8 @@ def Event_12904904(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8147,7 +8147,7 @@ def Event_12904904(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8171,7 +8171,7 @@ def Event_12904904(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8190,8 +8190,8 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8211,7 +8211,7 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -8221,7 +8221,7 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=150, overwrite_max=True)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -8248,8 +8248,8 @@ def Event_12904906(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8276,7 +8276,7 @@ def Event_12904906(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8300,7 +8300,7 @@ def Event_12904906(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8327,8 +8327,8 @@ def Event_12904907(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8355,7 +8355,7 @@ def Event_12904907(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8379,7 +8379,7 @@ def Event_12904907(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8398,8 +8398,8 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8419,7 +8419,7 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -8429,7 +8429,7 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=200, overwrite_max=True)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -8456,8 +8456,8 @@ def Event_12904909(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8484,7 +8484,7 @@ def Event_12904909(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8508,7 +8508,7 @@ def Event_12904909(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8535,8 +8535,8 @@ def Event_12904910(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8563,7 +8563,7 @@ def Event_12904910(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8587,7 +8587,7 @@ def Event_12904910(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8606,8 +8606,8 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8627,7 +8627,7 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -8637,7 +8637,7 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=200, overwrite_max=True)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -8664,8 +8664,8 @@ def Event_12904911(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8692,7 +8692,7 @@ def Event_12904911(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -8716,7 +8716,7 @@ def Event_12904911(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -8726,7 +8726,7 @@ def Event_12904911(
 @RestartOnRest(12904912)
 def Event_12904912(_, character: int):
     """Event 12904912"""
-    MAIN.Await(HealthRatioLessThan(character, value=0.6700000166893005))
+    MAIN.Await(HealthRatio(character) < 0.6700000166893005)
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -8739,7 +8739,7 @@ def Event_12904912(_, character: int):
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthRatioLessThan(character, value=0.33000001311302185))
+    MAIN.Await(HealthRatio(character) < 0.33000001311302185)
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -8797,7 +8797,7 @@ def Event_12904916(_, character: int):
     MAIN.Await(CharacterHasSpecialEffect(character, 420))
     
     WaitFrames(frames=10)
-    CancelSpecialEffect(character, 420)
+    RemoveSpecialEffect(character, 420)
     Restart()
 
 
@@ -8818,8 +8818,8 @@ def Event_12904917(
     MAIN.Await(AND_1)
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=1)
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
-    AND_3.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    AND_2.Add(HealthRatio(character) <= 0.0)
+    AND_3.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -8847,7 +8847,7 @@ def Event_12904918(
         MAIN.Await(FlagEnabled(flag))
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id))
     AND_1.Add(CharacterHasSpecialEffect(character, 421))
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
     AND_2.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id))
     AND_2.Add(CharacterHasSpecialEffect(character, 421))
     AND_2.Add(CharacterPartHealthComparison(
@@ -9290,13 +9290,13 @@ def Event_12905178(
     OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_6, radius=7.0))
     if not OR_2:
         return RESTART
-    CancelSpecialEffect(character, 5913)
-    CancelSpecialEffect(character_1, 5913)
-    CancelSpecialEffect(character_2, 5913)
-    CancelSpecialEffect(character_3, 5913)
-    CancelSpecialEffect(character_4, 5913)
-    CancelSpecialEffect(character_5, 5913)
-    CancelSpecialEffect(character_6, 5913)
+    RemoveSpecialEffect(character, 5913)
+    RemoveSpecialEffect(character_1, 5913)
+    RemoveSpecialEffect(character_2, 5913)
+    RemoveSpecialEffect(character_3, 5913)
+    RemoveSpecialEffect(character_4, 5913)
+    RemoveSpecialEffect(character_5, 5913)
+    RemoveSpecialEffect(character_6, 5913)
     AddSpecialEffect(character, 5625)
     AddSpecialEffect(character_1, 5625)
     AddSpecialEffect(character_2, 5625)
@@ -9943,7 +9943,7 @@ def Event_12905314(_, character: int, flag: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    MAIN.Await(HealthRatioEqual(character, value=1.0))
+    MAIN.Await(HealthRatio(character) == 1.0)
     
     WaitFrames(frames=1)
     End()
@@ -9956,7 +9956,7 @@ def Event_12905337(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(3, AND_1)
     DisableAI(character)
     ForceAnimation(character, 3002, wait_for_completion=True)
@@ -10000,7 +10000,7 @@ def Event_12905357(
     SetAIParamID(character, ai_param_id=ai_param_id)
     ForceAnimation(character, animation_id, loop=True)
     OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthRatioNotEqual(character, value=1.0))
+    OR_1.Add(HealthRatio(character) != 1.0)
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Search))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -10021,7 +10021,7 @@ def Event_12905369(_, character: int, animation_id: int, animation_id_1: int):
         End()
     ForceAnimation(character, animation_id, loop=True)
     OR_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthRatioNotEqual(character, value=1.0))
+    OR_1.Add(HealthRatio(character) != 1.0)
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     MAIN.Await(OR_1)
@@ -10063,7 +10063,7 @@ def Event_12905396(_, character: int):
     
     ForceAnimation(character, 7001)
     SetAIParamID(character, ai_param_id=218080)
-    CancelSpecialEffect(character, 5629)
+    RemoveSpecialEffect(character, 5629)
     ReplanAI(character)
 
 
@@ -10111,7 +10111,7 @@ def Event_12905406(_, character: int, flag: int):
     """Event 12905406"""
     DisableCharacter(character)
     End()
-    AND_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=10))
+    AND_1.Add(PlayerInsightAmount() >= 10)
     AND_1.Add(CharacterHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=10.0))
     
@@ -10127,7 +10127,7 @@ def Event_12905407(_, character: int, flag: int):
     """Event 12905407"""
     End()
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(PlayerInsightAmountLessThanOrEqual(value=8))
+    AND_1.Add(PlayerInsightAmount() <= 8)
     
     MAIN.Await(AND_1)
 
@@ -12062,7 +12062,7 @@ def Event_12906567(_, character: int, special_effect_id: int):
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 5645))
     
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     Restart()
 
 
@@ -12217,7 +12217,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
     """Event 12906656"""
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    AND_1.Add(HealthRatioEqual(character, value=1.0))
+    AND_1.Add(HealthRatio(character) == 1.0)
     AND_2.Add(OR_1)
     AND_2.Add(AND_1)
     
@@ -12244,7 +12244,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    AND_4.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_4.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(17, AND_4)
     ShootProjectile(
         owner_entity=2900000,
@@ -12256,7 +12256,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=90)
-    AND_5.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_5.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(13, AND_5)
     ShootProjectile(
         owner_entity=2900000,
@@ -12268,7 +12268,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=90)
-    AND_6.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_6.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(9, AND_6)
     ShootProjectile(
         owner_entity=2900000,
@@ -12280,7 +12280,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_7.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_7.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(5, AND_7)
     ShootProjectile(
         owner_entity=2900000,
@@ -12292,7 +12292,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
         launch_angle_z=0,
     )
     WaitFrames(frames=60)
-    AND_8.Add(HealthRatioNotEqual(character, value=1.0))
+    AND_8.Add(HealthRatio(character) != 1.0)
     SkipLinesIfConditionTrue(1, AND_8)
     ShootProjectile(
         owner_entity=2900000,
@@ -12487,7 +12487,7 @@ def Event_12906738(_, character: int):
 def Event_12906740(_, character: int, flag: int):
     """Event 12906740"""
     EndIfFlagRangeAnyEnabled(flag_range=(1431, 1432))
-    AND_1.Add(HealthRatioLessThan(character, value=0.8999999761581421))
+    AND_1.Add(HealthRatio(character) < 0.8999999761581421)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     OR_1.Add(AND_1)
@@ -12544,7 +12544,7 @@ def Event_12906748(_, character: int):
     """Event 12906748"""
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(CharacterHasSpecialEffect(character, 5543))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     
     MAIN.Await(AND_1)
     
@@ -12595,8 +12595,8 @@ def Event_12906764(
         body_damage_correction=2.0,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12614,14 +12614,14 @@ def Event_12906764(
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id_1)
+    RemoveSpecialEffect(character, special_effect_id_1)
     ReplanAI(character)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=100))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -12647,8 +12647,8 @@ def Event_12906765(
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12666,14 +12666,14 @@ def Event_12906765(
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
     AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id_1)
+    RemoveSpecialEffect(character, special_effect_id_1)
     ReplanAI(character)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=100))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -12688,7 +12688,7 @@ def Event_12906766(_, character: int, flag: int, flag_1: int):
     if ThisEventSlotFlagEnabled():
         return
     
-    MAIN.Await(HealthRatioLessThan(character, value=0.699999988079071))
+    MAIN.Await(HealthRatio(character) < 0.699999988079071)
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -12709,7 +12709,7 @@ def Event_12906767(_, character: int, flag: int, flag_1: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_1.Add(HealthRatioLessThan(character, value=0.30000001192092896))
+    AND_1.Add(HealthRatio(character) < 0.30000001192092896)
     AND_1.Add(FlagEnabled(flag_1))
     
     MAIN.Await(AND_1)
@@ -12781,8 +12781,8 @@ def Event_12906769(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12809,7 +12809,7 @@ def Event_12906769(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -12833,7 +12833,7 @@ def Event_12906769(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -12860,8 +12860,8 @@ def Event_12906770(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12888,7 +12888,7 @@ def Event_12906770(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -12912,7 +12912,7 @@ def Event_12906770(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -12939,8 +12939,8 @@ def Event_12906771(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -12967,7 +12967,7 @@ def Event_12906771(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -12991,7 +12991,7 @@ def Event_12906771(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13018,8 +13018,8 @@ def Event_12906772(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13046,7 +13046,7 @@ def Event_12906772(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13070,7 +13070,7 @@ def Event_12906772(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13097,8 +13097,8 @@ def Event_12906773(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13125,7 +13125,7 @@ def Event_12906773(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13149,7 +13149,7 @@ def Event_12906773(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13176,8 +13176,8 @@ def Event_12906774(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13204,7 +13204,7 @@ def Event_12906774(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13228,7 +13228,7 @@ def Event_12906774(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13255,8 +13255,8 @@ def Event_12906775(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13283,7 +13283,7 @@ def Event_12906775(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13307,7 +13307,7 @@ def Event_12906775(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13334,8 +13334,8 @@ def Event_12906776(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13362,7 +13362,7 @@ def Event_12906776(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13386,7 +13386,7 @@ def Event_12906776(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13413,8 +13413,8 @@ def Event_12906777(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13441,7 +13441,7 @@ def Event_12906777(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13465,7 +13465,7 @@ def Event_12906777(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13492,8 +13492,8 @@ def Event_12906778(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13520,7 +13520,7 @@ def Event_12906778(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13544,7 +13544,7 @@ def Event_12906778(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13571,8 +13571,8 @@ def Event_12906779(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13599,7 +13599,7 @@ def Event_12906779(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13623,7 +13623,7 @@ def Event_12906779(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13650,8 +13650,8 @@ def Event_12906780(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13678,7 +13678,7 @@ def Event_12906780(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13702,7 +13702,7 @@ def Event_12906780(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13729,8 +13729,8 @@ def Event_12906781(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13757,7 +13757,7 @@ def Event_12906781(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13781,7 +13781,7 @@ def Event_12906781(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13808,8 +13808,8 @@ def Event_12906782(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13836,7 +13836,7 @@ def Event_12906782(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13860,7 +13860,7 @@ def Event_12906782(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13887,8 +13887,8 @@ def Event_12906783(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13915,7 +13915,7 @@ def Event_12906783(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -13939,7 +13939,7 @@ def Event_12906783(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -13966,8 +13966,8 @@ def Event_12906784(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -13994,7 +13994,7 @@ def Event_12906784(
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -14018,7 +14018,7 @@ def Event_12906784(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14045,8 +14045,8 @@ def Event_12906785(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14073,7 +14073,7 @@ def Event_12906785(
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -14097,7 +14097,7 @@ def Event_12906785(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14124,8 +14124,8 @@ def Event_12906786(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14152,7 +14152,7 @@ def Event_12906786(
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -14176,7 +14176,7 @@ def Event_12906786(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14203,8 +14203,8 @@ def Event_12906787(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14231,7 +14231,7 @@ def Event_12906787(
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -14255,7 +14255,7 @@ def Event_12906787(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14282,8 +14282,8 @@ def Event_12906788(
     
     CreateNPCPart(character, npc_part_id=npc_part_id_1, part_index=part_index, part_health=desired_health__part_health)
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14310,7 +14310,7 @@ def Event_12906788(
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -14334,7 +14334,7 @@ def Event_12906788(
     )
     EnableFlag(flag)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14354,8 +14354,8 @@ def Event_12906827(
     """Event 12906827"""
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=100)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -14375,7 +14375,7 @@ def Event_12906827(
     AddSpecialEffect(character, special_effect_id)
     ReplanAI(character)
     Wait(30.0)
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     ReplanAI(character)
     Restart()
 
@@ -14411,8 +14411,8 @@ def Event_12906828(
         body_damage_correction=1.5,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -14622,13 +14622,13 @@ def Event_12906794(_, character: int, flag: int, radius: float, radius_1: float)
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatio(character) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     
     MAIN.Await(AND_2)
@@ -14988,13 +14988,13 @@ def Event_12906818(_, character: int, flag: int, radius: float, radius_1: float)
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_2.Add(HealthRatio(character) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=character, radius=radius_1))
     
     MAIN.Await(AND_2)
@@ -15009,11 +15009,11 @@ def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float,
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_2.Add(HealthRatioGreaterThan(character_1, value=0.0))
+    AND_2.Add(HealthRatio(character_1) > 0.0)
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius))
-    AND_3.Add(HealthRatioGreaterThan(character_2, value=0.0))
+    AND_3.Add(HealthRatio(character_2) > 0.0)
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_2, radius=radius))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -15022,11 +15022,11 @@ def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float,
     MAIN.Await(OR_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_4.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_4.Add(HealthRatio(character) > 0.0)
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
-    AND_5.Add(HealthRatioGreaterThan(character_1, value=0.0))
+    AND_5.Add(HealthRatio(character_1) > 0.0)
     AND_5.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius_1))
-    AND_6.Add(HealthRatioGreaterThan(character_2, value=0.0))
+    AND_6.Add(HealthRatio(character_2) > 0.0)
     AND_6.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_2, radius=radius_1))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -15044,9 +15044,9 @@ def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float,
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_2.Add(HealthRatioGreaterThan(character_1, value=0.0))
+    AND_2.Add(HealthRatio(character_1) > 0.0)
     AND_2.Add(FlagEnabled(flag_1))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius))
     OR_1.Add(AND_1)
@@ -15055,9 +15055,9 @@ def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float,
     MAIN.Await(OR_1)
     
     SetLockedCameraSlot(game_map=CHALICE_DUNGEON, camera_slot=1)
-    AND_3.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_3.Add(HealthRatio(character) > 0.0)
     AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius_1))
-    AND_4.Add(HealthRatioGreaterThan(character_1, value=0.0))
+    AND_4.Add(HealthRatio(character_1) > 0.0)
     AND_4.Add(FlagEnabled(flag_1))
     AND_4.Add(EntityWithinDistance(entity=PLAYER, other_entity=character_1, radius=radius_1))
     OR_2.Add(AND_3)
@@ -15099,7 +15099,7 @@ def Event_12906825(
     GotoIfFlagEnabled(Label.L1, flag=flag_1)
     DisableCharacter(character)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(HealthRatioLessThanOrEqual(character_1, value=value))
+    AND_1.Add(HealthRatio(character_1) <= value)
     
     MAIN.Await(AND_1)
     
@@ -15126,8 +15126,8 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=0.75,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15143,7 +15143,7 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8000, wait_for_completion=True)
@@ -15154,7 +15154,7 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15169,8 +15169,8 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=80)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15186,7 +15186,7 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -15197,7 +15197,7 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15212,8 +15212,8 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=80)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15229,7 +15229,7 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -15240,7 +15240,7 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15255,8 +15255,8 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=280)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15272,7 +15272,7 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -15283,7 +15283,7 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15298,8 +15298,8 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=280)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15315,7 +15315,7 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8040, wait_for_completion=True)
@@ -15326,7 +15326,7 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15360,8 +15360,8 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=100)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15377,7 +15377,7 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8000, wait_for_completion=True)
@@ -15388,7 +15388,7 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15403,8 +15403,8 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15420,7 +15420,7 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -15431,7 +15431,7 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15446,8 +15446,8 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=150)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15463,7 +15463,7 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -15474,7 +15474,7 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15489,8 +15489,8 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15506,7 +15506,7 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -15517,7 +15517,7 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15532,8 +15532,8 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=72, material_vfx_id=72)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15549,7 +15549,7 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8040, wait_for_completion=True)
@@ -15560,7 +15560,7 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15575,8 +15575,8 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15592,7 +15592,7 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -15603,7 +15603,7 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15618,8 +15618,8 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15635,7 +15635,7 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8000, wait_for_completion=True)
@@ -15646,7 +15646,7 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15661,8 +15661,8 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15678,7 +15678,7 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -15689,7 +15689,7 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15704,8 +15704,8 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15721,7 +15721,7 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -15732,7 +15732,7 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15747,8 +15747,8 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15764,7 +15764,7 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8040, wait_for_completion=True)
@@ -15775,7 +15775,7 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15820,8 +15820,8 @@ def Event_12906869(_, character: int, flag: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_2.Add(HealthRatioLessThan(character, value=0.699999988079071))
-    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) < 0.699999988079071)
+    AND_2.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_2)
     
@@ -15846,8 +15846,8 @@ def Event_12906870(_, character: int, flag: int):
         return
     if ThisEventSlotFlagEnabled():
         return
-    AND_2.Add(HealthRatioLessThan(character, value=0.33000001311302185))
-    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) < 0.33000001311302185)
+    AND_2.Add(HealthRatio(character) != 0.0)
     AND_2.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_2)
@@ -15917,8 +15917,8 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=1.399999976158142,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15934,7 +15934,7 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8000, wait_for_completion=True)
@@ -15945,7 +15945,7 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -15971,8 +15971,8 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=0.20000000298023224,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -15988,7 +15988,7 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 488, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 498)
+    RemoveSpecialEffect(character, 498)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -15999,7 +15999,7 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 498, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 488)
+    RemoveSpecialEffect(character, 488)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16019,8 +16019,8 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16036,7 +16036,7 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 485, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 495)
+    RemoveSpecialEffect(character, 495)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -16047,7 +16047,7 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 495, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 485)
+    RemoveSpecialEffect(character, 485)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16067,8 +16067,8 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=230)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16084,7 +16084,7 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -16095,7 +16095,7 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16115,8 +16115,8 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part6, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16132,7 +16132,7 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 486, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 496)
+    RemoveSpecialEffect(character, 496)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -16143,7 +16143,7 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 496, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 486)
+    RemoveSpecialEffect(character, 486)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16163,8 +16163,8 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part7, part_health=170)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16180,7 +16180,7 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -16191,7 +16191,7 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16211,8 +16211,8 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part8, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16228,7 +16228,7 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 487, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 497)
+    RemoveSpecialEffect(character, 497)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -16239,7 +16239,7 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 497, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 487)
+    RemoveSpecialEffect(character, 487)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16259,8 +16259,8 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part9, part_health=170)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16276,7 +16276,7 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -16287,7 +16287,7 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16307,8 +16307,8 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part10, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16324,7 +16324,7 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -16335,7 +16335,7 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16361,8 +16361,8 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=0.20000000298023224,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16378,7 +16378,7 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 488, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 498)
+    RemoveSpecialEffect(character, 498)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8040, wait_for_completion=True)
@@ -16389,7 +16389,7 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 498, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 488)
+    RemoveSpecialEffect(character, 488)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16415,8 +16415,8 @@ def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=0.20000000298023224,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16432,7 +16432,7 @@ def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 488, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 498)
+    RemoveSpecialEffect(character, 498)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -16443,7 +16443,7 @@ def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     AddSpecialEffect(character, 498, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 488)
+    RemoveSpecialEffect(character, 488)
     AICommand(character, command_id=-1, command_slot=1)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -16459,7 +16459,7 @@ def Event_12904889(_, character: int):
     if AND_1:
         return
     AICommand(character, command_id=2, command_slot=1)
-    AND_2.Add(HealthRatioLessThan(character, value=0.6700000166893005))
+    AND_2.Add(HealthRatio(character) < 0.6700000166893005)
     AND_2.Add(CharacterHasSpecialEffect(character, 5402))
     
     MAIN.Await(AND_2)
@@ -16488,8 +16488,8 @@ def Event_12904723(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=180)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16509,7 +16509,7 @@ def Event_12904723(_, character: int, npc_part_id: short, npc_part_id_1: int):
     ResetAnimation(character)
     ForceAnimation(character, 8000)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -16519,7 +16519,7 @@ def Event_12904723(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=130, overwrite_max=True)
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -16538,8 +16538,8 @@ def Event_12904724(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16559,7 +16559,7 @@ def Event_12904724(_, character: int, npc_part_id: short, npc_part_id_1: int):
     ResetAnimation(character)
     ForceAnimation(character, 8010)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -16569,7 +16569,7 @@ def Event_12904724(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=150, overwrite_max=True)
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -16588,8 +16588,8 @@ def Event_12904725(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=200)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16609,7 +16609,7 @@ def Event_12904725(_, character: int, npc_part_id: short, npc_part_id_1: int):
     ResetAnimation(character)
     ForceAnimation(character, 8030)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -16619,7 +16619,7 @@ def Event_12904725(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=150, overwrite_max=True)
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -16638,8 +16638,8 @@ def Event_12904726(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16659,7 +16659,7 @@ def Event_12904726(_, character: int, npc_part_id: short, npc_part_id_1: int):
     ResetAnimation(character)
     ForceAnimation(character, 8020)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -16669,7 +16669,7 @@ def Event_12904726(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=200, overwrite_max=True)
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -16688,8 +16688,8 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part5, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -16709,7 +16709,7 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     ResetAnimation(character)
     ForceAnimation(character, 8040)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     Wait(10.0)
     AICommand(character, command_id=110, command_slot=0)
@@ -16719,7 +16719,7 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=200, overwrite_max=True)
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     ChangeCharacterCloth(character, bit_count=10, state_id=1)
@@ -16760,15 +16760,15 @@ def Event_12906863(_, character: int, destination: int, destination_1: int, flag
     AND_1.Add(CharacterDead(character))
     if AND_1:
         return
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.75))
-    AND_2.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) <= 0.75)
+    AND_2.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_2)
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=10))
-    AND_3.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_3.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_3)
     
@@ -16780,15 +16780,15 @@ def Event_12906863(_, character: int, destination: int, destination_1: int, flag
     AICommand(character, command_id=101, command_slot=0)
     ReplanAI(character)
     EnableFlag(flag)
-    AND_4.Add(HealthRatioLessThanOrEqual(character, value=0.5))
-    AND_4.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_4.Add(HealthRatio(character) <= 0.5)
+    AND_4.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_4)
     
     AICommand(character, command_id=110, command_slot=0)
     ReplanAI(character)
     AND_5.Add(CharacterHasTAEEvent(character, tae_event_id=10))
-    AND_5.Add(HealthRatioNotEqual(character, value=0.0))
+    AND_5.Add(HealthRatio(character) != 0.0)
     
     MAIN.Await(AND_5)
     
@@ -16827,8 +16827,8 @@ def Event_12906864(_, character: int):
     """Event 12906864"""
     CreateNPCPart(character, npc_part_id=2, part_index=NPCPartType.Part2, part_health=250)
     SetNPCPartEffects(character, npc_part_id=2, material_sfx_id=59, material_vfx_id=59)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -16841,8 +16841,8 @@ def Event_12906864(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7000)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=100, overwrite_max=True)
-    AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_4.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_5.Add(HealthRatio(character) <= 0.0)
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -16855,8 +16855,8 @@ def Event_12906864(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7001)
     SetNPCPartHealth(character, npc_part_id=2, desired_health=50, overwrite_max=True)
-    AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=2, value=0))
-    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_7.Add(CharacterPartHealth(character, npc_part_id=2) <= 0)
+    AND_8.Add(HealthRatio(character) <= 0.0)
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -16893,8 +16893,8 @@ def Event_12906867(_, character: int):
     """Event 12906867"""
     CreateNPCPart(character, npc_part_id=3, part_index=NPCPartType.Part3, part_health=250)
     SetNPCPartEffects(character, npc_part_id=3, material_sfx_id=59, material_vfx_id=59)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
@@ -16907,8 +16907,8 @@ def Event_12906867(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7005)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=100, overwrite_max=True)
-    AND_4.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_5.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_4.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_5.Add(HealthRatio(character) <= 0.0)
     AND_6.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -16921,8 +16921,8 @@ def Event_12906867(_, character: int):
     ResetAnimation(character)
     ForceAnimation(character, 7006)
     SetNPCPartHealth(character, npc_part_id=3, desired_health=50, overwrite_max=True)
-    AND_7.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=3, value=0))
-    AND_8.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_7.Add(CharacterPartHealth(character, npc_part_id=3) <= 0)
+    AND_8.Add(HealthRatio(character) <= 0.0)
     AND_9.Add(CharacterHasTAEEvent(character, tae_event_id=20))
     OR_3.Add(AND_7)
     OR_3.Add(AND_8)
@@ -16969,8 +16969,8 @@ def Event_12906868(_, character: int):
         body_damage_correction=0.5,
     )
     SetNPCPartEffects(character, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=1) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -17021,7 +17021,7 @@ def Event_12904875(_, character: int, entity: int, flag: int):
     if FlagEnabled(flag):
         return
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.5))
+    MAIN.Await(HealthRatio(character) <= 0.5)
     
     ForceAnimation(entity, 3000)
 
@@ -17034,7 +17034,7 @@ def Event_12904884(_, character: int):
     if AND_1:
         return
     
-    MAIN.Await(HealthRatioLessThan(character, value=0.6700000166893005))
+    MAIN.Await(HealthRatio(character) < 0.6700000166893005)
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -17047,7 +17047,7 @@ def Event_12904884(_, character: int):
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     
-    MAIN.Await(HealthRatioLessThan(character, value=0.33000001311302185))
+    MAIN.Await(HealthRatio(character) < 0.33000001311302185)
     
     Wait(0.10000000149011612)
     ResetAnimation(character, disable_interpolation=True)
@@ -17069,7 +17069,7 @@ def Event_12904734(_, character: int):
     if AND_1:
         return
     AND_2.Add(CharacterHasSpecialEffect(character, 5650))
-    AND_2.Add(HealthValueLessThan(character, value=0))
+    AND_2.Add(HealthValue(character) < 0)
     
     MAIN.Await(AND_2)
     
@@ -17094,7 +17094,7 @@ def Event_12904735(_, character: int):
     if AND_1:
         return
     
-    MAIN.Await(HealthRatioLessThan(character, value=0.5))
+    MAIN.Await(HealthRatio(character) < 0.5)
     
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
@@ -17123,8 +17123,8 @@ def Event_12904728(_, character: int, npc_part_id: short, npc_part_id_1: int):
         body_damage_correction=2.0,
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17140,7 +17140,7 @@ def Event_12904728(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 480, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 490)
+    RemoveSpecialEffect(character, 490)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8040, wait_for_completion=True)
@@ -17151,7 +17151,7 @@ def Event_12904728(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=500))
     
     AddSpecialEffect(character, 490, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 480)
+    RemoveSpecialEffect(character, 480)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -17171,8 +17171,8 @@ def Event_12904729(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17188,7 +17188,7 @@ def Event_12904729(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 481, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 491)
+    RemoveSpecialEffect(character, 491)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8010, wait_for_completion=True)
@@ -17199,7 +17199,7 @@ def Event_12904729(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=500))
     
     AddSpecialEffect(character, 491, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 481)
+    RemoveSpecialEffect(character, 481)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -17219,8 +17219,8 @@ def Event_12904730(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=250)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17236,7 +17236,7 @@ def Event_12904730(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 482, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 492)
+    RemoveSpecialEffect(character, 492)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8000, wait_for_completion=True)
@@ -17247,7 +17247,7 @@ def Event_12904730(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=500))
     
     AddSpecialEffect(character, 492, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 482)
+    RemoveSpecialEffect(character, 482)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -17267,8 +17267,8 @@ def Event_12904731(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part3, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17284,7 +17284,7 @@ def Event_12904731(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 483, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 493)
+    RemoveSpecialEffect(character, 493)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8030, wait_for_completion=True)
@@ -17295,7 +17295,7 @@ def Event_12904731(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=500))
     
     AddSpecialEffect(character, 493, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 483)
+    RemoveSpecialEffect(character, 483)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -17315,8 +17315,8 @@ def Event_12904732(_, character: int, npc_part_id: short, npc_part_id_1: int):
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part4, part_health=300)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -17332,7 +17332,7 @@ def Event_12904732(_, character: int, npc_part_id: short, npc_part_id_1: int):
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     AddSpecialEffect(character, 484, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 494)
+    RemoveSpecialEffect(character, 494)
     ReplanAI(character)
     ResetAnimation(character)
     ForceAnimation(character, 8020, wait_for_completion=True)
@@ -17343,7 +17343,7 @@ def Event_12904732(_, character: int, npc_part_id: short, npc_part_id_1: int):
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=500))
     
     AddSpecialEffect(character, 494, affect_npc_part_hp=True)
-    CancelSpecialEffect(character, 484)
+    RemoveSpecialEffect(character, 484)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
@@ -17563,7 +17563,7 @@ def Event_12907400():
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(PLAYER, 9020)
     Restart()
 
 
@@ -17590,7 +17590,7 @@ def Event_12907401(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     ForceAnimation(character, 7010, loop=True)
     AND_1.Add(Online())
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     if FlagEnabled(flag_3):
         AND_2.Add(ClientTypeCountComparison(
             client_type=ClientType.Coop,
@@ -17636,7 +17636,7 @@ def Event_12907405(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     ForceAnimation(character, 7010, loop=True)
     AND_1.Add(Online())
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     AND_4.Add(FlagDisabled(flag_3))
     AND_4.Add(FlagEnabled(flag_5))
     SkipLinesIfConditionTrue(1, AND_4)
@@ -17672,7 +17672,7 @@ def Event_12907409(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     AND_3.Add(FlagEnabled(flag_2))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -17706,7 +17706,7 @@ def Event_12907413(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     if OR_15:
         return
     AND_1.Add(FlagEnabled(flag))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     AND_3.Add(FlagEnabled(flag_2))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -17749,7 +17749,7 @@ def Event_12907440(_, character: int, flag: int, flag_1: int):
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     Restart()
 
@@ -17912,8 +17912,8 @@ def Event_12906966(
     AddSpecialEffect(PLAYER, 4682)
     SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
     EnableFlag(flag_1)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 

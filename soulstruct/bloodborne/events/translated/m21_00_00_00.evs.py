@@ -1871,7 +1871,7 @@ def ActivateGehrmanPhaseTwo():
     IfHealthLessThan(0, Characters.GehrmanBoss, 0.5)
     AICommand(Characters.GehrmanBoss, command_id=100, slot=0)
     IfCharacterHasTAEEvent(0, Characters.GehrmanBoss, tae_event_id=100)
-    CancelSpecialEffect(Characters.GehrmanBoss, 5305)
+    RemoveSpecialEffect(Characters.GehrmanBoss, 5305)
     AICommand(Characters.GehrmanBoss, command_id=-1, slot=0)
     ReplanAI(Characters.GehrmanBoss)
     Wait(0.10000000149011612)
@@ -1882,7 +1882,7 @@ def GehrmanBuffWearsOff():
     """ 12104808: Educated guess. Waits for TAE event 20 and cancels effect 5526. """
     EndIfFlagEnabled(Flags.GehrmanDead)
     IfCharacterHasTAEEvent(0, Characters.GehrmanBoss, tae_event_id=20)
-    CancelSpecialEffect(Characters.GehrmanBoss, 5526)
+    RemoveSpecialEffect(Characters.GehrmanBoss, 5526)
     Wait(0.10000000149011612)
     Restart()
 
@@ -2215,7 +2215,7 @@ def ControlMoonPresenceTail(
     ResetAnimation(Characters.MoonPresence, disable_interpolation=False)
     ForceAnimation(Characters.MoonPresence, wounded_animation)
     AddSpecialEffect(Characters.MoonPresence, limb_broken_speffect, affect_npc_part_hp=False)
-    CancelSpecialEffect(Characters.MoonPresence, limb_unbroken_speffect)
+    RemoveSpecialEffect(Characters.MoonPresence, limb_unbroken_speffect)
     ReplanAI(Characters.MoonPresence)
 
     Wait(30.0)
@@ -2225,7 +2225,7 @@ def ControlMoonPresenceTail(
     IfCharacterHasTAEEvent(0, Characters.MoonPresence, tae_event_id=300)
     SetNPCPartHealth(Characters.MoonPresence, npc_part_id=monitor_part_id, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(Characters.MoonPresence, limb_unbroken_speffect, affect_npc_part_hp=False)
-    CancelSpecialEffect(Characters.MoonPresence, limb_broken_speffect)
+    RemoveSpecialEffect(Characters.MoonPresence, limb_broken_speffect)
     AICommand(Characters.MoonPresence, command_id=-1, slot=1)
     ReplanAI(Characters.MoonPresence)
     WaitFrames(10)
@@ -2246,7 +2246,7 @@ def MoonPresenceSinHarvest():
                              damage_type=DamageType.Unspecified)
     IfTimeElapsed(-1, 10.0)
     IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(PLAYER, 5572)
+    RemoveSpecialEffect(PLAYER, 5572)
     Restart()
 
 
@@ -3851,9 +3851,9 @@ def MonitorWeaponBuffRemovalRequest():
     EndIfConditionFalse(15)
     IfFlagEnabled(0, CommonFlags.RequestWeaponBuffRemoval)
     DisableFlag(CommonFlags.RequestWeaponBuffRemoval)
-    CancelSpecialEffect(PLAYER, Effects.FirePaper)
-    CancelSpecialEffect(PLAYER, Effects.EmptyPhantasmShell)
-    CancelSpecialEffect(PLAYER, Effects.BoltPaper)
+    RemoveSpecialEffect(PLAYER, Effects.FirePaper)
+    RemoveSpecialEffect(PLAYER, Effects.EmptyPhantasmShell)
+    RemoveSpecialEffect(PLAYER, Effects.BoltPaper)
     Restart()
 
 

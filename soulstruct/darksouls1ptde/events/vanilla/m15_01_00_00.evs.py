@@ -556,7 +556,7 @@ def Event_11515382():
 @NeverRestart(11510900)
 def Event_11510900():
     """Event 11510900"""
-    MAIN.Await(HealthRatioLessThanOrEqual(1510650, value=0.0))
+    MAIN.Await(HealthRatio(1510650) <= 0.0)
     
     WaitFrames(frames=1)
     SkipLinesIfClient(7)
@@ -601,7 +601,7 @@ def Event_11515384():
 def Event_11515385():
     """Event 11515385"""
     DisableNetworkSync()
-    AND_1.Add(HealthRatioLessThanOrEqual(1510650, value=0.0))
+    AND_1.Add(HealthRatio(1510650) <= 0.0)
     AND_1.Add(FlagEnabled(11515384))
     
     MAIN.Await(AND_1)
@@ -893,8 +893,8 @@ def Event_11515396():
 @NeverRestart(11515397)
 def Event_11515397():
     """Event 11515397"""
-    AND_1.Add(HealthRatioLessThanOrEqual(1510800, value=0.0))
-    AND_2.Add(HealthRatioLessThanOrEqual(1510810, value=0.0))
+    AND_1.Add(HealthRatio(1510800) <= 0.0)
+    AND_2.Add(HealthRatio(1510810) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -927,7 +927,7 @@ def Event_11515398():
     SetNPCPartBulletDamageScaling(1510810, npc_part_id=2360, desired_scaling=0.0)
     SetNPCPartEffects(1510810, npc_part_id=2360, material_sfx_id=50, material_vfx_id=50)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1510810, value=0.0))
+    MAIN.Await(HealthRatio(1510810) <= 0.0)
     
     SetNPCPartHealth(1510810, npc_part_id=2360, desired_health=0, overwrite_max=False)
 
@@ -953,7 +953,7 @@ def Event_11515399():
     SetNPCPartBulletDamageScaling(1510811, npc_part_id=2360, desired_scaling=0.0)
     SetNPCPartEffects(1510811, npc_part_id=2360, material_sfx_id=50, material_vfx_id=50)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1510811, value=0.0))
+    MAIN.Await(HealthRatio(1510811) <= 0.0)
     
     SetNPCPartHealth(1510811, npc_part_id=2360, desired_health=0, overwrite_max=False)
 
@@ -979,7 +979,7 @@ def Event_11515060(_, character: int):
     SetNPCPartBulletDamageScaling(character, npc_part_id=2870, desired_scaling=0.0)
     SetNPCPartEffects(character, npc_part_id=2870, material_sfx_id=50, material_vfx_id=50)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     SetNPCPartHealth(character, npc_part_id=2870, desired_health=0, overwrite_max=False)
 
@@ -998,8 +998,8 @@ def Event_11515080(_, character: int, character_1: int):
     MAIN.Await(CharacterBackreadEnabled(character))
     
     CreateNPCPart(character, npc_part_id=5351, part_index=NPCPartType.Part1, part_health=65)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(character, npc_part_id=5351, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=5351) <= 0)
+    AND_2.Add(HealthRatio(character) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1342,7 +1342,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(0, animation_id=0, collision=1513303, collision_1=1513302, flag=11510303, flag_1=11510302, frames=180)
+    Event_11515320(
+        0,
+        animation_id=0,
+        collision=1513303,
+        collision_1=1513302,
+        flag=11510303,
+        flag_1=11510302,
+        frames=180,
+    )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_4)
     Move(PLAYER, destination=1511302, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
@@ -1352,7 +1360,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(1, animation_id=0, collision=1513303, collision_1=1513302, flag=11510303, flag_1=11510302, frames=180)
+    Event_11515320(
+        1,
+        animation_id=0,
+        collision=1513303,
+        collision_1=1513302,
+        flag=11510303,
+        flag_1=11510302,
+        frames=180,
+    )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_5)
     Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
@@ -1371,7 +1387,7 @@ def Event_11510300():
         flag_1=11510301,
         animation_id_2=11,
         frames=180,
-        frames_1=360
+        frames_1=360,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_6)
     Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
@@ -1382,7 +1398,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(2, animation_id=0, collision=1513303, collision_1=1513302, flag=11510303, flag_1=11510302, frames=180)
+    Event_11515320(
+        2,
+        animation_id=0,
+        collision=1513303,
+        collision_1=1513302,
+        flag=11510303,
+        flag_1=11510302,
+        frames=180,
+    )
     
     MAIN.Await(FlagDisabled(11515300))
     
@@ -1396,7 +1420,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(3, animation_id=1, collision=1513302, collision_1=1513301, flag=11510302, flag_1=11510301, frames=360)
+    Event_11515320(
+        3,
+        animation_id=1,
+        collision=1513302,
+        collision_1=1513301,
+        flag=11510302,
+        flag_1=11510301,
+        frames=360,
+    )
     SkipLinesIfFinishedConditionFalse(6, input_condition=AND_2)
     Move(PLAYER, destination=1511300, destination_type=CoordEntityType.Object, model_point=101, short_move=True)
     ForceAnimation(PLAYER, 8020)
@@ -1405,7 +1437,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(4, animation_id=3, collision=1513302, collision_1=1513303, flag=11510302, flag_1=11510303, frames=180)
+    Event_11515320(
+        4,
+        animation_id=3,
+        collision=1513302,
+        collision_1=1513303,
+        flag=11510302,
+        flag_1=11510303,
+        frames=180,
+    )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_3)
     Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
@@ -1415,7 +1455,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(5, animation_id=3, collision=1513302, collision_1=1513303, flag=11510302, flag_1=11510303, frames=180)
+    Event_11515320(
+        5,
+        animation_id=3,
+        collision=1513302,
+        collision_1=1513303,
+        flag=11510302,
+        flag_1=11510303,
+        frames=180,
+    )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_5)
     Move(PLAYER, destination=1511303, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
@@ -1425,7 +1473,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(6, animation_id=1, collision=1513302, collision_1=1513301, flag=11510302, flag_1=11510301, frames=360)
+    Event_11515320(
+        6,
+        animation_id=1,
+        collision=1513302,
+        collision_1=1513301,
+        flag=11510302,
+        flag_1=11510301,
+        frames=360,
+    )
     
     MAIN.Await(FlagDisabled(11515300))
     
@@ -1439,7 +1495,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(7, animation_id=2, collision=1513301, collision_1=1513302, flag=11510301, flag_1=11510302, frames=360)
+    Event_11515320(
+        7,
+        animation_id=2,
+        collision=1513301,
+        collision_1=1513302,
+        flag=11510301,
+        flag_1=11510302,
+        frames=360,
+    )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_3)
     Move(PLAYER, destination=1511301, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
     ForceAnimation(PLAYER, 8000)
@@ -1458,7 +1522,7 @@ def Event_11510300():
         flag_1=11510303,
         animation_id_2=13,
         frames=360,
-        frames_1=180
+        frames_1=180,
     )
     SkipLinesIfFinishedConditionFalse(7, input_condition=AND_6)
     Move(PLAYER, destination=1511304, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
@@ -1469,7 +1533,15 @@ def Event_11510300():
     
     MAIN.Await(FramesElapsed(frames=0))
     
-    Event_11515320(8, animation_id=2, collision=1513301, collision_1=1513302, flag=11510301, flag_1=11510302, frames=360)
+    Event_11515320(
+        8,
+        animation_id=2,
+        collision=1513301,
+        collision_1=1513302,
+        flag=11510301,
+        flag_1=11510302,
+        frames=360,
+    )
     
     MAIN.Await(FlagDisabled(11515300))
     
@@ -2150,7 +2222,7 @@ def Event_11510460():
     ForceAnimation(PLAYER, 7896, loop=True)
     EnableFlag(11515352)
     Restart()
-    CancelSpecialEffect(PLAYER, 4170)
+    RemoveSpecialEffect(PLAYER, 4170)
     DisableFlag(11515350)
     SkipLinesIfHost(1)
     SkipLinesIfThisEventFlagDisabled(2)
@@ -2199,7 +2271,7 @@ def Event_11510461():
     
     MAIN.Await(FlagDisabled(11515351))
     
-    CancelSpecialEffect(PLAYER, 4170)
+    RemoveSpecialEffect(PLAYER, 4170)
     ForceAnimation(PLAYER, 7897, wait_for_completion=True)
     Restart()
 
@@ -2223,7 +2295,7 @@ def Event_11510600(_, obj: int, obj_act_id: int):
 @RestartOnRest(11515200)
 def Event_11515200(_, character: int):
     """Event 11515200"""
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(CharacterHasSpecialEffect(character, 5421))
     AND_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -2263,8 +2335,8 @@ def Event_11515210(_, character: int):
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     AND_7.Add(CharacterBackreadDisabled(character))
     if AND_7:
         return RESTART
@@ -2281,8 +2353,8 @@ def Event_11515210(_, character: int):
     SkipLinesIfConditionFalse(1, AND_5)
     ForceAnimation(character, 3006, wait_for_completion=True)
     ReplanAI(character)
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     Restart()
 
 
@@ -2328,8 +2400,8 @@ def Event_11515230(_, character: int):
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
     AICommand(character, command_id=201, command_slot=0)
     ReplanAI(character)
@@ -2440,8 +2512,8 @@ def Event_11510215():
 @NeverRestart(11510510)
 def Event_11510510(_, character: int, flag: int):
     """Event 11510510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2470,7 +2542,7 @@ def Event_11510520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -2483,8 +2555,8 @@ def Event_11510501(_, character: int, flag: int):
     OR_2.Add(FlagEnabled(1031))
     OR_2.Add(FlagEnabled(1036))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagDisabled(1034))
@@ -2649,7 +2721,7 @@ def Event_11510541(_, character: int, first_flag: int, last_flag: int, flag: int
 @NeverRestart(11510542)
 def Event_11510542(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11510542"""
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

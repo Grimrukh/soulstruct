@@ -167,7 +167,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501210,
         launch_angle_y=0,
-        left=11505280
+        left=11505280,
     )
     Event_11505270(
         1,
@@ -176,7 +176,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501211,
         launch_angle_y=90,
-        left=11505281
+        left=11505281,
     )
     Event_11505270(
         2,
@@ -185,7 +185,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501212,
         launch_angle_y=90,
-        left=11505282
+        left=11505282,
     )
     Event_11505270(
         3,
@@ -194,7 +194,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501213,
         launch_angle_y=270,
-        left=11505283
+        left=11505283,
     )
     Event_11505270(
         4,
@@ -203,7 +203,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501214,
         launch_angle_y=180,
-        left=11505284
+        left=11505284,
     )
     Event_11505270(
         5,
@@ -212,7 +212,7 @@ def Constructor():
         vfx_id=1503500,
         source_entity=1501213,
         launch_angle_y=270,
-        left=11505285
+        left=11505285,
     )
     Event_11505260()
     Event_11500860(0, character=6600)
@@ -777,7 +777,7 @@ def Event_11505351():
     CreateNPCPart(1500800, npc_part_id=2320, part_index=NPCPartType.Part2, part_health=200)
     SetNPCPartEffects(1500800, npc_part_id=2320, material_sfx_id=56, material_vfx_id=56)
     
-    MAIN.Await(CharacterPartHealthLessThanOrEqual(1500800, npc_part_id=2320, value=0))
+    MAIN.Await(CharacterPartHealth(1500800, npc_part_id=2320) <= 0)
     
     EzstateAIRequest(1500800, command_id=1300, command_slot=0)
     
@@ -806,7 +806,7 @@ def Event_11505352():
     MAIN.Await(FlagEnabled(11505355))
     
     AND_1.Add(FlagEnabled(11505355))
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1500800, npc_part_id=2321, value=0))
+    AND_1.Add(CharacterPartHealth(1500800, npc_part_id=2321) <= 0)
     
     MAIN.Await(AND_1)
     
@@ -828,7 +828,7 @@ def Event_11505353():
     """Event 11505353"""
     AND_1.Add(CharacterHasTAEEvent(1500800, tae_event_id=400))
     AND_2.Add(CharacterHasTAEEvent(1500800, tae_event_id=300))
-    AND_3.Add(HealthRatioLessThanOrEqual(1500800, value=0.0))
+    AND_3.Add(HealthRatio(1500800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -932,25 +932,25 @@ def Event_11500795():
     DisableObject(1501800)
     EnableObject(1501804)
     if FlagEnabled(11500812):
-        Event_11500700(0, 11505200, 1501804, 1, 2.5, 1501812, 11505210)
+        Event_11500700(0, obj_flag=11505200, obj=1501804, animation_id=1, life=2.5, entity=1501812, flag=11505210)
     
         MAIN.Await(FlagDisabled(11505210))
     
         Restart()
     if FlagDisabled(11500803):
-        Event_11500700(10, 11505200, 1501804, 2, 7.5, 1501813, 11505210)
+        Event_11500700(10, obj_flag=11505200, obj=1501804, animation_id=2, life=7.5, entity=1501813, flag=11505210)
     
         MAIN.Await(FlagDisabled(11505210))
     
         Restart()
     if FlagEnabled(11500806):
-        Event_11500700(20, 11505200, 1501804, 3, 7.5, 1501810, 11505210)
+        Event_11500700(20, obj_flag=11505200, obj=1501804, animation_id=3, life=7.5, entity=1501810, flag=11505210)
     
         MAIN.Await(FlagDisabled(11505210))
     
         Restart()
     if FlagDisabled(11500830):
-        Event_11500700(30, 11505200, 1501804, 4, 12.5, 1501811, 11505210)
+        Event_11500700(30, obj_flag=11505200, obj=1501804, animation_id=4, life=12.5, entity=1501811, flag=11505210)
     
         MAIN.Await(FlagDisabled(11505210))
     
@@ -965,7 +965,7 @@ def Event_11500795():
             entity=1501811,
             flag=11505210,
             flag_1=11500821,
-            obj_1=1501804
+            obj_1=1501804,
         )
     
         MAIN.Await(FlagDisabled(11505210))
@@ -981,7 +981,7 @@ def Event_11500795():
             entity=1501811,
             flag=11505210,
             flag_1=11500822,
-            obj_1=1501804
+            obj_1=1501804,
         )
     
         MAIN.Await(FlagDisabled(11505210))
@@ -997,13 +997,13 @@ def Event_11500795():
             entity=1501811,
             flag=11505210,
             flag_1=11500823,
-            obj_1=1501804
+            obj_1=1501804,
         )
     
         MAIN.Await(FlagDisabled(11505210))
     
         Restart()
-    Event_11500700(40, 11505200, 1501804, 8, 18.5, 1501811, 11505210)
+    Event_11500700(40, obj_flag=11505200, obj=1501804, animation_id=8, life=18.5, entity=1501811, flag=11505210)
     
     MAIN.Await(FlagDisabled(11505210))
     
@@ -1020,25 +1020,25 @@ def Event_11500796():
     DisableObject(1501800)
     EnableObject(1501805)
     if FlagEnabled(11500812):
-        Event_11500700(1, 11505201, 1501805, 1, 2.5, 1501812, 11505211)
+        Event_11500700(1, obj_flag=11505201, obj=1501805, animation_id=1, life=2.5, entity=1501812, flag=11505211)
     
         MAIN.Await(FlagDisabled(11505211))
     
         Restart()
     if FlagDisabled(11500803):
-        Event_11500700(11, 11505201, 1501805, 2, 7.5, 1501813, 11505211)
+        Event_11500700(11, obj_flag=11505201, obj=1501805, animation_id=2, life=7.5, entity=1501813, flag=11505211)
     
         MAIN.Await(FlagDisabled(11505211))
     
         Restart()
     if FlagEnabled(11500806):
-        Event_11500700(21, 11505201, 1501805, 3, 7.5, 1501810, 11505211)
+        Event_11500700(21, obj_flag=11505201, obj=1501805, animation_id=3, life=7.5, entity=1501810, flag=11505211)
     
         MAIN.Await(FlagDisabled(11505211))
     
         Restart()
     if FlagDisabled(11500830):
-        Event_11500700(31, 11505201, 1501805, 4, 12.5, 1501811, 11505211)
+        Event_11500700(31, obj_flag=11505201, obj=1501805, animation_id=4, life=12.5, entity=1501811, flag=11505211)
     
         MAIN.Await(FlagDisabled(11505211))
     
@@ -1053,7 +1053,7 @@ def Event_11500796():
             entity=1501811,
             flag=11505211,
             flag_1=11500821,
-            obj_1=1501805
+            obj_1=1501805,
         )
     
         MAIN.Await(FlagDisabled(11505211))
@@ -1069,7 +1069,7 @@ def Event_11500796():
             entity=1501811,
             flag=11505211,
             flag_1=11500822,
-            obj_1=1501805
+            obj_1=1501805,
         )
     
         MAIN.Await(FlagDisabled(11505211))
@@ -1085,13 +1085,13 @@ def Event_11500796():
             entity=1501811,
             flag=11505211,
             flag_1=11500823,
-            obj_1=1501805
+            obj_1=1501805,
         )
     
         MAIN.Await(FlagDisabled(11505211))
     
         Restart()
-    Event_11500700(41, 11505201, 1501805, 8, 18.5, 1501811, 11505211)
+    Event_11500700(41, obj_flag=11505201, obj=1501805, animation_id=8, life=18.5, entity=1501811, flag=11505211)
     
     MAIN.Await(FlagDisabled(11505211))
     
@@ -1108,25 +1108,25 @@ def Event_11500797():
     DisableObject(1501800)
     EnableObject(1501806)
     if FlagEnabled(11500812):
-        Event_11500700(2, 11505202, 1501806, 1, 2.5, 1501812, 11505212)
+        Event_11500700(2, obj_flag=11505202, obj=1501806, animation_id=1, life=2.5, entity=1501812, flag=11505212)
     
         MAIN.Await(FlagDisabled(11505212))
     
         Restart()
     if FlagDisabled(11500803):
-        Event_11500700(12, 11505202, 1501806, 2, 7.5, 1501813, 11505212)
+        Event_11500700(12, obj_flag=11505202, obj=1501806, animation_id=2, life=7.5, entity=1501813, flag=11505212)
     
         MAIN.Await(FlagDisabled(11505212))
     
         Restart()
     if FlagEnabled(11500806):
-        Event_11500700(22, 11505202, 1501806, 3, 7.5, 1501810, 11505212)
+        Event_11500700(22, obj_flag=11505202, obj=1501806, animation_id=3, life=7.5, entity=1501810, flag=11505212)
     
         MAIN.Await(FlagDisabled(11505212))
     
         Restart()
     if FlagDisabled(11500830):
-        Event_11500700(32, 11505202, 1501806, 4, 12.5, 1501811, 11505212)
+        Event_11500700(32, obj_flag=11505202, obj=1501806, animation_id=4, life=12.5, entity=1501811, flag=11505212)
     
         MAIN.Await(FlagDisabled(11505212))
     
@@ -1141,7 +1141,7 @@ def Event_11500797():
             entity=1501811,
             flag=11505212,
             flag_1=11500821,
-            obj_1=1501806
+            obj_1=1501806,
         )
     
         MAIN.Await(FlagDisabled(11505212))
@@ -1157,7 +1157,7 @@ def Event_11500797():
             entity=1501811,
             flag=11505212,
             flag_1=11500822,
-            obj_1=1501806
+            obj_1=1501806,
         )
     
         MAIN.Await(FlagDisabled(11505212))
@@ -1173,13 +1173,13 @@ def Event_11500797():
             entity=1501811,
             flag=11505212,
             flag_1=11500823,
-            obj_1=1501806
+            obj_1=1501806,
         )
     
         MAIN.Await(FlagDisabled(11505212))
     
         Restart()
-    Event_11500700(42, 11505202, 1501806, 8, 18.5, 1501811, 11505212)
+    Event_11500700(42, obj_flag=11505202, obj=1501806, animation_id=8, life=18.5, entity=1501811, flag=11505212)
     
     MAIN.Await(FlagDisabled(11505212))
     
@@ -1196,25 +1196,25 @@ def Event_11500798():
     DisableObject(1501800)
     EnableObject(1501807)
     if FlagEnabled(11500812):
-        Event_11500700(3, 11505203, 1501807, 1, 2.5, 1501812, 11505213)
+        Event_11500700(3, obj_flag=11505203, obj=1501807, animation_id=1, life=2.5, entity=1501812, flag=11505213)
     
         MAIN.Await(FlagDisabled(11505213))
     
         Restart()
     if FlagDisabled(11500803):
-        Event_11500700(13, 11505203, 1501807, 2, 7.5, 1501813, 11505213)
+        Event_11500700(13, obj_flag=11505203, obj=1501807, animation_id=2, life=7.5, entity=1501813, flag=11505213)
     
         MAIN.Await(FlagDisabled(11505213))
     
         Restart()
     if FlagEnabled(11500806):
-        Event_11500700(23, 11505203, 1501807, 3, 7.5, 1501810, 11505213)
+        Event_11500700(23, obj_flag=11505203, obj=1501807, animation_id=3, life=7.5, entity=1501810, flag=11505213)
     
         MAIN.Await(FlagDisabled(11505213))
     
         Restart()
     if FlagDisabled(11500830):
-        Event_11500700(33, 11505203, 1501807, 4, 12.5, 1501811, 11505213)
+        Event_11500700(33, obj_flag=11505203, obj=1501807, animation_id=4, life=12.5, entity=1501811, flag=11505213)
     
         MAIN.Await(FlagDisabled(11505213))
     
@@ -1229,7 +1229,7 @@ def Event_11500798():
             entity=1501811,
             flag=11505213,
             flag_1=11500821,
-            obj_1=1501807
+            obj_1=1501807,
         )
     
         MAIN.Await(FlagDisabled(11505213))
@@ -1245,7 +1245,7 @@ def Event_11500798():
             entity=1501811,
             flag=11505213,
             flag_1=11500822,
-            obj_1=1501807
+            obj_1=1501807,
         )
     
         MAIN.Await(FlagDisabled(11505213))
@@ -1261,13 +1261,13 @@ def Event_11500798():
             entity=1501811,
             flag=11505213,
             flag_1=11500823,
-            obj_1=1501807
+            obj_1=1501807,
         )
     
         MAIN.Await(FlagDisabled(11505213))
     
         Restart()
-    Event_11500700(43, 11505203, 1501807, 8, 18.5, 1501811, 11505213)
+    Event_11500700(43, obj_flag=11505203, obj=1501807, animation_id=8, life=18.5, entity=1501811, flag=11505213)
     
     MAIN.Await(FlagDisabled(11505213))
     
@@ -1831,7 +1831,7 @@ def Event_11505270(_, region: int, obj: int, vfx_id: int, source_entity: int, la
             launch_angle_z=0,
         )
     
-    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(11505280, 11505285), value=2))
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(11505280, 11505285)) >= 2)
     
     DisableFlag(left)
     ForceAnimation(obj, 1, wait_for_completion=True)
@@ -2250,7 +2250,7 @@ def Event_11505080():
         SetStandbyAnimationSettings(1500122)
         End()
     OR_1.Add(Attacked(attacked_entity=1500122, attacker=PLAYER))
-    OR_1.Add(HealthRatioNotEqual(1500122, value=1.0))
+    OR_1.Add(HealthRatio(1500122) != 1.0)
     
     MAIN.Await(OR_1)
     
@@ -2301,8 +2301,8 @@ def Event_11505011():
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(1500010, 3150)
-    CancelSpecialEffect(1500010, 3151)
+    RemoveSpecialEffect(1500010, 3150)
+    RemoveSpecialEffect(1500010, 3151)
     AND_7.Add(CharacterBackreadDisabled(1500010))
     if AND_7:
         return RESTART
@@ -2319,8 +2319,8 @@ def Event_11505011():
     SkipLinesIfConditionFalse(1, AND_5)
     ForceAnimation(1500010, 3006, wait_for_completion=True)
     ReplanAI(1500010)
-    CancelSpecialEffect(1500010, 3150)
-    CancelSpecialEffect(1500010, 3151)
+    RemoveSpecialEffect(1500010, 3150)
+    RemoveSpecialEffect(1500010, 3151)
     Restart()
 
 
@@ -2366,8 +2366,8 @@ def Event_11505013():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(1500010, 3150)
-    CancelSpecialEffect(1500010, 3151)
+    RemoveSpecialEffect(1500010, 3150)
+    RemoveSpecialEffect(1500010, 3151)
     SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
     AICommand(1500010, command_id=201, command_slot=0)
     ReplanAI(1500010)
@@ -2492,8 +2492,8 @@ def Event_11500600(_, obj: int, obj_act_id: int):
 @NeverRestart(11500510)
 def Event_11500510(_, character: int, flag: int):
     """Event 11500510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2522,7 +2522,7 @@ def Event_11500520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

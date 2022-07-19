@@ -12,164 +12,337 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m31_05_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=31050000, obj=31051950, unknown=5.0)
+    RegisterGrace(grace_flag=31050000, asset=Assets.AEG099_060_9000)
     Event_31052800()
     Event_31052810()
     Event_31052849()
     Event_31052811()
-    Event_31052830(0, flag=31050801, character=31050100)
-    RunCommonEvent(
+    Event_31052830(0, flag=31050801, character=Characters.TalkDummy1)
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(31050800, 31052840, 31052841, 31051840, 31052840, 31, 5, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=31050800,
+        left_flag=31052840,
+        cancel_flag__right_flag=31052841,
+        asset=31051840,
+        player_start=31052840,
+        area_id=31,
+        block_id=5,
+        cc_id=0,
+        dd_id=0,
     )
-    RunCommonEvent(0, 900005610, args=(31051550, 100, 800, 0), arg_types="IiiI")
+    CommonFunc_900005610(0, 31051550, 100, 800, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(31050200, 31052200, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005251, args=(31050201, 2.0, 0.0, 1700), arg_types="Iffi")
-    RunCommonEvent(0, 90005261, args=(31050203, 31052203, 2.0, 0.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31050205, 30002, 20002, 31052205, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(31050206, 30001, 20001, 31052205, 2.0, 2.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(31050209, 30002, 20002, 31052209, 5.0, 1.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(31050230, 31052230, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050251, 31052251, 5.0, 0.0, 3005), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050254, 31052254, 2.0, 0.0, 3005), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050257, 31052257, 2.0, 0.0, 3003), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050280, 31052280, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050300, 31052300, 2.0, 0.30000001192092896, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050301, 31052301, 2.0, 0.0, 0), arg_types="IIffi")
+    CommonFunc_90005261(0, character=Characters.DemiHuman0, region=31052200, radius=2.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005251(0, character=Characters.DemiHuman1, radius=2.0, seconds=0.0, animation_id=1700)
+    CommonFunc_90005261(0, character=Characters.DemiHuman2, region=31052203, radius=2.0, seconds=0.0, animation_id=1700)
+    CommonFunc_90005211(
+        0,
+        character=Characters.DemiHuman3,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=31052205,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.DemiHuman4,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31052205,
+        radius=2.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.DemiHuman5,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=31052209,
+        radius=5.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.LargeDemiHuman,
+        region=31052230,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.DemiHumanShaman0,
+        region=31052251,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=3005,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.DemiHumanShaman1,
+        region=31052254,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=3005,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.DemiHumanShaman2,
+        region=31052257,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=3003,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.DemiHumanBeastman,
+        region=31052280,
+        radius=2.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Snail0,
+        region=31052300,
+        radius=2.0,
+        seconds=0.30000001192092896,
+        animation_id=0,
+    )
+    CommonFunc_90005261(0, character=Characters.Snail1, region=31052301, radius=2.0, seconds=0.0, animation_id=0)
     Event_31052301()
-    RunCommonEvent(0, 90005261, args=(31050302, 31052300, 2.0, 0.10000000149011612, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31050304, 30000, 20000, 31052305, 2.0, 0.5, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(31050305, 30000, 20000, 31052305, 2.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Snail2,
+        region=31052300,
+        radius=2.0,
+        seconds=0.10000000149011612,
+        animation_id=0,
     )
-    RunCommonEvent(0, 90005211, args=(31050306, 30000, 20000, 31052305, 2.0, 0.5, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(31050307, 30000, 20000, 31052305, 2.0, 0.699999988079071, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Snail3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(31050308, 30000, 20000, 31052305, 2.0, 0.8999999761581421, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Snail4,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(31050309, 30000, 20000, 31052305, 2.0, 0.20000000298023224, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Snail5,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005211, args=(31050310, 30000, 20000, 31052305, 2.0, 0.5, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005261, args=(31050315, 31052315, 2.0, 0.0, 3012), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050316, 31052316, 2.0, 0.0, 3012), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(31050317, 31052317, 2.0, 0.0, 3012), arg_types="IIffi")
+    CommonFunc_90005211(
+        0,
+        character=Characters.Snail6,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.699999988079071,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Snail7,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.8999999761581421,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Snail8,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.20000000298023224,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Snail9,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31052305,
+        radius=2.0,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(0, character=Characters.Snail10, region=31052315, radius=2.0, seconds=0.0, animation_id=3012)
+    CommonFunc_90005261(0, character=Characters.Snail11, region=31052316, radius=2.0, seconds=0.0, animation_id=3012)
+    CommonFunc_90005261(0, 31050317, 31052317, 2.0, 0.0, 3012)
 
 
 @RestartOnRest(31052301)
 def Event_31052301():
     """Event 31052301"""
-    EndIfThisEventSlotFlagEnabled()
-    AddSpecialEffect(31050301, 8081)
-    AddSpecialEffect(31050301, 8082)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfEntityWithinDistance(AND_1, entity=31050301, other_entity=PLAYER, radius=4.0)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfHasAIStatus(OR_2, 31050301, ai_status=AIStatusType.Battle)
-    IfAttackedWithDamageType(OR_2, attacked_entity=31050301, attacker=0)
-    IfConditionTrue(MAIN, input_condition=OR_2)
-    CancelSpecialEffect(31050301, 8081)
-    CancelSpecialEffect(31050301, 8082)
+    if ThisEventSlotFlagEnabled():
+        return
+    AddSpecialEffect(Characters.Snail1, 8081)
+    AddSpecialEffect(Characters.Snail1, 8082)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(OR_1)
+    AND_1.Add(EntityWithinDistance(entity=Characters.Snail1, other_entity=PLAYER, radius=4.0))
+    OR_2.Add(AND_1)
+    OR_2.Add(HasAIStatus(Characters.Snail1, ai_status=AIStatusType.Battle))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Snail1, attacker=0))
+    
+    MAIN.Await(OR_2)
+    
+    RemoveSpecialEffect(Characters.Snail1, 8081)
+    RemoveSpecialEffect(Characters.Snail1, 8082)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
 
 
 @RestartOnRest(31052800)
 def Event_31052800():
     """Event 31052800"""
-    EndIfFlagEnabled(31050800)
-    IfHealthValueLessThanOrEqual(MAIN, 31050800, value=0)
+    if FlagEnabled(31050800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.BloodhoundKnight) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(31050800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 31050800)
-    KillBossAndDisplayBanner(character=31050800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.BloodhoundKnight, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.BloodhoundKnight))
+    
+    KillBossAndDisplayBanner(character=Characters.BloodhoundKnight, banner_type=BannerType.EnemyFelled)
     EnableFlag(31050800)
     EnableFlag(9237)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61237)
+    if PlayerInOwnWorld():
+        EnableFlag(61237)
 
 
 @RestartOnRest(31052810)
 def Event_31052810():
     """Event 31052810"""
     GotoIfFlagDisabled(Label.L0, flag=31050800)
-    DisableCharacter(31050800)
-    DisableAnimations(31050800)
-    Kill(31050800)
+    DisableCharacter(Characters.BloodhoundKnight)
+    DisableAnimations(Characters.BloodhoundKnight)
+    Kill(Characters.BloodhoundKnight)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableCharacter(31050800)
+    DisableCharacter(Characters.BloodhoundKnight)
     GotoIfFlagEnabled(Label.L1, flag=31050801)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=31052801)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=31052801))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(31050801)
     Goto(Label.L2)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfFlagEnabled(AND_2, 31052805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=31052800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(FlagEnabled(31052805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=31052800))
+    
+    MAIN.Await(AND_2)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableCharacter(31050800)
+    EnableCharacter(Characters.BloodhoundKnight)
     Wait(1.0)
-    EnableAI(31050800)
-    SetNetworkUpdateRate(31050800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    ForceAnimation(31050800, 3013, unknown2=1.0)
-    EnableBossHealthBar(31050800, name=904290310)
+    EnableAI(Characters.BloodhoundKnight)
+    SetNetworkUpdateRate(Characters.BloodhoundKnight, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    ForceAnimation(Characters.BloodhoundKnight, 3013)
+    EnableBossHealthBar(Characters.BloodhoundKnight, name=904290310)
 
 
 @RestartOnRest(31052811)
 def Event_31052811():
     """Event 31052811"""
-    EndIfFlagEnabled(31050800)
-    IfHealthRatioLessThanOrEqual(AND_1, 31050800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(31050800):
+        return
+    AND_1.Add(HealthRatio(Characters.BloodhoundKnight) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(31052802)
 
 
 @RestartOnRest(31052830)
 def Event_31052830(_, flag: uint, character: uint):
     """Event 31052830"""
-    EndIfFlagEnabled(flag)
+    if FlagEnabled(flag):
+        return
     AddSpecialEffect(character, 9531)
     AwaitFlagEnabled(flag=flag)
     AddSpecialEffect(character, 9532)
@@ -178,13 +351,26 @@ def Event_31052830(_, flag: uint, character: uint):
 @RestartOnRest(31052849)
 def Event_31052849():
     """Event 31052849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(31050800, 31051800, 31052800, 31052805, 31055800, 10000, 31050801, 31052801),
-        arg_types="IIIIIiII",
+        flag=31050800,
+        entity=Assets.AEG099_002_9000,
+        region=31052800,
+        flag_1=31052805,
+        character=31055800,
+        action_button_id=10000,
+        left=31050801,
+        region_1=31052801,
     )
-    RunCommonEvent(0, 9005801, args=(31050800, 31051800, 31052800, 31052805, 31052806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(31050800, 31051800, 5, 31050801), arg_types="IIiI")
-    RunCommonEvent(0, 9005811, args=(31050800, 31051801, 3, 31050801), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(31050800, 931000, 31052805, 31052806, 0, 31052802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=31050800,
+        entity=Assets.AEG099_002_9000,
+        region=31052800,
+        flag_1=31052805,
+        flag_2=31052806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=31050800, asset=Assets.AEG099_002_9000, model_point=5, right=31050801)
+    CommonFunc_9005811(0, flag=31050800, asset=Assets.AEG099_001_9000, model_point=3, right=31050801)
+    CommonFunc_9005822(0, 31050800, 931000, 31052805, 31052806, 0, 31052802, 0, 0)

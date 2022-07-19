@@ -50,18 +50,18 @@ def Constructor():
     Event_11310054()
     Event_11310100()
     Event_11315080()
-    Event_11315050(0, 1310200, 1310200, 0.0)
-    Event_11315050(1, 1310201, 1310202, 0.0)
-    Event_11315050(2, 1310202, 1310202, 0.0)
-    Event_11315060(0, 1310203, 51310100, 0.0)
-    Event_11315060(1, 1310204, 51310100, 0.20000000298023224)
-    Event_11315060(2, 1310205, 51310100, 0.8999999761581421)
-    Event_11315060(3, 1310206, 51310100, 1.0)
-    Event_11315070(0, 1310207, 1312251, 0.0)
-    Event_11315070(1, 1310208, 1312251, 0.20000000298023224)
-    Event_11315070(2, 1310209, 1312251, 0.4000000059604645)
-    Event_11315070(3, 1310210, 1312251, 0.6000000238418579)
-    Event_11315070(4, 1310211, 1312251, 0.800000011920929)
+    Event_11315050(0, character=1310200, entity=1310200, seconds=0.0)
+    Event_11315050(1, character=1310201, entity=1310202, seconds=0.0)
+    Event_11315050(2, character=1310202, entity=1310202, seconds=0.0)
+    Event_11315060(0, character=1310203, flag=51310100, seconds=0.0)
+    Event_11315060(1, character=1310204, flag=51310100, seconds=0.20000000298023224)
+    Event_11315060(2, character=1310205, flag=51310100, seconds=0.8999999761581421)
+    Event_11315060(3, character=1310206, flag=51310100, seconds=1.0)
+    Event_11315070(0, character=1310207, region=1312251, seconds=0.0)
+    Event_11315070(1, character=1310208, region=1312251, seconds=0.20000000298023224)
+    Event_11315070(2, character=1310209, region=1312251, seconds=0.4000000059604645)
+    Event_11315070(3, character=1310210, region=1312251, seconds=0.6000000238418579)
+    Event_11315070(4, character=1310211, region=1312251, seconds=0.800000011920929)
     Event_11310820(0, character=1310300, item_lot_param_id=27903000)
     Event_11310820(1, character=1310400, item_lot_param_id=33005000)
     DisableSoundEvent(sound_id=1313800)
@@ -478,7 +478,7 @@ def Event_11315395():
 @NeverRestart(11315396)
 def Event_11315396():
     """Event 11315396"""
-    MAIN.Await(HealthRatioLessThanOrEqual(1310800, value=0.0))
+    MAIN.Await(HealthRatio(1310800) <= 0.0)
     
     if FlagEnabled(11315370):
         Kill(1310110)
@@ -533,7 +533,7 @@ def Event_11315397():
         obj=1311200,
         character=1310110,
         character_1=1310113,
-        animation_id=8000
+        animation_id=8000,
     )
     Event_11315370(
         1,
@@ -544,7 +544,7 @@ def Event_11315397():
         obj=1311201,
         character=1310111,
         character_1=1310114,
-        animation_id=8010
+        animation_id=8010,
     )
     Event_11315370(
         2,
@@ -555,7 +555,7 @@ def Event_11315397():
         obj=1311202,
         character=1310112,
         character_1=1310115,
-        animation_id=8020
+        animation_id=8020,
     )
     
     MAIN.Await(CharacterBackreadEnabled(1310800))
@@ -606,9 +606,9 @@ def Event_11315370(
     MAIN.Await(FlagEnabled(flag))
     
     CreateNPCPart(1310800, npc_part_id=npc_part_id, part_index=part_index, part_health=200)
-    AND_1.Add(HealthRatioGreaterThan(1310800, value=0.0))
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1310800, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(1310800, value=0.0))
+    AND_1.Add(HealthRatio(1310800) > 0.0)
+    AND_1.Add(CharacterPartHealth(1310800, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(1310800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -664,9 +664,9 @@ def Event_11315350(_, character: int):
         return
     EnableImmortality(character)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1310800, value=0.0))
+    MAIN.Await(HealthRatio(1310800) <= 0.0)
     
-    CancelSpecialEffect(character, 5451)
+    RemoveSpecialEffect(character, 5451)
     DisableImmortality(character)
     Kill(character, award_souls=True)
 
@@ -961,8 +961,8 @@ def Event_11310820(_, character: int, item_lot_param_id: int):
 @NeverRestart(11310510)
 def Event_11310510(_, character: int, flag: int):
     """Event 11310510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -991,7 +991,7 @@ def Event_11310520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1006,8 +1006,8 @@ def Event_11310501(_, character: int, flag: int):
     OR_7.Add(FlagEnabled(1623))
     OR_7.Add(FlagEnabled(1624))
     AND_1.Add(OR_7)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagEnabled(flag))
@@ -1029,8 +1029,8 @@ def Event_11310502(_, character: int, flag: int):
     AND_1.Add(FlagDisabled(1176))
     AND_1.Add(FlagDisabled(1179))
     AND_1.Add(FlagEnabled(1173))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1051,8 +1051,8 @@ def Event_11310503(_, character: int, flag: int):
     AND_1.Add(FlagDisabled(1176))
     AND_1.Add(FlagDisabled(1179))
     AND_1.Add(FlagEnabled(1174))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1148,7 +1148,7 @@ def Event_11310533(_, character: int, first_flag: int, last_flag: int, flag: int
     OR_7.Add(FlagEnabled(1173))
     OR_7.Add(FlagEnabled(1176))
     AND_1.Add(OR_7)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1170,7 +1170,7 @@ def Event_11310534(_, character: int, first_flag: int, last_flag: int, flag: int
     OR_7.Add(FlagEnabled(1174))
     OR_7.Add(FlagEnabled(1179))
     AND_1.Add(OR_7)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_1.Add(ThisEventFlagDisabled())
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventFlagEnabled())
@@ -1225,9 +1225,9 @@ def Event_11310541(_, character: int, first_flag: int, last_flag: int, flag: int
 def Event_11310542(_, character: int, flag: int):
     """Event 11310542"""
     AND_1.Add(FlagEnabled(1623))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(1624))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(FlagEnabled(flag))
     AND_3.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)

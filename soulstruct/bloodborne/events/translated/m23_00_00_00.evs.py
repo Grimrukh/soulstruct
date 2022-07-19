@@ -1356,7 +1356,7 @@ def Event12304715(
     ResetAnimation(Characters.DarkbeastPaarl, disable_interpolation=False)
     ForceAnimation(Characters.DarkbeastPaarl, arg_20_23)
     AddSpecialEffect(Characters.DarkbeastPaarl, arg_12_15, affect_npc_part_hp=True)
-    CancelSpecialEffect(Characters.DarkbeastPaarl, arg_16_19)
+    RemoveSpecialEffect(Characters.DarkbeastPaarl, arg_16_19)
     ReplanAI(Characters.DarkbeastPaarl)
     Wait(10.0)
     AICommand(Characters.DarkbeastPaarl, command_id=110, slot=0)
@@ -1364,7 +1364,7 @@ def Event12304715(
     IfCharacterHasTAEEvent(0, Characters.DarkbeastPaarl, tae_event_id=300)
     SetNPCPartHealth(Characters.DarkbeastPaarl, npc_part_id=arg_4_7, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(Characters.DarkbeastPaarl, arg_16_19, affect_npc_part_hp=True)
-    CancelSpecialEffect(Characters.DarkbeastPaarl, arg_12_15)
+    RemoveSpecialEffect(Characters.DarkbeastPaarl, arg_12_15)
     AICommand(Characters.DarkbeastPaarl, command_id=-1, slot=0)
     ReplanAI(Characters.DarkbeastPaarl)
     ChangeCharacterCloth(Characters.DarkbeastPaarl, 10, state_id=1)
@@ -1533,8 +1533,8 @@ def Event12304410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
     SummonNPC(arg_0_3, arg_4_7, arg_8_11, summon_flag=arg_12_15, dismissal_flag=arg_16_19)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 
@@ -2669,7 +2669,7 @@ def Event12305440(_, arg_0_3: int, arg_4_7: int):
     IfCharacterHasSpecialEffect(0, arg_0_3, 5645)
     AddSpecialEffect(arg_0_3, arg_4_7, affect_npc_part_hp=False)
     IfCharacterDoesNotHaveSpecialEffect(0, arg_0_3, 5645)
-    CancelSpecialEffect(arg_0_3, arg_4_7)
+    RemoveSpecialEffect(arg_0_3, arg_4_7)
     Restart()
 
 

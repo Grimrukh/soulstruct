@@ -12,12 +12,15 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_50_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=76310, obj=1043501950, unknown=5.0)
-    RunCommonEvent(0, 90005771, args=(1043500950, 1043502700), arg_types="II")
+    RegisterGrace(grace_flag=76310, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005771(0, 1043500950, 1043502700)

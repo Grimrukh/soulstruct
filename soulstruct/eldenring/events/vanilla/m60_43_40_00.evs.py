@@ -13,15 +13,18 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005251, args=(1043400200, 10.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005300, args=(1043400200, 1043400200, 0, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005251(0, 1043400200, 10.0, 0.0, -1)
+    CommonFunc_90005300(0, 1043400200, 1043400200, 0, 0.0, 0)
 
 
 @NeverRestart(50)
@@ -33,9 +36,10 @@ def Preconstructor():
 @RestartOnRest(1043402200)
 def Event_1043402200():
     """Event 1043402200"""
-    EndIfFlagEnabled(1043400200)
-    DisableHealthBar(1043400200)
-    AddSpecialEffect(1043400200, 12189)
+    if FlagEnabled(1043400200):
+        return
+    DisableHealthBar(Characters.GuardianGolem)
+    AddSpecialEffect(Characters.GuardianGolem, 12189)
     Wait(3.0)
-    CancelSpecialEffect(1043400200, 12189)
-    EnableHealthBar(1043400200)
+    RemoveSpecialEffect(Characters.GuardianGolem, 12189)
+    EnableHealthBar(Characters.GuardianGolem)

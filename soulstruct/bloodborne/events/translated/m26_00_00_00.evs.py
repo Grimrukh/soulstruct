@@ -425,8 +425,8 @@ def Event12604720(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
     IfConditionTrue(1, input_condition=-1)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(arg_0_3, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(arg_0_3, 9100)
     ReplanAI(arg_0_3)
     DisableFlag(arg_12_15)
     Restart()
@@ -614,7 +614,7 @@ def MergosWetNurseDies():
     DisableObject(Objects.MergosWetNurseFog)
     DeleteVFX(VFX.MergosWetNurseFog, erase_root_only=True)
     SetLockedCameraSlot(game_map=NIGHTMARE_OF_MENSIS, camera_slot=0)
-    CancelSpecialEffect(PLAYER, 5630)
+    RemoveSpecialEffect(PLAYER, 5630)
     Wait(3.0)
     KillBoss(2600803)
     DisableNetworkSync()
@@ -1881,7 +1881,7 @@ def AnimateMicolashPuppet(_, arg_0_3: int, arg_4_7: int):
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
     EndIfFinishedConditionTrue(2)
-    CancelSpecialEffect(arg_0_3, 5914)
+    RemoveSpecialEffect(arg_0_3, 5914)
     EnableGravity(arg_0_3)
     ForceAnimation(arg_0_3, 7001)
 
@@ -2086,7 +2086,7 @@ def Event12600150(_, arg_0_3: int):
     IfCharacterDoesNotHaveSpecialEffect(1, arg_0_3, 4690)
     IfCharacterHasSpecialEffect(1, arg_0_3, 4691)
     IfConditionTrue(0, input_condition=1)
-    CancelSpecialEffect(arg_0_3, 4691)
+    RemoveSpecialEffect(arg_0_3, 4691)
     Restart()
 
 
@@ -2304,7 +2304,7 @@ def Event12600041(_, arg_0_3: int):
     """ 12600041: Event 12600041 """
     AddSpecialEffect(arg_0_3, 5641, affect_npc_part_hp=False)
     IfAttackedWithDamageType(0, attacked_entity=arg_0_3, attacker=PLAYER)
-    CancelSpecialEffect(arg_0_3, 5641)
+    RemoveSpecialEffect(arg_0_3, 5641)
     ReplanAI(arg_0_3)
 
 

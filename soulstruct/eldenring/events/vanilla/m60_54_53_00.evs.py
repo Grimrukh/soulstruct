@@ -12,25 +12,31 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_54_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1054530000, obj=1054531950, unknown=5.0)
+    RegisterGrace(grace_flag=1054530000, asset=Assets.AEG099_060_9000)
     Event_1054530703()
-    RunCommonEvent(0, 90005771, args=(1054531950, 1054532702), arg_types="II")
+    CommonFunc_90005771(0, 1054531950, 1054532702)
 
 
 @NeverRestart(1054532500)
 def Event_1054532500():
     """Event 1054532500"""
-    EndIfFlagEnabled(1054530520)
-    IfPlayerInOwnWorld(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=9320, entity=1054531500)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(1054530520):
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=9320, entity=1054531500))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(1054530500)
     EnableFlag(130)
     DisplayDialog(text=99999100, anchor_entity=0, display_distance=4.0, button_type=ButtonType.Yes_or_No)
@@ -39,22 +45,27 @@ def Event_1054532500():
 @RestartOnRest(1054533700)
 def Event_1054533700():
     """Event 1054533700"""
-    EndIfPlayerNotInOwnWorld()
+    if PlayerNotInOwnWorld():
+        return
     GotoIfFlagDisabled(Label.L0, flag=1054532700)
     GotoIfFlagEnabled(Label.L1, flag=1054532700)
     Goto(Label.L0)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfEntityWithinDistance(AND_1, entity=20000, other_entity=1054531950, radius=3.0)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1054532700)
     Goto(Label.L1)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfEntityBeyondDistance(AND_2, entity=20000, other_entity=1054531950, radius=3.0)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(EntityBeyondDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    
+    MAIN.Await(AND_2)
+    
     DisableNetworkFlag(1054532700)
     Restart()
 
@@ -62,22 +73,27 @@ def Event_1054533700():
 @RestartOnRest(1054533701)
 def Event_1054533701():
     """Event 1054533701"""
-    EndIfPlayerNotInOwnWorld()
+    if PlayerNotInOwnWorld():
+        return
     GotoIfFlagDisabled(Label.L0, flag=1054532701)
     GotoIfFlagEnabled(Label.L1, flag=1054532701)
     Goto(Label.L0)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfEntityWithinDistance(AND_1, entity=20000, other_entity=1054531950, radius=3.0)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(EntityWithinDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1054532701)
     Goto(Label.L1)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfEntityBeyondDistance(AND_2, entity=20000, other_entity=1054531950, radius=3.0)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(EntityBeyondDistance(entity=20000, other_entity=Assets.AEG099_060_9000, radius=3.0))
+    
+    MAIN.Await(AND_2)
+    
     DisableNetworkFlag(1054532701)
     Restart()
 
@@ -85,24 +101,31 @@ def Event_1054533701():
 @RestartOnRest(1054533702)
 def Event_1054533702():
     """Event 1054533702"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1054539200)
-    EndIfFlagEnabled(1054539201)
-    IfFlagEnabled(AND_1, 1054539200)
-    IfFlagEnabled(AND_1, 4652)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    ForceAnimation(PLAYER, 68110, unknown2=1.0)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1054539200):
+        return
+    if FlagEnabled(1054539201):
+        return
+    AND_1.Add(FlagEnabled(1054539200))
+    AND_1.Add(FlagEnabled(4652))
+    
+    MAIN.Await(AND_1)
+    
+    ForceAnimation(PLAYER, 68110)
     End()
 
 
 @NeverRestart(1054533703)
 def Event_1054533703():
     """Event 1054533703"""
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(OR_1, 1054539200)
-    IfFlagEnabled(OR_1, 1054539201)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    EndIfConditionFalse(input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(FlagEnabled(1054539200))
+    OR_1.Add(FlagEnabled(1054539201))
+    AND_1.Add(OR_1)
+    if not AND_1:
+        return
     DisableNetworkFlag(1054539200)
     DisableNetworkFlag(1054539201)
     DisableNetworkFlag(1054539205)
@@ -112,8 +135,11 @@ def Event_1054533703():
 @RestartOnRest(1054530703)
 def Event_1054530703():
     """Event 1054530703"""
-    EndIfPlayerNotInOwnWorld()
+    if PlayerNotInOwnWorld():
+        return
     DisableFlag(1054532703)
-    IfFlagRangeAnyEnabled(MAIN, flag_range=(71300, 71399))
+    
+    MAIN.Await(FlagRangeAnyEnabled(flag_range=(71300, 71399)))
+    
     EnableFlag(1054532703)
     End()

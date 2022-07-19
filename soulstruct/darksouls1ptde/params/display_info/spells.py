@@ -58,7 +58,7 @@ MAGIC_PARAM_ST = {
         ),
         FieldDisplayInfo(
             "limitCancelSpEffectId",
-            "LimitCancelSpecialEffect",
+            "LimitRemoveSpecialEffect",
             False,
             SpecialEffectParam,
             "Unknown. Never used.",

@@ -12,33 +12,39 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_35_49_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
     Event_1035492220()
-    RunCommonEvent(0, 90005631, args=(1035491640, 61022), arg_types="Ii")
+    CommonFunc_90005631(0, 1035491640, 61022)
 
 
 @RestartOnRest(1035492220)
 def Event_1035492220():
     """Event 1035492220"""
-    EndIfThisEventSlotFlagEnabled()
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfEntityWithinDistance(AND_3, entity=PLAYER, other_entity=1035490220, radius=30.0)
-    IfConditionTrue(AND_1, input_condition=AND_3)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=Characters.WolfPackLeader, radius=30.0))
+    AND_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    ForceAnimation(1035490220, 3011, unknown2=1.0)
+    ForceAnimation(Characters.WolfPackLeader, 3011)
     Wait(5.0)
     TriggerAISound(ai_sound_param_id=4020, anchor_entity=1035492220, unk_8_12=1)
     End()

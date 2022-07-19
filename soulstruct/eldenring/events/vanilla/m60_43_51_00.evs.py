@@ -12,21 +12,68 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_51_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1043510500, 1043510500, 40314, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 1043510500, 1043510500, 40314, 0.0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(1043510400, 30000, 20000, 1043512400, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043510401, 30001, 20001, 1043512400, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043510402, 30001, 20001, 1043512400, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043510403, 30001, 20001, 1043512400, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1043510404, 30001, 20001, 1043512400, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1043512400,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug1,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1043512400,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug2,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1043512400,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug3,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1043512400,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(0, 1043510404, 30001, 20001, 1043512400, 0.0, 0, 0, 0, 0)

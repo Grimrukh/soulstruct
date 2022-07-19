@@ -12,40 +12,83 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_52_57_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1052570000, obj=1052571950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1052570000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76510, 76504, 1052571980, 77500, 3, 78500, 78501, 78502, 78503, 78504, 78505, 78506, 78507, 78508, 78509),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76510,
+        flag_1=76504,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77500,
+        value=3,
+        flag_2=78500,
+        flag_3=78501,
+        flag_4=78502,
+        flag_5=78503,
+        flag_6=78504,
+        flag_7=78505,
+        flag_8=78506,
+        flag_9=78507,
+        flag_10=78508,
+        flag_11=78509,
     )
-    RunCommonEvent(0, 90005211, args=(1052570205, 30018, 20018, 0, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(1052570215, 30019, 20019, 0, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005250, args=(1052570240, 1052572240, 0.0, 3010), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1052570241, 1052572240, 0.5, 3010), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1052570243, 1052572243, 0.0, 3032), arg_types="IIfi")
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton4,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=0,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.Skeleton10,
+        animation_id=30019,
+        animation_id_1=20019,
+        region=0,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.Avionette0, region=1052572240, seconds=0.0, animation_id=3010)
+    CommonFunc_90005250(0, character=Characters.Avionette1, region=1052572240, seconds=0.5, animation_id=3010)
+    CommonFunc_90005250(0, character=Characters.Avionette2, region=1052572243, seconds=0.0, animation_id=3032)
     Event_1052572200(0, character=1052575200)
-    RunCommonEvent(0, 90005261, args=(1052570320, 1052572320, 3.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1052570321, 1052572321, 3.0, 0.0, 0), arg_types="IIffi")
+    CommonFunc_90005261(0, character=1052570320, region=1052572320, radius=3.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(0, character=1052570321, region=1052572321, radius=3.0, seconds=0.0, animation_id=0)
     Event_1052572210()
     Event_1052572220()
     Event_1052572230()
-    RunCommonEvent(0, 90005560, args=(1052570490, 1052571490, 0), arg_types="IIi")
+    CommonFunc_90005560(0, flag=1052570490, asset=Assets.AEG099_635_9000, left=0)
     Event_1052572510()
-    RunCommonEvent(
+    CommonFunc_90005501(
         0,
-        90005501,
-        args=(1052570510, 1052570511, 0, 1052571510, 1052571511, 1052571512, 1052570512),
-        arg_types="IIIIIII",
+        flag=1052570510,
+        flag_1=1052570511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        asset_2=Assets.AEG099_182_2000,
+        flag_2=1052570512,
     )
-    RunCommonEvent(0, 90005630, args=(65525700, 1052571500, 125), arg_types="IIi")
+    CommonFunc_90005630(0, 65525700, 1052571500, 125)
 
 
 @NeverRestart(50)
@@ -66,19 +109,21 @@ def Event_1052572200(_, character: uint):
 def Event_1052572210():
     """Event 1052572210"""
     GotoIfFlagEnabled(Label.L0, flag=1052570210)
-    DeleteObjectVFX(1052571210)
-    CreateObjectVFX(1052571210, vfx_id=200, model_point=1500)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=1052572210)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    DeleteAssetVFX(Assets.AEG099_251_9000)
+    CreateAssetVFX(Assets.AEG099_251_9000, vfx_id=200, model_point=1500)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1052572210))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(1052570210)
     DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableObject(1052571210)
-    DeleteObjectVFX(1052571210)
-    PlaySoundEffect(1052571210, 1500, sound_type=SoundType.s_SFX)
+    DisableAsset(Assets.AEG099_251_9000)
+    DeleteAssetVFX(Assets.AEG099_251_9000)
+    PlaySoundEffect(Assets.AEG099_251_9000, 1500, sound_type=SoundType.s_SFX)
     End()
 
 
@@ -86,12 +131,16 @@ def Event_1052572210():
 def Event_1052572220():
     """Event 1052572220"""
     DisableNetworkSync()
-    EndIfFlagEnabled(1052570210)
-    IfActionButtonParamActivated(OR_1, action_button_id=9320, entity=1052571210)
-    IfFlagEnabled(OR_1, 1052570210)
-    IfConditionTrue(MAIN, input_condition=OR_1)
-    EndIfFlagEnabled(1052570210)
-    DisplayDialog(text=20200, anchor_entity=1052571210)
+    if FlagEnabled(1052570210):
+        return
+    OR_1.Add(ActionButtonParamActivated(action_button_id=9320, entity=Assets.AEG099_251_9000))
+    OR_1.Add(FlagEnabled(1052570210))
+    
+    MAIN.Await(OR_1)
+    
+    if FlagEnabled(1052570210):
+        return
+    DisplayDialog(text=20200, anchor_entity=Assets.AEG099_251_9000)
     Wait(1.0)
     Restart()
 
@@ -100,9 +149,11 @@ def Event_1052572220():
 def Event_1052572230():
     """Event 1052572230"""
     DisableNetworkSync()
-    IfActionButtonParamActivated(AND_1, action_button_id=9210, entity=1052571230)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    DisplayDialog(text=60051, anchor_entity=1052571230)
+    AND_1.Add(ActionButtonParamActivated(action_button_id=9210, entity=Assets.AEG099_023_2000))
+    
+    MAIN.Await(AND_1)
+    
+    DisplayDialog(text=60051, anchor_entity=Assets.AEG099_023_2000)
     Wait(1.0)
     Restart()
 
@@ -110,30 +161,27 @@ def Event_1052572230():
 @NeverRestart(1052572510)
 def Event_1052572510():
     """Event 1052572510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            1052570510,
-            1052570511,
-            0,
-            1052571510,
-            1052571511,
-            1052573511,
-            1052571512,
-            1052573512,
-            1052572511,
-            1052572512,
-            1052570512,
-            1052570513,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        1052570510,
+        1052570511,
+        0,
+        1052571510,
+        1052571511,
+        1052573511,
+        1052571512,
+        1052573512,
+        1052572511,
+        1052572512,
+        1052570512,
+        1052570513,
+        0,
     )
 
 
 @NeverRestart(1052570519)
 def Event_1052570519():
     """Event 1052570519"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     DisableFlag(1052570510)

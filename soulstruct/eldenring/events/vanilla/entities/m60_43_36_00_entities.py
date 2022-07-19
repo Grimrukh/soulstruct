@@ -1,0 +1,30 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    YuraHunterofBloodyFingers = 1043360700  # c0000_9000 npc 533181110 think 533181000 chara 23183
+    TalkDummy = 1043360100  # c1000_9000 npc 10001000 think 1 talk 2000
+    Rat = 1043360200  # c4080_9011 npc 40800010 think 40800000
+    Dog = 1043360230  # c4160_9001 npc 41601010 think 41600000
+    WanderingNoble0 = 1043360212  # c4300_9012 npc 43005210 think 43005000
+    WanderingNoble1 = 1043360213  # c4300_9013 npc 43006010 think 43006000
+    WanderingNoble2 = 1043360214  # c4300_9014 npc 43006010 think 43006000
+    WanderingNoble3 = 1043360215  # c4300_9015 npc 43006210 think 43006000
+    WanderingNoble4 = 1043360216  # c4300_9016 npc 43005010 think 43005000
+    WanderingNoble5 = 1043360217  # c4300_9017 npc 43006010 think 43006000
+    WanderingNoble6 = 1043360218  # c4300_9018 npc 43006010 think 43006000
+    WanderingNoble7 = 1043360219  # c4300_9019 npc 43006010 think 43006000
+    WanderingNoble8 = 1043360220  # c4300_9021 npc 43007110 think 43006100
+    FlyingDragon = 1043360800  # c4500_9000 npc 45000010 think 45000900 group 1043365100
+
+
+class Assets(Asset):
+    AEG007_450_1001 = 1043361300  # AEG007
+    AEG004_970_1000 = 1043361540  # AEG004
+    AEG099_053_9000 = 1043361100  # AEG099
+    AEG099_090_9006 = 1043361610  # AEG099
+    AEG099_166_9000 = 1043361220  # AEG099
+    AEG099_290_9001 = 1043361510  # AEG099
+    AEG099_504_9000 = 1043361940  # AEG099
+    AEG099_504_9001 = 1043361941  # AEG099
+    AEG099_630_9001 = 1043361601  # AEG099

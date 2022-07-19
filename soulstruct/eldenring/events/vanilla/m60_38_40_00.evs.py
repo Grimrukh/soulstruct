@@ -11,19 +11,34 @@ strings:
 154: N:\\GR\\data\\Param\\event\\common_macro.emevd
 238: N:\\GR\\data\\Param\\event\\m60.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_38_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1038400000, obj=1038401950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1038400000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76206, 76201, 1038401980, 77200, 1, 78200, 78201, 78202, 78203, 78204, 78205, 78206, 78207, 78208, 78209),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76206,
+        flag_1=76201,
+        asset=Assets.AEG099_090_9001,
+        source_flag=77200,
+        value=1,
+        flag_2=78200,
+        flag_3=78201,
+        flag_4=78202,
+        flag_5=78203,
+        flag_6=78204,
+        flag_7=78205,
+        flag_8=78206,
+        flag_9=78207,
+        flag_10=78208,
+        flag_11=78209,
     )
-    RunCommonEvent(0, 90005251, args=(1038400210, 10.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005630, args=(61384000, 1038401500, 122), arg_types="IIi")
+    CommonFunc_90005251(0, 1038400210, 10.0, 0.0, -1)
+    CommonFunc_90005630(0, 61384000, 1038401500, 122)

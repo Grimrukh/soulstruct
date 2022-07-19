@@ -12,67 +12,109 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m34_10_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=34100000, obj=34101950, unknown=5.0)
-    RegisterGrace(grace_flag=34100002, obj=34101952, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=34100000, asset=Assets.AEG099_060_9000)
+    RegisterGrace(grace_flag=34100002, asset=Assets.AEG099_060_9002)
+    CommonFunc_90005508(
         0,
-        90005508,
-        args=(34100510, 34101510, 0, 34101510, 34101511, 34101512, 34100511),
-        arg_types="IIIIIII",
+        flag=34100510,
+        flag_1=34101510,
+        left=0,
+        entity=Assets.AEG027_070_0500,
+        asset=Assets.AEG027_203_0501,
+        asset_1=Assets.AEG027_203_0500,
+        flag_2=34100511,
     )
     Event_34102510()
-    RunCommonEvent(
+    CommonFunc_90005605(
         0,
-        90005605,
-        args=(34101600, 34, 10, 0, 0, 34102600, 0, 34102610, 34102611, 34102612, 0, 0, 0.0, 0.0),
-        arg_types="IBBbbIiIIIIiff",
+        asset=Assets.AEG099_510_9000,
+        area_id=34,
+        block_id=10,
+        cc_id=0,
+        dd_id=0,
+        player_start=34102600,
+        unk_8_12=0,
+        flag=34102610,
+        left_flag=34102611,
+        cancel_flag__right_flag=34102612,
+        left=0,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
     )
-    RunCommonEvent(
+    CommonFunc_90005110(
         0,
-        90005110,
-        args=(191, 9101, 34101650, 34100500, 8148, 806934, 9080, 60522, 0),
-        arg_types="IIIiiiiii",
+        flag=191,
+        flag_1=9101,
+        asset=Assets.AEG099_991_9000,
+        item_lot_param_id=34100500,
+        item=8148,
+        model_point=806934,
+        action_button_id=9080,
+        animation_id=60522,
+        left=0,
     )
-    RunCommonEvent(0, 90005300, args=(34100300, 34100300, 34100300, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 34100300, 34100300, 34100300, 0.0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(34100200, 30020, 20020, 34102200, 15.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(34100201, 30020, 20020, 34102200, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(34100202, 34102200, 8.0, -1), arg_types="IIfi")
+    CommonFunc_90005200(
+        0,
+        character=Characters.GuardianGolem0,
+        animation_id=30020,
+        animation_id_1=20020,
+        region=34102200,
+        seconds=15.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.GuardianGolem1,
+        animation_id=30020,
+        animation_id_1=20020,
+        region=34102200,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 34100202, 34102200, 8.0, -1)
 
 
 @NeverRestart(34102510)
 def Event_34102510():
     """Event 34102510"""
-    RunCommonEvent(
+    CommonFunc_90005507(
         0,
-        90005507,
-        args=(
-            34100510,
-            34101510,
-            0,
-            34101510,
-            34101511,
-            34102513,
-            34101512,
-            34102514,
-            34102511,
-            34102512,
-            34100511,
-            34102512,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        34100510,
+        34101510,
+        0,
+        34101510,
+        34101511,
+        34102513,
+        34101512,
+        34102514,
+        34102511,
+        34102512,
+        34100511,
+        34102512,
+        0,
     )
 
 
@@ -82,22 +124,22 @@ def Event_34102690():
     DisableNetworkSync()
     GotoIfCharacterInsideRegion(Label.L0, character=PLAYER, region=34102690)
     GotoIfCharacterInsideRegion(Label.L1, character=PLAYER, region=34102691)
-    Unknown_2003_68(unknown1=-1, unknown2=-1.0, unknown3=0)
+    SetWeather(weather=Weather.Null, duration=-1.0, immediate_change=False)
     Wait(1.0)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfUnknownCondition_31(OR_1, hours=8, unknown1=0.0, unknown2=0)
+    OR_1.Add(WeatherState(weather=Weather.RainyClouds, unk_4_8=0.0, unk_8_12=0.0))
     GotoIfConditionTrue(Label.L2, input_condition=OR_1)
-    Unknown_2003_68(unknown1=8, unknown2=-1.0, unknown3=0)
+    SetWeather(weather=Weather.RainyClouds, duration=-1.0, immediate_change=False)
     Goto(Label.L2)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfUnknownCondition_31(OR_1, hours=11, unknown1=0.0, unknown2=0)
+    OR_1.Add(WeatherState(weather=Weather.HeavyFog, unk_4_8=0.0, unk_8_12=0.0))
     GotoIfConditionTrue(Label.L2, input_condition=OR_1)
-    Unknown_2003_68(unknown1=11, unknown2=-1.0, unknown3=0)
+    SetWeather(weather=Weather.HeavyFog, duration=-1.0, immediate_change=False)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -107,12 +149,17 @@ def Event_34102690():
 @RestartOnRest(34102800)
 def Event_34102800():
     """Event 34102800"""
-    EndIfFlagEnabled(34100800)
-    IfHealthValueLessThanOrEqual(MAIN, 34100800, value=0)
+    if FlagEnabled(34100800):
+        return
+    
+    MAIN.Await(HealthValue(34100800) <= 0)
+    
     Wait(4.0)
     PlaySoundEffect(34108000, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 34100800)
-    KillBossAndDisplayBanner(character=34100800, banner_type=BannerType.Unknown)
+    
+    MAIN.Await(CharacterDead(34100800))
+    
+    KillBossAndDisplayBanner(character=34100800, banner_type=BannerType.GreatEnemyFelled)
     EnableFlag(9280)
     EnableFlag(34100800)
 
@@ -130,19 +177,22 @@ def Event_34102810():
     DefineLabel(0)
     DisableAI(34100800)
     GotoIfFlagEnabled(Label.L1, flag=34100801)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=34102801)
-    IfConditionTrue(OR_1, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_1, attacked_entity=34100800, attacker=PLAYER)
-    IfConditionTrue(MAIN, input_condition=OR_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=34102801))
+    OR_1.Add(AND_1)
+    OR_1.Add(AttackedWithDamageType(attacked_entity=34100800, attacker=PLAYER))
+    
+    MAIN.Await(OR_1)
+    
     EnableNetworkFlag(34100801)
     Goto(Label.L2)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfFlagEnabled(AND_2, 34102805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=34102800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(FlagEnabled(34102805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=34102800))
+    
+    MAIN.Await(AND_2)
 
     # --- Label 2 --- #
     DefineLabel(2)
@@ -154,12 +204,25 @@ def Event_34102810():
 @RestartOnRest(34102849)
 def Event_34102849():
     """Event 34102849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(34100800, 34101800, 34102800, 34102805, 34105800, 10000, 34100801, 34102801),
-        arg_types="IIIIIiII",
+        flag=34100800,
+        entity=34101800,
+        region=34102800,
+        flag_1=34102805,
+        character=34105800,
+        action_button_id=10000,
+        left=34100801,
+        region_1=34102801,
     )
-    RunCommonEvent(0, 9005801, args=(34100800, 34101800, 34102800, 34102805, 34102806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(34100800, 34101800, 3, 34100801), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(34100800, 90003101, 34102805, 34102806, 0, 11002852, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=34100800,
+        entity=34101800,
+        region=34102800,
+        flag_1=34102805,
+        flag_2=34102806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=34100800, asset=34101800, model_point=3, right=34100801)
+    CommonFunc_9005822(0, 34100800, 90003101, 34102805, 34102806, 0, 11002852, 0, 0)

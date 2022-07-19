@@ -68,34 +68,14 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
         if "talk" in self.DATA_TYPES:
             self.import_talk(force_import=yes_to_all, with_window=with_window)
 
-    def offer_events_submodule_copy(self, with_window: ProjectWindow = None):
-        """Offer to copy `soulstruct.events.darksouls1r` into project `events` folder for IDE purposes."""
-        if with_window:
-            result = with_window.CustomDialog(
-                title="Events Module Copy",
-                message="Would you like to copy the game events submodule for IDE autocomplete?",
-                button_names=("Yes, copy it", "No, don't bother"),
-                button_kwargs=("YES", "NO"),
-                cancel_output=1,
-                default_output=1,
-            )
-        else:
-            result = 1 if (
-                input(
-                    "Would you like to copy the game events submodule for IDE autocomplete? [y]/n",
-                ).lower() == "n"
-            ) else 0
-        if result == 0:
-            # We need both PTDE and DSR submodules for DSR.
-            dsr_events_submodule = PACKAGE_PATH("darksouls1r/events")
-            (self.project_root / "events/soulstruct/darksouls1r").mkdir(parents=True, exist_ok=True)
-            shutil.copytree(dsr_events_submodule, self.project_root / "events/soulstruct/darksouls1r/events")
-
-            dsr_events_submodule = PACKAGE_PATH("darksouls1ptde/events")
-            (self.project_root / "events/soulstruct/darksouls1ptde").mkdir(parents=True, exist_ok=True)
-            shutil.copytree(dsr_events_submodule, self.project_root / "events/soulstruct/darksouls1ptde/events")
-
-            _LOGGER.info("Copied `soulstruct.darksouls1r.events` submodule (and PTDE) into project events folder.")
+    def copy_events_submodule(self):
+        """Also need PTDE submodule for DSR."""
+        super().copy_events_submodule()
+        name = "darksouls1ptde"
+        events_submodule = PACKAGE_PATH(f"{name}/events")
+        (self.project_root / f"events/soulstruct/{name}").mkdir(parents=True, exist_ok=True)
+        shutil.copytree(events_submodule, self.project_root / f"events/soulstruct/{name}/events")
+        _LOGGER.info(f"Copied `soulstruct.{name}.events` submodule into project events folder (needed for DSR).")
 
     def offer_fix_broken_regions(self, with_window: ProjectWindow = None):
         """Offer to fix broken regions in Duke's Archives."""

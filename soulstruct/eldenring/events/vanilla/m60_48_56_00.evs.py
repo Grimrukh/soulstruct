@@ -12,46 +12,73 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_48_56_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005220, args=(1048560210, 30004, 20004, 0.0, 0, 1, 1), arg_types="IiifIII")
-    Event_1048562350(2, character__region=1048560352, character=1048560372)
-    Event_1048562350(5, character__region=1048560355, character=1048560374)
-    RunCommonEvent(
+    CommonFunc_90005220(
         0,
-        90005790,
-        args=(0, 1048560180, 1048562181, 1048562182, 1048560700, 22, 1048562180, 1048562181, 0.0, 0, 0, 0),
-        arg_types="IIIIIiIIfIBi",
+        character=Characters.KaidenSellsword,
+        animation_id=30004,
+        animation_id_1=20004,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=1,
     )
-    RunCommonEvent(0, 90005791, args=(1048560180, 1048562181, 1048562182, 1048560700), arg_types="IIII")
-    RunCommonEvent(
+    Event_1048562350(2, character__region=Characters.AlbinauricArcher0, character=Characters.BigWolf0)
+    Event_1048562350(5, character__region=Characters.AlbinauricArcher2, character=Characters.BigWolf1)
+    CommonFunc_90005790(
         0,
-        90005792,
-        args=(1048560180, 1048562181, 1048562182, 1048560700, 1048560800, 0.0),
-        arg_types="IIIIif",
+        right=0,
+        flag=1048560180,
+        summon_flag=1048562181,
+        dismissal_flag=1048562182,
+        character=Characters.AnastasiaTarnishedEater,
+        sign_type=22,
+        region=1048562180,
+        region_1=1048562181,
+        seconds=0.0,
+        right_1=0,
+        unknown=0,
+        right_2=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005791(
         0,
-        90005793,
-        args=(1048560180, 1048562181, 1048562182, 1048560700, 1048562180, 1048562182, 0),
-        arg_types="IIIIIIi",
+        flag=1048560180,
+        flag_1=1048562181,
+        flag_2=1048562182,
+        character=Characters.AnastasiaTarnishedEater,
     )
+    CommonFunc_90005792(
+        0,
+        flag=1048560180,
+        flag_1=1048562181,
+        flag_2=1048562182,
+        character=Characters.AnastasiaTarnishedEater,
+        item_lot_param_id=1048560800,
+        seconds=0.0,
+    )
+    CommonFunc_90005793(0, 1048560180, 1048562181, 1048562182, 1048560700, 1048562180, 1048562182, 0)
 
 
 @RestartOnRest(1048562350)
 def Event_1048562350(_, character__region: uint, character: uint):
     """Event 1048562350"""
-    SkipLinesIfThisEventSlotFlagEnabled(1)
-    SetCharacterEventTarget(character, region=character__region)
-    IfCharacterHasSpecialEffect(AND_1, character, 11893)
-    IfCharacterAlive(AND_1, character__region)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagDisabled():
+        SetCharacterEventTarget(character, region=character__region)
+    AND_1.Add(CharacterHasSpecialEffect(character, 11893))
+    AND_1.Add(CharacterAlive(character__region))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkUpdateRate(character__region, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Move(
@@ -62,7 +89,7 @@ def Event_1048562350(_, character__region: uint, character: uint):
         set_draw_parent=0,
     )
     WaitFrames(frames=1)
-    ForceAnimation(character, 20003, unknown2=1.0)
+    ForceAnimation(character, 20003)
     AddSpecialEffect(character__region, 11880)
     AddSpecialEffect(character, 11880)
     ReplanAI(character__region)
@@ -75,4 +102,4 @@ def Event_1048562350(_, character__region: uint, character: uint):
 @NeverRestart(100)
 def Event_100():
     """Event 100"""
-    RunCommonEvent(0, 90005300, args=(1148560200, 1148560200, 40524, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 1148560200, 1148560200, 40524, 0.0, 0)

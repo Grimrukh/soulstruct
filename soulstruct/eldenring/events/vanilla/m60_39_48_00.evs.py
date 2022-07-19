@@ -12,8 +12,11 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_39_48_00_entities import *
 
 
 @NeverRestart(0)
@@ -22,55 +25,56 @@ def Constructor():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    RunCommonEvent(0, 900005610, args=(1039481680, 100, 800, 1039488600), arg_types="IiiI")
+    CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=1039488600)
     Event_1039482510()
-    RunCommonEvent(
+    CommonFunc_90005501(
         0,
-        90005501,
-        args=(1039480510, 1039480511, 0, 1039481510, 1039481511, 1039481512, 1039480512),
-        arg_types="IIIIIII",
+        flag=1039480510,
+        flag_1=1039480511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        asset_2=Assets.AEG099_182_2000,
+        flag_2=1039480512,
     )
     Event_1039482610()
     Event_1039482611()
-    RunCommonEvent(0, 90005300, args=(1039480340, 1039480340, 0, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, 1039480340, 1039480340, 0, 0.0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     Event_1039480519()
-    RunCommonEvent(0, 90005251, args=(1039480200, 10.0, 0.0, 1700), arg_types="Iffi")
+    CommonFunc_90005251(0, 1039480200, 10.0, 0.0, 1700)
 
 
 @RestartOnRest(1039482510)
 def Event_1039482510():
     """Event 1039482510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            1039480510,
-            1039480511,
-            0,
-            1039481510,
-            1039481511,
-            1039483511,
-            1039481512,
-            1039483512,
-            1039482511,
-            1039482512,
-            1039480512,
-            1039480513,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        1039480510,
+        1039480511,
+        0,
+        1039481510,
+        1039481511,
+        1039483511,
+        1039481512,
+        1039483512,
+        1039482511,
+        1039482512,
+        1039480512,
+        1039480513,
+        0,
     )
 
 
 @NeverRestart(1039480519)
 def Event_1039480519():
     """Event 1039480519"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     DisableFlag(1039480510)
     DisableThisSlotFlag()
 
@@ -79,24 +83,26 @@ def Event_1039480519():
 def Event_1039482610():
     """Event 1039482610"""
     GotoIfFlagDisabled(Label.L0, flag=1039480610)
-    DisableObject(1039481610)
-    DeleteObjectVFX(1039481610)
+    DisableAsset(Assets.AEG099_251_2000)
+    DeleteAssetVFX(Assets.AEG099_251_2000)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DeleteObjectVFX(1039481610)
-    CreateObjectVFX(1039481610, vfx_id=200, model_point=1502)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=1039480610)
-    IfCharacterHasSpecialEffect(AND_1, PLAYER, 485)
-    IfCharacterHasSpecialEffect(AND_1, PLAYER, 486)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    DeleteAssetVFX(Assets.AEG099_251_2000)
+    CreateAssetVFX(Assets.AEG099_251_2000, vfx_id=200, model_point=1502)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1039480610))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 485))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 486))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1039480610)
     DisplayDialog(text=20210, anchor_entity=0, display_distance=5.0)
-    PlaySoundEffect(1039481610, 1500, sound_type=SoundType.s_SFX)
-    DisableObject(1039481610)
-    DeleteObjectVFX(1039481610)
+    PlaySoundEffect(Assets.AEG099_251_2000, 1500, sound_type=SoundType.s_SFX)
+    DisableAsset(Assets.AEG099_251_2000)
+    DeleteAssetVFX(Assets.AEG099_251_2000)
     End()
 
 
@@ -104,11 +110,15 @@ def Event_1039482610():
 def Event_1039482611():
     """Event 1039482611"""
     DisableNetworkSync()
-    EndIfFlagEnabled(1039480610)
-    IfActionButtonParamActivated(OR_1, action_button_id=9320, entity=1039481610)
-    IfFlagEnabled(OR_1, 1039480610)
-    IfConditionTrue(MAIN, input_condition=OR_1)
-    EndIfFlagEnabled(1039480610)
-    DisplayDialog(text=20200, anchor_entity=1039481610)
+    if FlagEnabled(1039480610):
+        return
+    OR_1.Add(ActionButtonParamActivated(action_button_id=9320, entity=Assets.AEG099_251_2000))
+    OR_1.Add(FlagEnabled(1039480610))
+    
+    MAIN.Await(OR_1)
+    
+    if FlagEnabled(1039480610):
+        return
+    DisplayDialog(text=20200, anchor_entity=Assets.AEG099_251_2000)
     Wait(1.0)
     Restart()

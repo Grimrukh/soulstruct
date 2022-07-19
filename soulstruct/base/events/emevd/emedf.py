@@ -169,7 +169,7 @@ def build_emedf_aliases_tests(emedf: dict) -> tuple[dict, dict, dict]:
                 emedf_tests.setdefault(test_name, {})["if"] = partial_name
 
             if v["alias"].endswith("Comparison") and "comparison_type" in v["args"] and "value" in v["args"]:
-                comparator_test_name = v["alias"].removeprefix("If").removesuffix("Comparison")
+                comparator_test_name = v["alias"].removeprefix("If").removesuffix("Comparison")  # e.g., `HealthRatio`
                 emedf_comparison_tests[comparator_test_name] = {
                     "test_name": v["alias"].removeprefix("If"),  # test defined above, e.g., `HealthComparison()`.
                     "return_type": v["args"]["value"]["type"],

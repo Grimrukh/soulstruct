@@ -12,56 +12,62 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_39_39_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005704, args=(1039390700, 3801, 3800, 1039399201, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1039390700, 3801, 3802, 1039399201, 3801, 3800, 3803, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1039390700, 3803, 3800, 3803), arg_types="IIII")
-    Event_1039393700(0, character__obj=1039390700)
+    CommonFunc_90005704(0, attacked_entity=Characters.SorcererThops, flag=3801, flag_1=3800, flag_2=1039399201, right=3)
+    CommonFunc_90005703(0, 1039390700, 3801, 3802, 1039399201, 3801, 3800, 3803, -1)
+    CommonFunc_90005702(0, character=Characters.SorcererThops, flag=3803, first_flag=3800, last_flag=3803)
+    Event_1039393700(0, asset__character=Characters.SorcererThops)
     Event_1039393701()
-    Event_1039393702(0, character=1039390700, obj=1039391700)
-    RunCommonEvent(0, 90005300, args=(1039390200, 1039390200, 40206, 0.0, 0), arg_types="IIifi")
+    Event_1039393702(0, character=Characters.SorcererThops, asset=Assets.AEG003_061_9000)
+    CommonFunc_90005300(0, flag=1039390200, character=Characters.Scarab, item_lot_param_id=40206, seconds=0.0, left=0)
     Event_1039392200()
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1039390700)
+    DisableBackread(Characters.SorcererThops)
 
 
 @RestartOnRest(1039392200)
 def Event_1039392200():
     """Event 1039392200"""
-    EndIfFlagEnabled(3803)
-    DisableCharacter(1039390200)
-    DisableAnimations(1039390200)
+    if FlagEnabled(3803):
+        return
+    DisableCharacter(Characters.Scarab)
+    DisableAnimations(Characters.Scarab)
 
 
 @RestartOnRest(1039393700)
-def Event_1039393700(_, character__obj: uint):
+def Event_1039393700(_, asset__character: uint):
     """Event 1039393700"""
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    IfFlagEnabled(AND_1, 3800)
-    IfFlagEnabled(AND_1, 1039399203)
+    AND_1.Add(FlagEnabled(3800))
+    AND_1.Add(FlagEnabled(1039399203))
     SkipLinesIfConditionFalse(1, AND_1)
     DisableFlag(1039399203)
 
     # --- Label 10 --- #
     DefineLabel(10)
-    DisableCharacter(character__obj)
-    DisableBackread(character__obj)
-    IfFlagEnabled(OR_1, 3805)
+    DisableCharacter(asset__character)
+    DisableBackread(asset__character)
+    OR_1.Add(FlagEnabled(3805))
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
-    IfFlagEnabled(OR_2, 3805)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    OR_2.Add(FlagEnabled(3805))
+    
+    MAIN.Await(OR_2)
+    
     Restart()
 
     # --- Label 0 --- #
@@ -72,43 +78,45 @@ def Event_1039393700(_, character__obj: uint):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    EnableCharacter(character__obj)
-    EnableBackread(character__obj)
-    ForceAnimation(character__obj, 90100, unknown2=1.0)
-    Move(character__obj, destination=1039392700, destination_type=CoordEntityType.Region, short_move=True)
-    DisableGravity(character__obj)
-    EnableObjectInvulnerability(1039391700)
+    EnableCharacter(asset__character)
+    EnableBackread(asset__character)
+    ForceAnimation(asset__character, 90100)
+    Move(asset__character, destination=1039392700, destination_type=CoordEntityType.Region, short_move=True)
+    DisableGravity(asset__character)
+    EnableAssetInvulnerability(Assets.AEG003_061_9000)
     Goto(Label.L20)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableCharacter(character__obj)
-    EnableBackread(character__obj)
-    SetTeamType(character__obj, TeamType.HostileNPC)
+    EnableCharacter(asset__character)
+    EnableBackread(asset__character)
+    SetTeamType(asset__character, TeamType.HostileNPC)
     Goto(Label.L20)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    DropMandatoryTreasure(character__obj)
-    DisableCharacter(character__obj)
-    DisableBackread(character__obj)
-    DisableObject(character__obj)
+    DropMandatoryTreasure(asset__character)
+    DisableCharacter(asset__character)
+    DisableBackread(asset__character)
+    DisableAsset(asset__character)
     Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagEnabled(OR_15, 3805)
-    IfConditionFalse(MAIN, input_condition=OR_15)
+    OR_15.Add(FlagEnabled(3805))
+    
+    MAIN.Await(not OR_15)
+    
     Restart()
 
 
 @RestartOnRest(1039393701)
 def Event_1039393701():
     """Event 1039393701"""
-    IfFlagEnabled(AND_1, 1039399213)
-    IfFlagEnabled(AND_1, 1039399218)
+    AND_1.Add(FlagEnabled(1039399213))
+    AND_1.Add(FlagEnabled(1039399218))
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
-    IfTrueFlagCountGreaterThanOrEqual(AND_2, FlagType.Absolute, flag_range=(120500, 120749), value=3)
+    AND_2.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(120500, 120749)) >= 3)
     AwaitConditionTrue(AND_2)
     EnableNetworkFlag(1039399218)
 
@@ -118,15 +126,15 @@ def Event_1039393701():
 
 
 @RestartOnRest(1039393702)
-def Event_1039393702(_, character: uint, obj: uint):
+def Event_1039393702(_, character: uint, asset: uint):
     """Event 1039393702"""
-    IfFlagEnabled(AND_1, 3801)
+    AND_1.Add(FlagEnabled(3801))
     AwaitConditionTrue(AND_1)
-    IfCharacterDoesNotHaveSpecialEffect(AND_1, character, 9624)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfPlayerInOwnWorld(AND_1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 9624))
+    AND_1.Add(CharacterBackreadEnabled(character))
+    AND_1.Add(PlayerInOwnWorld())
     AwaitConditionTrue(AND_1)
-    DisableObjectInvulnerability(obj)
-    DestroyObject(obj, request_slot=0)
+    DisableAssetInvulnerability(asset)
+    DestroyAsset(asset, request_slot=0)
     EnableGravity(character)
     End()

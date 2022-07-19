@@ -12,50 +12,72 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m31_03_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=310300, obj=31031950, unknown=5.0)
+    RegisterGrace(grace_flag=310300, asset=Assets.AEG099_060_9000)
     Event_31032800()
     Event_31032810()
     Event_31032811()
     Event_31032849()
-    RunCommonEvent(
-        0,
-        90005646,
-        args=(31030800, 31032840, 31032841, 31031840, 31032840, 31, 3, 0, 0),
-        arg_types="IIIIIBBbb",
-    )
+    CommonFunc_90005646(0, 31030800, 31032840, 31032841, 31031840, 31032840, 31, 3, 0, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(31030202, 31032202, 2.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005211, args=(31030210, 30000, 20000, 31032210, 6.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(
+    CommonFunc_90005261(0, character=Characters.Wolf2, region=31032202, radius=2.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(31030211, 30005, 20005, 31032210, 8.0, 0.30000001192092896, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Wolf3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=31032210,
+        radius=6.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005211, args=(31030216, 30001, 20001, 31032216, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
+    CommonFunc_90005211(
+        0,
+        character=Characters.Wolf4,
+        animation_id=30005,
+        animation_id_1=20005,
+        region=31032210,
+        radius=8.0,
+        seconds=0.30000001192092896,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(0, 31030216, 30001, 20001, 31032216, 2.0, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(31032650)
 def Event_31032650(_, tutorial_param_id: int, flag: uint):
     """Event 31032650"""
-    EndIfTryingToCreateSession()
-    IfPlayerHasGood(AND_5, 250, including_storage=True)
-    EndIfConditionTrue(input_condition=AND_5)
-    IfPlayerHasGood(AND_1, 250, including_storage=True)
-    IfLeavingSession(AND_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    EndIfTryingToCreateSession()
+    if Multiplayer():
+        return
+    AND_5.Add(PlayerHasGood(250, including_storage=True))
+    if AND_5:
+        return
+    AND_1.Add(PlayerHasGood(250, including_storage=True))
+    AND_1.Add(Singleplayer())
+    
+    MAIN.Await(AND_1)
+    
+    if Multiplayer():
+        return
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9115, flag=flag, bit_count=1)
@@ -64,13 +86,18 @@ def Event_31032650(_, tutorial_param_id: int, flag: uint):
 @RestartOnRest(31032651)
 def Event_31032651(_, tutorial_param_id: int, flag: uint, flag_1: uint):
     """Event 31032651"""
-    EndIfTryingToCreateSession()
-    EndIfFlagEnabled(flag)
-    IfFlagEnabled(AND_1, flag_1)
-    IfFlagDisabled(AND_1, flag)
-    IfLeavingSession(AND_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    EndIfTryingToCreateSession()
+    if Multiplayer():
+        return
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(FlagDisabled(flag))
+    AND_1.Add(Singleplayer())
+    
+    MAIN.Await(AND_1)
+    
+    if Multiplayer():
+        return
     EnableFlag(flag)
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)
@@ -80,16 +107,21 @@ def Event_31032651(_, tutorial_param_id: int, flag: uint, flag_1: uint):
 @RestartOnRest(31032800)
 def Event_31032800():
     """Event 31032800"""
-    EndIfFlagEnabled(31030800)
-    IfHealthValueLessThanOrEqual(MAIN, 31030800, value=0)
+    if FlagEnabled(31030800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.BeastmanofFarumAzula) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(31030800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 31030800)
-    KillBossAndDisplayBanner(character=31030800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.BeastmanofFarumAzula, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.BeastmanofFarumAzula))
+    
+    KillBossAndDisplayBanner(character=Characters.BeastmanofFarumAzula, banner_type=BannerType.EnemyFelled)
     EnableFlag(31030800)
     EnableFlag(9233)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61233)
+    if PlayerInOwnWorld():
+        EnableFlag(61233)
     Wait(5.0)
     AwardItemLot(20330, host_only=True)
     End()
@@ -99,20 +131,22 @@ def Event_31032800():
 def Event_31032810():
     """Event 31032810"""
     GotoIfFlagDisabled(Label.L0, flag=31030800)
-    DisableCharacter(31030800)
-    DisableAnimations(31030800)
-    Kill(31030800)
+    DisableCharacter(Characters.BeastmanofFarumAzula)
+    DisableAnimations(Characters.BeastmanofFarumAzula)
+    Kill(Characters.BeastmanofFarumAzula)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(31030800)
-    DisableAnimations(31030800)
-    ForceAnimation(31030800, 30003, unknown2=1.0)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=31032800)
-    IfConditionTrue(OR_1, input_condition=AND_1)
-    IfConditionTrue(MAIN, input_condition=OR_1)
+    DisableAI(Characters.BeastmanofFarumAzula)
+    DisableAnimations(Characters.BeastmanofFarumAzula)
+    ForceAnimation(Characters.BeastmanofFarumAzula, 30003)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=31032800))
+    OR_1.Add(AND_1)
+    
+    MAIN.Await(OR_1)
+    
     EnableNetworkFlag(31030801)
     Goto(Label.L2)
 
@@ -121,32 +155,48 @@ def Event_31032810():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableAI(31030800)
-    EnableAnimations(31030800)
-    SetNetworkUpdateRate(31030800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(31030800, name=903970310)
+    EnableAI(Characters.BeastmanofFarumAzula)
+    EnableAnimations(Characters.BeastmanofFarumAzula)
+    SetNetworkUpdateRate(Characters.BeastmanofFarumAzula, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.BeastmanofFarumAzula, name=903970310)
     Wait(1.0)
-    ForceAnimation(31030800, 20003, unknown2=1.0)
+    ForceAnimation(Characters.BeastmanofFarumAzula, 20003)
 
 
 @RestartOnRest(31032811)
 def Event_31032811():
     """Event 31032811"""
-    EndIfFlagEnabled(31030800)
-    IfHealthRatioLessThanOrEqual(AND_1, 31030800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(31030800):
+        return
+    AND_1.Add(HealthRatio(Characters.BeastmanofFarumAzula) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(31032802)
 
 
 @RestartOnRest(31032849)
 def Event_31032849():
     """Event 31032849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(31030800, 31031800, 31032800, 31032805, 31035800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=31030800,
+        entity=Assets.AEG099_001_9000,
+        region=31032800,
+        flag_1=31032805,
+        character=31035800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(31030800, 31031800, 31032800, 31032805, 31032806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(31030800, 31031800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(31030800, 931000, 31032805, 31032806, 0, 31032802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=31030800,
+        entity=Assets.AEG099_001_9000,
+        region=31032800,
+        flag_1=31032805,
+        flag_2=31032806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=31030800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 31030800, 931000, 31032805, 31032806, 0, 31032802, 0, 0)

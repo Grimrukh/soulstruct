@@ -13,29 +13,32 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_49_41_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005300, args=(1049410299, 1049410299, 40426, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot_param_id=40426, seconds=0.0, left=0)
     Event_1049412580()
-    RunCommonEvent(0, 900005610, args=(1049411650, 100, 800, 0), arg_types="IiiI")
-    RunCommonEvent(0, 900005610, args=(1049411651, 100, 800, 0), arg_types="IiiI")
-    RunCommonEvent(0, 900005610, args=(1049411652, 100, 800, 0), arg_types="IiiI")
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
+    CommonFunc_900005610(0, 1049411652, 100, 800, 0)
 
 
 @RestartOnRest(1049412580)
 def Event_1049412580():
     """Event 1049412580"""
-    RegisterLadder(start_climbing_flag=1049410580, stop_climbing_flag=1049410581, obj=1049411580)
-    RegisterLadder(start_climbing_flag=1049410582, stop_climbing_flag=1049410583, obj=1049411582)
-    RegisterLadder(start_climbing_flag=1049410584, stop_climbing_flag=1049410585, obj=1049411584)
-    RegisterLadder(start_climbing_flag=1049410586, stop_climbing_flag=1049410587, obj=1049411586)
-    RegisterLadder(start_climbing_flag=1049410588, stop_climbing_flag=1049410589, obj=1049411588)
-    RegisterLadder(start_climbing_flag=1049410590, stop_climbing_flag=1049410591, obj=1049411590)
-    RegisterLadder(start_climbing_flag=1049410592, stop_climbing_flag=1049410593, obj=1049411592)
-    RegisterLadder(start_climbing_flag=1049410594, stop_climbing_flag=1049410595, obj=1049411594)
-    RegisterLadder(start_climbing_flag=1049410596, stop_climbing_flag=1049410597, obj=1049411596)
+    RegisterLadder(start_climbing_flag=1049410580, stop_climbing_flag=1049410581, asset=Assets.AEG005_100_1000)
+    RegisterLadder(start_climbing_flag=1049410582, stop_climbing_flag=1049410583, asset=Assets.AEG005_101_1000)
+    RegisterLadder(start_climbing_flag=1049410584, stop_climbing_flag=1049410585, asset=Assets.AEG005_101_1001)
+    RegisterLadder(start_climbing_flag=1049410586, stop_climbing_flag=1049410587, asset=Assets.AEG005_101_1002)
+    RegisterLadder(start_climbing_flag=1049410588, stop_climbing_flag=1049410589, asset=Assets.AEG005_102_1000)
+    RegisterLadder(start_climbing_flag=1049410590, stop_climbing_flag=1049410591, asset=1049411590)
+    RegisterLadder(start_climbing_flag=1049410592, stop_climbing_flag=1049410593, asset=1049411592)
+    RegisterLadder(start_climbing_flag=1049410594, stop_climbing_flag=1049410595, asset=1049411594)
+    RegisterLadder(start_climbing_flag=1049410596, stop_climbing_flag=1049410597, asset=1049411596)

@@ -112,7 +112,7 @@ def Constructor():
             character_1=1300802,
             destination=1302600,
             destination_1=1302612,
-            flag_2=11305300
+            flag_2=11305300,
         )
         Event_11305350(
             1,
@@ -122,7 +122,7 @@ def Constructor():
             character_1=1300804,
             destination=1302601,
             destination_1=1302611,
-            flag_2=11305301
+            flag_2=11305301,
         )
         Event_11305350(
             2,
@@ -132,7 +132,7 @@ def Constructor():
             character_1=1300806,
             destination=1302602,
             destination_1=1302610,
-            flag_2=11305302
+            flag_2=11305302,
         )
         Event_11305350(
             3,
@@ -142,7 +142,7 @@ def Constructor():
             character_1=1300808,
             destination=1302603,
             destination_1=1302609,
-            flag_2=11305303
+            flag_2=11305303,
         )
         Event_11305350(
             4,
@@ -152,7 +152,7 @@ def Constructor():
             character_1=1300810,
             destination=1302604,
             destination_1=1302608,
-            flag_2=11305304
+            flag_2=11305304,
         )
         Event_11305350(
             5,
@@ -162,7 +162,7 @@ def Constructor():
             character_1=1300812,
             destination=1302605,
             destination_1=1302607,
-            flag_2=11305305
+            flag_2=11305305,
         )
         Event_11305350(
             6,
@@ -172,7 +172,7 @@ def Constructor():
             character_1=1300814,
             destination=1302606,
             destination_1=1302606,
-            flag_2=11305306
+            flag_2=11305306,
         )
         Event_11305370(0, character=1300801, flag=11305251)
         Event_11305370(1, character=1300802, flag=11305252)
@@ -467,7 +467,7 @@ def Event_11305392():
 @NeverRestart(11300001)
 def Event_11300001():
     """Event 11300001"""
-    MAIN.Await(HealthRatioLessThanOrEqual(1300800, value=0.0))
+    MAIN.Await(HealthRatio(1300800) <= 0.0)
     
     Wait(1.0)
     PlaySoundEffect(1300800, 777777777, sound_type=SoundType.s_SFX)
@@ -637,7 +637,7 @@ def Event_11305397():
 @NeverRestart(11305398)
 def Event_11305398():
     """Event 11305398"""
-    MAIN.Await(HealthRatioLessThanOrEqual(1300800, value=0.30000001192092896))
+    MAIN.Await(HealthRatio(1300800) <= 0.30000001192092896)
     
     EnableFlag(11305399)
     AICommand(1300800, command_id=1, command_slot=1)
@@ -676,7 +676,7 @@ def Event_11305398():
         character_1=1300802,
         destination=1302602,
         destination_1=1302603,
-        flag_2=11305300
+        flag_2=11305300,
     )
     Event_11305350(
         11,
@@ -686,7 +686,7 @@ def Event_11305398():
         character_1=1300804,
         destination=1302604,
         destination_1=1302605,
-        flag_2=11305301
+        flag_2=11305301,
     )
     Event_11305350(
         12,
@@ -696,7 +696,7 @@ def Event_11305398():
         character_1=1300806,
         destination=1302607,
         destination_1=1302608,
-        flag_2=11305302
+        flag_2=11305302,
     )
     Event_11305350(13, 11305257, 11305258, 1300807, 1300808, 1302609, 1302612, 11305303)
 
@@ -757,7 +757,7 @@ def Event_11305370(_, character: int, flag: int):
     """Event 11305370"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasTAEEvent(character, tae_event_id=710))
-    AND_2.Add(HealthRatioLessThanOrEqual(1300800, value=0.0))
+    AND_2.Add(HealthRatio(1300800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1240,7 +1240,7 @@ def Event_11305000():
     AND_6.Add(CharacterInsideRegion(PLAYER, region=1302700))
     if not AND_6:
         return RESTART
-    AND_7.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
+    AND_7.Add(HealthRatio(PLAYER) <= 0.0)
     if AND_7:
         return RESTART
     EnableFlag(11310050)
@@ -1450,10 +1450,10 @@ def Event_11300800():
     """Event 11300800"""
     EnableFlag(11305200)
     EnableFlag(11305040)
-    Event_11305050(1, 11305040, 1300100, 1302202, 10.0)
-    Event_11305050(2, 11305051, 1300100, 1302203, 10.0)
-    Event_11305050(3, 11305052, 1300100, 1302204, 10.0)
-    Event_11305050(4, 11305053, 1300100, 1302205, 10.0)
+    Event_11305050(1, flag=11305040, character=1300100, region=1302202, radius=10.0)
+    Event_11305050(2, flag=11305051, character=1300100, region=1302203, radius=10.0)
+    Event_11305050(3, flag=11305052, character=1300100, region=1302204, radius=10.0)
+    Event_11305050(4, flag=11305053, character=1300100, region=1302205, radius=10.0)
     Event_11300801(0, character=1300100)
     Event_11300801(1, character=1300120)
     Event_11300801(2, character=1300140)
@@ -1509,23 +1509,23 @@ def Event_11300800():
     Event_11305100(48, character=1300200, character_1=1300205)
     Event_11305100(49, character=1300200, character_1=1300206)
     Event_11305100(50, character=1300200, character_1=1300207)
-    Event_11305070(0, 1300107, 5.0)
-    Event_11305070(1, 1300109, 5.0)
-    Event_11305070(2, 1300110, 5.0)
-    Event_11305070(3, 1300113, 5.0)
-    Event_11305070(4, 1300121, 5.0)
-    Event_11305070(5, 1300122, 5.0)
-    Event_11305070(6, 1300123, 5.0)
-    Event_11305070(7, 1300124, 5.0)
-    Event_11305070(8, 1300125, 5.0)
-    Event_11305070(9, 1300147, 5.0)
-    Event_11305070(10, 1300181, 5.0)
-    Event_11305070(11, 1300182, 5.0)
-    Event_11305070(12, 1300000, 5.0)
-    Event_11305070(13, 1300001, 5.0)
-    Event_11305070(16, 1300163, 5.0)
-    Event_11305070(17, 1300164, 5.0)
-    Event_11305070(18, 1300020, 5.0)
+    Event_11305070(0, character=1300107, radius=5.0)
+    Event_11305070(1, character=1300109, radius=5.0)
+    Event_11305070(2, character=1300110, radius=5.0)
+    Event_11305070(3, character=1300113, radius=5.0)
+    Event_11305070(4, character=1300121, radius=5.0)
+    Event_11305070(5, character=1300122, radius=5.0)
+    Event_11305070(6, character=1300123, radius=5.0)
+    Event_11305070(7, character=1300124, radius=5.0)
+    Event_11305070(8, character=1300125, radius=5.0)
+    Event_11305070(9, character=1300147, radius=5.0)
+    Event_11305070(10, character=1300181, radius=5.0)
+    Event_11305070(11, character=1300182, radius=5.0)
+    Event_11305070(12, character=1300000, radius=5.0)
+    Event_11305070(13, character=1300001, radius=5.0)
+    Event_11305070(16, character=1300163, radius=5.0)
+    Event_11305070(17, character=1300164, radius=5.0)
+    Event_11305070(18, character=1300020, radius=5.0)
     Event_11305210(0, character=1300350)
     Event_11305210(1, character=1300351)
     Event_11305210(2, character=1300352)
@@ -1591,13 +1591,13 @@ def Event_11305070(_, character: int, radius: float):
 def Event_11305100(_, character: int, character_1: int):
     """Event 11305100"""
     if ThisEventSlotFlagEnabled():
-        CancelSpecialEffect(character_1, 5451)
+        RemoveSpecialEffect(character_1, 5451)
         End()
     EnableImmortality(character_1)
     
     MAIN.Await(CharacterDead(character))
     
-    CancelSpecialEffect(character_1, 5451)
+    RemoveSpecialEffect(character_1, 5451)
     DisableImmortality(character_1)
 
 
@@ -1647,8 +1647,8 @@ def Event_11300850(_, character: int, item_lot_param_id: int):
 @NeverRestart(11300510)
 def Event_11300510(_, character: int, flag: int):
     """Event 11300510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1677,7 +1677,7 @@ def Event_11300520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1704,9 +1704,9 @@ def Event_11300530(_, character: int, first_flag: int, last_flag: int, flag: int
 def Event_11300531(_, character: int, flag: int):
     """Event 11300531"""
     AND_1.Add(FlagEnabled(1620))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     AND_2.Add(FlagEnabled(1621))
-    AND_2.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) <= 0.0)
     AND_3.Add(FlagEnabled(flag))
     AND_3.Add(ThisEventFlagEnabled())
     OR_1.Add(AND_1)

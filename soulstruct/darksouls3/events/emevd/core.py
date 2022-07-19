@@ -11,7 +11,7 @@ from soulstruct.containers.dcx import DCXType
 from soulstruct.games import DarkSouls3Type
 from soulstruct.utilities.binary import BinaryStruct
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
-from .emedf import EMEDF, EMEDF_TESTS
+from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
 from .entity_enums_manager import EntityEnumsManager
 from .evs import EVSParser
 
@@ -53,10 +53,10 @@ class Instruction(_BaseInstruction):
 
 
 class Event(_BaseEvent):
-    EVENT_ARG_TYPES = {}
     Instruction = Instruction
     EventArg = EventArg
     EMEDF_TESTS = EMEDF_TESTS
+    EMEDF_COMPARISON_TESTS = EMEDF_COMPARISON_TESTS
     HEADER_STRUCT = BinaryStruct(
         ("event_id", "Q"),
         ("instruction_count", "Q"),

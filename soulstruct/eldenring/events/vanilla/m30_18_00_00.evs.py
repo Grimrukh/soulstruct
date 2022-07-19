@@ -12,185 +12,699 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_18_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=301800, obj=30181950, unknown=5.0)
-    RunCommonEvent(0, 90005525, args=(30180570, 30181570), arg_types="II")
-    RunCommonEvent(0, 900005610, args=(30181150, 100, 800, 0), arg_types="IiiI")
-    RunCommonEvent(0, 90005616, args=(30187900, 30182700), arg_types="II")
-    RunCommonEvent(0, 90005200, args=(30180200, 30000, 20000, 30182201, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180201, 30182207, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180205, 30182205, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(30180206, 30010, 20010, 30182220, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180228, 30000, 20000, 30182206, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180209, 30010, 20010, 30182209, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180210, 30010, 20010, 30182209, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180211, 30003, 20003, 30182211, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180207, 30182218, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180208, 30182300, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(30180213, 30002, 20002, 30182212, 3.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(
+    RegisterGrace(grace_flag=301800, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005525(0, flag=30180570, asset=Assets.AEG027_157_1000)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_90005616(0, flag=30187900, region=30182700)
+    CommonFunc_90005200(
         0,
-        90005200,
-        args=(30180214, 30002, 20002, 30182212, 3.700000047683716, 0, 0, 0, 0),
-        arg_types="IiiIfIIII",
+        character=Characters.Imp0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182201,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(30180215, 30002, 20002, 30182212, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180234, 30002, 20002, 30182212, 4.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180203, 30182300, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180221, 30182221, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180222, 30182221, 1.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(30180217, 30001, 20001, 30182217, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180227, 30182227, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005211, args=(30180353, 30000, 20000, 30182353, 7.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005200, args=(30180352, 30000, 20000, 30182352, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180300, 30000, 20000, 30182300, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30180301, 30000, 20000, 30182300, 1.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(
+    CommonFunc_90005250(0, character=30180201, region=30182207, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp1, region=30182205, seconds=0.0, animation_id=3004)
+    CommonFunc_90005200(
         0,
-        90005200,
-        args=(30180302, 30000, 20000, 30182300, 0.4000000059604645, 0, 0, 0, 0),
-        arg_types="IiiIfIIII",
+        character=Characters.Imp2,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30182220,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005201, args=(30180321, 30000, 20000, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180322, 30000, 20000, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180323, 30000, 20000, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180324, 30000, 20000, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005200, args=(30180354, 30000, 20000, 30182250, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180324, 30182250, 0.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180325, 30182250, 2.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180326, 30182250, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180327, 30182250, 2.5, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180328, 30182250, 3.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005260, args=(30180324, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005260, args=(30180325, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005260, args=(30180326, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005260, args=(30180327, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005260, args=(30180328, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005260, args=(30180354, 30182301, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005250, args=(30180305, 30182305, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180306, 30182305, 1.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(30180334, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180335, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180336, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180337, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180338, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180339, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180340, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180312, 30000, 20000, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005250, args=(30180330, 30182251, 0.699999988079071, 3010), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180331, 30182251, 0.5, 3011), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180341, 30182341, 0.0, 3011), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(30180310, 30000, 20000, 30182310, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180355, 30182212, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180342, 30182229, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180343, 30182229, 0.0, -1), arg_types="IIfi")
-    Event_30182218(0, character=30180218, animation_id=30010)
-    Event_30182218(1, character=30180219, animation_id=30010)
-    Event_30182218(2, character=30180220, animation_id=30001)
-    Event_30182219(0, character=30180218, animation_id=20010)
-    Event_30182219(1, character=30180219, animation_id=20010)
-    Event_30182219(2, character=30180220, animation_id=20001)
-    Event_30182220(0, 30180218, 0.0, 0)
-    Event_30182220(1, 30180219, 0.0, 0)
-    Event_30182220(2, 30180220, 0.0, 0)
-    RunCommonEvent(0, 90005250, args=(30180230, 30182230, 0.0, 3004), arg_types="IIfi")
-    RunCommonEvent(1, 90005200, args=(30180216, 30001, 20001, 30182216, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005201, args=(30180313, 30000, 20000, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180316, 30000, 20000, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005250, args=(30180332, 30182333, 0.0, 3011), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180333, 30182333, 0.5, 3011), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(30180318, 30000, 20000, 5.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005250, args=(30180317, 30172317, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(30180319, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(30180320, 30000, 20000, 8.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005200, args=(30180350, 30000, 20000, 30182350, 1.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30180351, 30182254, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(30180352, 30000, 20000, 30182351, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    Event_30182350(0, character=30180350)
-    Event_30182350(1, character=30180351)
-    Event_30182350(2, character=30180352)
-    Event_30182350(3, character=30180353)
+    CommonFunc_90005200(
+        0,
+        character=30180228,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182206,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp3,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30182209,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180210,
+        animation_id=30010,
+        animation_id_1=20010,
+        region=30182209,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp5,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30182211,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30180207, 30182218, 0.0, -1)
+    CommonFunc_90005250(0, 30180208, 30182300, 0.0, -1)
+    CommonFunc_90005200(
+        0,
+        character=30180213,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30182212,
+        seconds=3.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180214,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30182212,
+        seconds=3.700000047683716,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180215,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30182212,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180234,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30182212,
+        seconds=4.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30180203, 30182300, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Imp12, region=30182221, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=Characters.Imp13, region=30182221, seconds=1.0, animation_id=3004)
+    CommonFunc_90005200(
+        0,
+        character=30180217,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30182217,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.Imp8, region=30182227, seconds=0.0, animation_id=3004)
+    CommonFunc_90005211(
+        0,
+        character=Characters.ErdtreeBurialWatchdog0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182353,
+        radius=7.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.LivingPot3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182352,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180300,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182300,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180301,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182300,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180302,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182300,
+        seconds=0.4000000059604645,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot3,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot4,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot10,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot7,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=30180354,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182250,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot7, region=30182250, seconds=0.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot8, region=30182250, seconds=2.0, animation_id=3003)
+    CommonFunc_90005250(0, character=Characters.LivingPot4, region=30182250, seconds=0.0, animation_id=3004)
+    CommonFunc_90005250(0, character=30180327, region=30182250, seconds=2.5, animation_id=3003)
+    CommonFunc_90005250(0, character=30180328, region=30182250, seconds=3.0, animation_id=3003)
+    CommonFunc_90005260(0, 30180324, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005260(0, 30180325, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005260(0, 30180326, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005260(0, 30180327, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005260(0, 30180328, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005260(0, 30180354, 30182301, 5.0, 0.0, -1)
+    CommonFunc_90005250(0, 30180305, 30182305, 0.0, -1)
+    CommonFunc_90005250(0, 30180306, 30182305, 1.0, -1)
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot16,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot21,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot17,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=30180337,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot18,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot19,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=30180340,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot2,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(
+        0,
+        character=Characters.SmallLivingPot0,
+        region=30182251,
+        seconds=0.699999988079071,
+        animation_id=3010,
+    )
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot1, region=30182251, seconds=0.5, animation_id=3011)
+    CommonFunc_90005250(0, character=30180341, region=30182341, seconds=0.0, animation_id=3011)
+    CommonFunc_90005200(
+        0,
+        character=Characters.SmallLivingPot9,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182310,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30180355, 30182212, 0.0, -1)
+    CommonFunc_90005250(0, 30180342, 30182229, 0.0, -1)
+    CommonFunc_90005250(0, 30180343, 30182229, 0.0, -1)
+    Event_30182218(0, character=Characters.Imp6, animation_id=30010)
+    Event_30182218(1, character=Characters.Imp7, animation_id=30010)
+    Event_30182218(2, character=Characters.Imp9, animation_id=30001)
+    Event_30182219(0, character=Characters.Imp6, animation_id=20010)
+    Event_30182219(1, character=Characters.Imp7, animation_id=20010)
+    Event_30182219(2, character=Characters.Imp9, animation_id=20001)
+    Event_30182220(0, character=Characters.Imp6, seconds=0.0, animation_id=0)
+    Event_30182220(1, character=Characters.Imp7, seconds=0.0, animation_id=0)
+    Event_30182220(2, character=Characters.Imp9, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=30180230, region=30182230, seconds=0.0, animation_id=3004)
+    CommonFunc_90005200(
+        1,
+        character=30180216,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=30182216,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot11,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot12,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot20, region=30182333, seconds=0.0, animation_id=3011)
+    CommonFunc_90005250(0, character=Characters.SmallLivingPot15, region=30182333, seconds=0.5, animation_id=3011)
+    CommonFunc_90005201(
+        0,
+        character=Characters.SmallLivingPot14,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30180317, 30172317, 0.0, -1)
+    CommonFunc_90005201(
+        0,
+        character=30180319,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005201(
+        0,
+        character=30180320,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=8.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.LivingPot0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182350,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30180351, 30182254, 0.0, -1)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LivingPot3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30182351,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    Event_30182350(0, character=Characters.LivingPot0)
+    Event_30182350(1, character=Characters.LivingPot1)
+    Event_30182350(2, character=Characters.LivingPot3)
+    Event_30182350(3, character=Characters.ErdtreeBurialWatchdog0)
     Event_30182350(4, character=30180354)
-    RunCommonEvent(0, 90005250, args=(30180251, 30182251, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180254, 30182254, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005261, args=(30180344, 30182344, 10.0, 0.5, 3011), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30180345, 30182344, 10.0, 1.0, 3011), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30180346, 30182344, 10.0, 1.2999999523162842, 3011), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30180347, 30182254, 1.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(30180348, 30182344, 1.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005250, args=(30180257, 30182257, 0.0, 0), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180255, 30182255, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180256, 30182255, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180400, 30182401, 0.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180401, 30182401, 0.5, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180402, 30182401, 0.800000011920929, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180403, 30182401, 1.5, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180404, 30182401, 2.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180405, 30182401, 2.4000000953674316, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180406, 30182401, 3.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180407, 30182401, 3.299999952316284, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180408, 30182401, 4.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180409, 30182401, 4.5, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180410, 30182411, 0.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180411, 30182411, 0.5, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180412, 30182411, 0.800000011920929, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180413, 30182411, 1.5, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180414, 30182411, 2.0, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180415, 30182411, 2.799999952316284, 3001), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30180450, 30182450, 0.0, 3002), arg_types="IIfi")
-    RunCommonEvent(0, 90005650, args=(30180540, 30181540, 30181541, 30183541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30180540, 30181540), arg_types="II")
-    RunCommonEvent(
+    CommonFunc_90005250(0, character=30180251, region=30182251, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, character=30180254, region=30182254, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(0, character=30180344, region=30182344, radius=10.0, seconds=0.5, animation_id=3011)
+    CommonFunc_90005261(0, character=30180345, region=30182344, radius=10.0, seconds=1.0, animation_id=3011)
+    CommonFunc_90005261(
         0,
-        90005501,
-        args=(30180510, 30181511, 0, 30181510, 30181511, 30181512, 30180512),
-        arg_types="IIIIIII",
+        character=30180346,
+        region=30182344,
+        radius=10.0,
+        seconds=1.2999999523162842,
+        animation_id=3011,
     )
-    RunCommonEvent(
+    CommonFunc_90005261(0, 30180347, 30182254, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, 30180348, 30182344, 1.0, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.ErdtreeBurialWatchdog1, region=30182257, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, 30180255, 30182255, 0.0, -1)
+    CommonFunc_90005250(0, 30180256, 30182255, 0.0, -1)
+    CommonFunc_90005250(0, character=30180400, region=30182401, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod1, region=30182401, seconds=0.5, animation_id=3001)
+    CommonFunc_90005250(
         0,
-        90005501,
-        args=(30180515, 30181515, 0, 30181515, 30181516, 30181517, 30180516),
-        arg_types="IIIIIII",
+        character=Characters.FungalPod2,
+        region=30182401,
+        seconds=0.800000011920929,
+        animation_id=3001,
     )
-    RunCommonEvent(
+    CommonFunc_90005250(0, character=Characters.FungalPod3, region=30182401, seconds=1.5, animation_id=3001)
+    CommonFunc_90005250(0, character=30180404, region=30182401, seconds=2.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180405, region=30182401, seconds=2.4000000953674316, animation_id=3001)
+    CommonFunc_90005250(0, character=30180406, region=30182401, seconds=3.0, animation_id=3001)
+    CommonFunc_90005250(
         0,
-        90005501,
-        args=(30180520, 30181520, 2, 30181520, 30181521, 30181522, 30180521),
-        arg_types="IIIIIII",
+        character=Characters.FungalPod4,
+        region=30182401,
+        seconds=3.299999952316284,
+        animation_id=3001,
     )
-    RunCommonEvent(
+    CommonFunc_90005250(0, character=Characters.FungalPod5, region=30182401, seconds=4.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180409, region=30182401, seconds=4.5, animation_id=3001)
+    CommonFunc_90005250(0, character=30180410, region=30182411, seconds=0.0, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod6, region=30182411, seconds=0.5, animation_id=3001)
+    CommonFunc_90005250(
         0,
-        90005501,
-        args=(30180510, 30181511, 0, 30181510, 30181512, 30181518, 30180512),
-        arg_types="IIIIIII",
+        character=Characters.FungalPod7,
+        region=30182411,
+        seconds=0.800000011920929,
+        animation_id=3001,
+    )
+    CommonFunc_90005250(0, character=Characters.FungalPod8, region=30182411, seconds=1.5, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.FungalPod0, region=30182411, seconds=2.0, animation_id=3001)
+    CommonFunc_90005250(0, character=30180415, region=30182411, seconds=2.799999952316284, animation_id=3001)
+    CommonFunc_90005250(0, character=Characters.GiantFungalPod, region=30182450, seconds=0.0, animation_id=3002)
+    CommonFunc_90005650(
+        0,
+        flag=30180540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_0500,
+        obj_act_id=30183541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30180540, anchor_entity=Assets.AEG027_041_0500)
+    CommonFunc_90005501(
+        0,
+        flag=30180510,
+        flag_1=30181511,
+        left=0,
+        asset=Assets.AEG027_054_0500,
+        asset_1=Assets.AEG027_002_0503,
+        asset_2=Assets.AEG027_002_0504,
+        flag_2=30180512,
+    )
+    CommonFunc_90005501(
+        0,
+        flag=30180515,
+        flag_1=30181515,
+        left=0,
+        asset=Assets.AEG027_036_0500,
+        asset_1=Assets.AEG027_002_0501,
+        asset_2=Assets.AEG027_002_0502,
+        flag_2=30180516,
+    )
+    CommonFunc_90005501(
+        0,
+        flag=30180520,
+        flag_1=30181520,
+        left=2,
+        asset=Assets.AEG027_036_0501,
+        asset_1=Assets.AEG027_002_0506,
+        asset_2=Assets.AEG027_002_0507,
+        flag_2=30180521,
+    )
+    CommonFunc_90005501(
+        0,
+        flag=30180510,
+        flag_1=30181511,
+        left=0,
+        asset=Assets.AEG027_054_0500,
+        asset_1=Assets.AEG027_002_0504,
+        asset_2=Assets.AEG027_002_0505,
+        flag_2=30180512,
     )
     Event_30182510()
-    RunCommonEvent(0, 90005680, args=(30180505, 30180506, 30180507, 30180508, 30181505), arg_types="IIIII")
-    RunCommonEvent(0, 90005681, args=(30180505, 30180506, 30180507, 30180508, 30181505), arg_types="IIIII")
-    RunCommonEvent(0, 90005680, args=(30180505, 30180506, 30180507, 30180508, 30181505), arg_types="IIIII")
+    CommonFunc_90005680(
+        0,
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        asset=Assets.AEG027_156_0500,
+    )
+    CommonFunc_90005681(
+        0,
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        attacked_entity=Assets.AEG027_156_0500,
+    )
+    CommonFunc_90005680(
+        0,
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        asset=Assets.AEG027_156_0500,
+    )
     Event_30182500()
-    RunCommonEvent(0, 90005680, args=(30180500, 30180501, 30180502, 30180503, 30181500), arg_types="IIIII")
-    RunCommonEvent(0, 90005681, args=(30180500, 30180501, 30180502, 30180503, 30181500), arg_types="IIIII")
-    RunCommonEvent(0, 90005680, args=(30180500, 30180501, 30180502, 30180503, 30181500), arg_types="IIIII")
+    CommonFunc_90005680(
+        0,
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        asset=Assets.AEG027_156_0501,
+    )
+    CommonFunc_90005681(
+        0,
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        attacked_entity=Assets.AEG027_156_0501,
+    )
+    CommonFunc_90005680(
+        0,
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        asset=Assets.AEG027_156_0501,
+    )
     Event_30180050()
-    RunCommonEvent(0, 90005540, args=(30180530, 30181530, 30181531, 30183531, -1, 1, 2), arg_types="IIIIiii")
+    CommonFunc_90005540(0, 30180530, 30181530, 30181531, 30183531, -1, 1, 2)
     Event_30182800()
     Event_30182810()
     Event_30182849()
     Event_30182811()
-    RunCommonEvent(
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(30180800, 30182840, 30182841, 30181840, 30182840, 30, 18, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=30180800,
+        left_flag=30182840,
+        cancel_flag__right_flag=30182841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30182840,
+        area_id=30,
+        block_id=18,
+        cc_id=0,
+        dd_id=0,
     )
-    RunCommonEvent(0, 91005600, args=(30182800, 30181695, 5), arg_types="IIi")
+    CommonFunc_91005600(0, 30182800, 30181695, 5)
 
 
 @NeverRestart(50)
@@ -202,7 +716,8 @@ def Preconstructor():
 @NeverRestart(30180050)
 def Event_30180050():
     """Event 30180050"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(30180505)
     EnableFlag(30180500)
 
@@ -217,18 +732,20 @@ def Event_30182350(_, character: uint):
 @RestartOnRest(30182218)
 def Event_30182218(_, character: uint, animation_id: int):
     """Event 30182218"""
-    GotoIfUnknown_1004_05(Label.L0, character=character, unk_8_12=True)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=30182222)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    EndIffSpecialStandbyEndedFlagEnabled(character=character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30182222))
+    AND_1.Add(CharacterBackreadEnabled(character))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
     End()
 
@@ -236,28 +753,31 @@ def Event_30182218(_, character: uint, animation_id: int):
 @RestartOnRest(30182219)
 def Event_30182219(_, character: uint, animation_id: int):
     """Event 30182219"""
-    EndIfFlagEnabled(30182220)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=30182213)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfFlagEnabled(AND_1, 30182218)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    if FlagEnabled(30182220):
+        return
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30182213))
+    AND_1.Add(CharacterBackreadEnabled(character))
+    AND_1.Add(FlagEnabled(30182218))
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    
+    MAIN.Await(OR_2)
+    
     EnableNetworkFlag(30182220)
     Wait(0.0)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
+    ForceAnimation(character, animation_id, loop=True)
     EnableAI(character)
     End()
 
@@ -265,15 +785,18 @@ def Event_30182219(_, character: uint, animation_id: int):
 @RestartOnRest(30182220)
 def Event_30182220(_, character: uint, seconds: float, animation_id: int):
     """Event 30182220"""
-    EndIfFlagEnabled(30182220)
+    if FlagEnabled(30182220):
+        return
     DisableAI(character)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    
+    MAIN.Await(OR_2)
+    
     EnableNetworkFlag(30182220)
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
-    SkipLinesIfValueEqual(1, left=animation_id, right=-1)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
+    if ValueNotEqual(left=animation_id, right=-1):
+        ForceAnimation(character, animation_id, loop=True)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -283,626 +806,1323 @@ def Event_30182220(_, character: uint, seconds: float, animation_id: int):
 @RestartOnRest(30182227)
 def Event_30182227():
     """Event 30182227"""
-    EndIfThisEventSlotFlagEnabled()
-    IfFlagEnabled(MAIN, 30180570)
-    ForceAnimation(30180227, 3004, loop=True, unknown2=1.0)
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(FlagEnabled(30180570))
+    
+    ForceAnimation(Characters.Imp8, 3004, loop=True)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
 
 
 @NeverRestart(30182500)
 def Event_30182500():
     """Event 30182500"""
-    RunCommonEvent(0, 90005681, args=(30180500, 30180501, 30180502, 30180503, 30181500), arg_types="IIIII")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(
+    CommonFunc_90005681(
         0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110070, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
+        flag=30180500,
+        flag_1=30180501,
+        flag_2=30180502,
+        flag_3=30180503,
+        attacked_entity=Assets.AEG027_156_0501,
     )
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(
+    if FlagEnabled(57):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110070,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110060,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110050,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110040,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110030,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110020,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110010,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005682(
+            0,
+            flag=30180502,
+            source_entity=Assets.AEG027_156_0501,
+            region=30182500,
+            owner_entity=Characters.Dummy1,
+            behavior_id=801110000,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    CommonFunc_90005681(
         0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110060, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
+        flag=30180505,
+        flag_1=30180506,
+        flag_2=30180507,
+        flag_3=30180508,
+        attacked_entity=Assets.AEG027_156_0500,
     )
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110050, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110040, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110030, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110020, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110010, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180502, 30181500, 30182500, 30180500, 801110000, 801110005, 101, 0, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    RunCommonEvent(0, 90005681, args=(30180505, 30180506, 30180507, 30180508, 30181505), arg_types="IIIII")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110070, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110060, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110050, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110040, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110030, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110020, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110010, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(
-        0,
-        90005682,
-        args=(30180507, 30181505, 30182505, 30180505, 801110000, 801110005, 101, 103, 0, 0),
-        arg_types="IIIIiiiiii",
-    )
+    if FlagEnabled(57):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110070,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110060,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110050,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110040,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110030,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110020,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110010,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005682(
+            0,
+            flag=30180507,
+            source_entity=Assets.AEG027_156_0500,
+            region=30182505,
+            owner_entity=Characters.Dummy0,
+            behavior_id=801110000,
+            behavior_id_1=801110005,
+            model_point=101,
+            model_point_1=103,
+            model_point_2=0,
+            model_point_3=0,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010070, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010070,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010060, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010060,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010050, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010050,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010040, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010040,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010030, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010030,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010020, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy0,
+        entity=Assets.AEG027_044_0500,
+        region=30182600,
+        behavior_id=801010020,
+        source_entity=30182601,
+        source_entity_1=30182602,
+        source_entity_2=30182603,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010010, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180600, 30181600, 30182600, 801010000, 30182601, 30182602, 30182603),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy0,
+            entity=Assets.AEG027_044_0500,
+            region=30182600,
+            behavior_id=801010010,
+            source_entity=30182601,
+            source_entity_1=30182602,
+            source_entity_2=30182603,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy0,
+            entity=Assets.AEG027_044_0500,
+            region=30182600,
+            behavior_id=801010000,
+            source_entity=30182601,
+            source_entity_1=30182602,
+            source_entity_2=30182603,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010070, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010070,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010060, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010060,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010050, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010050,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010040, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010040,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010030, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010030,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010020, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy1,
+        entity=Assets.AEG027_044_0501,
+        region=30182605,
+        behavior_id=801010020,
+        source_entity=30182606,
+        source_entity_1=30182607,
+        source_entity_2=30182608,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010010, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180605, 30181605, 30182605, 801010000, 30182606, 30182607, 30182608),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy1,
+            entity=Assets.AEG027_044_0501,
+            region=30182605,
+            behavior_id=801010010,
+            source_entity=30182606,
+            source_entity_1=30182607,
+            source_entity_2=30182608,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy1,
+            entity=Assets.AEG027_044_0501,
+            region=30182605,
+            behavior_id=801010000,
+            source_entity=30182606,
+            source_entity_1=30182607,
+            source_entity_2=30182608,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010070, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010070,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010060, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010060,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010050, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010050,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010040, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010040,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010030, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010030,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010020, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy2,
+        entity=Assets.AEG027_044_0502,
+        region=30182610,
+        behavior_id=801010020,
+        source_entity=30182611,
+        source_entity_1=30182612,
+        source_entity_2=30182613,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010010, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180610, 30181610, 30182610, 801010000, 30182611, 30182612, 30182613),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy2,
+            entity=Assets.AEG027_044_0502,
+            region=30182610,
+            behavior_id=801010010,
+            source_entity=30182611,
+            source_entity_1=30182612,
+            source_entity_2=30182613,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy2,
+            entity=Assets.AEG027_044_0502,
+            region=30182610,
+            behavior_id=801010000,
+            source_entity=30182611,
+            source_entity_1=30182612,
+            source_entity_2=30182613,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010070, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010070,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010060, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010060,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010050, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010050,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010040, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010040,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010030, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010030,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010020, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy3,
+        entity=Assets.AEG027_044_0503,
+        region=30182615,
+        behavior_id=801010020,
+        source_entity=30182616,
+        source_entity_1=30182617,
+        source_entity_2=30182618,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010010, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180615, 30181615, 30182615, 801010000, 30182616, 30182617, 30182618),
-        arg_types="IIIiIII",
-    )
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy3,
+            entity=Assets.AEG027_044_0503,
+            region=30182615,
+            behavior_id=801010010,
+            source_entity=30182616,
+            source_entity_1=30182617,
+            source_entity_2=30182618,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy3,
+            entity=Assets.AEG027_044_0503,
+            region=30182615,
+            behavior_id=801010000,
+            source_entity=30182616,
+            source_entity_1=30182617,
+            source_entity_2=30182618,
+        )
     SkipLinesIfFlagDisabled(2, 57)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010070, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010070,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(19)
     SkipLinesIfFlagDisabled(2, 56)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010060, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010060,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(16)
     SkipLinesIfFlagDisabled(2, 55)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010050, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010050,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(13)
     SkipLinesIfFlagDisabled(2, 54)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010040, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010040,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(10)
     SkipLinesIfFlagDisabled(2, 53)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010030, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010030,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(7)
     SkipLinesIfFlagDisabled(2, 52)
-    RunCommonEvent(
+    CommonFunc_90005660(
         0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010020, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
+        owner_entity=Characters.TalkDummy4,
+        entity=Assets.AEG027_044_0504,
+        region=30182620,
+        behavior_id=801010020,
+        source_entity=30182621,
+        source_entity_1=30182622,
+        source_entity_2=30182623,
     )
     SkipLines(4)
-    SkipLinesIfFlagDisabled(2, 51)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010010, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
-    )
-    SkipLines(1)
-    RunCommonEvent(
-        0,
-        90005660,
-        args=(30180620, 30181620, 30182620, 801010000, 30182621, 30182622, 30182623),
-        arg_types="IIIiIII",
-    )
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205070, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205060, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205050, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205040, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205030, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205020, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205010, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182550, 30183550, 30181550, 30182550, 801205000, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205070, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205060, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205050, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205040, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205030, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205020, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205010, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182552, 30183552, 30181552, 30182550, 801205000, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205070, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205060, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205050, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205040, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205030, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205020, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205010, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182554, 30183554, 30181554, 30182550, 801205000, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205070, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205060, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205050, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205040, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205030, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205020, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205010, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182560, 30183560, 30181560, 30182560, 801205000, 4.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205070, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205060, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205050, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205040, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205030, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205020, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205010, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182562, 30183562, 30181562, 30182560, 801205000, 2.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205070, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205060, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205050, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205040, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205030, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205020, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205010, 0.0, 0), arg_types="IIIIifi")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005675, args=(30182564, 30183564, 30181564, 30182560, 801205000, 0.0, 0), arg_types="IIIIifi")
+    if FlagEnabled(51):
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy4,
+            entity=Assets.AEG027_044_0504,
+            region=30182620,
+            behavior_id=801010010,
+            source_entity=30182621,
+            source_entity_1=30182622,
+            source_entity_2=30182623,
+        )
+    else:
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy4,
+            entity=Assets.AEG027_044_0504,
+            region=30182620,
+            behavior_id=801010000,
+            source_entity=30182621,
+            source_entity_1=30182622,
+            source_entity_2=30182623,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205070,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205060,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205050,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205040,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205030,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205020,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205010,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(
+            0,
+            flag=30182550,
+            asset_flag=30183550,
+            asset=Assets.AEG027_013_0500,
+            region=30182550,
+            behaviour_id=801205000,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205070,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205060,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205050,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205040,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205030,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205020,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205010,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(
+            0,
+            flag=30182552,
+            asset_flag=30183552,
+            asset=Assets.AEG027_013_0501,
+            region=30182550,
+            behaviour_id=801205000,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205070,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205060,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205050,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205040,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205030,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205020,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205010,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(
+            0,
+            flag=30182554,
+            asset_flag=30183554,
+            asset=Assets.AEG027_013_0502,
+            region=30182550,
+            behaviour_id=801205000,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205070,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205060,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205050,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205040,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205030,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205020,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205010,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(
+            0,
+            flag=30182560,
+            asset_flag=30183560,
+            asset=Assets.AEG027_013_0503,
+            region=30182560,
+            behaviour_id=801205000,
+            seconds=4.0,
+            right=0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205070,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205060,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205050,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205040,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205030,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205020,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205010,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(
+            0,
+            flag=30182562,
+            asset_flag=30183562,
+            asset=Assets.AEG027_013_0504,
+            region=30182560,
+            behaviour_id=801205000,
+            seconds=2.0,
+            right=0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205070,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205060,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205050,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205040,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205030,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205020,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205010,
+            seconds=0.0,
+            right=0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005675(0, 30182564, 30183564, 30181564, 30182560, 801205000, 0.0, 0)
 
 
 @NeverRestart(30182510)
 def Event_30182510():
     """Event 30182510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            30180510,
-            30181511,
-            0,
-            30181510,
-            30181511,
-            30183511,
-            30181512,
-            30183512,
-            30182511,
-            30182512,
-            30180512,
-            30182512,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        flag=30180510,
+        flag_1=30181511,
+        left=0,
+        asset=Assets.AEG027_054_0500,
+        asset_1=Assets.AEG027_002_0503,
+        obj_act_id=30183511,
+        asset_2=Assets.AEG027_002_0504,
+        obj_act_id_1=30183512,
+        region=30182511,
+        region_1=30182512,
+        flag_2=30180512,
+        flag_3=30182512,
+        left_1=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            30180515,
-            30181515,
-            0,
-            30181515,
-            30181516,
-            30183516,
-            30181517,
-            30183517,
-            30182516,
-            30182517,
-            30180516,
-            30182517,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        flag=30180515,
+        flag_1=30181515,
+        left=0,
+        asset=Assets.AEG027_036_0500,
+        asset_1=Assets.AEG027_002_0501,
+        obj_act_id=30183516,
+        asset_2=Assets.AEG027_002_0502,
+        obj_act_id_1=30183517,
+        region=30182516,
+        region_1=30182517,
+        flag_2=30180516,
+        flag_3=30182517,
+        left_1=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            30180520,
-            30181520,
-            2,
-            30181520,
-            30181521,
-            30183521,
-            30181522,
-            30183522,
-            30182521,
-            30182522,
-            30180521,
-            30182522,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        flag=30180520,
+        flag_1=30181520,
+        left=2,
+        asset=Assets.AEG027_036_0501,
+        asset_1=Assets.AEG027_002_0506,
+        obj_act_id=30183521,
+        asset_2=Assets.AEG027_002_0507,
+        obj_act_id_1=30183522,
+        region=30182521,
+        region_1=30182522,
+        flag_2=30180521,
+        flag_3=30182522,
+        left_1=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            30180510,
-            30181511,
-            0,
-            30181510,
-            30181512,
-            30183512,
-            30181518,
-            30183518,
-            30182511,
-            30182512,
-            30180512,
-            30182512,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        30180510,
+        30181511,
+        0,
+        30181510,
+        30181512,
+        30183512,
+        30181518,
+        30183518,
+        30182511,
+        30182512,
+        30180512,
+        30182512,
+        0,
     )
 
 
 @NeverRestart(30180519)
 def Event_30180519():
     """Event 30180519"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(30180510)
     EnableFlag(30180515)
 
@@ -910,84 +2130,104 @@ def Event_30180519():
 @RestartOnRest(30182800)
 def Event_30182800():
     """Event 30182800"""
-    EndIfFlagEnabled(30180800)
-    IfHealthValueLessThanOrEqual(MAIN, 30180800, value=0)
+    if FlagEnabled(30180800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.UlceratedTreeSpirit) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(30180800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30180800)
-    KillBossAndDisplayBanner(character=30180800, banner_type=BannerType.DutyFulfilled)
-    EnableObjectActivation(30181671, obj_act_id=-1)
+    PlaySoundEffect(Characters.UlceratedTreeSpirit, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.UlceratedTreeSpirit))
+    
+    KillBossAndDisplayBanner(character=Characters.UlceratedTreeSpirit, banner_type=BannerType.EnemyFelled)
+    EnableAssetActivation(Assets.AEG099_630_9001, obj_act_id=-1)
     EnableFlag(30180800)
     EnableFlag(9218)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61218)
+    if PlayerInOwnWorld():
+        EnableFlag(61218)
 
 
 @RestartOnRest(30182810)
 def Event_30182810():
     """Event 30182810"""
     GotoIfFlagDisabled(Label.L0, flag=30180800)
-    DisableCharacter(30180800)
-    DisableAnimations(30180800)
-    Kill(30180800)
+    DisableCharacter(Characters.UlceratedTreeSpirit)
+    DisableAnimations(Characters.UlceratedTreeSpirit)
+    Kill(Characters.UlceratedTreeSpirit)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(30180800)
-    DisableObjectActivation(30181671, obj_act_id=-1)
-    DisableHealthBar(30180800)
+    DisableAI(Characters.UlceratedTreeSpirit)
+    DisableAssetActivation(Assets.AEG099_630_9001, obj_act_id=-1)
+    DisableHealthBar(Characters.UlceratedTreeSpirit)
     GotoIfFlagEnabled(Label.L1, flag=30180801)
-    ForceAnimation(30180800, 30002, loop=True, unknown2=1.0)
-    IfPlayerInOwnWorld(AND_1)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=30182800)
-    IfConditionTrue(OR_1, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_1, attacked_entity=30180800, attacker=PLAYER)
-    IfConditionTrue(MAIN, input_condition=OR_1)
-    ForceAnimation(30180800, 20002, unknown2=1.0)
+    ForceAnimation(Characters.UlceratedTreeSpirit, 30002, loop=True)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30182800))
+    OR_1.Add(AND_1)
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.UlceratedTreeSpirit, attacker=PLAYER))
+    
+    MAIN.Await(OR_1)
+    
+    ForceAnimation(Characters.UlceratedTreeSpirit, 20002)
     EnableNetworkFlag(30180801)
     Goto(Label.L2)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    ForceAnimation(30180800, 30002, loop=True, unknown2=1.0)
-    IfFlagEnabled(AND_2, 30182805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30182800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    ForceAnimation(30180800, 20002, unknown2=1.0)
+    ForceAnimation(Characters.UlceratedTreeSpirit, 30002, loop=True)
+    AND_2.Add(FlagEnabled(30182805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30182800))
+    
+    MAIN.Await(AND_2)
+    
+    ForceAnimation(Characters.UlceratedTreeSpirit, 20002)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableAI(30180800)
-    SetNetworkUpdateRate(30180800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableAI(Characters.UlceratedTreeSpirit)
+    SetNetworkUpdateRate(Characters.UlceratedTreeSpirit, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Wait(4.300000190734863)
-    EnableBossHealthBar(30180800, name=904640301)
+    EnableBossHealthBar(Characters.UlceratedTreeSpirit, name=904640301)
     EnableNetworkFlag(30182803)
 
 
 @RestartOnRest(30182811)
 def Event_30182811():
     """Event 30182811"""
-    EndIfFlagEnabled(30180800)
-    IfHealthRatioLessThanOrEqual(AND_1, 30180800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30180800):
+        return
+    AND_1.Add(HealthRatio(Characters.UlceratedTreeSpirit) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(30182802)
 
 
 @RestartOnRest(30182849)
 def Event_30182849():
     """Event 30182849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30180800, 30181800, 30182800, 30182805, 30185800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30180800,
+        entity=Assets.AEG099_001_9000,
+        region=30182800,
+        flag_1=30182805,
+        character=30185800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30180800, 30181800, 30182800, 30182805, 30182806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30180800, 30181800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(
+    CommonFunc_9005801(
         0,
-        9005822,
-        args=(30180800, 920600, 30182805, 30182806, 30182803, 30182802, 0, 0),
-        arg_types="IiIIIIii",
+        flag=30180800,
+        entity=Assets.AEG099_001_9000,
+        region=30182800,
+        flag_1=30182805,
+        flag_2=30182806,
+        action_button_id=10000,
     )
+    CommonFunc_9005811(0, flag=30180800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30180800, 920600, 30182805, 30182806, 30182803, 30182802, 0, 0)

@@ -12,13 +12,16 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_41_34_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005460, args=(1041340200,))
-    RunCommonEvent(0, 90005461, args=(1041340200,))
-    RunCommonEvent(0, 90005462, args=(1041340200,))
+    CommonFunc_90005460(0, character=Characters.GiantOctopus)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus)
+    CommonFunc_90005462(0, 1041340200)

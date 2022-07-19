@@ -1,0 +1,34 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy0 = 31060950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 31060100  # c1000_9001 npc 10001000 think 1 talk 2000
+    Crystalian0 = 31060800  # c3350_9000 col h000400 npc 33502920 think 33502900 group 31065800,31065100
+    Crystalian1 = 31060801  # c3350_9001 col h000400 npc 33501920 think 33501900 group 31065800,31065100
+    RayaLucariaScholar0 = 31060200  # c3702_9000 col h000200 npc 37020020 think 37020000
+    RayaLucariaScholar1 = 31060201  # c3702_9001 col h000200 npc 37020020 think 37020000
+    RayaLucariaScholar2 = 31060202  # c3702_9002 col h000200 npc 37020020 think 37020000
+    RayaLucariaScholar3 = 31060203  # c3702_9003 col h000200 npc 37023020 think 37020000
+    RayaLucariaScholar4 = 31060204  # c3702_9004 col h000200 npc 37023020 think 37020000
+    RayaLucariaScholar5 = 31060205  # c3702_9005 col h000200 npc 37023020 think 37020000
+    RayaLucariaScholar6 = 31060211  # c3702_9011 col h000300 npc 37020020 think 37020120
+    RayaLucariaScholar7 = 31060215  # c3702_9015 col h000300 npc 37020020 think 37020000
+    BattleMage = 31060300  # c3704_9000 col h000300 npc 37040020 think 37040000
+    Rat0 = 31060280  # c4080_9000 col h000101 npc 40800020 think 40800001
+    Rat1 = 31060281  # c4080_9001 col h000101 npc 40800020 think 40800001
+    Rat2 = 31060282  # c4080_9002 col h000101 npc 40800020 think 40800001
+
+
+class Assets(Asset):
+    AEG027_043_1000 = 31061540  # AEG027
+    AEG027_069_1000 = 31061600  # AEG027
+    AEG099_001_9000 = 31061800  # AEG099
+    AEG099_001_9001 = 31061801  # AEG099
+    AEG099_001_9002 = 31061695  # AEG099
+    AEG099_053_9000 = 31061100  # AEG099
+    AEG099_060_9000 = 31061950  # AEG099
+    AEG099_065_9000 = 31061840  # AEG099
+    AEG099_630_9000 = 31061520  # AEG099
+    AEG099_630_9001 = 31061522  # AEG099
+    AEG257_002_1000 = 14001522  # AEG257

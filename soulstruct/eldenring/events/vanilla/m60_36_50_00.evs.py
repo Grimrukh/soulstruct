@@ -12,66 +12,132 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_36_50_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1036500000, obj=1036501950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1036500000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005880(
         0,
-        90005880,
-        args=(1036500800, 1036500805, 1036502800, 1036500800, 30255, 60, 36, 50, 0, 1036502805),
-        arg_types="IIIIiBBbbI",
+        flag=1036500800,
+        flag_1=1036500805,
+        flag_2=1036502800,
+        character=Characters.OnyxLord,
+        item_lot_param_id=30255,
+        area_id=60,
+        block_id=36,
+        cc_id=50,
+        dd_id=0,
+        player_start=1036502805,
     )
-    RunCommonEvent(
+    CommonFunc_90005881(
         0,
-        90005881,
-        args=(1036500800, 1036500805, 1036502801, 1036502802, 20300, 1036501805, 60, 36, 50, 0, 1036502805),
-        arg_types="IIIIiIBBbbI",
+        flag=1036500800,
+        flag_1=1036500805,
+        left_flag=1036502801,
+        cancel_flag__right_flag=1036502802,
+        message=20300,
+        anchor_entity=Assets.AEG099_170_1000,
+        area_id=60,
+        block_id=36,
+        cc_id=50,
+        dd_id=0,
+        player_start=1036502805,
     )
-    RunCommonEvent(
+    CommonFunc_90005882(
         0,
-        90005882,
-        args=(
-            1036500800,
-            1036500805,
-            1036502800,
-            1036500800,
-            1036502806,
-            1036505810,
-            1036501800,
-            1036500810,
-            1036502810,
-            903600520,
-            -1,
-            20001,
-        ),
-        arg_types="IIIIIIIIIiii",
+        1036500800,
+        1036500805,
+        1036502800,
+        1036500800,
+        1036502806,
+        1036505810,
+        1036501800,
+        1036500810,
+        1036502810,
+        903600520,
+        -1,
+        20001,
     )
-    RunCommonEvent(0, 90005883, args=(1036500800, 1036500805, 1036501805), arg_types="III")
-    RunCommonEvent(0, 90005885, args=(1036500800, 0, 1036502806, 1036502807, 0, 1), arg_types="IiIIii")
-    RunCommonEvent(0, 90005300, args=(1036500340, 1036500340, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    CommonFunc_90005883(0, flag=1036500800, flag_1=1036500805, entity=Assets.AEG099_170_1000)
+    CommonFunc_90005885(
         0,
-        90005633,
-        args=(580310, 580010, 1036500600, 30016, 20016, 1036501600, 1036501610),
-        arg_types="IIIiiII",
+        flag=1036500800,
+        bgm_boss_conv_param_id=0,
+        flag_1=1036502806,
+        flag_2=1036502807,
+        left=0,
+        left_1=1,
     )
+    CommonFunc_90005300(0, flag=1036500340, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005633(0, 580310, 580010, 1036500600, 30016, 20016, 1036501600, 1036501610)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(1036500210, 1036502210, 1.0, 0.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500211, 1036502210, 1.0, 0.5, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500213, 1036502210, 1.0, 1.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500214, 1036502214, 1.0, 1.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500215, 1036502214, 1.0, 0.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500216, 1036502214, 1.0, 0.5, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500217, 1036502214, 1.0, 2.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500218, 1036502218, 1.0, 1.0, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500219, 1036502218, 1.0, 0.5, 1700), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1036500220, 1036502218, 1.0, 0.0, 1700), arg_types="IIffi")
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton0,
+        region=1036502210,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton1,
+        region=1036502210,
+        radius=1.0,
+        seconds=0.5,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton2,
+        region=1036502210,
+        radius=1.0,
+        seconds=1.0,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton3,
+        region=1036502214,
+        radius=1.0,
+        seconds=1.0,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton4,
+        region=1036502214,
+        radius=1.0,
+        seconds=0.0,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton5,
+        region=1036502214,
+        radius=1.0,
+        seconds=0.5,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Skeleton6,
+        region=1036502214,
+        radius=1.0,
+        seconds=2.0,
+        animation_id=1700,
+    )
+    CommonFunc_90005261(0, character=1036500218, region=1036502218, radius=1.0, seconds=1.0, animation_id=1700)
+    CommonFunc_90005261(0, character=1036500219, region=1036502218, radius=1.0, seconds=0.5, animation_id=1700)
+    CommonFunc_90005261(0, 1036500220, 1036502218, 1.0, 0.0, 1700)

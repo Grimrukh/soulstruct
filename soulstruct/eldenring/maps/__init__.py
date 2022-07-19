@@ -1,1 +1,1 @@
-from .constants import ALL_MAPS, get_map
+from .constants import COMMON_FUNC, ALL_MAPS, get_map

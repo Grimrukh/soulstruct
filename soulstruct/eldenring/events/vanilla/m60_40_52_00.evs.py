@@ -12,83 +12,151 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_40_52_00_entities import *
+from .entities.m60_35_45_00_entities import Characters as m60_35_Characters
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=76304, obj=1040521950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=76304, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76314, 76304, 1040521980, 77310, 0, 78310, 78311, 78312, 78313, 78314, 78315, 78316, 78317, 78318, 78319),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76314,
+        flag_1=76304,
+        asset=Assets.AEG099_060_9001,
+        source_flag=77310,
+        value=0,
+        flag_2=78310,
+        flag_3=78311,
+        flag_4=78312,
+        flag_5=78313,
+        flag_6=78314,
+        flag_7=78315,
+        flag_8=78316,
+        flag_9=78317,
+        flag_10=78318,
+        flag_11=78319,
     )
-    RunCommonEvent(0, 90005870, args=(1040520800, 902100600, 14), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1040520800, 0, 1040520800, 0, 30350, 0.0), arg_types="IIIIif")
-    Event_1040522240(0, obj=1040521690, entity=1040521691, flag=62030)
-    Unknown_2005_18(obj_1=1040521201, obj_2=1040521200, unk_8_12=151)
-    Unknown_2005_18(obj_1=1040521211, obj_2=1040521210, unk_8_12=151)
-    RunCommonEvent(0, 900005610, args=(1040521680, 100, 800, 1040528620), arg_types="IiiI")
-    RunCommonEvent(
+    CommonFunc_90005870(0, character=Characters.BlackKnifeAssassin, name=902100600, npc_threat_level=14)
+    CommonFunc_90005860(
         0,
-        90005605,
-        args=(1040521640, 60, 40, 55, 0, 1040552650, 0, 1040552651, 1040552652, 1040552653, 0, 0, 0.0, 0.0),
-        arg_types="IBBbbIiIIIIiff",
+        flag=1040520800,
+        left=0,
+        character=Characters.BlackKnifeAssassin,
+        left_1=0,
+        item_lot__item_lot_param_id=30350,
+        seconds=0.0,
+    )
+    Event_1040522240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62030)
+    AttachAssetToAsset(child_asset=1040521201, parent_asset=1040521200, parent_model_point=151)
+    AttachAssetToAsset(child_asset=1040521211, parent_asset=1040521210, parent_model_point=151)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9006, vfx_id=100, model_point=800, right=1040528620)
+    CommonFunc_90005605(
+        0,
+        asset=Assets.AEG099_510_9000,
+        area_id=60,
+        block_id=40,
+        cc_id=55,
+        dd_id=0,
+        player_start=1040552650,
+        unk_8_12=0,
+        flag=1040552651,
+        left_flag=1040552652,
+        cancel_flag__right_flag=1040552653,
+        left=0,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
     )
     Event_1040523700(0, character=1040520700)
     Event_1040523701(0, attacked_entity=1040520700, flag=1040529205, flag_1=1040529206)
     Event_1040523702(0, entity=1040520700, attacked_entity=1040520710, flag=1040529206)
     Event_1040523703(0, character=1040520710)
-    Event_1040523705(0, character=1040520705)
-    RunCommonEvent(0, 90005704, args=(1040520705, 4201, 4200, 1040529251, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1040520705, 4201, 4202, 1040529251, 4201, 4200, 4203, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1040520705, 4203, 4200, 4204), arg_types="IIII")
-    RunCommonEvent(
+    Event_1040523705(0, character=Characters.BrotherCorhyn)
+    CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040529251, right=3)
+    CommonFunc_90005703(0, 1040520705, 4201, 4202, 1040529251, 4201, 4200, 4203, -1)
+    CommonFunc_90005702(0, character=Characters.BrotherCorhyn, flag=4203, first_flag=4200, last_flag=4204)
+    CommonFunc_90005725(
         0,
-        90005725,
-        args=(4765, 4766, 4768, 1040529305, 1040520715, 1035450701, 1040526700),
-        arg_types="IIIIIII",
+        flag=4765,
+        flag_1=4766,
+        flag_2=4768,
+        flag_3=1040529305,
+        character=Characters.Merchant,
+        character_1=m60_35_Characters.NomadMule,
+        asset=1040526700,
     )
-    RunCommonEvent(0, 90005703, args=(1040520715, 4766, 4767, 1035469206, 4766, 4765, 4769, 0), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005704, args=(1040520715, 4766, 4765, 1035469206, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005702, args=(1040520715, 4768, 4765, 4769), arg_types="IIII")
-    RunCommonEvent(0, 90005705, args=(1040520720,))
+    CommonFunc_90005703(
+        0,
+        character=Characters.Merchant,
+        flag=4766,
+        flag_1=4767,
+        flag_2=1035469206,
+        flag_3=4766,
+        first_flag=4765,
+        last_flag=4769,
+        right=0,
+    )
+    CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4766, flag_1=4765, flag_2=1035469206, right=3)
+    CommonFunc_90005702(0, character=Characters.Merchant, flag=4768, first_flag=4765, last_flag=4769)
+    CommonFunc_90005705(0, 1040520720)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1040520705)
-    DisableBackread(1040520715)
-    DisableBackread(1040520720)
-    RunCommonEvent(0, 90005201, args=(1040520303, 30001, 20001, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005201, args=(1040520304, 30002, 20002, 4.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    DisableBackread(Characters.BrotherCorhyn)
+    DisableBackread(Characters.Merchant)
+    DisableBackread(Characters.FingerReader)
+    CommonFunc_90005201(
         0,
-        90005211,
-        args=(1040520800, 30000, 20000, 1040522800, 20.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.LeyndellSoldier0,
+        animation_id=30001,
+        animation_id_1=20001,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
+    CommonFunc_90005201(
+        0,
+        character=Characters.LeyndellSoldier1,
+        animation_id=30002,
+        animation_id_1=20002,
+        radius=4.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(0, 1040520800, 30000, 20000, 1040522800, 20.0, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1040522240)
-def Event_1040522240(_, obj: uint, entity: uint, flag: uint):
+def Event_1040522240(_, asset: uint, entity: uint, flag: uint):
     """Event 1040522240"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    ForceAnimation(entity, 1, unknown2=1.0)
-    DeleteObjectVFX(obj)
+    ForceAnimation(entity, 1)
+    DeleteAssetVFX(asset)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(obj, vfx_id=200, model_point=803220)
-    IfFlagEnabled(MAIN, flag)
-    ForceAnimation(entity, 1, unknown2=1.0)
-    DeleteObjectVFX(obj)
+    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    ForceAnimation(entity, 1)
+    DeleteAssetVFX(asset)
 
 
 @RestartOnRest(1040523700)
@@ -97,8 +165,8 @@ def Event_1040523700(_, character: uint):
     WaitFrames(frames=1)
     DisableFlag(1040529200)
     GotoIfPlayerNotInOwnWorld(Label.L10)
-    IfFlagEnabled(AND_1, 3620)
-    IfFlagEnabled(AND_1, 1043379255)
+    AND_1.Add(FlagEnabled(3620))
+    AND_1.Add(FlagEnabled(1043379255))
     SkipLinesIfConditionFalse(1, AND_1)
     DisableFlag(1043379255)
 
@@ -106,16 +174,16 @@ def Event_1040523700(_, character: uint):
     DefineLabel(10)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(OR_1, 3630)
+    OR_1.Add(FlagEnabled(3630))
     GotoIfConditionFalse(Label.L20, input_condition=OR_1)
-    IfFlagEnabled(OR_2, 1040529205)
-    IfFlagEnabled(OR_2, 1040529206)
-    IfFlagEnabled(OR_2, 1040529207)
+    OR_2.Add(FlagEnabled(1040529205))
+    OR_2.Add(FlagEnabled(1040529206))
+    OR_2.Add(FlagEnabled(1040529207))
     SkipLinesIfConditionFalse(5, OR_2)
     EnableCharacter(character)
     EnableBackread(character)
     DisableAnimations(character)
-    ForceAnimation(character, 90102, unknown2=1.0)
+    ForceAnimation(character, 90102)
     Goto(Label.L20)
     GotoIfFlagEnabled(Label.L1, flag=3620)
     GotoIfFlagEnabled(Label.L2, flag=3621)
@@ -127,7 +195,7 @@ def Event_1040523700(_, character: uint):
     EnableBackread(character)
     EnableCharacter(character)
     SetTeamType(character, TeamType.FriendlyNPC)
-    ForceAnimation(character, 90101, unknown2=1.0)
+    ForceAnimation(character, 90101)
     GotoIfConditionTrue(Label.L20, input_condition=MAIN)
 
     # --- Label 2 --- #
@@ -153,7 +221,9 @@ def Event_1040523700(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagEnabled(MAIN, 1040529200)
+    
+    MAIN.Await(FlagEnabled(1040529200))
+    
     Restart()
 
 
@@ -161,18 +231,26 @@ def Event_1040523700(_, character: uint):
 def Event_1040523701(_, attacked_entity: uint, flag: uint, flag_1: uint):
     """Event 1040523701"""
     WaitFrames(frames=1)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagDisabled(3620)
-    EndIfFlagDisabled(3630)
-    IfFlagEnabled(OR_1, flag)
-    IfFlagEnabled(OR_1, flag_1)
-    IfAttackedWithDamageType(OR_1, attacked_entity=attacked_entity, attacker=PLAYER)
-    EndIfConditionTrue(input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=OR_1)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(3620):
+        return
+    if FlagDisabled(3630):
+        return
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(FlagEnabled(flag_1))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=PLAYER))
+    if OR_1:
+        return
+    
+    MAIN.Await(OR_1)
+    
     DisableAnimations(attacked_entity)
-    EndIfFlagEnabled(flag)
-    ForceAnimation(attacked_entity, 90201, unknown2=1.0)
-    EndIfFlagEnabled(flag_1)
+    if FlagEnabled(flag):
+        return
+    ForceAnimation(attacked_entity, 90201)
+    if FlagEnabled(flag_1):
+        return
     EnableFlag(1040529207)
     End()
 
@@ -181,10 +259,15 @@ def Event_1040523701(_, attacked_entity: uint, flag: uint, flag_1: uint):
 def Event_1040523702(_, entity: uint, attacked_entity: uint, flag: uint):
     """Event 1040523702"""
     WaitFrames(frames=1)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagDisabled(3630)
-    EndIfFlagEnabled(flag)
-    IfAttackedWithDamageType(MAIN, attacked_entity=attacked_entity, attacker=PLAYER)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(3630):
+        return
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=PLAYER))
+    
     EnableFlag(flag)
     DisableAnimations(entity)
     End()
@@ -210,7 +293,7 @@ def Event_1040523703(_, character: uint):
     EnableCharacter(character)
     EnableBackread(character)
     SetTeamType(character, TeamType.FriendlyNPC)
-    ForceAnimation(character, 90100, unknown2=1.0)
+    ForceAnimation(character, 90100)
     End()
 
 
@@ -220,15 +303,17 @@ def Event_1040523705(_, character: uint):
     WaitFrames(frames=1)
     DisableNetworkSync()
     GotoIfPlayerNotInOwnWorld(Label.L19)
-    SkipLinesIfFlagDisabled(1, 4200)
-    DisableFlag(1040529253)
+    if FlagEnabled(4200):
+        DisableFlag(1040529253)
 
     # --- Label 19 --- #
     DefineLabel(19)
     GotoIfFlagEnabled(Label.L6, flag=4206)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, 4206)
+    
+    MAIN.Await(FlagEnabled(4206))
+    
     Restart()
 
     # --- Label 6 --- #
@@ -241,7 +326,7 @@ def Event_1040523705(_, character: uint):
     DefineLabel(1)
     EnableCharacter(character)
     EnableBackread(character)
-    ForceAnimation(character, 90101, unknown2=1.0)
+    ForceAnimation(character, 90101)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -260,5 +345,7 @@ def Event_1040523705(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 4206)
+    
+    MAIN.Await(FlagDisabled(4206))
+    
     Restart()

@@ -12,7 +12,7 @@ from soulstruct.darksouls1ptde.events.emevd.core import (
 )
 from soulstruct.games import DarkSoulsDSRType
 from soulstruct.utilities.binary import BinaryStruct
-from .emedf import EMEDF
+from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
 from .entity_enums_manager import EntityEnumsManager
 from .evs import EVSParser
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
@@ -27,6 +27,8 @@ class Instruction(_BaseInstruction):
 
 class Event(_BaseEvent):
     Instruction = Instruction
+    EMEDF_TESTS = EMEDF_TESTS
+    EMEDF_COMPARISON_TESTS = EMEDF_COMPARISON_TESTS
 
 
 class EMEVD(DarkSoulsDSRType, _BaseEMEVD):

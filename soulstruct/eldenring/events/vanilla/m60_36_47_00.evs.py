@@ -12,8 +12,11 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_36_47_00_entities import *
 
 
 @NeverRestart(0)
@@ -21,7 +24,7 @@ def Constructor():
     """Event 0"""
     Event_1036472600(
         0,
-        anchor_entity=1036471600,
+        anchor_entity=Assets.AEG099_090_9000,
         area_id=60,
         block_id=35,
         cc_id=46,
@@ -30,16 +33,11 @@ def Constructor():
         flag=1035460615,
         target_entity=1036472601,
         animation=60470,
-        action_button_id=9522
+        action_button_id=9522,
     )
     Event_1036472605(0, flag=1036470605, target_entity=1036472606, animation=60471)
-    RunCommonEvent(0, 90005637, args=(32020691, 1036470620, 1036471620), arg_types="III")
-    RunCommonEvent(
-        0,
-        90005636,
-        args=(32020691, 1036470620, 1036471620, 4470, 1036472620, 1036472621, 1036472620, 1036473620, -1),
-        arg_types="IIIiIIIIi",
-    )
+    CommonFunc_90005637(0, flag=32020691, character=Characters.WanderingNoble, region=1036471620)
+    CommonFunc_90005636(0, 32020691, 1036470620, 1036471620, 4470, 1036472620, 1036472621, 1036472620, 1036473620, -1)
 
 
 @NeverRestart(1036472600)
@@ -57,15 +55,18 @@ def Event_1036472600(
     action_button_id: int,
 ):
     """Event 1036472600"""
-    EndIfPlayerNotInOwnWorld()
-    IfTryingToCreateSession(OR_1)
-    IfTryingToJoinSession(OR_1)
-    IfConditionFalse(AND_1, input_condition=OR_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
     SkipLinesIfConditionTrue(7, OR_1)
-    IfPlayerInOwnWorld(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=action_button_id, entity=anchor_entity)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    IfPlayerHasGood(AND_9, 8109)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=anchor_entity))
+    
+    MAIN.Await(AND_1)
+    
+    AND_9.Add(PlayerHasGood(8109))
     GotoIfConditionTrue(Label.L1, input_condition=AND_9)
     Wait(0.10000000149011612)
     DisplayDialog(text=20030, anchor_entity=anchor_entity, number_buttons=NumberButtons.OneButton)
@@ -82,8 +83,11 @@ def Event_1036472600(
 @RestartOnRest(1036472605)
 def Event_1036472605(_, flag: uint, target_entity: uint, animation: int):
     """Event 1036472605"""
-    EndIfFlagDisabled(flag)
-    IfFlagEnabled(MAIN, flag)
+    if FlagDisabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     WaitFrames(frames=1)
     RotateToFaceEntity(PLAYER, target_entity, animation=animation)
     DisableFlag(flag)
@@ -98,27 +102,105 @@ def Preconstructor():
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    RunCommonEvent(0, 90005451, args=(1036470400, 1036476420), arg_types="II")
-    RunCommonEvent(0, 90005452, args=(1036470400, 1236470400), arg_types="II")
-    RunCommonEvent(0, 90005454, args=(1036470400, 1236472400, 1236470400), arg_types="III")
-    RunCommonEvent(0, 90005456, args=(1036470400, 1036471410, 1036471418, 1236470400), arg_types="IIII")
-    RunCommonEvent(0, 90005458, args=(1036470400, 1036471401), arg_types="II")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471420, 60, 0.0), arg_types="IIif")
-    RunCommonEvent(1, 90005453, args=(1036470400, 1036471421, 61, 0.10000000149011612), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471422, 62, 0.20000000298023224), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471423, 63, 0.30000001192092896), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471424, 64, 0.4000000059604645), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471425, 65, 0.5), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471426, 66, 0.6000000238418579), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471427, 67, 0.699999988079071), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471428, 68, 0.800000011920929), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471429, 69, 0.8999999761581421), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471430, 70, 1.0), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471431, 71, 0.10000000149011612), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471432, 72, 0.20000000298023224), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471433, 73, 0.30000001192092896), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471434, 74, 0.4000000059604645), arg_types="IIif")
-    RunCommonEvent(0, 90005453, args=(1036470400, 1036471435, 75, 0.5), arg_types="IIif")
+    CommonFunc_90005451(0, character=Characters.WalkingMausoleum, asset_group=1036476420)
+    CommonFunc_90005452(0, character=Characters.WalkingMausoleum, flag=1236470400)
+    CommonFunc_90005454(0, character=Characters.WalkingMausoleum, flag=1236472400, flag_1=1236470400)
+    CommonFunc_90005456(
+        0,
+        character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_004_9000,
+        asset_1=Assets.AEG300_005_9000,
+        flag=1236470400,
+    )
+    CommonFunc_90005458(0, character=Characters.WalkingMausoleum, asset=Assets.AEG300_015_9000)
+    CommonFunc_90005453(0, asset__character=1036470400, asset=Assets.AEG300_006_9000, model_point=60, seconds=0.0)
+    CommonFunc_90005453(
+        1,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9001,
+        model_point=61,
+        seconds=0.10000000149011612,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9002,
+        model_point=62,
+        seconds=0.20000000298023224,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9003,
+        model_point=63,
+        seconds=0.30000001192092896,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9004,
+        model_point=64,
+        seconds=0.4000000059604645,
+    )
+    CommonFunc_90005453(0, asset__character=1036470400, asset=Assets.AEG300_006_9005, model_point=65, seconds=0.5)
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9006,
+        model_point=66,
+        seconds=0.6000000238418579,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9007,
+        model_point=67,
+        seconds=0.699999988079071,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9008,
+        model_point=68,
+        seconds=0.800000011920929,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9009,
+        model_point=69,
+        seconds=0.8999999761581421,
+    )
+    CommonFunc_90005453(0, asset__character=1036470400, asset=Assets.AEG300_006_9010, model_point=70, seconds=1.0)
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9011,
+        model_point=71,
+        seconds=0.10000000149011612,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9012,
+        model_point=72,
+        seconds=0.20000000298023224,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9013,
+        model_point=73,
+        seconds=0.30000001192092896,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=1036470400,
+        asset=Assets.AEG300_006_9014,
+        model_point=74,
+        seconds=0.4000000059604645,
+    )
+    CommonFunc_90005453(0, asset__character=1036470400, asset=Assets.AEG300_006_9015, model_point=75, seconds=0.5)
     Event_1036472340()
     Event_1036472490()
 
@@ -126,34 +208,38 @@ def Event_200():
 @NeverRestart(250)
 def Event_250():
     """Event 250"""
-    RunCommonEvent(0, 90005450, args=(1036470400, 1036471400, 1036471410, 1036471418), arg_types="IIII")
+    CommonFunc_90005450(0, 1036470400, 1036471400, 1036471410, 1036471418)
 
 
 @RestartOnRest(1036472340)
 def Event_1036472340():
     """Event 1036472340"""
-    EndIfFlagEnabled(1036470400)
-    IfCharacterInsideRegion(MAIN, character=1036470400, region=1036472340)
-    ChangePatrolBehavior(1036470400, patrol_information_id=1036473340)
+    if FlagEnabled(1036470400):
+        return
+    
+    MAIN.Await(CharacterInsideRegion(character=Characters.WalkingMausoleum, region=1036472340))
+    
+    ChangePatrolBehavior(Characters.WalkingMausoleum, patrol_information_id=1036473340)
 
 
 @RestartOnRest(1036472490)
 def Event_1036472490():
     """Event 1036472490"""
-    EndIfFlagDisabled(1036470400)
-    DisableObject(1036471420)
-    DisableObject(1036471421)
-    DisableObject(1036471422)
-    DisableObject(1036471423)
-    DisableObject(1036471424)
-    DisableObject(1036471425)
-    DisableObject(1036471426)
-    DisableObject(1036471427)
-    DisableObject(1036471428)
-    DisableObject(1036471429)
-    DisableObject(1036471430)
-    DisableObject(1036471431)
-    DisableObject(1036471432)
-    DisableObject(1036471433)
-    DisableObject(1036471434)
-    DisableObject(1036471435)
+    if FlagDisabled(1036470400):
+        return
+    DisableAsset(Assets.AEG300_006_9000)
+    DisableAsset(Assets.AEG300_006_9001)
+    DisableAsset(Assets.AEG300_006_9002)
+    DisableAsset(Assets.AEG300_006_9003)
+    DisableAsset(Assets.AEG300_006_9004)
+    DisableAsset(Assets.AEG300_006_9005)
+    DisableAsset(Assets.AEG300_006_9006)
+    DisableAsset(Assets.AEG300_006_9007)
+    DisableAsset(Assets.AEG300_006_9008)
+    DisableAsset(Assets.AEG300_006_9009)
+    DisableAsset(Assets.AEG300_006_9010)
+    DisableAsset(Assets.AEG300_006_9011)
+    DisableAsset(Assets.AEG300_006_9012)
+    DisableAsset(Assets.AEG300_006_9013)
+    DisableAsset(Assets.AEG300_006_9014)
+    DisableAsset(Assets.AEG300_006_9015)

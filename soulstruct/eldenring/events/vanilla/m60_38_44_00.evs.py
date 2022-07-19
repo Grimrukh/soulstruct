@@ -13,25 +13,37 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_38_44_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005261, args=(1038440200, 1038442200, 20.0, 0.0, 3011), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038440210, 1038442210, 15.0, 1.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038440211, 1038442210, 15.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(
+    CommonFunc_90005261(
         0,
-        90005211,
-        args=(1038440210, 30002, 20002, 1038442210, 15.0, 1.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.WolfPackLeader,
+        region=1038442200,
+        radius=20.0,
+        seconds=0.0,
+        animation_id=3011,
     )
-    RunCommonEvent(
+    CommonFunc_90005261(0, 1038440210, 1038442210, 15.0, 1.0, -1)
+    CommonFunc_90005261(0, 1038440211, 1038442210, 15.0, 0.0, -1)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1038440211, 30002, 20002, 1038442210, 15.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Albinauric0,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1038442210,
+        radius=15.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
+    CommonFunc_90005211(0, 1038440211, 30002, 20002, 1038442210, 15.0, 0.0, 0, 0, 0, 0)

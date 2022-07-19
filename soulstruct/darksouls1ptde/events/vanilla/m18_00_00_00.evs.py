@@ -487,7 +487,7 @@ def Event_11800200():
 def Event_11800230(_, value: int, model_point: int, obj: int):
     """Event 11800230"""
     AND_1.Add(FlagEnabled(11805111))
-    AND_1.Add(TrueFlagCountEqual(FlagType.Absolute, flag_range=(11800201, 11800204), value=value))
+    AND_1.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == value)
     
     MAIN.Await(AND_1)
     
@@ -503,10 +503,10 @@ def Event_11800230(_, value: int, model_point: int, obj: int):
 def Event_11800210():
     """Event 11800210"""
     SkipLinesIfFlagEnabled(17, 15)
-    AND_2.Add(TrueFlagCountEqual(FlagType.Absolute, flag_range=(11800201, 11800204), value=1))
-    AND_3.Add(TrueFlagCountEqual(FlagType.Absolute, flag_range=(11800201, 11800204), value=2))
-    AND_4.Add(TrueFlagCountEqual(FlagType.Absolute, flag_range=(11800201, 11800204), value=3))
-    AND_5.Add(TrueFlagCountEqual(FlagType.Absolute, flag_range=(11800201, 11800204), value=4))
+    AND_2.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == 1)
+    AND_3.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == 2)
+    AND_4.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == 3)
+    AND_5.Add(EnabledFlagCount(FlagType.Absolute, flag_range=(11800201, 11800204)) == 4)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     OR_1.Add(AND_4)
@@ -598,8 +598,8 @@ def Event_11805100(_, character: int, item_lot_param_id: int):
 @NeverRestart(11800510)
 def Event_11800510(_, character: int, flag: int):
     """Event 11800510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -628,7 +628,7 @@ def Event_11800520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -727,8 +727,8 @@ def Event_11800539(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11800539"""
     AND_1.Add(InsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     OR_7.Add(FlagEnabled(11020598))
-    AND_7.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_7.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_7.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_7.Add(HealthRatio(character) > 0.0)
     AND_7.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_7.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_7.Add(AND_7)
@@ -753,8 +753,8 @@ def Event_11800540(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11800540"""
     AND_1.Add(InsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
     OR_7.Add(FlagEnabled(11600590))
-    AND_7.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_7.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_7.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_7.Add(HealthRatio(character) > 0.0)
     AND_7.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_7.Add(EntityBeyondDistance(entity=character, other_entity=PLAYER, radius=15.0))
     OR_7.Add(AND_7)

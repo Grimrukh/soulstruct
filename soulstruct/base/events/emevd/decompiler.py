@@ -316,26 +316,22 @@ def base_decompile_run_event(
 
 
 def base_decompile_run_common_event(
-    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None, unknown=None,
+    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None, slot=None,
 ):
     """Shared across games from Dark Souls 3 onward.
 
-    Note that Bloodborne also uses 'common' functions (from `common.emevd.dcx`), but they are simply called with
-    `RunEvent` and 'imported' through 'linked' strings in EMEVD.
-
     TODO:
-        - Enums manager also has `all_common_event_ids`.
-        - EMEVD version indicates whether these IDs should come from a specific module (common_func, for DS3 onwards)
-        or be detected through 'linked' names (Bloodborne).
-        - Events in `common_func` are named `CommonEvent_{ID}` rather than `Event_{ID}`.
-        - EVS compiler uses 'RunCommonEvent' if the Python function is imported (in DS3).
         - Unrelated: use `with EVENT_LAYERS(0, 1, 2):` block for event layers, rather than tacked-on argument.
     """
     if not opt_args and first_arg == 0:
-        # `args` and `arg_types` omitted. (Yes, there are common events called without arguments).
-        if unknown is not None:
-            return f"RunCommonEvent({unknown}, {event_id})"
-        return f"RunCommonEvent({event_id})"
+        # `args` and `arg_types` not needed. (Yes, there are common events called without arguments.)
+        if slot is None or slot == 0:
+            if event_id in enums_manager.all_common_event_ids:
+                return f"CommonFunc_{event_id}()"  # default slot
+            return f"RunCommonEvent({event_id})"  # default slot
+        if event_id in enums_manager.all_common_event_ids:
+            return f"CommonFunc_{event_id}({slot=})"
+        return f"RunCommonEvent({event_id}, {slot=})"
 
     event_args = (first_arg, *opt_args)
 
@@ -363,16 +359,18 @@ def base_decompile_run_common_event(
                     pass  # do nothing
         event_args = tuple(new_args)
 
-    # if event_id in enums_manager.all_event_ids:
-    #     # Arg types are given in event definition and are not needed in this call.
-    #     # TODO: Support multiline.
-    #     return f"Event_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
+    if event_id in enums_manager.all_common_event_ids:
+        # Arg types are given in event definition and are not needed in this call.
+        # NOTE: Even if `slot` is None, slot 0 is written for function signature match.
+        if slot is None:
+            return f"CommonFunc_{event_id}(0, {', '.join(repr(e) for e in event_args)})"
+        return f"CommonFunc_{event_id}({slot}, {', '.join(repr(e) for e in event_args)})"
 
     if not arg_types or not arg_types.strip("i"):
         # No arg types, or all signed integers (default). "arg_types" keyword omitted.
-        if unknown is not None:
-            return f"RunCommonEvent({unknown}, {event_id}, args={event_args})"
-        return f"RunCommonEvent({event_id}, args={event_args})"
-    if unknown is not None:
-        return f"RunCommonEvent({unknown}, {event_id}, args={event_args}, arg_types=\"{arg_types}\")"
-    return f"RunCommonEvent({event_id}, args={event_args}, arg_types=\"{arg_types}\")"
+        if slot is None:
+            return f"RunCommonEvent({event_id}, args={event_args})"
+        return f"RunCommonEvent({event_id}, {slot=}, args={event_args})"
+    if slot is None:
+        return f"RunCommonEvent({event_id}, args={event_args}, arg_types=\"{arg_types}\")"
+    return f"RunCommonEvent({event_id}, {slot=}, args={event_args}, arg_types=\"{arg_types}\")"

@@ -61,7 +61,7 @@ def Constructor():
         flag_2=2600,
         flag_3=12604731,
         flag_4=12601700,
-        flag_5=12604741
+        flag_5=12604741,
     )
     Event_12604730(
         5,
@@ -71,7 +71,7 @@ def Constructor():
         flag_2=2601,
         flag_3=12604732,
         flag_4=12601701,
-        flag_5=12604743
+        flag_5=12604743,
     )
     Event_12604740()
     Event_12604742()
@@ -125,7 +125,7 @@ def Constructor():
         region_4=2602042,
         flag=12604942,
         flag_1=12604941,
-        flag_2=12604942
+        flag_2=12604942,
     )
     Event_12604870(
         1,
@@ -136,7 +136,7 @@ def Constructor():
         region_4=2602043,
         flag=12604943,
         flag_1=12604940,
-        flag_2=12604943
+        flag_2=12604943,
     )
     Event_12604870(
         2,
@@ -147,7 +147,7 @@ def Constructor():
         region_4=2602044,
         flag=12604940,
         flag_1=12604944,
-        flag_2=12604940
+        flag_2=12604940,
     )
     Event_12604870(
         3,
@@ -158,7 +158,7 @@ def Constructor():
         region_4=2602046,
         flag=12604946,
         flag_1=12604945,
-        flag_2=12604941
+        flag_2=12604941,
     )
     Event_12604870(
         4,
@@ -169,7 +169,7 @@ def Constructor():
         region_4=2602042,
         flag=12604942,
         flag_1=12604942,
-        flag_2=12604945
+        flag_2=12604945,
     )
     Event_12604870(
         5,
@@ -180,7 +180,7 @@ def Constructor():
         region_4=2602043,
         flag=12604943,
         flag_1=12604943,
-        flag_2=12604944
+        flag_2=12604944,
     )
     Event_12604877()
     Event_12604888()
@@ -194,7 +194,7 @@ def Constructor():
         flag=12604952,
         flag_1=12604951,
         flag_2=12604952,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         1,
@@ -205,7 +205,7 @@ def Constructor():
         flag=12604955,
         flag_1=12604950,
         flag_2=12604955,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         2,
@@ -216,7 +216,7 @@ def Constructor():
         flag=12604953,
         flag_1=12604953,
         flag_2=12604950,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         3,
@@ -227,7 +227,7 @@ def Constructor():
         flag=12604954,
         flag_1=12604954,
         flag_2=12604954,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         4,
@@ -238,7 +238,7 @@ def Constructor():
         flag=12604956,
         flag_1=12604957,
         flag_2=12604951,
-        region_4=2602079
+        region_4=2602079,
     )
     Event_12604880(
         5,
@@ -249,7 +249,7 @@ def Constructor():
         flag=12604955,
         flag_1=12604955,
         flag_2=12604958,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         6,
@@ -260,7 +260,7 @@ def Constructor():
         flag=12604959,
         flag_1=12604959,
         flag_2=12604957,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604880(
         7,
@@ -271,7 +271,7 @@ def Constructor():
         flag=12604955,
         flag_1=12604955,
         flag_2=12604955,
-        region_4=2602070
+        region_4=2602070,
     )
     Event_12604956()
     Event_12604879()
@@ -336,7 +336,7 @@ def Constructor():
         first_flag_1=72600307,
         last_flag_1=72600311,
         flag=72600311,
-        flag_1=72600306
+        flag_1=72600306,
     )
     Event_12604980(
         1,
@@ -346,7 +346,7 @@ def Constructor():
         first_flag_1=72600312,
         last_flag_1=72600316,
         flag=72600316,
-        flag_1=72600306
+        flag_1=72600306,
     )
     Event_12600020(0, character=2600100, character_1=2600101)
     Event_12600021()
@@ -422,7 +422,7 @@ def Constructor():
         obj=2601211,
         obj_1=2601212,
         entity=2601210,
-        obj_act_id=12601211
+        obj_act_id=12601211,
     )
     Event_12601330(
         0,
@@ -433,7 +433,7 @@ def Constructor():
         obj=2601211,
         obj_1=2601212,
         entity=2601210,
-        obj_act_id=12601211
+        obj_act_id=12601211,
     )
     Event_12601320(
         1,
@@ -444,7 +444,7 @@ def Constructor():
         obj=2601221,
         obj_1=2601222,
         entity=2601220,
-        obj_act_id=12601221
+        obj_act_id=12601221,
     )
     Event_12601330(
         1,
@@ -455,7 +455,7 @@ def Constructor():
         obj=2601221,
         obj_1=2601222,
         entity=2601220,
-        obj_act_id=12601221
+        obj_act_id=12601221,
     )
     Event_12601320(
         2,
@@ -466,7 +466,7 @@ def Constructor():
         obj=2601231,
         obj_1=2601232,
         entity=2601230,
-        obj_act_id=12601231
+        obj_act_id=12601231,
     )
     Event_12601330(
         2,
@@ -477,7 +477,7 @@ def Constructor():
         obj=2601231,
         obj_1=2601232,
         entity=2601230,
-        obj_act_id=12601231
+        obj_act_id=12601231,
     )
     Event_12601320(
         3,
@@ -488,7 +488,7 @@ def Constructor():
         obj=2601242,
         obj_1=2601241,
         entity=2601240,
-        obj_act_id=12601241
+        obj_act_id=12601241,
     )
     Event_12601330(
         3,
@@ -499,7 +499,7 @@ def Constructor():
         obj=2601242,
         obj_1=2601241,
         entity=2601240,
-        obj_act_id=12601241
+        obj_act_id=12601241,
     )
     Event_12601320(
         4,
@@ -510,7 +510,7 @@ def Constructor():
         obj=2601281,
         obj_1=2601282,
         entity=2601280,
-        obj_act_id=12601281
+        obj_act_id=12601281,
     )
     Event_12601330(
         4,
@@ -521,7 +521,7 @@ def Constructor():
         obj=2601281,
         obj_1=2601282,
         entity=2601280,
-        obj_act_id=12601281
+        obj_act_id=12601281,
     )
     Event_12601320(
         5,
@@ -532,7 +532,7 @@ def Constructor():
         obj=2601291,
         obj_1=2601292,
         entity=2601290,
-        obj_act_id=12601291
+        obj_act_id=12601291,
     )
     Event_12601330(
         5,
@@ -543,7 +543,7 @@ def Constructor():
         obj=2601291,
         obj_1=2601292,
         entity=2601290,
-        obj_act_id=12601291
+        obj_act_id=12601291,
     )
     Event_12601351(0, flag=12601850, obj=2601260, obj_1=2601261)
     Event_12601352()
@@ -589,10 +589,10 @@ def Constructor():
     Event_12600110(1, character=2600113, character_1=2600212, character_2=2600213)
     Event_12600110(2, character=2600201, character_1=2600214, character_2=2600215)
     Event_12600110(3, character=2600103, character_1=2600216, character_2=2600217)
-    Event_12600070(0, 2600114, 2602012, 16.0)
-    Event_12600070(3, 2600117, 2602013, 15.0)
-    Event_12600070(4, 2600118, 2602014, 15.0)
-    Event_12600070(5, 2600119, 2602014, 15.0)
+    Event_12600070(0, character=2600114, region=2602012, radius=16.0)
+    Event_12600070(3, character=2600117, region=2602013, radius=15.0)
+    Event_12600070(4, character=2600118, region=2602014, radius=15.0)
+    Event_12600070(5, character=2600119, region=2602014, radius=15.0)
     Event_12600105(
         0,
         attacked_entity=2600123,
@@ -600,7 +600,7 @@ def Constructor():
         animation_id_1=7011,
         character=2600120,
         character_1=2600121,
-        character_2=2600122
+        character_2=2600122,
     )
     Event_12600105(
         1,
@@ -609,7 +609,7 @@ def Constructor():
         animation_id_1=7011,
         character=2600125,
         character_1=2600126,
-        character_2=0
+        character_2=0,
     )
     Event_12600060(0, character=2600120, animation_id=9001, animation_id_1=9060)
     Event_12600060(1, character=2600121, animation_id=9000, animation_id_1=9060)
@@ -679,7 +679,7 @@ def Event_12604700(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(FlagEnabled(flag_3))
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     if FlagEnabled(flag_4):
         AND_2.Add(ClientTypeCountComparison(
             client_type=ClientType.Coop,
@@ -749,8 +749,8 @@ def Event_12604720(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     DisableFlag(flag_2)
     Restart()
@@ -766,7 +766,7 @@ def Event_12604730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(FlagEnabled(flag_5))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -935,7 +935,7 @@ def Event_12601800():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(2600802, value=0.0))
+    MAIN.Await(HealthRatio(2600802) <= 0.0)
     
     ResetAnimation(2600800, disable_interpolation=True)
     ResetAnimation(2600801, disable_interpolation=True)
@@ -952,7 +952,7 @@ def Event_12601800():
     DisableObject(2601800)
     DeleteVFX(2603800)
     SetLockedCameraSlot(game_map=NIGHTMARE_OF_MENSIS, camera_slot=0)
-    CancelSpecialEffect(PLAYER, 5630)
+    RemoveSpecialEffect(PLAYER, 5630)
     Wait(3.0)
     KillBoss(game_area_param_id=2600803)
     DisableNetworkSync()
@@ -1007,7 +1007,7 @@ def Event_12601801():
         return
     AND_1.Add(FlagEnabled(12601800))
     AND_2.Add(CharacterBackreadDisabled(2600800))
-    AND_2.Add(HealthRatioLessThanOrEqual(2600802, value=0.0))
+    AND_2.Add(HealthRatio(2600802) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1265,7 +1265,7 @@ def Event_12604803():
     EnableBossMusic(sound_id=2603802)
     EnableFlag(12604815)
     
-    MAIN.Await(HealthRatioLessThan(2600802, value=0.699999988079071))
+    MAIN.Await(HealthRatio(2600802) < 0.699999988079071)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -1357,7 +1357,7 @@ def Event_12604815():
     DisableNetworkSync()
     AND_1.Add(ThisEventFlagEnabled())
     AND_2.Add(FlagEnabled(12601800))
-    AND_3.Add(HealthRatioLessThanOrEqual(2600800, value=0.0))
+    AND_3.Add(HealthRatio(2600800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1477,7 +1477,7 @@ def Event_12601850():
     # --- Label 0 --- #
     DefineLabel(0)
     
-    MAIN.Await(HealthRatioEqual(2600850, value=0.0))
+    MAIN.Await(HealthRatio(2600850) == 0.0)
     
     EnableFlag(12604858)
     
@@ -1552,7 +1552,7 @@ def Event_12601851():
         return
     AND_1.Add(FlagEnabled(12601800))
     AND_2.Add(CharacterBackreadDisabled(2600850))
-    AND_2.Add(HealthRatioLessThanOrEqual(2600850, value=0.0))
+    AND_2.Add(HealthRatio(2600850) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1923,7 +1923,7 @@ def Event_12604856():
     EnableImmortality(2600850)
     GotoIfThisEventFlagEnabled(Label.L0)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(2600850, value=0.5))
+    MAIN.Await(HealthRatio(2600850) <= 0.5)
     
     DisableBossHealthBar(2600850, name=899000)
     EnableFlag(12604985)
@@ -2108,7 +2108,7 @@ def Event_12604877():
     if FlagEnabled(12601850):
         return
     AND_1.Add(FlagDisabled(12604856))
-    AND_1.Add(HealthRatioLessThan(2600850, value=0.699999988079071))
+    AND_1.Add(HealthRatio(2600850) < 0.699999988079071)
     AND_1.Add(FlagDisabled(12604946))
     AND_2.Add(FlagDisabled(12604856))
     AND_2.Add(CharacterInsideRegion(2600850, region=2602046))
@@ -2319,7 +2319,7 @@ def Event_12604888():
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600850))
     AND_1.Add(FlagDisabled(12604946))
     AND_1.Add(FlagDisabled(12604856))
-    AND_1.Add(HealthRatioGreaterThan(2600850, value=0.5))
+    AND_1.Add(HealthRatio(2600850) > 0.5)
     
     MAIN.Await(AND_1)
     
@@ -2376,7 +2376,7 @@ def Event_12604889():
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600850))
     AND_1.Add(FlagDisabled(12604956))
     AND_1.Add(FlagEnabled(12604856))
-    AND_1.Add(HealthRatioGreaterThan(2600850, value=0.0))
+    AND_1.Add(HealthRatio(2600850) > 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2458,7 +2458,7 @@ def Event_12604910(_, character: int, flag: int):
     MAIN.Await(OR_2)
     
     EndIfFinishedConditionTrue(input_condition=AND_2)
-    CancelSpecialEffect(character, 5914)
+    RemoveSpecialEffect(character, 5914)
     EnableGravity(character)
     ForceAnimation(character, 7001)
 
@@ -2620,7 +2620,7 @@ def Event_12604000(_, character: int, value: uchar, radius: float):
     if ThisEventSlotFlagEnabled():
         return
     DisableCharacter(character)
-    AND_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=value))
+    AND_1.Add(PlayerInsightAmount() >= value)
     AND_1.Add(CharacterHuman(PLAYER))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     
@@ -2635,7 +2635,7 @@ def Event_12604005(_, character: int, value: uchar, flag: int):
     """Event 12604005"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     AND_1.Add(FlagEnabled(flag))
-    AND_1.Add(PlayerInsightAmountLessThanOrEqual(value=value))
+    AND_1.Add(PlayerInsightAmount() <= value)
     
     MAIN.Await(AND_1)
 
@@ -2722,7 +2722,7 @@ def Event_12600150(_, character: int):
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(character, 4691)
+    RemoveSpecialEffect(character, 4691)
     Restart()
 
 
@@ -2858,7 +2858,7 @@ def Event_12600029():
     if Client():
         return
     AND_1.Add(FlagEnabled(12600027))
-    AND_1.Add(HealthRatioEqual(2600129, value=0.0))
+    AND_1.Add(HealthRatio(2600129) == 0.0)
     AND_1.Add(AttackedWithDamageType(attacked_entity=2600129, attacker=PLAYER))
     
     MAIN.Await(AND_1)
@@ -2907,7 +2907,7 @@ def Event_12600030():
     DefineLabel(1)
     ForceAnimation(2600500, 0)
     AND_1.Add(EntityWithinDistance(entity=2600500, other_entity=PLAYER, radius=10.0))
-    AND_1.Add(HealthRatioGreaterThan(2600500, value=0.0))
+    AND_1.Add(HealthRatio(2600500) > 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2964,7 +2964,7 @@ def Event_12600040(_, region: int, character: int, region_1: int, character_1: i
     SetNest(character, region=region_1)
     AICommand(character, command_id=20, command_slot=0)
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(HealthRatioLessThan(character, value=1.0))
+    OR_1.Add(HealthRatio(character) < 1.0)
     OR_1.Add(CharacterInsideRegion(character, region=region_1))
     
     MAIN.Await(OR_1)
@@ -2980,7 +2980,7 @@ def Event_12600041(_, character: int):
     
     MAIN.Await(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     
-    CancelSpecialEffect(character, 5641)
+    RemoveSpecialEffect(character, 5641)
     ReplanAI(character)
 
 
@@ -3501,7 +3501,7 @@ def Event_12605200(_, character__set_draw_parent: int, character: int):
         MAIN.Await(CharacterBackreadEnabled(character__set_draw_parent))
     
         Wait(1.0)
-    AND_1.Add(HealthRatioLessThanOrEqual(character__set_draw_parent, value=0.0))
+    AND_1.Add(HealthRatio(character__set_draw_parent) <= 0.0)
     SkipLinesIfConditionFalse(2, AND_1)
     DisableBackread(character)
     End()

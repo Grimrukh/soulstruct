@@ -1,0 +1,22 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    KnightDiallos = 1037440700  # c0000_9000 npc 523140020 think 523140000 chara 23140 talk 314006000
+    Human = 1037440710  # c0000_9001 npc 523150020 think 523150000 chara 23150
+    TalkDummy0 = 1037440950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 1037440100  # c1000_9001 npc 10001000 think 1 talk 2000
+    Albinauric0 = 1037440200  # c3470_9000 npc 34704120 think 34704000
+    Albinauric1 = 1037440201  # c3470_9001 npc 34704120 think 34704000
+    Albinauric2 = 1037440202  # c3470_9002 npc 34704120 think 34704000
+    Albinauric3 = 1037440203  # c3470_9003 npc 34704120 think 34704000
+    Scarab = 1037440210  # c4191_9000 npc 41915020 think 41910000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1037441950  # AEG099
+    AEG099_053_9000 = 1037441100  # AEG099
+    AEG099_070_2000 = 1037441690  # AEG099
+    AEG099_071_2000 = 1037441691  # AEG099
+    AEG099_090_9001 = 1037441980  # AEG099
+    AEG099_401_9000 = 1037441700  # AEG099

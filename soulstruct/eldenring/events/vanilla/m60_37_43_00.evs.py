@@ -13,6 +13,8 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
@@ -20,10 +22,10 @@ from soulstruct.eldenring.events.instructions import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005251, args=(1037430200, 12.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430201, 12.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430203, 12.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430204, 12.0, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430210, 12.0, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430211, 12.0, 0.0, 1701), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1037430212, 12.0, 0.0, 1701), arg_types="Iffi")
+    CommonFunc_90005251(0, 1037430200, 12.0, 0.0, -1)
+    CommonFunc_90005251(0, 1037430201, 12.0, 0.0, -1)
+    CommonFunc_90005251(0, 1037430203, 12.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1037430204, radius=12.0, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, character=1037430210, radius=12.0, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, character=1037430211, radius=12.0, seconds=0.0, animation_id=1701)
+    CommonFunc_90005251(0, 1037430212, 12.0, 0.0, 1701)

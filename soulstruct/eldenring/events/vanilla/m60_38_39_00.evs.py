@@ -12,23 +12,40 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_38_39_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1038390200, 30018, 20018, 1038392200, 7.0, 3.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Skeleton0,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=1038392200,
+        radius=7.0,
+        seconds=3.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1038390201, 30018, 20018, 1038392200, 7.0, 3.5, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Skeleton1,
+        animation_id=30018,
+        animation_id_1=20018,
+        region=1038392200,
+        radius=7.0,
+        seconds=3.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005261, args=(1038390210, 1038392210, 7.0, 0.0, -1), arg_types="IIffi")
+    CommonFunc_90005261(0, 1038390210, 1038392210, 7.0, 0.0, -1)

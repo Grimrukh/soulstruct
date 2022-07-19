@@ -17,9 +17,9 @@ def Constructor():
     DisableFlag(760)
     DisableFlag(762)
     DisableFlag(765)
-    Event_260(0, 11810000, 10010600, 0.0)
-    Event_260(1, 257, 10010610, 0.0)
-    Event_260(2, 710, 10010620, 0.0)
+    Event_260(0, flag=11810000, text=10010600, seconds=0.0)
+    Event_260(1, flag=257, text=10010610, seconds=0.0)
+    Event_260(2, flag=710, text=10010620, seconds=0.0)
     Event_761()
     Event_763()
     Event_290()
@@ -1020,7 +1020,7 @@ def Event_725():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(11707100, 11707190), value=2))
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(11707100, 11707190)) >= 2)
     
     EnableFlag(725)
 
@@ -1031,7 +1031,7 @@ def Event_726():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(11607000, 11607090), value=2))
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(11607000, 11607090)) >= 2)
     
     EnableFlag(726)
 
@@ -1339,7 +1339,7 @@ def Event_758():
         DisplayStatus(10010670)
     DisableFlag(758)
     AND_1.Add(Host())
-    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatio(PLAYER) <= 0.0)
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2130))
     
     MAIN.Await(AND_1)
@@ -1360,7 +1360,7 @@ def Event_759():
         DisplayStatus(10010680)
     DisableFlag(759)
     AND_1.Add(Host())
-    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatio(PLAYER) <= 0.0)
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2131))
     
     MAIN.Await(AND_1)

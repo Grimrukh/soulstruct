@@ -12,29 +12,42 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_44_31_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    Event_1044312200(0, character=1044310200, region=1044312200)
-    Event_1044312200(1, character=1044310201, region=1044312200)
-    Event_1044312200(2, character=1044310202, region=1044312200)
-    Event_1044312200(3, character=1044310203, region=1044312200)
+    Event_1044312200(0, character=Characters.SpiritJellyfish0, region=1044312200)
+    Event_1044312200(1, character=Characters.SpiritJellyfish1, region=1044312200)
+    Event_1044312200(2, character=Characters.SpiritJellyfish2, region=1044312200)
+    Event_1044312200(3, character=Characters.SpiritJellyfish3, region=1044312200)
     Event_1044312340()
-    RunCommonEvent(0, 90005300, args=(1044310350, 1044310350, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005550, args=(1044310200, 1044311200, 44313200), arg_types="III")
-    RunCommonEvent(0, 90005631, args=(1044311640, 61012), arg_types="Ii")
+    CommonFunc_90005300(
+        0,
+        flag=1044310350,
+        character=Characters.GuardianGolem,
+        item_lot_param_id=0,
+        seconds=0.0,
+        left=0,
+    )
+    CommonFunc_90005550(0, flag=1044310200, asset=1044311200, obj_act_id=44313200)
+    CommonFunc_90005631(0, 1044311640, 61012)
 
 
 @RestartOnRest(1044312200)
 def Event_1044312200(_, character: uint, region: uint):
     """Event 1044312200"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
-    IfCharacterInsideRegion(MAIN, character=PLAYER, region=region)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
+    
+    MAIN.Await(CharacterInsideRegion(character=PLAYER, region=region))
+    
     AddSpecialEffect(character, 14200)
 
 
@@ -50,23 +63,25 @@ def Event_1044312340():
     """Event 1044312340"""
     ReturnIfFlagState(EventReturnType.End, FlagSetting.On, FlagType.RelativeToThisEventSlot, 1044310200)
     DisableAI(1044310340)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfEntityWithinDistance(AND_1, entity=PLAYER, other_entity=1044310340, radius=0.0)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=1044310340, attacker=0)
-    IfFlagEnabled(OR_2, 1044310200)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=1044310340, radius=0.0))
+    AND_1.Add(OR_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=1044310340, attacker=0))
+    OR_2.Add(FlagEnabled(1044310200))
+    OR_2.Add(AND_1)
+    
+    MAIN.Await(OR_2)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 1044310200, state=FlagSetting.On)
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(0.0)
-    SkipLinesIfValueEqual(1, left=1700, right=-1)
-    ForceAnimation(1044310340, 1700, loop=True, unknown2=1.0)
+    if ValueNotEqual(left=1700, right=-1):
+        ForceAnimation(1044310340, 1700, loop=True)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -76,17 +91,18 @@ def Event_1044312340():
 @RestartOnRest(1044312350)
 def Event_1044312350():
     """Event 1044312350"""
-    EndIfFlagEnabled(1044310350)
-    DisableHealthBar(1044310350)
-    AddSpecialEffect(1044310350, 12189)
+    if FlagEnabled(1044310350):
+        return
+    DisableHealthBar(Characters.GuardianGolem)
+    AddSpecialEffect(Characters.GuardianGolem, 12189)
     Wait(3.0)
-    CancelSpecialEffect(1044310350, 12189)
-    EnableHealthBar(1044310350)
+    RemoveSpecialEffect(Characters.GuardianGolem, 12189)
+    EnableHealthBar(Characters.GuardianGolem)
 
 
 @NeverRestart(250)
 def Event_250():
     """Event 250"""
-    RunCommonEvent(0, 90005485, args=(1044310350,))
-    RunCommonEvent(0, 90005251, args=(1044310350, 340.0, 0.0, -1), arg_types="Iffi")
+    CommonFunc_90005485(0, character=Characters.GuardianGolem)
+    CommonFunc_90005251(0, 1044310350, 340.0, 0.0, -1)
     Event_1044312350()

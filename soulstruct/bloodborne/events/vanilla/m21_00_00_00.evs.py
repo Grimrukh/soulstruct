@@ -198,7 +198,7 @@ def Constructor():
         part_health=100,
         special_effect_id=480,
         special_effect_id_1=490,
-        animation_id=8000
+        animation_id=8000,
     )
     Event_12104860(
         1,
@@ -208,7 +208,7 @@ def Constructor():
         part_health=150,
         special_effect_id=481,
         special_effect_id_1=491,
-        animation_id=8010
+        animation_id=8010,
     )
     Event_12104860(
         2,
@@ -218,7 +218,7 @@ def Constructor():
         part_health=150,
         special_effect_id=482,
         special_effect_id_1=492,
-        animation_id=8030
+        animation_id=8030,
     )
     Event_12104860(
         3,
@@ -228,7 +228,7 @@ def Constructor():
         part_health=200,
         special_effect_id=483,
         special_effect_id_1=493,
-        animation_id=8020
+        animation_id=8020,
     )
     Event_12104860(
         4,
@@ -238,7 +238,7 @@ def Constructor():
         part_health=200,
         special_effect_id=484,
         special_effect_id_1=494,
-        animation_id=8040
+        animation_id=8040,
     )
     Event_12104870()
     Event_12100400()
@@ -662,7 +662,7 @@ def Event_12100110():
     DisableFlag(72100107)
     DisableFlag(12100510)
     OR_1.Add(FlagDisabled(9401))
-    OR_1.Add(PlayerInsightAmountEqual(value=0))
+    OR_1.Add(PlayerInsightAmount() == 0)
     GotoIfConditionTrue(Label.L9, input_condition=OR_1)
     EnableFlag(12100105)
     EnableFlag(9404)
@@ -881,7 +881,7 @@ def Event_12100113():
     if not AND_15:
         return
     WaitFrames(frames=1)
-    OR_1.Add(HealthRatioEqual(2100700, value=0.0))
+    OR_1.Add(HealthRatio(2100700) == 0.0)
     OR_1.Add(FlagEnabled(12105100))
     GotoIfConditionFalse(Label.L0, input_condition=OR_1)
     EnableFlag(72100102)
@@ -934,7 +934,7 @@ def Event_12100115():
     
     MAIN.Await(AND_1)
     
-    OR_1.Add(HealthRatioEqual(2100700, value=0.0))
+    OR_1.Add(HealthRatio(2100700) == 0.0)
     OR_1.Add(FlagEnabled(12105100))
     OR_1.Add(FlagEnabled(72100105))
     if OR_1:
@@ -1414,7 +1414,7 @@ def Event_12100300():
 def Event_12100310():
     """Event 12100310"""
     GotoIfFlagEnabled(Label.L1, flag=9462)
-    OR_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=50))
+    OR_1.Add(PlayerInsightAmount() >= 50)
     OR_1.Add(FlagEnabled(9802))
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     EnableSoundEvent(sound_id=2103900)
@@ -1767,7 +1767,7 @@ def Event_12101800():
     DefineLabel(0)
     DisableFlag(12104809)
     
-    MAIN.Await(HealthRatioEqual(2100800, value=0.0))
+    MAIN.Await(HealthRatio(2100800) == 0.0)
     
     EnableFlag(12104809)
     AND_1.Add(CharacterDead(2100800))
@@ -1833,7 +1833,7 @@ def Event_12101801():
         return
     AND_1.Add(FlagEnabled(12101800))
     AND_2.Add(CharacterBackreadDisabled(2100800))
-    AND_2.Add(HealthRatioLessThanOrEqual(2100800, value=0.0))
+    AND_2.Add(HealthRatio(2100800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2050,13 +2050,13 @@ def Event_12104804():
     DisableNetworkSync()
     if FlagEnabled(12101800):
         return
-    AND_1.Add(HealthRatioGreaterThan(2100800, value=0.0))
+    AND_1.Add(HealthRatio(2100800) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100800, radius=8.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=HUNTERS_DREAM, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(2100800, value=0.0))
+    AND_2.Add(HealthRatio(2100800) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2100800, radius=10.0))
     
     MAIN.Await(AND_2)
@@ -2085,13 +2085,13 @@ def Event_12104807():
     if FlagEnabled(12101800):
         return
     
-    MAIN.Await(HealthRatioLessThan(2100800, value=0.5))
+    MAIN.Await(HealthRatio(2100800) < 0.5)
     
     AICommand(2100800, command_id=100, command_slot=0)
     
     MAIN.Await(CharacterHasTAEEvent(2100800, tae_event_id=100))
     
-    CancelSpecialEffect(2100800, 5305)
+    RemoveSpecialEffect(2100800, 5305)
     AICommand(2100800, command_id=-1, command_slot=0)
     ReplanAI(2100800)
     Wait(0.10000000149011612)
@@ -2106,7 +2106,7 @@ def Event_12104808():
     
     MAIN.Await(CharacterHasTAEEvent(2100800, tae_event_id=20))
     
-    CancelSpecialEffect(2100800, 5526)
+    RemoveSpecialEffect(2100800, 5526)
     Wait(0.10000000149011612)
     Restart()
 
@@ -2175,7 +2175,7 @@ def Event_12101851():
         return
     AND_1.Add(FlagEnabled(12101850))
     AND_2.Add(CharacterBackreadDisabled(2100810))
-    AND_2.Add(HealthRatioLessThanOrEqual(2100810, value=0.0))
+    AND_2.Add(HealthRatio(2100810) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -2434,13 +2434,13 @@ def Event_12104854():
     DisableNetworkSync()
     if FlagEnabled(12101850):
         return
-    AND_1.Add(HealthRatioGreaterThan(2100810, value=0.0))
+    AND_1.Add(HealthRatio(2100810) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2100810, radius=8.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=HUNTERS_DREAM, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(2100810, value=0.0))
+    AND_2.Add(HealthRatio(2100810) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2100810, radius=12.0))
     
     MAIN.Await(AND_2)
@@ -2479,8 +2479,8 @@ def Event_12104860(
         return
     CreateNPCPart(2100810, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2100810, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(2100810, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(2100810, value=0.0))
+    AND_2.Add(CharacterPartHealth(2100810, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(2100810) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -2498,7 +2498,7 @@ def Event_12104860(
     ResetAnimation(2100810)
     ForceAnimation(2100810, animation_id)
     AddSpecialEffect(2100810, special_effect_id)
-    CancelSpecialEffect(2100810, special_effect_id_1)
+    RemoveSpecialEffect(2100810, special_effect_id_1)
     ReplanAI(2100810)
     Wait(30.0)
     AICommand(2100810, command_id=10, command_slot=1)
@@ -2508,7 +2508,7 @@ def Event_12104860(
     
     SetNPCPartHealth(2100810, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(2100810, special_effect_id_1)
-    CancelSpecialEffect(2100810, special_effect_id)
+    RemoveSpecialEffect(2100810, special_effect_id)
     AICommand(2100810, command_id=-1, command_slot=1)
     ReplanAI(2100810)
     WaitFrames(frames=10)
@@ -2535,7 +2535,7 @@ def Event_12104870():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(PLAYER, 5572)
+    RemoveSpecialEffect(PLAYER, 5572)
     Restart()
 
 
@@ -3900,7 +3900,7 @@ def Event_12105043():
     if Client():
         return
     
-    MAIN.Await(PlayerInsightAmountGreaterThanOrEqual(value=1))
+    MAIN.Await(PlayerInsightAmount() >= 1)
     
     EnableFlag(12100320)
     ForceAnimation(2100219, 7031)
@@ -4005,7 +4005,7 @@ def Event_12101021():
         calculation_type=CalculationType.Subtract,
     )
     
-    MAIN.Await(EventValueEqual(flag=0, bit_count=1, value=0))
+    MAIN.Await(EventValue(flag=0, bit_count=1) == 0)
     
     AND_15.Add(CharacterHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_15)
@@ -4378,9 +4378,9 @@ def Event_12105210():
     MAIN.Await(FlagEnabled(70000100))
     
     DisableFlag(70000100)
-    CancelSpecialEffect(PLAYER, 2200)
-    CancelSpecialEffect(PLAYER, 2210)
-    CancelSpecialEffect(PLAYER, 2220)
+    RemoveSpecialEffect(PLAYER, 2200)
+    RemoveSpecialEffect(PLAYER, 2210)
+    RemoveSpecialEffect(PLAYER, 2220)
     Restart()
 
 

@@ -37,7 +37,7 @@ class GameFile(abc.ABC):
     def __init__(
         self,
         file_source: Typing = None,
-        dcx_type: DCXType = None,
+        dcx_type: DCXType | None = DCXType.Null,
         **kwargs,
     ):
         """Base class for a game file, with key methods and automatic DCX detection.
@@ -50,7 +50,7 @@ class GameFile(abc.ABC):
                 reason, set `.dcx_type` directly after the instance is created.)
             kwargs: keyword arguments to pass on to `unpack` for buffered sources.
         """
-        self._dcx_type = None
+        self._dcx_type = DCXType.Null
         self.dcx_type = dcx_type  # run through setter
 
         self.path = None  # type: tp.Optional[Path]
@@ -141,7 +141,7 @@ class GameFile(abc.ABC):
 
     def pack_dcx(self, **kwargs) -> bytes:
         """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_type`."""
-        if self._dcx_type:
+        if self._dcx_type != DCXType.Null:
             return compress(self.pack(**kwargs), self._dcx_type)
         return self.pack(**kwargs)
 
@@ -218,8 +218,8 @@ class GameFile(abc.ABC):
         if self.EXT and file_path.suffix != self.EXT:
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
 
-        # 3. If `dcx_type` is given, add ".dcx" extension to the path.
-        if self.dcx_type and not file_path.suffix == ".dcx":
+        # 3. If `dcx_type` is not `Null`, add ".dcx" extension to the path.
+        if self.dcx_type != DCXType.Null and not file_path.suffix == ".dcx":
             file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
 
         return file_path
@@ -234,10 +234,10 @@ class GameFile(abc.ABC):
         return self._dcx_type
 
     @dcx_type.setter
-    def dcx_type(self, value: DCXType):
+    def dcx_type(self, value: DCXType | None):
         """Set `dcx_type to `value`, which must be a `DCXType` or `None`."""
         if value is None or value == DCXType.Null:
-            self._dcx_type = None
+            self._dcx_type = DCXType.Null
         elif isinstance(value, DCXType):
             self._dcx_type = value
         else:

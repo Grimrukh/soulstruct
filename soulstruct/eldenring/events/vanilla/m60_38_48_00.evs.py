@@ -12,42 +12,131 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_38_48_00_entities import *
+from .entities.m60_37_49_00_entities import Characters as m60_37_Characters
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1038480000, obj=1038481950, unknown=5.0)
-    RunCommonEvent(0, 90005870, args=(1038480800, 904810601, 18), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1038480800, 0, 1038480800, 0, 30200, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005872, args=(1038480800, 18, 0), arg_types="III")
+    RegisterGrace(grace_flag=1038480000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005870(0, character=Characters.ErdtreeAvatar, name=904810601, npc_threat_level=18)
+    CommonFunc_90005860(
+        0,
+        flag=1038480800,
+        left=0,
+        character=Characters.ErdtreeAvatar,
+        left_1=0,
+        item_lot__item_lot_param_id=30200,
+        seconds=0.0,
+    )
+    CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
     Event_1038482580()
-    RunCommonEvent(0, 90005683, args=(62201, 1038481684, 209, 78290, 78290), arg_types="IIiII")
+    CommonFunc_90005683(0, 62201, 1038481684, 209, 78290, 78290)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1038480700)
-    RunCommonEvent(0, 90005261, args=(1038480200, 1038482200, 0.0, 1.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480201, 1038482200, 0.0, 0.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480202, 1038482200, 0.0, 0.5, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480203, 1038482200, 0.0, 1.399999976158142, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480204, 1038482200, 0.0, 1.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480205, 1038482200, 0.0, 0.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480206, 1038482200, 0.0, 0.5, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480207, 1038482200, 0.0, 1.399999976158142, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480208, 1038482200, 0.0, 1.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480209, 1038482200, 0.0, 0.5, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480210, 1038482200, 0.0, 1.399999976158142, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1038480211, 1038482200, 0.0, 1.0, 1705), arg_types="IIffi")
+    DisableBackread(m60_37_Characters.FesteringFingerprintVyke)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower0,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower1,
+        region=1038482200,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower2,
+        region=1038482200,
+        radius=0.0,
+        seconds=0.5,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower3,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.399999976158142,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower4,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower5,
+        region=1038482200,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower6,
+        region=1038482200,
+        radius=0.0,
+        seconds=0.5,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower7,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.399999976158142,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower8,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower9,
+        region=1038482200,
+        radius=0.0,
+        seconds=0.5,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower10,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.399999976158142,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(0, 1038480211, 1038482200, 0.0, 1.0, 1705)
 
 
 @NeverRestart(1038482580)
 def Event_1038482580():
     """Event 1038482580"""
-    RegisterLadder(start_climbing_flag=1038480580, stop_climbing_flag=1038480581, obj=1038481580)
-    RegisterLadder(start_climbing_flag=1038480582, stop_climbing_flag=1038480583, obj=1038481582)
-    RegisterLadder(start_climbing_flag=1038480584, stop_climbing_flag=1038480585, obj=1038481584)
+    RegisterLadder(start_climbing_flag=1038480580, stop_climbing_flag=1038480581, asset=1038481580)
+    RegisterLadder(start_climbing_flag=1038480582, stop_climbing_flag=1038480583, asset=1038481582)
+    RegisterLadder(start_climbing_flag=1038480584, stop_climbing_flag=1038480585, asset=1038481584)

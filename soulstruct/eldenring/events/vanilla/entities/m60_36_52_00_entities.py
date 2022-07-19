@@ -1,0 +1,22 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1036520950  # c1000_9000 npc 10000000 think 1 talk 1000
+    DemiHuman0 = 1036520210  # c4100_9002 npc 41000032 think 41000000
+    DemiHuman1 = 1036520209  # c4100_9004 npc 41000032 think 41000000
+    DemiHuman2 = 1036520220  # c4100_9005 npc 41000032 think 41000000
+    DemiHuman3 = 1036520221  # c4100_9006 npc 41002032 think 41002000
+    DemiHuman4 = 1036520222  # c4100_9007 npc 41001032 think 41001000
+    DemiHuman5 = 1036520206  # c4100_9023 npc 41001032 think 41001000
+    DemiHuman6 = 1036520207  # c4100_9024 npc 41001032 think 41001000
+    DemiHuman7 = 1036520200  # c4100_9034 npc 41000032 think 41000000
+    DemiHuman8 = 1036520201  # c4100_9035 npc 41000032 think 41000000
+    LargeDemiHuman = 1036520211  # c4101_9001 npc 41010032 think 41010000
+    Scarab = 1036520400  # c4191_9000 npc 41910032 think 41910000
+    Runebear = 1036520300  # c4630_9000 npc 46300032 think 46300000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1036521950  # AEG099
+    AEG099_635_9000 = 1036521200  # AEG099

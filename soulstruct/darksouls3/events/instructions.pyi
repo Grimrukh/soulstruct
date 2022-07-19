@@ -99,13 +99,13 @@ __all__ = [
     "IfInsideMap",
     "IfOutsideMap",
     "IfMultiplayerEvent",  # 3[9]
-    "IfTrueFlagCountComparison",  # 3[10]
-    "IfTrueFlagCountEqual",
-    "IfTrueFlagCountNotEqual",
-    "IfTrueFlagCountGreaterThan",
-    "IfTrueFlagCountLessThan",
-    "IfTrueFlagCountGreaterThanOrEqual",
-    "IfTrueFlagCountLessThanOrEqual",
+    "IfEnabledFlagCountComparison",  # 3[10]
+    "IfEnabledFlagCountEqual",
+    "IfEnabledFlagCountNotEqual",
+    "IfEnabledFlagCountGreaterThan",
+    "IfEnabledFlagCountLessThan",
+    "IfEnabledFlagCountGreaterThanOrEqual",
+    "IfEnabledFlagCountLessThanOrEqual",
     "IfWorldTendencyComparison",  # 3[11]
     "IfWhiteWorldTendencyComparison",
     "IfBlackWorldTendencyComparison",
@@ -410,7 +410,7 @@ __all__ = [
     "SetEventPoint",  # 2004[18]
     "SetAIParamID",  # 2004[19]
     "ReplanAI",  # 2004[20]
-    "CancelSpecialEffect",  # 2004[21]
+    "RemoveSpecialEffect",  # 2004[21]
     "CreateNPCPart",  # 2004[22]
     "SetNPCPartHealth",  # 2004[23]
     "SetNPCPartEffects",  # 2004[24]
@@ -827,13 +827,13 @@ __all__ = [
     "InsideMap",
     "OutsideMap",
     "MultiplayerEvent",
-    "TrueFlagCountComparison",
-    "TrueFlagCountEqual",
-    "TrueFlagCountNotEqual",
-    "TrueFlagCountGreaterThan",
-    "TrueFlagCountLessThan",
-    "TrueFlagCountGreaterThanOrEqual",
-    "TrueFlagCountLessThanOrEqual",
+    "EnabledFlagCountComparison",
+    "EnabledFlagCountEqual",
+    "EnabledFlagCountNotEqual",
+    "EnabledFlagCountGreaterThan",
+    "EnabledFlagCountLessThan",
+    "EnabledFlagCountGreaterThanOrEqual",
+    "EnabledFlagCountLessThanOrEqual",
     "WorldTendencyComparison",
     "WhiteWorldTendencyComparison",
     "BlackWorldTendencyComparison",
@@ -963,7 +963,7 @@ __all__ = [
     "PlayerDoesNotHaveArmor",
     "PlayerDoesNotHaveRing",
     "PlayerDoesNotHaveGood",
-    "TrueFlagCount",
+    "EnabledFlagCount",
     "WorldTendency",
     "EventValue",
     "HealthRatio",
@@ -1462,7 +1462,7 @@ def IfMultiplayerEvent(condition: ConditionGroup | int, event_id: int, event_lay
     """
 
 
-def IfTrueFlagCountComparison(
+def IfEnabledFlagCountComparison(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     comparison_type: ComparisonType | int,
@@ -1475,7 +1475,7 @@ def IfTrueFlagCountComparison(
     """
 
 
-def IfTrueFlagCountEqual(
+def IfEnabledFlagCountEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1483,11 +1483,11 @@ def IfTrueFlagCountEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=0`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=0`.
     """
 
 
-def IfTrueFlagCountNotEqual(
+def IfEnabledFlagCountNotEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1495,11 +1495,11 @@ def IfTrueFlagCountNotEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=1`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=1`.
     """
 
 
-def IfTrueFlagCountGreaterThan(
+def IfEnabledFlagCountGreaterThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1507,11 +1507,11 @@ def IfTrueFlagCountGreaterThan(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=2`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=2`.
     """
 
 
-def IfTrueFlagCountLessThan(
+def IfEnabledFlagCountLessThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1519,11 +1519,11 @@ def IfTrueFlagCountLessThan(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=3`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=3`.
     """
 
 
-def IfTrueFlagCountGreaterThanOrEqual(
+def IfEnabledFlagCountGreaterThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1531,11 +1531,11 @@ def IfTrueFlagCountGreaterThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=4`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=4`.
     """
 
 
-def IfTrueFlagCountLessThanOrEqual(
+def IfEnabledFlagCountLessThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1543,7 +1543,7 @@ def IfTrueFlagCountLessThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=5`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=5`.
     """
 
 
@@ -4065,7 +4065,7 @@ def ReplanAI(character: Character | int, event_layers=()):
     """
 
 
-def CancelSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def RemoveSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -7146,7 +7146,7 @@ def MultiplayerEvent(event_id: int, event_layers=()) -> bool:
     ...
 
 
-def TrueFlagCountComparison(
+def EnabledFlagCountComparison(
     flag_type: FlagType | int,
     comparison_type: ComparisonType | int,
     flag_range: FlagRange | tuple | list,
@@ -7156,11 +7156,7 @@ def TrueFlagCountComparison(
     ...
 
 
-def TrueFlagCountEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int, event_layers=()) -> bool:
-    ...
-
-
-def TrueFlagCountNotEqual(
+def EnabledFlagCountEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7169,7 +7165,7 @@ def TrueFlagCountNotEqual(
     ...
 
 
-def TrueFlagCountGreaterThan(
+def EnabledFlagCountNotEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7178,7 +7174,7 @@ def TrueFlagCountGreaterThan(
     ...
 
 
-def TrueFlagCountLessThan(
+def EnabledFlagCountGreaterThan(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7187,7 +7183,7 @@ def TrueFlagCountLessThan(
     ...
 
 
-def TrueFlagCountGreaterThanOrEqual(
+def EnabledFlagCountLessThan(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7196,7 +7192,16 @@ def TrueFlagCountGreaterThanOrEqual(
     ...
 
 
-def TrueFlagCountLessThanOrEqual(
+def EnabledFlagCountGreaterThanOrEqual(
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def EnabledFlagCountLessThanOrEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -8106,9 +8111,9 @@ def PlayerDoesNotHaveGood(good: GoodParam | int, including_storage: bool = False
     ...
 
 
-def TrueFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, event_layers=()) -> int:
+def EnabledFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, event_layers=()) -> int:
     """
-    Compare output to a value as a shortcut for calling `TrueFlagCountComparison(...)`.
+    Compare output to a value as a shortcut for calling `EnabledFlagCountComparison(...)`.
     """
     ...
 

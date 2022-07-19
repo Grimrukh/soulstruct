@@ -1117,7 +1117,7 @@ def Event_6789():
         target_flag_bit_count=8,
         calculation_type=CalculationType.Add,
     )
-    AND_1.Add(EventValueGreaterThanOrEqual(flag=6800, bit_count=9, value=255))
+    AND_1.Add(EventValue(flag=6800, bit_count=9) >= 255)
     SkipLinesIfConditionFalse(1, AND_1)
     EventValueOperation(
         source_flag=6800,
@@ -1136,15 +1136,15 @@ def Event_6809():
     """Event 6809"""
     DisableNetworkSync()
     
-    MAIN.Await(EventValueGreaterThanOrEqual(flag=6800, bit_count=9, value=1))
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 1)
     
     EnableFlag(6810)
     
-    MAIN.Await(EventValueGreaterThanOrEqual(flag=6800, bit_count=9, value=2))
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 2)
     
     EnableFlag(6811)
     
-    MAIN.Await(EventValueGreaterThanOrEqual(flag=6800, bit_count=9, value=5))
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 5)
     
     EnableFlag(6812)
 
@@ -1164,7 +1164,7 @@ def Event_6815():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(PLAYER, 6150)
+    RemoveSpecialEffect(PLAYER, 6150)
     Restart()
 
 
@@ -1183,7 +1183,7 @@ def Event_6816():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(PLAYER, 6140)
+    RemoveSpecialEffect(PLAYER, 6140)
     Restart()
 
 
@@ -1304,7 +1304,7 @@ def Event_9030(_, special_effect: int, special_effect_id: int):
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(PLAYER, special_effect))
     
-    CancelSpecialEffect(PLAYER, special_effect_id)
+    RemoveSpecialEffect(PLAYER, special_effect_id)
     Restart()
 
 
@@ -1323,7 +1323,7 @@ def Event_9035(_, special_effect: int, special_effect_id: int):
     
     MAIN.Await(not AND_2)
     
-    CancelSpecialEffect(PLAYER, special_effect_id)
+    RemoveSpecialEffect(PLAYER, special_effect_id)
     Restart()
 
 
@@ -1438,13 +1438,13 @@ def Event_9186():
     if not AND_1:
         return
     EnableFlag(9187)
-    AND_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=1))
+    AND_1.Add(PlayerInsightAmount() >= 1)
     AND_1.Add(FlagDisabled(6009))
     
     MAIN.Await(AND_1)
     
     DisableFlag(9187)
-    AND_2.Add(PlayerInsightAmountGreaterThanOrEqual(value=1))
+    AND_2.Add(PlayerInsightAmount() >= 1)
     AND_2.Add(FlagDisabled(6009))
     
     MAIN.Await(not AND_2)
@@ -1467,7 +1467,7 @@ def Event_9190():
     
     MAIN.Await(not AND_2)
     
-    CancelSpecialEffect(PLAYER, 9001)
+    RemoveSpecialEffect(PLAYER, 9001)
     Restart()
 
 
@@ -1533,7 +1533,7 @@ def Event_9193():
     
     MAIN.Await(FlagDisabled(6006))
     
-    CancelSpecialEffect(PLAYER, 6130)
+    RemoveSpecialEffect(PLAYER, 6130)
     Restart()
 
 
@@ -1569,7 +1569,7 @@ def Event_9200(_, sound_id: int):
     """Event 9200"""
     DisableNetworkSync()
     DisableSoundEvent(sound_id=sound_id)
-    OR_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=60))
+    OR_1.Add(PlayerInsightAmount() >= 60)
     OR_1.Add(FlagEnabled(9802))
     AND_1.Add(OR_1)
     AND_1.Add(FlagDisabled(9180))
@@ -1579,7 +1579,7 @@ def Event_9200(_, sound_id: int):
     MAIN.Await(AND_1)
     
     EnableSoundEvent(sound_id=sound_id)
-    OR_2.Add(PlayerInsightAmountGreaterThanOrEqual(value=60))
+    OR_2.Add(PlayerInsightAmount() >= 60)
     OR_2.Add(FlagEnabled(9802))
     AND_2.Add(OR_2)
     AND_2.Add(FlagDisabled(9180))
@@ -1630,7 +1630,7 @@ def Event_9220(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     AND_1.Add(FlagDisabled(flag_2))
     AND_1.Add(InsideMap(game_map=(area_id, block_id)))
     AND_2.Add(CharacterHuman(PLAYER))
-    AND_2.Add(PlayerLevelGreaterThanOrEqual(value=30))
+    AND_2.Add(PlayerLevel() >= 30)
     AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.GreaterThanOrEqual, value=1))
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 9025))
     OR_1.Add(AND_2)
@@ -1694,8 +1694,8 @@ def Event_9260(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     
     MAIN.Await(CharacterHuman(PLAYER))
     
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(character, 9100)
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
     ReplanAI(character)
     DisableFlag(flag_2)
     Restart()
@@ -1711,7 +1711,7 @@ def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: i
         return
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(InsideMap(game_map=(area_id, block_id)))
-    AND_2.Add(HealthRatioEqual(character, value=0.0))
+    AND_2.Add(HealthRatio(character) == 0.0)
     AND_3.Add(FlagEnabled(flag_3))
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
@@ -1852,7 +1852,7 @@ def Event_9404():
     if ThisEventFlagEnabled():
         return
     AND_1.Add(FlagEnabled(9401))
-    AND_1.Add(PlayerInsightAmountGreaterThanOrEqual(value=1))
+    AND_1.Add(PlayerInsightAmount() >= 1)
     AND_1.Add(CharacterDead(PLAYER))
     
     MAIN.Await(AND_1)
@@ -2231,7 +2231,7 @@ def Event_9909():
     if FlagEnabled(9900):
         return
     
-    MAIN.Await(EventValueGreaterThanOrEqual(flag=9901, bit_count=4, value=3))
+    MAIN.Await(EventValue(flag=9901, bit_count=4) >= 3)
     
     EnableFlag(9900)
 

@@ -11,27 +11,37 @@ strings:
 154: N:\\GR\\data\\Param\\event\\common_macro.emevd
 238: N:\\GR\\data\\Param\\event\\m60.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_44_34_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1044340000, obj=1044341950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1044340000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76161, 76157, 1044341980, 77110, 1, 78110, 78111, 78112, 78113, 78114, 78115, 78116, 78117, 78118, 78119),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76161,
+        flag_1=76157,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77110,
+        value=1,
+        flag_2=78110,
+        flag_3=78111,
+        flag_4=78112,
+        flag_5=78113,
+        flag_6=78114,
+        flag_7=78115,
+        flag_8=78116,
+        flag_9=78117,
+        flag_10=78118,
+        flag_11=78119,
     )
-    RunCommonEvent(0, 90005637, args=(31018600, 1044340620, 1044341620), arg_types="III")
-    RunCommonEvent(
-        0,
-        90005636,
-        args=(31018600, 1044340620, 1044341620, 4470, 1044342620, 1044342621, 1044342620, 1044343620, -1),
-        arg_types="IIIiIIIIi",
-    )
+    CommonFunc_90005637(0, flag=31018600, character=Characters.WanderingNoble, region=1044341620)
+    CommonFunc_90005636(0, 31018600, 1044340620, 1044341620, 4470, 1044342620, 1044342621, 1044342620, 1044343620, -1)
     Event_1044342502()
     Event_1044342200()
     Event_1044340650(
@@ -41,44 +51,54 @@ def Constructor():
         tutorial_param_id_1=1770,
         flag_1=710770,
         flag_2=69090,
-        flag_3=69370
+        flag_3=69370,
     )
-    Event_1044342300(0, character=1044340300, obj=1044341300, region=1044342300)
-    Event_1044342300(1, character=1044340301, obj=1044341302, region=1044342301)
-    Event_1044342300(2, character=1044340302, obj=1044341301, region=1044342301)
-    Event_1044342203(0, character=1044340203)
-    RunCommonEvent(0, 90005250, args=(1044340203, 1044342280, 0.0, -1), arg_types="IIfi")
+    Event_1044342300(0, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9000, region=1044342300)
+    Event_1044342300(1, character=Characters.DemiHuman5, asset=Assets.AEG801_480_9002, region=1044342301)
+    Event_1044342300(2, character=Characters.DemiHuman6, asset=Assets.AEG801_480_9001, region=1044342301)
+    Event_1044342203(0, character=Characters.GodrickFootSoldier1)
+    CommonFunc_90005250(0, 1044340203, 1044342280, 0.0, -1)
     Event_1044342280()
-    RunCommonEvent(0, 90005261, args=(1044340270, 1044342270, 5.0, 0.0, -1), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1044340271, 1044342270, 5.0, 1.5, -1), arg_types="IIffi")
+    CommonFunc_90005261(0, 1044340270, 1044342270, 5.0, 0.0, -1)
+    CommonFunc_90005261(0, 1044340271, 1044342270, 5.0, 1.5, -1)
     Event_1044342230(0, character=1044340230)
     Event_1044342230(1, character=1044340231)
     Event_1044342230(2, character=1044340232)
     Event_1044342230(3, character=1044340240)
-    RunCommonEvent(0, 90005251, args=(1044340252, 8.0, 0.0, 0), arg_types="Iffi")
-    RunCommonEvent(0, 90005250, args=(1044340250, 1044342600, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005630, args=(61443400, 1044341500, 127), arg_types="IIi")
-    Event_1044343700(0, character=1044340700, character_1=1044340701, character_2=1044340702, obj=1044346700)
+    CommonFunc_90005251(0, character=Characters.GodrickFootSoldier2, radius=8.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005250(0, 1044340250, 1044342600, 0.0, -1)
+    CommonFunc_90005630(0, far_view_id=61443400, asset=1044341500, model_point=127)
+    Event_1044343700(0, character=1044340700, character_1=1044340701, character_2=1044340702, asset=1044346700)
     Event_1044343702(0, character=1044340700)
     Event_1044343704(0, character=1044340700)
     Event_1044343701(0, character=1044340700)
-    RunCommonEvent(
+    CommonFunc_90005700(
         0,
-        90005700,
-        args=(1044340700, 4741, 4742, 1044349249, 0.6499999761581421, 4740, 4743, 0),
-        arg_types="IIIIfIIi",
+        character=1044340700,
+        flag=4741,
+        flag_1=4742,
+        flag_2=1044349249,
+        value=0.6499999761581421,
+        first_flag=4740,
+        last_flag=4743,
+        right=0,
     )
-    RunCommonEvent(0, 90005701, args=(1044340700, 4741, 4742, 1044349249, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005702, args=(1044340700, 4743, 4740, 4743), arg_types="IIII")
+    CommonFunc_90005701(0, attacked_entity=1044340700, flag=4741, flag_1=4742, flag_2=1044349249, right=3)
+    CommonFunc_90005702(0, character=1044340700, flag=4743, first_flag=4740, last_flag=4743)
     Event_1044343703()
-    RunCommonEvent(
+    CommonFunc_90005700(
         0,
-        90005700,
-        args=(1044340701, 1044349246, 1044349246, 1044349247, 0.6499999761581421, 1044349246, 1044349246, 0),
-        arg_types="IIIIfIIi",
+        character=1044340701,
+        flag=1044349246,
+        flag_1=1044349246,
+        flag_2=1044349247,
+        value=0.6499999761581421,
+        first_flag=1044349246,
+        last_flag=1044349246,
+        right=0,
     )
-    RunCommonEvent(0, 90005701, args=(1044340701, 4741, 4742, 1044349249, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 1044343705, args=(1044340700, 1044340701), arg_types="II")
+    CommonFunc_90005701(0, attacked_entity=1044340701, flag=4741, flag_1=4742, flag_2=1044349249, right=3)
+    RunCommonEvent(1044343705, slot=0, args=(1044340700, 1044340701), arg_types="II")
     Event_1044343706(
         0,
         character=1044340700,
@@ -87,44 +107,47 @@ def Constructor():
         flag_1=4742,
         last_flag=4743,
         character_1=1044340701,
-        flag_2=1044349246
+        flag_2=1044349246,
     )
     Event_1044343707(0, flag=4740, flag_1=1041369201, flag_2=1044349226)
-    RunCommonEvent(0, 90005704, args=(1044340710, 3601, 3600, 1044349251, 3), arg_types="IIIIi")
-    RunCommonEvent(0, 90005703, args=(1044340710, 3601, 3602, 1044349251, 3603, 3600, 3603, -1), arg_types="IIIIIIIi")
-    RunCommonEvent(0, 90005702, args=(1044340710, 3603, 3600, 3604), arg_types="IIII")
+    CommonFunc_90005704(0, attacked_entity=Characters.Blaidd, flag=3601, flag_1=3600, flag_2=1044349251, right=3)
+    CommonFunc_90005703(0, 1044340710, 3601, 3602, 1044349251, 3603, 3600, 3603, -1)
+    CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3604)
     Event_1044343710(0, 1044340710)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1044340710)
+    DisableBackread(Characters.Blaidd)
 
 
 @RestartOnRest(1044342502)
 def Event_1044342502():
     """Event 1044342502"""
-    RegisterLadder(start_climbing_flag=44340580, stop_climbing_flag=44340851, obj=1044341580)
-    RegisterLadder(start_climbing_flag=44340582, stop_climbing_flag=44340853, obj=1044341582)
-    RegisterLadder(start_climbing_flag=44340584, stop_climbing_flag=44340855, obj=1044341584)
+    RegisterLadder(start_climbing_flag=44340580, stop_climbing_flag=44340851, asset=Assets.AEG110_012_1000)
+    RegisterLadder(start_climbing_flag=44340582, stop_climbing_flag=44340853, asset=Assets.AEG110_012_1001)
+    RegisterLadder(start_climbing_flag=44340584, stop_climbing_flag=44340855, asset=Assets.AEG110_012_1002)
 
 
 @RestartOnRest(1044342200)
 def Event_1044342200():
     """Event 1044342200"""
-    DisableObject(1044346200)
+    DisableAsset(1044346200)
 
 
 @RestartOnRest(1044342203)
 def Event_1044342203(_, character: uint):
     """Event 1044342203"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
     AddSpecialEffect(character, 8089)
     SetTeamType(character, TeamType.CoopNPC)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=1044342281)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=1044342281))
+    
+    MAIN.Await(AND_2)
+    
     SetTeamType(character, TeamType.Enemy2)
     End()
 
@@ -139,74 +162,80 @@ def Event_1044342230(_, character: uint):
 @RestartOnRest(1044342280)
 def Event_1044342280():
     """Event 1044342280"""
-    EndIfPlayerNotInOwnWorld()
-    IfCharacterDead(MAIN, 1044345280)
-    TriggerAISound(ai_sound_param_id=4132, anchor_entity=1044340280, unk_8_12=2)
-    TriggerAISound(ai_sound_param_id=4132, anchor_entity=1044340281, unk_8_12=2)
-    TriggerAISound(ai_sound_param_id=4132, anchor_entity=1044340282, unk_8_12=2)
-    TriggerAISound(ai_sound_param_id=4132, anchor_entity=1044340283, unk_8_12=2)
+    if PlayerNotInOwnWorld():
+        return
+    
+    MAIN.Await(CharacterDead(1044345280))
+    
+    TriggerAISound(ai_sound_param_id=4132, anchor_entity=Characters.DemiHuman0, unk_8_12=2)
+    TriggerAISound(ai_sound_param_id=4132, anchor_entity=Characters.DemiHuman1, unk_8_12=2)
+    TriggerAISound(ai_sound_param_id=4132, anchor_entity=Characters.DemiHuman2, unk_8_12=2)
+    TriggerAISound(ai_sound_param_id=4132, anchor_entity=Characters.DemiHuman3, unk_8_12=2)
     End()
 
 
 @RestartOnRest(1044342300)
-def Event_1044342300(_, character: uint, obj: uint, region: uint):
+def Event_1044342300(_, character: uint, asset: uint, region: uint):
     """Event 1044342300"""
     DisableCharacter(character)
-    DisableObject(obj)
-    GotoIfUnknown_1004_05(Label.L0, character=character, unk_8_12=True)
-    IfCharacterDead(AND_10, character)
-    EndIfConditionTrue(input_condition=AND_10)
-    EnableObject(obj)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=obj, attacker=20000)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_3, input_condition=AND_1)
-    IfConditionTrue(OR_3, input_condition=AND_4)
-    IfConditionTrue(OR_3, input_condition=AND_5)
-    IfConditionTrue(OR_3, input_condition=AND_6)
-    IfConditionTrue(OR_3, input_condition=AND_7)
-    IfConditionTrue(OR_3, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_3)
+    DisableAsset(asset)
+    EndIffSpecialStandbyEndedFlagEnabled(character=character)
+    AND_10.Add(CharacterDead(character))
+    if AND_10:
+        return
+    EnableAsset(asset)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    AND_1.Add(OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_3.Add(AND_1)
+    OR_3.Add(AND_4)
+    OR_3.Add(AND_5)
+    OR_3.Add(AND_6)
+    OR_3.Add(AND_7)
+    OR_3.Add(AND_8)
+    
+    MAIN.Await(OR_3)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    Unknown_2004_83(character=character, unk_4_8=1)
+    SetSpecialStandbyEndedFlag(character=character, state=True)
     CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
-    DisableObject(obj)
+    DisableAsset(asset)
     Wait(0.30000001192092896)
     EnableCharacter(character)
 
@@ -223,23 +252,27 @@ def Event_1044340650(
 ):
     """Event 1044340650"""
     DisableNetworkSync()
-    EndIfPlayerNotInOwnWorld()
-    IfPlayerInOwnWorld(AND_1)
-    IfPlayerHasGood(AND_1, 130)
-    IfInsideMap(AND_1, game_map=EAST_WEEPING_PENINSULA_NW_SW)
-    IfPlayerDoesNotHaveGood(AND_1, 9109)
-    IfTryingToCreateSession(OR_1)
-    IfTryingToJoinSession(OR_1)
-    IfConditionFalse(AND_1, input_condition=OR_1)
-    IfCharacterDoesNotHaveSpecialEffect(AND_1, PLAYER, 100690)
-    IfCharacterDoesNotHaveSpecialEffect(AND_1, PLAYER, 9640)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(PlayerHasGood(130))
+    AND_1.Add(InsideMap(game_map=EAST_WEEPING_PENINSULA_NW_SW))
+    AND_1.Add(PlayerDoesNotHaveGood(9109))
+    OR_1.Add(Multiplayer())
+    OR_1.Add(MultiplayerPending())
+    AND_1.Add(not OR_1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 100690))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9640))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
     EnableFlag(flag_1)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id, unk_4_5=True, unk_5_6=True)
     Wait(1.0)
     DisplayTutorialMessage(tutorial_param_id=tutorial_param_id_1, unk_4_5=True, unk_5_6=True)
-    EndIfFlagEnabled(flag_2)
+    if FlagEnabled(flag_2):
+        return
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9109, flag=flag, bit_count=1)
     GivePlayerItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=9137, flag=flag_1, bit_count=1)
     EnableFlag(flag_2)
@@ -247,13 +280,13 @@ def Event_1044340650(
 
 
 @RestartOnRest(1044343700)
-def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, obj: uint):
+def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, asset: uint):
     """Event 1044343700"""
     WaitFrames(frames=1)
     DisableFlag(1044349200)
     GotoIfPlayerNotInOwnWorld(Label.L0)
-    IfFlagEnabled(AND_10, 4740)
-    IfFlagEnabled(AND_10, 1041369248)
+    AND_10.Add(FlagEnabled(4740))
+    AND_10.Add(FlagEnabled(1041369248))
     SkipLinesIfConditionFalse(1, AND_10)
     DisableFlag(1041369248)
 
@@ -262,15 +295,15 @@ def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, o
     DisableCharacter(character)
     DisableCharacter(character_1)
     DisableCharacter(character_2)
-    DisableObject(obj)
+    DisableAsset(asset)
     DisableBackread(character)
     DisableBackread(character_1)
     DisableBackread(character_2)
-    IfFlagEnabled(OR_1, 4745)
-    IfFlagEnabled(OR_1, 4746)
-    IfFlagEnabled(OR_1, 4747)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfFlagEnabled(AND_1, 1044349221)
+    OR_1.Add(FlagEnabled(4745))
+    OR_1.Add(FlagEnabled(4746))
+    OR_1.Add(FlagEnabled(4747))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagEnabled(1044349221))
     GotoIfConditionFalse(Label.L20, input_condition=AND_1)
     GotoIfFlagEnabled(Label.L1, flag=4740)
     GotoIfFlagEnabled(Label.L2, flag=4741)
@@ -281,14 +314,14 @@ def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, o
     EnableCharacter(character)
     EnableCharacter(character_1)
     EnableCharacter(character_2)
-    EnableObject(obj)
+    EnableAsset(asset)
     EnableBackread(character)
     EnableBackread(character_1)
     EnableBackread(character_2)
-    SkipLinesIfFlagDisabled(1, 4980)
-    ForceAnimation(character, 30001, unknown2=1.0)
+    if FlagEnabled(4980):
+        ForceAnimation(character, 30001)
     SkipLinesIfFlagRangeAllDisabled(1, (4982, 4983))
-    ForceAnimation(character, 30002, unknown2=1.0)
+    ForceAnimation(character, 30002)
     Goto(Label.L20)
 
     # --- Label 2 --- #
@@ -296,16 +329,16 @@ def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, o
     EnableCharacter(character)
     EnableCharacter(character_1)
     EnableCharacter(character_2)
-    EnableObject(obj)
+    EnableAsset(asset)
     EnableBackread(character)
     EnableBackread(character_1)
     EnableBackread(character_2)
     SetTeamType(character, TeamType.HostileNPC)
     SetTeamType(character_1, TeamType.HostileNPC)
-    SkipLinesIfFlagDisabled(1, 4980)
-    ForceAnimation(character, 30001, unknown2=1.0)
+    if FlagEnabled(4980):
+        ForceAnimation(character, 30001)
     SkipLinesIfFlagRangeAllDisabled(2, (4982, 4983))
-    ForceAnimation(character, 30002, unknown2=1.0)
+    ForceAnimation(character, 30002)
     DisableAI(character)
     Goto(Label.L20)
 
@@ -316,24 +349,31 @@ def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, o
     DropMandatoryTreasure(character_1)
     DisableCharacter(character)
     DisableCharacter(character_1)
-    EnableObject(obj)
+    EnableAsset(asset)
     DisableBackread(character)
     DisableBackread(character_1)
     Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagEnabled(MAIN, 1044349200)
+    
+    MAIN.Await(FlagEnabled(1044349200))
+    
     Restart()
 
 
 @NeverRestart(1044343701)
 def Event_1044343701(_, character: uint):
     """Event 1044343701"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(4743)
-    EndIfFlagDisabled(1044349221)
-    IfCharacterDead(MAIN, character)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(4743):
+        return
+    if FlagDisabled(1044349221):
+        return
+    
+    MAIN.Await(CharacterDead(character))
+    
     EnableNetworkFlag(1044349222)
     End()
 
@@ -341,61 +381,79 @@ def Event_1044343701(_, character: uint):
 @NeverRestart(1044343702)
 def Event_1044343702(_, character: uint):
     """Event 1044343702"""
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(OR_1, 4745)
-    IfFlagEnabled(OR_1, 4746)
-    IfFlagEnabled(OR_1, 4747)
-    IfFlagEnabled(OR_2, 4740)
-    IfFlagEnabled(OR_2, 4741)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    EndIfConditionFalse(input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(FlagEnabled(4745))
+    OR_1.Add(FlagEnabled(4746))
+    OR_1.Add(FlagEnabled(4747))
+    OR_2.Add(FlagEnabled(4740))
+    OR_2.Add(FlagEnabled(4741))
+    AND_1.Add(OR_1)
+    AND_1.Add(OR_2)
+    if not AND_1:
+        return
     GotoIfFlagEnabled(Label.L0, flag=4980)
     GotoIfFlagRangeAnyEnabled(Label.L10, flag_range=(4982, 4983))
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterHasSpecialEffect(OR_5, character, 9601)
-    IfCharacterHasSpecialEffect(OR_5, character, 9603)
-    IfConditionTrue(MAIN, input_condition=OR_5)
+    OR_5.Add(CharacterHasSpecialEffect(character, 9601))
+    OR_5.Add(CharacterHasSpecialEffect(character, 9603))
+    
+    MAIN.Await(OR_5)
+    
     GotoIfCharacterHasSpecialEffect(Label.L1, character=character, special_effect=9601)
     GotoIfCharacterHasSpecialEffect(Label.L2, character=character, special_effect=9603)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfEntityWithinDistance(OR_6, entity=20000, other_entity=character, radius=4.0)
-    IfCharacterDoesNotHaveSpecialEffect(OR_6, character, 9601)
-    IfConditionTrue(MAIN, input_condition=OR_6)
+    OR_6.Add(EntityWithinDistance(entity=20000, other_entity=character, radius=4.0))
+    OR_6.Add(CharacterDoesNotHaveSpecialEffect(character, 9601))
+    
+    MAIN.Await(OR_6)
+    
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004, unknown2=1.0)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, character, 9601)
+    ForceAnimation(character, 20004)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9601))
+    
     Goto(Label.L20)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    IfEntityBeyondDistance(OR_7, entity=20000, other_entity=character, radius=6.0)
-    IfCharacterDoesNotHaveSpecialEffect(OR_7, character, 9603)
-    IfConditionTrue(MAIN, input_condition=OR_7)
+    OR_7.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_7.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
+    
+    MAIN.Await(OR_7)
+    
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20010, unknown2=1.0)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, character, 9603)
+    ForceAnimation(character, 20010)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
+    
     Goto(Label.L20)
 
     # --- Label 10 --- #
     DefineLabel(10)
-    IfCharacterHasSpecialEffect(OR_10, character, 9603)
-    IfConditionTrue(MAIN, input_condition=OR_10)
+    OR_10.Add(CharacterHasSpecialEffect(character, 9603))
+    
+    MAIN.Await(OR_10)
+    
     GotoIfCharacterHasSpecialEffect(Label.L11, character=character, special_effect=9603)
 
     # --- Label 11 --- #
     DefineLabel(11)
-    IfEntityBeyondDistance(OR_11, entity=20000, other_entity=character, radius=6.0)
-    IfCharacterDoesNotHaveSpecialEffect(OR_11, character, 9603)
-    IfConditionTrue(MAIN, input_condition=OR_11)
+    OR_11.Add(EntityBeyondDistance(entity=20000, other_entity=character, radius=6.0))
+    OR_11.Add(CharacterDoesNotHaveSpecialEffect(character, 9603))
+    
+    MAIN.Await(OR_11)
+    
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=9603)
-    ForceAnimation(character, 20011, unknown2=1.0)
+    ForceAnimation(character, 20011)
     DisableAI(character)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, character, 9603)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
+    
     Goto(Label.L20)
 
     # --- Label 20 --- #
@@ -406,9 +464,13 @@ def Event_1044343702(_, character: uint):
 @RestartOnRest(1044343703)
 def Event_1044343703():
     """Event 1044343703"""
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagEnabled(1044349229)
-    IfEntityWithinDistance(MAIN, entity=PLAYER, other_entity=1044340700, radius=7.5)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagEnabled(1044349229):
+        return
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=1044340700, radius=7.5))
+    
     EnableNetworkFlag(1044349229)
     End()
 
@@ -416,46 +478,56 @@ def Event_1044343703():
 @RestartOnRest(1044343704)
 def Event_1044343704(_, character: uint):
     """Event 1044343704"""
-    EndIfPlayerNotInOwnWorld()
-    IfFlagEnabled(OR_1, 4745)
-    IfFlagEnabled(OR_1, 4746)
-    IfFlagEnabled(OR_1, 4747)
-    IfFlagEnabled(OR_2, 4740)
-    IfFlagEnabled(OR_2, 4741)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    EndIfConditionFalse(input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(FlagEnabled(4745))
+    OR_1.Add(FlagEnabled(4746))
+    OR_1.Add(FlagEnabled(4747))
+    OR_2.Add(FlagEnabled(4740))
+    OR_2.Add(FlagEnabled(4741))
+    AND_1.Add(OR_1)
+    AND_1.Add(OR_2)
+    if not AND_1:
+        return
     GotoIfCharacterHasSpecialEffect(Label.L0, character=character, special_effect=9602)
     Goto(Label.L10)
 
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(character)
-    IfCharacterDoesNotHaveSpecialEffect(MAIN, character, 9602)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9602))
+    
     Restart()
 
     # --- Label 10 --- #
     DefineLabel(10)
     EnableAI(character)
-    IfCharacterHasSpecialEffect(MAIN, character, 9602)
+    
+    MAIN.Await(CharacterHasSpecialEffect(character, 9602))
+    
     Restart()
 
 
 @RestartOnRest(1044343705)
 def Event_1044343705(_, character: uint, attacked_entity: uint):
     """Event 1044343705"""
-    EndIfPlayerNotInOwnWorld()
-    IfAttackedWithDamageType(OR_1, attacked_entity=attacked_entity, attacker=20000)
-    IfAttackedWithDamageType(OR_1, attacked_entity=attacked_entity, attacker=40000)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfFlagDisabled(AND_1, 1041362709)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if PlayerNotInOwnWorld():
+        return
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=40000))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagDisabled(1041362709))
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1041362708)
-    EndIfFlagEnabled(4741)
+    if FlagEnabled(4741):
+        return
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004, unknown2=1.0)
+    ForceAnimation(character, 20004)
     SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9602)
-    ForceAnimation(character, 20006, unknown2=1.0)
+    ForceAnimation(character, 20006)
 
 
 @NeverRestart(1044343706)
@@ -471,23 +543,27 @@ def Event_1044343706(
 ):
     """Event 1044343706"""
     WaitFrames(frames=1)
-    EndIfPlayerNotInOwnWorld()
-    EndIfFlagDisabled(first_flag)
+    if PlayerNotInOwnWorld():
+        return
+    if FlagDisabled(first_flag):
+        return
     DisableNetworkFlag(flag_2)
-    IfFlagEnabled(OR_1, flag)
-    IfFlagEnabled(OR_1, flag_1)
-    IfAttackedWithDamageType(AND_1, attacked_entity=character, attacker=20000)
-    IfHealthValueLessThan(AND_1, character, value=1)
-    IfConditionTrue(OR_2, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfFlagEnabled(OR_3, flag_2)
-    IfAttackedWithDamageType(AND_3, attacked_entity=character_1, attacker=20000)
-    IfHealthValueLessThan(AND_3, character_1, value=1)
-    IfConditionTrue(OR_4, input_condition=OR_3)
-    IfConditionTrue(OR_4, input_condition=AND_3)
-    IfConditionTrue(OR_5, input_condition=OR_2)
-    IfConditionTrue(OR_5, input_condition=OR_4)
-    IfConditionTrue(MAIN, input_condition=OR_5)
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    AND_1.Add(HealthValue(character) < 1)
+    OR_2.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_3.Add(FlagEnabled(flag_2))
+    AND_3.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    AND_3.Add(HealthValue(character_1) < 1)
+    OR_4.Add(OR_3)
+    OR_4.Add(AND_3)
+    OR_5.Add(OR_2)
+    OR_5.Add(OR_4)
+    
+    MAIN.Await(OR_5)
+    
     GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
     GotoIfFinishedConditionTrue(Label.L5, input_condition=OR_4)
 
@@ -510,7 +586,9 @@ def Event_1044343706(
     DefineLabel(10)
     WaitFrames(frames=1)
     DisableNetworkFlag(flag_2)
-    IfFlagEnabled(MAIN, flag_2)
+    
+    MAIN.Await(FlagEnabled(flag_2))
+    
     DisableNetworkFlag(flag_2)
     End()
 
@@ -518,15 +596,17 @@ def Event_1044343706(
 @RestartOnRest(1044343707)
 def Event_1044343707(_, flag: uint, flag_1: uint, flag_2: uint):
     """Event 1044343707"""
-    IfFlagDisabled(OR_1, flag)
-    IfFlagEnabled(OR_1, flag_1)
+    OR_1.Add(FlagDisabled(flag))
+    OR_1.Add(FlagEnabled(flag_1))
     SkipLinesIfConditionFalse(2, OR_1)
     DisableNetworkFlag(flag_2)
     End()
     EnableNetworkFlag(flag_2)
-    IfFlagDisabled(OR_2, flag)
-    IfFlagEnabled(OR_2, flag_1)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    OR_2.Add(FlagDisabled(flag))
+    OR_2.Add(FlagEnabled(flag_1))
+    
+    MAIN.Await(OR_2)
+    
     DisableNetworkFlag(flag_2)
     End()
 
@@ -537,15 +617,17 @@ def Event_1044343710(_, character: uint):
     DisableNetworkSync()
     WaitFrames(frames=1)
     GotoIfPlayerNotInOwnWorld(Label.L19)
-    SkipLinesIfFlagDisabled(1, 3600)
-    DisableFlag(1044349252)
+    if FlagEnabled(3600):
+        DisableFlag(1044349252)
 
     # --- Label 19 --- #
     DefineLabel(19)
     GotoIfFlagEnabled(Label.L7, flag=3607)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, 3607)
+    
+    MAIN.Await(FlagEnabled(3607))
+    
     Restart()
 
     # --- Label 7 --- #
@@ -559,7 +641,7 @@ def Event_1044343710(_, character: uint):
     DefineLabel(0)
     EnableBackread(character)
     EnableCharacter(character)
-    ForceAnimation(character, 930010, unknown2=1.0)
+    ForceAnimation(character, 930010)
     GotoIfConditionTrue(Label.L20, input_condition=MAIN)
 
     # --- Label 1 --- #
@@ -580,5 +662,7 @@ def Event_1044343710(_, character: uint):
 
     # --- Label 20 --- #
     DefineLabel(20)
-    IfFlagDisabled(MAIN, 3607)
+    
+    MAIN.Await(FlagDisabled(3607))
+    
     Restart()

@@ -12,26 +12,40 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_33_47_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1033470000, obj=1033471950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1033470000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005605(
         0,
-        90005605,
-        args=(1033471610, 12, 2, 0, 0, 12022210, 0, 1033472610, 1033472611, 1033472612, 1033470610, 0, 0.0, 0.0),
-        arg_types="IBBbbIiIIIIiff",
+        asset=Assets.AEG099_510_9000,
+        area_id=12,
+        block_id=2,
+        cc_id=0,
+        dd_id=0,
+        player_start=12022210,
+        unk_8_12=0,
+        flag=1033472610,
+        left_flag=1033472611,
+        cancel_flag__right_flag=1033472612,
+        left=1033470610,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
     )
     Event_1033472611(
         0,
         flag=1033470611,
-        destination=1033471611,
+        destination=Assets.AEG099_295_9000,
         left_flag=1033472613,
-        cancel_flag__right_flag=1033472614
+        cancel_flag__right_flag=1033472614,
     )
     Event_1033472612(0, 1033470611, 1033471612)
 
@@ -39,33 +53,70 @@ def Constructor():
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(1033470200, 1033472200, 0.0, 1.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1033470201, 1033472200, 0.0, 0.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1033470202, 1033472200, 0.0, 2.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1033470203, 1033472200, 0.0, 1.5, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1033470204, 1033472200, 0.0, 0.0, 1705), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1033470205, 1033472200, 0.0, 1.0, 1705), arg_types="IIffi")
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower0,
+        region=1033472200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower1,
+        region=1033472200,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower2,
+        region=1033472200,
+        radius=0.0,
+        seconds=2.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower3,
+        region=1033472200,
+        radius=0.0,
+        seconds=1.5,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower4,
+        region=1033472200,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=1705,
+    )
+    CommonFunc_90005261(0, 1033470205, 1033472200, 0.0, 1.0, 1705)
 
 
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    RunCommonEvent(0, 90005421, args=(1033470300, 1033471301, 1033478301), arg_types="III")
-    RunCommonEvent(0, 90005422, args=(1033478301, 1033471300, 1033473301), arg_types="III")
-    RunCommonEvent(0, 90005424, args=(1033471300, 1033470302, 1033470303, 1033470300, 1033471301), arg_types="IIIII")
-    RunCommonEvent(0, 90005423, args=(1033470302,))
-    RunCommonEvent(0, 90005423, args=(1033470303,))
+    CommonFunc_90005421(0, character=1033470300, asset=Assets.AEG100_101_9000, flag=1033478301)
+    CommonFunc_90005422(0, flag=1033478301, asset=Assets.AEG100_100_9000, obj_act_id=1033473301)
+    CommonFunc_90005424(
+        0,
+        asset=Assets.AEG100_100_9000,
+        character=Characters.Troll0,
+        character_1=Characters.Troll1,
+        character_2=Characters.CaravanDummy,
+        asset_1=Assets.AEG100_101_9000,
+    )
+    CommonFunc_90005423(0, character=Characters.Troll0)
+    CommonFunc_90005423(0, 1033470303)
 
 
 @NeverRestart(250)
 def Event_250():
     """Event 250"""
-    RunCommonEvent(
-        0,
-        90005420,
-        args=(1033470300, 1033471300, 1033471301, 1033470301, 1033470302, 1033470303, 0.0),
-        arg_types="IIIIIIf",
-    )
+    CommonFunc_90005420(0, 1033470300, 1033471300, 1033471301, 1033470301, 1033470302, 1033470303, 0.0)
 
 
 @RestartOnRest(1033472610)
@@ -81,12 +132,15 @@ def Event_1033472610(
     cancel_flag__right_flag: uint,
 ):
     """Event 1033472610"""
-    EndIfTryingToCreateSession()
+    if Multiplayer():
+        return
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    IfLeavingSession(AND_1)
-    IfActionButtonParamActivated(AND_1, action_button_id=9140, entity=anchor_entity)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(Singleplayer())
+    AND_1.Add(ActionButtonParamActivated(action_button_id=9140, entity=anchor_entity))
+    
+    MAIN.Await(AND_1)
+    
     GotoIfFlagEnabled(Label.L5, flag=1033470610)
     DisplayDialogAndSetFlags(
         message=108186,
@@ -104,7 +158,7 @@ def Event_1033472610(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfPlayerHasGood(AND_5, 8186)
+    AND_5.Add(PlayerHasGood(8186))
     SkipLinesIfConditionTrue(3, AND_5)
     DisplayDialogAndSetFlags(
         message=308186,
@@ -134,7 +188,7 @@ def Event_1033472610(
     # --- Label 5 --- #
     DefineLabel(5)
     RotateToFaceEntity(PLAYER, anchor_entity, wait_for_completion=True)
-    ForceAnimation(PLAYER, 60490, unknown2=1.0)
+    ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     WarpToMap(game_map=(area_id, block_id, cc_id, dd_id), player_start=player_start)
 
@@ -142,12 +196,15 @@ def Event_1033472610(
 @RestartOnRest(1033472611)
 def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint):
     """Event 1033472611"""
-    IfFlagEnabled(OR_1, flag)
-    IfPlayerNotInOwnWorld(OR_1)
-    EndIfConditionTrue(input_condition=OR_1)
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(PlayerNotInOwnWorld())
+    if OR_1:
+        return
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    IfActionButtonParamActivated(MAIN, action_button_id=9523, entity=destination)
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=9523, entity=destination))
+    
     DisplayDialogAndSetFlags(
         message=108186,
         button_type=ButtonType.Yes_or_No,
@@ -164,10 +221,10 @@ def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
     # --- Label 1 --- #
     DefineLabel(1)
-    IfPlayerHasGood(AND_2, 8186)
+    AND_2.Add(PlayerHasGood(8186))
     GotoIfConditionTrue(Label.L2, input_condition=AND_2)
     WaitFrames(frames=1)
-    ForceAnimation(PLAYER, 50050, unknown2=1.0)
+    ForceAnimation(PLAYER, 50050)
     Wait(1.5)
     DisplayDialog(text=308186, anchor_entity=destination)
     Wait(1.0)
@@ -175,8 +232,8 @@ def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
-    ForceAnimation(PLAYER, 60810, unknown2=1.0)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    ForceAnimation(PLAYER, 60810)
     Wait(2.5)
     EnableNetworkFlag(flag)
     EnableNetworkFlag(1033470610)
@@ -185,14 +242,16 @@ def Event_1033472611(_, flag: uint, destination: uint, left_flag: uint, cancel_f
 
 
 @RestartOnRest(1033472612)
-def Event_1033472612(_, flag: uint, obj: uint):
+def Event_1033472612(_, flag: uint, asset: uint):
     """Event 1033472612"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    EnableObject(obj)
+    EnableAsset(asset)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableObject(obj)
-    IfFlagEnabled(MAIN, flag)
-    EnableObject(obj)
+    DisableAsset(asset)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    EnableAsset(asset)

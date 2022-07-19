@@ -11,68 +11,138 @@ strings:
 154: N:\\GR\\data\\Param\\event\\m60.emevd
 220: N:\\GR\\data\\Param\\event\\common_macro.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_49_38_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterLadder(start_climbing_flag=49381500, stop_climbing_flag=49381501, obj=1049381500)
-    RegisterLadder(start_climbing_flag=49381502, stop_climbing_flag=49381503, obj=1049381502)
-    RegisterLadder(start_climbing_flag=49381504, stop_climbing_flag=49381505, obj=1049381504)
-    RunCommonEvent(0, 9005810, args=(1049380800, 1049380000, 1049380950, 1049381950, 5.0), arg_types="IIIIf")
-    RegisterGrace(grace_flag=1049380001, obj=1049381951, unknown=5.0)
-    RunCommonEvent(
+    RegisterLadder(start_climbing_flag=49381500, stop_climbing_flag=49381501, asset=1049381500)
+    RegisterLadder(start_climbing_flag=49381502, stop_climbing_flag=49381503, asset=1049381502)
+    RegisterLadder(start_climbing_flag=49381504, stop_climbing_flag=49381505, asset=1049381504)
+    CommonFunc_9005810(
         0,
-        90005100,
-        args=(76418, 76413, 1049381981, 77400, 5, 78400, 78401, 78402, 78403, 78404, 78405, 78406, 78407, 78408, 78409),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=1049380800,
+        grace_flag=1049380000,
+        character=Characters.TalkDummy1,
+        asset=Assets.AEG099_060_9000,
+        enemy_block_distance=5.0,
     )
-    RunCommonEvent(0, 90005511, args=(1049380560, 1049381560, 1049383560, 99020, 0), arg_types="IIIiI")
-    RunCommonEvent(0, 90005512, args=(1049380560, 1049382560, 1049382561), arg_types="III")
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1049380001, asset=Assets.AEG099_060_9001)
+    CommonFunc_90005100(
         0,
-        90005780,
-        args=(1049380800, 1049382160, 1049382161, 1049380700, 20, 1049382701, 0, 1, 0),
-        arg_types="IIIIiIIBi",
+        flag=76418,
+        flag_1=76413,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77400,
+        value=5,
+        flag_2=78400,
+        flag_3=78401,
+        flag_4=78402,
+        flag_5=78403,
+        flag_6=78404,
+        flag_7=78405,
+        flag_8=78406,
+        flag_9=78407,
+        flag_10=78408,
+        flag_11=78409,
     )
-    RunCommonEvent(0, 90005781, args=(1049380800, 1049382160, 1049382161, 1049380700), arg_types="IIII")
-    RunCommonEvent(
+    CommonFunc_90005511(
         0,
-        90005783,
-        args=(1049380800, 1049382160, 1049382161, 1049380700, 1049382700, 1049382400, 0),
-        arg_types="IIIIIIi",
+        flag=1049380560,
+        asset=Assets.AEG110_421_2000,
+        obj_act_id=1049383560,
+        obj_act_id_1=99020,
+        left=0,
     )
-    RunCommonEvent(0, 90005300, args=(1049380290, 1049380290, 40404, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005512(0, flag=1049380560, region=1049382560, region_1=1049382561)
+    CommonFunc_90005780(
+        0,
+        flag=1049380800,
+        summon_flag=1049382160,
+        dismissal_flag=1049382161,
+        character=Characters.Human1,
+        sign_type=20,
+        region=1049382701,
+        right=0,
+        unknown=1,
+        right_1=0,
+    )
+    CommonFunc_90005781(0, flag=1049380800, flag_1=1049382160, flag_2=1049382161, character=Characters.Human1)
+    CommonFunc_90005783(
+        0,
+        flag=1049380800,
+        flag_1=1049382160,
+        flag_2=1049382161,
+        character=Characters.Human1,
+        other_entity=1049382700,
+        region=1049382400,
+        left=0,
+    )
+    CommonFunc_90005300(0, flag=1049380290, character=Characters.Scarab, item_lot_param_id=40404, seconds=0.0, left=0)
     Event_1049382210()
-    Event_1049382211(0, 1049381235, 6.0)
-    Event_1049382211(1, 1049381236, 12.0)
-    Event_1049382211(2, 1049381237, 3.0)
-    Event_1049382211(3, 1049381238, 2.0)
-    Event_1049382211(4, 1049381239, 10.0)
-    Event_1049382211(5, 1049381240, 14.0)
-    Event_1049382211(6, 1049381241, 8.0)
-    Event_1049382211(7, 1049381242, 5.0)
-    Event_1049382211(8, 1049381243, 4.0)
-    RunCommonEvent(0, 90005250, args=(1049380399, 1049382399, 0.0, -1), arg_types="IIfi")
-    Event_1049382200(0, character=1049380200, special_effect_id=14807)
-    Event_1049382200(1, character=1049380201, special_effect_id=14807)
-    Event_1049382200(2, character=1049380202, special_effect_id=14807)
-    RunCommonEvent(0, 90005250, args=(1049380200, 1049382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1049380201, 1049382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1049380202, 1049382200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005200, args=(1049380311, 30002, 20002, 1049382311, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(1049380306, 1049382311, 82.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1049380310, 1049382311, 22.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1049380312, 1049382311, 115.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1049380313, 1049382311, 50.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1049380800, 35.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005870, args=(1049380800, 903050600, 11), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1049380800, 0, 1049380800, 1, 30405, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005872, args=(1049380800, 11, 0), arg_types="III")
-    Event_1049382820(0, character=1049380800, character_1=1049385800, special_effect=11130, animation_id=20015)
-    Event_1049382824(0, character=1049380800, character_1=1049385801, special_effect=11131, animation_id=20015)
+    Event_1049382211(0, source_entity=Assets.AEG099_046_9035, seconds=6.0)
+    Event_1049382211(1, source_entity=Assets.AEG099_046_9036, seconds=12.0)
+    Event_1049382211(2, source_entity=Assets.AEG099_046_9037, seconds=3.0)
+    Event_1049382211(3, source_entity=Assets.AEG099_046_9038, seconds=2.0)
+    Event_1049382211(4, source_entity=Assets.AEG099_046_9039, seconds=10.0)
+    Event_1049382211(5, source_entity=Assets.AEG099_046_9040, seconds=14.0)
+    Event_1049382211(6, source_entity=Assets.AEG099_046_9041, seconds=8.0)
+    Event_1049382211(7, source_entity=Assets.AEG099_046_9042, seconds=5.0)
+    Event_1049382211(8, source_entity=Assets.AEG099_046_9043, seconds=4.0)
+    CommonFunc_90005250(0, 1049380399, 1049382399, 0.0, -1)
+    Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14807)
+    Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14807)
+    Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect_id=14807)
+    CommonFunc_90005250(0, 1049380200, 1049382200, 0.0, -1)
+    CommonFunc_90005250(0, 1049380201, 1049382200, 0.0, -1)
+    CommonFunc_90005250(0, 1049380202, 1049382200, 0.0, -1)
+    CommonFunc_90005200(
+        0,
+        character=Characters.CleanrotKnight2,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1049382311,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 1049380306, 1049382311, 82.0, -1)
+    CommonFunc_90005250(0, 1049380310, 1049382311, 22.0, -1)
+    CommonFunc_90005250(0, 1049380312, 1049382311, 115.0, -1)
+    CommonFunc_90005250(0, 1049380313, 1049382311, 50.0, -1)
+    CommonFunc_90005251(0, 1049380800, 35.0, 0.0, -1)
+    CommonFunc_90005870(0, character=Characters.Commander, name=903050600, npc_threat_level=11)
+    CommonFunc_90005860(
+        0,
+        flag=1049380800,
+        left=0,
+        character=Characters.Commander,
+        left_1=1,
+        item_lot__item_lot_param_id=30405,
+        seconds=0.0,
+    )
+    CommonFunc_90005872(0, character=Characters.Commander, npc_threat_level=11, right=0)
+    Event_1049382820(
+        0,
+        character=Characters.Commander,
+        character_1=1049385800,
+        special_effect=11130,
+        animation_id=20015,
+    )
+    Event_1049382824(
+        0,
+        character=Characters.Commander,
+        character_1=1049385801,
+        special_effect=11131,
+        animation_id=20015,
+    )
     Event_1049382821(0, 1049380800, 1049385800, 1049385801, 20016)
 
 
@@ -85,7 +155,7 @@ def Event_1049382200(_, character: uint, special_effect_id: int):
 @RestartOnRest(1049382210)
 def Event_1049382210():
     """Event 1049382210"""
-    CreateProjectileOwner(entity=1049380299)
+    CreateProjectileOwner(entity=Characters.Human0)
 
 
 @RestartOnRest(1049382211)
@@ -93,12 +163,14 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     """Event 1049382211"""
     EnableNetworkSync()
     Wait(8.0)
-    IfEntityWithinDistance(MAIN, entity=PLAYER, other_entity=source_entity, radius=70.0)
+    
+    MAIN.Await(EntityWithinDistance(entity=PLAYER, other_entity=source_entity, radius=70.0))
+    
     Wait(seconds)
-    IfNewGameCycleEqual(AND_1, completion_count=0)
+    AND_1.Add(NewGameCycleEqual(completion_count=0))
     SkipLinesIfConditionFalse(2, AND_1)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700000,
@@ -107,10 +179,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_2, completion_count=1)
+    AND_2.Add(NewGameCycleEqual(completion_count=1))
     SkipLinesIfConditionFalse(2, AND_2)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700010,
@@ -119,10 +191,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_3, completion_count=2)
+    AND_3.Add(NewGameCycleEqual(completion_count=2))
     SkipLinesIfConditionFalse(2, AND_3)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700020,
@@ -131,10 +203,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_4, completion_count=3)
+    AND_4.Add(NewGameCycleEqual(completion_count=3))
     SkipLinesIfConditionFalse(2, AND_4)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700030,
@@ -143,10 +215,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_5, completion_count=4)
+    AND_5.Add(NewGameCycleEqual(completion_count=4))
     SkipLinesIfConditionFalse(2, AND_5)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700040,
@@ -155,10 +227,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_6, completion_count=5)
+    AND_6.Add(NewGameCycleEqual(completion_count=5))
     SkipLinesIfConditionFalse(2, AND_6)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700050,
@@ -167,10 +239,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleEqual(AND_7, completion_count=6)
+    AND_7.Add(NewGameCycleEqual(completion_count=6))
     SkipLinesIfConditionFalse(2, AND_7)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700060,
@@ -179,10 +251,10 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
         launch_angle_z=0,
     )
     Goto(Label.L0)
-    IfNewGameCycleGreaterThanOrEqual(AND_8, completion_count=7)
+    AND_8.Add(NewGameCycleGreaterThanOrEqual(completion_count=7))
     SkipLinesIfConditionFalse(2, AND_8)
     ShootProjectile(
-        owner_entity=1049380299,
+        owner_entity=Characters.Human0,
         source_entity=source_entity,
         model_point=-1,
         behavior_id=802700070,
@@ -200,13 +272,16 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
 @NeverRestart(1049382399)
 def Event_1049382399(_, character: uint, destination: uint, special_effect: int):
     """Event 1049382399"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
-    IfCharacterHasSpecialEffect(AND_2, character, special_effect)
-    IfCharacterAlive(AND_2, character)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
+    AND_2.Add(CharacterHasSpecialEffect(character, special_effect))
+    AND_2.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_2)
+    
     Move(character, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     ReplanAI(character)
 
 
@@ -224,9 +299,11 @@ def Event_1049382820(_, character: uint, character_1: uint, special_effect: int,
     GotoIfFlagEnabled(Label.L1, flag=1049382300)
     DisableAI(character_1)
     DisableCharacter(character_1)
-    IfCharacterHasSpecialEffect(AND_1, character, special_effect)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     AICommand(character, command_id=-1, command_slot=0)
 
     # --- Label 1 --- #
@@ -234,9 +311,9 @@ def Event_1049382820(_, character: uint, character_1: uint, special_effect: int,
     EnableCharacter(character_1)
     EnableAnimations(character_1)
     EnableAI(character_1)
-    SkipLinesIfFlagEnabled(2, 1049382300)
-    EnableFlag(1049382300)
-    ForceAnimation(character_1, animation_id, wait_for_completion=True, unknown2=1.0)
+    if FlagDisabled(1049382300):
+        EnableFlag(1049382300)
+        ForceAnimation(character_1, animation_id, wait_for_completion=True)
 
 
 @RestartOnRest(1049382821)
@@ -250,10 +327,12 @@ def Event_1049382821(_, character: uint, character_1: uint, character_2: uint, a
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDead(OR_1, character)
-    IfConditionTrue(MAIN, input_condition=OR_1)
-    ForceAnimation(character_1, animation_id, skip_transition=True, unknown2=1.0)
-    ForceAnimation(character_2, animation_id, skip_transition=True, unknown2=1.0)
+    OR_1.Add(CharacterDead(character))
+    
+    MAIN.Await(OR_1)
+    
+    ForceAnimation(character_1, animation_id, skip_transition=True)
+    ForceAnimation(character_2, animation_id, skip_transition=True)
     Wait(3.0)
     DisableCharacter(character_1)
     DisableAnimations(character_1)
@@ -278,9 +357,11 @@ def Event_1049382824(_, character: uint, character_1: uint, special_effect: int,
     GotoIfFlagEnabled(Label.L1, flag=1049382301)
     DisableAI(character_1)
     DisableCharacter(character_1)
-    IfCharacterHasSpecialEffect(AND_1, character, special_effect)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     AICommand(character, command_id=-1, command_slot=0)
 
     # --- Label 1 --- #
@@ -288,6 +369,6 @@ def Event_1049382824(_, character: uint, character_1: uint, special_effect: int,
     EnableCharacter(character_1)
     EnableAnimations(character_1)
     EnableAI(character_1)
-    SkipLinesIfFlagEnabled(2, 1049382301)
-    EnableFlag(1049382301)
-    ForceAnimation(character_1, animation_id, wait_for_completion=True, unknown2=1.0)
+    if FlagDisabled(1049382301):
+        EnableFlag(1049382301)
+        ForceAnimation(character_1, animation_id, wait_for_completion=True)

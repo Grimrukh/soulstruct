@@ -12,55 +12,169 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_51_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1051530000, obj=1051531950, unknown=5.0)
+    RegisterGrace(grace_flag=1051530000, asset=Assets.AEG099_060_9000)
     Event_1051532200(0, character=1051535200)
     Event_1051532390()
-    RunCommonEvent(0, 90005200, args=(1051530321, 30005, 20005, 1051532321, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(1051530322, 30006, 20006, 1051532322, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005211, args=(1051530323, 30006, 20006, 0, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005211, args=(1051530324, 30006, 20006, 0, 3.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005300, args=(1051530210, 1051530210, 1051530700, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005200(
+        0,
+        character=1051530321,
+        animation_id=30005,
+        animation_id_1=20005,
+        region=1051532321,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MassiveFingercreeper0,
+        animation_id=30006,
+        animation_id_1=20006,
+        region=1051532322,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MassiveFingercreeper1,
+        animation_id=30006,
+        animation_id_1=20006,
+        region=0,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005211(
+        0,
+        character=Characters.MassiveFingercreeper2,
+        animation_id=30006,
+        animation_id_1=20006,
+        region=0,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005300(
+        0,
+        flag=1051530210,
+        character=Characters.ExtraLargeScarab,
+        item_lot_param_id=1051530700,
+        seconds=0.0,
+        left=0,
+    )
     Event_1051532220(
         0,
-        character=1051530210,
+        character=Characters.ExtraLargeScarab,
         special_effect=12603,
         region=1051532210,
         region_1=1051532211,
-        region_2=1051532212
+        region_2=1051532212,
     )
-    RunCommonEvent(0, 90005201, args=(1051530210, 30000, 20000, 15.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005300, args=(1051530380, 1051530180, 0, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(
+    CommonFunc_90005201(
         0,
-        90005790,
-        args=(0, 1051530180, 1051532181, 1051532182, 1051530180, 21, 1051532180, 1051532181, 0.0, 0, 0, 0),
-        arg_types="IIIIIiIIfIBi",
+        character=Characters.ExtraLargeScarab,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=15.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005791, args=(1051530180, 1051532181, 1051532182, 1051530180), arg_types="IIII")
-    RunCommonEvent(
+    CommonFunc_90005300(
         0,
-        90005792,
-        args=(1051530180, 1051532181, 1051532182, 1051530180, 1051530500, 0.0),
-        arg_types="IIIIif",
+        flag=1051530380,
+        character=Characters.BloodyFingerOkina,
+        item_lot_param_id=0,
+        seconds=0.0,
+        left=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005790(
         0,
-        90005793,
-        args=(1051530180, 1051532181, 1051532182, 1051530180, 1051532180, 1051532182, 0),
-        arg_types="IIIIIIi",
+        right=0,
+        flag=1051530180,
+        summon_flag=1051532181,
+        dismissal_flag=1051532182,
+        character=Characters.BloodyFingerOkina,
+        sign_type=21,
+        region=1051532180,
+        region_1=1051532181,
+        seconds=0.0,
+        right_1=0,
+        unknown=0,
+        right_2=0,
+    )
+    CommonFunc_90005791(
+        0,
+        flag=1051530180,
+        flag_1=1051532181,
+        flag_2=1051532182,
+        character=Characters.BloodyFingerOkina,
+    )
+    CommonFunc_90005792(
+        0,
+        flag=1051530180,
+        flag_1=1051532181,
+        flag_2=1051532182,
+        character=Characters.BloodyFingerOkina,
+        item_lot_param_id=1051530500,
+        seconds=0.0,
+    )
+    CommonFunc_90005793(
+        0,
+        flag=1051530180,
+        flag_1=1051532181,
+        flag_2=1051532182,
+        character=Characters.BloodyFingerOkina,
+        other_entity=1051532180,
+        region=1051532182,
+        left=0,
     )
     Event_1051532330(0, attacker__character=1051535330, region=1051532330)
     Event_1051532330(1, attacker__character=1051535331, region=1051532331)
-    RunCommonEvent(0, 90005200, args=(1051530284, 30000, 20000, 1051532284, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005261, args=(1051530283, 1051532283, 0.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005771, args=(1051530950, 1051532700), arg_types="II")
+    CommonFunc_90005200(
+        0,
+        character=Characters.Fingercreeper1,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1051532284,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005261(
+        0,
+        character=Characters.Fingercreeper0,
+        region=1051532283,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=0,
+    )
+    CommonFunc_90005771(0, 1051530950, 1051532700)
 
 
 @RestartOnRest(1051532200)
@@ -74,11 +188,14 @@ def Event_1051532200(_, character: uint):
 @NeverRestart(1051532220)
 def Event_1051532220(_, character: uint, special_effect: int, region: uint, region_1: uint, region_2: uint):
     """Event 1051532220"""
-    EndIfFlagEnabled(1051530210)
-    IfCharacterHasSpecialEffect(AND_1, character, special_effect)
-    IfFlagDisabled(AND_1, 1051530210)
-    IfCharacterAlive(AND_1, character)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(1051530210):
+        return
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
+    AND_1.Add(FlagDisabled(1051530210))
+    AND_1.Add(CharacterAlive(character))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(1051532221)
     DisableFlag(1051532222)
     WaitFrames(frames=1)
@@ -93,11 +210,11 @@ def Event_1051532220(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1051532221)
     SkipLines(4)
     Move(character, destination=region_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region_1)
     Goto(Label.L0)
     Move(character, destination=region_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region_2)
     Goto(Label.L0)
 
@@ -106,11 +223,11 @@ def Event_1051532220(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1051532221)
     SkipLines(4)
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region)
     Goto(Label.L0)
     Move(character, destination=region_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region_2)
     Goto(Label.L0)
 
@@ -119,11 +236,11 @@ def Event_1051532220(_, character: uint, special_effect: int, region: uint, regi
     SkipLinesIfFlagEnabled(1, 1051532221)
     SkipLines(4)
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region)
     Goto(Label.L0)
     Move(character, destination=region_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    ForceAnimation(character, 20025, loop=True, unknown2=1.0)
+    ForceAnimation(character, 20025, loop=True)
     SetNest(character, region=region_1)
     Goto(Label.L0)
 
@@ -137,40 +254,45 @@ def Event_1051532220(_, character: uint, special_effect: int, region: uint, regi
 @RestartOnRest(1051532330)
 def Event_1051532330(_, attacker__character: uint, region: uint):
     """Event 1051532330"""
-    CancelSpecialEffect(attacker__character, 4800)
-    CancelSpecialEffect(attacker__character, 5651)
+    RemoveSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 5651)
     AddSpecialEffect(attacker__character, 4802)
-    EndIfFlagEnabled(1051532330)
+    if FlagEnabled(1051532330):
+        return
     AddSpecialEffect(attacker__character, 4800)
     AddSpecialEffect(attacker__character, 5651)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacker__character, attacker=35000)
-    IfAttackedWithDamageType(OR_2, attacked_entity=35000, attacker=attacker__character)
-    IfEntityWithinDistance(OR_2, entity=PLAYER, other_entity=attacker__character, radius=10.0)
-    IfEntityWithinDistance(OR_2, entity=35000, other_entity=attacker__character, radius=10.0)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfCharacterInsideRegion(OR_2, character=35000, region=region)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(OR_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=PLAYER))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacker__character, attacker=35000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000, attacker=attacker__character))
+    OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(EntityWithinDistance(entity=35000, other_entity=attacker__character, radius=10.0))
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    OR_2.Add(CharacterInsideRegion(character=35000, region=region))
+    AND_1.Add(OR_2)
+    
+    MAIN.Await(AND_1)
+    
     EnableNetworkFlag(1050562200)
-    CancelSpecialEffect(attacker__character, 4800)
+    RemoveSpecialEffect(attacker__character, 4800)
     AddSpecialEffect(attacker__character, 4802)
-    CancelSpecialEffect(attacker__character, 5651)
+    RemoveSpecialEffect(attacker__character, 5651)
 
 
 @RestartOnRest(1051532390)
 def Event_1051532390():
     """Event 1051532390"""
-    AddSpecialEffect(1051530331, 12019)
-    IfCharacterHasSpecialEffect(AND_1, 1051530331, 12019)
-    IfCharacterHasSpecialEffect(AND_1, 1051530331, 12018)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    ForceAnimation(1051530331, 20020, unknown2=1.0)
+    AddSpecialEffect(Characters.MonstrousCrow, 12019)
+    AND_1.Add(CharacterHasSpecialEffect(Characters.MonstrousCrow, 12019))
+    AND_1.Add(CharacterHasSpecialEffect(Characters.MonstrousCrow, 12018))
+    
+    MAIN.Await(AND_1)
+    
+    ForceAnimation(Characters.MonstrousCrow, 20020)
     End()

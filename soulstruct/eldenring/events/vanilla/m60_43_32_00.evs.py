@@ -12,32 +12,38 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_32_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 9005910, args=(1043321940, 1043320101, 1043320101, 1), arg_types="IIIi")
-    RunCommonEvent(0, 9005911, args=(1043321941,))
-    RunCommonEvent(0, 9005912, args=(1043320100, 605055), arg_types="Ii")
-    RunCommonEvent(0, 90005550, args=(1043320500, 1043321500, 43323500), arg_types="III")
+    CommonFunc_9005910(0, asset=1043321940, first_flag=1043320101, last_flag=1043320101, right=1)
+    CommonFunc_9005911(0, asset=1043321941)
+    CommonFunc_9005912(0, flag=1043320100, text=605055)
+    CommonFunc_90005550(0, flag=1043320500, asset=1043321500, obj_act_id=43323500)
     Event_1043322215(0, 1043320215, 1043322215)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005261, args=(1043320200, 1043322200, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005261, args=(1043320201, 1043322200, 5.0, 0.0, 0), arg_types="IIffi")
-    RunCommonEvent(0, 90005251, args=(1043320202, 5.0, 0.0, 3005), arg_types="Iffi")
+    CommonFunc_90005261(0, character=Characters.Rat0, region=1043322200, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005261(0, character=Characters.Rat1, region=1043322200, radius=5.0, seconds=0.0, animation_id=0)
+    CommonFunc_90005251(0, 1043320202, 5.0, 0.0, 3005)
 
 
 @RestartOnRest(1043322215)
 def Event_1043322215(_, character: uint, region: uint):
     """Event 1043322215"""
-    IfCharacterDead(AND_1, character)
-    EndIfConditionTrue(input_condition=AND_1)
-    IfCharacterInsideRegion(MAIN, character=PLAYER, region=region)
+    AND_1.Add(CharacterDead(character))
+    if AND_1:
+        return
+    
+    MAIN.Await(CharacterInsideRegion(character=PLAYER, region=region))
+    
     AddSpecialEffect(character, 8080)

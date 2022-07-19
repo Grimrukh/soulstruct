@@ -40,10 +40,10 @@ def Constructor():
     RunEvent(7300, slot=7, args=(72102302, 2301952))
     RunEvent(7600, slot=10, args=(2301999, 2303999))
     RunEvent(9200, slot=1, args=(2303900,))
-    RunEvent(9220, slot=1, args=(2300750, 12304220, 12304221, 2300, 23, 0), arg_types="iiiiBB")
-    RunEvent(9240, slot=1, args=(2300750, 12304220, 12304221, 12304222, 23, 0), arg_types="iiiiBB")
-    RunEvent(9260, slot=1, args=(2300750, 12304220, 12304221, 12304222, 23, 0), arg_types="iiiiBB")
-    RunEvent(9280, slot=1, args=(2300750, 12304220, 12304221, 2300, 12304800, 23, 0), arg_types="iiiiiBB")
+    RunEvent(9220, slot=1, args=(2300750, 12304220, 12304221, 2300, 23))
+    RunEvent(9240, slot=1, args=(2300750, 12304220, 12304221, 12304222, 23))
+    RunEvent(9260, slot=1, args=(2300750, 12304220, 12304221, 12304222, 23))
+    RunEvent(9280, slot=1, args=(2300750, 12304220, 12304221, 2300, 12304800, 23))
     DeleteVFX(2303400, erase_root_only=False)
     DeleteVFX(2303910, erase_root_only=False)
     DeleteVFX(2303911, erase_root_only=False)
@@ -59,7 +59,7 @@ def Constructor():
         dismissal_flag=12304430,
         flag=12304440,
         flag_1=12301800,
-        action_button_id=10576
+        action_button_id=10576,
     )
     Event_12304410(
         1,
@@ -70,7 +70,7 @@ def Constructor():
         dismissal_flag=12304431,
         flag=12304441,
         flag_1=12301700,
-        action_button_id=10568
+        action_button_id=10568,
     )
     Event_12304410(
         2,
@@ -81,7 +81,7 @@ def Constructor():
         dismissal_flag=12304432,
         flag=12304442,
         flag_1=12301700,
-        action_button_id=10564
+        action_button_id=10564,
     )
     Event_12304450(0, character=2300740, region=2302722, flag=12304420, flag_1=12304430, flag_2=12304800)
     Event_12304450(1, character=2300930, region=2302911, flag=12304421, flag_1=12304431, flag_2=12304700)
@@ -94,7 +94,7 @@ def Constructor():
         region_2=2302801,
         animation=101130,
         flag=12304450,
-        region_3=2302801
+        region_3=2302801,
     )
     Event_12304460(
         1,
@@ -104,7 +104,7 @@ def Constructor():
         region_2=2302811,
         animation=101130,
         flag=12304451,
-        region_3=2302811
+        region_3=2302811,
     )
     Event_12304460(
         2,
@@ -114,7 +114,7 @@ def Constructor():
         region_2=2302811,
         animation=101130,
         flag=12304452,
-        region_3=2302811
+        region_3=2302811,
     )
     StartPlayLogMeasurement(measurement_id=2300000, name=0, overwrite=False)
     StartPlayLogMeasurement(measurement_id=2300001, name=18, overwrite=True)
@@ -416,7 +416,7 @@ def Constructor():
         special_effect_id=480,
         special_effect_id_1=490,
         animation_id=8000,
-        part_health=130
+        part_health=130,
     )
     Event_12304715(
         1,
@@ -426,7 +426,7 @@ def Constructor():
         special_effect_id=481,
         special_effect_id_1=491,
         animation_id=8010,
-        part_health=150
+        part_health=150,
     )
     Event_12304715(
         2,
@@ -436,7 +436,7 @@ def Constructor():
         special_effect_id=482,
         special_effect_id_1=492,
         animation_id=8030,
-        part_health=150
+        part_health=150,
     )
     Event_12304715(
         3,
@@ -446,7 +446,7 @@ def Constructor():
         special_effect_id=483,
         special_effect_id_1=493,
         animation_id=8020,
-        part_health=200
+        part_health=200,
     )
     Event_12304715(
         4,
@@ -456,7 +456,7 @@ def Constructor():
         special_effect_id=484,
         special_effect_id_1=494,
         animation_id=8040,
-        part_health=200
+        part_health=200,
     )
     Event_12300100()
     Event_12300110(0, action_button_id=7031, anchor_entity=2301701, flag=12300120)
@@ -538,7 +538,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         1,
@@ -546,7 +546,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109913
+        ai_param_id_1=109913,
     )
     Event_12305140(
         2,
@@ -554,7 +554,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109913
+        ai_param_id_1=109913,
     )
     Event_12305140(
         3,
@@ -562,7 +562,7 @@ def Constructor():
         animation_id=7006,
         animation_id_1=7007,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         4,
@@ -570,7 +570,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         5,
@@ -578,7 +578,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         6,
@@ -586,7 +586,7 @@ def Constructor():
         animation_id=7003,
         animation_id_1=7004,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         7,
@@ -594,7 +594,7 @@ def Constructor():
         animation_id=7006,
         animation_id_1=7007,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         8,
@@ -602,7 +602,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         9,
@@ -610,7 +610,7 @@ def Constructor():
         animation_id=7006,
         animation_id_1=7007,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         10,
@@ -618,7 +618,7 @@ def Constructor():
         animation_id=7003,
         animation_id_1=7004,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         11,
@@ -626,7 +626,7 @@ def Constructor():
         animation_id=7006,
         animation_id_1=7007,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         12,
@@ -634,7 +634,7 @@ def Constructor():
         animation_id=7003,
         animation_id_1=7004,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         13,
@@ -642,7 +642,7 @@ def Constructor():
         animation_id=7003,
         animation_id_1=7004,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         14,
@@ -650,7 +650,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         15,
@@ -658,7 +658,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         16,
@@ -666,7 +666,7 @@ def Constructor():
         animation_id=7006,
         animation_id_1=7007,
         ai_param_id=109900,
-        ai_param_id_1=109912
+        ai_param_id_1=109912,
     )
     Event_12305140(
         17,
@@ -674,7 +674,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109015,
-        ai_param_id_1=109015
+        ai_param_id_1=109015,
     )
     Event_12305140(
         18,
@@ -682,7 +682,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109015,
-        ai_param_id_1=109015
+        ai_param_id_1=109015,
     )
     Event_12305140(
         19,
@@ -690,7 +690,7 @@ def Constructor():
         animation_id=7000,
         animation_id_1=7001,
         ai_param_id=109015,
-        ai_param_id_1=109015
+        ai_param_id_1=109015,
     )
     Event_12305160(0, character=2300303, animation_id=7002, event_slot=0, ai_param_id=109000)
     Event_12305160(1, character=2300304, animation_id=7002, event_slot=1, ai_param_id=109000)
@@ -712,21 +712,21 @@ def Constructor():
     Event_12305160(17, character=2300500, animation_id=7002, event_slot=17, ai_param_id=109010)
     Event_12305160(18, character=2300501, animation_id=7002, event_slot=18, ai_param_id=109010)
     Event_12305160(19, character=2300502, animation_id=7002, event_slot=19, ai_param_id=109010)
-    Event_12305180(0, 2300300, 2302140, 15.0, 0.0)
-    Event_12305180(1, 2300301, 2302141, 5.0, 0.0)
-    Event_12305180(2, 2300302, 2302141, 5.0, 2.5)
-    Event_12305180(3, 2300401, 2302147, 5.0, 0.0)
-    Event_12305180(4, 2300201, 2302146, 10.0, 0.0)
-    Event_12305180(5, 2300202, 2302146, 10.0, 0.0)
-    Event_12305180(6, 2300205, 2302130, 10.0, 0.0)
-    Event_12305180(7, 2300330, 2302148, 10.0, 0.0)
-    Event_12305180(8, 2300331, 2302148, 10.0, 0.0)
-    Event_12305180(9, 2300332, 2302148, 10.0, 0.0)
-    Event_12305180(10, 2300333, 2302148, 10.0, 0.0)
-    Event_12305180(11, 2300334, 2302148, 10.0, 0.0)
-    Event_12305180(13, 2300607, 2302148, 10.0, 0.0)
-    Event_12305180(14, 2300608, 2302148, 10.0, 0.0)
-    Event_12305180(15, 2300600, 2302149, 3.0, 0.0)
+    Event_12305180(0, character=2300300, region=2302140, radius=15.0, seconds=0.0)
+    Event_12305180(1, character=2300301, region=2302141, radius=5.0, seconds=0.0)
+    Event_12305180(2, character=2300302, region=2302141, radius=5.0, seconds=2.5)
+    Event_12305180(3, character=2300401, region=2302147, radius=5.0, seconds=0.0)
+    Event_12305180(4, character=2300201, region=2302146, radius=10.0, seconds=0.0)
+    Event_12305180(5, character=2300202, region=2302146, radius=10.0, seconds=0.0)
+    Event_12305180(6, character=2300205, region=2302130, radius=10.0, seconds=0.0)
+    Event_12305180(7, character=2300330, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(8, character=2300331, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(9, character=2300332, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(10, character=2300333, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(11, character=2300334, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(13, character=2300607, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(14, character=2300608, region=2302148, radius=10.0, seconds=0.0)
+    Event_12305180(15, character=2300600, region=2302149, radius=3.0, seconds=0.0)
     Event_12305190(0, character=2300200)
     Event_12305190(1, character=2300201)
     Event_12305190(2, character=2300202)
@@ -763,86 +763,86 @@ def Constructor():
     Event_12305190(33, character=2300233)
     Event_12305190(34, character=2300234)
     Event_12305250()
-    Event_12305300(0, 2300602, 2300309, 20.0)
-    Event_12305300(1, 2300602, 2300310, 20.0)
-    Event_12305300(2, 2300602, 2300311, 20.0)
-    Event_12305300(3, 2300602, 2300312, 20.0)
-    Event_12305300(4, 2300602, 2300313, 20.0)
-    Event_12305300(5, 2300602, 2300314, 20.0)
-    Event_12305300(6, 2300602, 2300315, 20.0)
-    Event_12305300(7, 2300602, 2300316, 20.0)
-    Event_12305300(8, 2300602, 2300317, 20.0)
-    Event_12305300(9, 2300602, 2300318, 20.0)
-    Event_12305300(10, 2300602, 2300319, 20.0)
-    Event_12305300(11, 2300602, 2300320, 20.0)
-    Event_12305300(12, 2300602, 2300321, 20.0)
-    Event_12305300(13, 2300602, 2300322, 20.0)
-    Event_12305300(14, 2300602, 2300323, 20.0)
-    Event_12305300(15, 2300602, 2300324, 20.0)
-    Event_12305300(16, 2300602, 2300403, 20.0)
-    Event_12305300(17, 2300602, 2300404, 20.0)
-    Event_12305300(18, 2300602, 2300405, 20.0)
-    Event_12305300(19, 2300602, 2300406, 20.0)
-    Event_12305300(20, 2300602, 2300407, 20.0)
-    Event_12305300(21, 2300602, 2300408, 20.0)
-    Event_12305300(22, 2300602, 2300409, 20.0)
-    Event_12305300(23, 2300602, 2300410, 20.0)
-    Event_12305300(24, 2300603, 2300309, 35.0)
-    Event_12305300(25, 2300603, 2300310, 35.0)
-    Event_12305300(26, 2300603, 2300311, 35.0)
-    Event_12305300(27, 2300603, 2300312, 35.0)
-    Event_12305300(28, 2300603, 2300313, 35.0)
-    Event_12305300(29, 2300603, 2300314, 35.0)
-    Event_12305300(30, 2300603, 2300315, 35.0)
-    Event_12305300(31, 2300603, 2300316, 35.0)
-    Event_12305300(32, 2300603, 2300317, 35.0)
-    Event_12305300(33, 2300603, 2300318, 35.0)
-    Event_12305300(34, 2300603, 2300319, 35.0)
-    Event_12305300(35, 2300603, 2300320, 35.0)
-    Event_12305300(36, 2300603, 2300321, 35.0)
-    Event_12305300(37, 2300603, 2300322, 35.0)
-    Event_12305300(38, 2300603, 2300323, 35.0)
-    Event_12305300(39, 2300603, 2300324, 35.0)
-    Event_12305300(40, 2300603, 2300403, 35.0)
-    Event_12305300(41, 2300603, 2300404, 35.0)
-    Event_12305300(42, 2300603, 2300405, 35.0)
-    Event_12305300(43, 2300603, 2300406, 35.0)
-    Event_12305300(44, 2300603, 2300407, 35.0)
-    Event_12305300(45, 2300603, 2300408, 35.0)
-    Event_12305300(46, 2300603, 2300409, 35.0)
-    Event_12305300(47, 2300603, 2300410, 35.0)
-    Event_12305300(48, 2300604, 2300318, 35.0)
-    Event_12305300(49, 2300604, 2300319, 35.0)
-    Event_12305300(50, 2300604, 2300320, 35.0)
-    Event_12305300(51, 2300604, 2300321, 35.0)
-    Event_12305300(52, 2300604, 2300322, 35.0)
-    Event_12305300(53, 2300604, 2300323, 35.0)
-    Event_12305300(54, 2300604, 2300324, 35.0)
-    Event_12305300(55, 2300604, 2300406, 35.0)
-    Event_12305300(56, 2300604, 2300407, 35.0)
-    Event_12305300(57, 2300604, 2300408, 35.0)
-    Event_12305300(58, 2300604, 2300409, 35.0)
-    Event_12305300(59, 2300604, 2300410, 35.0)
-    Event_12305300(60, 2300605, 2300318, 35.0)
-    Event_12305300(61, 2300605, 2300319, 35.0)
-    Event_12305300(62, 2300605, 2300320, 35.0)
-    Event_12305300(63, 2300605, 2300321, 35.0)
-    Event_12305300(64, 2300605, 2300322, 35.0)
-    Event_12305300(65, 2300605, 2300323, 35.0)
-    Event_12305300(66, 2300605, 2300324, 35.0)
-    Event_12305300(67, 2300605, 2300406, 35.0)
-    Event_12305300(68, 2300605, 2300407, 35.0)
-    Event_12305300(69, 2300605, 2300408, 35.0)
-    Event_12305300(70, 2300605, 2300409, 35.0)
-    Event_12305300(71, 2300605, 2300410, 35.0)
-    Event_12305300(72, 2300606, 2300325, 25.0)
-    Event_12305300(73, 2300606, 2300326, 25.0)
-    Event_12305300(74, 2300606, 2300327, 25.0)
-    Event_12305300(75, 2300606, 2300201, 25.0)
-    Event_12305300(76, 2300606, 2300202, 25.0)
-    Event_12305300(77, 2300606, 2300203, 25.0)
-    Event_12305300(78, 2300606, 2300204, 25.0)
-    Event_12305300(79, 2300606, 2300205, 25.0)
+    Event_12305300(0, character=2300602, character_1=2300309, radius=20.0)
+    Event_12305300(1, character=2300602, character_1=2300310, radius=20.0)
+    Event_12305300(2, character=2300602, character_1=2300311, radius=20.0)
+    Event_12305300(3, character=2300602, character_1=2300312, radius=20.0)
+    Event_12305300(4, character=2300602, character_1=2300313, radius=20.0)
+    Event_12305300(5, character=2300602, character_1=2300314, radius=20.0)
+    Event_12305300(6, character=2300602, character_1=2300315, radius=20.0)
+    Event_12305300(7, character=2300602, character_1=2300316, radius=20.0)
+    Event_12305300(8, character=2300602, character_1=2300317, radius=20.0)
+    Event_12305300(9, character=2300602, character_1=2300318, radius=20.0)
+    Event_12305300(10, character=2300602, character_1=2300319, radius=20.0)
+    Event_12305300(11, character=2300602, character_1=2300320, radius=20.0)
+    Event_12305300(12, character=2300602, character_1=2300321, radius=20.0)
+    Event_12305300(13, character=2300602, character_1=2300322, radius=20.0)
+    Event_12305300(14, character=2300602, character_1=2300323, radius=20.0)
+    Event_12305300(15, character=2300602, character_1=2300324, radius=20.0)
+    Event_12305300(16, character=2300602, character_1=2300403, radius=20.0)
+    Event_12305300(17, character=2300602, character_1=2300404, radius=20.0)
+    Event_12305300(18, character=2300602, character_1=2300405, radius=20.0)
+    Event_12305300(19, character=2300602, character_1=2300406, radius=20.0)
+    Event_12305300(20, character=2300602, character_1=2300407, radius=20.0)
+    Event_12305300(21, character=2300602, character_1=2300408, radius=20.0)
+    Event_12305300(22, character=2300602, character_1=2300409, radius=20.0)
+    Event_12305300(23, character=2300602, character_1=2300410, radius=20.0)
+    Event_12305300(24, character=2300603, character_1=2300309, radius=35.0)
+    Event_12305300(25, character=2300603, character_1=2300310, radius=35.0)
+    Event_12305300(26, character=2300603, character_1=2300311, radius=35.0)
+    Event_12305300(27, character=2300603, character_1=2300312, radius=35.0)
+    Event_12305300(28, character=2300603, character_1=2300313, radius=35.0)
+    Event_12305300(29, character=2300603, character_1=2300314, radius=35.0)
+    Event_12305300(30, character=2300603, character_1=2300315, radius=35.0)
+    Event_12305300(31, character=2300603, character_1=2300316, radius=35.0)
+    Event_12305300(32, character=2300603, character_1=2300317, radius=35.0)
+    Event_12305300(33, character=2300603, character_1=2300318, radius=35.0)
+    Event_12305300(34, character=2300603, character_1=2300319, radius=35.0)
+    Event_12305300(35, character=2300603, character_1=2300320, radius=35.0)
+    Event_12305300(36, character=2300603, character_1=2300321, radius=35.0)
+    Event_12305300(37, character=2300603, character_1=2300322, radius=35.0)
+    Event_12305300(38, character=2300603, character_1=2300323, radius=35.0)
+    Event_12305300(39, character=2300603, character_1=2300324, radius=35.0)
+    Event_12305300(40, character=2300603, character_1=2300403, radius=35.0)
+    Event_12305300(41, character=2300603, character_1=2300404, radius=35.0)
+    Event_12305300(42, character=2300603, character_1=2300405, radius=35.0)
+    Event_12305300(43, character=2300603, character_1=2300406, radius=35.0)
+    Event_12305300(44, character=2300603, character_1=2300407, radius=35.0)
+    Event_12305300(45, character=2300603, character_1=2300408, radius=35.0)
+    Event_12305300(46, character=2300603, character_1=2300409, radius=35.0)
+    Event_12305300(47, character=2300603, character_1=2300410, radius=35.0)
+    Event_12305300(48, character=2300604, character_1=2300318, radius=35.0)
+    Event_12305300(49, character=2300604, character_1=2300319, radius=35.0)
+    Event_12305300(50, character=2300604, character_1=2300320, radius=35.0)
+    Event_12305300(51, character=2300604, character_1=2300321, radius=35.0)
+    Event_12305300(52, character=2300604, character_1=2300322, radius=35.0)
+    Event_12305300(53, character=2300604, character_1=2300323, radius=35.0)
+    Event_12305300(54, character=2300604, character_1=2300324, radius=35.0)
+    Event_12305300(55, character=2300604, character_1=2300406, radius=35.0)
+    Event_12305300(56, character=2300604, character_1=2300407, radius=35.0)
+    Event_12305300(57, character=2300604, character_1=2300408, radius=35.0)
+    Event_12305300(58, character=2300604, character_1=2300409, radius=35.0)
+    Event_12305300(59, character=2300604, character_1=2300410, radius=35.0)
+    Event_12305300(60, character=2300605, character_1=2300318, radius=35.0)
+    Event_12305300(61, character=2300605, character_1=2300319, radius=35.0)
+    Event_12305300(62, character=2300605, character_1=2300320, radius=35.0)
+    Event_12305300(63, character=2300605, character_1=2300321, radius=35.0)
+    Event_12305300(64, character=2300605, character_1=2300322, radius=35.0)
+    Event_12305300(65, character=2300605, character_1=2300323, radius=35.0)
+    Event_12305300(66, character=2300605, character_1=2300324, radius=35.0)
+    Event_12305300(67, character=2300605, character_1=2300406, radius=35.0)
+    Event_12305300(68, character=2300605, character_1=2300407, radius=35.0)
+    Event_12305300(69, character=2300605, character_1=2300408, radius=35.0)
+    Event_12305300(70, character=2300605, character_1=2300409, radius=35.0)
+    Event_12305300(71, character=2300605, character_1=2300410, radius=35.0)
+    Event_12305300(72, character=2300606, character_1=2300325, radius=25.0)
+    Event_12305300(73, character=2300606, character_1=2300326, radius=25.0)
+    Event_12305300(74, character=2300606, character_1=2300327, radius=25.0)
+    Event_12305300(75, character=2300606, character_1=2300201, radius=25.0)
+    Event_12305300(76, character=2300606, character_1=2300202, radius=25.0)
+    Event_12305300(77, character=2300606, character_1=2300203, radius=25.0)
+    Event_12305300(78, character=2300606, character_1=2300204, radius=25.0)
+    Event_12305300(79, character=2300606, character_1=2300205, radius=25.0)
     Event_12305440(0, character=2300309, special_effect_id=5522)
     Event_12305440(1, character=2300310, special_effect_id=5522)
     Event_12305440(2, character=2300311, special_effect_id=5522)
@@ -1036,7 +1036,7 @@ def Event_12301801():
         return
     AND_1.Add(FlagEnabled(12301800))
     AND_2.Add(CharacterBackreadDisabled(2300800))
-    AND_2.Add(HealthRatioLessThanOrEqual(2300800, value=0.0))
+    AND_2.Add(HealthRatio(2300800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1304,7 +1304,7 @@ def Event_12304807():
     if ThisEventFlagEnabled():
         return
     
-    MAIN.Await(HealthRatioLessThan(2300800, value=0.6700000166893005))
+    MAIN.Await(HealthRatio(2300800) < 0.6700000166893005)
     
     Wait(0.10000000149011612)
     ResetAnimation(2300800, disable_interpolation=True)
@@ -1325,7 +1325,7 @@ def Event_12304808():
         return
     if ThisEventFlagEnabled():
         return
-    AND_1.Add(HealthRatioLessThan(2300800, value=0.33000001311302185))
+    AND_1.Add(HealthRatio(2300800) < 0.33000001311302185)
     AND_1.Add(FlagEnabled(12304807))
     
     MAIN.Await(AND_1)
@@ -1424,7 +1424,7 @@ def Event_12301701():
         return
     AND_1.Add(FlagEnabled(12301700))
     AND_2.Add(CharacterBackreadDisabled(2300810))
-    AND_2.Add(HealthRatioLessThanOrEqual(2300810, value=0.0))
+    AND_2.Add(HealthRatio(2300810) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1670,13 +1670,13 @@ def Event_12304704():
     DisableNetworkSync()
     if FlagEnabled(12301700):
         return
-    AND_1.Add(HealthRatioGreaterThan(2300810, value=0.0))
+    AND_1.Add(HealthRatio(2300810) > 0.0)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=2300810, radius=10.0))
     
     MAIN.Await(AND_1)
     
     SetLockedCameraSlot(game_map=OLD_YHARNAM, camera_slot=1)
-    AND_2.Add(HealthRatioGreaterThan(2300810, value=0.0))
+    AND_2.Add(HealthRatio(2300810) > 0.0)
     AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=2300810, radius=12.0))
     
     MAIN.Await(AND_2)
@@ -1705,7 +1705,7 @@ def Event_12304707():
     if FlagEnabled(12301700):
         return
     AICommand(2300810, command_id=2, command_slot=1)
-    AND_1.Add(HealthRatioLessThan(2300810, value=0.6700000166893005))
+    AND_1.Add(HealthRatio(2300810) < 0.6700000166893005)
     AND_1.Add(CharacterHasSpecialEffect(2300810, 5402))
     
     MAIN.Await(AND_1)
@@ -1738,8 +1738,8 @@ def Event_12304715(
         return
     CreateNPCPart(2300810, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2300810, npc_part_id=npc_part_id_1, material_sfx_id=77, material_vfx_id=77)
-    AND_2.Add(CharacterPartHealthLessThanOrEqual(2300810, npc_part_id=npc_part_id_1, value=0))
-    AND_3.Add(HealthRatioLessThanOrEqual(2300810, value=0.0))
+    AND_2.Add(CharacterPartHealth(2300810, npc_part_id=npc_part_id_1) <= 0)
+    AND_3.Add(HealthRatio(2300810) <= 0.0)
     OR_1.Add(AND_2)
     OR_1.Add(AND_3)
     
@@ -1759,7 +1759,7 @@ def Event_12304715(
     ResetAnimation(2300810)
     ForceAnimation(2300810, animation_id)
     AddSpecialEffect(2300810, special_effect_id, affect_npc_part_hp=True)
-    CancelSpecialEffect(2300810, special_effect_id_1)
+    RemoveSpecialEffect(2300810, special_effect_id_1)
     ReplanAI(2300810)
     Wait(10.0)
     AICommand(2300810, command_id=110, command_slot=0)
@@ -1769,7 +1769,7 @@ def Event_12304715(
     
     SetNPCPartHealth(2300810, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
     AddSpecialEffect(2300810, special_effect_id_1, affect_npc_part_hp=True)
-    CancelSpecialEffect(2300810, special_effect_id)
+    RemoveSpecialEffect(2300810, special_effect_id)
     AICommand(2300810, command_id=-1, command_slot=0)
     ReplanAI(2300810)
     ChangeCharacterCloth(2300810, bit_count=10, state_id=1)
@@ -1954,8 +1954,8 @@ def Event_12304410(
     ForceAnimation(PLAYER, 100111)
     AddSpecialEffect(PLAYER, 4682)
     SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 
@@ -3253,7 +3253,7 @@ def Event_12305440(_, character: int, special_effect_id: int):
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 5645))
     
-    CancelSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_id)
     Restart()
 
 

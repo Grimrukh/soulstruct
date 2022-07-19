@@ -156,6 +156,20 @@ class ComparisonType(BaseNegatableEMEVDEnum):
             return ComparisonType.GreaterThan
         return super().negate()
 
+    def get_operator(self):
+        if self == ComparisonType.Equal:
+            return "=="
+        elif self == ComparisonType.NotEqual:
+            return "!="
+        elif self == ComparisonType.GreaterThan:
+            return ">"
+        elif self == ComparisonType.LessThan:
+            return "<"
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ">="
+        elif self == ComparisonType.LessThanOrEqual:
+            return "<="
+
 
 class CutsceneFlags(BaseEMEVDFlags):
     """Bit flags, stored in one byte."""

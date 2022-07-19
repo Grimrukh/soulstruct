@@ -72,32 +72,32 @@ def Constructor():
     Event_970(24, flag=15100800, item_lot_param_id=2340, item_lot_param_id_1=0, item_lot_param_id_2=0)
     Event_970(25, flag=15100850, item_lot_param_id=2350, item_lot_param_id_1=0, item_lot_param_id_2=0)
     Event_970(26, flag=15110800, item_lot_param_id=2360, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_250(10, 17, 6700, 0.0)
-    Event_250(11, 18, 6770, 0.0)
-    Event_250(12, 19, 6740, 0.0)
-    Event_250(13, 20, 6750, 0.0)
-    Event_250(14, 21, 6760, 0.0)
-    Event_250(15, 22, 6710, 0.0)
-    Event_250(16, 23, 6720, 0.0)
-    Event_250(17, 24, 6730, 0.0)
-    Event_250(20, 4, 13300800, 0.0)
-    Event_250(21, 5, 13900800, 0.0)
-    Event_250(22, 6, 13700800, 0.0)
-    Event_250(23, 7, 13410830, 0.0)
-    Event_250(24, 27, 14000800, 0.0)
-    Event_250(25, 28, 13000800, 0.0)
-    Event_250(26, 29, 13100800, 0.0)
-    Event_250(27, 30, 13300850, 0.0)
-    Event_250(28, 31, 13500800, 0.0)
-    Event_250(29, 32, 13800800, 0.0)
-    Event_250(30, 33, 13700850, 0.0)
-    Event_250(31, 34, 13000890, 0.0)
-    Event_250(32, 35, 13010800, 0.0)
-    Event_250(33, 36, 13800830, 0.0)
-    Event_250(34, 37, 13000830, 0.0)
-    Event_250(35, 38, 14000830, 0.0)
-    Event_250(36, 39, 13200800, 0.0)
-    Event_250(37, 40, 13200850, 0.0)
+    Event_250(10, achievement_id=17, flag=6700, seconds=0.0)
+    Event_250(11, achievement_id=18, flag=6770, seconds=0.0)
+    Event_250(12, achievement_id=19, flag=6740, seconds=0.0)
+    Event_250(13, achievement_id=20, flag=6750, seconds=0.0)
+    Event_250(14, achievement_id=21, flag=6760, seconds=0.0)
+    Event_250(15, achievement_id=22, flag=6710, seconds=0.0)
+    Event_250(16, achievement_id=23, flag=6720, seconds=0.0)
+    Event_250(17, achievement_id=24, flag=6730, seconds=0.0)
+    Event_250(20, achievement_id=4, flag=13300800, seconds=0.0)
+    Event_250(21, achievement_id=5, flag=13900800, seconds=0.0)
+    Event_250(22, achievement_id=6, flag=13700800, seconds=0.0)
+    Event_250(23, achievement_id=7, flag=13410830, seconds=0.0)
+    Event_250(24, achievement_id=27, flag=14000800, seconds=0.0)
+    Event_250(25, achievement_id=28, flag=13000800, seconds=0.0)
+    Event_250(26, achievement_id=29, flag=13100800, seconds=0.0)
+    Event_250(27, achievement_id=30, flag=13300850, seconds=0.0)
+    Event_250(28, achievement_id=31, flag=13500800, seconds=0.0)
+    Event_250(29, achievement_id=32, flag=13800800, seconds=0.0)
+    Event_250(30, achievement_id=33, flag=13700850, seconds=0.0)
+    Event_250(31, achievement_id=34, flag=13000890, seconds=0.0)
+    Event_250(32, achievement_id=35, flag=13010800, seconds=0.0)
+    Event_250(33, achievement_id=36, flag=13800830, seconds=0.0)
+    Event_250(34, achievement_id=37, flag=13000830, seconds=0.0)
+    Event_250(35, achievement_id=38, flag=14000830, seconds=0.0)
+    Event_250(36, achievement_id=39, flag=13200800, seconds=0.0)
+    Event_250(37, achievement_id=40, flag=13200850, seconds=0.0)
     Event_6099()
     Event_6100(0, flag=6100, flag_1=13300800)
     Event_6100(1, flag=6101, flag_1=13900800)
@@ -144,7 +144,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=0
+        left=0,
     )
     Event_9120(
         1,
@@ -154,7 +154,7 @@ def Constructor():
         bit_count=3,
         bit_count_1=3,
         max_value__value=3,
-        left=0
+        left=0,
     )
     Event_9120(
         2,
@@ -164,7 +164,7 @@ def Constructor():
         bit_count=3,
         bit_count_1=3,
         max_value__value=6,
-        left=0
+        left=0,
     )
     Event_9120(
         3,
@@ -174,7 +174,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=1
+        left=1,
     )
     Event_9120(
         4,
@@ -184,7 +184,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=1
+        left=1,
     )
     Event_9120(
         5,
@@ -194,7 +194,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=1
+        left=1,
     )
     Event_9120(
         6,
@@ -204,7 +204,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=1
+        left=1,
     )
     Event_9120(
         7,
@@ -214,7 +214,7 @@ def Constructor():
         bit_count=1,
         bit_count_1=1,
         max_value__value=1,
-        left=0
+        left=0,
     )
     Event_9016()
     Event_9011(0, flag=74000132)
@@ -636,8 +636,8 @@ def Event_710():
     DefineLabel(2)
     EnableFlag(711)
     WaitFrames(frames=0)
-    CancelSpecialEffect(PLAYER, 4900)
-    CancelSpecialEffect(PLAYER, 4901)
+    RemoveSpecialEffect(PLAYER, 4900)
+    RemoveSpecialEffect(PLAYER, 4901)
     End()
 
 
@@ -652,36 +652,36 @@ def Event_730():
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
-    CancelSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
+    RemoveSpecialEffect(PLAYER, 11907)
     Wait(1.0)
     Restart()
 
@@ -952,7 +952,7 @@ def Event_9540(_, gesture_id: ushort, item_id: int, flag: int):
     AND_2.Add(HasAIStatus(3800198, ai_status=AIStatusType.Battle))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=3800198, radius=20.0))
     AND_3.Add(PlayerInOwnWorld())
-    AND_3.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
+    AND_3.Add(HealthRatio(PLAYER) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     AND_4.Add(OR_1)
@@ -2039,7 +2039,7 @@ def Event_9120(
     if FlagDisabled(flag):
         return RESTART
     IncrementEventValue(flag_2, bit_count=bit_count, max_value=max_value__value)
-    OR_2.Add(EventValueEqual(flag=flag_2, bit_count=bit_count_1, value=max_value__value))
+    OR_2.Add(EventValue(flag=flag_2, bit_count=bit_count_1) == max_value__value)
     if not OR_2:
         return RESTART
     EnableFlag(flag_1)

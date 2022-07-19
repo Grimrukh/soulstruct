@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 __all__ = ["EVSParser", "EVSError"]
 
 import abc
 import ast
-import copy
 import importlib
 import importlib.util  # TODO: needed? IDE doesn't think so...
 import logging
@@ -32,11 +33,11 @@ _LOGGER = logging.getLogger(__name__)
 
 _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 _COMMON_FUNC_IMPORT_RE = re.compile(
-    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[\w\d_, \n]+)\)?\n"
+    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[*\w\d_, \n]+)\)?\n"
 )
 _RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
-_CONDITION_GROUP_RE = re.compile(r"(AND|OR)_(\d+)")
+_CONDITION_GROUP_RE = re.compile(r"(MAIN|(AND|OR)_(\d+))")
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
 _BUILTIN_NAMES = {"Condition", "MAIN", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
@@ -75,6 +76,8 @@ class EVSParser(abc.ABC):
     COMPILER: dict[str, tp.Callable]
     COMPILE: tp.Callable
     COMPILE_OBJECT_TEST: tp.Callable
+    SUPPORTS_COMMON_FUNC: bool = False
+    USES_COMMON_FUNC_SLOT: bool = False
 
     tree: ast.Module
     map_name: str
@@ -86,7 +89,7 @@ class EVSParser(abc.ABC):
     for_vars: dict[str, tp.Any]  # local to each event function
 
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
-    common_func_events: dict[str, EventInfo]  # information about [COMMON_FUNC] imported events
+    common_func_evs: EVSParser | None  # parser instance called on a COMMON_FUNC tagged import
     event_ids: set[int]  # set of event IDs used, so duplicates can easily be spotted
 
     held_conditions: list[int]
@@ -133,7 +136,7 @@ class EVSParser(abc.ABC):
         self.for_vars = {}
 
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
-        self.common_func_events = {}  # Same, but for [COMMON_FUNC] imports, which are added to `events` last.
+        self.common_func_evs = None
         self.event_ids = set()  # Used to ensure the same ID is not repeated.
 
         self._reset_conditions()
@@ -158,33 +161,46 @@ class EVSParser(abc.ABC):
 
     def _import_common_funcs(self, evs_string: str):
         for common_func_import_match in re.finditer(_COMMON_FUNC_IMPORT_RE, evs_string):
+            # TODO: Could theoretically support importing from multiple COMMON_FUNC modules (especially for DS1).
             groups = common_func_import_match.groupdict()
             level = len(groups["dots"])
             if level == 1:
                 level = 0  # single dot is the same as no dot (same directory)
             cf_module_name = groups["module"]
-            cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
+            if self.common_func_evs:
+                raise EVSCommonFuncImportError(cf_module_name, "", "Can only import one [COMMON_FUNC] module.")
+            if groups["names"] != "*" and "*" in groups["names"]:
+                raise EVSCommonFuncImportError(
+                    cf_module_name, groups["names"], "Invalid import names from COMMON_FUNC (contains asterisk)."
+                )
             cf_module_path = self.script_directory / ("../" * level + cf_module_name.replace(".", "/") + ".py")
             if not cf_module_path.is_file():
                 raise EVSCommonFuncImportError(
                     cf_module_name, "", f"Cannot import missing COMMON_FUNC file: {cf_module_path}."
                 )
-            common_func_parser = self.__class__(  # force this map's base flag
-                cf_module_path, map_name=self.map_name, script_directory=self.script_directory
-            )
-            for cf_name in cf_imported_names:
-                if cf_name in self.common_func_events:
-                    raise EVSCommonFuncImportError(
-                        cf_module_name, cf_name, "Common func name imported more than once."
-                    )
-                try:
-                    self.common_func_events[cf_name] = common_func_parser.events[cf_name]
-                except KeyError:
-                    raise EVSCommonFuncImportError(
-                        cf_module_name, cf_name, "Common func name not found in parsed EVS source file."
-                    )
+            if self.SUPPORTS_COMMON_FUNC:
+                self.common_func_evs = self.__class__(
+                    cf_module_path, script_directory=self.script_directory
+                )
+            else:
+                self.common_func_evs = self.__class__(  # force this map's base flag
+                    cf_module_path, map_name=self.map_name, script_directory=self.script_directory
+                )
+            if groups["names"] != "*":
+                cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
+                for cf_name in cf_imported_names:
+                    if cf_name not in self.common_func_evs.events:
+                        raise EVSCommonFuncImportError(
+                            cf_module_name, cf_name, "Common func name not found in parsed EVS source file."
+                        )
+                # Remove non-imported names from common EVS.
+                for event_name in tuple(self.common_func_evs.events):
+                    if event_name not in cf_imported_names:
+                        event_info = self.common_func_evs.events.pop(event_name)
+                        self.common_func_evs.event_ids.remove(event_info.id)
+            # Otherise, star import preserves all names from common module.
 
-        # Strip these imports from the EVS string to be parsed properly.
+        # Strip these imports from the EVS string before it is parsed properly.
         return re.sub(_COMMON_FUNC_IMPORT_RE, "\n", evs_string)
 
     # ~~~~~~~~~~~~~~~~~~~
@@ -298,9 +314,9 @@ class EVSParser(abc.ABC):
 
         for node in self.tree.body[1:]:
             if isinstance(node, ast.Import):
-                _import_module(node, self.globals, ignore_names=ignore_import_names)
+                self.globals |= _import_module(node, ignore_names=ignore_import_names)
             elif isinstance(node, ast.ImportFrom):
-                _import_from(node, self.globals, self.script_directory, ignore_names=ignore_import_names)
+                self.globals |= _import_from(node, self.script_directory, ignore_names=ignore_import_names)
             elif isinstance(node, ast.FunctionDef):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
@@ -316,9 +332,10 @@ class EVSParser(abc.ABC):
                     f"from-imports, event script function definitions, and global name assignments.",
                 )
 
-        # Add common_func events in now, after local events.
-        self.events |= self.common_func_events
-        self.event_ids |= {event.id for event in self.common_func_events.values()}
+        if self.common_func_evs and not self.SUPPORTS_COMMON_FUNC:
+            # Add common_func events in now, after local events.
+            self.events |= self.common_func_evs.events
+            self.event_ids |= self.common_func_evs.event_ids
 
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
@@ -409,16 +426,20 @@ class EVSParser(abc.ABC):
             f"Invalid line: {ast.dump(node)}. Must be `Condition()` assignment, IF/ELSE block, or instruction.",
         )
 
-    def _compile_event_call(self, node: ast.Call):
+    def _compile_event_call(self, node: ast.Call, is_common_func=False):
         """Shortcut for RunEvent(...) instruction."""
         name, args, kwargs = self._parse_function_call(node)
-        event_info = self.events[name]
+        event_info = self.common_func_evs.events[name] if is_common_func else self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
 
         if not args and not kwargs and not event_info.args:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
-            instruction = self._compile_instr(node, "RunEvent", event_info.id)
+            # Common events can also be called without arguments.
+            if is_common_func:
+                instruction = self._compile_instr(node, "RunCommonEvent", event_info.id)
+            else:
+                instruction = self._compile_instr(node, "RunEvent", event_info.id)
             instruction[0] += event_layer_string
             return instruction
 
@@ -434,6 +455,13 @@ class EVSParser(abc.ABC):
             slot, args = args[0], args[1:]
         if not isinstance(slot, int):
             raise EVSValueError(node, "Slot ('slot' keyword or first positional argument) must be an integer.")
+
+        if is_common_func and not self.USES_COMMON_FUNC_SLOT:
+            if slot != 0:
+                raise EVSSyntaxError(
+                    node.lineno, f"This game does not support non-zero slot arguments for imported common events."
+                )
+            slot = None
 
         if kwargs:
             args = []
@@ -456,11 +484,14 @@ class EVSParser(abc.ABC):
                 )
 
         event_id = event_info.id
-        slot = 0 if slot is None else slot
         args = (0,) if not args else args
         arg_types = event_info.arg_types if event_info.arg_types else None
 
-        instruction = self.COMPILER["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+        instr_name = "RunCommonEvent" if is_common_func else "RunEvent"
+        if slot is None:
+            instruction = self.COMPILER[instr_name](event_id, args=args, arg_types=arg_types)
+        else:
+            instruction = self.COMPILER[instr_name](event_id, slot=slot, args=args, arg_types=arg_types)
         instruction[0] += event_layer_string
         return instruction
 
@@ -485,7 +516,10 @@ class EVSParser(abc.ABC):
             and isinstance(node.func.value, ast.Name)
             and (match := _CONDITION_GROUP_RE.match(node.func.value.id))
         ):
-            return (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(f"MAIN condition used in an `Add()` call on line {node.lineno}. This is unusual.")
+                return 0
+            return (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
         elif (
             isinstance(node.func, ast.Attribute)
             and node.func.attr == "Await"
@@ -533,6 +567,8 @@ class EVSParser(abc.ABC):
 
         if name in self.events:
             return self._compile_event_call(node)
+        if self.common_func_evs and self.SUPPORTS_COMMON_FUNC and name in self.common_func_evs.events:
+            return self._compile_event_call(node, is_common_func=True)
 
         if name == "Condition":
             raise EVSError(node, "You must assign the Condition() to a variable.")
@@ -776,7 +812,13 @@ class EVSParser(abc.ABC):
 
         # 4. The condition is a condition group such as `AND_01`. (It cannot be `MAIN`.)
         if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
-            i = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(
+                    f"MAIN condition used in a skip/return instruction on line {node.lineno}. This is unusual."
+                )
+                i = 0
+            else:
+                i = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
             try:
                 return self._compile_condition_skip_or_return(node, i, negate, skip_lines, end_event, restart_event)
             except ValueError:
@@ -935,7 +977,6 @@ class EVSParser(abc.ABC):
 
         emevd_args = []
         emevd_kwargs = {}
-        node_to_recur = copy.deepcopy(node)  # ignore any modifications made here
 
         # NOT (recurred)
         if isinstance(node, ast.UnaryOp):
@@ -956,7 +997,6 @@ class EVSParser(abc.ABC):
             node, op_node, comparison_value = self._validate_comparison_node(node)
             if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
                 if node.func.id not in self.EMEDF_COMPARISON_TESTS:
-                    print(self.EMEDF_COMPARISON_TESTS)
                     raise EVSSyntaxError(node.lineno, f"Invalid test function for binary comparison: {node.func.id}")
                 emevd_args += self._parse_nodes(node.args)
                 emevd_kwargs.update(self._parse_keyword_nodes(node.keywords))
@@ -965,7 +1005,7 @@ class EVSParser(abc.ABC):
                     value=comparison_value,
                 )
                 node = node.func  # `Name` node handled below.
-                # Modify test name, e.g., `Health` -> `HealthComparison`, so 'Test function' section below catches it.
+                # Modify test name, e.g., `HealthRatio` -> `HealthRatioComparison`, so 'Test function' check catches it.
                 node.id = self.EMEDF_COMPARISON_TESTS[node.id]["test_name"]
             else:
                 raise EVSSyntaxError(
@@ -1001,12 +1041,16 @@ class EVSParser(abc.ABC):
                 raise EVSSyntaxError(
                     node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
                 )
-            i = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
-            if i in self.finished_conditions:
-                # This condition slot is being used again. It is no longer considered 'finished' and cannot be used in
-                # 'IfFinishedCondition' checks.
-                self.finished_conditions.remove(i)
-            self._check_finished_conditions(condition, i)
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(f"MAIN condition used in another condition on line {node.lineno}. This is unusual.")
+                i = 0  # does happen very rarely
+            else:
+                i = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
+                if i in self.finished_conditions:
+                    # This condition slot is being used again. It is no longer considered 'finished' and cannot be used
+                    # in 'IfFinishedCondition' checks.
+                    self.finished_conditions.remove(i)
+                self._check_finished_conditions(condition, i)
             logic = "False" if negate else "True"
             return self._compile_instr(node, f"IfCondition{logic}", condition, i)
 
@@ -1047,7 +1091,7 @@ class EVSParser(abc.ABC):
                 skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
                 instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
+                condition_emevd += self._compile_condition(node, negate=skip_negate, condition=temp_condition)
                 condition_emevd += self._compile_instr(node, instr, skip_lines, temp_condition)
                 return condition_emevd
             except ValueError as ex:
@@ -1058,7 +1102,8 @@ class EVSParser(abc.ABC):
             game_object = self._parse_nodes(node)  # This will raise an `EmevdNameError` if the name is invalid.
             if not isinstance(game_object, BaseGameObject):
                 raise EVSValueError(
-                    node.lineno, f"Only (some) `BaseGameObject` subclasses are directly testable."
+                    node.lineno,
+                    f"Only (some) `BaseGameObject` subclasses are directly testable, not {type(game_object).__name__}.",
                 )
             elif isinstance(game_object, FlagRange):
                 raise EVSValueError(
@@ -1083,7 +1128,7 @@ class EVSParser(abc.ABC):
                 skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
                 instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
+                condition_emevd += self._compile_condition(node, negate=skip_negate, condition=temp_condition)
                 condition_emevd += self._compile_instr(node, instr, skip_lines, temp_condition)
                 return condition_emevd
 
@@ -1351,10 +1396,10 @@ class EVSParser(abc.ABC):
             return arg
 
         # Check if name is a condition group.
-        if name == "MAIN":
-            return 0
         if match := _CONDITION_GROUP_RE.match(name):
-            condition = (-1 if match.group(1) == "OR" else 1) * int(match.group(2))
+            if match.group(1) == "MAIN":
+                return 0
+            condition = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
             if condition not in self.AND_SLOTS + self.OR_SLOTS:
                 raise EVSValueError(node, f"Invalid condition group name for EMEVD: {name} (group index {condition})")
             return condition
@@ -1706,11 +1751,12 @@ def _parse_event_arguments(
     return arg_dict, arg_types, arg_classes
 
 
-def _import_module(node: ast.Import, namespace: dict[str, tp.Any], ignore_names: list[str] = ()):
+def _import_module(node: ast.Import, ignore_names: list[str] = ()) -> dict[str, tp.Any]:
+    module_dict = {}
     for alias in node.names:
         name = alias.name
         if name in ignore_names:
-            return
+            continue
         try:
             module = importlib.import_module(alias.name)
             importlib.reload(module)
@@ -1718,15 +1764,19 @@ def _import_module(node: ast.Import, namespace: dict[str, tp.Any], ignore_names:
             raise EVSImportError(node, alias.name, str(e))
         as_name = alias.asname if alias.asname is not None else name
         try:
-            namespace[as_name] = getattr(module, name)
+            module_dict[as_name] = getattr(module, name)
         except AttributeError as e:
             raise EVSImportError(node, name, str(e))
+    del module
+    return module_dict
 
 
-def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path, ignore_names: list[str] = ()):
+def _import_from(
+    node: ast.ImportFrom, script_directory: Path, ignore_names: list[str] = ()
+) -> dict[str, tp.Any]:
     """Import names into given namespace dictionary."""
     if node.module in ignore_names:
-        return
+        return {}
     try:
         # Try to import and reload module normally.
         module = importlib.import_module(node.module)
@@ -1745,10 +1795,11 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path, 
             raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
         module = import_arbitrary_file(module_path)
 
+    module_dict = {}
     for alias in node.names:
         name = alias.name
         if name in ignore_names:
-            return  # already imported
+            continue  # already imported
         if name == "*":
             if "__all__" in vars(module):
                 all_names = vars(module)["__all__"]
@@ -1762,7 +1813,7 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path, 
                 ]
             for name_ in all_names:
                 try:
-                    namespace[name_] = getattr(module, name_)
+                    module_dict[name_] = getattr(module, name_)
                 except AttributeError as e:
                     _LOGGER.error(
                         f"EVS error: could not import {name_} from module {node.module} " f"(__all__ = {all_names})"
@@ -1771,10 +1822,11 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path, 
         else:
             as_name = alias.asname if alias.asname is not None else name
             try:
-                namespace[as_name] = getattr(module, name)
+                module_dict[as_name] = getattr(module, name)
             except AttributeError as e:
                 raise EVSImportFromError(node, node.module, name, str(e))
     del module
+    return module_dict
 
 
 def _import_from_common_func(

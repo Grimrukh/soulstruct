@@ -12,42 +12,66 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_42_51_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=76309, obj=1042511950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=76309, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76314, 76309, 1042511980, 77300, 3, 78300, 78301, 78302, 78303, 78304, 78305, 78306, 78307, 78308, 78309),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76314,
+        flag_1=76309,
+        asset=Assets.AEG099_060_9001,
+        source_flag=77300,
+        value=3,
+        flag_2=78300,
+        flag_3=78301,
+        flag_4=78302,
+        flag_5=78303,
+        flag_6=78304,
+        flag_7=78305,
+        flag_8=78306,
+        flag_9=78307,
+        flag_10=78308,
+        flag_11=78309,
     )
-    RunCommonEvent(0, 90005300, args=(1042510300, 1042510300, 1042510900, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005300(
+        0,
+        flag=1042510300,
+        character=Characters.Gargoyle,
+        item_lot_param_id=1042510900,
+        seconds=0.0,
+        left=0,
+    )
     Event_1042512240(0, 1042511690, 1042511691, 62031)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(1042510300, 30004, 20004, 1042512301, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(0, 1042510300, 30004, 20004, 1042512301, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1042512240)
-def Event_1042512240(_, obj: uint, entity: uint, flag: uint):
+def Event_1042512240(_, asset: uint, entity: uint, flag: uint):
     """Event 1042512240"""
     DisableNetworkSync()
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    ForceAnimation(entity, 1, unknown2=1.0)
-    DeleteObjectVFX(obj)
+    ForceAnimation(entity, 1)
+    DeleteAssetVFX(asset)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(obj, vfx_id=200, model_point=803220)
-    IfFlagEnabled(MAIN, flag)
-    ForceAnimation(entity, 1, unknown2=1.0)
-    DeleteObjectVFX(obj)
+    CreateAssetVFX(asset, vfx_id=200, model_point=803220)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    ForceAnimation(entity, 1)
+    DeleteAssetVFX(asset)

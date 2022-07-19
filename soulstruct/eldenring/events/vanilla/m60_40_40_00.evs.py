@@ -11,31 +11,34 @@ strings:
 154: N:\\GR\\data\\Param\\event\\m60.emevd
 220: N:\\GR\\data\\Param\\event\\common_macro.emevd
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_40_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005261, args=(1040400206, 1040402206, 10.0, 0.0, 3011), arg_types="IIffi")
-    Event_1040402200(0, character=1040400210)
-    Event_1040402200(1, character=1040400211)
-    Event_1040402200(2, character=1040400212)
-    Event_1040402200(3, character=1040400213)
-    Event_1040402200(4, character=1040400214)
-    Event_1040402200(5, character=1040400215)
-    Event_1040402200(6, character=1040400216)
-    Event_1040402200(7, character=1040400217)
-    Event_1040402200(8, character=1040400218)
-    Event_1040402220(0, character=1040400220)
-    RunCommonEvent(0, 90005423, args=(1040400220,))
+    CommonFunc_90005261(0, character=Characters.Wolf, region=1040402206, radius=10.0, seconds=0.0, animation_id=3011)
+    Event_1040402200(0, character=Characters.WanderingNoble0)
+    Event_1040402200(1, character=Characters.WanderingNoble1)
+    Event_1040402200(2, character=Characters.WanderingNoble2)
+    Event_1040402200(3, character=Characters.RayaLucariaSoldier0)
+    Event_1040402200(4, character=Characters.RayaLucariaSoldier1)
+    Event_1040402200(5, character=Characters.RayaLucariaSoldier2)
+    Event_1040402200(6, character=Characters.RayaLucariaFootSoldier0)
+    Event_1040402200(7, character=Characters.RayaLucariaFootSoldier1)
+    Event_1040402200(8, character=Characters.RayaLucariaFootSoldier2)
+    Event_1040402220(0, character=Characters.Troll)
+    CommonFunc_90005423(0, 1040400220)
 
 
 @NeverRestart(200)
 def Event_200():
     """Event 200"""
-    RunCommonEvent(0, 90005422, args=(1040408500, 1040401500, 1040403500), arg_types="III")
+    CommonFunc_90005422(0, 1040408500, 1040401500, 1040403500)
 
 
 @RestartOnRest(1040402200)

@@ -13,43 +13,55 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_34_44_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1034440000, obj=1034441950, unknown=5.0)
-    RunCommonEvent(0, 1034442200)
-    RunCommonEvent(0, 90005300, args=(1034440220, 1034440220, 40218, 0.0, 0), arg_types="IIifi")
+    RegisterGrace(grace_flag=1034440000, asset=Assets.AEG099_060_9000)
+    RunCommonEvent(1034442200, slot=0)
+    CommonFunc_90005300(0, flag=1034440220, character=Characters.Scarab, item_lot_param_id=40218, seconds=0.0, left=0)
     Event_1034440700(0, 1034440700, 930023, 3409)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1034440700)
-    RunCommonEvent(0, 90005261, args=(1034440200, 1034442200, 3.0, 2.0, -1), arg_types="IIffi")
-    RunCommonEvent(
+    DisableBackread(Characters.Commoner)
+    CommonFunc_90005261(0, 1034440200, 1034442200, 3.0, 2.0, -1)
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1034440200, 30002, 20002, 1034442200, 3.0, 2.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Albinauric0,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1034442200,
+        radius=3.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1034440201, 30002, 20002, 1034442200, 3.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.Albinauric1,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1034442200,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005261, args=(1034440202, 1034442200, 3.0, 1.0, -1), arg_types="IIffi")
-    RunCommonEvent(
-        0,
-        90005211,
-        args=(1034440202, 30002, 20002, 1034442200, 3.0, 1.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
-    )
+    CommonFunc_90005261(0, 1034440202, 1034442200, 3.0, 1.0, -1)
+    CommonFunc_90005211(0, 1034440202, 30002, 20002, 1034442200, 3.0, 1.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1034440700)
@@ -60,7 +72,9 @@ def Event_1034440700(_, character: uint, animation_id: int, flag: uint):
     GotoIfFlagEnabled(Label.L0, flag=flag)
     DisableCharacter(character)
     DisableBackread(character)
-    IfFlagEnabled(MAIN, flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     Restart()
 
     # --- Label 0 --- #
@@ -68,25 +82,30 @@ def Event_1034440700(_, character: uint, animation_id: int, flag: uint):
     EnableBackread(character)
     EnableCharacter(character)
     DisableGravity(character)
-    ForceAnimation(character, animation_id, unknown2=1.0)
-    IfFlagDisabled(MAIN, flag)
+    ForceAnimation(character, animation_id)
+    
+    MAIN.Await(FlagDisabled(flag))
+    
     Restart()
 
 
 @RestartOnRest(1034442200)
 def Event_1034442200():
     """Event 1034442200"""
-    EndIfThisEventSlotFlagEnabled()
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_3, character=PLAYER, region=1034442200)
-    IfConditionTrue(AND_1, input_condition=AND_3)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_3.Add(CharacterInsideRegion(character=PLAYER, region=1034442200))
+    AND_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
     TriggerAISound(ai_sound_param_id=4020, anchor_entity=1034442200, unk_8_12=1)
     End()

@@ -61,7 +61,8 @@ __all__ = [
     "IfFramesElapsed",  # 1[1]
     "IfRandomTimeElapsed",  # 1[2]
     "IfRandomFramesElapsed",  # 1[3]
-    "IfTimeOfDay",  # 1[5]
+    "IfTimeOfDay",  # 1[4]
+    "IfTimeOfDayInRange",  # 1[5]
     "IfFlagState",  # 3[0]
     "IfFlagEnabled",
     "IfFlagDisabled",
@@ -89,10 +90,11 @@ __all__ = [
     "IfMultiplayerState",  # 3[6]
     "IfHost",
     "IfClient",
-    "IfTryingToCreateSession",
-    "IfTryingToJoinSession",
-    "IfLeavingSession",
-    "IfFailedToCreateSession",
+    "IfMultiplayer",
+    "IfMultiplayerPending",
+    "IfSingleplayer",
+    "IfInvasion",
+    "IfInvasionPending",
     "IfAllPlayersRegionState",  # 3[7]
     "IfAllPlayersInsideRegion",
     "IfAllPlayersOutsideRegion",
@@ -100,13 +102,13 @@ __all__ = [
     "IfInsideMap",
     "IfOutsideMap",
     "IfMultiplayerEvent",  # 3[9]
-    "IfTrueFlagCountComparison",  # 3[10]
-    "IfTrueFlagCountEqual",
-    "IfTrueFlagCountNotEqual",
-    "IfTrueFlagCountGreaterThan",
-    "IfTrueFlagCountLessThan",
-    "IfTrueFlagCountGreaterThanOrEqual",
-    "IfTrueFlagCountLessThanOrEqual",
+    "IfEnabledFlagCountComparison",  # 3[10]
+    "IfEnabledFlagCountEqual",
+    "IfEnabledFlagCountNotEqual",
+    "IfEnabledFlagCountGreaterThan",
+    "IfEnabledFlagCountLessThan",
+    "IfEnabledFlagCountGreaterThanOrEqual",
+    "IfEnabledFlagCountLessThanOrEqual",
     "IfEventValueComparison",  # 3[12]
     "IfEventValueEqual",
     "IfEventValueNotEqual",
@@ -146,9 +148,6 @@ __all__ = [
     "IfHealthRatioGreaterThanOrEqual",
     "IfHealthRatioLessThanOrEqual",
     "IfCharacterType",  # 4[3]
-    "IfCharacterHuman",
-    "IfCharacterWhitePhantom",
-    "IfCharacterHollow",
     "IfCharacterTargetingState",  # 4[4]
     "IfCharacterTargeting",
     "IfCharacterNotTargeting",
@@ -166,6 +165,8 @@ __all__ = [
     "IfCharacterHasTAEEvent",
     "IfCharacterDoesNotHaveTAEEvent",
     "IfHasAIStatus",  # 4[9]
+    "IfPlayerClass",  # 4[11]
+    "IfPlayerCovenant",  # 4[12]
     "IfPlayerLevelComparison",  # 4[13]
     "IfPlayerLevelEqual",
     "IfPlayerLevelNotEqual",
@@ -180,12 +181,18 @@ __all__ = [
     "IfHealthValueLessThan",
     "IfHealthValueGreaterThanOrEqual",
     "IfHealthValueLessThanOrEqual",
-    "IfObjectDestructionState",  # 5[0]
-    "IfObjectDestroyed",
-    "IfObjectNotDestroyed",
-    "IfObjectDamaged",  # 5[1]
-    "IfObjectActivated",  # 5[2]
-    "IfObjectHealthValueComparison",  # 5[3]
+    "IfAssetDestructionState",  # 5[0]
+    "IfAssetDestroyed",
+    "IfAssetNotDestroyed",
+    "IfAssetDamaged",  # 5[1]
+    "IfAssetActivated",  # 5[2]
+    "IfAssetHealthValueComparison",  # 5[3]
+    "IfAssetHealthValueEqual",
+    "IfAssetHealthValueNotEqual",
+    "IfAssetHealthValueGreaterThan",
+    "IfAssetHealthValueLessThan",
+    "IfAssetHealthValueGreaterThanOrEqual",
+    "IfAssetHealthValueLessThanOrEqual",
     "IfPlayerMovingOnCollision",  # 11[0]
     "IfPlayerRunningOnCollision",  # 11[1]
     "IfPlayerStandingOnCollision",  # 11[2]
@@ -286,14 +293,14 @@ __all__ = [
     "EndIfOutsideMap",
     "RestartIfInsideMap",
     "RestartIfOutsideMap",
-    "SkipLinesIfObjectDestructionState",  # 1005[1]
-    "SkipLinesIfObjectDestroyed",
-    "SkipLinesIfObjectNotDestroyed",
-    "ReturnIfObjectDestructionState",  # 1005[2]
-    "EndIfObjectDestroyed",
-    "EndIfObjectNotDestroyed",
-    "RestartIfObjectDestroyed",
-    "RestartIfObjectNotDestroyed",
+    "SkipLinesIfAssetDestructionState",  # 1005[1]
+    "SkipLinesIfAssetDestroyed",
+    "SkipLinesIfAssetNotDestroyed",
+    "ReturnIfAssetDestructionState",  # 1005[2]
+    "EndIfAssetDestroyed",
+    "EndIfAssetNotDestroyed",
+    "RestartIfAssetDestroyed",
+    "RestartIfAssetNotDestroyed",
     "TerminateEvent",  # 2000[1]
     "SetNetworkSyncState",  # 2000[2]
     "EnableNetworkSync",
@@ -301,9 +308,8 @@ __all__ = [
     "ClearMainCondition",  # 2000[3]
     "IssuePrefetchRequest",  # 2000[4]
     "SaveRequest",  # 2000[5]
-    "RunCommonEvent",  # 2000[6]
-    "UnknownSystem_07",  # 2000[7]
-    "UnknownSystem_08",  # 2000[8]
+    "StartPS5Activity",  # 2000[7]
+    "EndPS5Activity",  # 2000[8]
     "PlayCutsceneToAll",  # 2002[1]
     "PlayCutsceneToPlayer",  # 2002[3]
     "SetSpawnerState",  # 2003[3]
@@ -374,7 +380,7 @@ __all__ = [
     "SetEventPoint",  # 2004[18]
     "SetAIParamID",  # 2004[19]
     "ReplanAI",  # 2004[20]
-    "CancelSpecialEffect",  # 2004[21]
+    "RemoveSpecialEffect",  # 2004[21]
     "CreateNPCPart",  # 2004[22]
     "SetNPCPartHealth",  # 2004[23]
     "SetNPCPartEffects",  # 2004[24]
@@ -405,36 +411,36 @@ __all__ = [
     "ResetAnimation",  # 2004[43]
     "SetTeamTypeAndExitStandbyAnimation",  # 2004[44]
     "EqualRecovery",  # 2004[47]
-    "DestroyObject",  # 2005[1]
-    "RestoreObject",  # 2005[2]
-    "SetObjectState",  # 2005[3]
-    "EnableObject",
-    "DisableObject",
+    "DestroyAsset",  # 2005[1]
+    "RestoreAsset",  # 2005[2]
+    "SetAssetState",  # 2005[3]
+    "EnableAsset",
+    "DisableAsset",
     "SetTreasureState",  # 2005[4]
     "EnableTreasure",
     "DisableTreasure",
-    "ActivateObject",  # 2005[5]
-    "SetObjectActivation",  # 2005[6]
+    "ActivateAsset",  # 2005[5]
+    "SetAssetActivation",  # 2005[6]
     "EndOfAnimation",  # 2005[7]
     "PostDestruction",  # 2005[8]
     "CreateHazard",  # 2005[9]
-    "MoveObjectToCharacter",  # 2005[11]
-    "RemoveObjectFlag",  # 2005[12]
-    "SetObjectInvulnerabilityState",  # 2005[13]
-    "EnableObjectInvulnerability",
-    "DisableObjectInvulnerability",
-    "SetObjectActivationWithIdx",  # 2005[14]
+    "MoveAssetToCharacter",  # 2005[11]
+    "RemoveAssetFlag",  # 2005[12]
+    "SetAssetInvulnerabilityState",  # 2005[13]
+    "EnableAssetInvulnerability",
+    "DisableAssetInvulnerability",
+    "SetAssetActivationWithIdx",  # 2005[14]
     "EnableTreasureCollection",  # 2005[15]
     "DeleteVFX",  # 2006[1]
     "CreateVFX",  # 2006[2]
     "CreateTemporaryVFX",  # 2006[3]
-    "CreateObjectVFX",  # 2006[4]
-    "DeleteObjectVFX",  # 2006[5]
+    "CreateAssetVFX",  # 2006[4]
+    "DeleteAssetVFX",  # 2006[5]
     "DisplayDialog",  # 2007[1]
     "DisplayBanner",  # 2007[2]
     "DisplayStatus",  # 2007[3]
-    "DisplayBattlefieldMessage",  # 2007[4]
-    "UnknownText_2007_9",  # 2007[9]
+    "DisplayFlashingMessage",  # 2007[4]
+    "DisplayFullScreenMessage",  # 2007[9]
     "ChangeCamera",  # 2008[1]
     "SetCameraVibration",  # 2008[2]
     "SetLockedCameraSlot",  # 2008[3]
@@ -446,7 +452,9 @@ __all__ = [
     "SetMapCollisionState",  # 2011[1]
     "EnableMapCollision",
     "DisableMapCollision",
-    "UnknownCollision_2011_2",  # 2011[2]
+    "SetMapCollisionBackreadMaskState",  # 2011[2]
+    "EnableMapCollisionBackreadMask",
+    "DisableMapCollisionBackreadMask",
     "SetMapPieceState",  # 2012[1]
     "EnableMapPiece",
     "DisableMapPiece",
@@ -462,35 +470,49 @@ __all__ = [
     "IfPlayerOwnWorldState",  # 3[26]
     "IfPlayerInOwnWorld",
     "IfPlayerNotInOwnWorld",
-    "IfMapCeremonyState",  # 3[28]
-    "IfMapInCeremony",
-    "IfMapNotInCeremony",
-    "IfInsideMapTile",  # 3[30]
-    "IfUnknownCondition_31",  # 3[31]
-    "IfUnknown_3_32",  # 3[32]
-    "IfUnknownCondition_33",  # 3[33]
-    "IfUnknownCondition_34",  # 3[34]
-    "IfUnknownCondition_35",  # 3[35]
-    "IfUnknownFlagCheck_37",  # 3[37]
-    "IfSteamConnectionState",  # 3[38]
+    "IfMapLoaded",  # 3[30]
+    "IfWeatherState",  # 3[31]
+    "IfMapUpdatePermissionState",  # 3[32]
+    "IfMapHasUpdatePermission",
+    "IfMapDoesNotHaveUpdatePermission",
+    "IfFieldBattleMusicState",  # 3[33]
+    "IfFieldBattleMusicEnabled",
+    "IfFieldBattleMusicDisabled",
+    "IfPlayerHasArmorEquipped",  # 3[34]
+    "IfPlayerHasHeadArmorEquipped",
+    "IfPlayerHasBodyArmorEquipped",
+    "IfPlayerHasArmsArmorEquipped",
+    "IfPlayerHasLegsArmorEquipped",
+    "IfCeremonyState",  # 3[35]
+    "IfCeremonyActive",
+    "IfCeremonyInactive",
+    "IfWeatherLotState",  # 3[37]
+    "IfWeatherLotActive",
+    "IfWeatherLotInactive",
+    "IfPlayerGender",  # 3[38]
     "IfAllyPhantomCountComparison",  # 3[39]
-    "IfCharacterDrawGroupState",  # 4[15]
-    "IfCharacterDrawGroupEnabled",
-    "IfCharacterDrawGroupDisabled",
-    "IfUnknownCharacterCondition_19",  # 4[19]
-    "IfCharacterInvadeType",  # 4[27]
-    "IfUnknownCharacterCondition_28",  # 4[28]
-    "IfUnknownCharacterCondition_30",  # 4[30]
-    "IfUnknownCharacterCondition_31",  # 4[31]
+    "IfCharacterProportionDeathState",  # 4[15]
+    "IfCharacterProportionDead",
+    "IfCharacterProportionAlive",
+    "IfCharacterProportionSpecialEffectState",  # 4[19]
+    "IfCharacterProportionHasSpecialEffect",
+    "IfCharacterProportionDoesNotHaveSpecialEffect",
+    "IfPlayerTargeted",  # 4[28]
+    "IfNPCPartAttackedWithDamageType",  # 4[30]
+    "IfCharacterInvadeType",  # 4[31]
     "IfCharacterMountState",  # 4[32]
     "IfCharacterMounted",
     "IfCharacterNotMounted",
-    "IfUnknownCharacterCondition_34",  # 4[34]
-    "IfUnknownCharacterCondition_35",  # 4[35]
-    "IfUnknownObjectCondition_6",  # 5[6]
-    "IfObjectBackreadState",  # 5[10]
-    "IfObjectBackreadEnabled",
-    "IfObjectBackreadDisabled",
+    "IfCharacterStateInfoState",  # 4[34]
+    "IfCharacterHasStateInfo",
+    "IfCharacterDoesNotHaveStateInfo",
+    "IfSpecialStandbyEndedFlagState",  # 4[35]
+    "IfSpecialStandbyEndedFlagEnabled",
+    "IfSpecialStandbyEndedFlagDisabled",
+    "IfAssetProportionDestructionState",  # 5[6]
+    "IfAssetBackreadState",  # 5[10]
+    "IfAssetBackreadEnabled",
+    "IfAssetBackreadDisabled",
     "SkipLinesIfUnsignedComparison",  # 1000[10]
     "SkipLinesIfUnsignedEqual",
     "SkipLinesIfUnsignedNotEqual",
@@ -531,23 +553,26 @@ __all__ = [
     "SkipLinesIfMultiplayerState",  # 1003[5]
     "SkipLinesIfHost",
     "SkipLinesIfClient",
-    "SkipLinesIfTryingToCreateSession",
-    "SkipLinesIfTryingToJoinSession",
-    "SkipLinesIfLeavingSession",
-    "SkipLinesIfFailedToCreateSession",
+    "SkipLinesIfMultiplayer",
+    "SkipLinesIfMultiplayerPending",
+    "SkipLinesIfSingleplayer",
+    "SkipLinesIfInvasion",
+    "SkipLinesIfInvasionPending",
     "ReturnIfMultiplayerState",  # 1003[6]
     "EndIfHost",
     "EndIfClient",
-    "EndIfTryingToCreateSession",
-    "EndIfTryingToJoinSession",
-    "EndIfLeavingSession",
-    "EndIfFailedToCreateSession",
+    "EndIfMultiplayer",
+    "EndIfMultiplayerPending",
+    "EndIfSingleplayer",
+    "EndIfInvasion",
+    "EndIfInvasionPending",
     "RestartIfHost",
     "RestartIfClient",
-    "RestartIfTryingToCreateSession",
-    "RestartIfTryingToJoinSession",
-    "RestartIfLeavingSession",
-    "RestartIfFailedToCreateSession",
+    "RestartIfMultiplayer",
+    "RestartIfMultiplayerPending",
+    "RestartIfSingleplayer",
+    "RestartIfInvasion",
+    "RestartIfInvasionPending",
     "SkipLinesIfCoopClientCountComparison",  # 1003[9]
     "ReturnIfCoopClientCountComparison",  # 1003[10]
     "EndIfCoopClientCountComparison",
@@ -578,10 +603,11 @@ __all__ = [
     "GotoIfMultiplayerState",  # 1003[105]
     "GotoIfHost",
     "GotoIfClient",
-    "GotoIfTryingToCreateSession",
-    "GotoIfTryingToJoinSession",
-    "GotoIfLeavingSession",
-    "GotoIfFailedToCreateSession",
+    "GotoIfMultiplayer",
+    "GotoIfMultiplayerPending",
+    "GotoIfSingleplayer",
+    "GotoIfInvasion",
+    "GotoIfInvasionPending",
     "GotoIfMapPresenceState",  # 1003[107]
     "GotoIfInsideMap",
     "GotoIfOutsideMap",
@@ -605,10 +631,28 @@ __all__ = [
     "SkipLinesIfPlayerOutsideRegion",
     "SkipLinesIfCharacterInsideRegion",
     "SkipLinesIfCharacterOutsideRegion",
-    "SkipLinesIfUnknown_203",  # 1003[203]
-    "GotoIfUnknown_204",  # 1003[204]
-    "SkipOrGotoIfUnknown_206",  # 1003[206]
-    "ReturnIfUnknown_208",  # 1003[208]
+    "SkipLinesIfMapUpdatePermissionState",  # 1003[203]
+    "SkipLinesIfMapHasUpdatePermission",
+    "SkipLinesIfMapDoesNotHaveUpdatePermission",
+    "GotoIfMapUpdatePermissionState",  # 1003[204]
+    "GotoIfMapHasUpdatePermission",
+    "GotoIfMapDoesNotHaveUpdatePermission",
+    "ReturnIfMapUpdatePermissionState",  # 1003[205]
+    "EndIfMapHasUpdatePermission",
+    "EndIfMapDoesNotHaveUpdatePermission",
+    "RestartIfMapHasUpdatePermission",
+    "RestartIfMapDoesNotHaveUpdatePermission",
+    "SkipLinesIfCeremonyState",  # 1003[206]
+    "SkipLinesIfCeremonyActive",
+    "SkipLinesIfCeremonyInactive",
+    "GotoIfCeremonyState",  # 1003[207]
+    "GotoIfCeremonyActive",
+    "GotoIfCeremonyInactive",
+    "ReturnIfCeremonyState",  # 1003[208]
+    "EndIfCeremonyActive",
+    "EndIfCeremonyInactive",
+    "RestartIfCeremonyActive",
+    "RestartIfCeremonyInactive",
     "SkipLinesIfCharacterSpecialEffectState",  # 1004[0]
     "SkipLinesIfPlayerHasSpecialEffect",
     "SkipLinesIfPlayerDoesNotHaveSpecialEffect",
@@ -628,11 +672,23 @@ __all__ = [
     "EndIfCharacterDoesNotHaveSpecialEffect",
     "RestartIfCharacterHasSpecialEffect",
     "RestartIfCharacterDoesNotHaveSpecialEffect",
-    "Unknown_1004_04",  # 1004[4]
-    "GotoIfUnknown_1004_05",  # 1004[5]
-    "GotoIfObjectDestructionState",  # 1005[101]
-    "GotoIfObjectDestroyed",
-    "GotoIfObjectNotDestroyed",
+    "SkipLinesIfSpecialStandbyEndedFlagState",  # 1004[3]
+    "SkipLinesIfSpecialStandbyEndedFlagEnabled",
+    "SkipLinesIfSpecialStandbyEndedFlagDisabled",
+    "GotoIfSpecialStandbyEndedFlagState",  # 1004[4]
+    "GotoIfSpecialStandbyEndedFlagEnabled",
+    "GotoIfSpecialStandbyEndedFlagDisabled",
+    "ReturnIfSpecialStandbyEndedFlagState",  # 1004[5]
+    "EndIffSpecialStandbyEndedFlagEnabled",
+    "EndIffSpecialStandbyEndedFlagDisabled",
+    "RestartIffSpecialStandbyEndedFlagEnabled",
+    "RestartIffSpecialStandbyEndedFlagDisabled",
+    "AwaitAssetDestrucionState",  # 1005[0]
+    "AwaitAssetDestroyed",
+    "AwaitAssetNotDestroyed",
+    "GotoIfAssetDestructionState",  # 1005[101]
+    "GotoIfAssetDestroyed",
+    "GotoIfAssetNotDestroyed",
     "DefineLabel_0",  # 1014[0]
     "DefineLabel_1",  # 1014[1]
     "DefineLabel_2",  # 1014[2]
@@ -654,12 +710,14 @@ __all__ = [
     "DefineLabel_18",  # 1014[18]
     "DefineLabel_19",  # 1014[19]
     "DefineLabel_20",  # 1014[20]
-    "UnknownTimer_04",  # 2001[4]
-    "UnknownTimer_05",  # 2001[5]
-    "UnknownCutscene_10",  # 2002[10]
-    "UnknownCutscene_11",  # 2002[11]
-    "UnknownCutscene_12",  # 2002[12]
-    "UnknownCutscene_13",  # 2002[13]
+    "SetCurrentTime",  # 2001[4]
+    "SetTimeFreezeState",  # 2001[5]
+    "FreezeTime",
+    "UnfreezeTime",
+    "PlayCutsceneToPlayerWithWeatherAndTime",  # 2002[10]
+    "PlayCutsceneToPlayerAndWarp",  # 2002[11]
+    "PlayCutsceneToPlayerAndWarpWithWeatherAndTime",  # 2002[12]
+    "PlayCutsceneToPlayerAndWarpWithStablePositionUpdate",  # 2002[13]
     "StoreItemAmountSpecifiedByFlagValue",  # 2003[42]
     "GivePlayerItemAmountSpecifiedByFlagValue",  # 2003[43]
     "WarpPlayerToRespawnPoint",  # 2003[49]
@@ -678,77 +736,82 @@ __all__ = [
     "SetAbsoluteFlagState",
     "EnableThisSlotFlag",
     "DisableThisSlotFlag",
-    "Unknown_2003_68",  # 2003[68]
+    "SetWeather",  # 2003[68]
     "SetNetworkFlagState",  # 2003[69]
     "EnableNetworkFlag",
     "DisableNetworkFlag",
     "ToggleNetworkFlag",
     "SetAbsoluteNetworkFlagState",
     "SetNetworkInteractionState",  # 2003[70]
-    "Unknown_2003_71",  # 2003[71]
-    "Unknown_2003_72",  # 2003[72]
-    "Unknown_2003_73",  # 2003[73]
-    "Unknown_2003_74",  # 2003[74]
-    "Unknown_2003_75",  # 2003[75]
-    "Unknown_2003_76",  # 2003[76]
-    "Unknown_2003_77",  # 2003[77]
-    "Unknown_2003_78",  # 2003[78]
-    "Unknown_2003_79",  # 2003[79]
-    "Unknown_2003_80",  # 2003[80]
-    "Unknown_2003_81",  # 2003[81]
-    "Unknown_2003_82",  # 2003[82]
+    "AwardGesture",  # 2003[71]
+    "MultiplyBloodstainSouls",  # 2003[72]
+    "IncreaseCharacterSoulReward",  # 2003[73]
+    "IssueEndOfPseudoMultiplayerNotification",  # 2003[74]
+    "UseFarViewCamera",  # 2003[75]
+    "SetPlayerPositionDisplay",  # 2003[76]
+    "SetPseudoMultiplayerReturnPosition",  # 2003[77]
+    "OpenWorldMapPoint",  # 2003[78]
+    "SendNPCSummonHome",  # 2003[79]
+    "ShowLoadingScreenText",  # 2003[80]
+    "EnableLoadingScreenText",
+    "DisableLoadingScreenText",
+    "RemoveGesture",  # 2003[81]
+    "EraseNPCSummonSign",  # 2003[82]
     "ChangeCharacterCloth",  # 2004[48]
     "ChangePatrolBehavior",  # 2004[49]
     "SetLockOnPoint",  # 2004[50]
     "SetCharacterTalkRange",  # 2004[55]
-    "Unknown_2004_60",  # 2004[60]
+    "ConnectCharacterToCaravan",  # 2004[60]
     "Unknown_2004_61",  # 2004[61]
-    "Unknown_2004_63",  # 2004[63]
-    "Unknown_2004_67",  # 2004[67]
-    "AttachObjectToCharacter",  # 2004[68]
-    "Unknown_2004_69",  # 2004[69]
-    "Unknown_2004_70",  # 2004[70]
+    "SetCharacterEnableDistance",  # 2004[63]
+    "CopyPlayerCharacterData",  # 2004[67]
+    "AttachAssetToCharacter",  # 2004[68]
+    "SetCharacterDisableOnCollisionUnload",  # 2004[69]
+    "SetDistanceBasedNetworkAuthorityUpdate",  # 2004[70]
     "Unknown_2004_71",  # 2004[71]
-    "Unknown_2004_73",  # 2004[73]
-    "Unknown_2004_74",  # 2004[74]
-    "Unknown_2004_75",  # 2004[75]
+    "SetCharacterFadeOnEnable",  # 2004[73]
+    "MoveCharacterAndCopyDrawParentWitHFadeout",  # 2004[74]
+    "SetCharacterFaceParamOverride",  # 2004[75]
     "Unknown_2004_76",  # 2004[76]
-    "Unknown_2004_77",  # 2004[77]
-    "Unknown_2004_78",  # 2004[78]
-    "Unknown_2004_79",  # 2004[79]
-    "Unknown_2004_80",  # 2004[80]
-    "Unknown_2004_81",  # 2004[81]
-    "Unknown_2004_83",  # 2004[83]
-    "Unknown_2004_84",  # 2004[84]
-    "Unknown_2005_17",  # 2005[17]
-    "Unknown_2005_18",  # 2005[18]
-    "DestroyObject_NoSlot",  # 2005[19]
-    "CreateBigHazardousObject",  # 2005[20]
-    "SetUnknownVFX_06",  # 2006[6]
+    "FadeToBlack",  # 2004[77]
+    "CopyPlayerCharacterDataFromOnlinePlayers",  # 2004[78]
+    "RequestPlayerCharacterDataFromOnlinePlayers",  # 2004[79]
+    "SendPlayerCharacterDataToOnlinePlayers",  # 2004[80]
+    "ResetCharacterPosition",  # 2004[81]
+    "SetSpecialStandbyEndedFlag",  # 2004[83]
+    "SetCharacterEnableDistanceWithUnknown",  # 2004[84]
+    "AttachCaravanToController",  # 2005[17]
+    "AttachAssetToAsset",  # 2005[18]
+    "DestroyAsset_NoSlot",  # 2005[19]
+    "CreateBigHazardousAsset",  # 2005[20]
+    "SetWindVFX",  # 2006[6]
     "DisplayDialogAndSetFlags",  # 2007[10]
-    "DisplayUnknownMessage_12",  # 2007[12]
-    "DisplayUnknownMessage_13",  # 2007[13]
-    "DisplayUnknownMessage_14",  # 2007[14]
+    "DisplayFlashingMessageWithPriority",  # 2007[12]
+    "DisplaySubareaWelcomeMessage",  # 2007[13]
+    "DisplayAreaWelcomeMessage",  # 2007[14]
     "DisplayTutorialMessage",  # 2007[15]
-    "DisplayUnknownMessage_16",  # 2007[16]
-    "UnknownCamera_4",  # 2008[4]
+    "DisplayNetworkMessage",  # 2007[16]
+    "SetCameraAngle",  # 2008[4]
     "BanishInvaders",  # 2009[8]
     "BanishPhantoms",  # 2009[11]
     "SuppressSoundEvent",  # 2010[7]
     "UnknownSound_2010_8",  # 2010[8]
-    "UnknownSound_2010_10",  # 2010[10]
-    "UnknownSound_2010_11",  # 2010[11]
-    "UnknownSound_2010_12",  # 2010[12]
+    "SetBossMusic",  # 2010[10]
+    "SuppressSoundForFogGate",  # 2010[11]
+    "SetFieldBattleMusicWindUp",  # 2010[12]
+    "EnableFieldBattleMusicWindUp",
+    "DisableFieldBattleMusicWindUp",
     "SetAreaWelcomeMessageState",  # 2012[8]
-    "UnknownMap_11",  # 2012[11]
-    "UnknownMap_12",  # 2012[12]
+    "ActivateGparamOverride",  # 2012[11]
+    "DeactivateGparamOverride",  # 2012[12]
     "EnableThisFlag",
     "DisableThisFlag",
     # Custom instructions from `compiler`:
     "compile_game_object_test",
     "RunEvent",
-    "EnableObjectActivation",
-    "DisableObjectActivation",
+    "RunCommonEvent",
+    "EnableAssetActivation",
+    "DisableAssetActivation",
     "AwardItemLot",
     "PlayCutscene",
     "Move",
@@ -778,6 +841,7 @@ __all__ = [
     "RandomTimeElapsed",
     "RandomFramesElapsed",
     "TimeOfDay",
+    "TimeOfDayInRange",
     "FlagState",
     "FlagEnabled",
     "FlagDisabled",
@@ -805,10 +869,11 @@ __all__ = [
     "MultiplayerState",
     "Host",
     "Client",
-    "TryingToCreateSession",
-    "TryingToJoinSession",
-    "LeavingSession",
-    "FailedToCreateSession",
+    "Multiplayer",
+    "MultiplayerPending",
+    "Singleplayer",
+    "Invasion",
+    "InvasionPending",
     "AllPlayersRegionState",
     "AllPlayersInsideRegion",
     "AllPlayersOutsideRegion",
@@ -816,13 +881,13 @@ __all__ = [
     "InsideMap",
     "OutsideMap",
     "MultiplayerEvent",
-    "TrueFlagCountComparison",
-    "TrueFlagCountEqual",
-    "TrueFlagCountNotEqual",
-    "TrueFlagCountGreaterThan",
-    "TrueFlagCountLessThan",
-    "TrueFlagCountGreaterThanOrEqual",
-    "TrueFlagCountLessThanOrEqual",
+    "EnabledFlagCountComparison",
+    "EnabledFlagCountEqual",
+    "EnabledFlagCountNotEqual",
+    "EnabledFlagCountGreaterThan",
+    "EnabledFlagCountLessThan",
+    "EnabledFlagCountGreaterThanOrEqual",
+    "EnabledFlagCountLessThanOrEqual",
     "EventValueComparison",
     "EventValueEqual",
     "EventValueNotEqual",
@@ -862,9 +927,6 @@ __all__ = [
     "HealthRatioGreaterThanOrEqual",
     "HealthRatioLessThanOrEqual",
     "CharacterType",
-    "CharacterHuman",
-    "CharacterWhitePhantom",
-    "CharacterHollow",
     "CharacterTargetingState",
     "CharacterTargeting",
     "CharacterNotTargeting",
@@ -882,6 +944,8 @@ __all__ = [
     "CharacterHasTAEEvent",
     "CharacterDoesNotHaveTAEEvent",
     "HasAIStatus",
+    "PlayerClass",
+    "PlayerCovenant",
     "PlayerLevelComparison",
     "PlayerLevelEqual",
     "PlayerLevelNotEqual",
@@ -896,12 +960,18 @@ __all__ = [
     "HealthValueLessThan",
     "HealthValueGreaterThanOrEqual",
     "HealthValueLessThanOrEqual",
-    "ObjectDestructionState",
-    "ObjectDestroyed",
-    "ObjectNotDestroyed",
-    "ObjectDamaged",
-    "ObjectActivated",
-    "ObjectHealthValueComparison",
+    "AssetDestructionState",
+    "AssetDestroyed",
+    "AssetNotDestroyed",
+    "AssetDamaged",
+    "AssetActivated",
+    "AssetHealthValueComparison",
+    "AssetHealthValueEqual",
+    "AssetHealthValueNotEqual",
+    "AssetHealthValueGreaterThan",
+    "AssetHealthValueLessThan",
+    "AssetHealthValueGreaterThanOrEqual",
+    "AssetHealthValueLessThanOrEqual",
     "PlayerMovingOnCollision",
     "PlayerRunningOnCollision",
     "PlayerStandingOnCollision",
@@ -917,35 +987,49 @@ __all__ = [
     "PlayerOwnWorldState",
     "PlayerInOwnWorld",
     "PlayerNotInOwnWorld",
-    "MapCeremonyState",
-    "MapInCeremony",
-    "MapNotInCeremony",
-    "InsideMapTile",
-    "UnknownCondition_31",
-    "Unknown_3_32",
-    "UnknownCondition_33",
-    "UnknownCondition_34",
-    "UnknownCondition_35",
-    "UnknownFlagCheck_37",
-    "SteamConnectionState",
+    "MapLoaded",
+    "WeatherState",
+    "MapUpdatePermissionState",
+    "MapHasUpdatePermission",
+    "MapDoesNotHaveUpdatePermission",
+    "FieldBattleMusicState",
+    "FieldBattleMusicEnabled",
+    "FieldBattleMusicDisabled",
+    "PlayerHasArmorEquipped",
+    "PlayerHasHeadArmorEquipped",
+    "PlayerHasBodyArmorEquipped",
+    "PlayerHasArmsArmorEquipped",
+    "PlayerHasLegsArmorEquipped",
+    "CeremonyState",
+    "CeremonyActive",
+    "CeremonyInactive",
+    "WeatherLotState",
+    "WeatherLotActive",
+    "WeatherLotInactive",
+    "PlayerGender",
     "AllyPhantomCountComparison",
-    "CharacterDrawGroupState",
-    "CharacterDrawGroupEnabled",
-    "CharacterDrawGroupDisabled",
-    "UnknownCharacterCondition_19",
+    "CharacterProportionDeathState",
+    "CharacterProportionDead",
+    "CharacterProportionAlive",
+    "CharacterProportionSpecialEffectState",
+    "CharacterProportionHasSpecialEffect",
+    "CharacterProportionDoesNotHaveSpecialEffect",
+    "PlayerTargeted",
+    "NPCPartAttackedWithDamageType",
     "CharacterInvadeType",
-    "UnknownCharacterCondition_28",
-    "UnknownCharacterCondition_30",
-    "UnknownCharacterCondition_31",
     "CharacterMountState",
     "CharacterMounted",
     "CharacterNotMounted",
-    "UnknownCharacterCondition_34",
-    "UnknownCharacterCondition_35",
-    "UnknownObjectCondition_6",
-    "ObjectBackreadState",
-    "ObjectBackreadEnabled",
-    "ObjectBackreadDisabled",
+    "CharacterStateInfoState",
+    "CharacterHasStateInfo",
+    "CharacterDoesNotHaveStateInfo",
+    "SpecialStandbyEndedFlagState",
+    "SpecialStandbyEndedFlagEnabled",
+    "SpecialStandbyEndedFlagDisabled",
+    "AssetProportionDestructionState",
+    "AssetBackreadState",
+    "AssetBackreadEnabled",
+    "AssetBackreadDisabled",
     "ActionButton",
     "PlayerHasWeapon",
     "PlayerHasArmor",
@@ -955,13 +1039,13 @@ __all__ = [
     "PlayerDoesNotHaveArmor",
     "PlayerDoesNotHaveRing",
     "PlayerDoesNotHaveGood",
-    "TrueFlagCount",
+    "EnabledFlagCount",
     "EventValue",
     "HealthRatio",
     "CharacterPartHealth",
     "PlayerLevel",
     "HealthValue",
-    "ObjectHealthValue",
+    "AssetHealthValue",
     "AllyPhantomCount",
 ]
 
@@ -1121,9 +1205,18 @@ def IfRandomFramesElapsed(condition: ConditionGroup | int, min_frames: int, max_
     """
 
 
-def IfTimeOfDay(condition: ConditionGroup | int, earliest: tuple, latest: tuple, event_layers=()):
+def IfTimeOfDay(condition: ConditionGroup | int, time: tuple, event_layers=()):
     """
-    TODO
+    Checks if current in-game time is EXACTLY the given time, down to the second.
+    """
+
+
+def IfTimeOfDayInRange(condition: ConditionGroup | int, earliest: tuple, latest: tuple, event_layers=()):
+    """
+    Checks if current in-game time is between an earliest and latest time, each specified down to the second.
+    
+    Note that ranges will loop over midnight as expected, so checking, e.g., if the time is within the three-
+    hour range between hour 23 (PM) and hour 2 (AM) is straightforward: `earliest=(23, 0, 0), latest=(2, 0, 0)`.
     """
 
 
@@ -1273,8 +1366,8 @@ def IfCharacterOutsideRegion(
 def IfEntityDistanceState(
     condition: ConditionGroup | int,
     state: bool | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1286,7 +1379,7 @@ def IfEntityDistanceState(
 
 def IfPlayerWithinDistance(
     condition: ConditionGroup | int,
-    other_entity: Object | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1298,7 +1391,7 @@ def IfPlayerWithinDistance(
 
 def IfPlayerBeyondDistance(
     condition: ConditionGroup | int,
-    other_entity: Object | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1310,8 +1403,8 @@ def IfPlayerBeyondDistance(
 
 def IfEntityWithinDistance(
     condition: ConditionGroup | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1323,8 +1416,8 @@ def IfEntityWithinDistance(
 
 def IfEntityBeyondDistance(
     condition: ConditionGroup | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -1350,7 +1443,7 @@ def IfPlayerItemStateExcludingStorage(
 def IfActionButtonBasic(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -1386,27 +1479,33 @@ def IfClient(condition: ConditionGroup | int, event_layers=()):
     """
 
 
-def IfTryingToCreateSession(condition: ConditionGroup | int, event_layers=()):
+def IfMultiplayer(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=2`.
     """
 
 
-def IfTryingToJoinSession(condition: ConditionGroup | int, event_layers=()):
+def IfMultiplayerPending(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=3`.
     """
 
 
-def IfLeavingSession(condition: ConditionGroup | int, event_layers=()):
+def IfSingleplayer(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=4`.
     """
 
 
-def IfFailedToCreateSession(condition: ConditionGroup | int, event_layers=()):
+def IfInvasion(condition: ConditionGroup | int, event_layers=()):
     """
     Calls `IfMultiplayerState` with `state=5`.
+    """
+
+
+def IfInvasionPending(condition: ConditionGroup | int, event_layers=()):
+    """
+    Calls `IfMultiplayerState` with `state=6`.
     """
 
 
@@ -1457,7 +1556,7 @@ def IfMultiplayerEvent(condition: ConditionGroup | int, event_id: int, event_lay
     """
 
 
-def IfTrueFlagCountComparison(
+def IfEnabledFlagCountComparison(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     comparison_type: ComparisonType | int,
@@ -1470,7 +1569,7 @@ def IfTrueFlagCountComparison(
     """
 
 
-def IfTrueFlagCountEqual(
+def IfEnabledFlagCountEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1478,11 +1577,11 @@ def IfTrueFlagCountEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=0`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=0`.
     """
 
 
-def IfTrueFlagCountNotEqual(
+def IfEnabledFlagCountNotEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1490,11 +1589,11 @@ def IfTrueFlagCountNotEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=1`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=1`.
     """
 
 
-def IfTrueFlagCountGreaterThan(
+def IfEnabledFlagCountGreaterThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1502,11 +1601,11 @@ def IfTrueFlagCountGreaterThan(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=2`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=2`.
     """
 
 
-def IfTrueFlagCountLessThan(
+def IfEnabledFlagCountLessThan(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1514,11 +1613,11 @@ def IfTrueFlagCountLessThan(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=3`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=3`.
     """
 
 
-def IfTrueFlagCountGreaterThanOrEqual(
+def IfEnabledFlagCountGreaterThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1526,11 +1625,11 @@ def IfTrueFlagCountGreaterThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=4`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=4`.
     """
 
 
-def IfTrueFlagCountLessThanOrEqual(
+def IfEnabledFlagCountLessThanOrEqual(
     condition: ConditionGroup | int,
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
@@ -1538,7 +1637,7 @@ def IfTrueFlagCountLessThanOrEqual(
     event_layers=(),
 ):
     """
-    Calls `IfTrueFlagCountComparison` with `comparison_type=5`.
+    Calls `IfEnabledFlagCountComparison` with `comparison_type=5`.
     """
 
 
@@ -1624,7 +1723,7 @@ def IfEventValueLessThanOrEqual(
 def IfActionButtonBoss(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -1723,7 +1822,7 @@ def IfNewGameCycleLessThanOrEqual(condition: ConditionGroup | int, completion_co
 def IfActionButtonBasicLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -1745,7 +1844,7 @@ def IfActionButtonBasicLineIntersect(
 def IfActionButtonBossLineIntersect(
     condition: ConditionGroup | int,
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -1964,42 +2063,6 @@ def IfCharacterType(
 ):
     """
     TODO
-    """
-
-
-def IfCharacterHuman(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-):
-    """
-    Calls `IfCharacterType` with `character_type=0`.
-    """
-
-
-def IfCharacterWhitePhantom(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-):
-    """
-    Calls `IfCharacterType` with `character_type=1`.
-    """
-
-
-def IfCharacterHollow(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-):
-    """
-    Calls `IfCharacterType` with `character_type=8`.
     """
 
 
@@ -2222,6 +2285,18 @@ def IfHasAIStatus(
     """
 
 
+def IfPlayerClass(condition: ConditionGroup | int, class_type: ClassType | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def IfPlayerCovenant(condition: ConditionGroup | int, covenant: int, event_layers=()):
+    """
+    TODO
+    """
+
+
 def IfPlayerLevelComparison(
     condition: ConditionGroup | int,
     comparison_type: ComparisonType | int,
@@ -2361,10 +2436,10 @@ def IfHealthValueLessThanOrEqual(
     """
 
 
-def IfObjectDestructionState(
+def IfAssetDestructionState(
     condition: ConditionGroup | int,
     state: bool | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -2374,51 +2449,92 @@ def IfObjectDestructionState(
     """
 
 
-def IfObjectDestroyed(
+def IfAssetDestroyed(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfObjectDestructionState` with `state=True`.
+    Calls `IfAssetDestructionState` with `state=True`.
     """
 
 
-def IfObjectNotDestroyed(
+def IfAssetNotDestroyed(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfObjectDestructionState` with `state=False`.
+    Calls `IfAssetDestructionState` with `state=False`.
     """
 
 
-def IfObjectDamaged(condition: ConditionGroup | int, obj: Object | int, attacker: Character | int, event_layers=()):
-    """
-    TODO
-    """
-
-
-def IfObjectActivated(condition: ConditionGroup | int, obj_act_id: int, event_layers=()):
+def IfAssetDamaged(condition: ConditionGroup | int, asset: Asset | int, attacker: Character | int, event_layers=()):
     """
     TODO
     """
 
 
-def IfObjectHealthValueComparison(
+def IfAssetActivated(condition: ConditionGroup | int, obj_act_id: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def IfAssetHealthValueComparison(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    asset: Asset | int,
     comparison_type: ComparisonType | int,
     value: int,
     event_layers=(),
 ):
     """
     TODO
+    """
+
+
+def IfAssetHealthValueEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=0`.
+    """
+
+
+def IfAssetHealthValueNotEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=1`.
+    """
+
+
+def IfAssetHealthValueGreaterThan(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=2`.
+    """
+
+
+def IfAssetHealthValueLessThan(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=3`.
+    """
+
+
+def IfAssetHealthValueGreaterThanOrEqual(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
+    value: int,
+    event_layers=(),
+):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=4`.
+    """
+
+
+def IfAssetHealthValueLessThanOrEqual(condition: ConditionGroup | int, asset: Asset | int, value: int, event_layers=()):
+    """
+    Calls `IfAssetHealthValueComparison` with `comparison_type=5`.
     """
 
 
@@ -3087,10 +3203,10 @@ def RestartIfOutsideMap(game_map: Map | MapTile | tuple | list, event_layers=())
     """
 
 
-def SkipLinesIfObjectDestructionState(
+def SkipLinesIfAssetDestructionState(
     line_count: int,
     state: bool | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -3100,34 +3216,34 @@ def SkipLinesIfObjectDestructionState(
     """
 
 
-def SkipLinesIfObjectDestroyed(
+def SkipLinesIfAssetDestroyed(
     line_count: int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `SkipLinesIfObjectDestructionState` with `state=True`.
+    Calls `SkipLinesIfAssetDestructionState` with `state=True`.
     """
 
 
-def SkipLinesIfObjectNotDestroyed(
+def SkipLinesIfAssetNotDestroyed(
     line_count: int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `SkipLinesIfObjectDestructionState` with `state=False`.
+    Calls `SkipLinesIfAssetDestructionState` with `state=False`.
     """
 
 
-def ReturnIfObjectDestructionState(
+def ReturnIfAssetDestructionState(
     event_return_type: EventReturnType | int,
     state: bool | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -3137,47 +3253,47 @@ def ReturnIfObjectDestructionState(
     """
 
 
-def EndIfObjectDestroyed(
-    obj: Object | int,
+def EndIfAssetDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `ReturnIfObjectDestructionState` with `event_return_type=0`, `state=True`.
+    Calls `ReturnIfAssetDestructionState` with `event_return_type=0`, `state=True`.
     """
 
 
-def EndIfObjectNotDestroyed(
-    obj: Object | int,
+def EndIfAssetNotDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `ReturnIfObjectDestructionState` with `event_return_type=0`, `state=False`.
+    Calls `ReturnIfAssetDestructionState` with `event_return_type=0`, `state=False`.
     """
 
 
-def RestartIfObjectDestroyed(
-    obj: Object | int,
+def RestartIfAssetDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `ReturnIfObjectDestructionState` with `event_return_type=1`, `state=True`.
+    Calls `ReturnIfAssetDestructionState` with `event_return_type=1`, `state=True`.
     """
 
 
-def RestartIfObjectNotDestroyed(
-    obj: Object | int,
+def RestartIfAssetNotDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `ReturnIfObjectDestructionState` with `event_return_type=1`, `state=False`.
+    Calls `ReturnIfAssetDestructionState` with `event_return_type=1`, `state=False`.
     """
 
 
@@ -3226,19 +3342,16 @@ def SaveRequest(dummy: int = 0, event_layers=()):
     """
 
 
-def RunCommonEvent(unknown: int, event_id: int, args: tuple = (0,), arg_types: str = "", event_layers=()):
-    """
-    Initialize an instance of an event script from `common_func` with the given arguments.
-    """
+# Instruction `RunCommonEvent` is manually defined in the `compiler` module.
 
 
-def UnknownSystem_07(unknown_slot: int, event_layers=()):
+def StartPS5Activity(activity_id: int, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownSystem_08(unknown_slot: int, event_layers=()):
+def EndPS5Activity(activity_id: int, event_layers=()):
     """
     TODO
     """
@@ -3256,19 +3369,19 @@ def PlayCutsceneToPlayer(cutscene_id: int, cutscene_flags: CutsceneFlags | int, 
     """
 
 
-def SetSpawnerState(entity: Object | Region | Character | int, state: bool | int, event_layers=()):
+def SetSpawnerState(entity: Asset | Region | Character | int, state: bool | int, event_layers=()):
     """
     e.g. the baby skeletons in Tomb of the Giants.
     """
 
 
-def EnableSpawner(entity: Object | Region | Character | int, event_layers=()):
+def EnableSpawner(entity: Asset | Region | Character | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=True`.
     """
 
 
-def DisableSpawner(entity: Object | Region | Character | int, event_layers=()):
+def DisableSpawner(entity: Asset | Region | Character | int, event_layers=()):
     """
     Calls `SetSpawnerState` with `state=False`.
     """
@@ -3281,8 +3394,8 @@ def AwardItemLotToAllPlayers(item_lot_param_id: int, event_layers=()):
 
 
 def ShootProjectile(
-    owner_entity: Object | Region | Character | int,
-    source_entity: Object | Region | Character | int,
+    owner_entity: Asset | Region | Character | int,
+    source_entity: Asset | Region | Character | int,
     model_point: int,
     behavior_id: int,
     launch_angle_x: int,
@@ -3368,7 +3481,7 @@ def ToggleNavmeshType(navmesh_id: NavigationEvent | int, navmesh_type: NavmeshTy
 def WarpToMap(
     game_map: Map | MapTile | tuple | list,
     player_start: PlayerStart | int = -1,
-    unknown1: int = 0,
+    unk_8_12: int = 0,
     event_layers=(),
 ):
     """
@@ -3409,17 +3522,17 @@ def ToggleRandomFlagInRange(flag_range: FlagRange | tuple | list, event_layers=(
 
 
 def ForceAnimation(
-    entity: Character | Object | int,
+    entity: Character | Asset | int,
     animation_id: int,
     loop: bool | int = False,
     wait_for_completion: bool | int = False,
     skip_transition: bool | int = False,
-    unknown1: int = 0,
-    unknown2: float = 0.0,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Used a lot. Standard way to make a Character or Object perform an animation.
+    Used a lot. Standard way to make a Character or Asset perform an animation.
     """
 
 
@@ -3593,7 +3706,7 @@ def SetTeamType(character: Character | int, new_team: TeamType | int, event_laye
 
 def MoveToEntity(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Asset | Region | Character | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -3604,7 +3717,7 @@ def MoveToEntity(
     """
 
 
-def Kill(character: Character | int, award_souls: bool | int = False, event_layers=()):
+def Kill(character: Character | int, award_runes: bool | int = False, event_layers=()):
     """
     Technically a kill 'request.'
     """
@@ -3634,7 +3747,7 @@ def EzstateAIRequest(character: Character | int, command_id: int, command_slot: 
     """
 
 
-def CreateProjectileOwner(entity: Object | Region | Character | int, event_layers=()):
+def CreateProjectileOwner(entity: Asset | Region | Character | int, event_layers=()):
     """
     A 'bullet owner' that will spawn things according to the Spawner section of the MSB.
     """
@@ -3718,7 +3831,7 @@ def SetNest(character: Character | int, region: Region | int, event_layers=()):
 
 def RotateToFaceEntity(
     character: Character | int,
-    target_entity: Object | Region | Character | int,
+    target_entity: Asset | Region | Character | int,
     animation: int = -1,
     wait_for_completion: bool | int = False,
     event_layers=(),
@@ -3781,7 +3894,7 @@ def ReplanAI(character: Character | int, event_layers=()):
     """
 
 
-def CancelSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def RemoveSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -3938,7 +4051,7 @@ def AIEvent(
 def ReferDamageToEntity(character: Character | int, target_entity: Character | int, event_layers=()):
     """
     All damage dealt to the first character will *also* (not *only*) be dealt to the target entity. I'm not 100%
-    sure if the target entity can be an Object.
+    sure if the target entity can be an Asset.
     
     Only used by the Four Kings in the vanilla game.
     """
@@ -3968,19 +4081,19 @@ def DropMandatoryTreasure(character: Character | int, event_layers=()):
     """
 
 
-def SetAnimationsState(entity: Character | Object | int, state: bool | int, event_layers=()):
+def SetAnimationsState(entity: Character | Asset | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def EnableAnimations(entity: Character | Object | int, event_layers=()):
+def EnableAnimations(entity: Character | Asset | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=True`.
     """
 
 
-def DisableAnimations(entity: Character | Object | int, event_layers=()):
+def DisableAnimations(entity: Character | Asset | int, event_layers=()):
     """
     Calls `SetAnimationsState` with `state=False`.
     """
@@ -3988,7 +4101,7 @@ def DisableAnimations(entity: Character | Object | int, event_layers=()):
 
 def MoveAndSetDrawParent(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Asset | Region | Character | int,
     set_draw_parent: MapPart | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
@@ -4002,7 +4115,7 @@ def MoveAndSetDrawParent(
 
 def ShortMove(
     character: Character | int,
-    destination: Object | Region | Character | int,
+    destination: Asset | Region | Character | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4015,8 +4128,8 @@ def ShortMove(
 
 def MoveAndCopyDrawParent(
     character: Character | int,
-    destination: Object | Region | Character | int,
-    copy_draw_parent: Character | Object | int,
+    destination: Asset | Region | Character | int,
+    copy_draw_parent: Character | Asset | int,
     model_point: int = -1,
     destination_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4045,77 +4158,77 @@ def EqualRecovery(event_layers=()):
     """
 
 
-def DestroyObject(obj: Object | int, request_slot: int = 1, event_layers=()):
+def DestroyAsset(asset: Asset | int, request_slot: int = 1, event_layers=()):
     """
-    Technically 'requests' the object's destruction. No idea what the slot number does.
+    Technically 'requests' the asset's destruction. No idea what the slot number does.
     """
 
 
-def RestoreObject(obj: Object | int, event_layers=()):
+def RestoreAsset(asset: Asset | int, event_layers=()):
     """
     The opposite of destruction. Restores it to its original MSB coordinates.
     """
 
 
-def SetObjectState(obj: Object | int, state: bool | int, event_layers=()):
+def SetAssetState(asset: Asset | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def EnableObject(obj: Object | int, event_layers=()):
+def EnableAsset(asset: Asset | int, event_layers=()):
     """
-    Calls `SetObjectState` with `state=True`.
-    """
-
-
-def DisableObject(obj: Object | int, event_layers=()):
-    """
-    Calls `SetObjectState` with `state=False`.
+    Calls `SetAssetState` with `state=True`.
     """
 
 
-def SetTreasureState(obj: Object | int, state: bool | int, event_layers=()):
+def DisableAsset(asset: Asset | int, event_layers=()):
+    """
+    Calls `SetAssetState` with `state=False`.
+    """
+
+
+def SetTreasureState(asset: Asset | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def EnableTreasure(obj: Object | int, event_layers=()):
+def EnableTreasure(asset: Asset | int, event_layers=()):
     """
     Calls `SetTreasureState` with `state=True`.
-    Enables any treasure attached to this object by MSB events.
+    Enables any treasure attached to this asset by MSB events.
     """
 
 
-def DisableTreasure(obj: Object | int, event_layers=()):
+def DisableTreasure(asset: Asset | int, event_layers=()):
     """
     Calls `SetTreasureState` with `state=False`.
     
-    Disables any treasure attached to this object by MSB events.
+    Disables any treasure attached to this asset by MSB events.
     
     If you want to disable treasure by default, you can do it in the MSB by changing a certain event
     value to 255.
     """
 
 
-def ActivateObject(obj: Object | int, obj_act_id: int, relative_index: int, event_layers=()):
+def ActivateAsset(asset: Asset | int, obj_act_id: int, relative_index: int, event_layers=()):
     """
-    Manually call a specific ObjAct event attached to this object. I believe 'relative_index' refers to the
-    points on the object at which it can be activated (e.g. which side of a gate you are on).
+    Manually call a specific ObjAct event attached to this asset. I believe 'relative_index' refers to the
+    points on the asset at which it can be activated (e.g. which side of a gate you are on).
     
     Note that this will 'grab' a nearby NPC and force the appropriate animation from ObjAct params, which is how
     the game gets Patches to pull the lever in the Catacombs.
     """
 
 
-def SetObjectActivation(obj: Object | int, obj_act_id: int, state: bool | int, event_layers=()):
+def SetAssetActivation(asset: Asset | int, obj_act_id: int, state: bool | int, event_layers=()):
     """
-    Sets whether the object can be activated (1) or not activated (0).
+    Sets whether the asset can be activated (1) or not activated (0).
     """
 
 
-def EndOfAnimation(obj: Object | int, animation_id: int, event_layers=()):
+def EndOfAnimation(asset: Asset | int, animation_id: int, event_layers=()):
     """
     Sets entity to whatever state it would have after the given animation. Used often to open doors that have
     already been opened when you reload the map, etc. I doubt it can be used with characters, but haven't
@@ -4123,17 +4236,17 @@ def EndOfAnimation(obj: Object | int, animation_id: int, event_layers=()):
     """
 
 
-def PostDestruction(obj: Object | int, request_slot: int = 1, event_layers=()):
+def PostDestruction(asset: Asset | int, request_slot: int = 1, event_layers=()):
     """
-    Sets the object to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
+    Sets the asset to whatever appearance it would have after being destroyed. Again, not sure what 'slot'
     does, but it's literally *always* 1 in vanilla scripts (and from my testing, the instruction doesn't work
     with `slot=0`).
     """
 
 
 def CreateHazard(
-    obj_flag: Flag | int,
-    obj: Object | int,
+    asset_flag: Flag | int,
+    asset: Asset | int,
     model_point: int,
     behavior_param_id: int,
     target_type: DamageTargetType | int,
@@ -4143,8 +4256,8 @@ def CreateHazard(
     event_layers=(),
 ):
     """
-    Turn an object into an environmental hazard. It deals damage when touched according to the NPC Behavior
-    params you give it. The model_point determines which part of the object is hazardous (with the given radius
+    Turn an asset into an environmental hazard. It deals damage when touched according to the NPC Behavior
+    params you give it. The model_point determines which part of the asset is hazardous (with the given radius
     and life, relative to the time this instruction occurs).
     
     An example is the large fire in the Lower Undead Burg, or near the first Armored Tusk.
@@ -4153,51 +4266,51 @@ def CreateHazard(
     """
 
 
-def MoveObjectToCharacter(obj: Object | int, character: Character | int, model_point: int = -1, event_layers=()):
+def MoveAssetToCharacter(asset: Asset | int, character: Character | int, model_point: int = -1, event_layers=()):
     """
-    Move an object to a character.
+    Move an asset to a character.
     """
 
 
-def RemoveObjectFlag(obj_flag: Flag | int, event_layers=()):
+def RemoveAssetFlag(asset_flag: Flag | int, event_layers=()):
     """
     No idea what this does. I believe it might undo the CreateHazard instruction, at least.
     """
 
 
-def SetObjectInvulnerabilityState(obj: Object | int, state: bool | int, event_layers=()):
+def SetAssetInvulnerabilityState(asset: Asset | int, state: bool | int, event_layers=()):
     """
     1 = invulnerable.
     """
 
 
-def EnableObjectInvulnerability(obj: Object | int, event_layers=()):
+def EnableAssetInvulnerability(asset: Asset | int, event_layers=()):
     """
-    Calls `SetObjectInvulnerabilityState` with `state=True`.
-    """
-
-
-def DisableObjectInvulnerability(obj: Object | int, event_layers=()):
-    """
-    Calls `SetObjectInvulnerabilityState` with `state=False`.
+    Calls `SetAssetInvulnerabilityState` with `state=True`.
     """
 
 
-def SetObjectActivationWithIdx(
-    obj: Object | int,
+def DisableAssetInvulnerability(asset: Asset | int, event_layers=()):
+    """
+    Calls `SetAssetInvulnerabilityState` with `state=False`.
+    """
+
+
+def SetAssetActivationWithIdx(
+    asset: Asset | int,
     obj_act_id: int,
     relative_index: int,
     state: bool | int,
     event_layers=(),
 ):
     """
-    Similar to SetObjectActivation, but you can provide the relative index to disable (e.g. one side of a door).
+    Similar to SetAssetActivation, but you can provide the relative index to disable (e.g. one side of a door).
     """
 
 
-def EnableTreasureCollection(obj: Object | int, event_layers=()):
+def EnableTreasureCollection(asset: Asset | int, event_layers=()):
     """
-    Forces an object to spawn its treasure, even if the treasure's ItemLot flag is already enabled.
+    Forces an asset to spawn its treasure, even if the treasure's ItemLot flag is already enabled.
     
     Useful if you want some treasure to reappear (after, say, taking it from the player and disabling the
     ItemLot flag) without the player needing to reload the map.
@@ -4219,7 +4332,7 @@ def CreateVFX(vfx_id: VFXEvent | int, event_layers=()):
 
 def CreateTemporaryVFX(
     vfx_id: int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     model_point: int = -1,
     anchor_type: CoordEntityType | int = None,
     event_layers=(),
@@ -4232,13 +4345,13 @@ def CreateTemporaryVFX(
     """
 
 
-def CreateObjectVFX(obj: Object | int, vfx_id: int, model_point: int, event_layers=()):
+def CreateAssetVFX(asset: Asset | int, vfx_id: int, model_point: int, event_layers=()):
     """
     TODO
     """
 
 
-def DeleteObjectVFX(obj: Object | int, erase_root: bool = True, event_layers=()):
+def DeleteAssetVFX(asset: Asset | int, erase_root: bool = True, event_layers=()):
     """
     Note `erase_root` vs. `erase_root_only` for map SFX.
     """
@@ -4246,7 +4359,7 @@ def DeleteObjectVFX(obj: Object | int, erase_root: bool = True, event_layers=())
 
 def DisplayDialog(
     text: EventText | int,
-    anchor_entity: Object | Region | Character | int = 4294967295,
+    anchor_entity: Asset | Region | Character | int = 4294967295,
     display_distance: float = 3.0,
     button_type: ButtonType | int = ButtonType.OK_or_Cancel,
     number_buttons: NumberButtons | int = NumberButtons.NoButton,
@@ -4277,13 +4390,13 @@ def DisplayStatus(text: EventText | int, pad_enabled: bool = True, event_layers=
     """
 
 
-def DisplayBattlefieldMessage(text: EventText | int, event_layers=()):
+def DisplayFlashingMessage(text: EventText | int, event_layers=()):
     """
     Displays a flashing messages at the bottom of the screen that does not block player input.
     """
 
 
-def UnknownText_2007_9(text: EventText | int, event_layers=()):
+def DisplayFullScreenMessage(text: EventText | int, event_layers=()):
     """
     TODO
     """
@@ -4297,7 +4410,7 @@ def ChangeCamera(normal_camera_id: int, locked_camera_id: int, event_layers=()):
 
 def SetCameraVibration(
     vibration_id: int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     model_point: int = -1,
     decay_start_distance: float = 999.0,
     decay_end_distance: float = 999.0,
@@ -4318,7 +4431,12 @@ def SetLockedCameraSlot(area_id: int, block_id: int, camera_slot: int, event_lay
     """
 
 
-def RegisterLadder(start_climbing_flag: Flag | int, stop_climbing_flag: Flag | int, obj: Object | int, event_layers=()):
+def RegisterLadder(
+    start_climbing_flag: Flag | int,
+    stop_climbing_flag: Flag | int,
+    asset: Asset | int,
+    event_layers=(),
+):
     """
     Don't mess with these flags, generally; you can just delay when this is called after map load to disable
     certain ladders (which is kind of weird anyway).
@@ -4327,27 +4445,23 @@ def RegisterLadder(start_climbing_flag: Flag | int, stop_climbing_flag: Flag | i
 
 def RegisterGrace(
     grace_flag: Flag | int,
-    obj: Object | int,
+    asset: Asset | int,
     reaction_distance: float = 0.0,
     reaction_angle: float = 0.0,
     initial_kindle_level: int = 0,
-    unknown: float = 0,
+    enemy_block_distance: float = 5.0,
     event_layers=(),
 ):
     """
-    Register a bonfire, which creates the flame VFX and allows you to interact with it (via the MSB entity with
-    ID (obj + 1000).
+    Register a Site of Grace, which creates the VFX and allows you to interact with it via the MSB character
+    with ID `(asset + 1000)`.
     
-    I believe the bonfire flag tells the game where to keep track of its kindle level, or something like that. I
+    I believe the grace flag tells the game where to keep track of its kindle level, or something like that. I
     don't recommend messing around with this much. The reaction distance, angle, and initial kindle level are
-    all set to their standard defaults for bonfires.
+    all set to their standard defaults.
     
-    Note that, for some reason, kindle level is defined in increments of 10, so the number of Estus Flasks given
-    is (initial_kindle_level / 2) + 5.
-    
-    There also seems to be an issue with registering a bonfire that has already been registered with a greater
-    initial kindle level. Beware of this, if you find that you can't interact with bonfires or get them to even
-    register.
+    You can also use `enemy_block_distance` to set the minimum distance that enemies must be at to allow the
+    Grace to be interacted with.
     """
 
 
@@ -4365,7 +4479,7 @@ def NotifyBossBattleStart(dummy: int = 0, event_layers=()):
 
 
 def PlaySoundEffect(
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     sound_id: int,
     sound_type: SoundType | int = None,
     event_layers=(),
@@ -4395,9 +4509,21 @@ def DisableMapCollision(collision: Collision | int, event_layers=()):
     """
 
 
-def UnknownCollision_2011_2(unk_0_4: int, unk_4_8: int, event_layers=()):
+def SetMapCollisionBackreadMaskState(collision: Collision | int, state: bool | int, event_layers=()):
     """
-    TODO
+    Unused.
+    """
+
+
+def EnableMapCollisionBackreadMask(collision: Collision | int, event_layers=()):
+    """
+    Calls `SetMapCollisionBackreadMaskState` with `state=True`.
+    """
+
+
+def DisableMapCollisionBackreadMask(collision: Collision | int, event_layers=()):
+    """
+    Calls `SetMapCollisionBackreadMaskState` with `state=False`.
     """
 
 
@@ -4482,7 +4608,7 @@ def IfAttackedWithDamageType(
 def IfActionButtonParamActivated(
     condition: ConditionGroup | int,
     action_button_id: int,
-    entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
     event_layers=(),
 ):
     """
@@ -4508,83 +4634,169 @@ def IfPlayerNotInOwnWorld(condition: ConditionGroup | int, event_layers=()):
     """
 
 
-def IfMapCeremonyState(
+def IfMapLoaded(condition: ConditionGroup | int, game_map: Map | MapTile | tuple | list, event_layers=()):
+    """
+    Only used in Radahn fight, I believe, with map tiles.
+    """
+
+
+def IfWeatherState(
+    condition: ConditionGroup | int,
+    weather: Weather | int,
+    unk_4_8: float,
+    unk_8_12: float,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def IfMapUpdatePermissionState(
     condition: ConditionGroup | int,
     state: bool | int,
+    unk_state: bool | int,
     game_map: Map | MapTile | tuple | list,
-    ceremony_id: int,
     event_layers=(),
 ):
     """
-    Ceremony states are unused except for Untended Graves, I believe.
+    TODO
     """
 
 
-def IfMapInCeremony(
+def IfMapHasUpdatePermission(
     condition: ConditionGroup | int,
+    unk_state: bool | int,
     game_map: Map | MapTile | tuple | list,
-    ceremony_id: int,
     event_layers=(),
 ):
     """
-    Calls `IfMapCeremonyState` with `state=True`.
+    Calls `IfMapUpdatePermissionState` with `state=True`.
     """
 
 
-def IfMapNotInCeremony(
+def IfMapDoesNotHaveUpdatePermission(
     condition: ConditionGroup | int,
+    unk_state: bool | int,
     game_map: Map | MapTile | tuple | list,
-    ceremony_id: int,
     event_layers=(),
 ):
     """
-    Calls `IfMapCeremonyState` with `state=False`.
+    Calls `IfMapUpdatePermissionState` with `state=False`.
     """
 
 
-def IfInsideMapTile(condition: ConditionGroup | int, game_map: Map | MapTile | tuple | list, event_layers=()):
-    """
-    Note that there is a little bit of funny business with this one. Only really used during Radahn fight.
-    """
-
-
-def IfUnknownCondition_31(condition: ConditionGroup | int, hours: int, unknown1: float, unknown2: int, event_layers=()):
+def IfFieldBattleMusicState(condition: ConditionGroup | int, npc_threat_level: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def IfUnknown_3_32(condition: ConditionGroup | int, unk_1_2: int, unk_4_8: int, event_layers=()):
+def IfFieldBattleMusicEnabled(condition: ConditionGroup | int, npc_threat_level: int, event_layers=()):
+    """
+    Calls `IfFieldBattleMusicState` with `state=True`.
+    """
+
+
+def IfFieldBattleMusicDisabled(condition: ConditionGroup | int, npc_threat_level: int, event_layers=()):
+    """
+    Calls `IfFieldBattleMusicState` with `state=False`.
+    """
+
+
+def IfPlayerHasArmorEquipped(
+    condition: ConditionGroup | int,
+    armor_type: ArmorType | int,
+    armor: ArmorParam | int,
+    unk_8_12: int = -1,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def IfUnknownCondition_33(condition: ConditionGroup | int, unk_4_8: int, unk_8_9: bool | int, event_layers=()):
+def IfPlayerHasHeadArmorEquipped(
+    condition: ConditionGroup | int,
+    armor: ArmorParam | int,
+    unk_8_12: int = -1,
+    event_layers=(),
+):
+    """
+    Calls `IfPlayerHasArmorEquipped` with `armor_type=0`.
+    """
+
+
+def IfPlayerHasBodyArmorEquipped(
+    condition: ConditionGroup | int,
+    armor: ArmorParam | int,
+    unk_8_12: int = -1,
+    event_layers=(),
+):
+    """
+    Calls `IfPlayerHasArmorEquipped` with `armor_type=1`.
+    """
+
+
+def IfPlayerHasArmsArmorEquipped(
+    condition: ConditionGroup | int,
+    armor: ArmorParam | int,
+    unk_8_12: int = -1,
+    event_layers=(),
+):
+    """
+    Calls `IfPlayerHasArmorEquipped` with `armor_type=2`.
+    """
+
+
+def IfPlayerHasLegsArmorEquipped(
+    condition: ConditionGroup | int,
+    armor: ArmorParam | int,
+    unk_8_12: int = -1,
+    event_layers=(),
+):
+    """
+    Calls `IfPlayerHasArmorEquipped` with `armor_type=3`.
+    """
+
+
+def IfCeremonyState(condition: ConditionGroup | int, state: bool | int, ceremony: int, event_layers=()):
     """
     TODO
     """
 
 
-def IfUnknownCondition_34(condition: ConditionGroup | int, unk_4_8: int, unk_8_12: int, event_layers=()):
+def IfCeremonyActive(condition: ConditionGroup | int, ceremony: int, event_layers=()):
+    """
+    Calls `IfCeremonyState` with `state=True`.
+    """
+
+
+def IfCeremonyInactive(condition: ConditionGroup | int, ceremony: int, event_layers=()):
+    """
+    Calls `IfCeremonyState` with `state=False`.
+    """
+
+
+def IfWeatherLotState(condition: ConditionGroup | int, weather_lot_param_id: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def IfUnknownCondition_35(condition: ConditionGroup | int, unk_1_2: int, unk_4_8: int, event_layers=()):
+def IfWeatherLotActive(condition: ConditionGroup | int, weather_lot_param_id: int, event_layers=()):
     """
-    TODO
-    """
-
-
-def IfUnknownFlagCheck_37(condition: ConditionGroup | int, flag: Flag | int, state: FlagSetting | int, event_layers=()):
-    """
-    TODO
+    Calls `IfWeatherLotState` with `state=True`.
     """
 
 
-def IfSteamConnectionState(condition: ConditionGroup | int, is_disconnected: bool | int, event_layers=()):
+def IfWeatherLotInactive(condition: ConditionGroup | int, weather_lot_param_id: int, event_layers=()):
+    """
+    Calls `IfWeatherLotState` with `state=False`.
+    """
+
+
+def IfPlayerGender(condition: ConditionGroup | int, gender: Gender | int, event_layers=()):
     """
     TODO
     """
@@ -4602,50 +4814,102 @@ def IfAllyPhantomCountComparison(
     """
 
 
-def IfCharacterDrawGroupState(
+def IfCharacterProportionDeathState(
     condition: ConditionGroup | int,
     character: Character | int,
     state: bool | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ):
     """
-    Tests if character's draw group is currently enabled or disabled.
+    Checks if a proportion (0-1) of given characters (group entity ID) are dead or alive.
     """
 
 
-def IfCharacterDrawGroupEnabled(
+def IfCharacterProportionDead(
     condition: ConditionGroup | int,
     character: Character | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfCharacterDrawGroupState` with `state=True`.
+    Calls `IfCharacterProportionDeathState` with `state=True`.
     """
 
 
-def IfCharacterDrawGroupDisabled(
+def IfCharacterProportionAlive(
     condition: ConditionGroup | int,
     character: Character | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfCharacterDrawGroupState` with `state=False`.
+    Calls `IfCharacterProportionDeathState` with `state=False`.
     """
 
 
-def IfUnknownCharacterCondition_19(
+def IfCharacterProportionSpecialEffectState(
+    condition: ConditionGroup | int,
+    character_group: Character | int,
+    special_effect: int,
+    state: bool | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+):
+    """
+    Checks if a certain proportion of the given characters (group entity ID) have or do not have a given
+    special effect, rather than a certain absolute count.
+    """
+
+
+def IfCharacterProportionHasSpecialEffect(
+    condition: ConditionGroup | int,
+    character_group: Character | int,
+    special_effect: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+):
+    """
+    Calls `IfCharacterProportionSpecialEffectState` with `state=True`.
+    """
+
+
+def IfCharacterProportionDoesNotHaveSpecialEffect(
+    condition: ConditionGroup | int,
+    character_group: Character | int,
+    special_effect: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+):
+    """
+    Calls `IfCharacterProportionSpecialEffectState` with `state=False`.
+    """
+
+
+def IfPlayerTargeted(
+    condition: ConditionGroup | int,
+    min_npc_threat_level: int,
+    max_npc_threat_level: int,
+    ai_status: AIStatusType | int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def IfNPCPartAttackedWithDamageType(
     condition: ConditionGroup | int,
     character: Character | int,
-    unk_8_12: int,
-    unk_12_13: int,
-    unk_13_14: int,
-    unk_16_20: float,
+    npc_part_id: int,
+    attacker: Character | int = -1,
+    damage_type: DamageType | int = DamageType.Unspecified,
     event_layers=(),
 ):
     """
@@ -4662,44 +4926,7 @@ def IfCharacterInvadeType(
     event_layers=(),
 ):
     """
-    'invade_type' has an unknown type in the EMEDF. Probably refers to the invader's covenant.
-    """
-
-
-def IfUnknownCharacterCondition_28(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    unk_8_12: int,
-    unk_12_16: int,
-    event_layers=(),
-):
-    """
     TODO
-    """
-
-
-def IfUnknownCharacterCondition_30(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    npc_part_id: int,
-    unk_12_16: int,
-    unk_16_20: int,
-    event_layers=(),
-):
-    """
-    TODO
-    """
-
-
-def IfUnknownCharacterCondition_31(
-    condition: ConditionGroup | int,
-    character: Character | int,
-    unk_4_8: int,
-    unk_8_12: float,
-    event_layers=(),
-):
-    """
-    Possibly still 'IfCharacterInvadeType'.
     """
 
 
@@ -4726,47 +4953,85 @@ def IfCharacterNotMounted(condition: ConditionGroup | int, character: Character 
     """
 
 
-def IfUnknownCharacterCondition_34(
+def IfCharacterStateInfoState(
     condition: ConditionGroup | int,
     character: Character | int,
-    unk_8_12: int,
-    unk_12_16: int,
+    state_info: int,
+    state: bool | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    TODO
+    Checks if character has or does not have the given `state_info` (from a SpEffect).
     """
 
 
-def IfUnknownCharacterCondition_35(
+def IfCharacterHasStateInfo(
     condition: ConditionGroup | int,
     character: Character | int,
-    unk_8_12: int,
-    event_layers=(),
-):
-    """
-    TODO
-    """
-
-
-def IfUnknownObjectCondition_6(
-    condition: ConditionGroup | int,
-    unk_4_5: int,
-    obj: Object | int,
+    state_info: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
+    Calls `IfCharacterStateInfoState` with `state=True`.
+    """
+
+
+def IfCharacterDoesNotHaveStateInfo(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    state_info: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
+    """
+    Calls `IfCharacterStateInfoState` with `state=False`.
+    """
+
+
+def IfSpecialStandbyEndedFlagState(
+    condition: ConditionGroup | int,
+    character: Character | int,
+    state: bool | int,
+    event_layers=(),
+):
+    """
     TODO
     """
 
 
-def IfObjectBackreadState(
+def IfSpecialStandbyEndedFlagEnabled(condition: ConditionGroup | int, character: Character | int, event_layers=()):
+    """
+    Calls `IfSpecialStandbyEndedFlagState` with `state=True`.
+    """
+
+
+def IfSpecialStandbyEndedFlagDisabled(condition: ConditionGroup | int, character: Character | int, event_layers=()):
+    """
+    Calls `IfSpecialStandbyEndedFlagState` with `state=False`.
+    """
+
+
+def IfAssetProportionDestructionState(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    state: bool | int,
+    asset_group: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+):
+    """
+    Check if a certain proportion of given assets (group entity ID) have or have not been destroyed.
+    """
+
+
+def IfAssetBackreadState(
+    condition: ConditionGroup | int,
+    asset: Asset | int,
     state: bool | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -4777,27 +5042,27 @@ def IfObjectBackreadState(
     """
 
 
-def IfObjectBackreadEnabled(
+def IfAssetBackreadEnabled(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfObjectBackreadState` with `state=True`.
+    Calls `IfAssetBackreadState` with `state=True`.
     """
 
 
-def IfObjectBackreadDisabled(
+def IfAssetBackreadDisabled(
     condition: ConditionGroup | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `IfObjectBackreadState` with `state=False`.
+    Calls `IfAssetBackreadState` with `state=False`.
     """
 
 
@@ -5075,27 +5340,33 @@ def SkipLinesIfClient(line_count: int, event_layers=()):
     """
 
 
-def SkipLinesIfTryingToCreateSession(line_count: int, event_layers=()):
+def SkipLinesIfMultiplayer(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=2`.
     """
 
 
-def SkipLinesIfTryingToJoinSession(line_count: int, event_layers=()):
+def SkipLinesIfMultiplayerPending(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=3`.
     """
 
 
-def SkipLinesIfLeavingSession(line_count: int, event_layers=()):
+def SkipLinesIfSingleplayer(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=4`.
     """
 
 
-def SkipLinesIfFailedToCreateSession(line_count: int, event_layers=()):
+def SkipLinesIfInvasion(line_count: int, event_layers=()):
     """
     Calls `SkipLinesIfMultiplayerState` with `state=5`.
+    """
+
+
+def SkipLinesIfInvasionPending(line_count: int, event_layers=()):
+    """
+    Calls `SkipLinesIfMultiplayerState` with `state=6`.
     """
 
 
@@ -5117,27 +5388,33 @@ def EndIfClient(event_layers=()):
     """
 
 
-def EndIfTryingToCreateSession(event_layers=()):
+def EndIfMultiplayer(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=2`.
     """
 
 
-def EndIfTryingToJoinSession(event_layers=()):
+def EndIfMultiplayerPending(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=3`.
     """
 
 
-def EndIfLeavingSession(event_layers=()):
+def EndIfSingleplayer(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=4`.
     """
 
 
-def EndIfFailedToCreateSession(event_layers=()):
+def EndIfInvasion(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=5`.
+    """
+
+
+def EndIfInvasionPending(event_layers=()):
+    """
+    Calls `ReturnIfMultiplayerState` with `event_return_type=0`, `state=6`.
     """
 
 
@@ -5153,27 +5430,33 @@ def RestartIfClient(event_layers=()):
     """
 
 
-def RestartIfTryingToCreateSession(event_layers=()):
+def RestartIfMultiplayer(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=2`.
     """
 
 
-def RestartIfTryingToJoinSession(event_layers=()):
+def RestartIfMultiplayerPending(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=3`.
     """
 
 
-def RestartIfLeavingSession(event_layers=()):
+def RestartIfSingleplayer(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=4`.
     """
 
 
-def RestartIfFailedToCreateSession(event_layers=()):
+def RestartIfInvasion(event_layers=()):
     """
     Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=5`.
+    """
+
+
+def RestartIfInvasionPending(event_layers=()):
+    """
+    Calls `ReturnIfMultiplayerState` with `event_return_type=1`, `state=6`.
     """
 
 
@@ -5383,27 +5666,33 @@ def GotoIfClient(label: Label | int, event_layers=()):
     """
 
 
-def GotoIfTryingToCreateSession(label: Label | int, event_layers=()):
+def GotoIfMultiplayer(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=2`.
     """
 
 
-def GotoIfTryingToJoinSession(label: Label | int, event_layers=()):
+def GotoIfMultiplayerPending(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=3`.
     """
 
 
-def GotoIfLeavingSession(label: Label | int, event_layers=()):
+def GotoIfSingleplayer(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=4`.
     """
 
 
-def GotoIfFailedToCreateSession(label: Label | int, event_layers=()):
+def GotoIfInvasion(label: Label | int, event_layers=()):
     """
     Calls `GotoIfMultiplayerState` with `state=5`.
+    """
+
+
+def GotoIfInvasionPending(label: Label | int, event_layers=()):
+    """
+    Calls `GotoIfMultiplayerState` with `state=6`.
     """
 
 
@@ -5620,14 +5909,11 @@ def SkipLinesIfCharacterOutsideRegion(
     """
 
 
-def SkipLinesIfUnknown_203(
+def SkipLinesIfMapUpdatePermissionState(
     line_count: int,
     state: bool | int,
-    unk_2_3: int,
-    unk_3_2: int,
-    unk_4_3: int,
-    unk_5_4: int,
-    unk_6_5: int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
     event_layers=(),
 ):
     """
@@ -5635,14 +5921,33 @@ def SkipLinesIfUnknown_203(
     """
 
 
-def GotoIfUnknown_204(
+def SkipLinesIfMapHasUpdatePermission(
+    line_count: int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+):
+    """
+    Calls `SkipLinesIfMapUpdatePermissionState` with `state=True`.
+    """
+
+
+def SkipLinesIfMapDoesNotHaveUpdatePermission(
+    line_count: int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+):
+    """
+    Calls `SkipLinesIfMapUpdatePermissionState` with `state=False`.
+    """
+
+
+def GotoIfMapUpdatePermissionState(
     label: Label | int,
     state: bool | int,
-    unk_2_3: int,
-    unk_3_2: int,
-    unk_4_3: int,
-    unk_5_4: int,
-    unk_6_5: int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
     event_layers=(),
 ):
     """
@@ -5650,24 +5955,131 @@ def GotoIfUnknown_204(
     """
 
 
-def SkipOrGotoIfUnknown_206(label_or_goto: int, unk_4_8: int, event_layers=()):
+def GotoIfMapHasUpdatePermission(
+    label: Label | int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+):
     """
-    TODO
+    Calls `GotoIfMapUpdatePermissionState` with `state=True`.
     """
 
 
-def ReturnIfUnknown_208(
-    return_type: EventReturnType | int,
+def GotoIfMapDoesNotHaveUpdatePermission(
+    label: Label | int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+):
+    """
+    Calls `GotoIfMapUpdatePermissionState` with `state=False`.
+    """
+
+
+def ReturnIfMapUpdatePermissionState(
+    event_return_type: EventReturnType | int,
     state: bool | int,
-    unk_2_3: int,
-    unk_3_2: int,
-    unk_4_3: int,
-    unk_5_4: int,
-    unk_6_5: int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
     event_layers=(),
 ):
     """
     TODO
+    """
+
+
+def EndIfMapHasUpdatePermission(unk_state: bool | int, game_map: Map | MapTile | tuple | list, event_layers=()):
+    """
+    Calls `ReturnIfMapUpdatePermissionState` with `event_return_type=0`, `state=True`.
+    """
+
+
+def EndIfMapDoesNotHaveUpdatePermission(unk_state: bool | int, game_map: Map | MapTile | tuple | list, event_layers=()):
+    """
+    Calls `ReturnIfMapUpdatePermissionState` with `event_return_type=0`, `state=False`.
+    """
+
+
+def RestartIfMapHasUpdatePermission(unk_state: bool | int, game_map: Map | MapTile | tuple | list, event_layers=()):
+    """
+    Calls `ReturnIfMapUpdatePermissionState` with `event_return_type=1`, `state=True`.
+    """
+
+
+def RestartIfMapDoesNotHaveUpdatePermission(
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+):
+    """
+    Calls `ReturnIfMapUpdatePermissionState` with `event_return_type=1`, `state=False`.
+    """
+
+
+def SkipLinesIfCeremonyState(line_count: int, state: bool | int, ceremony: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def SkipLinesIfCeremonyActive(line_count: int, ceremony: int, event_layers=()):
+    """
+    Calls `SkipLinesIfCeremonyState` with `state=True`.
+    """
+
+
+def SkipLinesIfCeremonyInactive(line_count: int, ceremony: int, event_layers=()):
+    """
+    Calls `SkipLinesIfCeremonyState` with `state=False`.
+    """
+
+
+def GotoIfCeremonyState(label: Label | int, state: bool | int, ceremony: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def GotoIfCeremonyActive(label: Label | int, ceremony: int, event_layers=()):
+    """
+    Calls `GotoIfCeremonyState` with `state=True`.
+    """
+
+
+def GotoIfCeremonyInactive(label: Label | int, ceremony: int, event_layers=()):
+    """
+    Calls `GotoIfCeremonyState` with `state=False`.
+    """
+
+
+def ReturnIfCeremonyState(event_return_type: EventReturnType | int, state: bool | int, ceremony: int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def EndIfCeremonyActive(ceremony: int, event_layers=()):
+    """
+    Calls `ReturnIfCeremonyState` with `event_return_type=0`, `state=True`.
+    """
+
+
+def EndIfCeremonyInactive(ceremony: int, event_layers=()):
+    """
+    Calls `ReturnIfCeremonyState` with `event_return_type=0`, `state=True`.
+    """
+
+
+def RestartIfCeremonyActive(ceremony: int, event_layers=()):
+    """
+    Calls `ReturnIfCeremonyState` with `event_return_type=1`, `state=True`.
+    """
+
+
+def RestartIfCeremonyInactive(ceremony: int, event_layers=()):
+    """
+    Calls `ReturnIfCeremonyState` with `event_return_type=1`, `state=True`.
     """
 
 
@@ -5905,22 +6317,125 @@ def RestartIfCharacterDoesNotHaveSpecialEffect(
     """
 
 
-def Unknown_1004_04(line_count: int, character: Character | int, unk_8_12: int, event_layers=()):
-    """
-    Probably 'SkipLinesIfCharacterSomething'.
-    """
-
-
-def GotoIfUnknown_1004_05(label: Label | int, character: Character | int, unk_8_12: bool | int, event_layers=()):
+def SkipLinesIfSpecialStandbyEndedFlagState(
+    line_count: int,
+    character: Character | int,
+    state: bool | int,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def GotoIfObjectDestructionState(
+def SkipLinesIfSpecialStandbyEndedFlagEnabled(line_count: int, character: Character | int, event_layers=()):
+    """
+    Calls `SkipLinesIfSpecialStandbyEndedFlagState` with `state=True`.
+    """
+
+
+def SkipLinesIfSpecialStandbyEndedFlagDisabled(line_count: int, character: Character | int, event_layers=()):
+    """
+    Calls `SkipLinesIfSpecialStandbyEndedFlagState` with `state=False`.
+    """
+
+
+def GotoIfSpecialStandbyEndedFlagState(
+    label: Label | int,
+    character: Character | int,
+    state: bool | int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def GotoIfSpecialStandbyEndedFlagEnabled(label: Label | int, character: Character | int, event_layers=()):
+    """
+    Calls `GotoIfSpecialStandbyEndedFlagState` with `state=True`.
+    """
+
+
+def GotoIfSpecialStandbyEndedFlagDisabled(label: Label | int, character: Character | int, event_layers=()):
+    """
+    Calls `GotoIfSpecialStandbyEndedFlagState` with `state=False`.
+    """
+
+
+def ReturnIfSpecialStandbyEndedFlagState(
+    event_return_type: EventReturnType | int,
+    character: Character | int,
+    state: bool | int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def EndIffSpecialStandbyEndedFlagEnabled(character: Character | int, event_layers=()):
+    """
+    Calls `ReturnIfSpecialStandbyEndedFlagState` with `event_return_type=0`, `state=True`.
+    """
+
+
+def EndIffSpecialStandbyEndedFlagDisabled(character: Character | int, event_layers=()):
+    """
+    Calls `ReturnIfSpecialStandbyEndedFlagState` with `event_return_type=0`, `state=False`.
+    """
+
+
+def RestartIffSpecialStandbyEndedFlagEnabled(character: Character | int, event_layers=()):
+    """
+    Calls `ReturnIfSpecialStandbyEndedFlagState` with `event_return_type=1`, `state=True`.
+    """
+
+
+def RestartIffSpecialStandbyEndedFlagDisabled(character: Character | int, event_layers=()):
+    """
+    Calls `ReturnIfSpecialStandbyEndedFlagState` with `event_return_type=1`, `state=False`.
+    """
+
+
+def AwaitAssetDestrucionState(
+    state: bool | int,
+    asset: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def AwaitAssetDestroyed(
+    asset: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
+    """
+    Calls `AwaitAssetDestrucionState` with `state=True`.
+    """
+
+
+def AwaitAssetNotDestroyed(
+    asset: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+):
+    """
+    Calls `AwaitAssetDestrucionState` with `state=False`.
+    """
+
+
+def GotoIfAssetDestructionState(
     label: Label | int,
     state: bool | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -5930,27 +6445,27 @@ def GotoIfObjectDestructionState(
     """
 
 
-def GotoIfObjectDestroyed(
+def GotoIfAssetDestroyed(
     label: Label | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `GotoIfObjectDestructionState` with `state=True`.
+    Calls `GotoIfAssetDestructionState` with `state=True`.
     """
 
 
-def GotoIfObjectNotDestroyed(
+def GotoIfAssetNotDestroyed(
     label: Label | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
 ):
     """
-    Calls `GotoIfObjectDestructionState` with `state=False`.
+    Calls `GotoIfAssetDestructionState` with `state=False`.
     """
 
 
@@ -6080,16 +6595,14 @@ def DefineLabel_20(event_layers=()):
     """
 
 
-def UnknownTimer_04(
-    hours: int,
-    minutes: int,
-    seconds: int,
-    unknown1: int,
-    unknown2: int,
-    unknown3: int,
-    unknown4: int,
-    unknown5: int,
-    unknown6: int,
+def SetCurrentTime(
+    time: tuple,
+    fade_transition: bool | int,
+    wait_for_completion: bool | int,
+    show_clock: bool | int,
+    clock_start_delay: float,
+    clock_change_duration: float,
+    clock_finish_delay: float,
     event_layers=(),
 ):
     """
@@ -6097,22 +6610,33 @@ def UnknownTimer_04(
     """
 
 
-def UnknownTimer_05(unknown1: int, event_layers=()):
+def SetTimeFreezeState(state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownCutscene_10(
+def FreezeTime(event_layers=()):
+    """
+    Calls `SetTimeFreezeState` with `state=True`.
+    """
+
+
+def UnfreezeTime(event_layers=()):
+    """
+    Calls `SetTimeFreezeState` with `state=False`.
+    """
+
+
+def PlayCutsceneToPlayerWithWeatherAndTime(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
     player_id: int,
-    hours: int,
-    unknown1: int,
-    unknown2: float,
-    unknown3: int,
-    unknown4: int,
-    unknown5: int,
+    change_weather: bool | int = False,
+    weather: Weather | int = 0,
+    weather_duration: float = -1.0,
+    change_time: bool | int = False,
+    time: tuple = (0, 0, 0),
     event_layers=(),
 ):
     """
@@ -6120,33 +6644,14 @@ def UnknownCutscene_10(
     """
 
 
-def UnknownCutscene_11(
+def PlayCutsceneToPlayerAndWarp(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
     move_to_region: Region | int,
-    map_base_id: int,
-    player_id: int,
-    unknown2: int,
-    unknown3: int,
-    event_layers=(),
-):
-    """
-    TODO
-    """
-
-
-def UnknownCutscene_12(
-    cutscene_id: int,
-    cutscene_flags: CutsceneFlags | int,
-    respawn_point: int,
-    move_to_region: Region | int,
+    map_id: int,
     player_id: int,
     unk_20_24: int,
-    unk_24_25: int,
-    unk_25_26: int,
-    unk_26_27: int,
-    unk_28_32: float,
-    unk_32_36: int,
+    unk_24_25: bool | int,
     event_layers=(),
 ):
     """
@@ -6154,14 +6659,35 @@ def UnknownCutscene_12(
     """
 
 
-def UnknownCutscene_13(
+def PlayCutsceneToPlayerAndWarpWithWeatherAndTime(
     cutscene_id: int,
     cutscene_flags: CutsceneFlags | int,
-    respawn_point: int,
     move_to_region: Region | int,
+    map_id: int,
+    player_id: int,
+    unk_20_24: int,
+    unk_24_25: bool | int,
+    change_weather: bool | int,
+    weather: Weather | int = 0,
+    weather_duration: float = -1.0,
+    change_time: bool | int = False,
+    time: tuple = (0, 0, 0),
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def PlayCutsceneToPlayerAndWarpWithStablePositionUpdate(
+    cutscene_id: int,
+    cutscene_flags: CutsceneFlags | int,
+    move_to_region: Region | int,
+    map_id: int,
     player_id: int,
     unk_16_20: int,
-    unk_20_24: int,
+    unk_20_21: bool | int,
+    update_stable_position: bool | int,
     event_layers=(),
 ):
     """
@@ -6221,7 +6747,7 @@ def SummonNPC(
 
 def TriggerAISound(
     ai_sound_param_id: int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     unk_8_12: int,
     event_layers=(),
 ):
@@ -6302,9 +6828,9 @@ def DisableThisSlotFlag(event_layers=()):
     """
 
 
-def Unknown_2003_68(unknown1: int, unknown2: float, unknown3: int, event_layers=()):
+def SetWeather(weather: Weather | int, duration: float, immediate_change: bool | int, event_layers=()):
     """
-    Unknown. Second argument is a float (e.g., 300.0).
+    TODO
     """
 
 
@@ -6344,73 +6870,99 @@ def SetNetworkInteractionState(state: bool | int, event_layers=()):
     """
 
 
-def Unknown_2003_71(unk_0_4: int, event_layers=()):
+def AwardGesture(gesture_param_id: int, event_layers=()):
+    """
+    Awards a Gesture item to player.
+    """
+
+
+def MultiplyBloodstainSouls(multiplier: float, bloodstain_save_slot_id: int, event_layers=()):
+    """
+    Apply a multiplier to the amount of souls/echoes/runes waiting to be retrieved from the bloodstain with
+    the given save slot ID.
+    """
+
+
+def IncreaseCharacterSoulReward(
+    character: Character | int,
+    fixed_increase_amount: int,
+    soul_amount_load_slot_id: int,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2003_72(unk_0_4: float, unk_4_8: int, event_layers=()):
+def IssueEndOfPseudoMultiplayerNotification(success: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2003_73(unk_4_8: Object | Region | Character | int, unk_8_12: int, unk_12_16: int, event_layers=()):
+def UseFarViewCamera(far_view_id: int, asset: Asset | int, model_point: int = -1, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2003_74(unk_0_4: int, event_layers=()):
+def SetPlayerPositionDisplay(
+    state: bool | int,
+    aboveground: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    x: float,
+    y: float,
+    z: float,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2003_75(unknown1: int, unknown2: int, unknown3: int, event_layers=()):
-    """
-    Unknown. Only called once with arguments 0, 0, -1.
-    """
-
-
-def Unknown_2003_76(unk_0_4: int, unk_4_8: int, unk_8_12: float, unk_12_16: float, unk_16_20: float, event_layers=()):
+def SetPseudoMultiplayerReturnPosition(region: Region | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2003_77(entity_id: int, event_layers=()):
+def OpenWorldMapPoint(world_map_point_param_id: int, distance: float, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2003_78(unk_0_4: int, unk_4_8: float, event_layers=()):
+def SendNPCSummonHome(character: Character | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2003_79(unk_0_4: int, event_layers=()):
+def ShowLoadingScreenText(state: bool | int, event_layers=()):
     """
-    TODO
-    """
-
-
-def Unknown_2003_80(unk_0_4: int, event_layers=()):
-    """
-    TODO
+    Enable or disable text on loading screens.
     """
 
 
-def Unknown_2003_81(unk_0_4: int, event_layers=()):
+def EnableLoadingScreenText(event_layers=()):
     """
-    TODO
+    Calls `ShowLoadingScreenText` with `state=True`.
     """
 
 
-def Unknown_2003_82(character: Character | int, event_layers=()):
+def DisableLoadingScreenText(event_layers=()):
+    """
+    Calls `ShowLoadingScreenText` with `state=False`.
+    """
+
+
+def RemoveGesture(gesture_param_id: int, event_layers=()):
+    """
+    Remove given Gesture from player's inventory'.
+    """
+
+
+def EraseNPCSummonSign(character: Character | int, event_layers=()):
     """
     TODO
     """
@@ -6440,9 +6992,9 @@ def SetCharacterTalkRange(character: Character | int, distance: float, event_lay
     """
 
 
-def Unknown_2004_60(character: Character | int, obj: Object | int, event_layers=()):
+def ConnectCharacterToCaravan(character: Character | int, caravan_asset: Asset | int, event_layers=()):
     """
-    TODO
+    Used to connect trolls to the caravans they pull.
     """
 
 
@@ -6452,56 +7004,41 @@ def Unknown_2004_61(unk_0_4: int, event_layers=()):
     """
 
 
-def Unknown_2004_63(unk_0_4: int, unk_4_8: float, event_layers=()):
+def SetCharacterEnableDistance(character: Character | int, distance: float, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_67(character: Character | int, entity: Object | Region | Character | int, event_layers=()):
+def CopyPlayerCharacterData(source_character: Character | int, dest_characterentity: Character | int, event_layers=()):
     """
-    Possibly 'attaches' second entity to first character?
-    """
-
-
-def AttachObjectToCharacter(character: Character | int, model_point: int, obj: Object | int, event_layers=()):
-    """
-    TODO
+    Used to initialize Mimics.
     """
 
 
-def Unknown_2004_69(unk_0_4: int, unk_4_8: int, event_layers=()):
+def AttachAssetToCharacter(character: Character | int, model_point: int, asset: Asset | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_70(unk_0_4: int, unk_4_8: int, event_layers=()):
+def SetCharacterDisableOnCollisionUnload(character: Character | int, state: bool | int, event_layers=()):
+    """
+    I believe this will, if enabled for a character, cause that character to be disabled when the collision they
+    are standing on (or possibly their draw parent) is unloaded.
+    """
+
+
+def SetDistanceBasedNetworkAuthorityUpdate(character: Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_71(unk_0_4: int, unk_4_8: int, unk_8_12: int, event_layers=()):
-    """
-    Unknown. Called once, with all zeroes.
-    """
-
-
-def Unknown_2004_73(entity: Object | Region | Character | int, unk_4_8: int, event_layers=()):
-    """
-    TODO
-    """
-
-
-def Unknown_2004_74(
-    character: Character | int,
-    unknown1: int,
-    region: Region | int,
-    unknown2: int,
-    character_2: Character | int,
-    unknown3: int,
-    unknown4: int,
+def Unknown_2004_71(
+    unk_0_4: int,
+    entity_a: Asset | Region | Character | int,
+    entity_b: Asset | Region | Character | int,
     event_layers=(),
 ):
     """
@@ -6509,7 +7046,28 @@ def Unknown_2004_74(
     """
 
 
-def Unknown_2004_75(character: Character | int, unknown1: int, unknown2: int, event_layers=()):
+def SetCharacterFadeOnEnable(character: Character | int, state: bool | int, event_layers=()):
+    """
+    Determines if character will fade-in when enabled, I believe.
+    """
+
+
+def MoveCharacterAndCopyDrawParentWitHFadeout(
+    character: Character | int,
+    destination_type: CoordEntityType | int,
+    destination: Asset | Region | Character | int,
+    model_point: int,
+    copy_draw_parent: Asset | Region | Character | int,
+    use_bonfire_effect: bool | int,
+    reset_camera: bool | int,
+    event_layers=(),
+):
+    """
+    TODO
+    """
+
+
+def SetCharacterFaceParamOverride(character: Character | int, override_slot: int, face_param_id: int, event_layers=()):
     """
     TODO
     """
@@ -6521,69 +7079,90 @@ def Unknown_2004_76(flag: Flag | int, item_lot: int, event_layers=()):
     """
 
 
-def Unknown_2004_77(unknown1: float, unknown2: float, unknown3: int, unknown4: float, event_layers=()):
+def FadeToBlack(
+    strength: float,
+    duration: float,
+    freeze_player: bool | int,
+    freeze_player_delay: float,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2004_78(unk_0_4: int, unk_4_8: int, unk_8_12: int, event_layers=()):
+def CopyPlayerCharacterDataFromOnlinePlayers(
+    pool_type: int,
+    failcase_player_param_id: int,
+    target_character: Character | int,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2004_79(unk_0_4: int, unk_4_8: int, event_layers=()):
+def RequestPlayerCharacterDataFromOnlinePlayers(pool_type: int, unk_4_8: int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_80(unk_0_4: int, event_layers=()):
+def SendPlayerCharacterDataToOnlinePlayers(pool_type: int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_81(character: Character | int, event_layers=()):
+def ResetCharacterPosition(character: Character | int, event_layers=()):
+    """
+    Resets character position to MSB coordinates, I assume.
+    """
+
+
+def SetSpecialStandbyEndedFlag(character: Character | int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def Unknown_2004_83(character: Character | int, unk_4_8: int, event_layers=()):
+def SetCharacterEnableDistanceWithUnknown(
+    character: Character | int,
+    enable_distance: float,
+    unknown_distance: float,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2004_84(character: Character | int, unk_4_8: float, unk_8_12: float, event_layers=()):
+def AttachCaravanToController(caravan_asset: Asset | int, character: Character | int, event_layers=()):
+    """
+    Attaches caravan to trolls pulling it, presuamably (there is also an inverse event).
+    """
+
+
+def AttachAssetToAsset(
+    child_asset: Asset | int,
+    parent_asset: Asset | int,
+    parent_model_point: int = -1,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def Unknown_2005_17(obj_1: Object | int, obj_2: Object | int, event_layers=()):
-    """
-    TODO
-    """
-
-
-def Unknown_2005_18(obj_1: Object | int, obj_2: Object | int, unk_8_12: int, event_layers=()):
-    """
-    TODO
-    """
-
-
-def DestroyObject_NoSlot(obj: Object | int, event_layers=()):
+def DestroyAsset_NoSlot(asset: Asset | int, event_layers=()):
     """
     No 'slot' argument here.
     """
 
 
-def CreateBigHazardousObject(
-    obj_flag: Flag | int,
-    obj: int,
+def CreateBigHazardousAsset(
+    asset_flag: Flag | int,
+    asset: int,
     model_point_start: int,
     model_point_end: int,
     behaviour_id: int,
@@ -6598,9 +7177,9 @@ def CreateBigHazardousObject(
     """
 
 
-def SetUnknownVFX_06(vfx_id: int, event_layers=()):
+def SetWindVFX(wind_vfx_id: int, event_layers=()):
     """
-    Not known if argument is a VFX Event ID or an absolute VFX asset ID.
+    Not sure if argument is an MSB VFX Event ID (more likely) or an absolute VFX asset ID.
     """
 
 
@@ -6608,7 +7187,7 @@ def DisplayDialogAndSetFlags(
     message: EventText | int,
     button_type: ButtonType | int,
     number_buttons: NumberButtons | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     display_distance: float,
     left_flag: Flag | int,
     right_flag: Flag | int,
@@ -6620,19 +7199,24 @@ def DisplayDialogAndSetFlags(
     """
 
 
-def DisplayUnknownMessage_12(text: EventText | int, unknown1: int, event_layers=()):
-    """
-    Appears to be a variant of DisplayBattlefieldMessage.
-    """
-
-
-def DisplayUnknownMessage_13(text: EventText | int, event_layers=()):
+def DisplayFlashingMessageWithPriority(
+    text: EventText | int,
+    priority: int,
+    should_interrupt: bool | int,
+    event_layers=(),
+):
     """
     TODO
     """
 
 
-def DisplayUnknownMessage_14(text: EventText | int, event_layers=()):
+def DisplaySubareaWelcomeMessage(text: EventText | int, event_layers=()):
+    """
+    TODO
+    """
+
+
+def DisplayAreaWelcomeMessage(text: EventText | int, event_layers=()):
     """
     TODO
     """
@@ -6644,17 +7228,15 @@ def DisplayTutorialMessage(tutorial_param_id: int, unk_4_5: bool | int, unk_5_6:
     """
 
 
-def DisplayUnknownMessage_16(text: EventText | int, unknown2: int, event_layers=()):
+def DisplayNetworkMessage(text: EventText | int, unk_4_5: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownCamera_4(unknown1: float, unknown2: float, event_layers=()):
+def SetCameraAngle(x_angle: float, y_angle: float, event_layers=()):
     """
-    Very common camera instruction with unknown purpose.
-    First argument is often 5.0 but can also be negative, so is probably not a distance.
-    Second argument could be an angle (between -180 and 180).
+    Used very often, presumably to gently push the camera to a specific latitude/longitude.
     """
 
 
@@ -6682,21 +7264,33 @@ def UnknownSound_2010_8(sound_id: int, event_layers=()):
     """
 
 
-def UnknownSound_2010_10(unk_0_4: int, unk_4_8: int, event_layers=()):
+def SetBossMusic(bgm_boss_conv_param_id: int, state: BossMusicState | int, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownSound_2010_11(unk_0_4: float, event_layers=()):
+def SuppressSoundForFogGate(duration: float, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownSound_2010_12(entity_id: Object | Region | Character | int, unk_4_8: int, event_layers=()):
+def SetFieldBattleMusicWindUp(npc_threat_level: int, state: bool | int, event_layers=()):
     """
     TODO
+    """
+
+
+def EnableFieldBattleMusicWindUp(npc_threat_level: int, event_layers=()):
+    """
+    Calls `SetFieldBattleMusicWindUp` with `state=True`.
+    """
+
+
+def DisableFieldBattleMusicWindUp(npc_threat_level: int, event_layers=()):
+    """
+    Calls `SetFieldBattleMusicWindUp` with `state=False`.
     """
 
 
@@ -6706,13 +7300,13 @@ def SetAreaWelcomeMessageState(state: bool | int, event_layers=()):
     """
 
 
-def UnknownMap_11(unk_0_4: int, unk_4_8: float, event_layers=()):
+def ActivateGparamOverride(gparam_sub_id: int, change_duration: float, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownMap_12(unk_0_4: float, event_layers=()):
+def DeactivateGparamOverride(change_duration: float, event_layers=()):
     """
     TODO
     """
@@ -6774,7 +7368,11 @@ def RandomFramesElapsed(min_frames: int, max_frames: int, event_layers=()) -> bo
     ...
 
 
-def TimeOfDay(earliest: tuple, latest: tuple, event_layers=()) -> bool:
+def TimeOfDay(time: tuple, event_layers=()) -> bool:
+    ...
+
+
+def TimeOfDayInRange(earliest: tuple, latest: tuple, event_layers=()) -> bool:
     ...
 
 
@@ -6869,8 +7467,8 @@ def CharacterOutsideRegion(
 
 def EntityDistanceState(
     state: bool | int,
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -6879,7 +7477,7 @@ def EntityDistanceState(
 
 
 def PlayerWithinDistance(
-    other_entity: Object | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -6888,7 +7486,7 @@ def PlayerWithinDistance(
 
 
 def PlayerBeyondDistance(
-    other_entity: Object | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -6897,8 +7495,8 @@ def PlayerBeyondDistance(
 
 
 def EntityWithinDistance(
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -6907,8 +7505,8 @@ def EntityWithinDistance(
 
 
 def EntityBeyondDistance(
-    entity: Object | Region | Character | int,
-    other_entity: Object | Region | Character | int,
+    entity: Asset | Region | Character | int,
+    other_entity: Asset | Region | Character | int,
     radius: float,
     min_target_count: int = 1,
     event_layers=(),
@@ -6927,7 +7525,7 @@ def PlayerItemStateExcludingStorage(
 
 def ActionButtonBasic(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -6951,19 +7549,23 @@ def Client(event_layers=()) -> bool:
     ...
 
 
-def TryingToCreateSession(event_layers=()) -> bool:
+def Multiplayer(event_layers=()) -> bool:
     ...
 
 
-def TryingToJoinSession(event_layers=()) -> bool:
+def MultiplayerPending(event_layers=()) -> bool:
     ...
 
 
-def LeavingSession(event_layers=()) -> bool:
+def Singleplayer(event_layers=()) -> bool:
     ...
 
 
-def FailedToCreateSession(event_layers=()) -> bool:
+def Invasion(event_layers=()) -> bool:
+    ...
+
+
+def InvasionPending(event_layers=()) -> bool:
     ...
 
 
@@ -6995,7 +7597,7 @@ def MultiplayerEvent(event_id: int, event_layers=()) -> bool:
     ...
 
 
-def TrueFlagCountComparison(
+def EnabledFlagCountComparison(
     flag_type: FlagType | int,
     comparison_type: ComparisonType | int,
     flag_range: FlagRange | tuple | list,
@@ -7005,11 +7607,7 @@ def TrueFlagCountComparison(
     ...
 
 
-def TrueFlagCountEqual(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, value: int, event_layers=()) -> bool:
-    ...
-
-
-def TrueFlagCountNotEqual(
+def EnabledFlagCountEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7018,7 +7616,7 @@ def TrueFlagCountNotEqual(
     ...
 
 
-def TrueFlagCountGreaterThan(
+def EnabledFlagCountNotEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7027,7 +7625,7 @@ def TrueFlagCountGreaterThan(
     ...
 
 
-def TrueFlagCountLessThan(
+def EnabledFlagCountGreaterThan(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7036,7 +7634,7 @@ def TrueFlagCountLessThan(
     ...
 
 
-def TrueFlagCountGreaterThanOrEqual(
+def EnabledFlagCountLessThan(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7045,7 +7643,16 @@ def TrueFlagCountGreaterThanOrEqual(
     ...
 
 
-def TrueFlagCountLessThanOrEqual(
+def EnabledFlagCountGreaterThanOrEqual(
+    flag_type: FlagType | int,
+    flag_range: FlagRange | tuple | list,
+    value: int,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def EnabledFlagCountLessThanOrEqual(
     flag_type: FlagType | int,
     flag_range: FlagRange | tuple | list,
     value: int,
@@ -7090,7 +7697,7 @@ def EventValueLessThanOrEqual(flag: Flag | int, bit_count: int, value: int, even
 
 def ActionButtonBoss(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     model_point: int = -1,
@@ -7149,7 +7756,7 @@ def NewGameCycleLessThanOrEqual(completion_count: int, event_layers=()) -> bool:
 
 def ActionButtonBasicLineIntersect(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -7164,7 +7771,7 @@ def ActionButtonBasicLineIntersect(
 
 def ActionButtonBossLineIntersect(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     line_intersects: int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
@@ -7318,33 +7925,6 @@ def HealthRatioLessThanOrEqual(
 def CharacterType(
     character: Character | int,
     character_type: CharacterType | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def CharacterHuman(
-    character: Character | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def CharacterWhitePhantom(
-    character: Character | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def CharacterHollow(
-    character: Character | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7515,6 +8095,14 @@ def HasAIStatus(
     ...
 
 
+def PlayerClass(class_type: ClassType | int, event_layers=()) -> bool:
+    ...
+
+
+def PlayerCovenant(covenant: int, event_layers=()) -> bool:
+    ...
+
+
 def PlayerLevelComparison(comparison_type: ComparisonType | int, value: int, event_layers=()) -> bool:
     ...
 
@@ -7614,9 +8202,9 @@ def HealthValueLessThanOrEqual(
     ...
 
 
-def ObjectDestructionState(
+def AssetDestructionState(
     state: bool | int,
-    obj: Object | int,
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7624,8 +8212,8 @@ def ObjectDestructionState(
     ...
 
 
-def ObjectDestroyed(
-    obj: Object | int,
+def AssetDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7633,8 +8221,8 @@ def ObjectDestroyed(
     ...
 
 
-def ObjectNotDestroyed(
-    obj: Object | int,
+def AssetNotDestroyed(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7642,20 +8230,44 @@ def ObjectNotDestroyed(
     ...
 
 
-def ObjectDamaged(obj: Object | int, attacker: Character | int, event_layers=()) -> bool:
+def AssetDamaged(asset: Asset | int, attacker: Character | int, event_layers=()) -> bool:
     ...
 
 
-def ObjectActivated(obj_act_id: int, event_layers=()) -> bool:
+def AssetActivated(obj_act_id: int, event_layers=()) -> bool:
     ...
 
 
-def ObjectHealthValueComparison(
-    obj: Object | int,
+def AssetHealthValueComparison(
+    asset: Asset | int,
     comparison_type: ComparisonType | int,
     value: int,
     event_layers=(),
 ) -> bool:
+    ...
+
+
+def AssetHealthValueEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+    ...
+
+
+def AssetHealthValueNotEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+    ...
+
+
+def AssetHealthValueGreaterThan(asset: Asset | int, value: int, event_layers=()) -> bool:
+    ...
+
+
+def AssetHealthValueLessThan(asset: Asset | int, value: int, event_layers=()) -> bool:
+    ...
+
+
+def AssetHealthValueGreaterThanOrEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
+    ...
+
+
+def AssetHealthValueLessThanOrEqual(asset: Asset | int, value: int, event_layers=()) -> bool:
     ...
 
 
@@ -7708,7 +8320,7 @@ def AttackedWithDamageType(
     ...
 
 
-def ActionButtonParamActivated(action_button_id: int, entity: Object | Region | Character | int, event_layers=()) -> bool:
+def ActionButtonParamActivated(action_button_id: int, entity: Asset | Region | Character | int, event_layers=()) -> bool:
     ...
 
 
@@ -7724,47 +8336,88 @@ def PlayerNotInOwnWorld(event_layers=()) -> bool:
     ...
 
 
-def MapCeremonyState(state: bool | int, game_map: Map | MapTile | tuple | list, ceremony_id: int, event_layers=()) -> bool:
+def MapLoaded(game_map: Map | MapTile | tuple | list, event_layers=()) -> bool:
     ...
 
 
-def MapInCeremony(game_map: Map | MapTile | tuple | list, ceremony_id: int, event_layers=()) -> bool:
+def WeatherState(weather: Weather | int, unk_4_8: float, unk_8_12: float, event_layers=()) -> bool:
     ...
 
 
-def MapNotInCeremony(game_map: Map | MapTile | tuple | list, ceremony_id: int, event_layers=()) -> bool:
+def MapUpdatePermissionState(
+    state: bool | int,
+    unk_state: bool | int,
+    game_map: Map | MapTile | tuple | list,
+    event_layers=(),
+) -> bool:
     ...
 
 
-def InsideMapTile(game_map: Map | MapTile | tuple | list, event_layers=()) -> bool:
+def MapHasUpdatePermission(unk_state: bool | int, game_map: Map | MapTile | tuple | list, event_layers=()) -> bool:
     ...
 
 
-def UnknownCondition_31(hours: int, unknown1: float, unknown2: int, event_layers=()) -> bool:
+def MapDoesNotHaveUpdatePermission(unk_state: bool | int, game_map: Map | MapTile | tuple | list, event_layers=()) -> bool:
     ...
 
 
-def Unknown_3_32(unk_1_2: int, unk_4_8: int, event_layers=()) -> bool:
+def FieldBattleMusicState(npc_threat_level: int, state: bool | int, event_layers=()) -> bool:
     ...
 
 
-def UnknownCondition_33(unk_4_8: int, unk_8_9: bool | int, event_layers=()) -> bool:
+def FieldBattleMusicEnabled(npc_threat_level: int, event_layers=()) -> bool:
     ...
 
 
-def UnknownCondition_34(unk_4_8: int, unk_8_12: int, event_layers=()) -> bool:
+def FieldBattleMusicDisabled(npc_threat_level: int, event_layers=()) -> bool:
     ...
 
 
-def UnknownCondition_35(unk_1_2: int, unk_4_8: int, event_layers=()) -> bool:
+def PlayerHasArmorEquipped(armor_type: ArmorType | int, armor: ArmorParam | int, unk_8_12: int = -1, event_layers=()) -> bool:
     ...
 
 
-def UnknownFlagCheck_37(flag: Flag | int, state: FlagSetting | int, event_layers=()) -> bool:
+def PlayerHasHeadArmorEquipped(armor: ArmorParam | int, unk_8_12: int = -1, event_layers=()) -> bool:
     ...
 
 
-def SteamConnectionState(is_disconnected: bool | int, event_layers=()) -> bool:
+def PlayerHasBodyArmorEquipped(armor: ArmorParam | int, unk_8_12: int = -1, event_layers=()) -> bool:
+    ...
+
+
+def PlayerHasArmsArmorEquipped(armor: ArmorParam | int, unk_8_12: int = -1, event_layers=()) -> bool:
+    ...
+
+
+def PlayerHasLegsArmorEquipped(armor: ArmorParam | int, unk_8_12: int = -1, event_layers=()) -> bool:
+    ...
+
+
+def CeremonyState(state: bool | int, ceremony: int, event_layers=()) -> bool:
+    ...
+
+
+def CeremonyActive(ceremony: int, event_layers=()) -> bool:
+    ...
+
+
+def CeremonyInactive(ceremony: int, event_layers=()) -> bool:
+    ...
+
+
+def WeatherLotState(weather_lot_param_id: int, state: bool | int, event_layers=()) -> bool:
+    ...
+
+
+def WeatherLotActive(weather_lot_param_id: int, event_layers=()) -> bool:
+    ...
+
+
+def WeatherLotInactive(weather_lot_param_id: int, event_layers=()) -> bool:
+    ...
+
+
+def PlayerGender(gender: Gender | int, event_layers=()) -> bool:
     ...
 
 
@@ -7777,40 +8430,79 @@ def AllyPhantomCountComparison(
     ...
 
 
-def CharacterDrawGroupState(
+def CharacterProportionDeathState(
     character: Character | int,
     state: bool | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ) -> bool:
     ...
 
 
-def CharacterDrawGroupEnabled(
+def CharacterProportionDead(
     character: Character | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ) -> bool:
     ...
 
 
-def CharacterDrawGroupDisabled(
+def CharacterProportionAlive(
     character: Character | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
+    target_proportion: float = 1.0,
     event_layers=(),
 ) -> bool:
     ...
 
 
-def UnknownCharacterCondition_19(
+def CharacterProportionSpecialEffectState(
+    character_group: Character | int,
+    special_effect: int,
+    state: bool | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def CharacterProportionHasSpecialEffect(
+    character_group: Character | int,
+    special_effect: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def CharacterProportionDoesNotHaveSpecialEffect(
+    character_group: Character | int,
+    special_effect: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def PlayerTargeted(
+    min_npc_threat_level: int,
+    max_npc_threat_level: int,
+    ai_status: AIStatusType | int,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def NPCPartAttackedWithDamageType(
     character: Character | int,
-    unk_8_12: int,
-    unk_12_13: int,
-    unk_13_14: int,
-    unk_16_20: float,
+    npc_part_id: int,
+    attacker: Character | int = -1,
+    damage_type: DamageType | int = DamageType.Unspecified,
     event_layers=(),
 ) -> bool:
     ...
@@ -7826,24 +8518,6 @@ def CharacterInvadeType(
     ...
 
 
-def UnknownCharacterCondition_28(character: Character | int, unk_8_12: int, unk_12_16: int, event_layers=()) -> bool:
-    ...
-
-
-def UnknownCharacterCondition_30(
-    character: Character | int,
-    npc_part_id: int,
-    unk_12_16: int,
-    unk_16_20: int,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def UnknownCharacterCondition_31(character: Character | int, unk_4_8: int, unk_8_12: float, event_layers=()) -> bool:
-    ...
-
-
 def CharacterMountState(character: Character | int, is_mounted: bool | int, event_layers=()) -> bool:
     ...
 
@@ -7856,33 +8530,9 @@ def CharacterNotMounted(character: Character | int, event_layers=()) -> bool:
     ...
 
 
-def UnknownCharacterCondition_34(
+def CharacterStateInfoState(
     character: Character | int,
-    unk_8_12: int,
-    unk_12_16: int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def UnknownCharacterCondition_35(character: Character | int, unk_8_12: int, event_layers=()) -> bool:
-    ...
-
-
-def UnknownObjectCondition_6(
-    unk_4_5: int,
-    obj: Object | int,
-    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
-    target_count: float = 1.0,
-    event_layers=(),
-) -> bool:
-    ...
-
-
-def ObjectBackreadState(
-    obj: Object | int,
+    state_info: int,
     state: bool | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
@@ -7891,8 +8541,9 @@ def ObjectBackreadState(
     ...
 
 
-def ObjectBackreadEnabled(
-    obj: Object | int,
+def CharacterHasStateInfo(
+    character: Character | int,
+    state_info: int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7900,8 +8551,59 @@ def ObjectBackreadEnabled(
     ...
 
 
-def ObjectBackreadDisabled(
-    obj: Object | int,
+def CharacterDoesNotHaveStateInfo(
+    character: Character | int,
+    state_info: int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def SpecialStandbyEndedFlagState(character: Character | int, state: bool | int, event_layers=()) -> bool:
+    ...
+
+
+def SpecialStandbyEndedFlagEnabled(character: Character | int, event_layers=()) -> bool:
+    ...
+
+
+def SpecialStandbyEndedFlagDisabled(character: Character | int, event_layers=()) -> bool:
+    ...
+
+
+def AssetProportionDestructionState(
+    state: bool | int,
+    asset_group: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_proportion: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def AssetBackreadState(
+    asset: Asset | int,
+    state: bool | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def AssetBackreadEnabled(
+    asset: Asset | int,
+    target_comparison_type: ComparisonType | int = ComparisonType.Equal,
+    target_count: float = 1.0,
+    event_layers=(),
+) -> bool:
+    ...
+
+
+def AssetBackreadDisabled(
+    asset: Asset | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -7911,7 +8613,7 @@ def ObjectBackreadDisabled(
 
 def ActionButton(
     prompt_text: EventText | int,
-    anchor_entity: Object | Region | Character | int,
+    anchor_entity: Asset | Region | Character | int,
     anchor_type: CoordEntityType | int = None,
     facing_angle: float = None,
     max_distance: float = None,
@@ -7919,7 +8621,7 @@ def ActionButton(
     trigger_attribute: TriggerAttribute | int = 48,
     button: int = 0,
     boss_version: bool = False,
-    line_intersects: Object | Region | Character | int = None,
+    line_intersects: Asset | Region | Character | int = None,
     event_layers=(),
 ) -> bool:
     """
@@ -7984,9 +8686,9 @@ def PlayerDoesNotHaveGood(good: GoodParam | int, including_storage: bool = False
     ...
 
 
-def TrueFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, event_layers=()) -> int:
+def EnabledFlagCount(flag_type: FlagType | int, flag_range: FlagRange | tuple | list, event_layers=()) -> int:
     """
-    Compare output to a value as a shortcut for calling `TrueFlagCountComparison(...)`.
+    Compare output to a value as a shortcut for calling `EnabledFlagCountComparison(...)`.
     """
     ...
 
@@ -8036,9 +8738,9 @@ def HealthValue(
     ...
 
 
-def ObjectHealthValue(obj: Object | int, event_layers=()) -> int:
+def AssetHealthValue(asset: Asset | int, event_layers=()) -> int:
     """
-    Compare output to a value as a shortcut for calling `ObjectHealthValueComparison(...)`.
+    Compare output to a value as a shortcut for calling `AssetHealthValueComparison(...)`.
     """
     ...
 

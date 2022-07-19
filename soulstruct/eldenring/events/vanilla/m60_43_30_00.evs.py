@@ -12,36 +12,47 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_30_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 9005810, args=(1043300800, 76161, 1043300950, 1043301950, 5.0), arg_types="IIIIf")
+    CommonFunc_9005810(
+        0,
+        flag=1043300800,
+        grace_flag=76161,
+        character=Characters.TalkDummy0,
+        asset=Assets.AEG099_060_9000,
+        enemy_block_distance=5.0,
+    )
     Event_1043302800()
     Event_1043302810()
     Event_1043302849()
-    RunCommonEvent(
+    CommonFunc_90005780(
         0,
-        90005780,
-        args=(1043300800, 1043302701, 1043302161, 1043300700, 20, 1043302701, 1043319209, 1, 0),
-        arg_types="IIIIiIIBi",
+        flag=1043300800,
+        summon_flag=1043302701,
+        dismissal_flag=1043302161,
+        character=Characters.Edgar,
+        sign_type=20,
+        region=1043302701,
+        right=1043319209,
+        unknown=1,
+        right_1=0,
     )
-    RunCommonEvent(0, 90005781, args=(1043300800, 1043302701, 1043302161, 1043300700), arg_types="IIII")
-    RunCommonEvent(
-        0,
-        90005782,
-        args=(1043302701, 1043302805, 1043300700, 1043302850, 1043302809, 0),
-        arg_types="IIIIIi",
-    )
+    CommonFunc_90005781(0, flag=1043300800, flag_1=1043302701, flag_2=1043302161, character=Characters.Edgar)
+    CommonFunc_90005782(0, 1043302701, 1043302805, 1043300700, 1043302850, 1043302809, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005200, args=(1043300340, 30001, 20001, 1043302340, 0.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
+    CommonFunc_90005200(0, 1043300340, 30001, 20001, 1043302340, 0.5, 0, 0, 0, 0)
 
 
 @RestartOnRest(1043302500)
@@ -54,16 +65,21 @@ def Event_1043302500():
 @RestartOnRest(1043302800)
 def Event_1043302800():
     """Event 1043302800"""
-    EndIfFlagEnabled(1043300800)
-    IfHealthValueLessThanOrEqual(MAIN, 1043300800, value=0)
+    if FlagEnabled(1043300800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.LeonineMisbegotten) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(1043300800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 1043300800)
-    KillBossAndDisplayBanner(character=1043300800, banner_type=BannerType.Unknown)
+    PlaySoundEffect(Characters.LeonineMisbegotten, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.LeonineMisbegotten))
+    
+    KillBossAndDisplayBanner(character=Characters.LeonineMisbegotten, banner_type=BannerType.GreatEnemyFelled)
     EnableFlag(1043300800)
     EnableFlag(9180)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61180)
+    if PlayerInOwnWorld():
+        EnableFlag(61180)
     End()
 
 
@@ -71,47 +87,57 @@ def Event_1043302800():
 def Event_1043302810():
     """Event 1043302810"""
     GotoIfFlagDisabled(Label.L0, flag=1043300800)
-    DisableCharacter(1043300800)
-    DisableAnimations(1043300800)
-    Kill(1043300800)
+    DisableCharacter(Characters.LeonineMisbegotten)
+    DisableAnimations(Characters.LeonineMisbegotten)
+    Kill(Characters.LeonineMisbegotten)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(1043300800)
-    SetLockOnPoint(character=1043300800, lock_on_model_point=220, state=False)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(AND_1, 1043302805)
-    IfCharacterInsideRegion(OR_1, character=PLAYER, region=1043302850)
-    IfAttackedWithDamageType(OR_1, attacked_entity=1043300800, attacker=PLAYER)
-    IfUnknownCharacterCondition_34(OR_1, character=1043300800, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=1043300800, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=1043300800, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=1043300800, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_1, character=1043300800, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
-    EnableAI(1043300800)
-    SetNetworkUpdateRate(1043300800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(1043300800, name=903460500)
-    SetLockOnPoint(character=1043300800, lock_on_model_point=220, state=True)
-    AddSpecialEffect(1043300800, 8089)
+    DisableAI(Characters.LeonineMisbegotten)
+    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_model_point=220, state=False)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(1043302805))
+    OR_1.Add(CharacterInsideRegion(character=PLAYER, region=1043302850))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LeonineMisbegotten, attacker=PLAYER))
+    OR_1.Add(CharacterHasStateInfo(character=Characters.LeonineMisbegotten, state_info=436))
+    OR_1.Add(CharacterHasStateInfo(character=Characters.LeonineMisbegotten, state_info=2))
+    OR_1.Add(CharacterHasStateInfo(character=Characters.LeonineMisbegotten, state_info=5))
+    OR_1.Add(CharacterHasStateInfo(character=Characters.LeonineMisbegotten, state_info=6))
+    OR_1.Add(CharacterHasStateInfo(character=Characters.LeonineMisbegotten, state_info=260))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    EnableAI(Characters.LeonineMisbegotten)
+    SetNetworkUpdateRate(Characters.LeonineMisbegotten, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.LeonineMisbegotten, name=903460500)
+    SetLockOnPoint(character=Characters.LeonineMisbegotten, lock_on_model_point=220, state=True)
+    AddSpecialEffect(Characters.LeonineMisbegotten, 8089)
 
 
 @RestartOnRest(1043302849)
 def Event_1043302849():
     """Event 1043302849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(1043300800, 1043301800, 1043302850, 1043302805, 1043305800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=1043300800,
+        entity=Assets.AEG099_002_9000,
+        region=1043302850,
+        flag_1=1043302805,
+        character=1043305800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(
+    CommonFunc_9005801(
         0,
-        9005801,
-        args=(1043300800, 1043301800, 1043302850, 1043302805, 1043302806, 10000),
-        arg_types="IIIIIi",
+        flag=1043300800,
+        entity=Assets.AEG099_002_9000,
+        region=1043302850,
+        flag_1=1043302805,
+        flag_2=1043302806,
+        action_button_id=10000,
     )
-    RunCommonEvent(0, 9005811, args=(1043300800, 1043301800, 5, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(1043300800, 950000, 1043302805, 1043302806, 0, 0, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005811(0, flag=1043300800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
+    CommonFunc_9005822(0, 1043300800, 950000, 1043302805, 1043302806, 0, 0, 0, 0)

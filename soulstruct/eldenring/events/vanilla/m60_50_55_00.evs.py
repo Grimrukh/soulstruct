@@ -12,36 +12,66 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_50_55_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1050550300, 30000, 20000, 1050552300, 0.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.GravenSchool0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1050552300,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1050550301, 30000, 20000, 1050552300, 0.0, 1.5, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.GravenSchool1,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1050552300,
+        radius=0.0,
+        seconds=1.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1050550302, 30000, 20000, 1050552302, 0.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.GravenSchool2,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1050552302,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 900005610, args=(1050551680, 100, 800, 1050558600), arg_types="IiiI")
-    RunCommonEvent(
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1050558600)
+    CommonFunc_90005636(
         0,
-        90005636,
-        args=(1050558600, 1050550600, 1050551600, 4470, 1050552600, 1050552601, 1050552600, 1050553600, 0),
-        arg_types="IIIiIIIIi",
+        flag=1050558600,
+        character=Characters.WanderingNoble,
+        entity=Assets.AEG099_374_9000,
+        special_effect_id=4470,
+        destination=1050552600,
+        region=1050552601,
+        flag_1=1050552600,
+        patrol_information_id=1050553600,
+        right=0,
     )
-    RunCommonEvent(0, 90005637, args=(1050558600, 1050550600, 1050552601), arg_types="III")
+    CommonFunc_90005637(0, 1050558600, 1050550600, 1050552601)

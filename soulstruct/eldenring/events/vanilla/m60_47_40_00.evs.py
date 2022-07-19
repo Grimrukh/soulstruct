@@ -12,210 +12,641 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_47_40_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1047400900, obj=1047401950, unknown=5.0)
-    RunCommonEvent(
+    RegisterGrace(grace_flag=1047400900, asset=Assets.AEG099_060_9001)
+    CommonFunc_90005100(
         0,
-        90005100,
-        args=(76418, 76403, 1047401980, 77400, 1, 78400, 78401, 78402, 78403, 78404, 78405, 78406, 78407, 78408, 78409),
-        arg_types="IIIIIIIIIIIIIII",
+        flag=76418,
+        flag_1=76403,
+        asset=Assets.AEG099_090_9000,
+        source_flag=77400,
+        value=1,
+        flag_2=78400,
+        flag_3=78401,
+        flag_4=78402,
+        flag_5=78403,
+        flag_6=78404,
+        flag_7=78405,
+        flag_8=78406,
+        flag_9=78407,
+        flag_10=78408,
+        flag_11=78409,
     )
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004070, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004060, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004050, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004040, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004030, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004020, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004010, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005694, args=(1047402502, 1047401502, 200, 0, 802004000, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004070, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004060, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004050, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004040, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004030, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004020, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004010, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005694, args=(1047402506, 1047401506, 200, 0, 802004000, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004070, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004060, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004050, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004040, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004030, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004020, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004010, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005694, args=(1047402507, 1047401507, 200, 0, 802004000, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004070, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004060, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004050, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004040, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004030, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004020, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004010, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005694, args=(1047402511, 1047401511, 200, 0, 802004000, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 57)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004070, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 56)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004060, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 55)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004050, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 54)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004040, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 53)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004030, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 52)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004020, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 51)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004010, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    SkipLinesIfFlagDisabled(1, 50)
-    RunCommonEvent(0, 90005694, args=(1047402512, 1047401512, 200, 0, 802004000, 1.0, 0.0, 1.0), arg_types="IIiiifff")
-    RunCommonEvent(0, 90005683, args=(62410, 1047401684, 207, 78490, 78490), arg_types="IIiII")
-    RunCommonEvent(
+    if FlagEnabled(57):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004070,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004060,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004050,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004040,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004030,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004020,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004010,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402502,
+            asset=Assets.AEG007_432_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004000,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004070,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004060,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004050,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004040,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004030,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004020,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004010,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402506,
+            asset=Assets.AEG007_433_1000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004000,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004070,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004060,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004050,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004040,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004030,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004020,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004010,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402507,
+            asset=Assets.AEG007_433_1001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004000,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004070,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004060,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004050,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004040,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004030,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004020,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004010,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402511,
+            asset=Assets.AEG007_470_2000,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004000,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(57):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004070,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(56):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004060,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(55):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004050,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(54):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004040,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(53):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004030,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(52):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004020,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(51):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004010,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    if FlagEnabled(50):
+        CommonFunc_90005694(
+            0,
+            asset_flag=1047402512,
+            asset=Assets.AEG007_470_2001,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802004000,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
+    CommonFunc_90005683(0, flag=62410, asset=Assets.AEG099_055_2000, vfx_id=207, flag_1=78490, flag_2=78490)
+    CommonFunc_90005620(
         0,
-        90005620,
-        args=(1047400570, 1047401570, 1047401571, 0, 1047402570, 1047402571, 1047402572),
-        arg_types="IIIIIIi",
+        flag=1047400570,
+        asset=Assets.AEG027_079_9000,
+        asset_1=Assets.AEG027_216_9000,
+        asset_2=0,
+        left_flag=1047402570,
+        cancel_flag__right_flag=1047402571,
+        right=1047402572,
     )
-    RunCommonEvent(0, 90005621, args=(1047400570, 1047401573), arg_types="II")
-    RunCommonEvent(0, 90005250, args=(1047400256, 1047402259, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400259, 1047402259, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400260, 1047402260, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005300, args=(1047400290, 1047400290, 40400, 0.0, 0), arg_types="IIifi")
+    CommonFunc_90005621(0, flag=1047400570, asset=Assets.AEG099_272_9000)
+    CommonFunc_90005250(0, 1047400256, 1047402259, 0.0, -1)
+    CommonFunc_90005250(0, 1047400259, 1047402259, 0.0, -1)
+    CommonFunc_90005250(0, 1047400260, 1047402260, 0.0, -1)
+    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot_param_id=40400, seconds=0.0, left=0)
     Event_1047402399()
-    RunCommonEvent(0, 90005250, args=(1047400399, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400300, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400301, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400302, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400303, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400304, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400305, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400306, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400307, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400308, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400309, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400310, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400311, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400312, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400313, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400314, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400315, 1047402399, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400321, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400322, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400323, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400324, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400325, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400326, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400327, 1047402321, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400328, 1047402321, 0.0, -1), arg_types="IIfi")
+    CommonFunc_90005250(0, 1047400399, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400300, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400301, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400302, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400303, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400304, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400305, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400306, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400307, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400308, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400309, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400310, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400311, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400312, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400313, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400314, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400315, 1047402399, 0.0, -1)
+    CommonFunc_90005250(0, 1047400321, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400322, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400323, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400324, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400325, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400326, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400327, 1047402321, 0.0, -1)
+    CommonFunc_90005250(0, 1047400328, 1047402321, 0.0, -1)
     Event_1047402302()
-    RunCommonEvent(0, 90005250, args=(1047400336, 1047402336, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400337, 1047402336, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400338, 1047402336, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400339, 1047402336, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400340, 1047402340, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400341, 1047402340, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400342, 1047402340, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400354, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400355, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400402, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400403, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400405, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400407, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400408, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400409, 1047402402, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400410, 1047402336, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1047400468, 1047402468, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005251, args=(1047400391, 60.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005870, args=(1047400800, 904811602, 18), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1047400800, 0, 1047400800, 0, 30410, 0.0), arg_types="IIIIif")
-    RunCommonEvent(0, 90005872, args=(1047400800, 18, 0), arg_types="III")
+    CommonFunc_90005250(0, 1047400336, 1047402336, 0.0, -1)
+    CommonFunc_90005250(0, 1047400337, 1047402336, 0.0, -1)
+    CommonFunc_90005250(0, 1047400338, 1047402336, 0.0, -1)
+    CommonFunc_90005250(0, 1047400339, 1047402336, 0.0, -1)
+    CommonFunc_90005250(0, 1047400340, 1047402340, 0.0, -1)
+    CommonFunc_90005250(0, 1047400341, 1047402340, 0.0, -1)
+    CommonFunc_90005250(0, 1047400342, 1047402340, 0.0, -1)
+    CommonFunc_90005250(0, 1047400354, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400355, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400402, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400403, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400405, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400407, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400408, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400409, 1047402402, 0.0, -1)
+    CommonFunc_90005250(0, 1047400410, 1047402336, 0.0, -1)
+    CommonFunc_90005250(0, 1047400468, 1047402468, 0.0, -1)
+    CommonFunc_90005251(0, 1047400391, 60.0, 0.0, -1)
+    CommonFunc_90005870(0, character=Characters.PutridAvatar, name=904811602, npc_threat_level=18)
+    CommonFunc_90005860(
+        0,
+        flag=1047400800,
+        left=0,
+        character=Characters.PutridAvatar,
+        left_1=0,
+        item_lot__item_lot_param_id=30410,
+        seconds=0.0,
+    )
+    CommonFunc_90005872(0, 1047400800, 18, 0)
 
 
 @RestartOnRest(1047402301)
 def Event_1047402301(_, character: uint, region: uint, patrol_information_id: uint):
     """Event 1047402301"""
-    IfCharacterInsideRegion(MAIN, character=character, region=region)
+    MAIN.Await(CharacterInsideRegion(character=character, region=region))
+    
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
 
 
 @RestartOnRest(1047402302)
 def Event_1047402302():
     """Event 1047402302"""
-    DisableCharacter(1047400300)
-    DisableCharacter(1047400301)
-    DisableCharacter(1047400302)
-    DisableCharacter(1047400303)
-    DisableCharacter(1047400304)
-    DisableCharacter(1047400305)
-    DisableCharacter(1047400306)
-    DisableCharacter(1047400307)
-    DisableCharacter(1047400308)
-    DisableCharacter(1047400309)
-    DisableCharacter(1047400310)
-    DisableCharacter(1047400311)
-    DisableCharacter(1047400312)
-    DisableCharacter(1047400313)
-    DisableCharacter(1047400314)
-    DisableCharacter(1047400315)
-    IfCharacterInsideRegion(MAIN, character=PLAYER, region=1047402399)
-    EnableCharacter(1047400300)
-    EnableCharacter(1047400301)
-    EnableCharacter(1047400302)
-    EnableCharacter(1047400303)
-    EnableCharacter(1047400304)
-    EnableCharacter(1047400305)
-    EnableCharacter(1047400306)
-    EnableCharacter(1047400307)
-    EnableCharacter(1047400308)
-    EnableCharacter(1047400309)
-    EnableCharacter(1047400310)
-    EnableCharacter(1047400311)
-    EnableCharacter(1047400312)
-    EnableCharacter(1047400313)
-    EnableCharacter(1047400314)
-    EnableCharacter(1047400315)
+    DisableCharacter(Characters.PutridCorpse0)
+    DisableCharacter(Characters.PutridCorpse1)
+    DisableCharacter(Characters.PutridCorpse2)
+    DisableCharacter(Characters.PutridCorpse3)
+    DisableCharacter(Characters.PutridCorpse4)
+    DisableCharacter(Characters.PutridCorpse5)
+    DisableCharacter(Characters.PutridCorpse6)
+    DisableCharacter(Characters.PutridCorpse7)
+    DisableCharacter(Characters.PutridCorpse8)
+    DisableCharacter(Characters.PutridCorpse9)
+    DisableCharacter(Characters.PutridCorpse10)
+    DisableCharacter(Characters.PutridCorpse11)
+    DisableCharacter(Characters.PutridCorpse12)
+    DisableCharacter(Characters.PutridCorpse13)
+    DisableCharacter(Characters.PutridCorpse14)
+    DisableCharacter(Characters.PutridCorpse15)
+    
+    MAIN.Await(CharacterInsideRegion(character=PLAYER, region=1047402399))
+    
+    EnableCharacter(Characters.PutridCorpse0)
+    EnableCharacter(Characters.PutridCorpse1)
+    EnableCharacter(Characters.PutridCorpse2)
+    EnableCharacter(Characters.PutridCorpse3)
+    EnableCharacter(Characters.PutridCorpse4)
+    EnableCharacter(Characters.PutridCorpse5)
+    EnableCharacter(Characters.PutridCorpse6)
+    EnableCharacter(Characters.PutridCorpse7)
+    EnableCharacter(Characters.PutridCorpse8)
+    EnableCharacter(Characters.PutridCorpse9)
+    EnableCharacter(Characters.PutridCorpse10)
+    EnableCharacter(Characters.PutridCorpse11)
+    EnableCharacter(Characters.PutridCorpse12)
+    EnableCharacter(Characters.PutridCorpse13)
+    EnableCharacter(Characters.PutridCorpse14)
+    EnableCharacter(Characters.PutridCorpse15)
 
 
 @RestartOnRest(1047402399)
 def Event_1047402399():
     """Event 1047402399"""
-    IfCharacterInsideRegion(MAIN, character=1047400399, region=1046402399)
+    MAIN.Await(CharacterInsideRegion(character=Characters.Dummy, region=1046402399))
+    
     Wait(30.0)
-    ChangePatrolBehavior(1047400399, patrol_information_id=1046403201)
+    ChangePatrolBehavior(Characters.Dummy, patrol_information_id=1046403201)

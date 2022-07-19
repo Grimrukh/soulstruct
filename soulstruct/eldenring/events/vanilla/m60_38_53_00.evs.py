@@ -12,14 +12,17 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_38_53_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005600, args=(1038530000, 1038531950, 5.0, 1038530480), arg_types="IIfI")
+    CommonFunc_90005600(0, grace_flag=1038530000, asset=1038531950, enemy_block_distance=5.0, character=1038530480)
     Event_1038532200(0, character=1038530200)
     Event_1038532200(1, character=1038530201)
     Event_1038532200(2, character=1038530202)
@@ -30,19 +33,23 @@ def Constructor():
     Event_1038532200(7, character=1038530207)
     Event_1038532200(8, character=1038530208)
     Event_1038532580()
-    RunCommonEvent(
+    CommonFunc_90005620(
         0,
-        90005620,
-        args=(1038530570, 1038531570, 1038531571, 1038531572, 1038532570, 1038532571, 1038532572),
-        arg_types="IIIIIIi",
+        flag=1038530570,
+        asset=Assets.AEG027_078_9000,
+        asset_1=Assets.AEG027_216_9000,
+        asset_2=Assets.AEG027_217_9000,
+        left_flag=1038532570,
+        cancel_flag__right_flag=1038532571,
+        right=1038532572,
     )
-    RunCommonEvent(0, 90005621, args=(1038530570, 1038531573), arg_types="II")
+    CommonFunc_90005621(0, 1038530570, 1038531573)
 
 
 @RestartOnRest(1038532580)
 def Event_1038532580():
     """Event 1038532580"""
-    RegisterLadder(start_climbing_flag=38531580, stop_climbing_flag=38531851, obj=1038531582)
+    RegisterLadder(start_climbing_flag=38531580, stop_climbing_flag=38531851, asset=1038531582)
 
 
 @RestartOnRest(1038532200)

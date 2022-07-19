@@ -24,6 +24,8 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+_EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d,. \n]+)\) *\n")
+
 
 class EMEVD(GameFile, abc.ABC):
 
@@ -32,6 +34,11 @@ class EMEVD(GameFile, abc.ABC):
     linked_file_offset: list[int]
     map_name: str
 
+    # For internal usage.
+    all_event_arg_fmts: dict[int, str]  # maps events to their argument struct formats
+    all_event_arg_names: dict[int, list[str]]  # maps events to their auto-detected argument names
+    all_event_arg_types: dict[int, list[tuple[tp.Type, ...]]]  # maps events to each of their arguments' possible types
+
     Event: tp.Type[Event] = None
     ENTITY_ENUMS_MANAGER: tp.Type[EntityEnumsManager] = None
     EVS_PARSER: tp.Type[EVSParser] = None
@@ -39,7 +46,13 @@ class EMEVD(GameFile, abc.ABC):
     DCX_TYPE: DCXType = None
     HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, emevd_source: GameFile.Typing, dcx_type=None, script_directory=None):
+    def __init__(
+        self,
+        emevd_source: GameFile.Typing,
+        dcx_type=None,
+        script_directory=None,
+        common_func_emevd: EMEVD = None,
+    ):
         """Packed list of "event scripts" that are loaded in a particular map, or all maps ("common").
 
         Event scripts 50 and 0 are run automatically, in that order. All other scripts are called from them, sometimes
@@ -63,13 +76,19 @@ class EMEVD(GameFile, abc.ABC):
         self.packed_strings = b""
         self.linked_file_offsets = []  # offsets into packed strings
         self.map_name = ""
+        self.all_event_arg_names = {}
+        self.all_event_arg_fmts = {}
+        self.all_event_arg_types = {}
+        self.common_func_emevd = common_func_emevd
 
         if script_directory is None:
             if isinstance(emevd_source, Path) or (isinstance(emevd_source, str) and "\n" not in emevd_source):
                 script_directory = Path(emevd_source).parent
 
-        super().__init__(emevd_source, dcx_type=dcx_type, script_directory=script_directory)
-        if not dcx_type:
+        super().__init__(
+            emevd_source, dcx_type=dcx_type, script_directory=script_directory
+        )
+        if dcx_type is None:
             self.dcx_type = self.DCX_TYPE  # default to standard game DCX
         if not self.map_name and self.path:
             self.map_name = self.path.name.split(".")[0]
@@ -160,9 +179,9 @@ class EMEVD(GameFile, abc.ABC):
 
         # Parse event args for `RunEvent` and `RunCommonEvent` instructions.
         for event in self.events.values():
-            event.update_evs_function_args()
+            event.update_evs_function_args(self.all_event_arg_names, self.all_event_arg_fmts, self.all_event_arg_types)
         for event in self.events.values():
-            event.update_run_event_instructions()
+            event.update_run_event_instructions(self.all_event_arg_fmts, self.common_func_emevd)
 
     def load_dict(self, data: dict, clear_old_data=True):
         if clear_old_data:
@@ -291,7 +310,7 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_dict(self) -> dict:
         for event in self.events.values():
-            event.update_evs_function_args()
+            event.process_all_event_args()
 
         return {
             "map_name": self.map_name,
@@ -302,7 +321,7 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_numeric(self):
         for event in self.events.values():
-            event.update_evs_function_args()
+            event.process_all_event_args()
 
         numeric_output = "\n\n".join([event.to_numeric() for event in self.events.values()])
         numeric_output += "\n\nlinked:\n" + "\n".join(str(offset) for offset in self.linked_file_offsets)
@@ -322,6 +341,7 @@ class EMEVD(GameFile, abc.ABC):
         entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
         warn_missing_enums=True,
         entity_module_prefix=".",
+        is_common_func=False,
     ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
@@ -353,47 +373,35 @@ class EMEVD(GameFile, abc.ABC):
         enums_manager = self.ENTITY_ENUMS_MANAGER(
             entity_star_module_paths, entity_non_star_module_paths, list(self.events)
         )
+        if self.common_func_emevd:
+            enums_manager.all_common_event_ids = list(self.common_func_emevd.events)
 
         for event in self.events.values():
-            event.update_evs_function_args()
+            event.process_all_event_args()
 
         docstring = self.get_evs_docstring()
         imports = f"from soulstruct.{self.GAME.submodule_name}.events import *"
         imports += f"\nfrom soulstruct.{self.GAME.submodule_name}.events.instructions import *"
-        evs_events = [event.to_evs(enums_manager) for event in self.events.values()]
+        evs_events = [
+            event.to_evs(
+                enums_manager,
+                self.all_event_arg_names,
+                self.all_event_arg_fmts,
+                self.all_event_arg_types,
+                is_common_func=is_common_func,
+            )
+            for event in self.events.values()
+        ]
 
         # Add keyword argument names to `Event_{ID}(_, x, y, z)` calls and reformat call to multiple lines if necessary.
-        event_call_re = re.compile(r"( *)Event_(\d+)\(([\d ,]+)\) *\n")
-        for i, event_string in enumerate(evs_events):
-            new_event_string = event_string
-            for match in event_call_re.finditer(event_string):
-                if match.group(3) == "":
-                    continue  # no arguments
-                indent = match.group(1)
-                event_id = int(match.group(2))
-                try:
-                    event_arg_names = self.Event.EVENT_ARG_NAMES[event_id]
-                except KeyError:
-                    pass  # event ID not defined in this script
-                else:
-                    args = match.group(3).replace(" ", "").replace("\n", "").split(",")
-                    if len(args) != len(event_arg_names) + 1:
-                        _LOGGER.warning(f"Mismatch in defined/called event arg count for event {event_id}.")
-                        continue
-                    slot = args[0]
-                    kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(event_arg_names, args[1:])]
-                    one_line_event_call = f"{indent}Event_{event_id}({slot}, {', '.join(kwargs)})\n"
-                    if len(one_line_event_call) > 122:  # two newline characters don't count
-                        # Multiline call.
-                        arg_indent = " " * (len(indent) + 4)
-                        multi_line_kwargs = f",\n{arg_indent}".join([slot] + kwargs)
-                        multi_line_event_call = (
-                            f"{indent}Event_{event_id}(\n{arg_indent}{multi_line_kwargs}\n{indent})\n"
-                        )
-                        new_event_string = new_event_string.replace(match.group(0), multi_line_event_call)
-                    else:
-                        new_event_string = new_event_string.replace(match.group(0), one_line_event_call)
-            evs_events[i] = new_event_string
+        # TODO: Does not catch calls that are already multi-line.
+        for i in range(len(evs_events)):
+            evs_events[i] = self.add_event_call_keywords(evs_events[i], enums_manager)
+
+        if self.common_func_emevd and any("CommonFunc_" in event_string for event_string in evs_events):
+            # TODO: pass real path (or attach to common EMEVD).
+            # Import written first to avoid 'unused' warnings for standard imports.
+            imports = f"# [COMMON_FUNC]\nfrom .common_func import *\n" + imports
 
         # Create imports.
         if enums_manager:
@@ -416,9 +424,69 @@ class EMEVD(GameFile, abc.ABC):
 
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
+    def add_event_call_keywords(self, event_string: str, enums_manager: EntityEnumsManager):
+        new_event_string = event_string
+
+        for match in _EVENT_CALL_RE.finditer(event_string):
+            if match.group(4) == "":
+                continue  # no arguments
+            indent = match.group(1)
+            call_name = match.group(2)  # 'Event' or 'CommonFunc'
+            event_id = int(match.group(3))
+            if call_name == "CommonFunc" and not self.common_func_emevd:
+                continue  # cannot parse common event calls
+            try:
+                if call_name == "CommonFunc":
+                    event_arg_names = self.common_func_emevd.all_event_arg_names[event_id]
+                    event_arg_py_types = self.common_func_emevd.all_event_arg_types[event_id]
+                else:  # standard local "Event"
+                    event_arg_names = self.all_event_arg_names[event_id]
+                    event_arg_py_types = self.all_event_arg_types[event_id]
+            except KeyError:
+                pass  # event ID not defined in this script or in CommonFunc
+            else:
+                args = match.group(4).replace(" ", "").replace("\n", "").split(",")
+                if args[-1] == "":
+                    args = args[:-1]
+                if len(args) != len(event_arg_names) + 1:
+                    if call_name == "CommonFunc":
+                        _LOGGER.warning(f"Mismatch in defined/called event arg count for common func event {event_id}.")
+                    else:
+                        _LOGGER.warning(
+                            f"Mismatch in defined/called event arg count for map event {event_id}.\n"
+                            f"This is likely to be a serious problem for EVS compilation!"
+                        )
+                    continue
+                slot = args[0]
+                for j in range(1, len(args)):
+                    if not event_arg_py_types[j - 1]:
+                        continue  # no Python type hints for this argument
+                    try:
+                        int_value = int(args[j])
+                    except ValueError:
+                        continue
+                    try:
+                        args[j] = f"{enums_manager.check_out_enum(int_value, *event_arg_py_types[j - 1])}"
+                    except enums_manager.MissingEntityError:
+                        pass
+                kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(event_arg_names, args[1:])]
+                one_line_event_call = f"{indent}{call_name}_{event_id}({slot}, {', '.join(kwargs)})\n"
+                if len(one_line_event_call) > 121:  # last newline character doesn't count
+                    # Multiline call.
+                    arg_indent = " " * (len(indent) + 4)
+                    multi_line_kwargs = f",\n{arg_indent}".join([slot] + kwargs) + ","
+                    multi_line_event_call = (
+                        f"{indent}{call_name}_{event_id}(\n{arg_indent}{multi_line_kwargs}\n{indent})\n"
+                    )
+                    new_event_string = new_event_string.replace(match.group(0), multi_line_event_call)
+                else:
+                    new_event_string = new_event_string.replace(match.group(0), one_line_event_call)
+
+        return new_event_string
+
     def pack(self):
         for event in self.events.values():
-            event.update_evs_function_args()
+            event.process_all_event_args()
 
         event_table_binary = b""
         instr_table_binary = b""
@@ -537,6 +605,7 @@ class EMEVD(GameFile, abc.ABC):
         entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
         warn_missing_enums=True,
         entity_module_prefix=".",
+        is_common_func=False,
     ):
         if not evs_path:
             evs_path = self.map_name
@@ -550,6 +619,7 @@ class EMEVD(GameFile, abc.ABC):
             entity_non_star_module_paths,
             warn_missing_enums,
             entity_module_prefix,
+            is_common_func,
         )
         with evs_path.open("w", encoding="utf-8") as f:
             f.write(evs_string)

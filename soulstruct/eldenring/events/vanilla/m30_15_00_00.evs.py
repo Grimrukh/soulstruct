@@ -12,81 +12,189 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m30_15_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=301500, obj=30151950, unknown=5.0)
-    RunCommonEvent(0, 900005610, args=(30151150, 100, 800, 0), arg_types="IiiI")
-    RunCommonEvent(
+    RegisterGrace(grace_flag=301500, asset=Assets.AEG099_060_9000)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_90005200(
         0,
-        90005200,
-        args=(30150300, 30000, 20000, 30152400, 0.800000011920929, 0, 0, 0, 0),
-        arg_types="IiiIfIIII",
+        character=Characters.MirandaRotFlower0,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152400,
+        seconds=0.800000011920929,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005200, args=(30150301, 30000, 20000, 30152400, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30150302, 30000, 20000, 30152400, 1.5, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30150200, 30152214, 0.0, 3028), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30150310, 30152310, 0.0, 3003), arg_types="IIfi")
-    RunCommonEvent(0, 90005211, args=(30150201, 30003, 20003, 30152213, 2.0, 0.0, 0, 0, 0, 0), arg_types="IiiIffIIII")
-    RunCommonEvent(0, 90005200, args=(30150303, 30000, 20000, 30152217, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30150304, 30000, 20000, 30152211, 0.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30150305, 30000, 20000, 30152217, 1.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005200, args=(30150306, 30000, 20000, 30152217, 2.0, 0, 0, 0, 0), arg_types="IiiIfIIII")
-    RunCommonEvent(0, 90005250, args=(30150307, 30152200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30150308, 30152200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(30150309, 30152200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005650, args=(30150540, 30151540, 30151541, 30153541, 27115), arg_types="IIIIi")
-    RunCommonEvent(0, 90005651, args=(30150540, 30151540), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30150570, 30151570), arg_types="II")
-    RunCommonEvent(0, 90005525, args=(30150571, 30151571), arg_types="II")
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower1,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152400,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower2,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152400,
+        seconds=1.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, character=Characters.CatacombsSkeleton0, region=30152214, seconds=0.0, animation_id=3028)
+    CommonFunc_90005250(0, character=Characters.GiantMirandaRotFlower, region=30152310, seconds=0.0, animation_id=3003)
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton1,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30152213,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152217,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower4,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152211,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower5,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152217,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaRotFlower6,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30152217,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 30150307, 30152200, 0.0, -1)
+    CommonFunc_90005250(0, 30150308, 30152200, 0.0, -1)
+    CommonFunc_90005250(0, 30150309, 30152200, 0.0, -1)
+    CommonFunc_90005650(
+        0,
+        flag=30150540,
+        asset=Assets.AEG027_041_0500,
+        asset_1=Assets.AEG027_115_0500,
+        obj_act_id=30153541,
+        obj_act_id_1=27115,
+    )
+    CommonFunc_90005651(0, flag=30150540, anchor_entity=Assets.AEG027_041_0500)
+    CommonFunc_90005525(0, flag=30150570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30150571, asset=Assets.AEG027_157_0501)
     Event_30152800()
     Event_30152810()
     Event_30152849()
     Event_30152811()
-    RunCommonEvent(
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(30150800, 30152840, 30152841, 30151840, 30152840, 30, 15, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=30150800,
+        left_flag=30152840,
+        cancel_flag__right_flag=30152841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30152840,
+        area_id=30,
+        block_id=15,
+        cc_id=0,
+        dd_id=0,
     )
-    RunCommonEvent(0, 91005600, args=(30152800, 30151695, 5), arg_types="IIi")
+    CommonFunc_91005600(0, 30152800, 30151695, 5)
 
 
 @RestartOnRest(30152520)
-def Event_30152520(_, flag: uint, obj: uint, flag_1: uint):
+def Event_30152520(_, flag: uint, asset: uint, flag_1: uint):
     """Event 30152520"""
-    EndIfFlagEnabled(flag)
-    DisableObjectActivation(obj, obj_act_id=-1)
+    if FlagEnabled(flag):
+        return
+    DisableAssetActivation(asset, obj_act_id=-1)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfPlayerInOwnWorld(AND_1)
-    IfFlagEnabled(AND_1, flag_1)
-    IfFlagDisabled(AND_1, flag)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(PlayerInOwnWorld())
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_1.Add(FlagDisabled(flag))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
 
 
 @RestartOnRest(30152800)
 def Event_30152800():
     """Event 30152800"""
-    EndIfFlagEnabled(30150800)
-    IfHealthValueLessThanOrEqual(MAIN, 30150800, value=0)
+    if FlagEnabled(30150800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.CemeteryShade) <= 0)
+    
     Wait(4.0)
-    PlaySoundEffect(30150800, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 30150800)
-    KillBossAndDisplayBanner(character=30150800, banner_type=BannerType.DutyFulfilled)
+    PlaySoundEffect(Characters.CemeteryShade, 888880000, sound_type=SoundType.s_SFX)
+    
+    MAIN.Await(CharacterDead(Characters.CemeteryShade))
+    
+    KillBossAndDisplayBanner(character=Characters.CemeteryShade, banner_type=BannerType.EnemyFelled)
     EnableFlag(30150800)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61215)
+    if PlayerInOwnWorld():
+        EnableFlag(61215)
     EnableFlag(9215)
 
 
@@ -94,44 +202,61 @@ def Event_30152800():
 def Event_30152810():
     """Event 30152810"""
     GotoIfFlagDisabled(Label.L0, flag=30150800)
-    DisableCharacter(30150800)
-    DisableAnimations(30150800)
-    Kill(30150800)
+    DisableCharacter(Characters.CemeteryShade)
+    DisableAnimations(Characters.CemeteryShade)
+    Kill(Characters.CemeteryShade)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(30150800)
-    IfFlagEnabled(AND_2, 30152805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=30152800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
+    DisableAI(Characters.CemeteryShade)
+    AND_2.Add(FlagEnabled(30152805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30152800))
+    
+    MAIN.Await(AND_2)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    SetNetworkUpdateRate(30150800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(30150800, name=903664301)
+    SetNetworkUpdateRate(Characters.CemeteryShade, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.CemeteryShade, name=903664301)
     Wait(0.5)
-    EnableAI(30150800)
+    EnableAI(Characters.CemeteryShade)
 
 
 @RestartOnRest(30152811)
 def Event_30152811():
     """Event 30152811"""
-    EndIfFlagEnabled(30150800)
-    IfHealthRatioLessThanOrEqual(AND_1, 30150800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(30150800):
+        return
+    AND_1.Add(HealthRatio(Characters.CemeteryShade) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(30152802)
 
 
 @RestartOnRest(30152849)
 def Event_30152849():
     """Event 30152849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(30150800, 30151800, 30152800, 30152805, 30155800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=30150800,
+        entity=Assets.AEG099_001_9000,
+        region=30152800,
+        flag_1=30152805,
+        character=30155800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(30150800, 30151800, 30152800, 30152805, 30152806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(30150800, 30151800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(30150800, 930000, 30152805, 30152806, 0, 30152802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=30150800,
+        entity=Assets.AEG099_001_9000,
+        region=30152800,
+        flag_1=30152805,
+        flag_2=30152806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=30150800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 30150800, 930000, 30152805, 30152806, 0, 30152802, 0, 0)

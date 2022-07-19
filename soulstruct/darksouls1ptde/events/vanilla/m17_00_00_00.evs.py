@@ -74,7 +74,7 @@ def Constructor():
         obj_act_id_1=11700211,
         flag_1=11705090,
         flag_2=11705180,
-        flag_3=11705181
+        flag_3=11705181,
     )
     Event_11700105(
         0,
@@ -84,7 +84,7 @@ def Constructor():
         obj_2=1701102,
         flag_1=11705090,
         flag_2=11705180,
-        flag_3=11705181
+        flag_3=11705181,
     )
     Event_11700160(
         1,
@@ -94,7 +94,7 @@ def Constructor():
         obj_act_id_1=11700221,
         flag_1=11705091,
         flag_2=11705182,
-        flag_3=11705183
+        flag_3=11705183,
     )
     Event_11700105(
         2,
@@ -104,7 +104,7 @@ def Constructor():
         obj_2=1701132,
         flag_1=11705091,
         flag_2=11705182,
-        flag_3=11705183
+        flag_3=11705183,
     )
     Event_11700090(0, flag=11700100, state=0, anchor_entity=1701101, flag_1=11705090)
     Event_11700090(1, flag=11700100, state=1, anchor_entity=1701102, flag_1=11705090)
@@ -120,7 +120,7 @@ def Constructor():
         collision_1=1703201,
         navmesh_id=1703010,
         navmesh_id_1=1703011,
-        flag_1=11705151
+        flag_1=11705151,
     )
     Event_11700200(
         1,
@@ -131,7 +131,7 @@ def Constructor():
         collision_1=1703211,
         navmesh_id=1703012,
         navmesh_id_1=1703013,
-        flag_1=11705152
+        flag_1=11705152,
     )
     Event_11700150(0, collision=1703100, region=1702780)
     Event_11700150(1, collision=1703101, region=1702781)
@@ -171,13 +171,13 @@ def Constructor():
         Event_11705396()
         Event_11705397()
     Event_11705200()
-    Event_11705270(0, 1700250, 15.0)
-    Event_11705270(1, 1700251, 15.0)
+    Event_11705270(0, character=1700250, radius=15.0)
+    Event_11705270(1, character=1700251, radius=15.0)
     Event_11705140(0, character=1700102, region=1702150)
     Event_11705140(1, character=1700103, region=1702151)
-    Event_11705160(0, 1700350, 3.0)
-    Event_11705160(1, 1700351, 3.0)
-    Event_11705160(2, 1700352, 10.0)
+    Event_11705160(0, character=1700350, radius=3.0)
+    Event_11705160(1, character=1700351, radius=3.0)
+    Event_11705160(2, character=1700352, radius=10.0)
     Event_11705010(0, character=1700400)
     Event_11705020(0, character=1700400)
     Event_11705030(0, character=1700400)
@@ -823,10 +823,10 @@ def Event_11705396():
     
     MAIN.Await(CharacterHasTAEEvent(1700800, tae_event_id=500))
     
-    CancelSpecialEffect(1700800, 5440)
-    CancelSpecialEffect(1700800, 5441)
-    CancelSpecialEffect(1700800, 5442)
-    CancelSpecialEffect(1700800, 5443)
+    RemoveSpecialEffect(1700800, 5440)
+    RemoveSpecialEffect(1700800, 5441)
+    RemoveSpecialEffect(1700800, 5442)
+    RemoveSpecialEffect(1700800, 5443)
     DisableImmortality(1700800)
 
 
@@ -845,9 +845,9 @@ def Event_11705397():
     MAIN.Await(CharacterBackreadEnabled(1700800))
     
     CreateNPCPart(1700800, npc_part_id=5290, part_index=NPCPartType.Part1, part_health=330)
-    AND_1.Add(HealthRatioGreaterThan(1700800, value=0.0))
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1700800, npc_part_id=5290, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(1700800, value=0.0))
+    AND_1.Add(HealthRatio(1700800) > 0.0)
+    AND_1.Add(CharacterPartHealth(1700800, npc_part_id=5290) <= 0)
+    AND_2.Add(HealthRatio(1700800) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1617,8 +1617,8 @@ def Event_11705020(_, character: int):
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     AND_7.Add(CharacterBackreadDisabled(character))
     if AND_7:
         return RESTART
@@ -1635,8 +1635,8 @@ def Event_11705020(_, character: int):
     SkipLinesIfConditionFalse(1, AND_5)
     ForceAnimation(character, 3006, wait_for_completion=True)
     ReplanAI(character)
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     Restart()
 
 
@@ -1682,8 +1682,8 @@ def Event_11705040(_, character: int):
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(character, 3150)
-    CancelSpecialEffect(character, 3151)
+    RemoveSpecialEffect(character, 3150)
+    RemoveSpecialEffect(character, 3151)
     SkipLinesIfFinishedConditionTrue(5, input_condition=AND_2)
     AICommand(character, command_id=201, command_slot=0)
     ReplanAI(character)
@@ -1770,8 +1770,8 @@ def Event_11700700():
 @NeverRestart(11700510)
 def Event_11700510(_, character: int, flag: int):
     """Event 11700510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1800,7 +1800,7 @@ def Event_11700520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

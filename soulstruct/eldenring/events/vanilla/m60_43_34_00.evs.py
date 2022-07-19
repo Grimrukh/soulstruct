@@ -12,83 +12,129 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_43_34_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1043340000, obj=1043341950, unknown=5.0)
-    RunCommonEvent(0, 90005461, args=(1043340204,))
-    RunCommonEvent(1, 90005462, args=(1043340204,))
-    RunCommonEvent(0, 90005460, args=(1043340204,))
-    Event_1043342220(0, character=1043340220, obj=1043341220, region=1043342220)
-    Event_1043342220(1, character=1043340221, obj=1043341221, region=1043342220)
-    Event_1043342220(2, character=1043340222, obj=1043341222, region=1043342220)
-    Event_1043342220(3, character=1043340223, obj=1043341223, region=1043342223)
-    Event_1043342220(4, character=1043340224, obj=1043341224, region=1043342223)
-    Event_1043342220(5, character=1043340225, obj=1043341225, region=1043342223)
-    RunCommonEvent(0, 90005683, args=(62150, 1043341684, 210, 78196, 78196), arg_types="IIiII")
-    RunCommonEvent(0, 90005300, args=(1043340340, 1043340340, 1043340400, 0.0, 0), arg_types="IIifi")
-    RunCommonEvent(0, 90005706, args=(1043340700, 930025, 1043341700), arg_types="IiI")
-    RunCommonEvent(0, 90005771, args=(1043340950, 1043342700), arg_types="II")
+    RegisterGrace(grace_flag=1043340000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005461(0, character=1043340204)
+    CommonFunc_90005462(1, character=1043340204)
+    CommonFunc_90005460(0, character=1043340204)
+    Event_1043342220(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1043342220)
+    Event_1043342220(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1043342220)
+    Event_1043342220(2, character=Characters.DemiHuman2, asset=Assets.AEG801_480_9002, region=1043342220)
+    Event_1043342220(3, character=Characters.DemiHuman3, asset=Assets.AEG801_480_9003, region=1043342223)
+    Event_1043342220(4, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9004, region=1043342223)
+    Event_1043342220(5, character=1043340225, asset=1043341225, region=1043342223)
+    CommonFunc_90005683(0, flag=62150, asset=Assets.AEG099_055_1001, vfx_id=210, flag_1=78196, flag_2=78196)
+    CommonFunc_90005300(
+        0,
+        flag=1043340340,
+        character=Characters.DemiHumanQueen,
+        item_lot_param_id=1043340400,
+        seconds=0.0,
+        left=0,
+    )
+    CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930025, left=Assets.AEG099_590_9000)
+    CommonFunc_90005771(0, 1043340950, 1043342700)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    DisableBackread(1043340700)
-    RunCommonEvent(0, 90005201, args=(1043340210, 30004, 20004, 10.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(
+    DisableBackread(Characters.Commoner)
+    CommonFunc_90005201(
         0,
-        90005211,
-        args=(1043340212, 30004, 20004, 1043342212, 10.0, 2.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.ErdtreeGuardian0,
+        animation_id=30004,
+        animation_id_1=20004,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043340213, 30004, 20004, 1043342212, 10.0, 1.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.ErdtreeGuardian1,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1043342212,
+        radius=10.0,
+        seconds=2.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(
+    CommonFunc_90005211(
         0,
-        90005211,
-        args=(1043340214, 30004, 20004, 1043342212, 10.0, 0.0, 0, 0, 0, 0),
-        arg_types="IiiIffIIII",
+        character=Characters.ErdtreeGuardian2,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1043342212,
+        radius=10.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
     )
-    RunCommonEvent(0, 90005250, args=(1043340300, 1043342300, 0.0, 3031), arg_types="IIfi")
+    CommonFunc_90005211(
+        0,
+        character=Characters.ErdtreeGuardian3,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1043342212,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005250(0, 1043340300, 1043342300, 0.0, 3031)
 
 
 @RestartOnRest(1043342220)
-def Event_1043342220(_, character: uint, obj: uint, region: uint):
+def Event_1043342220(_, character: uint, asset: uint, region: uint):
     """Event 1043342220"""
-    EnableObject(obj)
+    EnableAsset(asset)
     DisableCharacter(character)
-    EndIfFlagEnabled(1044342300)
-    IfCharacterDead(AND_5, character)
-    EndIfConditionTrue(input_condition=AND_5)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=obj, attacker=20000)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfCharacterInsideRegion(OR_2, character=PLAYER, region=region)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(1044342300):
+        return
+    AND_5.Add(CharacterDead(character))
+    if AND_5:
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=asset, attacker=20000))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
+    AND_1.Add(OR_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(1044342300)
     CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)
-    DisableObject(obj)
+    DisableAsset(asset)
     Wait(0.30000001192092896)
     EnableCharacter(character)
 
@@ -98,5 +144,5 @@ def Event_1043343700(_, character: uint):
     """Event 1043343700"""
     EnableBackread(character)
     EnableCharacter(character)
-    ForceAnimation(character, 30023, unknown2=1.0)
+    ForceAnimation(character, 30023)
     End()

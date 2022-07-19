@@ -12,36 +12,122 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m32_04_00_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=32040000, obj=32041950, unknown=5.0)
+    RegisterGrace(grace_flag=32040000, asset=Assets.AEG099_060_9000)
     Event_32042800()
     Event_32042810()
     Event_32042811()
     Event_32042849()
-    Event_32042200(0, 32040206, 30004, 20004, 16576, 0.0, 0, 0, 0, 0, 32041682, 0, 0, 0)
-    Event_32042250(0, 32040207, 30000, 20000, 16572, 0.0, 0, 0, 0, 0, 32041207, 0, 0, 0, 32040207)
-    Event_32042270(0, 32040207, 30005, 20005, 32040207, 3.0, 0.0, 0, 1, 0, 0)
-    Event_32042200(2, 32040210, 30004, 20004, 16576, 0.0, 0, 0, 0, 0, 32041681, 0, 0, 0)
-    Event_32042200(3, 32040211, 30004, 20004, 16576, 0.0, 0, 0, 0, 0, 32041680, 0, 0, 0)
-    Event_32042510()
-    RunCommonEvent(
+    Event_32042200(
         0,
-        90005501,
-        args=(32040510, 32040511, 0, 32041510, 32041511, 32041512, 32040512),
-        arg_types="IIIIIII",
+        character=Characters.TunnelMiner1,
+        animation_id=30004,
+        animation_id_1=20004,
+        special_effect_id=16576,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+        asset=Assets.AEG099_780_9052,
+        asset_1=0,
+        asset_2=0,
+        asset_3=0,
+    )
+    Event_32042250(
+        0,
+        character=Characters.TunnelMiner2,
+        animation_id=30000,
+        animation_id_1=20000,
+        special_effect_id=16572,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+        asset=Assets.AEG099_864_9002,
+        asset_1=0,
+        asset_2=0,
+        asset_3=0,
+        flag=32040207,
+    )
+    Event_32042270(
+        0,
+        character=Characters.TunnelMiner2,
+        animation_id=30005,
+        animation_id_1=20005,
+        flag=32040207,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
+    )
+    Event_32042200(
+        2,
+        character=Characters.TunnelMiner3,
+        animation_id=30004,
+        animation_id_1=20004,
+        special_effect_id=16576,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+        asset=Assets.AEG099_780_9054,
+        asset_1=0,
+        asset_2=0,
+        asset_3=0,
+    )
+    Event_32042200(
+        3,
+        character=Characters.TunnelMiner4,
+        animation_id=30004,
+        animation_id_1=20004,
+        special_effect_id=16576,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+        asset=Assets.AEG099_780_9053,
+        asset_1=0,
+        asset_2=0,
+        asset_3=0,
+    )
+    Event_32042510()
+    CommonFunc_90005501(
+        0,
+        flag=32040510,
+        flag_1=32040511,
+        left=0,
+        asset=Assets.AEG027_001_1000,
+        asset_1=Assets.AEG027_080_1001,
+        asset_2=Assets.AEG027_080_1000,
+        flag_2=32040512,
     )
     Event_32042580()
-    RunCommonEvent(
+    CommonFunc_90005646(
         0,
-        90005646,
-        args=(32040800, 32042840, 32042841, 32041840, 32042840, 32, 4, 0, 0),
-        arg_types="IIIIIBBbb",
+        flag=32040800,
+        left_flag=32042840,
+        cancel_flag__right_flag=32042841,
+        asset=Assets.AEG099_065_9000,
+        player_start=32042840,
+        area_id=32,
+        block_id=4,
+        cc_id=0,
+        dd_id=0,
     )
     Event_32049570(
         0,
@@ -49,60 +135,68 @@ def Constructor():
         destination=32041570,
         left_flag=32042570,
         cancel_flag__right_flag=32042571,
-        flag_1=32042572
+        flag_1=32042572,
     )
-    Event_32042569(0, flag=32040570, obj=32041570, obj_1=32041571, obj_2=32041572, obj_3=32041573)
-    RunCommonEvent(0, 900005610, args=(32041690, 100, 800, 0), arg_types="IiiI")
+    Event_32042569(0, flag=32040570, asset=32041570, asset_1=32041571, asset_2=32041572, asset_3=32041573)
+    CommonFunc_900005610(0, 32041690, 100, 800, 0)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
     Event_32040519()
-    RunCommonEvent(0, 90005250, args=(32040200, 32042200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040217, 32042217, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005201, args=(32040221, 30005, 20005, 3.0, 0.0, 0, 1, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(32040250, 15.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005250, args=(32040302, 32042213, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040303, 32042213, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040306, 32042305, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040350, 32042305, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040351, 32042351, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040400, 32042200, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040410, 32042410, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040411, 32042410, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(32040412, 32042217, 0.0, -1), arg_types="IIfi")
+    CommonFunc_90005250(0, 32040200, 32042200, 0.0, -1)
+    CommonFunc_90005250(0, 32040217, 32042217, 0.0, -1)
+    CommonFunc_90005201(
+        0,
+        character=Characters.TunnelMiner6,
+        animation_id=30005,
+        animation_id_1=20005,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 32040250, 15.0, 0.0, -1)
+    CommonFunc_90005250(0, 32040302, 32042213, 0.0, -1)
+    CommonFunc_90005250(0, 32040303, 32042213, 0.0, -1)
+    CommonFunc_90005250(0, 32040306, 32042305, 0.0, -1)
+    CommonFunc_90005250(0, 32040350, 32042305, 0.0, -1)
+    CommonFunc_90005250(0, 32040351, 32042351, 0.0, -1)
+    CommonFunc_90005250(0, 32040400, 32042200, 0.0, -1)
+    CommonFunc_90005250(0, 32040410, 32042410, 0.0, -1)
+    CommonFunc_90005250(0, 32040411, 32042410, 0.0, -1)
+    CommonFunc_90005250(0, 32040412, 32042217, 0.0, -1)
 
 
 @NeverRestart(32042510)
 def Event_32042510():
     """Event 32042510"""
-    RunCommonEvent(
+    CommonFunc_90005500(
         0,
-        90005500,
-        args=(
-            32040510,
-            32040511,
-            0,
-            32041510,
-            32041511,
-            32043511,
-            32041512,
-            32043512,
-            32042511,
-            32042512,
-            32040512,
-            32040513,
-            0,
-        ),
-        arg_types="IIIIIIIIIIIII",
+        32040510,
+        32040511,
+        0,
+        32041510,
+        32041511,
+        32043511,
+        32041512,
+        32043512,
+        32042511,
+        32042512,
+        32040512,
+        32040513,
+        0,
     )
 
 
 @NeverRestart(32040519)
 def Event_32040519():
     """Event 32040519"""
-    EndIfThisEventSlotFlagEnabled()
+    if ThisEventSlotFlagEnabled():
+        return
     EnableFlag(32040510)
     DisableThisSlotFlag()
 
@@ -110,12 +204,15 @@ def Event_32040519():
 @RestartOnRest(32049570)
 def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_flag__right_flag: uint, flag_1: uint):
     """Event 32049570"""
-    IfFlagEnabled(OR_1, flag)
-    IfPlayerNotInOwnWorld(OR_1)
-    EndIfConditionTrue(input_condition=OR_1)
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(PlayerNotInOwnWorld())
+    if OR_1:
+        return
     DisableFlag(left_flag)
     DisableFlag(cancel_flag__right_flag)
-    IfActionButtonParamActivated(MAIN, action_button_id=9220, entity=destination)
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=9220, entity=destination))
+    
     DisplayDialogAndSetFlags(
         message=108000,
         button_type=ButtonType.Yes_or_No,
@@ -133,10 +230,10 @@ def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
     # --- Label 1 --- #
     DefineLabel(1)
     StoreItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=8000, flag=flag_1, bit_count=2)
-    IfEventValueGreaterThanOrEqual(AND_2, flag=flag_1, bit_count=6, value=2)
+    AND_2.Add(EventValue(flag=flag_1, bit_count=6) >= 2)
     GotoIfConditionTrue(Label.L2, input_condition=AND_2)
     WaitFrames(frames=1)
-    ForceAnimation(PLAYER, 50050, unknown2=1.0)
+    ForceAnimation(PLAYER, 50050)
     Wait(1.5)
     DisplayDialog(text=308000, anchor_entity=destination)
     Wait(1.0)
@@ -144,10 +241,10 @@ def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
     # --- Label 2 --- #
     DefineLabel(2)
-    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Object, model_point=191, short_move=True)
-    ForceAnimation(PLAYER, 60810, unknown2=1.0)
+    Move(PLAYER, destination=destination, destination_type=CoordEntityType.Asset, model_point=191, short_move=True)
+    ForceAnimation(PLAYER, 60810)
     Wait(1.3300000429153442)
-    ForceAnimation(PLAYER, 60811, unknown2=1.0)
+    ForceAnimation(PLAYER, 60811)
     Wait(1.5)
     DisplayDialog(text=208000, anchor_entity=destination)
     RemoveGoodFromPlayer(item=8000, quantity=2)
@@ -155,38 +252,41 @@ def Event_32049570(_, flag: uint, destination: uint, left_flag: uint, cancel_fla
 
 
 @RestartOnRest(32042569)
-def Event_32042569(_, flag: uint, obj: uint, obj_1: uint, obj_2: uint, obj_3: uint):
+def Event_32042569(_, flag: uint, asset: uint, asset_1: uint, asset_2: uint, asset_3: uint):
     """Event 32042569"""
-    EndIfThisEventSlotFlagEnabled()
-    SkipLinesIfFlagDisabled(6, flag)
-    DeleteObjectVFX(obj)
-    DeleteObjectVFX(obj_3)
-    EnableObject(obj_1)
-    EnableObject(obj_2)
-    DisableObject(obj_3)
-    End()
-    DeleteObjectVFX(obj)
-    DeleteObjectVFX(obj_3)
-    DisableObject(obj_1)
-    DisableObject(obj_2)
-    CreateObjectVFX(obj, vfx_id=200, model_point=806040)
-    CreateObjectVFX(obj, vfx_id=201, model_point=806040)
-    CreateObjectVFX(obj_3, vfx_id=101, model_point=806042)
-    IfFlagEnabled(MAIN, flag)
-    EnableObject(obj_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    if FlagEnabled(flag):
+        DeleteAssetVFX(asset)
+        DeleteAssetVFX(asset_3)
+        EnableAsset(asset_1)
+        EnableAsset(asset_2)
+        DisableAsset(asset_3)
+        End()
+    DeleteAssetVFX(asset)
+    DeleteAssetVFX(asset_3)
+    DisableAsset(asset_1)
+    DisableAsset(asset_2)
+    CreateAssetVFX(asset, vfx_id=200, model_point=806040)
+    CreateAssetVFX(asset, vfx_id=201, model_point=806040)
+    CreateAssetVFX(asset_3, vfx_id=101, model_point=806042)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    EnableAsset(asset_1)
     Wait(1.3300000429153442)
-    EnableObject(obj_2)
+    EnableAsset(asset_2)
     Wait(0.5)
-    DeleteObjectVFX(obj)
-    DeleteObjectVFX(obj_3, erase_root=False)
-    DisableObject(obj_3)
+    DeleteAssetVFX(asset)
+    DeleteAssetVFX(asset_3, erase_root=False)
+    DisableAsset(asset_3)
 
 
 @RestartOnRest(32042580)
 def Event_32042580():
     """Event 32042580"""
-    RegisterLadder(start_climbing_flag=32040530, stop_climbing_flag=32040531, obj=32041530)
-    RegisterLadder(start_climbing_flag=32040532, stop_climbing_flag=32040533, obj=32041532)
+    RegisterLadder(start_climbing_flag=32040530, stop_climbing_flag=32040531, asset=Assets.AEG027_046_1000)
+    RegisterLadder(start_climbing_flag=32040532, stop_climbing_flag=32040533, asset=Assets.AEG027_000_1001)
 
 
 @RestartOnRest(32042200)
@@ -201,102 +301,105 @@ def Event_32042200(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    obj: uint,
-    obj_1: uint,
-    obj_2: uint,
-    obj_3: uint,
+    asset: uint,
+    asset_1: uint,
+    asset_2: uint,
+    asset_3: uint,
 ):
     """Event 32042200"""
-    EndIfThisEventSlotFlagEnabled()
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    DisableGravity(character)
-    EnableCharacterCollision(character)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfObjectDestroyed(OR_10, obj)
-    IfObjectDestroyed(OR_10, obj_1)
-    IfObjectDestroyed(OR_10, obj_2)
-    IfObjectDestroyed(OR_10, obj_3)
-    IfConditionTrue(AND_1, input_condition=OR_10)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfCharacterHasSpecialEffect(OR_11, character, 5080)
-    IfCharacterHasSpecialEffect(OR_11, character, 5450)
-    IfConditionTrue(AND_1, input_condition=OR_11)
-    IfUnsignedEqual(AND_9, left=left_1, right=0)
-    IfUnsignedEqual(AND_9, left=left_2, right=0)
-    IfUnsignedEqual(AND_9, left=left_3, right=0)
+    if ThisEventSlotFlagEnabled():
+        return
+    if UnsignedNotEqual(left=left, right=0):
+        DisableGravity(character)
+        EnableCharacterCollision(character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_10.Add(AssetDestroyed(asset))
+    OR_10.Add(AssetDestroyed(asset_1))
+    OR_10.Add(AssetDestroyed(asset_2))
+    OR_10.Add(AssetDestroyed(asset_3))
+    AND_1.Add(OR_10)
+    AND_1.Add(CharacterBackreadEnabled(character))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5080))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5450))
+    AND_1.Add(OR_11)
+    AND_9.Add(UnsignedEqual(left=left_1, right=0))
+    AND_9.Add(UnsignedEqual(left=left_2, right=0))
+    AND_9.Add(UnsignedEqual(left=left_3, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    SkipLinesIfUnsignedEqual(1, left=left_1, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfUnsignedEqual(1, left=left_2, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown5)
-    SkipLinesIfUnsignedEqual(1, left=left_3, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown4)
-    IfConditionTrue(AND_1, input_condition=OR_9)
+    if UnsignedNotEqual(left=left_1, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    if UnsignedNotEqual(left=left_2, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
+    if UnsignedNotEqual(left=left_3, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
+    AND_1.Add(OR_9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(OR_2, input_condition=AND_4)
-    IfConditionTrue(OR_2, input_condition=AND_5)
-    IfConditionTrue(OR_2, input_condition=AND_6)
-    IfConditionTrue(OR_2, input_condition=AND_7)
-    IfConditionTrue(OR_2, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    OR_2.Add(AND_7)
+    OR_2.Add(AND_8)
+    
+    MAIN.Await(OR_2)
+    
     Wait(0.10000000149011612)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5080)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5450)
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
     Wait(seconds)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
     AddSpecialEffect(character, special_effect_id)
-    ForceAnimation(character, animation_id_1, loop=True, unknown2=1.0)
+    ForceAnimation(character, animation_id_1, loop=True)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     End()
 
 
@@ -312,103 +415,106 @@ def Event_32042250(
     left_1: uint,
     left_2: uint,
     left_3: uint,
-    obj: uint,
-    obj_1: uint,
-    obj_2: uint,
-    obj_3: uint,
+    asset: uint,
+    asset_1: uint,
+    asset_2: uint,
+    asset_3: uint,
     flag: uint,
 ):
     """Event 32042250"""
-    EndIfFlagEnabled(flag)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    DisableGravity(character)
-    EnableCharacterCollision(character)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfObjectDestroyed(OR_10, obj)
-    IfObjectDestroyed(OR_10, obj_1)
-    IfObjectDestroyed(OR_10, obj_2)
-    IfObjectDestroyed(OR_10, obj_3)
-    IfConditionTrue(AND_1, input_condition=OR_10)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfCharacterHasSpecialEffect(OR_11, character, 5080)
-    IfCharacterHasSpecialEffect(OR_11, character, 5450)
-    IfConditionTrue(AND_1, input_condition=OR_11)
-    IfUnsignedEqual(AND_9, left=left_1, right=0)
-    IfUnsignedEqual(AND_9, left=left_2, right=0)
-    IfUnsignedEqual(AND_9, left=left_3, right=0)
+    if FlagEnabled(flag):
+        return
+    if UnsignedNotEqual(left=left, right=0):
+        DisableGravity(character)
+        EnableCharacterCollision(character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_10.Add(AssetDestroyed(asset))
+    OR_10.Add(AssetDestroyed(asset_1))
+    OR_10.Add(AssetDestroyed(asset_2))
+    OR_10.Add(AssetDestroyed(asset_3))
+    AND_1.Add(OR_10)
+    AND_1.Add(CharacterBackreadEnabled(character))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5080))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5450))
+    AND_1.Add(OR_11)
+    AND_9.Add(UnsignedEqual(left=left_1, right=0))
+    AND_9.Add(UnsignedEqual(left=left_2, right=0))
+    AND_9.Add(UnsignedEqual(left=left_3, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    SkipLinesIfUnsignedEqual(1, left=left_1, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfUnsignedEqual(1, left=left_2, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown5)
-    SkipLinesIfUnsignedEqual(1, left=left_3, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown4)
-    IfConditionTrue(AND_1, input_condition=OR_9)
+    if UnsignedNotEqual(left=left_1, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    if UnsignedNotEqual(left=left_2, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
+    if UnsignedNotEqual(left=left_3, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
+    AND_1.Add(OR_9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(OR_2, input_condition=AND_4)
-    IfConditionTrue(OR_2, input_condition=AND_5)
-    IfConditionTrue(OR_2, input_condition=AND_6)
-    IfConditionTrue(OR_2, input_condition=AND_7)
-    IfConditionTrue(OR_2, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    OR_2.Add(AND_7)
+    OR_2.Add(AND_8)
+    
+    MAIN.Await(OR_2)
+    
     Wait(0.10000000149011612)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5080)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5450)
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     EnableFlag(flag)
     Wait(seconds)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
     AddSpecialEffect(character, special_effect_id)
-    ForceAnimation(character, animation_id_1, loop=True, unknown2=1.0)
+    ForceAnimation(character, animation_id_1, loop=True)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     End()
 
 
@@ -427,152 +533,179 @@ def Event_32042270(
     left_3: uint,
 ):
     """Event 32042270"""
-    EndIfThisEventSlotFlagEnabled()
-    EndIfFlagDisabled(flag)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    DisableGravity(character)
-    EnableCharacterCollision(character)
-    ForceAnimation(character, animation_id, loop=True, unknown2=1.0)
-    IfCharacterType(AND_15, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_15, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_15)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterType(OR_1, PLAYER, character_type=CharacterType.Unknown17)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfEntityWithinDistance(AND_1, entity=PLAYER, other_entity=character, radius=radius)
-    IfCharacterBackreadEnabled(AND_1, character)
-    IfCharacterHasSpecialEffect(OR_11, character, 5080)
-    IfCharacterHasSpecialEffect(OR_11, character, 5450)
-    IfConditionTrue(AND_1, input_condition=OR_11)
-    IfUnsignedEqual(AND_9, left=left_1, right=0)
-    IfUnsignedEqual(AND_9, left=left_2, right=0)
-    IfUnsignedEqual(AND_9, left=left_3, right=0)
+    if ThisEventSlotFlagEnabled():
+        return
+    if FlagDisabled(flag):
+        return
+    if UnsignedNotEqual(left=left, right=0):
+        DisableGravity(character)
+        EnableCharacterCollision(character)
+    ForceAnimation(character, animation_id, loop=True)
+    AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_15)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.BluePhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
+    AND_1.Add(CharacterBackreadEnabled(character))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5080))
+    OR_11.Add(CharacterHasSpecialEffect(character, 5450))
+    AND_1.Add(OR_11)
+    AND_9.Add(UnsignedEqual(left=left_1, right=0))
+    AND_9.Add(UnsignedEqual(left=left_2, right=0))
+    AND_9.Add(UnsignedEqual(left=left_3, right=0))
     GotoIfConditionTrue(Label.L9, input_condition=AND_9)
-    SkipLinesIfUnsignedEqual(1, left=left_1, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Battle)
-    SkipLinesIfUnsignedEqual(1, left=left_2, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown5)
-    SkipLinesIfUnsignedEqual(1, left=left_3, right=0)
-    IfHasAIStatus(OR_9, character, ai_status=AIStatusType.Unknown4)
-    IfConditionTrue(AND_1, input_condition=OR_9)
+    if UnsignedNotEqual(left=left_1, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    if UnsignedNotEqual(left=left_2, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown5))
+    if UnsignedNotEqual(left=left_3, right=0):
+        OR_9.Add(HasAIStatus(character, ai_status=AIStatusType.Unknown4))
+    AND_1.Add(OR_9)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_2, input_condition=AND_1)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=0)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(OR_2, input_condition=AND_4)
-    IfConditionTrue(OR_2, input_condition=AND_5)
-    IfConditionTrue(OR_2, input_condition=AND_6)
-    IfConditionTrue(OR_2, input_condition=AND_7)
-    IfConditionTrue(OR_2, input_condition=AND_8)
-    IfConditionTrue(MAIN, input_condition=OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    OR_2.Add(AND_7)
+    OR_2.Add(AND_8)
+    
+    MAIN.Await(OR_2)
+    
     Wait(0.10000000149011612)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5080)
-    IfCharacterDoesNotHaveSpecialEffect(AND_2, character, 5450)
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
     Wait(seconds)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
-    ForceAnimation(character, animation_id_1, loop=True, unknown2=1.0)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
+    ForceAnimation(character, animation_id_1, loop=True)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfUnsignedEqual(2, left=left, right=0)
-    EnableGravity(character)
-    DisableCharacterCollision(character)
+    if UnsignedNotEqual(left=left, right=0):
+        EnableGravity(character)
+        DisableCharacterCollision(character)
     End()
 
 
 @RestartOnRest(32042800)
 def Event_32042800():
     """Event 32042800"""
-    EndIfFlagEnabled(32040800)
-    IfHealthValueLessThanOrEqual(MAIN, 32040800, value=0)
+    if FlagEnabled(32040800):
+        return
+    
+    MAIN.Await(HealthValue(Characters.MineTroll) <= 0)
+    
     Wait(4.0)
     PlaySoundEffect(32048000, 888880000, sound_type=SoundType.s_SFX)
-    IfCharacterDead(MAIN, 32040800)
-    KillBossAndDisplayBanner(character=32040800, banner_type=BannerType.DutyFulfilled)
+    
+    MAIN.Await(CharacterDead(Characters.MineTroll))
+    
+    KillBossAndDisplayBanner(character=Characters.MineTroll, banner_type=BannerType.EnemyFelled)
     EnableFlag(32040800)
     EnableFlag(9263)
-    SkipLinesIfPlayerNotInOwnWorld(1)
-    EnableFlag(61263)
+    if PlayerInOwnWorld():
+        EnableFlag(61263)
 
 
 @RestartOnRest(32042810)
 def Event_32042810():
     """Event 32042810"""
     GotoIfFlagDisabled(Label.L0, flag=32040800)
-    DisableCharacter(32040800)
-    DisableAnimations(32040800)
-    Kill(32040800)
+    DisableCharacter(Characters.MineTroll)
+    DisableAnimations(Characters.MineTroll)
+    Kill(Characters.MineTroll)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(32040800)
-    ForceAnimation(32040800, 30000, loop=True, unknown2=1.0)
-    IfFlagEnabled(AND_2, 32042805)
-    IfCharacterInsideRegion(AND_2, character=PLAYER, region=32042800)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    ForceAnimation(32040800, 20000, unknown2=1.0)
+    DisableAI(Characters.MineTroll)
+    ForceAnimation(Characters.MineTroll, 30000, loop=True)
+    AND_2.Add(FlagEnabled(32042805))
+    AND_2.Add(CharacterInsideRegion(character=PLAYER, region=32042800))
+    
+    MAIN.Await(AND_2)
+    
+    ForceAnimation(Characters.MineTroll, 20000)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    EnableAI(32040800)
-    SetNetworkUpdateRate(32040800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(32040800, name=904600321)
+    EnableAI(Characters.MineTroll)
+    SetNetworkUpdateRate(Characters.MineTroll, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.MineTroll, name=904600321)
 
 
 @RestartOnRest(32042811)
 def Event_32042811():
     """Event 32042811"""
-    EndIfFlagEnabled(32040800)
-    IfHealthRatioLessThanOrEqual(AND_1, 32040800, value=0.6000000238418579)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if FlagEnabled(32040800):
+        return
+    AND_1.Add(HealthRatio(Characters.MineTroll) <= 0.6000000238418579)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(32042802)
 
 
 @RestartOnRest(32042849)
 def Event_32042849():
     """Event 32042849"""
-    RunCommonEvent(
+    CommonFunc_9005800(
         0,
-        9005800,
-        args=(32040800, 32041800, 32042800, 32042805, 32045800, 10000, 0, 0),
-        arg_types="IIIIIiII",
+        flag=32040800,
+        entity=Assets.AEG099_001_9000,
+        region=32042800,
+        flag_1=32042805,
+        character=32045800,
+        action_button_id=10000,
+        left=0,
+        region_1=0,
     )
-    RunCommonEvent(0, 9005801, args=(32040800, 32041800, 32042800, 32042805, 32042806, 10000), arg_types="IIIIIi")
-    RunCommonEvent(0, 9005811, args=(32040800, 32041800, 3, 0), arg_types="IIiI")
-    RunCommonEvent(0, 9005822, args=(32040800, 931000, 32042805, 32042806, 0, 32042802, 0, 0), arg_types="IiIIIIii")
+    CommonFunc_9005801(
+        0,
+        flag=32040800,
+        entity=Assets.AEG099_001_9000,
+        region=32042800,
+        flag_1=32042805,
+        flag_2=32042806,
+        action_button_id=10000,
+    )
+    CommonFunc_9005811(0, flag=32040800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
+    CommonFunc_9005822(0, 32040800, 931000, 32042805, 32042806, 0, 32042802, 0, 0)

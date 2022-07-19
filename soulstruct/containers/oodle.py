@@ -16,6 +16,7 @@ __all__ = [
 ]
 
 import ctypes as c
+import logging
 import typing as tp
 from enum import IntEnum
 from functools import wraps
@@ -33,6 +34,9 @@ try:
 except ImportError:
     colorama = None
     YELLOW = RESET = ""
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 __DLL_NAME = "oo2core_6_win64.dll"
@@ -158,6 +162,24 @@ class CompressOptions(c.Structure):
         ("matchTableSizeLog2", c.c_int),
     ]
 
+    def __repr__(self):
+        return (
+            f"CompressOptions(\n"
+            f"    verbosity={self.verbosity}\n"
+            f"    minMatchLen={self.minMatchLen}\n"
+            f"    seekChunkReset={self.seekChunkReset}\n"
+            f"    seekChunkLen={self.seekChunkLen}\n"
+            f"    profile={self.profile}\n"
+            f"    dictionarySize={self.dictionarySize}\n"
+            f"    spaceSpeedTradeoffBytes={self.spaceSpeedTradeoffBytes}\n"
+            f"    maxHuffmansPerChunk={self.maxHuffmansPerChunk}\n"
+            f"    sendQuantumCRCs={self.sendQuantumCRCs}\n"
+            f"    maxLocalDictionarySize={self.maxLocalDictionarySize}\n"
+            f"    makeLongRangeMatcher={self.makeLongRangeMatcher}\n"
+            f"    matchTableSizeLog2={self.matchTableSizeLog2}\n"
+            f")"
+        )
+
 
 def LOAD_DLL(dll_path: str):
     global __DLL
@@ -185,7 +207,7 @@ def LOAD_DLL(dll_path: str):
     )
 
     __DLL_CompressOptions_GetDefault = __DLL["OodleLZ_CompressOptions_GetDefault"]
-    __DLL_CompressOptions_GetDefault.restype = CompressOptions
+    __DLL_CompressOptions_GetDefault.restype = c.POINTER(CompressOptions)
     __DLL_CompressOptions_GetDefault.argtypes = (
         Compressor,  # compressor
         CompressionLevel,  # lzLevel
@@ -266,8 +288,8 @@ def compress(
     comp_buf_array = (c.c_char * max_comp_buf_size)()
 
     p_options = __DLL_CompressOptions_GetDefault(compressor, level)
-    p_options.seekChunkReset = True
-    p_options.seekChunkLen = 0x40000
+    p_options.contents.seekChunkReset = True  # required for the game to not crash --TK
+    p_options.contents.seekChunkLen = 0x40000  # already default, but included for authenticity --TK
 
     actual_comp_buf_size = __DLL_Compress(
         compressor,
@@ -282,7 +304,6 @@ def compress(
         0,
     )
 
-    # NOTE: `comp_buf_array.value` almost certainly already has the correct length, but just being clear about it.
     return comp_buf_array.raw[:actual_comp_buf_size]
 
 
@@ -314,7 +335,10 @@ def decompress(comp_buf: bytes, decompressed_size: int):
         DecodeThreadPhase.Unthreaded,
     )
 
-    # NOTE: `raw_buf_array.value` almost certainly already has the correct length, but just being clear about it.
+    if actual_raw_buf_size == 0:
+        _LOGGER.warning("Oodle decompression returned zero. Using expected decompressed size instead.")
+        return raw_buf_array.raw[:decompressed_size]
+
     return raw_buf_array.raw[:actual_raw_buf_size]
 
 

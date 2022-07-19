@@ -12,8 +12,11 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_35_48_00_entities import *
 
 
 @NeverRestart(0)
@@ -25,32 +28,81 @@ def Constructor():
     Event_1035482270(slot=1)
     Event_1035482280()
     Event_1035482280(slot=1)
-    Event_1035482260(0, 1035480250, 1035481250, 1035480250, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    Event_1035482260(
+        0,
+        flag=1035480250,
+        destination=Assets.AEG099_160_9000,
+        character=Characters.Balloon,
+        seconds=0.0,
+        seconds_1=0.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        seconds_4=0.0,
+        seconds_5=0.0,
+        seconds_6=0.0,
+    )
     Event_1035482261(
         0,
-        1035480250,
-        1035481250,
-        1035480250,
-        1035485260,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1035480100,
-        1035482250,
+        flag=1035480250,
+        asset=Assets.AEG099_160_9000,
+        character=Characters.Balloon,
+        character_1=1035485260,
+        seconds=0.0,
+        seconds_1=0.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        seconds_4=0.0,
+        item_lot_param_id=1035480100,
+        flag_1=1035482250,
     )
-    Event_1035482262(0, 1035480250, 0.0, 1035480250, 0.0, 1035480260, 30010, 20010, 20.0, 0.0, 0.0, 1035482250)
-    Event_1035482262(1, 1035480250, 0.0, 1035480250, 0.0, 1035480261, 30010, 20010, 20.0, 0.0, 0.0, 1035482250)
+    Event_1035482262(
+        0,
+        character=Characters.Balloon,
+        seconds=0.0,
+        attacked_entity=Characters.Balloon,
+        seconds_1=0.0,
+        character_1=Characters.Marionette0,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=20.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        flag=1035482250,
+    )
+    Event_1035482262(
+        1,
+        character=Characters.Balloon,
+        seconds=0.0,
+        attacked_entity=Characters.Balloon,
+        seconds_1=0.0,
+        character_1=Characters.Marionette1,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=20.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        flag=1035482250,
+    )
     Event_1035482262(3, 1035480250, 0.0, 1035480250, 0.0, 1035480262, 30010, 20010, 20.0, 0.0, 0.0, 1035482250)
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005201, args=(1035480200, 30001, 20001, 15.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
-    RunCommonEvent(0, 90005251, args=(1035480200, 15.0, 0.0, -1), arg_types="Iffi")
-    RunCommonEvent(0, 90005251, args=(1035480210, 1.0, 0.0, -1), arg_types="Iffi")
+    CommonFunc_90005201(
+        0,
+        character=Characters.LargeCrabSnow,
+        animation_id=30001,
+        animation_id_1=20001,
+        radius=15.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
+    CommonFunc_90005251(0, 1035480200, 15.0, 0.0, -1)
+    CommonFunc_90005251(0, 1035480210, 1.0, 0.0, -1)
 
 
 @RestartOnRest(1035482210)
@@ -74,11 +126,13 @@ def Event_1035482260(
     seconds_6: float,
 ):
     """Event 1035482260"""
-    EndIfFlagEnabled(flag)
-    IfAttackedWithDamageType(AND_1, attacked_entity=character, attacker=20000)
-    EndIfConditionTrue(input_condition=AND_1)
-    ForceAnimation(destination, 0, unknown2=1.0)
-    Move(character, destination=destination, destination_type=CoordEntityType.Object, model_point=220, short_move=True)
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    if AND_1:
+        return
+    ForceAnimation(destination, 0)
+    Move(character, destination=destination, destination_type=CoordEntityType.Asset, model_point=220, short_move=True)
     Wait(5.400000095367432)
     Restart()
     Wait(seconds)
@@ -94,7 +148,7 @@ def Event_1035482260(
 def Event_1035482261(
     _,
     flag: uint,
-    obj: uint,
+    asset: uint,
     character: uint,
     character_1: uint,
     seconds: float,
@@ -108,7 +162,7 @@ def Event_1035482261(
     """Event 1035482261"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     GotoIfFlagEnabled(Label.L1, flag=flag_1)
-    DisableObject(obj)
+    DisableAsset(asset)
     DisableCharacter(character)
     DisableAnimations(character)
     Kill(character)
@@ -119,7 +173,7 @@ def Event_1035482261(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    DisableObject(obj)
+    DisableAsset(asset)
     DisableCharacter(character)
     DisableAnimations(character)
     Kill(character)
@@ -127,30 +181,32 @@ def Event_1035482261(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CreateObjectVFX(obj, vfx_id=200, model_point=803160)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character, attacker=20000)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character, unk_8_12=260, unk_12_16=1)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    CreateAssetVFX(asset, vfx_id=200, model_point=803160)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=20000))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
+    AND_1.Add(OR_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
-    ForceAnimation(obj, 1, unknown2=1.0)
-    DeleteObjectVFX(obj)
+    ForceAnimation(asset, 1)
+    DeleteAssetVFX(asset)
     Wait(1.0)
-    DisableObject(obj)
-    SkipLinesIfPlayerNotInOwnWorld(2)
-    Wait(0.30000001192092896)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    DisableAsset(asset)
+    if PlayerInOwnWorld():
+        Wait(0.30000001192092896)
+        AwardItemLot(item_lot_param_id, host_only=True)
     End()
     Wait(seconds)
     Wait(seconds_1)
@@ -175,59 +231,62 @@ def Event_1035482262(
     flag: uint,
 ):
     """Event 1035482262"""
-    EndIfFlagEnabled(character)
-    GotoIfUnknown_1004_05(Label.L0, character=character_1, unk_8_12=True)
-    ForceAnimation(character_1, animation_id, unknown2=1.0)
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfAttackedWithDamageType(OR_2, attacked_entity=attacked_entity, attacker=20000)
-    IfAttackedWithDamageType(OR_2, attacked_entity=character_1, attacker=20000)
-    IfUnknownCharacterCondition_34(OR_2, character=character_1, unk_8_12=436, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character_1, unk_8_12=2, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character_1, unk_8_12=5, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character_1, unk_8_12=6, unk_12_16=1)
-    IfUnknownCharacterCondition_34(OR_2, character=character_1, unk_8_12=260, unk_12_16=1)
-    IfEntityWithinDistance(OR_2, entity=character_1, other_entity=20000, radius=radius)
-    IfConditionTrue(AND_1, input_condition=OR_2)
-    IfCharacterHasSpecialEffect(AND_4, character, 481)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90110)
-    IfCharacterDoesNotHaveSpecialEffect(AND_4, character, 90160)
-    IfCharacterHasSpecialEffect(AND_5, character, 482)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90120)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_5, character, 90162)
-    IfCharacterHasSpecialEffect(AND_6, character, 483)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90140)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90160)
-    IfCharacterDoesNotHaveSpecialEffect(AND_6, character, 90161)
-    IfCharacterHasSpecialEffect(AND_7, character, 484)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90130)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90161)
-    IfCharacterDoesNotHaveSpecialEffect(AND_7, character, 90162)
-    IfCharacterHasSpecialEffect(AND_8, character, 487)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90100)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90150)
-    IfCharacterDoesNotHaveSpecialEffect(AND_8, character, 90160)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(OR_3, input_condition=AND_4)
-    IfConditionTrue(OR_3, input_condition=AND_5)
-    IfConditionTrue(OR_3, input_condition=AND_6)
-    IfConditionTrue(OR_3, input_condition=AND_7)
-    IfConditionTrue(OR_3, input_condition=AND_8)
-    IfConditionTrue(OR_3, input_condition=AND_1)
-    IfConditionTrue(MAIN, input_condition=OR_3)
+    if FlagEnabled(character):
+        return
+    EndIffSpecialStandbyEndedFlagEnabled(character=character_1)
+    ForceAnimation(character_1, animation_id)
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=20000))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=20000))
+    OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=436))
+    OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=2))
+    OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=5))
+    OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=6))
+    OR_2.Add(CharacterHasStateInfo(character=character_1, state_info=260))
+    OR_2.Add(EntityWithinDistance(entity=character_1, other_entity=20000, radius=radius))
+    AND_1.Add(OR_2)
+    AND_4.Add(CharacterHasSpecialEffect(character, 481))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
+    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterHasSpecialEffect(character, 482))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90120))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_6.Add(CharacterHasSpecialEffect(character, 483))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90140))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_6.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterHasSpecialEffect(character, 484))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90130))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90161))
+    AND_7.Add(CharacterDoesNotHaveSpecialEffect(character, 90162))
+    AND_8.Add(CharacterHasSpecialEffect(character, 487))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
+    AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
+    AND_1.Add(OR_1)
+    OR_3.Add(AND_4)
+    OR_3.Add(AND_5)
+    OR_3.Add(AND_6)
+    OR_3.Add(AND_7)
+    OR_3.Add(AND_8)
+    OR_3.Add(AND_1)
+    
+    MAIN.Await(OR_3)
+    
     EnableNetworkFlag(flag)
-    Unknown_2004_83(character=character_1, unk_4_8=1)
+    SetSpecialStandbyEndedFlag(character=character_1, state=True)
     Wait(seconds_2)
-    ForceAnimation(character_1, animation_id_1, unknown2=1.0)
+    ForceAnimation(character_1, animation_id_1)
     End()
     Wait(seconds)
     Wait(seconds_1)
@@ -238,90 +297,92 @@ def Event_1035482262(
 def Event_1035482270():
     """Event 1035482270"""
     DisableNetworkSync()
-    CreateProjectileOwner(entity=1035480270)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=1035482270)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    CreateProjectileOwner(entity=Characters.Dummy0)
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1035482270))
+    
+    MAIN.Await(AND_1)
+    
     WaitRandomSeconds(min_seconds=1.0, max_seconds=10.0)
-    SkipLinesIfFlagDisabled(1, 50)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 55)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 56)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 57)
-    ShootProjectile(
-        owner_entity=1035480270,
-        source_entity=1035482271,
-        model_point=900,
-        behavior_id=802102070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=Characters.Dummy0,
+            source_entity=1035482271,
+            model_point=900,
+            behavior_id=802102070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
     Wait(1.0)
     Restart()
 
@@ -330,89 +391,91 @@ def Event_1035482270():
 def Event_1035482280():
     """Event 1035482280"""
     DisableNetworkSync()
-    CreateProjectileOwner(entity=1035480280)
-    IfCharacterInsideRegion(AND_1, character=PLAYER, region=1035482280)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    CreateProjectileOwner(entity=Characters.Dummy1)
+    AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1035482280))
+    
+    MAIN.Await(AND_1)
+    
     WaitRandomSeconds(min_seconds=1.0, max_seconds=10.0)
-    SkipLinesIfFlagDisabled(1, 50)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102000,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 51)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102010,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 52)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102020,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 53)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102030,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 54)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102040,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 55)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102050,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 56)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102060,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    SkipLinesIfFlagDisabled(1, 57)
-    ShootProjectile(
-        owner_entity=1035480280,
-        source_entity=1035482281,
-        model_point=900,
-        behavior_id=802102070,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
+    if FlagEnabled(50):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102000,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(51):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102010,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(52):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102020,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(53):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102030,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(54):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102040,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(55):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102050,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(56):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102060,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+    if FlagEnabled(57):
+        ShootProjectile(
+            owner_entity=Characters.Dummy1,
+            source_entity=1035482281,
+            model_point=900,
+            behavior_id=802102070,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
     Wait(1.0)
     Restart()

@@ -12,42 +12,45 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_51_39_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RegisterGrace(grace_flag=1051390000, obj=1051391950, unknown=5.0)
-    RunCommonEvent(0, 90005683, args=(62412, 1051391684, 209, 78494, 78494), arg_types="IIiII")
-    RunCommonEvent(0, 900005610, args=(1051391650, 100, 800, 0), arg_types="IiiI")
-    RunCommonEvent(0, 90005250, args=(1051390204, 1051392204, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390250, 1051392280, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390251, 1051392251, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390280, 1051392280, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390400, 1051392400, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390402, 1051392400, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390431, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390432, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390433, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390434, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390435, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390436, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390437, 1051392401, 0.0, -1), arg_types="IIfi")
-    RunCommonEvent(0, 90005250, args=(1051390438, 1051392401, 0.0, -1), arg_types="IIfi")
-    Event_1051392200(0, character=1051390400)
-    Event_1051392200(1, character=1051390402)
-    Event_1051392200(2, character=1051390431)
-    Event_1051392200(3, character=1051390432)
-    Event_1051392200(4, character=1051390433)
-    Event_1051392200(5, character=1051390434)
-    Event_1051392200(6, character=1051390435)
-    Event_1051392200(7, character=1051390436)
-    Event_1051392200(8, character=1051390437)
-    Event_1051392200(9, character=1051390438)
-    Event_1051392580(0, start_climbing_flag=1051390580, stop_climbing_flag=1051390851, obj=1051391580)
-    Event_1051392580(1, start_climbing_flag=1051390582, stop_climbing_flag=1051390853, obj=1051391582)
+    RegisterGrace(grace_flag=1051390000, asset=Assets.AEG099_060_9000)
+    CommonFunc_90005683(0, flag=62412, asset=Assets.AEG099_055_1000, vfx_id=209, flag_1=78494, flag_2=78494)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
+    CommonFunc_90005250(0, 1051390204, 1051392204, 0.0, -1)
+    CommonFunc_90005250(0, 1051390250, 1051392280, 0.0, -1)
+    CommonFunc_90005250(0, 1051390251, 1051392251, 0.0, -1)
+    CommonFunc_90005250(0, 1051390280, 1051392280, 0.0, -1)
+    CommonFunc_90005250(0, 1051390400, 1051392400, 0.0, -1)
+    CommonFunc_90005250(0, 1051390402, 1051392400, 0.0, -1)
+    CommonFunc_90005250(0, 1051390431, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390432, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390433, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390434, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390435, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390436, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390437, 1051392401, 0.0, -1)
+    CommonFunc_90005250(0, 1051390438, 1051392401, 0.0, -1)
+    Event_1051392200(0, character=Characters.RadahnSoldier0)
+    Event_1051392200(1, character=Characters.RadahnSoldier1)
+    Event_1051392200(2, character=Characters.RadahnSoldier2)
+    Event_1051392200(3, character=Characters.RadahnSoldier3)
+    Event_1051392200(4, character=Characters.RadahnSoldier4)
+    Event_1051392200(5, character=Characters.RadahnSoldier5)
+    Event_1051392200(6, character=Characters.RadahnSoldier6)
+    Event_1051392200(7, character=Characters.RadahnSoldier7)
+    Event_1051392200(8, character=Characters.RadahnSoldier8)
+    Event_1051392200(9, character=Characters.RadahnSoldier9)
+    Event_1051392580(0, start_climbing_flag=1051390580, stop_climbing_flag=1051390851, asset=Assets.AEG030_001_2000)
+    Event_1051392580(1, start_climbing_flag=1051390582, stop_climbing_flag=1051390853, asset=Assets.AEG030_608_2100)
     Event_1051392580(2, 1051390584, 1051390855, 1051391584)
 
 
@@ -55,11 +58,13 @@ def Constructor():
 def Event_1051392200(_, character: uint):
     """Event 1051392200"""
     AddSpecialEffect(character, 8081)
-    IfHasAIStatus(MAIN, character, ai_status=AIStatusType.Battle)
-    CancelSpecialEffect(character, 8081)
+    
+    MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    
+    RemoveSpecialEffect(character, 8081)
 
 
 @NeverRestart(1051392580)
-def Event_1051392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, obj: uint):
+def Event_1051392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
     """Event 1051392580"""
-    RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, obj=obj)
+    RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

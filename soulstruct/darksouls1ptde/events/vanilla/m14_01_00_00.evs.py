@@ -187,7 +187,7 @@ def Constructor():
         character_2=1410221,
         character_3=1410222,
         character_4=1410223,
-        character_5=1410224
+        character_5=1410224,
     )
     Event_11415250(
         1,
@@ -196,7 +196,7 @@ def Constructor():
         character_2=1410226,
         character_3=1410227,
         character_4=1410228,
-        character_5=1410229
+        character_5=1410229,
     )
     Event_11415250(
         2,
@@ -205,7 +205,7 @@ def Constructor():
         character_2=1410231,
         character_3=1410232,
         character_4=1410233,
-        character_5=1410234
+        character_5=1410234,
     )
     Event_11415250(
         3,
@@ -214,7 +214,7 @@ def Constructor():
         character_2=1410236,
         character_3=1410237,
         character_4=1410238,
-        character_5=1410239
+        character_5=1410239,
     )
     Event_11415250(
         4,
@@ -223,7 +223,7 @@ def Constructor():
         character_2=1410241,
         character_3=1410242,
         character_4=1410243,
-        character_5=1410244
+        character_5=1410244,
     )
     Event_11415250(
         5,
@@ -232,7 +232,7 @@ def Constructor():
         character_2=1410246,
         character_3=1410247,
         character_4=1410248,
-        character_5=1410249
+        character_5=1410249,
     )
     Event_11415250(
         6,
@@ -241,7 +241,7 @@ def Constructor():
         character_2=1410251,
         character_3=1410252,
         character_4=1410253,
-        character_5=1410254
+        character_5=1410254,
     )
     Event_11415250(
         7,
@@ -250,7 +250,7 @@ def Constructor():
         character_2=1410256,
         character_3=1410257,
         character_4=1410258,
-        character_5=1410259
+        character_5=1410259,
     )
     Event_11415250(
         8,
@@ -259,7 +259,7 @@ def Constructor():
         character_2=1410261,
         character_3=1410262,
         character_4=1410263,
-        character_5=1410264
+        character_5=1410264,
     )
     Event_11415250(
         9,
@@ -268,7 +268,7 @@ def Constructor():
         character_2=1410266,
         character_3=1410267,
         character_4=1410268,
-        character_5=1410269
+        character_5=1410269,
     )
     Event_11415250(
         10,
@@ -277,7 +277,7 @@ def Constructor():
         character_2=1410271,
         character_3=1410272,
         character_4=1410273,
-        character_5=1410274
+        character_5=1410274,
     )
     Event_11415250(
         11,
@@ -286,7 +286,7 @@ def Constructor():
         character_2=1410276,
         character_3=1410277,
         character_4=1410278,
-        character_5=1410279
+        character_5=1410279,
     )
     Event_11415250(
         12,
@@ -295,7 +295,7 @@ def Constructor():
         character_2=1410281,
         character_3=1410282,
         character_4=1410283,
-        character_5=1410284
+        character_5=1410284,
     )
     Event_11415250(
         13,
@@ -304,15 +304,36 @@ def Constructor():
         character_2=1410286,
         character_3=1410287,
         character_4=1410288,
-        character_5=1410289
+        character_5=1410289,
     )
-    Event_11415100(0, 1410301, 1410301, 9060, 15.0, 0.0)
-    Event_11415100(1, 1410302, 1410302, 9060, 10.0, 0.0)
-    Event_11415100(2, 1410307, 1410307, 9060, 15.0, 0.0)
-    Event_11415120(0, 10000, 1410303, 9060, 1412302, 0.30000001192092896)
-    Event_11415120(1, 10000, 1410304, 9060, 1412302, 0.10000000149011612)
-    Event_11415120(2, 10000, 1410305, 9060, 1412302, 0.0)
-    Event_11415120(3, 10000, 1410306, 9060, 1412302, 0.20000000298023224)
+    Event_11415100(0, entity=1410301, character=1410301, cancel_animation=9060, radius=15.0, seconds=0.0)
+    Event_11415100(1, entity=1410302, character=1410302, cancel_animation=9060, radius=10.0, seconds=0.0)
+    Event_11415100(2, entity=1410307, character=1410307, cancel_animation=9060, radius=15.0, seconds=0.0)
+    Event_11415120(
+        0,
+        character=10000,
+        character_1=1410303,
+        cancel_animation=9060,
+        region=1412302,
+        seconds=0.30000001192092896,
+    )
+    Event_11415120(
+        1,
+        character=10000,
+        character_1=1410304,
+        cancel_animation=9060,
+        region=1412302,
+        seconds=0.10000000149011612,
+    )
+    Event_11415120(2, character=10000, character_1=1410305, cancel_animation=9060, region=1412302, seconds=0.0)
+    Event_11415120(
+        3,
+        character=10000,
+        character_1=1410306,
+        cancel_animation=9060,
+        region=1412302,
+        seconds=0.20000000298023224,
+    )
     Event_11410150(1, character=1410301, item_lot_param_id=33900000)
     Event_11410150(2, character=1410302, item_lot_param_id=33900000)
     Event_11410150(3, character=1410303, item_lot_param_id=33900000)
@@ -755,7 +776,7 @@ def Event_11415397():
     
     DisableInvincibility(1410802)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1410802, value=0.0))
+    MAIN.Await(HealthRatio(1410802) <= 0.0)
     
     DisableInvincibility(1410800)
     DisableInvincibility(1410801)
@@ -1161,14 +1182,14 @@ def Event_11415376():
 def Event_11415377():
     """Event 11415377"""
     if ThisEventFlagEnabled():
-        CancelSpecialEffect(1410600, 5132)
+        RemoveSpecialEffect(1410600, 5132)
         AddSpecialEffect(1410600, 5133)
         AICommand(1410600, command_id=-1, command_slot=1)
         End()
     
     MAIN.Await(CharacterHasTAEEvent(1410600, tae_event_id=300))
     
-    CancelSpecialEffect(1410600, 5132)
+    RemoveSpecialEffect(1410600, 5132)
     AddSpecialEffect(1410600, 5133)
     AICommand(1410600, command_id=-1, command_slot=1)
     ReplanAI(1410600)
@@ -1195,7 +1216,7 @@ def Event_11415379():
     if FlagEnabled(11410900):
         return
     AND_1.Add(FlagRangeAllEnabled(flag_range=(11415310, 11415314)))
-    AND_2.Add(HealthRatioLessThanOrEqual(1410600, value=0.0))
+    AND_2.Add(HealthRatio(1410600) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1242,7 +1263,7 @@ def Event_11410800():
     
     Wait(5.0)
     AND_1.Add(Host())
-    AND_1.Add(HealthRatioLessThanOrEqual(PLAYER, value=0.0))
+    AND_1.Add(HealthRatio(PLAYER) <= 0.0)
     if AND_1:
         return
     if Client():
@@ -1458,11 +1479,11 @@ def Event_11415320(_, flag: int, character: int):
     """Event 11415320"""
     AND_1.Add(FlagEnabled(flag))
     AND_1.Add(CharacterHasTAEEvent(1410700, tae_event_id=400))
-    AND_1.Add(HealthRatioGreaterThan(1410700, value=0.0))
+    AND_1.Add(HealthRatio(1410700) > 0.0)
     
     MAIN.Await(AND_1)
     
-    MAIN.Await(HealthRatioLessThanOrEqual(1410700, value=0.0))
+    MAIN.Await(HealthRatio(1410700) <= 0.0)
     
     Kill(character, award_souls=True)
 
@@ -1481,8 +1502,8 @@ def Event_11415350(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     MAIN.Await(FlagEnabled(flag))
     
     CreateNPCPart(1410700, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=part_health)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1410700, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(1410700, value=0.0))
+    AND_1.Add(CharacterPartHealth(1410700, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(1410700) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1530,8 +1551,8 @@ def Event_11415360(_, flag: int, npc_part_id: short, npc_part_id_1: int, part_he
     MAIN.Await(FlagEnabled(flag))
     
     CreateNPCPart(1410700, npc_part_id=npc_part_id, part_index=NPCPartType.Part2, part_health=part_health)
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1410700, npc_part_id=npc_part_id_1, value=0))
-    AND_2.Add(HealthRatioLessThanOrEqual(1410700, value=0.0))
+    AND_1.Add(CharacterPartHealth(1410700, npc_part_id=npc_part_id_1) <= 0)
+    AND_2.Add(HealthRatio(1410700) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1943,7 +1964,7 @@ def Event_11415201(_, character: int, part_index: short, npc_part_id: short, npc
     
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=100)
     
-    MAIN.Await(CharacterPartHealthLessThanOrEqual(character, npc_part_id=npc_part_id_1, value=0))
+    MAIN.Await(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
     
     DisableFlag(11415290)
     DisableFlag(11415291)
@@ -2034,7 +2055,7 @@ def Event_5202(_, character: int, flag: int, character_1: int, character_2: int,
 @RestartOnRest(11415210)
 def Event_11415210(_, first_flag: int, last_flag: int, value: int):
     """Event 11415210"""
-    MAIN.Await(TrueFlagCountGreaterThanOrEqual(FlagType.Absolute, flag_range=(first_flag, last_flag), value=value))
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(first_flag, last_flag)) >= value)
     
     DisableSoundEvent(sound_id=1413806)
 
@@ -2217,8 +2238,8 @@ def Event_11410260():
 @NeverRestart(11410510)
 def Event_11410510(_, character: int, flag: int):
     """Event 11410510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2247,7 +2268,7 @@ def Event_11410520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -2261,8 +2282,8 @@ def Event_11410501(_, character: int, flag: int):
     OR_2.Add(FlagEnabled(1506))
     OR_2.Add(FlagEnabled(1507))
     AND_1.Add(OR_2)
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -2366,7 +2387,7 @@ def Event_11410534(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410534"""
     AND_1.Add(FlagDisabled(1004))
     AND_1.Add(FlagEnabled(1002))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     
     MAIN.Await(AND_1)
     
@@ -2439,8 +2460,8 @@ def Event_11410543(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410543"""
     AND_1.Add(FlagDisabled(1512))
     AND_1.Add(FlagEnabled(1504))
-    AND_1.Add(HealthRatioLessThan(character, value=0.5))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) < 0.5)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(CharacterDead(1410410))
     AND_1.Add(CharacterDead(1410411))
     AND_1.Add(CharacterDead(1410412))
@@ -2458,7 +2479,7 @@ def Event_11410544(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11410544"""
     AND_1.Add(FlagDisabled(1512))
     AND_1.Add(FlagEnabled(1504))
-    AND_1.Add(HealthRatioGreaterThanOrEqual(character, value=0.5))
+    AND_1.Add(HealthRatio(character) >= 0.5)
     AND_1.Add(CharacterDead(1410410))
     AND_1.Add(CharacterDead(1410411))
     AND_1.Add(CharacterDead(1410412))
@@ -2490,7 +2511,7 @@ def Event_11410545(_, character: int, first_flag: int, last_flag: int, flag: int
     EnableFlag(flag)
     SkipLinesIfFinishedConditionTrue(3, input_condition=AND_2)
     Kill(character, award_souls=True)
-    CancelSpecialEffect(character, 90111)
+    RemoveSpecialEffect(character, 90111)
     End()
     DropMandatoryTreasure(character)
 
@@ -2503,7 +2524,7 @@ def Event_11410546(_, character: int, first_flag: int, last_flag: int, flag: int
         End()
     AND_1.Add(FlagDisabled(1506))
     AND_1.Add(FlagDisabled(1508))
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.0)
     
     MAIN.Await(AND_1)
     

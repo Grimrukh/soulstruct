@@ -32,7 +32,7 @@ __all__ = [
 
     "MapPart",
     "MapPiece",
-    "Object",
+    "Asset",
     "Character",
     "Collision",
     "PlayerStart",
@@ -52,7 +52,7 @@ __all__ = [
 
     "MapPartTyping",
     "CoordEntityTyping",
-    "ObjectTyping",
+    "AssetTyping",
     "RegionTyping",
     "CharacterTyping",
     "AnimatedEntityTyping",
@@ -446,16 +446,16 @@ class MapPiece(MapPart):
         return 3000, 3199
 
 
-class Object(MapPart):
-    """Condition upon an object as a shortcut to condition upon it *not* being destroyed."""
+class Asset(MapPart):
+    """Formerly 'Objects'."""
     @classmethod
     def get_coord_entity_type(cls):
         from ..events.emevd.enums import CoordEntityType
-        return CoordEntityType.Object
+        return CoordEntityType.Asset
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Parts", "Objects") if pluralized_subtype else ("Parts", "Object")
+        return ("Parts", "Assets") if pluralized_subtype else ("Parts", "Asset")
 
     @classmethod
     def get_id_start_and_max(cls) -> tuple[int, int]:
@@ -547,11 +547,11 @@ class MapConnection(MapPart):
 
 
 MapPartTyping = tp.Union[MapPart, int]
-CoordEntityTyping = tp.Union[Object, Region, Character, int]
-ObjectTyping = tp.Union[Object, int]
+CoordEntityTyping = tp.Union[Asset, Region, Character, int]
+AssetTyping = tp.Union[Asset, int]
 RegionTyping = tp.Union[Region, int]
 CharacterTyping = tp.Union[Character, int]
-AnimatedEntityTyping = tp.Union[Character, Object, int]
+AnimatedEntityTyping = tp.Union[Character, Asset, int]
 MapPieceTyping = tp.Union[MapPiece, int]
 CollisionTyping = tp.Union[Collision, int]
 NavigationEventTyping = tp.Union[NavigationEvent, int]

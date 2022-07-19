@@ -12,29 +12,41 @@ strings:
 172: 
 174: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_41_50_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005870, args=(1041500800, 904680602, 19), arg_types="IiI")
-    RunCommonEvent(0, 90005860, args=(1041500800, 0, 1041500800, 0, 30310, 0.0), arg_types="IIIIif")
+    CommonFunc_90005870(0, character=Characters.FallingstarBeast, name=904680602, npc_threat_level=19)
+    CommonFunc_90005860(
+        0,
+        flag=1041500800,
+        left=0,
+        character=Characters.FallingstarBeast,
+        left_1=0,
+        item_lot__item_lot_param_id=30310,
+        seconds=0.0,
+    )
     Event_1041502200()
 
 
 @NeverRestart(50)
 def Preconstructor():
     """Event 50"""
-    RunCommonEvent(0, 90005201, args=(1041500800, 30009, 20009, 30.0, 0.0, 0, 0, 0, 0), arg_types="IiiffIIII")
+    CommonFunc_90005201(0, 1041500800, 30009, 20009, 30.0, 0.0, 0, 0, 0, 0)
 
 
 @RestartOnRest(1041502200)
 def Event_1041502200():
     """Event 1041502200"""
     GotoIfFlagEnabled(Label.L0, flag=1041500800)
-    IfUnknownCharacterCondition_35(MAIN, character=1041500800, unk_8_12=1)
+    
+    MAIN.Await(SpecialStandbyEndedFlagEnabled(character=Characters.FallingstarBeast))
 
     # --- Label 0 --- #
     DefineLabel(0)

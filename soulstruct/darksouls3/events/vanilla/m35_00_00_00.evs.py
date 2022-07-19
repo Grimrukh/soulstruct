@@ -11,6 +11,8 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
@@ -21,42 +23,62 @@ def Constructor():
     RegisterBonfire(bonfire_flag=13500000, obj=3501950, reaction_distance=5.0)
     RegisterBonfire(bonfire_flag=13500003, obj=3501953, reaction_distance=5.0)
     RegisterBonfire(bonfire_flag=13500002, obj=3501952, reaction_distance=5.0)
-    RunCommonEvent(20005500, args=(13500800, 13500001, 3500951, 3501951))
-    RunCommonEvent(20005211, args=(3500900, 700, 1700, 1.0, 20.0), arg_types="iiiff")
-    RunCommonEvent(20005210, args=(3500901, 700, 1700, 1.0), arg_types="iiif")
-    RunCommonEvent(20005119, args=(3500681, 3502270, 3502273, 0, 0, 0, 0, 0))
-    RunCommonEvent(20005119, args=(3500682, 3502260, 3502261, 0, 0, 0, 0, 0))
-    RunCommonEvent(20005110, args=(3500683, 3502203))
-    RunCommonEvent(20005132, args=(3500175, 3.0, 3502175), arg_types="ifi")
-    RunCommonEvent(20005132, args=(3500176, 3.0, 3502176), arg_types="ifi")
-    RunCommonEvent(20005342, args=(13500285, 3500175))
-    RunCommonEvent(20005342, args=(13500286, 3500176))
+    CommonFunc_20005500(0, flag=13500800, bonfire_flag=13500001, character=3500951, obj=3501951)
+    CommonFunc_20005211(0, character=3500900, animation_id=700, animation_id_1=1700, radius=1.0, seconds=20.0)
+    CommonFunc_20005210(0, character=3500901, animation_id=700, animation_id_1=1700, radius=1.0)
+    CommonFunc_20005119(
+        0,
+        character=3500681,
+        region=3502270,
+        region_1=3502273,
+        region_2=0,
+        region_3=0,
+        region_4=0,
+        region_5=0,
+        region_6=0,
+    )
+    CommonFunc_20005119(
+        0,
+        character=3500682,
+        region=3502260,
+        region_1=3502261,
+        region_2=0,
+        region_3=0,
+        region_4=0,
+        region_5=0,
+        region_6=0,
+    )
+    CommonFunc_20005110(0, character=3500683, region=3502203)
+    CommonFunc_20005132(0, character=3500175, radius=3.0, region=3502175)
+    CommonFunc_20005132(0, character=3500176, radius=3.0, region=3502176)
+    CommonFunc_20005342(0, flag=13500285, character=3500175)
+    CommonFunc_20005342(0, flag=13500286, character=3500176)
     Event_13505271()
-    RunCommonEvent(20005132, args=(3500202, 3.0, 3502290), arg_types="ifi")
-    RunCommonEvent(20005200, args=(3500204, 706, 1706, 3502243))
-    RunCommonEvent(20005215, args=(3500205, 710, 1710, 4.0, 0.0), arg_types="iiiff")
-    RunCommonEvent(20005215, args=(3500206, 710, 1710, 4.0, 1.0), arg_types="iiiff")
-    RunCommonEvent(20005290, args=(3500207, 703, 1703))
-    RunCommonEvent(20005220, args=(3500210, 706, 1706))
-    RunCommonEvent(20005260, args=(3500211, 700, 1700, 3500291))
-    RunCommonEvent(20005260, args=(3500212, 701, 1701, 3500291))
-    RunCommonEvent(20005260, args=(3500213, 702, 1702, 3500291))
-    RunCommonEvent(20005110, args=(3500215, 3502244))
-    RunCommonEvent(20005290, args=(3500216, 705, 1705))
-    RunCommonEvent(20005220, args=(3500220, 706, 1706))
-    RunCommonEvent(20005290, args=(3500221, 705, 1706))
-    RunCommonEvent(20005205, args=(3500231, 710, 1710, 3502264, 4.0), arg_types="iiiif")
-    RunCommonEvent(20005200, args=(3500232, 703, 1703, 3502264))
-    RunCommonEvent(20005220, args=(3500233, 706, 1706))
-    RunCommonEvent(20005120, args=(3500234, 32.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500235, 22.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500236, 35.0), arg_types="if")
-    RunCommonEvent(20005231, args=(3500248, 704, 1704, 3501242))
-    RunCommonEvent(20005231, args=(3500249, 704, 1704, 3501243))
-    RunCommonEvent(20005231, args=(3500250, 704, 1704, 3501244))
-    RunCommonEvent(20005132, args=(3500255, 3.0, 3502290), arg_types="ifi")
-    RunCommonEvent(20005214, args=(3500257, 710, 1710, 6.0), arg_types="iiif")
-    RunCommonEvent(20005215, args=(3500258, 703, 1703, 5.0, 3.0), arg_types="iiiff")
+    CommonFunc_20005132(0, character=3500202, radius=3.0, region=3502290)
+    CommonFunc_20005200(0, character=3500204, animation_id=706, animation_id_1=1706, region=3502243)
+    CommonFunc_20005215(0, character=3500205, animation_id=710, animation_id_1=1710, radius=4.0, seconds=0.0)
+    CommonFunc_20005215(0, character=3500206, animation_id=710, animation_id_1=1710, radius=4.0, seconds=1.0)
+    CommonFunc_20005290(0, character=3500207, animation_id=703, animation_id_1=1703)
+    CommonFunc_20005220(0, character=3500210, animation_id=706, animation_id_1=1706)
+    CommonFunc_20005260(0, character=3500211, animation_id=700, animation_id_1=1700, character_1=3500291)
+    CommonFunc_20005260(0, character=3500212, animation_id=701, animation_id_1=1701, character_1=3500291)
+    CommonFunc_20005260(0, character=3500213, animation_id=702, animation_id_1=1702, character_1=3500291)
+    CommonFunc_20005110(0, character=3500215, region=3502244)
+    CommonFunc_20005290(0, character=3500216, animation_id=705, animation_id_1=1705)
+    CommonFunc_20005220(0, character=3500220, animation_id=706, animation_id_1=1706)
+    CommonFunc_20005290(0, character=3500221, animation_id=705, animation_id_1=1706)
+    CommonFunc_20005205(0, character=3500231, animation_id=710, animation_id_1=1710, region=3502264, seconds=4.0)
+    CommonFunc_20005200(0, character=3500232, animation_id=703, animation_id_1=1703, region=3502264)
+    CommonFunc_20005220(0, character=3500233, animation_id=706, animation_id_1=1706)
+    CommonFunc_20005120(0, character=3500234, radius=32.0)
+    CommonFunc_20005120(0, character=3500235, radius=22.0)
+    CommonFunc_20005120(0, character=3500236, radius=35.0)
+    CommonFunc_20005231(0, character=3500248, animation_id=704, animation_id_1=1704, obj=3501242)
+    CommonFunc_20005231(0, character=3500249, animation_id=704, animation_id_1=1704, obj=3501243)
+    CommonFunc_20005231(0, character=3500250, animation_id=704, animation_id_1=1704, obj=3501244)
+    CommonFunc_20005132(0, character=3500255, radius=3.0, region=3502290)
+    CommonFunc_20005214(0, character=3500257, animation_id=710, animation_id_1=1710, radius=6.0)
+    CommonFunc_20005215(0, character=3500258, animation_id=703, animation_id_1=1703, radius=5.0, seconds=3.0)
     Event_13505240(0, character=3500240, animation_id=701, animation_id_1=1701)
     Event_13505240(1, character=3500241, animation_id=701, animation_id_1=1701)
     Event_13505240(2, character=3500242, animation_id=701, animation_id_1=1701)
@@ -67,32 +89,42 @@ def Constructor():
     Event_13505245(2, character=3500228, animation_id=701, animation_id_1=1701)
     Event_13505245(3, character=3500229, animation_id=701, animation_id_1=1701)
     Event_13505245(4, character=3500230, animation_id=701, animation_id_1=1701)
-    Event_13505220(0, 3500213, 3.0)
-    Event_13505220(1, 3500220, 5.0)
-    Event_13505220(2, 3500258, 3.0)
-    Event_13505220(3, 3500204, 5.0)
+    Event_13505220(0, character=3500213, seconds=3.0)
+    Event_13505220(1, character=3500220, seconds=5.0)
+    Event_13505220(2, character=3500258, seconds=3.0)
+    Event_13505220(3, character=3500204, seconds=5.0)
     Event_13505230(0, character=3500218)
     Event_13505230(1, character=3500219)
     Event_13505230(2, character=3500238)
-    RunCommonEvent(20005132, args=(3500260, 2.0, 3502280), arg_types="ifi")
-    RunCommonEvent(20005132, args=(3500262, 2.0, 3502282), arg_types="ifi")
-    RunCommonEvent(20005132, args=(3500310, 5.0, 3502380), arg_types="ifi")
-    RunCommonEvent(20005231, args=(3500311, 700, 1700, 3501245))
-    RunCommonEvent(20005231, args=(3500319, 700, 1700, 3501235))
+    CommonFunc_20005132(0, character=3500260, radius=2.0, region=3502280)
+    CommonFunc_20005132(0, character=3500262, radius=2.0, region=3502282)
+    CommonFunc_20005132(0, character=3500310, radius=5.0, region=3502380)
+    CommonFunc_20005231(0, character=3500311, animation_id=700, animation_id_1=1700, obj=3501245)
+    CommonFunc_20005231(0, character=3500319, animation_id=700, animation_id_1=1700, obj=3501235)
     Event_13505260()
     Event_13505261()
-    RunCommonEvent(20005110, args=(3500321, 3502390))
-    RunCommonEvent(20005119, args=(3500326, 3502270, 3502273, 0, 0, 0, 0, 0))
-    RunCommonEvent(20005120, args=(3500340, 1.0), arg_types="if")
-    RunCommonEvent(20005202, args=(3500341, 700, 1700, 3502341))
-    RunCommonEvent(20005200, args=(3500342, 700, 1700, 3502342))
-    RunCommonEvent(20005202, args=(3500343, 700, 1700, 3502343))
-    RunCommonEvent(20005202, args=(3500345, 700, 1700, 3502345))
-    RunCommonEvent(20005202, args=(3500346, 700, 1700, 3502346))
-    RunCommonEvent(20005202, args=(3500347, 700, 1700, 3502347))
-    RunCommonEvent(20005202, args=(3500348, 700, 1700, 3502348))
-    RunCommonEvent(20005202, args=(3500349, 700, 1700, 3502349))
-    RunCommonEvent(20005205, args=(3500350, 700, 1700, 3502350, 2.0), arg_types="iiiif")
+    CommonFunc_20005110(0, character=3500321, region=3502390)
+    CommonFunc_20005119(
+        0,
+        character=3500326,
+        region=3502270,
+        region_1=3502273,
+        region_2=0,
+        region_3=0,
+        region_4=0,
+        region_5=0,
+        region_6=0,
+    )
+    CommonFunc_20005120(0, character=3500340, radius=1.0)
+    CommonFunc_20005202(0, character=3500341, animation_id=700, animation_id_1=1700, region=3502341)
+    CommonFunc_20005200(0, character=3500342, animation_id=700, animation_id_1=1700, region=3502342)
+    CommonFunc_20005202(0, character=3500343, animation_id=700, animation_id_1=1700, region=3502343)
+    CommonFunc_20005202(0, character=3500345, animation_id=700, animation_id_1=1700, region=3502345)
+    CommonFunc_20005202(0, character=3500346, animation_id=700, animation_id_1=1700, region=3502346)
+    CommonFunc_20005202(0, character=3500347, animation_id=700, animation_id_1=1700, region=3502347)
+    CommonFunc_20005202(0, character=3500348, animation_id=700, animation_id_1=1700, region=3502348)
+    CommonFunc_20005202(0, character=3500349, animation_id=700, animation_id_1=1700, region=3502349)
+    CommonFunc_20005205(0, character=3500350, animation_id=700, animation_id_1=1700, region=3502350, seconds=2.0)
     Event_13505255(
         0,
         character=3500344,
@@ -100,143 +132,274 @@ def Constructor():
         animation_id_1=1700,
         region=3502344,
         flag=53500710,
-        flag_1=53500630
+        flag_1=53500630,
     )
-    RunCommonEvent(20005290, args=(3500401, 700, 1700))
-    RunCommonEvent(20005220, args=(3500402, 701, 1701))
-    RunCommonEvent(20005110, args=(3500403, 3502202))
-    RunCommonEvent(20005220, args=(3500404, 700, 1700))
-    RunCommonEvent(20005210, args=(3500407, 700, 1700, 8.0), arg_types="iiif")
-    RunCommonEvent(20005201, args=(3500409, 702, 1702, 3502209, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500410, 702, 1702, 3502209, 2.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500411, 702, 1702, 3502209, 1.5), arg_types="iiiif")
-    RunCommonEvent(20005220, args=(3500412, 700, 1700))
-    RunCommonEvent(20005220, args=(3500413, 700, 1700))
-    RunCommonEvent(20005210, args=(3500414, 700, 1700, 1.0), arg_types="iiif")
-    RunCommonEvent(20005110, args=(3500415, 3502211))
-    RunCommonEvent(20005210, args=(3500434, 700, 1700, 5.0), arg_types="iiif")
-    RunCommonEvent(20005110, args=(3500442, 3502202))
-    RunCommonEvent(20005290, args=(3500443, 700, 1700))
-    RunCommonEvent(20005290, args=(3500444, 701, 1701))
-    RunCommonEvent(20005290, args=(3500447, 701, 1701))
-    RunCommonEvent(20005290, args=(3500448, 700, 1700))
-    RunCommonEvent(20005110, args=(3500449, 3502210))
-    RunCommonEvent(20005201, args=(3500450, 702, 1702, 3502209, 2.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500451, 702, 1702, 3502209, 1.5), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500492, 702, 1702, 3502209, 1.5), arg_types="iiiif")
-    RunCommonEvent(20005220, args=(3500461, 701, 1701))
-    RunCommonEvent(20005290, args=(3500472, 701, 1701))
-    RunCommonEvent(20005290, args=(3500471, 701, 1701))
-    RunCommonEvent(20005290, args=(3500472, 701, 1701))
-    RunCommonEvent(20005290, args=(3500473, 700, 1700))
-    RunCommonEvent(20005213, args=(3500474, 700, 1700, 1.0, 3502212), arg_types="iiifi")
-    RunCommonEvent(20005213, args=(3500475, 702, 1702, 1.0, 3502212), arg_types="iiifi")
-    RunCommonEvent(20005150, args=(3500476,))
-    RunCommonEvent(20005290, args=(3500477, 701, 1701))
-    RunCommonEvent(20005220, args=(3500478, 700, 1700))
-    RunCommonEvent(20005210, args=(3500479, 700, 1700, 6.0), arg_types="iiif")
-    RunCommonEvent(20005290, args=(3500480, 700, 1700))
-    RunCommonEvent(20005290, args=(3500481, 701, 1701))
-    RunCommonEvent(20005150, args=(3500482,))
-    RunCommonEvent(20005290, args=(3500484, 700, 1700))
-    RunCommonEvent(20005290, args=(3500488, 701, 1701))
-    RunCommonEvent(20005290, args=(3500499, 700, 1700))
-    RunCommonEvent(20005201, args=(3500440, 30004, 20004, 3502200, 1.2999999523162842), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500460, 30004, 20004, 3502200, 0.30000001192092896), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500424, 30004, 20004, 3502200, 1.2000000476837158), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500441, 30004, 20004, 3502200, 2.200000047683716), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500487, 30004, 20004, 3502200, 1.100000023841858), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500427, 30004, 20004, 3502200, 3.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500426, 30004, 20004, 3502200, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500452, 30004, 20004, 3502209, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500453, 30004, 20004, 3502209, 2.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500454, 30004, 20004, 3502209, 3.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500455, 30004, 20004, 3502209, 2.5), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500456, 30004, 20004, 3502209, 1.5), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500435, 30004, 20004, 3502205, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500436, 30004, 20004, 3502205, 1.399999976158142), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500437, 30004, 20004, 3502205, 1.7999999523162842), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500438, 30004, 20004, 3502205, 2.4000000953674316), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500439, 30004, 20004, 3502205, 3.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500417, 30004, 20004, 3502213, 2.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500418, 30004, 20004, 3502213, 2.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500419, 30004, 20004, 3502213, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500420, 30004, 20004, 3502213, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005201, args=(3500421, 30004, 20004, 3502213, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005120, args=(3500280, 10.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500281, 10.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500282, 10.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500283, 12.0), arg_types="if")
-    RunCommonEvent(20005120, args=(3500284, 10.0), arg_types="if")
-    RunCommonEvent(20005110, args=(3500291, 3502291))
-    RunCommonEvent(20005322, args=(3500600, 3502250, 3504200, 3502252, 3504201))
-    RunCommonEvent(20005202, args=(3500601, 700, 1700, 3502369))
-    RunCommonEvent(20005214, args=(3500604, 701, 1701, 7.0), arg_types="iiif")
-    RunCommonEvent(20005202, args=(3500607, 701, 1701, 3502360))
-    RunCommonEvent(20005213, args=(3500608, 706, 20002, 2.0, 3502360), arg_types="iiifi")
-    RunCommonEvent(20005110, args=(3500609, 3502363))
-    RunCommonEvent(20005261, args=(3500612, 706, 20002, 3500623))
-    RunCommonEvent(20005261, args=(3500613, 706, 20002, 3500623))
-    RunCommonEvent(20005207, args=(3500616, 701, 1701, 3502372, 4.0, 1702, 3502373, 0.0), arg_types="iiiifiif")
-    RunCommonEvent(20005207, args=(3500617, 701, 1701, 3502374, 3.0, 1702, 3502375, 3.0), arg_types="iiiifiif")
-    RunCommonEvent(20005120, args=(3500618, 3.0), arg_types="if")
-    RunCommonEvent(20005205, args=(3500620, 701, 1701, 3502364, 8.0), arg_types="iiiif")
-    RunCommonEvent(20005214, args=(3500622, 700, 1700, 8.0), arg_types="iiif")
-    RunCommonEvent(20005134, args=(3500623, 3006, 2.0, 3502240), arg_types="iifi")
-    RunCommonEvent(20005205, args=(3500627, 700, 1700, 3502364, 1.0), arg_types="iiiif")
-    RunCommonEvent(20005202, args=(3500633, 701, 1701, 3502367))
-    RunCommonEvent(20005214, args=(3500636, 701, 1701, 3.0), arg_types="iiif")
-    RunCommonEvent(20005202, args=(3500637, 701, 1701, 3502368))
-    RunCommonEvent(20005207, args=(3500638, 701, 1701, 3502371, 2.0, 1703, 3502370, 9.0), arg_types="iiiifiif")
-    RunCommonEvent(20005207, args=(3500639, 701, 1701, 3502371, 4.0, 1706, 3502370, 7.0), arg_types="iiiifiif")
-    RunCommonEvent(20005205, args=(3500640, 700, 1700, 3502370, 5.0), arg_types="iiiif")
-    RunCommonEvent(20005207, args=(3500641, 701, 1701, 3502250, 0.0, 1702, 3502251, 1.0), arg_types="iiiifiif")
-    RunCommonEvent(20005207, args=(3500642, 701, 1701, 3502250, 3.0, 1705, 3502252, 1.0), arg_types="iiiifiif")
-    RunCommonEvent(20005210, args=(3500370, 700, 1700, 3.0), arg_types="iiif")
-    RunCommonEvent(20005341, args=(13500290, 3500370, 31001000))
-    RunCommonEvent(20005341, args=(13500292, 3500372, 21503000))
-    RunCommonEvent(20005341, args=(13500293, 3500373, 21503010))
+    CommonFunc_20005290(0, character=3500401, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005220(0, character=3500402, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005110(0, character=3500403, region=3502202)
+    CommonFunc_20005220(0, character=3500404, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005210(0, character=3500407, animation_id=700, animation_id_1=1700, radius=8.0)
+    CommonFunc_20005201(0, character=3500409, animation_id=702, animation_id_1=1702, region=3502209, seconds=1.0)
+    CommonFunc_20005201(0, character=3500410, animation_id=702, animation_id_1=1702, region=3502209, seconds=2.0)
+    CommonFunc_20005201(0, character=3500411, animation_id=702, animation_id_1=1702, region=3502209, seconds=1.5)
+    CommonFunc_20005220(0, character=3500412, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005220(0, character=3500413, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005210(0, character=3500414, animation_id=700, animation_id_1=1700, radius=1.0)
+    CommonFunc_20005110(0, character=3500415, region=3502211)
+    CommonFunc_20005210(0, character=3500434, animation_id=700, animation_id_1=1700, radius=5.0)
+    CommonFunc_20005110(0, character=3500442, region=3502202)
+    CommonFunc_20005290(0, character=3500443, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005290(0, character=3500444, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500447, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500448, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005110(0, character=3500449, region=3502210)
+    CommonFunc_20005201(0, character=3500450, animation_id=702, animation_id_1=1702, region=3502209, seconds=2.0)
+    CommonFunc_20005201(0, character=3500451, animation_id=702, animation_id_1=1702, region=3502209, seconds=1.5)
+    CommonFunc_20005201(0, character=3500492, animation_id=702, animation_id_1=1702, region=3502209, seconds=1.5)
+    CommonFunc_20005220(0, character=3500461, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500472, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500471, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500472, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500473, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005213(0, character=3500474, animation_id=700, animation_id_1=1700, radius=1.0, region=3502212)
+    CommonFunc_20005213(0, character=3500475, animation_id=702, animation_id_1=1702, radius=1.0, region=3502212)
+    CommonFunc_20005150(0, character=3500476)
+    CommonFunc_20005290(0, character=3500477, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005220(0, character=3500478, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005210(0, character=3500479, animation_id=700, animation_id_1=1700, radius=6.0)
+    CommonFunc_20005290(0, character=3500480, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005290(0, character=3500481, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005150(0, character=3500482)
+    CommonFunc_20005290(0, character=3500484, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005290(0, character=3500488, animation_id=701, animation_id_1=1701)
+    CommonFunc_20005290(0, character=3500499, animation_id=700, animation_id_1=1700)
+    CommonFunc_20005201(
+        0,
+        character=3500440,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502200,
+        seconds=1.2999999523162842,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500460,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502200,
+        seconds=0.30000001192092896,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500424,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502200,
+        seconds=1.2000000476837158,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500441,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502200,
+        seconds=2.200000047683716,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500487,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502200,
+        seconds=1.100000023841858,
+    )
+    CommonFunc_20005201(0, character=3500427, animation_id=30004, animation_id_1=20004, region=3502200, seconds=3.0)
+    CommonFunc_20005201(0, character=3500426, animation_id=30004, animation_id_1=20004, region=3502200, seconds=1.0)
+    CommonFunc_20005201(0, character=3500452, animation_id=30004, animation_id_1=20004, region=3502209, seconds=1.0)
+    CommonFunc_20005201(0, character=3500453, animation_id=30004, animation_id_1=20004, region=3502209, seconds=2.0)
+    CommonFunc_20005201(0, character=3500454, animation_id=30004, animation_id_1=20004, region=3502209, seconds=3.0)
+    CommonFunc_20005201(0, character=3500455, animation_id=30004, animation_id_1=20004, region=3502209, seconds=2.5)
+    CommonFunc_20005201(0, character=3500456, animation_id=30004, animation_id_1=20004, region=3502209, seconds=1.5)
+    CommonFunc_20005201(0, character=3500435, animation_id=30004, animation_id_1=20004, region=3502205, seconds=1.0)
+    CommonFunc_20005201(
+        0,
+        character=3500436,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502205,
+        seconds=1.399999976158142,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500437,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502205,
+        seconds=1.7999999523162842,
+    )
+    CommonFunc_20005201(
+        0,
+        character=3500438,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=3502205,
+        seconds=2.4000000953674316,
+    )
+    CommonFunc_20005201(0, character=3500439, animation_id=30004, animation_id_1=20004, region=3502205, seconds=3.0)
+    CommonFunc_20005201(0, character=3500417, animation_id=30004, animation_id_1=20004, region=3502213, seconds=2.0)
+    CommonFunc_20005201(0, character=3500418, animation_id=30004, animation_id_1=20004, region=3502213, seconds=2.0)
+    CommonFunc_20005201(0, character=3500419, animation_id=30004, animation_id_1=20004, region=3502213, seconds=1.0)
+    CommonFunc_20005201(0, character=3500420, animation_id=30004, animation_id_1=20004, region=3502213, seconds=1.0)
+    CommonFunc_20005201(0, character=3500421, animation_id=30004, animation_id_1=20004, region=3502213, seconds=1.0)
+    CommonFunc_20005120(0, character=3500280, radius=10.0)
+    CommonFunc_20005120(0, character=3500281, radius=10.0)
+    CommonFunc_20005120(0, character=3500282, radius=10.0)
+    CommonFunc_20005120(0, character=3500283, radius=12.0)
+    CommonFunc_20005120(0, character=3500284, radius=10.0)
+    CommonFunc_20005110(0, character=3500291, region=3502291)
+    CommonFunc_20005322(
+        0,
+        character=3500600,
+        region=3502250,
+        patrol_information_id=3504200,
+        region_1=3502252,
+        patrol_information_id_1=3504201,
+    )
+    CommonFunc_20005202(0, character=3500601, animation_id=700, animation_id_1=1700, region=3502369)
+    CommonFunc_20005214(0, character=3500604, animation_id=701, animation_id_1=1701, radius=7.0)
+    CommonFunc_20005202(0, character=3500607, animation_id=701, animation_id_1=1701, region=3502360)
+    CommonFunc_20005213(0, character=3500608, animation_id=706, animation_id_1=20002, radius=2.0, region=3502360)
+    CommonFunc_20005110(0, character=3500609, region=3502363)
+    CommonFunc_20005261(0, character=3500612, animation_id=706, animation_id_1=20002, character_1=3500623)
+    CommonFunc_20005261(0, character=3500613, animation_id=706, animation_id_1=20002, character_1=3500623)
+    CommonFunc_20005207(
+        0,
+        character=3500616,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502372,
+        seconds=4.0,
+        animation_id_2=1702,
+        region_1=3502373,
+        seconds_1=0.0,
+    )
+    CommonFunc_20005207(
+        0,
+        character=3500617,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502374,
+        seconds=3.0,
+        animation_id_2=1702,
+        region_1=3502375,
+        seconds_1=3.0,
+    )
+    CommonFunc_20005120(0, character=3500618, radius=3.0)
+    CommonFunc_20005205(0, character=3500620, animation_id=701, animation_id_1=1701, region=3502364, seconds=8.0)
+    CommonFunc_20005214(0, character=3500622, animation_id=700, animation_id_1=1700, radius=8.0)
+    CommonFunc_20005134(0, character=3500623, animation_id=3006, radius=2.0, region=3502240)
+    CommonFunc_20005205(0, character=3500627, animation_id=700, animation_id_1=1700, region=3502364, seconds=1.0)
+    CommonFunc_20005202(0, character=3500633, animation_id=701, animation_id_1=1701, region=3502367)
+    CommonFunc_20005214(0, character=3500636, animation_id=701, animation_id_1=1701, radius=3.0)
+    CommonFunc_20005202(0, character=3500637, animation_id=701, animation_id_1=1701, region=3502368)
+    CommonFunc_20005207(
+        0,
+        character=3500638,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502371,
+        seconds=2.0,
+        animation_id_2=1703,
+        region_1=3502370,
+        seconds_1=9.0,
+    )
+    CommonFunc_20005207(
+        0,
+        character=3500639,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502371,
+        seconds=4.0,
+        animation_id_2=1706,
+        region_1=3502370,
+        seconds_1=7.0,
+    )
+    CommonFunc_20005205(0, character=3500640, animation_id=700, animation_id_1=1700, region=3502370, seconds=5.0)
+    CommonFunc_20005207(
+        0,
+        character=3500641,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502250,
+        seconds=0.0,
+        animation_id_2=1702,
+        region_1=3502251,
+        seconds_1=1.0,
+    )
+    CommonFunc_20005207(
+        0,
+        character=3500642,
+        animation_id=701,
+        animation_id_1=1701,
+        region=3502250,
+        seconds=3.0,
+        animation_id_2=1705,
+        region_1=3502252,
+        seconds_1=1.0,
+    )
+    CommonFunc_20005210(0, character=3500370, animation_id=700, animation_id_1=1700, radius=3.0)
+    CommonFunc_20005341(0, flag=13500290, character=3500370, item_lot_param_id=31001000)
+    CommonFunc_20005341(0, flag=13500292, character=3500372, item_lot_param_id=21503000)
+    CommonFunc_20005341(0, flag=13500293, character=3500373, item_lot_param_id=21503010)
     Event_13500276(0, character=3500668, item_lot_param_id=21800110)
-    RunCommonEvent(20005341, args=(13500295, 3500669, 21800010))
+    CommonFunc_20005341(0, flag=13500295, character=3500669, item_lot_param_id=21800010)
     Event_13505275()
-    RunCommonEvent(20005150, args=(3500584,))
-    RunCommonEvent(20005150, args=(3500585,))
-    RunCommonEvent(20005350, args=(3500586, 52230310, 53500970))
-    RunCommonEvent(20005110, args=(3500589, 3502257))
-    Event_13505270(0, 3500292, 700, 1700, 3502293, 5.0, 3502294)
-    RunCommonEvent(20005432, args=(3500292,))
-    RunCommonEvent(20005340, args=(13500299, 3500292))
-    RunCommonEvent(20005400, args=(3500360,))
-    RunCommonEvent(20000343, args=(13500298, 3500360, 53500980))
-    RunCommonEvent(20005202, args=(3500651, 700, 1700, 3502295))
-    RunCommonEvent(20005202, args=(3500652, 700, 1700, 3502295))
-    RunCommonEvent(20005202, args=(3500653, 700, 1700, 3502295))
-    RunCommonEvent(20005202, args=(3500654, 700, 1700, 3502295))
-    RunCommonEvent(20005205, args=(3500656, 700, 1700, 3502297, 3.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500657, 700, 1700, 3502297, 3.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500658, 701, 1701, 3502297, 0.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500659, 700, 1700, 3502297, 5.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500661, 700, 1700, 3502297, 10.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500662, 700, 1700, 3502297, 10.0), arg_types="iiiif")
-    RunCommonEvent(20005202, args=(3500664, 700, 1700, 3502298))
-    RunCommonEvent(20005202, args=(3500665, 700, 1700, 3502298))
-    RunCommonEvent(20005205, args=(3500666, 700, 1700, 3502297, 4.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500667, 700, 1700, 3502297, 10.0), arg_types="iiiif")
-    RunCommonEvent(20005205, args=(3500670, 701, 1701, 3502299, 0.0), arg_types="iiiif")
+    CommonFunc_20005150(0, character=3500584)
+    CommonFunc_20005150(0, character=3500585)
+    CommonFunc_20005350(0, character=3500586, item_lot_param_id=52230310, flag=53500970)
+    CommonFunc_20005110(0, character=3500589, region=3502257)
+    Event_13505270(
+        0,
+        character=3500292,
+        animation_id=700,
+        animation_id_1=1700,
+        region=3502293,
+        seconds=5.0,
+        region_1=3502294,
+    )
+    CommonFunc_20005432(0, character=3500292)
+    CommonFunc_20005340(0, flag=13500299, character=3500292)
+    CommonFunc_20005400(0, character=3500360)
+    CommonFunc_20000343(0, flag=13500298, character=3500360, flag_1=53500980)
+    CommonFunc_20005202(0, character=3500651, animation_id=700, animation_id_1=1700, region=3502295)
+    CommonFunc_20005202(0, character=3500652, animation_id=700, animation_id_1=1700, region=3502295)
+    CommonFunc_20005202(0, character=3500653, animation_id=700, animation_id_1=1700, region=3502295)
+    CommonFunc_20005202(0, character=3500654, animation_id=700, animation_id_1=1700, region=3502295)
+    CommonFunc_20005205(0, character=3500656, animation_id=700, animation_id_1=1700, region=3502297, seconds=3.0)
+    CommonFunc_20005205(0, character=3500657, animation_id=700, animation_id_1=1700, region=3502297, seconds=3.0)
+    CommonFunc_20005205(0, character=3500658, animation_id=701, animation_id_1=1701, region=3502297, seconds=0.0)
+    CommonFunc_20005205(0, character=3500659, animation_id=700, animation_id_1=1700, region=3502297, seconds=5.0)
+    CommonFunc_20005205(0, character=3500661, animation_id=700, animation_id_1=1700, region=3502297, seconds=10.0)
+    CommonFunc_20005205(0, character=3500662, animation_id=700, animation_id_1=1700, region=3502297, seconds=10.0)
+    CommonFunc_20005202(0, character=3500664, animation_id=700, animation_id_1=1700, region=3502298)
+    CommonFunc_20005202(0, character=3500665, animation_id=700, animation_id_1=1700, region=3502298)
+    CommonFunc_20005205(0, character=3500666, animation_id=700, animation_id_1=1700, region=3502297, seconds=4.0)
+    CommonFunc_20005205(0, character=3500667, animation_id=700, animation_id_1=1700, region=3502297, seconds=10.0)
+    CommonFunc_20005205(0, character=3500670, animation_id=701, animation_id_1=1701, region=3502299, seconds=0.0)
     Event_13505210(0, region=3502200, entity=3503400)
     Event_13505210(1, region=3502209, entity=3503408)
     Event_13505210(2, region=3502205, entity=3503411)
     Event_13505300(0, character=3500300)
     Event_13505300(1, character=3500301)
-    RunCommonEvent(20005340, args=(13500300, 3500300))
-    RunCommonEvent(20005340, args=(13500301, 3500301))
+    CommonFunc_20005340(0, flag=13500300, character=3500300)
+    CommonFunc_20005340(0, flag=13500301, character=3500301)
     Event_13505310()
     Event_13505311()
     Event_13505312()
     Event_13505320(0, flag=13500320, character=3500300, region=3502330, flag_1=13500405)
     Event_13505322(0, flag=13500320, character=3500300, destination=3502331)
     Event_13505324(0, character=3500300, animation_id=20001, animation_id_1=20002, animation_id_2=30000)
-    RunCommonEvent(20005221, args=(3500301, 30000, 20001, 26.0), arg_types="iiif")
+    CommonFunc_20005221(0, character=3500301, animation_id=30000, animation_id_1=20001, radius=26.0)
     Event_13505320(1, flag=13500321, character=3500301, region=3502332, flag_1=13500407)
     Event_13505322(1, flag=13500321, character=3500301, destination=3502333)
     Event_13505324(1, character=3500301, animation_id=20000, animation_id_1=20001, animation_id_2=30000)
@@ -362,100 +525,163 @@ def Constructor():
     Event_13504401(1, flag=13500406, flag_1=13501406, obj=3506401, flag_2=13505406)
     Event_13504401(2, flag=13500407, flag_1=13501407, obj=3506402, flag_2=13505407)
     Event_13504400()
-    RunCommonEvent(20005610, args=(13500460, 3502460, 3502461))
-    RunCommonEvent(20005611, args=(13500460, 3503460, 3501460, 300310))
-    RunCommonEvent(20005610, args=(13500462, 3502462, 3502463))
-    RunCommonEvent(20005611, args=(13500462, 3503462, 3501462, 300310))
-    RunCommonEvent(20005614, args=(3501480, 63500200))
-    RunCommonEvent(20005614, args=(3501481, 63500201))
-    RunCommonEvent(20005614, args=(3501482, 63500202))
-    RunCommonEvent(20005614, args=(3501483, 63500210))
-    RunCommonEvent(20005614, args=(3501487, 63500212))
-    RunCommonEvent(20005614, args=(3501488, 63500213))
+    CommonFunc_20005610(0, flag=13500460, region=3502460, region_1=3502461)
+    CommonFunc_20005611(0, flag=13500460, obj_act_id=3503460, obj=3501460, obj_act_id_1=300310)
+    CommonFunc_20005610(0, flag=13500462, region=3502462, region_1=3502463)
+    CommonFunc_20005611(0, flag=13500462, obj_act_id=3503462, obj=3501462, obj_act_id_1=300310)
+    CommonFunc_20005614(0, entity=3501480, flag=63500200)
+    CommonFunc_20005614(0, entity=3501481, flag=63500201)
+    CommonFunc_20005614(0, entity=3501482, flag=63500202)
+    CommonFunc_20005614(0, entity=3501483, flag=63500210)
+    CommonFunc_20005614(0, entity=3501487, flag=63500212)
+    CommonFunc_20005614(0, entity=3501488, flag=63500213)
     Event_13505480()
-    RunCommonEvent(20005640, args=(13500490, 3501490, 13500484, 13500485))
-    RunCommonEvent(20005523, args=(3501530, 1), arg_types="iB")
-    RunCommonEvent(20005523, args=(3501531, 2), arg_types="iB")
-    RunCommonEvent(20005524, args=(3501532, 9511))
-    RunCommonEvent(20005524, args=(3501810, 13500800))
-    RunCommonEvent(20005525, args=(53500850, 3500850, 3501540, 61))
-    RunCommonEvent(20005525, args=(53500860, 3500860, 3501541, 60))
-    RunCommonEvent(20005525, args=(53500870, 3500870, 3501542, 60))
-    RunCommonEvent(20005525, args=(53500880, 3500880, 3501543, 61))
-    RunCommonEvent(20005525, args=(53500890, 3500890, 3501544, 61))
-    RunCommonEvent(20005510, args=(13500500, 3501500, 61350000, 9400, 9401, 13505500))
-    RunCommonEvent(20005510, args=(13500501, 3501501, 61350010, 9400, 9401, 13505501))
-    RunCommonEvent(20005510, args=(13500502, 3501502, 61350020, 9400, 9401, 13505502))
-    RunCommonEvent(20005780, args=(3501780, 3))
-    RunCommonEvent(20005780, args=(3501781, 3))
-    RunCommonEvent(20005780, args=(3501850, 3))
-    RunCommonEvent(20005670, args=(35, 0, 3503100), arg_types="BBi")
-    RunCommonEvent(20005671, args=(35, 0, 3503101), arg_types="BBi")
-    RunCommonEvent(20005672, args=(35, 0, 3503102), arg_types="BBi")
-    RunCommonEvent(20005551, args=(3501300, 17, 3502400, 0.0, 0.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501301, 15, 3502400, 1.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501302, 10, 3502400, 1.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501303, 13, 3502400, 1.0, 2.5, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501304, 10, 3502400, 1.0, 2.5, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501305, 10, 3502401, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501306, 10, 3502401, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501307, 10, 3502401, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501308, 10, 3502401, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501309, 10, 3502402, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501310, 10, 3502402, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501311, 10, 3502402, 0.0, 2.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501312, 10, 3502402, 1.0, 3.0, 1), arg_types="iiiffi")
-    RunCommonEvent(20005551, args=(3501313, 10, 3502402, 1.0, 3.0, 1), arg_types="iiiffi")
-    Event_13505500(0, 3500380, 3501380, 4.0, 100, 10.0)
-    Event_13505500(1, 3500381, 3501381, 6.0, 100, 10.0)
-    Event_13505500(2, 3500382, 3501382, 6.0, 100, 10.0)
-    Event_13505500(3, 3500383, 3501383, 6.0, 100, 10.0)
-    Event_13505500(5, 3500385, 3501385, 3.5, 100, 10.0)
-    RunCommonEvent(20005624, args=(13500420, 13501420, 3501420, 3501421, 3501422, 13501421))
-    RunCommonEvent(20005620, args=(13500425, 13501425, 3501425, 3501426, 3501427, 13501426))
-    RunCommonEvent(20005622, args=(13500430, 13501430, 3501430, 3501431, 3501432, 13501431))
-    RunCommonEvent(20005628, args=(13500431, 3501431, 3502432))
+    CommonFunc_20005640(0, flag=13500490, obj=3501490, start_climbing_flag=13500484, stop_climbing_flag=13500485)
+    CommonFunc_20005523(0, obj=3501530, completion_count=1)
+    CommonFunc_20005523(0, obj=3501531, completion_count=2)
+    CommonFunc_20005524(0, obj=3501532, flag=9511)
+    CommonFunc_20005524(0, obj=3501810, flag=13500800)
+    CommonFunc_20005525(0, flag=53500850, item_lot_param_id=3500850, obj=3501540, model_point=61)
+    CommonFunc_20005525(0, flag=53500860, item_lot_param_id=3500860, obj=3501541, model_point=60)
+    CommonFunc_20005525(0, flag=53500870, item_lot_param_id=3500870, obj=3501542, model_point=60)
+    CommonFunc_20005525(0, flag=53500880, item_lot_param_id=3500880, obj=3501543, model_point=61)
+    CommonFunc_20005525(0, flag=53500890, item_lot_param_id=3500890, obj=3501544, model_point=61)
+    CommonFunc_20005510(
+        0,
+        flag=13500500,
+        obj=3501500,
+        message=61350000,
+        action_button_id=9400,
+        action_button_id_1=9401,
+        flag_1=13505500,
+    )
+    CommonFunc_20005510(
+        0,
+        flag=13500501,
+        obj=3501501,
+        message=61350010,
+        action_button_id=9400,
+        action_button_id_1=9401,
+        flag_1=13505501,
+    )
+    CommonFunc_20005510(
+        0,
+        flag=13500502,
+        obj=3501502,
+        message=61350020,
+        action_button_id=9400,
+        action_button_id_1=9401,
+        flag_1=13505502,
+    )
+    CommonFunc_20005780(0, obj=3501780, model_point=3)
+    CommonFunc_20005780(0, obj=3501781, model_point=3)
+    CommonFunc_20005780(0, obj=3501850, model_point=3)
+    CommonFunc_20005670(0, area_id=35, block_id=0, vfx_id=3503100)
+    CommonFunc_20005671(0, area_id=35, block_id=0, vfx_id=3503101)
+    CommonFunc_20005672(0, area_id=35, block_id=0, vfx_id=3503102)
+    CommonFunc_20005551(0, obj=3501300, animation_id=17, region=3502400, min_seconds=0.0, max_seconds=0.0, left=1)
+    CommonFunc_20005551(0, obj=3501301, animation_id=15, region=3502400, min_seconds=1.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501302, animation_id=10, region=3502400, min_seconds=1.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501303, animation_id=13, region=3502400, min_seconds=1.0, max_seconds=2.5, left=1)
+    CommonFunc_20005551(0, obj=3501304, animation_id=10, region=3502400, min_seconds=1.0, max_seconds=2.5, left=1)
+    CommonFunc_20005551(0, obj=3501305, animation_id=10, region=3502401, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501306, animation_id=10, region=3502401, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501307, animation_id=10, region=3502401, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501308, animation_id=10, region=3502401, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501309, animation_id=10, region=3502402, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501310, animation_id=10, region=3502402, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501311, animation_id=10, region=3502402, min_seconds=0.0, max_seconds=2.0, left=1)
+    CommonFunc_20005551(0, obj=3501312, animation_id=10, region=3502402, min_seconds=1.0, max_seconds=3.0, left=1)
+    CommonFunc_20005551(0, obj=3501313, animation_id=10, region=3502402, min_seconds=1.0, max_seconds=3.0, left=1)
+    Event_13505500(0, owner_entity=3500380, source_entity=3501380, radius=4.0, model_point=100, seconds=10.0)
+    Event_13505500(1, owner_entity=3500381, source_entity=3501381, radius=6.0, model_point=100, seconds=10.0)
+    Event_13505500(2, owner_entity=3500382, source_entity=3501382, radius=6.0, model_point=100, seconds=10.0)
+    Event_13505500(3, owner_entity=3500383, source_entity=3501383, radius=6.0, model_point=100, seconds=10.0)
+    Event_13505500(5, owner_entity=3500385, source_entity=3501385, radius=3.5, model_point=100, seconds=10.0)
+    CommonFunc_20005624(0, flag=13500420, flag_1=13501420, entity=3501420, obj=3501421, obj_1=3501422, flag_2=13501421)
+    CommonFunc_20005620(0, flag=13500425, flag_1=13501425, entity=3501425, obj=3501426, obj_1=3501427, flag_2=13501426)
+    CommonFunc_20005622(0, flag=13500430, flag_1=13501430, entity=3501430, obj=3501431, obj_1=3501432, flag_2=13501431)
+    CommonFunc_20005628(0, flag=13500431, obj=3501431, region=3502432)
     Event_13504411()
     DisableGravity(3500296)
-    RunCommonEvent(
-        20005490,
-        args=(3500296, 3500396, 3501396, 3501396, 10, 5530, 5531, 5532, 5533, 5534, 5535, 5536, 13505702),
+    CommonFunc_20005490(
+        0,
+        owner_entity=3500296,
+        character=3500396,
+        entity=3501396,
+        source_entity=3501396,
+        model_point=10,
+        behavior_id=5530,
+        behavior_id_1=5531,
+        behavior_id_2=5532,
+        behavior_id_3=5533,
+        behavior_id_4=5534,
+        behavior_id_5=5535,
+        behavior_id_6=5536,
+        flag=13505702,
     )
-    RunCommonEvent(20005491, args=(3500296, 3500396, 3502396, 13505701))
-    RunCommonEvent(20005492, args=(3502396,))
-    RunCommonEvent(20005493, args=(3500296, 3500396, 13500700))
-    RunCommonEvent(20005494)
-    RunCommonEvent(20005496, args=(3501396,))
+    CommonFunc_20005491(0, character=3500296, character_1=3500396, region=3502396, flag=13505701)
+    CommonFunc_20005492(0, anchor_entity=3502396)
+    CommonFunc_20005493(0, character=3500296, character_1=3500396, flag=13500700)
+    CommonFunc_20005494()
+    CommonFunc_20005496(0, obj=3501396)
     Event_13500721(0, character=3500715, animation_id=90710)
-    RunCommonEvent(20006002, args=(3500715, 1158, 1155, 1159))
-    RunCommonEvent(
-        20006000,
-        args=(3500715, 1156, 1157, 73500230, 0.6499999761581421, 1155, 1159, 0),
-        arg_types="iiiifiii",
+    CommonFunc_20006002(0, character=3500715, flag=1158, first_flag=1155, last_flag=1159)
+    CommonFunc_20006000(
+        0,
+        character=3500715,
+        flag=1156,
+        flag_1=1157,
+        flag_2=73500230,
+        value=0.6499999761581421,
+        first_flag=1155,
+        last_flag=1159,
+        right=0,
     )
-    RunCommonEvent(20006001, args=(3500715, 1156, 1157, 73500230, 3))
+    CommonFunc_20006001(0, attacked_entity=3500715, flag=1156, flag_1=1157, flag_2=73500230, right=3)
     Event_13505728()
-    RunCommonEvent(20006030, args=(3501715, 6190, 2, 60920, 50006092, 50006092, 1152))
-    RunCommonEvent(20006002, args=(3500700, 1358, 1355, 1359))
+    CommonFunc_20006030(
+        0,
+        obj=3501715,
+        action_button_id=6190,
+        right=2,
+        item_lot_param_id=60920,
+        first_flag=50006092,
+        last_flag=50006092,
+        flag=1152,
+    )
+    CommonFunc_20006002(0, character=3500700, flag=1358, first_flag=1355, last_flag=1359)
     Event_13505741(0, character=3500700)
-    RunCommonEvent(20006002, args=(3500701, 1358, 1355, 1359))
+    CommonFunc_20006002(0, character=3500701, flag=1358, first_flag=1355, last_flag=1359)
     Event_13505741(1, character=3500701)
-    RunCommonEvent(20006002, args=(3500720, 1378, 1375, 1379))
-    RunCommonEvent(
-        20006000,
-        args=(3500720, 1376, 1377, 73500290, 0.6499999761581421, 1375, 1379, 0),
-        arg_types="iiiifiii",
+    CommonFunc_20006002(0, character=3500720, flag=1378, first_flag=1375, last_flag=1379)
+    CommonFunc_20006000(
+        0,
+        character=3500720,
+        flag=1376,
+        flag_1=1377,
+        flag_2=73500290,
+        value=0.6499999761581421,
+        first_flag=1375,
+        last_flag=1379,
+        right=0,
     )
-    RunCommonEvent(20006001, args=(3500720, 1376, 1377, 73500290, 3))
-    RunCommonEvent(20006032, args=(3500720, 3501720))
-    RunCommonEvent(20006002, args=(3500721, 1378, 1375, 1379))
-    RunCommonEvent(
-        20006000,
-        args=(3500721, 1376, 1377, 73500291, 0.6499999761581421, 1375, 1379, 0),
-        arg_types="iiiifiii",
+    CommonFunc_20006001(0, attacked_entity=3500720, flag=1376, flag_1=1377, flag_2=73500290, right=3)
+    CommonFunc_20006032(0, character=3500720, obj=3501720)
+    CommonFunc_20006002(0, character=3500721, flag=1378, first_flag=1375, last_flag=1379)
+    CommonFunc_20006000(
+        0,
+        character=3500721,
+        flag=1376,
+        flag_1=1377,
+        flag_2=73500291,
+        value=0.6499999761581421,
+        first_flag=1375,
+        last_flag=1379,
+        right=0,
     )
-    RunCommonEvent(20006001, args=(3500721, 1376, 1377, 73500291, 3))
-    RunCommonEvent(20006032, args=(3500721, 3501721))
+    CommonFunc_20006001(0, attacked_entity=3500721, flag=1376, flag_1=1377, flag_2=73500291, right=3)
+    CommonFunc_20006032(0, character=3500721, obj=3501721)
     Event_13500781(0, character=3500720, character_1=3500721, character_2=3500722)
     Event_13500782(0, character=3500720, character_1=3500721, character_2=3500722)
     Event_13500783(0, flag=13500405, flag_1=13500406, flag_2=13500407)
@@ -469,32 +695,71 @@ def Constructor():
     Event_13505602(0, entity=3500850, flag=73500161)
     Event_13505603(0, character=3500850, flag=73500162)
     Event_13505604(0, flag=73500164)
-    RunCommonEvent(20006010, args=(73500162, 69003))
-    RunCommonEvent(20006031, args=(73500155, 3502700))
-    RunCommonEvent(20006011, args=(73500163, 652120))
-    RunCommonEvent(20005900, args=(73500150, 9250))
-    RunCommonEvent(20005701, args=(13500800, 13504190, 13505190, 3500190, 3502190, 70000019))
-    RunCommonEvent(20005720, args=(13504190, 13505190, 13500800, 3500190))
-    Event_13505370(0, flag=13504190, flag_1=13505805, character=3500190, region=3502800, region_1=3502805)
-    RunCommonEvent(20005701, args=(13500800, 13504191, 13505191, 3500191, 3502191, 70000020))
-    RunCommonEvent(20005720, args=(13504191, 13505191, 13500800, 3500191))
-    Event_13505370(1, flag=13504191, flag_1=13505805, character=3500191, region=3502800, region_1=3502805)
-    RunCommonEvent(20005701, args=(13500800, 13504192, 13505192, 3500192, 3502192, 70000021))
-    RunCommonEvent(20005720, args=(13504192, 13505192, 13500800, 3500192))
-    Event_13505370(2, flag=13504192, flag_1=13505805, character=3500192, region=3502800, region_1=3502805)
-    RunCommonEvent(20005701, args=(13500800, 13504193, 13505193, 3500193, 3502193, 70000008))
-    RunCommonEvent(20005720, args=(13504193, 13505193, 13500800, 3500193))
-    Event_13505370(3, flag=13504193, flag_1=13505805, character=3500193, region=3502800, region_1=3502805)
-    RunCommonEvent(
-        20005750,
-        args=(13500800, 13500194, 13504194, 13505194, 3500194, 3502194, 3502195, 2.0, 0),
-        arg_types="iiiiiiifi",
+    CommonFunc_20006010(0, flag=73500162, animation_id=69003)
+    CommonFunc_20006031(0, flag=73500155, region=3502700)
+    CommonFunc_20006011(0, flag=73500163, vfx_id=652120)
+    CommonFunc_20005900(0, flag=73500150, flag_1=9250)
+    CommonFunc_20005701(
+        0,
+        left=13500800,
+        summon_flag=13504190,
+        dismissal_flag=13505190,
+        character=3500190,
+        region=3502190,
+        left_1=70000019,
     )
-    RunCommonEvent(20005721, args=(13504194, 13505194, 13500800, 3500194))
-    RunCommonEvent(20005760, args=(13500194, 13504194, 13505194, 3500194))
-    RunCommonEvent(20005341, args=(13500194, 3500194, 58700))
+    CommonFunc_20005720(0, flag=13504190, flag_1=13505190, flag_2=13500800, character=3500190)
+    Event_13505370(0, flag=13504190, flag_1=13505805, character=3500190, region=3502800, region_1=3502805)
+    CommonFunc_20005701(
+        0,
+        left=13500800,
+        summon_flag=13504191,
+        dismissal_flag=13505191,
+        character=3500191,
+        region=3502191,
+        left_1=70000020,
+    )
+    CommonFunc_20005720(0, flag=13504191, flag_1=13505191, flag_2=13500800, character=3500191)
+    Event_13505370(1, flag=13504191, flag_1=13505805, character=3500191, region=3502800, region_1=3502805)
+    CommonFunc_20005701(
+        0,
+        left=13500800,
+        summon_flag=13504192,
+        dismissal_flag=13505192,
+        character=3500192,
+        region=3502192,
+        left_1=70000021,
+    )
+    CommonFunc_20005720(0, flag=13504192, flag_1=13505192, flag_2=13500800, character=3500192)
+    Event_13505370(2, flag=13504192, flag_1=13505805, character=3500192, region=3502800, region_1=3502805)
+    CommonFunc_20005701(
+        0,
+        left=13500800,
+        summon_flag=13504193,
+        dismissal_flag=13505193,
+        character=3500193,
+        region=3502193,
+        left_1=70000008,
+    )
+    CommonFunc_20005720(0, flag=13504193, flag_1=13505193, flag_2=13500800, character=3500193)
+    Event_13505370(3, flag=13504193, flag_1=13505805, character=3500193, region=3502800, region_1=3502805)
+    CommonFunc_20005750(
+        0,
+        flag=13500800,
+        flag_1=13500194,
+        summon_flag=13504194,
+        dismissal_flag=13505194,
+        character=3500194,
+        region=3502194,
+        region_1=3502195,
+        seconds=2.0,
+        left=0,
+    )
+    CommonFunc_20005721(0, flag=13504194, flag_1=13505194, flag_2=13500800, character=3500194)
+    CommonFunc_20005760(0, flag=13500194, flag_1=13504194, flag_2=13505194, character=3500194)
+    CommonFunc_20005341(0, flag=13500194, character=3500194, item_lot_param_id=58700)
     Event_13505100()
-    RunCommonEvent(20006002, args=(3500725, 1638, 1635, 1639))
+    CommonFunc_20006002(0, character=3500725, flag=1638, first_flag=1635, last_flag=1639)
     Event_13505751(0, character=3500725)
     Event_13505752(0, 3501725)
 
@@ -504,7 +769,7 @@ def Preconstructor():
     """Event 50"""
     Event_13505600(0, character=3500850, destination=3502852)
     Event_13505700(0, obj=3501396)
-    RunCommonEvent(20005495, args=(3500396, 3500296, 13500700))
+    CommonFunc_20005495(0, character=3500396, character_1=3500296, flag=13500700)
     Event_13505720(0, character=3500715, animation_id=90710)
     Event_13505740(0, character=3500700, character_1=3500701)
     Event_13505760(0, character=3500705)
@@ -953,7 +1218,7 @@ def Event_13505310():
     
     MAIN.Await(OR_3)
     
-    CancelSpecialEffect(3500300, 12341)
+    RemoveSpecialEffect(3500300, 12341)
     WaitFrames(frames=1)
     ReplanAI(3500300)
     GotoIfFlagEnabled(Label.L2, flag=13500320)
@@ -976,7 +1241,7 @@ def Event_13505311():
     
     WaitFrames(frames=1)
     AddSpecialEffect(3500300, 12341)
-    CancelSpecialEffect(3500300, 5406)
+    RemoveSpecialEffect(3500300, 5406)
     Wait(1.0)
     
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=3502300))
@@ -990,7 +1255,7 @@ def Event_13505312():
     MAIN.Await(CharacterHasTAEEvent(3500300, tae_event_id=100))
     
     Move(3500300, destination=3502307, destination_type=CoordEntityType.Region, short_move=True)
-    CancelSpecialEffect(3500300, 12341)
+    RemoveSpecialEffect(3500300, 12341)
     Restart()
 
 
@@ -1107,7 +1372,7 @@ def Event_13504400():
         obj_act_id=3503400,
         flag_2=13504405,
         flag_3=13505405,
-        obj_act_id_1=350021
+        obj_act_id_1=350021,
     )
     Event_13505401(
         1,
@@ -1119,7 +1384,7 @@ def Event_13504400():
         obj_act_id=3503401,
         flag_2=13504406,
         flag_3=13505406,
-        obj_act_id_1=350022
+        obj_act_id_1=350022,
     )
     Event_13505401(2, 13500407, 13501407, 3506402, 3501402, 3501412, 3503402, 13504407, 13505407, 350023)
 
@@ -1303,30 +1568,50 @@ def Event_13500410():
 @NeverRestart(13504411)
 def Event_13504411():
     """Event 13504411"""
-    RunCommonEvent(
-        20005625,
-        args=(13500420, 13501420, 3501420, 3501421, 3503421, 3501422, 3503422, 3502421, 3502422, 13501421, 13504420, 0),
+    CommonFunc_20005625(
+        0,
+        flag=13500420,
+        flag_1=13501420,
+        obj=3501420,
+        obj_1=3501421,
+        obj_act_id=3503421,
+        obj_2=3501422,
+        obj_act_id_1=3503422,
+        region=3502421,
+        region_1=3502422,
+        flag_2=13501421,
+        flag_3=13504420,
+        left=0,
     )
-    RunCommonEvent(
-        20005621,
-        args=(13500425, 13501425, 3501425, 3501426, 3503426, 3501427, 3503427, 3502426, 3502427, 13501426, 13504425, 0),
+    CommonFunc_20005621(
+        0,
+        flag=13500425,
+        flag_1=13501425,
+        obj=3501425,
+        obj_1=3501426,
+        obj_act_id=3503426,
+        obj_2=3501427,
+        obj_act_id_1=3503427,
+        region=3502426,
+        region_1=3502427,
+        flag_2=13501426,
+        flag_3=13504425,
+        left=0,
     )
-    RunCommonEvent(
-        20005623,
-        args=(
-            13500430,
-            13501430,
-            3501430,
-            3501431,
-            3503431,
-            3501432,
-            3503432,
-            3502431,
-            3502432,
-            13501431,
-            13504430,
-            13500431,
-        ),
+    CommonFunc_20005623(
+        0,
+        13500430,
+        13501430,
+        3501430,
+        3501431,
+        3503431,
+        3501432,
+        3503432,
+        3502431,
+        3502432,
+        13501431,
+        13504430,
+        13500431,
     )
 
 
@@ -1474,11 +1759,11 @@ def Event_13501800():
     if FlagEnabled(13500800):
         return
     
-    MAIN.Await(HealthRatioLessThanOrEqual(3500800, value=0.0))
+    MAIN.Await(HealthRatio(3500800) <= 0.0)
     
     DeleteVFX(3503800)
     DeleteVFX(3503801)
-    CancelSpecialEffect(PLAYER, 11557)
+    RemoveSpecialEffect(PLAYER, 11557)
     DisableSpawner(entity=3503830)
     DisableSpawner(entity=3503831)
     DisableSpawner(entity=3503832)
@@ -1564,7 +1849,7 @@ def Event_13505812(_, first_flag: int, last_flag: int):
     """Event 13505812"""
     if FlagEnabled(13500800):
         return
-    AND_1.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_1.Add(HealthRatio(3500800) <= 0.6499999761581421)
     AND_1.Add(FlagRangeAllDisabled(flag_range=(first_flag, last_flag)))
     
     MAIN.Await(AND_1)
@@ -1613,7 +1898,7 @@ def Event_13505813():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(3500800, 11554)
+    RemoveSpecialEffect(3500800, 11554)
     DeleteVFX(3503800)
     GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
     End()
@@ -1635,7 +1920,7 @@ def Event_13505814():
     
     MAIN.Await(AND_1)
     
-    CancelSpecialEffect(3500800, 11554)
+    RemoveSpecialEffect(3500800, 11554)
     DeleteVFX(3503800)
     CreateVFX(3503801)
     OR_1.Add(CharacterDoesNotHaveSpecialEffect(3500800, 11555))
@@ -1645,7 +1930,7 @@ def Event_13505814():
     
     MAIN.Await(OR_1)
     
-    CancelSpecialEffect(3500800, 11555)
+    RemoveSpecialEffect(3500800, 11555)
     DeleteVFX(3503801)
     GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
     End()
@@ -1681,7 +1966,7 @@ def Event_13505815():
     
     MAIN.Await(OR_2)
     
-    CancelSpecialEffect(PLAYER, 11557)
+    RemoveSpecialEffect(PLAYER, 11557)
     GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
     End()
 
@@ -1711,9 +1996,9 @@ def Event_13505816(_, character: int):
 
     # --- Label 1 --- #
     DefineLabel(1)
-    CancelSpecialEffect(3500800, 11556)
-    CancelSpecialEffect(3500800, 11555)
-    CancelSpecialEffect(3500800, 11554)
+    RemoveSpecialEffect(3500800, 11556)
+    RemoveSpecialEffect(3500800, 11555)
+    RemoveSpecialEffect(3500800, 11554)
     Wait(3.0)
     Restart()
 
@@ -1728,7 +2013,7 @@ def Event_13505820(_, first_flag: int, last_flag: int, first_flag_1: uint, last_
     if FlagEnabled(13505802):
         return
     AND_1.Add(PlayerInOwnWorld())
-    AND_1.Add(HealthRatioGreaterThan(3500800, value=0.6499999761581421))
+    AND_1.Add(HealthRatio(3500800) > 0.6499999761581421)
     AND_1.Add(FlagEnabled(13505805))
     AND_1.Add(FlagEnabled(13505810))
     AND_1.Add(FlagRangeAllDisabled(flag_range=(first_flag, last_flag)))
@@ -1759,7 +2044,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
         value=0,
     )
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
-    AND_2.Add(HealthValueGreaterThan(character, value=0))
+    AND_2.Add(HealthValue(character) > 0)
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -1775,7 +2060,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     CreateTemporaryVFX(vfx_id=652231, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
     Wait(2.0)
     AddSpecialEffect(character, 11521)
-    OR_1.Add(HealthRatioLessThanOrEqual(character, value=0.0))
+    OR_1.Add(HealthRatio(character) <= 0.0)
     OR_2.Add(TimeElapsed(seconds=25.0))
     OR_2.Add(FlagEnabled(flag_1))
     OR_2.Add(OR_1)
@@ -1784,7 +2069,7 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     
     GotoIfFinishedConditionFalse(Label.L0, input_condition=OR_1)
     AddSpecialEffect(3500800, special_effect_id)
-    AND_3.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_3.Add(HealthRatio(3500800) <= 0.6499999761581421)
     SkipLinesIfConditionTrue(2, AND_3)
     PlaySoundEffect(character, 522008010, sound_type=SoundType.c_CharacterMotion)
     SkipLines(1)
@@ -1793,12 +2078,12 @@ def Event_13505821(_, flag: int, flag_1: int, character: int, special_effect_id:
     # --- Label 0 --- #
     DefineLabel(0)
     Wait(0.5)
-    AND_4.Add(HealthRatioLessThanOrEqual(3500800, value=0.6499999761581421))
+    AND_4.Add(HealthRatio(3500800) <= 0.6499999761581421)
     SkipLinesIfConditionTrue(2, AND_4)
     CreateTemporaryVFX(vfx_id=652230, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
     SkipLines(1)
     CreateTemporaryVFX(vfx_id=652232, anchor_entity=character, model_point=203, anchor_type=CoordEntityType.Character)
-    CancelSpecialEffect(character, 11521)
+    RemoveSpecialEffect(character, 11521)
     Wait(2.0)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -1868,11 +2153,38 @@ def Event_13504899():
 @RestartOnRest(13505899)
 def Event_13505899():
     """Event 13505899"""
-    RunCommonEvent(20005800, args=(13500800, 3501800, 3502800, 13505805, 3501800, 3505800, 0, 0))
-    RunCommonEvent(20005801, args=(13500800, 3501800, 3502800, 13505805, 3501800, 13505806))
-    RunCommonEvent(20005820, args=(13500800, 3501800, 2, 0))
-    RunCommonEvent(20005831, args=(13500800, 13505805, 13505806, 3502800, 3504801, 3504802, 13505802))
-    RunCommonEvent(20005810, args=(13500800, 3501800, 3502800, 10000))
+    CommonFunc_20005800(
+        0,
+        flag=13500800,
+        entity=3501800,
+        region=3502800,
+        flag_1=13505805,
+        action_button_id=3501800,
+        character=3505800,
+        left=0,
+        region_1=0,
+    )
+    CommonFunc_20005801(
+        0,
+        flag=13500800,
+        entity=3501800,
+        region=3502800,
+        flag_1=13505805,
+        action_button_id=3501800,
+        flag_2=13505806,
+    )
+    CommonFunc_20005820(0, flag=13500800, obj=3501800, model_point=2, left=0)
+    CommonFunc_20005831(
+        0,
+        flag=13500800,
+        flag_1=13505805,
+        flag_2=13505806,
+        region=3502800,
+        sound_id=3504801,
+        sound_id_1=3504802,
+        flag_3=13505802,
+    )
+    CommonFunc_20005810(0, 13500800, 3501800, 3502800, 10000)
 
 
 @RestartOnRest(13504900)
@@ -1981,7 +2293,7 @@ def Event_13505603(_, character: int, flag: int):
     MAIN.Await(FlagEnabled(flag))
     
     OR_1.Add(FlagEnabled(1501))
-    OR_1.Add(HealthRatioEqual(character, value=0.0))
+    OR_1.Add(HealthRatio(character) == 0.0)
     GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     ForceAnimation(character, 20003, wait_for_completion=True, unknown2=1.0)
     Restart()
@@ -2177,7 +2489,7 @@ def Event_13500721(_, character: int, animation_id: int):
     )
     SaveRequest()
     Wait(0.5)
-    CancelSpecialEffect(character, 12400)
+    RemoveSpecialEffect(character, 12400)
     Wait(1.0)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -2198,7 +2510,7 @@ def Event_13505728():
     OR_1.Add(FlagEnabled(13900002))
     OR_1.Add(FlagEnabled(9318))
     AND_1.Add(OR_1)
-    AND_1.Add(HealthRatioNotEqual(3500850, value=0.0))
+    AND_1.Add(HealthRatio(3500850) != 0.0)
     if not AND_1:
         return
     DisableNetworkConnectedFlagRange(flag_range=(1140, 1154))
@@ -2314,7 +2626,7 @@ def Event_13505750(_, character: int, obj: int):
     SetNetworkConnectedFlagState(flag=1635, state=FlagSetting.On)
     AND_1.Add(FlagRangeAnyEnabled(flag_range=(1620, 1621)))
     AND_1.Add(FlagEnabled(1638))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     SkipLinesIfConditionFalse(3, AND_1)
     DisableNetworkConnectedFlagRange(flag_range=(1635, 1639))
     SetNetworkConnectedFlagState(flag=1635, state=FlagSetting.On)

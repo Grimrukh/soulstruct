@@ -41,12 +41,12 @@ def Constructor():
     Event_11105150(2, character=1100102)
     Event_11105160(0, character=1100104, region=1102006)
     Event_11105160(1, character=1100105, region=1102001)
-    Event_11105170(0, 1100130, 1102202, 0.20000000298023224)
-    Event_11105170(1, 1100132, 1102202, 0.0)
-    Event_11105170(2, 1100135, 1102202, 0.4000000059604645)
-    Event_11105170(3, 1100136, 1102202, 0.6000000238418579)
-    Event_11105170(4, 1100137, 1102007, 0.30000001192092896)
-    Event_11105170(5, 1100138, 1102007, 0.0)
+    Event_11105170(0, character=1100130, region=1102202, seconds=0.20000000298023224)
+    Event_11105170(1, character=1100132, region=1102202, seconds=0.0)
+    Event_11105170(2, character=1100135, region=1102202, seconds=0.4000000059604645)
+    Event_11105170(3, character=1100136, region=1102202, seconds=0.6000000238418579)
+    Event_11105170(4, character=1100137, region=1102007, seconds=0.30000001192092896)
+    Event_11105170(5, character=1100138, region=1102007, seconds=0.0)
     Event_11106299()
     Event_11106200(0, 1101011, 1101011, 12, -1)
     Event_11106200(1, obj=1101012, other_entity=1101012, animation_id=13, left=11006200)
@@ -448,11 +448,11 @@ def Event_11105396():
     MAIN.Await(CharacterBackreadEnabled(1100160))
     
     CreateNPCPart(1100160, npc_part_id=2730, part_index=NPCPartType.Part1, part_health=158)
-    AND_1.Add(HealthRatioGreaterThan(1100160, value=0.0))
-    AND_1.Add(CharacterPartHealthLessThanOrEqual(1100160, npc_part_id=2730, value=0))
+    AND_1.Add(HealthRatio(1100160) > 0.0)
+    AND_1.Add(CharacterPartHealth(1100160, npc_part_id=2730) <= 0)
     AND_1.Add(FlagDisabled(11105381))
     AND_1.Add(Attacked(attacked_entity=1100160, attacker=PLAYER))
-    AND_2.Add(HealthRatioLessThanOrEqual(1100160, value=0.0))
+    AND_2.Add(HealthRatio(1100160) <= 0.0)
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     
@@ -1144,7 +1144,7 @@ def Event_11100200():
         flag_2=11105230,
         flag_3=11105231,
         flag_4=11105232,
-        flag_5=11105233
+        flag_5=11105233,
     )
     Event_11105200(
         1,
@@ -1155,7 +1155,7 @@ def Event_11100200():
         flag_2=11105234,
         flag_3=11105235,
         flag_4=11105236,
-        flag_5=11105237
+        flag_5=11105237,
     )
     Event_11105200(
         2,
@@ -1166,7 +1166,7 @@ def Event_11100200():
         flag_2=11105238,
         flag_3=11105239,
         flag_4=11105240,
-        flag_5=11105241
+        flag_5=11105241,
     )
     Event_11105200(
         3,
@@ -1177,12 +1177,12 @@ def Event_11100200():
         flag_2=11105242,
         flag_3=11105243,
         flag_4=11105244,
-        flag_5=11105245
+        flag_5=11105245,
     )
-    Event_11105220(0, 1100300, 11105210, 10.0, 11105250)
-    Event_11105220(1, 1100301, 11105211, 10.0, 11105260)
-    Event_11105220(2, 1100302, 11105212, 10.0, 11105270)
-    Event_11105220(3, 1100303, 11105213, 10.0, 11105280)
+    Event_11105220(0, character=1100300, flag=11105210, seconds=10.0, event_id=11105250)
+    Event_11105220(1, character=1100301, flag=11105211, seconds=10.0, event_id=11105260)
+    Event_11105220(2, character=1100302, flag=11105212, seconds=10.0, event_id=11105270)
+    Event_11105220(3, character=1100303, flag=11105213, seconds=10.0, event_id=11105280)
     Event_11105250(
         0,
         flag=11105210,
@@ -1191,7 +1191,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105232
+        flag_1=11105232,
     )
     Event_11105250(
         1,
@@ -1201,7 +1201,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105230
+        flag_1=11105230,
     )
     Event_11105250(
         2,
@@ -1211,7 +1211,7 @@ def Event_11100200():
         region=1102030,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105231
+        flag_1=11105231,
     )
     Event_11105250(
         3,
@@ -1221,7 +1221,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105230
+        flag_1=11105230,
     )
     Event_11105250(
         4,
@@ -1231,7 +1231,7 @@ def Event_11100200():
         region=1102050,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105233
+        flag_1=11105233,
     )
     Event_11105250(
         5,
@@ -1241,7 +1241,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105230,
         last_flag=11105233,
-        flag_1=11105232
+        flag_1=11105232,
     )
     Event_11105260(
         0,
@@ -1251,7 +1251,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105236
+        flag_1=11105236,
     )
     Event_11105260(
         1,
@@ -1261,7 +1261,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105234
+        flag_1=11105234,
     )
     Event_11105260(
         2,
@@ -1271,7 +1271,7 @@ def Event_11100200():
         region=1102030,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105235
+        flag_1=11105235,
     )
     Event_11105260(
         3,
@@ -1281,7 +1281,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105234
+        flag_1=11105234,
     )
     Event_11105260(
         4,
@@ -1291,7 +1291,7 @@ def Event_11100200():
         region=1102050,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105237
+        flag_1=11105237,
     )
     Event_11105260(
         5,
@@ -1301,7 +1301,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105234,
         last_flag=11105237,
-        flag_1=11105236
+        flag_1=11105236,
     )
     Event_11105270(
         0,
@@ -1311,7 +1311,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105240
+        flag_1=11105240,
     )
     Event_11105270(
         1,
@@ -1321,7 +1321,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105238
+        flag_1=11105238,
     )
     Event_11105270(
         2,
@@ -1331,7 +1331,7 @@ def Event_11100200():
         region=1102030,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105239
+        flag_1=11105239,
     )
     Event_11105270(
         3,
@@ -1341,7 +1341,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105238
+        flag_1=11105238,
     )
     Event_11105270(
         4,
@@ -1351,7 +1351,7 @@ def Event_11100200():
         region=1102050,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105241
+        flag_1=11105241,
     )
     Event_11105270(
         5,
@@ -1361,7 +1361,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105238,
         last_flag=11105241,
-        flag_1=11105240
+        flag_1=11105240,
     )
     Event_11105280(
         0,
@@ -1371,7 +1371,7 @@ def Event_11100200():
         region=1102040,
         first_flag=11105242,
         last_flag=11105245,
-        flag_1=11105244
+        flag_1=11105244,
     )
     Event_11105280(
         1,
@@ -1381,7 +1381,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105242,
         last_flag=11105245,
-        flag_1=11105242
+        flag_1=11105242,
     )
     Event_11105280(
         2,
@@ -1391,7 +1391,7 @@ def Event_11100200():
         region=1102030,
         first_flag=11105242,
         last_flag=11105245,
-        flag_1=11105243
+        flag_1=11105243,
     )
     Event_11105280(
         3,
@@ -1401,7 +1401,7 @@ def Event_11100200():
         region=1102020,
         first_flag=11105242,
         last_flag=11105245,
-        flag_1=11105242
+        flag_1=11105242,
     )
     Event_11105280(
         4,
@@ -1411,7 +1411,7 @@ def Event_11100200():
         region=1102050,
         first_flag=11105242,
         last_flag=11105245,
-        flag_1=11105245
+        flag_1=11105245,
     )
     Event_11105280(5, 11105213, 1100303, 6, 1102040, 11105242, 11105245, 11105244)
 
@@ -1440,12 +1440,12 @@ def Event_11105190(_, character: int, animation_id: int, animation_id_1: int, fl
     SetStandbyAnimationSettings(character)
     SkipLinesIfFinishedConditionFalse(5, input_condition=AND_1)
     ForceAnimation(character, animation_id, wait_for_completion=True)
-    CancelSpecialEffect(character, 4160)
+    RemoveSpecialEffect(character, 4160)
     SetNest(character, region=1102020)
     EnableFlag(flag)
     Restart()
     ForceAnimation(character, animation_id_1, wait_for_completion=True)
-    CancelSpecialEffect(character, 4160)
+    RemoveSpecialEffect(character, 4160)
     SetNest(character, region=1102040)
     EnableFlag(flag_1)
     Restart()
@@ -1692,8 +1692,8 @@ def Event_11100600(_, obj: int, obj_act_id: int):
 @NeverRestart(11100510)
 def Event_11100510(_, character: int, flag: int):
     """Event 11100510"""
-    AND_1.Add(HealthRatioLessThanOrEqual(character, value=0.8999999761581421))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
+    AND_1.Add(HealthRatio(character) > 0.0)
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
     AND_2.Add(FlagEnabled(flag))
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -1722,7 +1722,7 @@ def Event_11100520(_, character: int, first_flag: int, last_flag: int, flag: int
         DropMandatoryTreasure(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1733,7 +1733,7 @@ def Event_11100530(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100530"""
     AND_1.Add(FlagEnabled(1690))
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
-    AND_1.Add(HealthRatioGreaterThan(character, value=0.0))
+    AND_1.Add(HealthRatio(character) > 0.0)
     
     MAIN.Await(AND_1)
     
@@ -1748,7 +1748,7 @@ def Event_11100531(_, character: int, first_flag: int, last_flag: int, flag: int
         DisableCharacter(character)
         End()
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1813,7 +1813,7 @@ def Event_11100533(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100533"""
     AND_1.Add(FlagEnabled(1606))
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)
@@ -1825,7 +1825,7 @@ def Event_11100534(_, character: int, first_flag: int, last_flag: int, flag: int
     """Event 11100534"""
     AND_1.Add(FlagEnabled(1607))
     
-    MAIN.Await(HealthRatioLessThanOrEqual(character, value=0.0))
+    MAIN.Await(HealthRatio(character) <= 0.0)
     
     DisableFlagRange((first_flag, last_flag))
     EnableFlag(flag)

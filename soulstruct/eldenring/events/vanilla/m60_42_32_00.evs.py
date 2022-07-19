@@ -13,16 +13,19 @@ strings:
 236: 
 238: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_42_32_00_entities import *
 
 
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    RunCommonEvent(0, 90005460, args=(1042320200,))
-    RunCommonEvent(0, 90005461, args=(1042320200,))
-    RunCommonEvent(0, 90005462, args=(1042320200,))
+    CommonFunc_90005460(0, character=Characters.GiantOctopus)
+    CommonFunc_90005461(0, character=Characters.GiantOctopus)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus)
     Event_1042322220()
     Event_1042322230()
     Event_1042322580()
@@ -32,19 +35,22 @@ def Constructor():
 @RestartOnRest(1042322220)
 def Event_1042322220():
     """Event 1042322220"""
-    EndIfThisEventSlotFlagEnabled()
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_3, character=PLAYER, region=1042322220)
-    IfConditionTrue(AND_1, input_condition=AND_3)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_3.Add(CharacterInsideRegion(character=PLAYER, region=1042322220))
+    AND_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    ForceAnimation(1042320220, 3011, unknown2=1.0)
+    ForceAnimation(Characters.WolfPackLeader, 3011)
     Wait(5.0)
     TriggerAISound(ai_sound_param_id=4020, anchor_entity=1042322220, unk_8_12=1)
     End()
@@ -53,19 +59,22 @@ def Event_1042322220():
 @RestartOnRest(1042322230)
 def Event_1042322230():
     """Event 1042322230"""
-    EndIfThisEventSlotFlagEnabled()
-    IfCharacterType(AND_9, PLAYER, character_type=CharacterType.BlackPhantom)
-    IfCharacterHasSpecialEffect(AND_9, PLAYER, 3710)
-    IfConditionTrue(OR_1, input_condition=AND_9)
-    IfCharacterHuman(OR_1, PLAYER)
-    IfCharacterHollow(OR_1, PLAYER)
-    IfCharacterWhitePhantom(OR_1, PLAYER)
-    IfCharacterInsideRegion(AND_3, character=PLAYER, region=1042322230)
-    IfConditionTrue(AND_1, input_condition=AND_3)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
+    AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
+    OR_1.Add(AND_9)
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
+    OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
+    AND_3.Add(CharacterInsideRegion(character=PLAYER, region=1042322230))
+    AND_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    ForceAnimation(1042320230, 3031, unknown2=1.0)
+    ForceAnimation(Characters.GodrickFootSoldier, 3031)
     End()
 
 
@@ -73,56 +82,60 @@ def Event_1042322230():
 def Event_1042322500(_, character: uint):
     """Event 1042322500"""
     AddSpecialEffect(character, 5000)
-    IfCharacterHasSpecialEffect(MAIN, character, 5411)
-    CancelSpecialEffect(character, 5000)
+    
+    MAIN.Await(CharacterHasSpecialEffect(character, 5411))
+    
+    RemoveSpecialEffect(character, 5000)
 
 
 @RestartOnRest(1042322510)
-def Event_1042322510(_, obj: uint, region: uint, flag: uint, obj_act_id: uint):
+def Event_1042322510(_, asset: uint, region: uint, flag: uint, obj_act_id: uint):
     """Event 1042322510"""
     DisableNetworkSync()
-    GotoIfTryingToJoinSession(Label.L1)
-    GotoIfTryingToCreateSession(Label.L1)
+    GotoIfMultiplayerPending(Label.L1)
+    GotoIfMultiplayer(Label.L1)
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    IfObjectActivated(OR_1, obj_act_id=obj_act_id)
-    IfTryingToJoinSession(OR_1)
-    IfTryingToCreateSession(OR_1)
-    IfConditionTrue(MAIN, input_condition=OR_1)
-    GotoIfTryingToJoinSession(Label.L1)
-    GotoIfTryingToCreateSession(Label.L1)
+    OR_1.Add(AssetActivated(obj_act_id=obj_act_id))
+    OR_1.Add(MultiplayerPending())
+    OR_1.Add(Multiplayer())
+    
+    MAIN.Await(OR_1)
+    
+    GotoIfMultiplayerPending(Label.L1)
+    GotoIfMultiplayer(Label.L1)
     EnableFlag(flag)
     Wait(1.2999999523162842)
     Wait(0.8999999761581421)
-    GotoIfTryingToJoinSession(Label.L2)
-    GotoIfTryingToCreateSession(Label.L2)
-    IfHealthValueEqual(AND_1, PLAYER, value=0)
+    GotoIfMultiplayerPending(Label.L2)
+    GotoIfMultiplayer(Label.L2)
+    AND_1.Add(HealthValue(PLAYER) == 0)
     GotoIfConditionTrue(Label.L20, input_condition=AND_1)
     GotoIfCharacterOutsideRegion(Label.L20, character=PLAYER, region=region)
-    GotoIfTryingToJoinSession(Label.L2)
-    GotoIfTryingToCreateSession(Label.L2)
-    Unknown_2004_77(unknown1=0.0, unknown2=0.0, unknown3=1, unknown4=-1.0)
+    GotoIfMultiplayerPending(Label.L2)
+    GotoIfMultiplayer(Label.L2)
+    FadeToBlack(strength=0.0, duration=0.0, freeze_player=True, freeze_player_delay=-1.0)
     DisplayDialog(text=20700, anchor_entity=0, display_distance=5.0, button_type=ButtonType.Yes_or_No)
     Wait(0.699999988079071)
     AddSpecialEffect(PLAYER, 4090)
     PlaySoundEffect(PLAYER, 8700, sound_type=SoundType.c_CharacterMotion)
     Wait(2.700000047683716)
     DisableCharacter(PLAYER)
-    IfHealthValueEqual(AND_3, PLAYER, value=0)
+    AND_3.Add(HealthValue(PLAYER) == 0)
     GotoIfConditionTrue(Label.L20, input_condition=AND_3)
-    GotoIfTryingToJoinSession(Label.L3)
-    GotoIfTryingToCreateSession(Label.L3)
+    GotoIfMultiplayerPending(Label.L3)
+    GotoIfMultiplayer(Label.L3)
     AddSpecialEffect(PLAYER, 4091)
-    Unknown_2004_77(unknown1=0.0, unknown2=0.0, unknown3=0, unknown4=-1.0)
+    FadeToBlack(strength=0.0, duration=0.0, freeze_player=False, freeze_player_delay=-1.0)
     EnableFlag(11000601)
     GotoIfFlagEnabled(Label.L10, flag=300)
-    WarpToMap(game_map=LEYNDELL_ROYAL_CAPITAL, player_start=11002697, unknown1=60)
+    WarpToMap(game_map=LEYNDELL_ROYAL_CAPITAL, player_start=11002697, unk_8_12=60)
     SaveRequest()
     SetRespawnPoint(respawn_point=11002697)
     End()
 
     # --- Label 10 --- #
     DefineLabel(10)
-    WarpToMap(game_map=LEYNDELL_ASHEN_CAPITAL, player_start=11052680, unknown1=60)
+    WarpToMap(game_map=LEYNDELL_ASHEN_CAPITAL, player_start=11052680, unk_8_12=60)
     SaveRequest()
     SetRespawnPoint(respawn_point=11052680)
     End()
@@ -131,46 +144,48 @@ def Event_1042322510(_, obj: uint, region: uint, flag: uint, obj_act_id: uint):
     DefineLabel(20)
     AddSpecialEffect(PLAYER, 4091)
     EnableCharacter(PLAYER)
-    Unknown_2004_77(unknown1=0.0, unknown2=0.0, unknown3=0, unknown4=-1.0)
+    FadeToBlack(strength=0.0, duration=0.0, freeze_player=False, freeze_player_delay=-1.0)
     Wait(4.400000095367432)
 
     # --- Label 19 --- #
     DefineLabel(19)
-    ForceAnimation(obj, 2, wait_for_completion=True, unknown2=1.0)
+    ForceAnimation(asset, 2, wait_for_completion=True)
     DisableFlag(flag)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    EndOfAnimation(obj=obj, animation_id=2)
+    EndOfAnimation(asset=asset, animation_id=2)
     DisableFlag(flag)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    EnableAssetActivation(asset, obj_act_id=-1)
     Restart()
 
     # --- Label 3 --- #
     DefineLabel(3)
-    DisableObjectActivation(obj, obj_act_id=-1)
+    DisableAssetActivation(asset, obj_act_id=-1)
     AddSpecialEffect(PLAYER, 4091)
     EnableCharacter(PLAYER)
-    ForceAnimation(PLAYER, 60131, unknown2=1.0)
-    Unknown_2004_77(unknown1=0.0, unknown2=0.0, unknown3=0, unknown4=-1.0)
+    ForceAnimation(PLAYER, 60131)
+    FadeToBlack(strength=0.0, duration=0.0, freeze_player=False, freeze_player_delay=-1.0)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    DisableObjectActivation(obj, obj_act_id=-1)
-    ForceAnimation(obj, 2, wait_for_completion=True, unknown2=1.0)
+    DisableAssetActivation(asset, obj_act_id=-1)
+    ForceAnimation(asset, 2, wait_for_completion=True)
     DisableFlag(flag)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    DisableObjectActivation(obj, obj_act_id=-1)
-    IfTryingToJoinSession(OR_2)
-    IfConditionFalse(AND_2, input_condition=OR_2)
-    IfTryingToCreateSession(OR_3)
-    IfConditionFalse(AND_2, input_condition=OR_3)
-    IfConditionTrue(MAIN, input_condition=AND_2)
-    EnableObjectActivation(obj, obj_act_id=-1)
+    DisableAssetActivation(asset, obj_act_id=-1)
+    OR_2.Add(MultiplayerPending())
+    AND_2.Add(not OR_2)
+    OR_3.Add(Multiplayer())
+    AND_2.Add(not OR_3)
+    
+    MAIN.Await(AND_2)
+    
+    EnableAssetActivation(asset, obj_act_id=-1)
     Restart()
 
 
@@ -178,48 +193,52 @@ def Event_1042322510(_, obj: uint, region: uint, flag: uint, obj_act_id: uint):
 def Event_1042322400():
     """Event 1042322400"""
     GotoIfFlagDisabled(Label.L0, flag=1042320400)
-    DisableObject(1042321400)
+    DisableAsset(1042321400)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    DeleteObjectVFX(1042321400, erase_root=False)
-    CreateObjectVFX(1042321400, vfx_id=101, model_point=6)
-    IfFlagEnabled(AND_1, 1042320401)
-    IfFlagEnabled(AND_1, 1042320402)
-    IfFlagEnabled(AND_1, 1042320403)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    DeleteAssetVFX(1042321400, erase_root=False)
+    CreateAssetVFX(1042321400, vfx_id=101, model_point=6)
+    AND_1.Add(FlagEnabled(1042320401))
+    AND_1.Add(FlagEnabled(1042320402))
+    AND_1.Add(FlagEnabled(1042320403))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(1042320400)
-    DeleteObjectVFX(1042321400)
-    DisableObject(1042321400)
+    DeleteAssetVFX(1042321400)
+    DisableAsset(1042321400)
 
 
 @RestartOnRest(1042322401)
-def Event_1042322401(_, flag: uint, obj: uint, obj_1: uint):
+def Event_1042322401(_, flag: uint, asset: uint, asset_1: uint):
     """Event 1042322401"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
-    DestroyObject(obj)
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=800056)
+    DestroyAsset(asset)
+    CreateAssetVFX(asset_1, vfx_id=90, model_point=800056)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    IfObjectDestroyed(AND_1, obj)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    AND_1.Add(AssetDestroyed(asset))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(flag)
-    CreateObjectVFX(obj_1, vfx_id=90, model_point=800056)
+    CreateAssetVFX(asset_1, vfx_id=90, model_point=800056)
 
 
 @RestartOnRest(1042322402)
 def Event_1042322402():
     """Event 1042322402"""
-    DisableObject(1042321400)
-    DisableObject(1042321401)
-    DisableObject(1042321402)
-    DisableObject(1042321403)
-    DisableObject(1042321404)
-    DisableObject(1042321405)
-    DisableObject(1042321406)
+    DisableAsset(1042321400)
+    DisableAsset(1042321401)
+    DisableAsset(1042321402)
+    DisableAsset(1042321403)
+    DisableAsset(1042321404)
+    DisableAsset(1042321405)
+    DisableAsset(1042321406)
 
 
 @RestartOnRest(1042322403)
@@ -233,25 +252,22 @@ def Event_1042322403(
 ):
     """Event 1042322403"""
     AddSpecialEffect(character_1, 10196)
-    ForceAnimation(character_1, animation_id, loop=True, unknown2=1.0)
-    IfCharacterHasSpecialEffect(AND_1, character_1, 5080)
-    IfCharacterHasSpecialEffect(
-        OR_1,
-        character,
-        special_effect,
-        target_comparison_type=ComparisonType.GreaterThanOrEqual,
-    )
-    IfAttackedWithDamageType(OR_1, attacked_entity=character_1, attacker=0)
-    IfHasAIStatus(OR_1, character_1, ai_status=AIStatusType.Search)
-    IfConditionTrue(AND_1, input_condition=OR_1)
-    IfConditionTrue(MAIN, input_condition=AND_1)
+    ForceAnimation(character_1, animation_id, loop=True)
+    AND_1.Add(CharacterHasSpecialEffect(character_1, 5080))
+    OR_1.Add(CharacterHasSpecialEffect(character, special_effect, target_comparison_type=ComparisonType.GreaterThanOrEqual))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=0))
+    OR_1.Add(HasAIStatus(character_1, ai_status=AIStatusType.Search))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     GotoIfCharacterHasSpecialEffect(Label.L0, character=character, special_effect=special_effect, target_count=0)
     WaitRandomSeconds(min_seconds=0.0, max_seconds=2.0)
 
     # --- Label 0 --- #
     DefineLabel(0)
-    CancelSpecialEffect(character_1, 10196)
-    ForceAnimation(character_1, animation_id_1, wait_for_completion=True, unknown2=1.0)
+    RemoveSpecialEffect(character_1, 10196)
+    ForceAnimation(character_1, animation_id_1, wait_for_completion=True)
     ReplanAI(character_1)
 
 
@@ -260,7 +276,9 @@ def Event_1042322404(_, flag: uint, character: uint):
     """Event 1042322404"""
     EnableCharacter(character)
     EnableAnimations(character)
-    IfFlagEnabled(MAIN, flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     DisableCharacter(character)
     DisableAnimations(character)
 
@@ -268,6 +286,6 @@ def Event_1042322404(_, flag: uint, character: uint):
 @NeverRestart(1042322580)
 def Event_1042322580():
     """Event 1042322580"""
-    RegisterLadder(start_climbing_flag=1042320580, stop_climbing_flag=1042320851, obj=1042321580)
-    RegisterLadder(start_climbing_flag=1042320582, stop_climbing_flag=1042320853, obj=1042321582)
-    RegisterLadder(start_climbing_flag=1042320584, stop_climbing_flag=1042320855, obj=1042321584)
+    RegisterLadder(start_climbing_flag=1042320580, stop_climbing_flag=1042320851, asset=Assets.AEG110_012_1000)
+    RegisterLadder(start_climbing_flag=1042320582, stop_climbing_flag=1042320853, asset=Assets.AEG110_012_1001)
+    RegisterLadder(start_climbing_flag=1042320584, stop_climbing_flag=1042320855, asset=Assets.AEG110_012_1002)
