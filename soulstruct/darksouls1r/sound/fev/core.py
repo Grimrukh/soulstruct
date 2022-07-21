@@ -6,10 +6,14 @@ import math
 import struct
 import typing as tp
 import uuid
+import xml.dom.minidom
 from enum import IntEnum
+from pathlib import Path
 from xml.etree import ElementTree
 
 from soulstruct.base.game_file import GameFile
+from soulstruct.darksouls1r.sound.fsb import FSB, FSBSampleMode, fsbext
+from soulstruct.darksouls1r.sound.utilities import move_extracted_mp3
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
@@ -1463,6 +1467,15 @@ class FEV(GameFile):
     def pack(self):
         raise ValueError("FEV pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
+    def remove_event(self, event_name: str):
+        """Remove the `SoundDef` and `Event` for the given event name (e.g., `v123456789`)."""
+        self.sounddefs = [sd for sd in self.sounddefs if Path(sd.name).name != event_name]
+        for top_event_group in self.top_event_groups:
+            top_event_group.events = [e for e in top_event_group.events if e.name != event_name]
+            for subgroup in top_event_group.subgroups:
+                # TODO: Should recur on any deeper subgroups, but this depth will work for me.
+                subgroup.events = [e for e in subgroup.events if e.name != event_name]
+
     def to_xml_lines_start(self) -> list[str]:
         """Start of FDP XML contribution from FEV.
 
@@ -1532,3 +1545,144 @@ class FEV(GameFile):
         project_footer += PROJECT_FOOTER_COMPOSITION.splitlines()
         project_footer += ["</project>"]
         return project_footer
+
+    def find_paths_from_waveforms_with_bank_index(self, bank_name: str, index: int):
+        """Parses the given `FEV` to find Sound Definitions that reference the wavetable in wavebank `bank_name` at the
+        given `index`, in order to determine the filepath of the wavetable.
+
+        Returns a list of possible filepaths.
+        """
+        waveform_name_set = set()
+        for sounddef in self.sounddefs:
+            for waveform in sounddef.waveforms:
+                if waveform.bank_name == bank_name and waveform.index_in_bank == index:
+                    waveform_name_set.add(waveform.name)
+        return list(waveform_name_set)
+
+    def to_fdp(self, write_bank_dir: Path | str = "", fsb_dir: Path | str = None, convert_to_wav=False) -> str:
+        """Read FEV and FSB files and reconstruct FDP project file for FMOD Designer (just plaintext XML).
+
+        Args:
+            write_bank_dir (Path or str): path of folder where MP3 files from FSB will be unpacked to
+            "bank/{fev_name}". Optional; defaults to empty string.
+            fsb_dir (Path or str): directory to find FSB files in (typically just the one FSB). If omitted, the
+                directory containing the FEV file will be used.
+            convert_to_wav (bool): if True, and `write_bank_path` is given, the MP3 files written to the bank directory
+                will also be converted to WAV files for easy re-use in FMOD. Voice files starting with "v" will further
+                be converted to single-channel, which is the format expected by DSR.
+        """
+        if fsb_dir is None:
+            fsb_dir = self.path.parent
+
+        open_fsbs = {}  # type: dict[str, FSB]
+        open_fevs = {}  # type: dict[str, FEV]
+
+        xml_lines = self.to_xml_lines_start()
+
+        if write_bank_dir:
+            write_bank_dir = Path(write_bank_dir)
+        elif convert_to_wav:
+            _LOGGER.warning("`convert_to_wav=True`, but no `write_bank_path` was given. Ignoring.")
+
+        for bank in self.wavebanks:
+            bank_format = WavebankInfo.BankOutputFormat.PCM
+            xml_lines += bank.to_xml_lines_header()
+
+            fsb_path = fsb_dir / f"{bank.bank_name}.fsb"
+            fsb = open_fsbs.setdefault(str(fsb_path), FSB(fsb_path))
+            if write_bank_dir:
+                write_bank_dir.mkdir(parents=True, exist_ok=True)
+                fsbext(f"\"{fsb_path}\"", f"-d \"{str(write_bank_dir)}\"")
+
+            if len(fsb.samples) > 0:
+                # Try to determined bank file format from first sample.
+                suffix = ""
+                if fsb.samples[0].header.mode_flags & FSBSampleMode.FSOUND_IMAADPCM:
+                    bank_format = WavebankInfo.BankOutputFormat.ADPCM
+                    suffix = ""  # TODO: unknown
+                if fsb.samples[0].header.mode_flags & FSBSampleMode.FSOUND_MPEG_LAYER2:
+                    bank_format = WavebankInfo.BankOutputFormat.MP2
+                    suffix = ".mp2"
+                if fsb.samples[0].header.mode_flags & FSBSampleMode.FSOUND_MPEG_LAYER3:
+                    bank_format = WavebankInfo.BankOutputFormat.MP3
+                    suffix = ".mp3"
+
+                bank_original_fev = None
+                if self.path.stem != bank.bank_name:
+                    # If the bank was not paired with this FEV (i.e. they have different names), search for and parse
+                    # the bank's FEV to identify paths for samples that are unused in this FEV.
+                    fsb_original_fev_filepath = self.path.parent / (bank.bank_name + ".fev")
+                    if not fsb_original_fev_filepath.is_file():
+                        raise FileNotFoundError(
+                            f"Cannot find required file '{bank.bank_name}.fev' associated with matching bank."
+                        )
+                    bank_original_fev = open_fevs.setdefault(str(fsb_original_fev_filepath),
+                                                             FEV(fsb_original_fev_filepath))
+
+                for index, sample in enumerate(fsb.samples):
+                    paths = self.find_paths_from_waveforms_with_bank_index(bank.bank_name, index)
+                    if bank_original_fev:
+                        # Bank is from a different FEV.
+                        original_fev_paths = bank_original_fev.find_paths_from_waveforms_with_bank_index(
+                            bank.bank_name, index
+                        )
+                        if not set(paths).issubset(set(original_fev_paths)):
+                            _LOGGER.warning(
+                                f"Searching original FEV SoundDefs for wavebank with name '{bank.bank_name}' and index "
+                                f"{index} yielded {original_fev_paths} but searching given FEV SoundDefs yielded "
+                                f"{paths}, which is not a superset of the former. Using given."
+                            )
+                        else:
+                            paths = original_fev_paths
+
+                    if len(paths) == 0:
+                        default_path = f"bank/{bank.bank_name}/{sample.header.name}"
+                        _LOGGER.warning(
+                            f"Could not find any SoundDef referencing Wavebank '{bank.bank_name}' and index {index}. "
+                            f"Defaulting to '{default_path}', which may need manual correction."
+                        )
+                        xml_lines += sample.header.to_xml_lines(Path(default_path))
+                        wav_path = write_bank_dir / default_path
+
+                    elif len(paths) == 1:
+                        # Ideal outcome: found exactly one matching path.
+                        xml_lines += sample.header.to_xml_lines(Path(paths[0]))
+                        # print(sample)
+                        wav_path = write_bank_dir / paths[0]
+                    else:
+                        _LOGGER.warning(
+                            f"Searching SoundDefs for Wavebank with name '{bank.bank_name}' and index {index} "
+                            f"yielded {paths}."
+                        )
+                        suspected_paths = [path for path in paths if sample.header.name in path]
+                        if len(suspected_paths) == 1:
+                            xml_lines += sample.header.to_xml_lines(Path(suspected_paths[0]))
+                            wav_path = write_bank_dir / suspected_paths[0]
+                        else:
+                            raise ValueError(
+                                f"Searching SoundDefs for Wavebank '{bank.bank_name}' and index {index} yielded "
+                                f"{paths}, which could not be reduced to one choice using sample name "
+                                f"'{sample.header.name}'."
+                            )
+
+                    if write_bank_dir and suffix:
+                        compressed_file_path = wav_path.with_name(wav_path.name + suffix)
+                        move_extracted_mp3(
+                            write_bank_dir, sample, compressed_file_path, convert_to_wav=convert_to_wav
+                        )
+
+            xml_lines += bank.to_xml_lines_footer(bank_format)
+
+        xml_lines += self.to_xml_lines_end()
+
+        # XML indentation.
+        xml_string = "\n".join(xml_lines)
+        dom = xml.dom.minidom.parseString(xml_string)
+        return dom.toprettyxml(indent="    ", newl="")
+
+    def write_fdp(
+        self, fdp_path: Path | str, write_bank_dir: Path | str = "", fsb_dir: Path | str = None, convert_to_wav=False
+    ):
+        fdp_path = Path(fdp_path)
+        fdp_text = self.to_fdp(write_bank_dir, fsb_dir, convert_to_wav)
+        fdp_path.write_text(fdp_text)

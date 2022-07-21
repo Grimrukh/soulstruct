@@ -17,8 +17,8 @@ from enum import IntEnum, unique
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
+from soulstruct.utilities.files import PACKAGE_PATH
 
 __all__ = ["FSB", "FSBSample", "FSBSampleHeader", "FSBHeaderVersion", "FSBHeaderMode", "FSBSampleMode", "fsbext"]
 
