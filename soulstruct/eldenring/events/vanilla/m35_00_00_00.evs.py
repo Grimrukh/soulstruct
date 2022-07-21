@@ -2147,7 +2147,7 @@ def Event_35002220(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -2200,7 +2200,7 @@ def Event_35002220(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -2208,7 +2208,7 @@ def Event_35002220(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -2229,7 +2229,7 @@ def Event_35002226(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -2314,7 +2314,7 @@ def Event_35002226(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -2322,7 +2322,7 @@ def Event_35002226(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -2821,7 +2821,7 @@ def Event_35002410(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -2899,14 +2899,14 @@ def Event_35002410(
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
         ForceAnimation(character, animation_id_1, loop=True)
-    DisableCharacterCollision(character)
+    EnableCharacterCollision(character)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -2939,7 +2939,7 @@ def Event_35002430(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -2983,7 +2983,7 @@ def Event_35002430(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -2991,7 +2991,7 @@ def Event_35002430(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 

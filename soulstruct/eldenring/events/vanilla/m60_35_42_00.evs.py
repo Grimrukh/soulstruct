@@ -397,7 +397,7 @@ def Event_1035420701(_, character: uint, asset: uint):
     EnableNetworkFlag(1035420701)
     DisableGravity(character)
     DisableAnimations(character)
-    EnableCharacterCollision(character)
+    DisableCharacterCollision(character)
     ForceAnimation(asset, 1)
     Wait(1.0)
     DeleteAssetVFX(Assets.AEG099_090_9020)
@@ -413,7 +413,7 @@ def Event_1035420701(_, character: uint, asset: uint):
     WaitFrames(frames=1)
     EnableGravity(character)
     EnableAnimations(character)
-    DisableCharacterCollision(character)
+    EnableCharacterCollision(character)
     End()
 
 

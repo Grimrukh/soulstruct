@@ -43,7 +43,7 @@ def Event_1041352680():
 def Event_1041350700(_, character: uint):
     """Event 1041350700"""
     DisableGravity(character)
-    EnableCharacterCollision(character)
+    DisableCharacterCollision(character)
 
 
 @RestartOnRest(1041350701)

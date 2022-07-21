@@ -28,7 +28,7 @@ def CommonFunc_90005200(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -103,7 +103,7 @@ def CommonFunc_90005200(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -111,7 +111,7 @@ def CommonFunc_90005200(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -132,7 +132,7 @@ def CommonFunc_90005201(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -207,7 +207,7 @@ def CommonFunc_90005201(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -215,7 +215,7 @@ def CommonFunc_90005201(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -237,7 +237,7 @@ def CommonFunc_90005210(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -314,7 +314,7 @@ def CommonFunc_90005210(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -322,7 +322,7 @@ def CommonFunc_90005210(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -344,7 +344,7 @@ def CommonFunc_90005211(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -422,7 +422,7 @@ def CommonFunc_90005211(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -430,7 +430,7 @@ def CommonFunc_90005211(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -454,7 +454,7 @@ def CommonFunc_90005213(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -537,7 +537,7 @@ def CommonFunc_90005213(
     Wait(seconds_1)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -545,7 +545,7 @@ def CommonFunc_90005213(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -564,7 +564,7 @@ def CommonFunc_90005220(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_1.Add(CharacterBackreadEnabled(character))
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
@@ -627,7 +627,7 @@ def CommonFunc_90005220(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -635,7 +635,7 @@ def CommonFunc_90005220(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -645,7 +645,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
@@ -693,7 +693,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -701,7 +701,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 
@@ -1179,7 +1179,7 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
         return
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     if ValueNotEqual(left=special_effect_id, right=0):
         AddSpecialEffect(character, special_effect_id)
     else:
@@ -1200,7 +1200,7 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, 14102, loop=True)
     End()
 
@@ -1208,7 +1208,7 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 

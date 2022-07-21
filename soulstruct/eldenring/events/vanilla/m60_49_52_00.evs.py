@@ -92,7 +92,7 @@ def Event_1049522820(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     DisableAI(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -168,7 +168,7 @@ def Event_1049522820(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     EnableAI(character)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
@@ -177,7 +177,7 @@ def Event_1049522820(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 

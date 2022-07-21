@@ -24,7 +24,7 @@ from .entities.m60_37_55_00_entities import *
 @NeverRestart(0)
 def Constructor():
     """Event 0"""
-    EnableCharacterCollision(0)
+    DisableCharacterCollision(0)
     CommonFunc_90005261(
         0,
         character=Characters.DemiHumanShaman0,

@@ -229,7 +229,7 @@ def Event_1052562830(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     DisableAI(character)
     ForceAnimation(character, animation_id, loop=True)
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
@@ -309,7 +309,7 @@ def Event_1052562830(
     Wait(seconds_1)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     EnableAI(character)
     Move(
         character,
@@ -327,7 +327,7 @@ def Event_1052562830(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     Wait(5.0)
     AddSpecialEffect(Characters.ErdtreeAvatar0, 17327)
     End()

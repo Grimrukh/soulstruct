@@ -625,7 +625,7 @@ def Event_31212250(
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
     AddSpecialEffect(character, 8081)
     AddSpecialEffect(character, 8082)
     ForceAnimation(character, animation_id, loop=True)
@@ -672,7 +672,7 @@ def Event_31212250(
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     ForceAnimation(character, animation_id_1, loop=True)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
     RemoveSpecialEffect(character, 8082)
@@ -682,7 +682,7 @@ def Event_31212250(
     DefineLabel(0)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
-        DisableCharacterCollision(character)
+        EnableCharacterCollision(character)
     End()
 
 

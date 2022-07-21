@@ -2794,7 +2794,7 @@ def Event_1252382280(
     if FlagEnabled(1252380800):
         DisableCharacter(character)
         DisableAnimations(character)
-        EnableCharacterCollision(character)
+        DisableCharacterCollision(character)
         DisableGravity(character)
         DisableAI(character)
         End()
@@ -2809,7 +2809,7 @@ def Event_1252382280(
     if ValueNotEqual(left=animation_id, right=0):
         ForceAnimation(character, animation_id, wait_for_completion=True)
     EnableAnimations(character)
-    DisableCharacterCollision(character)
+    EnableCharacterCollision(character)
     EnableGravity(character)
     DisableInvincibility(character)
     EnableImmortality(character)
@@ -2934,7 +2934,7 @@ def Event_1252382440(
     RemoveSpecialEffect(character, 18677)
     DisableInvincibility(character)
     DisableAnimations(character)
-    EnableCharacterCollision(character)
+    DisableCharacterCollision(character)
     DisableGravity(character)
     WaitFrames(frames=1)
     if ValueNotEqual(left=animation_id, right=0):
@@ -2996,7 +2996,7 @@ def Event_1252382520(
     DisableAnimations(character)
     SetTeamType(character, TeamType.NoTeam)
     Wait(0.10000000149011612)
-    EnableCharacterCollision(character)
+    DisableCharacterCollision(character)
     DisableGravity(character)
     ClearTargetList(character)
     SkipLinesIfValueEqual(5, left=animation_id, right=0)

@@ -2412,15 +2412,15 @@ EMEDF = {
     (2004, 31): {
         "alias": "SetCharacterCollisionState",
         "docstring": """
-            Note that the bool is inverted from what you might expect.
+            Note that the bool is no longer inverted, as in older games.
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "is_disabled": BOOL,
+            "state": BOOL,
         },
         "partials": {
-            "EnableCharacterCollision": dict(is_disabled=False),  # Note reversed bool.
-            "DisableCharacterCollision": dict(is_disabled=True),
+            "EnableCharacterCollision": dict(state=True),
+            "DisableCharacterCollision": dict(state=False),
         },
     },
     (2004, 32): {

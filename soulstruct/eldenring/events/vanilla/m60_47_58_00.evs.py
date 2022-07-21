@@ -194,7 +194,7 @@ def Event_1047583700(_, character: uint, character_1: uint, asset: uint):
     DisableNetworkSync()
     EnableBackread(character_1)
     EnableCharacter(character_1)
-    EnableCharacterCollision(character_1)
+    DisableCharacterCollision(character_1)
     DisableGravity(character_1)
     SetTeamType(character_1, TeamType.NoTeam)
     ForceAnimation(character_1, 930009)
