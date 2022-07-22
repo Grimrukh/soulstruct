@@ -32,7 +32,7 @@ def Constructor():
         left=0,
         character=Characters.TreeSentinel0,
         left_1=0,
-        item_lot__item_lot_param_id=30335,
+        item_lot=30335,
         character_1=Characters.TreeSentinel1,
     )
     CommonFunc_90005261(
@@ -74,7 +74,7 @@ def Constructor():
         0,
         flag=1041510410,
         character=Characters.GiantMirandaFlower,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -294,12 +294,12 @@ def Event_1041512800(
     left: uint,
     character: uint,
     left_1: uint,
-    item_lot__item_lot_param_id: int,
+    item_lot: int,
     character_1: uint,
 ):
     """Event 1041512800"""
-    if ValueNotEqual(left=item_lot__item_lot_param_id, right=0):
-        Unknown_2004_76(flag=flag, item_lot=item_lot__item_lot_param_id)
+    if ValueNotEqual(left=item_lot, right=0):
+        Unknown_2004_76(flag=flag, item_lot=item_lot)
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
     DisableCharacter(character_1)
@@ -309,10 +309,10 @@ def Event_1041512800(
     Kill(character_1)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(1.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #
@@ -351,8 +351,8 @@ def Event_1041512800(
         EnableFlag(left)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(5.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()

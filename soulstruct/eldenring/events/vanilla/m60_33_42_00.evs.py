@@ -27,14 +27,14 @@ def Constructor():
     """Event 0"""
     Event_1033422211()
     Event_1033422611()
-    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1033420610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005880(
         0,
         flag=1033420800,
         flag_1=1033420805,
         flag_2=1033422800,
         character=Characters.BlackKnifeAssassin,
-        item_lot_param_id=30265,
+        item_lot=30265,
         area_id=60,
         block_id=33,
         cc_id=42,

@@ -95,7 +95,7 @@ def Constructor():
         0,
         flag=1050400800,
         character=Characters.LargeDragonbarrowDragon,
-        item_lot_param_id=1050400800,
+        item_lot=1050400800,
         seconds=0.0,
         left=0,
     )

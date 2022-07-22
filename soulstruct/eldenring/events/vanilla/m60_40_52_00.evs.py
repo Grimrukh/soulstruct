@@ -51,7 +51,7 @@ def Constructor():
         left=0,
         character=Characters.BlackKnifeAssassin,
         left_1=0,
-        item_lot__item_lot_param_id=30350,
+        item_lot=30350,
         seconds=0.0,
     )
     Event_1040522240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62030)

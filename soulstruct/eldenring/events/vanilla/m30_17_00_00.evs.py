@@ -227,7 +227,7 @@ def Constructor():
         left_3=0,
     )
     Event_30172400(11, character=Characters.Troll)
-    CommonFunc_90005300(0, flag=30170400, character=Characters.Troll, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=30170400, character=Characters.Troll, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005652(0, flag=30170540, asset=Assets.AEG027_041_0500, flag_1=30170400)
     CommonFunc_90005651(0, flag=30170540, anchor_entity=Assets.AEG027_041_0500)
     Event_30172600()

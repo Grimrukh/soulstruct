@@ -36,7 +36,7 @@ def Constructor():
         0,
         flag=1038460340,
         character=Characters.GuardianGolem,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )

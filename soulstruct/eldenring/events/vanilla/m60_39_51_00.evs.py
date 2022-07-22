@@ -58,19 +58,19 @@ def Constructor():
         left=0,
         character=Characters.NightsCavalry,
         left_1=0,
-        item_lot__item_lot_param_id=1039510200,
+        item_lot=1039510200,
         seconds=0.0,
     )
     CommonFunc_90005300(
         0,
         flag=1039510800,
         character=Characters.NightsCavalryHorse,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
     CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
-    CommonFunc_90005300(0, flag=1039510500, character=Characters.Scarab, item_lot_param_id=40304, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039510500, character=Characters.Scarab, item_lot=40304, seconds=0.0, left=0)
     CommonFunc_90005703(
         0,
         character=Characters.DemiHumanShaman,

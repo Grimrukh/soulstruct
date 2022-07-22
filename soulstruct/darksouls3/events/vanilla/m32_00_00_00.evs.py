@@ -50,7 +50,7 @@ def Constructor():
     Event_13205320()
     Event_13205330()
     Event_13205340()
-    CommonFunc_20005341(0, flag=13200305, character=3200300, item_lot_param_id=31412000)
+    CommonFunc_20005341(0, flag=13200305, character=3200300, item_lot=31412000)
     CommonFunc_20005119(
         0,
         character=3200200,
@@ -252,7 +252,7 @@ def Constructor():
         region_5=0,
         region_6=0,
     )
-    CommonFunc_20005341(0, flag=13200259, character=3200259, item_lot_param_id=21509000)
+    CommonFunc_20005341(0, flag=13200259, character=3200259, item_lot=21509000)
     CommonFunc_20005190(0, character=3200264, radius=15.0)
     CommonFunc_20005190(0, character=3200265, radius=20.0)
     CommonFunc_20005120(0, character=3200260, radius=18.0)
@@ -345,8 +345,8 @@ def Constructor():
     CommonFunc_20005120(0, character=3200299, radius=15.0)
     Event_13205380()
     Event_13205381()
-    CommonFunc_20005350(0, character=3200291, item_lot_param_id=57400, flag=50006740)
-    CommonFunc_20005350(0, character=3200297, item_lot_param_id=57500, flag=50006750)
+    CommonFunc_20005350(0, character=3200291, item_lot=57400, flag=50006740)
+    CommonFunc_20005350(0, character=3200297, item_lot=57500, flag=50006750)
     CommonFunc_20005342(0, flag=13200299, character=3200299)
     CommonFunc_20005111(0, character=3200500, animation_id=3002, region=3202500)
     CommonFunc_20005120(0, character=3200510, radius=3.0)
@@ -381,9 +381,9 @@ def Constructor():
     CommonFunc_20005523(0, obj=3201461, completion_count=2)
     CommonFunc_20005520(0, flag=13201470, obj=3201470, obj_act_id=3204470)
     CommonFunc_20005520(0, flag=13201471, obj=3201471, obj_act_id=3204471)
-    CommonFunc_20005525(0, flag=53200300, item_lot_param_id=3200300, obj=3201480, model_point=62)
-    CommonFunc_20005525(0, flag=53200310, item_lot_param_id=3200310, obj=3201481, model_point=61)
-    Event_13205910(0, flag=13200910, region=3202910, item_lot_param_id=3200900)
+    CommonFunc_20005525(0, flag=53200300, item_lot=3200300, obj=3201480, model_point=62)
+    CommonFunc_20005525(0, flag=53200310, item_lot=3200310, obj=3201481, model_point=61)
+    Event_13205910(0, flag=13200910, region=3202910, item_lot=3200900)
     Event_13205910(1, 13200915, 3202915, 3200910)
 
 
@@ -1663,7 +1663,7 @@ def Event_13205880():
 
 
 @RestartOnRest(13205910)
-def Event_13205910(_, flag: int, region: int, item_lot_param_id: int):
+def Event_13205910(_, flag: int, region: int, item_lot: int):
     """Event 13205910"""
     DisableNetworkSync()
     if FlagEnabled(flag):
@@ -1683,7 +1683,7 @@ def Event_13205910(_, flag: int, region: int, item_lot_param_id: int):
     
     if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4400):
         return RESTART
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     EnableFlag(flag)
     End()
 

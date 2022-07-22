@@ -54,7 +54,7 @@ def Event_200():
         left=0,
         character=Characters.BorealistheFreezingFog,
         left_1=1,
-        item_lot__item_lot_param_id=30510,
+        item_lot=30510,
         text=30066,
         seconds=0.0,
     )

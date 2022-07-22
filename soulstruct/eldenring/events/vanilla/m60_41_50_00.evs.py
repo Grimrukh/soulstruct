@@ -31,7 +31,7 @@ def Constructor():
         left=0,
         character=Characters.FallingstarBeast,
         left_1=0,
-        item_lot__item_lot_param_id=30310,
+        item_lot=30310,
         seconds=0.0,
     )
     Event_1041502200()

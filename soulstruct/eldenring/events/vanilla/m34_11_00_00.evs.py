@@ -75,7 +75,7 @@ def Constructor():
         0,
         flag=34110280,
         character=Characters.GodskinNoble,
-        item_lot_param_id=34110400,
+        item_lot=34110400,
         seconds=0.0,
         left=0,
     )
@@ -98,7 +98,7 @@ def Constructor():
         0,
         flag=34110710,
         character=Characters.PreceptorMiriam0,
-        item_lot_param_id=34110700,
+        item_lot=34110700,
         seconds=0.0,
         left=0,
     )
@@ -108,7 +108,7 @@ def Constructor():
         0,
         flag=34110711,
         character=Characters.PreceptorMiriam1,
-        item_lot_param_id=34110710,
+        item_lot=34110710,
         seconds=0.0,
         left=0,
     )

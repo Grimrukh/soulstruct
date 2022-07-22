@@ -64,7 +64,7 @@ def Constructor():
         flag_1=1048562181,
         flag_2=1048562182,
         character=Characters.AnastasiaTarnishedEater,
-        item_lot_param_id=1048560800,
+        item_lot=1048560800,
         seconds=0.0,
     )
     CommonFunc_90005793(0, 1048560180, 1048562181, 1048562182, 1048560700, 1048562180, 1048562182, 0)

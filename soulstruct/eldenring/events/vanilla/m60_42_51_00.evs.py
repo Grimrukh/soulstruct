@@ -47,7 +47,7 @@ def Constructor():
         0,
         flag=1042510300,
         character=Characters.Gargoyle,
-        item_lot_param_id=1042510900,
+        item_lot=1042510900,
         seconds=0.0,
         left=0,
     )

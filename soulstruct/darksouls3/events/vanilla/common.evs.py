@@ -16,8 +16,8 @@ def Constructor():
     """Event 0"""
     Event_200()
     Event_230()
-    Event_9570(0, item_lot_param_id=4500, special_effect=3740)
-    Event_9570(1, item_lot_param_id=4510, special_effect=3750)
+    Event_9570(0, item_lot=4500, special_effect=3740)
+    Event_9570(1, item_lot=4510, special_effect=3750)
     if Client():
         return
     if FlagEnabled(2052):
@@ -48,32 +48,32 @@ def Constructor():
     Event_9000(0, flag=9001, flag_1=9007, flag_2=9008, flag_3=9009)
     Event_9002(0, flag=9003)
     Event_9010()
-    Event_970(0, flag=13000800, item_lot_param_id=2000, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(1, flag=13000890, item_lot_param_id=2010, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(2, flag=13000830, item_lot_param_id=2020, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(3, flag=13010800, item_lot_param_id=2030, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(9, flag=13410830, item_lot_param_id=2040, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(10, flag=13410860, item_lot_param_id=2050, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(4, flag=13100800, item_lot_param_id=2060, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(5, flag=13200800, item_lot_param_id=2070, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(6, flag=13200850, item_lot_param_id=2080, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(7, flag=13300850, item_lot_param_id=2090, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(8, flag=13300800, item_lot_param_id=2100, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(11, flag=13500800, item_lot_param_id=2110, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(12, flag=13700850, item_lot_param_id=2120, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(13, flag=13700800, item_lot_param_id=2130, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(14, flag=13800800, item_lot_param_id=2140, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(15, flag=13800830, item_lot_param_id=2150, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(17, flag=13900800, item_lot_param_id=2170, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(18, flag=14000800, item_lot_param_id=2180, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(19, flag=14000830, item_lot_param_id=2190, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(20, flag=14100800, item_lot_param_id=2200, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(21, flag=14500800, item_lot_param_id=2300, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(22, flag=14500860, item_lot_param_id=2310, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(23, flag=15000800, item_lot_param_id=2330, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(24, flag=15100800, item_lot_param_id=2340, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(25, flag=15100850, item_lot_param_id=2350, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(26, flag=15110800, item_lot_param_id=2360, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(0, flag=13000800, item_lot=2000, item_lot_1=0, item_lot_2=0)
+    Event_970(1, flag=13000890, item_lot=2010, item_lot_1=0, item_lot_2=0)
+    Event_970(2, flag=13000830, item_lot=2020, item_lot_1=0, item_lot_2=0)
+    Event_970(3, flag=13010800, item_lot=2030, item_lot_1=0, item_lot_2=0)
+    Event_970(9, flag=13410830, item_lot=2040, item_lot_1=0, item_lot_2=0)
+    Event_970(10, flag=13410860, item_lot=2050, item_lot_1=0, item_lot_2=0)
+    Event_970(4, flag=13100800, item_lot=2060, item_lot_1=0, item_lot_2=0)
+    Event_970(5, flag=13200800, item_lot=2070, item_lot_1=0, item_lot_2=0)
+    Event_970(6, flag=13200850, item_lot=2080, item_lot_1=0, item_lot_2=0)
+    Event_970(7, flag=13300850, item_lot=2090, item_lot_1=0, item_lot_2=0)
+    Event_970(8, flag=13300800, item_lot=2100, item_lot_1=0, item_lot_2=0)
+    Event_970(11, flag=13500800, item_lot=2110, item_lot_1=0, item_lot_2=0)
+    Event_970(12, flag=13700850, item_lot=2120, item_lot_1=0, item_lot_2=0)
+    Event_970(13, flag=13700800, item_lot=2130, item_lot_1=0, item_lot_2=0)
+    Event_970(14, flag=13800800, item_lot=2140, item_lot_1=0, item_lot_2=0)
+    Event_970(15, flag=13800830, item_lot=2150, item_lot_1=0, item_lot_2=0)
+    Event_970(17, flag=13900800, item_lot=2170, item_lot_1=0, item_lot_2=0)
+    Event_970(18, flag=14000800, item_lot=2180, item_lot_1=0, item_lot_2=0)
+    Event_970(19, flag=14000830, item_lot=2190, item_lot_1=0, item_lot_2=0)
+    Event_970(20, flag=14100800, item_lot=2200, item_lot_1=0, item_lot_2=0)
+    Event_970(21, flag=14500800, item_lot=2300, item_lot_1=0, item_lot_2=0)
+    Event_970(22, flag=14500860, item_lot=2310, item_lot_1=0, item_lot_2=0)
+    Event_970(23, flag=15000800, item_lot=2330, item_lot_1=0, item_lot_2=0)
+    Event_970(24, flag=15100800, item_lot=2340, item_lot_1=0, item_lot_2=0)
+    Event_970(25, flag=15100850, item_lot=2350, item_lot_1=0, item_lot_2=0)
+    Event_970(26, flag=15110800, item_lot=2360, item_lot_1=0, item_lot_2=0)
     Event_250(10, achievement_id=17, flag=6700, seconds=0.0)
     Event_250(11, achievement_id=18, flag=6770, seconds=0.0)
     Event_250(12, achievement_id=19, flag=6740, seconds=0.0)
@@ -734,21 +734,21 @@ def Event_750():
 
 
 @ContinueOnRest(970)
-def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
+def Event_970(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int):
     """Event 970"""
     if FlagEnabled(flag):
         return
     
     MAIN.Await(FlagEnabled(flag))
     
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    if ValueNotEqual(left=item_lot_param_id_1, right=0):
-        AwardItemLot(item_lot_param_id_1, host_only=True)
-    if ValueNotEqual(left=item_lot_param_id_2, right=0):
-        AwardItemLot(item_lot_param_id_2, host_only=True)
+    if ValueNotEqual(left=item_lot_1, right=0):
+        AwardItemLot(item_lot_1, host_only=True)
+    if ValueNotEqual(left=item_lot_2, right=0):
+        AwardItemLot(item_lot_2, host_only=True)
 
 
 @ContinueOnRest(6099)
@@ -982,13 +982,13 @@ def Event_9540(_, gesture_id: ushort, item_id: int, flag: int):
 
 
 @RestartOnRest(9570)
-def Event_9570(_, item_lot_param_id: int, special_effect: int):
+def Event_9570(_, item_lot: int, special_effect: int):
     """Event 9570"""
     DisableNetworkSync()
     
     MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
     
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     Wait(1.5)
     Restart()
 

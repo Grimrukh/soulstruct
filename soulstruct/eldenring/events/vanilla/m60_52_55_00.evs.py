@@ -44,7 +44,7 @@ def Constructor():
         0,
         flag=1052550390,
         character=Characters.ChiefGuardianArghanthy,
-        item_lot_param_id=1052550700,
+        item_lot=1052550700,
         seconds=0.0,
         left=0,
     )
@@ -75,7 +75,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005261(0, character=Characters.SmallerDog1, region=1052552282, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, flag=1052550300, character=Characters.Scarab, item_lot_param_id=40516, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1052550300, character=Characters.Scarab, item_lot=40516, seconds=0.0, left=0)
     Event_1052552580()
     CommonFunc_900005610(0, 1052551500, 100, 800, 0)
 

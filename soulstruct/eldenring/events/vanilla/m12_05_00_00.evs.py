@@ -637,10 +637,10 @@ def Constructor():
     Event_12052360(2, character=Characters.GiantSkeletonTorso2, character_1=Characters.Albinauric2_2)
     Event_12052360(3, character=Characters.GiantSkeletonTorso3, character_1=Characters.Albinauric2_3)
     CommonFunc_90005251(0, character=Characters.Dummy0, radius=60.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12050400, character=12050400, item_lot_param_id=40680, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12050401, character=12050401, item_lot_param_id=40682, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12050402, character=12050402, item_lot_param_id=40684, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12050403, character=Characters.Scarab, item_lot_param_id=40686, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12050400, character=12050400, item_lot=40680, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12050401, character=12050401, item_lot=40682, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12050402, character=12050402, item_lot=40684, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12050403, character=Characters.Scarab, item_lot=40686, seconds=1.5, left=0)
     CommonFunc_90005790(
         0,
         right=12050800,
@@ -663,7 +663,7 @@ def Constructor():
         flag_1=12052410,
         flag_2=12052411,
         character=Characters.NamelessWhiteMask0,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
     )
     CommonFunc_90005790(
@@ -688,7 +688,7 @@ def Constructor():
         flag_1=12052412,
         flag_2=12052413,
         character=Characters.NamelessWhiteMask1,
-        item_lot_param_id=12050950,
+        item_lot=12050950,
         seconds=0.0,
     )
     CommonFunc_90005790(
@@ -713,7 +713,7 @@ def Constructor():
         flag_1=12052414,
         flag_2=12052415,
         character=Characters.NamelessWhiteMask2,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
     )
     CommonFunc_90005501(
@@ -789,7 +789,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9001,
         action_button_id=4350,
-        item_lot_param_id=100360,
+        item_lot=100360,
         first_flag=400036,
         last_flag=400037,
         flag=12059166,

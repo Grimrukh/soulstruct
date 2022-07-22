@@ -31,7 +31,7 @@ def Constructor():
         left=0,
         character=Characters.ErdtreeAvatar,
         left_1=0,
-        item_lot__item_lot_param_id=30205,
+        item_lot=30205,
         seconds=0.0,
     )
     CommonFunc_90005251(0, character=Characters.ErdtreeAvatar, radius=20.0, seconds=0.0, animation_id=0)

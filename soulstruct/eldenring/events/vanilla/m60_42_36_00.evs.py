@@ -69,7 +69,7 @@ def Constructor():
         left=0,
         character=Characters.TreeSentinel,
         left_1=0,
-        item_lot__item_lot_param_id=30100,
+        item_lot=30100,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.TreeSentinel, npc_threat_level=12, right=0)
@@ -109,7 +109,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9017,
         action_button_id=4350,
-        item_lot_param_id=103900,
+        item_lot=103900,
         first_flag=400390,
         last_flag=400390,
         flag=1042369413,

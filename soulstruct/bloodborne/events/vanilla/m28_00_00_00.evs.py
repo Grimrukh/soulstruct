@@ -3373,7 +3373,7 @@ def Event_12800911():
 
 
 @ContinueOnRest(12800920)
-def Event_12800920(_, flag: int, flag_1: int, flag_2: int, obj: int, item_lot_param_id: int):
+def Event_12800920(_, flag: int, flag_1: int, flag_2: int, obj: int, item_lot: int):
     """Event 12800920"""
     if Client():
         return
@@ -3390,7 +3390,7 @@ def Event_12800920(_, flag: int, flag_1: int, flag_2: int, obj: int, item_lot_pa
     MAIN.Await(ActionButtonParamActivated(action_button_id=7500, entity=obj))
     
     ForceAnimation(PLAYER, 101140)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     DeleteObjectVFX(obj)
 
 

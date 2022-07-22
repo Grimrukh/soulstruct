@@ -1681,7 +1681,7 @@ EMEDF = {
         "alias": "AwardItemLotToAllPlayers",
         "docstring": "TODO",
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 5): {
@@ -1975,7 +1975,7 @@ EMEDF = {
             *not* want to award an item lot to the host only.
         """,
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 41): {
@@ -3119,7 +3119,7 @@ EMEDF = {
             "attacked_entity": NO_DEFAULT(CharacterTyping),
             "attacker": {
                 "type": CharacterTyping,
-                "default": -1,
+                "default": 0,
                 "internal_default": -1,
             },
             "damage_type": {

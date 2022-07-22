@@ -39,7 +39,7 @@ def Constructor():
         0,
         flag=1043340340,
         character=Characters.DemiHumanQueen,
-        item_lot_param_id=1043340400,
+        item_lot=1043340400,
         seconds=0.0,
         left=0,
     )

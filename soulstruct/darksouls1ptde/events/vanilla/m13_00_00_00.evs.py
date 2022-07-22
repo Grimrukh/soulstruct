@@ -190,15 +190,15 @@ def Constructor():
         Event_11305370(11, character=1300812, flag=11305262)
         Event_11305370(12, character=1300813, flag=11305263)
     Event_11305370(13, character=1300814, flag=11305264)
-    Event_11300850(0, character=1300100, item_lot_param_id=0)
-    Event_11300850(1, character=1300120, item_lot_param_id=0)
-    Event_11300850(2, character=1300140, item_lot_param_id=0)
-    Event_11300850(3, character=1300160, item_lot_param_id=0)
-    Event_11300850(4, character=1300180, item_lot_param_id=0)
-    Event_11300850(5, character=1300200, item_lot_param_id=0)
-    Event_11300850(6, character=1300500, item_lot_param_id=33003000)
-    Event_11300850(7, character=1300501, item_lot_param_id=33003000)
-    Event_11300850(8, character=1300300, item_lot_param_id=0)
+    Event_11300850(0, character=1300100, item_lot=0)
+    Event_11300850(1, character=1300120, item_lot=0)
+    Event_11300850(2, character=1300140, item_lot=0)
+    Event_11300850(3, character=1300160, item_lot=0)
+    Event_11300850(4, character=1300180, item_lot=0)
+    Event_11300850(5, character=1300200, item_lot=0)
+    Event_11300850(6, character=1300500, item_lot=33003000)
+    Event_11300850(7, character=1300501, item_lot=33003000)
+    Event_11300850(8, character=1300300, item_lot=0)
     Event_11300850(9, 1300400, 27902000)
 
 
@@ -1628,7 +1628,7 @@ def Event_11305045():
 
 
 @RestartOnRest(11300850)
-def Event_11300850(_, character: int, item_lot_param_id: int):
+def Event_11300850(_, character: int, item_lot: int):
     """Event 11300850"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -1637,13 +1637,13 @@ def Event_11300850(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11300510)

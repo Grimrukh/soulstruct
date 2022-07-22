@@ -48,9 +48,9 @@ def Constructor():
         Event_11215004()
         Event_11215005()
         Event_11210000()
-        Event_11215006(0, character=1210810, character_1=1210800, item_lot_param_id=34720000)
-    Event_11215006(1, character=1210811, character_1=1210801, item_lot_param_id=34720010)
-    Event_11215006(2, character=1210812, character_1=1210802, item_lot_param_id=34720020)
+        Event_11215006(0, character=1210810, character_1=1210800, item_lot=34720000)
+    Event_11215006(1, character=1210811, character_1=1210801, item_lot=34720010)
+    Event_11215006(2, character=1210812, character_1=1210802, item_lot=34720020)
     Event_11215007()
     Event_11215008()
     Event_11215009()
@@ -174,12 +174,12 @@ def Constructor():
     Event_11210600(4, obj=1211604, obj_act_id=11210604)
     Event_11210600(5, obj=1211605, obj_act_id=11210605)
     Event_11210230(0, obj=1211210, obj_1=1211650, animation_id=125, animation_id_1=126)
-    Event_11210350(0, character=1210200, item_lot_param_id=33007200)
-    Event_11210350(1, character=1210201, item_lot_param_id=33007000)
-    Event_11210350(2, character=1210202, item_lot_param_id=33007100)
-    Event_11210350(3, character=1210203, item_lot_param_id=33007300)
-    Event_11210350(4, character=1210204, item_lot_param_id=33007100)
-    Event_11210350(5, character=1210260, item_lot_param_id=41601000)
+    Event_11210350(0, character=1210200, item_lot=33007200)
+    Event_11210350(1, character=1210201, item_lot=33007000)
+    Event_11210350(2, character=1210202, item_lot=33007100)
+    Event_11210350(3, character=1210203, item_lot=33007300)
+    Event_11210350(4, character=1210204, item_lot=33007100)
+    Event_11210350(5, character=1210260, item_lot=41601000)
     Event_11210100()
     Event_11210103()
     Event_11210110()
@@ -665,7 +665,7 @@ def Event_11210000():
 
 
 @RestartOnRest(11215006)
-def Event_11215006(_, character: int, character_1: int, item_lot_param_id: int):
+def Event_11215006(_, character: int, character_1: int, item_lot: int):
     """Event 11215006"""
     DisableCharacter(character)
     if ThisEventSlotFlagEnabled():
@@ -707,7 +707,7 @@ def Event_11215006(_, character: int, character_1: int, item_lot_param_id: int):
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(11215008)
@@ -1787,7 +1787,7 @@ def Event_11210600(_, obj: int, obj_act_id: int):
 
 
 @RestartOnRest(11210350)
-def Event_11210350(_, character: int, item_lot_param_id: int):
+def Event_11210350(_, character: int, item_lot: int):
     """Event 11210350"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -1796,13 +1796,13 @@ def Event_11210350(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(11210150)

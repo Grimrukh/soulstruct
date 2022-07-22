@@ -146,7 +146,7 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1037520355, character=1037525350, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005600(0, grace_flag=1037520001, asset=Assets.AEG099_060_9001, enemy_block_distance=5.0, character=0)
     CommonFunc_90005200(
         0,

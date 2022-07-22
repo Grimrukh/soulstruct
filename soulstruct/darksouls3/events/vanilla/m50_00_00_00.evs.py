@@ -691,7 +691,7 @@ def Constructor():
         obj=5001700,
         action_button_id=4000,
         right=0,
-        item_lot_param_id=66200,
+        item_lot=66200,
         first_flag=50006620,
         last_flag=50006620,
         flag=75000135,

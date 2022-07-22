@@ -49,7 +49,7 @@ def Constructor():
         flag_1=1038410805,
         flag_2=1038412800,
         character=Characters.AdanThiefofFire,
-        item_lot_param_id=30245,
+        item_lot=30245,
         area_id=60,
         block_id=38,
         cc_id=41,

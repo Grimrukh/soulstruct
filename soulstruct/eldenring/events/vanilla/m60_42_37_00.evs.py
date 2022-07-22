@@ -51,7 +51,7 @@ def Constructor():
         flag_1=1042370805,
         flag_2=1042372800,
         character=Characters.CrucibleKnight,
-        item_lot_param_id=30120,
+        item_lot=30120,
         area_id=60,
         block_id=42,
         cc_id=37,

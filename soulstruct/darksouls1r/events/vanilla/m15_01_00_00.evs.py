@@ -232,11 +232,11 @@ def Constructor():
     Event_11510600(17, obj=1511667, obj_act_id=11510617)
     Event_11510600(18, obj=1511668, obj_act_id=11510618)
     Event_11510600(19, obj=1511669, obj_act_id=11510619)
-    Event_11510860(0, character=1510250, item_lot_param_id=0)
-    Event_11510860(1, character=1510450, item_lot_param_id=53500000)
-    Event_11510860(2, character=1510452, item_lot_param_id=53500000)
-    Event_11510860(3, character=6640, item_lot_param_id=0)
-    Event_11510860(4, character=6650, item_lot_param_id=0)
+    Event_11510860(0, character=1510250, item_lot=0)
+    Event_11510860(1, character=1510450, item_lot=53500000)
+    Event_11510860(2, character=1510452, item_lot=53500000)
+    Event_11510860(3, character=6640, item_lot=0)
+    Event_11510860(4, character=6650, item_lot=0)
     Event_11515843(0, flag=11510902, line_intersects=1511990, anchor_entity=1512998, target_entity=1512997)
     Event_11515846(0, flag=11510902, obj=1511990, vfx_id=1511991)
     Event_11515843(1, flag=11510903, line_intersects=1511990, anchor_entity=1512998, target_entity=1512997)
@@ -2278,7 +2278,7 @@ def Event_11510462():
 
 
 @RestartOnRest(11510860)
-def Event_11510860(_, character: int, item_lot_param_id: int):
+def Event_11510860(_, character: int, item_lot: int):
     """Event 11510860"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -2287,13 +2287,13 @@ def Event_11510860(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11510461)

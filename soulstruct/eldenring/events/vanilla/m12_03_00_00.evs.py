@@ -92,7 +92,7 @@ def Constructor():
         0,
         flag=12030240,
         character=Characters.GiantAnt14,
-        item_lot_param_id=12030800,
+        item_lot=12030800,
         seconds=1.5,
         left=0,
     )
@@ -100,7 +100,7 @@ def Constructor():
         0,
         flag=12030241,
         character=Characters.GiantAnt15,
-        item_lot_param_id=12030810,
+        item_lot=12030810,
         seconds=1.5,
         left=0,
     )
@@ -108,7 +108,7 @@ def Constructor():
         0,
         flag=12030256,
         character=Characters.GiantAnt30,
-        item_lot_param_id=12030820,
+        item_lot=12030820,
         seconds=1.5,
         left=0,
     )
@@ -116,7 +116,7 @@ def Constructor():
         0,
         flag=12030257,
         character=Characters.GiantAnt31,
-        item_lot_param_id=12030830,
+        item_lot=12030830,
         seconds=1.5,
         left=0,
     )
@@ -124,7 +124,7 @@ def Constructor():
         0,
         flag=12030297,
         character=Characters.GiantAnt13,
-        item_lot_param_id=12030840,
+        item_lot=12030840,
         seconds=1.5,
         left=0,
     )
@@ -132,21 +132,21 @@ def Constructor():
         0,
         flag=12030201,
         character=Characters.GiantAnt0,
-        item_lot_param_id=12030850,
+        item_lot=12030850,
         seconds=1.5,
         left=0,
     )
     CommonFunc_90005251(0, character=12030303, radius=8.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot_param_id=40660, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot_param_id=40668, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12030355, character=Characters.Scarab2, item_lot_param_id=40670, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot=40660, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot=40668, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030355, character=Characters.Scarab2, item_lot=40670, seconds=1.5, left=0)
     CommonFunc_90005860(
         0,
         flag=12030390,
         left=0,
         character=Characters.CrucibleKnight,
         left_1=1,
-        item_lot__item_lot_param_id=12030950,
+        item_lot=12030950,
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.CrucibleKnight, name=902500600, npc_threat_level=12)
@@ -155,7 +155,7 @@ def Constructor():
         0,
         flag=12030391,
         character=Characters.ErdtreeAvatar,
-        item_lot_param_id=12030960,
+        item_lot=12030960,
         seconds=1.5,
         left=0,
     )
@@ -266,7 +266,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9001,
         action_button_id=4350,
-        item_lot_param_id=103410,
+        item_lot=103410,
         first_flag=400348,
         last_flag=400348,
         flag=4067,
@@ -338,7 +338,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9002,
         action_button_id=6460,
-        item_lot_param_id=103350,
+        item_lot=103350,
         first_flag=9502,
         last_flag=9502,
         flag=4131,
@@ -348,7 +348,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9002,
         action_button_id=4110,
-        item_lot_param_id=113300,
+        item_lot=113300,
         first_flag=400339,
         last_flag=400339,
         flag=12039162,

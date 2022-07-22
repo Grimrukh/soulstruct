@@ -172,7 +172,7 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.NoxFighter, region=12022211, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=12020220, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.RedWolf, region=12022220, radius=70.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=12020221, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=-1)
+    CommonFunc_90005300(0, flag=12020221, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=-1)
     Event_12022300(0, character=12020300, region=12022300, seconds=0.0)
     Event_12022300(1, character=12020301, region=12022300, seconds=0.0)
     Event_12022300(2, character=Characters.AncestralFollower3, region=12022302, seconds=0.0)
@@ -283,16 +283,16 @@ def Constructor():
         left=0,
         character=Characters.DragonkinSoldier,
         left_1=1,
-        item_lot__item_lot_param_id=30620,
+        item_lot=30620,
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.DragonkinSoldier, name=904650600, npc_threat_level=25)
     CommonFunc_90005251(0, character=Characters.GiantOctopus, radius=30.0, seconds=0.0, animation_id=3009)
-    CommonFunc_90005300(0, flag=12020470, character=Characters.Scarab2, item_lot_param_id=40648, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12020472, character=Characters.Scarab0, item_lot_param_id=40630, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12020474, character=Characters.Scarab4, item_lot_param_id=40610, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12020477, character=Characters.Scarab3, item_lot_param_id=40642, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12020479, character=Characters.Scarab1, item_lot_param_id=40646, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020470, character=Characters.Scarab2, item_lot=40648, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020472, character=Characters.Scarab0, item_lot=40630, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020474, character=Characters.Scarab4, item_lot=40610, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020477, character=Characters.Scarab3, item_lot=40642, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020479, character=Characters.Scarab1, item_lot=40646, seconds=1.5, left=0)
     CommonFunc_90005250(0, character=12020420, region=12022420, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=12020421, radius=60.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Dummy1, radius=100.0, seconds=0.0, animation_id=-1)
@@ -303,7 +303,7 @@ def Constructor():
         0,
         flag=12020430,
         character=Characters.CrucibleKnight0,
-        item_lot_param_id=12020435,
+        item_lot=12020435,
         seconds=1.5,
         left=0,
     )
@@ -311,7 +311,7 @@ def Constructor():
         0,
         flag=12020431,
         character=Characters.CrucibleKnight1,
-        item_lot_param_id=12020445,
+        item_lot=12020445,
         seconds=1.5,
         left=0,
     )
@@ -319,7 +319,7 @@ def Constructor():
         0,
         flag=12020434,
         character=Characters.CrucibleKnight2,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=1.5,
         left=0,
     )

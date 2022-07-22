@@ -584,7 +584,7 @@ def Event_11806100(_, character: int, destination: int):
 
 
 @RestartOnRest(11805100)
-def Event_11805100(_, character: int, item_lot_param_id: int):
+def Event_11805100(_, character: int, item_lot: int):
     """Event 11805100"""
     MAIN.Await(CharacterAlive(character))
     
@@ -594,7 +594,7 @@ def Event_11805100(_, character: int, item_lot_param_id: int):
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11800510)

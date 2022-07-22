@@ -435,10 +435,10 @@ def Constructor():
     Event_15105305()
     CommonFunc_20005132(0, character=5100310, radius=70.0, region=5102310)
     CommonFunc_20005130(0, character=5100320, radius=30.0, region=5102320)
-    CommonFunc_20005351(0, character=5100300, item_lot_param_id=62800110, flag=55100983, seconds=2.799999952316284)
-    CommonFunc_20005351(0, character=5100310, item_lot_param_id=62800010, flag=55100982, seconds=2.799999952316284)
-    CommonFunc_20005351(0, character=5100320, item_lot_param_id=62800210, flag=55100984, seconds=2.799999952316284)
-    CommonFunc_20005351(0, character=5100240, item_lot_param_id=62600230, flag=55100980, seconds=2.0)
+    CommonFunc_20005351(0, character=5100300, item_lot=62800110, flag=55100983, seconds=2.799999952316284)
+    CommonFunc_20005351(0, character=5100310, item_lot=62800010, flag=55100982, seconds=2.799999952316284)
+    CommonFunc_20005351(0, character=5100320, item_lot=62800210, flag=55100984, seconds=2.799999952316284)
+    CommonFunc_20005351(0, character=5100240, item_lot=62600230, flag=55100980, seconds=2.0)
     CommonFunc_20005114(0, character=5100242, region=5102242, seconds=1.2000000476837158)
     CommonFunc_20005132(0, character=5100243, radius=3.0, region=5102243)
     CommonFunc_20005132(0, character=5100244, radius=3.0, region=5102243)
@@ -898,13 +898,13 @@ def Constructor():
     Event_15105450(0, character=5100285, animation_id=700, animation_id_1=1700, radius=45.0)
     CommonFunc_20005400(0, character=5100298)
     CommonFunc_20000343(0, flag=15100298, character=5100298, flag_1=55100985)
-    CommonFunc_20005341(0, flag=15100290, character=5100290, item_lot_param_id=21509800)
-    CommonFunc_20005341(0, flag=15100291, character=5100291, item_lot_param_id=21509810)
-    CommonFunc_20005341(0, flag=15100292, character=5100292, item_lot_param_id=21509820)
-    CommonFunc_20005341(0, flag=15100293, character=5100293, item_lot_param_id=21509830)
-    CommonFunc_20005341(0, flag=15100294, character=5100294, item_lot_param_id=21509840)
-    CommonFunc_20005341(0, flag=15100295, character=5100295, item_lot_param_id=21509850)
-    CommonFunc_20005341(0, flag=15100296, character=5100296, item_lot_param_id=21509860)
+    CommonFunc_20005341(0, flag=15100290, character=5100290, item_lot=21509800)
+    CommonFunc_20005341(0, flag=15100291, character=5100291, item_lot=21509810)
+    CommonFunc_20005341(0, flag=15100292, character=5100292, item_lot=21509820)
+    CommonFunc_20005341(0, flag=15100293, character=5100293, item_lot=21509830)
+    CommonFunc_20005341(0, flag=15100294, character=5100294, item_lot=21509840)
+    CommonFunc_20005341(0, flag=15100295, character=5100295, item_lot=21509850)
+    CommonFunc_20005341(0, flag=15100296, character=5100296, item_lot=21509860)
     CommonFunc_20005132(0, character=5100490, radius=1.0, region=5102454)
     CommonFunc_20005132(0, character=5100491, radius=2.0, region=5102342)
     CommonFunc_20005132(0, character=5100492, radius=2.0, region=5102345)
@@ -936,10 +936,10 @@ def Constructor():
     Event_15105506()
     Event_15105508()
     Event_15105580()
-    CommonFunc_20005527(0, flag=55100670, item_lot_param_id=5100670, obj=5101680, left=2, action_button_id=9701)
-    CommonFunc_20005527(0, flag=55100900, item_lot_param_id=5100900, obj=5101684, left=1, action_button_id=9701)
-    CommonFunc_20005527(0, flag=55100910, item_lot_param_id=5100910, obj=5101685, left=1, action_button_id=9701)
-    CommonFunc_20005527(0, flag=55100910, item_lot_param_id=5100920, obj=5101686, left=1, action_button_id=9701)
+    CommonFunc_20005527(0, flag=55100670, item_lot=5100670, obj=5101680, left=2, action_button_id=9701)
+    CommonFunc_20005527(0, flag=55100900, item_lot=5100900, obj=5101684, left=1, action_button_id=9701)
+    CommonFunc_20005527(0, flag=55100910, item_lot=5100910, obj=5101685, left=1, action_button_id=9701)
+    CommonFunc_20005527(0, flag=55100910, item_lot=5100920, obj=5101686, left=1, action_button_id=9701)
     Event_15105530()
     CommonFunc_20005701(
         0,
@@ -999,7 +999,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=15104170, flag_1=15105170, flag_2=15100170, character=5100170)
     CommonFunc_20005760(0, flag=15100170, flag_1=15104170, flag_2=15105170, character=5100170)
-    CommonFunc_20005341(0, flag=15100170, character=5100170, item_lot_param_id=59600)
+    CommonFunc_20005341(0, flag=15100170, character=5100170, item_lot=59600)
     CommonFunc_20005752(
         0,
         flag=15100890,
@@ -1017,7 +1017,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=15104172, flag_1=15105172, flag_2=15100172, character=5100172)
     CommonFunc_20005760(0, flag=15100172, flag_1=15104172, flag_2=15105172, character=5100172)
-    CommonFunc_20005341(0, flag=15100172, character=5100172, item_lot_param_id=59700)
+    CommonFunc_20005341(0, flag=15100172, character=5100172, item_lot=59700)
     Event_15105490()
     CommonFunc_20005752(
         0,
@@ -1036,7 +1036,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=15104174, flag_1=15105174, flag_2=15100174, character=5100174)
     CommonFunc_20005760(0, flag=15100174, flag_1=15104174, flag_2=15105174, character=5100174)
-    CommonFunc_20005341(0, flag=15100174, character=5100174, item_lot_param_id=59800)
+    CommonFunc_20005341(0, flag=15100174, character=5100174, item_lot=59800)
     CommonFunc_20006031(0, flag=75100131, region=5102700)
     CommonFunc_20006002(0, character=5100810, flag=1918, first_flag=1915, last_flag=1919)
     Event_15105703(0, character=5100810, flag=15105003, radius=7.0)
@@ -1093,7 +1093,7 @@ def Constructor():
         obj=5101705,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=66230,
+        item_lot=66230,
         first_flag=50006623,
         last_flag=50006624,
         flag=1811,

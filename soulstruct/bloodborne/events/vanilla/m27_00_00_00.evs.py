@@ -669,9 +669,9 @@ def Constructor():
     Event_12700903(0, character=2700912, first_flag=1790, last_flag=1809, last_flag_1=1799, flag=1790)
     Event_12700904(0, attacked_entity=2700912, flag=72700320)
     Event_12700905(0, character=2700912, flag=72700320, first_flag=1790, last_flag=1809, flag_1=1805)
-    Event_12700906(0, flag=72700321, item_lot_param_id=43120, flag_1=6676)
-    Event_12700906(1, flag=72700322, item_lot_param_id=43130, flag_1=6678)
-    Event_12700908(0, flag=1790, flag_1=72700330, item_lot_param_id=43110)
+    Event_12700906(0, flag=72700321, item_lot=43120, flag_1=6676)
+    Event_12700906(1, flag=72700322, item_lot=43130, flag_1=6678)
+    Event_12700908(0, flag=1790, flag_1=72700330, item_lot=43110)
     Event_12700910()
     Event_12700909()
 
@@ -2313,7 +2313,7 @@ def Event_12700905(_, character: int, flag: int, first_flag: int, last_flag: int
 
 
 @ContinueOnRest(12700906)
-def Event_12700906(_, flag: int, item_lot_param_id: int, flag_1: int):
+def Event_12700906(_, flag: int, item_lot: int, flag_1: int):
     """Event 12700906"""
     if FlagEnabled(flag_1):
         return
@@ -2323,7 +2323,7 @@ def Event_12700906(_, flag: int, item_lot_param_id: int, flag_1: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @ContinueOnRest(12700910)
@@ -2354,7 +2354,7 @@ def Event_12700910():
 
 
 @ContinueOnRest(12700908)
-def Event_12700908(_, flag: int, flag_1: int, item_lot_param_id: int):
+def Event_12700908(_, flag: int, flag_1: int, item_lot: int):
     """Event 12700908"""
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
@@ -2372,7 +2372,7 @@ def Event_12700908(_, flag: int, flag_1: int, item_lot_param_id: int):
     
     MAIN.Await(FlagEnabled(flag_1))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     SaveRequest()
 
 

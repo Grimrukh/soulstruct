@@ -2025,7 +2025,7 @@ def CommonFunc_20005340(_, flag: int, character: int):
 
 
 @RestartOnRest(20005341)
-def CommonFunc_20005341(_, flag: int, character: int, item_lot_param_id: int):
+def CommonFunc_20005341(_, flag: int, character: int, item_lot: int):
     """CommonFunc 20005341"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
@@ -2041,7 +2041,7 @@ def CommonFunc_20005341(_, flag: int, character: int, item_lot_param_id: int):
     EnableFlag(flag)
     if PlayerNotInOwnWorld():
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
 
@@ -2081,7 +2081,7 @@ def CommonFunc_20000343(_, flag: int, character: int, flag_1: int):
 
 
 @ContinueOnRest(20005350)
-def CommonFunc_20005350(_, character: int, item_lot_param_id: int, flag: int):
+def CommonFunc_20005350(_, character: int, item_lot: int, flag: int):
     """CommonFunc 20005350"""
     if PlayerNotInOwnWorld():
         return
@@ -2091,12 +2091,12 @@ def CommonFunc_20005350(_, character: int, item_lot_param_id: int, flag: int):
     
     MAIN.Await(CharacterDead(character))
     
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
 
 @RestartOnRest(20005351)
-def CommonFunc_20005351(_, character: int, item_lot_param_id: int, flag: int, seconds: float):
+def CommonFunc_20005351(_, character: int, item_lot: int, flag: int, seconds: float):
     """CommonFunc 20005351"""
     if PlayerNotInOwnWorld():
         return
@@ -2106,7 +2106,7 @@ def CommonFunc_20005351(_, character: int, item_lot_param_id: int, flag: int, se
     MAIN.Await(CharacterDead(character))
     
     Wait(seconds)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
 
@@ -3210,7 +3210,7 @@ def CommonFunc_20005520(_, flag: int, obj: int, obj_act_id: int):
 
 
 @RestartOnRest(20005521)
-def CommonFunc_20005521(_, flag: int, flag_1: int, obj: int, obj_1: int, item_lot_param_id: int):
+def CommonFunc_20005521(_, flag: int, flag_1: int, obj: int, obj_1: int, item_lot: int):
     """CommonFunc 20005521"""
     GotoIfFlagEnabled(Label.L0, flag=flag_1)
     
@@ -3228,7 +3228,7 @@ def CommonFunc_20005521(_, flag: int, flag_1: int, obj: int, obj_1: int, item_lo
     MAIN.Await(ActionButtonParamActivated(action_button_id=4200, entity=obj_1))
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     DeleteObjectVFX(obj_1)
     EnableFlag(flag)
     End()
@@ -3289,7 +3289,7 @@ def CommonFunc_20005524(_, obj: int, flag: int):
 
 
 @ContinueOnRest(20005525)
-def CommonFunc_20005525(_, flag: int, item_lot_param_id: int, obj: int, model_point: int):
+def CommonFunc_20005525(_, flag: int, item_lot: int, obj: int, model_point: int):
     """CommonFunc 20005525"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -3302,11 +3302,11 @@ def CommonFunc_20005525(_, flag: int, item_lot_param_id: int, obj: int, model_po
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
     DeleteObjectVFX(obj)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @ContinueOnRest(20005526)
-def CommonFunc_20005526(_, flag: int, item_lot_param_id__obj: int, obj: int, model_point: int, flag_1: int):
+def CommonFunc_20005526(_, flag: int, item_lot__obj: int, obj: int, model_point: int, flag_1: int):
     """CommonFunc 20005526"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -3314,23 +3314,23 @@ def CommonFunc_20005526(_, flag: int, item_lot_param_id__obj: int, obj: int, mod
     if FlagEnabled(flag):
         return
     GotoIfFlagEnabled(Label.L0, flag=flag_1)
-    DisableObject(item_lot_param_id__obj)
+    DisableObject(item_lot__obj)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    EnableObject(item_lot_param_id__obj)
+    EnableObject(item_lot__obj)
     CreateObjectVFX(obj, vfx_id=90, model_point=model_point)
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9700, entity=obj))
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
     DeleteObjectVFX(obj)
-    AwardItemLot(item_lot_param_id__obj, host_only=False)
+    AwardItemLot(item_lot__obj, host_only=False)
 
 
 @ContinueOnRest(20005527)
-def CommonFunc_20005527(_, flag: int, item_lot_param_id: int, obj: int, left: int, action_button_id: int):
+def CommonFunc_20005527(_, flag: int, item_lot: int, obj: int, left: int, action_button_id: int):
     """CommonFunc 20005527"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -3365,7 +3365,7 @@ def CommonFunc_20005527(_, flag: int, item_lot_param_id: int, obj: int, left: in
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
     DeleteObjectVFX(obj)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @RestartOnRest(20005530)
@@ -6773,7 +6773,7 @@ def CommonFunc_20006030(
     obj: int,
     action_button_id: int,
     right: int,
-    item_lot_param_id: int,
+    item_lot: int,
     first_flag: int,
     last_flag: int,
     flag: int,
@@ -6806,7 +6806,7 @@ def CommonFunc_20006030(
     MAIN.Await(ActionButtonParamActivated(action_button_id=action_button_id, entity=obj))
     
     ForceAnimation(PLAYER, 60070, unknown2=1.0)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     DeleteObjectVFX(obj)
 
 

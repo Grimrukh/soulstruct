@@ -40,7 +40,7 @@ def Constructor():
         flag_1=1039500805,
         flag_2=1039502800,
         character=Characters.GodricktheGrafted,
-        item_lot_param_id=1039500100,
+        item_lot=1039500100,
         area_id=60,
         block_id=39,
         cc_id=50,
@@ -230,7 +230,7 @@ def Event_1039502580(
     flag_1: uint,
     flag_2: uint,
     character: uint,
-    item_lot_param_id: int,
+    item_lot: int,
     area_id: uchar,
     block_id: uchar,
     cc_id: char,
@@ -251,7 +251,7 @@ def Event_1039502580(
     Wait(3.0)
     KillBossAndDisplayBanner(character=character, banner_type=BannerType.GreatEnemyFelled)
     DeactivateGparamOverride(change_duration=10.0)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
     Wait(5.0)
     AddSpecialEffect(20000, 8870)

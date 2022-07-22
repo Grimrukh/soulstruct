@@ -78,7 +78,7 @@ def Constructor():
         flag=194,
         flag_1=9122,
         asset=Assets.AEG099_991_9000,
-        item_lot_param_id=34120500,
+        item_lot=34120500,
         item=8151,
         model_point=806936,
         action_button_id=9083,

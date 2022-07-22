@@ -81,7 +81,7 @@ def Constructor():
         0,
         flag=1051530210,
         character=Characters.ExtraLargeScarab,
-        item_lot_param_id=1051530700,
+        item_lot=1051530700,
         seconds=0.0,
         left=0,
     )
@@ -109,7 +109,7 @@ def Constructor():
         0,
         flag=1051530380,
         character=Characters.BloodyFingerOkina,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -141,7 +141,7 @@ def Constructor():
         flag_1=1051532181,
         flag_2=1051532182,
         character=Characters.BloodyFingerOkina,
-        item_lot_param_id=1051530500,
+        item_lot=1051530500,
         seconds=0.0,
     )
     CommonFunc_90005793(

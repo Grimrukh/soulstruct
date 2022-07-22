@@ -44,7 +44,7 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_90005300(0, flag=1043530500, character=Characters.Scarab, item_lot_param_id=40318, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1043530500, character=Characters.Scarab, item_lot=40318, seconds=0.0, left=0)
     CommonFunc_90005211(
         0,
         character=Characters.LeyndellFootSoldier0,
@@ -91,7 +91,7 @@ def Constructor():
         left=0,
         character=Characters.BellBearingHunter,
         left_1=0,
-        item_lot__item_lot_param_id=1043530400,
+        item_lot=1043530400,
         seconds=0.0,
     )
     CommonFunc_90005760(

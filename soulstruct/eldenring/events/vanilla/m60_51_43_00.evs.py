@@ -32,7 +32,7 @@ def Constructor():
         left=0,
         character=Characters.Gargoyle,
         left_1=0,
-        item_lot__item_lot_param_id=30425,
+        item_lot=30425,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.Gargoyle, npc_threat_level=16, right=0)

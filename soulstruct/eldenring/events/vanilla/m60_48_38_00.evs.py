@@ -86,7 +86,7 @@ def Constructor():
         flag_1=1048382181,
         flag_2=1048382182,
         character=Characters.Millicent,
-        item_lot_param_id=1048380500,
+        item_lot=1048380500,
         seconds=0.0,
     )
     CommonFunc_90005793(
@@ -99,7 +99,7 @@ def Constructor():
         region=0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=1048380290, character=Characters.Scarab, item_lot_param_id=40402, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1048380290, character=Characters.Scarab, item_lot=40402, seconds=0.0, left=0)
     Event_1048382201()
     Event_1048382200(0, source_entity=Assets.AEG099_046_1000, seconds=2.0)
     Event_1048382200(1, source_entity=Assets.AEG099_046_1001, seconds=4.0)

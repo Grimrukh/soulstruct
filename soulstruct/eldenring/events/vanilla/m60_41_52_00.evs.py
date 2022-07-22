@@ -32,7 +32,7 @@ def Constructor():
         left=0,
         character=Characters.AncientDragon,
         left_1=1,
-        item_lot__item_lot_param_id=30300,
+        item_lot=30300,
         seconds=0.0,
     )
     Event_1041522270(0, owner_entity=Characters.Dummy0, region=1041522270, source_entity=1041522271)

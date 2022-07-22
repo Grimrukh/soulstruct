@@ -31,7 +31,7 @@ def Constructor():
         anchor_entity=Characters.WanderingNoble,
         character=Characters.Troll,
         left=1,
-        item_lot_param_id=1047370100,
+        item_lot=1047370100,
     )
     CommonFunc_90005391(
         0,
@@ -52,7 +52,7 @@ def Event_1047372200(
     anchor_entity: uint,
     character: uint,
     left: int,
-    item_lot_param_id: int,
+    item_lot: int,
 ):
     """Event 1047372200"""
     if FlagEnabled(flag):
@@ -87,6 +87,6 @@ def Event_1047372200(
     DisableCharacter(character)
     if PlayerNotInOwnWorld():
         return
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)

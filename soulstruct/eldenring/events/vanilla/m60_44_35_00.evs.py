@@ -49,7 +49,7 @@ def Constructor():
         flag_1=1044350805,
         flag_2=1044352800,
         character=Characters.BloodhoundKnight,
-        item_lot_param_id=30130,
+        item_lot=30130,
         area_id=60,
         block_id=44,
         cc_id=35,
@@ -102,7 +102,7 @@ def Constructor():
         anchor_entity=Characters.WanderingNoble2,
         character=Characters.Runebear,
         left=1,
-        item_lot_param_id=1044350100,
+        item_lot=1044350100,
     )
     CommonFunc_90005391(
         0,

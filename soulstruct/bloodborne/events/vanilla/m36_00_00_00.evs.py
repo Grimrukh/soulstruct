@@ -1029,12 +1029,12 @@ def Constructor():
         flag_2=13605981,
     )
     Event_13605930(2, character=3600902, flag=13605962, flag_1=13605972, region=3602928, region_1=0, flag_2=13605982)
-    Event_13605940(0, character=3600900, flag=13605960, flag_1=13605970, item_lot_param_id=43730, character_1=3600910)
-    Event_13605940(1, character=3600901, flag=13605961, flag_1=13605971, item_lot_param_id=43740, character_1=3600911)
-    Event_13605940(2, character=3600902, flag=13605962, flag_1=13605972, item_lot_param_id=43720, character_1=3600912)
+    Event_13605940(0, character=3600900, flag=13605960, flag_1=13605970, item_lot=43730, character_1=3600910)
+    Event_13605940(1, character=3600901, flag=13605961, flag_1=13605971, item_lot=43740, character_1=3600911)
+    Event_13605940(2, character=3600902, flag=13605962, flag_1=13605972, item_lot=43720, character_1=3600912)
     Event_13600995()
     Event_13600942(0, min_seconds=6.0, max_seconds=10.0)
-    Event_13600943(0, flag=73600300, item_lot_param_id=43600)
+    Event_13600943(0, flag=73600300, item_lot=43600)
     Event_13600944()
     Event_13600951(0, character=3600905, flag=73600520, flag_1=1723)
     Event_13600952(0, character=3600905, flag=1723, flag_1=73600530)
@@ -3076,7 +3076,7 @@ def Event_13605930(_, character: int, flag: int, flag_1: int, region: int, regio
 
 
 @RestartOnRest(13605940)
-def Event_13605940(_, character: int, flag: int, flag_1: int, item_lot_param_id: int, character_1: int):
+def Event_13605940(_, character: int, flag: int, flag_1: int, item_lot: int, character_1: int):
     """Event 13605940"""
     DisableBackread(character_1)
     GotoIfFlagDisabled(Label.L0, flag=1730)
@@ -3099,7 +3099,7 @@ def Event_13605940(_, character: int, flag: int, flag_1: int, item_lot_param_id:
     EnableFlag(flag_1)
     AND_2.Add(CharacterHuman(PLAYER))
     SkipLinesIfConditionFalse(1, AND_2)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(13600900)
@@ -3150,7 +3150,7 @@ def Event_13600940(_, character: int):
 
 
 @ContinueOnRest(13600943)
-def Event_13600943(_, flag: int, item_lot_param_id: int):
+def Event_13600943(_, flag: int, item_lot: int):
     """Event 13600943"""
     if FlagEnabled(flag):
         return
@@ -3160,7 +3160,7 @@ def Event_13600943(_, flag: int, item_lot_param_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @ContinueOnRest(13600941)
@@ -3362,7 +3362,7 @@ def Event_13600953(_, character: int):
 
 
 @ContinueOnRest(13600954)
-def Event_13600954(_, flag: int, flag_1: int, item_lot_param_id: int):
+def Event_13600954(_, flag: int, flag_1: int, item_lot: int):
     """Event 13600954"""
     OR_15.Add(CharacterHuman(PLAYER))
     if not OR_15:
@@ -3382,7 +3382,7 @@ def Event_13600954(_, flag: int, flag_1: int, item_lot_param_id: int):
     
     MAIN.Await(AND_1)
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @ContinueOnRest(13600955)

@@ -56,7 +56,7 @@ def Constructor():
         left=1038540800,
         character=1038540800,
         left_1=0,
-        item_lot__item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
     )
     CommonFunc_90005250(0, character=Characters.Dog, region=1038542229, seconds=0.0, animation_id=-1)
@@ -109,7 +109,7 @@ def Constructor():
         flag_1=1038542410,
         flag_2=1038542411,
         character=Characters.AnastasiaTarnishedEater,
-        item_lot_param_id=1038540700,
+        item_lot=1038540700,
         seconds=0.0,
     )
     CommonFunc_90005793(
@@ -600,7 +600,7 @@ def Constructor():
         0,
         flag=1038540400,
         character=Characters.MaleighMarais,
-        item_lot_param_id=1038540100,
+        item_lot=1038540100,
         seconds=0.0,
         left=0,
     )

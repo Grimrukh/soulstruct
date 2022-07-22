@@ -67,7 +67,7 @@ def Constructor():
         left_3=0,
     )
     Event_1045372344()
-    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot_param_id=40116, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, left=0)
     CommonFunc_90005400(0, character=Characters.Runebear3, special_effect_id=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98101, character=Characters.Runebear3)
     CommonFunc_90005637(0, flag=1045378601, character=Characters.WanderingNoble, region=1045371620)

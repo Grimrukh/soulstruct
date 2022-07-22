@@ -417,7 +417,7 @@ def Constructor():
         0,
         flag=14000276,
         character=Characters.RayaLucariaScholar23,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -425,7 +425,7 @@ def Constructor():
         0,
         flag=14000277,
         character=Characters.RayaLucariaScholar24,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -469,16 +469,16 @@ def Constructor():
         0,
         flag=14000633,
         character=Characters.SmallCrabCrystal0,
-        item_lot_param_id=14000005,
+        item_lot=14000005,
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot_param_id=14000015, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000634, character=14000634, item_lot=14000015, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=14000637,
         character=Characters.SmallCrabCrystal1,
-        item_lot_param_id=14000025,
+        item_lot=14000025,
         seconds=0.0,
         left=0,
     )
@@ -486,7 +486,7 @@ def Constructor():
         0,
         flag=14000638,
         character=Characters.SmallCrabCrystal2,
-        item_lot_param_id=14000035,
+        item_lot=14000035,
         seconds=0.0,
         left=0,
     )
@@ -497,12 +497,12 @@ def Constructor():
     Event_14002490(1, character=Characters.Avionette1, region=14002491, seconds=0.0, animation_id=3032)
     Event_14002490(2, character=Characters.Avionette6, region=14002496, seconds=0.0, animation_id=3032)
     Event_14002490(3, character=Characters.Avionette7, region=14002496, seconds=1.0, animation_id=3032)
-    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot_param_id=40272, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000486, character=Characters.Scarab, item_lot=40272, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=14000499,
         character=Characters.MoongrumCarianKnight,
-        item_lot_param_id=14000980,
+        item_lot=14000980,
         seconds=0.0,
         left=0,
     )
@@ -570,7 +570,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9003,
         action_button_id=4110,
-        item_lot_param_id=101070,
+        item_lot=101070,
         first_flag=400107,
         last_flag=400107,
         flag=3469,

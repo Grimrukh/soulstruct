@@ -58,7 +58,7 @@ def Constructor():
         first_flag_1=13304202,
         last_flag_1=13304203,
     )
-    CommonFunc_20005350(0, character=3300200, item_lot_param_id=22700020, flag=53300990)
+    CommonFunc_20005350(0, character=3300200, item_lot=22700020, flag=53300990)
     CommonFunc_20005220(0, character=3300230, animation_id=700, animation_id_1=1700)
     CommonFunc_20005210(0, character=3300231, animation_id=700, animation_id_1=1700, radius=1.0)
     CommonFunc_20005210(0, character=3300232, animation_id=700, animation_id_1=1700, radius=4.0)
@@ -189,8 +189,8 @@ def Constructor():
         special_effect_id=12141,
         ai_param_id=221012,
     )
-    CommonFunc_20005350(0, character=3300494, item_lot_param_id=31200110, flag=53300995)
-    CommonFunc_20005350(0, character=3300495, item_lot_param_id=31200210, flag=53300996)
+    CommonFunc_20005350(0, character=3300494, item_lot=31200110, flag=53300995)
+    CommonFunc_20005350(0, character=3300495, item_lot=31200210, flag=53300996)
     CommonFunc_20005110(0, character=3300500, region=3302350)
     CommonFunc_20005110(0, character=3300501, region=3302350)
     CommonFunc_20005110(0, character=3300502, region=3302350)
@@ -200,7 +200,7 @@ def Constructor():
     CommonFunc_20005110(0, character=3300506, region=3302350)
     CommonFunc_20005110(0, character=3300507, region=3302350)
     CommonFunc_20005211(0, character=3300508, animation_id=701, animation_id_1=1701, radius=5.0, seconds=0.0)
-    CommonFunc_20005350(0, character=3300510, item_lot_param_id=22702010, flag=53300991)
+    CommonFunc_20005350(0, character=3300510, item_lot=22702010, flag=53300991)
     CommonFunc_20005110(0, character=3300580, region=3302240)
     CommonFunc_20005110(0, character=3300391, region=3302281)
     CommonFunc_20005110(0, character=3300397, region=3302290)
@@ -262,17 +262,17 @@ def Constructor():
     CommonFunc_20005132(0, character=3300372, radius=5.0, region=3302310)
     CommonFunc_20005132(0, character=3300373, radius=5.0, region=3302310)
     CommonFunc_20005210(0, character=3300384, animation_id=700, animation_id_1=1700, radius=3.0)
-    CommonFunc_20005341(0, flag=13300384, character=3300384, item_lot_param_id=31000000)
-    CommonFunc_20005341(0, flag=13300385, character=3300385, item_lot_param_id=21502030)
-    CommonFunc_20005341(0, flag=13300386, character=3300386, item_lot_param_id=21502040)
-    CommonFunc_20005341(0, flag=13300387, character=3300387, item_lot_param_id=21502050)
-    CommonFunc_20005341(0, flag=13300388, character=3300388, item_lot_param_id=21502060)
-    CommonFunc_20005341(0, flag=13300389, character=3300389, item_lot_param_id=21502000)
-    CommonFunc_20005341(0, flag=13300390, character=3300390, item_lot_param_id=21502010)
-    CommonFunc_20005341(0, flag=13300391, character=3300391, item_lot_param_id=21502020)
+    CommonFunc_20005341(0, flag=13300384, character=3300384, item_lot=31000000)
+    CommonFunc_20005341(0, flag=13300385, character=3300385, item_lot=21502030)
+    CommonFunc_20005341(0, flag=13300386, character=3300386, item_lot=21502040)
+    CommonFunc_20005341(0, flag=13300387, character=3300387, item_lot=21502050)
+    CommonFunc_20005341(0, flag=13300388, character=3300388, item_lot=21502060)
+    CommonFunc_20005341(0, flag=13300389, character=3300389, item_lot=21502000)
+    CommonFunc_20005341(0, flag=13300390, character=3300390, item_lot=21502010)
+    CommonFunc_20005341(0, flag=13300391, character=3300391, item_lot=21502020)
     Event_13305300()
     CommonFunc_20005900(0, flag=13100900, flag_1=13300560)
-    CommonFunc_20005341(0, flag=13300560, character=3300560, item_lot_param_id=52000000)
+    CommonFunc_20005341(0, flag=13300560, character=3300560, item_lot=52000000)
     CommonFunc_20005434(0, character=3300560, character_1=3300561)
     Event_13300310()
     CommonFunc_20005342(0, flag=13300395, character=3300172)
@@ -944,10 +944,10 @@ def Constructor():
     CommonFunc_20005523(0, obj=3301312, completion_count=1)
     CommonFunc_20005523(0, obj=3301313, completion_count=2)
     CommonFunc_20005523(0, obj=3301314, completion_count=2)
-    CommonFunc_20005525(0, flag=53300950, item_lot_param_id=3300950, obj=3301320, model_point=62)
-    CommonFunc_20005525(0, flag=53300960, item_lot_param_id=3300960, obj=3301321, model_point=60)
-    CommonFunc_20005525(0, flag=53300970, item_lot_param_id=3300970, obj=3301322, model_point=60)
-    CommonFunc_20005525(0, flag=53300980, item_lot_param_id=3300980, obj=3301323, model_point=62)
+    CommonFunc_20005525(0, flag=53300950, item_lot=3300950, obj=3301320, model_point=62)
+    CommonFunc_20005525(0, flag=53300960, item_lot=3300960, obj=3301321, model_point=60)
+    CommonFunc_20005525(0, flag=53300970, item_lot=3300970, obj=3301322, model_point=60)
+    CommonFunc_20005525(0, flag=53300980, item_lot=3300980, obj=3301323, model_point=62)
     CommonFunc_20005524(0, obj=3301330, flag=9481)
     CommonFunc_20005610(0, flag=63300432, region=3302432, region_1=3302433)
     CommonFunc_20005611(0, flag=63300432, obj_act_id=3303432, obj=3301432, obj_act_id_1=332100)
@@ -1266,7 +1266,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=13304180, flag_1=13305180, flag_2=13300800, character=3300180)
     CommonFunc_20005760(0, flag=13300180, flag_1=13304180, flag_2=13305180, character=3300180)
-    CommonFunc_20005341(0, flag=13300180, character=3300180, item_lot_param_id=57800)
+    CommonFunc_20005341(0, flag=13300180, character=3300180, item_lot=57800)
     CommonFunc_20005750(
         0,
         flag=13300800,
@@ -1281,7 +1281,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=13304182, flag_1=13305182, flag_2=13300800, character=3300182)
     CommonFunc_20005760(0, flag=13300182, flag_1=13304182, flag_2=13305182, character=3300182)
-    CommonFunc_20005341(0, flag=13300182, character=3300182, item_lot_param_id=57800)
+    CommonFunc_20005341(0, flag=13300182, character=3300182, item_lot=57800)
     CommonFunc_20005750(
         0,
         flag=13300800,
@@ -1296,7 +1296,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=13304184, flag_1=13305184, flag_2=13300800, character=3300184)
     CommonFunc_20005760(0, flag=13300184, flag_1=13304184, flag_2=13305184, character=3300184)
-    CommonFunc_20005341(0, flag=13300184, character=3300184, item_lot_param_id=57900)
+    CommonFunc_20005341(0, flag=13300184, character=3300184, item_lot=57900)
     CommonFunc_20006000(
         0,
         character=3300700,

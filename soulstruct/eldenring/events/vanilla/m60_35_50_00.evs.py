@@ -55,8 +55,8 @@ def Constructor():
         asset=Assets.AEG099_060_9000,
         enemy_block_distance=5.0,
     )
-    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot_param_id=40220, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot_param_id=40250, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035500322, character=Characters.Scarab1, item_lot=40220, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035500320, character=Characters.Scarab0, item_lot=40250, seconds=0.0, left=0)
     Event_1035502580()
     CommonFunc_90005501(
         0,
@@ -622,7 +622,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9000,
         action_button_id=4110,
-        item_lot_param_id=101490,
+        item_lot=101490,
         first_flag=400149,
         last_flag=400149,
         flag=1035509215,
@@ -632,7 +632,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9000,
         action_button_id=4110,
-        item_lot_param_id=101495,
+        item_lot=101495,
         first_flag=400149,
         last_flag=400149,
         flag=1035509216,

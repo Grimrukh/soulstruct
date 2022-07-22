@@ -59,7 +59,7 @@ def Constructor():
         left=0,
         character=Characters.FlyingDragon,
         left_1=1,
-        item_lot__item_lot_param_id=30110,
+        item_lot=30110,
         text=30060,
         seconds=0.0,
     )

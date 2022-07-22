@@ -1016,7 +1016,7 @@ def CommonFunc_90005271(_, character: uint, seconds: float, animation_id: int):
 
 
 @RestartOnRest(90005300)
-def CommonFunc_90005300(_, flag: uint, character: uint, item_lot_param_id: int, seconds: float, left: int):
+def CommonFunc_90005300(_, flag: uint, character: uint, item_lot: int, seconds: float, left: int):
     """CommonFunc 90005300"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     if ValueNotEqual(left=left, right=0):
@@ -1039,14 +1039,14 @@ def CommonFunc_90005300(_, flag: uint, character: uint, item_lot_param_id: int, 
         return
     if ValueEqual(left=left, right=1):
         return
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
 
 @RestartOnRest(90005360)
-def CommonFunc_90005360(_, flag: uint, character: uint, item_lot_param_id: int):
+def CommonFunc_90005360(_, flag: uint, character: uint, item_lot: int):
     """CommonFunc 90005360"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
@@ -1061,7 +1061,7 @@ def CommonFunc_90005360(_, flag: uint, character: uint, item_lot_param_id: int):
     DisplayBanner(BannerType.Unknown14)
     if PlayerNotInOwnWorld():
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(90005390)
@@ -1072,7 +1072,7 @@ def CommonFunc_90005390(
     anchor_entity: uint,
     character: uint,
     left: int,
-    item_lot_param_id: int,
+    item_lot: int,
 ):
     """CommonFunc 90005390"""
     if FlagEnabled(flag):
@@ -1107,8 +1107,8 @@ def CommonFunc_90005390(
     DisableCharacter(character)
     if PlayerNotInOwnWorld():
         return
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
 
 
@@ -4734,7 +4734,7 @@ def CommonFunc_90005631(_, anchor_entity: uint, text: int):
 
 
 @RestartOnRest(90005632)
-def CommonFunc_90005632(_, flag: uint, asset: uint, item_lot_param_id: int):
+def CommonFunc_90005632(_, flag: uint, asset: uint, item_lot: int):
     """CommonFunc 90005632"""
     if FlagEnabled(flag):
         return
@@ -4750,7 +4750,7 @@ def CommonFunc_90005632(_, flag: uint, asset: uint, item_lot_param_id: int):
     DeleteAssetVFX(asset)
     PlaySoundEffect(asset, 806841, sound_type=SoundType.s_SFX)
     Wait(0.10000000149011612)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(90005633)
@@ -6804,7 +6804,7 @@ def CommonFunc_90005724(
     _,
     flag: uint,
     character: uint,
-    item_lot_param_id: int,
+    item_lot: int,
     seconds: float,
     left: int,
     character_1: uint,
@@ -6834,7 +6834,7 @@ def CommonFunc_90005724(
         return
     if ValueEqual(left=left, right=1):
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
 
@@ -7535,7 +7535,7 @@ def CommonFunc_90005750(
     _,
     asset: uint,
     action_button_id: int,
-    item_lot_param_id: int,
+    item_lot: int,
     first_flag: uint,
     last_flag: uint,
     flag: uint,
@@ -7563,7 +7563,7 @@ def CommonFunc_90005750(
     
     GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     EzstateAIRequest(PLAYER, command_id=60070, command_slot=0)
     End()
 
@@ -7690,7 +7690,7 @@ def CommonFunc_90005773(_, flag: uint):
 
 
 @ContinueOnRest(90005774)
-def CommonFunc_90005774(_, flag: uint, item_lot_param_id: int, flag_1: uint):
+def CommonFunc_90005774(_, flag: uint, item_lot: int, flag_1: uint):
     """CommonFunc 90005774"""
     if PlayerNotInOwnWorld():
         return
@@ -7700,7 +7700,7 @@ def CommonFunc_90005774(_, flag: uint, item_lot_param_id: int, flag_1: uint):
     AND_2.Add(FlagEnabled(flag))
     AwaitConditionTrue(AND_2)
     if PlayerInOwnWorld():
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     End()
 
 
@@ -8027,7 +8027,7 @@ def CommonFunc_90005792(
     flag_1: uint,
     flag_2: uint,
     character: uint,
-    item_lot_param_id: int,
+    item_lot: int,
     seconds: float,
 ):
     """CommonFunc 90005792"""
@@ -8048,9 +8048,9 @@ def CommonFunc_90005792(
     EnableFlag(flag)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
     OR_1.Add(FlagEnabled(flag_2))
 
@@ -8772,22 +8772,22 @@ def CommonFunc_90005860(
     left: uint,
     character: uint,
     left_1: uint,
-    item_lot__item_lot_param_id: int,
+    item_lot: int,
     seconds: float,
 ):
     """CommonFunc 90005860"""
-    if ValueNotEqual(left=item_lot__item_lot_param_id, right=0):
-        Unknown_2004_76(flag=flag, item_lot=item_lot__item_lot_param_id)
+    if ValueNotEqual(left=item_lot, right=0):
+        Unknown_2004_76(flag=flag, item_lot=item_lot)
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
     DisableAnimations(character)
     Kill(character)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(1.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #
@@ -8818,10 +8818,10 @@ def CommonFunc_90005860(
         EnableFlag(left)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(5.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
     Wait(seconds)
 
@@ -8833,23 +8833,23 @@ def CommonFunc_90005861(
     left: uint,
     character: uint,
     left_1: uint,
-    item_lot__item_lot_param_id: int,
+    item_lot: int,
     text: int,
     seconds: float,
 ):
     """CommonFunc 90005861"""
-    if ValueNotEqual(left=item_lot__item_lot_param_id, right=0):
-        Unknown_2004_76(flag=flag, item_lot=item_lot__item_lot_param_id)
+    if ValueNotEqual(left=item_lot, right=0):
+        Unknown_2004_76(flag=flag, item_lot=item_lot)
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
     DisableAnimations(character)
     Kill(character)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(1.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #
@@ -8880,10 +8880,10 @@ def CommonFunc_90005861(
         EnableFlag(left)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(5.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     Wait(2.0)
     DisplayFlashingMessage(text)
     End()
@@ -9076,7 +9076,7 @@ def CommonFunc_90005880(
     flag_1: uint,
     flag_2: uint,
     character: uint,
-    item_lot_param_id: int,
+    item_lot: int,
     area_id: uchar,
     block_id: uchar,
     cc_id: char,
@@ -9097,7 +9097,7 @@ def CommonFunc_90005880(
     Wait(3.0)
     KillBossAndDisplayBanner(character=character, banner_type=BannerType.EnemyFelled)
     DeactivateGparamOverride(change_duration=10.0)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
     Wait(5.0)
     AddSpecialEffect(20000, 8870)
@@ -9875,7 +9875,7 @@ def CommonFunc_90005110(
     flag: uint,
     flag_1: uint,
     asset: uint,
-    item_lot_param_id: int,
+    item_lot: int,
     item: int,
     model_point: int,
     action_button_id: int,
@@ -9901,7 +9901,7 @@ def CommonFunc_90005110(
     DeleteAssetVFX(asset)
     Wait(4.0)
     DisplayBanner(BannerType.GreatRuneRestored)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     RemoveGoodFromPlayer(item=item, quantity=1)
     EnableFlag(flag)
     End()

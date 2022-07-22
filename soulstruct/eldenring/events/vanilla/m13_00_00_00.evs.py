@@ -102,22 +102,22 @@ def Constructor():
     )
     Event_13002892()
     Event_13002236(0, region=13002314, character=Characters.BeastmanofFarumAzula29)
-    CommonFunc_90005300(0, flag=13000340, character=13000340, item_lot_param_id=40770, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000341, character=Characters.Scarab, item_lot_param_id=40772, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000342, character=13000342, item_lot_param_id=40774, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000343, character=13000343, item_lot_param_id=40776, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000369, character=Characters.WormfaceLarge, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000340, character=13000340, item_lot=40770, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000341, character=Characters.Scarab, item_lot=40772, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000342, character=13000342, item_lot=40774, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000343, character=13000343, item_lot=40776, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000369, character=Characters.WormfaceLarge, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=13000490,
         character=Characters.AncientDragon0,
-        item_lot_param_id=13002091,
+        item_lot=13002091,
         seconds=0.0,
         left=0,
     )
     Event_13002493(0, character=Characters.AncientDragon0, region=13002641, region_1=13002640)
     Event_13002646(0, flag=13000492, region=13002492, character=Characters.AncientDragon1, seconds=10.0)
-    CommonFunc_90005300(0, flag=13000494, character=Characters.AncientDragon2, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000494, character=Characters.AncientDragon2, item_lot=0, seconds=0.0, left=0)
     Event_13002493(2, character=Characters.AncientDragon2, region=13002645, region_1=13002494)
     Event_13002646(1, flag=13000494, region=13002646, character=Characters.AncientDragon2, seconds=10.0)
     Event_13002610()
@@ -125,19 +125,19 @@ def Constructor():
         0,
         flag=13000495,
         character=Characters.AncientDragon3,
-        item_lot_param_id=13002093,
+        item_lot=13002093,
         seconds=0.0,
         left=0,
     )
     Event_13002646(2, flag=13000495, region=13002495, character=Characters.AncientDragon3, seconds=1.0)
-    CommonFunc_90005300(0, flag=13000701, character=Characters.AncientDragon4, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=13000702, character=Characters.AncientDragon5, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000701, character=Characters.AncientDragon4, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000702, character=Characters.AncientDragon5, item_lot=0, seconds=0.0, left=0)
     Event_13002493(3, character=Characters.AncientDragon5, region=13002497, region_1=13002493)
     CommonFunc_90005300(
         0,
         flag=13000295,
         character=Characters.CrucibleKnight0,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -145,7 +145,7 @@ def Constructor():
         0,
         flag=13000296,
         character=Characters.CrucibleKnight1,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -153,7 +153,7 @@ def Constructor():
         0,
         flag=13000496,
         character=Characters.DraconicTreeSentinel,
-        item_lot_param_id=13002095,
+        item_lot=13002095,
         seconds=2.0,
         left=0,
     )
@@ -287,7 +287,7 @@ def Constructor():
         flag_1=13002181,
         flag_2=13002182,
         character=Characters.RecusantBernahl0,
-        item_lot_param_id=102920,
+        item_lot=102920,
         seconds=0.0,
     )
     RunCommonEvent(
@@ -316,7 +316,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9009,
         action_button_id=4110,
-        item_lot_param_id=101740,
+        item_lot=101740,
         first_flag=400174,
         last_flag=400174,
         flag=13009254,

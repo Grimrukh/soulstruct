@@ -30,7 +30,7 @@ def Constructor():
         flag_1=1033450805,
         flag_2=1033452800,
         character=Characters.LiurniaTroll,
-        item_lot_param_id=30250,
+        item_lot=30250,
         area_id=60,
         block_id=33,
         cc_id=45,

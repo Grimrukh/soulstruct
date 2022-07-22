@@ -166,7 +166,7 @@ def Constructor():
     Event_39202145()
     Event_39203700()
     Event_39203701()
-    CommonFunc_90005774(0, flag=7606, item_lot_param_id=39200500, flag_1=39207500)
+    CommonFunc_90005774(0, flag=7606, item_lot=39200500, flag_1=39207500)
     Event_39203710()
     Event_39203720()
 

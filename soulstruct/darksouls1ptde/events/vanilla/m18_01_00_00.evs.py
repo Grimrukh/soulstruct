@@ -49,8 +49,8 @@ def Constructor():
     Event_11810450()
     Event_11810320()
     Event_11810300()
-    Event_11810850(0, character=1810200, item_lot_param_id=27907000)
-    Event_11810850(1, character=1810213, item_lot_param_id=27907000)
+    Event_11810850(0, character=1810200, item_lot=27907000)
+    Event_11810850(1, character=1810213, item_lot=27907000)
     SkipLinesIfClient(44)
     Event_11810641(0, item_type=3, item=111, flag=11810601, flag_1=51810800)
     Event_11810641(1, item_type=3, item=270, flag=11810602, flag_1=51810810)
@@ -865,7 +865,7 @@ def Event_11810300():
 
 
 @RestartOnRest(11810850)
-def Event_11810850(_, character: int, item_lot_param_id: int):
+def Event_11810850(_, character: int, item_lot: int):
     """Event 11810850"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -874,13 +874,13 @@ def Event_11810850(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(11810350)

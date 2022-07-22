@@ -408,7 +408,7 @@ def Constructor():
         0,
         flag=1051360291,
         character=Characters.LionGuardian0,
-        item_lot_param_id=1051360700,
+        item_lot=1051360700,
         seconds=0.0,
         left=0,
     )
@@ -416,7 +416,7 @@ def Constructor():
         0,
         flag=1051360292,
         character=Characters.LionGuardian1,
-        item_lot_param_id=1051360800,
+        item_lot=1051360800,
         seconds=0.0,
         left=0,
     )

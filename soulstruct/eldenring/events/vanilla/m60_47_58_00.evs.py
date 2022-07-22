@@ -40,7 +40,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9001,
         action_button_id=4350,
-        item_lot_param_id=104110,
+        item_lot=104110,
         first_flag=400411,
         last_flag=400411,
         flag=1047589210,

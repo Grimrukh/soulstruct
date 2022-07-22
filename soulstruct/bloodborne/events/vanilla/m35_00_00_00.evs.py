@@ -832,7 +832,7 @@ def Constructor():
         region_1=3502895,
         flag_2=13505913,
     )
-    Event_13505904(0, character=3500936, flag=13505911, flag_1=13505912, item_lot_param_id=43710, character_1=3500937)
+    Event_13505904(0, character=3500936, flag=13505911, flag_1=13505912, item_lot=43710, character_1=3500937)
     Event_13501960()
     Event_13500963(0, character=3500910, first_flag=1750, last_flag=1769, last_flag_1=1752, flag=1750)
     Event_13500963(1, character=3500910, first_flag=1750, last_flag=1769, last_flag_1=1752, flag=1752)
@@ -926,13 +926,13 @@ def Constructor():
     Event_13501900(12, character=3500556)
     Event_13500977()
     Event_13501915(0, character=3500933, flag=13501904)
-    Event_13500953(0, flag=1712, flag_1=73500630, item_lot_param_id=43200)
-    Event_13501920(1, flag=73500321, item_lot_param_id=43010)
-    Event_13501920(2, flag=73500322, item_lot_param_id=43020)
-    Event_13501920(3, flag=13501900, item_lot_param_id=43830)
-    Event_13501920(4, flag=13501903, item_lot_param_id=43820)
-    Event_13501920(5, flag=13501905, item_lot_param_id=43710)
-    Event_13501940(0, flag=73500320, item_lot_param_id=43000)
+    Event_13500953(0, flag=1712, flag_1=73500630, item_lot=43200)
+    Event_13501920(1, flag=73500321, item_lot=43010)
+    Event_13501920(2, flag=73500322, item_lot=43020)
+    Event_13501920(3, flag=13501900, item_lot=43830)
+    Event_13501920(4, flag=13501903, item_lot=43820)
+    Event_13501920(5, flag=13501905, item_lot=43710)
+    Event_13501940(0, flag=73500320, item_lot=43000)
     DeleteVFX(3503910, erase_root_only=False)
     Event_13504400(0, flag=13504440, vfx_id=3503910, flag_1=13504420, flag_2=13504430, flag_3=13501850, flag_4=6001)
     Event_13504410(
@@ -4830,7 +4830,7 @@ def Event_13500952(_, character: int):
 
 
 @ContinueOnRest(13500953)
-def Event_13500953(_, flag: int, flag_1: int, item_lot_param_id: int):
+def Event_13500953(_, flag: int, flag_1: int, item_lot: int):
     """Event 13500953"""
     OR_15.Add(CharacterHuman(PLAYER))
     if not OR_15:
@@ -4848,7 +4848,7 @@ def Event_13500953(_, flag: int, flag_1: int, item_lot_param_id: int):
     
     MAIN.Await(FlagEnabled(flag_1))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     SaveRequest()
 
 
@@ -5262,7 +5262,7 @@ def Event_13501915(_, character: int, flag: int):
 
 
 @ContinueOnRest(13501920)
-def Event_13501920(_, flag: int, item_lot_param_id: int):
+def Event_13501920(_, flag: int, item_lot: int):
     """Event 13501920"""
     if ThisEventSlotFlagEnabled():
         return
@@ -5272,11 +5272,11 @@ def Event_13501920(_, flag: int, item_lot_param_id: int):
     
     MAIN.Await(FlagEnabled(flag))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @ContinueOnRest(13501940)
-def Event_13501940(_, flag: int, item_lot_param_id: int):
+def Event_13501940(_, flag: int, item_lot: int):
     """Event 13501940"""
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
@@ -5285,7 +5285,7 @@ def Event_13501940(_, flag: int, item_lot_param_id: int):
     MAIN.Await(FlagEnabled(flag))
     
     DisableFlag(flag)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     End()
 
 
@@ -5454,7 +5454,7 @@ def Event_13505903(_, character: int, flag: int, flag_1: int, region: int, regio
 
 
 @RestartOnRest(13505904)
-def Event_13505904(_, character: int, flag: int, flag_1: int, item_lot_param_id: int, character_1: int):
+def Event_13505904(_, character: int, flag: int, flag_1: int, item_lot: int, character_1: int):
     """Event 13505904"""
     DisableBackread(character_1)
     GotoIfFlagDisabled(Label.L0, flag=1730)
@@ -5480,7 +5480,7 @@ def Event_13505904(_, character: int, flag: int, flag_1: int, item_lot_param_id:
     AND_2.Add(CharacterHuman(PLAYER))
     if not AND_2:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 1 --- #

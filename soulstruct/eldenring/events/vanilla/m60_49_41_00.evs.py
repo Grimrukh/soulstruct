@@ -25,7 +25,7 @@ from .entities.m60_49_41_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot_param_id=40426, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot=40426, seconds=0.0, left=0)
     Event_1049412580()
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)

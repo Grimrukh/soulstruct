@@ -350,15 +350,15 @@ def Constructor():
         seconds_1=1.0,
     )
     CommonFunc_20005210(0, character=3500370, animation_id=700, animation_id_1=1700, radius=3.0)
-    CommonFunc_20005341(0, flag=13500290, character=3500370, item_lot_param_id=31001000)
-    CommonFunc_20005341(0, flag=13500292, character=3500372, item_lot_param_id=21503000)
-    CommonFunc_20005341(0, flag=13500293, character=3500373, item_lot_param_id=21503010)
-    Event_13500276(0, character=3500668, item_lot_param_id=21800110)
-    CommonFunc_20005341(0, flag=13500295, character=3500669, item_lot_param_id=21800010)
+    CommonFunc_20005341(0, flag=13500290, character=3500370, item_lot=31001000)
+    CommonFunc_20005341(0, flag=13500292, character=3500372, item_lot=21503000)
+    CommonFunc_20005341(0, flag=13500293, character=3500373, item_lot=21503010)
+    Event_13500276(0, character=3500668, item_lot=21800110)
+    CommonFunc_20005341(0, flag=13500295, character=3500669, item_lot=21800010)
     Event_13505275()
     CommonFunc_20005150(0, character=3500584)
     CommonFunc_20005150(0, character=3500585)
-    CommonFunc_20005350(0, character=3500586, item_lot_param_id=52230310, flag=53500970)
+    CommonFunc_20005350(0, character=3500586, item_lot=52230310, flag=53500970)
     CommonFunc_20005110(0, character=3500589, region=3502257)
     Event_13505270(
         0,
@@ -543,11 +543,11 @@ def Constructor():
     CommonFunc_20005523(0, obj=3501531, completion_count=2)
     CommonFunc_20005524(0, obj=3501532, flag=9511)
     CommonFunc_20005524(0, obj=3501810, flag=13500800)
-    CommonFunc_20005525(0, flag=53500850, item_lot_param_id=3500850, obj=3501540, model_point=61)
-    CommonFunc_20005525(0, flag=53500860, item_lot_param_id=3500860, obj=3501541, model_point=60)
-    CommonFunc_20005525(0, flag=53500870, item_lot_param_id=3500870, obj=3501542, model_point=60)
-    CommonFunc_20005525(0, flag=53500880, item_lot_param_id=3500880, obj=3501543, model_point=61)
-    CommonFunc_20005525(0, flag=53500890, item_lot_param_id=3500890, obj=3501544, model_point=61)
+    CommonFunc_20005525(0, flag=53500850, item_lot=3500850, obj=3501540, model_point=61)
+    CommonFunc_20005525(0, flag=53500860, item_lot=3500860, obj=3501541, model_point=60)
+    CommonFunc_20005525(0, flag=53500870, item_lot=3500870, obj=3501542, model_point=60)
+    CommonFunc_20005525(0, flag=53500880, item_lot=3500880, obj=3501543, model_point=61)
+    CommonFunc_20005525(0, flag=53500890, item_lot=3500890, obj=3501544, model_point=61)
     CommonFunc_20005510(
         0,
         flag=13500500,
@@ -647,7 +647,7 @@ def Constructor():
         obj=3501715,
         action_button_id=6190,
         right=2,
-        item_lot_param_id=60920,
+        item_lot=60920,
         first_flag=50006092,
         last_flag=50006092,
         flag=1152,
@@ -759,7 +759,7 @@ def Constructor():
     )
     CommonFunc_20005721(0, flag=13504194, flag_1=13505194, flag_2=13500800, character=3500194)
     CommonFunc_20005760(0, flag=13500194, flag_1=13504194, flag_2=13505194, character=3500194)
-    CommonFunc_20005341(0, flag=13500194, character=3500194, item_lot_param_id=58700)
+    CommonFunc_20005341(0, flag=13500194, character=3500194, item_lot=58700)
     Event_13505100()
     CommonFunc_20006002(0, character=3500725, flag=1638, first_flag=1635, last_flag=1639)
     Event_13505751(0, character=3500725)
@@ -1143,7 +1143,7 @@ def Event_13505275():
 
 
 @RestartOnRest(13500276)
-def Event_13500276(_, character: int, item_lot_param_id: int):
+def Event_13500276(_, character: int, item_lot: int):
     """Event 13500276"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     AND_1.Add(PlayerInOwnWorld())
@@ -1154,7 +1154,7 @@ def Event_13500276(_, character: int, item_lot_param_id: int):
     
     if PlayerNotInOwnWorld():
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #

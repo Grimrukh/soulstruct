@@ -93,7 +93,7 @@ def Constructor():
         left=0,
         character=Characters.TibiaMariner,
         left_1=0,
-        item_lot__item_lot_param_id=30170,
+        item_lot=30170,
         seconds=0.0,
     )
     CommonFunc_90005704(

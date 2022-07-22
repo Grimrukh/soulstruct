@@ -2705,12 +2705,12 @@ def Event_12901593(_, flag: int, obj: int):
 def Event_12901594(
     _,
     flag: int,
-    item_lot_param_id: int,
-    item_lot_param_id_1: int,
-    item_lot_param_id_2: int,
-    item_lot_param_id_3: int,
-    item_lot_param_id_4: int,
-    item_lot_param_id_5: int,
+    item_lot: int,
+    item_lot_1: int,
+    item_lot_2: int,
+    item_lot_3: int,
+    item_lot_4: int,
+    item_lot_5: int,
     flag_1: int,
 ):
     """Event 12901594"""
@@ -2723,32 +2723,32 @@ def Event_12901594(
     AND_1.Add(FlagEnabled(92905377))
     AND_1.Add(FlagDisabled(flag_1))
     SkipLinesIfConditionFalse(2, AND_1)
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     End()
     if FlagDisabled(92905378):
-        AwardItemLot(item_lot_param_id, host_only=False)
+        AwardItemLot(item_lot, host_only=False)
         End()
     AND_2.Add(FlagEnabled(92905360))
     AND_2.Add(FlagEnabled(12907220))
     SkipLinesIfConditionTrue(2, AND_2)
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     End()
     SkipLinesIfClient(9)
     EndIfFlagRangeAllDisabled(flag_range=(92905370, 92905373))
     if FlagDisabled(flag_1):
-        AwardItemLot(item_lot_param_id_4, host_only=False)
+        AwardItemLot(item_lot_4, host_only=False)
         EnableFlag(flag_1)
     else:
-        AwardItemLot(item_lot_param_id_5, host_only=False)
+        AwardItemLot(item_lot_5, host_only=False)
     EndIfFlagRangeAllDisabled(flag_range=(92905371, 92905373))
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_1, host_only=True)
+    AwardItemLot(item_lot_1, host_only=True)
     End()
     SkipLinesIfFlagRangeAllDisabled(1, (92905370, 92905373))
-    AwardItemLot(item_lot_param_id_2, host_only=True)
+    AwardItemLot(item_lot_2, host_only=True)
     End()
 
 
@@ -2756,12 +2756,12 @@ def Event_12901594(
 def Event_12901595(
     _,
     flag: int,
-    item_lot_param_id: int,
-    item_lot_param_id_1: int,
-    item_lot_param_id_2: int,
-    item_lot_param_id_3: int,
-    item_lot_param_id_4: int,
-    item_lot_param_id_5: int,
+    item_lot: int,
+    item_lot_1: int,
+    item_lot_2: int,
+    item_lot_3: int,
+    item_lot_4: int,
+    item_lot_5: int,
     flag_1: int,
 ):
     """Event 12901595"""
@@ -2774,39 +2774,39 @@ def Event_12901595(
     AND_1.Add(FlagEnabled(92905377))
     AND_1.Add(FlagDisabled(flag_1))
     SkipLinesIfConditionFalse(2, AND_1)
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     End()
     if FlagDisabled(92905378):
-        AwardItemLot(item_lot_param_id, host_only=False)
+        AwardItemLot(item_lot, host_only=False)
         End()
     AND_2.Add(FlagEnabled(92905360))
     AND_2.Add(FlagEnabled(12907220))
     SkipLinesIfConditionTrue(2, AND_2)
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     End()
     SkipLinesIfClient(11)
     if FlagDisabled(92905360):
         return
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     EndIfFlagRangeAllDisabled(flag_range=(92905370, 92905373))
     if FlagDisabled(flag_1):
-        AwardItemLot(item_lot_param_id_4, host_only=False)
+        AwardItemLot(item_lot_4, host_only=False)
         EnableFlag(flag_1)
     else:
-        AwardItemLot(item_lot_param_id_5, host_only=False)
+        AwardItemLot(item_lot_5, host_only=False)
     EndIfFlagRangeAllDisabled(flag_range=(92905371, 92905373))
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_1, host_only=True)
+    AwardItemLot(item_lot_1, host_only=True)
     SkipLinesIfFlagRangeAllDisabled(1, (92905370, 92905373))
-    AwardItemLot(item_lot_param_id_2, host_only=True)
+    AwardItemLot(item_lot_2, host_only=True)
     End()
 
 
 @ContinueOnRest(12901596)
-def Event_12901596(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
+def Event_12901596(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int):
     """Event 12901596"""
     if FlagEnabled(flag):
         return
@@ -2814,16 +2814,16 @@ def Event_12901596(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     MAIN.Await(FlagEnabled(flag))
     
     SkipLinesIfClient(2)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_1, host_only=False)
+    AwardItemLot(item_lot_1, host_only=False)
     SkipLinesIfFlagRangeAllDisabled(1, (92905370, 92905373))
-    AwardItemLot(item_lot_param_id_2, host_only=True)
+    AwardItemLot(item_lot_2, host_only=True)
     End()
 
 
 @ContinueOnRest(12901597)
-def Event_12901597(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
+def Event_12901597(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int):
     """Event 12901597"""
     if FlagEnabled(flag):
         return
@@ -2831,16 +2831,16 @@ def Event_12901597(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     MAIN.Await(FlagEnabled(flag))
     
     SkipLinesIfClient(2)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_1, host_only=False)
+    AwardItemLot(item_lot_1, host_only=False)
     SkipLinesIfFlagRangeAllDisabled(1, (92905370, 92905373))
-    AwardItemLot(item_lot_param_id_2, host_only=True)
+    AwardItemLot(item_lot_2, host_only=True)
     End()
 
 
 @ContinueOnRest(12901598)
-def Event_12901598(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int):
+def Event_12901598(_, flag: int, item_lot: int, item_lot_1: int):
     """Event 12901598"""
     if FlagEnabled(flag):
         return
@@ -2848,9 +2848,9 @@ def Event_12901598(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     MAIN.Await(FlagEnabled(flag))
     
     SkipLinesIfClient(2)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     End()
-    AwardItemLot(item_lot_param_id_1, host_only=False)
+    AwardItemLot(item_lot_1, host_only=False)
     End()
 
 
@@ -3369,12 +3369,12 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
 def Event_12901693(
     _,
     flag: int,
-    item_lot_param_id: int,
-    item_lot_param_id_1: int,
-    item_lot_param_id_2: int,
-    item_lot_param_id_3: int,
-    item_lot_param_id_4: int,
-    item_lot_param_id_5: int,
+    item_lot: int,
+    item_lot_1: int,
+    item_lot_2: int,
+    item_lot_3: int,
+    item_lot_4: int,
+    item_lot_5: int,
 ):
     """Event 12901693"""
     DisableNetworkSync()
@@ -3391,9 +3391,9 @@ def Event_12901693(
     SkipLinesIfConditionFalse(6, AND_1)
     AND_2.Add(FlagEnabled(12907213))
     SkipLinesIfConditionTrue(2, AND_2)
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     Goto(Label.L1)
-    AwardItemLot(item_lot_param_id_5, host_only=False)
+    AwardItemLot(item_lot_5, host_only=False)
     Goto(Label.L1)
     AND_3.Add(FlagDisabled(92905385))
     AND_3.Add(FlagEnabled(92905378))
@@ -3407,9 +3407,9 @@ def Event_12901693(
     DefineLabel(3)
     AND_4.Add(FlagEnabled(12907212))
     SkipLinesIfConditionTrue(2, AND_4)
-    AwardItemLot(item_lot_param_id_4, host_only=False)
+    AwardItemLot(item_lot_4, host_only=False)
     Goto(Label.L1)
-    AwardItemLot(item_lot_param_id_5, host_only=False)
+    AwardItemLot(item_lot_5, host_only=False)
     Goto(Label.L1)
 
     # --- Label 1 --- #
@@ -3429,17 +3429,17 @@ def Event_12901693(
     DefineLabel(0)
     GotoIfClient(Label.L4)
     if FlagDisabled(92905370):
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
         Goto(Label.L9)
-    AwardItemLot(item_lot_param_id_1, host_only=True)
+    AwardItemLot(item_lot_1, host_only=True)
     Goto(Label.L9)
 
     # --- Label 4 --- #
     DefineLabel(4)
     if FlagDisabled(92905370):
-        AwardItemLot(item_lot_param_id_2, host_only=True)
+        AwardItemLot(item_lot_2, host_only=True)
         Goto(Label.L9)
-    AwardItemLot(item_lot_param_id_3, host_only=True)
+    AwardItemLot(item_lot_3, host_only=True)
     Goto(Label.L9)
 
     # --- Label 9 --- #
@@ -4345,10 +4345,10 @@ def Event_12901728(_, flag: int, obj: int):
 def Event_12901730(
     _,
     flag: int,
-    item_lot_param_id: int,
-    item_lot_param_id_1: int,
-    item_lot_param_id_2: int,
-    item_lot_param_id_3: int,
+    item_lot: int,
+    item_lot_1: int,
+    item_lot_2: int,
+    item_lot_3: int,
 ):
     """Event 12901730"""
     DisableNetworkSync()
@@ -4359,17 +4359,17 @@ def Event_12901730(
     
     GotoIfClient(Label.L0)
     if FlagDisabled(92905370):
-        AwardItemLot(item_lot_param_id, host_only=False)
+        AwardItemLot(item_lot, host_only=False)
         End()
-    AwardItemLot(item_lot_param_id_1, host_only=False)
+    AwardItemLot(item_lot_1, host_only=False)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     if FlagDisabled(92905370):
-        AwardItemLot(item_lot_param_id_2, host_only=False)
+        AwardItemLot(item_lot_2, host_only=False)
         End()
-    AwardItemLot(item_lot_param_id_3, host_only=False)
+    AwardItemLot(item_lot_3, host_only=False)
     End()
 
 

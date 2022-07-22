@@ -32,7 +32,7 @@ def Constructor():
         anchor_entity=Characters.GiantLobster,
         character=Characters.GraftedScion,
         left=1,
-        item_lot_param_id=1035430100,
+        item_lot=1035430100,
     )
     CommonFunc_90005391(0, 1035430220, 1035432220, 1035430220, 1035430230, 1)
 
@@ -171,7 +171,7 @@ def Event_1035432395(
     character: uint,
     character_1: uint,
     left: int,
-    item_lot_param_id: int,
+    item_lot: int,
 ):
     """Event 1035432395"""
     if FlagEnabled(flag):
@@ -209,9 +209,9 @@ def Event_1035432395(
     DefineLabel(3)
     AddSpecialEffect(character_1, 4305)
     Wait(3.0)
-    SkipLinesIfValueEqual(2, left=item_lot_param_id, right=0)
+    SkipLinesIfValueEqual(2, left=item_lot, right=0)
     SkipLinesIfPlayerNotInOwnWorld(1)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     DisableCharacter(character)
     DisableGravity(character)
     DisableAnimations(character)

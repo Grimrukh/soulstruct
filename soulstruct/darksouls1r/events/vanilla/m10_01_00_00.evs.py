@@ -102,8 +102,8 @@ def Constructor():
         Event_11015394()
         Event_11015395()
         Event_11015396()
-        Event_11010750(0, character=1010800, item_lot_param_id=53500000)
-        Event_11010750(1, character=1010801, item_lot_param_id=53500100)
+        Event_11010750(0, character=1010800, item_lot=53500000)
+        Event_11010750(1, character=1010801, item_lot=53500100)
     Event_11015397(0, character=1010800, npc_part_id=5350, npc_part_id_1=5350, character_1=1010810)
     Event_11015398(0, character=1010801, character_1=1010811)
     DisableSoundEvent(sound_id=1013802)
@@ -206,13 +206,13 @@ def Constructor():
     Event_11010130(3, obj=1011253, character=1010153, region=1012151)
     Event_11010130(4, obj=1011254, character=1010154, region=1012151)
     Event_11010130(5, obj=1011255, character=1010155, region=1012151)
-    Event_11010860(0, character=6580, left=0, item_lot_param_id=0)
-    Event_11010860(1, character=1010350, left=1, item_lot_param_id=27900000)
-    Event_11010860(2, character=1010351, left=1, item_lot_param_id=27900100)
-    Event_11010860(3, character=1010320, left=0, item_lot_param_id=0)
-    Event_11010860(4, character=1010340, left=0, item_lot_param_id=0)
-    Event_11010860(5, character=1010370, left=0, item_lot_param_id=0)
-    Event_11010860(6, character=6010, left=0, item_lot_param_id=0)
+    Event_11010860(0, character=6580, left=0, item_lot=0)
+    Event_11010860(1, character=1010350, left=1, item_lot=27900000)
+    Event_11010860(2, character=1010351, left=1, item_lot=27900100)
+    Event_11010860(3, character=1010320, left=0, item_lot=0)
+    Event_11010860(4, character=1010340, left=0, item_lot=0)
+    Event_11010860(5, character=1010370, left=0, item_lot=0)
+    Event_11010860(6, character=6010, left=0, item_lot=0)
     Event_11010400(2, obj=1011652, obj_1=1011502)
     Event_11010400(3, obj=1011653, obj_1=1011503)
     Event_11010400(4, obj=1011654, obj_1=1011504)
@@ -752,7 +752,7 @@ def Event_11015398(_, character: int, character_1: int):
 
 
 @ContinueOnRest(11010750)
-def Event_11010750(_, character: int, item_lot_param_id: int):
+def Event_11010750(_, character: int, item_lot: int):
     """Event 11010750"""
     AND_1.Add(FlagDisabled(3))
     AND_1.Add(CharacterAlive(character))
@@ -765,7 +765,7 @@ def Event_11010750(_, character: int, item_lot_param_id: int):
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11015380)
@@ -1738,7 +1738,7 @@ def Event_11015170():
 
 
 @RestartOnRest(11010860)
-def Event_11010860(_, character: int, left: int, item_lot_param_id: int):
+def Event_11010860(_, character: int, left: int, item_lot: int):
     """Event 11010860"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -1752,7 +1752,7 @@ def Event_11010860(_, character: int, left: int, item_lot_param_id: int):
         OR_7.Add(CharacterHollow(PLAYER))
         if not OR_7:
             return
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     End()
 
 

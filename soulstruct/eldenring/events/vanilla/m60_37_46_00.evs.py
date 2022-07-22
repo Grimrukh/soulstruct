@@ -37,7 +37,7 @@ def Constructor():
         left=0,
         character=Characters.BellBearingHunter,
         left_1=0,
-        item_lot__item_lot_param_id=1037460400,
+        item_lot=1037460400,
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.BellBearingHunter, name=903100601, npc_threat_level=10)

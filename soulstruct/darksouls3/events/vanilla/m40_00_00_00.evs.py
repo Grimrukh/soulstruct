@@ -118,10 +118,10 @@ def Constructor():
     CommonFunc_20005211(0, 4000363, 701, 1701, 5.0, 0.0, event_layers=[1])
     CommonFunc_20005211(0, 4000364, 701, 1701, 5.0, 0.0, event_layers=[1])
     CommonFunc_20005211(0, 4000365, 701, 1701, 5.0, 0.0, event_layers=[1])
-    CommonFunc_20005341(0, flag=14000380, character=4000380, item_lot_param_id=31002000)
-    CommonFunc_20005341(0, flag=14000381, character=4000381, item_lot_param_id=31004000)
-    CommonFunc_20005341(0, flag=14000382, character=4000382, item_lot_param_id=31004000)
-    CommonFunc_20005341(0, flag=14000390, character=4000390, item_lot_param_id=21509500)
+    CommonFunc_20005341(0, flag=14000380, character=4000380, item_lot=31002000)
+    CommonFunc_20005341(0, flag=14000381, character=4000381, item_lot=31004000)
+    CommonFunc_20005341(0, flag=14000382, character=4000382, item_lot=31004000)
+    CommonFunc_20005341(0, flag=14000390, character=4000390, item_lot=21509500)
     CommonFunc_20005342(0, flag=9500, character=4000500)
     CommonFunc_20005620(0, flag=14000400, flag_1=14001400, entity=4001400, obj=4001401, obj_1=4001402, flag_2=14001401)
     Event_14005401()
@@ -209,7 +209,7 @@ def Constructor():
     CommonFunc_20005760(0, 14000197, 14004197, 14005197, 4000197, event_layers=[1, 3, 4, 5, 6, 7, 8, 9])
     Event_14005619()
     CommonFunc_20006002(0, character=4000700, flag=1018, first_flag=1015, last_flag=1019)
-    Event_14005602(0, character=4000700, item_lot_param_id=60200)
+    Event_14005602(0, character=4000700, item_lot=60200)
     Event_14000603(0, flag=14000410, flag_1=74000132)
     Event_14005604(0, character=4000700, region=4002702)
     Event_14005605(0, character=4000700, special_effect=12500, animation_id=20005)
@@ -308,7 +308,7 @@ def Constructor():
         obj=4001727,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=61610,
+        item_lot=61610,
         first_flag=50006162,
         last_flag=50006163,
         flag=1286,
@@ -407,7 +407,7 @@ def Constructor():
         obj=4001750,
         action_button_id=4000,
         right=3,
-        item_lot_param_id=60410,
+        item_lot=60410,
         first_flag=50006041,
         last_flag=50006042,
         flag=1045,
@@ -507,7 +507,7 @@ def Constructor():
         obj=4001760,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=60730,
+        item_lot=60730,
         first_flag=50006074,
         last_flag=50006074,
         flag=74000825,
@@ -531,7 +531,7 @@ def Constructor():
         obj=4001780,
         action_button_id=4000,
         right=1,
-        item_lot_param_id=60810,
+        item_lot=60810,
         first_flag=50006081,
         last_flag=50006081,
         flag=74000790,
@@ -1442,210 +1442,210 @@ def Event_14000490():
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=350,
-        item_lot_id=4300,
+        item_lot=4300,
         trade_completed_flag=70001000,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=2118,
-        item_lot_id=4301,
+        item_lot=4301,
         trade_completed_flag=70001007,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=2143,
-        item_lot_id=4302,
+        item_lot=4302,
         trade_completed_flag=70001001,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=374,
-        item_lot_id=4303,
+        item_lot=4303,
         trade_completed_flag=70001002,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=240,
-        item_lot_id=4304,
+        item_lot=4304,
         trade_completed_flag=6792,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=241,
-        item_lot_id=4305,
+        item_lot=4305,
         trade_completed_flag=6791,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=1250,
-        item_lot_id=4306,
+        item_lot=4306,
         trade_completed_flag=6793,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13080000,
-        item_lot_id=4307,
+        item_lot=4307,
         trade_completed_flag=70001003,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=7130000,
-        item_lot_id=4308,
+        item_lot=4308,
         trade_completed_flag=70001004,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=14090000,
-        item_lot_id=4309,
+        item_lot=4309,
         trade_completed_flag=70001005,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13140000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13210000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13220000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13230000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13240000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=13250000,
-        item_lot_id=4310,
+        item_lot=4310,
         trade_completed_flag=6794,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=351,
-        item_lot_id=4311,
+        item_lot=4311,
         trade_completed_flag=70001006,
         crow_response_flag=74000996,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=294,
-        item_lot_id=4320,
+        item_lot=4320,
         trade_completed_flag=6790,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=456,
-        item_lot_id=4321,
+        item_lot=4321,
         trade_completed_flag=70001020,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=292,
-        item_lot_id=4322,
+        item_lot=4322,
         trade_completed_flag=70001021,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=299,
-        item_lot_id=4322,
+        item_lot=4322,
         trade_completed_flag=70001021,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=297,
-        item_lot_id=4323,
+        item_lot=4323,
         trade_completed_flag=70001022,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=302,
-        item_lot_id=4323,
+        item_lot=4323,
         trade_completed_flag=70001022,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=300,
-        item_lot_id=4324,
+        item_lot=4324,
         trade_completed_flag=70001023,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=370,
-        item_lot_id=4325,
+        item_lot=4325,
         trade_completed_flag=70001024,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Good,
         item_id=440,
-        item_lot_id=4326,
+        item_lot=4326,
         trade_completed_flag=70001025,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Armor,
         item_id=23500000,
-        item_lot_id=4327,
+        item_lot=4327,
         trade_completed_flag=70001026,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=20040000,
-        item_lot_id=4328,
+        item_lot=4328,
         trade_completed_flag=70001027,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=22050000,
-        item_lot_id=4329,
+        item_lot=4329,
         trade_completed_flag=70001028,
         crow_response_flag=74000997,
     )
     InitializeCrowTrade(
         item_type=ItemType.Weapon,
         item_id=8280000,
-        item_lot_id=4330,
+        item_lot=4330,
         trade_completed_flag=70001029,
         crow_response_flag=74000997,
     )
@@ -3369,14 +3369,14 @@ def Event_14000601(_, flag: int):
 
 
 @ContinueOnRest(14005602)
-def Event_14005602(_, character: int, item_lot_param_id: int):
+def Event_14005602(_, character: int, item_lot: int):
     """Event 14005602"""
     if PlayerNotInOwnWorld():
         return
     
     MAIN.Await(CharacterDead(character))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     DisableFlag(74000130)
     DisableFlag(74000131)
 

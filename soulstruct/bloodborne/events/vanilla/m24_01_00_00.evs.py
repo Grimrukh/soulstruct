@@ -3625,7 +3625,7 @@ def Event_12410600(_, obj_act_id: int, obj: int, obj_act_id_1: int):
 
 
 @RestartOnRest(12410630)
-def Event_12410630(_, character: int, item_lot_param_id: int):
+def Event_12410630(_, character: int, item_lot: int):
     """Event 12410630"""
     AND_15.Add(CharacterHuman(PLAYER))
     if not AND_15:
@@ -3635,7 +3635,7 @@ def Event_12410630(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
 
 
 @RestartOnRest(12410645)

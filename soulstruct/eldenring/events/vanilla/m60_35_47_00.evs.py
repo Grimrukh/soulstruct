@@ -37,10 +37,10 @@ def Constructor():
     Event_1035472222()
     Event_1035472200()
     Event_1035472210()
-    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470200, character=Characters.Turtle0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470220, character=Characters.Scarab1, item_lot=0, seconds=0.0, left=0)
     Event_1035472240(
         0,
         character=Characters.Scarab0,
@@ -49,7 +49,7 @@ def Constructor():
         region_1=1035472241,
         region_2=1035472242,
     )
-    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot_param_id=40210, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035470260, character=Characters.Scarab0, item_lot=40210, seconds=0.0, left=0)
     Event_1035472270()
     Event_1035472270(slot=1)
 

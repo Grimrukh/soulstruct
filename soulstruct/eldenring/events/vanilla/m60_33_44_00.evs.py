@@ -63,7 +63,7 @@ def Constructor():
         flag_1=1033442181,
         flag_2=1033442182,
         character=Characters.Edgar,
-        item_lot_param_id=100610,
+        item_lot=100610,
         seconds=0.0,
     )
     CommonFunc_90005793(

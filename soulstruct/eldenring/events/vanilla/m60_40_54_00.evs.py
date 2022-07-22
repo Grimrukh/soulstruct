@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78358,
         flag_11=78359,
     )
-    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot_param_id=40312, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1040540500, character=Characters.Scarab, item_lot=40312, seconds=0.0, left=0)
     Event_1040542700(0, character=Characters.BrotherCorhyn)
     CommonFunc_90005704(0, attacked_entity=Characters.BrotherCorhyn, flag=4201, flag_1=4200, flag_2=1040549201, right=3)
     CommonFunc_90005703(

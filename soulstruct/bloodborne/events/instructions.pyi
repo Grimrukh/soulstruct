@@ -3456,7 +3456,7 @@ def DisableSpawner(entity: Object | Region | Character | int):
     """
 
 
-def AwardItemLotToAllPlayers(item_lot_param_id: int):
+def AwardItemLotToAllPlayers(item_lot: int):
     """
     TODO
     """
@@ -3816,7 +3816,7 @@ def MoveRemains(source_region: Region | int, destination_region: Region | int):
     """
 
 
-def AwardItemLotToHostOnly(item_lot_param_id: int):
+def AwardItemLotToHostOnly(item_lot: int):
     """
     You can simply call AwardItemLot() with the same argument, which will redirect here, as you'll almost never
     *not* want to award an item lot to the host only.

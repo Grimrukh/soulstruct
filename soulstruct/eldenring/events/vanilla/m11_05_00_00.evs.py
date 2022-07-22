@@ -201,7 +201,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9000,
         action_button_id=6450,
-        item_lot_param_id=4900,
+        item_lot=4900,
         first_flag=9500,
         last_flag=9500,
         flag=11059206,
@@ -212,7 +212,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9000,
         action_button_id=4110,
-        item_lot_param_id=105000,
+        item_lot=105000,
         first_flag=400500,
         last_flag=400500,
         flag=11059305,
@@ -1045,7 +1045,7 @@ def Event_11053708(
     _,
     asset: uint,
     action_button_id: int,
-    item_lot_param_id: int,
+    item_lot: int,
     first_flag: uint,
     last_flag: uint,
     flag: uint,
@@ -1075,7 +1075,7 @@ def Event_11053708(
     
     GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     EzstateAIRequest(PLAYER, command_id=60070, command_slot=0)
     End()
 

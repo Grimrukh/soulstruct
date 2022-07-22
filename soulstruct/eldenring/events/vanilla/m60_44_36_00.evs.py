@@ -35,7 +35,7 @@ def Constructor():
     Event_1044362800()
     Event_1044362810()
     Event_1044362849()
-    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot_param_id=40112, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1044360220, character=Characters.Scarab, item_lot=40112, seconds=0.0, left=0)
     Event_1044362500()
     CommonFunc_90005704(
         0,

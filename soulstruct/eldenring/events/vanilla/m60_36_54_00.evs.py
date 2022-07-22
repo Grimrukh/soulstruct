@@ -59,11 +59,11 @@ def Constructor():
         left=0,
         character=Characters.FallingstarBeast,
         left_1=0,
-        item_lot__item_lot_param_id=30375,
+        item_lot=30375,
         seconds=0.0,
     )
     Event_1036542350(0, region=1036542450, special_effect_id=16488, special_effect_id_1=16489)
-    CommonFunc_90005300(0, flag=1036540498, character=Characters.Scarab, item_lot_param_id=40334, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1036540498, character=Characters.Scarab, item_lot=40334, seconds=0.0, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.Marionette0,
@@ -167,7 +167,7 @@ def Constructor():
         anchor_entity=Characters.PutridCorpse,
         character=Characters.WormfaceLarge,
         left=1,
-        item_lot_param_id=1036540100,
+        item_lot=1036540100,
     )
     Event_1036542580()
     Event_1036542240(0, asset=1036541200, entity=1036541201, flag=82032)
@@ -253,7 +253,7 @@ def Event_1036542250(
     anchor_entity: uint,
     character: uint,
     left: int,
-    item_lot_param_id: int,
+    item_lot: int,
 ):
     """Event 1036542250"""
     if FlagEnabled(flag):
@@ -288,8 +288,8 @@ def Event_1036542250(
     DisableCharacter(character)
     if PlayerNotInOwnWorld():
         return
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
 
 

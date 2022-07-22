@@ -57,33 +57,33 @@ def Constructor():
     Event_8131(5, item=212, item_1=213)
     Event_8131(6, item=214, item_1=215)
     Event_819()
-    Event_970(0, flag=2, item_lot_param_id=2500, item_lot_param_id_1=9020, item_lot_param_id_2=9030)
-    Event_970(1, flag=11010901, item_lot_param_id=0, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(2, flag=11010902, item_lot_param_id=2510, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(3, flag=3, item_lot_param_id=0, item_lot_param_id_1=9020, item_lot_param_id_2=0)
-    Event_970(4, flag=4, item_lot_param_id=2520, item_lot_param_id_1=9020, item_lot_param_id_2=0)
-    Event_970(5, flag=11200900, item_lot_param_id=2530, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(6, flag=5, item_lot_param_id=2540, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(7, flag=6, item_lot_param_id=2550, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(8, flag=7, item_lot_param_id=2560, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(9, flag=9, item_lot_param_id=2570, item_lot_param_id_1=9020, item_lot_param_id_2=0)
-    Event_970(10, flag=11410900, item_lot_param_id=0, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(11, flag=11410410, item_lot_param_id=0, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(12, flag=11410901, item_lot_param_id=0, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(13, flag=10, item_lot_param_id=2580, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(14, flag=11, item_lot_param_id=2590, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(15, flag=11510900, item_lot_param_id=2600, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(16, flag=11510902, item_lot_param_id=2610, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(17, flag=11510903, item_lot_param_id=2620, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(18, flag=13, item_lot_param_id=2630, item_lot_param_id_1=9010, item_lot_param_id_2=0)
-    Event_970(19, flag=14, item_lot_param_id=2640, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(20, flag=15, item_lot_param_id=2650, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(21, flag=16, item_lot_param_id=2660, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(22, flag=11810900, item_lot_param_id=0, item_lot_param_id_1=9000, item_lot_param_id_2=9030)
-    Event_970(23, flag=11210000, item_lot_param_id=2680, item_lot_param_id_1=9000, item_lot_param_id_2=0)
-    Event_970(24, flag=11210001, item_lot_param_id=2690, item_lot_param_id_1=0, item_lot_param_id_2=0)
-    Event_970(25, flag=17, item_lot_param_id=2700, item_lot_param_id_1=9040, item_lot_param_id_2=0)
-    Event_970(26, flag=11210004, item_lot_param_id=2710, item_lot_param_id_1=0, item_lot_param_id_2=0)
+    Event_970(0, flag=2, item_lot=2500, item_lot_1=9020, item_lot_2=9030)
+    Event_970(1, flag=11010901, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(2, flag=11010902, item_lot=2510, item_lot_1=9000, item_lot_2=9030)
+    Event_970(3, flag=3, item_lot=0, item_lot_1=9020, item_lot_2=0)
+    Event_970(4, flag=4, item_lot=2520, item_lot_1=9020, item_lot_2=0)
+    Event_970(5, flag=11200900, item_lot=2530, item_lot_1=9000, item_lot_2=0)
+    Event_970(6, flag=5, item_lot=2540, item_lot_1=9000, item_lot_2=9030)
+    Event_970(7, flag=6, item_lot=2550, item_lot_1=9000, item_lot_2=9030)
+    Event_970(8, flag=7, item_lot=2560, item_lot_1=9000, item_lot_2=0)
+    Event_970(9, flag=9, item_lot=2570, item_lot_1=9020, item_lot_2=0)
+    Event_970(10, flag=11410900, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(11, flag=11410410, item_lot=0, item_lot_1=9000, item_lot_2=0)
+    Event_970(12, flag=11410901, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(13, flag=10, item_lot=2580, item_lot_1=9000, item_lot_2=0)
+    Event_970(14, flag=11, item_lot=2590, item_lot_1=9000, item_lot_2=0)
+    Event_970(15, flag=11510900, item_lot=2600, item_lot_1=0, item_lot_2=0)
+    Event_970(16, flag=11510902, item_lot=2610, item_lot_1=9000, item_lot_2=0)
+    Event_970(17, flag=11510903, item_lot=2620, item_lot_1=9000, item_lot_2=0)
+    Event_970(18, flag=13, item_lot=2630, item_lot_1=9010, item_lot_2=0)
+    Event_970(19, flag=14, item_lot=2640, item_lot_1=9000, item_lot_2=0)
+    Event_970(20, flag=15, item_lot=2650, item_lot_1=0, item_lot_2=0)
+    Event_970(21, flag=16, item_lot=2660, item_lot_1=9000, item_lot_2=0)
+    Event_970(22, flag=11810900, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(23, flag=11210000, item_lot=2680, item_lot_1=9000, item_lot_2=0)
+    Event_970(24, flag=11210001, item_lot=2690, item_lot_1=0, item_lot_2=0)
+    Event_970(25, flag=17, item_lot=2700, item_lot_1=9040, item_lot_2=0)
+    Event_970(26, flag=11210004, item_lot=2710, item_lot_1=0, item_lot_2=0)
     Event_250(0, item=2600, flag=250)
     Event_250(1, item=2601, flag=251)
     Event_250(2, item=2602, flag=252)
@@ -156,73 +156,73 @@ def Constructor():
     Event_812(1, flag=51010050)
     Event_822()
     Event_823()
-    Event_910(0, flag=11400591, item_lot_param_id=1280)
-    Event_911(0, flag=11010591, item_lot_param_id=1000, state=1)
-    Event_911(1, flag=11510590, item_lot_param_id=1010, state=1)
-    Event_911(2, flag=11700591, item_lot_param_id=1020, state=1)
-    Event_911(3, flag=11000591, item_lot_param_id=1030, state=1)
-    Event_911(4, flag=11400590, item_lot_param_id=1040, state=1)
-    Event_911(5, flag=11410594, item_lot_param_id=1050, state=1)
-    Event_911(6, flag=11020594, item_lot_param_id=1060, state=1)
-    Event_911(7, flag=11020595, item_lot_param_id=1070, state=1)
-    Event_911(8, flag=11810590, item_lot_param_id=1082, state=1)
-    Event_911(9, flag=11810591, item_lot_param_id=1080, state=1)
-    Event_911(10, flag=11510592, item_lot_param_id=1090, state=1)
-    Event_911(11, flag=11600592, item_lot_param_id=1100, state=1)
-    Event_911(12, flag=11020602, item_lot_param_id=1110, state=1)
-    Event_911(13, flag=11010594, item_lot_param_id=1120, state=1)
-    Event_911(14, flag=11010595, item_lot_param_id=1130, state=1)
-    Event_911(15, flag=11020599, item_lot_param_id=1140, state=1)
-    Event_911(16, flag=11020607, item_lot_param_id=1150, state=1)
-    Event_911(17, flag=11200592, item_lot_param_id=1160, state=1)
-    Event_911(18, flag=11200593, item_lot_param_id=1170, state=1)
-    Event_911(19, flag=11200594, item_lot_param_id=1180, state=1)
-    Event_911(20, flag=11300590, item_lot_param_id=1190, state=1)
-    Event_911(21, flag=11300591, item_lot_param_id=1200, state=1)
-    Event_911(22, flag=11310590, item_lot_param_id=1210, state=1)
-    Event_911(23, flag=11310592, item_lot_param_id=1220, state=1)
-    Event_911(24, flag=11310593, item_lot_param_id=1230, state=1)
-    Event_911(25, flag=11310594, item_lot_param_id=1240, state=1)
-    Event_911(26, flag=11320590, item_lot_param_id=1250, state=1)
-    Event_911(27, flag=11320581, item_lot_param_id=1260, state=1)
-    Event_911(28, flag=11320593, item_lot_param_id=1270, state=1)
-    Event_911(29, flag=11400592, item_lot_param_id=1290, state=1)
-    Event_911(30, flag=11400594, item_lot_param_id=1300, state=1)
-    Event_911(31, flag=11400596, item_lot_param_id=1310, state=1)
-    Event_911(32, flag=11400597, item_lot_param_id=1320, state=1)
-    Event_911(33, flag=11400598, item_lot_param_id=1330, state=1)
-    Event_911(34, flag=11400599, item_lot_param_id=1340, state=1)
-    Event_911(35, flag=11510595, item_lot_param_id=1350, state=1)
-    Event_911(36, flag=11510596, item_lot_param_id=1360, state=1)
-    Event_911(37, flag=11510597, item_lot_param_id=1370, state=1)
-    Event_911(38, flag=11600594, item_lot_param_id=1380, state=1)
-    Event_911(39, flag=11600595, item_lot_param_id=1390, state=1)
-    Event_911(40, flag=11600596, item_lot_param_id=1400, state=1)
-    Event_911(41, flag=11010598, item_lot_param_id=1410, state=0)
-    Event_911(42, flag=11210590, item_lot_param_id=1500, state=1)
-    Event_911(43, flag=11210593, item_lot_param_id=1510, state=1)
-    Event_911(44, flag=11210594, item_lot_param_id=1520, state=1)
-    Event_911(45, flag=11600580, item_lot_param_id=1401, state=1)
-    Event_911(46, flag=11600581, item_lot_param_id=1402, state=1)
-    Event_911(47, flag=11600582, item_lot_param_id=1403, state=1)
-    Event_911(48, flag=11600583, item_lot_param_id=1404, state=1)
-    Event_911(49, flag=11020905, item_lot_param_id=1800, state=1)
-    Event_911(50, flag=11510905, item_lot_param_id=1810, state=1)
-    Event_911(51, flag=11010905, item_lot_param_id=1820, state=1)
-    Event_911(52, flag=11600905, item_lot_param_id=1830, state=1)
-    Event_911(53, flag=11320905, item_lot_param_id=1840, state=1)
-    Event_911(54, flag=11300906, item_lot_param_id=1850, state=1)
-    Event_911(55, flag=11200905, item_lot_param_id=1860, state=1)
-    Event_911(56, flag=11510906, item_lot_param_id=1870, state=1)
-    Event_911(57, flag=11400905, item_lot_param_id=1880, state=1)
-    Event_890(0, flag=11310580, item_lot_param_id=1221, state=1)
-    Event_890(1, flag=11510580, item_lot_param_id=1361, state=1)
-    Event_890(2, flag=11510581, item_lot_param_id=1371, state=1)
-    Event_890(3, flag=11320592, item_lot_param_id=1261, state=1)
-    Event_960(0, flag=1322, character=6190, item_lot_param_id=6190)
-    Event_960(1, flag=1315, character=6180, item_lot_param_id=1100)
-    Event_960(2, flag=1402, character=6230, item_lot_param_id=6230)
-    Event_960(3, flag=1402, character=6230, item_lot_param_id=6231)
+    Event_910(0, flag=11400591, item_lot=1280)
+    Event_911(0, flag=11010591, item_lot=1000, state=1)
+    Event_911(1, flag=11510590, item_lot=1010, state=1)
+    Event_911(2, flag=11700591, item_lot=1020, state=1)
+    Event_911(3, flag=11000591, item_lot=1030, state=1)
+    Event_911(4, flag=11400590, item_lot=1040, state=1)
+    Event_911(5, flag=11410594, item_lot=1050, state=1)
+    Event_911(6, flag=11020594, item_lot=1060, state=1)
+    Event_911(7, flag=11020595, item_lot=1070, state=1)
+    Event_911(8, flag=11810590, item_lot=1082, state=1)
+    Event_911(9, flag=11810591, item_lot=1080, state=1)
+    Event_911(10, flag=11510592, item_lot=1090, state=1)
+    Event_911(11, flag=11600592, item_lot=1100, state=1)
+    Event_911(12, flag=11020602, item_lot=1110, state=1)
+    Event_911(13, flag=11010594, item_lot=1120, state=1)
+    Event_911(14, flag=11010595, item_lot=1130, state=1)
+    Event_911(15, flag=11020599, item_lot=1140, state=1)
+    Event_911(16, flag=11020607, item_lot=1150, state=1)
+    Event_911(17, flag=11200592, item_lot=1160, state=1)
+    Event_911(18, flag=11200593, item_lot=1170, state=1)
+    Event_911(19, flag=11200594, item_lot=1180, state=1)
+    Event_911(20, flag=11300590, item_lot=1190, state=1)
+    Event_911(21, flag=11300591, item_lot=1200, state=1)
+    Event_911(22, flag=11310590, item_lot=1210, state=1)
+    Event_911(23, flag=11310592, item_lot=1220, state=1)
+    Event_911(24, flag=11310593, item_lot=1230, state=1)
+    Event_911(25, flag=11310594, item_lot=1240, state=1)
+    Event_911(26, flag=11320590, item_lot=1250, state=1)
+    Event_911(27, flag=11320581, item_lot=1260, state=1)
+    Event_911(28, flag=11320593, item_lot=1270, state=1)
+    Event_911(29, flag=11400592, item_lot=1290, state=1)
+    Event_911(30, flag=11400594, item_lot=1300, state=1)
+    Event_911(31, flag=11400596, item_lot=1310, state=1)
+    Event_911(32, flag=11400597, item_lot=1320, state=1)
+    Event_911(33, flag=11400598, item_lot=1330, state=1)
+    Event_911(34, flag=11400599, item_lot=1340, state=1)
+    Event_911(35, flag=11510595, item_lot=1350, state=1)
+    Event_911(36, flag=11510596, item_lot=1360, state=1)
+    Event_911(37, flag=11510597, item_lot=1370, state=1)
+    Event_911(38, flag=11600594, item_lot=1380, state=1)
+    Event_911(39, flag=11600595, item_lot=1390, state=1)
+    Event_911(40, flag=11600596, item_lot=1400, state=1)
+    Event_911(41, flag=11010598, item_lot=1410, state=0)
+    Event_911(42, flag=11210590, item_lot=1500, state=1)
+    Event_911(43, flag=11210593, item_lot=1510, state=1)
+    Event_911(44, flag=11210594, item_lot=1520, state=1)
+    Event_911(45, flag=11600580, item_lot=1401, state=1)
+    Event_911(46, flag=11600581, item_lot=1402, state=1)
+    Event_911(47, flag=11600582, item_lot=1403, state=1)
+    Event_911(48, flag=11600583, item_lot=1404, state=1)
+    Event_911(49, flag=11020905, item_lot=1800, state=1)
+    Event_911(50, flag=11510905, item_lot=1810, state=1)
+    Event_911(51, flag=11010905, item_lot=1820, state=1)
+    Event_911(52, flag=11600905, item_lot=1830, state=1)
+    Event_911(53, flag=11320905, item_lot=1840, state=1)
+    Event_911(54, flag=11300906, item_lot=1850, state=1)
+    Event_911(55, flag=11200905, item_lot=1860, state=1)
+    Event_911(56, flag=11510906, item_lot=1870, state=1)
+    Event_911(57, flag=11400905, item_lot=1880, state=1)
+    Event_890(0, flag=11310580, item_lot=1221, state=1)
+    Event_890(1, flag=11510580, item_lot=1361, state=1)
+    Event_890(2, flag=11510581, item_lot=1371, state=1)
+    Event_890(3, flag=11320592, item_lot=1261, state=1)
+    Event_960(0, flag=1322, character=6190, item_lot=6190)
+    Event_960(1, flag=1315, character=6180, item_lot=1100)
+    Event_960(2, flag=1402, character=6230, item_lot=6230)
+    Event_960(3, flag=1402, character=6230, item_lot=6231)
     Event_8200(0, item_type=3, item=5500, flag=50000120, flag_1=11010594)
     Event_8200(1, item_type=3, item=5510, flag=50000130, flag_1=11010595)
     Event_8200(2, item_type=2, item=103, flag=50000160, flag_1=11200592)
@@ -791,32 +791,32 @@ def Event_260(_, flag: int, text: int, seconds: float):
 
 
 @ContinueOnRest(970)
-def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
+def Event_970(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int):
     """Event 970"""
     if FlagEnabled(flag):
         return
     
     MAIN.Await(FlagEnabled(flag))
     
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    if ValueNotEqual(left=item_lot_param_id_1, right=0):
-        AwardItemLot(item_lot_param_id_1, host_only=True)
-    if ValueNotEqual(left=item_lot_param_id_2, right=0):
-        AwardItemLot(item_lot_param_id_2, host_only=True)
+    if ValueNotEqual(left=item_lot_1, right=0):
+        AwardItemLot(item_lot_1, host_only=True)
+    if ValueNotEqual(left=item_lot_2, right=0):
+        AwardItemLot(item_lot_2, host_only=True)
 
 
 @ContinueOnRest(911)
-def Event_911(_, flag: int, item_lot_param_id: int, state: uchar):
+def Event_911(_, flag: int, item_lot: int, state: uchar):
     """Event 911"""
     if FlagEnabled(flag):
         return
     
     MAIN.Await(FlagEnabled(flag))
     
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     SetFlagState(flag, state)
     if FlagEnabled(flag):
         return
@@ -824,14 +824,14 @@ def Event_911(_, flag: int, item_lot_param_id: int, state: uchar):
 
 
 @ContinueOnRest(890)
-def Event_890(_, flag: int, item_lot_param_id: int, state: uchar):
+def Event_890(_, flag: int, item_lot: int, state: uchar):
     """Event 890"""
     if FlagEnabled(flag):
         return
     
     MAIN.Await(FlagEnabled(flag))
     
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     SetFlagState(flag, state)
     if FlagEnabled(flag):
         return
@@ -839,7 +839,7 @@ def Event_890(_, flag: int, item_lot_param_id: int, state: uchar):
 
 
 @ContinueOnRest(960)
-def Event_960(_, flag: int, character: int, item_lot_param_id: int):
+def Event_960(_, flag: int, character: int, item_lot: int):
     """Event 960"""
     if ThisEventSlotFlagEnabled():
         return
@@ -848,7 +848,7 @@ def Event_960(_, flag: int, character: int, item_lot_param_id: int):
     
     MAIN.Await(AND_1)
     
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(8200)
@@ -895,12 +895,12 @@ def Event_8090(_, item_type: uchar, item: int, flag: int):
 
 
 @ContinueOnRest(910)
-def Event_910(_, flag: int, item_lot_param_id: int):
+def Event_910(_, flag: int, item_lot: int):
     """Event 910"""
     if FlagDisabled(flag):
         MAIN.Await(FlagEnabled(flag))
     
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     
     MAIN.Await(FlagDisabled(flag))
     

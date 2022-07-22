@@ -46,7 +46,7 @@ def Constructor():
     )
     RegisterGrace(grace_flag=1038500001, asset=Assets.AEG099_060_9001)
     RegisterGrace(grace_flag=76301, asset=Assets.AEG099_060_9002)
-    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot_param_id=40256, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1038500210, character=Characters.Scarab, item_lot=40256, seconds=0.0, left=0)
     Event_1038502580()
     Event_1038502500()
     Event_1038503700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)

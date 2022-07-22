@@ -62,7 +62,7 @@ def Constructor():
         left=0,
         character=Characters.DecayingEkzykes,
         left_1=1,
-        item_lot__item_lot_param_id=30400,
+        item_lot=30400,
         text=30064,
         seconds=0.0,
     )

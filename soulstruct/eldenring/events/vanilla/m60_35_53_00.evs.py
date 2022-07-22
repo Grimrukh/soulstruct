@@ -87,7 +87,7 @@ def Constructor():
         left=1035530800,
         character=Characters.MagmaWyrm,
         left_1=1,
-        item_lot__item_lot_param_id=30390,
+        item_lot=30390,
         text=30062,
         seconds=0.0,
     )

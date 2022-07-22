@@ -33,10 +33,10 @@ def Constructor():
         left=0,
         character=Characters.Omenkiller,
         left_1=0,
-        item_lot__item_lot_param_id=30225,
+        item_lot=30225,
         seconds=0.0,
     )
-    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot_param_id=40208, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035420220, character=Characters.Scarab, item_lot=40208, seconds=0.0, left=0)
     CommonFunc_90005780(
         0,
         flag=1035420800,
@@ -106,7 +106,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9000,
         action_button_id=4350,
-        item_lot_param_id=103930,
+        item_lot=103930,
         first_flag=400393,
         last_flag=400393,
         flag=1035429255,

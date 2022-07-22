@@ -538,7 +538,7 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.MonstrousCrow0, region=1047402259, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=1047400259, region=1047402259, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.MonstrousCrow1, region=1047402260, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot_param_id=40400, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1047400290, character=Characters.Scarab, item_lot=40400, seconds=0.0, left=0)
     Event_1047402399()
     CommonFunc_90005250(0, character=Characters.Dummy, region=1047402399, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.PutridCorpse0, region=1047402399, seconds=0.0, animation_id=-1)
@@ -591,7 +591,7 @@ def Constructor():
         left=0,
         character=Characters.PutridAvatar,
         left_1=0,
-        item_lot__item_lot_param_id=30410,
+        item_lot=30410,
         seconds=0.0,
     )
     CommonFunc_90005872(0, 1047400800, 18, 0)

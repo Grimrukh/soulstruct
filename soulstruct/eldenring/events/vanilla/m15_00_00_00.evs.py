@@ -101,13 +101,13 @@ def Constructor():
     SkipLinesIfCeremonyInactive(line_count=1, ceremony=30)
     CommonFunc_90005796(0, flag=7611, character=Characters.Millicent2, banner_type=5, region=15002151)
     Event_15002155()
-    CommonFunc_90005300(0, flag=15000390, character=15000390, item_lot_param_id=15001250, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=15000391, character=15000391, item_lot_param_id=15001260, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=15000390, character=15000390, item_lot=15001250, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=15000391, character=15000391, item_lot=15001260, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=15000392,
         character=Characters.PutridAvatar0,
-        item_lot_param_id=15001270,
+        item_lot=15001270,
         seconds=0.0,
         left=0,
     )
@@ -115,16 +115,16 @@ def Constructor():
         0,
         flag=15000393,
         character=Characters.PutridAvatar1,
-        item_lot_param_id=15001280,
+        item_lot=15001280,
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=15000394, character=15000394, item_lot_param_id=15001290, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=15000394, character=15000394, item_lot=15001290, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=15000398,
         character=Characters.UlceratedTreeSpirit,
-        item_lot_param_id=15001200,
+        item_lot=15001200,
         seconds=0.0,
         left=0,
     )
@@ -1602,7 +1602,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9000,
         action_button_id=4350,
-        item_lot_param_id=103210,
+        item_lot=103210,
         first_flag=400321,
         last_flag=400321,
         flag=4192,
@@ -1613,7 +1613,7 @@ def Constructor():
     Event_15000713(0, entity=Assets.AEG099_090_9001)
     Event_15000715()
     Event_15000716()
-    CommonFunc_90005774(0, flag=7611, item_lot_param_id=103220, flag_1=400323)
+    CommonFunc_90005774(0, flag=7611, item_lot=103220, flag_1=400323)
     CommonFunc_90005774(0, 7610, 104800, 400480)
 
 

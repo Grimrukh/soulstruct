@@ -44,7 +44,7 @@ def Constructor():
         anchor_entity=Characters.Scarab,
         character=Characters.ExtraLargeScarab,
         left=1,
-        item_lot_param_id=34140720,
+        item_lot=34140720,
     )
     Event_34142251(
         0,
@@ -84,7 +84,7 @@ def Constructor():
         flag=193,
         flag_1=9104,
         asset=Assets.AEG099_991_9000,
-        item_lot_param_id=34140700,
+        item_lot=34140700,
         item=8150,
         model_point=806932,
         action_button_id=9082,
@@ -96,7 +96,7 @@ def Constructor():
         flag=195,
         flag_1=9112,
         asset=Assets.AEG099_991_9001,
-        item_lot_param_id=34140710,
+        item_lot=34140710,
         item=8152,
         model_point=806938,
         action_button_id=9084,
@@ -123,7 +123,7 @@ def Event_34142250(
     anchor_entity: uint,
     character: uint,
     left: int,
-    item_lot_param_id: int,
+    item_lot: int,
 ):
     """Event 34142250"""
     if FlagEnabled(flag):
@@ -157,8 +157,8 @@ def Event_34142250(
     Wait(1.0)
     if PlayerNotInOwnWorld():
         return
-    if ValueNotEqual(left=item_lot_param_id, right=0):
-        AwardItemLot(item_lot_param_id, host_only=True)
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     EnableNetworkFlag(flag)
 
 

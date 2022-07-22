@@ -35,7 +35,7 @@ def Constructor():
         left=1037530800,
         character=Characters.DemiHumanQueen,
         left_1=0,
-        item_lot__item_lot_param_id=30395,
+        item_lot=30395,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.DemiHumanQueen, npc_threat_level=16, right=0)
@@ -75,7 +75,7 @@ def Constructor():
         0,
         flag=1037530400,
         character=Characters.LargeScarab,
-        item_lot_param_id=40332,
+        item_lot=40332,
         seconds=0.0,
         left=0,
     )

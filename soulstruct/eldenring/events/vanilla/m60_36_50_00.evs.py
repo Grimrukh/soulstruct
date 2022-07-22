@@ -31,7 +31,7 @@ def Constructor():
         flag_1=1036500805,
         flag_2=1036502800,
         character=Characters.OnyxLord,
-        item_lot_param_id=30255,
+        item_lot=30255,
         area_id=60,
         block_id=36,
         cc_id=50,
@@ -77,7 +77,7 @@ def Constructor():
         left=0,
         left_1=1,
     )
-    CommonFunc_90005300(0, flag=1036500340, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1036500340, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005633(0, 580310, 580010, 1036500600, 30016, 20016, 1036501600, 1036501610)
 
 

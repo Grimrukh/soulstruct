@@ -46,7 +46,7 @@ def Constructor():
         flag_10=78118,
         flag_11=78119,
     )
-    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot_param_id=40140, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1044330290, character=Characters.Scarab, item_lot=40140, seconds=0.0, left=0)
     CommonFunc_90005550(0, flag=1044330500, asset=1044331500, obj_act_id=44333500)
     CommonFunc_90005510(
         0,

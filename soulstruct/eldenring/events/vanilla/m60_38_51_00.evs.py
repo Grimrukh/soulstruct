@@ -48,7 +48,7 @@ def Constructor():
     Event_1038512810()
     Event_1038512849()
     Event_1038512500()
-    CommonFunc_90005300(0, flag=1038510500, character=Characters.Scarab, item_lot_param_id=40302, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1038510500, character=Characters.Scarab, item_lot=40302, seconds=0.0, left=0)
     Event_1038513700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
     CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
     Event_1038513701()

@@ -94,7 +94,7 @@ def Constructor():
         left=0,
         character=Characters.GlintstoneDragon,
         left_1=1,
-        item_lot__item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
     )
     Event_1034502800()
@@ -102,7 +102,7 @@ def Constructor():
     Event_1034502804()
     Event_1034502802()
     Event_1034502803()
-    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot_param_id=40200, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, left=0)
     CommonFunc_90005525(0, flag=1034500620, asset=Assets.AEG004_983_1000)
     CommonFunc_90005525(0, flag=1034500621, asset=Assets.AEG004_336_1000)
     Event_1034502580()
@@ -220,7 +220,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9001,
         action_button_id=4110,
-        item_lot_param_id=101480,
+        item_lot=101480,
         first_flag=400148,
         last_flag=400148,
         flag=3569,

@@ -32,7 +32,7 @@ def Constructor():
         left=0,
         character=Characters.GlintstoneDragon0,
         left_1=1,
-        item_lot__item_lot_param_id=30260,
+        item_lot=30260,
         seconds=0.0,
     )
     Event_1034422800()
@@ -55,7 +55,7 @@ def Constructor():
         0,
         flag=1034420340,
         character=Characters.GlintstoneDragon1,
-        item_lot_param_id=1034420400,
+        item_lot=1034420400,
         seconds=0.0,
         left=0,
     )

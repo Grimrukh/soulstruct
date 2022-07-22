@@ -105,7 +105,7 @@ def Constructor():
         seconds_2=0.0,
         seconds_3=0.0,
         seconds_4=0.0,
-        item_lot_param_id=1034471300,
+        item_lot=1034471300,
         flag_1=1034472250,
     )
     Event_1034472261(
@@ -119,7 +119,7 @@ def Constructor():
         seconds_2=0.0,
         seconds_3=0.0,
         seconds_4=0.0,
-        item_lot_param_id=1034471310,
+        item_lot=1034471310,
         flag_1=1034472251,
     )
     Event_1034472262(
@@ -293,7 +293,7 @@ def Event_1034472261(
     seconds_2: float,
     seconds_3: float,
     seconds_4: float,
-    item_lot_param_id: int,
+    item_lot: int,
     flag_1: uint,
 ):
     """Event 1034472261"""
@@ -343,7 +343,7 @@ def Event_1034472261(
     DisableAsset(asset)
     if PlayerInOwnWorld():
         Wait(0.30000001192092896)
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     End()
     Wait(seconds)
     Wait(seconds_1)

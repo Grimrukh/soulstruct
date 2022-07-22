@@ -49,7 +49,7 @@ def Constructor():
         left=0,
         character=Characters.ErdtreeAvatar0,
         left_1=0,
-        item_lot__item_lot_param_id=30525,
+        item_lot=30525,
         seconds=0.0,
     )
     Event_1052562815(0, character=Characters.ErdtreeAvatar0, name=904810601, npc_threat_level=18)

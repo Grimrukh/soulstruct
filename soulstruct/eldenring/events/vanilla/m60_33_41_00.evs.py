@@ -28,7 +28,7 @@ def Constructor():
         0,
         flag=1033410350,
         character=Characters.GlintstoneDragon0,
-        item_lot_param_id=1033410400,
+        item_lot=1033410400,
         seconds=0.0,
         left=0,
     )
@@ -36,11 +36,11 @@ def Constructor():
         0,
         flag=1033410351,
         character=Characters.GlintstoneDragon1,
-        item_lot_param_id=1033410410,
+        item_lot=1033410410,
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=1033410340, character=Characters.RedWolf, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1033410340, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005920(0, flag=1033410600, asset=1033411600, obj_act_id=1033413600)
     CommonFunc_90005920(0, flag=1033410601, asset=1033411601, obj_act_id=1033413601)
     CommonFunc_90005920(0, 1033410602, 1033411602, 1033413602)

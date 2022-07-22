@@ -27,8 +27,8 @@ def Constructor():
     CommonFunc_90005460(0, character=Characters.Skeleton0)
     CommonFunc_90005461(0, character=Characters.Skeleton0)
     CommonFunc_90005462(0, character=Characters.Skeleton0)
-    CommonFunc_90005300(0, flag=1044380210, character=Characters.Scarab, item_lot_param_id=40142, seconds=0.0, left=0)
-    CommonFunc_90005632(0, flag=580000, asset=Assets.AEG099_371_1001, item_lot_param_id=80000)
+    CommonFunc_90005300(0, flag=1044380210, character=Characters.Scarab, item_lot=40142, seconds=0.0, left=0)
+    CommonFunc_90005632(0, flag=580000, asset=Assets.AEG099_371_1001, item_lot=80000)
     Event_1044382220()
     CommonFunc_90005704(
         0,
@@ -101,7 +101,7 @@ def Event_1044382220():
 
 
 @RestartOnRest(1044382600)
-def Event_1044382600(_, asset: uint, item_lot_param_id: int, flag: uint):
+def Event_1044382600(_, asset: uint, item_lot: int, flag: uint):
     """Event 1044382600"""
     if FlagEnabled(flag):
         return
@@ -114,7 +114,7 @@ def Event_1044382600(_, asset: uint, item_lot_param_id: int, flag: uint):
     DeleteAssetVFX(asset)
     PlaySoundEffect(asset, 806841, sound_type=SoundType.s_SFX)
     Wait(0.10000000149011612)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     EnableFlag(flag)
 
 

@@ -1726,7 +1726,7 @@ EMEDF = {
         "alias": "AwardItemLotToAllPlayers",
         "docstring": "TODO",
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 5): {
@@ -2147,7 +2147,7 @@ EMEDF = {
             *not* want to award an item lot to the host only.
         """,
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 37): {

@@ -190,11 +190,11 @@ def DisableAssetActivation(asset: AssetTyping, obj_act_id, relative_index=None):
 
 
 @_compile
-def AwardItemLot(item_lot_param_id: int, host_only=True):
+def AwardItemLot(item_lot: int, host_only=True):
     """Directly award an item lot to player(s). By default, only the host receives the item."""
     if host_only:
-        return compile_instruction("AwardItemLotToHostOnly", item_lot_param_id=item_lot_param_id)
-    return compile_instruction("AwardItemLotToAllPlayers", item_lot_param_id=item_lot_param_id)
+        return compile_instruction("AwardItemLotToHostOnly", item_lot=item_lot)
+    return compile_instruction("AwardItemLotToAllPlayers", item_lot=item_lot)
 
 
 # TODO: Only use new Cutscene instruction set.

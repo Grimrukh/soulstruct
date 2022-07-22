@@ -171,7 +171,7 @@ def Constructor():
         0,
         flag=1047380299,
         character=Characters.LionGuardian,
-        item_lot_param_id=1047380700,
+        item_lot=1047380700,
         seconds=0.0,
         left=0,
     )

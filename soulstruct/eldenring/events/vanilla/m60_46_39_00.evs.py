@@ -25,7 +25,7 @@ from .entities.m60_46_39_00_entities import *
 def Constructor():
     """Event 0"""
     Event_1035472602()
-    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot_param_id=40118, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, left=0)
     Event_1035472200(0, 1046391600, 60, 51, 43, 0, 1051430600, 0, 1051432650, 1051432651, 1051432652, 0, 0, 0.0, 0.0)
 
 

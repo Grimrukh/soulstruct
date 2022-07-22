@@ -118,7 +118,7 @@ def Constructor():
         0,
         flag=30080450,
         character=Characters.GraveWardenDuelist,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=3.0,
         left=0,
     )

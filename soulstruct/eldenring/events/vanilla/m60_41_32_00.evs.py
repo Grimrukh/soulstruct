@@ -29,7 +29,7 @@ def Constructor():
         0,
         flag=1041320290,
         character=1041320290,
-        item_lot_param_id=70000,
+        item_lot=70000,
         seconds=0.0,
         left=1,
         character_1=1041325291,

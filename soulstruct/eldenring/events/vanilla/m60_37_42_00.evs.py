@@ -30,7 +30,7 @@ def Constructor():
         left=0,
         character=Characters.DeathRiteBird,
         left_1=0,
-        item_lot__item_lot_param_id=1037420400,
+        item_lot=1037420400,
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980603, npc_threat_level=24)

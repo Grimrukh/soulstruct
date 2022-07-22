@@ -27,7 +27,7 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542341, seconds=0.0, animation_id=0)
     CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542342, seconds=0.0, animation_id=0)
     Event_1037542500()
-    CommonFunc_90005300(0, flag=1037540341, character=Characters.GraftedScion, item_lot_param_id=0, seconds=3.0, left=0)
+    CommonFunc_90005300(0, flag=1037540341, character=Characters.GraftedScion, item_lot=0, seconds=3.0, left=0)
     CommonFunc_90005271(0, character=Characters.LeyndellSoldier0, seconds=0.0, animation_id=-1)
     Event_1037542260()
     CommonFunc_90005250(0, character=Characters.Marionette2, region=1037542250, seconds=0.0, animation_id=0)
@@ -199,7 +199,7 @@ def Constructor():
         left=0,
         character=Characters.UlceratedTreeSpirit,
         left_1=0,
-        item_lot__item_lot_param_id=30380,
+        item_lot=30380,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.UlceratedTreeSpirit, npc_threat_level=18, right=0)

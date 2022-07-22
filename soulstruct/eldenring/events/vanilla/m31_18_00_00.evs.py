@@ -189,7 +189,7 @@ def Preconstructor():
         animation_id=3012,
         region_1=32052401,
     )
-    CommonFunc_90005300(0, flag=31180400, character=Characters.MalformedStar, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=31180400, character=Characters.MalformedStar, item_lot=0, seconds=0.0, left=0)
     Event_31182400()
 
 

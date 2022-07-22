@@ -299,7 +299,7 @@ def Preconstructor():
         0,
         flag=18000350,
         character=Characters.GraftedScion0,
-        item_lot_param_id=18002000,
+        item_lot=18002000,
         seconds=0.0,
         left=0,
     )
@@ -307,7 +307,7 @@ def Preconstructor():
         0,
         flag=18000351,
         character=Characters.GraftedScion1,
-        item_lot_param_id=18002010,
+        item_lot=18002010,
         seconds=0.0,
         left=0,
     )

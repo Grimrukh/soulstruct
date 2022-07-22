@@ -24,7 +24,7 @@ from .entities.m60_42_53_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, flag=1042530501, character=1042530501, item_lot_param_id=1042530300, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1042530501, character=1042530501, item_lot=1042530300, seconds=0.0, left=0)
     CommonFunc_90005390(
         0,
         flag=1042530350,
@@ -32,7 +32,7 @@ def Constructor():
         anchor_entity=Characters.WanderingNoble,
         character=Characters.LionGuardian,
         left=0,
-        item_lot_param_id=1043530100,
+        item_lot=1043530100,
     )
     CommonFunc_90005391(0, 1042530350, 1042532350, 1042530365, 1042530350, 0)
 

@@ -726,13 +726,13 @@ def Constructor():
     CommonFunc_20005205(0, character=4500651, animation_id=701, animation_id_1=1701, region=4502372, seconds=2.0)
     CommonFunc_20005205(0, character=4500652, animation_id=701, animation_id_1=1701, region=4502372, seconds=4.0)
     CommonFunc_20005205(0, character=4500653, animation_id=701, animation_id_1=1701, region=4502372, seconds=5.0)
-    CommonFunc_20005341(0, flag=14500480, character=4500680, item_lot_param_id=21509600)
-    CommonFunc_20005341(0, flag=14500482, character=4500682, item_lot_param_id=21509620)
-    CommonFunc_20005341(0, flag=14500484, character=4500684, item_lot_param_id=21509640)
-    CommonFunc_20005341(0, flag=14500485, character=4500685, item_lot_param_id=21509650)
-    CommonFunc_20005341(0, flag=14500487, character=4500687, item_lot_param_id=21509670)
-    CommonFunc_20005341(0, flag=14500488, character=4500688, item_lot_param_id=21509680)
-    CommonFunc_20005341(0, flag=14500489, character=4500689, item_lot_param_id=21509690)
+    CommonFunc_20005341(0, flag=14500480, character=4500680, item_lot=21509600)
+    CommonFunc_20005341(0, flag=14500482, character=4500682, item_lot=21509620)
+    CommonFunc_20005341(0, flag=14500484, character=4500684, item_lot=21509640)
+    CommonFunc_20005341(0, flag=14500485, character=4500685, item_lot=21509650)
+    CommonFunc_20005341(0, flag=14500487, character=4500687, item_lot=21509670)
+    CommonFunc_20005341(0, flag=14500488, character=4500688, item_lot=21509680)
+    CommonFunc_20005341(0, flag=14500489, character=4500689, item_lot=21509690)
     CommonFunc_20005110(0, character=4500680, region=4502295)
     CommonFunc_20005120(0, character=4500682, radius=10.0)
     CommonFunc_20005120(0, character=4500683, radius=14.0)
@@ -857,7 +857,7 @@ def Constructor():
         obj=4501711,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=55500,
+        item_lot=55500,
         first_flag=50006550,
         last_flag=50006550,
         flag=1718,
@@ -874,7 +874,7 @@ def Constructor():
         obj=4501716,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=55400,
+        item_lot=55400,
         first_flag=50006540,
         last_flag=50006540,
         flag=14500733,

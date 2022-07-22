@@ -313,8 +313,8 @@ def Constructor():
             life=0.0,
             repetition_time=1.0,
         )
-    CommonFunc_90005300(0, flag=1047390299, character=Characters.Scarab0, item_lot_param_id=40410, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=1047390298, character=Characters.Scarab1, item_lot_param_id=40422, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1047390299, character=Characters.Scarab0, item_lot=40410, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1047390298, character=Characters.Scarab1, item_lot=40422, seconds=0.0, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.MonstrousCrow0,

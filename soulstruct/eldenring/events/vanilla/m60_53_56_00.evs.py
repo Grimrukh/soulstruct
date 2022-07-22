@@ -75,7 +75,7 @@ def Constructor():
         seconds_2=0.0,
         seconds_3=0.0,
         seconds_4=0.0,
-        item_lot_param_id=1053560700,
+        item_lot=1053560700,
         flag_1=1053562250,
     )
     Event_1053562260(
@@ -89,7 +89,7 @@ def Constructor():
         seconds_2=0.0,
         seconds_3=0.0,
         seconds_4=0.0,
-        item_lot_param_id=1053560710,
+        item_lot=1053560710,
         flag_1=1053562251,
     )
     Event_1053562260(
@@ -103,7 +103,7 @@ def Constructor():
         seconds_2=0.0,
         seconds_3=0.0,
         seconds_4=0.0,
-        item_lot_param_id=1053560720,
+        item_lot=1053560720,
         flag_1=1053562252,
     )
     Event_1053562270(
@@ -182,7 +182,7 @@ def Constructor():
         flag_1=1053560805,
         flag_2=1053562800,
         character=Characters.RoundtableKnightVyke,
-        item_lot_param_id=30515,
+        item_lot=30515,
         area_id=60,
         block_id=53,
         cc_id=56,
@@ -301,7 +301,7 @@ def Event_1053562260(
     seconds_2: float,
     seconds_3: float,
     seconds_4: float,
-    item_lot_param_id: int,
+    item_lot: int,
     flag_1: uint,
 ):
     """Event 1053562260"""
@@ -351,7 +351,7 @@ def Event_1053562260(
     DisableAsset(asset)
     if PlayerInOwnWorld():
         Wait(0.30000001192092896)
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     End()
     Wait(seconds)
     Wait(seconds_1)

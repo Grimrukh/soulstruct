@@ -131,13 +131,13 @@ def _PlayCutsceneAndRotatePlayer(
 
 
 @_decompile(2003, 4)
-def _AwardItemLotToAllPlayers(item_lot_id: int):
-    return f"AwardItemLot({item_lot_id}, host_only=False)"
+def _AwardItemLotToAllPlayers(item_lot: int):
+    return f"AwardItemLot({item_lot}, host_only=False)"
 
 
 @_decompile(2003, 36)
-def _AwardItemLotToHostOnly(item_lot_id: int):
-    return f"AwardItemLot({item_lot_id}, host_only=True)"
+def _AwardItemLotToHostOnly(item_lot: int):
+    return f"AwardItemLot({item_lot}, host_only=True)"
 
 
 @_decompile(2005, 6)

@@ -124,7 +124,7 @@ def Constructor():
         0,
         flag=12010240,
         character=Characters.GiantAnt10,
-        item_lot_param_id=12010105,
+        item_lot=12010105,
         seconds=3.5,
         left=0,
     )
@@ -310,7 +310,7 @@ def Constructor():
         left=0,
         character=Characters.DragonkinSoldier3,
         left_1=1,
-        item_lot__item_lot_param_id=30600,
+        item_lot=30600,
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.DragonkinSoldier3, name=904650601, npc_threat_level=25)
@@ -345,22 +345,22 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=12010400, character=Characters.MalformedStar0, item_lot_param_id=0, seconds=3.5, left=0)
+    CommonFunc_90005300(0, flag=12010400, character=Characters.MalformedStar0, item_lot=0, seconds=3.5, left=0)
     CommonFunc_90005300(
         0,
         flag=12010401,
         character=Characters.MalformedStar1,
-        item_lot_param_id=12015995,
+        item_lot=12015995,
         seconds=3.5,
         left=0,
     )
-    CommonFunc_90005300(0, flag=12010403, character=Characters.Scarab0, item_lot_param_id=40600, seconds=1.5, left=0)
-    CommonFunc_90005300(0, flag=12010404, character=Characters.Scarab1, item_lot_param_id=40602, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12010403, character=Characters.Scarab0, item_lot=40600, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12010404, character=Characters.Scarab1, item_lot=40602, seconds=1.5, left=0)
     CommonFunc_90005300(
         0,
         flag=12010420,
         character=Characters.UlceratedTreeSpirit,
-        item_lot_param_id=12015997,
+        item_lot=12015997,
         seconds=3.5,
         left=0,
     )
@@ -377,7 +377,7 @@ def Constructor():
         left_3=0,
     )
     Event_12012421()
-    CommonFunc_90005300(0, flag=12010421, character=Characters.OnyxLord, item_lot_param_id=0, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12010421, character=Characters.OnyxLord, item_lot=0, seconds=1.5, left=0)
     CommonFunc_90005200(
         0,
         character=Characters.Snail0,
@@ -545,7 +545,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9001,
         action_button_id=4350,
-        item_lot_param_id=103940,
+        item_lot=103940,
         first_flag=400394,
         last_flag=400394,
         flag=1034509430,

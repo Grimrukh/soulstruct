@@ -48,7 +48,7 @@ def Constructor():
         0,
         flag=1049540200,
         character=Characters.Scarab,
-        item_lot_param_id=1049540700,
+        item_lot=1049540700,
         seconds=0.0,
         left=0,
     )

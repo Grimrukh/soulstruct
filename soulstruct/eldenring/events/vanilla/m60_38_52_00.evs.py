@@ -73,7 +73,7 @@ def Constructor():
         left=0,
         character=Characters.TibiaMariner,
         left_1=0,
-        item_lot__item_lot_param_id=30385,
+        item_lot=30385,
         seconds=0.0,
     )
     Event_1038522339(0, character__region=1038520340, character__region_1=1038520350)

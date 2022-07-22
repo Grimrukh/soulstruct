@@ -53,7 +53,7 @@ def Constructor():
         flag_1=1037492181,
         flag_2=1037492182,
         character=Characters.FesteringFingerprintVyke,
-        item_lot_param_id=1037490300,
+        item_lot=1037490300,
         seconds=0.0,
     )
     CommonFunc_90005793(

@@ -41,7 +41,7 @@ def Constructor():
         left=0,
         character=Characters.PutridAvatar,
         left_1=0,
-        item_lot__item_lot_param_id=30415,
+        item_lot=30415,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)

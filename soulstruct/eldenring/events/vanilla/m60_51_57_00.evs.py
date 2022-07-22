@@ -97,7 +97,7 @@ def Constructor():
     )
     CommonFunc_90005502(0, flag=1051570514, asset=Assets.AEG030_183_2000, region=1051572511)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9008, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005632(0, flag=580030, asset=Assets.AEG099_387_2000, item_lot_param_id=80030)
+    CommonFunc_90005632(0, flag=580030, asset=Assets.AEG099_387_2000, item_lot=80030)
     Event_1051572849()
     Event_1051572800()
     Event_1051572810()
@@ -935,7 +935,7 @@ def Constructor():
     )
     CommonFunc_90005261(0, character=1051570395, region=1051572275, radius=3.0, seconds=0.0, animation_id=3005)
     CommonFunc_90005261(0, character=1051570315, region=1051572315, radius=3.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, flag=1051570315, character=1051570315, item_lot_param_id=40508, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1051570315, character=1051570315, item_lot=40508, seconds=0.0, left=0)
     Event_1051572310(
         0,
         character=Characters.LionGuardian1,
@@ -954,7 +954,7 @@ def Constructor():
         0,
         flag=1051570310,
         character=Characters.LionGuardian0,
-        item_lot_param_id=1051570800,
+        item_lot=1051570800,
         seconds=0.0,
         left=0,
     )
@@ -962,7 +962,7 @@ def Constructor():
         0,
         flag=1051570311,
         character=Characters.LionGuardian1,
-        item_lot_param_id=1051570810,
+        item_lot=1051570810,
         seconds=0.0,
         left=0,
     )
@@ -1039,7 +1039,7 @@ def Constructor():
         0,
         flag=1051570421,
         character=Characters.TibiaMariner,
-        item_lot_param_id=1051570720,
+        item_lot=1051570720,
         seconds=0.0,
         left=0,
     )

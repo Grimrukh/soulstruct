@@ -70,12 +70,12 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=1048570200, character=1048570200, item_lot_param_id=40526, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1048570200, character=1048570200, item_lot=40526, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=1048570250,
         character=Characters.BlackKnifeAssassin0,
-        item_lot_param_id=1048570900,
+        item_lot=1048570900,
         seconds=0.0,
         left=0,
     )
@@ -83,7 +83,7 @@ def Constructor():
         0,
         flag=1048570251,
         character=Characters.BlackKnifeAssassin1,
-        item_lot_param_id=1048570910,
+        item_lot=1048570910,
         seconds=0.0,
         left=0,
     )
@@ -91,7 +91,7 @@ def Constructor():
         0,
         flag=1048570252,
         character=Characters.BlackKnifeAssassin2,
-        item_lot_param_id=1048570920,
+        item_lot=1048570920,
         seconds=0.0,
         left=0,
     )
@@ -99,7 +99,7 @@ def Constructor():
         0,
         flag=1048570253,
         character=Characters.BlackKnifeAssassin3,
-        item_lot_param_id=1048570930,
+        item_lot=1048570930,
         seconds=0.0,
         left=0,
     )
@@ -122,7 +122,7 @@ def Constructor():
         left=0,
         character=Characters.DeathRiteBird,
         left_1=0,
-        item_lot__item_lot_param_id=1048570700,
+        item_lot=1048570700,
         seconds=0.0,
     )
     CommonFunc_90005605(

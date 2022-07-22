@@ -55,7 +55,7 @@ def Constructor():
     CommonFunc_90005460(0, character=1041380240)
     CommonFunc_90005461(0, character=1041380240)
     CommonFunc_90005462(0, character=1041380240)
-    CommonFunc_90005300(0, flag=1041380230, character=Characters.Scarab, item_lot_param_id=40104, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1041380230, character=Characters.Scarab, item_lot=40104, seconds=0.0, left=0)
     Event_1041382200(0, character=Characters.Wolf0, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041382200(1, character=Characters.Wolf1, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041382200(2, character=Characters.Wolf2, region=1041382250, owner_entity=Characters.Dummy)
@@ -68,7 +68,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9003,
         action_button_id=4350,
-        item_lot_param_id=101910,
+        item_lot=101910,
         first_flag=400191,
         last_flag=400191,
         flag=1041389414,
@@ -78,7 +78,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9003,
         action_button_id=4350,
-        item_lot_param_id=101910,
+        item_lot=101910,
         first_flag=400191,
         last_flag=400191,
         flag=3708,
@@ -88,7 +88,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9003,
         action_button_id=4350,
-        item_lot_param_id=101910,
+        item_lot=101910,
         first_flag=400191,
         last_flag=400191,
         flag=3709,

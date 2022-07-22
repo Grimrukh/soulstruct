@@ -34,7 +34,7 @@ def Constructor():
         left=0,
         character=m60_45_Characters.DraconicTreeSentinel,
         left_1=0,
-        item_lot__item_lot_param_id=30315,
+        item_lot=30315,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=m60_45_Characters.DraconicTreeSentinel, npc_threat_level=12, right=0)
@@ -45,7 +45,7 @@ def Constructor():
         0,
         flag=1045520200,
         character=m60_45_Characters.GuardianGolem0,
-        item_lot_param_id=30360,
+        item_lot=30360,
         seconds=0.0,
         left=0,
     )
@@ -53,7 +53,7 @@ def Constructor():
         0,
         flag=1045520202,
         character=m60_45_Characters.GuardianGolem1,
-        item_lot_param_id=30365,
+        item_lot=30365,
         seconds=0.0,
         left=0,
     )
@@ -152,7 +152,7 @@ def Constructor():
         flag_1=1045522181,
         flag_2=1045522182,
         character=Characters.DungEater,
-        item_lot_param_id=113800,
+        item_lot=113800,
         seconds=0.0,
     )
     CommonFunc_90005793(

@@ -564,7 +564,7 @@ def Constructor():
     Event_12600047(1, character=2600109)
     Event_12600047(2, character=2600110)
     Event_12600047(3, character=2600198)
-    Event_12600180(0, character=2600106, item_lot_param_id=22502610)
+    Event_12600180(0, character=2600106, item_lot=22502610)
     Event_12600400(0, character=2600400, flag=52600990)
     Event_12600400(1, character=2600401, flag=52600980)
     Event_12600400(2, character=2600402, flag=52600970)
@@ -627,7 +627,7 @@ def Constructor():
     Event_12600120(1, obj_act_id=12601001, obj=2601006)
     Event_12600120(2, obj_act_id=12601002, obj=2601007)
     Event_12600120(3, obj_act_id=12601003, obj=2601009)
-    Event_12600125(0, obj=2601008, item_lot_param_id=2600570)
+    Event_12600125(0, obj=2601008, item_lot=2600570)
     AND_15.Add(CharacterHuman(PLAYER))
     SkipLinesIfConditionFalse(2, AND_15)
     if FlagEnabled(6314):
@@ -3004,7 +3004,7 @@ def Event_12600047(_, character: int):
 
 
 @ContinueOnRest(12600180)
-def Event_12600180(_, character: int, item_lot_param_id: int):
+def Event_12600180(_, character: int, item_lot: int):
     """Event 12600180"""
     DisableNetworkSync()
     if Client():
@@ -3029,7 +3029,7 @@ def Event_12600180(_, character: int, item_lot_param_id: int):
     DeleteObjectVFX(2601040)
     RestartIfFinishedConditionTrue(input_condition=AND_2)
     ForceAnimation(PLAYER, 101140)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     Restart()
 
 
@@ -3183,7 +3183,7 @@ def Event_12600120(_, obj_act_id: int, obj: int):
 
 
 @RestartOnRest(12600125)
-def Event_12600125(_, obj: int, item_lot_param_id: int):
+def Event_12600125(_, obj: int, item_lot: int):
     """Event 12600125"""
     if ThisEventSlotFlagEnabled():
         return
@@ -3194,7 +3194,7 @@ def Event_12600125(_, obj: int, item_lot_param_id: int):
     MAIN.Await(ActionButtonParamActivated(action_button_id=2600030, entity=obj))
     
     ForceAnimation(PLAYER, 101140)
-    AwardItemLot(item_lot_param_id, host_only=False)
+    AwardItemLot(item_lot, host_only=False)
     DeleteObjectVFX(obj)
 
 

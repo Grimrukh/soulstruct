@@ -36,7 +36,7 @@ def Constructor():
     Event_1042392200(9, character=Characters.Wolf9, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     Event_1042392200(10, character=Characters.Wolf10, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     Event_1042392200(11, character=Characters.Wolf11, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
-    CommonFunc_90005300(0, flag=1042390310, character=Characters.Scarab, item_lot_param_id=40146, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1042390310, character=Characters.Scarab, item_lot=40146, seconds=0.0, left=0)
     Event_1042392600(0, attacked_entity=Assets.AEG099_280_9000, region=1042392600)
     Event_1042392600(1, attacked_entity=Assets.AEG099_280_9001, region=1042392601)
     Event_1042392600(2, attacked_entity=Assets.AEG099_280_9002, region=1042392602)
@@ -66,7 +66,7 @@ def Constructor():
         flag_1=1042392181,
         flag_2=1042392182,
         character=Characters.RecusantHenricus,
-        item_lot_param_id=1042390700,
+        item_lot=1042390700,
         seconds=0.0,
     )
     CommonFunc_90005793(

@@ -41,7 +41,7 @@ def Constructor():
     Event_35002504()
     Event_35002506()
     Event_35002508()
-    CommonFunc_90005300(0, flag=35000800, character=Characters.Mohg, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000800, character=Characters.Mohg, item_lot=0, seconds=0.0, left=0)
     Event_35002800()
     Event_35002810()
     Event_35002849()
@@ -225,7 +225,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9007,
         action_button_id=4110,
-        item_lot_param_id=100890,
+        item_lot=100890,
         first_flag=400089,
         last_flag=400089,
         flag=35009211,
@@ -253,7 +253,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_090_9002,
         action_button_id=6440,
-        item_lot_param_id=4920,
+        item_lot=4920,
         first_flag=9504,
         last_flag=9504,
         flag=35009333,
@@ -264,7 +264,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9000,
         action_button_id=4110,
-        item_lot_param_id=103820,
+        item_lot=103820,
         first_flag=400381,
         last_flag=400382,
         flag=35009336,
@@ -277,7 +277,7 @@ def Constructor():
         0,
         asset=Assets.AEG099_990_9000,
         action_button_id=4110,
-        item_lot_param_id=113820,
+        item_lot=113820,
         first_flag=400382,
         last_flag=400382,
         flag=35009337,
@@ -1000,14 +1000,14 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, flag=35000495, character=Characters.Scarab5, item_lot_param_id=35000970, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000496, character=Characters.Scarab6, item_lot_param_id=35000980, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000497, character=Characters.Scarab7, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000490, character=Characters.Scarab0, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000491, character=Characters.Scarab1, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000492, character=Characters.Scarab2, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000493, character=Characters.Scarab3, item_lot_param_id=0, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=35000494, character=Characters.Scarab4, item_lot_param_id=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000495, character=Characters.Scarab5, item_lot=35000970, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000496, character=Characters.Scarab6, item_lot=35000980, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000497, character=Characters.Scarab7, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000490, character=Characters.Scarab0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000491, character=Characters.Scarab1, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000492, character=Characters.Scarab2, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000493, character=Characters.Scarab3, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=35000494, character=Characters.Scarab4, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005211(
         0,
         character=Characters.Omen0,
@@ -3624,7 +3624,7 @@ def Event_35003724(
     _,
     asset: uint,
     action_button_id: int,
-    item_lot_param_id: int,
+    item_lot: int,
     first_flag: uint,
     last_flag: uint,
     flag: uint,
@@ -3653,7 +3653,7 @@ def Event_35003724(
     
     GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_2)
     DeleteAssetVFX(asset)
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #

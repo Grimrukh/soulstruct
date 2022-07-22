@@ -30,7 +30,7 @@ def Constructor():
         0,
         flag=1049370800,
         character=Characters.NightsCavalryHorse,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -49,7 +49,7 @@ def Constructor():
         left=0,
         character=Characters.NightsCavalry,
         left_1=0,
-        item_lot__item_lot_param_id=1049370100,
+        item_lot=1049370100,
         seconds=0.0,
     )
     CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
@@ -60,7 +60,7 @@ def Constructor():
         left=0,
         character=Characters.DeathRiteBird,
         left_1=0,
-        item_lot__item_lot_param_id=1049370110,
+        item_lot=1049370110,
         seconds=0.0,
     )
     Event_1049372299()
@@ -68,7 +68,7 @@ def Constructor():
         0,
         flag=1049370299,
         character=Characters.LionGuardian,
-        item_lot_param_id=1049370700,
+        item_lot=1049370700,
         seconds=0.0,
         left=0,
     )

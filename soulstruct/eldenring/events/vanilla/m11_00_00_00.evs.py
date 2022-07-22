@@ -218,7 +218,7 @@ def Constructor():
         seconds=0.0,
         seconds_1=0.0,
     )
-    CommonFunc_90005632(0, flag=580050, asset=Assets.AEG099_389_4500, item_lot_param_id=80050)
+    CommonFunc_90005632(0, flag=580050, asset=Assets.AEG099_389_4500, item_lot=80050)
     CommonFunc_90005570(0, flag=60822, gesture_param_id=52, asset=Assets.AEG099_600_9001, left=0, left_1=1, right=0)
     Event_11002203(0, character=Characters.SmallOracleEnvoy3, region=11002216)
     Event_11002205(0, character=Characters.SmallOracleEnvoy3, region=11002215)
@@ -532,7 +532,7 @@ def Constructor():
         0,
         flag=11000393,
         character=Characters.Gargoyle2,
-        item_lot_param_id=11001187,
+        item_lot=11001187,
         seconds=2.0,
         left=0,
     )
@@ -581,7 +581,7 @@ def Constructor():
         0,
         flag=11000389,
         character=Characters.ErdtreeAvatar,
-        item_lot_param_id=11001198,
+        item_lot=11001198,
         seconds=0.0,
         left=0,
     )
@@ -589,7 +589,7 @@ def Constructor():
         0,
         flag=11000399,
         character=Characters.LionGuardian,
-        item_lot_param_id=11000185,
+        item_lot=11000185,
         seconds=0.0,
         left=0,
     )
@@ -597,7 +597,7 @@ def Constructor():
         0,
         flag=11000495,
         character=Characters.CrucibleKnight0,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -605,7 +605,7 @@ def Constructor():
         0,
         flag=11000496,
         character=Characters.CrucibleKnight1,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
@@ -614,7 +614,7 @@ def Constructor():
         0,
         flag=11000497,
         character=Characters.UlceratedTreeSpirit,
-        item_lot_param_id=11001193,
+        item_lot=11001193,
         seconds=0.0,
         left=0,
     )
@@ -631,20 +631,20 @@ def Constructor():
         left_3=1,
         left_4=1,
     )
-    CommonFunc_90005300(0, flag=11000498, character=Characters.GuardianGolem, item_lot_param_id=0, seconds=2.0, left=0)
-    CommonFunc_90005300(0, flag=11000499, character=11000499, item_lot_param_id=11000195, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000498, character=Characters.GuardianGolem, item_lot=0, seconds=2.0, left=0)
+    CommonFunc_90005300(0, flag=11000499, character=11000499, item_lot=11000195, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=11000484,
         character=Characters.BlackKnifeAssassin,
-        item_lot_param_id=0,
+        item_lot=0,
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=11000665, character=Characters.Scarab0, item_lot_param_id=40370, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=11000666, character=Characters.Scarab1, item_lot_param_id=40372, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=11000667, character=11000667, item_lot_param_id=40374, seconds=0.0, left=0)
-    CommonFunc_90005300(0, flag=11000299, character=11000299, item_lot_param_id=11001000, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000665, character=Characters.Scarab0, item_lot=40370, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000666, character=Characters.Scarab1, item_lot=40372, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000667, character=11000667, item_lot=40374, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000299, character=11000299, item_lot=11001000, seconds=0.0, left=0)
     CommonFunc_9005811(0, flag=11000850, asset=11001930, model_point=5, right=0)
     CommonFunc_9005811(0, flag=11000850, asset=11001931, model_point=5, right=0)
     CommonFunc_9005811(0, flag=11000850, asset=11001932, model_point=5, right=0)
@@ -770,7 +770,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=11000705, flag=4703, first_flag=4700, last_flag=4704)
     Event_11003730()
-    CommonFunc_90005774(0, flag=7605, item_lot_param_id=11001985, flag_1=11001985)
+    CommonFunc_90005774(0, flag=7605, item_lot=11001985, flag_1=11001985)
     Event_11003740()
     Event_11003741()
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy6, flag=11002740)

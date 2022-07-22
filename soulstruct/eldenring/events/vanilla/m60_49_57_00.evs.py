@@ -67,7 +67,7 @@ def Constructor():
         0,
         flag=1049570300,
         character=Characters.LargeScarab,
-        item_lot_param_id=1049570710,
+        item_lot=1049570710,
         seconds=0.0,
         left=0,
     )
@@ -75,7 +75,7 @@ def Constructor():
         0,
         flag=1049570310,
         character=Characters.Scarab,
-        item_lot_param_id=1049570700,
+        item_lot=1049570700,
         seconds=0.0,
         left=0,
     )
@@ -83,7 +83,7 @@ def Constructor():
         0,
         flag=1049570320,
         character=Characters.ExtraLargeScarab,
-        item_lot_param_id=1049570720,
+        item_lot=1049570720,
         seconds=0.0,
         left=0,
     )

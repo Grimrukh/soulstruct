@@ -31,7 +31,7 @@ def Constructor():
         left=0,
         character=Characters.WormfaceLarge,
         left_1=0,
-        item_lot__item_lot_param_id=30320,
+        item_lot=30320,
         seconds=0.0,
     )
     CommonFunc_90005636(

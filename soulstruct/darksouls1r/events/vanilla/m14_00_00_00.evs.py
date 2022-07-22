@@ -138,15 +138,15 @@ def Constructor():
     Event_11405250(2, character=1400102)
     Event_11405250(3, character=1400103)
     Event_11405250(4, character=1400104)
-    Event_11400850(0, character=1400200, item_lot_param_id=25300200)
-    Event_11400850(1, character=1400201, item_lot_param_id=25300200)
-    Event_11400850(2, character=1400202, item_lot_param_id=25300200)
-    Event_11400850(3, character=1400203, item_lot_param_id=25300200)
-    Event_11400850(4, character=1400204, item_lot_param_id=25300200)
-    Event_11400850(5, character=1400205, item_lot_param_id=25300200)
-    Event_11400850(6, character=1400206, item_lot_param_id=25300200)
-    Event_11400850(7, character=1400207, item_lot_param_id=25300200)
-    Event_11400850(8, character=1400208, item_lot_param_id=25300200)
+    Event_11400850(0, character=1400200, item_lot=25300200)
+    Event_11400850(1, character=1400201, item_lot=25300200)
+    Event_11400850(2, character=1400202, item_lot=25300200)
+    Event_11400850(3, character=1400203, item_lot=25300200)
+    Event_11400850(4, character=1400204, item_lot=25300200)
+    Event_11400850(5, character=1400205, item_lot=25300200)
+    Event_11400850(6, character=1400206, item_lot=25300200)
+    Event_11400850(7, character=1400207, item_lot=25300200)
+    Event_11400850(8, character=1400208, item_lot=25300200)
     Event_11400600(0, obj=1401650, obj_act_id=11400600)
     Event_11400600(1, obj=1401651, obj_act_id=11400601)
     Event_11400600(2, obj=1401652, obj_act_id=11400602)
@@ -987,7 +987,7 @@ def Event_11400100(_, flag: int, region: int, entity: int):
 
 
 @RestartOnRest(11400850)
-def Event_11400850(_, character: int, item_lot_param_id: int):
+def Event_11400850(_, character: int, item_lot: int):
     """Event 11400850"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -996,13 +996,13 @@ def Event_11400850(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11400600)

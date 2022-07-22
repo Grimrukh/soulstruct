@@ -207,15 +207,15 @@ def Constructor():
     Event_11205180(0, character=1200350, left=1)
     Event_11205180(1, character=1200351, left=0)
     Event_11205180(2, character=1200352, left=0)
-    Event_11200810(0, character=1200000, left=0, item_lot_param_id=0)
-    Event_11200810(1, character=1200001, left=0, item_lot_param_id=0)
-    Event_11200810(2, character=1200400, left=0, item_lot_param_id=33004000)
-    Event_11200810(3, character=1200350, left=0, item_lot_param_id=0)
-    Event_11200810(4, character=1200351, left=0, item_lot_param_id=0)
-    Event_11200810(5, character=1200352, left=0, item_lot_param_id=0)
-    Event_11200810(6, character=1200750, left=0, item_lot_param_id=27901000)
-    Event_11200810(7, character=1200301, left=0, item_lot_param_id=0)
-    Event_11200810(8, character=1200304, left=1, item_lot_param_id=0)
+    Event_11200810(0, character=1200000, left=0, item_lot=0)
+    Event_11200810(1, character=1200001, left=0, item_lot=0)
+    Event_11200810(2, character=1200400, left=0, item_lot=33004000)
+    Event_11200810(3, character=1200350, left=0, item_lot=0)
+    Event_11200810(4, character=1200351, left=0, item_lot=0)
+    Event_11200810(5, character=1200352, left=0, item_lot=0)
+    Event_11200810(6, character=1200750, left=0, item_lot=27901000)
+    Event_11200810(7, character=1200301, left=0, item_lot=0)
+    Event_11200810(8, character=1200304, left=1, item_lot=0)
     Event_11200810(9, 1200306, 0, 0)
 
 
@@ -1182,7 +1182,7 @@ def Event_11200200():
 
 
 @RestartOnRest(11200810)
-def Event_11200810(_, character: int, left: int, item_lot_param_id: int):
+def Event_11200810(_, character: int, left: int, item_lot: int):
     """Event 11200810"""
     SkipLinesIfThisEventSlotFlagDisabled(6)
     SkipLinesIfValueEqual(3, left=left, right=1)
@@ -1194,13 +1194,13 @@ def Event_11200810(_, character: int, left: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11200600)

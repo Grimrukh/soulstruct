@@ -45,11 +45,11 @@ def Constructor():
         0,
         flag=1043520506,
         character=Characters.Margit,
-        item_lot_param_id=1043520500,
+        item_lot=1043520500,
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot_param_id=40316, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, left=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61032)
     CommonFunc_90005705(0, 1043520710)
 

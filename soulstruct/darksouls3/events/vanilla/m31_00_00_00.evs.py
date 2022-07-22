@@ -578,14 +578,14 @@ def Constructor():
     Event_13105470(4, character=3100560, region=3102550, destination=3102570, seconds=4.5)
     Event_13105470(5, character=3100561, region=3102550, destination=3102570, seconds=5.800000190734863)
     Event_13105470(6, character=3100562, region=3102550, destination=3102571, seconds=3.5)
-    CommonFunc_20005350(0, character=3100570, item_lot_param_id=22800000, flag=53100228)
+    CommonFunc_20005350(0, character=3100570, item_lot=22800000, flag=53100228)
     Event_13105300()
     Event_13105225(0, character=3100401, region=3102300, region_1=3102313)
     Event_13105320()
-    CommonFunc_20005341(0, flag=13100500, character=3100831, item_lot_param_id=30600000)
-    CommonFunc_20005341(0, flag=13100501, character=3100860, item_lot_param_id=13102000)
-    CommonFunc_20005341(0, flag=13100502, character=3100610, item_lot_param_id=21501000)
-    CommonFunc_20005341(0, flag=13100503, character=3100611, item_lot_param_id=21501010)
+    CommonFunc_20005341(0, flag=13100500, character=3100831, item_lot=30600000)
+    CommonFunc_20005341(0, flag=13100501, character=3100860, item_lot=13102000)
+    CommonFunc_20005341(0, flag=13100502, character=3100610, item_lot=21501000)
+    CommonFunc_20005341(0, flag=13100503, character=3100611, item_lot=21501010)
     Event_13105240()
     CommonFunc_20005900(0, flag=13300901, flag_1=13100900)
     CommonFunc_20005340(0, flag=13100900, character=3100900)
@@ -871,9 +871,9 @@ def Constructor():
     Event_13105420(6, flag=53100760, obj=3101576)
     Event_13105420(7, flag=53100770, obj=3101577)
     Event_13105420(9, flag=53100800, obj=3101579)
-    CommonFunc_20005525(0, flag=6700, item_lot_param_id=4200, obj=3101290, model_point=60)
-    CommonFunc_20005525(0, flag=53100630, item_lot_param_id=3100630, obj=3101291, model_point=60)
-    CommonFunc_20005525(0, flag=53100660, item_lot_param_id=3100660, obj=3101292, model_point=60)
+    CommonFunc_20005525(0, flag=6700, item_lot=4200, obj=3101290, model_point=60)
+    CommonFunc_20005525(0, flag=53100630, item_lot=3100630, obj=3101291, model_point=60)
+    CommonFunc_20005525(0, flag=53100660, item_lot=3100660, obj=3101292, model_point=60)
     CommonFunc_20005524(0, obj=3101260, flag=9482)
     Event_13105295()
     CommonFunc_20005542(
@@ -1041,7 +1041,7 @@ def Constructor():
         obj=3101715,
         action_button_id=4000,
         right=2,
-        item_lot_param_id=62510,
+        item_lot=62510,
         first_flag=50006251,
         last_flag=50006251,
         flag=1478,
@@ -1093,7 +1093,7 @@ def Constructor():
     CommonFunc_20006002(0, character=3100725, flag=1138, first_flag=1135, last_flag=1139)
     Event_13105721()
     Event_13105722(0, attacked_entity=3100725)
-    CommonFunc_20005526(0, flag=50006083, item_lot_param_id__obj=60830, obj=3101700, model_point=61, flag_1=8220)
+    CommonFunc_20005526(0, flag=50006083, item_lot__obj=60830, obj=3101700, model_point=61, flag_1=8220)
     Event_13105723()
     CommonFunc_20006002(0, character=3100740, flag=1598, first_flag=1595, last_flag=1599)
     CommonFunc_20006000(

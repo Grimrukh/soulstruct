@@ -1718,7 +1718,7 @@ EMEDF = {
         "alias": "AwardItemLotToAllPlayers",
         "docstring": "TODO",
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 5): {
@@ -2139,7 +2139,7 @@ EMEDF = {
             *not* want to award an item lot to the host only.
         """,
         "args": {
-            "item_lot_param_id": INT,
+            "item_lot": INT,
         },
     },
     (2003, 37): {
@@ -4651,7 +4651,7 @@ EMEDF = {
         "args": {
             "item_type": NO_DEFAULT(ItemType),
             "item_id": NO_DEFAULT(ItemTyping),
-            "item_lot_id": NO_DEFAULT(ItemLotTyping),
+            "item_lot": NO_DEFAULT(ItemLotTyping),
             "trade_completed_flag": FLAG,
             "crow_response_flag": FLAG,
         },

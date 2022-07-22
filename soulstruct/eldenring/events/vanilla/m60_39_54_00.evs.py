@@ -34,7 +34,7 @@ def Constructor():
         asset=Assets.AEG099_060_9002,
         enemy_block_distance=5.0,
     )
-    CommonFunc_90005632(0, flag=580020, asset=Assets.AEG099_386_2000, item_lot_param_id=80020)
+    CommonFunc_90005632(0, flag=580020, asset=Assets.AEG099_386_2000, item_lot=80020)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)

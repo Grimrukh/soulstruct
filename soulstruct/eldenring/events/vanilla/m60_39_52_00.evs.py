@@ -55,7 +55,7 @@ def Constructor():
         flag_1=1039522181,
         flag_2=1039522182,
         character=Characters.EleonoraVioletBloodyFinger,
-        item_lot_param_id=101620,
+        item_lot=101620,
         seconds=0.0,
     )
     CommonFunc_90005793(
@@ -69,7 +69,7 @@ def Constructor():
         left=0,
     )
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61031)
-    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot_param_id=40306, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1039520500, character=Characters.Scarab, item_lot=40306, seconds=0.0, left=0)
     Event_1039523700(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523701(0, character=Characters.YuraHunterofBloodyFingers)
     Event_1039523703(0, asset=Assets.AEG099_429_9000, asset_1=Assets.AEG099_429_9001, asset_2=Assets.AEG099_429_9002)

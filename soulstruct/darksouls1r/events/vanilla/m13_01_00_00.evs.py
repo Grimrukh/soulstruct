@@ -64,8 +64,8 @@ def Constructor():
     Event_11315070(2, character=1310209, region=1312251, seconds=0.4000000059604645)
     Event_11315070(3, character=1310210, region=1312251, seconds=0.6000000238418579)
     Event_11315070(4, character=1310211, region=1312251, seconds=0.800000011920929)
-    Event_11310820(0, character=1310300, item_lot_param_id=27903000)
-    Event_11310820(1, character=1310400, item_lot_param_id=33005000)
+    Event_11310820(0, character=1310300, item_lot=27903000)
+    Event_11310820(1, character=1310400, item_lot=33005000)
     DisableSoundEvent(sound_id=1313800)
     if FlagEnabled(7):
         Event_11315392()
@@ -961,7 +961,7 @@ def Event_11310100():
 
 
 @RestartOnRest(11310820)
-def Event_11310820(_, character: int, item_lot_param_id: int):
+def Event_11310820(_, character: int, item_lot: int):
     """Event 11310820"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -970,13 +970,13 @@ def Event_11310820(_, character: int, item_lot_param_id: int):
     
     MAIN.Await(CharacterDead(character))
     
-    if ValueEqual(left=item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     OR_7.Add(CharacterHuman(PLAYER))
     OR_7.Add(CharacterHollow(PLAYER))
     if not OR_7:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @ContinueOnRest(11310510)

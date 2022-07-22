@@ -194,17 +194,17 @@ def Constructor():
     Event_11705050(1, character=1700401, region=1702011)
     Event_11700900(1, character=1700401)
     Event_11705060(1, character=1700401)
-    Event_11700810(0, character=6610, left=0, item_lot_param_id=0)
-    Event_11700810(1, character=1700450, left=1, item_lot_param_id=33001000)
-    Event_11700810(2, character=1700451, left=1, item_lot_param_id=33001000)
-    Event_11700810(3, character=1700452, left=1, item_lot_param_id=33001000)
-    Event_11700810(4, character=1700453, left=1, item_lot_param_id=33001000)
-    Event_11700810(5, character=1700190, left=0, item_lot_param_id=0)
-    Event_11700810(6, character=1700191, left=0, item_lot_param_id=0)
-    Event_11700810(10, character=1700501, left=0, item_lot_param_id=0)
-    Event_11700810(11, character=1700502, left=0, item_lot_param_id=0)
-    Event_11700810(12, character=1700150, left=0, item_lot_param_id=0)
-    Event_11700810(13, character=1700151, left=0, item_lot_param_id=0)
+    Event_11700810(0, character=6610, left=0, item_lot=0)
+    Event_11700810(1, character=1700450, left=1, item_lot=33001000)
+    Event_11700810(2, character=1700451, left=1, item_lot=33001000)
+    Event_11700810(3, character=1700452, left=1, item_lot=33001000)
+    Event_11700810(4, character=1700453, left=1, item_lot=33001000)
+    Event_11700810(5, character=1700190, left=0, item_lot=0)
+    Event_11700810(6, character=1700191, left=0, item_lot=0)
+    Event_11700810(10, character=1700501, left=0, item_lot=0)
+    Event_11700810(11, character=1700502, left=0, item_lot=0)
+    Event_11700810(12, character=1700150, left=0, item_lot=0)
+    Event_11700810(13, character=1700151, left=0, item_lot=0)
     Event_11705280(0, character=1700350)
     Event_11705280(1, character=1700351)
     Event_11700600(1, obj=1701651, obj_act_id=11700601)
@@ -1528,7 +1528,7 @@ def Event_11705201(_, flag: int, character: int, region: int, flag_1: int):
 
 
 @RestartOnRest(11700810)
-def Event_11700810(_, character: int, left: int, item_lot_param_id: int):
+def Event_11700810(_, character: int, left: int, item_lot: int):
     """Event 11700810"""
     if ThisEventSlotFlagEnabled():
         DisableCharacter(character)
@@ -1542,7 +1542,7 @@ def Event_11700810(_, character: int, left: int, item_lot_param_id: int):
         OR_7.Add(CharacterHollow(PLAYER))
         if not OR_7:
             return
-        AwardItemLot(item_lot_param_id, host_only=True)
+        AwardItemLot(item_lot, host_only=True)
     End()
 
 

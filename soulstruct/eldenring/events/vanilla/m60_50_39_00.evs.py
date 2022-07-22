@@ -28,7 +28,7 @@ def Constructor():
     Event_1050392210(1, character=Characters.GiantBall1, asset=Assets.AEG099_090_9002, region=1050392291)
     Event_1050392580(0, start_climbing_flag=50390580, stop_climbing_flag=50390851, asset=Assets.AEG110_069_2000)
     CommonFunc_90005525(0, flag=1050390620, asset=Assets.AEG004_998_1000)
-    CommonFunc_90005632(0, flag=580060, asset=Assets.AEG099_391_2000, item_lot_param_id=80060)
+    CommonFunc_90005632(0, flag=580060, asset=Assets.AEG099_391_2000, item_lot=80060)
     Event_1050392300(0, asset=Assets.AEG099_252_2000, flag=1050390200)
     Event_1050392300(1, asset=Assets.AEG099_252_2001, flag=1050390200)
     Event_1050392301(2, asset=Assets.AEG099_253_2000, flag=1050390201)

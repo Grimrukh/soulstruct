@@ -57,12 +57,12 @@ def Event_1048512800(
     left: uint,
     character: uint,
     left_1: uint,
-    item_lot__item_lot_param_id: int,
+    item_lot: int,
     seconds: float,
 ):
     """Event 1048512800"""
-    if ValueNotEqual(left=item_lot__item_lot_param_id, right=0):
-        Unknown_2004_76(flag=flag, item_lot=item_lot__item_lot_param_id)
+    if ValueNotEqual(left=item_lot, right=0):
+        Unknown_2004_76(flag=flag, item_lot=item_lot)
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
     DisableAnimations(character)
@@ -72,10 +72,10 @@ def Event_1048512800(
     Kill(Characters.NightsCavalryHorse)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(1.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
 
     # --- Label 0 --- #
@@ -106,10 +106,10 @@ def Event_1048512800(
         EnableFlag(left)
     if PlayerNotInOwnWorld():
         return
-    if ValueEqual(left=item_lot__item_lot_param_id, right=0):
+    if ValueEqual(left=item_lot, right=0):
         return
     Wait(5.0)
-    AwardItemLot(item_lot__item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
     End()
     Wait(seconds)
 

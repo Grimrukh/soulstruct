@@ -336,12 +336,12 @@ def Constructor():
         region=1412302,
         seconds=0.20000000298023224,
     )
-    Event_11410150(1, character=1410301, item_lot_param_id=33900000)
-    Event_11410150(2, character=1410302, item_lot_param_id=33900000)
-    Event_11410150(3, character=1410303, item_lot_param_id=33900000)
-    Event_11410150(4, character=1410304, item_lot_param_id=33900000)
-    Event_11410150(5, character=1410305, item_lot_param_id=33900000)
-    Event_11410150(6, character=1410306, item_lot_param_id=33900000)
+    Event_11410150(1, character=1410301, item_lot=33900000)
+    Event_11410150(2, character=1410302, item_lot=33900000)
+    Event_11410150(3, character=1410303, item_lot=33900000)
+    Event_11410150(4, character=1410304, item_lot=33900000)
+    Event_11410150(5, character=1410305, item_lot=33900000)
+    Event_11410150(6, character=1410306, item_lot=33900000)
     Event_11410600(0, obj=1411650, obj_act_id=11410600)
     Event_11410600(1, obj=1411651, obj_act_id=11410601)
     Event_11410600(2, obj=1411652, obj_act_id=11410602)
@@ -2195,7 +2195,7 @@ def Event_11410100(_, character: int):
 
 
 @RestartOnRest(11410150)
-def Event_11410150(_, character: int, item_lot_param_id: int):
+def Event_11410150(_, character: int, item_lot: int):
     """Event 11410150"""
     if ThisEventSlotFlagEnabled():
         return
@@ -2206,7 +2206,7 @@ def Event_11410150(_, character: int, item_lot_param_id: int):
     OR_1.Add(CharacterHollow(PLAYER))
     if not OR_1:
         return
-    AwardItemLot(item_lot_param_id, host_only=True)
+    AwardItemLot(item_lot, host_only=True)
 
 
 @RestartOnRest(800)
