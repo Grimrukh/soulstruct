@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13010000, obj=3011950, reaction_distance=5.0)
@@ -298,7 +298,7 @@ def Constructor():
     CommonFunc_20006031(0, 73010953, 3012750)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableAnimations(3010790)
@@ -517,7 +517,7 @@ def Event_13015201(
     Restart()
 
 
-@UnknownRestart(13015202)
+@EndOnRest(13015202)
 def Event_13015202():
     """Event 13015202"""
     Event_13015201(0, 13010300, 13010302, 3011491, 3011490, 3014500, 13011300, 13014300, 13010301)

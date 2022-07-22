@@ -2080,7 +2080,7 @@ def CommonFunc_20000343(_, flag: int, character: int, flag_1: int):
     EnableFlag(flag)
 
 
-@NeverRestart(20005350)
+@ContinueOnRest(20005350)
 def CommonFunc_20005350(_, character: int, item_lot_param_id: int, flag: int):
     """CommonFunc 20005350"""
     if PlayerNotInOwnWorld():
@@ -2198,7 +2198,7 @@ def CommonFunc_20005381(_, character: int, region: int, area_id: uchar, block_id
     End()
 
 
-@NeverRestart(20005400)
+@ContinueOnRest(20005400)
 def CommonFunc_20005400(_, character: int):
     """CommonFunc 20005400"""
     AND_1.Add(CharacterHasSpecialEffect(character, 11700))
@@ -2972,7 +2972,7 @@ def CommonFunc_20005493(_, character: int, character_1: int, flag: int):
     Restart()
 
 
-@NeverRestart(20005494)
+@ContinueOnRest(20005494)
 def CommonFunc_20005494():
     """CommonFunc 20005494"""
     if PlayerNotInOwnWorld():
@@ -3043,7 +3043,7 @@ def CommonFunc_20005495(_, character: int, character_1: int, flag: int):
     End()
 
 
-@NeverRestart(20005496)
+@ContinueOnRest(20005496)
 def CommonFunc_20005496(_, obj: int):
     """CommonFunc 20005496"""
     if FlagEnabled(1478):
@@ -3054,7 +3054,7 @@ def CommonFunc_20005496(_, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(20005500)
+@ContinueOnRest(20005500)
 def CommonFunc_20005500(_, flag: int, bonfire_flag: int, character: int, obj: int):
     """CommonFunc 20005500"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -3288,7 +3288,7 @@ def CommonFunc_20005524(_, obj: int, flag: int):
     EnableTreasure(obj=obj)
 
 
-@NeverRestart(20005525)
+@ContinueOnRest(20005525)
 def CommonFunc_20005525(_, flag: int, item_lot_param_id: int, obj: int, model_point: int):
     """CommonFunc 20005525"""
     DisableNetworkSync()
@@ -3305,7 +3305,7 @@ def CommonFunc_20005525(_, flag: int, item_lot_param_id: int, obj: int, model_po
     AwardItemLot(item_lot_param_id, host_only=False)
 
 
-@NeverRestart(20005526)
+@ContinueOnRest(20005526)
 def CommonFunc_20005526(_, flag: int, item_lot_param_id__obj: int, obj: int, model_point: int, flag_1: int):
     """CommonFunc 20005526"""
     DisableNetworkSync()
@@ -3329,7 +3329,7 @@ def CommonFunc_20005526(_, flag: int, item_lot_param_id__obj: int, obj: int, mod
     AwardItemLot(item_lot_param_id__obj, host_only=False)
 
 
-@NeverRestart(20005527)
+@ContinueOnRest(20005527)
 def CommonFunc_20005527(_, flag: int, item_lot_param_id: int, obj: int, left: int, action_button_id: int):
     """CommonFunc 20005527"""
     DisableNetworkSync()
@@ -3688,7 +3688,7 @@ def CommonFunc_20005581(_, obj: int, obj_act_id: int):
     DisableObjectActivation(obj, obj_act_id=obj_act_id, relative_index=3)
 
 
-@NeverRestart(20005610)
+@ContinueOnRest(20005610)
 def CommonFunc_20005610(_, flag: int, region: int, region_1: int):
     """CommonFunc 20005610"""
     DisableNetworkSync()
@@ -3715,7 +3715,7 @@ def CommonFunc_20005610(_, flag: int, region: int, region_1: int):
     Restart()
 
 
-@NeverRestart(20005611)
+@ContinueOnRest(20005611)
 def CommonFunc_20005611(_, flag: int, obj_act_id: int, obj: int, obj_act_id_1: int):
     """CommonFunc 20005611"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -3739,7 +3739,7 @@ def CommonFunc_20005611(_, flag: int, obj_act_id: int, obj: int, obj_act_id_1: i
     End()
 
 
-@NeverRestart(20005612)
+@ContinueOnRest(20005612)
 def CommonFunc_20005612(_, flag: int, obj_act_id: int):
     """CommonFunc 20005612"""
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
@@ -3766,7 +3766,7 @@ def CommonFunc_20005613(_, flag: int, obj_act_id: int, obj: int, obj_act_id_1: i
     DisableObjectActivation(obj, obj_act_id=obj_act_id_1)
 
 
-@NeverRestart(20005614)
+@ContinueOnRest(20005614)
 def CommonFunc_20005614(_, entity: int, flag: int):
     """CommonFunc 20005614"""
     DisableNetworkSync()
@@ -3781,7 +3781,7 @@ def CommonFunc_20005614(_, entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(20005620)
+@ContinueOnRest(20005620)
 def CommonFunc_20005620(_, flag: int, flag_1: int, entity: int, obj: int, obj_1: int, flag_2: int):
     """CommonFunc 20005620"""
     SkipLinesIfClientTypeCountComparison(
@@ -3805,7 +3805,7 @@ def CommonFunc_20005620(_, flag: int, flag_1: int, entity: int, obj: int, obj_1:
     End()
 
 
-@NeverRestart(20005621)
+@ContinueOnRest(20005621)
 def CommonFunc_20005621(
     _,
     flag: int,
@@ -3982,7 +3982,7 @@ def CommonFunc_20005621(
     Restart()
 
 
-@NeverRestart(20005622)
+@ContinueOnRest(20005622)
 def CommonFunc_20005622(_, flag: int, flag_1: int, entity: int, obj: int, obj_1: int, flag_2: int):
     """CommonFunc 20005622"""
     SkipLinesIfClientTypeCountComparison(
@@ -4006,7 +4006,7 @@ def CommonFunc_20005622(_, flag: int, flag_1: int, entity: int, obj: int, obj_1:
     End()
 
 
-@NeverRestart(20005623)
+@ContinueOnRest(20005623)
 def CommonFunc_20005623(
     _,
     flag: int,
@@ -4183,7 +4183,7 @@ def CommonFunc_20005623(
     Restart()
 
 
-@NeverRestart(20005624)
+@ContinueOnRest(20005624)
 def CommonFunc_20005624(_, flag: int, flag_1: int, entity: int, obj: int, obj_1: int, flag_2: int):
     """CommonFunc 20005624"""
     SkipLinesIfClientTypeCountComparison(
@@ -4207,7 +4207,7 @@ def CommonFunc_20005624(_, flag: int, flag_1: int, entity: int, obj: int, obj_1:
     End()
 
 
-@NeverRestart(20005625)
+@ContinueOnRest(20005625)
 def CommonFunc_20005625(
     _,
     flag: int,
@@ -4384,7 +4384,7 @@ def CommonFunc_20005625(
     Restart()
 
 
-@NeverRestart(20000627)
+@ContinueOnRest(20000627)
 def CommonFunc_20000627(_, flag: int, flag_1: int, left: int, entity: int, entity_1: int):
     """CommonFunc 20000627"""
     DisableNetworkSync()
@@ -4484,7 +4484,7 @@ def CommonFunc_20005650(_, flag: int, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(20005660)
+@ContinueOnRest(20005660)
 def CommonFunc_20005660(_, flag: int, area_id: uchar, block_id: uchar, player_start: int):
     """CommonFunc 20005660"""
     DisableNetworkSync()
@@ -4544,7 +4544,7 @@ def CommonFunc_20005673(_, area_id: uchar, block_id: uchar, vfx_id: int):
     DeleteVFX(vfx_id, erase_root_only=False)
 
 
-@NeverRestart(20005700)
+@ContinueOnRest(20005700)
 def CommonFunc_20005700(_, flag: int, summon_flag: int, dismissal_flag: int, character: int, region: int):
     """CommonFunc 20005700"""
     SkipLinesIfClientTypeCountComparison(
@@ -4572,7 +4572,7 @@ def CommonFunc_20005700(_, flag: int, summon_flag: int, dismissal_flag: int, cha
     )
 
 
-@NeverRestart(20005701)
+@ContinueOnRest(20005701)
 def CommonFunc_20005701(_, left: int, summon_flag: int, dismissal_flag: int, character: int, region: int, left_1: int):
     """CommonFunc 20005701"""
     SkipLinesIfClientTypeCountComparison(
@@ -4769,7 +4769,7 @@ def CommonFunc_20005712(
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
 
 
-@NeverRestart(20005713)
+@ContinueOnRest(20005713)
 def CommonFunc_20005713(_, flag: int, flag_1: int, flag_2: int, flag_3: int, character: int):
     """CommonFunc 20005713"""
     DisableNetworkSync()
@@ -4897,7 +4897,7 @@ def CommonFunc_20005715(
     Restart()
 
 
-@NeverRestart(20005720)
+@ContinueOnRest(20005720)
 def CommonFunc_20005720(_, flag: int, flag_1: int, flag_2: int, character: int):
     """CommonFunc 20005720"""
     DisableCharacter(character)
@@ -5082,7 +5082,7 @@ def CommonFunc_20005752(
     Restart()
 
 
-@NeverRestart(20005760)
+@ContinueOnRest(20005760)
 def CommonFunc_20005760(_, flag: int, flag_1: int, flag_2: int, character: int):
     """CommonFunc 20005760"""
     if FlagEnabled(flag):
@@ -5096,7 +5096,7 @@ def CommonFunc_20005760(_, flag: int, flag_1: int, flag_2: int, character: int):
     EnableFlag(flag)
 
 
-@NeverRestart(20005780)
+@ContinueOnRest(20005780)
 def CommonFunc_20005780(_, obj: int, model_point: int):
     """CommonFunc 20005780"""
     DisableNetworkSync()
@@ -5209,7 +5209,7 @@ def CommonFunc_20005800(
     Restart()
 
 
-@NeverRestart(20005810)
+@ContinueOnRest(20005810)
 def CommonFunc_20005810(_, flag: int, entity: int, target_entity: int, action_button_id: int):
     """CommonFunc 20005810"""
     DisableNetworkSync()
@@ -5398,7 +5398,7 @@ def CommonFunc_20005821(_, flag: int, bonfire_flag: int, character: int, obj: in
     RegisterBonfire(bonfire_flag=bonfire_flag, obj=obj, reaction_distance=5.0)
 
 
-@NeverRestart(20005830)
+@ContinueOnRest(20005830)
 def CommonFunc_20005830(_, flag: int, flag_1: int, flag_2: int, region: int, sound_id: int):
     """CommonFunc 20005830"""
     DisableNetworkSync()
@@ -6384,7 +6384,7 @@ def CommonFunc_20006001(_, attacked_entity: int, flag: int, flag_1: int, flag_2:
     Restart()
 
 
-@NeverRestart(20006002)
+@ContinueOnRest(20006002)
 def CommonFunc_20006002(_, character: int, flag: int, first_flag: int, last_flag: int):
     """CommonFunc 20006002"""
     if PlayerNotInOwnWorld():
@@ -6399,7 +6399,7 @@ def CommonFunc_20006002(_, character: int, flag: int, first_flag: int, last_flag
     SaveRequest()
 
 
-@NeverRestart(20006003)
+@ContinueOnRest(20006003)
 def CommonFunc_20006003(
     _,
     character: int,
@@ -6449,7 +6449,7 @@ def CommonFunc_20006003(
     DisableBackread(character)
 
 
-@NeverRestart(20006004)
+@ContinueOnRest(20006004)
 def CommonFunc_20006004(
     _,
     character: int,
@@ -6483,7 +6483,7 @@ def CommonFunc_20006004(
     DisableBackread(character)
 
 
-@NeverRestart(20006005)
+@ContinueOnRest(20006005)
 def CommonFunc_20006005(
     _,
     target_entity: int,
@@ -6572,7 +6572,7 @@ def CommonFunc_20006005(
     Restart()
 
 
-@NeverRestart(20006006)
+@ContinueOnRest(20006006)
 def CommonFunc_20006006(
     _,
     character: int,
@@ -6618,7 +6618,7 @@ def CommonFunc_20006006(
     Restart()
 
 
-@NeverRestart(20006007)
+@ContinueOnRest(20006007)
 def CommonFunc_20006007(
     _,
     target_entity: int,
@@ -6676,7 +6676,7 @@ def CommonFunc_20006007(
     Restart()
 
 
-@NeverRestart(20006008)
+@ContinueOnRest(20006008)
 def CommonFunc_20006008(_, region: int, flag: int, flag_1: int, target_entity: int, animation: int, animation_id: int):
     """CommonFunc 20006008"""
     DisableNetworkSync()
@@ -6726,7 +6726,7 @@ def CommonFunc_20006008(_, region: int, flag: int, flag_1: int, target_entity: i
     Restart()
 
 
-@NeverRestart(20006010)
+@ContinueOnRest(20006010)
 def CommonFunc_20006010(_, flag: int, animation_id: int):
     """CommonFunc 20006010"""
     if PlayerNotInOwnWorld():
@@ -6740,7 +6740,7 @@ def CommonFunc_20006010(_, flag: int, animation_id: int):
     Restart()
 
 
-@NeverRestart(20006011)
+@ContinueOnRest(20006011)
 def CommonFunc_20006011(_, flag: int, vfx_id: int):
     """CommonFunc 20006011"""
     if PlayerNotInOwnWorld():
@@ -6753,7 +6753,7 @@ def CommonFunc_20006011(_, flag: int, vfx_id: int):
     Restart()
 
 
-@NeverRestart(20006020)
+@ContinueOnRest(20006020)
 def CommonFunc_20006020(_, flag: int, flag_1: int):
     """CommonFunc 20006020"""
     if PlayerNotInOwnWorld():
@@ -6767,7 +6767,7 @@ def CommonFunc_20006020(_, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(20006030)
+@ContinueOnRest(20006030)
 def CommonFunc_20006030(
     _,
     obj: int,
@@ -6810,7 +6810,7 @@ def CommonFunc_20006030(
     DeleteObjectVFX(obj)
 
 
-@NeverRestart(20006031)
+@ContinueOnRest(20006031)
 def CommonFunc_20006031(_, flag: int, region: int):
     """CommonFunc 20006031"""
     if PlayerNotInOwnWorld():
@@ -6829,7 +6829,7 @@ def CommonFunc_20006031(_, flag: int, region: int):
     Restart()
 
 
-@NeverRestart(20006032)
+@ContinueOnRest(20006032)
 def CommonFunc_20006032(_, character: int, obj: int):
     """CommonFunc 20006032"""
     if PlayerNotInOwnWorld():
@@ -6861,7 +6861,7 @@ def CommonFunc_20006032(_, character: int, obj: int):
     DeleteObjectVFX(obj)
 
 
-@NeverRestart(20006040)
+@ContinueOnRest(20006040)
 def CommonFunc_20006040(_, character: int, destination: int, special_effect: int):
     """CommonFunc 20006040"""
     AND_1.Add(PlayerInOwnWorld())

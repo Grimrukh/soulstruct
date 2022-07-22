@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_41_51_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005870(0, character=Characters.TreeSentinel0, name=903251600, npc_threat_level=12)
@@ -82,7 +82,7 @@ def Constructor():
     Event_1041512270(slot=1)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005250(0, character=Characters.GiantMirandaFlower, region=1041512410, seconds=0.0, animation_id=700)
@@ -265,7 +265,7 @@ def Event_1041512320(_, character: uint, character_1: uint):
     EnableNetworkFlag(1041512815)
 
 
-@NeverRestart(1041512321)
+@ContinueOnRest(1041512321)
 def Event_1041512321(_, character: uint, character_1: uint, npc_threat_level: uint, flag: uint):
     """Event 1041512321"""
     DisableNetworkSync()

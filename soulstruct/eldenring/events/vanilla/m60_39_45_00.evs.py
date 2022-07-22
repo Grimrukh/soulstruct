@@ -20,7 +20,7 @@ from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005300(0, 1039450210, 1039450210, 40258, 0.0, 0)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_39_39_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005704(0, attacked_entity=Characters.SorcererThops, flag=3801, flag_1=3800, flag_2=1039399201, right=3)
@@ -44,7 +44,7 @@ def Constructor():
     Event_1039392200()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.SorcererThops)

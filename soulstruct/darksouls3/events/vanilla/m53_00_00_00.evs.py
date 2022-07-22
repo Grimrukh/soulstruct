@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     GotoIfHollowArenaMatchType(Label.L0, match_type=HollowArenaMatchType.Duel)

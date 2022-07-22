@@ -21,13 +21,13 @@ from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_900005610(0, 1035511650, 100, 800, 0)
 
 
-@NeverRestart(1035512210)
+@ContinueOnRest(1035512210)
 def Event_1035512210():
     """Event 1035512210"""
     AND_14.Add(CharacterHasSpecialEffect(PLAYER, 415))
@@ -45,7 +45,7 @@ def Event_1035512210():
     Restart()
 
 
-@NeverRestart(1035512220)
+@ContinueOnRest(1035512220)
 def Event_1035512220():
     """Event 1035512220"""
     OR_13.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 415))

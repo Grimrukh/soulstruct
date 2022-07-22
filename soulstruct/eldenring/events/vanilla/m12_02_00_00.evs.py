@@ -23,7 +23,7 @@ from .entities.m60_35_45_00_entities import Characters as m60_35_Characters
 from .entities.m60_49_40_00_entities import Assets as m60_49_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71223, asset=Assets.AEG099_060_9003)
@@ -471,7 +471,7 @@ def Constructor():
     Event_12022698()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(12020700)
@@ -531,7 +531,7 @@ def Event_12022569(_, flag: uint, flag_1: uint):
     Restart()
 
 
-@NeverRestart(12022568)
+@ContinueOnRest(12022568)
 def Event_12022568(_, flag: uint, asset: uint):
     """Event 12022568"""
     DisableNetworkSync()
@@ -553,7 +553,7 @@ def Event_12022568(_, flag: uint, asset: uint):
     DisableAsset(asset)
 
 
-@NeverRestart(12022567)
+@ContinueOnRest(12022567)
 def Event_12022567(_, flag: uint, region: uint):
     """Event 12022567"""
     DisableNetworkSync()
@@ -643,7 +643,7 @@ def Event_12022601(_, flag: uint, asset: uint, asset_1: uint):
     End()
 
 
-@NeverRestart(12022609)
+@ContinueOnRest(12022609)
 def Event_12022609():
     """Event 12022609"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -660,7 +660,7 @@ def Event_12022609():
     Wait(0.4000000059604645)
     BanishInvaders(unknown=0)
     Wait(1.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12082400,
@@ -687,7 +687,7 @@ def Event_12022609():
     
     MAIN.Await(FlagEnabled(12022610))
     
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12022202,
@@ -697,7 +697,7 @@ def Event_12022609():
         reset_camera=True,
     )
     Wait(5.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12082401,
@@ -783,7 +783,7 @@ def Event_12022621(_, flag: uint, asset: uint, asset_1: uint):
     End()
 
 
-@NeverRestart(12022629)
+@ContinueOnRest(12022629)
 def Event_12022629():
     """Event 12022629"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -804,7 +804,7 @@ def Event_12022629():
     else:
         BanishInvaders(unknown=0)
     Wait(2.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12092400,
@@ -831,7 +831,7 @@ def Event_12022629():
     
     MAIN.Await(FlagEnabled(12022630))
     
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12022209,
@@ -841,7 +841,7 @@ def Event_12022629():
         reset_camera=True,
     )
     Wait(5.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12092401,
@@ -853,7 +853,7 @@ def Event_12022629():
     Restart()
 
 
-@NeverRestart(12022670)
+@ContinueOnRest(12022670)
 def Event_12022670():
     """Event 12022670"""
     if ThisEventSlotFlagDisabled():
@@ -888,7 +888,7 @@ def Event_12022670():
     RotateToFaceEntity(PLAYER, Assets.AEG099_510_9000, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12022670,
@@ -905,7 +905,7 @@ def Event_12022670():
     MAIN.Await(FlagEnabled(12022670))
     
     Wait(3.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12022671,
@@ -1340,7 +1340,7 @@ def Event_12022440(_, character: uint, character_1: uint, patrol_information_id:
     ChangePatrolBehavior(character_1, patrol_information_id=patrol_information_id)
 
 
-@NeverRestart(12022502)
+@ContinueOnRest(12022502)
 def Event_12022502():
     """Event 12022502"""
     DisableNetworkSync()
@@ -1370,7 +1370,7 @@ def Event_12022502():
     DisplayAreaWelcomeMessage(text=12030)
 
 
-@NeverRestart(12022503)
+@ContinueOnRest(12022503)
 def Event_12022503():
     """Event 12022503"""
     if FlagEnabled(12020502):
@@ -1383,7 +1383,7 @@ def Event_12022503():
     CreateAssetVFX(Assets.AEG099_060_9000, vfx_id=100, model_point=6400)
 
 
-@NeverRestart(12020510)
+@ContinueOnRest(12020510)
 def Event_12020510():
     """Event 12020510"""
     CommonFunc_90005500(
@@ -1420,7 +1420,7 @@ def Event_12020510():
     )
 
 
-@NeverRestart(12020519)
+@ContinueOnRest(12020519)
 def Event_12020519():
     """Event 12020519"""
     if ThisEventSlotFlagEnabled():
@@ -1431,7 +1431,7 @@ def Event_12020519():
     EnableFlag(12020530)
 
 
-@NeverRestart(12020500)
+@ContinueOnRest(12020500)
 def Event_12020500():
     """Event 12020500"""
     if FlagEnabled(12020570):

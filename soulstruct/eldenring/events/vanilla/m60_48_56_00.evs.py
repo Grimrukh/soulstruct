@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_48_56_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005220(
@@ -101,7 +101,7 @@ def Event_1048562350(_, character__region: uint, character: uint):
     Restart()
 
 
-@NeverRestart(100)
+@ContinueOnRest(100)
 def Event_100():
     """Event 100"""
     CommonFunc_90005300(0, 1148560200, 1148560200, 40524, 0.0, 0)

@@ -11,7 +11,7 @@ from soulstruct.bloodborne.events import *
 from soulstruct.bloodborne.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     DisableFlag(7501)
@@ -192,7 +192,7 @@ def Constructor():
     EnableFlag(70009240)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_6002()
@@ -409,7 +409,7 @@ def Preconstructor():
     DefineLabel(1)
 
 
-@NeverRestart(3500)
+@ContinueOnRest(3500)
 def Event_3500(_, item: int, flag: int, flag_1: int, flag_2: int):
     """Event 3500"""
     DisableNetworkSync()
@@ -425,7 +425,7 @@ def Event_3500(_, item: int, flag: int, flag_1: int, flag_2: int):
     DisableFlag(flag_2)
 
 
-@NeverRestart(3503)
+@ContinueOnRest(3503)
 def Event_3503():
     """Event 3503"""
     DisableNetworkSync()
@@ -489,7 +489,7 @@ def Event_5500(_, item: int):
     Wait(0.0)
 
 
-@NeverRestart(6680)
+@ContinueOnRest(6680)
 def Event_6680():
     """Event 6680"""
     DisableNetworkSync()
@@ -522,7 +522,7 @@ def Event_6680():
     Wait(0.0)
 
 
-@NeverRestart(6681)
+@ContinueOnRest(6681)
 def Event_6681():
     """Event 6681"""
     DisableNetworkSync()
@@ -555,7 +555,7 @@ def Event_6681():
     Wait(0.0)
 
 
-@NeverRestart(6682)
+@ContinueOnRest(6682)
 def Event_6682():
     """Event 6682"""
     DisableNetworkSync()
@@ -588,7 +588,7 @@ def Event_6682():
     Wait(0.0)
 
 
-@NeverRestart(6683)
+@ContinueOnRest(6683)
 def Event_6683():
     """Event 6683"""
     DisableNetworkSync()
@@ -621,7 +621,7 @@ def Event_6683():
     Wait(0.0)
 
 
-@NeverRestart(6684)
+@ContinueOnRest(6684)
 def Event_6684():
     """Event 6684"""
     DisableNetworkSync()
@@ -654,7 +654,7 @@ def Event_6684():
     Wait(0.0)
 
 
-@NeverRestart(6685)
+@ContinueOnRest(6685)
 def Event_6685():
     """Event 6685"""
     DisableNetworkSync()
@@ -687,7 +687,7 @@ def Event_6685():
     Wait(0.0)
 
 
-@NeverRestart(6686)
+@ContinueOnRest(6686)
 def Event_6686():
     """Event 6686"""
     DisableNetworkSync()
@@ -720,7 +720,7 @@ def Event_6686():
     Wait(0.0)
 
 
-@NeverRestart(6687)
+@ContinueOnRest(6687)
 def Event_6687():
     """Event 6687"""
     DisableNetworkSync()
@@ -753,7 +753,7 @@ def Event_6687():
     Wait(0.0)
 
 
-@NeverRestart(6688)
+@ContinueOnRest(6688)
 def Event_6688():
     """Event 6688"""
     DisableNetworkSync()
@@ -786,7 +786,7 @@ def Event_6688():
     Wait(0.0)
 
 
-@NeverRestart(6689)
+@ContinueOnRest(6689)
 def Event_6689():
     """Event 6689"""
     DisableNetworkSync()
@@ -819,7 +819,7 @@ def Event_6689():
     Wait(0.0)
 
 
-@NeverRestart(6690)
+@ContinueOnRest(6690)
 def Event_6690():
     """Event 6690"""
     DisableNetworkSync()
@@ -852,7 +852,7 @@ def Event_6690():
     Wait(0.0)
 
 
-@NeverRestart(6691)
+@ContinueOnRest(6691)
 def Event_6691():
     """Event 6691"""
     DisableNetworkSync()
@@ -885,7 +885,7 @@ def Event_6691():
     Wait(0.0)
 
 
-@NeverRestart(6692)
+@ContinueOnRest(6692)
 def Event_6692():
     """Event 6692"""
     DisableNetworkSync()
@@ -918,7 +918,7 @@ def Event_6692():
     Wait(0.0)
 
 
-@NeverRestart(6693)
+@ContinueOnRest(6693)
 def Event_6693():
     """Event 6693"""
     DisableNetworkSync()
@@ -951,7 +951,7 @@ def Event_6693():
     Wait(0.0)
 
 
-@NeverRestart(6694)
+@ContinueOnRest(6694)
 def Event_6694():
     """Event 6694"""
     DisableNetworkSync()
@@ -984,7 +984,7 @@ def Event_6694():
     Wait(0.0)
 
 
-@NeverRestart(6695)
+@ContinueOnRest(6695)
 def Event_6695():
     """Event 6695"""
     DisableNetworkSync()
@@ -1017,7 +1017,7 @@ def Event_6695():
     Wait(0.0)
 
 
-@NeverRestart(6696)
+@ContinueOnRest(6696)
 def Event_6696():
     """Event 6696"""
     DisableNetworkSync()
@@ -1050,7 +1050,7 @@ def Event_6696():
     Wait(0.0)
 
 
-@NeverRestart(6697)
+@ContinueOnRest(6697)
 def Event_6697():
     """Event 6697"""
     DisableNetworkSync()
@@ -1083,7 +1083,7 @@ def Event_6697():
     Wait(0.0)
 
 
-@NeverRestart(6788)
+@ContinueOnRest(6788)
 def Event_6788():
     """Event 6788"""
     DisableNetworkSync()
@@ -1095,7 +1095,7 @@ def Event_6788():
     Restart()
 
 
-@NeverRestart(6789)
+@ContinueOnRest(6789)
 def Event_6789():
     """Event 6789"""
     DisableNetworkSync()
@@ -1133,7 +1133,7 @@ def Event_6789():
     Restart()
 
 
-@NeverRestart(6809)
+@ContinueOnRest(6809)
 def Event_6809():
     """Event 6809"""
     DisableNetworkSync()
@@ -1151,7 +1151,7 @@ def Event_6809():
     EnableFlag(6812)
 
 
-@NeverRestart(6815)
+@ContinueOnRest(6815)
 def Event_6815():
     """Event 6815"""
     DisableNetworkSync()
@@ -1170,7 +1170,7 @@ def Event_6815():
     Restart()
 
 
-@NeverRestart(6816)
+@ContinueOnRest(6816)
 def Event_6816():
     """Event 6816"""
     DisableNetworkSync()
@@ -1189,7 +1189,7 @@ def Event_6816():
     Restart()
 
 
-@NeverRestart(7000)
+@ContinueOnRest(7000)
 def Event_7000(_, character: int, obj: int, flag: int, flag_1: int):
     """Event 7000"""
     DisableNetworkSync()
@@ -1215,7 +1215,7 @@ def Event_7000(_, character: int, obj: int, flag: int, flag_1: int):
     RegisterLantern(flag=flag_1, obj=obj, reaction_distance=0.0, reaction_angle=0.0)
 
 
-@NeverRestart(7100)
+@ContinueOnRest(7100)
 def Event_7100(_, flag: int, warp_object_id: int):
     """Event 7100"""
     if FlagEnabled(flag):
@@ -1236,7 +1236,7 @@ def Event_7100(_, flag: int, warp_object_id: int):
     EnableFlag(6715)
 
 
-@NeverRestart(7200)
+@ContinueOnRest(7200)
 def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
     """Event 7200"""
     if Client():
@@ -1255,7 +1255,7 @@ def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
     WarpPlayerToRespawnPoint(2102962)
 
 
-@NeverRestart(7300)
+@ContinueOnRest(7300)
 def Event_7300(_, flag: int, warp_object_id: int):
     """Event 7300"""
     if Client():
@@ -1274,7 +1274,7 @@ def Event_7300(_, flag: int, warp_object_id: int):
     DisableFlag(flag)
 
 
-@NeverRestart(7600)
+@ContinueOnRest(7600)
 def Event_7600(_, obj: int, vfx_id: int):
     """Event 7600"""
     DisableNetworkSync()
@@ -1295,7 +1295,7 @@ def Event_7600(_, obj: int, vfx_id: int):
     Restart()
 
 
-@NeverRestart(9030)
+@ContinueOnRest(9030)
 def Event_9030(_, special_effect: int, special_effect_id: int):
     """Event 9030"""
     DisableNetworkSync()
@@ -1310,7 +1310,7 @@ def Event_9030(_, special_effect: int, special_effect_id: int):
     Restart()
 
 
-@NeverRestart(9035)
+@ContinueOnRest(9035)
 def Event_9035(_, special_effect: int, special_effect_id: int):
     """Event 9035"""
     DisableNetworkSync()
@@ -1329,7 +1329,7 @@ def Event_9035(_, special_effect: int, special_effect_id: int):
     Restart()
 
 
-@NeverRestart(9040)
+@ContinueOnRest(9040)
 def Event_9040(_, flag: int, item_lot_param_id: int):
     """Event 9040"""
     if FlagEnabled(flag):
@@ -1343,7 +1343,7 @@ def Event_9040(_, flag: int, item_lot_param_id: int):
     AwardItemLot(item_lot_param_id, host_only=False)
 
 
-@NeverRestart(9100)
+@ContinueOnRest(9100)
 def Event_9100(_, flag: int, item_lot_param_id: int):
     """Event 9100"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -1357,7 +1357,7 @@ def Event_9100(_, flag: int, item_lot_param_id: int):
     Restart()
 
 
-@NeverRestart(9110)
+@ContinueOnRest(9110)
 def Event_9110(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, flag_1: int):
     """Event 9110"""
     if FlagEnabled(flag):
@@ -1373,7 +1373,7 @@ def Event_9110(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, f
         AwardItemLot(item_lot_param_id_1, host_only=False)
 
 
-@NeverRestart(9181)
+@ContinueOnRest(9181)
 def Event_9181():
     """Event 9181"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -1389,7 +1389,7 @@ def Event_9181():
     Restart()
 
 
-@NeverRestart(9182)
+@ContinueOnRest(9182)
 def Event_9182():
     """Event 9182"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -1412,7 +1412,7 @@ def Event_9182():
     Restart()
 
 
-@NeverRestart(9183)
+@ContinueOnRest(9183)
 def Event_9183():
     """Event 9183"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -1431,7 +1431,7 @@ def Event_9183():
     Restart()
 
 
-@NeverRestart(9186)
+@ContinueOnRest(9186)
 def Event_9186():
     """Event 9186"""
     DisableNetworkSync()
@@ -1454,7 +1454,7 @@ def Event_9186():
     Restart()
 
 
-@NeverRestart(9190)
+@ContinueOnRest(9190)
 def Event_9190():
     """Event 9190"""
     DisableNetworkSync()
@@ -1473,7 +1473,7 @@ def Event_9190():
     Restart()
 
 
-@NeverRestart(9191)
+@ContinueOnRest(9191)
 def Event_9191():
     """Event 9191"""
     if Client():
@@ -1503,7 +1503,7 @@ def Event_9191():
     End()
 
 
-@NeverRestart(9192)
+@ContinueOnRest(9192)
 def Event_9192():
     """Event 9192"""
     if Client():
@@ -1523,7 +1523,7 @@ def Event_9192():
     EnableFlag(6403)
 
 
-@NeverRestart(9193)
+@ContinueOnRest(9193)
 def Event_9193():
     """Event 9193"""
     if Client():
@@ -1539,7 +1539,7 @@ def Event_9193():
     Restart()
 
 
-@NeverRestart(9198)
+@ContinueOnRest(9198)
 def Event_9198():
     """Event 9198"""
     GotoIfFlagEnabled(Label.L0, flag=9199)
@@ -1566,7 +1566,7 @@ def Event_9198():
     Restart()
 
 
-@NeverRestart(9200)
+@ContinueOnRest(9200)
 def Event_9200(_, sound_id: int):
     """Event 9200"""
     DisableNetworkSync()
@@ -1593,7 +1593,7 @@ def Event_9200(_, sound_id: int):
     Restart()
 
 
-@NeverRestart(9215)
+@ContinueOnRest(9215)
 def Event_9215():
     """Event 9215"""
     DisableNetworkSync()
@@ -1703,7 +1703,7 @@ def Event_9260(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: 
     Restart()
 
 
-@NeverRestart(9280)
+@ContinueOnRest(9280)
 def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, area_id: uchar, block_id: uchar):
     """Event 9280"""
     OR_15.Add(FlagEnabled(flag_1))
@@ -1735,7 +1735,7 @@ def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: i
     ForceAnimation(character, 7010)
 
 
-@NeverRestart(9350)
+@ContinueOnRest(9350)
 def Event_9350(_, left: int):
     """Event 9350"""
     if Client():
@@ -1797,7 +1797,7 @@ def Event_9350(_, left: int):
     WaitFrames(frames=10)
 
 
-@NeverRestart(9360)
+@ContinueOnRest(9360)
 def Event_9360(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 9360"""
     if ThisEventSlotFlagEnabled():
@@ -1828,7 +1828,7 @@ def Event_9360(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     AwardItemLot(5520, host_only=True)
 
 
-@NeverRestart(9400)
+@ContinueOnRest(9400)
 def Event_9400():
     """Event 9400"""
     if Client():
@@ -1846,7 +1846,7 @@ def Event_9400():
     SetRespawnPoint(respawn_point=2102962)
 
 
-@NeverRestart(9404)
+@ContinueOnRest(9404)
 def Event_9404():
     """Event 9404"""
     if Client():
@@ -1862,7 +1862,7 @@ def Event_9404():
     SetRespawnPoint(respawn_point=2102961)
 
 
-@NeverRestart(9410)
+@ContinueOnRest(9410)
 def Event_9410():
     """Event 9410"""
     if ThisEventFlagEnabled():
@@ -1877,7 +1877,7 @@ def Event_9410():
     AwardItemLot(3200800, host_only=False)
 
 
-@NeverRestart(9421)
+@ContinueOnRest(9421)
 def Event_9421():
     """Event 9421"""
     if FlagEnabled(9423):
@@ -1891,7 +1891,7 @@ def Event_9421():
     DisableFlag(9420)
 
 
-@NeverRestart(9422)
+@ContinueOnRest(9422)
 def Event_9422():
     """Event 9422"""
     if FlagEnabled(9423):
@@ -1910,7 +1910,7 @@ def Event_9422():
     AddSpecialEffect(PLAYER, 4680)
 
 
-@NeverRestart(9440)
+@ContinueOnRest(9440)
 def Event_9440(_, flag: int, item_lot_param_id: int):
     """Event 9440"""
     DisableNetworkSync()
@@ -1924,7 +1924,7 @@ def Event_9440(_, flag: int, item_lot_param_id: int):
     AwardItemLot(item_lot_param_id, host_only=False)
 
 
-@NeverRestart(9480)
+@ContinueOnRest(9480)
 def Event_9480(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
     """Event 9480"""
     if ThisEventSlotFlagEnabled():
@@ -1956,7 +1956,7 @@ def Event_9480(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int)
     AwardItemLot(5520, host_only=True)
 
 
-@NeverRestart(9500)
+@ContinueOnRest(9500)
 def Event_9500(_, special_effect: int, item_lot_param_id: int):
     """Event 9500"""
     DisableNetworkSync()
@@ -1968,7 +1968,7 @@ def Event_9500(_, special_effect: int, item_lot_param_id: int):
     Restart()
 
 
-@NeverRestart(9700)
+@ContinueOnRest(9700)
 def Event_9700(_, first_flag: int, last_flag: int):
     """Event 9700"""
     AND_1.Add(FlagEnabled(1021))
@@ -1981,7 +1981,7 @@ def Event_9700(_, first_flag: int, last_flag: int):
     EnableFlag(1022)
 
 
-@NeverRestart(9701)
+@ContinueOnRest(9701)
 def Event_9701(_, first_flag: int, last_flag: int):
     """Event 9701"""
     AND_1.Add(FlagEnabled(1023))
@@ -1994,7 +1994,7 @@ def Event_9701(_, first_flag: int, last_flag: int):
     EnableFlag(1024)
 
 
-@NeverRestart(9702)
+@ContinueOnRest(9702)
 def Event_9702(_, first_flag: int, last_flag: int):
     """Event 9702"""
     AND_1.Add(FlagEnabled(1025))
@@ -2007,7 +2007,7 @@ def Event_9702(_, first_flag: int, last_flag: int):
     EnableFlag(1026)
 
 
-@NeverRestart(9703)
+@ContinueOnRest(9703)
 def Event_9703(_, first_flag: int, last_flag: int):
     """Event 9703"""
     AND_1.Add(FlagEnabled(1026))
@@ -2021,7 +2021,7 @@ def Event_9703(_, first_flag: int, last_flag: int):
     EnableFlag(1027)
 
 
-@NeverRestart(9710)
+@ContinueOnRest(9710)
 def Event_9710(_, first_flag: int, last_flag: int):
     """Event 9710"""
     AND_1.Add(FlagEnabled(1000))
@@ -2034,7 +2034,7 @@ def Event_9710(_, first_flag: int, last_flag: int):
     EnableFlag(1001)
 
 
-@NeverRestart(9720)
+@ContinueOnRest(9720)
 def Event_9720():
     """Event 9720"""
     GotoIfThisEventFlagEnabled(Label.L0)
@@ -2071,7 +2071,7 @@ def Event_9720():
     DisableFlag(70002413)
 
 
-@NeverRestart(9721)
+@ContinueOnRest(9721)
 def Event_9721():
     """Event 9721"""
     GotoIfThisEventFlagEnabled(Label.L0)
@@ -2088,7 +2088,7 @@ def Event_9721():
     DisableFlag(70002401)
 
 
-@NeverRestart(9722)
+@ContinueOnRest(9722)
 def Event_9722():
     """Event 9722"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -2104,7 +2104,7 @@ def Event_9722():
     EnableFlag(70002401)
 
 
-@NeverRestart(9723)
+@ContinueOnRest(9723)
 def Event_9723():
     """Event 9723"""
     AND_15.Add(CharacterHuman(PLAYER))
@@ -2120,7 +2120,7 @@ def Event_9723():
     EnableFlag(70002401)
 
 
-@NeverRestart(9755)
+@ContinueOnRest(9755)
 def Event_9755():
     """Event 9755"""
     OR_2.Add(FlagEnabled(1205))
@@ -2150,7 +2150,7 @@ def Event_9755():
     Restart()
 
 
-@NeverRestart(9756)
+@ContinueOnRest(9756)
 def Event_9756():
     """Event 9756"""
     OR_2.Add(FlagEnabled(1205))
@@ -2170,7 +2170,7 @@ def Event_9756():
     Restart()
 
 
-@NeverRestart(9770)
+@ContinueOnRest(9770)
 def Event_9770():
     """Event 9770"""
     AND_1.Add(FlagEnabled(1351))
@@ -2181,7 +2181,7 @@ def Event_9770():
     EnableFlag(72500359)
 
 
-@NeverRestart(9780)
+@ContinueOnRest(9780)
 def Event_9780():
     """Event 9780"""
     AND_1.Add(FlagEnabled(1422))
@@ -2194,7 +2194,7 @@ def Event_9780():
     EnableFlag(1423)
 
 
-@NeverRestart(9781)
+@ContinueOnRest(9781)
 def Event_9781():
     """Event 9781"""
     if ThisEventFlagEnabled():
@@ -2210,7 +2210,7 @@ def Event_9781():
     EnableFlag(72410382)
 
 
-@NeverRestart(9782)
+@ContinueOnRest(9782)
 def Event_9782():
     """Event 9782"""
     AND_1.Add(PlayerHasGood(4310))
@@ -2227,7 +2227,7 @@ def Event_9782():
     DisableFlag(1439)
 
 
-@NeverRestart(9909)
+@ContinueOnRest(9909)
 def Event_9909():
     """Event 9909"""
     if FlagEnabled(9900):
@@ -2238,7 +2238,7 @@ def Event_9909():
     EnableFlag(9900)
 
 
-@NeverRestart(9905)
+@ContinueOnRest(9905)
 def Event_9905(_, special_effect: int):
     """Event 9905"""
     if ThisEventSlotFlagEnabled():
@@ -2249,7 +2249,7 @@ def Event_9905(_, special_effect: int):
     IncrementEventValue(9901, bit_count=4, max_value=4)
 
 
-@NeverRestart(9910)
+@ContinueOnRest(9910)
 def Event_9910():
     """Event 9910"""
     DisableNetworkSync()

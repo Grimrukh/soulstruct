@@ -22,9 +22,9 @@ _MAX_LINE_WIDTH = 120
 
 BASICS = """
 # Restart decorators. They can be used as names (not function calls) or have an event ID argument.
-def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def ContinueOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
-def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
@@ -145,9 +145,9 @@ def generate_instr_pyi(
 
     pyi_all_lines = [
         "# Basics:",
-        "\"NeverRestart\",",
+        "\"ContinueOnRest\",",
         "\"RestartOnRest\",",
-        "\"UnknownRestart\",",
+        "\"EndOnRest\",",
         "\"EVENTS\",",
         "\"Condition\",",
         "\"HeldCondition\",",

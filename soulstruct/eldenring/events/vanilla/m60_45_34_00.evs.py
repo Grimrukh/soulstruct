@@ -22,7 +22,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_45_34_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RunEvent(1045342580, slot=0, args=(0,))
@@ -112,7 +112,7 @@ def Constructor():
     Event_1045340707(0, 1045340705)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.IrinaofMorne0)

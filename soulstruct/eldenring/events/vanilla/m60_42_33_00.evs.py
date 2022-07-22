@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_42_33_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1042330000, asset=Assets.AEG099_060_9000)
@@ -184,7 +184,7 @@ def Event_1042332575(
     WaitFrames(frames=1)
     ForceAnimation(PLAYER, 60450)
     Wait(1.5)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
@@ -227,13 +227,13 @@ def Event_1042332576(_, flag: uint, flag_1: uint, entity: uint, flag_2: uint):
     Restart()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1042330700)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005451(0, character=Characters.WalkingMausoleum, asset_group=1042336420)
@@ -335,7 +335,7 @@ def Event_200():
     CommonFunc_90005456(0, 1042330400, 1042331410, 1042331418, 1042330400)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005450(0, 1042330400, 1042331400, 1042331410, 1042331418)

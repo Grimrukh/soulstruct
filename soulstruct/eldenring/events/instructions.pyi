@@ -6,9 +6,9 @@ Make sure you also do `from soulstruct.{game}.events import *` to get all enums,
 
 __all__ = [
     # Basics:
-    "NeverRestart",
+    "ContinueOnRest",
     "RestartOnRest",
-    "UnknownRestart",
+    "EndOnRest",
     "EVENTS",
     "Condition",
     "HeldCondition",
@@ -770,7 +770,7 @@ __all__ = [
     "SetDistanceBasedNetworkAuthorityUpdate",  # 2004[70]
     "Unknown_2004_71",  # 2004[71]
     "SetCharacterFadeOnEnable",  # 2004[73]
-    "MoveCharacterAndCopyDrawParentWitHFadeout",  # 2004[74]
+    "MoveCharacterAndCopyDrawParentWithFadeout",  # 2004[74]
     "SetCharacterFaceParamOverride",  # 2004[75]
     "Unknown_2004_76",  # 2004[76]
     "FadeToBlack",  # 2004[77]
@@ -1056,9 +1056,9 @@ from .emevd.compiler import *
 from .emevd.enums import *
 
 # Restart decorators. They can be used as names (not function calls) or have an event ID argument.
-def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def ContinueOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
-def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...
@@ -7052,7 +7052,7 @@ def SetCharacterFadeOnEnable(character: Character | int, state: bool | int, even
     """
 
 
-def MoveCharacterAndCopyDrawParentWitHFadeout(
+def MoveCharacterAndCopyDrawParentWithFadeout(
     character: Character | int,
     destination_type: CoordEntityType | int,
     destination: Asset | Region | Character | int,

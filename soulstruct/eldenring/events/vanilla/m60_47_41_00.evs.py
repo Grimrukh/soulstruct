@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_47_41_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1047412300()
@@ -53,7 +53,7 @@ def Constructor():
     CommonFunc_90005793(0, 1047419201, 1047412222, 1047410232, 1047410703, 1047412202, 0, 0)
 
 
-@NeverRestart(100)
+@ContinueOnRest(100)
 def Event_100():
     """Event 100"""
     Event_1047412304(0, character=Characters.LargeLivingPot)
@@ -62,13 +62,13 @@ def Event_100():
     Event_1047410702()
 
 
-@NeverRestart(150)
+@ContinueOnRest(150)
 def Event_150():
     """Event 150"""
     Event_1047412303(0, 1047410700)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005485(0, 1047410300)

@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13900000, obj=3901950, reaction_distance=5.0)
@@ -469,7 +469,7 @@ def Constructor():
     CommonFunc_20006030(0, 3901706, 4000, 1, 62140, 50006215, 50006216, 1390)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13900465()
@@ -893,7 +893,7 @@ def Event_13905415(
     DisableObjectActivation(obj, obj_act_id=obj_act_id_3)
 
 
-@NeverRestart(13900900)
+@ContinueOnRest(13900900)
 def Event_13900900():
     """Event 13900900"""
     DisableNetworkSync()
@@ -913,7 +913,7 @@ def Event_13900900():
     EnableFlag(6073)
 
 
-@NeverRestart(13900410)
+@ContinueOnRest(13900410)
 def Event_13900410():
     """Event 13900410"""
     if ThisEventSlotFlagEnabled():
@@ -963,59 +963,59 @@ def Event_13900412():
     )
 
 
-@NeverRestart(13905420)
+@ContinueOnRest(13905420)
 def Event_13905420():
     """Event 13905420"""
     CommonFunc_20005610(0, flag=13900420, region=3902420, region_1=3902421)
     CommonFunc_20005611(0, 13900420, 3903420, 3901420, 390305)
 
 
-@NeverRestart(13905425)
+@ContinueOnRest(13905425)
 def Event_13905425():
     """Event 13905425"""
     CommonFunc_20005613(0, 13900425, 3903425, 3901425, 390340, 10010872)
 
 
-@NeverRestart(13905430)
+@ContinueOnRest(13905430)
 def Event_13905430():
     """Event 13905430"""
     CommonFunc_20005610(0, flag=13900430, region=3902430, region_1=3902431)
     CommonFunc_20005611(0, 13900430, 3903430, 3901430, 390305)
 
 
-@NeverRestart(13905435)
+@ContinueOnRest(13905435)
 def Event_13905435():
     """Event 13905435"""
     CommonFunc_20005610(0, flag=13900435, region=3902435, region_1=3902436)
     CommonFunc_20005611(0, 13900435, 3903435, 3901435, 390300)
 
 
-@NeverRestart(13905440)
+@ContinueOnRest(13905440)
 def Event_13905440():
     """Event 13905440"""
     CommonFunc_20005610(0, flag=13900440, region=3902440, region_1=3902441)
     CommonFunc_20005611(0, 13900440, 3903440, 3901440, 390305)
 
 
-@NeverRestart(13905445)
+@ContinueOnRest(13905445)
 def Event_13905445():
     """Event 13905445"""
     EndOfAnimation(obj=3901445, animation_id=0)
 
 
-@NeverRestart(13905450)
+@ContinueOnRest(13905450)
 def Event_13905450():
     """Event 13905450"""
     CommonFunc_20005613(0, 13900450, 3903450, 3901450, 390320, 10010867)
 
 
-@NeverRestart(13905460)
+@ContinueOnRest(13905460)
 def Event_13905460():
     """Event 13905460"""
     CommonFunc_20005614(0, 3901460, 63900460)
 
 
-@NeverRestart(13900465)
+@ContinueOnRest(13900465)
 def Event_13900465():
     """Event 13900465"""
     if ThisEventSlotFlagEnabled():
@@ -1239,7 +1239,7 @@ def Event_13905620(_, entity: int, flag: int, flag_1: int):
     End()
 
 
-@NeverRestart(13905700)
+@ContinueOnRest(13905700)
 def Event_13905700(_, character: int, animation_id: int):
     """Event 13905700"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -1281,7 +1281,7 @@ def Event_13905700(_, character: int, animation_id: int):
     End()
 
 
-@NeverRestart(13905720)
+@ContinueOnRest(13905720)
 def Event_13905720(_, character: int, character_1: int):
     """Event 13905720"""
     GotoIfPlayerNotInOwnWorld(Label.L20)

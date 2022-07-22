@@ -22,7 +22,7 @@ from .entities.m60_34_41_00_entities import *
 from .entities.m12_04_00_00_entities import Assets as m12_04_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1034410000, asset=Assets.AEG099_060_9000)
@@ -40,7 +40,7 @@ def Constructor():
     CommonFunc_90005640(0, 1034410540, 1034411540)
 
 
-@NeverRestart(1034412510)
+@ContinueOnRest(1034412510)
 def Event_1034412510():
     """Event 1034412510"""
     CommonFunc_90005500(
@@ -61,7 +61,7 @@ def Event_1034412510():
     )
 
 
-@NeverRestart(1034410519)
+@ContinueOnRest(1034410519)
 def Event_1034410519():
     """Event 1034410519"""
     if FlagEnabled(1034410519):

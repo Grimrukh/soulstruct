@@ -51,7 +51,7 @@ from soulstruct.bloodborne.events import *
 from soulstruct.bloodborne.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     SkipLinesIfClient(1)
@@ -103,7 +103,7 @@ def Constructor():
     Event_12907400()
 
 
-@NeverRestart(12900000)
+@ContinueOnRest(12900000)
 def Event_12900000(_, obj: int, obj_act_id: int):
     """Event 12900000"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -123,7 +123,7 @@ def Event_12900000(_, obj: int, obj_act_id: int):
     DisableObjectActivation(obj, obj_act_id=-1)
 
 
-@NeverRestart(12900060)
+@ContinueOnRest(12900060)
 def Event_12900060(_, obj: int, obj_1: int):
     """Event 12900060"""
     if FlagEnabled(92905335):
@@ -137,7 +137,7 @@ def Event_12900060(_, obj: int, obj_1: int):
     End()
 
 
-@NeverRestart(12900067)
+@ContinueOnRest(12900067)
 def Event_12900067(_, obj: int, obj_act_id: int, flag: int):
     """Event 12900067"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -163,7 +163,7 @@ def Event_12900067(_, obj: int, obj_act_id: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12900078)
+@ContinueOnRest(12900078)
 def Event_12900078(_, source_entity: int, flag: int):
     """Event 12900078"""
     if ThisEventSlotFlagEnabled():
@@ -223,7 +223,7 @@ def Event_12900078(_, source_entity: int, flag: int):
     )
 
 
-@NeverRestart(12900089)
+@ContinueOnRest(12900089)
 def Event_12900089(_, obj: int, obj_act_id: int, obj_act_id_1: int, obj_act_id_2: int):
     """Event 12900089"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -242,7 +242,7 @@ def Event_12900089(_, obj: int, obj_act_id: int, obj_act_id_1: int, obj_act_id_2
     End()
 
 
-@NeverRestart(12900163)
+@ContinueOnRest(12900163)
 def Event_12900163(_, obj: int, obj_act_id: int, obj_act_id_1: int, flag: int):
     """Event 12900163"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -260,7 +260,7 @@ def Event_12900163(_, obj: int, obj_act_id: int, obj_act_id_1: int, flag: int):
     End()
 
 
-@NeverRestart(12900174)
+@ContinueOnRest(12900174)
 def Event_12900174(_, entity: int, obj_act_id: int, flag: int):
     """Event 12900174"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -286,7 +286,7 @@ def Event_12900174(_, entity: int, obj_act_id: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900185)
+@ContinueOnRest(12900185)
 def Event_12900185(_, obj: int, obj_1: int, obj_act_id: int, flag: int):
     """Event 12900185"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -303,7 +303,7 @@ def Event_12900185(_, obj: int, obj_1: int, obj_act_id: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12900186)
+@ContinueOnRest(12900186)
 def Event_12900186(_, anchor_entity: int, flag: int):
     """Event 12900186"""
     DisableNetworkSync()
@@ -324,7 +324,7 @@ def Event_12900186(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900187)
+@ContinueOnRest(12900187)
 def Event_12900187(_, anchor_entity: int, flag: int):
     """Event 12900187"""
     DisableNetworkSync()
@@ -338,7 +338,7 @@ def Event_12900187(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900188)
+@ContinueOnRest(12900188)
 def Event_12900188(_, obj: int, obj_act_id: int, flag: int, flag_1: int):
     """Event 12900188"""
     if FlagEnabled(flag_1):
@@ -361,7 +361,7 @@ def Event_12900188(_, obj: int, obj_act_id: int, flag: int, flag_1: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12900189)
+@ContinueOnRest(12900189)
 def Event_12900189(_, obj: int, obj_act_id: int, flag: int):
     """Event 12900189"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -378,7 +378,7 @@ def Event_12900189(_, obj: int, obj_act_id: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(12900190)
+@ContinueOnRest(12900190)
 def Event_12900190(_, anchor_entity: int, flag: int):
     """Event 12900190"""
     DisableNetworkSync()
@@ -394,7 +394,7 @@ def Event_12900190(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900191)
+@ContinueOnRest(12900191)
 def Event_12900191(_, anchor_entity: int, flag: int):
     """Event 12900191"""
     DisableNetworkSync()
@@ -408,7 +408,7 @@ def Event_12900191(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900192)
+@ContinueOnRest(12900192)
 def Event_12900192(_, obj_act_id: int, flag: int, obj: int):
     """Event 12900192"""
     if FlagEnabled(flag):
@@ -430,7 +430,7 @@ def Event_12900192(_, obj_act_id: int, flag: int, obj: int):
     DisplayBattlefieldMessage(10011260, display_location_index=0)
 
 
-@NeverRestart(12900197)
+@ContinueOnRest(12900197)
 def Event_12900197(_, obj: int, obj_act_id: int, flag: int):
     """Event 12900197"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -447,7 +447,7 @@ def Event_12900197(_, obj: int, obj_act_id: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(12900202)
+@ContinueOnRest(12900202)
 def Event_12900202(_, anchor_entity: int, flag: int):
     """Event 12900202"""
     DisableNetworkSync()
@@ -463,7 +463,7 @@ def Event_12900202(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900207)
+@ContinueOnRest(12900207)
 def Event_12900207(_, anchor_entity: int, flag: int):
     """Event 12900207"""
     DisableNetworkSync()
@@ -479,7 +479,7 @@ def Event_12900207(_, anchor_entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12900229)
+@ContinueOnRest(12900229)
 def Event_12900229(_, obj: int, flag: int, flag_1: int):
     """Event 12900229"""
     WaitFrames(frames=2)
@@ -507,7 +507,7 @@ def Event_12900229(_, obj: int, flag: int, flag_1: int):
     Wait(0.5)
 
 
-@NeverRestart(12900234)
+@ContinueOnRest(12900234)
 def Event_12900234(_, obj_act_id: int, item: int, text: int, obj: int, obj_act_id_1: int, obj_act_id_2: int):
     """Event 12900234"""
     if ThisEventSlotFlagEnabled():
@@ -524,7 +524,7 @@ def Event_12900234(_, obj_act_id: int, item: int, text: int, obj: int, obj_act_i
     DisableObjectActivation(obj, obj_act_id=obj_act_id_2)
 
 
-@NeverRestart(12900235)
+@ContinueOnRest(12900235)
 def Event_12900235(_, obj_act_id: int, text: int, obj: int, obj_act_id_1: int, obj_act_id_2: int):
     """Event 12900235"""
     if ThisEventSlotFlagEnabled():
@@ -540,7 +540,7 @@ def Event_12900235(_, obj_act_id: int, text: int, obj: int, obj_act_id_1: int, o
     DisableObjectActivation(obj, obj_act_id=obj_act_id_2)
 
 
-@NeverRestart(12900236)
+@ContinueOnRest(12900236)
 def Event_12900236(_, obj: int):
     """Event 12900236"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -552,7 +552,7 @@ def Event_12900236(_, obj: int):
     CreatePlayLog(name=38)
 
 
-@NeverRestart(12901760)
+@ContinueOnRest(12901760)
 def Event_12901760(_, obj: int):
     """Event 12901760"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -567,7 +567,7 @@ def Event_12901760(_, obj: int):
     CreatePlayLog(name=38)
 
 
-@NeverRestart(12900238)
+@ContinueOnRest(12900238)
 def Event_12900238(_, obj: int, obj_act_id: int, obj_act_id_1: int, obj_act_id_2: int, flag: int):
     """Event 12900238"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
@@ -585,7 +585,7 @@ def Event_12900238(_, obj: int, obj_act_id: int, obj_act_id_1: int, obj_act_id_2
     EnableFlag(flag)
 
 
-@NeverRestart(12900239)
+@ContinueOnRest(12900239)
 def Event_12900239(_, source_entity: int, flag: int):
     """Event 12900239"""
     if ThisEventSlotFlagEnabled():
@@ -606,7 +606,7 @@ def Event_12900239(_, source_entity: int, flag: int):
     )
 
 
-@NeverRestart(12900240)
+@ContinueOnRest(12900240)
 def Event_12900240(_, obj: int, obj_1: int, obj_2: int, flag: int, flag_1: int):
     """Event 12900240"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -626,7 +626,7 @@ def Event_12900240(_, obj: int, obj_1: int, obj_2: int, flag: int, flag_1: int):
     DisableFlag(flag_1)
 
 
-@NeverRestart(12900245)
+@ContinueOnRest(12900245)
 def Event_12900245(
     _,
     entity: int,
@@ -662,7 +662,7 @@ def Event_12900245(
     Restart()
 
 
-@NeverRestart(12900250)
+@ContinueOnRest(12900250)
 def Event_12900250(
     _,
     entity: int,
@@ -698,7 +698,7 @@ def Event_12900250(
     Restart()
 
 
-@NeverRestart(12900255)
+@ContinueOnRest(12900255)
 def Event_12900255(_, entity: int, entity_1: int, flag: int, flag_1: int):
     """Event 12900255"""
     DisableNetworkSync()
@@ -724,7 +724,7 @@ def Event_12900255(_, entity: int, entity_1: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12900260)
+@ContinueOnRest(12900260)
 def Event_12900260(_, character: int):
     """Event 12900260"""
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6100))
@@ -740,7 +740,7 @@ def Event_12900260(_, character: int):
     AwardItemLot(5530, host_only=True)
 
 
-@NeverRestart(12900293)
+@ContinueOnRest(12900293)
 def Event_12900293(_, region: int, flag: int, flag_1: int):
     """Event 12900293"""
     DisableNetworkSync()
@@ -763,7 +763,7 @@ def Event_12900293(_, region: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12900304)
+@ContinueOnRest(12900304)
 def Event_12900304(_, flag: int, move_to_region: int, flag_1: int):
     """Event 12900304"""
     DisableNetworkSync()
@@ -779,7 +779,7 @@ def Event_12900304(_, flag: int, move_to_region: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12901732)
+@ContinueOnRest(12901732)
 def Event_12901732(_, flag: int, obj: int):
     """Event 12901732"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -802,7 +802,7 @@ def Event_12901732(_, flag: int, obj: int):
     Restart()
 
 
-@NeverRestart(12901743)
+@ContinueOnRest(12901743)
 def Event_12901743(_, flag: int, anchor_entity: int):
     """Event 12901743"""
     MAIN.Await(FlagEnabled(flag))
@@ -812,7 +812,7 @@ def Event_12901743(_, flag: int, anchor_entity: int):
     Restart()
 
 
-@NeverRestart(12900315)
+@ContinueOnRest(12900315)
 def Event_12900315(_, flag: int, obj: int, obj_1: int, obj_act_id: int, obj_2: int, flag_1: int):
     """Event 12900315"""
     AND_1.Add(FlagEnabled(flag))
@@ -833,7 +833,7 @@ def Event_12900315(_, flag: int, obj: int, obj_1: int, obj_act_id: int, obj_2: i
     DisableFlag(flag_1)
 
 
-@NeverRestart(12900323)
+@ContinueOnRest(12900323)
 def Event_12900323(
     _,
     flag: int,
@@ -874,7 +874,7 @@ def Event_12900323(
     Restart()
 
 
-@NeverRestart(12900331)
+@ContinueOnRest(12900331)
 def Event_12900331(
     _,
     flag: int,
@@ -915,7 +915,7 @@ def Event_12900331(
     Restart()
 
 
-@NeverRestart(12900339)
+@ContinueOnRest(12900339)
 def Event_12900339(_, flag: int, entity: int, flag_1: int, entity_1: int):
     """Event 12900339"""
     DisableNetworkSync()
@@ -940,7 +940,7 @@ def Event_12900339(_, flag: int, entity: int, flag_1: int, entity_1: int):
     Restart()
 
 
-@NeverRestart(12900347)
+@ContinueOnRest(12900347)
 def Event_12900347(_, obj: int, obj_1: int, obj_2: int, flag: int, flag_1: int, animation_id: int, animation_id_1: int):
     """Event 12900347"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -960,7 +960,7 @@ def Event_12900347(_, obj: int, obj_1: int, obj_2: int, flag: int, flag_1: int, 
     DisableFlag(flag_1)
 
 
-@NeverRestart(12900351)
+@ContinueOnRest(12900351)
 def Event_12900351(
     _,
     entity: int,
@@ -999,7 +999,7 @@ def Event_12900351(
     Restart()
 
 
-@NeverRestart(12900353)
+@ContinueOnRest(12900353)
 def Event_12900353(
     _,
     entity: int,
@@ -1038,7 +1038,7 @@ def Event_12900353(
     Restart()
 
 
-@NeverRestart(12900354)
+@ContinueOnRest(12900354)
 def Event_12900354(
     _,
     entity: int,
@@ -1077,7 +1077,7 @@ def Event_12900354(
     Restart()
 
 
-@NeverRestart(12900356)
+@ContinueOnRest(12900356)
 def Event_12900356(
     _,
     entity: int,
@@ -1116,7 +1116,7 @@ def Event_12900356(
     Restart()
 
 
-@NeverRestart(12900357)
+@ContinueOnRest(12900357)
 def Event_12900357(_, entity: int, entity_1: int, flag: int, flag_1: int):
     """Event 12900357"""
     DisableNetworkSync()
@@ -1142,7 +1142,7 @@ def Event_12900357(_, entity: int, entity_1: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12900361)
+@ContinueOnRest(12900361)
 def Event_12900361(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int, entity: int, entity_1: int):
     """Event 12900361"""
     EnableFlag(flag)
@@ -1155,7 +1155,7 @@ def Event_12900361(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: 
     End()
 
 
-@NeverRestart(12900363)
+@ContinueOnRest(12900363)
 def Event_12900363(_, flag: int, flag_1: int, region: int, region_1: int, entity: int, flag_2: int):
     """Event 12900363"""
     Wait(1.0)
@@ -1185,7 +1185,7 @@ def Event_12900363(_, flag: int, flag_1: int, region: int, region_1: int, entity
     End()
 
 
-@NeverRestart(12900365)
+@ContinueOnRest(12900365)
 def Event_12900365(
     _,
     flag: int,
@@ -1243,7 +1243,7 @@ def Event_12900365(
     Restart()
 
 
-@NeverRestart(12900367)
+@ContinueOnRest(12900367)
 def Event_12900367(
     _,
     flag: int,
@@ -1301,7 +1301,7 @@ def Event_12900367(
     Restart()
 
 
-@NeverRestart(12900369)
+@ContinueOnRest(12900369)
 def Event_12900369(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int, entity: int, entity_1: int):
     """Event 12900369"""
     EnableFlag(flag)
@@ -1314,7 +1314,7 @@ def Event_12900369(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: 
     End()
 
 
-@NeverRestart(12900371)
+@ContinueOnRest(12900371)
 def Event_12900371(_, flag: int, flag_1: int, region: int, region_1: int, entity: int, flag_2: int):
     """Event 12900371"""
     Wait(1.0)
@@ -1344,7 +1344,7 @@ def Event_12900371(_, flag: int, flag_1: int, region: int, region_1: int, entity
     End()
 
 
-@NeverRestart(12900373)
+@ContinueOnRest(12900373)
 def Event_12900373(
     _,
     flag: int,
@@ -1400,7 +1400,7 @@ def Event_12900373(
     Restart()
 
 
-@NeverRestart(12900375)
+@ContinueOnRest(12900375)
 def Event_12900375(
     _,
     flag: int,
@@ -1456,7 +1456,7 @@ def Event_12900375(
     Restart()
 
 
-@NeverRestart(12900377)
+@ContinueOnRest(12900377)
 def Event_12900377(_, obj: int, obj_flag: int):
     """Event 12900377"""
     GotoIfFlagEnabled(Label.L7, flag=92905107)
@@ -1580,7 +1580,7 @@ def Event_12900377(_, obj: int, obj_flag: int):
     )
 
 
-@NeverRestart(12900395)
+@ContinueOnRest(12900395)
 def Event_12900395(_, obj: int, obj_flag: int):
     """Event 12900395"""
     CreateObjectVFX(obj, vfx_id=704, model_point=900110)
@@ -1705,7 +1705,7 @@ def Event_12900395(_, obj: int, obj_flag: int):
     )
 
 
-@NeverRestart(12900423)
+@ContinueOnRest(12900423)
 def Event_12900423(_, region: int, obj: int):
     """Event 12900423"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -1723,13 +1723,13 @@ def Event_12900423(_, region: int, obj: int):
     DestroyObject(obj)
 
 
-@NeverRestart(12900430)
+@ContinueOnRest(12900430)
 def Event_12900430(_, entity: int):
     """Event 12900430"""
     DisableSpawner(entity=entity)
 
 
-@NeverRestart(12901000)
+@ContinueOnRest(12901000)
 def Event_12901000(_, character: int, entity: int):
     """Event 12901000"""
     DisableSpawner(entity=entity)
@@ -1748,7 +1748,7 @@ def Event_12901000(_, character: int, entity: int):
     Restart()
 
 
-@NeverRestart(12901200)
+@ContinueOnRest(12901200)
 def Event_12901200(_, copy_draw_parent: int, character: int):
     """Event 12901200"""
     DisableNetworkSync()
@@ -1771,7 +1771,7 @@ def Event_12901200(_, copy_draw_parent: int, character: int):
     Restart()
 
 
-@NeverRestart(12901272)
+@ContinueOnRest(12901272)
 def Event_12901272(_, character: int, entity: int, character_1: int):
     """Event 12901272"""
     MAIN.Await(CharacterHasTAEEvent(character_1, tae_event_id=100))
@@ -1792,7 +1792,7 @@ def Event_12901272(_, character: int, entity: int, character_1: int):
     Restart()
 
 
-@NeverRestart(12901347)
+@ContinueOnRest(12901347)
 def Event_12901347(_, region: int, entity: int, flag: int):
     """Event 12901347"""
     AND_1.Add(FlagDisabled(flag))
@@ -1817,7 +1817,7 @@ def Event_12901347(_, region: int, entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12901400)
+@ContinueOnRest(12901400)
 def Event_12901400(_, obj: int, flag: int):
     """Event 12901400"""
     AND_1.Add(ObjectNotDestroyed(obj))
@@ -2190,7 +2190,7 @@ def Event_12901400(_, obj: int, flag: int):
     Restart()
 
 
-@NeverRestart(12901447)
+@ContinueOnRest(12901447)
 def Event_12901447(_, obj_act_id: int, navmesh_id: int):
     """Event 12901447"""
     if ThisEventSlotFlagEnabled():
@@ -2202,7 +2202,7 @@ def Event_12901447(_, obj_act_id: int, navmesh_id: int):
     DisableNavmeshType(navmesh_id=navmesh_id, navmesh_type=NavmeshType.Solid)
 
 
-@NeverRestart(12901525)
+@ContinueOnRest(12901525)
 def Event_12901525(_, obj_act_id: int, navmesh_id: int):
     """Event 12901525"""
     if ThisEventSlotFlagEnabled():
@@ -2233,7 +2233,7 @@ def Event_12901532(_, character: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(12901550)
+@ContinueOnRest(12901550)
 def Event_12901550(_, obj_act_id: int, obj: int, obj_1: int):
     """Event 12901550"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -2251,7 +2251,7 @@ def Event_12901550(_, obj_act_id: int, obj: int, obj_1: int):
     CreatePlayLog(name=224)
 
 
-@NeverRestart(12901554)
+@ContinueOnRest(12901554)
 def Event_12901554(_, character__targeting_character: int, ai_param_id: int):
     """Event 12901554"""
     OR_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=PLAYER))
@@ -2263,20 +2263,20 @@ def Event_12901554(_, character__targeting_character: int, ai_param_id: int):
     ReplanAI(character__targeting_character)
 
 
-@NeverRestart(12901555)
+@ContinueOnRest(12901555)
 def Event_12901555():
     """Event 12901555"""
     CreateProjectileOwner(entity=2900000)
     DisableCharacter(2900000)
 
 
-@NeverRestart(12901556)
+@ContinueOnRest(12901556)
 def Event_12901556(_, start_climbing_flag: int, stop_climbing_flag: int, obj: int):
     """Event 12901556"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, obj=obj)
 
 
-@NeverRestart(12901588)
+@ContinueOnRest(12901588)
 def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int, left: int, obj_1: int, vfx_id_1: int):
     """Event 12901588"""
     if ThisEventSlotFlagEnabled():
@@ -2394,7 +2394,7 @@ def Event_12901588(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     EnableFlag(left)
 
 
-@NeverRestart(12901589)
+@ContinueOnRest(12901589)
 def Event_12901589(
     _,
     character__game_area_param_id: int,
@@ -2523,7 +2523,7 @@ def Event_12901589(
     EnableFlag(left)
 
 
-@NeverRestart(12901590)
+@ContinueOnRest(12901590)
 def Event_12901590(_, character__game_area_param_id: int, obj: int, vfx_id: int, flag: int, obj_1: int, vfx_id_1: int):
     """Event 12901590"""
     if ThisEventSlotFlagEnabled():
@@ -2547,7 +2547,7 @@ def Event_12901590(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     EnableFlag(flag)
 
 
-@NeverRestart(12901591)
+@ContinueOnRest(12901591)
 def Event_12901591(
     _,
     character__game_area_param_id: int,
@@ -2678,7 +2678,7 @@ def Event_12901591(
     EnableFlag(left)
 
 
-@NeverRestart(12901592)
+@ContinueOnRest(12901592)
 def Event_12901592(_, flag: int, obj: int):
     """Event 12901592"""
     if ThisEventSlotFlagDisabled():
@@ -2693,7 +2693,7 @@ def Event_12901592(_, flag: int, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(12901593)
+@ContinueOnRest(12901593)
 def Event_12901593(_, flag: int, obj: int):
     """Event 12901593"""
     if ThisEventSlotFlagDisabled():
@@ -2701,7 +2701,7 @@ def Event_12901593(_, flag: int, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(12901594)
+@ContinueOnRest(12901594)
 def Event_12901594(
     _,
     flag: int,
@@ -2752,7 +2752,7 @@ def Event_12901594(
     End()
 
 
-@NeverRestart(12901595)
+@ContinueOnRest(12901595)
 def Event_12901595(
     _,
     flag: int,
@@ -2805,7 +2805,7 @@ def Event_12901595(
     End()
 
 
-@NeverRestart(12901596)
+@ContinueOnRest(12901596)
 def Event_12901596(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
     """Event 12901596"""
     if FlagEnabled(flag):
@@ -2822,7 +2822,7 @@ def Event_12901596(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     End()
 
 
-@NeverRestart(12901597)
+@ContinueOnRest(12901597)
 def Event_12901597(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
     """Event 12901597"""
     if FlagEnabled(flag):
@@ -2839,7 +2839,7 @@ def Event_12901597(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     End()
 
 
-@NeverRestart(12901598)
+@ContinueOnRest(12901598)
 def Event_12901598(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int):
     """Event 12901598"""
     if FlagEnabled(flag):
@@ -2854,7 +2854,7 @@ def Event_12901598(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: in
     End()
 
 
-@NeverRestart(12901599)
+@ContinueOnRest(12901599)
 def Event_12901599(_, character: int, region: int, animation_id: int, animation: int):
     """Event 12901599"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -2866,7 +2866,7 @@ def Event_12901599(_, character: int, region: int, animation_id: int, animation:
     RotateToFaceEntity(character, PLAYER, animation=animation)
 
 
-@NeverRestart(12901600)
+@ContinueOnRest(12901600)
 def Event_12901600(_, character: int, region: int):
     """Event 12901600"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -2880,13 +2880,13 @@ def Event_12901600(_, character: int, region: int):
     EnableCharacter(character)
 
 
-@NeverRestart(12901601)
+@ContinueOnRest(12901601)
 def Event_12901601(_, obj: int):
     """Event 12901601"""
     DisableObject(obj)
 
 
-@NeverRestart(12901602)
+@ContinueOnRest(12901602)
 def Event_12901602(_, region: int, obj: int):
     """Event 12901602"""
     CreateObjectVFX(obj, vfx_id=200, model_point=8020)
@@ -2898,7 +2898,7 @@ def Event_12901602(_, region: int, obj: int):
     ForceAnimation(obj, 1000100, loop=True, wait_for_completion=True)
 
 
-@NeverRestart(12901684)
+@ContinueOnRest(12901684)
 def Event_12901684(_, flag: int, achievement_id: int):
     """Event 12901684"""
     MAIN.Await(FlagEnabled(flag))
@@ -2906,7 +2906,7 @@ def Event_12901684(_, flag: int, achievement_id: int):
     AwardAchievement(achievement_id=achievement_id)
 
 
-@NeverRestart(12901685)
+@ContinueOnRest(12901685)
 def Event_12901685():
     """Event 12901685"""
     StartPlayLogMeasurement(measurement_id=2900000, name=380, overwrite=False)
@@ -2969,7 +2969,7 @@ def Event_12901685():
     End()
 
 
-@NeverRestart(12901686)
+@ContinueOnRest(12901686)
 def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, vfx_id: int, vfx_id_1: int, left: int):
     """Event 12901686"""
     GotoIfFlagDisabled(Label.L0, flag=left)
@@ -3103,7 +3103,7 @@ def Event_12901686(_, character__game_area_param_id: int, obj: int, obj_1: int, 
     EnableFlag(left)
 
 
-@NeverRestart(12901690)
+@ContinueOnRest(12901690)
 def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int, left: int):
     """Event 12901690"""
     GotoIfFlagDisabled(Label.L0, flag=left)
@@ -3234,7 +3234,7 @@ def Event_12901690(_, character__game_area_param_id: int, obj: int, vfx_id: int,
     EnableFlag(left)
 
 
-@NeverRestart(12901692)
+@ContinueOnRest(12901692)
 def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id: int, vfx_id_1: int, left: int):
     """Event 12901692"""
     GotoIfFlagDisabled(Label.L0, flag=left)
@@ -3365,7 +3365,7 @@ def Event_12901692(_, character__miniboss_id: int, obj: int, obj_1: int, vfx_id:
     EnableFlag(left)
 
 
-@NeverRestart(12901693)
+@ContinueOnRest(12901693)
 def Event_12901693(
     _,
     flag: int,
@@ -3485,7 +3485,7 @@ def Event_12901693(
     End()
 
 
-@NeverRestart(12901697)
+@ContinueOnRest(12901697)
 def Event_12901697(
     _,
     character: int,
@@ -3523,7 +3523,7 @@ def Event_12901697(
     EnableFlag(flag_2)
 
 
-@NeverRestart(12901701)
+@ContinueOnRest(12901701)
 def Event_12901701(_, character: int, region: int, flag: int, flag_1: int, flag_2: int, obj_act_id: int):
     """Event 12901701"""
     if FlagEnabled(flag):
@@ -3550,7 +3550,7 @@ def Event_12901701(_, character: int, region: int, flag: int, flag_1: int, flag_
     EnableCharacter(character)
 
 
-@NeverRestart(12901705)
+@ContinueOnRest(12901705)
 def Event_12901705(
     _,
     character: int,
@@ -3585,7 +3585,7 @@ def Event_12901705(
     EnableFlag(flag_2)
 
 
-@NeverRestart(12901706)
+@ContinueOnRest(12901706)
 def Event_12901706(_, character: int, region: int, flag: int, flag_1: int, flag_2: int, obj_act_id: int):
     """Event 12901706"""
     if FlagEnabled(flag):
@@ -3612,7 +3612,7 @@ def Event_12901706(_, character: int, region: int, flag: int, flag_1: int, flag_
     EnableCharacter(character)
 
 
-@NeverRestart(12901707)
+@ContinueOnRest(12901707)
 def Event_12901707(
     _,
     character: int,
@@ -3659,7 +3659,7 @@ def Event_12901707(
     EnableCharacter(character_2)
 
 
-@NeverRestart(12901708)
+@ContinueOnRest(12901708)
 def Event_12901708(_, flag: int, left: int):
     """Event 12901708"""
     DisableNetworkSync()
@@ -3743,7 +3743,7 @@ def Event_12901708(_, flag: int, left: int):
     DefineLabel(0)
 
 
-@NeverRestart(12901712)
+@ContinueOnRest(12901712)
 def Event_12901712(_, flag: int, left: int):
     """Event 12901712"""
     DisableNetworkSync()
@@ -3824,7 +3824,7 @@ def Event_12901712(_, flag: int, left: int):
     DefineLabel(0)
 
 
-@NeverRestart(12901713)
+@ContinueOnRest(12901713)
 def Event_12901713(_, obj_act_id: int, obj: int, obj_act_id_1: int, flag: int):
     """Event 12901713"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -3840,7 +3840,7 @@ def Event_12901713(_, obj_act_id: int, obj: int, obj_act_id_1: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(12901717)
+@ContinueOnRest(12901717)
 def Event_12901717(_, obj_act_id: int, obj: int, obj_act_id_1: int, flag: int):
     """Event 12901717"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -3856,7 +3856,7 @@ def Event_12901717(_, obj_act_id: int, obj: int, obj_act_id_1: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(12901718)
+@ContinueOnRest(12901718)
 def Event_12901718(_, flag: int, left: int, flag_1: int):
     """Event 12901718"""
     DisableNetworkSync()
@@ -3928,7 +3928,7 @@ def Event_12901718(_, flag: int, left: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12901722)
+@ContinueOnRest(12901722)
 def Event_12901722(_, flag: int, left: int, flag_1: int):
     """Event 12901722"""
     DisableNetworkSync()
@@ -4000,7 +4000,7 @@ def Event_12901722(_, flag: int, left: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12901723)
+@ContinueOnRest(12901723)
 def Event_12901723(
     _,
     character__game_area_param_id: int,
@@ -4146,7 +4146,7 @@ def Event_12901723(
     EnableFlag(left)
 
 
-@NeverRestart(12901725)
+@ContinueOnRest(12901725)
 def Event_12901725(
     _,
     character__game_area_param_id: int,
@@ -4301,7 +4301,7 @@ def Event_12901725(
     EnableFlag(left)
 
 
-@NeverRestart(12901727)
+@ContinueOnRest(12901727)
 def Event_12901727(_, flag: int, obj: int):
     """Event 12901727"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -4317,7 +4317,7 @@ def Event_12901727(_, flag: int, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(12901728)
+@ContinueOnRest(12901728)
 def Event_12901728(_, flag: int, obj: int):
     """Event 12901728"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -4341,7 +4341,7 @@ def Event_12901728(_, flag: int, obj: int):
     DisableObject(obj)
 
 
-@NeverRestart(12901730)
+@ContinueOnRest(12901730)
 def Event_12901730(
     _,
     flag: int,
@@ -4373,7 +4373,7 @@ def Event_12901730(
     End()
 
 
-@NeverRestart(12901754)
+@ContinueOnRest(12901754)
 def Event_12901754(_, character: int):
     """Event 12901754"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -4420,7 +4420,7 @@ def Event_12904013(_, character: int):
     RemoveSpecialEffect(character, 5333)
 
 
-@NeverRestart(12904026)
+@ContinueOnRest(12904026)
 def Event_12904026(_, character: int, character_1: int, flag: int):
     """Event 12904026"""
     if FlagEnabled(flag):
@@ -4433,7 +4433,7 @@ def Event_12904026(_, character: int, character_1: int, flag: int):
     DisableCharacter(character_1)
 
 
-@NeverRestart(12904027)
+@ContinueOnRest(12904027)
 def Event_12904027(_, character: int, character_1: int, character_2: int, flag: int):
     """Event 12904027"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -4450,7 +4450,7 @@ def Event_12904027(_, character: int, character_1: int, character_2: int, flag: 
     Kill(character_2)
 
 
-@NeverRestart(12904028)
+@ContinueOnRest(12904028)
 def Event_12904028(_, character: int, character_1: int, character_2: int, flag: int):
     """Event 12904028"""
     if FlagEnabled(flag):
@@ -4462,7 +4462,7 @@ def Event_12904028(_, character: int, character_1: int, character_2: int, flag: 
     AICommand(character_2, command_id=100, command_slot=1)
 
 
-@NeverRestart(12904029)
+@ContinueOnRest(12904029)
 def Event_12904029(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
     """Event 12904029"""
     if Client():
@@ -4515,7 +4515,7 @@ def Event_12904029(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     Restart()
 
 
-@NeverRestart(12904030)
+@ContinueOnRest(12904030)
 def Event_12904030(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int, flag_5: int):
     """Event 12904030"""
     if Client():
@@ -4570,7 +4570,7 @@ def Event_12904030(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     Restart()
 
 
-@NeverRestart(12904033)
+@ContinueOnRest(12904033)
 def Event_12904033(
     _,
     character: int,
@@ -4624,7 +4624,7 @@ def Event_12904033(
     Restart()
 
 
-@NeverRestart(12904036)
+@ContinueOnRest(12904036)
 def Event_12904036(
     _,
     character: int,
@@ -4678,7 +4678,7 @@ def Event_12904036(
     Restart()
 
 
-@NeverRestart(12904039)
+@ContinueOnRest(12904039)
 def Event_12904039(
     _,
     character: int,
@@ -4712,7 +4712,7 @@ def Event_12904039(
     Restart()
 
 
-@NeverRestart(12904040)
+@ContinueOnRest(12904040)
 def Event_12904040(_, character: int, flag: int, flag_1: int, character_1: int, character_2: int, flag_2: int):
     """Event 12904040"""
     if FlagEnabled(flag_2):
@@ -5098,7 +5098,7 @@ def Event_12904338(_, obj: int, obj_act_id: int, character: int, flag: int):
     EnableAI(character)
 
 
-@NeverRestart(12904342)
+@ContinueOnRest(12904342)
 def Event_12904342(_, obj: int, obj_flag: int, obj_1: int, obj_flag_1: int, anchor_entity: int):
     """Event 12904342"""
     DisableObject(obj_1)
@@ -5367,13 +5367,13 @@ def Event_12904342(_, obj: int, obj_flag: int, obj_1: int, obj_flag_1: int, anch
     Restart()
 
 
-@NeverRestart(12904343)
+@ContinueOnRest(12904343)
 def Event_12904343(_, character: int):
     """Event 12904343"""
     SetCollisionMask(character, bit_index=0, switch_type=OnOffChange.Off)
 
 
-@NeverRestart(12904345)
+@ContinueOnRest(12904345)
 def Event_12904345(_, character: int):
     """Event 12904345"""
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 404))
@@ -5393,7 +5393,7 @@ def Event_12904345(_, character: int):
     ReplanAI(character)
 
 
-@NeverRestart(12904361)
+@ContinueOnRest(12904361)
 def Event_12904361(_, character: int, character_1: int):
     """Event 12904361"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -5429,7 +5429,7 @@ def Event_12904361(_, character: int, character_1: int):
     DisableCharacter(character_1)
 
 
-@NeverRestart(12904369)
+@ContinueOnRest(12904369)
 def Event_12904369(_, obj: int, obj_1: int, flag: int, animation_id: int, animation_id_1: int, animation_id_2: int):
     """Event 12904369"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -5478,7 +5478,7 @@ def Event_12904373(_, character: int, region: int, radius: float, radius_1: floa
     Restart()
 
 
-@NeverRestart(12904374)
+@ContinueOnRest(12904374)
 def Event_12904374(_, obj_act_id: int, character: int, obj: int):
     """Event 12904374"""
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
@@ -5494,7 +5494,7 @@ def Event_12904374(_, obj_act_id: int, character: int, obj: int):
     Restart()
 
 
-@NeverRestart(12904382)
+@ContinueOnRest(12904382)
 def Event_12904382(_, character: int, obj: int, radius: float, region: int, region_1: int):
     """Event 12904382"""
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
@@ -6002,7 +6002,7 @@ def Event_12904501(_, character: int, animation_id: int):
     ForceAnimation(character, animation_id)
 
 
-@NeverRestart(12904506)
+@ContinueOnRest(12904506)
 def Event_12904506(
     _,
     character: int,
@@ -6060,7 +6060,7 @@ def Event_12904506(
     Restart()
 
 
-@NeverRestart(12904540)
+@ContinueOnRest(12904540)
 def Event_12904540(
     _,
     character: int,
@@ -6093,7 +6093,7 @@ def Event_12904540(
     ReplanAI(character)
 
 
-@NeverRestart(12904544)
+@ContinueOnRest(12904544)
 def Event_12904544(_, character: int, bit_index: uchar):
     """Event 12904544"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -6522,7 +6522,7 @@ def Event_12904737(_, obj: int):
     Restart()
 
 
-@NeverRestart(12904754)
+@ContinueOnRest(12904754)
 def Event_12904754(_, character: int, entity: int, entity_1: int, region: int):
     """Event 12904754"""
     AND_1.Add(HasAIStatus(character, ai_status=AIStatusType.Normal))
@@ -6567,7 +6567,7 @@ def Event_12904755(_, character: int, region: int, anchor_entity: int, vfx_id: i
     ReplanAI(character)
 
 
-@NeverRestart(12904759)
+@ContinueOnRest(12904759)
 def Event_12904759(_, character: int, region: int):
     """Event 12904759"""
     if ThisEventSlotFlagEnabled():
@@ -6589,7 +6589,7 @@ def Event_12904759(_, character: int, region: int):
     ForceAnimation(character, 3024, wait_for_completion=True)
 
 
-@NeverRestart(12904772)
+@ContinueOnRest(12904772)
 def Event_12904772(_, region: int, obj: int, character: int, region_1: int):
     """Event 12904772"""
     if ThisEventSlotFlagEnabled():
@@ -6613,7 +6613,7 @@ def Event_12904772(_, region: int, obj: int, character: int, region_1: int):
     End()
 
 
-@NeverRestart(12904773)
+@ContinueOnRest(12904773)
 def Event_12904773(_, target_entity: int, entity: int, flag: int):
     """Event 12904773"""
     AND_1.Add(FlagDisabled(flag))
@@ -6625,7 +6625,7 @@ def Event_12904773(_, target_entity: int, entity: int, flag: int):
     Restart()
 
 
-@NeverRestart(12904774)
+@ContinueOnRest(12904774)
 def Event_12904774(_, flag: int, region: int, flag_1: int):
     """Event 12904774"""
     if ThisEventSlotFlagDisabled():
@@ -6638,7 +6638,7 @@ def Event_12904774(_, flag: int, region: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12904775)
+@ContinueOnRest(12904775)
 def Event_12904775(_, target_entity: int, entity: int, flag: int, flag_1: int):
     """Event 12904775"""
     AND_1.Add(FlagDisabled(flag_1))
@@ -6652,7 +6652,7 @@ def Event_12904775(_, target_entity: int, entity: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12904776)
+@ContinueOnRest(12904776)
 def Event_12904776(
     _,
     character: int,
@@ -6692,7 +6692,7 @@ def Event_12904776(
     EnableFlag(flag)
 
 
-@NeverRestart(12904777)
+@ContinueOnRest(12904777)
 def Event_12904777(_, flag: int, flag_1: int, region: int, sound_id: int, sound_id_1: int, character: int):
     """Event 12904777"""
     DisableBossMusic(sound_id=sound_id)
@@ -6715,7 +6715,7 @@ def Event_12904777(_, flag: int, flag_1: int, region: int, sound_id: int, sound_
     EnableBossMusic(sound_id=sound_id_1)
 
 
-@NeverRestart(12904778)
+@ContinueOnRest(12904778)
 def Event_12904778(_, character: int, flag: int):
     """Event 12904778"""
     if FlagEnabled(flag):
@@ -6737,7 +6737,7 @@ def Event_12904778(_, character: int, flag: int):
     Restart()
 
 
-@NeverRestart(12904779)
+@ContinueOnRest(12904779)
 def Event_12904779(_, flag: int, sound_id: int, sound_id_1: int):
     """Event 12904779"""
     if FlagEnabled(flag):
@@ -6751,7 +6751,7 @@ def Event_12904779(_, flag: int, sound_id: int, sound_id_1: int):
     DisableBossMusic(sound_id=-1)
 
 
-@NeverRestart(12904780)
+@ContinueOnRest(12904780)
 def Event_12904780(_, character: int):
     """Event 12904780"""
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 404))
@@ -6767,7 +6767,7 @@ def Event_12904780(_, character: int):
     Restart()
 
 
-@NeverRestart(12904852)
+@ContinueOnRest(12904852)
 def Event_12904852(_, character: int, character_1: int, character_2: int):
     """Event 12904852"""
     DisableCharacter(character_1)
@@ -6845,7 +6845,7 @@ def Event_12904861(_, character: int, destination: int):
     ForceAnimation(character, 7000)
 
 
-@NeverRestart(12904862)
+@ContinueOnRest(12904862)
 def Event_12904862(_, character: int, character_1: int, character_2: int):
     """Event 12904862"""
     MAIN.Await(HealthRatio(character) <= 0.0)
@@ -6854,7 +6854,7 @@ def Event_12904862(_, character: int, character_1: int, character_2: int):
     Kill(character_2)
 
 
-@NeverRestart(12904863)
+@ContinueOnRest(12904863)
 def Event_12904863(_, character: int, character_1: int, character_2: int, region: int, flag: int, left: int, name: int):
     """Event 12904863"""
     DisableAI(character_2)
@@ -6886,7 +6886,7 @@ def Event_12904863(_, character: int, character_1: int, character_2: int, region
     EnableFlag(flag)
 
 
-@NeverRestart(12904864)
+@ContinueOnRest(12904864)
 def Event_12904864(
     _,
     flag: int,
@@ -6925,7 +6925,7 @@ def Event_12904864(
     EnableFlag(flag_1)
 
 
-@NeverRestart(12904865)
+@ContinueOnRest(12904865)
 def Event_12904865(_, character: int, value: float, character_1: int):
     """Event 12904865"""
     DisableCharacter(character)
@@ -6937,7 +6937,7 @@ def Event_12904865(_, character: int, value: float, character_1: int):
     EnableCharacter(character)
 
 
-@NeverRestart(12904866)
+@ContinueOnRest(12904866)
 def Event_12904866(_, character: int, character_1: int, flag: int):
     """Event 12904866"""
     if FlagEnabled(flag):
@@ -6950,7 +6950,7 @@ def Event_12904866(_, character: int, character_1: int, flag: int):
     Kill(character_1, award_souls=True)
 
 
-@NeverRestart(12904867)
+@ContinueOnRest(12904867)
 def Event_12904867(_, character: int, region: int):
     """Event 12904867"""
     DisableAI(character)
@@ -6961,7 +6961,7 @@ def Event_12904867(_, character: int, region: int):
     EnableAI(character)
 
 
-@NeverRestart(12904868)
+@ContinueOnRest(12904868)
 def Event_12904868(_, character: int, destination: int, destination_1: int):
     """Event 12904868"""
     MAIN.Await(HealthRatio(character) <= 0.75)
@@ -6995,7 +6995,7 @@ def Event_12904868(_, character: int, destination: int, destination_1: int):
     ReplanAI(character)
 
 
-@NeverRestart(12904869)
+@ContinueOnRest(12904869)
 def Event_12904869(_, character: int):
     """Event 12904869"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -7063,7 +7063,7 @@ def Event_12904869(_, character: int):
     Restart()
 
 
-@NeverRestart(12904870)
+@ContinueOnRest(12904870)
 def Event_12904870(_, character: int):
     """Event 12904870"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -7131,7 +7131,7 @@ def Event_12904870(_, character: int):
     Restart()
 
 
-@NeverRestart(12904871)
+@ContinueOnRest(12904871)
 def Event_12904871(_, character: int):
     """Event 12904871"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -7147,7 +7147,7 @@ def Event_12904871(_, character: int):
     SetNPCPartEffects(character, npc_part_id=1, material_sfx_id=61, material_vfx_id=61)
 
 
-@NeverRestart(12904872)
+@ContinueOnRest(12904872)
 def Event_12904872(_, character: int, flag: int, region: int, vfx_id: int):
     """Event 12904872"""
     DisableCharacter(character)
@@ -7162,7 +7162,7 @@ def Event_12904872(_, character: int, flag: int, region: int, vfx_id: int):
     EnableCharacter(character)
 
 
-@NeverRestart(12904877)
+@ContinueOnRest(12904877)
 def Event_12904877(
     _,
     character: int,
@@ -7234,7 +7234,7 @@ def Event_12904877(
     EnableFlag(flag)
 
 
-@NeverRestart(12904878)
+@ContinueOnRest(12904878)
 def Event_12904878(_, target_entity: int, entity: int, flag: int, flag_1: int):
     """Event 12904878"""
     AwaitFlagEnabled(flag=flag_1)
@@ -7247,7 +7247,7 @@ def Event_12904878(_, target_entity: int, entity: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12904879)
+@ContinueOnRest(12904879)
 def Event_12904879(_, flag: int, region: int, flag_1: int):
     """Event 12904879"""
     if ThisEventSlotFlagDisabled():
@@ -7260,7 +7260,7 @@ def Event_12904879(_, flag: int, region: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12904880)
+@ContinueOnRest(12904880)
 def Event_12904880(_, target_entity: int, entity: int, flag: int, flag_1: int):
     """Event 12904880"""
     AND_1.Add(FlagDisabled(flag_1))
@@ -7274,7 +7274,7 @@ def Event_12904880(_, target_entity: int, entity: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12904881)
+@ContinueOnRest(12904881)
 def Event_12904881(_, character: int, region: int, vfx_id: int, name: int, flag: int, left: int, obj: int):
     """Event 12904881"""
     DisableAI(character)
@@ -7332,7 +7332,7 @@ def Event_12904881(_, character: int, region: int, vfx_id: int, name: int, flag:
     EnableFlag(flag)
 
 
-@NeverRestart(12904882)
+@ContinueOnRest(12904882)
 def Event_12904882(_, flag: int, flag_1: int, region: int, sound_id: int, sound_id_1: int, character: int):
     """Event 12904882"""
     DisableBossMusic(sound_id=sound_id)
@@ -7355,7 +7355,7 @@ def Event_12904882(_, flag: int, flag_1: int, region: int, sound_id: int, sound_
     EnableBossMusic(sound_id=sound_id_1)
 
 
-@NeverRestart(12904883)
+@ContinueOnRest(12904883)
 def Event_12904883(_, character: int, flag: int):
     """Event 12904883"""
     DisableNetworkSync()
@@ -7376,7 +7376,7 @@ def Event_12904883(_, character: int, flag: int):
     Restart()
 
 
-@NeverRestart(12904886)
+@ContinueOnRest(12904886)
 def Event_12904886(_, flag: int, sound_id: int, sound_id_1: int):
     """Event 12904886"""
     if FlagEnabled(flag):
@@ -7390,7 +7390,7 @@ def Event_12904886(_, flag: int, sound_id: int, sound_id_1: int):
     DisableBossMusic(sound_id=-1)
 
 
-@NeverRestart(12904887)
+@ContinueOnRest(12904887)
 def Event_12904887(_, character: int, character_1: int, flag: int, destination: int, name: int, value: float):
     """Event 12904887"""
     DisableCharacter(character)
@@ -7424,7 +7424,7 @@ def Event_12904888(_, character: int):
     AICommand(character, command_id=-1, command_slot=1)
 
 
-@NeverRestart(12904890)
+@ContinueOnRest(12904890)
 def Event_12904890(
     _,
     character: int,
@@ -7461,7 +7461,7 @@ def Event_12904890(
     EnableFlag(flag)
 
 
-@NeverRestart(12904891)
+@ContinueOnRest(12904891)
 def Event_12904891(
     _,
     character: int,
@@ -7499,14 +7499,14 @@ def Event_12904891(
     EnableFlag(flag)
 
 
-@NeverRestart(12904892)
+@ContinueOnRest(12904892)
 def Event_12904892(_, sound_id: int, sound_id_1: int):
     """Event 12904892"""
     DisableSoundEvent(sound_id=sound_id)
     DisableSoundEvent(sound_id=sound_id_1)
 
 
-@NeverRestart(12904893)
+@ContinueOnRest(12904893)
 def Event_12904893(_, character: int):
     """Event 12904893"""
     MAIN.Await(HealthRatio(character) < 0.5)
@@ -7518,7 +7518,7 @@ def Event_12904893(_, character: int):
     AICommand(character, command_id=-1, command_slot=1)
 
 
-@NeverRestart(12904894)
+@ContinueOnRest(12904894)
 def Event_12904894(_, character: int, flag: int):
     """Event 12904894"""
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=10))
@@ -7531,7 +7531,7 @@ def Event_12904894(_, character: int, flag: int):
     Restart()
 
 
-@NeverRestart(12904895)
+@ContinueOnRest(12904895)
 def Event_12904895(_, vfx_id: int, vfx_id_1: int, vfx_id_2: int, region: int):
     """Event 12904895"""
     DeleteVFX(vfx_id, erase_root_only=False)
@@ -7545,7 +7545,7 @@ def Event_12904895(_, vfx_id: int, vfx_id_1: int, vfx_id_2: int, region: int):
     CreateVFX(vfx_id_2)
 
 
-@NeverRestart(12904896)
+@ContinueOnRest(12904896)
 def Event_12904896(
     _,
     character: int,
@@ -7614,7 +7614,7 @@ def Event_12904896(
     Restart()
 
 
-@NeverRestart(12904897)
+@ContinueOnRest(12904897)
 def Event_12904897(
     _,
     character: int,
@@ -7683,7 +7683,7 @@ def Event_12904897(
     Restart()
 
 
-@NeverRestart(12904898)
+@ContinueOnRest(12904898)
 def Event_12904898(
     _,
     character: int,
@@ -7762,7 +7762,7 @@ def Event_12904898(
     Restart()
 
 
-@NeverRestart(12904899)
+@ContinueOnRest(12904899)
 def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, flag: int, flag_1: int):
     """Event 12904899"""
     if FlagEnabled(flag):
@@ -7812,7 +7812,7 @@ def Event_12904899(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     Restart()
 
 
-@NeverRestart(12904900)
+@ContinueOnRest(12904900)
 def Event_12904900(
     _,
     character: int,
@@ -7891,7 +7891,7 @@ def Event_12904900(
     Restart()
 
 
-@NeverRestart(12904901)
+@ContinueOnRest(12904901)
 def Event_12904901(
     _,
     character: int,
@@ -7970,7 +7970,7 @@ def Event_12904901(
     Restart()
 
 
-@NeverRestart(12904902)
+@ContinueOnRest(12904902)
 def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, flag: int, flag_1: int):
     """Event 12904902"""
     if FlagEnabled(flag):
@@ -8020,7 +8020,7 @@ def Event_12904902(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     Restart()
 
 
-@NeverRestart(12904903)
+@ContinueOnRest(12904903)
 def Event_12904903(
     _,
     character: int,
@@ -8099,7 +8099,7 @@ def Event_12904903(
     Restart()
 
 
-@NeverRestart(12904904)
+@ContinueOnRest(12904904)
 def Event_12904904(
     _,
     character: int,
@@ -8178,7 +8178,7 @@ def Event_12904904(
     Restart()
 
 
-@NeverRestart(12904905)
+@ContinueOnRest(12904905)
 def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, flag: int, flag_1: int):
     """Event 12904905"""
     if FlagEnabled(flag):
@@ -8228,7 +8228,7 @@ def Event_12904905(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     Restart()
 
 
-@NeverRestart(12904906)
+@ContinueOnRest(12904906)
 def Event_12904906(
     _,
     character: int,
@@ -8307,7 +8307,7 @@ def Event_12904906(
     Restart()
 
 
-@NeverRestart(12904907)
+@ContinueOnRest(12904907)
 def Event_12904907(
     _,
     character: int,
@@ -8386,7 +8386,7 @@ def Event_12904907(
     Restart()
 
 
-@NeverRestart(12904908)
+@ContinueOnRest(12904908)
 def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, flag: int, flag_1: int):
     """Event 12904908"""
     if FlagEnabled(flag):
@@ -8436,7 +8436,7 @@ def Event_12904908(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     Restart()
 
 
-@NeverRestart(12904909)
+@ContinueOnRest(12904909)
 def Event_12904909(
     _,
     character: int,
@@ -8515,7 +8515,7 @@ def Event_12904909(
     Restart()
 
 
-@NeverRestart(12904910)
+@ContinueOnRest(12904910)
 def Event_12904910(
     _,
     character: int,
@@ -8594,7 +8594,7 @@ def Event_12904910(
     Restart()
 
 
-@NeverRestart(12904913)
+@ContinueOnRest(12904913)
 def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, flag: int, flag_1: int):
     """Event 12904913"""
     if FlagEnabled(flag):
@@ -8644,7 +8644,7 @@ def Event_12904913(_, character: int, npc_part_id: short, npc_part_id_1: int, fl
     Restart()
 
 
-@NeverRestart(12904911)
+@ContinueOnRest(12904911)
 def Event_12904911(
     _,
     character: int,
@@ -8753,7 +8753,7 @@ def Event_12904912(_, character: int):
     ReplanAI(character)
 
 
-@NeverRestart(12904914)
+@ContinueOnRest(12904914)
 def Event_12904914(
     _,
     special_effect: int,
@@ -8783,7 +8783,7 @@ def Event_12904914(
     Restart()
 
 
-@NeverRestart(12904915)
+@ContinueOnRest(12904915)
 def Event_12904915(_, character: int):
     """Event 12904915"""
     MAIN.Await(CharacterHasSpecialEffect(character, 482))
@@ -8791,7 +8791,7 @@ def Event_12904915(_, character: int):
     ChangeCharacterCloth(character, bit_count=15, state_id=2)
 
 
-@NeverRestart(12904916)
+@ContinueOnRest(12904916)
 def Event_12904916(_, character: int):
     """Event 12904916"""
     MAIN.Await(CharacterHasSpecialEffect(character, 420))
@@ -8801,7 +8801,7 @@ def Event_12904916(_, character: int):
     Restart()
 
 
-@NeverRestart(12904917)
+@ContinueOnRest(12904917)
 def Event_12904917(
     _,
     npc_part_id: short,
@@ -8833,7 +8833,7 @@ def Event_12904917(
     Restart()
 
 
-@NeverRestart(12904918)
+@ContinueOnRest(12904918)
 def Event_12904918(
     _,
     special_effect__special_effect_id: int,
@@ -9899,7 +9899,7 @@ def Event_12905244(_, first_flag: int, last_flag: int, obj: int):
     DisableTreasure(obj=obj)
 
 
-@NeverRestart(12905245)
+@ContinueOnRest(12905245)
 def Event_12905245(_, map_piece_id: int, flag: int, map_piece_id_1: int):
     """Event 12905245"""
     if FlagEnabled(flag):
@@ -9909,7 +9909,7 @@ def Event_12905245(_, map_piece_id: int, flag: int, map_piece_id_1: int):
     End()
 
 
-@NeverRestart(12905271)
+@ContinueOnRest(12905271)
 def Event_12905271(_, collision: int, flag: int, collision_1: int):
     """Event 12905271"""
     if FlagEnabled(flag):
@@ -9919,14 +9919,14 @@ def Event_12905271(_, collision: int, flag: int, collision_1: int):
     End()
 
 
-@NeverRestart(12905302)
+@ContinueOnRest(12905302)
 def Event_12905302(_, collision: int):
     """Event 12905302"""
     DisableMapCollision(collision=collision)
     SkipLines(1)
 
 
-@NeverRestart(12905303)
+@ContinueOnRest(12905303)
 def Event_12905303(_, entity: int, collision: int):
     """Event 12905303"""
     MAIN.Await(PlayerMovingOnCollision(collision))
@@ -10096,7 +10096,7 @@ def Event_12905403(_, flag: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12905404)
+@ContinueOnRest(12905404)
 def Event_12905404(_, obj_act_id: int, flag: int):
     """Event 12905404"""
     MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
@@ -10106,7 +10106,7 @@ def Event_12905404(_, obj_act_id: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12905406)
+@ContinueOnRest(12905406)
 def Event_12905406(_, character: int, flag: int):
     """Event 12905406"""
     DisableCharacter(character)
@@ -10122,7 +10122,7 @@ def Event_12905406(_, character: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12905407)
+@ContinueOnRest(12905407)
 def Event_12905407(_, character: int, flag: int):
     """Event 12905407"""
     End()
@@ -10312,7 +10312,7 @@ def Event_12906500(_, character: int, character_1: int):
     Kill(character, award_souls=True)
 
 
-@NeverRestart(12906534)
+@ContinueOnRest(12906534)
 def Event_12906534(
     _,
     obj: int,
@@ -10722,7 +10722,7 @@ def Event_12906534(
     Restart()
 
 
-@NeverRestart(12906537)
+@ContinueOnRest(12906537)
 def Event_12906537(
     _,
     obj: int,
@@ -11132,7 +11132,7 @@ def Event_12906537(
     Restart()
 
 
-@NeverRestart(12906540)
+@ContinueOnRest(12906540)
 def Event_12906540(
     _,
     obj: int,
@@ -11546,7 +11546,7 @@ def Event_12906540(
     End()
 
 
-@NeverRestart(12906541)
+@ContinueOnRest(12906541)
 def Event_12906541(
     _,
     obj: int,
@@ -11709,7 +11709,7 @@ def Event_12906541(
     DisableObject(obj_1)
 
 
-@NeverRestart(12906543)
+@ContinueOnRest(12906543)
 def Event_12906543(
     _,
     obj: int,
@@ -11872,7 +11872,7 @@ def Event_12906543(
     DisableObject(obj_1)
 
 
-@NeverRestart(12906545)
+@ContinueOnRest(12906545)
 def Event_12906545(
     _,
     obj: int,
@@ -12309,7 +12309,7 @@ def Event_12906656(_, character: int, sound_id: int, character_1: int):
     Restart()
 
 
-@NeverRestart(12906660)
+@ContinueOnRest(12906660)
 def Event_12906660(_, obj: int):
     """Event 12906660"""
     if ObjectDestroyed(obj):
@@ -12526,7 +12526,7 @@ def Event_12906744(_, attacked_entity: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12906746)
+@ContinueOnRest(12906746)
 def Event_12906746(_, character: int):
     """Event 12906746"""
     ForceAnimation(character, 7015, loop=True, wait_for_completion=True, skip_transition=True)
@@ -12539,7 +12539,7 @@ def Event_12906746(_, character: int):
     AddSpecialEffect(character, 151, affect_npc_part_hp=True)
 
 
-@NeverRestart(12906748)
+@ContinueOnRest(12906748)
 def Event_12906748(_, character: int):
     """Event 12906748"""
     AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
@@ -12680,7 +12680,7 @@ def Event_12906765(
     Restart()
 
 
-@NeverRestart(12906766)
+@ContinueOnRest(12906766)
 def Event_12906766(_, character: int, flag: int, flag_1: int):
     """Event 12906766"""
     if FlagEnabled(flag):
@@ -12702,7 +12702,7 @@ def Event_12906766(_, character: int, flag: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12906767)
+@ContinueOnRest(12906767)
 def Event_12906767(_, character: int, flag: int, flag_1: int):
     """Event 12906767"""
     if FlagEnabled(flag):
@@ -12761,7 +12761,7 @@ def Event_12906768(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
 
 
-@NeverRestart(12906769)
+@ContinueOnRest(12906769)
 def Event_12906769(
     _,
     character: int,
@@ -12840,7 +12840,7 @@ def Event_12906769(
     Restart()
 
 
-@NeverRestart(12906770)
+@ContinueOnRest(12906770)
 def Event_12906770(
     _,
     character: int,
@@ -12919,7 +12919,7 @@ def Event_12906770(
     Restart()
 
 
-@NeverRestart(12906771)
+@ContinueOnRest(12906771)
 def Event_12906771(
     _,
     character: int,
@@ -12998,7 +12998,7 @@ def Event_12906771(
     Restart()
 
 
-@NeverRestart(12906772)
+@ContinueOnRest(12906772)
 def Event_12906772(
     _,
     character: int,
@@ -13077,7 +13077,7 @@ def Event_12906772(
     Restart()
 
 
-@NeverRestart(12906773)
+@ContinueOnRest(12906773)
 def Event_12906773(
     _,
     character: int,
@@ -13156,7 +13156,7 @@ def Event_12906773(
     Restart()
 
 
-@NeverRestart(12906774)
+@ContinueOnRest(12906774)
 def Event_12906774(
     _,
     character: int,
@@ -13235,7 +13235,7 @@ def Event_12906774(
     Restart()
 
 
-@NeverRestart(12906775)
+@ContinueOnRest(12906775)
 def Event_12906775(
     _,
     character: int,
@@ -13314,7 +13314,7 @@ def Event_12906775(
     Restart()
 
 
-@NeverRestart(12906776)
+@ContinueOnRest(12906776)
 def Event_12906776(
     _,
     character: int,
@@ -13393,7 +13393,7 @@ def Event_12906776(
     Restart()
 
 
-@NeverRestart(12906777)
+@ContinueOnRest(12906777)
 def Event_12906777(
     _,
     character: int,
@@ -13472,7 +13472,7 @@ def Event_12906777(
     Restart()
 
 
-@NeverRestart(12906778)
+@ContinueOnRest(12906778)
 def Event_12906778(
     _,
     character: int,
@@ -13551,7 +13551,7 @@ def Event_12906778(
     Restart()
 
 
-@NeverRestart(12906779)
+@ContinueOnRest(12906779)
 def Event_12906779(
     _,
     character: int,
@@ -13630,7 +13630,7 @@ def Event_12906779(
     Restart()
 
 
-@NeverRestart(12906780)
+@ContinueOnRest(12906780)
 def Event_12906780(
     _,
     character: int,
@@ -13709,7 +13709,7 @@ def Event_12906780(
     Restart()
 
 
-@NeverRestart(12906781)
+@ContinueOnRest(12906781)
 def Event_12906781(
     _,
     character: int,
@@ -13788,7 +13788,7 @@ def Event_12906781(
     Restart()
 
 
-@NeverRestart(12906782)
+@ContinueOnRest(12906782)
 def Event_12906782(
     _,
     character: int,
@@ -13867,7 +13867,7 @@ def Event_12906782(
     Restart()
 
 
-@NeverRestart(12906783)
+@ContinueOnRest(12906783)
 def Event_12906783(
     _,
     character: int,
@@ -13946,7 +13946,7 @@ def Event_12906783(
     Restart()
 
 
-@NeverRestart(12906784)
+@ContinueOnRest(12906784)
 def Event_12906784(
     _,
     character: int,
@@ -14025,7 +14025,7 @@ def Event_12906784(
     Restart()
 
 
-@NeverRestart(12906785)
+@ContinueOnRest(12906785)
 def Event_12906785(
     _,
     character: int,
@@ -14104,7 +14104,7 @@ def Event_12906785(
     Restart()
 
 
-@NeverRestart(12906786)
+@ContinueOnRest(12906786)
 def Event_12906786(
     _,
     character: int,
@@ -14183,7 +14183,7 @@ def Event_12906786(
     Restart()
 
 
-@NeverRestart(12906787)
+@ContinueOnRest(12906787)
 def Event_12906787(
     _,
     character: int,
@@ -14262,7 +14262,7 @@ def Event_12906787(
     Restart()
 
 
-@NeverRestart(12906788)
+@ContinueOnRest(12906788)
 def Event_12906788(
     _,
     character: int,
@@ -14341,7 +14341,7 @@ def Event_12906788(
     Restart()
 
 
-@NeverRestart(12906827)
+@ContinueOnRest(12906827)
 def Event_12906827(
     _,
     character: int,
@@ -14380,7 +14380,7 @@ def Event_12906827(
     Restart()
 
 
-@NeverRestart(12906828)
+@ContinueOnRest(12906828)
 def Event_12906828(
     _,
     character: int,
@@ -14430,7 +14430,7 @@ def Event_12906828(
     SetDisplayMask(character, bit_index=bit_index_1, switch_type=OnOffChange.On)
 
 
-@NeverRestart(12906789)
+@ContinueOnRest(12906789)
 def Event_12906789(
     _,
     region: int,
@@ -14493,7 +14493,7 @@ def Event_12906789(
     Restart()
 
 
-@NeverRestart(12906790)
+@ContinueOnRest(12906790)
 def Event_12906790(_, region: int, entity: int, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 12906790"""
     DisableNetworkSync()
@@ -14527,7 +14527,7 @@ def Event_12906790(_, region: int, entity: int, flag: int, flag_1: int, flag_2: 
     Restart()
 
 
-@NeverRestart(12906791)
+@ContinueOnRest(12906791)
 def Event_12906791(_, character: int, name: int, left: int, flag: int, flag_1: int):
     """Event 12906791"""
     if FlagEnabled(left):
@@ -14581,7 +14581,7 @@ def Event_12906791(_, character: int, name: int, left: int, flag: int, flag_1: i
         StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 
-@NeverRestart(12906792)
+@ContinueOnRest(12906792)
 def Event_12906792(_, character: int, region: int, sound_id: int, sound_id_1: int, flag: int, flag_1: int, flag_2: int):
     """Event 12906792"""
     DisableNetworkSync()
@@ -14616,7 +14616,7 @@ def Event_12906792(_, character: int, region: int, sound_id: int, sound_id_1: in
     EnableBossMusic(sound_id=sound_id_1)
 
 
-@NeverRestart(12906794)
+@ContinueOnRest(12906794)
 def Event_12906794(_, character: int, flag: int, radius: float, radius_1: float):
     """Event 12906794"""
     DisableNetworkSync()
@@ -14637,7 +14637,7 @@ def Event_12906794(_, character: int, flag: int, radius: float, radius_1: float)
     Restart()
 
 
-@NeverRestart(12906795)
+@ContinueOnRest(12906795)
 def Event_12906795(_, character: int, name: int, left: int, flag: int, flag_1: int, character_1: int, character_2: int):
     """Event 12906795"""
     if FlagEnabled(left):
@@ -14710,7 +14710,7 @@ def Event_12906795(_, character: int, name: int, left: int, flag: int, flag_1: i
         StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 
-@NeverRestart(12906796)
+@ContinueOnRest(12906796)
 def Event_12906796(
     _,
     region: int,
@@ -14773,7 +14773,7 @@ def Event_12906796(
     Restart()
 
 
-@NeverRestart(12906800)
+@ContinueOnRest(12906800)
 def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int, flag_2: int):
     """Event 12906800"""
     if FlagEnabled(flag):
@@ -14822,7 +14822,7 @@ def Event_12906800(_, region: int, obj: int, vfx_id: int, flag: int, flag_1: int
     Restart()
 
 
-@NeverRestart(12906802)
+@ContinueOnRest(12906802)
 def Event_12906802(_, target_entity: int, entity: int, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 12906802"""
     DisableNetworkSync()
@@ -14856,7 +14856,7 @@ def Event_12906802(_, target_entity: int, entity: int, flag: int, flag_1: int, f
     Restart()
 
 
-@NeverRestart(12906806)
+@ContinueOnRest(12906806)
 def Event_12906806(_, character: int, name: int, left: int, flag: int, flag_1: int):
     """Event 12906806"""
     if FlagEnabled(left):
@@ -14912,7 +14912,7 @@ def Event_12906806(_, character: int, name: int, left: int, flag: int, flag_1: i
         StartPlayLogMeasurement(measurement_id=2900013, name=1424, overwrite=True)
 
 
-@NeverRestart(12906810)
+@ContinueOnRest(12906810)
 def Event_12906810(_, character: int, region: int, sound_id: int, sound_id_1: int, flag: int, flag_1: int, flag_2: int):
     """Event 12906810"""
     DisableNetworkSync()
@@ -14947,7 +14947,7 @@ def Event_12906810(_, character: int, region: int, sound_id: int, sound_id_1: in
     EnableBossMusic(sound_id=sound_id_1)
 
 
-@NeverRestart(12906978)
+@ContinueOnRest(12906978)
 def Event_12906978(_, flag: int, region: int, sound_id: int, sound_id_1: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 12906978"""
     DisableNetworkSync()
@@ -14982,7 +14982,7 @@ def Event_12906978(_, flag: int, region: int, sound_id: int, sound_id_1: int, fl
     EnableBossMusic(sound_id=sound_id_1)
 
 
-@NeverRestart(12906818)
+@ContinueOnRest(12906818)
 def Event_12906818(_, character: int, flag: int, radius: float, radius_1: float):
     """Event 12906818"""
     DisableNetworkSync()
@@ -15003,7 +15003,7 @@ def Event_12906818(_, character: int, flag: int, radius: float, radius_1: float)
     Restart()
 
 
-@NeverRestart(12906822)
+@ContinueOnRest(12906822)
 def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float, character_1: int, character_2: int):
     """Event 12906822"""
     DisableNetworkSync()
@@ -15038,7 +15038,7 @@ def Event_12906822(_, character: int, flag: int, radius: float, radius_1: float,
     Restart()
 
 
-@NeverRestart(12906823)
+@ContinueOnRest(12906823)
 def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float, character_1: int, flag_1: int):
     """Event 12906823"""
     DisableNetworkSync()
@@ -15069,7 +15069,7 @@ def Event_12906823(_, character: int, flag: int, radius: float, radius_1: float,
     Restart()
 
 
-@NeverRestart(12906824)
+@ContinueOnRest(12906824)
 def Event_12906824(_, flag: int, flag_1: int):
     """Event 12906824"""
     MAIN.Await(FlagEnabled(flag))
@@ -15077,7 +15077,7 @@ def Event_12906824(_, flag: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(12906825)
+@ContinueOnRest(12906825)
 def Event_12906825(
     _,
     character: int,
@@ -15113,7 +15113,7 @@ def Event_12906825(
     EnableFlag(flag_1)
 
 
-@NeverRestart(12906841)
+@ContinueOnRest(12906841)
 def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906841"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15162,7 +15162,7 @@ def Event_12906841(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906843)
+@ContinueOnRest(12906843)
 def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906843"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15205,7 +15205,7 @@ def Event_12906843(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906845)
+@ContinueOnRest(12906845)
 def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906845"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15248,7 +15248,7 @@ def Event_12906845(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906847)
+@ContinueOnRest(12906847)
 def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906847"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15291,7 +15291,7 @@ def Event_12906847(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906849)
+@ContinueOnRest(12906849)
 def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906849"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15334,7 +15334,7 @@ def Event_12906849(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906851)
+@ContinueOnRest(12906851)
 def Event_12906851(_, character: int, flag: int):
     """Event 12906851"""
     WaitFrames(frames=1)
@@ -15353,7 +15353,7 @@ def Event_12906851(_, character: int, flag: int):
     ForceAnimation(character, 7021)
 
 
-@NeverRestart(12906853)
+@ContinueOnRest(12906853)
 def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906853"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15396,7 +15396,7 @@ def Event_12906853(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906855)
+@ContinueOnRest(12906855)
 def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906855"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15439,7 +15439,7 @@ def Event_12906855(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906857)
+@ContinueOnRest(12906857)
 def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906857"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15482,7 +15482,7 @@ def Event_12906857(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906859)
+@ContinueOnRest(12906859)
 def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906859"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15525,7 +15525,7 @@ def Event_12906859(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906861)
+@ContinueOnRest(12906861)
 def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906861"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15568,7 +15568,7 @@ def Event_12906861(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906831)
+@ContinueOnRest(12906831)
 def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906831"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15611,7 +15611,7 @@ def Event_12906831(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906833)
+@ContinueOnRest(12906833)
 def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906833"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15654,7 +15654,7 @@ def Event_12906833(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906835)
+@ContinueOnRest(12906835)
 def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906835"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15697,7 +15697,7 @@ def Event_12906835(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906837)
+@ContinueOnRest(12906837)
 def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906837"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15740,7 +15740,7 @@ def Event_12906837(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906839)
+@ContinueOnRest(12906839)
 def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906839"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
@@ -15783,7 +15783,7 @@ def Event_12906839(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906793)
+@ContinueOnRest(12906793)
 def Event_12906793(_, flag: int, sound_id: int, sound_id_1: int):
     """Event 12906793"""
     DisableNetworkSync()
@@ -15797,7 +15797,7 @@ def Event_12906793(_, flag: int, sound_id: int, sound_id_1: int):
     DisableBossMusic(sound_id=-1)
 
 
-@NeverRestart(12906814)
+@ContinueOnRest(12906814)
 def Event_12906814(_, flag: int, sound_id: int, sound_id_1: int):
     """Event 12906814"""
     DisableNetworkSync()
@@ -15811,7 +15811,7 @@ def Event_12906814(_, flag: int, sound_id: int, sound_id_1: int):
     DisableBossMusic(sound_id=-1)
 
 
-@NeverRestart(12906869)
+@ContinueOnRest(12906869)
 def Event_12906869(_, character: int, flag: int):
     """Event 12906869"""
     WaitFrames(frames=1)
@@ -15837,7 +15837,7 @@ def Event_12906869(_, character: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12906870)
+@ContinueOnRest(12906870)
 def Event_12906870(_, character: int, flag: int):
     """Event 12906870"""
     WaitFrames(frames=1)
@@ -15899,7 +15899,7 @@ def Event_12906865(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
 
 
-@NeverRestart(12906871)
+@ContinueOnRest(12906871)
 def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906871"""
     WaitFrames(frames=1)
@@ -15953,7 +15953,7 @@ def Event_12906871(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906879)
+@ContinueOnRest(12906879)
 def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906879"""
     WaitFrames(frames=1)
@@ -16007,7 +16007,7 @@ def Event_12906879(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906872)
+@ContinueOnRest(12906872)
 def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906872"""
     WaitFrames(frames=1)
@@ -16055,7 +16055,7 @@ def Event_12906872(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906875)
+@ContinueOnRest(12906875)
 def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906875"""
     WaitFrames(frames=1)
@@ -16103,7 +16103,7 @@ def Event_12906875(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906873)
+@ContinueOnRest(12906873)
 def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906873"""
     WaitFrames(frames=1)
@@ -16151,7 +16151,7 @@ def Event_12906873(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906876)
+@ContinueOnRest(12906876)
 def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906876"""
     WaitFrames(frames=1)
@@ -16199,7 +16199,7 @@ def Event_12906876(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906874)
+@ContinueOnRest(12906874)
 def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906874"""
     WaitFrames(frames=1)
@@ -16247,7 +16247,7 @@ def Event_12906874(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906877)
+@ContinueOnRest(12906877)
 def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906877"""
     WaitFrames(frames=1)
@@ -16295,7 +16295,7 @@ def Event_12906877(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906878)
+@ContinueOnRest(12906878)
 def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906878"""
     WaitFrames(frames=1)
@@ -16343,7 +16343,7 @@ def Event_12906878(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906880)
+@ContinueOnRest(12906880)
 def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906880"""
     WaitFrames(frames=1)
@@ -16397,7 +16397,7 @@ def Event_12906880(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906881)
+@ContinueOnRest(12906881)
 def Event_12906881(_, character: int, npc_part_id: short, npc_part_id_1: int):
     """Event 12906881"""
     WaitFrames(frames=1)
@@ -16726,7 +16726,7 @@ def Event_12904727(_, character: int, npc_part_id: short, npc_part_id_1: int):
     Restart()
 
 
-@NeverRestart(12906882)
+@ContinueOnRest(12906882)
 def Event_12906882(_, character: int, character_1: int, flag: int):
     """Event 12906882"""
     if FlagEnabled(flag):
@@ -16753,7 +16753,7 @@ def Event_12906882(_, character: int, character_1: int, flag: int):
     EnableAI(character)
 
 
-@NeverRestart(12906863)
+@ContinueOnRest(12906863)
 def Event_12906863(_, character: int, destination: int, destination_1: int, flag: int, flag_1: int):
     """Event 12906863"""
     WaitFrames(frames=1)
@@ -16802,7 +16802,7 @@ def Event_12906863(_, character: int, destination: int, destination_1: int, flag
     EnableFlag(flag_1)
 
 
-@NeverRestart(12906912)
+@ContinueOnRest(12906912)
 def Event_12906912(_, character: int, character_1: int, flag: int):
     """Event 12906912"""
     WaitFrames(frames=1)
@@ -16822,7 +16822,7 @@ def Event_12906912(_, character: int, character_1: int, flag: int):
     Kill(character_1)
 
 
-@NeverRestart(12906864)
+@ContinueOnRest(12906864)
 def Event_12906864(_, character: int):
     """Event 12906864"""
     CreateNPCPart(character, npc_part_id=2, part_index=NPCPartType.Part2, part_health=250)
@@ -16888,7 +16888,7 @@ def Event_12906864(_, character: int):
     Restart()
 
 
-@NeverRestart(12906867)
+@ContinueOnRest(12906867)
 def Event_12906867(_, character: int):
     """Event 12906867"""
     CreateNPCPart(character, npc_part_id=3, part_index=NPCPartType.Part3, part_health=250)
@@ -16955,7 +16955,7 @@ def Event_12906867(_, character: int):
     Restart()
 
 
-@NeverRestart(12906868)
+@ContinueOnRest(12906868)
 def Event_12906868(_, character: int):
     """Event 12906868"""
     if FlagEnabled(13201800):
@@ -17086,7 +17086,7 @@ def Event_12904734(_, character: int):
     Restart()
 
 
-@NeverRestart(12904735)
+@ContinueOnRest(12904735)
 def Event_12904735(_, character: int):
     """Event 12904735"""
     WaitFrames(frames=1)
@@ -17413,7 +17413,7 @@ def Event_12906960(_, character: int, flag: int, flag_1: int, character_1: int):
     Restart()
 
 
-@NeverRestart(12907000)
+@ContinueOnRest(12907000)
 def Event_12907000(_, character: int, obj: int, flag: int, flag_1: int):
     """Event 12907000"""
     DisableNetworkSync()
@@ -17435,7 +17435,7 @@ def Event_12907000(_, character: int, obj: int, flag: int, flag_1: int):
     RegisterLantern(flag=flag_1, obj=obj, reaction_distance=0.0, reaction_angle=0.0)
 
 
-@NeverRestart(12907010)
+@ContinueOnRest(12907010)
 def Event_12907010(_, flag: int, warp_object_id: int):
     """Event 12907010"""
     if FlagEnabled(flag):
@@ -17448,7 +17448,7 @@ def Event_12907010(_, flag: int, warp_object_id: int):
     InitializeWarpObject(warp_object_id=warp_object_id)
 
 
-@NeverRestart(12907020)
+@ContinueOnRest(12907020)
 def Event_12907020(_, flag: int, anchor_entity: int):
     """Event 12907020"""
     if Client():
@@ -17485,7 +17485,7 @@ def Event_12907020(_, flag: int, anchor_entity: int):
     WarpPlayerToRespawnPoint(2102954)
 
 
-@NeverRestart(12907030)
+@ContinueOnRest(12907030)
 def Event_12907030(_, flag: int, warp_object_id: int):
     """Event 12907030"""
     if Client():
@@ -17504,7 +17504,7 @@ def Event_12907030(_, flag: int, warp_object_id: int):
     DisableFlag(flag)
 
 
-@NeverRestart(12907300)
+@ContinueOnRest(12907300)
 def Event_12907300(_, item: int, flag: int):
     """Event 12907300"""
     MAIN.Await(PlayerHasGood(item))
@@ -17512,7 +17512,7 @@ def Event_12907300(_, item: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(12907400)
+@ContinueOnRest(12907400)
 def Event_12907400():
     """Event 12907400"""
     AND_1.Add(FlagEnabled(12907230))
@@ -17567,7 +17567,7 @@ def Event_12907400():
     Restart()
 
 
-@NeverRestart(12907401)
+@ContinueOnRest(12907401)
 def Event_12907401(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
     """Event 12907401"""
     GotoIfFlagEnabled(Label.L0, flag=92905340)
@@ -17620,7 +17620,7 @@ def Event_12907401(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     EnableFlag(12907230)
 
 
-@NeverRestart(12907405)
+@ContinueOnRest(12907405)
 def Event_12907405(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int, flag_5: int):
     """Event 12907405"""
     GotoIfFlagDisabled(Label.L1, flag=flag_1)
@@ -17664,7 +17664,7 @@ def Event_12907405(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     EnableFlag(12907231)
 
 
-@NeverRestart(12907409)
+@ContinueOnRest(12907409)
 def Event_12907409(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 12907409"""
     OR_15.Add(FlagEnabled(flag_1))
@@ -17698,7 +17698,7 @@ def Event_12907409(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     ForceAnimation(character, 7010)
 
 
-@NeverRestart(12907413)
+@ContinueOnRest(12907413)
 def Event_12907413(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 12907413"""
     OR_15.Add(FlagEnabled(flag_1))
@@ -17732,7 +17732,7 @@ def Event_12907413(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     ForceAnimation(character, 7010)
 
 
-@NeverRestart(12907440)
+@ContinueOnRest(12907440)
 def Event_12907440(_, character: int, flag: int, flag_1: int):
     """Event 12907440"""
     AND_1.Add(FlagEnabled(flag))
@@ -17754,7 +17754,7 @@ def Event_12907440(_, character: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(12907420)
+@ContinueOnRest(12907420)
 def Event_12907420(_, special_effect_id: int, flag: int, special_effect_id_1: int, special_effect_id_2: int):
     """Event 12907420"""
     if FlagDisabled(flag):
@@ -17770,7 +17770,7 @@ def Event_12907420(_, special_effect_id: int, flag: int, special_effect_id_1: in
     AddSpecialEffect(PLAYER, special_effect_id_2)
 
 
-@NeverRestart(12907430)
+@ContinueOnRest(12907430)
 def Event_12907430(_, region: int, flag: int):
     """Event 12907430"""
     DisableFlag(flag)
@@ -17789,7 +17789,7 @@ def Event_12907430(_, region: int, flag: int):
     Restart()
 
 
-@NeverRestart(12907600)
+@ContinueOnRest(12907600)
 def Event_12907600(_, obj: int, vfx_id: int):
     """Event 12907600"""
     DisableNetworkSync()

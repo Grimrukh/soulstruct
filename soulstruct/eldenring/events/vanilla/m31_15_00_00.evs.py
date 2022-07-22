@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m31_15_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=31150000, asset=Assets.AEG099_060_9000)
@@ -74,7 +74,7 @@ def Constructor():
     Event_31153710()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DemiHumanShaman)
@@ -268,7 +268,7 @@ def Event_31152820(_, character: uint):
     AddSpecialEffect(character, 4305)
 
 
-@NeverRestart(31152825)
+@ContinueOnRest(31152825)
 def Event_31152825(_, flag: uint, region: uint, character: uint, target_entity: uint, region_1: uint, animation: int):
     """Event 31152825"""
     if PlayerNotInOwnWorld():

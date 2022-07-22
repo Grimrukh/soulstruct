@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_51_41_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1051412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1051412210)

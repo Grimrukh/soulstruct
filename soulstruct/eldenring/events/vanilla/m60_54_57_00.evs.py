@@ -18,7 +18,7 @@ from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1054572200(0, 1054575200)

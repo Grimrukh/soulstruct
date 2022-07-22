@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_39_50_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005620(
@@ -89,7 +89,7 @@ def Constructor():
     Event_1039502576(0, 1039500800, 1039500805, 1039501805, 1039500570)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005251(0, character=Characters.RevenantFollower, radius=30.0, seconds=1.0, animation_id=3022)
@@ -180,7 +180,7 @@ def Event_1039502575(
     WaitFrames(frames=1)
     ForceAnimation(PLAYER, 60450)
     Wait(1.5)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,

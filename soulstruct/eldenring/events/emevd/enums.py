@@ -175,7 +175,7 @@ class CutsceneFlags(BaseEMEVDFlags):
     # TODO: These could have been introduced in Sekiro?
     Unknown16 = 0b0001_0000  # 16
     Unknown32 = 0b0010_0000  # 32
-    Unknown64 = 0b0100_0000  # 64
+    IsEndingCutscene = 0b0100_0000  # 64
 
 
 class DamageTargetType(BaseEMEVDEnum):
@@ -295,9 +295,9 @@ class OnOffChange(BaseNegatableEMEVDEnum):
 
 
 class RestartType(BaseEMEVDEnum):
-    NeverRestart = 0
+    ContinueOnRest = 0
     RestartOnRest = 1
-    UnknownRestart = 2
+    EndOnRest = 2
 
 
 class SummonSignType(BaseEMEVDEnum):

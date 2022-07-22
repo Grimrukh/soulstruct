@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_45_38_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005704(0, attacked_entity=Characters.KennethHaight, flag=3581, flag_1=3580, flag_2=1045389201, right=3)
@@ -39,7 +39,7 @@ def Constructor():
     Event_1045383700(0, 1045380700)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.KennethHaight)

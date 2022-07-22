@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_44_36_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_9005810(
@@ -59,7 +59,7 @@ def Constructor():
     CommonFunc_90005709(0, 1044360700, 200, 603051)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.SorceressSellen)
@@ -97,7 +97,7 @@ def Preconstructor():
     CommonFunc_90005211(0, 1044360200, 30014, 20014, 1044362200, 10.0, 0.0, 0, 0, 0, 0)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1044368301)
@@ -115,7 +115,7 @@ def Event_200():
     Event_1044362300()
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005420(0, 1044360300, 1044361300, 1044361301, 1044360301, 1044360302, 1044360303, 0.0)
@@ -544,7 +544,7 @@ def Event_1044363713():
     End()
 
 
-@NeverRestart(1044363714)
+@ContinueOnRest(1044363714)
 def Event_1044363714(_, entity: uint):
     """Event 1044363714"""
     if FlagDisabled(3465):

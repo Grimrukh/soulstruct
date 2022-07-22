@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m15_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     DisableAsset(Assets.AEG099_332_9000)
@@ -1617,7 +1617,7 @@ def Constructor():
     CommonFunc_90005774(0, 7610, 104800, 400480)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Millicent0)
@@ -1638,7 +1638,7 @@ def Preconstructor():
     Event_15002550()
 
 
-@NeverRestart(15000050)
+@ContinueOnRest(15000050)
 def Event_15000050():
     """Event 15000050"""
     if ThisEventSlotFlagEnabled():
@@ -1715,7 +1715,7 @@ def Event_15002344(_, character: uint, entity: uint):
     DisableSpawner(entity=entity)
 
 
-@NeverRestart(15002520)
+@ContinueOnRest(15002520)
 def Event_15002520():
     """Event 15002520"""
     CommonFunc_90005500(
@@ -1753,7 +1753,7 @@ def Event_15002520():
     )
 
 
-@NeverRestart(15002620)
+@ContinueOnRest(15002620)
 def Event_15002620():
     """Event 15002620"""
     CommonFunc_90005500(
@@ -2021,7 +2021,7 @@ def Event_15002811():
         ChangeCamera(normal_camera_id=2120, locked_camera_id=2120)
 
 
-@NeverRestart(15002820)
+@ContinueOnRest(15002820)
 def Event_15002820(_, character: uint, animation_id: int, special_effect: int):
     """Event 15002820"""
     if FlagEnabled(15000800):
@@ -2068,7 +2068,7 @@ def Event_15002820(_, character: uint, animation_id: int, special_effect: int):
     Restart()
 
 
-@NeverRestart(15002830)
+@ContinueOnRest(15002830)
 def Event_15002830(_, special_effect_id: int, special_effect: int):
     """Event 15002830"""
     if FlagEnabled(15000800):
@@ -2084,7 +2084,7 @@ def Event_15002830(_, special_effect_id: int, special_effect: int):
     Restart()
 
 
-@NeverRestart(15002840)
+@ContinueOnRest(15002840)
 def Event_15002840(_, character: uint, character_1: uint, state: uchar):
     """Event 15002840"""
     if FlagEnabled(15000800):
@@ -2118,7 +2118,7 @@ def Event_15002840(_, character: uint, character_1: uint, state: uchar):
     Restart()
 
 
-@NeverRestart(15002842)
+@ContinueOnRest(15002842)
 def Event_15002842(_, character: uint, special_effect_id: int, special_effect: int):
     """Event 15002842"""
     if FlagEnabled(15000800):
@@ -2165,7 +2165,7 @@ def Event_15002842(_, character: uint, special_effect_id: int, special_effect: i
     Restart()
 
 
-@NeverRestart(15002848)
+@ContinueOnRest(15002848)
 def Event_15002848(_, special_effect: int, locked_camera_id__normal_camera_id: int):
     """Event 15002848"""
     DisableNetworkSync()
@@ -2339,7 +2339,7 @@ def Event_15002899():
     CommonFunc_9005822(0, 15000850, 920200, 15002855, 15002856, 0, 15002852, 0, 0)
 
 
-@NeverRestart(15000700)
+@ContinueOnRest(15000700)
 def Event_15000700():
     """Event 15000700"""
     if PlayerNotInOwnWorld():
@@ -2358,7 +2358,7 @@ def Event_15000700():
     SetCharacterTalkRange(character=Characters.Malenia0, distance=17.0)
 
 
-@NeverRestart(15000701)
+@ContinueOnRest(15000701)
 def Event_15000701():
     """Event 15000701"""
     if PlayerNotInOwnWorld():

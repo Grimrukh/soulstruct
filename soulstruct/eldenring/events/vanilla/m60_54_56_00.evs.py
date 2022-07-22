@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_54_56_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1054562200(0, character=1054565200)
@@ -44,7 +44,7 @@ def Event_1054562500():
     SetCharacterTalkRange(character=Characters.Dummy, distance=300.0)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005870(0, character=Characters.BorealistheFreezingFog, name=904503600, npc_threat_level=25)

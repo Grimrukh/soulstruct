@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_52_56_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1052560000, asset=Assets.AEG099_060_9000)
@@ -98,7 +98,7 @@ def Constructor():
     CommonFunc_90005771(0, 1052560950, 1052562700)
 
 
-@NeverRestart(1052562815)
+@ContinueOnRest(1052562815)
 def Event_1052562815(_, character: uint, name: int, npc_threat_level: uint):
     """Event 1052562815"""
     DisableNetworkSync()

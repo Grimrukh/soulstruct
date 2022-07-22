@@ -17,7 +17,7 @@ from soulstruct.bloodborne.events import *
 from soulstruct.bloodborne.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_12110200(0, obj=2111000, obj_act_id=12110000)
@@ -33,7 +33,7 @@ def Constructor():
     RunEvent(7300, slot=52, args=(72102110, 2111950))
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableHealthBar(2110700)
@@ -41,7 +41,7 @@ def Preconstructor():
     DisableCharacterCollision(2110700)
 
 
-@NeverRestart(12110100)
+@ContinueOnRest(12110100)
 def Event_12110100():
     """Event 12110100"""
     DisableNetworkSync()
@@ -52,7 +52,7 @@ def Event_12110100():
     Restart()
 
 
-@NeverRestart(12110200)
+@ContinueOnRest(12110200)
 def Event_12110200(_, obj: int, obj_act_id: int):
     """Event 12110200"""
     GotoIfThisEventSlotFlagDisabled(Label.L0)
@@ -70,7 +70,7 @@ def Event_12110200(_, obj: int, obj_act_id: int):
     EnableTreasure(obj=obj)
 
 
-@NeverRestart(12110300)
+@ContinueOnRest(12110300)
 def Event_12110300():
     """Event 12110300"""
     if ThisEventFlagEnabled():
@@ -86,7 +86,7 @@ def Event_12110300():
     DeleteObjectVFX(2111100)
 
 
-@NeverRestart(12110301)
+@ContinueOnRest(12110301)
 def Event_12110301():
     """Event 12110301"""
     if ThisEventFlagEnabled():
@@ -102,7 +102,7 @@ def Event_12110301():
     DeleteObjectVFX(2111101)
 
 
-@NeverRestart(12110302)
+@ContinueOnRest(12110302)
 def Event_12110302():
     """Event 12110302"""
     if ThisEventFlagEnabled():
@@ -118,7 +118,7 @@ def Event_12110302():
     DeleteObjectVFX(2111102)
 
 
-@NeverRestart(12110400)
+@ContinueOnRest(12110400)
 def Event_12110400():
     """Event 12110400"""
     GotoIfFlagEnabled(Label.L0, flag=9802)
@@ -147,7 +147,7 @@ def Event_12110400():
     End()
 
 
-@NeverRestart(12110990)
+@ContinueOnRest(12110990)
 def Event_12110990():
     """Event 12110990"""
     if ThisEventFlagEnabled():

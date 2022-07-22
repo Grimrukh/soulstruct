@@ -6,9 +6,9 @@ Make sure you also do `from soulstruct.{game}.events import *` to get all enums,
 
 __all__ = [
     # Basics:
-    "NeverRestart",
+    "ContinueOnRest",
     "RestartOnRest",
-    "UnknownRestart",
+    "EndOnRest",
     "EVENTS",
     "Condition",
     "HeldCondition",
@@ -734,9 +734,9 @@ from .emevd.compiler import *
 from .emevd.enums import *
 
 # Restart decorators. They can be used as names (not function calls) or have an event ID argument.
-def NeverRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def ContinueOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 def RestartOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
-def UnknownRestart(event_id_or_func: tp.Union[tp.Callable, int]): ...
+def EndOnRest(event_id_or_func: tp.Union[tp.Callable, int]): ...
 
 # Dummy enum for accessing event flags defined by events.
 class EVENTS(Flag): ...

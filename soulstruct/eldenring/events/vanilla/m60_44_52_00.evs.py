@@ -22,7 +22,7 @@ from .entities.m60_44_52_00_entities import *
 from .entities.m60_45_52_00_entities import Characters as m60_45_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1044523701(0, character=Characters.Blackguard0)
@@ -61,7 +61,7 @@ def Constructor():
     Event_1044523712()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1044523700(0, entity=Assets.AEG099_315_9000)
@@ -82,7 +82,7 @@ def Preconstructor():
     CommonFunc_90005201(0, 1044520301, 30016, 20016, 20.0, 0.0, 0, 0, 0, 0)
 
 
-@NeverRestart(1044523700)
+@ContinueOnRest(1044523700)
 def Event_1044523700(_, entity: uint):
     """Event 1044523700"""
     AND_1.Add(EntityWithinDistance(entity=entity, other_entity=PLAYER, radius=5.0))

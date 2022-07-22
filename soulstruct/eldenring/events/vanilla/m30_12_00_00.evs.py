@@ -22,7 +22,7 @@ from .entities.m30_12_00_00_entities import *
 from .entities.m30_10_00_00_entities import Characters as m30_10_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301200, asset=Assets.AEG099_060_9001)

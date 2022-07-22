@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_10_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=73010, asset=Assets.AEG099_060_9000)
@@ -375,21 +375,21 @@ def Constructor():
     Event_30102811()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_30100050()
     Event_30100519()
 
 
-@NeverRestart(30100050)
+@ContinueOnRest(30100050)
 def Event_30100050():
     """Event 30100050"""
     if ThisEventSlotFlagEnabled():
         return
 
 
-@NeverRestart(30100100)
+@ContinueOnRest(30100100)
 def Event_30100100(_, flag: uint, asset: uint, obj_act_id: uint, obj_act_id_1: int):
     """Event 30100100"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -766,7 +766,7 @@ def Event_30102490():
     End()
 
 
-@NeverRestart(30102510)
+@ContinueOnRest(30102510)
 def Event_30102510():
     """Event 30102510"""
     CommonFunc_90005500(
@@ -803,7 +803,7 @@ def Event_30102510():
     )
 
 
-@NeverRestart(30100519)
+@ContinueOnRest(30100519)
 def Event_30100519():
     """Event 30100519"""
     if ThisEventSlotFlagEnabled():
@@ -811,7 +811,7 @@ def Event_30100519():
     EnableFlag(30100510)
 
 
-@NeverRestart(30102500)
+@ContinueOnRest(30102500)
 def Event_30102500():
     """Event 30102500"""
     CommonFunc_90005681(
@@ -825,7 +825,7 @@ def Event_30102500():
     Event_30102521(0, 30100503, 30102500, 30100500)
 
 
-@NeverRestart(30102520)
+@ContinueOnRest(30102520)
 def Event_30102520(
     _,
     flag: uint,
@@ -1207,7 +1207,7 @@ def Event_30102520(
     Restart()
 
 
-@NeverRestart(30102521)
+@ContinueOnRest(30102521)
 def Event_30102521(_, flag: uint, region: uint, entity: uint):
     """Event 30102521"""
     AND_1.Add(FlagDisabled(flag))
@@ -1661,7 +1661,7 @@ def Event_30102521(_, flag: uint, region: uint, entity: uint):
     Restart()
 
 
-@NeverRestart(30102530)
+@ContinueOnRest(30102530)
 def Event_30102530(
     _,
     flag: uint,
@@ -2043,7 +2043,7 @@ def Event_30102530(
     Restart()
 
 
-@NeverRestart(30102540)
+@ContinueOnRest(30102540)
 def Event_30102540(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, attacked_entity: uint):
     """Event 30102540"""
     AND_13.Add(FlagEnabled(flag))
@@ -2149,7 +2149,7 @@ def Event_30102560():
     Restart()
 
 
-@NeverRestart(30102580)
+@ContinueOnRest(30102580)
 def Event_30102580():
     """Event 30102580"""
     RegisterLadder(start_climbing_flag=30100580, stop_climbing_flag=30100581, asset=Assets.AEG027_009_0500)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_38_52_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005620(
@@ -827,7 +827,7 @@ def Event_1038522347(
     Restart()
 
 
-@UnknownRestart(1038522349)
+@EndOnRest(1038522349)
 def Event_1038522349():
     """Event 1038522349"""
     DisableFlag(1038520340)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_41_50_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005870(0, character=Characters.FallingstarBeast, name=904680602, npc_threat_level=19)
@@ -37,7 +37,7 @@ def Constructor():
     Event_1041502200()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005201(0, 1041500800, 30009, 20009, 30.0, 0.0, 0, 0, 0, 0)

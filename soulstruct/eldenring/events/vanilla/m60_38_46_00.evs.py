@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_38_46_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1038460000, asset=Assets.AEG099_060_9000)
@@ -44,7 +44,7 @@ def Constructor():
     CommonFunc_90005501(0, 1038460650, 1038460651, 0, 1038461650, 1038461651, 1038461652, 1038460652)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1038460519()
@@ -84,7 +84,7 @@ def Event_1038462340():
     EnableHealthBar(Characters.GuardianGolem)
 
 
-@NeverRestart(1038460510)
+@ContinueOnRest(1038460510)
 def Event_1038460510():
     """Event 1038460510"""
     CommonFunc_90005500(
@@ -105,7 +105,7 @@ def Event_1038460510():
     )
 
 
-@NeverRestart(1038460519)
+@ContinueOnRest(1038460519)
 def Event_1038460519():
     """Event 1038460519"""
     if ThisEventSlotFlagEnabled():

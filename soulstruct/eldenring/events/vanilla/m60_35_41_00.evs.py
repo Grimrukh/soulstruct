@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_35_41_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005525(0, flag=1035410612, asset=Assets.AEG004_983_1000)
@@ -43,7 +43,7 @@ def Constructor():
     CommonFunc_90005300(0, 1035410610, 1035410610, 0, 0.0, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005261(

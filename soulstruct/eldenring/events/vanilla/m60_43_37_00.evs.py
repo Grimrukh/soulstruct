@@ -22,7 +22,7 @@ from .entities.m60_43_37_00_entities import *
 from .entities.m60_43_39_00_entities import Characters as m60_43_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043370000, asset=Assets.AEG099_060_9000)
@@ -178,7 +178,7 @@ def Constructor():
     Event_1043372650(0, 1520, 710520, 1770, 710770, 69090, 69370)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1043370711)
@@ -452,7 +452,7 @@ def Event_1043373701():
     End()
 
 
-@NeverRestart(1043373703)
+@ContinueOnRest(1043373703)
 def Event_1043373703(_, character: uint):
     """Event 1043373703"""
     if PlayerNotInOwnWorld():
@@ -590,7 +590,7 @@ def Event_1043373706(_, character: uint, attacked_entity: uint):
     ForceAnimation(character, 20006)
 
 
-@NeverRestart(1043373707)
+@ContinueOnRest(1043373707)
 def Event_1043373707(
     _,
     character: uint,

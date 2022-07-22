@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_40_40_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005261(0, character=Characters.Wolf, region=1040402206, radius=10.0, seconds=0.0, animation_id=3011)
@@ -37,7 +37,7 @@ def Constructor():
     CommonFunc_90005423(0, 1040400220)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005422(0, 1040408500, 1040401500, 1040403500)

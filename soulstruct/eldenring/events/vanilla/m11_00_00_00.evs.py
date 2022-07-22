@@ -23,7 +23,7 @@ from .entities.m10_00_00_00_entities import Characters as m10_00_Characters
 from .entities.m60_45_52_00_entities import Assets as m60_45_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=11000002, asset=Assets.AEG099_060_9002)
@@ -781,7 +781,7 @@ def Constructor():
     CommonFunc_90005775(0, 85495300, 11109687, -1.0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(11000705)
@@ -2092,7 +2092,7 @@ def Preconstructor():
         EnableFlag(11008544)
 
 
-@NeverRestart(11002500)
+@ContinueOnRest(11002500)
 def Event_11002500():
     """Event 11002500"""
     if PlayerNotInOwnWorld():
@@ -2108,7 +2108,7 @@ def Event_11002500():
     Restart()
 
 
-@NeverRestart(11002501)
+@ContinueOnRest(11002501)
 def Event_11002501():
     """Event 11002501"""
     if PlayerNotInOwnWorld():
@@ -2134,7 +2134,7 @@ def Event_11002501():
     Restart()
 
 
-@NeverRestart(11002502)
+@ContinueOnRest(11002502)
 def Event_11002502():
     """Event 11002502"""
     if PlayerNotInOwnWorld():
@@ -2164,7 +2164,7 @@ def Event_11002502():
     Restart()
 
 
-@NeverRestart(11002503)
+@ContinueOnRest(11002503)
 def Event_11002503():
     """Event 11002503"""
     if PlayerNotInOwnWorld():
@@ -2186,7 +2186,7 @@ def Event_11002503():
     Restart()
 
 
-@NeverRestart(11000519)
+@ContinueOnRest(11000519)
 def Event_11000519():
     """Event 11000519"""
     if FlagEnabled(300):
@@ -2198,7 +2198,7 @@ def Event_11000519():
     EnableFlag(11000525)
 
 
-@NeverRestart(11000602)
+@ContinueOnRest(11000602)
 def Event_11000602():
     """Event 11000602"""
     if FlagDisabled(300):
@@ -2780,7 +2780,7 @@ def Event_11002497(_, character: uint, region: uint, seconds: float):
     ForceAnimation(character, 20002)
 
 
-@NeverRestart(11002510)
+@ContinueOnRest(11002510)
 def Event_11002510():
     """Event 11002510"""
     CommonFunc_90005500(
@@ -2989,7 +2989,7 @@ def Event_11002601():
     DisableFlag(11000601)
 
 
-@NeverRestart(11002603)
+@ContinueOnRest(11002603)
 def Event_11002603():
     """Event 11002603"""
     if PlayerNotInOwnWorld():
@@ -3329,7 +3329,7 @@ def Event_11002910():
     CreateAssetVFX(11001920, vfx_id=100, model_point=30)
 
 
-@NeverRestart(11002920)
+@ContinueOnRest(11002920)
 def Event_11002920(_, flag: uint, anchor_entity: uint):
     """Event 11002920"""
     DisableNetworkSync()

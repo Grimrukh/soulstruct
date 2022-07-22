@@ -22,7 +22,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_42_32_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
@@ -285,7 +285,7 @@ def Event_1042322404(_, flag: uint, character: uint):
     DisableAnimations(character)
 
 
-@NeverRestart(1042322580)
+@ContinueOnRest(1042322580)
 def Event_1042322580():
     """Event 1042322580"""
     RegisterLadder(start_climbing_flag=1042320580, stop_climbing_flag=1042320851, asset=Assets.AEG110_012_1000)

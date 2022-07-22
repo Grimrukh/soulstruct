@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_19_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301900, asset=Assets.AEG099_060_9000)
@@ -466,7 +466,7 @@ def Constructor():
     CommonFunc_91005600(0, 30192800, 30191695, 5)
 
 
-@NeverRestart(30190050)
+@ContinueOnRest(30190050)
 def Event_30190050():
     """Event 30190050"""
     if ThisEventSlotFlagEnabled():
@@ -476,7 +476,7 @@ def Event_30190050():
     EnableFlag(30190503)
 
 
-@NeverRestart(30192210)
+@ContinueOnRest(30192210)
 def Event_30192210(_, flag: uint, entity: uint):
     """Event 30192210"""
     if FlagEnabled(flag):
@@ -514,7 +514,7 @@ def Event_30192201():
     DefineLabel(1)
 
 
-@NeverRestart(30192500)
+@ContinueOnRest(30192500)
 def Event_30192500(
     _,
     flag: uint,
@@ -907,7 +907,7 @@ def Event_30192500(
     Restart()
 
 
-@NeverRestart(30192501)
+@ContinueOnRest(30192501)
 def Event_30192501(
     _,
     flag: uint,
@@ -1299,7 +1299,7 @@ def Event_30192501(
     Restart()
 
 
-@NeverRestart(30192502)
+@ContinueOnRest(30192502)
 def Event_30192502(
     _,
     flag: uint,
@@ -1691,7 +1691,7 @@ def Event_30192502(
     Restart()
 
 
-@NeverRestart(30192503)
+@ContinueOnRest(30192503)
 def Event_30192503(
     _,
     flag: uint,
@@ -2083,7 +2083,7 @@ def Event_30192503(
     Restart()
 
 
-@NeverRestart(30192504)
+@ContinueOnRest(30192504)
 def Event_30192504(
     _,
     flag: uint,
@@ -2475,7 +2475,7 @@ def Event_30192504(
     Restart()
 
 
-@NeverRestart(30192505)
+@ContinueOnRest(30192505)
 def Event_30192505(
     _,
     flag: uint,
@@ -2867,7 +2867,7 @@ def Event_30192505(
     Restart()
 
 
-@NeverRestart(30192506)
+@ContinueOnRest(30192506)
 def Event_30192506(
     _,
     flag: uint,
@@ -3259,7 +3259,7 @@ def Event_30192506(
     Restart()
 
 
-@NeverRestart(30192507)
+@ContinueOnRest(30192507)
 def Event_30192507(
     _,
     flag: uint,
@@ -3673,7 +3673,7 @@ def Event_30192520(_, flag: uint, asset: uint, flag_1: uint):
     EnableAssetActivation(asset, obj_act_id=-1)
 
 
-@NeverRestart(30192600)
+@ContinueOnRest(30192600)
 def Event_30192600():
     """Event 30192600"""
     CommonFunc_90005681(

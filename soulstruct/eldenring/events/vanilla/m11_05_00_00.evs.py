@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m11_05_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=11050002, asset=Assets.AEG099_060_9002, enemy_block_distance=8.0)
@@ -252,7 +252,7 @@ def Constructor():
     Event_11053731(0, 11050730)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Goldmask)
@@ -348,7 +348,7 @@ def Preconstructor():
     CommonFunc_90005211(0, 11050302, 30002, 20002, 11052302, 5.0, 0.0, 0, 0, 0, 0)
 
 
-@NeverRestart(11052500)
+@ContinueOnRest(11052500)
 def Event_11052500():
     """Event 11052500"""
     if PlayerNotInOwnWorld():
@@ -369,7 +369,7 @@ def Event_11052500():
     DisplayAreaWelcomeMessage(text=11050)
 
 
-@NeverRestart(11052510)
+@ContinueOnRest(11052510)
 def Event_11052510():
     """Event 11052510"""
     CommonFunc_90005500(
@@ -448,7 +448,7 @@ def Event_11052692():
     DisableAssetActivation(Assets.AEG227_052_0501, obj_act_id=-1)
 
 
-@NeverRestart(11052800)
+@ContinueOnRest(11052800)
 def Event_11052800():
     """Event 11052800"""
     if FlagEnabled(11050800):
@@ -1040,7 +1040,7 @@ def Event_11053707():
     End()
 
 
-@NeverRestart(11053708)
+@ContinueOnRest(11053708)
 def Event_11053708(
     _,
     asset: uint,

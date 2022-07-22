@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m35_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=35000001, asset=Assets.AEG099_060_9001)
@@ -291,7 +291,7 @@ def Constructor():
     Event_35002361()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Hyetta)
@@ -1513,7 +1513,7 @@ def Preconstructor():
     CommonFunc_90005250(0, 35000485, 35002483, 0.0, -1)
 
 
-@NeverRestart(35000050)
+@ContinueOnRest(35000050)
 def Event_35000050():
     """Event 35000050"""
     if ThisEventSlotFlagEnabled():
@@ -1536,7 +1536,7 @@ def Event_35002498():
     End()
 
 
-@NeverRestart(35002500)
+@ContinueOnRest(35002500)
 def Event_35002500():
     """Event 35002500"""
     if PlayerNotInOwnWorld():
@@ -1586,7 +1586,7 @@ def Event_35002500():
     EnableFlag(9430)
 
 
-@NeverRestart(35002504)
+@ContinueOnRest(35002504)
 def Event_35002504():
     """Event 35002504"""
     GotoIfFlagDisabled(Label.L0, flag=35000504)
@@ -1698,7 +1698,7 @@ def Event_35002600():
     DisableTreasure(asset=Assets.AEG099_610_9031)
 
 
-@NeverRestart(35002510)
+@ContinueOnRest(35002510)
 def Event_35002510():
     """Event 35002510"""
     CommonFunc_90005500(
@@ -1963,7 +1963,7 @@ def Event_35002510():
         CommonFunc_90005682(0, 35000677, 35001675, 35002675, 35000675, 801103300, 801103305, 102, 0, 0, 0)
 
 
-@NeverRestart(35000519)
+@ContinueOnRest(35000519)
 def Event_35000519():
     """Event 35000519"""
     if ThisEventSlotFlagEnabled():
@@ -1972,7 +1972,7 @@ def Event_35000519():
     DisableFlag(35000520)
 
 
-@NeverRestart(35002679)
+@ContinueOnRest(35002679)
 def Event_35002679():
     """Event 35002679"""
     CommonFunc_90005681(0, 35000670, 35000671, 35000672, 35000672, 35001670)
@@ -3023,7 +3023,7 @@ def Event_35003500(_, region: uint):
     Restart()
 
 
-@NeverRestart(35002530)
+@ContinueOnRest(35002530)
 def Event_35002530():
     """Event 35002530"""
     GotoIfFlagEnabled(Label.L0, flag=35000530)
@@ -3043,7 +3043,7 @@ def Event_35002530():
     ForceAnimation(35001350, 1)
 
 
-@NeverRestart(35002642)
+@ContinueOnRest(35002642)
 def Event_35002642():
     """Event 35002642"""
     DisableAssetActivation(Assets.AEG027_041_0502, obj_act_id=27041)
@@ -3619,7 +3619,7 @@ def Event_35003723():
     End()
 
 
-@NeverRestart(35003724)
+@ContinueOnRest(35003724)
 def Event_35003724(
     _,
     asset: uint,

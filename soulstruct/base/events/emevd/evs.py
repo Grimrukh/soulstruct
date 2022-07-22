@@ -35,7 +35,7 @@ _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 _COMMON_FUNC_IMPORT_RE = re.compile(
     r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[*\w\d_, \n]+)\)?\n"
 )
-_RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
+_RESTART_TYPES = {"ContinueOnRest": 0, "RestartOnRest": 1, "EndOnRest": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
 _CONDITION_GROUP_RE = re.compile(r"(MAIN|(AND|OR)_(\d+))")
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
@@ -1550,7 +1550,7 @@ class EVSParser(abc.ABC):
         """Extract `RestartType` enum value (default is 0) and event ID (default is -1) from function decorator."""
         decorators = event_node.decorator_list
         if not decorators:
-            return _RESTART_TYPES["NeverRestart"], -1
+            return _RESTART_TYPES["ContinueOnRest"], -1
 
         if len(decorators) > 1:
             raise EVSSyntaxError(
@@ -1560,10 +1560,10 @@ class EVSParser(abc.ABC):
             )
 
         dec_node = decorators[0]
-        if isinstance(dec_node, ast.Name):  # e.g. just `@NeverRestart`
+        if isinstance(dec_node, ast.Name):  # e.g. just `@ContinueOnRest`
             name = dec_node.id
             event_id = -1
-        elif isinstance(dec_node, ast.Call):  # e.g. `@NeverRestart(11020000)`
+        elif isinstance(dec_node, ast.Call):  # e.g. `@ContinueOnRest(11020000)`
             name, args, kwargs = self._parse_function_call(dec_node)
             if kwargs or len(args) != 1 or not isinstance(args[0], int):
                 raise EVSSyntaxError(
@@ -1583,7 +1583,7 @@ class EVSParser(abc.ABC):
         else:
             raise EVSSyntaxError(
                 event_node,
-                f"Event function decorator must be a single name, like `@NeverRestart`, or function call with an event "
+                f"Event function decorator must be a single name, like `@ContinueOnRest`, or function call with an event "
                 f"ID, like `@RestartOnRest(11020100)`, not: {dec_node}.\n"
                 f"The restart type must be one of: {', '.join(_RESTART_TYPES)}",
             )

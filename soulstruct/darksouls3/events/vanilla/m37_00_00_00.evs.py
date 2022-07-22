@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13700000, obj=3701950, reaction_distance=5.0)
@@ -1076,7 +1076,7 @@ def Constructor():
     CommonFunc_20005780(0, 3701787, 2)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13700220()
@@ -1140,7 +1140,7 @@ def Event_13700111():
     End()
 
 
-@NeverRestart(13705155)
+@ContinueOnRest(13705155)
 def Event_13705155():
     """Event 13705155"""
     DisableNetworkSync()
@@ -1158,7 +1158,7 @@ def Event_13705155():
     DisplayStatus(10010690)
 
 
-@NeverRestart(13700156)
+@ContinueOnRest(13700156)
 def Event_13700156():
     """Event 13700156"""
     if PlayerNotInOwnWorld():
@@ -1177,7 +1177,7 @@ def Event_13700156():
     SetNetworkConnectedFlagState(flag=1158, state=FlagSetting.On)
 
 
-@NeverRestart(13705157)
+@ContinueOnRest(13705157)
 def Event_13705157():
     """Event 13705157"""
     CreateObjectVFX(3701156, vfx_id=101, model_point=3)
@@ -1190,7 +1190,7 @@ def Event_13700162():
     EnableFlag(13700240)
 
 
-@NeverRestart(13700163)
+@ContinueOnRest(13700163)
 def Event_13700163():
     """Event 13700163"""
     if PlayerNotInOwnWorld():
@@ -1204,20 +1204,20 @@ def Event_13700163():
     EnableFlag(13701162)
 
 
-@NeverRestart(13700165)
+@ContinueOnRest(13700165)
 def Event_13700165():
     """Event 13700165"""
     CreateObjectVFX(3701540, vfx_id=101, model_point=837061)
 
 
-@NeverRestart(13700172)
+@ContinueOnRest(13700172)
 def Event_13700172():
     """Event 13700172"""
     EnableFlag(13705805)
     EnableFlag(13705806)
 
 
-@NeverRestart(13700173)
+@ContinueOnRest(13700173)
 def Event_13700173():
     """Event 13700173"""
     if PlayerNotInOwnWorld():
@@ -1235,7 +1235,7 @@ def Event_13700173():
     End()
 
 
-@NeverRestart(13700174)
+@ContinueOnRest(13700174)
 def Event_13700174():
     """Event 13700174"""
     if PlayerNotInOwnWorld():
@@ -1249,7 +1249,7 @@ def Event_13700174():
     AddSpecialEffect(PLAYER, 3293)
 
 
-@NeverRestart(13700175)
+@ContinueOnRest(13700175)
 def Event_13700175():
     """Event 13700175"""
     MAIN.Await(FlagEnabled(9314))
@@ -1258,7 +1258,7 @@ def Event_13700175():
     AwardItemLot(4550, host_only=True)
 
 
-@NeverRestart(13700200)
+@ContinueOnRest(13700200)
 def Event_13700200():
     """Event 13700200"""
     if FlagEnabled(13700201):
@@ -1271,7 +1271,7 @@ def Event_13700200():
     EnableFlag(13700201)
 
 
-@NeverRestart(13700220)
+@ContinueOnRest(13700220)
 def Event_13700220():
     """Event 13700220"""
     if ThisEventSlotFlagEnabled():
@@ -1762,28 +1762,28 @@ def Event_13705400():
     )
 
 
-@NeverRestart(13705430)
+@ContinueOnRest(13705430)
 def Event_13705430():
     """Event 13705430"""
     CommonFunc_20005610(0, flag=13700430, region=3702431, region_1=3702432)
     CommonFunc_20005611(0, 13700430, 3703430, 3701430, 370301)
 
 
-@NeverRestart(13705440)
+@ContinueOnRest(13705440)
 def Event_13705440():
     """Event 13705440"""
     CommonFunc_20005610(0, flag=13700440, region=3702441, region_1=3702442)
     CommonFunc_20005611(0, 13700440, 3703440, 3701440, 370301)
 
 
-@NeverRestart(13705450)
+@ContinueOnRest(13705450)
 def Event_13705450():
     """Event 13705450"""
     CommonFunc_20005610(0, flag=13700450, region=3702451, region_1=3702452)
     CommonFunc_20005611(0, 13700450, 3703450, 3701450, 370301)
 
 
-@NeverRestart(13705460)
+@ContinueOnRest(13705460)
 def Event_13705460():
     """Event 13705460"""
     CommonFunc_20005614(0, 3701460, 63700460)
@@ -1827,7 +1827,7 @@ def Event_13700471():
     Restart()
 
 
-@NeverRestart(13705480)
+@ContinueOnRest(13705480)
 def Event_13705480():
     """Event 13705480"""
     RegisterLadder(start_climbing_flag=13700480, stop_climbing_flag=13700481, obj=3701480)
@@ -1836,7 +1836,7 @@ def Event_13705480():
     RegisterLadder(start_climbing_flag=13701486, stop_climbing_flag=13701487, obj=3701486)
 
 
-@NeverRestart(13705510)
+@ContinueOnRest(13705510)
 def Event_13705510(_, flag: int, flag_1: int, entity: int, obj: int, obj_1: int, flag_2: int):
     """Event 13705510"""
     SkipLinesIfClientTypeCountComparison(
@@ -1860,7 +1860,7 @@ def Event_13705510(_, flag: int, flag_1: int, entity: int, obj: int, obj_1: int,
     End()
 
 
-@NeverRestart(13705511)
+@ContinueOnRest(13705511)
 def Event_13705511(
     _,
     flag: int,
@@ -2059,7 +2059,7 @@ def Event_13705513():
     Event_13705511(0, 13700500, 13700501, 3701500, 3701502, 3704502, 3701501, 3704501, 13701500, 13704500)
 
 
-@NeverRestart(13705520)
+@ContinueOnRest(13705520)
 def Event_13705520(_, obj: int, entity: int):
     """Event 13705520"""
     if PlayerNotInOwnWorld():
@@ -2080,7 +2080,7 @@ def Event_13705520(_, obj: int, entity: int):
     DeleteObjectVFX(obj)
 
 
-@NeverRestart(13705532)
+@ContinueOnRest(13705532)
 def Event_13705532():
     """Event 13705532"""
     GotoIfFlagEnabled(Label.L0, flag=13700532)
@@ -2100,7 +2100,7 @@ def Event_13705532():
     EndOfAnimation(obj=3701533, animation_id=1)
 
 
-@NeverRestart(13705535)
+@ContinueOnRest(13705535)
 def Event_13705535():
     """Event 13705535"""
     GotoIfFlagEnabled(Label.L0, flag=13700535)
@@ -2119,7 +2119,7 @@ def Event_13705535():
     DisableObject(3701535)
 
 
-@NeverRestart(13705540)
+@ContinueOnRest(13705540)
 def Event_13705540():
     """Event 13705540"""
     DisableNetworkSync()
@@ -2136,7 +2136,7 @@ def Event_13705540():
     DisableObject(3701540)
 
 
-@NeverRestart(13705541)
+@ContinueOnRest(13705541)
 def Event_13705541():
     """Event 13705541"""
     DisableNetworkSync()
@@ -2153,7 +2153,7 @@ def Event_13705541():
     Restart()
 
 
-@NeverRestart(13705542)
+@ContinueOnRest(13705542)
 def Event_13705542():
     """Event 13705542"""
     DisableNetworkSync()
@@ -2173,7 +2173,7 @@ def Event_13705542():
     Restart()
 
 
-@NeverRestart(13705543)
+@ContinueOnRest(13705543)
 def Event_13705543():
     """Event 13705543"""
     DisableNetworkSync()
@@ -2522,7 +2522,7 @@ def Event_13705870():
     CommonFunc_20005810(0, 13700850, 3701850, 3702850, 10000)
 
 
-@NeverRestart(13705880)
+@ContinueOnRest(13705880)
 def Event_13705880():
     """Event 13705880"""
     if FlagEnabled(13700850):
@@ -2556,7 +2556,7 @@ def Event_13705880():
     Restart()
 
 
-@NeverRestart(13705881)
+@ContinueOnRest(13705881)
 def Event_13705881():
     """Event 13705881"""
     if FlagEnabled(13700850):
@@ -2569,7 +2569,7 @@ def Event_13705881():
     EnableImmortality(3700851)
 
 
-@NeverRestart(13705882)
+@ContinueOnRest(13705882)
 def Event_13705882():
     """Event 13705882"""
     if FlagEnabled(13700850):
@@ -2592,7 +2592,7 @@ def Event_13705882():
     Restart()
 
 
-@NeverRestart(13705883)
+@ContinueOnRest(13705883)
 def Event_13705883():
     """Event 13705883"""
     if FlagEnabled(13700850):
@@ -2610,7 +2610,7 @@ def Event_13705883():
     Restart()
 
 
-@NeverRestart(13705885)
+@ContinueOnRest(13705885)
 def Event_13705885():
     """Event 13705885"""
     if FlagEnabled(13700850):
@@ -2622,7 +2622,7 @@ def Event_13705885():
     Kill(3700851)
 
 
-@NeverRestart(13705886)
+@ContinueOnRest(13705886)
 def Event_13705886():
     """Event 13705886"""
     if ThisEventSlotFlagEnabled():
@@ -2637,7 +2637,7 @@ def Event_13705886():
     AddSpecialEffect(3700850, 10641)
 
 
-@NeverRestart(13705887)
+@ContinueOnRest(13705887)
 def Event_13705887():
     """Event 13705887"""
     if FlagEnabled(13700850):
@@ -2670,7 +2670,7 @@ def Event_13705887():
     Restart()
 
 
-@NeverRestart(13705889)
+@ContinueOnRest(13705889)
 def Event_13705889():
     """Event 13705889"""
     if FlagEnabled(13700850):
@@ -2727,7 +2727,7 @@ def Event_13705950(
     RemoveObjectFlag(obj_flag=obj_flag)
 
 
-@NeverRestart(13705620)
+@ContinueOnRest(13705620)
 def Event_13705620(_, character: int):
     """Event 13705620"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2847,7 +2847,7 @@ def Event_13705624(_, entity: int):
     Restart()
 
 
-@NeverRestart(13705630)
+@ContinueOnRest(13705630)
 def Event_13705630(_, character: int, command_id: int):
     """Event 13705630"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2892,7 +2892,7 @@ def Event_13705630(_, character: int, command_id: int):
     End()
 
 
-@NeverRestart(13705640)
+@ContinueOnRest(13705640)
 def Event_13705640(_, character: int, character_1: int, animation_id: int, vfx_id: int, vfx_id_1: int):
     """Event 13705640"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3039,7 +3039,7 @@ def Event_13705640(_, character: int, character_1: int, animation_id: int, vfx_i
     End()
 
 
-@NeverRestart(13705641)
+@ContinueOnRest(13705641)
 def Event_13705641(
     _,
     character: int,
@@ -3153,7 +3153,7 @@ def Event_13705641(
     End()
 
 
-@NeverRestart(13700642)
+@ContinueOnRest(13700642)
 def Event_13700642(
     _,
     character: int,
@@ -3201,7 +3201,7 @@ def Event_13700642(
     End()
 
 
-@NeverRestart(13700643)
+@ContinueOnRest(13700643)
 def Event_13700643(
     _,
     character: int,
@@ -3360,7 +3360,7 @@ def Event_13700643(
     Restart()
 
 
-@NeverRestart(13705644)
+@ContinueOnRest(13705644)
 def Event_13705644(
     _,
     entity: int,
@@ -3444,7 +3444,7 @@ def Event_13705644(
     SetNetworkUpdateRate(character, is_fixed=False, update_rate=CharacterUpdateRate.Always)
 
 
-@NeverRestart(13705645)
+@ContinueOnRest(13705645)
 def Event_13705645(
     _,
     character: int,
@@ -3631,7 +3631,7 @@ def Event_13705645(
     End()
 
 
-@NeverRestart(13705646)
+@ContinueOnRest(13705646)
 def Event_13705646(_, character: int, obj: int, special_effect_id: int):
     """Event 13705646"""
     AND_2.Add(ThisEventSlotFlagEnabled())
@@ -3664,7 +3664,7 @@ def Event_13705646(_, character: int, obj: int, special_effect_id: int):
     RemoveSpecialEffect(character, special_effect_id)
 
 
-@NeverRestart(13705647)
+@ContinueOnRest(13705647)
 def Event_13705647(_, character: int, animation_id: int, flag: int):
     """Event 13705647"""
     if PlayerNotInOwnWorld():
@@ -3691,7 +3691,7 @@ def Event_13705647(_, character: int, animation_id: int, flag: int):
     Restart()
 
 
-@NeverRestart(13705650)
+@ContinueOnRest(13705650)
 def Event_13705650():
     """Event 13705650"""
     if PlayerNotInOwnWorld():
@@ -3792,7 +3792,7 @@ def Event_13705650():
     SetNetworkConnectedFlagState(flag=1044, state=FlagSetting.On)
 
 
-@NeverRestart(13705651)
+@ContinueOnRest(13705651)
 def Event_13705651(_, character: int, character_1: int):
     """Event 13705651"""
     if FlagEnabled(13700651):
@@ -3813,7 +3813,7 @@ def Event_13705651(_, character: int, character_1: int):
     DisableBackread(character_1)
 
 
-@NeverRestart(13705652)
+@ContinueOnRest(13705652)
 def Event_13705652(_, character: int):
     """Event 13705652"""
     MAIN.Await(HealthRatio(3700800) == 0.0)
@@ -3822,7 +3822,7 @@ def Event_13705652(_, character: int):
     ReplanAI(character)
 
 
-@NeverRestart(13705660)
+@ContinueOnRest(13705660)
 def Event_13705660(_, character: int):
     """Event 13705660"""
     GotoIfPlayerNotInOwnWorld(Label.L20)
@@ -3968,7 +3968,7 @@ def Event_13700664():
     AddSpecialEffect(PLAYER, 2005)
 
 
-@NeverRestart(13705684)
+@ContinueOnRest(13705684)
 def Event_13705684(_, character: int, animation_id: int):
     """Event 13705684"""
     ForceAnimation(character, animation_id, loop=True, skip_transition=True, unknown2=1.0)

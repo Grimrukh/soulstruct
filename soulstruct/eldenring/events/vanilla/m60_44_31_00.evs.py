@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_44_31_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1044312200(0, character=Characters.SpiritJellyfish0, region=1044312200)
@@ -102,7 +102,7 @@ def Event_1044312350():
     EnableHealthBar(Characters.GuardianGolem)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005485(0, character=Characters.GuardianGolem)

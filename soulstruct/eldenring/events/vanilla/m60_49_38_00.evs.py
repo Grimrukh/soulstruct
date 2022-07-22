@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_49_38_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterLadder(start_climbing_flag=49381500, stop_climbing_flag=49381501, asset=1049381500)
@@ -271,7 +271,7 @@ def Event_1049382211(_, source_entity: uint, seconds: float):
     Restart()
 
 
-@NeverRestart(1049382399)
+@ContinueOnRest(1049382399)
 def Event_1049382399(_, character: uint, destination: uint, special_effect: int):
     """Event 1049382399"""
     AND_1.Add(CharacterDead(character))

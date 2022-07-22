@@ -22,7 +22,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_49_41_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005300(0, flag=1049410299, character=Characters.Scarab, item_lot_param_id=40426, seconds=0.0, left=0)

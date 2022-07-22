@@ -19,7 +19,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_41_50_00_entities import Characters as m60_41_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1040502200(0, vfx_id=1040502200)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_50_39_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1050392210(0, character=Characters.GiantBall0, asset=Assets.AEG099_090_9001, region=1050392290)
@@ -152,7 +152,7 @@ def Event_1050392210(_, character: uint, asset: uint, region: uint):
     End()
 
 
-@NeverRestart(1050392300)
+@ContinueOnRest(1050392300)
 def Event_1050392300(_, asset: uint, flag: uint):
     """Event 1050392300"""
     EnableNetworkSync()
@@ -165,7 +165,7 @@ def Event_1050392300(_, asset: uint, flag: uint):
     DeleteAssetVFX(asset)
 
 
-@NeverRestart(1050392301)
+@ContinueOnRest(1050392301)
 def Event_1050392301(_, asset: uint, flag: uint):
     """Event 1050392301"""
     EnableNetworkSync()
@@ -178,7 +178,7 @@ def Event_1050392301(_, asset: uint, flag: uint):
     DeleteAssetVFX(asset)
 
 
-@NeverRestart(1050392303)
+@ContinueOnRest(1050392303)
 def Event_1050392303(_, asset: uint, flag: uint):
     """Event 1050392303"""
     EnableNetworkSync()
@@ -200,7 +200,7 @@ def Event_1050392303(_, asset: uint, flag: uint):
     End()
 
 
-@NeverRestart(1050392580)
+@ContinueOnRest(1050392580)
 def Event_1050392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
     """Event 1050392580"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

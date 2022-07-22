@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_43_31_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043310000, asset=Assets.AEG099_060_9000)
@@ -297,7 +297,7 @@ def Constructor():
     Event_1043312709(0, 1043310705, 1043311700)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.WanderingNoble)
@@ -385,7 +385,7 @@ def Event_1043312223(_, attacker__character: uint, region: uint):
     RemoveSpecialEffect(attacker__character, 5655)
 
 
-@NeverRestart(1043312510)
+@ContinueOnRest(1043312510)
 def Event_1043312510():
     """Event 1043312510"""
     CommonFunc_90005500(
@@ -406,7 +406,7 @@ def Event_1043312510():
     )
 
 
-@NeverRestart(1043310519)
+@ContinueOnRest(1043310519)
 def Event_1043310519():
     """Event 1043310519"""
     if ThisEventSlotFlagEnabled():
@@ -414,7 +414,7 @@ def Event_1043310519():
     DisableFlag(1043310510)
 
 
-@NeverRestart(1043312580)
+@ContinueOnRest(1043312580)
 def Event_1043312580():
     """Event 1043312580"""
     RegisterLadder(start_climbing_flag=1043310580, stop_climbing_flag=1043310851, asset=Assets.AEG030_893_2000)
@@ -502,7 +502,7 @@ def Event_1043310705(_, character: uint, asset: uint):
     Restart()
 
 
-@NeverRestart(1043310706)
+@ContinueOnRest(1043310706)
 def Event_1043310706():
     """Event 1043310706"""
     if PlayerNotInOwnWorld():
@@ -524,7 +524,7 @@ def Event_1043310706():
     EnableFlag(3418)
 
 
-@NeverRestart(1043310707)
+@ContinueOnRest(1043310707)
 def Event_1043310707(_, other_entity: uint):
     """Event 1043310707"""
     if PlayerNotInOwnWorld():
@@ -539,7 +539,7 @@ def Event_1043310707(_, other_entity: uint):
     EnableFlag(3418)
 
 
-@NeverRestart(1043310708)
+@ContinueOnRest(1043310708)
 def Event_1043310708():
     """Event 1043310708"""
     if PlayerNotInOwnWorld():

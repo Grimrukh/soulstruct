@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_41_55_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     ConnectCharacterToCaravan(character=Characters.WanderingNoble0, caravan_asset=1041552000)
@@ -30,7 +30,7 @@ def Constructor():
     ConnectCharacterToCaravan(character=1041550403, caravan_asset=1041552000)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1041552400(0, character=Characters.WanderingNoble0)

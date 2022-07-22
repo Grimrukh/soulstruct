@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_36_47_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1036472600(
@@ -42,7 +42,7 @@ def Constructor():
     CommonFunc_90005636(0, 32020691, 1036470620, 1036471620, 4470, 1036472620, 1036472621, 1036472620, 1036473620, -1)
 
 
-@NeverRestart(1036472600)
+@ContinueOnRest(1036472600)
 def Event_1036472600(
     _,
     anchor_entity: uint,
@@ -95,13 +95,13 @@ def Event_1036472605(_, flag: uint, target_entity: uint, animation: int):
     DisableFlag(flag)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1036470700)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005451(0, character=Characters.WalkingMausoleum, asset_group=1036476420)
@@ -207,7 +207,7 @@ def Event_200():
     Event_1036472490()
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005450(0, 1036470400, 1036471400, 1036471410, 1036471418)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m19_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_9005810(
@@ -46,13 +46,13 @@ def Constructor():
     Event_19002900()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_19000050()
 
 
-@NeverRestart(19000100)
+@ContinueOnRest(19000100)
 def Event_19000100():
     """Event 19000100"""
     GotoIfPlayerInOwnWorld(Label.L0)
@@ -116,7 +116,7 @@ def Event_19000100():
     GotoIfFlagEnabled(Label.L11, flag=9401)
     PlayCutsceneToPlayerAndWarpWithStablePositionUpdate(
         cutscene_id=19000010,
-        cutscene_flags=CutsceneFlags.Unknown64,
+        cutscene_flags=CutsceneFlags.IsEndingCutscene,
         move_to_region=11712500,
         map_id=11710000,
         player_id=10000,
@@ -132,7 +132,7 @@ def Event_19000100():
     DefineLabel(11)
     PlayCutsceneToPlayerAndWarpWithStablePositionUpdate(
         cutscene_id=19000060,
-        cutscene_flags=CutsceneFlags.Unknown64,
+        cutscene_flags=CutsceneFlags.IsEndingCutscene,
         move_to_region=11712500,
         map_id=11710000,
         player_id=10000,
@@ -148,7 +148,7 @@ def Event_19000100():
     DefineLabel(12)
     PlayCutsceneToPlayerAndWarpWithStablePositionUpdate(
         cutscene_id=19000070,
-        cutscene_flags=CutsceneFlags.Unknown64,
+        cutscene_flags=CutsceneFlags.IsEndingCutscene,
         move_to_region=11712500,
         map_id=11710000,
         player_id=10000,
@@ -164,7 +164,7 @@ def Event_19000100():
     DefineLabel(13)
     PlayCutsceneToPlayerAndWarpWithStablePositionUpdate(
         cutscene_id=19000080,
-        cutscene_flags=CutsceneFlags.Unknown64,
+        cutscene_flags=CutsceneFlags.IsEndingCutscene,
         move_to_region=11712500,
         map_id=11710000,
         player_id=10000,
@@ -180,7 +180,7 @@ def Event_19000100():
     DefineLabel(15)
 
 
-@NeverRestart(19000110)
+@ContinueOnRest(19000110)
 def Event_19000110():
     """Event 19000110"""
     if PlayerNotInOwnWorld():
@@ -226,7 +226,7 @@ def Event_19000110():
     EnableFlag(21)
 
 
-@NeverRestart(19000120)
+@ContinueOnRest(19000120)
 def Event_19000120():
     """Event 19000120"""
     if PlayerNotInOwnWorld():
@@ -269,14 +269,14 @@ def Event_19000120():
     EnableFlag(22)
 
 
-@NeverRestart(19000050)
+@ContinueOnRest(19000050)
 def Event_19000050():
     """Event 19000050"""
     if ThisEventSlotFlagEnabled():
         return
 
 
-@NeverRestart(19002500)
+@ContinueOnRest(19002500)
 def Event_19002500():
     """Event 19002500"""
     GotoIfFlagDisabled(Label.L0, flag=19000800)
@@ -287,7 +287,7 @@ def Event_19002500():
     DefineLabel(0)
     GotoIfPlayerInOwnWorld(Label.L1)
     GotoIfFlagDisabled(Label.L1, flag=19002801)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=19002811,
@@ -707,7 +707,7 @@ def Event_19002900():
     
     MAIN.Await(ActionButtonParamActivated(action_button_id=9000, entity=Assets.AEG099_090_9000))
     
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=19002900,

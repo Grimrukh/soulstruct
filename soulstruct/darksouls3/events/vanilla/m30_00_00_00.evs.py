@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13000009, obj=3001950, reaction_distance=5.0)
@@ -813,7 +813,7 @@ def Constructor():
     Event_13000901(0, 3001900)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13000410()
@@ -831,7 +831,7 @@ def Preconstructor():
     DisableSoundEvent(sound_id=3002899)
 
 
-@NeverRestart(13000200)
+@ContinueOnRest(13000200)
 def Event_13000200():
     """Event 13000200"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
@@ -846,7 +846,7 @@ def Event_13000200():
     EnableFlag(13000201)
 
 
-@NeverRestart(13000210)
+@ContinueOnRest(13000210)
 def Event_13000210():
     """Event 13000210"""
     if FlagEnabled(13000009):
@@ -857,7 +857,7 @@ def Event_13000210():
     DisableFlag(13000000)
 
 
-@NeverRestart(13000230)
+@ContinueOnRest(13000230)
 def Event_13000230():
     """Event 13000230"""
     if ThisEventSlotFlagEnabled():
@@ -869,7 +869,7 @@ def Event_13000230():
     EnableSoapstoneMessage(3002280)
 
 
-@NeverRestart(13000360)
+@ContinueOnRest(13000360)
 def Event_13000360():
     """Event 13000360"""
     if PlayerNotInOwnWorld():
@@ -888,7 +888,7 @@ def Event_13000360():
     DeleteObjectVFX(3001705)
 
 
-@NeverRestart(13000380)
+@ContinueOnRest(13000380)
 def Event_13000380(_, character: int, item_lot_param_id: int, flag: int):
     """Event 13000380"""
     if PlayerNotInOwnWorld():
@@ -904,7 +904,7 @@ def Event_13000380(_, character: int, item_lot_param_id: int, flag: int):
     End()
 
 
-@NeverRestart(13000410)
+@ContinueOnRest(13000410)
 def Event_13000410():
     """Event 13000410"""
     if ThisEventSlotFlagEnabled():
@@ -1216,7 +1216,7 @@ def Event_13005240(
     ReplanAI(character)
 
 
-@NeverRestart(13005280)
+@ContinueOnRest(13005280)
 def Event_13005280(_, obj: int, vfx_id: int):
     """Event 13005280"""
     AND_1.Add(ObjectBurnState(obj=obj, comparison_type=ComparisonType.GreaterThan, state=False))
@@ -1880,7 +1880,7 @@ def Event_13005810():
     SetNetworkConnectedFlagState(flag=13000801, state=FlagSetting.On)
 
 
-@NeverRestart(13005811)
+@ContinueOnRest(13005811)
 def Event_13005811():
     """Event 13005811"""
     if FlagEnabled(13000800):
@@ -2170,7 +2170,7 @@ def Event_13005830():
     SetNetworkConnectedFlagState(flag=13000838, state=FlagSetting.On)
 
 
-@NeverRestart(13005831)
+@ContinueOnRest(13005831)
 def Event_13005831():
     """Event 13005831"""
     if FlagEnabled(13000830):
@@ -2542,7 +2542,7 @@ def Event_13005892():
     Restart()
 
 
-@NeverRestart(13005893)
+@ContinueOnRest(13005893)
 def Event_13005893():
     """Event 13005893"""
     SkipLinesIfClientTypeCountComparison(
@@ -2700,7 +2700,7 @@ def Event_13000901(_, obj: int):
     EnableFlag(13000900)
 
 
-@NeverRestart(13005600)
+@ContinueOnRest(13005600)
 def Event_13005600(_, character__obj: int, obj: int, obj_1: int):
     """Event 13005600"""
     GotoIfPlayerNotInOwnWorld(Label.L9)
@@ -2770,7 +2770,7 @@ def Event_13005600(_, character__obj: int, obj: int, obj_1: int):
     End()
 
 
-@NeverRestart(13005601)
+@ContinueOnRest(13005601)
 def Event_13005601(_, flag: int):
     """Event 13005601"""
     if PlayerNotInOwnWorld():
@@ -2782,7 +2782,7 @@ def Event_13005601(_, flag: int):
     AwardItemLot(62320, host_only=False)
 
 
-@NeverRestart(13005602)
+@ContinueOnRest(13005602)
 def Event_13005602(_, entity: int, flag: int):
     """Event 13005602"""
     if PlayerNotInOwnWorld():
@@ -2794,7 +2794,7 @@ def Event_13005602(_, entity: int, flag: int):
     ForceAnimation(entity, 20001, unknown2=1.0)
 
 
-@NeverRestart(13005603)
+@ContinueOnRest(13005603)
 def Event_13005603(_, attacked_entity: int):
     """Event 13005603"""
     if PlayerNotInOwnWorld():
@@ -2808,7 +2808,7 @@ def Event_13005603(_, attacked_entity: int):
     ForceAnimation(attacked_entity, 20001, unknown2=1.0)
 
 
-@NeverRestart(13005604)
+@ContinueOnRest(13005604)
 def Event_13005604():
     """Event 13005604"""
     MAIN.Await(FlagEnabled(1438))
@@ -2816,7 +2816,7 @@ def Event_13005604():
     DisableObjectInvulnerability(3001875)
 
 
-@NeverRestart(13005620)
+@ContinueOnRest(13005620)
 def Event_13005620(_, character: int):
     """Event 13005620"""
     GotoIfPlayerNotInOwnWorld(Label.L10)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m12_01_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71211, asset=Assets.AEG099_060_9001)
@@ -575,7 +575,7 @@ def Constructor():
     CommonFunc_90005702(0, 12010705, 4808, 4805, 4809)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_12010519()
@@ -757,7 +757,7 @@ def Event_12012050():
     DisableAsset(12015650)
 
 
-@NeverRestart(12012569)
+@ContinueOnRest(12012569)
 def Event_12012569(_, flag: uint, asset: uint):
     """Event 12012569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -1689,7 +1689,7 @@ def Event_12012301():
     EnableNetworkFlag(12012301)
 
 
-@NeverRestart(12012506)
+@ContinueOnRest(12012506)
 def Event_12012506():
     """Event 12012506"""
     AND_1.Add(PlayerInOwnWorld())
@@ -1726,7 +1726,7 @@ def Event_12012506():
     End()
 
 
-@NeverRestart(12012507)
+@ContinueOnRest(12012507)
 def Event_12012507():
     """Event 12012507"""
     if PlayerNotInOwnWorld():
@@ -1753,7 +1753,7 @@ def Event_12012507():
     End()
 
 
-@NeverRestart(12010509)
+@ContinueOnRest(12010509)
 def Event_12010509():
     """Event 12010509"""
     CommonFunc_90005500(
@@ -1822,7 +1822,7 @@ def Event_12010509():
     )
 
 
-@NeverRestart(12010519)
+@ContinueOnRest(12010519)
 def Event_12010519():
     """Event 12010519"""
     if ThisEventSlotFlagEnabled():

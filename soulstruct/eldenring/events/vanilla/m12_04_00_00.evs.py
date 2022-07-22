@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m12_04_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_9005810(
@@ -39,7 +39,7 @@ def Constructor():
     Event_12042810()
 
 
-@NeverRestart(12042400)
+@ContinueOnRest(12042400)
 def Event_12042400():
     """Event 12042400"""
     GotoIfFlagDisabled(Label.L0, flag=114)
@@ -117,7 +117,7 @@ def Event_12042680():
     Restart()
 
 
-@NeverRestart(12042800)
+@ContinueOnRest(12042800)
 def Event_12042800():
     """Event 12042800"""
     if FlagEnabled(12040800):
@@ -164,7 +164,7 @@ def Event_12042810():
     SetCharacterEventTarget(Characters.MalformedStar, region=12040810)
 
 
-@NeverRestart(12042849)
+@ContinueOnRest(12042849)
 def Event_12042849():
     """Event 12042849"""
     CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9001, model_point=8, right=0)

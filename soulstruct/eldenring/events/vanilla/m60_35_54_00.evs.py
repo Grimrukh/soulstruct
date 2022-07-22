@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_35_54_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005261(
@@ -320,7 +320,7 @@ def Constructor():
     Event_1035543700(0, 1035540700)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.WanderingNoble)
@@ -408,7 +408,7 @@ def Event_1035542450(_, asset: uint):
     End()
 
 
-@NeverRestart(1035542500)
+@ContinueOnRest(1035542500)
 def Event_1035542500():
     """Event 1035542500"""
     if FlagEnabled(57):
@@ -499,7 +499,7 @@ def Event_1035542500():
         CommonFunc_90005694(0, 1035542250, 1035541200, 200, 0, 802003200, 1.0, 0.0, 1.0)
 
 
-@NeverRestart(1035542580)
+@ContinueOnRest(1035542580)
 def Event_1035542580():
     """Event 1035542580"""
     RegisterLadder(start_climbing_flag=1035540580, stop_climbing_flag=1035540581, asset=1035541580)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_41_36_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
@@ -71,7 +71,7 @@ def Constructor():
     CommonFunc_90005727(0, 4731, 1041360700, 1041360701, 4730, 4733)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Merchant)
@@ -197,7 +197,7 @@ def Event_1041363706(_, attacked_entity: uint):
     End()
 
 
-@NeverRestart(1041363707)
+@ContinueOnRest(1041363707)
 def Event_1041363707(
     _,
     character: uint,

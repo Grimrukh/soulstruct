@@ -11,7 +11,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_200()
@@ -230,7 +230,7 @@ def Constructor():
     Event_9020(2, 14500161, 14500162, 14500162, 6952, 45, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_231()
@@ -337,7 +337,7 @@ def Preconstructor():
     DefineLabel(0)
 
 
-@NeverRestart(130)
+@ContinueOnRest(130)
 def Event_130(_, area_id: uchar, block_id: uchar, collision: int, ceremony_id: ushort, achievement_id: int):
     """Event 130"""
     if ThisEventSlotFlagEnabled():
@@ -394,7 +394,7 @@ def Event_231():
     End()
 
 
-@NeverRestart(232)
+@ContinueOnRest(232)
 def Event_232():
     """Event 232"""
     GotoIfFlagEnabled(Label.L1, flag=8221)
@@ -438,7 +438,7 @@ def Event_232():
     Restart()
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250(_, achievement_id: int, flag: int, seconds: float):
     """Event 250"""
     if ThisEventSlotFlagEnabled():
@@ -452,7 +452,7 @@ def Event_250(_, achievement_id: int, flag: int, seconds: float):
     AwardAchievement(achievement_id=achievement_id)
 
 
-@NeverRestart(6100)
+@ContinueOnRest(6100)
 def Event_6100(_, flag: int, flag_1: int):
     """Event 6100"""
     if ThisEventSlotFlagEnabled():
@@ -465,7 +465,7 @@ def Event_6100(_, flag: int, flag_1: int):
     EnableFlag(flag)
 
 
-@NeverRestart(700)
+@ContinueOnRest(700)
 def Event_700():
     """Event 700"""
     if PlayerNotInOwnWorld():
@@ -524,14 +524,14 @@ def Event_700():
     End()
 
 
-@NeverRestart(701)
+@ContinueOnRest(701)
 def Event_701():
     """Event 701"""
     DisableFlag(6000)
     EnableFlag(6001)
 
 
-@NeverRestart(702)
+@ContinueOnRest(702)
 def Event_702():
     """Event 702"""
     if FlagEnabled(6600):
@@ -542,7 +542,7 @@ def Event_702():
     EnableFlag(703)
 
 
-@NeverRestart(710)
+@ContinueOnRest(710)
 def Event_710():
     """Event 710"""
     if PlayerNotInOwnWorld():
@@ -643,7 +643,7 @@ def Event_710():
     End()
 
 
-@NeverRestart(730)
+@ContinueOnRest(730)
 def Event_730():
     """Event 730"""
     DisableNetworkSync()
@@ -688,14 +688,14 @@ def Event_730():
     Restart()
 
 
-@NeverRestart(740)
+@ContinueOnRest(740)
 def Event_740():
     """Event 740"""
     DisableNetworkSync()
     ChangeCamera(normal_camera_id=-1, locked_camera_id=-1)
 
 
-@NeverRestart(741)
+@ContinueOnRest(741)
 def Event_741():
     """Event 741"""
     if PlayerNotInOwnWorld():
@@ -733,7 +733,7 @@ def Event_750():
     RemoveGoodFromPlayer(item=10230, quantity=99)
 
 
-@NeverRestart(970)
+@ContinueOnRest(970)
 def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
     """Event 970"""
     if FlagEnabled(flag):
@@ -751,7 +751,7 @@ def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, it
         AwardItemLot(item_lot_param_id_2, host_only=True)
 
 
-@NeverRestart(6099)
+@ContinueOnRest(6099)
 def Event_6099():
     """Event 6099"""
     DisableNetworkSync()
@@ -790,7 +790,7 @@ def Event_6099():
     EnableFlag(6099)
 
 
-@NeverRestart(6900)
+@ContinueOnRest(6900)
 def Event_6900():
     """Event 6900"""
     if PlayerNotInOwnWorld():
@@ -804,7 +804,7 @@ def Event_6900():
     EnableFlag(6030)
 
 
-@NeverRestart(9510)
+@ContinueOnRest(9510)
 def Event_9510():
     """Event 9510"""
     if ThisEventSlotFlagEnabled():
@@ -819,7 +819,7 @@ def Event_9510():
     EnableFlag(9510)
 
 
-@NeverRestart(9511)
+@ContinueOnRest(9511)
 def Event_9511():
     """Event 9511"""
     if ThisEventSlotFlagEnabled():
@@ -833,7 +833,7 @@ def Event_9511():
     EnableFlag(9511)
 
 
-@NeverRestart(9512)
+@ContinueOnRest(9512)
 def Event_9512():
     """Event 9512"""
     if ThisEventSlotFlagEnabled():
@@ -993,7 +993,7 @@ def Event_9570(_, item_lot_param_id: int, special_effect: int):
     Restart()
 
 
-@NeverRestart(9000)
+@ContinueOnRest(9000)
 def Event_9000(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     """Event 9000"""
     if PlayerNotInOwnWorld():
@@ -1015,7 +1015,7 @@ def Event_9000(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
     Restart()
 
 
-@NeverRestart(9002)
+@ContinueOnRest(9002)
 def Event_9002(_, flag: int):
     """Event 9002"""
     if PlayerNotInOwnWorld():
@@ -1079,7 +1079,7 @@ def Event_9002(_, flag: int):
     Restart()
 
 
-@NeverRestart(9004)
+@ContinueOnRest(9004)
 def Event_9004(_, flag: int):
     """Event 9004"""
     if PlayerNotInOwnWorld():
@@ -1187,7 +1187,7 @@ def Event_9004(_, flag: int):
     Restart()
 
 
-@NeverRestart(9005)
+@ContinueOnRest(9005)
 def Event_9005(_, flag: int):
     """Event 9005"""
     if PlayerNotInOwnWorld():
@@ -1295,7 +1295,7 @@ def Event_9005(_, flag: int):
     Restart()
 
 
-@NeverRestart(9006)
+@ContinueOnRest(9006)
 def Event_9006(_, flag: int):
     """Event 9006"""
     if PlayerNotInOwnWorld():
@@ -1319,7 +1319,7 @@ def Event_9006(_, flag: int):
     Restart()
 
 
-@NeverRestart(9010)
+@ContinueOnRest(9010)
 def Event_9010():
     """Event 9010"""
     if PlayerNotInOwnWorld():
@@ -1354,7 +1354,7 @@ def Event_9010():
     Restart()
 
 
-@NeverRestart(9011)
+@ContinueOnRest(9011)
 def Event_9011(_, flag: int):
     """Event 9011"""
     if PlayerNotInOwnWorld():
@@ -1399,7 +1399,7 @@ def Event_9011(_, flag: int):
     Restart()
 
 
-@NeverRestart(9012)
+@ContinueOnRest(9012)
 def Event_9012():
     """Event 9012"""
     if PlayerNotInOwnWorld():
@@ -1435,7 +1435,7 @@ def Event_9014():
     EnableFlag(9014)
 
 
-@NeverRestart(9015)
+@ContinueOnRest(9015)
 def Event_9015():
     """Event 9015"""
     if PlayerNotInOwnWorld():
@@ -1500,7 +1500,7 @@ def Event_9019(_, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(9020)
+@ContinueOnRest(9020)
 def Event_9020(_, flag: int, first_flag: int, last_flag: int, flag_1: int, area_id: uchar, block_id: uchar):
     """Event 9020"""
     if PlayerNotInOwnWorld():
@@ -1525,7 +1525,7 @@ def Event_9020(_, flag: int, first_flag: int, last_flag: int, flag_1: int, area_
     Restart()
 
 
-@NeverRestart(9080)
+@ContinueOnRest(9080)
 def Event_9080(_, item_type: uchar, item: int, flag: int):
     """Event 9080"""
     if PlayerNotInOwnWorld():
@@ -1540,7 +1540,7 @@ def Event_9080(_, item_type: uchar, item: int, flag: int):
     DisableFlag(flag)
 
 
-@NeverRestart(9100)
+@ContinueOnRest(9100)
 def Event_9100(_, flag: int):
     """Event 9100"""
     if PlayerNotInOwnWorld():
@@ -1556,7 +1556,7 @@ def Event_9100(_, flag: int):
     Restart()
 
 
-@NeverRestart(9101)
+@ContinueOnRest(9101)
 def Event_9101(_, flag: int):
     """Event 9101"""
     if PlayerNotInOwnWorld():
@@ -1627,7 +1627,7 @@ def Event_9101(_, flag: int):
     Restart()
 
 
-@NeverRestart(9102)
+@ContinueOnRest(9102)
 def Event_9102(_, flag: int):
     """Event 9102"""
     if PlayerNotInOwnWorld():
@@ -1660,7 +1660,7 @@ def Event_9102(_, flag: int):
     Restart()
 
 
-@NeverRestart(9103)
+@ContinueOnRest(9103)
 def Event_9103(_, flag: int):
     """Event 9103"""
     if PlayerNotInOwnWorld():
@@ -1676,7 +1676,7 @@ def Event_9103(_, flag: int):
     Restart()
 
 
-@NeverRestart(9104)
+@ContinueOnRest(9104)
 def Event_9104(_, flag: int):
     """Event 9104"""
     if PlayerNotInOwnWorld():
@@ -1710,7 +1710,7 @@ def Event_9104(_, flag: int):
     Restart()
 
 
-@NeverRestart(9105)
+@ContinueOnRest(9105)
 def Event_9105(_, flag: int, flag_1: int, flag_2: int):
     """Event 9105"""
     if PlayerNotInOwnWorld():
@@ -1763,7 +1763,7 @@ def Event_9106(_, flag: int):
     Restart()
 
 
-@NeverRestart(9107)
+@ContinueOnRest(9107)
 def Event_9107(_, flag: int):
     """Event 9107"""
     if PlayerNotInOwnWorld():
@@ -1783,7 +1783,7 @@ def Event_9107(_, flag: int):
     Restart()
 
 
-@NeverRestart(9108)
+@ContinueOnRest(9108)
 def Event_9108(_, flag: int):
     """Event 9108"""
     if PlayerNotInOwnWorld():
@@ -1803,7 +1803,7 @@ def Event_9108(_, flag: int):
     Restart()
 
 
-@NeverRestart(9109)
+@ContinueOnRest(9109)
 def Event_9109(_, flag: int):
     """Event 9109"""
     if PlayerNotInOwnWorld():
@@ -1823,7 +1823,7 @@ def Event_9109(_, flag: int):
     Restart()
 
 
-@NeverRestart(9110)
+@ContinueOnRest(9110)
 def Event_9110(_, flag: int):
     """Event 9110"""
     if PlayerNotInOwnWorld():
@@ -1851,7 +1851,7 @@ def Event_9110(_, flag: int):
     Restart()
 
 
-@NeverRestart(9111)
+@ContinueOnRest(9111)
 def Event_9111(_, flag: int, flag_1: int):
     """Event 9111"""
     if PlayerNotInOwnWorld():
@@ -1884,7 +1884,7 @@ def Event_9111(_, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(9112)
+@ContinueOnRest(9112)
 def Event_9112(_, flag: int):
     """Event 9112"""
     if PlayerNotInOwnWorld():
@@ -1900,7 +1900,7 @@ def Event_9112(_, flag: int):
     Restart()
 
 
-@NeverRestart(9113)
+@ContinueOnRest(9113)
 def Event_9113(_, flag: int):
     """Event 9113"""
     if PlayerNotInOwnWorld():
@@ -1934,7 +1934,7 @@ def Event_9113(_, flag: int):
     Restart()
 
 
-@NeverRestart(9114)
+@ContinueOnRest(9114)
 def Event_9114(_, flag: int):
     """Event 9114"""
     if PlayerNotInOwnWorld():
@@ -2047,7 +2047,7 @@ def Event_9120(
     EnableFlag(flag_1)
 
 
-@NeverRestart(690)
+@ContinueOnRest(690)
 def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
     """Event 690"""
     if ThisEventSlotFlagDisabled():
@@ -2087,7 +2087,7 @@ def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
     Restart()
 
 
-@NeverRestart(840)
+@ContinueOnRest(840)
 def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_1: int):
     """Event 840"""
     DisableFlag(flag)
@@ -2106,7 +2106,7 @@ def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_
     Restart()
 
 
-@NeverRestart(870)
+@ContinueOnRest(870)
 def Event_870(_, covenant: uchar, flag: int):
     """Event 870"""
     MAIN.Await(PlayerCovenant(covenant))

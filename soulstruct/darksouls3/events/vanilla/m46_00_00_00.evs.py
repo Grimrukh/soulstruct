@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     GotoIfHollowArenaMatchType(Label.L0, match_type=HollowArenaMatchType.Duel)
@@ -66,7 +66,7 @@ def Constructor():
     CommonFunc_20005940(0, 14605300)
 
 
-@NeverRestart(14605200)
+@ContinueOnRest(14605200)
 def Event_14605200(_, seconds: float, seconds_1: float, seconds_2: float):
     """Event 14605200"""
     AND_1.Add(PlayerInOwnWorld())

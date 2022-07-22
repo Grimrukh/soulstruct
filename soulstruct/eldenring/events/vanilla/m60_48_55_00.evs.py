@@ -21,13 +21,13 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_48_55_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005300(0, 1048550200, 1048550200, 40522, 0.0, 0)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1248558301)
@@ -90,7 +90,7 @@ def Event_200():
     Event_1248552320(0, 1248550800, 1248550801)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005420(0, 1248550300, 1248551300, 1248551301, 1248550301, 1248550302, 1248550303, 0.0)
@@ -113,7 +113,7 @@ def Event_1248552320(_, character: uint, character_1: uint):
     EnableNetworkFlag(1248552815)
 
 
-@NeverRestart(1248552321)
+@ContinueOnRest(1248552321)
 def Event_1248552321(_, character: uint, character_1: uint, npc_threat_level: uint, flag: uint):
     """Event 1248552321"""
     DisableNetworkSync()

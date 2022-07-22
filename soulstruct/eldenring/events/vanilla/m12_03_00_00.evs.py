@@ -22,7 +22,7 @@ from .entities.m12_03_00_00_entities import *
 from .entities.m12_02_00_00_entities import Assets as m12_02_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71231, asset=Assets.AEG099_060_9001)
@@ -374,7 +374,7 @@ def Constructor():
     Event_12030720(0, 12030725)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.FiaDeathbedCompanion0)
@@ -545,7 +545,7 @@ def Event_12032500():
     Restart()
 
 
-@NeverRestart(12032504)
+@ContinueOnRest(12032504)
 def Event_12032504():
     """Event 12032504"""
     if PlayerNotInOwnWorld():
@@ -585,7 +585,7 @@ def Event_12032504():
     DisplayAreaWelcomeMessage(text=12010)
 
 
-@NeverRestart(12032509)
+@ContinueOnRest(12032509)
 def Event_12032509():
     """Event 12032509"""
     DisableNetworkSync()
@@ -1068,7 +1068,7 @@ def Event_12032812():
     EnableBossHealthBar(Characters.FiasChampion1, name=137100, bar_slot=2)
 
 
-@NeverRestart(12032820)
+@ContinueOnRest(12032820)
 def Event_12032820():
     """Event 12032820"""
     if PlayerNotInOwnWorld():
@@ -1193,7 +1193,7 @@ def Event_12032840():
     EnableFlag(12032806)
     DisplayNetworkMessage(text=2920000, unk_4_5=False)
     Wait(4.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=12032806,

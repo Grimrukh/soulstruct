@@ -293,9 +293,9 @@ class OnOffChange(BaseNegatableEMEVDEnum):
 
 
 class RestartType(BaseEMEVDEnum):
-    NeverRestart = 0
+    ContinueOnRest = 0
     RestartOnRest = 1
-    UnknownRestart = 2
+    EndOnRest = 2
 
 
 class SummonSignType(BaseEMEVDEnum):

@@ -19,7 +19,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_42_34_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005261(0, character=Characters.Page0, region=1042342210, radius=15.0, seconds=0.0, animation_id=0)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m16_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=16000002, asset=Assets.AEG099_060_9002)
@@ -406,7 +406,7 @@ def Constructor():
     Event_16003765()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Tanith0)
@@ -714,7 +714,7 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
     EnableAI(character)
 
 
-@NeverRestart(16002500)
+@ContinueOnRest(16002500)
 def Event_16002500():
     """Event 16002500"""
     GotoIfFlagDisabled(Label.L0, flag=16000500)
@@ -760,13 +760,13 @@ def Event_16002500():
     Restart()
 
 
-@NeverRestart(16002505)
+@ContinueOnRest(16002505)
 def Event_16002505():
     """Event 16002505"""
     DisableAsset(Assets.AEG007_434_9000)
 
 
-@NeverRestart(16002510)
+@ContinueOnRest(16002510)
 def Event_16002510():
     """Event 16002510"""
     CommonFunc_90005500(
@@ -831,7 +831,7 @@ def Event_16002510():
     )
 
 
-@NeverRestart(16000519)
+@ContinueOnRest(16000519)
 def Event_16000519():
     """Event 16000519"""
     if ThisEventSlotFlagEnabled():
@@ -936,7 +936,7 @@ def Event_16002570(
     RotateToFaceEntity(PLAYER, asset, wait_for_completion=True)
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
@@ -962,7 +962,7 @@ def Event_16002579():
     
     MAIN.Await(FlagEnabled(16002578))
     
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=16002575,
@@ -1867,7 +1867,7 @@ def Event_16002865():
     EnableBossHealthBar(Characters.IronVirgin3, name=904470001, bar_slot=1)
 
 
-@NeverRestart(16002889)
+@ContinueOnRest(16002889)
 def Event_16002889():
     """Event 16002889"""
     CommonFunc_9005800(
@@ -1895,7 +1895,7 @@ def Event_16002889():
     CommonFunc_9005822(0, 16000860, 931000, 16002865, 16002866, 0, 16002862, 0, 0)
 
 
-@NeverRestart(16002899)
+@ContinueOnRest(16002899)
 def Event_16002899():
     """Event 16002899"""
     CommonFunc_9005800(

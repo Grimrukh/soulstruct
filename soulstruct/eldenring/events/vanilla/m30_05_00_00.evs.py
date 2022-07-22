@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_05_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005646(
@@ -94,7 +94,7 @@ def Constructor():
     CommonFunc_90005621(0, 30050575, 30051578)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005200(
@@ -383,7 +383,7 @@ def Preconstructor():
     CommonFunc_90005782(0, 30052160, 30052855, 30050700, 30052855, 30052809, 0)
 
 
-@NeverRestart(30052580)
+@ContinueOnRest(30052580)
 def Event_30052580():
     """Event 30052580"""
     RegisterLadder(start_climbing_flag=30050580, stop_climbing_flag=30050581, asset=Assets.AEG027_000_0500)
@@ -474,7 +474,7 @@ def Event_30052350(_, character: uint, character_1: uint):
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
 
 
-@NeverRestart(30052400)
+@ContinueOnRest(30052400)
 def Event_30052400():
     """Event 30052400"""
     if FlagEnabled(57):
@@ -909,7 +909,7 @@ def Event_30052811():
     EnableFlag(30052802)
 
 
-@NeverRestart(30052825)
+@ContinueOnRest(30052825)
 def Event_30052825(_, flag: uint, region: uint, character: uint, target_entity: uint, region_1: uint, animation: int):
     """Event 30052825"""
     if PlayerNotInOwnWorld():

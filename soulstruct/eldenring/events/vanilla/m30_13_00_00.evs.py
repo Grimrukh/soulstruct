@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_13_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=73013, asset=Assets.AEG099_060_9000)
@@ -454,13 +454,13 @@ def Constructor():
     Event_30132205(11, 30131221, 30132281)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_30130519()
 
 
-@NeverRestart(30132510)
+@ContinueOnRest(30132510)
 def Event_30132510():
     """Event 30132510"""
     CommonFunc_90005500(
@@ -481,7 +481,7 @@ def Event_30132510():
     )
 
 
-@NeverRestart(30132580)
+@ContinueOnRest(30132580)
 def Event_30132580():
     """Event 30132580"""
     RegisterLadder(start_climbing_flag=30130580, stop_climbing_flag=30130581, asset=Assets.AEG027_034_0500)
@@ -513,7 +513,7 @@ def Event_30132200(_, asset: uint, asset_1: uint, region: uint, destination: uin
     AND_2.Add(HealthValue(PLAYER) == 0)
     GotoIfConditionTrue(Label.L18, input_condition=AND_2)
     DisableCharacter(PLAYER)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=destination,
@@ -580,7 +580,7 @@ def Event_30132205(_, flag: uint, region: uint):
     Restart()
 
 
-@NeverRestart(30130519)
+@ContinueOnRest(30130519)
 def Event_30130519():
     """Event 30130519"""
     if FlagEnabled(30130519):

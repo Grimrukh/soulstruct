@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13410001, obj=3411951, reaction_distance=5.0)
@@ -1828,7 +1828,7 @@ def Constructor():
     CommonFunc_20005628(0, 0, -1, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13415600()
@@ -1839,7 +1839,7 @@ def Preconstructor():
     Event_13415700()
 
 
-@NeverRestart(13410300)
+@ContinueOnRest(13410300)
 def Event_13410300():
     """Event 13410300"""
     if PlayerNotInOwnWorld():
@@ -2568,7 +2568,7 @@ def Event_13415831():
     EnableBossHealthBar(3410831, name=905251, bar_slot=1)
 
 
-@NeverRestart(13410832)
+@ContinueOnRest(13410832)
 def Event_13410832():
     """Event 13410832"""
     if FlagEnabled(13410830):
@@ -2701,7 +2701,7 @@ def Event_13415843():
     Restart()
 
 
-@NeverRestart(13415845)
+@ContinueOnRest(13415845)
 def Event_13415845():
     """Event 13415845"""
     if FlagEnabled(13410830):
@@ -2742,7 +2742,7 @@ def Event_13415600():
     End()
 
 
-@NeverRestart(13415620)
+@ContinueOnRest(13415620)
 def Event_13415620(_, character: int, command_id: int, obj: int, destination: int):
     """Event 13415620"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2789,7 +2789,7 @@ def Event_13415620(_, character: int, command_id: int, obj: int, destination: in
     End()
 
 
-@NeverRestart(13415640)
+@ContinueOnRest(13415640)
 def Event_13415640(_, character: int):
     """Event 13415640"""
     GotoIfPlayerNotInOwnWorld(Label.L10)

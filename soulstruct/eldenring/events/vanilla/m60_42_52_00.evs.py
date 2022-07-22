@@ -20,7 +20,7 @@ from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005201(0, 1042520303, 30000, 20000, 15.0, 0.0, 0, 0, 0, 0)

@@ -21,7 +21,7 @@ from .entities.m60_43_38_00_entities import *
 from .entities.m60_43_37_00_entities import Characters as m60_43_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043380000, asset=Assets.AEG099_060_9000)
@@ -48,7 +48,7 @@ def Constructor():
     Event_1043383703(0, 1043380700, 1043372712, 160.0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.YuraHunterofBloodyFingers)

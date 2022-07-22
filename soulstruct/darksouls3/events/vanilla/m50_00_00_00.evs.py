@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_20005500(0, flag=15000800, bonfire_flag=15000000, character=5000950, obj=5001950)
@@ -703,7 +703,7 @@ def Constructor():
     Event_15005721(0, 5000705, 5001705)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_15005200(0, character=5000200, region=5002200, region_1=0, region_2=0)
@@ -751,7 +751,7 @@ def Event_15005100():
     Restart()
 
 
-@NeverRestart(15005120)
+@ContinueOnRest(15005120)
 def Event_15005120(_, flag: int, character: int):
     """Event 15005120"""
     AddSpecialEffect(character, 17500)
@@ -2379,7 +2379,7 @@ def Event_15005849():
     CommonFunc_20005841(0, 5001800)
 
 
-@NeverRestart(15005700)
+@ContinueOnRest(15005700)
 def Event_15005700(
     _,
     character: int,
@@ -2582,7 +2582,7 @@ def Event_15005701(_, obj: int, character: int, obj_1: int):
     EnableObject(obj_1)
 
 
-@NeverRestart(15005702)
+@ContinueOnRest(15005702)
 def Event_15005702(_, character: int, character_1: int, flag: int, flag_1: int):
     """Event 15005702"""
     EndIfFlagRangeAnyEnabled(flag_range=(1805, 1814))
@@ -2606,7 +2606,7 @@ def Event_15005702(_, character: int, character_1: int, flag: int, flag_1: int):
     DisableBackread(character)
 
 
-@NeverRestart(15005720)
+@ContinueOnRest(15005720)
 def Event_15005720(_, character: int, animation_id: int, command_id: int, obj: int, destination: int):
     """Event 15005720"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2680,7 +2680,7 @@ def Event_15005720(_, character: int, animation_id: int, command_id: int, obj: i
     End()
 
 
-@NeverRestart(15005721)
+@ContinueOnRest(15005721)
 def Event_15005721(_, character: int, obj: int):
     """Event 15005721"""
     GotoIfFlagEnabled(Label.L0, flag=15000721)

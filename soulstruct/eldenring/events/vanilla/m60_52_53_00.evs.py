@@ -22,7 +22,7 @@ from .entities.m60_52_53_00_entities import *
 from .entities.m60_52_52_00_entities import Characters as m60_52_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1052530000, asset=Assets.AEG099_060_9001)
@@ -97,7 +97,7 @@ def Event_1052532510():
     SetCharacterTalkRange(character=Characters.Dummy, distance=300.0)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005781(0, flag=1252520800, flag_1=1252532160, flag_2=1252532161, character=Characters.LivingPot0)
@@ -148,7 +148,7 @@ def Event_200():
     )
 
 
-@NeverRestart(1052532400)
+@ContinueOnRest(1052532400)
 def Event_1052532400(
     _,
     flag: uint,

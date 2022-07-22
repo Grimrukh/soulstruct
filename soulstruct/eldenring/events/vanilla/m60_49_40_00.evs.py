@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_49_40_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005560(0, flag=1049400600, asset=Assets.AEG099_635_9000, left=0)
@@ -41,7 +41,7 @@ def Constructor():
     CommonFunc_90005706(0, 1049400700, 90100, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DragonbarrowSilentSpirit)
@@ -58,7 +58,7 @@ def Event_1049402390():
     Kill(Characters.PutridCorpse4)
 
 
-@NeverRestart(1046400510)
+@ContinueOnRest(1046400510)
 def Event_1046400510():
     """Event 1046400510"""
     if ThisEventSlotFlagEnabled():

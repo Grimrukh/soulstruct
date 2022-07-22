@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_01_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005646(
@@ -120,7 +120,7 @@ def Constructor():
     Event_30010790(0, 30011520, 30010800)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005211(
@@ -437,7 +437,7 @@ def Event_30012910(_, character: uint, region: uint, radius: float, seconds: flo
     EnableAI(character)
 
 
-@NeverRestart(30012500)
+@ContinueOnRest(30012500)
 def Event_30012500():
     """Event 30012500"""
     GotoIfFlagEnabled(Label.L0, flag=30010500)
@@ -466,7 +466,7 @@ def Event_30012500():
     Restart()
 
 
-@NeverRestart(30012505)
+@ContinueOnRest(30012505)
 def Event_30012505():
     """Event 30012505"""
     AND_1.Add(FlagEnabled(30012510))
@@ -571,7 +571,7 @@ def Event_30012505():
     Restart()
 
 
-@NeverRestart(30012506)
+@ContinueOnRest(30012506)
 def Event_30012506():
     """Event 30012506"""
     AND_1.Add(FlagEnabled(30012510))
@@ -584,14 +584,14 @@ def Event_30012506():
     Restart()
 
 
-@UnknownRestart(30012520)
+@EndOnRest(30012520)
 def Event_30012520():
     """Event 30012520"""
     DisableFlag(30010500)
     End()
 
 
-@NeverRestart(30012580)
+@ContinueOnRest(30012580)
 def Event_30012580():
     """Event 30012580"""
     RegisterLadder(start_climbing_flag=30010580, stop_climbing_flag=30010581, asset=Assets.AEG027_005_1000)

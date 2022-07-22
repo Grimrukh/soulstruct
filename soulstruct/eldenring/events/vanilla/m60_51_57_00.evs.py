@@ -22,7 +22,7 @@ from .entities.m60_51_57_00_entities import *
 from .entities.m60_50_57_00_entities import Characters as m60_50_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1051570000, asset=Assets.AEG099_060_9003)
@@ -1102,7 +1102,7 @@ def Constructor():
     CommonFunc_90005706(0, 1051570710, 930025, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(1051570700)
@@ -1110,7 +1110,7 @@ def Preconstructor():
     Event_1051570519()
 
 
-@NeverRestart(1051572510)
+@ContinueOnRest(1051572510)
 def Event_1051572510():
     """Event 1051572510"""
     CommonFunc_90005500(
@@ -1131,7 +1131,7 @@ def Event_1051572510():
     )
 
 
-@NeverRestart(1051570519)
+@ContinueOnRest(1051570519)
 def Event_1051570519():
     """Event 1051570519"""
     if ThisEventSlotFlagEnabled():
@@ -1665,7 +1665,7 @@ def Event_1051572580():
     RegisterLadder(start_climbing_flag=1051570594, stop_climbing_flag=1051570595, asset=Assets.AEG030_822_2005)
 
 
-@NeverRestart(1051572800)
+@ContinueOnRest(1051572800)
 def Event_1051572800():
     """Event 1051572800"""
     if FlagEnabled(1051570800):
@@ -1856,7 +1856,7 @@ def Event_1051572829(_, region: uint):
     Restart()
 
 
-@NeverRestart(1051572849)
+@ContinueOnRest(1051572849)
 def Event_1051572849():
     """Event 1051572849"""
     CommonFunc_9005800(
@@ -1884,7 +1884,7 @@ def Event_1051572849():
     CommonFunc_9005822(0, 1051570800, 950000, 1051572805, 1051572806, 0, 1051572802, 0, 0)
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     RunEvent(1051572581, slot=0, args=(0,))
@@ -1987,7 +1987,7 @@ def Event_200():
     CommonFunc_90005456(0, 1251570400, 1251571410, 1251571418, 1251570400)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005450(0, 1251570400, 1251571400, 1251571410, 1251571418)

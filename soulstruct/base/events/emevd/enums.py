@@ -18,9 +18,9 @@ from enum import IntEnum
 
 
 class RestartType(IntEnum):
-    NeverRestart = 0
+    ContinueOnRest = 0
     RestartOnRest = 1
-    UnknownRestart = 2
+    EndOnRest = 2
 
 
 uint = "I"

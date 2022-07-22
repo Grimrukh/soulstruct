@@ -22,7 +22,7 @@ from .entities.m60_50_56_00_entities import *
 from .entities.m60_50_57_00_entities import Characters as m60_50_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005870(0, character=Characters.GreatWyrmTheodorix, name=904911600, npc_threat_level=5)
@@ -112,7 +112,7 @@ def Constructor():
     CommonFunc_90005774(0, 7604, 1050560700, 1050567700)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.JunoHoslow)

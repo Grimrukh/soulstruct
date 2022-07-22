@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m18_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     GotoIfPlayerNotInOwnWorld(Label.L0)
@@ -260,7 +260,7 @@ def Constructor():
     CommonFunc_90005706(0, 18000701, 30025, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Commoner)
@@ -813,7 +813,7 @@ def Event_18002450(_, asset_flag: uint, asset: uint, flag: uint):
     EnableFlag(18000400)
 
 
-@NeverRestart(18002510)
+@ContinueOnRest(18002510)
 def Event_18002510():
     """Event 18002510"""
     CommonFunc_90005500(
@@ -958,7 +958,7 @@ def Event_18002510():
         CommonFunc_90005682(0, 18000532, 18001530, 18002530, 18000530, 801100700, 801100705, 102, 0, 0, 0)
 
 
-@NeverRestart(18002520)
+@ContinueOnRest(18002520)
 def Event_18002520():
     """Event 18002520"""
     if ThisEventSlotFlagEnabled():
@@ -966,7 +966,7 @@ def Event_18002520():
     EnableFlag(18000530)
 
 
-@NeverRestart(18002569)
+@ContinueOnRest(18002569)
 def Event_18002569(_, flag: uint, asset: uint):
     """Event 18002569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)

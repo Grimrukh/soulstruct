@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_09_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=73009, asset=Assets.AEG099_060_9000)
@@ -240,14 +240,14 @@ def Constructor():
     Event_30090790(0, 30091670, 30090800)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_30090050()
     Event_30090519()
 
 
-@NeverRestart(30090050)
+@ContinueOnRest(30090050)
 def Event_30090050():
     """Event 30090050"""
     if ThisEventSlotFlagEnabled():
@@ -255,7 +255,7 @@ def Event_30090050():
     EnableFlag(30090500)
 
 
-@NeverRestart(30090100)
+@ContinueOnRest(30090100)
 def Event_30090100(_, flag: uint, asset: uint, obj_act_id: uint, obj_act_id_1: int):
     """Event 30090100"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -275,7 +275,7 @@ def Event_30090100(_, flag: uint, asset: uint, obj_act_id: uint, obj_act_id_1: i
     End()
 
 
-@NeverRestart(30092510)
+@ContinueOnRest(30092510)
 def Event_30092510():
     """Event 30092510"""
     CommonFunc_90005500(
@@ -296,7 +296,7 @@ def Event_30092510():
     )
 
 
-@NeverRestart(30090519)
+@ContinueOnRest(30090519)
 def Event_30090519():
     """Event 30090519"""
     if ThisEventSlotFlagEnabled():
@@ -519,14 +519,14 @@ def Event_30092410(
     Restart()
 
 
-@NeverRestart(30092580)
+@ContinueOnRest(30092580)
 def Event_30092580():
     """Event 30092580"""
     RegisterLadder(start_climbing_flag=30090580, stop_climbing_flag=30090581, asset=Assets.AEG027_040_0500)
     RegisterLadder(start_climbing_flag=30090582, stop_climbing_flag=30090583, asset=Assets.AEG027_005_0501)
 
 
-@NeverRestart(30092610)
+@ContinueOnRest(30092610)
 def Event_30092610(
     _,
     flag: uint,

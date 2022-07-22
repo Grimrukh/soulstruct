@@ -20,7 +20,7 @@ from soulstruct.bloodborne.events import *
 from soulstruct.bloodborne.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RunEvent(7000, slot=50, args=(3300950, 3301950, 999, 13307800))
@@ -342,7 +342,7 @@ def Constructor():
         EnableTreasure(obj=3301509)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableAnimations(3303950)
@@ -489,7 +489,7 @@ def Event_13304730(_, character: int, flag: int, flag_1: int, flag_2: int, flag_
     ForceAnimation(character, 7010)
 
 
-@NeverRestart(13301800)
+@ContinueOnRest(13301800)
 def Event_13301800():
     """Event 13301800"""
     GotoIfThisEventFlagDisabled(Label.L0)
@@ -552,7 +552,7 @@ def Event_13301800():
     )
 
 
-@NeverRestart(13301801)
+@ContinueOnRest(13301801)
 def Event_13301801():
     """Event 13301801"""
     DisableNetworkSync()
@@ -602,7 +602,7 @@ def Event_13301802():
     EnableFlag(9302)
 
 
-@NeverRestart(13301803)
+@ContinueOnRest(13301803)
 def Event_13301803():
     """Event 13301803"""
     AND_1.Add(CharacterHuman(PLAYER))
@@ -616,7 +616,7 @@ def Event_13301803():
     EnableFlag(13301802)
 
 
-@NeverRestart(13304870)
+@ContinueOnRest(13304870)
 def Event_13304870():
     """Event 13304870"""
     if FlagEnabled(13301800):
@@ -697,7 +697,7 @@ def Event_13304871():
     Restart()
 
 
-@NeverRestart(13304872)
+@ContinueOnRest(13304872)
 def Event_13304872():
     """Event 13304872"""
     AND_1.Add(CharacterHuman(PLAYER))
@@ -710,7 +710,7 @@ def Event_13304872():
     Restart()
 
 
-@NeverRestart(13304873)
+@ContinueOnRest(13304873)
 def Event_13304873():
     """Event 13304873"""
     AND_1.Add(CharacterHuman(PLAYER))
@@ -770,7 +770,7 @@ def Event_13304802():
     StartPlayLogMeasurement(measurement_id=3300010, name=94, overwrite=True)
 
 
-@NeverRestart(13304803)
+@ContinueOnRest(13304803)
 def Event_13304803():
     """Event 13304803"""
     DisableNetworkSync()
@@ -805,7 +805,7 @@ def Event_13304803():
     EnableBossMusic(sound_id=3303803)
 
 
-@NeverRestart(13304804)
+@ContinueOnRest(13304804)
 def Event_13304804():
     """Event 13304804"""
     if FlagEnabled(13301800):
@@ -827,7 +827,7 @@ def Event_13304804():
     Restart()
 
 
-@NeverRestart(13304805)
+@ContinueOnRest(13304805)
 def Event_13304805():
     """Event 13304805"""
     DisableNetworkSync()
@@ -841,7 +841,7 @@ def Event_13304805():
     DisableBossMusic(sound_id=-1)
 
 
-@NeverRestart(13304807)
+@ContinueOnRest(13304807)
 def Event_13304807():
     """Event 13304807"""
     if FlagEnabled(13301800):
@@ -862,7 +862,7 @@ def Event_13304807():
     ReplanAI(3300800)
 
 
-@NeverRestart(13304808)
+@ContinueOnRest(13304808)
 def Event_13304808():
     """Event 13304808"""
     if FlagEnabled(13301800):
@@ -1033,7 +1033,7 @@ def Event_13300100():
     ForceAnimation(3301100, 1)
 
 
-@NeverRestart(13300110)
+@ContinueOnRest(13300110)
 def Event_13300110():
     """Event 13300110"""
     AND_1.Add(FlagEnabled(13300115))
@@ -1058,7 +1058,7 @@ def Event_13300110():
         DisableObjectActivation(3301011, obj_act_id=3300000)
 
 
-@NeverRestart(13300111)
+@ContinueOnRest(13300111)
 def Event_13300111():
     """Event 13300111"""
     if ThisEventSlotFlagEnabled():
@@ -1073,7 +1073,7 @@ def Event_13300111():
     EnableObjectActivation(3301011, obj_act_id=3300000)
 
 
-@NeverRestart(13300112)
+@ContinueOnRest(13300112)
 def Event_13300112():
     """Event 13300112"""
     AND_3.Add(FlagDisabled(13300115))
@@ -1116,7 +1116,7 @@ def Event_13300112():
     Restart()
 
 
-@NeverRestart(13300113)
+@ContinueOnRest(13300113)
 def Event_13300113():
     """Event 13300113"""
     AND_3.Add(FlagEnabled(13300115))
@@ -1159,7 +1159,7 @@ def Event_13300113():
     Restart()
 
 
-@NeverRestart(13300120)
+@ContinueOnRest(13300120)
 def Event_13300120():
     """Event 13300120"""
     GotoIfThisEventFlagEnabled(Label.L0)
@@ -1193,7 +1193,7 @@ def Event_13300130(_, character: int, flag: int):
     Wait(0.0)
 
 
-@NeverRestart(13300200)
+@ContinueOnRest(13300200)
 def Event_13300200():
     """Event 13300200"""
     if ThisEventFlagEnabled():
@@ -1513,7 +1513,7 @@ def Event_13300700():
     DropMandatoryTreasure(3300710)
 
 
-@NeverRestart(13300990)
+@ContinueOnRest(13300990)
 def Event_13300990():
     """Event 13300990"""
     if ThisEventFlagEnabled():

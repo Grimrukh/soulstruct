@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_20_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=30200000, asset=Assets.AEG099_060_9000)
@@ -314,7 +314,7 @@ def Constructor():
     Event_30202200()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005460(0, character=Characters.GiantOctopus0)
@@ -328,7 +328,7 @@ def Preconstructor():
     CommonFunc_90005462(0, 30200202)
 
 
-@NeverRestart(30202510)
+@ContinueOnRest(30202510)
 def Event_30202510():
     """Event 30202510"""
     CommonFunc_90005500(

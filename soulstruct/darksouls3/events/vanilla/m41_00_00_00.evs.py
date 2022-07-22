@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=14100000, obj=4101950, reaction_distance=5.0)
@@ -83,7 +83,7 @@ def Constructor():
     CommonFunc_20005714(0, 14104191, 14105805, 4100191, 4102806, 14100801)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableSoundEvent(sound_id=4104800)
@@ -93,7 +93,7 @@ def Preconstructor():
     Event_14105510()
 
 
-@NeverRestart(14100100)
+@ContinueOnRest(14100100)
 def Event_14100100():
     """Event 14100100"""
     DisableMapCollision(collision=4104101)
@@ -199,7 +199,7 @@ def Event_14100100():
     End()
 
 
-@NeverRestart(14100101)
+@ContinueOnRest(14100101)
 def Event_14100101():
     """Event 14100101"""
     DisableFlag(101)
@@ -263,7 +263,7 @@ def Event_14100101():
     End()
 
 
-@NeverRestart(14105520)
+@ContinueOnRest(14105520)
 def Event_14105520(_, text: int, anchor_entity: int):
     """Event 14105520"""
     DisableNetworkSync()
@@ -275,7 +275,7 @@ def Event_14105520(_, text: int, anchor_entity: int):
     Restart()
 
 
-@NeverRestart(14105500)
+@ContinueOnRest(14105500)
 def Event_14105500():
     """Event 14105500"""
     MAIN.Await(ActionButtonParamActivated(action_button_id=9343, entity=4101101))
@@ -316,7 +316,7 @@ def Event_14105200():
     DisableCharacter(4100200)
 
 
-@NeverRestart(14100800)
+@ContinueOnRest(14100800)
 def Event_14100800():
     """Event 14100800"""
     if FlagEnabled(14100800):

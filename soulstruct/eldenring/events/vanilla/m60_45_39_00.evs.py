@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_45_39_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005616(0, flag=530170, region=1045392700)
@@ -121,7 +121,7 @@ def Constructor():
     CommonFunc_90005775(0, 81463900, 1045399206, -1.0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.DHunteroftheDead)

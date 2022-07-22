@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_49_39_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049390000, asset=Assets.AEG099_060_9000)
@@ -321,7 +321,7 @@ def Event_1049392211(_, source_entity: uint, seconds: float):
     Restart()
 
 
-@NeverRestart(1049392300)
+@ContinueOnRest(1049392300)
 def Event_1049392300(_, asset: uint, flag: uint):
     """Event 1049392300"""
     EnableNetworkSync()
@@ -334,7 +334,7 @@ def Event_1049392300(_, asset: uint, flag: uint):
     DeleteAssetVFX(asset)
 
 
-@NeverRestart(1049392301)
+@ContinueOnRest(1049392301)
 def Event_1049392301(_, asset: uint, flag: uint):
     """Event 1049392301"""
     EnableNetworkSync()
@@ -347,7 +347,7 @@ def Event_1049392301(_, asset: uint, flag: uint):
     DeleteAssetVFX(asset)
 
 
-@NeverRestart(1049392302)
+@ContinueOnRest(1049392302)
 def Event_1049392302(_, asset: uint, flag: uint):
     """Event 1049392302"""
     EnableNetworkSync()
@@ -369,7 +369,7 @@ def Event_1049392302(_, asset: uint, flag: uint):
     End()
 
 
-@NeverRestart(1049392303)
+@ContinueOnRest(1049392303)
 def Event_1049392303(_, asset: uint, flag: uint):
     """Event 1049392303"""
     EnableNetworkSync()
@@ -391,7 +391,7 @@ def Event_1049392303(_, asset: uint, flag: uint):
     CreateAssetVFX(asset, vfx_id=100, model_point=806031)
 
 
-@NeverRestart(1049392350)
+@ContinueOnRest(1049392350)
 def Event_1049392350(_, character: uint, special_effect: int, region: uint, region_1: uint, region_2: uint):
     """Event 1049392350"""
     AND_1.Add(CharacterDead(character))
@@ -451,7 +451,7 @@ def Event_1049392350(_, character: uint, special_effect: int, region: uint, regi
     Restart()
 
 
-@NeverRestart(1049392580)
+@ContinueOnRest(1049392580)
 def Event_1049392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
     """Event 1049392580"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

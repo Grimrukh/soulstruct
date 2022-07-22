@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_35_53_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=76355, asset=Assets.AEG099_060_9000, enemy_block_distance=5.0, character=0)
@@ -151,7 +151,7 @@ def Event_1035532200(_, attacker__character: uint, region: uint):
     RemoveSpecialEffect(attacker__character, 5658)
 
 
-@NeverRestart(1035532210)
+@ContinueOnRest(1035532210)
 def Event_1035532210():
     """Event 1035532210"""
     AddSpecialEffect(1035530210, 8092)
@@ -193,7 +193,7 @@ def Event_1035532450(_, asset: uint):
     End()
 
 
-@NeverRestart(1035532500)
+@ContinueOnRest(1035532500)
 def Event_1035532500():
     """Event 1035532500"""
     if FlagEnabled(57):

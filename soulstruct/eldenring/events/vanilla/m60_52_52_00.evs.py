@@ -22,7 +22,7 @@ from .entities.m60_52_52_00_entities import *
 from .entities.m60_52_53_00_entities import Assets as m60_52_Assets, Characters as m60_52_Characters
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     Event_1052520800()
@@ -191,7 +191,7 @@ def Event_1052522811():
     EnableFlag(1252522802)
 
 
-@NeverRestart(1052522812)
+@ContinueOnRest(1052522812)
 def Event_1052522812():
     """Event 1052522812"""
     if FlagEnabled(1252520800):

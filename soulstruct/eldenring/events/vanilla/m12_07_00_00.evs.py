@@ -22,7 +22,7 @@ from .entities.m12_07_00_00_entities import *
 from .entities.m60_45_37_00_entities import Assets as m60_45_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71270, asset=Assets.AEG099_060_9000)
@@ -51,7 +51,7 @@ def Constructor():
     Event_12070510()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(12070700)
@@ -362,7 +362,7 @@ def Preconstructor():
     Event_12073700(0, 12070700, 12070701)
 
 
-@NeverRestart(12070510)
+@ContinueOnRest(12070510)
 def Event_12070510():
     """Event 12070510"""
     CommonFunc_90005500(
@@ -399,7 +399,7 @@ def Event_12070510():
     )
 
 
-@NeverRestart(12070519)
+@ContinueOnRest(12070519)
 def Event_12070519():
     """Event 12070519"""
     if ThisEventSlotFlagEnabled():

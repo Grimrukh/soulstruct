@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_08_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005646(
@@ -249,7 +249,7 @@ def Constructor():
     Event_30082811()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_30080519()
@@ -308,7 +308,7 @@ def Event_30082401():
     End()
 
 
-@NeverRestart(30082500)
+@ContinueOnRest(30082500)
 def Event_30082500():
     """Event 30082500"""
     if FlagEnabled(57):
@@ -832,7 +832,7 @@ def Event_30082500():
         CommonFunc_90005675(0, 30082505, 30083505, 30081505, 30082500, 801203000, 0.0, 1)
 
 
-@NeverRestart(30082510)
+@ContinueOnRest(30082510)
 def Event_30082510():
     """Event 30082510"""
     CommonFunc_90005500(
@@ -853,7 +853,7 @@ def Event_30082510():
     )
 
 
-@NeverRestart(30080519)
+@ContinueOnRest(30080519)
 def Event_30080519():
     """Event 30080519"""
     if ThisEventSlotFlagEnabled():
@@ -880,7 +880,7 @@ def Event_30080520():
     End()
 
 
-@NeverRestart(30082564)
+@ContinueOnRest(30082564)
 def Event_30082564(_, flag: uint, asset: uint):
     """Event 30082564"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
@@ -901,7 +901,7 @@ def Event_30082564(_, flag: uint, asset: uint):
     DisableAsset(asset)
 
 
-@NeverRestart(30082580)
+@ContinueOnRest(30082580)
 def Event_30082580():
     """Event 30082580"""
     RegisterLadder(start_climbing_flag=30080580, stop_climbing_flag=30080581, asset=Assets.AEG027_005_0500)

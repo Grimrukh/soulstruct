@@ -22,14 +22,14 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_43_40_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005251(0, character=Characters.GuardianGolem, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, 1043400200, 1043400200, 0, 0.0, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1043402200()

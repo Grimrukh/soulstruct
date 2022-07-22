@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_40_55_00_entities import *
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005261(0, character=Characters.Rat0, region=1040552301, radius=2.0, seconds=0.0, animation_id=3005)

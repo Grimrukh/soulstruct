@@ -11,7 +11,7 @@ from soulstruct.darksouls1r.events import *
 from soulstruct.darksouls1r.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=11320992, obj=1321960, initial_kindle_level=10)
@@ -62,7 +62,7 @@ def Constructor():
     Event_11320600(0, 1321650, 11320600)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     HumanityRegistration(6288, event_flag=8446)
@@ -81,7 +81,7 @@ def Preconstructor():
     EnableImmortality(1320800)
 
 
-@NeverRestart(11320090)
+@ContinueOnRest(11320090)
 def Event_11320090(_, obj: int, vfx_id: int, destination: int, destination_1: int):
     """Event 11320090"""
     if ThisEventSlotFlagEnabled():
@@ -246,7 +246,7 @@ def Event_11325100():
     Restart()
 
 
-@UnknownRestart(11325110)
+@EndOnRest(11325110)
 def Event_11325110(
     _,
     part_index: short,
@@ -294,7 +294,7 @@ def Event_11325110(
     AddSpecialEffect(1320700, special_effect_id)
 
 
-@UnknownRestart(11325121)
+@EndOnRest(11325121)
 def Event_11325121():
     """Event 11325121"""
     MAIN.Await(CharacterHasTAEEvent(1320700, tae_event_id=500))
@@ -326,7 +326,7 @@ def Event_11320100():
     AwardItemLot(35300000, host_only=False)
 
 
-@NeverRestart(11320101)
+@ContinueOnRest(11320101)
 def Event_11320101():
     """Event 11320101"""
     if FlagEnabled(11320100):
@@ -358,7 +358,7 @@ def Event_11325150(_, character: int, radius: float):
     SetStandbyAnimationSettings(character, cancel_animation=9060)
 
 
-@NeverRestart(11325000)
+@ContinueOnRest(11325000)
 def Event_11325000():
     """Event 11325000"""
     if ThisEventFlagEnabled():
@@ -372,7 +372,7 @@ def Event_11325000():
     SetStandbyAnimationSettings(1320800, cancel_animation=9060)
 
 
-@NeverRestart(11320800)
+@ContinueOnRest(11320800)
 def Event_11320800():
     """Event 11320800"""
     if ThisEventFlagEnabled():
@@ -431,7 +431,7 @@ def Event_11325001():
     AwardItemLot(34510000, host_only=True)
 
 
-@NeverRestart(11320200)
+@ContinueOnRest(11320200)
 def Event_11320200(_, obj: int, flag: int):
     """Event 11320200"""
     if ThisEventSlotFlagEnabled():
@@ -466,7 +466,7 @@ def Event_11320300(_, character: int, first_flag: uint, last_flag: uint, flag: i
     End()
 
 
-@NeverRestart(11320600)
+@ContinueOnRest(11320600)
 def Event_11320600(_, obj: int, obj_act_id: int):
     """Event 11320600"""
     if ThisEventSlotFlagEnabled():
@@ -481,7 +481,7 @@ def Event_11320600(_, obj: int, obj_act_id: int):
     EnableTreasure(obj=obj)
 
 
-@NeverRestart(11320510)
+@ContinueOnRest(11320510)
 def Event_11320510(_, character: int, flag: int):
     """Event 11320510"""
     AND_1.Add(HealthRatio(character) <= 0.8999999761581421)
@@ -507,7 +507,7 @@ def Event_11320510(_, character: int, flag: int):
     SaveRequest()
 
 
-@NeverRestart(11320520)
+@ContinueOnRest(11320520)
 def Event_11320520(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11320520"""
     if ThisEventSlotFlagEnabled():
@@ -520,7 +520,7 @@ def Event_11320520(_, character: int, first_flag: int, last_flag: int, flag: int
     EnableFlag(flag)
 
 
-@NeverRestart(11320534)
+@ContinueOnRest(11320534)
 def Event_11320534(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11320534"""
     AND_1.Add(FlagDisabled(1512))
@@ -537,7 +537,7 @@ def Event_11320534(_, character: int, first_flag: int, last_flag: int, flag: int
     EnableCharacter(character)
 
 
-@NeverRestart(11320535)
+@ContinueOnRest(11320535)
 def Event_11320535(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11320535"""
     AND_1.Add(FlagDisabled(1512))
@@ -555,7 +555,7 @@ def Event_11320535(_, character: int, first_flag: int, last_flag: int, flag: int
     DisableCharacter(character)
 
 
-@NeverRestart(11320540)
+@ContinueOnRest(11320540)
 def Event_11320540(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11320540"""
     AND_1.Add(FlagDisabled(1547))
@@ -570,7 +570,7 @@ def Event_11320540(_, character: int, first_flag: int, last_flag: int, flag: int
     EnableCharacter(character)
 
 
-@NeverRestart(11320541)
+@ContinueOnRest(11320541)
 def Event_11320541(_, character: int, first_flag: int, last_flag: int, flag: int):
     """Event 11320541"""
     AND_1.Add(FlagDisabled(1547))
@@ -585,7 +585,7 @@ def Event_11320541(_, character: int, first_flag: int, last_flag: int, flag: int
     DisableCharacter(character)
 
 
-@NeverRestart(11320580)
+@ContinueOnRest(11320580)
 def Event_11320580():
     """Event 11320580"""
     MAIN.Await(FlagEnabled(11325030))

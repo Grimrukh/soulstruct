@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_07_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=300700, asset=Assets.AEG099_060_9000)
@@ -410,7 +410,7 @@ def Constructor():
     Event_30072811()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005211(
@@ -689,7 +689,7 @@ def Preconstructor():
     Event_30072618()
 
 
-@NeverRestart(30070510)
+@ContinueOnRest(30070510)
 def Event_30070510():
     """Event 30070510"""
     CommonFunc_90005500(
@@ -710,7 +710,7 @@ def Event_30070510():
     )
 
 
-@NeverRestart(30070519)
+@ContinueOnRest(30070519)
 def Event_30070519():
     """Event 30070519"""
     if ThisEventSlotFlagEnabled():
@@ -818,7 +818,7 @@ def Event_30072501():
     End()
 
 
-@NeverRestart(30072505)
+@ContinueOnRest(30072505)
 def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, seconds: float):
     """Event 30072505"""
     AND_10.Add(MapHasUpdatePermission(unk_state=False, game_map=(0, 0, 0, 0)))
@@ -954,7 +954,7 @@ def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, s
     Restart()
 
 
-@NeverRestart(30072510)
+@ContinueOnRest(30072510)
 def Event_30072510():
     """Event 30072510"""
     GotoIfFlagEnabled(Label.L0, flag=30070510)
@@ -983,7 +983,7 @@ def Event_30072510():
     Restart()
 
 
-@NeverRestart(30072515)
+@ContinueOnRest(30072515)
 def Event_30072515():
     """Event 30072515"""
     AND_1.Add(FlagEnabled(30070510))
@@ -1088,7 +1088,7 @@ def Event_30072515():
     Restart()
 
 
-@NeverRestart(30072516)
+@ContinueOnRest(30072516)
 def Event_30072516():
     """Event 30072516"""
     AND_1.Add(FlagEnabled(30070510))
@@ -1101,13 +1101,13 @@ def Event_30072516():
     Restart()
 
 
-@NeverRestart(30072580)
+@ContinueOnRest(30072580)
 def Event_30072580():
     """Event 30072580"""
     RegisterLadder(start_climbing_flag=30070580, stop_climbing_flag=30070581, asset=Assets.AEG027_009_0500)
 
 
-@NeverRestart(30072605)
+@ContinueOnRest(30072605)
 def Event_30072605(
     _,
     owner_entity: uint,
@@ -1799,7 +1799,7 @@ def Event_30072605(
     Restart()
 
 
-@NeverRestart(30072610)
+@ContinueOnRest(30072610)
 def Event_30072610(
     _,
     owner_entity: uint,
@@ -2196,7 +2196,7 @@ def Event_30072610(
     Restart()
 
 
-@NeverRestart(30072611)
+@ContinueOnRest(30072611)
 def Event_30072611(
     _,
     owner_entity: uint,
@@ -2593,7 +2593,7 @@ def Event_30072611(
     Restart()
 
 
-@NeverRestart(30072612)
+@ContinueOnRest(30072612)
 def Event_30072612(
     _,
     owner_entity: uint,
@@ -2990,7 +2990,7 @@ def Event_30072612(
     Restart()
 
 
-@NeverRestart(30072613)
+@ContinueOnRest(30072613)
 def Event_30072613(
     _,
     owner_entity: uint,
@@ -3387,7 +3387,7 @@ def Event_30072613(
     Restart()
 
 
-@NeverRestart(30072614)
+@ContinueOnRest(30072614)
 def Event_30072614(
     _,
     owner_entity: uint,
@@ -3784,7 +3784,7 @@ def Event_30072614(
     Restart()
 
 
-@NeverRestart(30072615)
+@ContinueOnRest(30072615)
 def Event_30072615(
     _,
     owner_entity: uint,
@@ -4181,7 +4181,7 @@ def Event_30072615(
     Restart()
 
 
-@NeverRestart(30072616)
+@ContinueOnRest(30072616)
 def Event_30072616(
     _,
     owner_entity: uint,
@@ -4578,7 +4578,7 @@ def Event_30072616(
     Restart()
 
 
-@NeverRestart(30072617)
+@ContinueOnRest(30072617)
 def Event_30072617(
     _,
     owner_entity: uint,
@@ -4975,7 +4975,7 @@ def Event_30072617(
     Restart()
 
 
-@NeverRestart(30072618)
+@ContinueOnRest(30072618)
 def Event_30072618():
     """Event 30072618"""
     SkipLinesIfFlagDisabled(2, 57)

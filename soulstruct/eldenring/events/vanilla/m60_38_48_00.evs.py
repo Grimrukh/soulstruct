@@ -22,7 +22,7 @@ from .entities.m60_38_48_00_entities import *
 from .entities.m60_37_49_00_entities import Characters as m60_37_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1038480000, asset=Assets.AEG099_060_9000)
@@ -41,7 +41,7 @@ def Constructor():
     CommonFunc_90005683(0, 62201, 1038481684, 209, 78290, 78290)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(m60_37_Characters.FesteringFingerprintVyke)
@@ -136,7 +136,7 @@ def Preconstructor():
     CommonFunc_90005261(0, 1038480211, 1038482200, 0.0, 1.0, 1705)
 
 
-@NeverRestart(1038482580)
+@ContinueOnRest(1038482580)
 def Event_1038482580():
     """Event 1038482580"""
     RegisterLadder(start_climbing_flag=1038480580, stop_climbing_flag=1038480581, asset=1038481580)

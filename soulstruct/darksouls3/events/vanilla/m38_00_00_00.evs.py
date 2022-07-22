@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13800001, obj=3801951, reaction_distance=5.0)
@@ -728,7 +728,7 @@ def Constructor():
     CommonFunc_20005900(0, 13800380, 6330)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13801200()
@@ -1140,7 +1140,7 @@ def Event_13805400():
     RegisterLadder(start_climbing_flag=13800402, stop_climbing_flag=13800403, obj=3801402)
 
 
-@NeverRestart(13805402)
+@ContinueOnRest(13805402)
 def Event_13805402():
     """Event 13805402"""
     AND_1.Add(ObjectDestroyed(3801401))
@@ -4085,7 +4085,7 @@ def Event_13805813(
     AddSpecialEffect(3800800, special_effect_id)
 
 
-@NeverRestart(13804814)
+@ContinueOnRest(13804814)
 def Event_13804814(_, npc_part_id: short, part_health: int, npc_part_id_1: short, part_health_1: int, flag: int):
     """Event 13804814"""
     if FlagEnabled(13800800):
@@ -4102,7 +4102,7 @@ def Event_13804814(_, npc_part_id: short, part_health: int, npc_part_id_1: short
     End()
 
 
-@NeverRestart(13805820)
+@ContinueOnRest(13805820)
 def Event_13805820():
     """Event 13805820"""
     if FlagEnabled(13800800):
@@ -4174,7 +4174,7 @@ def Event_13804815(_, character: int, region: int, model_point: int):
     Restart()
 
 
-@NeverRestart(13805824)
+@ContinueOnRest(13805824)
 def Event_13805824():
     """Event 13805824"""
     SetNetworkConnectedFlagState(flag=13804813, state=FlagSetting.On)
@@ -4197,7 +4197,7 @@ def Event_13805824():
     Restart()
 
 
-@NeverRestart(13805828)
+@ContinueOnRest(13805828)
 def Event_13805828(_, flag: int, region: int, flag_1: int, flag_2: int):
     """Event 13805828"""
     DisableNetworkSync()
@@ -4214,7 +4214,7 @@ def Event_13805828(_, flag: int, region: int, flag_1: int, flag_2: int):
     Restart()
 
 
-@NeverRestart(13804829)
+@ContinueOnRest(13804829)
 def Event_13804829(_, flag: int, obj: int, model_point: int):
     """Event 13804829"""
     DisableNetworkSync()
@@ -4276,7 +4276,7 @@ def Event_13805829():
     CommonFunc_20005810(0, 13800800, 3801800, 3802800, 10000)
 
 
-@NeverRestart(13800830)
+@ContinueOnRest(13800830)
 def Event_13800830():
     """Event 13800830"""
     if FlagEnabled(13800830):
@@ -4489,7 +4489,7 @@ def Event_13805859():
     CommonFunc_20005810(0, 13800830, 3801830, 3802830, 10000)
 
 
-@NeverRestart(13800899)
+@ContinueOnRest(13800899)
 def Event_13800899():
     """Event 13800899"""
     if ThisEventSlotFlagEnabled():
@@ -4503,14 +4503,14 @@ def Event_13800899():
     EnableFlag(13800899)
 
 
-@NeverRestart(13805570)
+@ContinueOnRest(13805570)
 def Event_13805570():
     """Event 13805570"""
     DisableObject(3801975)
     End()
 
 
-@NeverRestart(13805700)
+@ContinueOnRest(13805700)
 def Event_13805700(
     _,
     character: int,
@@ -4852,7 +4852,7 @@ def Event_13805700(
     End()
 
 
-@NeverRestart(13805701)
+@ContinueOnRest(13805701)
 def Event_13805701(_, character: int, character_1: int, animation_id: int, character_2: int):
     """Event 13805701"""
     if ThisEventSlotFlagEnabled():
@@ -4898,7 +4898,7 @@ def Event_13805701(_, character: int, character_1: int, animation_id: int, chara
     SaveRequest()
 
 
-@NeverRestart(13800702)
+@ContinueOnRest(13800702)
 def Event_13800702(_, attacked_entity: int, collision: int):
     """Event 13800702"""
     if PlayerNotInOwnWorld():
@@ -4918,7 +4918,7 @@ def Event_13800702(_, attacked_entity: int, collision: int):
     EnableFlag(73800134)
 
 
-@NeverRestart(13805703)
+@ContinueOnRest(13805703)
 def Event_13805703(
     _,
     character: int,
@@ -5102,7 +5102,7 @@ def Event_13805703(
     End()
 
 
-@NeverRestart(13805704)
+@ContinueOnRest(13805704)
 def Event_13805704(_, character: int):
     """Event 13805704"""
     if PlayerNotInOwnWorld():
@@ -5119,7 +5119,7 @@ def Event_13805704(_, character: int):
     ReplanAI(character)
 
 
-@NeverRestart(13805706)
+@ContinueOnRest(13805706)
 def Event_13805706(_, character: int, map_piece_id: int, vfx_id: int, collision: int):
     """Event 13805706"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -5200,7 +5200,7 @@ def Event_13805706(_, character: int, map_piece_id: int, vfx_id: int, collision:
     End()
 
 
-@NeverRestart(13805707)
+@ContinueOnRest(13805707)
 def Event_13805707():
     """Event 13805707"""
     if PlayerNotInOwnWorld():

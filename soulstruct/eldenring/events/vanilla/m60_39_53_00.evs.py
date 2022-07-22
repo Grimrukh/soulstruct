@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_39_53_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=76350, asset=Assets.AEG099_060_9000, enemy_block_distance=5.0, character=0)
@@ -90,13 +90,13 @@ def Constructor():
     CommonFunc_90005774(0, 7603, 1039530700, 1039537700)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.RileightheIdle)
 
 
-@NeverRestart(100)
+@ContinueOnRest(100)
 def Event_100():
     """Event 100"""
     Event_1039532500()

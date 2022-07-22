@@ -22,7 +22,7 @@ from .entities.m34_13_00_00_entities import *
 from .entities.m31_12_00_00_entities import Assets as m31_12_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=34130001, asset=Assets.AEG099_060_9001)
@@ -114,13 +114,13 @@ def Constructor():
     CommonFunc_90005251(0, 34130298, 10.0, 0.0, -1)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_34130519()
 
 
-@NeverRestart(34132510)
+@ContinueOnRest(34132510)
 def Event_34132510():
     """Event 34132510"""
     CommonFunc_90005507(
@@ -141,7 +141,7 @@ def Event_34132510():
     )
 
 
-@NeverRestart(34132515)
+@ContinueOnRest(34132515)
 def Event_34132515():
     """Event 34132515"""
     CommonFunc_90005507(
@@ -162,7 +162,7 @@ def Event_34132515():
     )
 
 
-@NeverRestart(34132520)
+@ContinueOnRest(34132520)
 def Event_34132520():
     """Event 34132520"""
     CommonFunc_90005507(
@@ -191,7 +191,7 @@ def Event_34130519():
     EnableFlag(34130520)
 
 
-@NeverRestart(34132580)
+@ContinueOnRest(34132580)
 def Event_34132580():
     """Event 34132580"""
     RegisterLadder(start_climbing_flag=34130580, stop_climbing_flag=34130581, asset=Assets.AEG027_071_0500)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m30_04_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005646(
@@ -53,7 +53,7 @@ def Constructor():
     Event_30042500()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005200(
@@ -144,14 +144,14 @@ def Preconstructor():
     CommonFunc_90005200(0, 30040212, 30003, 20003, 30042212, 0.0, 0, 0, 0, 0)
 
 
-@NeverRestart(30040050)
+@ContinueOnRest(30040050)
 def Event_30040050():
     """Event 30040050"""
     if ThisEventSlotFlagEnabled():
         return
 
 
-@NeverRestart(30042500)
+@ContinueOnRest(30042500)
 def Event_30042500():
     """Event 30042500"""
     SkipLinesIfFlagDisabled(2, 57)

@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=14000000, obj=4001950, reaction_distance=5.0)
@@ -568,7 +568,7 @@ def Constructor():
     Event_14000624(0, 4000791)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_14005103(event_layers=[0, 3, 4, 5, 6, 7, 8, 9])
@@ -618,7 +618,7 @@ def Preconstructor():
     DisableSoundEvent(sound_id=4003701)
 
 
-@NeverRestart(14000100)
+@ContinueOnRest(14000100)
 def Event_14000100():
     """Event 14000100"""
     if ThisEventSlotFlagEnabled():
@@ -656,7 +656,7 @@ def Event_14000100():
     EnableFlag(14000100)
 
 
-@NeverRestart(14005101)
+@ContinueOnRest(14005101)
 def Event_14005101():
     """Event 14005101"""
     if FlagEnabled(14000101):
@@ -682,7 +682,7 @@ def Event_14005101():
     RemoveGoodFromPlayer(item=2137, quantity=1)
 
 
-@NeverRestart(14005102)
+@ContinueOnRest(14005102)
 def Event_14005102():
     """Event 14005102"""
     if PlayerNotInOwnWorld():
@@ -744,7 +744,7 @@ def Event_14005102():
     Restart()
 
 
-@NeverRestart(14005103)
+@ContinueOnRest(14005103)
 def Event_14005103():
     """Event 14005103"""
     AND_1.Add(PlayerInOwnWorld())
@@ -756,14 +756,14 @@ def Event_14005103():
     DisableMapCollision(collision=4004100)
 
 
-@NeverRestart(14005104)
+@ContinueOnRest(14005104)
 def Event_14005104():
     """Event 14005104"""
     EnableMapCollision(collision=4004109)
     DisableMapCollision(collision=4004100)
 
 
-@NeverRestart(14005110)
+@ContinueOnRest(14005110)
 def Event_14005110():
     """Event 14005110"""
     SetCollisionResState(collision=4004100, state=False)
@@ -886,7 +886,7 @@ def Event_14005110():
     WaitFrames(frames=1)
 
 
-@NeverRestart(14000120)
+@ContinueOnRest(14000120)
 def Event_14000120(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int, flag_5: int):
     """Event 14000120"""
     if FlagEnabled(flag):
@@ -1033,7 +1033,7 @@ def Event_14005300(_, character: int, region: int):
     SetNest(character, region=region)
 
 
-@NeverRestart(14000401)
+@ContinueOnRest(14000401)
 def Event_14000401():
     """Event 14000401"""
     if ThisEventSlotFlagEnabled():
@@ -1224,7 +1224,7 @@ def Event_14005445():
     DisableSoapstoneMessage(4004222)
 
 
-@NeverRestart(14005450)
+@ContinueOnRest(14005450)
 def Event_14005450():
     """Event 14005450"""
     DisableNetworkSync()
@@ -1276,7 +1276,7 @@ def Event_1405451():
     DisableSoundEvent(sound_id=4004460)
 
 
-@NeverRestart(14005460)
+@ContinueOnRest(14005460)
 def Event_14005460():
     """Event 14005460"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
@@ -1320,7 +1320,7 @@ def Event_14005461():
     DeleteObjectVFX(4001461)
 
 
-@NeverRestart(14005470)
+@ContinueOnRest(14005470)
 def Event_14005470():
     """Event 14005470"""
     DisableNetworkSync()
@@ -1399,7 +1399,7 @@ def Event_14005474():
     EnableFlag(743)
 
 
-@NeverRestart(14005480)
+@ContinueOnRest(14005480)
 def Event_14005480(_, flag: int):
     """Event 14005480"""
     if PlayerNotInOwnWorld():
@@ -1436,7 +1436,7 @@ def Event_14005484(_, text: int, anchor_entity: int):
     Restart()
 
 
-@NeverRestart(14000490)
+@ContinueOnRest(14000490)
 def Event_14000490():
     """Event 14000490"""
     InitializeCrowTrade(
@@ -1657,7 +1657,7 @@ def Event_14000490():
     DisableFlag(74000990)
 
 
-@NeverRestart(14000491)
+@ContinueOnRest(14000491)
 def Event_14000491():
     """Event 14000491"""
     if PlayerNotInOwnWorld():
@@ -1676,7 +1676,7 @@ def Event_14000491():
     Restart()
 
 
-@NeverRestart(14005800)
+@ContinueOnRest(14005800)
 def Event_14005800():
     """Event 14005800"""
     if FlagEnabled(14000800):
@@ -1744,7 +1744,7 @@ def Event_14005810():
     End()
 
 
-@NeverRestart(14005811)
+@ContinueOnRest(14005811)
 def Event_14005811():
     """Event 14005811"""
     if FlagEnabled(14000800):
@@ -1869,7 +1869,7 @@ def Event_14005820():
     CommonFunc_20001836(0, 14000800, 14005805, 14005822, 14000801, 4004800, 4004801, 14005802)
 
 
-@NeverRestart(14005830)
+@ContinueOnRest(14005830)
 def Event_14005830():
     """Event 14005830"""
     if FlagEnabled(14000830):
@@ -1930,7 +1930,7 @@ def Event_14005840():
     EnableFlag(14000831)
 
 
-@NeverRestart(14005841)
+@ContinueOnRest(14005841)
 def Event_14005841():
     """Event 14005841"""
     if FlagEnabled(14000830):
@@ -1995,7 +1995,7 @@ def Event_14000859():
     CommonFunc_20001836(0, 14000830, 14005835, 14005836, 14000831, 4004830, 4004831, 14005832)
 
 
-@NeverRestart(14005500)
+@ContinueOnRest(14005500)
 def Event_14005500(_, character: int, animation_id: int, obj: int, destination: int):
     """Event 14005500"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2066,7 +2066,7 @@ def Event_14005500(_, character: int, animation_id: int, obj: int, destination: 
     End()
 
 
-@NeverRestart(14005501)
+@ContinueOnRest(14005501)
 def Event_14005501(_, flag: int, flag_1: int, bit_count: uint, bit_count_1: uchar, max_value__value: uint):
     """Event 14005501"""
     if PlayerNotInOwnWorld():
@@ -2107,7 +2107,7 @@ def Event_14005501(_, flag: int, flag_1: int, bit_count: uint, bit_count_1: ucha
     EnableFlag(flag)
 
 
-@NeverRestart(14005503)
+@ContinueOnRest(14005503)
 def Event_14005503(_, flag: int):
     """Event 14005503"""
     if PlayerNotInOwnWorld():
@@ -2144,7 +2144,7 @@ def Event_14005503(_, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(14005520)
+@ContinueOnRest(14005520)
 def Event_14005520(_, character: int, animation_id: int, destination: int, obj: int):
     """Event 14005520"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2253,7 +2253,7 @@ def Event_14005520(_, character: int, animation_id: int, destination: int, obj: 
     End()
 
 
-@NeverRestart(14005521)
+@ContinueOnRest(14005521)
 def Event_14005521(
     _,
     character: int,
@@ -2303,7 +2303,7 @@ def Event_14005521(
     ForceAnimation(character, 0, unknown2=1.0)
 
 
-@NeverRestart(14000522)
+@ContinueOnRest(14000522)
 def Event_14000522():
     """Event 14000522"""
     if PlayerNotInOwnWorld():
@@ -2322,7 +2322,7 @@ def Event_14000522():
     SaveRequest()
 
 
-@NeverRestart(14005540)
+@ContinueOnRest(14005540)
 def Event_14005540(_, character: int, character_1: int, animation_id: int, destination: int, destination_1: int):
     """Event 14005540"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -2436,7 +2436,7 @@ def Event_14005540(_, character: int, character_1: int, animation_id: int, desti
     End()
 
 
-@NeverRestart(14005541)
+@ContinueOnRest(14005541)
 def Event_14005541(
     _,
     character: int,
@@ -2471,7 +2471,7 @@ def Event_14005541(
     ForceAnimation(character, 0, unknown2=1.0)
 
 
-@NeverRestart(14005542)
+@ContinueOnRest(14005542)
 def Event_14005542(_, character: int, character_1: int, character_2: int, character_3: int, animation_id: int):
     """Event 14005542"""
     if PlayerNotInOwnWorld():
@@ -2518,7 +2518,7 @@ def Event_14005542(_, character: int, character_1: int, character_2: int, charac
     ForceAnimation(character_3, animation_id, loop=True, unknown2=1.0)
 
 
-@NeverRestart(14005543)
+@ContinueOnRest(14005543)
 def Event_14005543(_, character: int):
     """Event 14005543"""
     AND_1.Add(FlagEnabled(1304))
@@ -2539,7 +2539,7 @@ def Event_14005543(_, character: int):
     RotateToFaceEntity(character, PLAYER, wait_for_completion=True)
 
 
-@NeverRestart(14005560)
+@ContinueOnRest(14005560)
 def Event_14005560(_, character: int, character_1: int, destination: int, destination_1: int):
     """Event 14005560"""
     DisableAnimations(4000762)
@@ -2655,7 +2655,7 @@ def Event_14005560(_, character: int, character_1: int, destination: int, destin
     End()
 
 
-@NeverRestart(14005570)
+@ContinueOnRest(14005570)
 def Event_14005570(_, character: int, character_1: int, destination: int, destination_1: int):
     """Event 14005570"""
     GotoIfPlayerNotInOwnWorld(Label.L20)
@@ -2844,7 +2844,7 @@ def Event_14005571():
     EnableFlag(70000118)
 
 
-@NeverRestart(14005580)
+@ContinueOnRest(14005580)
 def Event_14005580(
     _,
     character: int,
@@ -2981,7 +2981,7 @@ def Event_14005580(
     End()
 
 
-@NeverRestart(14005581)
+@ContinueOnRest(14005581)
 def Event_14005581(_, character: int, character_1: int, character_2: int, flag: int, flag_1: int, value: float):
     """Event 14005581"""
     if PlayerNotInOwnWorld():
@@ -3030,7 +3030,7 @@ def Event_14005581(_, character: int, character_1: int, character_2: int, flag: 
     ForceAnimation(character_2, 0, unknown2=1.0)
 
 
-@NeverRestart(14005582)
+@ContinueOnRest(14005582)
 def Event_14005582(
     _,
     character: int,
@@ -3070,7 +3070,7 @@ def Event_14005582(
     ForceAnimation(character, 0, unknown2=1.0)
 
 
-@NeverRestart(14000583)
+@ContinueOnRest(14000583)
 def Event_14000583(
     _,
     character: int,
@@ -3114,7 +3114,7 @@ def Event_14000583(
     SaveRequest()
 
 
-@NeverRestart(14005584)
+@ContinueOnRest(14005584)
 def Event_14005584(_, character: int, character_1: int, flag: int, flag_1: int):
     """Event 14005584"""
     if PlayerNotInOwnWorld():
@@ -3136,7 +3136,7 @@ def Event_14005584(_, character: int, character_1: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(14000585)
+@ContinueOnRest(14000585)
 def Event_14000585(
     _,
     character: int,
@@ -3174,7 +3174,7 @@ def Event_14000585(
     SaveRequest()
 
 
-@NeverRestart(14005586)
+@ContinueOnRest(14005586)
 def Event_14005586(_, character: int, animation_id: int, destination: int):
     """Event 14005586"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3264,7 +3264,7 @@ def Event_14005587(_, character: int, flag: int, flag_1: int):
     Kill(character, award_souls=True)
 
 
-@NeverRestart(14005600)
+@ContinueOnRest(14005600)
 def Event_14005600(_, character: int, destination: int, destination_1: int, destination_2: int, destination_3: int):
     """Event 14005600"""
     GotoIfPlayerNotInOwnWorld(Label.L9)
@@ -3358,7 +3358,7 @@ def Event_14005600(_, character: int, destination: int, destination_1: int, dest
     End()
 
 
-@NeverRestart(14000601)
+@ContinueOnRest(14000601)
 def Event_14000601(_, flag: int):
     """Event 14000601"""
     if PlayerNotInOwnWorld():
@@ -3368,7 +3368,7 @@ def Event_14000601(_, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(14005602)
+@ContinueOnRest(14005602)
 def Event_14005602(_, character: int, item_lot_param_id: int):
     """Event 14005602"""
     if PlayerNotInOwnWorld():
@@ -3381,7 +3381,7 @@ def Event_14005602(_, character: int, item_lot_param_id: int):
     DisableFlag(74000131)
 
 
-@NeverRestart(14000603)
+@ContinueOnRest(14000603)
 def Event_14000603(_, flag: int, flag_1: int):
     """Event 14000603"""
     if PlayerNotInOwnWorld():
@@ -3394,7 +3394,7 @@ def Event_14000603(_, flag: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(14005604)
+@ContinueOnRest(14005604)
 def Event_14005604(_, character: int, region: int):
     """Event 14005604"""
     if PlayerNotInOwnWorld():
@@ -3423,7 +3423,7 @@ def Event_14005604(_, character: int, region: int):
     AICommand(character, command_id=-1, command_slot=0)
 
 
-@NeverRestart(14005605)
+@ContinueOnRest(14005605)
 def Event_14005605(_, character: int, special_effect: int, animation_id: int):
     """Event 14005605"""
     if PlayerNotInOwnWorld():
@@ -3471,7 +3471,7 @@ def Event_14005616(_, character: int):
     Restart()
 
 
-@NeverRestart(14005618)
+@ContinueOnRest(14005618)
 def Event_14005618():
     """Event 14005618"""
     if FlagDisabled(14005617):
@@ -3479,7 +3479,7 @@ def Event_14005618():
     EnableFlag(14000618)
 
 
-@NeverRestart(14005619)
+@ContinueOnRest(14005619)
 def Event_14005619():
     """Event 14005619"""
     if PlayerNotInOwnWorld():
@@ -3523,7 +3523,7 @@ def Event_14005619():
     End()
 
 
-@NeverRestart(14005620)
+@ContinueOnRest(14005620)
 def Event_14005620(_, character: int, character_1: int, destination: int):
     """Event 14005620"""
     GotoIfPlayerNotInOwnWorld(Label.L20)
@@ -3762,7 +3762,7 @@ def Event_14005625(_, region: int):
     Restart()
 
 
-@NeverRestart(14005640)
+@ContinueOnRest(14005640)
 def Event_14005640(_, character: int, obj: int, character_1: int):
     """Event 14005640"""
     GotoIfPlayerNotInOwnWorld(Label.L9)
@@ -3837,7 +3837,7 @@ def Event_14005640(_, character: int, obj: int, character_1: int):
     End()
 
 
-@NeverRestart(14005660)
+@ContinueOnRest(14005660)
 def Event_14005660(_, character: int):
     """Event 14005660"""
     GotoIfPlayerNotInOwnWorld(Label.L9)
@@ -3888,7 +3888,7 @@ def Event_14005660(_, character: int):
     End()
 
 
-@NeverRestart(14005661)
+@ContinueOnRest(14005661)
 def Event_14005661(_, character: int):
     """Event 14005661"""
     OR_1.Add(PlayerStandingOnCollision(4004100))
@@ -3928,7 +3928,7 @@ def Event_14005661(_, character: int):
     Restart()
 
 
-@NeverRestart(14005680)
+@ContinueOnRest(14005680)
 def Event_14005680(_, character: int, destination: int):
     """Event 14005680"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3998,7 +3998,7 @@ def Event_14005680(_, character: int, destination: int):
     End()
 
 
-@NeverRestart(14005681)
+@ContinueOnRest(14005681)
 def Event_14005681():
     """Event 14005681"""
     if PlayerNotInOwnWorld():
@@ -4023,7 +4023,7 @@ def Event_14005681():
     EnableFlag(74000280)
 
 
-@NeverRestart(14005682)
+@ContinueOnRest(14005682)
 def Event_14005682(_, character: int, flag: int, first_flag: int, last_flag: int):
     """Event 14005682"""
     if PlayerNotInOwnWorld():
@@ -4059,7 +4059,7 @@ def Event_14005682(_, character: int, flag: int, first_flag: int, last_flag: int
     SaveRequest()
 
 
-@NeverRestart(14005683)
+@ContinueOnRest(14005683)
 def Event_14005683(_, character: int, destination: int):
     """Event 14005683"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -4097,7 +4097,7 @@ def Event_14005683(_, character: int, destination: int):
     End()
 
 
-@NeverRestart(14005684)
+@ContinueOnRest(14005684)
 def Event_14005684(_, flag: int):
     """Event 14005684"""
     if PlayerNotInOwnWorld():
@@ -4110,7 +4110,7 @@ def Event_14005684(_, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(14005700)
+@ContinueOnRest(14005700)
 def Event_14005700(_, character: int, destination: int):
     """Event 14005700"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -4218,7 +4218,7 @@ def Event_14005700(_, character: int, destination: int):
     End()
 
 
-@NeverRestart(14005701)
+@ContinueOnRest(14005701)
 def Event_14005701():
     """Event 14005701"""
     if PlayerNotInOwnWorld():
@@ -4234,7 +4234,7 @@ def Event_14005701():
     SetNetworkConnectedFlagState(flag=1385, state=FlagSetting.On)
 
 
-@NeverRestart(14005720)
+@ContinueOnRest(14005720)
 def Event_14005720(
     _,
     character: int,
@@ -4386,7 +4386,7 @@ def Event_14005720(
     End()
 
 
-@NeverRestart(14005721)
+@ContinueOnRest(14005721)
 def Event_14005721():
     """Event 14005721"""
     if PlayerNotInOwnWorld():
@@ -4409,7 +4409,7 @@ def Event_14005721():
     EnableFlag(74000380)
 
 
-@NeverRestart(14005722)
+@ContinueOnRest(14005722)
 def Event_14005722(_, entity: int, animation_id: int):
     """Event 14005722"""
     if PlayerNotInOwnWorld():
@@ -4423,7 +4423,7 @@ def Event_14005722(_, entity: int, animation_id: int):
     EnableFlag(14005722)
 
 
-@NeverRestart(14005723)
+@ContinueOnRest(14005723)
 def Event_14005723(
     _,
     character: int,
@@ -4462,7 +4462,7 @@ def Event_14005723(
     DisableBackread(character)
 
 
-@NeverRestart(14005725)
+@ContinueOnRest(14005725)
 def Event_14005725():
     """Event 14005725"""
     DisableNetworkSync()
@@ -4512,7 +4512,7 @@ def Event_14005725():
     Restart()
 
 
-@NeverRestart(14005740)
+@ContinueOnRest(14005740)
 def Event_14005740(_, character: int, command_id: int, destination: int):
     """Event 14005740"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -4590,7 +4590,7 @@ def Event_14005740(_, character: int, command_id: int, destination: int):
     End()
 
 
-@NeverRestart(14005750)
+@ContinueOnRest(14005750)
 def Event_14005750(_, character: int, animation_id: int, destination: int):
     """Event 14005750"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -4674,7 +4674,7 @@ def Event_14005750(_, character: int, animation_id: int, destination: int):
     End()
 
 
-@NeverRestart(14005760)
+@ContinueOnRest(14005760)
 def Event_14005760(_, character: int, obj: int):
     """Event 14005760"""
     GotoIfPlayerNotInOwnWorld(Label.L9)
@@ -4722,7 +4722,7 @@ def Event_14005760(_, character: int, obj: int):
     End()
 
 
-@NeverRestart(14005780)
+@ContinueOnRest(14005780)
 def Event_14005780(_, character: int, animation_id: int, obj: int, destination: int):
     """Event 14005780"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -4802,7 +4802,7 @@ def Event_14005782():
     Restart()
 
 
-@NeverRestart(14005900)
+@ContinueOnRest(14005900)
 def Event_14005900():
     """Event 14005900"""
     DisableNetworkSync()

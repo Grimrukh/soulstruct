@@ -23,7 +23,7 @@ from .entities.m31_06_00_00_entities import Assets as m31_06_Assets
 from .entities.m60_35_46_00_entities import Assets as m60_35_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=14000002, asset=Assets.AEG099_060_9002)
@@ -610,7 +610,7 @@ def Constructor():
     CommonFunc_90005750(0, 14001720, 4110, 103600, 400360, 400362, 3806, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.RennalaPhaseOne1)
@@ -1487,7 +1487,7 @@ def Preconstructor():
     CommonFunc_90005250(0, 14000499, 14002499, 0.0, -1)
 
 
-@NeverRestart(14002080)
+@ContinueOnRest(14002080)
 def Event_14002080():
     """Event 14002080"""
     if PlayerNotInOwnWorld():
@@ -1559,7 +1559,7 @@ def Event_14002580():
     RegisterLadder(start_climbing_flag=14000542, stop_climbing_flag=14000543, asset=Assets.AEG257_015_0500)
 
 
-@NeverRestart(14002510)
+@ContinueOnRest(14002510)
 def Event_14002510():
     """Event 14002510"""
     CommonFunc_90005500(
@@ -1612,7 +1612,7 @@ def Event_14002510():
     )
 
 
-@NeverRestart(14000519)
+@ContinueOnRest(14000519)
 def Event_14000519():
     """Event 14000519"""
     if ThisEventSlotFlagEnabled():
@@ -2030,7 +2030,7 @@ def Event_14002495():
     Restart()
 
 
-@NeverRestart(14002606)
+@ContinueOnRest(14002606)
 def Event_14002606():
     """Event 14002606"""
     DisableNetworkSync()
@@ -4235,7 +4235,7 @@ def Event_14003850(
     Restart()
 
 
-@NeverRestart(14003880)
+@ContinueOnRest(14003880)
 def Event_14003880(
     _,
     character: uint,

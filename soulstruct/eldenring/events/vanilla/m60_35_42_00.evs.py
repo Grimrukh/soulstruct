@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_35_42_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1035422150()
@@ -117,7 +117,7 @@ def Constructor():
     Event_1035422151()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.AlbinauricLookout0)
@@ -171,7 +171,7 @@ def Preconstructor():
     CommonFunc_90005200(0, 1035420374, 30003, 20003, 1035422374, 0.0, 0, 0, 0, 0)
 
 
-@NeverRestart(1035422150)
+@ContinueOnRest(1035422150)
 def Event_1035422150():
     """Event 1035422150"""
     GotoIfFlagDisabled(Label.L0, flag=1035420150)
@@ -257,7 +257,7 @@ def Event_1035422150():
     EnableFlag(1035420150)
 
 
-@NeverRestart(1035422151)
+@ContinueOnRest(1035422151)
 def Event_1035422151():
     """Event 1035422151"""
     GotoIfFlagDisabled(Label.L0, flag=1035420150)
@@ -275,7 +275,7 @@ def Event_1035422151():
     DisableAsset(Assets.AEG110_243_2000)
 
 
-@NeverRestart(1035420200)
+@ContinueOnRest(1035420200)
 def Event_1035420200():
     """Event 1035420200"""
     AND_2.Add(OutsideMap(game_map=SOUTHWEST_LIURNIA_NE_SE))

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m31_10_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=31100000, asset=Assets.AEG099_060_9000)
@@ -49,7 +49,7 @@ def Constructor():
     CommonFunc_900005610(0, 31101200, 100, 800, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_31102255(0, character=Characters.Wolf2, patrol_information_id=31103252)
@@ -194,7 +194,7 @@ def Event_31102255(_, character: uint, patrol_information_id: uint):
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
 
 
-@NeverRestart(31102360)
+@ContinueOnRest(31102360)
 def Event_31102360():
     """Event 31102360"""
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))

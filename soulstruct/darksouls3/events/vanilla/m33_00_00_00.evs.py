@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13300000, obj=3301950, reaction_distance=5.0)
@@ -1391,7 +1391,7 @@ def Constructor():
     CommonFunc_20005900(0, 13300560, 6331)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13300400()
@@ -1748,7 +1748,7 @@ def Event_13305202(
     Restart()
 
 
-@NeverRestart(13305209)
+@ContinueOnRest(13305209)
 def Event_13305209():
     """Event 13305209"""
     DisableNetworkSync()
@@ -1788,7 +1788,7 @@ def Event_13305209():
     Restart()
 
 
-@NeverRestart(13305210)
+@ContinueOnRest(13305210)
 def Event_13305210():
     """Event 13305210"""
     if ThisEventSlotFlagEnabled():
@@ -1890,7 +1890,7 @@ def Event_13305300():
     End()
 
 
-@NeverRestart(13300310)
+@ContinueOnRest(13300310)
 def Event_13300310():
     """Event 13300310"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
@@ -2058,7 +2058,7 @@ def Event_13305362():
     Restart()
 
 
-@NeverRestart(13300400)
+@ContinueOnRest(13300400)
 def Event_13300400():
     """Event 13300400"""
     if ThisEventSlotFlagEnabled():
@@ -2103,7 +2103,7 @@ def Event_13305409():
     )
 
 
-@NeverRestart(13305410)
+@ContinueOnRest(13305410)
 def Event_13305410(_, flag: int, flag_1: int, value: uint, obj: int):
     """Event 13305410"""
     MAIN.Await(EventValue(flag=flag, bit_count=2) >= value)
@@ -2114,7 +2114,7 @@ def Event_13305410(_, flag: int, flag_1: int, value: uint, obj: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(13300412)
+@ContinueOnRest(13300412)
 def Event_13300412(
     _,
     flag: int,
@@ -2281,14 +2281,14 @@ def Event_13305471():
     EndOfAnimation(obj=3301305, animation_id=1)
 
 
-@NeverRestart(13305480)
+@ContinueOnRest(13305480)
 def Event_13305480():
     """Event 13305480"""
     RegisterLadder(start_climbing_flag=13300480, stop_climbing_flag=13300481, obj=3301480)
     RegisterLadder(start_climbing_flag=13300482, stop_climbing_flag=13300483, obj=3301482)
 
 
-@NeverRestart(13305800)
+@ContinueOnRest(13305800)
 def Event_13305800():
     """Event 13305800"""
     if FlagEnabled(13300800):
@@ -2480,7 +2480,7 @@ def Event_13305813():
     EnableAI(3300804)
 
 
-@NeverRestart(13305814)
+@ContinueOnRest(13305814)
 def Event_13305814():
     """Event 13305814"""
     if FlagEnabled(13300800):
@@ -2594,7 +2594,7 @@ def Event_13305829():
     CommonFunc_20005810(0, 13300800, 3301800, 3302800, 10000)
 
 
-@NeverRestart(13305850)
+@ContinueOnRest(13305850)
 def Event_13305850():
     """Event 13305850"""
     if FlagEnabled(13300850):
@@ -3076,7 +3076,7 @@ def Event_13305900():
     CommonFunc_20005810(0, 13300110, 3301850, 3302850, 10000)
 
 
-@NeverRestart(13305700)
+@ContinueOnRest(13305700)
 def Event_13305700(_, character: int, animation_id: int):
     """Event 13305700"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3126,7 +3126,7 @@ def Event_13305700(_, character: int, animation_id: int):
     End()
 
 
-@NeverRestart(13305720)
+@ContinueOnRest(13305720)
 def Event_13305720(_, obj: int):
     """Event 13305720"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3197,7 +3197,7 @@ def Event_13305720(_, obj: int):
     End()
 
 
-@NeverRestart(13305740)
+@ContinueOnRest(13305740)
 def Event_13305740(_, character: int, character_1: int, animation_id: int, animation_id_1: int, destination: int):
     """Event 13305740"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3306,7 +3306,7 @@ def Event_13305740(_, character: int, character_1: int, animation_id: int, anima
     End()
 
 
-@NeverRestart(13305741)
+@ContinueOnRest(13305741)
 def Event_13305741(_, character: int, character_1: int, character_2: int, flag: int, flag_1: int, value: float):
     """Event 13305741"""
     if PlayerNotInOwnWorld():
@@ -3355,7 +3355,7 @@ def Event_13305741(_, character: int, character_1: int, character_2: int, flag: 
     ForceAnimation(character_2, 0, unknown2=1.0)
 
 
-@NeverRestart(13305742)
+@ContinueOnRest(13305742)
 def Event_13305742(
     _,
     character: int,
@@ -3395,7 +3395,7 @@ def Event_13305742(
     ForceAnimation(character, 0, unknown2=1.0)
 
 
-@NeverRestart(13300743)
+@ContinueOnRest(13300743)
 def Event_13300743(
     _,
     character: int,
@@ -3438,7 +3438,7 @@ def Event_13300743(
     ForceAnimation(character_1, 0, unknown2=1.0)
 
 
-@NeverRestart(13305744)
+@ContinueOnRest(13305744)
 def Event_13305744(_, character: int, character_1: int, flag: int, flag_1: int):
     """Event 13305744"""
     if PlayerNotInOwnWorld():
@@ -3460,7 +3460,7 @@ def Event_13305744(_, character: int, character_1: int, flag: int, flag_1: int):
     Restart()
 
 
-@NeverRestart(13300745)
+@ContinueOnRest(13300745)
 def Event_13300745(
     _,
     character: int,
@@ -3496,7 +3496,7 @@ def Event_13300745(
     ForceAnimation(character, 0, unknown2=1.0)
 
 
-@NeverRestart(13305746)
+@ContinueOnRest(13305746)
 def Event_13305746(_, character: int, animation_id: int):
     """Event 13305746"""
     GotoIfPlayerNotInOwnWorld(Label.L10)
@@ -3550,7 +3550,7 @@ def Event_13305746(_, character: int, animation_id: int):
     End()
 
 
-@NeverRestart(13300747)
+@ContinueOnRest(13300747)
 def Event_13300747(_, character: int, character_1: int, character_2: int):
     """Event 13300747"""
     if ThisEventFlagEnabled():
@@ -3611,7 +3611,7 @@ def Event_13300748(_, character: int, flag: int, flag_1: int):
     Kill(character, award_souls=True)
 
 
-@NeverRestart(13305760)
+@ContinueOnRest(13305760)
 def Event_13305760(_, character: int):
     """Event 13305760"""
     GotoIfPlayerNotInOwnWorld(Label.L10)

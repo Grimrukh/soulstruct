@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_51_36_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1051362580()
@@ -487,7 +487,7 @@ def Constructor():
     Event_1051362490(0, 1051362710)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.WitchHunterJerren0)
@@ -738,7 +738,7 @@ def Event_1051362500():
     End()
 
 
-@NeverRestart(1051362510)
+@ContinueOnRest(1051362510)
 def Event_1051362510():
     """Event 1051362510"""
     CommonFunc_90005500(
@@ -759,7 +759,7 @@ def Event_1051362510():
     )
 
 
-@NeverRestart(1051362519)
+@ContinueOnRest(1051362519)
 def Event_1051362519():
     """Event 1051362519"""
     if FlagEnabled(1051360514):
@@ -769,7 +769,7 @@ def Event_1051362519():
     EnableFlag(1051360510)
 
 
-@NeverRestart(1051362560)
+@ContinueOnRest(1051362560)
 def Event_1051362560(_, asset: uint):
     """Event 1051362560"""
     GotoIfFlagEnabled(Label.L0, flag=9413)

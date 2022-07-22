@@ -3341,7 +3341,7 @@ EMEDF = {
         "args": {
             "condition": CONDITION_GROUP | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
-            "invade_type": INT,
+            "invade_type": NO_DEFAULT(CharacterType),
             "target_comparison_type": TARGET_COMPARISON_TYPE,
             "target_count": TARGET_COUNT_FLOAT,
         },
@@ -4828,7 +4828,7 @@ EMEDF = {
         },
     },
     (2004, 74): {
-        "alias": "MoveCharacterAndCopyDrawParentWitHFadeout",
+        "alias": "MoveCharacterAndCopyDrawParentWithFadeout",
         "docstring": "TODO",
         "args": {
             "character": NO_DEFAULT(CharacterTyping),

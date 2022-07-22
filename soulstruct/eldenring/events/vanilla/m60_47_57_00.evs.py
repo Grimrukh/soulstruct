@@ -21,13 +21,13 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_47_57_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005706(0, 1047570701, 930021, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.WanderingNoble)

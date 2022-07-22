@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m11_10_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=11100000, asset=Assets.AEG099_060_9000, enemy_block_distance=1.0)
@@ -220,7 +220,7 @@ def Constructor():
     Event_11102652(0, 710780, 1780, 9132, 69320)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.FingerReaderEnia)
@@ -251,7 +251,7 @@ def Preconstructor():
     Event_11102100()
 
 
-@NeverRestart(11100020)
+@ContinueOnRest(11100020)
 def Event_11100020():
     """Event 11100020"""
     if ThisEventSlotFlagEnabled():
@@ -279,7 +279,7 @@ def Event_11100030():
     EnableFlag(30)
 
 
-@NeverRestart(11100031)
+@ContinueOnRest(11100031)
 def Event_11100031():
     """Event 11100031"""
     if FlagDisabled(120):
@@ -295,7 +295,7 @@ def Event_11100031():
     EnableFlag(121)
 
 
-@NeverRestart(11102100)
+@ContinueOnRest(11102100)
 def Event_11102100():
     """Event 11102100"""
     GotoIfFlagEnabled(Label.L1, flag=302)
@@ -429,7 +429,7 @@ def Event_11102606():
     End()
 
 
-@NeverRestart(11102620)
+@ContinueOnRest(11102620)
 def Event_11102620(
     _,
     flag: uint,
@@ -561,7 +561,7 @@ def Event_11102652(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uin
     EnableFlag(flag_1)
 
 
-@NeverRestart(11100680)
+@ContinueOnRest(11100680)
 def Event_11100680():
     """Event 11100680"""
     ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
@@ -583,7 +583,7 @@ def Event_11100680():
     IssueEndOfPseudoMultiplayerNotification(success=True)
 
 
-@NeverRestart(11102680)
+@ContinueOnRest(11102680)
 def Event_11102680():
     """Event 11102680"""
     ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
@@ -1926,7 +1926,7 @@ def Event_11103772():
     End()
 
 
-@NeverRestart(11103775)
+@ContinueOnRest(11103775)
 def Event_11103775():
     """Event 11103775"""
     if PlayerNotInOwnWorld():
@@ -2006,7 +2006,7 @@ def Event_11100795():
     Restart()
 
 
-@NeverRestart(11100796)
+@ContinueOnRest(11100796)
 def Event_11100796():
     """Event 11100796"""
     if PlayerNotInOwnWorld():
@@ -2031,7 +2031,7 @@ def Event_11100796():
     End()
 
 
-@NeverRestart(11100797)
+@ContinueOnRest(11100797)
 def Event_11100797():
     """Event 11100797"""
     if PlayerNotInOwnWorld():

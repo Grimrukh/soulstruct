@@ -19,7 +19,7 @@ from soulstruct.darksouls3.events import *
 from soulstruct.darksouls3.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterBonfire(bonfire_flag=13200000, obj=3201950, reaction_distance=5.0)
@@ -387,7 +387,7 @@ def Constructor():
     Event_13205910(1, 13200915, 3202915, 3200910)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13205100()
@@ -396,7 +396,7 @@ def Preconstructor():
     DisableSoundEvent(sound_id=3204852)
 
 
-@NeverRestart(13205100)
+@ContinueOnRest(13205100)
 def Event_13205100():
     """Event 13205100"""
     ChangeCamera(normal_camera_id=-1, locked_camera_id=-1)
@@ -1039,7 +1039,7 @@ def Event_13205381():
     EnableFlag(13200381)
 
 
-@NeverRestart(13205390)
+@ContinueOnRest(13205390)
 def Event_13205390():
     """Event 13205390"""
     DisableObject(3201780)
@@ -1245,7 +1245,7 @@ def Event_13205442():
     End()
 
 
-@NeverRestart(13205450)
+@ContinueOnRest(13205450)
 def Event_13205450():
     """Event 13205450"""
     RegisterLadder(start_climbing_flag=13200450, stop_climbing_flag=13200451, obj=3201450)
@@ -1329,7 +1329,7 @@ def Event_13205810():
     EnableFlag(13205802)
 
 
-@NeverRestart(13200811)
+@ContinueOnRest(13200811)
 def Event_13200811():
     """Event 13200811"""
     if FlagEnabled(13200800):
@@ -1488,7 +1488,7 @@ def Event_13205861():
     EnableFlag(13205852)
 
 
-@NeverRestart(13200862)
+@ContinueOnRest(13200862)
 def Event_13200862():
     """Event 13200862"""
     if ThisEventSlotFlagEnabled():
@@ -1565,7 +1565,7 @@ def Event_13200862():
     TriggerMultiplayerEvent(event_id=2)
 
 
-@NeverRestart(13200863)
+@ContinueOnRest(13200863)
 def Event_13200863():
     """Event 13200863"""
     if FlagEnabled(13200850):

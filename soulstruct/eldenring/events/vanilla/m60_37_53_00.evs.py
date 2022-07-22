@@ -22,7 +22,7 @@ from .entities.m60_37_53_00_entities import *
 from .entities.m60_37_54_00_entities import Characters as m60_37_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005600(0, grace_flag=76357, asset=Assets.AEG099_060_9000, enemy_block_distance=5.0, character=0)

@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_43_36_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1043362210(1, character=Characters.WanderingNoble1, radius=30.0, sound_id=430008500)
@@ -101,7 +101,7 @@ def Constructor():
     Event_1043363704()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.YuraHunterofBloodyFingers)

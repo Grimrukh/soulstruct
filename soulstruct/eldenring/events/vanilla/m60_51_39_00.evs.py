@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_51_39_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1051390000, asset=Assets.AEG099_060_9000)
@@ -66,7 +66,7 @@ def Event_1051392200(_, character: uint):
     RemoveSpecialEffect(character, 8081)
 
 
-@NeverRestart(1051392580)
+@ContinueOnRest(1051392580)
 def Event_1051392580(_, start_climbing_flag: uint, stop_climbing_flag: uint, asset: uint):
     """Event 1051392580"""
     RegisterLadder(start_climbing_flag=start_climbing_flag, stop_climbing_flag=stop_climbing_flag, asset=asset)

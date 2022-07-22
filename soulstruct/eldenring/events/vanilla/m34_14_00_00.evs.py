@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m34_14_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=34140000, asset=Assets.AEG099_060_9000)
@@ -108,7 +108,7 @@ def Constructor():
     Event_34140700()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(34140700)
@@ -241,7 +241,7 @@ def Event_34142252(_, flag: uint, seconds: float, character: uint, seconds_1: fl
     Wait(seconds_1)
 
 
-@NeverRestart(34142510)
+@ContinueOnRest(34142510)
 def Event_34142510():
     """Event 34142510"""
     CommonFunc_90005500(
@@ -278,7 +278,7 @@ def Event_34142510():
     )
 
 
-@NeverRestart(34140519)
+@ContinueOnRest(34140519)
 def Event_34140519():
     """Event 34140519"""
     if ThisEventSlotFlagEnabled():
@@ -441,7 +441,7 @@ def Event_34142870():
     # --- Label 0 --- #
     DefineLabel(0)
     Wait(2.0)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=34142851,
@@ -469,7 +469,7 @@ def Event_34142875():
     MoveRemains(source_region=34142875, destination_region=34142876)
 
 
-@NeverRestart(34142899)
+@ContinueOnRest(34142899)
 def Event_34142899():
     """Event 34142899"""
     CommonFunc_9005822(0, 34140850, 921200, 34142855, 34142856, 0, 0, 0, 0)

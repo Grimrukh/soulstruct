@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m12_08_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_12082849()
@@ -30,7 +30,7 @@ def Constructor():
     Event_12082848()
 
 
-@NeverRestart(12082848)
+@ContinueOnRest(12082848)
 def Event_12082848():
     """Event 12082848"""
     GotoIfFlagEnabled(Label.L0, flag=12080800)
@@ -58,7 +58,7 @@ def Event_12082848():
     WarpToMap(game_map=SIOFRA_RIVER, player_start=12022200)
 
 
-@NeverRestart(12082800)
+@ContinueOnRest(12082800)
 def Event_12082800():
     """Event 12082800"""
     if FlagEnabled(12080800):
@@ -102,7 +102,7 @@ def Event_12082810():
     EnableBossHealthBar(Characters.AncestorSpirit, name=904670000)
 
 
-@NeverRestart(12082849)
+@ContinueOnRest(12082849)
 def Event_12082849():
     """Event 12082849"""
     CommonFunc_9005800(

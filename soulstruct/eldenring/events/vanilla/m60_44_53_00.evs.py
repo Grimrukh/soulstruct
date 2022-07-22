@@ -21,14 +21,14 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_44_53_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980605, npc_threat_level=24)
     CommonFunc_90005860(0, 1044530800, 0, 1044530800, 0, 1044530300, 0.0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005200(

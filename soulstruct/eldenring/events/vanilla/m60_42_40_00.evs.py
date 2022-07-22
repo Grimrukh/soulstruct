@@ -21,14 +21,14 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_42_40_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1042402650(0, flag=710670, tutorial_param_id=1670, item=9123, flag_1=69230)
     CommonFunc_90005706(0, 1042400700, 90101, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.StormhillColosseumSilentSpirit)

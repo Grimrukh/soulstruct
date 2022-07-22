@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m10_01_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_10012682()
@@ -35,7 +35,7 @@ def Constructor():
     Event_10010792()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.FingerMaiden)
@@ -93,7 +93,7 @@ def Event_10010020():
     EnableFlag(100)
 
 
-@NeverRestart(10010030)
+@ContinueOnRest(10010030)
 def Event_10010030():
     """Event 10010030"""
     AND_15.Add(ThisEventSlotFlagEnabled())
@@ -137,7 +137,7 @@ def Event_10010030():
     WaitFramesAfterCutscene(frames=1)
 
 
-@NeverRestart(10010031)
+@ContinueOnRest(10010031)
 def Event_10010031():
     """Event 10010031"""
     if OutsideMap(game_map=CHAPEL_OF_ANTICIPATION):
@@ -455,7 +455,7 @@ def Event_10010792():
     End()
 
 
-@NeverRestart(10012900)
+@ContinueOnRest(10012900)
 def Event_10012900():
     """Event 10012900"""
     MAIN.Await(FlagEnabled(10010900))

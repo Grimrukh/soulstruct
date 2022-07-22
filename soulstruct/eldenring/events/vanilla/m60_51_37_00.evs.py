@@ -19,7 +19,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_51_37_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1051372598(
@@ -122,7 +122,7 @@ def Event_1051372598(
     ForceAnimation(PLAYER, 60490)
     Wait(3.0)
     EnableNetworkFlag(1052382602)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=PLAYER,
         destination_type=CoordEntityType.Region,
         destination=player_start,
@@ -166,7 +166,7 @@ def Event_1051372599():
     
     MAIN.Await(FlagEnabled(1052382602))
     
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=1051382302,

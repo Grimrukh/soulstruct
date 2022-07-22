@@ -22,7 +22,7 @@ from .entities.m39_20_00_00_entities import *
 from .entities.m60_37_51_00_entities import Assets as m60_37_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=39200001, asset=Assets.AEG099_060_9001)
@@ -171,7 +171,7 @@ def Constructor():
     Event_39203720()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.GreatHornedTragoth1)
@@ -311,7 +311,7 @@ def Event_39202145():
     CreateAssetVFX(Assets.AEG099_236_9000, vfx_id=200, model_point=806700)
 
 
-@NeverRestart(39202500)
+@ContinueOnRest(39202500)
 def Event_39202500():
     """Event 39202500"""
     CommonFunc_90005500(

@@ -197,8 +197,8 @@ def PullOutMeltedIronKey():
     # (in our docstring) is enabled. (Note that flags that end in 5*** are disabled on every map load.)
 
 
-# You can add this decorator to make this event restart when you rest at a bonfire. There's also a 'NeverRestart'
-# decorator, but that's applied by default if you leave it out. (The third decorator, 'UnknownRestart', is used only
+# You can add this decorator to make this event restart when you rest at a bonfire. There's also a 'ContinueOnRest'
+# decorator, but that's applied by default if you leave it out. (The third decorator, 'EndOnRest', is used only
 # by skeleton assembly scripts and we haven't figured out exactly how it works yet. You're welcome to experiment.)
 @RestartOnRest
 def DespawnChanneler(channeler: int):

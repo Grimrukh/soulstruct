@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_33_45_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005880(
@@ -106,7 +106,7 @@ def Event_1033452360():
     EnableAnimations(1033455800)
 
 
-@NeverRestart(1033452200)
+@ContinueOnRest(1033452200)
 def Event_1033452200(_, character: uint, special_effect: int, region: uint, region_1: uint, region_2: uint):
     """Event 1033452200"""
     if FlagEnabled(1233450200):

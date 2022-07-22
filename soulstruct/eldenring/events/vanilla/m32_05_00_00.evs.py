@@ -22,7 +22,7 @@ from .entities.m32_05_00_00_entities import *
 from .entities.m31_18_00_00_entities import Characters as m31_18_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=32050000, asset=Assets.AEG099_060_9000)
@@ -131,7 +131,7 @@ def Constructor():
     Event_32052400()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_32050519()
@@ -164,7 +164,7 @@ def Preconstructor():
     CommonFunc_90005271(0, 32050318, 0.0, -1)
 
 
-@NeverRestart(32052510)
+@ContinueOnRest(32052510)
 def Event_32052510():
     """Event 32052510"""
     CommonFunc_90005500(
@@ -185,7 +185,7 @@ def Event_32052510():
     )
 
 
-@NeverRestart(32050519)
+@ContinueOnRest(32050519)
 def Event_32050519():
     """Event 32050519"""
     if ThisEventSlotFlagEnabled():

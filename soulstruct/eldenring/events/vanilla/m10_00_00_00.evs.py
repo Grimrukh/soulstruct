@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m10_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=10000002, asset=Assets.AEG099_060_9002)
@@ -584,7 +584,7 @@ def Constructor():
     Event_10003500(1, 10002741)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.GatekeeperGostoc0)
@@ -973,7 +973,7 @@ def Event_10002281(_, character: uint, region: uint, seconds: float, animation_i
     DisableInvincibility(character)
 
 
-@NeverRestart(10002580)
+@ContinueOnRest(10002580)
 def Event_10002580():
     """Event 10002580"""
     RegisterLadder(start_climbing_flag=10000580, stop_climbing_flag=10000581, asset=Assets.AEG219_060_0500)
@@ -989,7 +989,7 @@ def Event_10002580():
     RegisterLadder(start_climbing_flag=10000598, stop_climbing_flag=10000599, asset=Assets.AEG219_071_0500)
 
 
-@NeverRestart(10002500)
+@ContinueOnRest(10002500)
 def Event_10002500():
     """Event 10002500"""
     AND_1.Add(FlagDisabled(10000500))
@@ -1016,7 +1016,7 @@ def Event_10002500():
     ForceAnimation(Assets.AEG219_050_0500, 1)
 
 
-@NeverRestart(10002501)
+@ContinueOnRest(10002501)
 def Event_10002501():
     """Event 10002501"""
     AND_1.Add(FlagDisabled(10000500))
@@ -1041,7 +1041,7 @@ def Event_10002501():
     ForceAnimation(Assets.AEG219_050_0500, 1)
 
 
-@NeverRestart(10002510)
+@ContinueOnRest(10002510)
 def Event_10002510():
     """Event 10002510"""
     CommonFunc_90005500(
@@ -1094,7 +1094,7 @@ def Event_10002510():
     )
 
 
-@NeverRestart(10000519)
+@ContinueOnRest(10000519)
 def Event_10000519():
     """Event 10000519"""
     if ThisEventSlotFlagEnabled():
@@ -1464,7 +1464,7 @@ def Event_10002480():
     Kill(Characters.BladedTalonEagle12)
 
 
-@NeverRestart(1002700)
+@ContinueOnRest(1002700)
 def Event_1002700(_, character: uint, flag: uint, flag_1: uint):
     """Event 1002700"""
     GotoIfFlagEnabled(Label.L0, flag=flag)
@@ -1483,7 +1483,7 @@ def Event_1002700(_, character: uint, flag: uint, flag_1: uint):
     End()
 
 
-@NeverRestart(1002680)
+@ContinueOnRest(1002680)
 def Event_1002680():
     """Event 1002680"""
     AND_1.Add(CharacterOutsideRegion(character=PLAYER, region=10002680))
@@ -1671,7 +1671,7 @@ def Event_10003500(_, region: uint):
     Restart()
 
 
-@NeverRestart(10002800)
+@ContinueOnRest(10002800)
 def Event_10002800():
     """Event 10002800"""
     if FlagEnabled(10000800):
@@ -2014,7 +2014,7 @@ def Event_10002849():
     CommonFunc_9005822(0, 10000800, 475000, 10002805, 10002806, 0, 10002802, 1, 1)
 
 
-@NeverRestart(10002850)
+@ContinueOnRest(10002850)
 def Event_10002850():
     """Event 10002850"""
     if FlagEnabled(10000850):
@@ -3214,7 +3214,7 @@ def Event_10000762():
     EnableFlag(11109528)
 
 
-@NeverRestart(10000763)
+@ContinueOnRest(10000763)
 def Event_10000763(_, asset: uint, radius: float):
     """Event 10000763"""
     DisableNetworkSync()

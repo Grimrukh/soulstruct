@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_37_54_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     CommonFunc_90005250(0, character=Characters.GraftedScion, region=1037542341, seconds=0.0, animation_id=0)
@@ -320,7 +320,7 @@ def Constructor():
     Event_1037542450(8, 1037541408)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Patches0)
@@ -380,7 +380,7 @@ def Event_1037542220(_, character: uint, region: uint, destination: uint, second
     End()
 
 
-@NeverRestart(1037542505)
+@ContinueOnRest(1037542505)
 def Event_1037542505():
     """Event 1037542505"""
     if FlagEnabled(57):
@@ -1239,7 +1239,7 @@ def Event_1037542505():
         CommonFunc_90005694(0, 1037542418, 1037541308, 200, 0, 802003200, 1.0, 0.0, 1.0)
 
 
-@NeverRestart(1037542580)
+@ContinueOnRest(1037542580)
 def Event_1037542580():
     """Event 1037542580"""
     RegisterLadder(start_climbing_flag=1037540580, stop_climbing_flag=1037540851, asset=Assets.AEG004_180_1000)
@@ -1415,7 +1415,7 @@ def Event_1037542500():
     Restart()
 
 
-@NeverRestart(1037542569)
+@ContinueOnRest(1037542569)
 def Event_1037542569(_, flag: uint, asset: uint):
     """Event 1037542569"""
     GotoIfFlagDisabled(Label.L0, flag=flag)

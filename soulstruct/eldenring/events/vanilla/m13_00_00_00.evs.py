@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m13_00_00_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=13000003, asset=Assets.AEG099_060_9003)
@@ -326,7 +326,7 @@ def Constructor():
     Event_13003721()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_13000519()
@@ -1321,7 +1321,7 @@ def Preconstructor():
     CommonFunc_90005261(0, 13000496, 13002496, 40.0, 0.0, -1)
 
 
-@NeverRestart(13002500)
+@ContinueOnRest(13002500)
 def Event_13002500():
     """Event 13002500"""
     if PlayerNotInOwnWorld():
@@ -1357,7 +1357,7 @@ def Event_13002580():
     RegisterLadder(start_climbing_flag=13000590, stop_climbing_flag=13000591, asset=Assets.AEG247_011_0500)
 
 
-@NeverRestart(13002510)
+@ContinueOnRest(13002510)
 def Event_13002510():
     """Event 13002510"""
     CommonFunc_90005500(
@@ -1442,7 +1442,7 @@ def Event_13002510():
     )
 
 
-@NeverRestart(13000519)
+@ContinueOnRest(13000519)
 def Event_13000519():
     """Event 13000519"""
     if ThisEventSlotFlagEnabled():
@@ -1860,7 +1860,7 @@ def Event_13002834():
         return
     GotoIfPlayerInOwnWorld(Label.L0)
     GotoIfFlagDisabled(Label.L0, flag=13002834)
-    MoveCharacterAndCopyDrawParentWitHFadeout(
+    MoveCharacterAndCopyDrawParentWithFadeout(
         character=20000,
         destination_type=CoordEntityType.Region,
         destination=13002836,
@@ -2070,7 +2070,7 @@ def Event_13002850():
         EnableFlag(61114)
 
 
-@NeverRestart(13002859)
+@ContinueOnRest(13002859)
 def Event_13002859():
     """Event 13002859"""
     if PlayerNotInOwnWorld():
@@ -3022,7 +3022,7 @@ def Event_13003720():
     End()
 
 
-@NeverRestart(13003721)
+@ContinueOnRest(13003721)
 def Event_13003721():
     """Event 13003721"""
     if PlayerNotInOwnWorld():

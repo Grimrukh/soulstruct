@@ -22,7 +22,7 @@ from .entities.m60_49_54_00_entities import *
 from .entities.m12_03_00_00_entities import Assets as m12_03_Assets
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049540000, asset=Assets.AEG099_060_9000)
@@ -74,7 +74,7 @@ def Constructor():
     CommonFunc_90005706(0, 1049540710, 930023, 0)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.TalkDummy1)
@@ -242,7 +242,7 @@ def Event_1049542350(_, character__region: uint, character: uint):
     Restart()
 
 
-@NeverRestart(1049542510)
+@ContinueOnRest(1049542510)
 def Event_1049542510():
     """Event 1049542510"""
     CommonFunc_90005500(
@@ -302,7 +302,7 @@ def Event_1049543700(_, character: uint, region: uint, distance: float):
     End()
 
 
-@NeverRestart(200)
+@ContinueOnRest(200)
 def Event_200():
     """Event 200"""
     CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1249548301)
@@ -330,7 +330,7 @@ def Event_200():
     CommonFunc_90005261(0, 1249540303, 1249542300, 10.0, 0.0, 0)
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250():
     """Event 250"""
     CommonFunc_90005420(0, 1249540300, 1249541300, 1249541301, 1249540301, 1249540302, 1249540303, 0.0)

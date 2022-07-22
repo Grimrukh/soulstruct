@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_44_34_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1044340000, asset=Assets.AEG099_060_9000)
@@ -153,7 +153,7 @@ def Constructor():
     Event_1044343710(0, 1044340710)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Blaidd)
@@ -399,7 +399,7 @@ def Event_1044343700(_, character: uint, character_1: uint, character_2: uint, a
     Restart()
 
 
-@NeverRestart(1044343701)
+@ContinueOnRest(1044343701)
 def Event_1044343701(_, character: uint):
     """Event 1044343701"""
     if PlayerNotInOwnWorld():
@@ -415,7 +415,7 @@ def Event_1044343701(_, character: uint):
     End()
 
 
-@NeverRestart(1044343702)
+@ContinueOnRest(1044343702)
 def Event_1044343702(_, character: uint):
     """Event 1044343702"""
     if PlayerNotInOwnWorld():
@@ -567,7 +567,7 @@ def Event_1044343705(_, character: uint, attacked_entity: uint):
     ForceAnimation(character, 20006)
 
 
-@NeverRestart(1044343706)
+@ContinueOnRest(1044343706)
 def Event_1044343706(
     _,
     character: uint,

@@ -22,7 +22,7 @@ from .entities.m12_05_00_00_entities import *
 from .entities.m60_35_45_00_entities import Characters as m60_35_Characters
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=71251, asset=Assets.AEG099_060_9001)
@@ -798,7 +798,7 @@ def Constructor():
     CommonFunc_90005702(0, 12050702, 3183, 3180, 3184)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     DisableBackread(12050700)
@@ -1379,7 +1379,7 @@ def Event_12052849():
     CommonFunc_9005822(0, 12050800, 480000, 12052805, 12052806, 0, 12052802, 0, 0)
 
 
-@NeverRestart(12052510)
+@ContinueOnRest(12052510)
 def Event_12052510():
     """Event 12052510"""
     CommonFunc_90005500(

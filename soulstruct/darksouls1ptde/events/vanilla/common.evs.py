@@ -11,7 +11,7 @@ from soulstruct.darksouls1ptde.events import *
 from soulstruct.darksouls1ptde.events.instructions import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     if Client():
@@ -253,7 +253,7 @@ def Constructor():
     Event_8090(4, 3, 514, 11217050)
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     SkipLinesIfFlagEnabled(80, 909)
@@ -377,7 +377,7 @@ def Preconstructor():
         EnableFlag(50006080)
 
 
-@NeverRestart(290)
+@ContinueOnRest(290)
 def Event_290():
     """Event 290"""
     if ThisEventFlagEnabled():
@@ -398,7 +398,7 @@ def Event_290():
     DisableFlag(288)
 
 
-@NeverRestart(701)
+@ContinueOnRest(701)
 def Event_701():
     """Event 701"""
     if ThisEventFlagEnabled():
@@ -414,7 +414,7 @@ def Event_701():
     EnableVagrantSpawning()
 
 
-@NeverRestart(702)
+@ContinueOnRest(702)
 def Event_702():
     """Event 702"""
     DisableFlag(702)
@@ -433,7 +433,7 @@ def Event_702():
     Restart()
 
 
-@NeverRestart(717)
+@ContinueOnRest(717)
 def Event_717():
     """Event 717"""
     DisableFlag(717)
@@ -452,7 +452,7 @@ def Event_717():
     Restart()
 
 
-@NeverRestart(718)
+@ContinueOnRest(718)
 def Event_718():
     """Event 718"""
     if FlagDisabled(8120):
@@ -461,7 +461,7 @@ def Event_718():
     DisableFlag(8120)
 
 
-@NeverRestart(706)
+@ContinueOnRest(706)
 def Event_706():
     """Event 706"""
     MAIN.Await(FlagEnabled(710))
@@ -481,7 +481,7 @@ def Event_706():
     Restart()
 
 
-@NeverRestart(710)
+@ContinueOnRest(710)
 def Event_710():
     """Event 710"""
     if ThisEventFlagEnabled():
@@ -492,7 +492,7 @@ def Event_710():
     EnableFlag(710)
 
 
-@NeverRestart(711)
+@ContinueOnRest(711)
 def Event_711(_, item: int, flag: int):
     """Event 711"""
     if ThisEventSlotFlagEnabled():
@@ -503,7 +503,7 @@ def Event_711(_, item: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(715)
+@ContinueOnRest(715)
 def Event_715():
     """Event 715"""
     DisableFlag(715)
@@ -525,7 +525,7 @@ def Event_715():
     Restart()
 
 
-@NeverRestart(716)
+@ContinueOnRest(716)
 def Event_716():
     """Event 716"""
     if ThisEventFlagEnabled():
@@ -536,7 +536,7 @@ def Event_716():
     EnableFlag(716)
 
 
-@NeverRestart(8131)
+@ContinueOnRest(8131)
 def Event_8131(_, item: int, item_1: int):
     """Event 8131"""
     if ThisEventSlotFlagEnabled():
@@ -562,7 +562,7 @@ def Event_8131(_, item: int, item_1: int):
         EnableFlagRange((8131, 8137))
 
 
-@NeverRestart(819)
+@ContinueOnRest(819)
 def Event_819():
     """Event 819"""
     if ThisEventFlagEnabled():
@@ -576,7 +576,7 @@ def Event_819():
     EnableFlag(11017170)
 
 
-@NeverRestart(719)
+@ContinueOnRest(719)
 def Event_719():
     """Event 719"""
     if ThisEventFlagEnabled():
@@ -660,7 +660,7 @@ def Event_719():
     EnableFlag(719)
 
 
-@NeverRestart(720)
+@ContinueOnRest(720)
 def Event_720():
     """Event 720"""
     if ThisEventFlagEnabled():
@@ -679,7 +679,7 @@ def Event_720():
     EnableFlag(11020102)
 
 
-@NeverRestart(730)
+@ContinueOnRest(730)
 def Event_730():
     """Event 730"""
     AND_1.Add(FlagDisabled(732))
@@ -692,7 +692,7 @@ def Event_730():
     Restart()
 
 
-@NeverRestart(731)
+@ContinueOnRest(731)
 def Event_731():
     """Event 731"""
     MAIN.Await(FlagDisabled(8000))
@@ -705,7 +705,7 @@ def Event_731():
     Restart()
 
 
-@NeverRestart(250)
+@ContinueOnRest(250)
 def Event_250(_, item: int, flag: int):
     """Event 250"""
     if ThisEventSlotFlagEnabled():
@@ -716,7 +716,7 @@ def Event_250(_, item: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(350)
+@ContinueOnRest(350)
 def Event_350(_, flag: int, item: int):
     """Event 350"""
     if ThisEventSlotFlagEnabled():
@@ -729,7 +729,7 @@ def Event_350(_, flag: int, item: int):
     RemoveGoodFromPlayer(item=item, quantity=1)
 
 
-@NeverRestart(780)
+@ContinueOnRest(780)
 def Event_780(_, item: int, flag: int):
     """Event 780"""
     DisableFlag(flag)
@@ -743,7 +743,7 @@ def Event_780(_, item: int, flag: int):
     Restart()
 
 
-@NeverRestart(870)
+@ContinueOnRest(870)
 def Event_870(_, covenant: uchar, flag: int):
     """Event 870"""
     MAIN.Await(PlayerCovenant(covenant))
@@ -757,7 +757,7 @@ def Event_870(_, covenant: uchar, flag: int):
     Restart()
 
 
-@NeverRestart(260)
+@ContinueOnRest(260)
 def Event_260(_, flag: int, text: int, seconds: float):
     """Event 260"""
     if FlagEnabled(flag):
@@ -769,7 +769,7 @@ def Event_260(_, flag: int, text: int, seconds: float):
     DisplayStatus(text)
 
 
-@NeverRestart(970)
+@ContinueOnRest(970)
 def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, item_lot_param_id_2: int):
     """Event 970"""
     if FlagEnabled(flag):
@@ -787,7 +787,7 @@ def Event_970(_, flag: int, item_lot_param_id: int, item_lot_param_id_1: int, it
         AwardItemLot(item_lot_param_id_2, host_only=True)
 
 
-@NeverRestart(911)
+@ContinueOnRest(911)
 def Event_911(_, flag: int, item_lot_param_id: int, state: uchar):
     """Event 911"""
     if FlagEnabled(flag):
@@ -802,7 +802,7 @@ def Event_911(_, flag: int, item_lot_param_id: int, state: uchar):
     Restart()
 
 
-@NeverRestart(890)
+@ContinueOnRest(890)
 def Event_890(_, flag: int, item_lot_param_id: int, state: uchar):
     """Event 890"""
     if FlagEnabled(flag):
@@ -817,7 +817,7 @@ def Event_890(_, flag: int, item_lot_param_id: int, state: uchar):
     Restart()
 
 
-@NeverRestart(960)
+@ContinueOnRest(960)
 def Event_960(_, flag: int, character: int, item_lot_param_id: int):
     """Event 960"""
     if ThisEventSlotFlagEnabled():
@@ -830,7 +830,7 @@ def Event_960(_, flag: int, character: int, item_lot_param_id: int):
     AwardItemLot(item_lot_param_id, host_only=True)
 
 
-@NeverRestart(8200)
+@ContinueOnRest(8200)
 def Event_8200(_, item_type: uchar, item: int, flag: int, flag_1: int):
     """Event 8200"""
     if FlagEnabled(flag):
@@ -845,7 +845,7 @@ def Event_8200(_, item_type: uchar, item: int, flag: int, flag_1: int):
     EnableFlag(flag_1)
 
 
-@NeverRestart(8300)
+@ContinueOnRest(8300)
 def Event_8300(_, item_type: uchar, item: int, flag: int):
     """Event 8300"""
     if FlagEnabled(flag):
@@ -859,7 +859,7 @@ def Event_8300(_, item_type: uchar, item: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(8090)
+@ContinueOnRest(8090)
 def Event_8090(_, item_type: uchar, item: int, flag: int):
     """Event 8090"""
     if FlagEnabled(flag):
@@ -873,7 +873,7 @@ def Event_8090(_, item_type: uchar, item: int, flag: int):
     EnableFlag(flag)
 
 
-@NeverRestart(910)
+@ContinueOnRest(910)
 def Event_910(_, flag: int, item_lot_param_id: int):
     """Event 910"""
     if FlagDisabled(flag):
@@ -886,7 +886,7 @@ def Event_910(_, flag: int, item_lot_param_id: int):
     Restart()
 
 
-@NeverRestart(690)
+@ContinueOnRest(690)
 def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
     """Event 690"""
     if ThisEventSlotFlagDisabled():
@@ -926,7 +926,7 @@ def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
     Restart()
 
 
-@NeverRestart(721)
+@ContinueOnRest(721)
 def Event_721():
     """Event 721"""
     if FlagEnabled(728):
@@ -952,7 +952,7 @@ def Event_721():
     EnableFlag(728)
 
 
-@NeverRestart(722)
+@ContinueOnRest(722)
 def Event_722():
     """Event 722"""
     if ThisEventFlagEnabled():
@@ -973,7 +973,7 @@ def Event_722():
     EnableFlag(722)
 
 
-@NeverRestart(723)
+@ContinueOnRest(723)
 def Event_723():
     """Event 723"""
     if ThisEventFlagEnabled():
@@ -996,7 +996,7 @@ def Event_723():
     EnableFlag(723)
 
 
-@NeverRestart(724)
+@ContinueOnRest(724)
 def Event_724():
     """Event 724"""
     if ThisEventFlagEnabled():
@@ -1016,7 +1016,7 @@ def Event_724():
     EnableFlag(724)
 
 
-@NeverRestart(725)
+@ContinueOnRest(725)
 def Event_725():
     """Event 725"""
     if ThisEventFlagEnabled():
@@ -1027,7 +1027,7 @@ def Event_725():
     EnableFlag(725)
 
 
-@NeverRestart(726)
+@ContinueOnRest(726)
 def Event_726():
     """Event 726"""
     if ThisEventFlagEnabled():
@@ -1038,7 +1038,7 @@ def Event_726():
     EnableFlag(726)
 
 
-@NeverRestart(727)
+@ContinueOnRest(727)
 def Event_727():
     """Event 727"""
     if ThisEventFlagEnabled():
@@ -1059,7 +1059,7 @@ def Event_727():
     EnableFlag(727)
 
 
-@NeverRestart(740)
+@ContinueOnRest(740)
 def Event_740():
     """Event 740"""
     MAIN.Await(PlayerClass(ClassType.Pyromancer))
@@ -1067,7 +1067,7 @@ def Event_740():
     EnableFlag(740)
 
 
-@NeverRestart(745)
+@ContinueOnRest(745)
 def Event_745():
     """Event 745"""
     AND_7.Add(FlagEnabled(1604))
@@ -1087,7 +1087,7 @@ def Event_745():
     End()
 
 
-@NeverRestart(754)
+@ContinueOnRest(754)
 def Event_754():
     """Event 754"""
     DisableFlag(754)
@@ -1101,7 +1101,7 @@ def Event_754():
     Restart()
 
 
-@NeverRestart(770)
+@ContinueOnRest(770)
 def Event_770():
     """Event 770"""
     MAIN.Await(FlagEnabled(755))
@@ -1183,7 +1183,7 @@ def Event_770():
     Restart()
 
 
-@NeverRestart(772)
+@ContinueOnRest(772)
 def Event_772():
     """Event 772"""
     MAIN.Await(FlagDisabled(744))
@@ -1241,7 +1241,7 @@ def Event_772():
     Restart()
 
 
-@NeverRestart(761)
+@ContinueOnRest(761)
 def Event_761():
     """Event 761"""
     DisableNetworkSync()
@@ -1253,7 +1253,7 @@ def Event_761():
     Restart()
 
 
-@NeverRestart(763)
+@ContinueOnRest(763)
 def Event_763():
     """Event 763"""
     DisableNetworkSync()
@@ -1269,7 +1269,7 @@ def Event_763():
     Restart()
 
 
-@NeverRestart(750)
+@ContinueOnRest(750)
 def Event_750():
     """Event 750"""
     DisableNetworkSync()
@@ -1293,7 +1293,7 @@ def Event_750():
     Restart()
 
 
-@NeverRestart(752)
+@ContinueOnRest(752)
 def Event_752():
     """Event 752"""
     DisableNetworkSync()
@@ -1314,7 +1314,7 @@ def Event_752():
     Restart()
 
 
-@NeverRestart(757)
+@ContinueOnRest(757)
 def Event_757():
     """Event 757"""
     if FlagEnabled(757):
@@ -1334,7 +1334,7 @@ def Event_757():
     End()
 
 
-@NeverRestart(758)
+@ContinueOnRest(758)
 def Event_758():
     """Event 758"""
     if ThisEventFlagEnabled():
@@ -1355,7 +1355,7 @@ def Event_758():
     End()
 
 
-@NeverRestart(759)
+@ContinueOnRest(759)
 def Event_759():
     """Event 759"""
     if ThisEventFlagEnabled():
@@ -1376,7 +1376,7 @@ def Event_759():
     End()
 
 
-@NeverRestart(818)
+@ContinueOnRest(818)
 def Event_818():
     """Event 818"""
     if FlagDisabled(11510150):
@@ -1392,7 +1392,7 @@ def Event_818():
     Restart()
 
 
-@NeverRestart(810)
+@ContinueOnRest(810)
 def Event_810():
     """Event 810"""
     if ThisEventFlagEnabled():
@@ -1403,7 +1403,7 @@ def Event_810():
     EnableFlag(810)
 
 
-@NeverRestart(812)
+@ContinueOnRest(812)
 def Event_812(_, flag: int):
     """Event 812"""
     if ThisEventSlotFlagEnabled():
@@ -1414,7 +1414,7 @@ def Event_812(_, flag: int):
     End()
 
 
-@NeverRestart(822)
+@ContinueOnRest(822)
 def Event_822():
     """Event 822"""
     MAIN.Await(FlagEnabled(830))
@@ -1428,7 +1428,7 @@ def Event_822():
     Restart()
 
 
-@NeverRestart(823)
+@ContinueOnRest(823)
 def Event_823():
     """Event 823"""
     MAIN.Await(FlagEnabled(831))
@@ -1442,7 +1442,7 @@ def Event_823():
     Restart()
 
 
-@NeverRestart(840)
+@ContinueOnRest(840)
 def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_1: int):
     """Event 840"""
     DisableFlag(flag)
@@ -1461,7 +1461,7 @@ def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_
     Restart()
 
 
-@NeverRestart(766)
+@ContinueOnRest(766)
 def Event_766():
     """Event 766"""
     AND_1.Add(Online())

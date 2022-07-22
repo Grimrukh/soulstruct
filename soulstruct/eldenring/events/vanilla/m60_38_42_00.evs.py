@@ -20,7 +20,7 @@ from soulstruct.eldenring.events.instructions import *
 from .entities.m60_38_42_00_entities import *
 
 
-@NeverRestart(0)
+@ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1038422200(0, character=Characters.RayaLucariaSoldier0)
@@ -44,7 +44,7 @@ def Constructor():
     Event_1038422580()
 
 
-@NeverRestart(50)
+@ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     CommonFunc_90005261(0, 1038420240, 1038422240, 30.0, 0.0, 0)
@@ -132,7 +132,7 @@ def Event_1038422240():
     End()
 
 
-@NeverRestart(1038422580)
+@ContinueOnRest(1038422580)
 def Event_1038422580():
     """Event 1038422580"""
     RegisterLadder(start_climbing_flag=1038420580, stop_climbing_flag=1038420581, asset=Assets.AEG110_012_2000)
