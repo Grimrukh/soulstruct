@@ -66,7 +66,10 @@ class ESD(GameFile, abc.ABC):
                 if file_source.name.endswith(ext):
                     self.esd_name = file_source.name[len(ext)]
                     self.path = file_source.parent / self.esd_name
-                    self.compile_from_esp_single_file(file_source)
+                    try:
+                        self.compile_from_esp_single_file(file_source)
+                    except Exception as ex:
+                        raise ValueError(f"Error encountered while parsing '{file_source}': {ex}")
                     return None
 
         raise InvalidGameFileTypeError("`esd_source` is not a `.esp[.py]` file or directory.")

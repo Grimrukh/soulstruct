@@ -1,6 +1,8 @@
 """Adapted from `DarkSouls1SoundProjects` by HotPocketRemix, with much gratitude."""
 from __future__ import annotations
 
+__all__ = ["FEV", "new_guid"]
+
 import logging
 import math
 import os
@@ -26,7 +28,7 @@ def tag(tag_name: str, value: tp.Any = ""):
 
 
 def new_guid() -> str:
-    return "<guid>" + str(uuid.uuid4()) + "</guid>"
+    return f"<guid>{{{str(uuid.uuid4())}}}</guid>"
 
 
 def read_string_from_length(reader: BinaryReader, strip=True) -> str:
