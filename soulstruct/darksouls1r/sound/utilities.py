@@ -14,9 +14,7 @@ except ImportError:
 if tp.TYPE_CHECKING:
     from .fsb import FSBSample
 
-
 _LOGGER = logging.getLogger(__name__)
-
 
 _PYDUB_WARNING_DONE = False
 
@@ -61,9 +59,9 @@ def move_extracted_mp3(
                 wav_path = compressed_file_path.parent / (compressed_file_path.name.split(".")[0] + ".wav")
                 if sample.header.channel_count == 1:
                     sound.set_channels(1)
-                    print(f"Converting to WAV: {compressed_file_path} -> {wav_path.name} (MONO)")
+                    _LOGGER.info(f"Converting to WAV: {compressed_file_path} -> {wav_path.name} (MONO)")
                 else:
-                    print(f"Converting to WAV: {compressed_file_path} -> {wav_path.name}")
+                    _LOGGER.info(f"Converting to WAV: {compressed_file_path} -> {wav_path.name}")
                 try:
                     sound.export(wav_path, format="wav")
                 except Exception as ex:

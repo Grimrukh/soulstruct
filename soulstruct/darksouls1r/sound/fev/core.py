@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import logging
 import math
+import os
+import re
 import struct
 import typing as tp
 import uuid
@@ -466,7 +468,7 @@ class UserProperty(XMLObject):
         ]
 
 
-class SoundDefInstance(XMLObject):
+class SoundInstance(XMLObject):
     """Sound Definition Instance included on Layers in Events.
 
     Each Sound Definition Instance is an occurrence of a base Sound Definition.
@@ -501,12 +503,12 @@ class SoundDefInstance(XMLObject):
         POWER_30_LATE = 6
         POWER_30_EARLY = 7
 
-    index: int
+    sounddef_index: int
     start: int
     length: int
-    start_mode: SoundDefInstance.StartMode
-    loop_mode: SoundDefInstance.LoopMode
-    autopitch_param: SoundDefInstance.AutopitchParameter
+    start_mode: SoundInstance.StartMode
+    loop_mode: SoundInstance.LoopMode
+    autopitch_param: SoundInstance.AutopitchParameter
     loop_count: int
     autopitch_enabled: int
     autopitch_reference: int
@@ -515,11 +517,11 @@ class SoundDefInstance(XMLObject):
     volume: int
     fade_in_length: int
     fade_out_length: int
-    fade_in_type: SoundDefInstance.CrossfadeType
-    fade_out_type: SoundDefInstance.CrossfadeType
+    fade_in_type: SoundInstance.CrossfadeType
+    fade_out_type: SoundInstance.CrossfadeType
 
     STRUCT = BinaryStruct(
-        ("index", "H"),
+        ("sounddef_index", "H"),
         ("start", "f"),
         ("length", "f"),
         ("start_mode", "I"),
@@ -542,7 +544,7 @@ class SoundDefInstance(XMLObject):
 
     # TODO: Not finished. Too painful for now.
     FROM_XML = {
-        "index": ("index", lambda e: int(e.text)),
+        "sounddef_index": ("sounddef_index", lambda e: int(e.text)),
         "start": ("start", lambda e: int(e.text)),
         "length": ("length", lambda e: int(e.text)),
         "start_mode": ("start_mode", lambda e: int(e.text)),
@@ -731,13 +733,13 @@ class Layer(XMLObject):
     )
 
     STRUCT = BinaryStruct(
-        ("_sounddef_instance_count", "H"),
+        ("_sound_instance_count", "H"),
         ("_envelope_count", "H"),
     )
 
     priority: int
     control_parameter: int
-    sounddef_instances: list[SoundDefInstance]
+    sound_instances: list[SoundInstance]
     envelopes: list[Envelope]
 
     def unpack(self, reader: BinaryReader, event_type: Event.EventType = None):
@@ -749,7 +751,7 @@ class Layer(XMLObject):
             self.priority = -1
             self.control_parameter = -1
         data = reader.unpack_struct(self.STRUCT)
-        self.sounddef_instances = [SoundDefInstance(reader) for _ in range(data["_sounddef_instance_count"])]
+        self.sound_instances = [SoundInstance(reader) for _ in range(data["_sound_instance_count"])]
         self.envelopes = [Envelope(reader) for _ in range(data["_envelope_count"])]
         # No other fields to set.
 
@@ -777,8 +779,8 @@ class Layer(XMLObject):
         ]
         if self.control_parameter != -1:
             xml_lines += [tag("controlparameter", parameters[self.control_parameter].name)]
-        for sdi in self.sounddef_instances:
-            xml_lines += sdi.to_xml_lines(sounddefs[sdi.index])
+        for sound in self.sound_instances:
+            xml_lines += sound.to_xml_lines(sounddefs[sound.sounddef_index])
         for i, envelope in enumerate(self.envelopes):
             xml_lines += envelope.to_xml_lines(f"parsed_envelope{i}", self.envelopes, parameters)
         xml_lines += [tag(f"_{console}_enable", 1) for console in CONSOLES]
@@ -1015,7 +1017,6 @@ class Event(XMLObject):
     def unpack(self, reader: BinaryReader):
         event_type = self.EventType(reader.unpack_value("I"))
         self.name = read_string_from_length(reader)
-        # print(f"EVENT NAME: {self.name}")
         kwargs = self.extract_kwargs_from_struct(reader)
         raw_guid = kwargs.pop("_guid")
         self.guid = "-".join((
@@ -1048,6 +1049,12 @@ class Event(XMLObject):
         self.category_names = [read_string_from_length(reader) for _ in range(category_name_count)]
 
         self.set(**kwargs)
+
+    def has_name(self, name: str | re.Pattern) -> bool:
+        """Compares name to given string or regex pattern."""
+        if isinstance(name, re.Pattern):
+            return name.match(self.name) is not None
+        return name == self.name
 
     def to_xml_lines(self, sounddefs) -> list[str]:
         """XML string for Event class, including Layers, Parameters, and User Properties.
@@ -1149,7 +1156,6 @@ class EventGroup(XMLObject):
 
     def unpack(self, reader: BinaryReader):
         self.name = read_string_from_length(reader)
-        # print(f"EVENT GROUP NAME: {self.name}")
         kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
         self.user_properties = [UserProperty(reader) for _ in range(kwargs.pop("_user_property_count"))]
         self.subgroups = [EventGroup(reader) for _ in range(kwargs.pop("_subgroup_count"))]
@@ -1328,7 +1334,6 @@ class SoundDef(XMLObject):
 
     def unpack(self, reader: BinaryReader):
         self.name = read_string_from_length(reader)
-        # print(f"SOUND DEF NAME: {self.name}")
         kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
         self.waveforms = [Waveform(reader) for _ in range(kwargs.pop("_waveform_count"))]
         self.set(**kwargs)
@@ -1441,8 +1446,6 @@ class FEV(GameFile):
         self.unk_offset2 = data.pop("unk_offset2")
         self.project_name = read_string_from_length(reader)
 
-        # print("PROJECT NAME:", self.project_name)
-
         wavebank_count = reader.unpack_value("I")
         self.wavebanks = [WavebankInfo(reader) for _ in range(wavebank_count)]
 
@@ -1467,14 +1470,82 @@ class FEV(GameFile):
     def pack(self):
         raise ValueError("FEV pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
-    def remove_event(self, event_name: str):
-        """Remove the `SoundDef` and `Event` for the given event name (e.g., `v123456789`)."""
-        self.sounddefs = [sd for sd in self.sounddefs if Path(sd.name).name != event_name]
+    def remove_events(self, event_name: str | re.Pattern, remove_unused_sounddefs=True) -> list[Event]:
+        """Remove `Event` with the given name.
+
+        If `remove_unused_sounddefs=True` and any SoundDefs referenced by the deleted `Event` are not used anywhere
+        else, that `SoundDef` will also be removed (and all `SoundDefInstances` in event layers will be rechecked).
+
+        Returns a list of removed events.
+        """
+        removed_events = []
+        removed_sounddef_indices = []
+        used_sounddef_indices = []
         for top_event_group in self.top_event_groups:
-            top_event_group.events = [e for e in top_event_group.events if e.name != event_name]
-            for subgroup in top_event_group.subgroups:
-                # TODO: Should recur on any deeper subgroups, but this depth will work for me.
-                subgroup.events = [e for e in subgroup.events if e.name != event_name]
+            self._remove_event_from_group(
+                top_event_group, event_name, removed_events, removed_sounddef_indices, used_sounddef_indices
+            )
+
+        if remove_unused_sounddefs:
+            deleted_sounddef_indices = [i for i in removed_sounddef_indices if i not in used_sounddef_indices]
+            self.sounddefs = [sd for i, sd in enumerate(self.sounddefs) if i not in deleted_sounddef_indices]
+            self._update_all_sounddef_indices(deleted_sounddef_indices)
+
+        return removed_events
+
+    def _remove_event_from_group(
+        self,
+        event_group: EventGroup,
+        event_name: str | re.Pattern,
+        removed_events: list[Event],
+        removed_sounddef_indices: list[int],
+        used_sounddef_indices: list[int],
+    ):
+        for event in event_group.events:
+            for layer in event.layers:
+                for sound_instance in layer.sound_instances:
+                    if event.has_name(event_name):
+                        removed_events.append(event)
+                        removed_sounddef_indices.append(sound_instance.sounddef_index)
+                    else:
+                        used_sounddef_indices.append(sound_instance.sounddef_index)
+        event_group.events = [e for e in event_group.events if not e.has_name(event_name)]
+        for subgroup in event_group.subgroups:
+            self._remove_event_from_group(
+                subgroup, event_name, removed_events, removed_sounddef_indices, used_sounddef_indices
+            )
+
+    def _update_all_sounddef_indices(self, deleted_indices: list[int]):
+        """Decrements each index by the number of deleted indices beneath it.
+
+        For example, if indices 1, 2, 4, and 8 were deleted, a sound instance with old index 6 would now have index 3.
+        """
+        for event in self.get_all_events():
+            for layer in event.layers:
+                for sound_instance in layer.sound_instances:
+                    if sound_instance.sounddef_index in deleted_indices:
+                        raise ValueError(
+                            f"Sound instance in event '{event.name}' references a just-deleted SoundDef index: "
+                            f"{sound_instance.sounddef_index}"
+                        )
+                    decrement = sum(i < sound_instance.sounddef_index for i in deleted_indices)
+                    sound_instance.sounddef_index -= decrement
+
+    def get_all_events(self) -> list[Event]:
+        events = []
+        for top_event_group in self.top_event_groups:
+            self._get_all_event_group_events(top_event_group, events)
+        return events
+
+    def _get_all_event_group_events(self, event_group: EventGroup, events: list[Event]):
+        events += event_group.events
+        for subgroup in event_group.subgroups:
+            self._get_all_event_group_events(subgroup, events)
+
+    def get_all_event_names(self, name_regex: re.Pattern = None) -> list[str]:
+        event_names = [e.name for e in self.get_all_events()]
+        if name_regex is not None:
+            return [name for name in event_names if name_regex.match(name) is not None]
 
     def to_xml_lines_start(self) -> list[str]:
         """Start of FDP XML contribution from FEV.
@@ -1547,8 +1618,8 @@ class FEV(GameFile):
         return project_footer
 
     def find_paths_from_waveforms_with_bank_index(self, bank_name: str, index: int):
-        """Parses the given `FEV` to find Sound Definitions that reference the wavetable in wavebank `bank_name` at the
-        given `index`, in order to determine the filepath of the wavetable.
+        """Parses FEV to find Sound Definitions that reference the wavetable in wavebank `bank_name` at the given
+        `index`, in order to determine the filepath of the wavetable.
 
         Returns a list of possible filepaths.
         """
@@ -1559,7 +1630,13 @@ class FEV(GameFile):
                     waveform_name_set.add(waveform.name)
         return list(waveform_name_set)
 
-    def to_fdp(self, write_bank_dir: Path | str = "", fsb_dir: Path | str = None, convert_to_wav=False) -> str:
+    def to_fdp(
+        self,
+        write_bank_dir: Path | str = "",
+        fsb_dir: Path | str = None,
+        ignore_fsb_sample_names: tp.Iterable[str] = (),
+        convert_to_wav=False,
+    ) -> str:
         """Read FEV and FSB files and reconstruct FDP project file for FMOD Designer (just plaintext XML).
 
         Args:
@@ -1567,6 +1644,8 @@ class FEV(GameFile):
             "bank/{fev_name}". Optional; defaults to empty string.
             fsb_dir (Path or str): directory to find FSB files in (typically just the one FSB). If omitted, the
                 directory containing the FEV file will be used.
+            ignore_fsb_sample_names (sequence of Path or str): any FSB sample header names contained in this sequence
+                will be ignored for the FDP file and deleted after FSB extraction.
             convert_to_wav (bool): if True, and `write_bank_path` is given, the MP3 files written to the bank directory
                 will also be converted to WAV files for easy re-use in FMOD. Voice files starting with "v" will further
                 be converted to single-channel, which is the format expected by DSR.
@@ -1616,10 +1695,17 @@ class FEV(GameFile):
                         raise FileNotFoundError(
                             f"Cannot find required file '{bank.bank_name}.fev' associated with matching bank."
                         )
-                    bank_original_fev = open_fevs.setdefault(str(fsb_original_fev_filepath),
-                                                             FEV(fsb_original_fev_filepath))
+                    bank_original_fev = open_fevs.setdefault(
+                        str(fsb_original_fev_filepath), FEV(fsb_original_fev_filepath)
+                    )
 
                 for index, sample in enumerate(fsb.samples):
+                    if Path(sample.header.name).stem in ignore_fsb_sample_names:
+                        extracted_file_path = write_bank_dir / f"{sample.header.name}{suffix}"
+                        os.remove(extracted_file_path)
+                        _LOGGER.info(f"Deleted ignored extracted FSB sample: {extracted_file_path}")
+                        continue
+
                     paths = self.find_paths_from_waveforms_with_bank_index(bank.bank_name, index)
                     if bank_original_fev:
                         # Bank is from a different FEV.
@@ -1647,7 +1733,6 @@ class FEV(GameFile):
                     elif len(paths) == 1:
                         # Ideal outcome: found exactly one matching path.
                         xml_lines += sample.header.to_xml_lines(Path(paths[0]))
-                        # print(sample)
                         wav_path = write_bank_dir / paths[0]
                     else:
                         _LOGGER.warning(
@@ -1681,8 +1766,13 @@ class FEV(GameFile):
         return dom.toprettyxml(indent="    ", newl="")
 
     def write_fdp(
-        self, fdp_path: Path | str, write_bank_dir: Path | str = "", fsb_dir: Path | str = None, convert_to_wav=False
+        self,
+        fdp_path: Path | str,
+        write_bank_dir: Path | str = "",
+        ignore_fsb_sample_names: tp.Iterable[str] = (),
+        fsb_dir: Path | str = None,
+        convert_to_wav=False,
     ):
         fdp_path = Path(fdp_path)
-        fdp_text = self.to_fdp(write_bank_dir, fsb_dir, convert_to_wav)
+        fdp_text = self.to_fdp(write_bank_dir, fsb_dir, ignore_fsb_sample_names, convert_to_wav)
         fdp_path.write_text(fdp_text)
