@@ -1630,7 +1630,7 @@ def Event_15105283(_, character: int, character_1: int, character_2: int, destin
     AND_2.Add(CharacterAlive(character_1))
     if AND_2:
         return RESTART
-    MakeEnemyAppear(character=character_2)
+    ForceSpawnerToSpawn(spawner=character_2)
     WaitFrames(frames=1)
     EnableGravity(character_1)
     Move(character_1, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=character)

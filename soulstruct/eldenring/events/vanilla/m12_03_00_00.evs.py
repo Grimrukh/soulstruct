@@ -1076,7 +1076,7 @@ def Event_12032820():
     
     MAIN.Await(InsideMap(game_map=DEEPROOT_DEPTHS))
     
-    RequestPlayerCharacterDataFromOnlinePlayers(pool_type=0, unk_4_8=3)
+    RequestPlayerCharacterDataFromOnlinePlayers(pool_type=0, data_count=3)
 
 
 @RestartOnRest(12032830)

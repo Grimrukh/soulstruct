@@ -950,7 +950,7 @@ def Event_30082501():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    MakeEnemyAppear(character=30083460)
+    ForceSpawnerToSpawn(spawner=30083460)
     EnableAI(Characters.Revenant0)
     End()
 

@@ -9058,13 +9058,13 @@ def CommonFunc_90005872(_, character: uint, npc_threat_level: uint, right: uint)
     
     MAIN.Await(AND_1)
     
-    EnableFieldBattleMusicWindUp(npc_threat_level=npc_threat_level)
+    EnableFieldBattleMusicHeatUp(npc_threat_level=npc_threat_level)
     OR_2.Add(CharacterDead(character))
     OR_2.Add(FieldBattleMusicDisabled(npc_threat_level=npc_threat_level))
     
     MAIN.Await(OR_2)
     
-    DisableFieldBattleMusicWindUp(npc_threat_level=npc_threat_level)
+    DisableFieldBattleMusicHeatUp(npc_threat_level=npc_threat_level)
     Wait(0.30000001192092896)
     Restart()
 

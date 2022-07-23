@@ -307,7 +307,7 @@ def Event_1047412302():
     
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=1047412300))
     
-    RequestPlayerCharacterDataFromOnlinePlayers(pool_type=1, unk_4_8=3)
+    RequestPlayerCharacterDataFromOnlinePlayers(pool_type=1, data_count=3)
 
 
 @RestartOnRest(1047412303)

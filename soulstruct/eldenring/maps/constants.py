@@ -14,8 +14,8 @@ __all__ = [
     "ASTEL_ARENA",
     "MOHGWYN_PALACE",
     "SIOFRA_RIVER_START",
-    "REGAL_ANCESTOR_LOWER",
-    "REGAL_ANCESTOR_UPPER",
+    "ANCESTOR_SPIRIT_ARENA",
+    "REGAL_ANCESTOR_ARENA",
     "CRUMBLING_FARUM_AZULA",
     "RAYA_LUCARIA",
     "HALIGTREE",
@@ -578,17 +578,17 @@ SIOFRA_RIVER_START = Map(
     variable_name="SIOFRA_RIVER_START",
     verbose_name="Siofra River (Start)",
 )
-REGAL_ANCESTOR_LOWER = Map(
+ANCESTOR_SPIRIT_ARENA = Map(
     12, 8, 0, 0,
-    name="RegalAncestorLower",
-    variable_name="REGAL_ANCESTOR_LOWER",
-    verbose_name="Regal Ancestor (Lower)",
+    name="AncestorSpiritArena",
+    variable_name="ANCESTOR_SPIRIT_ARENA",
+    verbose_name="Ancestor Spirit Arena",
 )
-REGAL_ANCESTOR_UPPER = Map(
+REGAL_ANCESTOR_ARENA = Map(
     12, 9, 0, 0,
-    name="RegalAncestorUpper",
-    variable_name="REGAL_ANCESTOR_UPPER",
-    verbose_name="Regal Ancestor (Upper)",
+    name="RegalAncestorArena",
+    variable_name="REGAL_ANCESTOR_ARENA",
+    verbose_name="Regal Ancestor Arena",
 )
 CRUMBLING_FARUM_AZULA = Map(
     13, 0, 0, 0,
@@ -652,8 +652,8 @@ ALL_MAPS = (
     ASTEL_ARENA,
     MOHGWYN_PALACE,
     SIOFRA_RIVER_START,
-    REGAL_ANCESTOR_LOWER,
-    REGAL_ANCESTOR_UPPER,
+    ANCESTOR_SPIRIT_ARENA,
+    REGAL_ANCESTOR_ARENA,
     CRUMBLING_FARUM_AZULA,
     RAYA_LUCARIA,
     HALIGTREE,
@@ -1125,8 +1125,8 @@ ALL_LEGACY_DUNGEON_MAPS = [
     ASTEL_ARENA,
     MOHGWYN_PALACE,
     SIOFRA_RIVER_START,
-    REGAL_ANCESTOR_LOWER,
-    REGAL_ANCESTOR_UPPER,
+    ANCESTOR_SPIRIT_ARENA,
+    REGAL_ANCESTOR_ARENA,
     CRUMBLING_FARUM_AZULA,
     RAYA_LUCARIA,
     HALIGTREE,

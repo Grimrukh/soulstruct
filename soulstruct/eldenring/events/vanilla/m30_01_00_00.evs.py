@@ -385,7 +385,7 @@ def Event_30012330(_, character: uint, character_1: uint):
     
     MAIN.Await(AND_5)
     
-    MakeEnemyAppear(character=character_1)
+    ForceSpawnerToSpawn(spawner=character_1)
     Restart()
 
 

@@ -789,7 +789,7 @@ def Event_15005210(_, character: int, special_effect: int, character_1: int, cha
     
     MAIN.Await(AND_1)
     
-    MakeEnemyAppear(character=character_1)
+    ForceSpawnerToSpawn(spawner=character_1)
     DisableFlag(flag)
     WaitFrames(frames=1)
     ReplanAI(character_2)
@@ -1119,7 +1119,7 @@ def Event_15005300(_, character: int, character_1: int, character_2: int):
     
     MAIN.Await(AND_1)
     
-    MakeEnemyAppear(character=character_2)
+    ForceSpawnerToSpawn(spawner=character_2)
     WaitFrames(frames=1)
     Move(
         character_1,
@@ -1270,7 +1270,7 @@ def Event_15005380(_, character: int, character_1: int):
     
     MAIN.Await(AND_1)
     
-    MakeEnemyAppear(character=character_1)
+    ForceSpawnerToSpawn(spawner=character_1)
     Wait(1.0)
     Restart()
 
@@ -1327,11 +1327,11 @@ def Event_15005400(
     Wait(seconds)
     AND_3.Add(CharacterAlive(character_1))
     SkipLinesIfConditionTrue(1, AND_3)
-    MakeEnemyAppear(character=character_2)
+    ForceSpawnerToSpawn(spawner=character_2)
     SkipLinesIfThisEventSlotFlagDisabled(2)
     AND_2.Add(CharacterAlive(character_3))
     SkipLinesIfConditionTrue(1, AND_2)
-    MakeEnemyAppear(character=character_4)
+    ForceSpawnerToSpawn(spawner=character_4)
     WaitFrames(frames=1)
     DisableAI(character_3)
     DisableCharacter(character_3)
@@ -2061,7 +2061,7 @@ def Event_15005825(
     
     MAIN.Await(AND_1)
     
-    MakeEnemyAppear(character=character_1)
+    ForceSpawnerToSpawn(spawner=character_1)
     WaitFrames(frames=1)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Move(

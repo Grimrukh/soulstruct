@@ -3921,7 +3921,7 @@ EMEDF = {
         "alias": "SkipLinesIfCharacterRegionState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "state": BOOL,
             "character": NO_DEFAULT(CharacterTyping),
             "region": NO_DEFAULT(RegionTyping),
@@ -3938,7 +3938,7 @@ EMEDF = {
         "alias": "SkipLinesIfMapUpdatePermissionState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "state": BOOL,
             "unk_state": BOOL,
             "area_id": AREA_ID,
@@ -4009,7 +4009,7 @@ EMEDF = {
         "alias": "SkipLinesIfCeremonyState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "state": BOOL,
             "ceremony": INT,
         },
@@ -4041,9 +4041,9 @@ EMEDF = {
         },
         "partials": {
             "EndIfCeremonyActive": dict(event_return_type=EventReturnType.End, state=True),
-            "EndIfCeremonyInactive": dict(event_return_type=EventReturnType.End, state=True),
+            "EndIfCeremonyInactive": dict(event_return_type=EventReturnType.End, state=False),
             "RestartIfCeremonyActive": dict(event_return_type=EventReturnType.Restart, state=True),
-            "RestartIfCeremonyInactive": dict(event_return_type=EventReturnType.Restart, state=True),
+            "RestartIfCeremonyInactive": dict(event_return_type=EventReturnType.Restart, state=False),
         },
     },
 
@@ -4051,7 +4051,7 @@ EMEDF = {
         "alias": "SkipLinesIfCharacterSpecialEffectState",
         "docstring": "Note that the same instruction appeared in DS3 as 1003[112].",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
             "special_effect": SPECIAL_EFFECT,
             "state": BOOL,
@@ -4522,10 +4522,10 @@ EMEDF = {
         },
     },
     (2003, 54): {
-        "alias": "MakeEnemyAppear",
+        "alias": "ForceSpawnerToSpawn",
         "docstring": "TODO",
         "args": {
-            "character": NO_DEFAULT(CharacterTyping),
+            "spawner": NO_DEFAULT(tp.Union[SpawnerEvent, int]),
         },
     },
     (2003, 63): {
@@ -4881,7 +4881,7 @@ EMEDF = {
         "docstring": "TODO",
         "args": {
             "pool_type": INT,
-            "unk_4_8": INT,  # TODO: always 3
+            "data_count": INT,
         },
     },
     (2004, 80): {
@@ -5079,15 +5079,15 @@ EMEDF = {
         },
     },
     (2010, 12): {
-        "alias": "SetFieldBattleMusicWindUp",
+        "alias": "SetFieldBattleMusicHeatUp",
         "docstring": "TODO",
         "args": {
             "npc_threat_level": INT | {"internal_default": 2},
             "state": BOOL,
         },
         "partials": {
-            "EnableFieldBattleMusicWindUp": dict(state=True),
-            "DisableFieldBattleMusicWindUp": dict(state=False),
+            "EnableFieldBattleMusicHeatUp": dict(state=True),
+            "DisableFieldBattleMusicHeatUp": dict(state=False),
         },
     },
 

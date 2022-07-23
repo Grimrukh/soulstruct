@@ -262,10 +262,10 @@ def Event_1039522700():
     
     EnableSpawner(entity=1039523200)
     ClearTargetList(Characters.Imp0)
-    MakeEnemyAppear(character=1039523200)
+    ForceSpawnerToSpawn(spawner=1039523200)
     WaitRandomSeconds(min_seconds=5.0, max_seconds=5.0)
     ClearTargetList(Characters.Imp1)
-    MakeEnemyAppear(character=1039523200)
+    ForceSpawnerToSpawn(spawner=1039523200)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -274,13 +274,13 @@ def Event_1039522700():
     WaitRandomSeconds(min_seconds=5.0, max_seconds=5.0)
     EnableSpawner(entity=1039523200)
     ClearTargetList(Characters.Imp0)
-    MakeEnemyAppear(character=1039523200)
+    ForceSpawnerToSpawn(spawner=1039523200)
     AND_3.Add(CharacterDead(Characters.Imp1))
     SkipLinesIfConditionFalse(3, AND_3)
     WaitRandomSeconds(min_seconds=5.0, max_seconds=5.0)
     EnableSpawner(entity=1039523200)
     ClearTargetList(Characters.Imp1)
-    MakeEnemyAppear(character=1039523200)
+    ForceSpawnerToSpawn(spawner=1039523200)
     if FlagEnabled(1039520655):
         Wait(5.0)
     DisableSpawner(entity=1039523200)

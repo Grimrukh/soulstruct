@@ -2253,7 +2253,7 @@ def Event_13002891(
         return
     if FlagEnabled(13002854):
         return
-    MakeEnemyAppear(character=character)
+    ForceSpawnerToSpawn(spawner=character)
     DisableNetworkFlag(flag)
     EnableNetworkFlag(flag_1)
     SetNetworkUpdateRate(character_2, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -2289,14 +2289,14 @@ def Event_13002892():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    MakeEnemyAppear(character=13003851)
+    ForceSpawnerToSpawn(spawner=13003851)
     EnableFlag(13002873)
     DisableFlag(13002875)
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    MakeEnemyAppear(character=13003852)
+    ForceSpawnerToSpawn(spawner=13003852)
     EnableFlag(13002874)
     DisableFlag(13002876)
     Restart()

@@ -687,7 +687,7 @@ __all__ = [
     "StartEnemySpawner",  # 2003[50]
     "SummonNPC",  # 2003[51]
     "InitializeWarpObject",  # 2003[52]
-    "MakeEnemyAppear",  # 2003[54]
+    "ForceSpawnerToSpawn",  # 2003[54]
     "SetCurrentMapCeremony",  # 2003[57]
     "SetMapCeremony",  # 2003[59]
     "DisplayEpitaphMessage",  # 2003[61]
@@ -6420,7 +6420,7 @@ def InitializeWarpObject(warp_object_id: int, event_layers=()):
     """
 
 
-def MakeEnemyAppear(character: Character | int, event_layers=()):
+def ForceSpawnerToSpawn(spawner: Character | int, event_layers=()):
     """
     TODO
     """

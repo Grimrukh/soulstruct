@@ -431,10 +431,10 @@ def Event_30162621(_, character: uint):
     AND_5.Add(OR_15)
     AND_4.Add(CharacterInsideRegion(character=PLAYER, region=30162256))
     SkipLinesIfConditionFalse(1, AND_4)
-    MakeEnemyAppear(character=30163256)
+    ForceSpawnerToSpawn(spawner=30163256)
     AND_5.Add(CharacterInsideRegion(character=PLAYER, region=30162258))
     SkipLinesIfConditionFalse(1, AND_5)
-    MakeEnemyAppear(character=30163258)
+    ForceSpawnerToSpawn(spawner=30163258)
     Restart()
 
 

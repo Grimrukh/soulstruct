@@ -724,7 +724,7 @@ __all__ = [
     "StartEnemySpawner",  # 2003[50]
     "SummonNPC",  # 2003[51]
     "TriggerAISound",  # 2003[52]
-    "MakeEnemyAppear",  # 2003[54]
+    "ForceSpawnerToSpawn",  # 2003[54]
     "SetNetworkConnectedFlagRangeState",  # 2003[63]
     "EnableNetworkConnectedFlagRange",
     "DisableNetworkConnectedFlagRange",
@@ -798,9 +798,9 @@ __all__ = [
     "UnknownSound_2010_8",  # 2010[8]
     "SetBossMusic",  # 2010[10]
     "SuppressSoundForFogGate",  # 2010[11]
-    "SetFieldBattleMusicWindUp",  # 2010[12]
-    "EnableFieldBattleMusicWindUp",
-    "DisableFieldBattleMusicWindUp",
+    "SetFieldBattleMusicHeatUp",  # 2010[12]
+    "EnableFieldBattleMusicHeatUp",
+    "DisableFieldBattleMusicHeatUp",
     "SetAreaWelcomeMessageState",  # 2012[8]
     "ActivateGparamOverride",  # 2012[11]
     "DeactivateGparamOverride",  # 2012[12]
@@ -6756,7 +6756,7 @@ def TriggerAISound(
     """
 
 
-def MakeEnemyAppear(character: Character | int, event_layers=()):
+def ForceSpawnerToSpawn(spawner: Character | int, event_layers=()):
     """
     TODO
     """
@@ -7102,7 +7102,7 @@ def CopyPlayerCharacterDataFromOnlinePlayers(
     """
 
 
-def RequestPlayerCharacterDataFromOnlinePlayers(pool_type: int, unk_4_8: int, event_layers=()):
+def RequestPlayerCharacterDataFromOnlinePlayers(pool_type: int, data_count: int, event_layers=()):
     """
     TODO
     """
@@ -7276,21 +7276,21 @@ def SuppressSoundForFogGate(duration: float, event_layers=()):
     """
 
 
-def SetFieldBattleMusicWindUp(npc_threat_level: int, state: bool | int, event_layers=()):
+def SetFieldBattleMusicHeatUp(npc_threat_level: int, state: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def EnableFieldBattleMusicWindUp(npc_threat_level: int, event_layers=()):
+def EnableFieldBattleMusicHeatUp(npc_threat_level: int, event_layers=()):
     """
-    Calls `SetFieldBattleMusicWindUp` with `state=True`.
+    Calls `SetFieldBattleMusicHeatUp` with `state=True`.
     """
 
 
-def DisableFieldBattleMusicWindUp(npc_threat_level: int, event_layers=()):
+def DisableFieldBattleMusicHeatUp(npc_threat_level: int, event_layers=()):
     """
-    Calls `SetFieldBattleMusicWindUp` with `state=False`.
+    Calls `SetFieldBattleMusicHeatUp` with `state=False`.
     """
 
 

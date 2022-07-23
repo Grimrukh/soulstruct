@@ -4118,19 +4118,19 @@ def Event_13805820():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    MakeEnemyAppear(character=3803810)
+    ForceSpawnerToSpawn(spawner=3803810)
     SetNetworkConnectedFlagState(flag=13804810, state=FlagSetting.On)
     Goto(Label.L3)
 
     # --- Label 1 --- #
     DefineLabel(1)
-    MakeEnemyAppear(character=3803811)
+    ForceSpawnerToSpawn(spawner=3803811)
     SetNetworkConnectedFlagState(flag=13804811, state=FlagSetting.On)
     Goto(Label.L3)
 
     # --- Label 2 --- #
     DefineLabel(2)
-    MakeEnemyAppear(character=3803812)
+    ForceSpawnerToSpawn(spawner=3803812)
     SetNetworkConnectedFlagState(flag=13804812, state=FlagSetting.On)
     Goto(Label.L3)
 

@@ -4057,7 +4057,7 @@ EMEDF = {
         "alias": "SkipLinesIfCharacterSpecialEffectState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping),
             "special_effect": SPECIAL_EFFECT,
             "state": BOOL,
@@ -4123,7 +4123,7 @@ EMEDF = {
         "alias": "SkipLinesIfCharacterRegionState",
         "docstring": "TODO",
         "args": {
-            "line_count": INT,
+            "line_count": INT | HIDE_NAME,
             "state": BOOL,
             "character": NO_DEFAULT(CharacterTyping),
             "region": NO_DEFAULT(RegionTyping),
@@ -4573,10 +4573,10 @@ EMEDF = {
         },
     },
     (2003, 54): {
-        "alias": "MakeEnemyAppear",
+        "alias": "ForceSpawnerToSpawn",
         "docstring": "TODO",
         "args": {
-            "character": NO_DEFAULT(CharacterTyping),
+            "spawner": NO_DEFAULT(tp.Union[SpawnerEvent, int]),
         },
     },
     (2003, 57): {

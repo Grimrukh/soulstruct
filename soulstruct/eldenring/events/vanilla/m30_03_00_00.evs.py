@@ -1181,7 +1181,7 @@ def Event_30032810():
     EnableNetworkFlag(30032839)
     Wait(1.2000000476837158)
     EnableFlag(30032812)
-    MakeEnemyAppear(character=30033801)
+    ForceSpawnerToSpawn(spawner=30033801)
     EnableNetworkFlag(30032882)
     ForceAnimation(Characters.Snail, 20013)
 
@@ -1308,7 +1308,7 @@ def Event_30032890():
     
     AND_3.Add(HealthRatio(Characters.Snail) >= 0.8999999761581421)
     GotoIfConditionFalse(Label.L3, input_condition=AND_3)
-    MakeEnemyAppear(character=30033801)
+    ForceSpawnerToSpawn(spawner=30033801)
     
     MAIN.Await(CharacterAlive(Characters.CrucibleKnight0))
     
@@ -1319,7 +1319,7 @@ def Event_30032890():
     # --- Label 3 --- #
     DefineLabel(3)
     GotoIfFlagDisabled(Label.L9, flag=30032817)
-    MakeEnemyAppear(character=30033806)
+    ForceSpawnerToSpawn(spawner=30033806)
     AND_8.Add(CharacterAlive(Characters.CrucibleKnight8))
     AND_8.Add(CharacterAlive(Characters.CrucibleKnight9))
     
@@ -1332,7 +1332,7 @@ def Event_30032890():
     # --- Label 9 --- #
     DefineLabel(9)
     GotoIfFlagDisabled(Label.L8, flag=30032816)
-    MakeEnemyAppear(character=30033805)
+    ForceSpawnerToSpawn(spawner=30033805)
     AND_6.Add(CharacterAlive(Characters.CrucibleKnight6))
     AND_6.Add(CharacterAlive(Characters.CrucibleKnight7))
     
@@ -1345,7 +1345,7 @@ def Event_30032890():
     # --- Label 8 --- #
     DefineLabel(8)
     GotoIfFlagDisabled(Label.L4, flag=30032815)
-    MakeEnemyAppear(character=30033804)
+    ForceSpawnerToSpawn(spawner=30033804)
     AND_5.Add(CharacterAlive(Characters.CrucibleKnight1))
     AND_5.Add(CharacterAlive(Characters.CrucibleKnight2))
     
@@ -1358,7 +1358,7 @@ def Event_30032890():
     # --- Label 4 --- #
     DefineLabel(4)
     GotoIfFlagDisabled(Label.L5, flag=30032814)
-    MakeEnemyAppear(character=30033803)
+    ForceSpawnerToSpawn(spawner=30033803)
     EnableFlag(30032860)
     AND_7.Add(CharacterAlive(Characters.CrucibleKnight4))
     AND_7.Add(CharacterAlive(Characters.CrucibleKnight5))
@@ -1372,7 +1372,7 @@ def Event_30032890():
     # --- Label 5 --- #
     DefineLabel(5)
     GotoIfFlagDisabled(Label.L6, flag=30032813)
-    MakeEnemyAppear(character=30033802)
+    ForceSpawnerToSpawn(spawner=30033802)
     
     MAIN.Await(CharacterAlive(Characters.CrucibleKnight3))
     
@@ -1383,7 +1383,7 @@ def Event_30032890():
     # --- Label 6 --- #
     DefineLabel(6)
     GotoIfFlagDisabled(Label.L7, flag=30032812)
-    MakeEnemyAppear(character=30033801)
+    ForceSpawnerToSpawn(spawner=30033801)
     EnableNetworkFlag(30032882)
     
     MAIN.Await(CharacterAlive(Characters.CrucibleKnight0))

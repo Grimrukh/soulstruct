@@ -545,7 +545,7 @@ def Event_1040532690():
     
     EnableSpawner(entity=1040533610)
     ClearTargetList(Characters.Imp)
-    MakeEnemyAppear(character=1040533610)
+    ForceSpawnerToSpawn(spawner=1040533610)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -554,7 +554,7 @@ def Event_1040532690():
     WaitRandomSeconds(min_seconds=10.0, max_seconds=10.0)
     EnableSpawner(entity=1040533610)
     ClearTargetList(Characters.Imp)
-    MakeEnemyAppear(character=1040533610)
+    ForceSpawnerToSpawn(spawner=1040533610)
     if FlagEnabled(1040530655):
         Wait(5.0)
     DisableSpawner(entity=1040533610)
