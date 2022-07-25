@@ -519,7 +519,7 @@ def Event_32020519():
     EnableFlag(32020510)
     EnableFlag(32020520)
     EnableFlag(32020525)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(32022200)

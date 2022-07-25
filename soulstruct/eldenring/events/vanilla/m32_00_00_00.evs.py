@@ -310,7 +310,7 @@ def Event_32000519():
     if ThisEventSlotFlagEnabled():
         return
     EnableFlag(32000510)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @ContinueOnRest(32002580)

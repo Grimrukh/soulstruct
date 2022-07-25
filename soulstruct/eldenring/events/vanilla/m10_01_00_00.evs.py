@@ -89,7 +89,7 @@ def Event_10010020():
     DefineLabel(0)
     SetRespawnPoint(respawn_point=10012020)
     SaveRequest()
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     EnableFlag(100)
 
 

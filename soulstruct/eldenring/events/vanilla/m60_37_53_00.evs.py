@@ -270,7 +270,7 @@ def Event_1037532345():
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(Characters.DemiHumanQueen, 8087)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 
@@ -305,7 +305,7 @@ def Event_1037532200(_, source_entity: uint, seconds: float):
     
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     Wait(seconds)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
     # --- Label 0 --- #
     DefineLabel(0)

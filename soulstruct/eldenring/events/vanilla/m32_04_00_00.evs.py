@@ -200,7 +200,7 @@ def Event_32040519():
     if ThisEventSlotFlagEnabled():
         return
     EnableFlag(32040510)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(32049570)

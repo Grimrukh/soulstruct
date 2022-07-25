@@ -1182,7 +1182,7 @@ def Event_1036542300(_, source_entity: uint, seconds: float):
     
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     Wait(seconds)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
     # --- Label 0 --- #
     DefineLabel(0)

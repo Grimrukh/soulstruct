@@ -713,7 +713,7 @@ def Event_130(_, collision: uint):
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @ContinueOnRest(700)
@@ -1910,7 +1910,7 @@ def Event_945():
     MAIN.Await(AND_1)
     
     WarpToMap(game_map=ROUNDTABLE_HOLD, player_start=11100980, unk_8_12=61000)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(950)
@@ -3566,7 +3566,7 @@ def Event_6901():
         EnableFlag(10007452)
     else:
         EnableFlag(10007450)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3609,7 +3609,7 @@ def Event_6902():
     EnableFlag(66170)
     EnableFlag(66180)
     EnableFlag(66190)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3643,7 +3643,7 @@ def Event_6903():
     EnableFlag(66470)
     EnableFlag(66480)
     EnableFlag(66490)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3677,7 +3677,7 @@ def Event_6904():
     EnableFlag(66770)
     EnableFlag(66780)
     EnableFlag(66790)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3710,7 +3710,7 @@ def Event_6905():
         EnableFlag(176)
     if FlagEnabled(197):
         EnableFlag(177)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3751,7 +3751,7 @@ def Event_6906():
         EnableFlag(1047408540)
         EndOfAnimation(asset=1047401540, animation_id=2)
         DisableAssetActivation(1047401540, obj_act_id=-1)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3790,7 +3790,7 @@ def Event_6907():
         EnableFlag(1039488540)
         EndOfAnimation(asset=1039481540, animation_id=2)
         DisableAssetActivation(1039481540, obj_act_id=-1)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3811,7 +3811,7 @@ def Event_6908():
     GotoIfPlayerNotInOwnWorld(Label.L15)
     if FlagEnabled(73207):
         EnableFlag(73257)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
     # --- Label 15 --- #
@@ -3893,7 +3893,7 @@ def Event_9390(_, flag: uint, right: uint, right_1: uint, right_2: uint, right_3
     
     MAIN.Await(OR_2)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(9820)

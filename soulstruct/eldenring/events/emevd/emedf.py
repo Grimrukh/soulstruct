@@ -4561,8 +4561,8 @@ EMEDF = {
             "DisableFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
             "ToggleFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
             "SetAbsoluteFlagState": dict(flag_type=FlagType.Absolute),
-            "EnableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.Off),
-            "DisableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.On),
+            "EnableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.On),
+            "DisableThisSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.Off),
         },
     },
     (2003, 68): {

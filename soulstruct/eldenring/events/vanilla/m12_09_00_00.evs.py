@@ -1110,7 +1110,7 @@ def Event_12092862(_, character: uint, character_1: uint):
     AddSpecialEffect(character_1, 13617)
     Kill(character_1)
     Wait(1.0)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     EnableFlag(12092802)
 
 
@@ -1127,7 +1127,7 @@ def Event_12092863(_, character: uint, character_1: uint, flag: uint):
     AddSpecialEffect(character_1, 13617)
     Kill(character_1)
     Wait(1.0)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(12092864)

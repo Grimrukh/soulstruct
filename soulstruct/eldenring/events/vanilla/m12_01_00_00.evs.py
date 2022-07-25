@@ -1374,7 +1374,7 @@ def Event_12012220(_, character: uint):
     """Event 12012220"""
     if ThisEventSlotFlagEnabled():
         return
-    EnableThisSlotFlag()
+    DisableThisSlotFlag()
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
@@ -1642,7 +1642,7 @@ def Event_12012288(_, character: uint, character_1: uint, region: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     DisableCharacter(character_1)
     DisableAnimations(character_1)
     

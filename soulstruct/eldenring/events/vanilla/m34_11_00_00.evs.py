@@ -716,7 +716,7 @@ def Event_34112519():
     if CharacterInsideRegion(character=PLAYER, region=34112152):
         return
     EnableFlag(34110520)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112580)
@@ -2093,7 +2093,7 @@ def Event_34112448():
     
     ClearTargetList(Characters.PreceptorMiriam0)
     AddSpecialEffect(Characters.PreceptorMiriam0, 8082)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112449)
@@ -2120,7 +2120,7 @@ def Event_34112449():
     SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
     EnableAI(Characters.PreceptorMiriam0)
     SetAIParamID(Characters.PreceptorMiriam0, ai_param_id=523520200)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112459)
@@ -2142,7 +2142,7 @@ def Event_34112459():
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112460)
@@ -2223,7 +2223,7 @@ def Event_34112460():
     Wait(0.5)
     EnableCharacter(Characters.PreceptorMiriam1)
     EnableAnimations(Characters.PreceptorMiriam1)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112465)
@@ -2326,7 +2326,7 @@ def Event_34112465():
     )
     SetNest(Characters.PreceptorMiriam1, region=34112466)
     SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
 
 
@@ -2389,7 +2389,7 @@ def Event_34112492():
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
     SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112493)
@@ -2417,7 +2417,7 @@ def Event_34112493():
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
     SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112496)
@@ -2455,7 +2455,7 @@ def Event_34112496():
         copy_draw_parent=Characters.PreceptorMiriam1,
     )
     SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(34112499)

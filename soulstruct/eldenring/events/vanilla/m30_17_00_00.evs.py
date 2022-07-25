@@ -425,7 +425,7 @@ def Event_30172400(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     AddSpecialEffect(character, 5881)
     AddSpecialEffect(character, 4321)
     EnableAnimations(character)

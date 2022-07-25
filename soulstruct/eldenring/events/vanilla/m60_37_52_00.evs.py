@@ -330,7 +330,7 @@ def Event_1037522350(_, character: uint):
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     ForceAnimation(character, 3021, wait_for_completion=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 
@@ -343,5 +343,5 @@ def Event_1037522370(_, character: uint):
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     ForceAnimation(character, 3022, wait_for_completion=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()

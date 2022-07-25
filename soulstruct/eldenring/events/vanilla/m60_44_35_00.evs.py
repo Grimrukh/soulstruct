@@ -444,7 +444,7 @@ def Event_1044350715(_, character: uint, character_1: uint):
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     WaitFrames(frames=1)
     DisableCharacter(character_1)
     DisableBackread(character_1)

@@ -6818,13 +6818,13 @@ def SetAbsoluteFlagState(flag: Flag | int, state: FlagSetting | int, event_layer
 
 def EnableThisSlotFlag(event_layers=()):
     """
-    Calls `SetFlagState` with `flag_type=2`, `flag=0`, `state=0`.
+    Calls `SetFlagState` with `flag_type=2`, `flag=0`, `state=1`.
     """
 
 
 def DisableThisSlotFlag(event_layers=()):
     """
-    Calls `SetFlagState` with `flag_type=2`, `flag=0`, `state=1`.
+    Calls `SetFlagState` with `flag_type=2`, `flag=0`, `state=0`.
     """
 
 

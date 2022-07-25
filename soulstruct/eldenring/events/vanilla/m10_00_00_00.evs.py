@@ -1100,7 +1100,7 @@ def Event_10000519():
     if ThisEventSlotFlagEnabled():
         return
     EnableFlag(10000515)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(1002200)
@@ -1113,7 +1113,7 @@ def Event_1002200():
     
     Wait(1.0)
     ForceAnimation(Characters.CastleGuard30, 3010)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(10002240)
@@ -1261,7 +1261,7 @@ def Event_10002310():
     MAIN.Await(AND_1)
     
     EnableAI(Characters.LivingPot)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     ForceAnimation(Characters.LivingPot, 20000, wait_for_completion=True)
     ForceAnimation(Characters.LivingPot, 3004)
 
@@ -1390,7 +1390,7 @@ def Event_10002330(_, character: uint, asset: uint):
     
     DisableAsset(asset)
     DestroyAsset(asset, request_slot=0)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(10002340)
@@ -2048,7 +2048,7 @@ def Event_10002860():
     DefineLabel(0)
     DisableAI(Characters.Margit)
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
     if OR_15:

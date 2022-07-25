@@ -402,7 +402,7 @@ def Event_18000021():
     
     UnfreezeTime()
     EnableFlag(71801)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     EnableFlag(102)
     SetWeather(weather=Weather.Default, duration=3600.0, immediate_change=False)
 

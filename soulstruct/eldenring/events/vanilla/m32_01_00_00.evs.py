@@ -351,7 +351,7 @@ def Event_32010519():
     """Event 32010519"""
     if ThisEventSlotFlagEnabled():
         return
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
 
 
 @RestartOnRest(32012200)

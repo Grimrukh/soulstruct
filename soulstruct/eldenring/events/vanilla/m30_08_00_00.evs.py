@@ -281,7 +281,7 @@ def Event_30082400(_, character: uint):
     
     MAIN.Await(OR_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     AddSpecialEffect(character, 5881)
     AddSpecialEffect(character, 4321)
     EnableAnimations(character)
@@ -973,7 +973,7 @@ def Event_30080790(_, asset: uint, flag: uint):
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     EnableAssetActivation(asset, obj_act_id=-1)
     End()
 

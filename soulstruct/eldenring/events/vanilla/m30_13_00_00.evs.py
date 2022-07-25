@@ -606,7 +606,7 @@ def Event_30130790(_, asset: uint, flag: uint):
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     EnableAssetActivation(asset, obj_act_id=-1)
     End()
 

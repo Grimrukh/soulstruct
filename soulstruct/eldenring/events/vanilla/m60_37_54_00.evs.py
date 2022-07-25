@@ -370,7 +370,7 @@ def Event_1037542220(_, character: uint, region: uint, destination: uint, second
     
     MAIN.Await(AND_1)
     
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     Wait(seconds)
     Move(character, destination=destination, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(character)
@@ -1263,7 +1263,7 @@ def Event_1037542250(_, character: uint):
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(character, 8087)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 
@@ -1273,7 +1273,7 @@ def Event_1037542255():
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(Characters.UlceratedTreeSpirit, 8087)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 
@@ -1335,7 +1335,7 @@ def Event_1037542300():
     
     Wait(1.2999999523162842)
     ForceAnimation(Characters.LeyndellKnight0, 3014)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 
@@ -1391,7 +1391,7 @@ def Event_1037542400(_, character: uint):
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
     ForceAnimation(character, 20010, skip_transition=True)
-    DisableThisSlotFlag()
+    EnableThisSlotFlag()
     End()
 
 

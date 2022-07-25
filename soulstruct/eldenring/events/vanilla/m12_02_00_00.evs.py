@@ -1261,7 +1261,7 @@ def Event_12022400(_, character: uint, character_1: uint, region: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     DisableCharacter(character_1)
     DisableAnimations(character_1)
     
@@ -1304,7 +1304,7 @@ def Event_12022419(_, character: uint, character_1: uint, region: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     DisableCharacter(character_1)
     DisableAnimations(character_1)
     
@@ -1489,7 +1489,7 @@ def Event_12022860():
     if AND_10:
         return
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     DisableAI(Characters.MimicTear)
     DisableAI(Characters.SilverTear4)
     GotoIfFlagEnabled(Label.L1, flag=12020851)
@@ -1562,7 +1562,7 @@ def Event_12022865(_, character: uint, character_1: uint, region: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     if PlayerInOwnWorld():
-        EnableThisSlotFlag()
+        DisableThisSlotFlag()
     DisableCharacter(character_1)
     DisableAnimations(character_1)
     

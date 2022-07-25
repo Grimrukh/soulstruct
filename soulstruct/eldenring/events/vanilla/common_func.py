@@ -5453,7 +5453,7 @@ def CommonFunc_90005675(
     AND_10.Add(FlagEnabled(flag))
     GotoIfConditionFalse(Label.L10, input_condition=AND_10)
     DisableNetworkFlag(flag)
-    EnableThisSlotFlag()
+    DisableThisSlotFlag()
 
     # --- Label 10 --- #
     DefineLabel(10)

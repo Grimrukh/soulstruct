@@ -825,7 +825,7 @@ def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, s
     AND_10.Add(FlagEnabled(flag))
     GotoIfConditionFalse(Label.L10, input_condition=AND_10)
     DisableNetworkFlag(flag)
-    EnableThisSlotFlag()
+    DisableThisSlotFlag()
 
     # --- Label 10 --- #
     DefineLabel(10)
