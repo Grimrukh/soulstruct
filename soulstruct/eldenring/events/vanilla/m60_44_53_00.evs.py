@@ -25,7 +25,15 @@ from .entities.m60_44_53_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980605, npc_threat_level=24)
-    CommonFunc_90005860(0, 1044530800, 0, 1044530800, 0, 1044530300, 0.0)
+    CommonFunc_90005860(
+        0,
+        flag=1044530800,
+        left=0,
+        character=Characters.DeathRiteBird,
+        left_1=0,
+        item_lot=1044530300,
+        seconds=0.0,
+    )
 
 
 @ContinueOnRest(50)
@@ -322,4 +330,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005201(0, 1044530800, 30000, 20000, 30.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.DeathRiteBird,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=30.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

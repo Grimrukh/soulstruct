@@ -109,7 +109,7 @@ def Constructor():
         flag=1045349258,
         model_point=0,
     )
-    Event_1045340707(0, 1045340705)
+    Event_1045340707(0, attacked_entity=Characters.Edgar)
 
 
 @ContinueOnRest(50)
@@ -119,7 +119,7 @@ def Preconstructor():
     DisableBackread(Characters.IrinaofMorne1)
     DisableBackread(Characters.Edgar)
     Event_1045340706()
-    CommonFunc_90005250(0, 1045340405, 1045342405, 0.0, 0)
+    CommonFunc_90005250(0, character=1045340405, region=1045342405, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1045342250)
@@ -313,6 +313,6 @@ def Event_1045340707(_, attacked_entity: uint):
     if FlagEnabled(1045349256):
         return
     
-    MAIN.Await(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    MAIN.Await(AttackedWithDamageType(attacked_entity=attacked_entity))
     
     EnableFlag(1045349256)

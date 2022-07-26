@@ -80,7 +80,7 @@ def Constructor():
         region_4=0,
         region_5=0,
     )
-    Event_15005210(0, character=5000210, special_effect=16256, character_1=5004200, character_2=5000200, flag=15005215)
+    Event_15005210(0, character=5000210, special_effect=16256, spawner=5004200, character_1=5000200, flag=15005215)
     Event_15005250(0, character=5000210, character_1=5000200)
     Event_15005260()
     Event_15005270(0, character=5000200)
@@ -98,7 +98,7 @@ def Constructor():
         special_effect_id_1=16641,
     )
     Event_15005240(0, character=5000201, region=5002228, special_effect_id=16255)
-    Event_15005210(1, character=5000211, special_effect=16256, character_1=5004201, character_2=5000201, flag=15005216)
+    Event_15005210(1, character=5000211, special_effect=16256, spawner=5004201, character_1=5000201, flag=15005216)
     Event_15005250(1, character=5000211, character_1=5000201)
     Event_15005270(1, character=5000201)
     Event_15005266(
@@ -138,7 +138,7 @@ def Constructor():
         special_effect_id=16622,
         special_effect_id_1=16642,
     )
-    Event_15005210(2, character=5000212, special_effect=16256, character_1=5004202, character_2=5000202, flag=15005217)
+    Event_15005210(2, character=5000212, special_effect=16256, spawner=5004202, character_1=5000202, flag=15005217)
     Event_15005250(2, character=5000212, character_1=5000202)
     Event_15005270(2, character=5000202)
     Event_15005290(2, character=5000202)
@@ -458,27 +458,27 @@ def Constructor():
         0,
         character=5000335,
         character_1=5000460,
-        character_2=5003340,
-        character_3=5000520,
-        character_4=5003345,
+        spawner=5003340,
+        character_2=5000520,
+        spawner_1=5003345,
         seconds=0.0,
     )
     Event_15005400(
         1,
         character=5000335,
         character_1=5000461,
-        character_2=5003341,
-        character_3=5000521,
-        character_4=5003346,
+        spawner=5003341,
+        character_2=5000521,
+        spawner_1=5003346,
         seconds=0.10000000149011612,
     )
     Event_15005400(
         2,
         character=5000335,
         character_1=5000462,
-        character_2=5003342,
-        character_3=5000522,
-        character_4=5003347,
+        spawner=5003342,
+        character_2=5000522,
+        spawner_1=5003347,
         seconds=0.30000001192092896,
     )
     CommonFunc_20005201(0, character=5000337, animation_id=700, animation_id_1=1700, region=5002356, seconds=0.0)
@@ -700,7 +700,7 @@ def Constructor():
     Event_15005702(1, character=5000702, character_1=5000170, flag=1802, flag_1=1804)
     CommonFunc_20006002(0, character=5000705, flag=1878, first_flag=1875, last_flag=1879)
     CommonFunc_20006040(0, character=5000705, destination=5002705, special_effect=5450)
-    Event_15005721(0, 5000705, 5001705)
+    Event_15005721(0, character=5000705, obj=5001705)
 
 
 @ContinueOnRest(50)
@@ -724,7 +724,7 @@ def Preconstructor():
     )
     Event_15005701(0, obj=5001345, character=5000230, obj_1=5001230)
     Event_15005720(0, character=5000705, animation_id=30004, command_id=2160, obj=5001705, destination=5002705)
-    Event_15005722(0, 5000203)
+    Event_15005722(0, character=5000203)
 
 
 @RestartOnRest(15005100)
@@ -782,19 +782,19 @@ def Event_15005200(_, character: int, region: int, region_1: int, region_2: int)
 
 
 @RestartOnRest(15005210)
-def Event_15005210(_, character: int, special_effect: int, character_1: int, character_2: int, flag: int):
+def Event_15005210(_, character: int, special_effect: int, spawner: int, character_1: int, flag: int):
     """Event 15005210"""
     AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_1.Add(FlagEnabled(flag))
     
     MAIN.Await(AND_1)
     
-    ForceSpawnerToSpawn(spawner=character_1)
+    ForceSpawnerToSpawn(spawner=spawner)
     DisableFlag(flag)
     WaitFrames(frames=1)
-    ReplanAI(character_2)
-    SetNetworkUpdateRate(character_2, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    DisableGravity(character_2)
+    ReplanAI(character_1)
+    SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    DisableGravity(character_1)
     Restart()
 
 
@@ -1109,7 +1109,7 @@ def Event_15005290(_, character: int):
 
 
 @RestartOnRest(15005300)
-def Event_15005300(_, character: int, character_1: int, character_2: int):
+def Event_15005300(_, character: int, character_1: int, spawner: int):
     """Event 15005300"""
     RemoveSpecialEffect(character, 16240)
     if ThisEventSlotFlagEnabled():
@@ -1119,7 +1119,7 @@ def Event_15005300(_, character: int, character_1: int, character_2: int):
     
     MAIN.Await(AND_1)
     
-    ForceSpawnerToSpawn(spawner=character_2)
+    ForceSpawnerToSpawn(spawner=spawner)
     WaitFrames(frames=1)
     Move(
         character_1,
@@ -1262,7 +1262,7 @@ def Event_15005370(_, character: int, character_1: int, special_effect: int):
 
 
 @RestartOnRest(15005380)
-def Event_15005380(_, character: int, character_1: int):
+def Event_15005380(_, character: int, spawner: int):
     """Event 15005380"""
     RemoveSpecialEffect(character, 16240)
     AND_1.Add(CharacterHasSpecialEffect(character, 16240))
@@ -1270,7 +1270,7 @@ def Event_15005380(_, character: int, character_1: int):
     
     MAIN.Await(AND_1)
     
-    ForceSpawnerToSpawn(spawner=character_1)
+    ForceSpawnerToSpawn(spawner=spawner)
     Wait(1.0)
     Restart()
 
@@ -1306,15 +1306,7 @@ def Event_15005390(_, character: int, region: int, entity: int):
 
 
 @RestartOnRest(15005400)
-def Event_15005400(
-    _,
-    character: int,
-    character_1: int,
-    character_2: int,
-    character_3: int,
-    character_4: int,
-    seconds: float,
-):
+def Event_15005400(_, character: int, character_1: int, spawner: int, character_2: int, spawner_1: int, seconds: float):
     """Event 15005400"""
     RemoveSpecialEffect(character, 16240)
     if ThisEventSlotFlagEnabled():
@@ -1327,15 +1319,15 @@ def Event_15005400(
     Wait(seconds)
     AND_3.Add(CharacterAlive(character_1))
     SkipLinesIfConditionTrue(1, AND_3)
-    ForceSpawnerToSpawn(spawner=character_2)
+    ForceSpawnerToSpawn(spawner=spawner)
     SkipLinesIfThisEventSlotFlagDisabled(2)
-    AND_2.Add(CharacterAlive(character_3))
+    AND_2.Add(CharacterAlive(character_2))
     SkipLinesIfConditionTrue(1, AND_2)
-    ForceSpawnerToSpawn(spawner=character_4)
+    ForceSpawnerToSpawn(spawner=spawner_1)
     WaitFrames(frames=1)
-    DisableAI(character_3)
-    DisableCharacter(character_3)
-    DisableAnimations(character_3)
+    DisableAI(character_2)
+    DisableCharacter(character_2)
+    DisableAnimations(character_2)
     Wait(1.0)
     Restart()
 
@@ -1526,8 +1518,8 @@ def Event_15005460(
     SetAutogeneratedEventSpecificFlag_1(unknown1=2, unknown2=1)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=special_effect)
-    Wait(0.5)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect):
+        Wait(0.5)
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_1)
     Wait(seconds)
     EnableGravity(character)
@@ -2046,7 +2038,7 @@ def Event_15005825(
     character: int,
     flag: int,
     special_effect: int,
-    character_1: int,
+    spawner: int,
     model_point: int,
     right: int,
 ):
@@ -2061,7 +2053,7 @@ def Event_15005825(
     
     MAIN.Await(AND_1)
     
-    ForceSpawnerToSpawn(spawner=character_1)
+    ForceSpawnerToSpawn(spawner=spawner)
     WaitFrames(frames=1)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Move(
@@ -2330,7 +2322,7 @@ def Event_15005849():
         character=5000810,
         flag=15005840,
         special_effect=15020,
-        character_1=5004810,
+        spawner=5004810,
         model_point=100,
         right=0,
     )
@@ -2340,7 +2332,7 @@ def Event_15005849():
         character=5000811,
         flag=15005841,
         special_effect=15021,
-        character_1=5004811,
+        spawner=5004811,
         model_point=1,
         right=0,
     )
@@ -2350,7 +2342,7 @@ def Event_15005849():
         character=5000812,
         flag=15005842,
         special_effect=15022,
-        character_1=5004812,
+        spawner=5004812,
         model_point=2,
         right=0,
     )
@@ -2360,7 +2352,7 @@ def Event_15005849():
         character=5000813,
         flag=15005843,
         special_effect=15027,
-        character_1=5004813,
+        spawner=5004813,
         model_point=1,
         right=1,
     )
@@ -2370,13 +2362,13 @@ def Event_15005849():
         character=5000814,
         flag=15005844,
         special_effect=15028,
-        character_1=5004814,
+        spawner=5004814,
         model_point=2,
         right=1,
     )
     Event_15005835()
     CommonFunc_20005840(0, other_entity=5001800)
-    CommonFunc_20005841(0, 5001800)
+    CommonFunc_20005841(0, other_entity=5001800)
 
 
 @ContinueOnRest(15005700)

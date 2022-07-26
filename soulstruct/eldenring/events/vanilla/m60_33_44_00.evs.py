@@ -87,7 +87,7 @@ def Constructor():
     Event_1033440710(0, asset=Assets.AEG099_407_9000)
     Event_1033440710(1, asset=Assets.AEG099_408_9000)
     Event_1033440710(2, asset=Assets.AEG099_410_9001)
-    Event_1033440710(3, 1033441713)
+    Event_1033440710(3, asset=Assets.AEG099_410_9000)
 
 
 @RestartOnRest(1033440700)

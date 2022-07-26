@@ -81,7 +81,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.AlbinauricLookout0, flag=3543, first_flag=3540, last_flag=3544)
     Event_1035423700(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
-    Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=Assets.AEG110_334_9000)
+    Event_1035420701(0, character=Characters.AlbinauricLookout0, asset=1035421700)
     Event_1035423702(0, character=Characters.AlbinauricLookout0)
     Event_1035423703(0, entity=Characters.AlbinauricLookout0)
     Event_1035420710(0, character=Characters.Ranni)
@@ -168,7 +168,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1035420374, 30003, 20003, 1035422374, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LargeCrabSnow1,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=1035422374,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(1035422150)

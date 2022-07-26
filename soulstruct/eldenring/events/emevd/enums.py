@@ -101,6 +101,11 @@ class CharacterType(BaseEMEVDEnum):
     Alive = 0
     WhitePhantom = 1
     BlackPhantom = 2
+    Unknown3 = 3
+    Unknown4 = 4
+    Unknown5 = 5
+    Unknown6 = 6
+    Unknown7 = 7
     GrayPhantom = 8
     Invader = 15
     Invader2 = 16

@@ -77,7 +77,7 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.SmallerDog1, region=1052552282, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005300(0, flag=1052550300, character=Characters.Scarab, item_lot=40516, seconds=0.0, left=0)
     Event_1052552580()
-    CommonFunc_900005610(0, 1052551500, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
 
 
 @RestartOnRest(1052552270)
@@ -154,7 +154,7 @@ def Event_1052552270(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

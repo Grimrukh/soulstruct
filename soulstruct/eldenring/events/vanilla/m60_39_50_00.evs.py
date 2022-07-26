@@ -86,7 +86,7 @@ def Constructor():
         player_start=1039502805,
         flag_2=1039500570,
     )
-    Event_1039502576(0, 1039500800, 1039500805, 1039501805, 1039500570)
+    Event_1039502576(0, flag=1039500800, flag_1=1039500805, entity=Assets.AEG099_170_3000, flag_2=1039500570)
 
 
 @ContinueOnRest(50)
@@ -120,7 +120,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1039500303, 30000, 20000, 1039502300, 1.5, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=1039500303,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1039502300,
+        seconds=1.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1039502575)

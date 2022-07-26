@@ -82,7 +82,7 @@ def Constructor():
         flag_3=1044399213,
         flag_4=1044399212,
     )
-    CommonFunc_90005731(0, 1044399214, 1044390700, 10.0, 12.0)
+    CommonFunc_90005731(0, flag=1044399214, other_entity=Characters.DHunteroftheDead, radius=10.0, radius_1=12.0)
 
 
 @ContinueOnRest(50)
@@ -124,7 +124,7 @@ def Preconstructor():
         seconds=1.5,
         animation_id=1700,
     )
-    CommonFunc_90005261(0, 1044390204, 1044392202, 1.0, 0.0, 1700)
+    CommonFunc_90005261(0, character=Characters.Skeleton4, region=1044392202, radius=1.0, seconds=0.0, animation_id=1700)
 
 
 @ContinueOnRest(1044393710)

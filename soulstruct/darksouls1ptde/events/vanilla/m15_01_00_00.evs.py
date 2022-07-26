@@ -235,7 +235,7 @@ def Constructor():
     Event_11510860(1, character=1510450, item_lot=53500000)
     Event_11510860(2, character=1510452, item_lot=53500000)
     Event_11510860(3, character=6640, item_lot=0)
-    Event_11510860(4, 6650, 0)
+    Event_11510860(4, character=6650, item_lot=0)
 
 
 @ContinueOnRest(50)
@@ -290,7 +290,7 @@ def Preconstructor():
     Event_11510541(0, character=6302, first_flag=1570, last_flag=1599, flag=1578)
     Event_11510542(0, character=6302, first_flag=1570, last_flag=1599, flag=1575)
     Event_11510543(0, character=6302, first_flag=1570, last_flag=1599, flag=1572)
-    Event_11510544(0, 6302, 1570, 1599, 1575)
+    Event_11510544(0, character=6302, first_flag=1570, last_flag=1599, flag=1575)
 
 
 @ContinueOnRest(11510090)

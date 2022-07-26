@@ -317,7 +317,7 @@ def Constructor():
         flag_4=1035549202,
     )
     CommonFunc_90005732(0, flag=1035549200, region=1035542350, region_1=1035542350)
-    Event_1035543700(0, 1035540700)
+    Event_1035543700(0, character=Characters.WanderingNoble)
 
 
 @ContinueOnRest(50)
@@ -496,7 +496,17 @@ def Event_1035542500():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1035542250, 1035541200, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1035542250,
+            asset=Assets.AEG007_557_1024,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
 
 
 @ContinueOnRest(1035542580)

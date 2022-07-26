@@ -25,7 +25,7 @@ from .entities.m60_42_40_00_entities import *
 def Constructor():
     """Event 0"""
     Event_1042402650(0, flag=710670, tutorial_param_id=1670, item=9123, flag_1=69230)
-    CommonFunc_90005706(0, 1042400700, 90101, 0)
+    CommonFunc_90005706(0, character=Characters.StormhillColosseumSilentSpirit, animation_id=90101, left=0)
 
 
 @ContinueOnRest(50)

@@ -19,6 +19,7 @@ from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 from .entities.m60_38_46_00_entities import *
+from .entities.m12_01_00_00_entities import Assets as m12_01_Assets
 
 
 @ContinueOnRest(0)
@@ -32,16 +33,18 @@ def Constructor():
     Event_1038462200(0, character=Characters.Commoner0)
     Event_1038462200(1, character=Characters.Commoner1)
     Event_1038462200(2, character=Characters.ThornSorcerer)
-    CommonFunc_90005300(
-        0,
-        flag=1038460340,
-        character=Characters.GuardianGolem,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1038460340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
     Event_1038460510()
-    CommonFunc_90005501(0, 1038460650, 1038460651, 0, 1038461650, 1038461651, 1038461652, 1038460652)
+    CommonFunc_90005501(
+        0,
+        flag=1038460650,
+        flag_1=1038460651,
+        left=0,
+        asset=Assets.AEG239_010_2000,
+        asset_1=Assets.AEG239_020_2000,
+        asset_2=m12_01_Assets.AEG239_021_0500,
+        flag_2=1038460652,
+    )
 
 
 @ContinueOnRest(50)
@@ -89,19 +92,19 @@ def Event_1038460510():
     """Event 1038460510"""
     CommonFunc_90005500(
         0,
-        1038460650,
-        1038460651,
-        0,
-        1038461650,
-        1038461651,
-        1038463651,
-        1038461652,
-        1038463652,
-        1038462651,
-        1038462652,
-        1038460652,
-        1038462653,
-        0,
+        flag=1038460650,
+        flag_1=1038460651,
+        left=0,
+        asset=Assets.AEG239_010_2000,
+        asset_1=Assets.AEG239_020_2000,
+        obj_act_id=1038463651,
+        asset_2=m12_01_Assets.AEG239_021_0500,
+        obj_act_id_1=1038463652,
+        region=1038462651,
+        region_1=1038462652,
+        flag_2=1038460652,
+        flag_3=1038462653,
+        left_1=0,
     )
 
 

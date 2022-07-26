@@ -252,7 +252,19 @@ def Constructor():
         asset_3=0,
         flag=32010218,
     )
-    Event_32012270(5, 32010218, 30005, 20005, 32010218, 3.0, 0.0, 0, 1, 0, 0)
+    Event_32012270(
+        5,
+        character=Characters.TunnelMiner8,
+        animation_id=30005,
+        animation_id_1=20005,
+        flag=32010218,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=1,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -290,7 +302,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.SmallerDog1, region=32012301, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Rat0, region=32012350, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Rat1, region=32012350, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 32010352, 32012350, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Rat2, region=32012350, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32012510)
@@ -330,19 +342,19 @@ def Event_32012510():
     )
     CommonFunc_90005500(
         0,
-        32010520,
-        32010521,
-        0,
-        32011520,
-        32011521,
-        32013521,
-        32011522,
-        32013522,
-        32012521,
-        32012522,
-        32010522,
-        32010523,
-        0,
+        flag=32010520,
+        flag_1=32010521,
+        left=0,
+        asset=Assets.AEG027_001_1002,
+        asset_1=Assets.AEG027_080_1004,
+        obj_act_id=32013521,
+        asset_2=Assets.AEG027_080_1005,
+        obj_act_id_1=32013522,
+        region=32012521,
+        region_1=32012522,
+        flag_2=32010522,
+        flag_3=32010523,
+        left_1=0,
     )
 
 
@@ -432,7 +444,7 @@ def Event_32012200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -547,7 +559,7 @@ def Event_32012250(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -656,7 +668,7 @@ def Event_32012270(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -843,7 +855,17 @@ def Event_32012849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=32010800, asset=Assets.AEG099_002_9000, model_point=7, right=32010801)
-    CommonFunc_9005822(0, 32010800, 931000, 32012805, 32012806, 0, 32012802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=32010800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=32012805,
+        flag_2=32012806,
+        right=0,
+        flag_3=32012802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(32012920)

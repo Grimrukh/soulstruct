@@ -43,7 +43,7 @@ def Constructor():
         dd_id=0,
     )
     Event_31012500()
-    CommonFunc_900005610(0, 31011200, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -64,7 +64,7 @@ def Preconstructor():
     Event_31012220(0, character=Characters.Rat2)
     Event_31012220(1, character=Characters.Rat3)
     Event_31012220(2, character=Characters.Rat4)
-    Event_31012220(3, 31010300)
+    Event_31012220(3, character=Characters.GiantRat)
 
 
 @RestartOnRest(31012500)
@@ -142,7 +142,7 @@ def Event_31012207(_, character: uint, region: uint, radius: float, seconds: flo
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_6.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_6.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -210,7 +210,7 @@ def Event_31012220(_, character: uint):
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(AND_4)
     OR_2.Add(AND_5)
@@ -240,8 +240,8 @@ def Event_31012230(_, character: uint):
     AND_1.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=7.0))
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat0, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat1))
     
     MAIN.Await(OR_2)
     
@@ -355,4 +355,14 @@ def Event_31012849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31010800, asset=Assets.AEG099_001_9000, model_point=3, right=31010801)
-    CommonFunc_9005822(0, 31010800, 931000, 31012805, 31012806, 0, 31012802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31010800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31012805,
+        flag_2=31012806,
+        right=0,
+        flag_3=31012802,
+        left=0,
+        left_1=0,
+    )

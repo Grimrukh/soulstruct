@@ -28,7 +28,7 @@ def Constructor():
     CommonFunc_9005911(0, asset=1043321941)
     CommonFunc_9005912(0, flag=1043320100, text=605055)
     CommonFunc_90005550(0, flag=1043320500, asset=1043321500, obj_act_id=43323500)
-    Event_1043322215(0, 1043320215, 1043322215)
+    Event_1043322215(0, character=Characters.Bat, region=1043322215)
 
 
 @ContinueOnRest(50)
@@ -36,7 +36,7 @@ def Preconstructor():
     """Event 50"""
     CommonFunc_90005261(0, character=Characters.Rat0, region=1043322200, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat1, region=1043322200, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005251(0, 1043320202, 5.0, 0.0, 3005)
+    CommonFunc_90005251(0, character=1043320202, radius=5.0, seconds=0.0, animation_id=3005)
 
 
 @RestartOnRest(1043322215)

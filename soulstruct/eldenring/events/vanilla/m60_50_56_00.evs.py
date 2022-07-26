@@ -104,12 +104,12 @@ def Constructor():
         asset=Assets.AEG099_090_9001,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    CommonFunc_90005796(0, flag=7604, character=Characters.JunoHoslow, banner_type=5, region=1050562141)
-    Event_1050562145()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7604, character=Characters.JunoHoslow, banner_type=5, region=1050562141)
+        Event_1050562145()
     Event_1050562400()
     Event_1050563700()
-    CommonFunc_90005774(0, 7604, 1050560700, 1050567700)
+    CommonFunc_90005774(0, flag=7604, item_lot=1050560700, flag_1=1050567700)
 
 
 @ContinueOnRest(50)
@@ -121,7 +121,8 @@ def Preconstructor():
 @RestartOnRest(1050562145)
 def Event_1050562145():
     """Event 1050562145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.JunoHoslow)
     SetTeamType(Characters.JunoHoslow, TeamType.Human)
     DisableCharacter(m60_50_Characters.GiantSkeletonTorso)

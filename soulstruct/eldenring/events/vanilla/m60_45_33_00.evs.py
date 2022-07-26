@@ -30,14 +30,7 @@ def Constructor():
     CommonFunc_9005910(0, asset=1045331940, first_flag=1045330101, last_flag=1045330103, right=3)
     CommonFunc_9005911(0, asset=1045331941)
     CommonFunc_9005912(0, flag=1045330100, text=605053)
-    CommonFunc_90005300(
-        0,
-        flag=1045330200,
-        character=Characters.Turtle0,
-        item_lot=45000000,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1045330200, character=Characters.Turtle0, item_lot=45000000, seconds=0.0, left=0)
     Event_1045332220()
     Event_1045332250(0, flag=1045330200, flag_1=1045330201, flag_2=1045330202, flag_3=1045330205)
     Event_1045332251(0, flag=1045330200, attacked_entity=Characters.Turtle0)
@@ -54,7 +47,7 @@ def Constructor():
     CommonFunc_90005300(0, flag=1045330201, character=Characters.Turtle1, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=1045330202, character=Characters.Turtle2, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005251(0, character=Characters.Turtle1, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, 1045330900, 1045330900, 1045330400, 0.0, 0)
+    CommonFunc_90005300(0, flag=1045330900, character=Characters.OnyxLord, item_lot=1045330400, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -87,7 +80,7 @@ def Preconstructor():
     Event_1045332265(13, vfx_id=1045332213)
     Event_1045332265(14, vfx_id=1045332214)
     Event_1045332265(15, vfx_id=1045332215)
-    Event_1045332265(16, 1045332216)
+    Event_1045332265(16, vfx_id=1045332216)
 
 
 @RestartOnRest(1045332220)

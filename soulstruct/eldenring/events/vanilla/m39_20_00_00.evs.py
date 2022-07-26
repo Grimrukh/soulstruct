@@ -161,9 +161,9 @@ def Constructor():
         asset=Assets.AEG099_090_9001,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=50)
-    CommonFunc_90005796(0, flag=7606, character=Characters.GreatHornedTragoth1, banner_type=5, region=39202141)
-    Event_39202145()
+    if CeremonyActive(ceremony=50):
+        CommonFunc_90005796(0, flag=7606, character=Characters.GreatHornedTragoth1, banner_type=5, region=39202141)
+        Event_39202145()
     Event_39203700()
     Event_39203701()
     CommonFunc_90005774(0, flag=7606, item_lot=39200500, flag_1=39207500)
@@ -295,13 +295,14 @@ def Preconstructor():
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
     CommonFunc_90005462(0, character=Characters.GiantOctopus)
-    CommonFunc_90005300(0, 39200290, 39200290, 40290, 0.0, 0)
+    CommonFunc_90005300(0, flag=39200290, character=Characters.Scarab, item_lot=40290, seconds=0.0, left=0)
 
 
 @RestartOnRest(39202145)
 def Event_39202145():
     """Event 39202145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=50)
+    if CeremonyInactive(ceremony=50):
+        return
     EnableBackread(Characters.GreatHornedTragoth1)
     SetTeamType(Characters.GreatHornedTragoth1, TeamType.Human)
     EnableFlag(39202104)
@@ -364,19 +365,19 @@ def Event_39202500():
     )
     CommonFunc_90005500(
         0,
-        39200525,
-        39201525,
-        1,
-        39201525,
-        39201526,
-        39203526,
-        39201527,
-        39203527,
-        39202526,
-        39202527,
-        39200526,
-        39202527,
-        0,
+        flag=39200525,
+        flag_1=39201525,
+        left=1,
+        asset=Assets.AEG027_001_0500,
+        asset_1=Assets.AEG027_080_0505,
+        obj_act_id=39203526,
+        asset_2=Assets.AEG027_080_0504,
+        obj_act_id_1=39203527,
+        region=39202526,
+        region_1=39202527,
+        flag_2=39200526,
+        flag_3=39202527,
+        left_1=0,
     )
 
 
@@ -415,13 +416,13 @@ def Event_39202200():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=39202207))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.VulgarMilitia4, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.VulgarMilitia4))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia4, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia4, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia4, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia4, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia4, state_info=260))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.VulgarMilitia5, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.VulgarMilitia5))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia5, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia5, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.VulgarMilitia5, state_info=5))
@@ -503,7 +504,7 @@ def Event_39202280(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -594,7 +595,7 @@ def Event_39202220(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -706,7 +707,7 @@ def Event_39202230(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -815,7 +816,7 @@ def Event_39202240(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -934,11 +935,11 @@ def Event_39202351():
     AddSpecialEffect(Characters.Bat9, 8081)
     AddSpecialEffect(Characters.Bat10, 8033)
     AddSpecialEffect(Characters.Bat10, 8081)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat6, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat7, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat9, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat10, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.OldWomanBat0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat6))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat7))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat9))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Bat10))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.OldWomanBat0))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=39202350))
     AND_1.Add(HasAIStatus(Characters.OldWomanBat0, ai_status=AIStatusType.Battle))
     OR_1.Add(AND_1)
@@ -1060,7 +1061,17 @@ def Event_39202829():
     )
     CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
     CommonFunc_9005811(0, flag=39200800, asset=Assets.AEG099_002_9001, model_point=5, right=0)
-    CommonFunc_9005822(0, 39200800, 920900, 39202805, 39202806, 0, 39202802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=39200800,
+        bgm_boss_conv_param_id=920900,
+        flag_1=39202805,
+        flag_2=39202806,
+        right=0,
+        flag_3=39202802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(39203700)

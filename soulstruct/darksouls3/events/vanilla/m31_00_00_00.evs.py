@@ -481,13 +481,13 @@ def Constructor():
     CommonFunc_20005202(0, character=3100434, animation_id=700, animation_id_1=1700, region=3102305)
     CommonFunc_20005202(0, character=3100435, animation_id=701, animation_id_1=1701, region=3102305)
     CommonFunc_20005110(0, character=3100436, region=3102320)
-    CommonFunc_20005290(0, 3100450, -1, -1)
+    CommonFunc_20005290(0, character=3100450, animation_id=-1, animation_id_1=-1)
     CommonFunc_20005220(0, character=3100451, animation_id=701, animation_id_1=1701)
-    CommonFunc_20005290(0, 3100452, -1, -1)
+    CommonFunc_20005290(0, character=3100452, animation_id=-1, animation_id_1=-1)
     CommonFunc_20005220(0, character=3100453, animation_id=703, animation_id_1=1703)
     CommonFunc_20005220(0, character=3100454, animation_id=701, animation_id_1=1701)
-    CommonFunc_20005290(0, 3100455, -1, -1)
-    CommonFunc_20005290(0, 3100456, -1, -1)
+    CommonFunc_20005290(0, character=3100455, animation_id=-1, animation_id_1=-1)
+    CommonFunc_20005290(0, character=3100456, animation_id=-1, animation_id_1=-1)
     CommonFunc_20005220(0, character=3100457, animation_id=702, animation_id_1=1702)
     CommonFunc_20005220(0, character=3100458, animation_id=701, animation_id_1=1701)
     CommonFunc_20005290(0, character=3100460, animation_id=703, animation_id_1=1703)
@@ -1007,7 +1007,17 @@ def Constructor():
         first_flag=1280,
         last_flag=1294,
     )
-    CommonFunc_20006005(0, 3100700, 73100131, 73100132, 0, 1.0, 90280, 90291, -1)
+    CommonFunc_20006005(
+        0,
+        target_entity=3100700,
+        flag=73100131,
+        flag_1=73100132,
+        region=0,
+        radius=1.0,
+        animation=90280,
+        animation_id=90291,
+        special_effect=-1,
+    )
     CommonFunc_20006002(0, character=3100710, flag=1258, first_flag=1255, last_flag=1259)
     CommonFunc_20006003(
         0,
@@ -2609,7 +2619,7 @@ def Event_13105820():
         flag_1=13105805,
         flag_2=13105806,
     )
-    CommonFunc_20005810(0, 13100800, 3101800, 3102800, 10000)
+    CommonFunc_20005810(0, flag=13100800, entity=3101800, target_entity=3102800, action_button_id=10000)
 
 
 @RestartOnRest(13105825)
@@ -3884,7 +3894,7 @@ def Event_13105741(_, character: int, character_1: int):
         last_flag=1399,
         flag_3=73100370,
     )
-    Event_13105744(0, 3100731, 1396, 1397, 73100390, 73100370)
+    Event_13105744(0, attacked_entity=3100731, flag=1396, flag_1=1397, flag_2=73100390, flag_3=73100370)
 
 
 @RestartOnRest(13105742)

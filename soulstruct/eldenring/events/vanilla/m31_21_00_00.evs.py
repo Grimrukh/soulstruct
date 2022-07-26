@@ -177,7 +177,7 @@ def Constructor():
         animation_id=0,
         animation_id_1=0,
     )
-    CommonFunc_90005621(0, 1047380570, 31211578)
+    CommonFunc_90005621(0, flag=1047380570, asset=Assets.AEG099_272_9001)
 
 
 @ContinueOnRest(50)
@@ -533,7 +533,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat4, region=31212316, radius=2.0, seconds=0.0, animation_id=0)
     Event_31212308(0, character=31210306, region=31212306)
     Event_31212308(1, character=31210307, region=31212307)
-    CommonFunc_90005261(0, 31210330, 31212316, 2.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.GiantRat, region=31212316, radius=2.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31212500)
@@ -734,7 +734,7 @@ def Event_31212308(_, character: uint, region: uint):
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterInsideRegion(character=character, region=region))
     
     MAIN.Await(OR_2)
@@ -885,10 +885,10 @@ def Event_31212815():
     if FlagEnabled(31210800):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, 31212800, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, 31212800, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, 31212800, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, 31212800, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -986,4 +986,14 @@ def Event_31032849():
     )
     CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9000, model_point=3, right=31210801)
     CommonFunc_9005811(0, flag=31210800, asset=Assets.AEG099_001_9001, model_point=3, right=31210801)
-    CommonFunc_9005822(0, 31210800, 931000, 31212805, 31212806, 31212810, 31212852, 31212802, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31210800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31212805,
+        flag_2=31212806,
+        right=31212810,
+        flag_3=31212852,
+        left=31212802,
+        left_1=0,
+    )

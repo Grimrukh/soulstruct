@@ -46,7 +46,7 @@ def Constructor():
     Event_1054552200(0, character=1054555200)
     CommonFunc_90005630(0, far_view_id=65545500, asset=1054551500, model_point=119)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1054552700)
-    CommonFunc_90005771(0, 1054550950, 1054552701)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1054552701)
 
 
 @RestartOnRest(1054552200)

@@ -79,7 +79,7 @@ def Constructor():
         animation_id=0,
         animation_id_1=0,
     )
-    CommonFunc_90005525(0, flag=30050570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30050570, asset=30051570)
     Event_30052580()
     CommonFunc_90005620(
         0,
@@ -91,7 +91,7 @@ def Constructor():
         cancel_flag__right_flag=30052576,
         right=30052577,
     )
-    CommonFunc_90005621(0, 30050575, 30051578)
+    CommonFunc_90005621(0, flag=30050575, asset=Assets.AEG099_272_9000)
 
 
 @ContinueOnRest(50)
@@ -380,7 +380,15 @@ def Preconstructor():
         right_1=0,
     )
     CommonFunc_90005781(0, flag=30050850, flag_1=30052160, flag_2=30052161, character=Characters.DHunteroftheDead)
-    CommonFunc_90005782(0, 30052160, 30052855, 30050700, 30052855, 30052809, 0)
+    CommonFunc_90005782(
+        0,
+        flag=30052160,
+        region=30052855,
+        character=Characters.DHunteroftheDead,
+        target_entity=30052855,
+        region_1=30052809,
+        animation=0,
+    )
 
 
 @ContinueOnRest(30052580)
@@ -423,7 +431,7 @@ def Event_30052301():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30052310))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Commoner1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Commoner1))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -446,7 +454,7 @@ def Event_30052302():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30052205))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Commoner0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Commoner0))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -731,7 +739,16 @@ def Event_30052400():
             right=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005675(0, 30052704, 30053504, 30051504, 30052650, 801202000, 0.0, 0)
+        CommonFunc_90005675(
+            0,
+            flag=30052704,
+            asset_flag=30053504,
+            asset=Assets.AEG027_013_0502,
+            region=30052650,
+            behaviour_id=801202000,
+            seconds=0.0,
+            right=0,
+        )
 
 
 @RestartOnRest(30052450)
@@ -782,7 +799,7 @@ def Event_30052450(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1023,7 +1040,17 @@ def Event_30052849():
         action_button_id=10000,
     )
     CommonFunc_9005813(0, flag=30050800, asset=Assets.AEG099_001_9000, model_point=3, right=0, model_point_1=3)
-    CommonFunc_9005822(0, 30050800, 930000, 30052805, 30052806, 0, 30052802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30050800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30052805,
+        flag_2=30052806,
+        right=0,
+        flag_3=30052802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30052899)
@@ -1050,7 +1077,17 @@ def Event_30052899():
         action_button_id=10000,
     )
     CommonFunc_9005813(0, flag=30050850, asset=Assets.AEG099_001_9002, model_point=3, right=0, model_point_1=3)
-    CommonFunc_9005822(0, 30050850, 921500, 30052855, 30052856, 0, 30052852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30050850,
+        bgm_boss_conv_param_id=921500,
+        flag_1=30052855,
+        flag_2=30052856,
+        right=0,
+        flag_3=30052852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30052870)
@@ -1099,10 +1136,10 @@ def Event_30052870(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)

@@ -62,7 +62,7 @@ def Constructor():
         last_flag=1043359259,
     )
     Event_1043353710(0, character=Characters.YuraHunterofBloodyFingers)
-    Event_1043353711(0, 1043350710)
+    Event_1043353711(0, character=Characters.YuraHunterofBloodyFingers)
 
 
 @ContinueOnRest(50)

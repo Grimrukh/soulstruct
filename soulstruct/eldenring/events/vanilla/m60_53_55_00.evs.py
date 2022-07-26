@@ -32,7 +32,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    Event_1053552200(0, 1053555200)
+    Event_1053552200(0, character=1053555200)
 
 
 @RestartOnRest(1053552200)

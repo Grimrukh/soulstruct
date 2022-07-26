@@ -115,7 +115,7 @@ def Constructor():
         right=3,
     )
     CommonFunc_90005702(0, character=Characters.WitchHunterJerren, flag=3363, first_flag=3360, last_flag=3363)
-    CommonFunc_90005706(0, 1041330720, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -206,7 +206,7 @@ def Event_1041332849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, 1041330800, 1041331801, 3, 0, 0)
+    CommonFunc_9005812(0, flag=1041330800, asset=1041331801, model_point=3, right=0, model_point_1=0)
 
 
 @RestartOnRest(1041333700)

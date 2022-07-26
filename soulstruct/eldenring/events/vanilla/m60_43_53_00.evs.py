@@ -138,7 +138,7 @@ def Constructor():
         right=0,
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4761, flag_1=4760, flag_2=1043530702, right=3)
-    CommonFunc_90005771(0, 1043530951, 1043532710)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy1, flag=1043532710)
 
 
 @ContinueOnRest(50)
@@ -377,7 +377,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1043530212, 30016, 20016, 1043532212, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Skeleton9,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1043532212,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1043530700)

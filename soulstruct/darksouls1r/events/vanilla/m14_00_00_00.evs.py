@@ -152,7 +152,7 @@ def Constructor():
     Event_11400600(2, obj=1401652, obj_act_id=11400602)
     Event_11415170()
     Event_11405843(0, flag=9, line_intersects=1401990, anchor_entity=1402998, target_entity=1402997)
-    Event_11405846(0, 9, 1401990, 1401991)
+    Event_11405846(0, flag=9, obj=1401990, vfx_id=1401991)
 
 
 @ContinueOnRest(50)
@@ -774,7 +774,15 @@ def Event_11405300():
         model_point=132,
         model_point_1=134,
     )
-    Event_11405330(7, 1400500, 11405304, 1400614, 1400615, 150, 152)
+    Event_11405330(
+        7,
+        character=1400500,
+        flag=11405304,
+        character_1=1400614,
+        character_2=1400615,
+        model_point=150,
+        model_point_1=152,
+    )
 
 
 @EndOnRest(11405301)

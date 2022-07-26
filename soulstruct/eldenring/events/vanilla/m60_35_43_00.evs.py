@@ -34,7 +34,14 @@ def Constructor():
         left=1,
         item_lot=1035430100,
     )
-    CommonFunc_90005391(0, 1035430220, 1035432220, 1035430220, 1035430230, 1)
+    CommonFunc_90005391(
+        0,
+        flag=1035430220,
+        flag_1=1035432220,
+        character=Characters.GiantLobster,
+        character_1=Characters.GraftedScion,
+        left=1,
+    )
 
 
 @ContinueOnRest(50)
@@ -79,7 +86,19 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 1035430203, 30001, 20001, 1035432200, 3.0, 1.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=1035430203,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1035432200,
+        radius=3.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1035432390)
@@ -164,15 +183,7 @@ def Event_1035432390(_, flag: uint, flag_1: uint, character: uint, character_1: 
 
 
 @RestartOnRest(1035432395)
-def Event_1035432395(
-    _,
-    flag: uint,
-    flag_1: uint,
-    character: uint,
-    character_1: uint,
-    left: int,
-    item_lot: int,
-):
+def Event_1035432395(_, flag: uint, flag_1: uint, character: uint, character_1: uint, left: int, item_lot: int):
     """Event 1035432395"""
     if FlagEnabled(flag):
         return

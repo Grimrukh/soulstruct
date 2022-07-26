@@ -50,7 +50,7 @@ def Constructor():
     Event_1038502580()
     Event_1038502500()
     Event_1038503700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1038501700, vfx_id=200, model_point=120, seconds=3.0)
     Event_1038503701()
     Event_1038503702(0, attacked_entity=1038501700, other_entity=Characters.RyatheScout)
     Event_1038503703()
@@ -83,7 +83,7 @@ def Constructor():
     )
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1038502710)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy2, flag=1038502711)
-    CommonFunc_90005706(0, 1038500710, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -100,7 +100,14 @@ def Preconstructor():
         animation_id=0,
         attacked_entity=Characters.GuardianGolem0,
     )
-    Event_1038502400(1, 1038500400, 1038502400, 0.0, 0, 1038500402)
+    Event_1038502400(
+        1,
+        character=Characters.GuardianGolem0,
+        region=1038502400,
+        seconds=0.0,
+        animation_id=0,
+        attacked_entity=Characters.GuardianGolem1,
+    )
 
 
 @RestartOnRest(1038502400)
@@ -120,8 +127,8 @@ def Event_1038502400(_, character: uint, region: uint, seconds: float, animation
     OR_15.Add(FlagDisabled(1051397900))
     AND_1.Add(OR_15)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

@@ -49,4 +49,4 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.ErdtreeGuardian1, region=1051402200, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.ErdtreeGuardian2, region=1051402200, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.GuardianGolem, region=1051402300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005251(0, 1051400300, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1051400300, radius=7.0, seconds=0.0, animation_id=-1)

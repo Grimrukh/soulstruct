@@ -349,7 +349,17 @@ def Event_31152849():
         right=31150815,
         model_point_1=806760,
     )
-    CommonFunc_9005822(0, 31150800, 931000, 31152805, 31152806, 31152815, 31152842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31150800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31152805,
+        flag_2=31152806,
+        right=31152815,
+        flag_3=31152842,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31153700)

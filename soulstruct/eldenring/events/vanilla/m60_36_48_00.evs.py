@@ -51,14 +51,7 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1036480800,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1036480800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1036482340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -102,7 +95,7 @@ def Constructor():
     Event_1036483700(0, character=Characters.DemiHumanShaman)
     Event_1036483701(0, entity=Characters.DemiHumanShaman)
     CommonFunc_90005705(0, character=Characters.FingerReader)
-    CommonFunc_90005771(0, 1036480950, 1036482710)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1036482710)
 
 
 @ContinueOnRest(50)

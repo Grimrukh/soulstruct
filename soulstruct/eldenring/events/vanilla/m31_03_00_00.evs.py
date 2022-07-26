@@ -29,7 +29,18 @@ def Constructor():
     Event_31032810()
     Event_31032811()
     Event_31032849()
-    CommonFunc_90005646(0, 31030800, 31032840, 31032841, 31031840, 31032840, 31, 3, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31030800,
+        left_flag=31032840,
+        cancel_flag__right_flag=31032841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31032840,
+        area_id=31,
+        block_id=3,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -62,7 +73,19 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 31030216, 30001, 20001, 31032216, 2.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.Wolf5,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=31032216,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(31032650)
@@ -201,4 +224,14 @@ def Event_31032849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31030800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 31030800, 931000, 31032805, 31032806, 0, 31032802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31030800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31032805,
+        flag_2=31032806,
+        right=0,
+        flag_3=31032802,
+        left=0,
+        left_1=0,
+    )

@@ -239,7 +239,7 @@ def Constructor():
     Event_11215175(1, character=1210601)
     Event_11215180(1, character=1210601, region=1212181)
     Event_11210680(1, character=1210601)
-    Event_11215185(1, 1210601)
+    Event_11215185(1, character=1210601)
 
 
 @ContinueOnRest(50)
@@ -3712,7 +3712,7 @@ def Event_11210700():
     Event_11210890(2, region=1212732, player_start=1218211)
     Event_11210890(3, region=1212733, player_start=1218214)
     Event_11210890(4, region=1212734, player_start=1218212)
-    Event_11210890(5, 1212735, 1218210)
+    Event_11210890(5, region=1212735, player_start=1218210)
 
 
 @ContinueOnRest(11210708)
@@ -5333,7 +5333,7 @@ def Event_11210407():
     Event_11216200(96, value=97, text=60000097)
     Event_11216200(97, value=98, text=60000098)
     Event_11216200(98, value=99, text=60000099)
-    Event_11216200(99, 100, 60000100)
+    Event_11216200(99, value=100, text=60000100)
 
 
 @ContinueOnRest(11216200)

@@ -56,7 +56,7 @@ def Constructor():
     Event_1044363713()
     Event_1044363714(0, entity=Characters.SorceressSellen)
     CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, model_point=905, vfx_id=603001)
-    CommonFunc_90005709(0, 1044360700, 200, 603051)
+    CommonFunc_90005709(0, attacked_entity=Characters.SorceressSellen, model_point=200, vfx_id=603051)
 
 
 @ContinueOnRest(50)
@@ -94,13 +94,25 @@ def Preconstructor():
         animation_id=1701,
     )
     CommonFunc_90005261(0, character=1044360200, region=1044362200, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005211(0, 1044360200, 30014, 20014, 1044362200, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=1044360200,
+        animation_id=30014,
+        animation_id_1=20014,
+        region=1044362200,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1044368301)
+    CommonFunc_90005421(0, character=1044360300, asset=Assets.AEG100_101_9000, flag=1044368301)
     CommonFunc_90005422(0, flag=1044368301, asset=Assets.AEG100_100_9000, obj_act_id=1044363301)
     CommonFunc_90005424(
         0,
@@ -118,7 +130,16 @@ def Event_200():
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005420(0, 1044360300, 1044361300, 1044361301, 1044360301, 1044360302, 1044360303, 0.0)
+    CommonFunc_90005420(
+        0,
+        character=Characters.CaravanDummy,
+        caravan_asset__parent_asset=Assets.AEG100_100_9000,
+        child_asset=Assets.AEG100_101_9000,
+        character_1=Characters.Dummy,
+        character_2=Characters.Troll0,
+        character_3=Characters.Troll1,
+        seconds=0.0,
+    )
 
 
 @RestartOnRest(1044362500)
@@ -636,4 +657,4 @@ def Event_1044362849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, 1044360800, 1044361801, 3, 0, 0)
+    CommonFunc_9005812(0, flag=1044360800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)

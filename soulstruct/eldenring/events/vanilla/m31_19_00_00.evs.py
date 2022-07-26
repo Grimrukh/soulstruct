@@ -49,12 +49,12 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Skeleton7, region=31192220, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.GraveSkeleton, region=31192219, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=31190280, region=31192218, radius=3.0, seconds=0.0, animation_id=3001)
-    CommonFunc_90005525(0, flag=31190600, asset=Assets.AEG027_069_1000)
-    CommonFunc_90005525(0, flag=31190601, asset=Assets.AEG027_069_1001)
-    CommonFunc_90005525(0, flag=31190602, asset=Assets.AEG027_069_1002)
-    CommonFunc_90005525(0, flag=31190603, asset=Assets.AEG027_069_1003)
-    CommonFunc_90005525(0, flag=31190604, asset=Assets.AEG027_069_1004)
-    CommonFunc_90005525(0, flag=31190605, asset=Assets.AEG027_069_1005)
+    CommonFunc_90005525(0, flag=31190600, asset=31191600)
+    CommonFunc_90005525(0, flag=31190601, asset=31191601)
+    CommonFunc_90005525(0, flag=31190602, asset=31191602)
+    CommonFunc_90005525(0, flag=31190603, asset=31191603)
+    CommonFunc_90005525(0, flag=31190604, asset=31191604)
+    CommonFunc_90005525(0, flag=31190605, asset=31191605)
     CommonFunc_90005646(
         0,
         flag=31190800,
@@ -67,7 +67,18 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_90005646(0, 31190850, 31192890, 31192891, 31191890, 31192840, 31, 19, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31190850,
+        left_flag=31192890,
+        cancel_flag__right_flag=31192891,
+        asset=Assets.AEG099_065_9001,
+        player_start=31192840,
+        area_id=31,
+        block_id=19,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @RestartOnRest(31192210)
@@ -88,14 +99,14 @@ def Event_31192210(_, character: uint, region: uint, radius: float, seconds: flo
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(FlagEnabled(31190603))
     AND_2.Add(FlagEnabled(31190603))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Skeleton1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Skeleton1))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=260))
     OR_2.Add(HasAIStatus(Characters.Skeleton1, ai_status=AIStatusType.Battle))
-    OR_5.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -167,7 +178,7 @@ def Event_35002250(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Skeleton1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Skeleton1))
     OR_2.Add(HasAIStatus(Characters.Skeleton1, ai_status=AIStatusType.Battle))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.Skeleton1, state_info=2))
@@ -469,7 +480,17 @@ def Event_31192849():
         action_button_id=10000,
     )
     CommonFunc_9005813(0, flag=31190800, asset=Assets.AEG099_001_9000, model_point=3, right=0, model_point_1=3)
-    CommonFunc_9005822(0, 31190800, 921500, 31192805, 31192806, 0, 31192802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31190800,
+        bgm_boss_conv_param_id=921500,
+        flag_1=31192805,
+        flag_2=31192806,
+        right=0,
+        flag_3=31192802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31192899)
@@ -496,7 +517,17 @@ def Event_31192899():
         action_button_id=10000,
     )
     CommonFunc_9005813(0, flag=31190850, asset=Assets.AEG099_001_9002, model_point=3, right=0, model_point_1=3)
-    CommonFunc_9005822(0, 31190850, 920100, 31192855, 31192856, 0, 31192852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31190850,
+        bgm_boss_conv_param_id=920100,
+        flag_1=31192855,
+        flag_2=31192856,
+        right=0,
+        flag_3=31192852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31192845)
@@ -545,10 +576,10 @@ def Event_31192845(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)

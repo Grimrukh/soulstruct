@@ -25,14 +25,7 @@ from .entities.m60_39_43_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(
-        0,
-        flag=1039430800,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1039430800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1039432340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -54,7 +47,7 @@ def Constructor():
         character_1=Characters.NightsCavalryHorse,
     )
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
-    CommonFunc_90005300(0, 1039430310, 1039430310, 40252, 0.0, 0)
+    CommonFunc_90005300(0, flag=1039430310, character=Characters.Scarab, item_lot=40252, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)

@@ -187,7 +187,7 @@ def Constructor():
     CommonFunc_90005731(0, flag=1044359265, other_entity=Characters.TalkDummy3, radius=30.0, radius_1=50.0)
     Event_1044350711()
     Event_1044350713()
-    Event_1044350712(0, 1044350703)
+    Event_1044350712(0, character=Characters.TalkDummy2)
 
 
 @ContinueOnRest(50)
@@ -210,7 +210,7 @@ def Preconstructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005251(0, 1044350221, 55.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.WanderingNoble1, radius=55.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1044352250)
@@ -231,7 +231,7 @@ def Event_1044352600(_, attacked_entity: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)

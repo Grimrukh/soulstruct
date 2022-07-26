@@ -44,7 +44,7 @@ def Constructor():
     Event_11806100(2, character=1800102, destination=1802002)
     Event_11806100(3, character=1800103, destination=1802003)
     Event_11806100(4, character=1800104, destination=1802004)
-    Event_11806100(5, 1800105, 1802005)
+    Event_11806100(5, character=1800105, destination=1802005)
 
 
 @ContinueOnRest(50)

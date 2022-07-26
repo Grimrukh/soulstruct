@@ -109,7 +109,7 @@ def Event_1052522810():
     GotoIfFlagEnabled(Label.L1, flag=1252520801)
     if PlayerInOwnWorld():
         DisableFlag(1252520804)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant0))
     OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=PLAYER, radius=120.0))
     OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_Characters.LivingPot0, radius=120.0))
     OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant0, other_entity=m60_52_Characters.LivingPot1, radius=120.0))
@@ -123,7 +123,7 @@ def Event_1052522810():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant0))
     OR_1.Add(CharacterHasStateInfo(character=Characters.FireGiant0, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.FireGiant0, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.FireGiant0, state_info=5))
@@ -196,7 +196,7 @@ def Event_1052522812():
     """Event 1052522812"""
     if FlagEnabled(1252520800):
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant1, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.FireGiant1))
     OR_1.Add(EntityWithinDistance(entity=Characters.FireGiant1, other_entity=PLAYER, radius=70.0))
     AND_1.Add(OR_1)
     AND_1.Add(FlagEnabled(1252522802))
@@ -644,4 +644,14 @@ def Event_1052522849():
     CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_003_9001, model_point=10, right=1252520804)
     CommonFunc_9005811(0, flag=1252520800, asset=Assets.AEG099_019_1000, model_point=0, right=1252520804)
     CommonFunc_9005811(0, flag=1252520800, asset=m60_52_Assets.AEG099_017_1000, model_point=0, right=1252520804)
-    CommonFunc_9005822(0, 1252520800, 476000, 1252522805, 1252522806, 0, 1252522802, 1, 1)
+    CommonFunc_9005822(
+        0,
+        flag=1252520800,
+        bgm_boss_conv_param_id=476000,
+        flag_1=1252522805,
+        flag_2=1252522806,
+        right=0,
+        flag_3=1252522802,
+        left=1,
+        left_1=1,
+    )

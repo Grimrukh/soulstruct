@@ -48,7 +48,16 @@ def Constructor():
         right=-1,
     )
     CommonFunc_90005702(0, character=Characters.AlbinauricArcher, flag=4103, first_flag=4100, last_flag=4104)
-    CommonFunc_90005750(0, 1036411700, 4350, 104100, 400410, 400410, 1036419215, 0)
+    CommonFunc_90005750(
+        0,
+        asset=Assets.AEG099_090_9000,
+        action_button_id=4350,
+        item_lot=104100,
+        first_flag=400410,
+        last_flag=400410,
+        flag=1036419215,
+        model_point=0,
+    )
 
 
 @ContinueOnRest(50)

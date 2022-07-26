@@ -242,7 +242,7 @@ def Constructor():
     Event_11515843(1, flag=11510903, line_intersects=1511990, anchor_entity=1512998, target_entity=1512997)
     Event_11515846(1, flag=11510903, obj=1511990, vfx_id=1511991)
     Event_11515843(2, flag=11510900, line_intersects=1511890, anchor_entity=1512898, target_entity=1512897)
-    Event_11515846(2, 11510900, 1511890, 1511891)
+    Event_11515846(2, flag=11510900, obj=1511890, vfx_id=1511891)
 
 
 @ContinueOnRest(50)
@@ -299,7 +299,7 @@ def Preconstructor():
     Event_11510541(0, character=6302, first_flag=1570, last_flag=1599, flag=1578)
     Event_11510542(0, character=6302, first_flag=1570, last_flag=1599, flag=1575)
     Event_11510543(0, character=6302, first_flag=1570, last_flag=1599, flag=1572)
-    Event_11510544(0, 6302, 1570, 1599, 1575)
+    Event_11510544(0, character=6302, first_flag=1570, last_flag=1599, flag=1575)
 
 
 @ContinueOnRest(11510090)

@@ -787,19 +787,19 @@ def Event_30102510():
     )
     CommonFunc_90005500(
         0,
-        30100515,
-        30100516,
-        3,
-        30101515,
-        30101516,
-        30103516,
-        30101517,
-        30103517,
-        30102516,
-        30102517,
-        30100517,
-        30100518,
-        0,
+        flag=30100515,
+        flag_1=30100516,
+        left=3,
+        asset=Assets.AEG027_016_0500,
+        asset_1=Assets.AEG027_002_0502,
+        obj_act_id=30103516,
+        asset_2=Assets.AEG027_002_0503,
+        obj_act_id_1=30103517,
+        region=30102516,
+        region_1=30102517,
+        flag_2=30100517,
+        flag_3=30100518,
+        left_1=0,
     )
 
 
@@ -814,15 +814,8 @@ def Event_30100519():
 @ContinueOnRest(30102500)
 def Event_30102500():
     """Event 30102500"""
-    CommonFunc_90005681(
-        0,
-        flag=30100500,
-        flag_1=30100501,
-        flag_2=30100502,
-        flag_3=30100503,
-        attacked_entity=Assets.AEG027_057_0500,
-    )
-    Event_30102521(0, 30100503, 30102500, 30100500)
+    CommonFunc_90005681(0, flag=30100500, flag_1=30100501, flag_2=30100502, flag_3=30100503, attacked_entity=30101500)
+    Event_30102521(0, flag=30100503, region=30102500, entity=Characters.TalkDummy0)
 
 
 @ContinueOnRest(30102520)
@@ -2065,21 +2058,13 @@ def Event_30102540(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, atta
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     DisableFlag(flag_1)
     EnableFlag(flag_2)
     ForceAnimation(attacked_entity, 21, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     Restart()
 
@@ -2094,20 +2079,12 @@ def Event_30102540(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, atta
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     EnableFlag(flag_1)
     ForceAnimation(attacked_entity, 12, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     DisableFlag(flag_2)
     Restart()
@@ -2249,4 +2226,14 @@ def Event_30102849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30100800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30100800, 920200, 30102805, 30102806, 0, 30102802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30100800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=30102805,
+        flag_2=30102806,
+        right=0,
+        flag_3=30102802,
+        left=0,
+        left_1=0,
+    )

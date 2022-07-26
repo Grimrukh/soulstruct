@@ -35,7 +35,7 @@ def Constructor():
         flag_2=1051580512,
     )
     Event_1051582510()
-    CommonFunc_90005706(0, 1051580700, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -49,19 +49,19 @@ def Event_1051582510():
     """Event 1051582510"""
     CommonFunc_90005500(
         0,
-        1051580510,
-        1051580511,
-        1,
-        1051581510,
-        1051581511,
-        1051583511,
-        1051581512,
-        1051583512,
-        1051582511,
-        1051582512,
-        1051580512,
-        1051580513,
-        0,
+        flag=1051580510,
+        flag_1=1051580511,
+        left=1,
+        asset=Assets.AEG030_095_2000,
+        asset_1=Assets.AEG030_183_2003,
+        obj_act_id=1051583511,
+        asset_2=Assets.AEG099_026_2001,
+        obj_act_id_1=1051583512,
+        region=1051582511,
+        region_1=1051582512,
+        flag_2=1051580512,
+        flag_3=1051580513,
+        left_1=0,
     )
 
 

@@ -37,7 +37,7 @@ def Constructor():
         asset=Assets.AEG099_166_9000,
         asset_1=Assets.AEG099_990_9000,
     )
-    CommonFunc_90005706(0, 1042540700, 30025, 0)
+    CommonFunc_90005706(0, character=1042540700, animation_id=30025, left=0)
 
 
 @ContinueOnRest(50)
@@ -90,7 +90,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1042540653, 30004, 20004, 1042542651, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LeyndellSoldier2,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1042542651,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1042542350)
@@ -130,7 +141,7 @@ def Event_1042542350(_, character: uint, region: uint, character_1: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=5))

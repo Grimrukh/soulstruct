@@ -124,7 +124,7 @@ def Constructor():
     )
     Event_1034472262(
         0,
-        character=Characters.Balloon0,
+        character=1034470250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -138,7 +138,7 @@ def Constructor():
     )
     Event_1034472262(
         1,
-        character=Characters.Balloon0,
+        character=1034470250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -152,7 +152,7 @@ def Constructor():
     )
     Event_1034472262(
         3,
-        character=Characters.Balloon0,
+        character=1034470250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -166,7 +166,7 @@ def Constructor():
     )
     Event_1034472262(
         4,
-        character=Characters.Balloon1,
+        character=1034470251,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,
@@ -178,7 +178,20 @@ def Constructor():
         seconds_3=0.0,
         flag=1034472251,
     )
-    Event_1034472262(5, 1034470251, 0.0, 1034470251, 0.0, 1034470264, 30010, 20010, 20.0, 0.0, 0.0, 1034472251)
+    Event_1034472262(
+        5,
+        character=1034470251,
+        seconds=0.0,
+        attacked_entity=Characters.Balloon1,
+        seconds_1=0.0,
+        character_1=Characters.Marionette4,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=20.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        flag=1034472251,
+    )
 
 
 @ContinueOnRest(50)
@@ -245,7 +258,14 @@ def Preconstructor():
         seconds=0.0,
         animation_id=1705,
     )
-    CommonFunc_90005261(0, 1034470206, 1034472200, 5.0, 2.0, 1705)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower6,
+        region=1034472200,
+        radius=5.0,
+        seconds=2.0,
+        animation_id=1705,
+    )
 
 
 @RestartOnRest(1034472260)

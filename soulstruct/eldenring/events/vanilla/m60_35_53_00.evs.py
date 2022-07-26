@@ -110,7 +110,15 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.LivingPot, flag=3663, first_flag=3660, last_flag=3663)
     Event_1035533700(0, character=Characters.LivingPot)
     Event_1035533701()
-    CommonFunc_90005730(0, 1035532702, 40.0, 1035539206, 1051369265, 1035539205, 1035539205)
+    CommonFunc_90005730(
+        0,
+        flag=1035532702,
+        seconds=40.0,
+        flag_1=1035539206,
+        flag_2=1051369265,
+        flag_3=1035539205,
+        flag_4=1035539205,
+    )
 
 
 @RestartOnRest(1035532200)
@@ -473,7 +481,17 @@ def Event_1035532500():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1035532252, 1035531202, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1035532252,
+            asset=Assets.AEG007_557_1027,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
 
 
 @RestartOnRest(1035533700)

@@ -57,7 +57,7 @@ def Constructor():
         last_flag=1044389209,
     )
     Event_1044383720(0, character=Characters.YuraHunterofBloodyFingers)
-    Event_1044383721(0, 1044380710)
+    Event_1044383721(0, character=Characters.YuraHunterofBloodyFingers)
 
 
 @ContinueOnRest(50)
@@ -78,7 +78,7 @@ def Preconstructor():
     )
     CommonFunc_90005250(0, character=Characters.Skeleton2, region=1044382200, seconds=0.0, animation_id=1700)
     CommonFunc_90005250(0, character=Characters.Skeleton3, region=1044382200, seconds=0.0, animation_id=1700)
-    CommonFunc_90005250(0, 1044380204, 1044382200, 0.5, 1700)
+    CommonFunc_90005250(0, character=Characters.Skeleton4, region=1044382200, seconds=0.5, animation_id=1700)
 
 
 @RestartOnRest(1044382220)

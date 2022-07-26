@@ -121,7 +121,7 @@ def Preconstructor():
     """Event 50"""
     Event_1043392200()
     CommonFunc_90005261(0, character=1043390220, region=1043392220, radius=3.0, seconds=0.0, animation_id=3010)
-    CommonFunc_90005251(0, 1043390220, 5.0, 0.0, -1)
+    CommonFunc_90005251(0, character=1043390220, radius=5.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1043392600)
@@ -135,7 +135,7 @@ def Event_1043392600(_, attacked_entity: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -353,8 +353,8 @@ def Event_1043393703(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
@@ -367,8 +367,8 @@ def Event_1043393703(_, character: uint):
     
     MAIN.Await(OR_7)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20010)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20010)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -389,9 +389,9 @@ def Event_1043393703(_, character: uint):
     
     MAIN.Await(OR_11)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=9603)
-    ForceAnimation(character, 20011)
-    DisableAI(character)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20011)
+        DisableAI(character)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -465,10 +465,10 @@ def Event_1043393706(_, character: uint, attacked_entity: uint):
     EnableNetworkFlag(1041362708)
     if FlagEnabled(4741):
         return
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9602)
-    ForceAnimation(character, 20006)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9602):
+        ForceAnimation(character, 20006)
 
 
 @ContinueOnRest(1043393707)

@@ -66,7 +66,7 @@ def Constructor():
         animation_id=60522,
         left=0,
     )
-    CommonFunc_90005300(0, 34100300, 34100300, 34100300, 0.0, 0)
+    CommonFunc_90005300(0, flag=34100300, character=34100300, item_lot=34100300, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -96,7 +96,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 34100202, 34102200, 8.0, -1)
+    CommonFunc_90005250(0, character=Characters.GuardianGolem2, region=34102200, seconds=8.0, animation_id=-1)
 
 
 @ContinueOnRest(34102510)
@@ -104,19 +104,19 @@ def Event_34102510():
     """Event 34102510"""
     CommonFunc_90005507(
         0,
-        34100510,
-        34101510,
-        0,
-        34101510,
-        34101511,
-        34102513,
-        34101512,
-        34102514,
-        34102511,
-        34102512,
-        34100511,
-        34102512,
-        0,
+        flag=34100510,
+        flag_1=34101510,
+        left=0,
+        asset=Assets.AEG027_070_0500,
+        entity=Assets.AEG027_203_0501,
+        region=34102513,
+        entity_1=Assets.AEG027_203_0500,
+        region_1=34102514,
+        region_2=34102511,
+        region_3=34102512,
+        flag_2=34100511,
+        flag_3=34102512,
+        left_1=0,
     )
 
 
@@ -227,4 +227,14 @@ def Event_34102849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=34100800, asset=34101800, model_point=3, right=34100801)
-    CommonFunc_9005822(0, 34100800, 90003101, 34102805, 34102806, 0, 11002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=34100800,
+        bgm_boss_conv_param_id=90003101,
+        flag_1=34102805,
+        flag_2=34102806,
+        right=0,
+        flag_3=11002852,
+        left=0,
+        left_1=0,
+    )

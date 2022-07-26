@@ -40,7 +40,7 @@ def Constructor():
         last_flag=4144,
         right=-1,
     )
-    CommonFunc_90005702(0, 1036430700, 4143, 4140, 4144)
+    CommonFunc_90005702(0, character=Characters.Blackguard, flag=4143, first_flag=4140, last_flag=4144)
 
 
 @ContinueOnRest(50)

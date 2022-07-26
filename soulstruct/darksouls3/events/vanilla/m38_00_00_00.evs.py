@@ -725,7 +725,7 @@ def Constructor():
     CommonFunc_20006002(0, character=3800708, flag=1358, first_flag=1355, last_flag=1359)
     Event_13805704(1, character=3800708)
     CommonFunc_20006002(0, character=3800710, flag=1498, first_flag=1495, last_flag=1499)
-    CommonFunc_20005900(0, 13800380, 6330)
+    CommonFunc_20005900(0, flag=13800380, flag_1=6330)
 
 
 @ContinueOnRest(50)
@@ -4273,7 +4273,7 @@ def Event_13805829():
             sound_id_1=3804802,
             flag_4=13805802,
         )
-    CommonFunc_20005810(0, 13800800, 3801800, 3802800, 10000)
+    CommonFunc_20005810(0, flag=13800800, entity=3801800, target_entity=3802800, action_button_id=10000)
 
 
 @ContinueOnRest(13800830)
@@ -4486,7 +4486,7 @@ def Event_13805859():
         flag_1=13805835,
         flag_2=13805836,
     )
-    CommonFunc_20005810(0, 13800830, 3801830, 3802830, 10000)
+    CommonFunc_20005810(0, flag=13800830, entity=3801830, target_entity=3802830, action_button_id=10000)
 
 
 @ContinueOnRest(13800899)

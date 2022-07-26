@@ -25,4 +25,15 @@ from .entities.m60_36_42_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005637(0, flag=31058521, character=Characters.WanderingNoble, region=1036421620)
-    CommonFunc_90005636(0, 31058521, 1036420620, 1036421620, 4470, 1036422620, 1036422621, 1036422620, 1036423620, -1)
+    CommonFunc_90005636(
+        0,
+        flag=31058521,
+        character=Characters.WanderingNoble,
+        entity=Assets.AEG099_374_9000,
+        special_effect_id=4470,
+        destination=1036422620,
+        region=1036422621,
+        flag_1=1036422620,
+        patrol_information_id=1036423620,
+        right=-1,
+    )

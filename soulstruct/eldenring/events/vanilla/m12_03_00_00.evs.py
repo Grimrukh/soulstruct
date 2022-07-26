@@ -88,54 +88,12 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.GiantAnt3, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantAnt4, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantAnt5, region=12032200, radius=50.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(
-        0,
-        flag=12030240,
-        character=Characters.GiantAnt14,
-        item_lot=12030800,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12030241,
-        character=Characters.GiantAnt15,
-        item_lot=12030810,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12030256,
-        character=Characters.GiantAnt30,
-        item_lot=12030820,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12030257,
-        character=Characters.GiantAnt31,
-        item_lot=12030830,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12030297,
-        character=Characters.GiantAnt13,
-        item_lot=12030840,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12030201,
-        character=Characters.GiantAnt0,
-        item_lot=12030850,
-        seconds=1.5,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=12030240, character=Characters.GiantAnt14, item_lot=12030800, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030241, character=Characters.GiantAnt15, item_lot=12030810, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030256, character=Characters.GiantAnt30, item_lot=12030820, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030257, character=Characters.GiantAnt31, item_lot=12030830, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030297, character=Characters.GiantAnt13, item_lot=12030840, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12030201, character=Characters.GiantAnt0, item_lot=12030850, seconds=1.5, left=0)
     CommonFunc_90005251(0, character=12030303, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, flag=12030350, character=Characters.Scarab0, item_lot=40660, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12030354, character=Characters.Scarab1, item_lot=40668, seconds=1.5, left=0)
@@ -151,14 +109,7 @@ def Constructor():
     )
     CommonFunc_90005870(0, character=Characters.CrucibleKnight, name=902500600, npc_threat_level=12)
     CommonFunc_90005872(0, character=Characters.CrucibleKnight, npc_threat_level=12, right=0)
-    CommonFunc_90005300(
-        0,
-        flag=12030391,
-        character=Characters.ErdtreeAvatar,
-        item_lot=12030960,
-        seconds=1.5,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=12030391, character=Characters.ErdtreeAvatar, item_lot=12030960, seconds=1.5, left=0)
     CommonFunc_90005250(0, character=Characters.ErdtreeAvatar, region=12032391, seconds=0.0, animation_id=-1)
     Event_12032504()
     Event_12032509()
@@ -174,70 +125,112 @@ def Constructor():
         flag=12030400,
     )
     CommonFunc_90005458(0, character=Characters.WalkingMausoleum, asset=Assets.AEG300_015_9000)
-    CommonFunc_90005453(0, asset__character=12030400, asset=Assets.AEG300_006_9000, model_point=60, seconds=0.0)
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9000,
+        model_point=60,
+        seconds=0.0,
+    )
     CommonFunc_90005453(
         1,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9001,
         model_point=61,
         seconds=0.10000000149011612,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9002,
         model_point=62,
         seconds=0.20000000298023224,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9003,
         model_point=63,
         seconds=0.30000001192092896,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9004,
         model_point=64,
         seconds=0.4000000059604645,
     )
-    CommonFunc_90005453(0, asset__character=12030400, asset=Assets.AEG300_006_9005, model_point=65, seconds=0.5)
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9005,
+        model_point=65,
+        seconds=0.5,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9006,
         model_point=66,
         seconds=0.6000000238418579,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9007,
         model_point=67,
         seconds=0.699999988079071,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9008,
         model_point=68,
         seconds=0.800000011920929,
     )
     CommonFunc_90005453(
         0,
-        asset__character=12030400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9009,
         model_point=69,
         seconds=0.8999999761581421,
     )
-    CommonFunc_90005453(0, asset__character=12030400, asset=Assets.AEG300_006_9010, model_point=70, seconds=1.0)
-    CommonFunc_90005453(0, asset__character=12030400, asset=12031431, model_point=71, seconds=0.10000000149011612)
-    CommonFunc_90005453(0, asset__character=12030400, asset=12031432, model_point=72, seconds=0.20000000298023224)
-    CommonFunc_90005453(0, asset__character=12030400, asset=12031433, model_point=73, seconds=0.30000001192092896)
-    CommonFunc_90005453(0, asset__character=12030400, asset=12031434, model_point=74, seconds=0.4000000059604645)
-    CommonFunc_90005453(0, asset__character=12030400, asset=12031435, model_point=75, seconds=0.5)
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9010,
+        model_point=70,
+        seconds=1.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=12031431,
+        model_point=71,
+        seconds=0.10000000149011612,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=12031432,
+        model_point=72,
+        seconds=0.20000000298023224,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=12031433,
+        model_point=73,
+        seconds=0.30000001192092896,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=12031434,
+        model_point=74,
+        seconds=0.4000000059604645,
+    )
+    CommonFunc_90005453(0, asset__character=Characters.WalkingMausoleum, asset=12031435, model_point=75, seconds=0.5)
     Event_12032300(0, character=12035380, seconds=1.0)
     Event_12032500()
     Event_12030050()
@@ -370,8 +363,8 @@ def Constructor():
         special_effect=-1,
         radius_1=1.2999999523162842,
     )
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9003, vfx_id=200, model_point=120, seconds=3.0)
-    Event_12030720(0, 12030725)
+    CommonFunc_90005752(0, asset=12031730, vfx_id=200, model_point=120, seconds=3.0)
+    Event_12030720(0, character=Characters.FingerReader)
 
 
 @ContinueOnRest(50)
@@ -389,7 +382,13 @@ def Preconstructor():
     DisableBackread(Characters.FingerReader)
     DisableAsset(Assets.AEG099_320_9003)
     Event_12032820()
-    CommonFunc_90005450(0, 12030400, 12031400, 12031410, 12031418)
+    CommonFunc_90005450(
+        0,
+        character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_003_9000,
+        asset_1=Assets.AEG300_004_9000,
+        asset_2=Assets.AEG300_005_9000,
+    )
 
 
 @RestartOnRest(12030050)
@@ -663,7 +662,7 @@ def Event_12032310(_, character: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -692,7 +691,7 @@ def Event_12032241(_, character: uint, seconds: float):
     AddSpecialEffect(character, 2900)
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     ForceAnimation(character, 30001, loop=True)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(FlagEnabled(12032240))
     
     MAIN.Await(OR_2)
@@ -1317,7 +1316,17 @@ def Event_12032849():
     )
     Event_12032840()
     RunCommonEvent(12032842, slot=0, args=(12030800, 12031800, 5, 12030801), arg_types="IIiI")
-    CommonFunc_9005822(0, 12030800, 921100, 12032805, 12032806, 12032803, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12030800,
+        bgm_boss_conv_param_id=921100,
+        flag_1=12032805,
+        flag_2=12032806,
+        right=12032803,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(12032859)
@@ -1465,7 +1474,17 @@ def Event_12032896(_, flag: uint, flag_1: uint, flag_2: uint):
 def Event_12032899():
     """Event 12032899"""
     RunCommonEvent(12032896, slot=0, args=(12030850, 12032860, 12032856), arg_types="III")
-    CommonFunc_9005822(0, 12030850, 451000, 12032860, 12032856, 12030852, 12032852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12030850,
+        bgm_boss_conv_param_id=451000,
+        flag_1=12032860,
+        flag_2=12032856,
+        right=12030852,
+        flag_3=12032852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(12032861)

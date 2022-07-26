@@ -78,10 +78,10 @@ def Constructor():
     Event_13002891(
         0,
         flag=13002944,
-        character=13003851,
-        character_1=Characters.GodskinNoble,
+        spawner=13003851,
+        character=Characters.GodskinNoble,
         special_effect=15506,
-        character_2=Characters.GodskinApostle0,
+        character_1=Characters.GodskinApostle0,
         flag_1=13002873,
     )
     Event_13002890(
@@ -94,10 +94,10 @@ def Constructor():
     Event_13002891(
         1,
         flag=13002945,
-        character=13003852,
-        character_1=Characters.GodskinApostle0,
+        spawner=13003852,
+        character=Characters.GodskinApostle0,
         special_effect=15456,
-        character_2=Characters.GodskinNoble,
+        character_1=Characters.GodskinNoble,
         flag_1=13002874,
     )
     Event_13002892()
@@ -107,48 +107,20 @@ def Constructor():
     CommonFunc_90005300(0, flag=13000342, character=13000342, item_lot=40774, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=13000343, character=13000343, item_lot=40776, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=13000369, character=Characters.WormfaceLarge, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=13000490,
-        character=Characters.AncientDragon0,
-        item_lot=13002091,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=13000490, character=Characters.AncientDragon0, item_lot=13002091, seconds=0.0, left=0)
     Event_13002493(0, character=Characters.AncientDragon0, region=13002641, region_1=13002640)
     Event_13002646(0, flag=13000492, region=13002492, character=Characters.AncientDragon1, seconds=10.0)
     CommonFunc_90005300(0, flag=13000494, character=Characters.AncientDragon2, item_lot=0, seconds=0.0, left=0)
     Event_13002493(2, character=Characters.AncientDragon2, region=13002645, region_1=13002494)
     Event_13002646(1, flag=13000494, region=13002646, character=Characters.AncientDragon2, seconds=10.0)
     Event_13002610()
-    CommonFunc_90005300(
-        0,
-        flag=13000495,
-        character=Characters.AncientDragon3,
-        item_lot=13002093,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=13000495, character=Characters.AncientDragon3, item_lot=13002093, seconds=0.0, left=0)
     Event_13002646(2, flag=13000495, region=13002495, character=Characters.AncientDragon3, seconds=1.0)
     CommonFunc_90005300(0, flag=13000701, character=Characters.AncientDragon4, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=13000702, character=Characters.AncientDragon5, item_lot=0, seconds=0.0, left=0)
     Event_13002493(3, character=Characters.AncientDragon5, region=13002497, region_1=13002493)
-    CommonFunc_90005300(
-        0,
-        flag=13000295,
-        character=Characters.CrucibleKnight0,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=13000296,
-        character=Characters.CrucibleKnight1,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=13000295, character=Characters.CrucibleKnight0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=13000296, character=Characters.CrucibleKnight1, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=13000496,
@@ -1318,7 +1290,14 @@ def Preconstructor():
     )
     CommonFunc_90005250(0, character=Characters.CrucibleKnight0, region=13002295, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.CrucibleKnight1, region=13002296, seconds=0.0, animation_id=-1)
-    CommonFunc_90005261(0, 13000496, 13002496, 40.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.DraconicTreeSentinel,
+        region=13002496,
+        radius=40.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
 
 
 @ContinueOnRest(13002500)
@@ -1426,19 +1405,19 @@ def Event_13002510():
     )
     CommonFunc_90005500(
         0,
-        13000530,
-        13000531,
-        2,
-        13001530,
-        13001531,
-        13003531,
-        13001532,
-        13003532,
-        13002531,
-        13002532,
-        13000532,
-        13000533,
-        0,
+        flag=13000530,
+        flag_1=13000531,
+        left=2,
+        asset=Assets.AEG247_005_0502,
+        asset_1=Assets.AEG247_003_0509,
+        obj_act_id=13003531,
+        asset_2=Assets.AEG247_003_0508,
+        obj_act_id_1=13003532,
+        region=13002531,
+        region_1=13002532,
+        flag_2=13000532,
+        flag_3=13000533,
+        left_1=0,
     )
 
 
@@ -1826,7 +1805,17 @@ def Event_13002829():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=13000800, asset=Assets.AEG099_002_9000, model_point=4, right=0)
-    CommonFunc_9005822(0, 13000800, 211000, 13002805, 13002806, 0, 13002802, 1, 1)
+    CommonFunc_9005822(
+        0,
+        flag=13000800,
+        bgm_boss_conv_param_id=211000,
+        flag_1=13002805,
+        flag_2=13002806,
+        right=0,
+        flag_3=13002802,
+        left=1,
+        left_1=1,
+    )
 
 
 @RestartOnRest(13002830)
@@ -1969,7 +1958,7 @@ def Event_13002835():
     ForceAnimation(Characters.DragonlordPlacidusax, 30000, loop=True)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=13002831))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DragonlordPlacidusax, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DragonlordPlacidusax))
     OR_1.Add(CharacterHasStateInfo(character=Characters.DragonlordPlacidusax, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.DragonlordPlacidusax, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.DragonlordPlacidusax, state_info=5))
@@ -2044,7 +2033,17 @@ def Event_13002846(_, flag: uint, flag_1: uint, flag_2: uint):
 def Event_13002849():
     """Event 13002849"""
     Event_13002846(0, flag=13000830, flag_1=13002835, flag_2=13002836)
-    CommonFunc_9005822(0, 13000830, 452000, 13002835, 13002836, 0, 13002832, 0, 1)
+    CommonFunc_9005822(
+        0,
+        flag=13000830,
+        bgm_boss_conv_param_id=452000,
+        flag_1=13002835,
+        flag_2=13002836,
+        right=0,
+        flag_3=13002832,
+        left=0,
+        left_1=1,
+    )
 
 
 @RestartOnRest(13002850)
@@ -2226,15 +2225,7 @@ def Event_13002890(_, flag: uint, character: uint, character_1: uint, special_ef
 
 
 @RestartOnRest(13002891)
-def Event_13002891(
-    _,
-    flag: uint,
-    character: uint,
-    character_1: uint,
-    special_effect: int,
-    character_2: uint,
-    flag_1: uint,
-):
+def Event_13002891(_, flag: uint, spawner: uint, character: uint, special_effect: int, character_1: uint, flag_1: uint):
     """Event 13002891"""
     if PlayerNotInOwnWorld():
         return
@@ -2242,8 +2233,8 @@ def Event_13002891(
         return
     if FlagEnabled(13002854):
         return
-    OR_1.Add(CharacterHasSpecialEffect(character_1, special_effect))
-    OR_1.Add(CharacterDead(character_1))
+    OR_1.Add(CharacterHasSpecialEffect(character, special_effect))
+    OR_1.Add(CharacterDead(character))
     AND_1.Add(OR_1)
     AND_1.Add(FlagEnabled(flag))
     
@@ -2253,10 +2244,10 @@ def Event_13002891(
         return
     if FlagEnabled(13002854):
         return
-    ForceSpawnerToSpawn(spawner=character)
+    ForceSpawnerToSpawn(spawner=spawner)
     DisableNetworkFlag(flag)
     EnableNetworkFlag(flag_1)
-    SetNetworkUpdateRate(character_2, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
 
 
@@ -2370,7 +2361,17 @@ def Event_13002865():
     CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9002, model_point=5, right=13000851)
     CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9001, model_point=5, right=13000851)
     CommonFunc_9005811(0, flag=13000850, asset=Assets.AEG099_001_9004, model_point=5, right=13000851)
-    CommonFunc_9005822(0, 13000850, 356000, 13002855, 13002856, 0, 13002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=13000850,
+        bgm_boss_conv_param_id=356000,
+        flag_1=13002855,
+        flag_2=13002856,
+        right=0,
+        flag_3=13002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(13002600)

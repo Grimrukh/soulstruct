@@ -295,7 +295,7 @@ def Constructor():
     Event_13015815()
     Event_13015830(0, character=3010812, seconds=1.2000000476837158)
     CommonFunc_20006010(0, flag=73010952, animation_id=69003)
-    CommonFunc_20006031(0, 73010953, 3012750)
+    CommonFunc_20006031(0, flag=73010953, region=3012750)
 
 
 @ContinueOnRest(50)
@@ -340,7 +340,17 @@ def Event_13014522():
         flag_3=13014450,
         left=13010451,
     )
-    Event_13015220(0, 13010460, 3011410, 3011411, 3014411, 3011413, 3014413, 3011412, 3014412)
+    Event_13015220(
+        0,
+        flag=13010460,
+        entity=3011410,
+        obj=3011411,
+        obj_act_id=3014411,
+        obj_1=3011413,
+        obj_act_id_1=3014413,
+        obj_2=3011412,
+        obj_act_id_2=3014412,
+    )
 
 
 @RestartOnRest(13015200)
@@ -520,7 +530,17 @@ def Event_13015201(
 @EndOnRest(13015202)
 def Event_13015202():
     """Event 13015202"""
-    Event_13015201(0, 13010300, 13010302, 3011491, 3011490, 3014500, 13011300, 13014300, 13010301)
+    Event_13015201(
+        0,
+        flag=13010300,
+        flag_1=13010302,
+        obj=3011491,
+        obj_1=3011490,
+        obj_act_id=3014500,
+        flag_2=13011300,
+        flag_3=13014300,
+        flag_4=13010301,
+    )
 
 
 @RestartOnRest(13015210)
@@ -1442,4 +1462,4 @@ def Event_13015820():
     )
     CommonFunc_20005820(0, flag=13010800, obj=3011800, model_point=3, left=0)
     CommonFunc_20005820(0, flag=13010800, obj=3011801, model_point=3, left=0)
-    CommonFunc_20005810(0, 13010800, 3011800, 3012801, 10000)
+    CommonFunc_20005810(0, flag=13010800, entity=3011800, target_entity=3012801, action_button_id=10000)

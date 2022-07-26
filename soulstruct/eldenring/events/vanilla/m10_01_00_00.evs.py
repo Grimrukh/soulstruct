@@ -400,7 +400,17 @@ def Event_10012849():
     )
     CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9000, model_point=16, right=10010801)
     CommonFunc_9005811(0, flag=10010800, asset=Assets.AEG099_001_9001, model_point=16, right=0)
-    CommonFunc_9005822(0, 10010800, 920900, 10012805, 10012806, 0, 10012802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=10010800,
+        bgm_boss_conv_param_id=920900,
+        flag_1=10012805,
+        flag_2=10012806,
+        right=0,
+        flag_3=10012802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(10010790)

@@ -41,17 +41,10 @@ def Constructor():
     )
     Event_1043522510()
     Event_1043522515()
-    CommonFunc_90005300(
-        0,
-        flag=1043520506,
-        character=Characters.Margit,
-        item_lot=1043520500,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1043520506, character=Characters.Margit, item_lot=1043520500, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=1043520400, character=Characters.Scarab, item_lot=40316, seconds=0.0, left=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61032)
-    CommonFunc_90005705(0, 1043520710)
+    CommonFunc_90005705(0, character=Characters.FingerReader)
 
 
 @ContinueOnRest(50)
@@ -81,7 +74,7 @@ def Event_1043522500(_, character: uint, character_1: uint, flag: uint, region: 
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(CharacterBackreadEnabled(character))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

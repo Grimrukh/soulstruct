@@ -26,7 +26,16 @@ def Constructor():
     Event_1042352222(0, character=1042350222, region=1042352222)
     Event_1042352222(1, character=Characters.Bat, region=1042352223)
     Event_1042352222(2, character=1042350224, region=1042352223)
-    CommonFunc_90005633(0, 580340, 580040, 1042350600, 30017, 20017, 1042351600, 1042351610)
+    CommonFunc_90005633(
+        0,
+        character=580340,
+        flag=580040,
+        character_1=Characters.WanderingNoble,
+        animation_id=30017,
+        animation_id_1=20017,
+        asset=Assets.AEG099_166_9000,
+        asset_1=Assets.AEG099_990_9000,
+    )
 
 
 @ContinueOnRest(50)
@@ -71,7 +80,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1042350202, 20.0, 1.5, -1)
+    CommonFunc_90005251(0, character=Characters.Skeleton2, radius=20.0, seconds=1.5, animation_id=-1)
 
 
 @RestartOnRest(1042352222)

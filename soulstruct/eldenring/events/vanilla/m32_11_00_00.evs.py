@@ -78,7 +78,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, 32111680, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -222,7 +222,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.OnyxLord0, region=32112300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 32110301, 32112301, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.OnyxLord1, region=32112301, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32112510)
@@ -230,19 +230,19 @@ def Event_32112510():
     """Event 32112510"""
     CommonFunc_90005500(
         0,
-        32110510,
-        32110511,
-        0,
-        32111510,
-        32111511,
-        32113511,
-        32111512,
-        32113512,
-        32112511,
-        32112512,
-        32110512,
-        32110513,
-        0,
+        flag=32110510,
+        flag_1=32110511,
+        left=0,
+        asset=Assets.AEG024_846_0500,
+        asset_1=Assets.AEG027_080_0501,
+        obj_act_id=32113511,
+        asset_2=Assets.AEG027_080_0500,
+        obj_act_id_1=32113512,
+        region=32112511,
+        region_1=32112512,
+        flag_2=32110512,
+        flag_3=32110513,
+        left_1=0,
     )
 
 
@@ -397,4 +397,14 @@ def Event_32112849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=32110800, asset=Assets.AEG099_003_9000, model_point=7, right=32110801)
-    CommonFunc_9005822(0, 32110800, 920700, 32112805, 32112806, 0, 32112802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=32110800,
+        bgm_boss_conv_param_id=920700,
+        flag_1=32112805,
+        flag_2=32112806,
+        right=0,
+        flag_3=32112802,
+        left=0,
+        left_1=0,
+    )

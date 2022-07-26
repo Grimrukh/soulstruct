@@ -62,7 +62,7 @@ def Preconstructor():
     CommonFunc_90005251(0, character=Characters.PutridCorpse0, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, character=Characters.PutridCorpse1, radius=3.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, character=Characters.PutridCorpse2, radius=3.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005251(0, 1035470218, 3.0, 0.0, 0)
+    CommonFunc_90005251(0, character=1035470218, radius=3.0, seconds=0.0, animation_id=0)
 
 
 @ContinueOnRest(1035472200)

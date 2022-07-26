@@ -111,7 +111,7 @@ def Constructor():
     CommonFunc_90005690(0, region=34132593)
     CommonFunc_90005691(0, region=34132593)
     CommonFunc_90005250(0, character=Characters.GodskinMonk0, region=34132299, seconds=0.0, animation_id=-1)
-    CommonFunc_90005251(0, 34130298, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GodskinMonk1, radius=10.0, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(50)
@@ -125,19 +125,19 @@ def Event_34132510():
     """Event 34132510"""
     CommonFunc_90005507(
         0,
-        34130510,
-        34131510,
-        0,
-        34131510,
-        34131511,
-        34132513,
-        34131512,
-        34132514,
-        34132511,
-        34132512,
-        34130511,
-        34132512,
-        0,
+        flag=34130510,
+        flag_1=34131510,
+        left=0,
+        asset=Assets.AEG027_070_0500,
+        entity=Assets.AEG027_203_0500,
+        region=34132513,
+        entity_1=Assets.AEG027_203_0501,
+        region_1=34132514,
+        region_2=34132511,
+        region_3=34132512,
+        flag_2=34130511,
+        flag_3=34132512,
+        left_1=0,
     )
 
 
@@ -146,19 +146,19 @@ def Event_34132515():
     """Event 34132515"""
     CommonFunc_90005507(
         0,
-        34130515,
-        34131515,
-        0,
-        34131515,
-        34131516,
-        34132518,
-        34131517,
-        34132519,
-        34132516,
-        34132517,
-        34130516,
-        34132517,
-        0,
+        flag=34130515,
+        flag_1=34131515,
+        left=0,
+        asset=Assets.AEG027_099_0500,
+        entity=Assets.AEG027_203_0503,
+        region=34132518,
+        entity_1=Assets.AEG027_203_0502,
+        region_1=34132519,
+        region_2=34132516,
+        region_3=34132517,
+        flag_2=34130516,
+        flag_3=34132517,
+        left_1=0,
     )
 
 
@@ -167,19 +167,19 @@ def Event_34132520():
     """Event 34132520"""
     CommonFunc_90005507(
         0,
-        34130520,
-        34131520,
-        1,
-        34131520,
-        34131521,
-        34132523,
-        34131522,
-        34132524,
-        34132521,
-        34132522,
-        34130521,
-        34132522,
-        0,
+        flag=34130520,
+        flag_1=34131520,
+        left=1,
+        asset=Assets.AEG027_099_0501,
+        entity=Assets.AEG027_203_0504,
+        region=34132523,
+        entity_1=Assets.AEG027_203_0505,
+        region_1=34132524,
+        region_2=34132521,
+        region_3=34132522,
+        flag_2=34130521,
+        flag_3=34132522,
+        left_1=0,
     )
 
 
@@ -312,4 +312,14 @@ def Event_34132849():
     )
     CommonFunc_9005811(0, flag=34130800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
     CommonFunc_9005812(0, flag=34130800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
-    CommonFunc_9005822(0, 34130800, 356000, 34132805, 34132806, 0, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=34130800,
+        bgm_boss_conv_param_id=356000,
+        flag_1=34132805,
+        flag_2=34132806,
+        right=0,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )

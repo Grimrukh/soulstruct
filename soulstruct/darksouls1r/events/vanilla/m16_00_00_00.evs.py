@@ -164,7 +164,7 @@ def Constructor():
     Event_11600650(0, obj=1601610, obj_1=1601310)
     Event_11600650(1, obj=1601611, obj_1=1601311)
     Event_11605843(0, flag=13, line_intersects=1601990, anchor_entity=1602998, target_entity=1602997)
-    Event_11605846(0, 13, 1601990, 1601991)
+    Event_11605846(0, flag=13, obj=1601990, vfx_id=1601991)
 
 
 @ContinueOnRest(50)

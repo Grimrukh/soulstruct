@@ -29,14 +29,7 @@ def Constructor():
     Event_1052412270()
     Event_1052412270(slot=1)
     Event_1052412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1052412210)
-    CommonFunc_90005300(
-        0,
-        flag=1052410850,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1052410850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1052412291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     CommonFunc_90005871(
@@ -171,19 +164,19 @@ def Event_1052412510():
     """Event 1052412510"""
     CommonFunc_90005500(
         0,
-        1052410510,
-        1052410511,
-        0,
-        1052411510,
-        1052411511,
-        1052413511,
-        1052411512,
-        1052413512,
-        1052412511,
-        1052412512,
-        1052410512,
-        1052410513,
-        0,
+        flag=1052410510,
+        flag_1=1052410511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        obj_act_id=1052413511,
+        asset_2=Assets.AEG099_182_2000,
+        obj_act_id_1=1052413512,
+        region=1052412511,
+        region_1=1052412512,
+        flag_2=1052410512,
+        flag_3=1052410513,
+        left_1=0,
     )
 
 

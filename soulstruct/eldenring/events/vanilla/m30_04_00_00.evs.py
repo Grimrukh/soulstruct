@@ -141,7 +141,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 30040212, 30003, 20003, 30042212, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp8,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30042212,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(30040050)
@@ -332,7 +343,16 @@ def Event_30042500():
             source_entity_2=30042608,
         )
     else:
-        CommonFunc_90005660(0, 30040605, 30041605, 30042605, 801001000, 30042606, 30042607, 30042608)
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.TalkDummy3,
+            entity=Assets.AEG027_044_0500,
+            region=30042605,
+            behavior_id=801001000,
+            source_entity=30042606,
+            source_entity_1=30042607,
+            source_entity_2=30042608,
+        )
 
 
 @RestartOnRest(30042650)
@@ -450,7 +470,17 @@ def Event_30042849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30040800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30040800, 930000, 30042805, 30042806, 0, 30042802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30040800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30042805,
+        flag_2=30042806,
+        right=0,
+        flag_3=30042802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30042900)

@@ -269,7 +269,7 @@ def Constructor():
         region_2=2202171,
         flag=12205016,
     )
-    Event_12205015(0, 2200130, 2202370, -1, 12205010)
+    Event_12205015(0, character=2200130, region=2202370, command_id=-1, flag=12205010)
     Event_12205015(1, character=2200310, region=2202371, command_id=200, flag=12205011)
     Event_12205100(0, character=2200202, region=2202130, radius=3.0, flag=12205105, command_id=50)
     Event_12205100(1, character=2200200, region=2202150, radius=3.0, flag=12205106, command_id=50)
@@ -387,7 +387,7 @@ def Constructor():
         region_2=2202382,
         event_id=12205261,
     )
-    Event_12205300(0, 2203300, 1439, 6001, 9802)
+    Event_12205300(0, sound_id=2203300, flag=1439, flag_1=6001, flag_2=9802)
 
 
 @ContinueOnRest(50)

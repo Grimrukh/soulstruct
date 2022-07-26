@@ -69,7 +69,7 @@ def Constructor():
     )
     Event_30022510()
     Event_30022580()
-    CommonFunc_90005706(0, 30020700, 930025, 30021700)
+    CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930025, left=Assets.AEG099_590_9000)
 
 
 @ContinueOnRest(50)
@@ -262,14 +262,7 @@ def Event_30020050():
 @ContinueOnRest(30022510)
 def Event_30022510():
     """Event 30022510"""
-    CommonFunc_90005681(
-        0,
-        flag=30020500,
-        flag_1=30020501,
-        flag_2=30020502,
-        flag_3=30020503,
-        attacked_entity=Assets.AEG027_156_0500,
-    )
+    CommonFunc_90005681(0, flag=30020500, flag_1=30020501, flag_2=30020502, flag_3=30020503, attacked_entity=30021500)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -382,14 +375,7 @@ def Event_30022510():
             model_point_2=0,
             model_point_3=0,
         )
-    CommonFunc_90005681(
-        0,
-        flag=30020505,
-        flag_1=30020506,
-        flag_2=30020507,
-        flag_3=30020508,
-        attacked_entity=Assets.AEG027_156_0501,
-    )
+    CommonFunc_90005681(0, flag=30020505, flag_1=30020506, flag_2=30020507, flag_3=30020508, attacked_entity=30021505)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -489,7 +475,19 @@ def Event_30022510():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 30020507, 30021505, 30022505, 30020505, 801101000, 801101005, 101, 0, 0, 0)
+        CommonFunc_90005682(
+            0,
+            flag=30020507,
+            source_entity=Assets.AEG027_156_0501,
+            region=30022505,
+            owner_entity=Characters.TalkDummy2,
+            behavior_id=801101000,
+            behavior_id_1=801101005,
+            model_point=101,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
 
 
 @ContinueOnRest(30022580)
@@ -815,4 +813,14 @@ def Event_30022849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30020800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30020800, 930000, 30022805, 30022806, 0, 30022802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30020800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30022805,
+        flag_2=30022806,
+        right=0,
+        flag_3=30022802,
+        left=0,
+        left_1=0,
+    )

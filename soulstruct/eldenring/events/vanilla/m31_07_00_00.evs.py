@@ -342,7 +342,18 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005646(0, 31070800, 31072840, 31072841, 31071840, 31072840, 31, 7, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31070800,
+        left_flag=31072840,
+        cancel_flag__right_flag=31072841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31072840,
+        area_id=31,
+        block_id=7,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -351,7 +362,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat6, region=31072302, radius=1.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat7, region=31072302, radius=1.0, seconds=0.0, animation_id=0)
     Event_310722300(0, character=Characters.Rat6, seconds=10.0)
-    Event_310722300(1, 31070303, 11.0)
+    Event_310722300(1, character=Characters.Rat7, seconds=11.0)
 
 
 @RestartOnRest(31072213)
@@ -397,7 +408,7 @@ def Event_31072213(_, character: uint, region: uint):
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -542,11 +553,11 @@ def Event_31072230(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer9, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer10, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer11, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer12, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer13, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer9))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer10))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer11))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer12))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer13))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
@@ -619,7 +630,7 @@ def Event_31072280(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=2.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -774,4 +785,14 @@ def Event_31042849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31070800, asset=Assets.AEG099_001_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 31070800, 931000, 31072805, 31072806, 0, 31072842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31070800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31072805,
+        flag_2=31072806,
+        right=0,
+        flag_3=31072842,
+        left=0,
+        left_1=0,
+    )

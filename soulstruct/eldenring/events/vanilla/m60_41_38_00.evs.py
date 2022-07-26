@@ -62,7 +62,7 @@ def Constructor():
     Event_1041382200(3, character=Characters.Wolf3, region=1041382250, owner_entity=Characters.Dummy)
     Event_1041383710(0, flag=4720, flag_1=1042389201, flag_2=1041389370)
     Event_1041383730(0, character=Characters.Roderika)
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1041381700, vfx_id=200, model_point=120, seconds=3.0)
     Event_1041383731()
     CommonFunc_90005750(
         0,
@@ -98,7 +98,7 @@ def Constructor():
     Event_1041383760(0, flag=78103, other_entity=Characters.TalkDummy0, flag_1=1041389500)
     Event_1041383761(0, other_entity=Characters.TalkDummy0, flag=1041389500)
     Event_1041383762(0, other_entity=Characters.TalkDummy0, flag=1041389501)
-    Event_1041383763(0, 1041380950, 1041389501)
+    Event_1041383763(0, other_entity=Characters.TalkDummy0, flag=1041389501)
 
 
 @ContinueOnRest(50)
@@ -108,7 +108,7 @@ def Preconstructor():
     DisableBackread(1041380730)
     DisableAsset(Assets.AEG099_320_9000)
     CommonFunc_90005251(0, character=Characters.GodrickFootSoldier, radius=100.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005251(0, 1041380216, 25.0, 0.0, 1704)
+    CommonFunc_90005251(0, character=Characters.GodrickSoldier, radius=25.0, seconds=0.0, animation_id=1704)
 
 
 @RestartOnRest(1041382200)

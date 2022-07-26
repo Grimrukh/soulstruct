@@ -265,7 +265,7 @@ def Constructor():
         last_flag=4778,
     )
     CommonFunc_90005729(0, flag=1048389200, character=Characters.Merchant, distance=54.0, flag_1=1048382702)
-    CommonFunc_90005706(0, 1048380701, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)

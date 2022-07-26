@@ -297,7 +297,7 @@ def Preconstructor():
     )
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
-    CommonFunc_90005462(0, 31170340)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus)
 
 
 @RestartOnRest(31172500)
@@ -393,7 +393,7 @@ def Event_31172218(_, character: uint, region: uint, radius: float, seconds: flo
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -432,7 +432,7 @@ def Event_31172499():
     if FlagEnabled(31170800):
         return
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=31172390))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.GuardianGolem, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.GuardianGolem))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GuardianGolem, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GuardianGolem, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GuardianGolem, state_info=5))
@@ -529,7 +529,17 @@ def Event_31172849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31170800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 31170800, 931000, 31172805, 31172806, 31172499, 31172802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31170800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31172805,
+        flag_2=31172806,
+        right=31172499,
+        flag_3=31172802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31172900)

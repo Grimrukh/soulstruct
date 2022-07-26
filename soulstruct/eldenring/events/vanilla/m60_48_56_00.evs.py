@@ -67,7 +67,16 @@ def Constructor():
         item_lot=1048560800,
         seconds=0.0,
     )
-    CommonFunc_90005793(0, 1048560180, 1048562181, 1048562182, 1048560700, 1048562180, 1048562182, 0)
+    CommonFunc_90005793(
+        0,
+        flag=1048560180,
+        flag_1=1048562181,
+        flag_2=1048562182,
+        character=Characters.AnastasiaTarnishedEater,
+        other_entity=1048562180,
+        region=1048562182,
+        left=0,
+    )
 
 
 @RestartOnRest(1048562350)
@@ -104,4 +113,4 @@ def Event_1048562350(_, character__region: uint, character: uint):
 @ContinueOnRest(100)
 def Event_100():
     """Event 100"""
-    CommonFunc_90005300(0, 1148560200, 1148560200, 40524, 0.0, 0)
+    CommonFunc_90005300(0, flag=1148560200, character=Characters.Scarab, item_lot=40524, seconds=0.0, left=0)

@@ -101,7 +101,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005560(0, 1036520205, 1036521200, 0)
+    CommonFunc_90005560(0, flag=1036520205, asset=Assets.AEG099_635_9000, left=0)
 
 
 @RestartOnRest(1036522200)
@@ -151,7 +151,7 @@ def Event_1036522205(_, character: uint, region: uint, seconds: float, animation
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -226,7 +226,7 @@ def Event_1036522215(_, character: uint, region: uint, radius: float, seconds: f
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

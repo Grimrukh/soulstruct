@@ -68,7 +68,7 @@ def Constructor():
     Event_1043332230(9, character=Characters.Bat9, region=1043332233)
     Event_1043332230(10, character=Characters.Bat10, region=1043332233)
     Event_1043332230(11, character=Characters.Bat11, region=1043332233)
-    CommonFunc_90005300(0, 1043330221, 1043330221, 40136, 0.0, 0)
+    CommonFunc_90005300(0, flag=1043330221, character=Characters.Scarab, item_lot=40136, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -82,7 +82,18 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat2, region=1043332200, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat3, region=1043332200, radius=5.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat4, region=1043332200, radius=5.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005201(0, 1043330250, 30000, 20000, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.DemiHumanBeastman,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(1043330050)
@@ -128,7 +139,7 @@ def Event_1043332230(_, character: uint, region: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -247,19 +258,19 @@ def Event_1043332650():
     """Event 1043332650"""
     CommonFunc_90005500(
         0,
-        1043330650,
-        1043330651,
-        0,
-        1043331650,
-        1043331651,
-        1043332651,
-        1043331652,
-        1043332652,
-        1043332651,
-        1043332652,
-        1043330652,
-        1043332653,
-        0,
+        flag=1043330650,
+        flag_1=1043330651,
+        left=0,
+        asset=1043331650,
+        asset_1=1043331651,
+        obj_act_id=1043332651,
+        asset_2=1043331652,
+        obj_act_id_1=1043332652,
+        region=1043332651,
+        region_1=1043332652,
+        flag_2=1043330652,
+        flag_3=1043332653,
+        left_1=0,
     )
 
 

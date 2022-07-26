@@ -71,14 +71,7 @@ def Constructor():
     Event_34112580()
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9003, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9004, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005300(
-        0,
-        flag=34110280,
-        character=Characters.GodskinNoble,
-        item_lot=34110400,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=34110280, character=Characters.GodskinNoble, item_lot=34110400, seconds=0.0, left=0)
     Event_34112400()
     Event_34112410()
     Event_34112420()
@@ -94,29 +87,15 @@ def Constructor():
     Event_34112448()
     Event_34112449()
     Event_34112459()
-    CommonFunc_90005300(
-        0,
-        flag=34110710,
-        character=Characters.PreceptorMiriam0,
-        item_lot=34110700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=34110710, character=Characters.PreceptorMiriam0, item_lot=34110700, seconds=0.0, left=0)
     Event_34112460()
     Event_34112465()
-    CommonFunc_90005300(
-        0,
-        flag=34110711,
-        character=Characters.PreceptorMiriam1,
-        item_lot=34110710,
-        seconds=0.0,
-        left=0,
-    )
-    Event_34112475(0, flag=34112485, character=Characters.PreceptorMiriam0, region=34112411)
-    Event_34112475(1, flag=34112486, character=Characters.PreceptorMiriam0, region=34112421)
-    Event_34112475(2, flag=34112487, character=Characters.PreceptorMiriam0, region=34112431)
-    Event_34112475(3, flag=34112488, character=Characters.PreceptorMiriam1, region=34112466)
-    CommonFunc_90005706(0, 34110700, 930023, 0)
+    CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, left=0)
+    Event_34112475(0, flag=34112485, character=34110710, region=34112411)
+    Event_34112475(1, flag=34112486, character=34110710, region=34112421)
+    Event_34112475(2, flag=34112487, character=34110710, region=34112431)
+    Event_34112475(3, flag=34112488, character=34110711, region=34112466)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble24, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -476,7 +455,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 34110452, 30006, 20006, 34112475, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.RayaLucariaSoldier2,
+        animation_id=30006,
+        animation_id_1=20006,
+        region=34112475,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(34112150)
@@ -692,19 +682,19 @@ def Event_34112510():
     )
     CommonFunc_90005507(
         0,
-        34110525,
-        34111525,
-        0,
-        34111525,
-        34111526,
-        34112528,
-        34111527,
-        34112529,
-        34112526,
-        34112527,
-        34110526,
-        34112527,
-        0,
+        flag=34110525,
+        flag_1=34111525,
+        left=0,
+        asset=Assets.AEG027_070_0500,
+        entity=Assets.AEG027_203_0501,
+        region=34112528,
+        entity_1=Assets.AEG027_203_0500,
+        region_1=34112529,
+        region_2=34112526,
+        region_3=34112527,
+        flag_2=34110526,
+        flag_3=34112527,
+        left_1=0,
     )
 
 
@@ -1158,11 +1148,7 @@ def Event_34112910(
     AND_15.Add(FlagEnabled(flag_2))
     GotoIfConditionTrue(Label.L9, input_condition=AND_15)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableAssetActivation(asset_2, obj_act_id=-1)
     DisableAssetActivation(asset_1, obj_act_id=-1)
     OR_1.Add(AssetActivated(obj_act_id=obj_act_id_1))
@@ -1176,17 +1162,9 @@ def Event_34112910(
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableAssetActivation(asset_2, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
@@ -1227,11 +1205,7 @@ def Event_34112910(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -1269,11 +1243,7 @@ def Event_34112910(
     # --- Label 11 --- #
     DefineLabel(11)
     ForceAnimation(asset_2, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 2 --- #
@@ -1361,11 +1331,7 @@ def Event_34112910(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableAssetActivation(asset_1, obj_act_id=-1)
     DisableAssetActivation(asset_2, obj_act_id=-1)
     OR_5.Add(AssetActivated(obj_act_id=obj_act_id))
@@ -1380,17 +1346,9 @@ def Event_34112910(
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableAssetActivation(asset_1, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
@@ -1431,11 +1389,7 @@ def Event_34112910(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -1473,11 +1427,7 @@ def Event_34112910(
     # --- Label 14 --- #
     DefineLabel(14)
     ForceAnimation(asset_1, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 5 --- #
@@ -1733,14 +1683,10 @@ def Event_34112410():
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.PreceptorMiriam0,
-        special_effect=19385,
-    )
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
-    EnableNetworkFlag(34112485)
-    End()
+    if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        EnableNetworkFlag(34112485)
+        End()
     Move(
         Characters.PreceptorMiriam0,
         destination=34112411,
@@ -1834,14 +1780,10 @@ def Event_34112420():
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.PreceptorMiriam0,
-        special_effect=19385,
-    )
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
-    EnableNetworkFlag(34112486)
-    End()
+    if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        EnableNetworkFlag(34112486)
+        End()
     Move(
         Characters.PreceptorMiriam0,
         destination=34112421,
@@ -1935,14 +1877,10 @@ def Event_34112430():
     )
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
     Wait(0.5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.PreceptorMiriam0,
-        special_effect=19385,
-    )
-    SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
-    EnableNetworkFlag(34112487)
-    End()
+    if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
+        SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
+        EnableNetworkFlag(34112487)
+        End()
     Move(
         Characters.PreceptorMiriam0,
         destination=34112431,
@@ -2054,13 +1992,9 @@ def Event_34112440(_, region: uint, region_1: uint):
         anchor_type=CoordEntityType.Character,
     )
     Wait(0.5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=2,
-        character=Characters.PreceptorMiriam0,
-        special_effect=19385,
-    )
-    AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
-    Restart()
+    if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam0, special_effect=19385):
+        AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
+        Restart()
     Move(
         Characters.PreceptorMiriam0,
         destination=region_1,
@@ -2310,14 +2244,10 @@ def Event_34112465():
     )
     Wait(0.5)
     AddSpecialEffect(Characters.PreceptorMiriam0, 4240)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.PreceptorMiriam1,
-        special_effect=19385,
-    )
-    SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
-    EnableNetworkFlag(34112488)
-    End()
+    if CharacterHasSpecialEffect(character=Characters.PreceptorMiriam1, special_effect=19385):
+        SetLockOnPoint(character=Characters.PreceptorMiriam1, lock_on_model_point=220, state=True)
+        EnableNetworkFlag(34112488)
+        End()
     Move(
         Characters.PreceptorMiriam1,
         destination=34112466,
@@ -2562,4 +2492,14 @@ def Event_34112849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=34110800, asset=34111800, model_point=3, right=0)
-    CommonFunc_9005822(0, 34110800, 930000, 34112805, 34112806, 0, 34112802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=34110800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=34112805,
+        flag_2=34112806,
+        right=0,
+        flag_3=34112802,
+        left=0,
+        left_1=0,
+    )

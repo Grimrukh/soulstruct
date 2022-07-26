@@ -164,7 +164,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.RadahnSoldier6, region=32072309, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.RadahnSoldier7, region=32072309, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.RadahnSoldier8, region=32072315, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 32070316, 32072316, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.RadahnSoldier9, region=32072316, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(32072580)
@@ -253,7 +253,7 @@ def Event_32072200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -406,7 +406,17 @@ def Event_32072849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=32070800, asset=Assets.AEG099_001_9000, model_point=7, right=32070801)
-    CommonFunc_9005822(0, 32070800, 920900, 32072805, 32072806, 0, 32072802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=32070800,
+        bgm_boss_conv_param_id=920900,
+        flag_1=32072805,
+        flag_2=32072806,
+        right=0,
+        flag_3=32072802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(32073700)

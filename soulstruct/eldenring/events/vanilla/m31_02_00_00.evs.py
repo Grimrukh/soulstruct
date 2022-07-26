@@ -44,7 +44,7 @@ def Constructor():
         dd_id=0,
     )
     Event_31022900(0, tutorial_param_id=1580, flag=710580)
-    Event_31022901(0, 1690, 710690, 31020040)
+    Event_31022901(0, tutorial_param_id=1690, flag=710690, flag_1=31020040)
 
 
 @ContinueOnRest(50)
@@ -263,7 +263,7 @@ def Preconstructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005261(0, 31020359, 31022358, 2.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.MirandaFlower4, region=31022358, radius=2.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31022211)
@@ -282,8 +282,8 @@ def Event_31022211(_, character: uint):
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=31022212))
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer5, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer6, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer5))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.FungalSorcerer6))
     OR_2.Add(CharacterHasStateInfo(character=Characters.FungalSorcerer5, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.FungalSorcerer5, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.FungalSorcerer5, state_info=5))
@@ -377,9 +377,9 @@ def Event_31022223(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -435,9 +435,9 @@ def Event_31022250(_, character: uint):
     AND_1.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=7.0))
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantRat0, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat0, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantRat0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Rat1))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=5))
@@ -512,7 +512,7 @@ def Event_31022256():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.GiantRat0, 90160))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantRat0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantRat0))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantRat0, state_info=5))
@@ -624,7 +624,17 @@ def Event_31022849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31020800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 31020800, 931000, 31022805, 31022806, 0, 31022802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31020800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31022805,
+        flag_2=31022806,
+        right=0,
+        flag_3=31022802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31022900)

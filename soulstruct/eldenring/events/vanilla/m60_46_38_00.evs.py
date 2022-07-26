@@ -38,7 +38,7 @@ def Constructor():
         flag_3=69370,
     )
     Event_1046380671(0, flag=710590, tutorial_param_id=1590, item=9115, flag_1=69150)
-    CommonFunc_90005771(0, 1046380950, 1046382701)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1046382701)
 
 
 @ContinueOnRest(1046380280)

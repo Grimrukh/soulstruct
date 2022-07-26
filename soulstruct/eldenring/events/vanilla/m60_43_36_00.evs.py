@@ -113,7 +113,7 @@ def Preconstructor():
     CommonFunc_90005251(0, character=Characters.WanderingNoble5, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.WanderingNoble6, radius=20.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.WanderingNoble7, radius=20.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005251(0, 1043360200, 5.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Rat, radius=5.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1043362210)

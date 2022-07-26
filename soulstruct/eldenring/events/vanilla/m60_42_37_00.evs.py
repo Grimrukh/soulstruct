@@ -110,13 +110,13 @@ def Constructor():
     Event_1042373700(0, flag=78102, other_entity=Characters.TalkDummy1, flag_1=1042379204)
     Event_1042373701(0, other_entity=Characters.TalkDummy1, flag=1042379204)
     Event_1042373702(0, other_entity=Characters.TalkDummy1, flag=1042379205)
-    Event_1042373703(0, 1042370950, 1042379205)
+    Event_1042373703(0, other_entity=Characters.TalkDummy1, flag=1042379205)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005251(0, 1042370200, 5.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GodrickSoldier, radius=5.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1042372610)

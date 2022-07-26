@@ -249,7 +249,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.DemiHumanShaman, flag=3943, first_flag=3940, last_flag=3944)
     Event_11053730(0, character=Characters.DemiHumanShaman)
-    Event_11053731(0, 11050730)
+    Event_11053731(0, entity=Characters.DemiHumanShaman)
 
 
 @ContinueOnRest(50)
@@ -345,7 +345,19 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 11050302, 30002, 20002, 11052302, 5.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.UlceratedTreeSpirit2,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=11052302,
+        radius=5.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(11052500)
@@ -404,19 +416,19 @@ def Event_11052510():
     )
     CommonFunc_90005500(
         0,
-        11050610,
-        11051610,
-        2,
-        11051610,
-        11051611,
-        11053611,
-        11051612,
-        11053612,
-        11052611,
-        11052612,
-        11050611,
-        11052612,
-        0,
+        flag=11050610,
+        flag_1=11051610,
+        left=2,
+        asset=Assets.AEG227_001_0500,
+        asset_1=Assets.AEG227_050_0507,
+        obj_act_id=11053611,
+        asset_2=Assets.AEG227_050_0508,
+        obj_act_id_1=11053612,
+        region=11052611,
+        region_1=11052612,
+        flag_2=11050611,
+        flag_3=11052612,
+        left_1=0,
     )
 
 
@@ -663,7 +675,17 @@ def Event_11052849():
     )
     CommonFunc_9005811(0, flag=11050800, asset=Assets.AEG099_001_9001, model_point=17, right=0)
     CommonFunc_9005813(0, flag=11050800, asset=Assets.AEG099_001_9002, model_point=18, right=11050801, model_point_1=18)
-    CommonFunc_9005822(0, 11050800, 472000, 11052805, 11052806, 11050801, 11052802, 1, 1)
+    CommonFunc_9005822(
+        0,
+        flag=11050800,
+        bgm_boss_conv_param_id=472000,
+        flag_1=11052805,
+        flag_2=11052806,
+        right=11050801,
+        flag_3=11052802,
+        left=1,
+        left_1=1,
+    )
 
 
 @RestartOnRest(11052850)
@@ -803,7 +825,7 @@ def Event_11052860():
     AND_11.Add(PlayerInOwnWorld())
     AND_11.Add(CharacterHasSpecialEffect(Characters.SirGideonOfnir0, 9770))
     OR_11.Add(AND_11)
-    OR_11.Add(AttackedWithDamageType(attacked_entity=Characters.SirGideonOfnir0, attacker=0))
+    OR_11.Add(AttackedWithDamageType(attacked_entity=Characters.SirGideonOfnir0))
     
     MAIN.Await(OR_11)
     
@@ -904,7 +926,17 @@ def Event_11052859():
     CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9006, model_point=4, right=11050854)
     CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9007, model_point=5, right=11050854)
     CommonFunc_9005811(0, flag=11050850, asset=Assets.AEG099_001_9008, model_point=5, right=11050854)
-    CommonFunc_9005822(0, 11050850, 921100, 11052855, 11052856, 0, 11052852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=11050850,
+        bgm_boss_conv_param_id=921100,
+        flag_1=11052855,
+        flag_2=11052856,
+        right=0,
+        flag_3=11052852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(11053700)

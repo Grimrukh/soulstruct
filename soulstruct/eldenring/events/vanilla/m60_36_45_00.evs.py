@@ -46,20 +46,20 @@ def Constructor():
     CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980604, npc_threat_level=24)
     CommonFunc_90005605(
         0,
-        1036451620,
-        60,
-        34,
-        48,
-        0,
-        1034482620,
-        0,
-        1036452620,
-        1036452621,
-        1036452622,
-        0,
-        0,
-        0.0,
-        0.0,
+        asset=Assets.AEG099_510_9000,
+        area_id=60,
+        block_id=34,
+        cc_id=48,
+        dd_id=0,
+        player_start=1034482620,
+        unk_8_12=0,
+        flag=1036452620,
+        left_flag=1036452621,
+        cancel_flag__right_flag=1036452622,
+        left=0,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
     )
 
 
@@ -95,7 +95,14 @@ def Preconstructor():
         animation_id=-1,
     )
     CommonFunc_90005261(0, character=Characters.Skeleton8, region=1036452250, radius=0.0, seconds=1.0, animation_id=-1)
-    CommonFunc_90005261(0, 1036450250, 1036452250, 0.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GraveSkeleton,
+        region=1036452250,
+        radius=0.0,
+        seconds=0.0,
+        animation_id=-1,
+    )
 
 
 @RestartOnRest(1036452200)
@@ -115,7 +122,7 @@ def Event_1036452200(_, character: uint, radius: float, seconds: float, animatio
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)

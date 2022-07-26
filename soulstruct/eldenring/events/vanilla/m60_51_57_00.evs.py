@@ -110,16 +110,10 @@ def Constructor():
         special_effect=11130,
         animation_id=20015,
     )
-    Event_1051572821(
-        0,
-        character=Characters.Commander,
-        character_1=1051575801,
-        special_effect=11136,
-        animation_id=20016,
-    )
+    Event_1051572821(0, character=1051570800, character_1=1051575801, special_effect=11136, animation_id=20016)
     Event_1051572822(
         0,
-        character=Characters.Commander,
+        character=1051570800,
         character_1=Characters.BanishedKnight5,
         character_2=Characters.BanishedKnight6,
         special_effect_id=11135,
@@ -1035,14 +1029,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1051570421,
-        character=Characters.TibiaMariner,
-        item_lot=1051570720,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1051570421, character=Characters.TibiaMariner, item_lot=1051570720, seconds=0.0, left=0)
     Event_1051572460(
         0,
         character=Characters.TibiaMariner,
@@ -1099,7 +1086,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005706(0, 1051570710, 930025, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
 
 
 @ContinueOnRest(50)
@@ -1115,19 +1102,19 @@ def Event_1051572510():
     """Event 1051572510"""
     CommonFunc_90005500(
         0,
-        1051570510,
-        1051570511,
-        0,
-        1051571510,
-        1051571511,
-        1051573511,
-        1051571512,
-        1051573512,
-        1051572511,
-        1051572512,
-        1051570512,
-        1051570513,
-        1051570514,
+        flag=1051570510,
+        flag_1=1051570511,
+        left=0,
+        asset=Assets.AEG030_095_2000,
+        asset_1=Assets.AEG030_183_2001,
+        obj_act_id=1051573511,
+        asset_2=Assets.AEG030_183_2000,
+        obj_act_id_1=1051573512,
+        region=1051572511,
+        region_1=1051572512,
+        flag_2=1051570512,
+        flag_3=1051570513,
+        left_1=1051570514,
     )
 
 
@@ -1293,7 +1280,7 @@ def Event_1051572250(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1404,7 +1391,7 @@ def Event_1051572274(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1513,7 +1500,7 @@ def Event_1051572310(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1698,7 +1685,7 @@ def Event_1051572810():
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1051572801))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Commander, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Commander))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Commander, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Commander, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Commander, state_info=5))
@@ -1881,7 +1868,17 @@ def Event_1051572849():
     )
     CommonFunc_9005811(0, flag=1051570800, asset=Assets.AEG099_002_9000, model_point=3, right=0)
     CommonFunc_9005811(0, flag=1051570800, asset=Assets.AEG099_002_9001, model_point=3, right=0)
-    CommonFunc_9005822(0, 1051570800, 950000, 1051572805, 1051572806, 0, 1051572802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1051570800,
+        bgm_boss_conv_param_id=950000,
+        flag_1=1051572805,
+        flag_2=1051572806,
+        right=0,
+        flag_3=1051572802,
+        left=0,
+        left_1=0,
+    )
 
 
 @ContinueOnRest(200)
@@ -1892,102 +1889,330 @@ def Event_200():
     CommonFunc_90005452(0, character=Characters.WalkingMausoleum, flag=1251570400)
     CommonFunc_90005454(0, character=Characters.WalkingMausoleum, flag=1251572400, flag_1=1251570400)
     CommonFunc_90005458(0, character=Characters.WalkingMausoleum, asset=Assets.AEG300_015_9000)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9000, model_point=101, seconds=0.0)
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9000,
+        model_point=101,
+        seconds=0.0,
+    )
     CommonFunc_90005453(
         1,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9001,
         model_point=102,
         seconds=0.10000000149011612,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9002,
         model_point=103,
         seconds=0.20000000298023224,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9003,
         model_point=104,
         seconds=0.30000001192092896,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9004,
         model_point=105,
         seconds=0.4000000059604645,
     )
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9005, model_point=106, seconds=0.5)
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9005,
+        model_point=106,
+        seconds=0.5,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9006,
         model_point=107,
         seconds=0.6000000238418579,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9007,
         model_point=108,
         seconds=0.699999988079071,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9008,
         model_point=109,
         seconds=0.800000011920929,
     )
     CommonFunc_90005453(
         0,
-        asset__character=1251570400,
+        asset__character=Characters.WalkingMausoleum,
         asset=Assets.AEG300_006_9009,
         model_point=110,
         seconds=0.8999999761581421,
     )
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9010, model_point=111, seconds=1.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9016, model_point=117, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9017, model_point=118, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9018, model_point=119, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9019, model_point=120, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9020, model_point=121, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9021, model_point=122, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9022, model_point=123, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9023, model_point=124, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9024, model_point=125, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9025, model_point=126, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9026, model_point=127, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9027, model_point=128, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9032, model_point=133, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9033, model_point=134, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9034, model_point=135, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9035, model_point=136, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9036, model_point=137, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9037, model_point=138, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9038, model_point=139, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9039, model_point=140, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9040, model_point=141, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9041, model_point=142, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9048, model_point=149, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9049, model_point=150, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9050, model_point=151, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9051, model_point=152, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9052, model_point=153, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9053, model_point=154, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9054, model_point=155, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9055, model_point=156, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9056, model_point=157, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9057, model_point=158, seconds=0.0)
-    CommonFunc_90005453(0, asset__character=1251570400, asset=Assets.AEG300_006_9058, model_point=159, seconds=0.0)
-    CommonFunc_90005456(0, 1251570400, 1251571410, 1251571418, 1251570400)
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9010,
+        model_point=111,
+        seconds=1.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9016,
+        model_point=117,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9017,
+        model_point=118,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9018,
+        model_point=119,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9019,
+        model_point=120,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9020,
+        model_point=121,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9021,
+        model_point=122,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9022,
+        model_point=123,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9023,
+        model_point=124,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9024,
+        model_point=125,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9025,
+        model_point=126,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9026,
+        model_point=127,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9027,
+        model_point=128,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9032,
+        model_point=133,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9033,
+        model_point=134,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9034,
+        model_point=135,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9035,
+        model_point=136,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9036,
+        model_point=137,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9037,
+        model_point=138,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9038,
+        model_point=139,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9039,
+        model_point=140,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9040,
+        model_point=141,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9041,
+        model_point=142,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9048,
+        model_point=149,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9049,
+        model_point=150,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9050,
+        model_point=151,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9051,
+        model_point=152,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9052,
+        model_point=153,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9053,
+        model_point=154,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9054,
+        model_point=155,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9055,
+        model_point=156,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9056,
+        model_point=157,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9057,
+        model_point=158,
+        seconds=0.0,
+    )
+    CommonFunc_90005453(
+        0,
+        asset__character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_006_9058,
+        model_point=159,
+        seconds=0.0,
+    )
+    CommonFunc_90005456(
+        0,
+        character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_004_9000,
+        asset_1=Assets.AEG300_005_9000,
+        flag=1251570400,
+    )
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005450(0, 1251570400, 1251571400, 1251571410, 1251571418)
+    CommonFunc_90005450(
+        0,
+        character=Characters.WalkingMausoleum,
+        asset=Assets.AEG300_014_9000,
+        asset_1=Assets.AEG300_004_9000,
+        asset_2=Assets.AEG300_005_9000,
+    )

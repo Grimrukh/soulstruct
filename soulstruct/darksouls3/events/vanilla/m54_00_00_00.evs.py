@@ -63,4 +63,4 @@ def Constructor():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CommonFunc_20005940(0, 15405300)
+    CommonFunc_20005940(0, flag=15405300)

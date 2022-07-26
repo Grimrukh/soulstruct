@@ -33,7 +33,7 @@ def Constructor():
         animation_id=0,
     )
     Event_1051542200(0, character=1049535200)
-    CommonFunc_90005300(0, 1051540210, 1051540210, 40512, 0.0, 0)
+    CommonFunc_90005300(0, flag=1051540210, character=1051540210, item_lot=40512, seconds=0.0, left=0)
 
 
 @RestartOnRest(1051542200)

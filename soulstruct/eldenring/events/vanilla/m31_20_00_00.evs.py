@@ -48,7 +48,7 @@ def Constructor():
     Event_31202550(2, owner_entity=Characters.Dummy6, source_entity=Assets.AEG099_046_9015, seconds=5.0, seconds_1=0.0)
     Event_31202550(3, owner_entity=Characters.Dummy7, source_entity=Assets.AEG099_046_9020, seconds=5.0, seconds_1=1.0)
     Event_31202550(5, owner_entity=Characters.Dummy1, source_entity=Assets.AEG099_046_9001, seconds=5.0, seconds_1=2.0)
-    Event_31202550(1, 31200480, 31201580, 5.0, 3.0)
+    Event_31202550(1, owner_entity=Characters.Dummy2, source_entity=Assets.AEG099_046_9002, seconds=5.0, seconds_1=3.0)
 
 
 @ContinueOnRest(50)
@@ -103,7 +103,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.Rat1, region=31202230, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(1, 31200231, 31202230, 0.0, 0)
+    CommonFunc_90005250(1, character=Characters.Rat2, region=31202230, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31202520)
@@ -291,7 +291,7 @@ def Event_31202810():
     Wait(5.0)
     EnableAI(Characters.CleanrotKnight1)
     SetNetworkUpdateRate(Characters.CleanrotKnight1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    OR_15.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight1, attacker=0))
+    OR_15.Add(AttackedWithDamageType(attacked_entity=Characters.CleanrotKnight1))
     OR_15.Add(TimeElapsed(seconds=7.0))
     AwaitConditionTrue(OR_15)
     EnableBossHealthBar(Characters.CleanrotKnight1, name=903800312, bar_slot=1)
@@ -334,4 +334,14 @@ def Event_31092849():
         action_button_id=10010,
     )
     CommonFunc_9005811(0, flag=31200800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 31200800, 931000, 31202805, 31202806, 0, 31202842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31200800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31202805,
+        flag_2=31202806,
+        right=0,
+        flag_3=31202842,
+        left=0,
+        left_1=0,
+    )

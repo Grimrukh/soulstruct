@@ -42,7 +42,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, 31051550, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -241,7 +241,7 @@ def Preconstructor():
     )
     CommonFunc_90005261(0, character=Characters.Snail10, region=31052315, radius=2.0, seconds=0.0, animation_id=3012)
     CommonFunc_90005261(0, character=Characters.Snail11, region=31052316, radius=2.0, seconds=0.0, animation_id=3012)
-    CommonFunc_90005261(0, 31050317, 31052317, 2.0, 0.0, 3012)
+    CommonFunc_90005261(0, character=Characters.Snail12, region=31052317, radius=2.0, seconds=0.0, animation_id=3012)
 
 
 @RestartOnRest(31052301)
@@ -261,7 +261,7 @@ def Event_31052301():
     AND_1.Add(EntityWithinDistance(entity=Characters.Snail1, other_entity=PLAYER, radius=4.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(Characters.Snail1, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Snail1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Snail1))
     
     MAIN.Await(OR_2)
     
@@ -375,4 +375,14 @@ def Event_31052849():
     )
     CommonFunc_9005811(0, flag=31050800, asset=Assets.AEG099_002_9000, model_point=5, right=31050801)
     CommonFunc_9005811(0, flag=31050800, asset=Assets.AEG099_001_9000, model_point=3, right=31050801)
-    CommonFunc_9005822(0, 31050800, 931000, 31052805, 31052806, 0, 31052802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31050800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31052805,
+        flag_2=31052806,
+        right=0,
+        flag_3=31052802,
+        left=0,
+        left_1=0,
+    )

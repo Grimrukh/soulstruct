@@ -594,7 +594,7 @@ def Constructor():
         item_lot=30410,
         seconds=0.0,
     )
-    CommonFunc_90005872(0, 1047400800, 18, 0)
+    CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
 
 
 @RestartOnRest(1047402301)

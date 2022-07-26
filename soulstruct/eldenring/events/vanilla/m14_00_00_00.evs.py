@@ -52,7 +52,7 @@ def Constructor():
     Event_14002811()
     Event_14002849()
     Event_140028121()
-    Event_140028122(0, character=Characters.RennalaPhaseTwo, special_effect=14585, special_effect_1=14575)
+    Event_140028122(0, character=14000800, special_effect=14585, special_effect_1=14575)
     Event_14002606()
     Event_14002689()
     Event_14003500(0, region=14002700, flag=14000800)
@@ -243,11 +243,11 @@ def Constructor():
         flag_2=14003836,
         flag_3=14003837,
         flag_4=14003838,
-        asset__asset_flag=Assets.AEG257_031_5004,
-        asset__asset_flag_1=Assets.AEG257_031_5003,
-        asset__asset_flag_2=Assets.AEG257_031_5002,
-        asset__asset_flag_3=Assets.AEG257_031_5001,
-        asset__asset_flag_4=Assets.AEG257_031_5000,
+        asset__asset_flag=14001810,
+        asset__asset_flag_1=14001811,
+        asset__asset_flag_2=14001812,
+        asset__asset_flag_3=14001813,
+        asset__asset_flag_4=14001814,
         region=14002815,
         region_1=14002816,
         region_2=14002817,
@@ -267,11 +267,11 @@ def Constructor():
         flag_2=14003836,
         flag_3=14003837,
         flag_4=14003838,
-        asset__asset_flag=Assets.AEG257_031_5004,
-        asset__asset_flag_1=Assets.AEG257_031_5003,
-        asset__asset_flag_2=Assets.AEG257_031_5002,
-        asset__asset_flag_3=Assets.AEG257_031_5001,
-        asset__asset_flag_4=Assets.AEG257_031_5000,
+        asset__asset_flag=14001810,
+        asset__asset_flag_1=14001811,
+        asset__asset_flag_2=14001812,
+        asset__asset_flag_3=14001813,
+        asset__asset_flag_4=14001814,
         region=14002815,
         region_1=14002816,
         region_2=14002817,
@@ -413,25 +413,11 @@ def Constructor():
     Event_14002590()
     Event_14002592()
     Event_14002594()
-    CommonFunc_90005300(
-        0,
-        flag=14000276,
-        character=Characters.RayaLucariaScholar23,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=14000277,
-        character=Characters.RayaLucariaScholar24,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005525(0, flag=14000610, asset=Assets.AEG257_035_3000)
-    CommonFunc_90005525(0, flag=14000611, asset=Assets.AEG257_035_3001)
-    CommonFunc_90005525(0, flag=14000612, asset=Assets.AEG257_039_1000)
+    CommonFunc_90005300(0, flag=14000276, character=Characters.RayaLucariaScholar23, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=14000277, character=Characters.RayaLucariaScholar24, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005525(0, flag=14000610, asset=14001610)
+    CommonFunc_90005525(0, flag=14000611, asset=14001611)
+    CommonFunc_90005525(0, flag=14000612, asset=14001612)
     CommonFunc_90005605(
         0,
         asset=Assets.AEG099_510_9000,
@@ -540,9 +526,9 @@ def Constructor():
         asset=Assets.AEG099_090_9001,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    CommonFunc_90005796(0, flag=7608, character=Characters.SorceressSellen2, banner_type=5, region=14002141)
-    Event_14002145()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7608, character=Characters.SorceressSellen2, banner_type=5, region=14002141)
+        Event_14002145()
     CommonFunc_90005795(
         0,
         flag=7609,
@@ -555,15 +541,15 @@ def Constructor():
         asset=Assets.AEG099_090_9002,
         model_point=30000,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=30)
-    Event_14002155()
-    Event_14002165(0, flag=7609, character=Characters.WitchHunterJerren1, banner_type=7, region=14002151)
+    if CeremonyActive(ceremony=30):
+        Event_14002155()
+        Event_14002165(0, flag=7609, character=Characters.WitchHunterJerren1, banner_type=7, region=14002151)
     Event_14002495()
     Event_14000700()
     Event_14000701()
     Event_14000702()
     Event_14000703()
-    Event_14000710(0, asset__character=14000710, asset__character_1=14000711)
+    Event_14000710(0, asset__character=Characters.SorceressSellen0, asset__character_1=Characters.GravenSchool)
     Event_14000711()
     CommonFunc_90005702(0, character=Characters.SorceressSellen2, flag=3463, first_flag=3460, last_flag=3463)
     CommonFunc_90005750(
@@ -607,7 +593,16 @@ def Constructor():
     Event_14000741(0, character=Characters.DemiHumanShaman)
     Event_14000742()
     Event_14000750(0, character=Characters.SorcererThops, asset=14006700)
-    CommonFunc_90005750(0, 14001720, 4110, 103600, 400360, 400362, 3806, 0)
+    CommonFunc_90005750(
+        0,
+        asset=Assets.AEG099_090_9004,
+        action_button_id=4110,
+        item_lot=103600,
+        first_flag=400360,
+        last_flag=400362,
+        flag=3806,
+        model_point=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -1484,7 +1479,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.MadPumpkinHead, region=14002276, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.IronVirgin0, region=14002293, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.IronVirgin1, region=14002294, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 14000499, 14002499, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.MoongrumCarianKnight, region=14002499, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(14002080)
@@ -1506,7 +1501,8 @@ def Event_14002080():
 @RestartOnRest(14002145)
 def Event_14002145():
     """Event 14002145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.SorceressSellen2)
     EnableBackread(Characters.WitchHunterJerren0)
     SetTeamType(Characters.SorceressSellen2, TeamType.Human)
@@ -1518,7 +1514,8 @@ def Event_14002145():
 @RestartOnRest(14002155)
 def Event_14002155():
     """Event 14002155"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=30)
+    if CeremonyInactive(ceremony=30):
+        return
     EnableBackread(Characters.WitchHunterJerren1)
     EnableBackread(Characters.SorceressSellen1)
     SetTeamType(Characters.WitchHunterJerren1, TeamType.Enemy)
@@ -1596,19 +1593,19 @@ def Event_14002510():
     )
     CommonFunc_90005500(
         0,
-        14000520,
-        14000521,
-        0,
-        14001520,
-        14001521,
-        14003521,
-        14001522,
-        14003522,
-        14002521,
-        14002522,
-        14000522,
-        14000523,
-        0,
+        flag=14000520,
+        flag_1=14000521,
+        left=0,
+        asset=Assets.AEG257_011_0500,
+        asset_1=Assets.AEG257_002_0504,
+        obj_act_id=14003521,
+        asset_2=m31_06_Assets.AEG257_002_1000,
+        obj_act_id_1=14003522,
+        region=14002521,
+        region_1=14002522,
+        flag_2=14000522,
+        flag_3=14000523,
+        left_1=0,
     )
 
 
@@ -1879,9 +1876,9 @@ def Event_14002360(
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_1, attacker=0))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_2, attacker=0))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_1))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_2))
     AND_1.Add(OR_3)
     AND_1.Add(CharacterBackreadEnabled(character))
     OR_11.Add(CharacterHasSpecialEffect(character, 5080))
@@ -1903,7 +1900,7 @@ def Event_14002360(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1948,7 +1945,7 @@ def Event_14002490(_, character: uint, region: uint, seconds: float, animation_i
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1987,7 +1984,7 @@ def Event_14002491(_, character: uint, region: uint, radius: float, seconds: flo
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2606,7 +2603,17 @@ def Event_14002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=14000800, asset=Assets.AEG099_001_9000, model_point=3, right=14000801)
-    CommonFunc_9005822(0, 14000800, 203000, 14002805, 14002806, 0, 14002803, 1, 0)
+    CommonFunc_9005822(
+        0,
+        flag=14000800,
+        bgm_boss_conv_param_id=203000,
+        flag_1=14002805,
+        flag_2=14002806,
+        right=0,
+        flag_3=14002803,
+        left=1,
+        left_1=0,
+    )
 
 
 @RestartOnRest(14002850)
@@ -2701,7 +2708,17 @@ def Event_14002889():
         right=14000851,
         model_point_1=806760,
     )
-    CommonFunc_9005822(0, 14000850, 921400, 14002855, 14002856, 0, 14000852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=14000850,
+        bgm_boss_conv_param_id=921400,
+        flag_1=14002855,
+        flag_2=14002856,
+        right=0,
+        flag_3=14000852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(14002820)
@@ -2803,157 +2820,157 @@ def Event_14003801(
     if FlagDisabled(14003804):
         GotoIfFlagEnabled(Label.L0, flag=14003802)
         GotoIfFlagEnabled(Label.L1, flag=14003803)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_2, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_2, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_2, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_2, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_2, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_2, special_effect=14393)
     AddSpecialEffect(character_2, 14394)
     ReplanAI(character_2)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_3, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_3, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_3, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_3, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_3, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_3, special_effect=14393)
     AddSpecialEffect(character_3, 14394)
     ReplanAI(character_3)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_4, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_4, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_4, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_4, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_4, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_4, special_effect=14393)
     AddSpecialEffect(character_4, 14394)
     ReplanAI(character_4)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_5, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_5, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_5, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_5, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_5, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_5, special_effect=14393)
     AddSpecialEffect(character_5, 14394)
     ReplanAI(character_5)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_6, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_6, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_6, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_6, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_6, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_6, special_effect=14393)
     AddSpecialEffect(character_6, 14394)
     ReplanAI(character_6)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_7, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_7, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_7, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_7, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_7, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_7, special_effect=14393)
     AddSpecialEffect(character_7, 14394)
     ReplanAI(character_7)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_8, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_8, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_8, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_8, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_8, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_8, special_effect=14393)
     AddSpecialEffect(character_8, 14394)
     ReplanAI(character_8)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_9, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_9, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_9, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_9, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_9, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_9, special_effect=14393)
     AddSpecialEffect(character_9, 14394)
     ReplanAI(character_9)
     Restart()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_10, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_10, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_10, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_10, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_10, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_10, special_effect=14393)
     AddSpecialEffect(character_10, 14394)
     ReplanAI(character_10)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_11, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_11, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_11, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_11, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_11, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_11, special_effect=14393)
     AddSpecialEffect(character_11, 14394)
     ReplanAI(character_11)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_12, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_12, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_12, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_12, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_12, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_12, special_effect=14393)
     AddSpecialEffect(character_12, 14394)
     ReplanAI(character_12)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_13, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_13, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_13, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_13, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_13, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_13, special_effect=14393)
     AddSpecialEffect(character_13, 14394)
     ReplanAI(character_13)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_14, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_14, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_14, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_14, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_14, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_14, special_effect=14393)
     AddSpecialEffect(character_14, 14394)
     ReplanAI(character_14)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_15, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_15, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_15, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_15, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_15, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_15, special_effect=14393)
     AddSpecialEffect(character_15, 14394)
     ReplanAI(character_15)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_16, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_16, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_16, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_16, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_16, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_16, special_effect=14393)
     AddSpecialEffect(character_16, 14394)
     ReplanAI(character_16)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_17, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_17, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_17, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_17, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_17, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_17, special_effect=14393)
     AddSpecialEffect(character_17, 14394)
     ReplanAI(character_17)
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_18, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_18, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_18, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_18, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_18, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_18, special_effect=14393)
     AddSpecialEffect(character_18, 14394)
     ReplanAI(character_18)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_19, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_19, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_19, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_19, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_19, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_19, special_effect=14393)
     AddSpecialEffect(character_19, 14394)
     ReplanAI(character_19)
     Restart()
     Goto(Label.L10)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_20, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_20, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_20, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_20, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_20, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_20, special_effect=14393)
     AddSpecialEffect(character_20, 14394)
     ReplanAI(character_20)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_21, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_21, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_21, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_21, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_21, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_21, special_effect=14393)
     AddSpecialEffect(character_21, 14394)
     ReplanAI(character_21)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_22, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_22, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_22, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_22, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_22, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_22, special_effect=14393)
     AddSpecialEffect(character_22, 14394)
     ReplanAI(character_22)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_23, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_23, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_23, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_23, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_23, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_23, special_effect=14393)
     AddSpecialEffect(character_23, 14394)
     ReplanAI(character_23)
     Restart()
 
     # --- Label 10 --- #
     DefineLabel(10)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_24, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_24, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_24, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_24, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_24, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_24, special_effect=14393)
     AddSpecialEffect(character_24, 14394)
     ReplanAI(character_24)
     Restart()
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_25, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_25, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_25, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_25, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_25, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_25, special_effect=14393)
     AddSpecialEffect(character_25, 14394)
     ReplanAI(character_25)
     Restart()
@@ -3101,66 +3118,66 @@ def Event_14003811(
     if FlagDisabled(14003804):
         GotoIfFlagEnabled(Label.L0, flag=14003802)
         GotoIfFlagEnabled(Label.L1, flag=14003803)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_1, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_1, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_1, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_1, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_1, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_1, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_1, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_1, special_effect=14393)
     AddSpecialEffect(character_1, 14351)
     ReplanAI(character_1)
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_2, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_2, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_2, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_2, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_2, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_2, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_2, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_2, special_effect=14393)
     AddSpecialEffect(character_2, 14351)
     ReplanAI(character_2)
     SetNetworkUpdateRate(character_2, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_3, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_3, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_3, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_3, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_3, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_3, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_3, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_3, special_effect=14393)
     AddSpecialEffect(character_3, 14351)
     ReplanAI(character_3)
     SetNetworkUpdateRate(character_3, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_4, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_4, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_4, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_4, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_4, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_4, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_4, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_4, special_effect=14393)
     AddSpecialEffect(character_4, 14351)
     ReplanAI(character_4)
     SetNetworkUpdateRate(character_4, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_5, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_5, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_5, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_5, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_5, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_5, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_5, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_5, special_effect=14393)
     AddSpecialEffect(character_5, 14351)
     ReplanAI(character_5)
     SetNetworkUpdateRate(character_5, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_6, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_6, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_6, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_6, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_6, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_6, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_6, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_6, special_effect=14393)
     AddSpecialEffect(character_6, 14351)
     ReplanAI(character_6)
     SetNetworkUpdateRate(character_6, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_7, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_7, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_7, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_7, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_7, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_7, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_7, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_7, special_effect=14393)
     AddSpecialEffect(character_7, 14351)
     ReplanAI(character_7)
     SetNetworkUpdateRate(character_7, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_8, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_8, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_8, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_8, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_8, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_8, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_8, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_8, special_effect=14393)
     AddSpecialEffect(character_8, 14351)
     ReplanAI(character_8)
     SetNetworkUpdateRate(character_8, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -3168,66 +3185,66 @@ def Event_14003811(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_9, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_9, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_9, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_9, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_9, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_9, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_9, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_9, special_effect=14393)
     AddSpecialEffect(character_9, 14351)
     ReplanAI(character_9)
     SetNetworkUpdateRate(character_9, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_10, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_10, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_10, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_10, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_10, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_10, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_10, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_10, special_effect=14393)
     AddSpecialEffect(character_10, 14351)
     ReplanAI(character_10)
     SetNetworkUpdateRate(character_10, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_11, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_11, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_11, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_11, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_11, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_11, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_11, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_11, special_effect=14393)
     AddSpecialEffect(character_11, 14351)
     ReplanAI(character_11)
     SetNetworkUpdateRate(character_11, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_12, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_12, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_12, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_12, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_12, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_12, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_12, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_12, special_effect=14393)
     AddSpecialEffect(character_12, 14351)
     ReplanAI(character_12)
     SetNetworkUpdateRate(character_12, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_13, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_13, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_13, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_13, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_13, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_13, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_13, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_13, special_effect=14393)
     AddSpecialEffect(character_13, 14351)
     ReplanAI(character_13)
     SetNetworkUpdateRate(character_13, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_14, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_14, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_14, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_14, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_14, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_14, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_14, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_14, special_effect=14393)
     AddSpecialEffect(character_14, 14351)
     ReplanAI(character_14)
     SetNetworkUpdateRate(character_14, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_15, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_15, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_15, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_15, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_15, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_15, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_15, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_15, special_effect=14393)
     AddSpecialEffect(character_15, 14351)
     ReplanAI(character_15)
     SetNetworkUpdateRate(character_15, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_16, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_16, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_16, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_16, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_16, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_16, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_16, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_16, special_effect=14393)
     AddSpecialEffect(character_16, 14351)
     ReplanAI(character_16)
     SetNetworkUpdateRate(character_16, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -3235,51 +3252,51 @@ def Event_14003811(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_17, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_17, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_17, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_17, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_17, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_17, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_17, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_17, special_effect=14393)
     AddSpecialEffect(character_17, 14351)
     ReplanAI(character_17)
     SetNetworkUpdateRate(character_17, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_18, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_18, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_18, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_18, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_18, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_18, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_18, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_18, special_effect=14393)
     AddSpecialEffect(character_18, 14351)
     ReplanAI(character_18)
     SetNetworkUpdateRate(character_18, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
     Goto(Label.L10)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_19, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_19, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_19, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_19, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_19, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_19, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_19, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_19, special_effect=14393)
     AddSpecialEffect(character_19, 14351)
     ReplanAI(character_19)
     SetNetworkUpdateRate(character_19, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_20, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_20, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_20, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_20, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_20, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_20, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_20, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_20, special_effect=14393)
     AddSpecialEffect(character_20, 14351)
     ReplanAI(character_20)
     SetNetworkUpdateRate(character_20, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_21, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_21, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_21, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_21, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_21, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_21, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_21, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_21, special_effect=14393)
     AddSpecialEffect(character_21, 14351)
     ReplanAI(character_21)
     SetNetworkUpdateRate(character_21, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_22, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_22, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_22, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_22, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_22, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_22, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_22, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_22, special_effect=14393)
     AddSpecialEffect(character_22, 14351)
     ReplanAI(character_22)
     SetNetworkUpdateRate(character_22, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -3287,18 +3304,18 @@ def Event_14003811(
 
     # --- Label 10 --- #
     DefineLabel(10)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=7, character=character_23, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=6, character=character_23, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_23, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character_23, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(7, character=character_23, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(6, character=character_23, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_23, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(4, character=character_23, special_effect=14393)
     AddSpecialEffect(character_23, 14351)
     ReplanAI(character_23)
     SetNetworkUpdateRate(character_23, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Restart()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=6, character=character_24, special_effect=14577)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=5, character=character_24, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_24, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_24, special_effect=14393)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(6, character=character_24, special_effect=14577)
+    SkipLinesIfCharacterHasSpecialEffect(5, character=character_24, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_24, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(3, character=character_24, special_effect=14393)
     AddSpecialEffect(character_24, 14351)
     ReplanAI(character_24)
     SetNetworkUpdateRate(character_24, is_fixed=True, update_rate=CharacterUpdateRate.Always)
@@ -3579,656 +3596,656 @@ def Event_14003850(
     """Event 14003850"""
     MAIN.Await(CharacterHasSpecialEffect(character, 14363))
     
-    SkipLinesIfCharacterOutsideRegion(line_count=24, character=20000, region=region)
-    if FlagEnabled(flag):
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        DisableNetworkFlag(flag)
-        ForceAnimation(asset, 1)
-        AddSpecialEffect(character, 5032)
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(1.0)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        CreateHazard(
-            asset_flag=asset__asset_flag,
-            asset=asset__asset_flag,
-            model_point=210,
-            behavior_param_id=220400150,
-            target_type=DamageTargetType.Character,
-            radius=3.5,
-            life=12.0,
-            repetition_time=0.0,
-        )
-        Wait(7.5)
-        DisableAsset(asset)
-        Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(line_count=24, character=20000, region=region_1)
-    if FlagEnabled(flag_1):
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        DisableNetworkFlag(flag_1)
-        ForceAnimation(asset_1, 1)
-        AddSpecialEffect(character, 5032)
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(1.0)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_1,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        CreateHazard(
-            asset_flag=asset__asset_flag_1,
-            asset=asset__asset_flag_1,
-            model_point=210,
-            behavior_param_id=220400150,
-            target_type=DamageTargetType.Character,
-            radius=3.5,
-            life=12.0,
-            repetition_time=0.0,
-        )
-        Wait(7.5)
-        DisableAsset(asset_1)
-        Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(line_count=24, character=20000, region=region_2)
-    if FlagEnabled(flag_2):
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        DisableNetworkFlag(flag_2)
-        ForceAnimation(asset_2, 1)
-        AddSpecialEffect(character, 5032)
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(1.0)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_2,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        CreateHazard(
-            asset_flag=asset__asset_flag_2,
-            asset=asset__asset_flag_2,
-            model_point=210,
-            behavior_param_id=220400150,
-            target_type=DamageTargetType.Character,
-            radius=3.5,
-            life=12.0,
-            repetition_time=0.0,
-        )
-        Wait(7.5)
-        DisableAsset(asset_2)
-        Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(line_count=24, character=20000, region=region_3)
-    if FlagEnabled(flag_3):
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        DisableNetworkFlag(flag_3)
-        ForceAnimation(asset_3, 1)
-        AddSpecialEffect(character, 5032)
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(1.0)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_3,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        CreateHazard(
-            asset_flag=asset__asset_flag_3,
-            asset=asset__asset_flag_3,
-            model_point=210,
-            behavior_param_id=220400150,
-            target_type=DamageTargetType.Character,
-            radius=3.5,
-            life=12.0,
-            repetition_time=0.0,
-        )
-        Wait(7.5)
-        DisableAsset(asset_3)
-        Goto(Label.L10)
-    SkipLinesIfCharacterOutsideRegion(line_count=24, character=20000, region=region_4)
-    if FlagEnabled(flag_4):
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        DisableNetworkFlag(flag_4)
-        ForceAnimation(asset_4, 1)
-        AddSpecialEffect(character, 5032)
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=220,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(1.0)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=223,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=225,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=221,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        Wait(0.5)
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=222,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        ShootProjectile(
-            owner_entity=character,
-            source_entity=asset__asset_flag_4,
-            model_point=224,
-            behavior_id=220400155,
-            launch_angle_x=0,
-            launch_angle_y=0,
-            launch_angle_z=0,
-        )
-        CreateHazard(
-            asset_flag=asset__asset_flag_4,
-            asset=asset__asset_flag_4,
-            model_point=210,
-            behavior_param_id=220400150,
-            target_type=DamageTargetType.Character,
-            radius=3.5,
-            life=12.0,
-            repetition_time=0.0,
-        )
-        Wait(7.5)
-        DisableAsset(asset_4)
-        Goto(Label.L10)
+    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region)
+    SkipLinesIfFlagDisabled(23, flag)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    DisableNetworkFlag(flag)
+    ForceAnimation(asset, 1)
+    AddSpecialEffect(character, 5032)
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(1.0)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    CreateHazard(
+        asset_flag=asset__asset_flag,
+        asset=asset__asset_flag,
+        model_point=210,
+        behavior_param_id=220400150,
+        target_type=DamageTargetType.Character,
+        radius=3.5,
+        life=12.0,
+        repetition_time=0.0,
+    )
+    Wait(7.5)
+    DisableAsset(asset)
+    Goto(Label.L10)
+    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_1)
+    SkipLinesIfFlagDisabled(23, flag_1)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    DisableNetworkFlag(flag_1)
+    ForceAnimation(asset_1, 1)
+    AddSpecialEffect(character, 5032)
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(1.0)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_1,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    CreateHazard(
+        asset_flag=asset__asset_flag_1,
+        asset=asset__asset_flag_1,
+        model_point=210,
+        behavior_param_id=220400150,
+        target_type=DamageTargetType.Character,
+        radius=3.5,
+        life=12.0,
+        repetition_time=0.0,
+    )
+    Wait(7.5)
+    DisableAsset(asset_1)
+    Goto(Label.L10)
+    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_2)
+    SkipLinesIfFlagDisabled(23, flag_2)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    DisableNetworkFlag(flag_2)
+    ForceAnimation(asset_2, 1)
+    AddSpecialEffect(character, 5032)
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(1.0)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_2,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    CreateHazard(
+        asset_flag=asset__asset_flag_2,
+        asset=asset__asset_flag_2,
+        model_point=210,
+        behavior_param_id=220400150,
+        target_type=DamageTargetType.Character,
+        radius=3.5,
+        life=12.0,
+        repetition_time=0.0,
+    )
+    Wait(7.5)
+    DisableAsset(asset_2)
+    Goto(Label.L10)
+    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_3)
+    SkipLinesIfFlagDisabled(23, flag_3)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    DisableNetworkFlag(flag_3)
+    ForceAnimation(asset_3, 1)
+    AddSpecialEffect(character, 5032)
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(1.0)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_3,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    CreateHazard(
+        asset_flag=asset__asset_flag_3,
+        asset=asset__asset_flag_3,
+        model_point=210,
+        behavior_param_id=220400150,
+        target_type=DamageTargetType.Character,
+        radius=3.5,
+        life=12.0,
+        repetition_time=0.0,
+    )
+    Wait(7.5)
+    DisableAsset(asset_3)
+    Goto(Label.L10)
+    SkipLinesIfCharacterOutsideRegion(24, character=20000, region=region_4)
+    SkipLinesIfFlagDisabled(23, flag_4)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    DisableNetworkFlag(flag_4)
+    ForceAnimation(asset_4, 1)
+    AddSpecialEffect(character, 5032)
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=220,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(1.0)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=223,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=225,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=221,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    Wait(0.5)
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=222,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    ShootProjectile(
+        owner_entity=character,
+        source_entity=asset__asset_flag_4,
+        model_point=224,
+        behavior_id=220400155,
+        launch_angle_x=0,
+        launch_angle_y=0,
+        launch_angle_z=0,
+    )
+    CreateHazard(
+        asset_flag=asset__asset_flag_4,
+        asset=asset__asset_flag_4,
+        model_point=210,
+        behavior_param_id=220400150,
+        target_type=DamageTargetType.Character,
+        radius=3.5,
+        life=12.0,
+        repetition_time=0.0,
+    )
+    Wait(7.5)
+    DisableAsset(asset_4)
+    Goto(Label.L10)
 
     # --- Label 10 --- #
     DefineLabel(10)
@@ -4452,18 +4469,18 @@ def Event_14003885(
     """Event 14003885"""
     MAIN.Await(CharacterHasSpecialEffect(character, 14372))
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=special_effect)
-    Move(character, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=special_effect_1)
-    Move(character, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=special_effect_2)
-    Move(character, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=special_effect_3)
-    Move(character, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
-    Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect):
+        Move(character, destination=destination_2, destination_type=CoordEntityType.Region, copy_draw_parent=character)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_1):
+        Move(character, destination=destination_3, destination_type=CoordEntityType.Region, copy_draw_parent=character)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_2):
+        Move(character, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=character)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_3):
+        Move(character, destination=destination_1, destination_type=CoordEntityType.Region, copy_draw_parent=character)
+        Goto(Label.L0)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -4531,44 +4548,44 @@ def Event_14003898(
     if ThisEventSlotFlagDisabled():
         MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Normal, target_comparison_type=ComparisonType.NotEqual))
     Wait(40.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_1, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_1, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_1, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_1, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_1, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_1, special_effect=14393)
     AddSpecialEffect(character_1, 14367)
     ReplanAI(character_1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_2, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_2, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_2, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_2, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_2, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_2, special_effect=14393)
     AddSpecialEffect(character_2, 14367)
     ReplanAI(character_2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_3, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_3, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_3, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_3, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_3, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_3, special_effect=14393)
     AddSpecialEffect(character_3, 14367)
     ReplanAI(character_3)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_4, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_4, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_4, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_4, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_4, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_4, special_effect=14393)
     AddSpecialEffect(character_4, 14367)
     ReplanAI(character_4)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_5, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_5, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_5, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_5, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_5, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_5, special_effect=14393)
     AddSpecialEffect(character_5, 14367)
     ReplanAI(character_5)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_6, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_6, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_6, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_6, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_6, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_6, special_effect=14393)
     AddSpecialEffect(character_6, 14367)
     ReplanAI(character_6)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_7, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_7, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_7, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_7, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_7, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_7, special_effect=14393)
     AddSpecialEffect(character_7, 14367)
     ReplanAI(character_7)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=4, character=character_8, special_effect=14351)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=3, character=character_8, special_effect=14394)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_8, special_effect=14393)
+    SkipLinesIfCharacterHasSpecialEffect(4, character=character_8, special_effect=14351)
+    SkipLinesIfCharacterHasSpecialEffect(3, character=character_8, special_effect=14394)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character_8, special_effect=14393)
     AddSpecialEffect(character_8, 14367)
     ReplanAI(character_8)
     EnableThisSlotFlag()

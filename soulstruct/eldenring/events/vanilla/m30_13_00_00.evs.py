@@ -265,7 +265,7 @@ def Constructor():
         flag_2=30130511,
     )
     Event_30132510()
-    CommonFunc_90005525(0, flag=30130570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30130570, asset=30131570)
     Event_30132580()
     Event_30132800()
     Event_30132810()
@@ -451,7 +451,7 @@ def Constructor():
         flag=30131221,
         obj_act_id=30133221,
     )
-    Event_30132205(11, 30131221, 30132281)
+    Event_30132205(11, flag=30131221, region=30132281)
 
 
 @ContinueOnRest(50)
@@ -465,19 +465,19 @@ def Event_30132510():
     """Event 30132510"""
     CommonFunc_90005500(
         0,
-        30130510,
-        30131510,
-        0,
-        30131510,
-        30131511,
-        30133511,
-        30131512,
-        30133512,
-        30132511,
-        30132512,
-        30130511,
-        30132512,
-        0,
+        flag=30130510,
+        flag_1=30131510,
+        left=0,
+        asset=30131510,
+        asset_1=30131511,
+        obj_act_id=30133511,
+        asset_2=30131512,
+        obj_act_id_1=30133512,
+        region=30132511,
+        region_1=30132512,
+        flag_2=30130511,
+        flag_3=30132512,
+        left_1=0,
     )
 
 
@@ -748,7 +748,17 @@ def Event_30132849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30130800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30130800, 900000, 30132805, 30132806, 0, 30132802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30130800,
+        bgm_boss_conv_param_id=900000,
+        flag_1=30132805,
+        flag_2=30132806,
+        right=0,
+        flag_3=30132802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30132850)
@@ -775,4 +785,14 @@ def Event_30132850():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30130810, asset=30131810, model_point=3, right=0)
-    CommonFunc_9005822(0, 30130810, 930000, 30132815, 30132816, 0, 11002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30130810,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30132815,
+        flag_2=30132816,
+        right=0,
+        flag_3=11002852,
+        left=0,
+        left_1=0,
+    )

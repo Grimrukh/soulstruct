@@ -29,16 +29,9 @@ def Constructor():
     Event_1044312200(2, character=Characters.SpiritJellyfish2, region=1044312200)
     Event_1044312200(3, character=Characters.SpiritJellyfish3, region=1044312200)
     Event_1044312340()
-    CommonFunc_90005300(
-        0,
-        flag=1044310350,
-        character=Characters.GuardianGolem,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1044310350, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005550(0, flag=1044310200, asset=1044311200, obj_act_id=44313200)
-    CommonFunc_90005631(0, 1044311640, 61012)
+    CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61012)
 
 
 @RestartOnRest(1044312200)
@@ -73,7 +66,7 @@ def Event_1044312340():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=1044310340, radius=0.0))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=1044310340, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=1044310340))
     OR_2.Add(FlagEnabled(1044310200))
     OR_2.Add(AND_1)
     

@@ -90,7 +90,7 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.PutridCorpse2, region=1046402303, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.LivingMass, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
-    CommonFunc_90005631(0, 1046401640, 61011)
+    CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61011)
 
 
 @ContinueOnRest(50)

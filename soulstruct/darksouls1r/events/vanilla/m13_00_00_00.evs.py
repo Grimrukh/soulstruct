@@ -214,7 +214,7 @@ def Constructor():
     Event_11300850(8, character=1300300, item_lot=0)
     Event_11300850(9, character=1300400, item_lot=27902000)
     Event_11305846(0, flag=6, obj=1301990, vfx_id=1301991)
-    Event_11305843(0, 6, 1301990, 1302998, 1302997)
+    Event_11305843(0, flag=6, line_intersects=1301990, anchor_entity=1302998, target_entity=1302997)
 
 
 @ContinueOnRest(50)
@@ -717,7 +717,16 @@ def Event_11305398():
         destination_1=1302608,
         flag_2=11305302,
     )
-    Event_11305350(13, 11305257, 11305258, 1300807, 1300808, 1302609, 1302612, 11305303)
+    Event_11305350(
+        13,
+        flag=11305257,
+        flag_1=11305258,
+        character=1300807,
+        character_1=1300808,
+        destination=1302609,
+        destination_1=1302612,
+        flag_2=11305303,
+    )
 
 
 @ContinueOnRest(11305330)
@@ -1556,7 +1565,7 @@ def Event_11300800():
     Event_11305210(8, character=1300358)
     Event_11305210(9, character=1300359)
     Event_11305210(10, character=1300360)
-    Event_11305210(13, 1300363)
+    Event_11305210(13, character=1300363)
 
 
 @EndOnRest(11305050)

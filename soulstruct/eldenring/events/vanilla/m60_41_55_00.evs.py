@@ -130,7 +130,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1041550255, 30001, 20001, 1041552250, 0.800000011920929, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.PutridCorpse5,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1041552250,
+        seconds=0.800000011920929,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1041552350)
@@ -170,7 +181,7 @@ def Event_1041552350(_, character: uint, region: uint, character_1: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -204,7 +215,7 @@ def Event_1041552400(_, character: uint):
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableAI(character)
     ForceAnimation(character, 30012, loop=True)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=character, state_info=5))

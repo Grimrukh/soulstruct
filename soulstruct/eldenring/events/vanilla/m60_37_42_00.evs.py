@@ -75,7 +75,7 @@ def Constructor():
     Event_1037423700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
     Event_1037423702(0, flag=1037422704, flag_1=1037422703, flag_2=1037429207, seconds=20.0)
     Event_1037423703(0, attacked_entity=1037421700, other_entity=Characters.RyatheScout)
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1037421700, vfx_id=200, model_point=120, seconds=3.0)
     Event_1037423710(0, character=Characters.Patches, asset=Assets.AEG003_363_1000)
     Event_1037423711(0, character=Characters.Patches, flag=1037422731, flag_1=1038419251)
     Event_1037423712()
@@ -91,7 +91,7 @@ def Constructor():
         last_flag=3684,
         right=-1,
     )
-    CommonFunc_90005702(0, 1037420720, 3683, 3680, 3684)
+    CommonFunc_90005702(0, character=Characters.Patches, flag=3683, first_flag=3680, last_flag=3684)
 
 
 @ContinueOnRest(50)
@@ -133,7 +133,7 @@ def Preconstructor():
     CommonFunc_90005462(0, character=Characters.GiantOctopus0)
     CommonFunc_90005460(0, character=Characters.GiantOctopus1)
     CommonFunc_90005461(0, character=Characters.GiantOctopus1)
-    CommonFunc_90005462(0, 1037420301)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus1)
 
 
 @RestartOnRest(1037422610)

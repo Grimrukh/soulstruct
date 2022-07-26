@@ -27,4 +27,4 @@ def Constructor():
     CommonFunc_90005600(0, grace_flag=1051350000, asset=1051351950, enemy_block_distance=10.0, character=1051350480)
     CommonFunc_90005300(0, flag=1051350290, character=Characters.Scarab, item_lot=40408, seconds=0.0, left=0)
     CommonFunc_90005261(0, character=Characters.Bat0, region=1051352200, radius=10.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005261(0, 1051350201, 1051352200, 10.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.Bat1, region=1051352200, radius=10.0, seconds=0.0, animation_id=0)

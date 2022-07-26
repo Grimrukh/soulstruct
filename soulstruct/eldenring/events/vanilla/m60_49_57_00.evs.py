@@ -63,22 +63,8 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1049570300,
-        character=Characters.LargeScarab,
-        item_lot=1049570710,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=1049570310,
-        character=Characters.Scarab,
-        item_lot=1049570700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1049570300, character=Characters.LargeScarab, item_lot=1049570710, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=1049570310, character=Characters.Scarab, item_lot=1049570700, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
         flag=1049570320,
@@ -113,7 +99,7 @@ def Constructor():
     )
     Event_1049572350(0, source_entity=1049572351)
     Event_1049572350(1, source_entity=1049572351)
-    Event_1049572350(2, 1049572352)
+    Event_1049572350(2, source_entity=1049572352)
 
 
 @RestartOnRest(1049572350)

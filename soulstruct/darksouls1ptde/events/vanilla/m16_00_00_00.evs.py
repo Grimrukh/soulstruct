@@ -162,7 +162,7 @@ def Constructor():
     Event_11600600(1, obj=1601651, obj_act_id=11600601)
     Event_11600600(2, obj=1601652, obj_act_id=11600602)
     Event_11600650(0, obj=1601610, obj_1=1601310)
-    Event_11600650(1, 1601611, 1601311)
+    Event_11600650(1, obj=1601611, obj_1=1601311)
 
 
 @ContinueOnRest(50)

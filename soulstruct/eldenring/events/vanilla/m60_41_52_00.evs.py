@@ -49,13 +49,13 @@ def Constructor():
         asset=Assets.AEG099_166_9000,
         asset_1=Assets.AEG099_990_9000,
     )
-    CommonFunc_90005631(0, 1041521400, 61030)
+    CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1001, text=61030)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    Event_1041522300(0, 1041520800)
+    Event_1041522300(0, character=Characters.AncientDragon)
 
 
 @RestartOnRest(1041522270)

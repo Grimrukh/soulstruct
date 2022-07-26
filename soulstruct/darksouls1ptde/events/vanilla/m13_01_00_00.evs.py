@@ -86,7 +86,7 @@ def Constructor():
         Event_11315350(2, character=1310122)
         Event_11315350(3, character=1310123)
     Event_11315350(4, character=1310124)
-    Event_11315350(5, 1310125)
+    Event_11315350(5, character=1310125)
 
 
 @ContinueOnRest(50)
@@ -726,7 +726,7 @@ def Event_11315100():
     Event_11315150(45, flag=11315145, vfx_id=1313245, flag_1=11315146)
     Event_11315150(46, flag=11315146, vfx_id=1313246, flag_1=11315147)
     Event_11315150(47, flag=11315147, vfx_id=1313247, flag_1=11315148)
-    Event_11315150(48, 11315148, 1313248, 11315149)
+    Event_11315150(48, flag=11315148, vfx_id=1313248, flag_1=11315149)
 
 
 @EndOnRest(11315150)

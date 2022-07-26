@@ -189,4 +189,14 @@ def Event_12042849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12040800, asset=Assets.AEG099_002_9000, model_point=8, right=0)
-    CommonFunc_9005822(0, 12040800, 920700, 12042805, 12042806, 0, 12042802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12040800,
+        bgm_boss_conv_param_id=920700,
+        flag_1=12042805,
+        flag_2=12042806,
+        right=0,
+        flag_3=12042802,
+        left=0,
+        left_1=0,
+    )

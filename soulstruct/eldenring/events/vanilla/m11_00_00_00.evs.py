@@ -528,14 +528,7 @@ def Constructor():
         left_3=0,
         left_4=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=11000393,
-        character=Characters.Gargoyle2,
-        item_lot=11001187,
-        seconds=2.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=11000393, character=Characters.Gargoyle2, item_lot=11001187, seconds=2.0, left=0)
     Event_11002402(
         2,
         character=Characters.DepravedPerfurmer1,
@@ -577,38 +570,10 @@ def Constructor():
     )
     Event_11002317(0, character=Characters.LeyndellKnight8, region=11002359, seconds=0.0, radius=5.0)
     Event_11002317(1, character=Characters.DepravedPerfurmer9, region=11002359, seconds=0.0, radius=10.0)
-    CommonFunc_90005300(
-        0,
-        flag=11000389,
-        character=Characters.ErdtreeAvatar,
-        item_lot=11001198,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=11000399,
-        character=Characters.LionGuardian,
-        item_lot=11000185,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=11000495,
-        character=Characters.CrucibleKnight0,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=11000496,
-        character=Characters.CrucibleKnight1,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=11000389, character=Characters.ErdtreeAvatar, item_lot=11001198, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000399, character=Characters.LionGuardian, item_lot=11000185, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000495, character=Characters.CrucibleKnight0, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=11000496, character=Characters.CrucibleKnight1, item_lot=0, seconds=0.0, left=0)
     Event_11002497(0, character=Characters.UlceratedTreeSpirit, region=11002497, seconds=0.0)
     CommonFunc_90005300(
         0,
@@ -633,14 +598,7 @@ def Constructor():
     )
     CommonFunc_90005300(0, flag=11000498, character=Characters.GuardianGolem, item_lot=0, seconds=2.0, left=0)
     CommonFunc_90005300(0, flag=11000499, character=11000499, item_lot=11000195, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=11000484,
-        character=Characters.BlackKnifeAssassin,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=11000484, character=Characters.BlackKnifeAssassin, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=11000665, character=Characters.Scarab0, item_lot=40370, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=11000666, character=Characters.Scarab1, item_lot=40372, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=11000667, character=11000667, item_lot=40374, seconds=0.0, left=0)
@@ -660,16 +618,16 @@ def Constructor():
         asset=Assets.AEG099_090_9002,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    Event_11002155(
-        0,
-        flag=7605,
-        character=Characters.VargramtheRagingWolf,
-        character_1=Characters.ErrantSorcererWilhelm,
-        banner_type=5,
-        region=11002141,
-    )
-    Event_11002145()
+    if CeremonyActive(ceremony=20):
+        Event_11002155(
+            0,
+            flag=7605,
+            character=Characters.VargramtheRagingWolf,
+            character_1=Characters.ErrantSorcererWilhelm,
+            banner_type=5,
+            region=11002141,
+        )
+        Event_11002145()
     CommonFunc_90005780(
         0,
         flag=11000800,
@@ -778,7 +736,7 @@ def Constructor():
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy3, flag=11002742)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy4, flag=11002743)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy5, flag=11002744)
-    CommonFunc_90005775(0, 85495300, 11109687, -1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=85495300, flag=11109687, distance=-1.0)
 
 
 @ContinueOnRest(50)
@@ -2217,7 +2175,8 @@ def Event_11000602():
 @RestartOnRest(11002145)
 def Event_11002145():
     """Event 11002145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.VargramtheRagingWolf)
     EnableBackread(Characters.ErrantSorcererWilhelm)
     EnableBackread(Characters.RecusantBernahl)
@@ -2405,7 +2364,7 @@ def Event_11002260(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2481,7 +2440,7 @@ def Event_11002317(_, character: uint, region: uint, seconds: float, radius: flo
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2556,7 +2515,7 @@ def Event_11002360(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2613,7 +2572,7 @@ def Event_11002397(_, character: uint, region: uint, seconds: float):
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(AND_2)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Search))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
@@ -2710,7 +2669,7 @@ def Event_11002402(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2761,7 +2720,7 @@ def Event_11002497(_, character: uint, region: uint, seconds: float):
     AND_3.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=20.0))
     AND_1.Add(AND_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2878,19 +2837,19 @@ def Event_11002510():
     )
     CommonFunc_90005500(
         0,
-        11000610,
-        11000611,
-        2,
-        11001610,
-        11001611,
-        11003611,
-        11001612,
-        11003612,
-        11002611,
-        11002612,
-        11000612,
-        11000613,
-        0,
+        flag=11000610,
+        flag_1=11000611,
+        left=2,
+        asset=Assets.AEG227_001_0501,
+        asset_1=Assets.AEG227_050_0507,
+        obj_act_id=11003611,
+        asset_2=m60_45_Assets.AEG227_050_2001,
+        obj_act_id_1=11003612,
+        region=11002611,
+        region_1=11002612,
+        flag_2=11000612,
+        flag_3=11000613,
+        left_1=0,
     )
 
 
@@ -3208,7 +3167,17 @@ def Event_11002829():
     )
     CommonFunc_9005811(0, flag=11000501, asset=Assets.AEG099_001_9000, model_point=17, right=0)
     CommonFunc_9005811(0, flag=11000800, asset=Assets.AEG099_002_9001, model_point=18, right=11000801)
-    CommonFunc_9005822(0, 11000800, 213001, 11002805, 11002806, 0, 11002802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=11000800,
+        bgm_boss_conv_param_id=213001,
+        flag_1=11002805,
+        flag_2=11002806,
+        right=0,
+        flag_3=11002802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(11002850)
@@ -3249,7 +3218,7 @@ def Event_11002860():
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(EntityWithinDistance(entity=Characters.Godfrey, other_entity=PLAYER, radius=25.0))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=m10_00_Characters.Margit, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=m10_00_Characters.Margit))
     
     MAIN.Await(OR_1)
     
@@ -3314,7 +3283,17 @@ def Event_11002859():
     CommonFunc_9005811(0, flag=11000850, asset=Assets.AEG099_002_9000, model_point=19, right=0)
     CommonFunc_9005811(0, flag=11000850, asset=Assets.AEG099_001_9007, model_point=5, right=0)
     CommonFunc_9005811(0, flag=11000850, asset=Assets.AEG099_001_9008, model_point=5, right=0)
-    CommonFunc_9005822(0, 11000850, 472001, 11002855, 11002856, 0, 11002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=11000850,
+        bgm_boss_conv_param_id=472001,
+        flag_1=11002855,
+        flag_2=11002856,
+        right=0,
+        flag_3=11002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(11002910)

@@ -2682,7 +2682,17 @@ def Event_200():
         text=80871,
         destination=Assets.AEG099_090_9087,
     )
-    Event_1252382600(79, 1052380340, 1052389250, 1252382179, 1252382187, 1252382197, 0, 0, 80872)
+    Event_1252382600(
+        79,
+        character=Characters.Patches,
+        left=1052389250,
+        flag=1252382179,
+        flag_1=1252382187,
+        flag_2=1252382197,
+        left_1=0,
+        animation_id=0,
+        text=80872,
+    )
 
 
 @RestartOnRest(1252382200)
@@ -3415,7 +3425,17 @@ def Event_1252382820():
 @RestartOnRest(1252382850)
 def Event_1252382850():
     """Event 1252382850"""
-    CommonFunc_9005822(0, 1252380800, 473000, 1052382805, 1052382806, 1252382815, 1252382895, 0, 1)
+    CommonFunc_9005822(
+        0,
+        flag=1252380800,
+        bgm_boss_conv_param_id=473000,
+        flag_1=1052382805,
+        flag_2=1052382806,
+        right=1252382815,
+        flag_3=1252382895,
+        left=0,
+        left_1=1,
+    )
 
 
 @RestartOnRest(1252382860)

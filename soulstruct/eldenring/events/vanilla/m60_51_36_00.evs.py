@@ -474,8 +474,8 @@ def Constructor():
     Event_1051363711()
     Event_1051360720(0, character=Characters.Blaidd)
     Event_1051360721()
-    Event_1051363725(0, asset__character=1051360700)
-    Event_1051363726(0, asset__character=1051360701)
+    Event_1051363725(0, asset__character=Characters.WitchHunterJerren0)
+    Event_1051363726(0, asset__character=Characters.WitchHunterJerren1)
     Event_1051363727()
     CommonFunc_90005708(0, character=Characters.WitchHunterJerren0, flag=3360, left=1051362700)
     Event_1051360730(0, character=Characters.Human, animation_id=0, left=1)
@@ -484,7 +484,7 @@ def Constructor():
     Event_1051360734(0, character=Characters.FingerMaidenTherolina)
     Event_1051360735(0, character=Characters.GreatHornedTragoth, animation_id=0, left=1)
     Event_1051362500()
-    Event_1051362490(0, 1051362710)
+    Event_1051362490(0, region=1051362710)
 
 
 @ContinueOnRest(50)
@@ -668,7 +668,7 @@ def Event_1051362340(_, character: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=1051362340))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Troll, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Troll))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -728,8 +728,8 @@ def Event_1051362500():
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SkipLinesIfCharacterInsideRegion(line_count=1, character=20000, region=1051362710)
-    RemoveSpecialEffect(20000, 9621)
+    if CharacterOutsideRegion(character=20000, region=1051362710):
+        RemoveSpecialEffect(20000, 9621)
     Restart()
 
     # --- Label 0 --- #
@@ -743,19 +743,19 @@ def Event_1051362510():
     """Event 1051362510"""
     CommonFunc_90005500(
         0,
-        1051360510,
-        1051360511,
-        0,
-        1051361510,
-        1051361511,
-        1051363511,
-        1051361512,
-        1051363512,
-        1051362511,
-        1051362512,
-        1051360512,
-        1051360513,
-        0,
+        flag=1051360510,
+        flag_1=1051360511,
+        left=0,
+        asset=Assets.AEG030_858_2000,
+        asset_1=Assets.AEG099_026_2000,
+        obj_act_id=1051363511,
+        asset_2=Assets.AEG099_026_2001,
+        obj_act_id_1=1051363512,
+        region=1051362511,
+        region_1=1051362512,
+        flag_2=1051360512,
+        flag_3=1051360513,
+        left_1=0,
     )
 
 
@@ -1044,7 +1044,17 @@ def Event_1051362849():
     )
     CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9000, model_point=5, right=0)
     CommonFunc_9005811(0, flag=1051360800, asset=Assets.AEG099_001_9001, model_point=3, right=0)
-    CommonFunc_9005822(0, 1051360800, 920200, 1051362805, 1051362806, 0, 1051362802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1051360800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=1051362805,
+        flag_2=1051362806,
+        right=0,
+        flag_3=1051362802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(1051363700)

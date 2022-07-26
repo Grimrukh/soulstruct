@@ -681,7 +681,7 @@ def Constructor():
     CommonFunc_20005610(0, flag=13000452, region=3002471, region_1=3002470)
     CommonFunc_20005611(0, flag=13000452, obj_act_id=3003304, obj=3001412, obj_act_id_1=300310)
     CommonFunc_20005611(0, flag=13000453, obj_act_id=3003303, obj=3001411, obj_act_id_1=300312)
-    CommonFunc_20005613(0, 13000405, 3003309, 3001413, -1, 10010861)
+    CommonFunc_20005613(0, flag=13000405, obj_act_id=3003309, obj=3001413, obj_act_id_1=-1, text=10010861)
     CommonFunc_20005613(0, flag=13000406, obj_act_id=3003310, obj=3001415, obj_act_id_1=300313, text=10010870)
     Event_13005540()
     DeleteObjectVFX(3001885)
@@ -810,7 +810,7 @@ def Constructor():
     Event_13005604()
     Event_13005560()
     Event_13000360()
-    Event_13000901(0, 3001900)
+    Event_13000901(0, obj=3001900)
 
 
 @ContinueOnRest(50)
@@ -1787,18 +1787,18 @@ def Event_13005440():
     )
     CommonFunc_20005623(
         0,
-        13000330,
-        13000331,
-        3001230,
-        3001231,
-        3004231,
-        3001232,
-        3004232,
-        3002331,
-        3002332,
-        13001330,
-        13004330,
-        0,
+        flag=13000330,
+        flag_1=13000331,
+        obj=3001230,
+        obj_1=3001231,
+        obj_act_id=3004231,
+        obj_2=3001232,
+        obj_act_id_1=3004232,
+        region=3002331,
+        region_1=3002332,
+        flag_2=13001330,
+        flag_3=13004330,
+        left=0,
     )
 
 
@@ -1992,7 +1992,7 @@ def Event_13005820():
             sound_id_1=3002806,
             flag_3=13005815,
         )
-    CommonFunc_20005810(0, 13000825, 3001800, 3002800, 10000)
+    CommonFunc_20005810(0, flag=13000825, entity=3001800, target_entity=3002800, action_button_id=10000)
 
 
 @RestartOnRest(13005825)
@@ -2290,7 +2290,7 @@ def Event_13005840():
         flag_2=13005856,
     )
     CommonFunc_20005810(0, flag=13000830, entity=3001830, target_entity=3002831, action_button_id=10000)
-    CommonFunc_20005810(0, 13000825, 3001890, 3002896, 10000)
+    CommonFunc_20005810(0, flag=13000825, entity=3001890, target_entity=3002896, action_button_id=10000)
 
 
 @RestartOnRest(13005850)

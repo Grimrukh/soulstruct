@@ -239,7 +239,7 @@ def Constructor():
         cancel_flag__right_flag=1053562571,
         right=1053562572,
     )
-    CommonFunc_90005621(0, 1053560570, 1053561573)
+    CommonFunc_90005621(0, flag=1053560570, asset=Assets.AEG099_272_9000)
 
 
 @ContinueOnRest(50)

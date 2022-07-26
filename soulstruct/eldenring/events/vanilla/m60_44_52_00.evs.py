@@ -79,7 +79,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005201(0, 1044520301, 30016, 20016, 20.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.Skeleton1,
+        animation_id=30016,
+        animation_id_1=20016,
+        radius=20.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(1044523700)

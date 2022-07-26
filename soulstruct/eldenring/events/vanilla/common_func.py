@@ -80,7 +80,7 @@ def CommonFunc_90005200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -184,7 +184,7 @@ def CommonFunc_90005201(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -291,7 +291,7 @@ def CommonFunc_90005210(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -399,7 +399,7 @@ def CommonFunc_90005211(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -511,7 +511,7 @@ def CommonFunc_90005213(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -604,7 +604,7 @@ def CommonFunc_90005220(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -670,7 +670,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -742,7 +742,7 @@ def CommonFunc_90005250(_, character: uint, region: uint, seconds: float, animat
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -805,7 +805,7 @@ def CommonFunc_90005251(_, character: uint, radius: float, seconds: float, anima
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -870,7 +870,7 @@ def CommonFunc_90005260(_, character: uint, region: uint, radius: float, seconds
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -935,7 +935,7 @@ def CommonFunc_90005261(_, character: uint, region: uint, radius: float, seconds
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -990,7 +990,7 @@ def CommonFunc_90005271(_, character: uint, seconds: float, animation_id: int):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1065,15 +1065,7 @@ def CommonFunc_90005360(_, flag: uint, character: uint, item_lot: int):
 
 
 @RestartOnRest(90005390)
-def CommonFunc_90005390(
-    _,
-    flag: uint,
-    flag_1: uint,
-    anchor_entity: uint,
-    character: uint,
-    left: int,
-    item_lot: int,
-):
+def CommonFunc_90005390(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
     """CommonFunc 90005390"""
     if FlagEnabled(flag):
         return
@@ -1185,7 +1177,7 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
     else:
         AddSpecialEffect(character, 4421)
     ForceAnimation(character, 14100, loop=True)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasSpecialEffect(character, 5112))
     
     MAIN.Await(OR_2)
@@ -1194,10 +1186,10 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5111))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
     SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=character, special_effect=5112)
-    Wait(seconds_1)
-    SkipLines(1)
-    Wait(seconds)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=5112):
+        Wait(seconds_1)
+    else:
+        Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
         EnableCharacterCollision(character)
@@ -1662,8 +1654,8 @@ def CommonFunc_90005461(_, character: uint):
     
     SetNPCPartHealth(character, npc_part_id=10, desired_health=0, overwrite_max=False)
     SetNPCPartHealth(character, npc_part_id=20, desired_health=0, overwrite_max=False)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=11753)
-    ForceAnimation(character, 20001)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=11753):
+        ForceAnimation(character, 20001)
     Wait(2.0)
     Restart()
 
@@ -1725,7 +1717,7 @@ def CommonFunc_90005463(_, character: uint, character_1: uint):
     """CommonFunc 90005463"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     OR_10.Add(EventValue(flag=character, bit_count=3) >= 5)
-    AND_1.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=0))
+    AND_1.Add(AttackedWithDamageType(attacked_entity=character_1))
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(character, 11757))
     OR_10.Add(AND_1)
     
@@ -1775,77 +1767,101 @@ def CommonFunc_90005470(_, character: uint):
     MAIN.Await(AND_1)
     
     GotoIfThisEventSlotFlagEnabled(Label.L1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=12160)
-    CreateNPCPart(character, npc_part_id=20, part_index=NPCPartType.Part2, part_health=80, body_damage_correction=3.0)
-    SetNPCPartEffects(
-        character,
-        npc_part_id=20,
-        material_sfx_id=120,
-        material_vfx_id=120,
-        unk_16_20=-1,
-        unk_20_24=-1,
-        unk_24_28=-1,
-    )
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=12161)
-    CreateNPCPart(character, npc_part_id=30, part_index=NPCPartType.Part3, part_health=80, body_damage_correction=3.0)
-    SetNPCPartEffects(
-        character,
-        npc_part_id=30,
-        material_sfx_id=120,
-        material_vfx_id=120,
-        unk_16_20=-1,
-        unk_20_24=-1,
-        unk_24_28=-1,
-    )
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=12162)
-    CreateNPCPart(character, npc_part_id=40, part_index=NPCPartType.Part4, part_health=75, body_damage_correction=3.0)
-    SetNPCPartEffects(
-        character,
-        npc_part_id=40,
-        material_sfx_id=120,
-        material_vfx_id=120,
-        unk_16_20=-1,
-        unk_20_24=-1,
-        unk_24_28=-1,
-    )
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=12163)
-    CreateNPCPart(character, npc_part_id=50, part_index=NPCPartType.Part5, part_health=75, body_damage_correction=3.0)
-    SetNPCPartEffects(
-        character,
-        npc_part_id=50,
-        material_sfx_id=120,
-        material_vfx_id=120,
-        unk_16_20=-1,
-        unk_20_24=-1,
-        unk_24_28=-1,
-    )
+    if CharacterHasSpecialEffect(character=character, special_effect=12160):
+        CreateNPCPart(
+            character,
+            npc_part_id=20,
+            part_index=NPCPartType.Part2,
+            part_health=80,
+            body_damage_correction=3.0,
+        )
+        SetNPCPartEffects(
+            character,
+            npc_part_id=20,
+            material_sfx_id=120,
+            material_vfx_id=120,
+            unk_16_20=-1,
+            unk_20_24=-1,
+            unk_24_28=-1,
+        )
+    if CharacterHasSpecialEffect(character=character, special_effect=12161):
+        CreateNPCPart(
+            character,
+            npc_part_id=30,
+            part_index=NPCPartType.Part3,
+            part_health=80,
+            body_damage_correction=3.0,
+        )
+        SetNPCPartEffects(
+            character,
+            npc_part_id=30,
+            material_sfx_id=120,
+            material_vfx_id=120,
+            unk_16_20=-1,
+            unk_20_24=-1,
+            unk_24_28=-1,
+        )
+    if CharacterHasSpecialEffect(character=character, special_effect=12162):
+        CreateNPCPart(
+            character,
+            npc_part_id=40,
+            part_index=NPCPartType.Part4,
+            part_health=75,
+            body_damage_correction=3.0,
+        )
+        SetNPCPartEffects(
+            character,
+            npc_part_id=40,
+            material_sfx_id=120,
+            material_vfx_id=120,
+            unk_16_20=-1,
+            unk_20_24=-1,
+            unk_24_28=-1,
+        )
+    if CharacterHasSpecialEffect(character=character, special_effect=12163):
+        CreateNPCPart(
+            character,
+            npc_part_id=50,
+            part_index=NPCPartType.Part5,
+            part_health=75,
+            body_damage_correction=3.0,
+        )
+        SetNPCPartEffects(
+            character,
+            npc_part_id=50,
+            material_sfx_id=120,
+            material_vfx_id=120,
+            unk_16_20=-1,
+            unk_20_24=-1,
+            unk_24_28=-1,
+        )
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=6, character=character, special_effect=12160)
-    AND_2.Add(CharacterPartHealth(character, npc_part_id=20) <= 0)
-    AND_2.Add(CharacterHasSpecialEffect(character, 12156))
-    AND_2.Add(CharacterHasSpecialEffect(character, 12168))
-    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
-    AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
-    OR_2.Add(AND_2)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=6, character=character, special_effect=12161)
-    AND_3.Add(CharacterPartHealth(character, npc_part_id=30) <= 0)
-    AND_3.Add(CharacterHasSpecialEffect(character, 12156))
-    AND_3.Add(CharacterHasSpecialEffect(character, 12169))
-    AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
-    AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
-    OR_3.Add(AND_3)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character, special_effect=12162)
-    AND_4.Add(CharacterPartHealth(character, npc_part_id=40) <= 0)
-    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
-    AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
-    OR_4.Add(AND_4)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character, special_effect=12163)
-    AND_5.Add(CharacterPartHealth(character, npc_part_id=50) <= 0)
-    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
-    AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
-    OR_5.Add(AND_5)
+    if CharacterHasSpecialEffect(character=character, special_effect=12160):
+        AND_2.Add(CharacterPartHealth(character, npc_part_id=20) <= 0)
+        AND_2.Add(CharacterHasSpecialEffect(character, 12156))
+        AND_2.Add(CharacterHasSpecialEffect(character, 12168))
+        AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
+        AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
+        OR_2.Add(AND_2)
+    if CharacterHasSpecialEffect(character=character, special_effect=12161):
+        AND_3.Add(CharacterPartHealth(character, npc_part_id=30) <= 0)
+        AND_3.Add(CharacterHasSpecialEffect(character, 12156))
+        AND_3.Add(CharacterHasSpecialEffect(character, 12169))
+        AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
+        AND_3.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
+        OR_3.Add(AND_3)
+    if CharacterHasSpecialEffect(character=character, special_effect=12162):
+        AND_4.Add(CharacterPartHealth(character, npc_part_id=40) <= 0)
+        AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
+        AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
+        OR_4.Add(AND_4)
+    if CharacterHasSpecialEffect(character=character, special_effect=12163):
+        AND_5.Add(CharacterPartHealth(character, npc_part_id=50) <= 0)
+        AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 12170))
+        AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 12171))
+        OR_5.Add(AND_5)
     OR_9.Add(OR_2)
     OR_9.Add(OR_3)
     OR_9.Add(OR_4)
@@ -1891,10 +1907,10 @@ def CommonFunc_90005470(_, character: uint):
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=character, special_effect=12156)
-    ForceAnimation(character, 20006, wait_for_completion=True)
-    SkipLines(1)
-    ForceAnimation(character, 20010, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=12156):
+        ForceAnimation(character, 20006, wait_for_completion=True)
+    else:
+        ForceAnimation(character, 20010, wait_for_completion=True)
     CreateNPCPart(character, npc_part_id=40, part_index=NPCPartType.Part4, part_health=75, body_damage_correction=3.0)
     SetNPCPartEffects(
         character,
@@ -1909,10 +1925,10 @@ def CommonFunc_90005470(_, character: uint):
 
     # --- Label 5 --- #
     DefineLabel(5)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=character, special_effect=12156)
-    ForceAnimation(character, 20007, wait_for_completion=True)
-    SkipLines(1)
-    ForceAnimation(character, 2009, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=12156):
+        ForceAnimation(character, 20007, wait_for_completion=True)
+    else:
+        ForceAnimation(character, 2009, wait_for_completion=True)
     CreateNPCPart(character, npc_part_id=50, part_index=NPCPartType.Part5, part_health=75, body_damage_correction=3.0)
     SetNPCPartEffects(
         character,
@@ -1924,14 +1940,14 @@ def CommonFunc_90005470(_, character: uint):
         unk_24_28=-1,
     )
     Goto(Label.L9)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=12160)
-    SetNPCPartHealth(character, npc_part_id=20, desired_health=9999999, overwrite_max=False)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=12161)
-    SetNPCPartHealth(character, npc_part_id=30, desired_health=9999999, overwrite_max=False)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=12162)
-    SetNPCPartHealth(character, npc_part_id=40, desired_health=9999999, overwrite_max=False)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=12163)
-    SetNPCPartHealth(character, npc_part_id=50, desired_health=9999999, overwrite_max=False)
+    if CharacterHasSpecialEffect(character=character, special_effect=12160):
+        SetNPCPartHealth(character, npc_part_id=20, desired_health=9999999, overwrite_max=False)
+    if CharacterHasSpecialEffect(character=character, special_effect=12161):
+        SetNPCPartHealth(character, npc_part_id=30, desired_health=9999999, overwrite_max=False)
+    if CharacterHasSpecialEffect(character=character, special_effect=12162):
+        SetNPCPartHealth(character, npc_part_id=40, desired_health=9999999, overwrite_max=False)
+    if CharacterHasSpecialEffect(character=character, special_effect=12163):
+        SetNPCPartHealth(character, npc_part_id=50, desired_health=9999999, overwrite_max=False)
     Wait(1.0)
     Restart()
 
@@ -1970,8 +1986,8 @@ def CommonFunc_90005471(_, character: uint):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=12170)
-    ForceAnimation(character, 20011, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=12170):
+        ForceAnimation(character, 20011, wait_for_completion=True)
     CreateNPCPart(character, npc_part_id=20, part_index=NPCPartType.Part2, part_health=80, body_damage_correction=3.0)
     SetNPCPartEffects(
         character,
@@ -2020,8 +2036,8 @@ def CommonFunc_90005472(_, character: uint):
     
     MAIN.Await(OR_2)
     
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=12170)
-    ForceAnimation(character, 20008, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=12170):
+        ForceAnimation(character, 20008, wait_for_completion=True)
     CreateNPCPart(character, npc_part_id=30, part_index=NPCPartType.Part3, part_health=80, body_damage_correction=3.0)
     SetNPCPartEffects(
         character,
@@ -2259,8 +2275,8 @@ def CommonFunc_90005480(_, character: uint):
     AddSpecialEffect(character, 16472)
     SetDisplayMask(character, bit_index=10, switch_type=OnOffChange.On)
     WaitFrames(frames=2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=16485)
-    ForceAnimation(character, 20000, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=16485):
+        ForceAnimation(character, 20000, wait_for_completion=True)
     Goto(Label.L9)
 
     # --- Label 4 --- #
@@ -2270,8 +2286,8 @@ def CommonFunc_90005480(_, character: uint):
     AddSpecialEffect(character, 16473)
     SetDisplayMask(character, bit_index=11, switch_type=OnOffChange.On)
     WaitFrames(frames=2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=16485)
-    ForceAnimation(character, 20001, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=16485):
+        ForceAnimation(character, 20001, wait_for_completion=True)
     Goto(Label.L9)
 
     # --- Label 5 --- #
@@ -2281,8 +2297,8 @@ def CommonFunc_90005480(_, character: uint):
     AddSpecialEffect(character, 16474)
     SetDisplayMask(character, bit_index=12, switch_type=OnOffChange.On)
     WaitFrames(frames=2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=16485)
-    ForceAnimation(character, 20002, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=16485):
+        ForceAnimation(character, 20002, wait_for_completion=True)
     Goto(Label.L9)
 
     # --- Label 6 --- #
@@ -2292,8 +2308,8 @@ def CommonFunc_90005480(_, character: uint):
     AddSpecialEffect(character, 16475)
     SetDisplayMask(character, bit_index=13, switch_type=OnOffChange.On)
     WaitFrames(frames=2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=16485)
-    ForceAnimation(character, 20003, wait_for_completion=True)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=16485):
+        ForceAnimation(character, 20003, wait_for_completion=True)
     Goto(Label.L9)
 
     # --- Label 9 --- #
@@ -2445,11 +2461,7 @@ def CommonFunc_90005500(
     AND_15.Add(FlagEnabled(flag_2))
     GotoIfConditionTrue(Label.L9, input_condition=AND_15)
     GotoIfFlagDisabled(Label.L0, flag=flag_1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableAssetActivation(asset_2, obj_act_id=-1)
     DisableAssetActivation(asset_1, obj_act_id=-1)
     OR_1.Add(AssetActivated(obj_act_id=obj_act_id_1))
@@ -2463,17 +2475,9 @@ def CommonFunc_90005500(
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableAssetActivation(asset_2, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
@@ -2514,11 +2518,7 @@ def CommonFunc_90005500(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -2556,11 +2556,7 @@ def CommonFunc_90005500(
     # --- Label 11 --- #
     DefineLabel(11)
     ForceAnimation(asset_2, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 2 --- #
@@ -2647,11 +2643,7 @@ def CommonFunc_90005500(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableAssetActivation(asset_1, obj_act_id=-1)
     DisableAssetActivation(asset_2, obj_act_id=-1)
     OR_5.Add(AssetActivated(obj_act_id=obj_act_id))
@@ -2666,17 +2658,9 @@ def CommonFunc_90005500(
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableAssetActivation(asset_1, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
@@ -2717,11 +2701,7 @@ def CommonFunc_90005500(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(29, left=left, right=10)
@@ -2759,11 +2739,7 @@ def CommonFunc_90005500(
     # --- Label 14 --- #
     DefineLabel(14)
     ForceAnimation(asset_1, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 5 --- #
@@ -3061,11 +3037,7 @@ def CommonFunc_90005503(
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
@@ -3148,17 +3120,9 @@ def CommonFunc_90005503(
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableAssetActivation(asset__region, obj_act_id=-1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
@@ -3181,11 +3145,7 @@ def CommonFunc_90005503(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     Wait(2.0)
     SkipLinesIfUnsignedEqual(11, left=left, right=4)
@@ -3205,11 +3165,7 @@ def CommonFunc_90005503(
     # --- Label 14 --- #
     DefineLabel(14)
     ForceAnimation(asset__region, 3, skip_transition=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 5 --- #
@@ -3577,11 +3533,7 @@ def CommonFunc_90005507(
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     DisableNetworkFlag(flag)
     DisableFlag(flag_1)
@@ -3623,11 +3575,7 @@ def CommonFunc_90005507(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     ForceAnimation(entity_1, 1, skip_transition=True)
     Wait(0.5)
@@ -3665,11 +3613,7 @@ def CommonFunc_90005507(
 
     # --- Label 11 --- #
     DefineLabel(11)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 2 --- #
@@ -3769,11 +3713,7 @@ def CommonFunc_90005507(
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_2)
     EnableNetworkFlag(flag)
     EnableFlag(flag_1)
@@ -3815,11 +3755,7 @@ def CommonFunc_90005507(
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_3)
     ForceAnimation(entity, 1, skip_transition=True)
     Wait(0.5)
@@ -3857,11 +3793,7 @@ def CommonFunc_90005507(
 
     # --- Label 14 --- #
     DefineLabel(14)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
 
     # --- Label 5 --- #
@@ -5304,11 +5236,7 @@ def CommonFunc_90005670(
     
     MAIN.Await(OR_1)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     ForceAnimation(entity, 12, wait_for_completion=True)
 
@@ -5318,11 +5246,7 @@ def CommonFunc_90005670(
     GotoIfConditionTrue(Label.L10, input_condition=AND_10)
     if UnsignedNotEqual(left=0, right=right):
         GotoIfFlagDisabled(Label.L10, flag=right)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag_1)
     EnableFlag(flag_2)
     ForceAnimation(entity, 20, wait_for_completion=True)
@@ -5331,18 +5255,10 @@ def CommonFunc_90005670(
     # --- Label 10 --- #
     DefineLabel(10)
     Wait(0.10000000149011612)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_1)
     ForceAnimation(entity, 21, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=3,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(3, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     ForceAnimation(entity, 10)
     SkipLines(1)
@@ -5361,11 +5277,7 @@ def CommonFunc_90005673(_, flag: uint, region: uint):
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     OR_10.Add(CharacterType(PLAYER, character_type=CharacterType.Invader))
@@ -5380,11 +5292,7 @@ def CommonFunc_90005673(_, flag: uint, region: uint):
     
     SkipLinesIfFinishedConditionFalse(1, input_condition=AND_10)
     Wait(1.0)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     Restart()
 
@@ -5464,11 +5372,7 @@ def CommonFunc_90005675(
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     if ThisEventSlotFlagDisabled():
         Wait(seconds)
@@ -5504,11 +5408,7 @@ def CommonFunc_90005675(
     RemoveAssetFlag(asset_flag=asset_flag)
     Wait(4.099999904632568)
     Wait(0.10000000149011612)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     Restart()
 
@@ -5516,11 +5416,7 @@ def CommonFunc_90005675(
 @RestartOnRest(90005680)
 def CommonFunc_90005680(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, asset: uint):
     """CommonFunc 90005680"""
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableFlag(flag_3)
     
     MAIN.Await(AssetBackreadEnabled(asset=asset))
@@ -5561,21 +5457,13 @@ def CommonFunc_90005681(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint,
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     DisableFlag(flag_1)
     DisableFlag(flag_2)
     ForceAnimation(attacked_entity, 21, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     Restart()
 
@@ -5590,20 +5478,12 @@ def CommonFunc_90005681(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint,
     
     MAIN.Await(OR_8)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     EnableFlag(flag_1)
     ForceAnimation(attacked_entity, 12, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     EnableFlag(flag_2)
     Restart()
@@ -6310,8 +6190,8 @@ def CommonFunc_90005703(
     AddSpecialEffect(character, 9628)
     AddSpecialEffect(character, 9635)
     AddSpecialEffect(character, 9643)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=445)
-    AddSpecialEffect(character, 442)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=445):
+        AddSpecialEffect(character, 442)
     AddSpecialEffect(character, 9644)
 
     # --- Label 0 --- #
@@ -6325,8 +6205,8 @@ def CommonFunc_90005703(
     AddSpecialEffect(character, 9634)
     AddSpecialEffect(character, 9642)
     AddSpecialEffect(character, 9647)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=445)
-    AddSpecialEffect(character, 440)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=445):
+        AddSpecialEffect(character, 440)
     AddSpecialEffect(character, 9645)
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=40000))
@@ -6376,8 +6256,8 @@ def CommonFunc_90005703(
     AddSpecialEffect(character, 9628)
     AddSpecialEffect(character, 9635)
     AddSpecialEffect(character, 9643)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=445)
-    AddSpecialEffect(character, 442)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=445):
+        AddSpecialEffect(character, 442)
     AddSpecialEffect(character, 9644)
     GotoIfFinishedConditionTrue(Label.L9, input_condition=OR_5)
     GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=1, right=right)
@@ -6629,7 +6509,7 @@ def CommonFunc_90005709(_, attacked_entity: uint, model_point: int, vfx_id: int)
     if PlayerNotInOwnWorld():
         return
     
-    MAIN.Await(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    MAIN.Await(AttackedWithDamageType(attacked_entity=attacked_entity))
     
     CreateTemporaryVFX(
         vfx_id=vfx_id,
@@ -6800,15 +6680,7 @@ def CommonFunc_90005723(_, character: uint):
 
 
 @RestartOnRest(90005724)
-def CommonFunc_90005724(
-    _,
-    flag: uint,
-    character: uint,
-    item_lot: int,
-    seconds: float,
-    left: int,
-    character_1: uint,
-):
+def CommonFunc_90005724(_, flag: uint, character: uint, item_lot: int, seconds: float, left: int, character_1: uint):
     """CommonFunc 90005724"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character_1)
@@ -6872,10 +6744,10 @@ def CommonFunc_90005725(
     DefineLabel(1)
     EnableCharacter(character)
     EnableBackread(character)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=11035)
-    ForceAnimation(character, 930003)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=11035)
-    ForceAnimation(character, 930002)
+    if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=11035):
+        ForceAnimation(character, 930003)
+    if CharacterHasSpecialEffect(character=character, special_effect=11035):
+        ForceAnimation(character, 930002)
     EnableCharacter(character_1)
     EnableBackread(character_1)
     EnableAsset(asset)
@@ -8021,15 +7893,7 @@ def CommonFunc_90005791(_, flag: uint, flag_1: uint, flag_2: uint, character: ui
 
 
 @RestartOnRest(90005792)
-def CommonFunc_90005792(
-    _,
-    flag: uint,
-    flag_1: uint,
-    flag_2: uint,
-    character: uint,
-    item_lot: int,
-    seconds: float,
-):
+def CommonFunc_90005792(_, flag: uint, flag_1: uint, flag_2: uint, character: uint, item_lot: int, seconds: float):
     """CommonFunc 90005792"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableCharacter(character)
@@ -8246,10 +8110,10 @@ def CommonFunc_9005800(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -8766,15 +8630,7 @@ def CommonFunc_9005845(_, flag: uint, character: uint):
 
 
 @RestartOnRest(90005860)
-def CommonFunc_90005860(
-    _,
-    flag: uint,
-    left: uint,
-    character: uint,
-    left_1: uint,
-    item_lot: int,
-    seconds: float,
-):
+def CommonFunc_90005860(_, flag: uint, left: uint, character: uint, left_1: uint, item_lot: int, seconds: float):
     """CommonFunc 90005860"""
     if ValueNotEqual(left=item_lot, right=0):
         Unknown_2004_76(flag=flag, item_lot=item_lot)
@@ -9241,7 +9097,7 @@ def CommonFunc_90005882(
     AddSpecialEffect(20000, 8870)
     OR_1.Add(EntityBeyondDistance(entity=PLAYER, other_entity=asset, radius=12.0))
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_1)
     

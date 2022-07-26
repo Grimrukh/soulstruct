@@ -71,7 +71,15 @@ def Constructor():
         animation_id_1=20020,
     )
     CommonFunc_90005883(0, flag=1033420800, flag_1=1033420805, entity=Assets.AEG099_170_1000)
-    CommonFunc_90005885(0, 1033420800, 0, 1033422806, 1033422807, 0, 1)
+    CommonFunc_90005885(
+        0,
+        flag=1033420800,
+        bgm_boss_conv_param_id=0,
+        flag_1=1033422806,
+        flag_2=1033422807,
+        left=0,
+        left_1=1,
+    )
 
 
 @RestartOnRest(1033422211)

@@ -50,15 +50,7 @@ def Constructor():
         flag_11=78359,
     )
     CommonFunc_90005870(0, character=1038540800, name=904680601, npc_threat_level=19)
-    CommonFunc_90005860(
-        0,
-        flag=1038540800,
-        left=1038540800,
-        character=1038540800,
-        left_1=0,
-        item_lot=0,
-        seconds=0.0,
-    )
+    CommonFunc_90005860(0, flag=1038540800, left=1038540800, character=1038540800, left_1=0, item_lot=0, seconds=0.0)
     CommonFunc_90005250(0, character=Characters.Dog, region=1038542229, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(1, character=1038540227, region=1038542229, seconds=1.0, animation_id=-1)
     CommonFunc_90005250(2, character=Characters.SmallerDog1, region=1038542229, seconds=6.0, animation_id=-1)
@@ -621,7 +613,7 @@ def Constructor():
     Event_1038542450(0, asset=Assets.AEG007_434_9000)
     Event_1038542450(1, asset=Assets.AEG007_434_9001)
     Event_1038542450(2, asset=Assets.AEG007_434_9002)
-    Event_1038542450(3, 1038541403)
+    Event_1038542450(3, asset=Assets.AEG007_434_9003)
 
 
 @ContinueOnRest(1038542580)
@@ -1091,4 +1083,14 @@ def Event_1038542500():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1038542203, 1038541203, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1038542203,
+            asset=Assets.AEG007_557_1081,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )

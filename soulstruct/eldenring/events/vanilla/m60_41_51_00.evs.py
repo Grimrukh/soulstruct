@@ -70,14 +70,7 @@ def Constructor():
     )
     Event_1041512200(0, character=Characters.LeyndellKnight0)
     Event_1041512200(1, character=Characters.LeyndellKnight1)
-    CommonFunc_90005300(
-        0,
-        flag=1041510410,
-        character=Characters.GiantMirandaFlower,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1041510410, character=Characters.GiantMirandaFlower, item_lot=0, seconds=0.0, left=0)
     Event_1041512270()
     Event_1041512270(slot=1)
 
@@ -124,7 +117,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1041510453, 30016, 20016, 1041512453, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.GraveSkeleton3,
+        animation_id=30016,
+        animation_id_1=20016,
+        region=1041512453,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1041512200)
@@ -288,15 +292,7 @@ def Event_1041512321(_, character: uint, character_1: uint, npc_threat_level: ui
 
 
 @RestartOnRest(1041512800)
-def Event_1041512800(
-    _,
-    flag: uint,
-    left: uint,
-    character: uint,
-    left_1: uint,
-    item_lot: int,
-    character_1: uint,
-):
+def Event_1041512800(_, flag: uint, left: uint, character: uint, left_1: uint, item_lot: int, character_1: uint):
     """Event 1041512800"""
     if ValueNotEqual(left=item_lot, right=0):
         Unknown_2004_76(flag=flag, item_lot=item_lot)

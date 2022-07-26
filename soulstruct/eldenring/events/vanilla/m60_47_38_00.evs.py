@@ -167,14 +167,7 @@ def Constructor():
     CommonFunc_90005637(0, flag=31218690, character=Characters.WanderingNoble, region=1047382625)
     CommonFunc_90005251(0, character=1047380294, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=1047380296, region=1047382296, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(
-        0,
-        flag=1047380299,
-        character=Characters.LionGuardian,
-        item_lot=1047380700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1047380299, character=Characters.LionGuardian, item_lot=1047380700, seconds=0.0, left=0)
     CommonFunc_90005250(0, character=1047380301, region=1047382453, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.KindredofRot0, region=1047382302, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.KindredofRot1, region=1047382302, seconds=0.0, animation_id=-1)
@@ -194,7 +187,7 @@ def Constructor():
         animation_id_1=2,
     )
     Event_1047381580()
-    CommonFunc_90005706(0, 1047380701, 930025, 1047381700)
+    CommonFunc_90005706(0, character=Characters.Commoner, animation_id=930025, left=Assets.AEG099_590_9001)
 
 
 @ContinueOnRest(50)

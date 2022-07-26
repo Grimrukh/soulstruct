@@ -66,9 +66,9 @@ def Constructor():
         flag_2=69090,
         flag_3=69370,
     )
-    Event_1044342300(0, character=Characters.DemiHuman4, asset=Assets.AEG801_480_9000, region=1044342300)
-    Event_1044342300(1, character=Characters.DemiHuman5, asset=Assets.AEG801_480_9002, region=1044342301)
-    Event_1044342300(2, character=Characters.DemiHuman6, asset=Assets.AEG801_480_9001, region=1044342301)
+    Event_1044342300(0, character=Characters.DemiHuman4, asset=1044341300, region=1044342300)
+    Event_1044342300(1, character=Characters.DemiHuman5, asset=1044341302, region=1044342301)
+    Event_1044342300(2, character=Characters.DemiHuman6, asset=1044341301, region=1044342301)
     Event_1044342203(0, character=Characters.GodrickFootSoldier1)
     CommonFunc_90005250(0, character=Characters.GodrickFootSoldier1, region=1044342280, seconds=0.0, animation_id=-1)
     Event_1044342280()
@@ -150,7 +150,7 @@ def Constructor():
         right=-1,
     )
     CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3604)
-    Event_1044343710(0, 1044340710)
+    Event_1044343710(0, character=Characters.Blaidd)
 
 
 @ContinueOnRest(50)
@@ -449,8 +449,8 @@ def Event_1044343702(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
@@ -463,8 +463,8 @@ def Event_1044343702(_, character: uint):
     
     MAIN.Await(OR_7)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20010)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20010)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -485,9 +485,9 @@ def Event_1044343702(_, character: uint):
     
     MAIN.Await(OR_11)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=9603)
-    ForceAnimation(character, 20011)
-    DisableAI(character)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20011)
+        DisableAI(character)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -561,10 +561,10 @@ def Event_1044343705(_, character: uint, attacked_entity: uint):
     EnableNetworkFlag(1041362708)
     if FlagEnabled(4741):
         return
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9602)
-    ForceAnimation(character, 20006)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9602):
+        ForceAnimation(character, 20006)
 
 
 @ContinueOnRest(1044343706)

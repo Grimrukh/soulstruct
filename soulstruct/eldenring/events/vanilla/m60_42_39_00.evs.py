@@ -91,12 +91,12 @@ def Constructor():
         asset=Assets.AEG099_090_9000,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    CommonFunc_90005796(0, flag=7602, character=Characters.OldKnightIstvan, banner_type=5, region=1042392141)
-    Event_1042392145()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7602, character=Characters.OldKnightIstvan, banner_type=5, region=1042392141)
+        Event_1042392145()
     Event_1042393700()
     Event_1042393710()
-    CommonFunc_90005774(0, 7602, 1042390500, 1042397500)
+    CommonFunc_90005774(0, flag=7602, item_lot=1042390500, flag_1=1042397500)
 
 
 @ContinueOnRest(50)
@@ -109,7 +109,8 @@ def Preconstructor():
 @RestartOnRest(1042392145)
 def Event_1042392145():
     """Event 1042392145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.OldKnightIstvan)
     SetTeamType(Characters.OldKnightIstvan, TeamType.Human)
     DeleteAssetVFX(Assets.AEG099_120_9000)
@@ -275,7 +276,7 @@ def Event_1042392600(_, attacked_entity: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)

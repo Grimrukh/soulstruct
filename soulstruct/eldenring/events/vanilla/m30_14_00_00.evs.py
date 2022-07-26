@@ -338,7 +338,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 30142800, 30141695, 5)
+    CommonFunc_91005600(0, flag=30142800, asset=30141695, model_point=5)
 
 
 @ContinueOnRest(50)
@@ -352,19 +352,19 @@ def Event_30142510():
     """Event 30142510"""
     CommonFunc_90005500(
         0,
-        30140510,
-        30141510,
-        0,
-        30141510,
-        30141511,
-        30143511,
-        30141512,
-        30143512,
-        30142511,
-        30142512,
-        30140511,
-        30142512,
-        0,
+        flag=30140510,
+        flag_1=30141510,
+        left=0,
+        asset=Assets.AEG027_016_0500,
+        asset_1=Assets.AEG027_002_0502,
+        obj_act_id=30143511,
+        asset_2=Assets.AEG027_002_0501,
+        obj_act_id_1=30143512,
+        region=30142511,
+        region_1=30142512,
+        flag_2=30140511,
+        flag_3=30142512,
+        left_1=0,
     )
 
 
@@ -495,4 +495,14 @@ def Event_30142849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30140800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30140800, 930000, 30142805, 30142806, 0, 30142802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30140800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30142805,
+        flag_2=30142806,
+        right=0,
+        flag_3=30142802,
+        left=0,
+        left_1=0,
+    )

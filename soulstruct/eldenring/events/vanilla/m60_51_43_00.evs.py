@@ -60,7 +60,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.BeastClergyman, flag=3643, first_flag=3640, last_flag=3643)
     Event_1051430702(0, character=Characters.BeastClergyman, value=0.8999999761581421)
-    Event_1051430703(0, 1051430700)
+    Event_1051430703(0, character=Characters.BeastClergyman)
 
 
 @RestartOnRest(1051432200)
@@ -78,7 +78,7 @@ def Event_1051432200(_, character: uint, radius: float, seconds: float, animatio
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(FlagDisabled(1051430210))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

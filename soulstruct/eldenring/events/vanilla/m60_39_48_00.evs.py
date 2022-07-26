@@ -41,14 +41,14 @@ def Constructor():
     )
     Event_1039482610()
     Event_1039482611()
-    CommonFunc_90005300(0, 1039480340, 1039480340, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1039480340, character=Characters.LiurniaTroll, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1039480519()
-    CommonFunc_90005251(0, 1039480200, 10.0, 0.0, 1700)
+    CommonFunc_90005251(0, character=Characters.GravenSchool, radius=10.0, seconds=0.0, animation_id=1700)
 
 
 @RestartOnRest(1039482510)
@@ -56,19 +56,19 @@ def Event_1039482510():
     """Event 1039482510"""
     CommonFunc_90005500(
         0,
-        1039480510,
-        1039480511,
-        0,
-        1039481510,
-        1039481511,
-        1039483511,
-        1039481512,
-        1039483512,
-        1039482511,
-        1039482512,
-        1039480512,
-        1039480513,
-        0,
+        flag=1039480510,
+        flag_1=1039480511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        obj_act_id=1039483511,
+        asset_2=Assets.AEG099_182_2000,
+        obj_act_id_1=1039483512,
+        region=1039482511,
+        region_1=1039482512,
+        flag_2=1039480512,
+        flag_3=1039480513,
+        left_1=0,
     )
 
 

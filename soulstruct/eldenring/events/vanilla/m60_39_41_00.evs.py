@@ -72,7 +72,19 @@ def Constructor():
         item_lot=1039410300,
         flag_1=1039412250,
     )
-    Event_1039412251(1, 1039410280, 1039411280, 1039410280, 0.0, 0.0, 0.0, 0.0, 0.0, 1039410310, 1039412280)
+    Event_1039412251(
+        1,
+        flag=1039410280,
+        asset=Assets.AEG099_160_9001,
+        character=Characters.Balloon1,
+        seconds=0.0,
+        seconds_1=0.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        seconds_4=0.0,
+        item_lot=1039410310,
+        flag_1=1039412280,
+    )
 
 
 @ContinueOnRest(50)
@@ -81,7 +93,7 @@ def Preconstructor():
     DisableBackread(Characters.Commoner3)
     Event_1039412340(0, character=Characters.Commoner0)
     Event_1039412340(1, character=Characters.Commoner1)
-    Event_1039412340(2, 1039410702)
+    Event_1039412340(2, character=Characters.Commoner2)
 
 
 @RestartOnRest(1039412200)
@@ -120,7 +132,7 @@ def Event_1039412200(_, character: uint, radius: float, seconds: float):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

@@ -116,15 +116,7 @@ def Preconstructor():
 
 
 @RestartOnRest(34142250)
-def Event_34142250(
-    _,
-    flag: uint,
-    flag_1: uint,
-    anchor_entity: uint,
-    character: uint,
-    left: int,
-    item_lot: int,
-):
+def Event_34142250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
     """Event 34142250"""
     if FlagEnabled(flag):
         return
@@ -262,19 +254,19 @@ def Event_34142510():
     )
     CommonFunc_90005507(
         0,
-        34140515,
-        34141515,
-        0,
-        34141515,
-        34141516,
-        34142518,
-        34141517,
-        34142519,
-        34142516,
-        34142517,
-        34140517,
-        34142517,
-        0,
+        flag=34140515,
+        flag_1=34141515,
+        left=0,
+        asset=Assets.AEG027_070_0500,
+        entity=Assets.AEG027_203_0501,
+        region=34142518,
+        entity_1=Assets.AEG027_203_0500,
+        region_1=34142519,
+        region_2=34142516,
+        region_3=34142517,
+        flag_2=34140517,
+        flag_3=34142517,
+        left_1=0,
     )
 
 
@@ -472,7 +464,17 @@ def Event_34142875():
 @ContinueOnRest(34142899)
 def Event_34142899():
     """Event 34142899"""
-    CommonFunc_9005822(0, 34140850, 921200, 34142855, 34142856, 0, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=34140850,
+        bgm_boss_conv_param_id=921200,
+        flag_1=34142855,
+        flag_2=34142856,
+        right=0,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(34140700)

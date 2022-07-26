@@ -75,7 +75,16 @@ def Constructor():
     Event_1039523703(0, asset=Assets.AEG099_429_9000, asset_1=Assets.AEG099_429_9001, asset_2=Assets.AEG099_429_9002)
     Event_1039523702(0, flag=1039529206)
     Event_1039523704(0, character=Characters.YuraHunterofBloodyFingers)
-    CommonFunc_90005750(0, 1039521703, 4350, 101630, 400163, 400163, 1039529205, 0)
+    CommonFunc_90005750(
+        0,
+        asset=Assets.AEG099_090_9000,
+        action_button_id=4350,
+        item_lot=101630,
+        first_flag=400163,
+        last_flag=400163,
+        flag=1039529205,
+        model_point=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -162,7 +171,7 @@ def Preconstructor():
         left_3=0,
     )
     Event_1039522400()
-    CommonFunc_90005300(0, 1039520400, 1039520400, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1039520400, character=Characters.SanguineNoble, item_lot=0, seconds=0.0, left=0)
 
 
 @RestartOnRest(1039522220)

@@ -1144,7 +1144,7 @@ def Constructor():
     CommonFunc_20006001(0, attacked_entity=5100721, flag=1846, flag_1=1847, flag_2=75000291, right=3)
     CommonFunc_20006001(0, attacked_entity=5100722, flag=1851, flag_1=1852, flag_2=75000292, right=3)
     CommonFunc_20006040(0, character=5100720, destination=5102720, special_effect=159)
-    CommonFunc_20006010(0, 75100952, 69003)
+    CommonFunc_20006010(0, flag=75100952, animation_id=69003)
 
 
 @ContinueOnRest(50)
@@ -1175,8 +1175,8 @@ def Preconstructor():
         obj=5101706,
         destination=5102707,
     )
-    Event_15105720(0, 5100710, -1)
-    Event_15105730(0, 5100715, -1)
+    Event_15105720(0, character=5100710, animation_id=-1)
+    Event_15105730(0, character=5100715, animation_id=-1)
     Event_15105740(
         0,
         character=5100720,
@@ -1187,8 +1187,26 @@ def Preconstructor():
         flag_2=75000252,
         animation_id=30000,
     )
-    Event_15105740(1, 5100721, 1845, 1846, 1848, 1849, 75000262, -1)
-    Event_15105740(2, 5100722, 1850, 1851, 1853, 1854, 75000272, -1)
+    Event_15105740(
+        1,
+        character=5100721,
+        first_flag=1845,
+        flag=1846,
+        flag_1=1848,
+        last_flag=1849,
+        flag_2=75000262,
+        animation_id=-1,
+    )
+    Event_15105740(
+        2,
+        character=5100722,
+        first_flag=1850,
+        flag=1851,
+        flag_1=1853,
+        last_flag=1854,
+        flag_2=75000272,
+        animation_id=-1,
+    )
     DisableAnimations(5100790)
     DisableGravity(5100790)
     DisableCharacterCollision(5100790)
@@ -1617,7 +1635,7 @@ def Event_15105280(
 
 
 @RestartOnRest(15105283)
-def Event_15105283(_, character: int, character_1: int, character_2: int, destination: int):
+def Event_15105283(_, character: int, character_1: int, spawner: int, destination: int):
     """Event 15105283"""
     AND_1.Add(CharacterDead(character_1))
     AND_1.Add(CharacterHasSpecialEffect(character, 16433))
@@ -1630,7 +1648,7 @@ def Event_15105283(_, character: int, character_1: int, character_2: int, destin
     AND_2.Add(CharacterAlive(character_1))
     if AND_2:
         return RESTART
-    ForceSpawnerToSpawn(spawner=character_2)
+    ForceSpawnerToSpawn(spawner=spawner)
     WaitFrames(frames=1)
     EnableGravity(character_1)
     Move(character_1, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=character)
@@ -1697,7 +1715,13 @@ def Event_15105300():
         special_effect__special_effect_id=16282,
         special_effect=16410,
     )
-    Event_15105320(12, 5100320, 5100321, 16283, 16410)
+    Event_15105320(
+        12,
+        character=5100320,
+        character_1=5100321,
+        special_effect__special_effect_id=16283,
+        special_effect=16410,
+    )
 
 
 @RestartOnRest(15105301)
@@ -2412,18 +2436,18 @@ def Event_15105510():
     )
     CommonFunc_20005623(
         0,
-        15100515,
-        15101515,
-        5101515,
-        5101516,
-        5103516,
-        5101517,
-        5103517,
-        5102516,
-        5102517,
-        15101516,
-        15104515,
-        0,
+        flag=15100515,
+        flag_1=15101515,
+        obj=5101515,
+        obj_1=5101516,
+        obj_act_id=5103516,
+        obj_2=5101517,
+        obj_act_id_1=5103517,
+        region=5102516,
+        region_1=5102517,
+        flag_2=15101516,
+        flag_3=15104515,
+        left=0,
     )
 
 
@@ -3325,7 +3349,7 @@ def Event_15105849():
     CommonFunc_20005820(0, flag=15100800, obj=5101800, model_point=4, left=0)
     CommonFunc_20005820(0, flag=15100800, obj=5101801, model_point=2, left=0)
     CommonFunc_20005820(0, flag=15100800, obj=5101802, model_point=2, left=0)
-    CommonFunc_20005810(0, 15100890, 5101800, 5102800, 10000)
+    CommonFunc_20005810(0, flag=15100890, entity=5101800, target_entity=5102800, action_button_id=10000)
 
 
 @RestartOnRest(15105850)
@@ -3505,7 +3529,7 @@ def Event_15105889():
         flag_2=15105856,
         region=5102870,
     )
-    CommonFunc_20005810(0, 15100890, 5101850, 5102850, 10000)
+    CommonFunc_20005810(0, flag=15100890, entity=5101850, target_entity=5102850, action_button_id=10000)
 
 
 @RestartOnRest(15105890)

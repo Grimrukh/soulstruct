@@ -61,21 +61,21 @@ def Event_200():
     Event_1054562815()
     Event_1054562820(
         0,
-        1054560800,
-        30003,
-        20003,
-        1054562830,
-        0.0,
-        0.0,
-        0,
-        0,
-        0,
-        0,
-        1054562831,
-        1054562832,
-        1054562833,
-        1054562834,
-        1054562835,
+        character=Characters.BorealistheFreezingFog,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=1054562830,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+        region_1=1054562831,
+        region_2=1054562832,
+        region_3=1054562833,
+        region_4=1054562834,
+        region_5=1054562835,
     )
 
 
@@ -186,7 +186,7 @@ def Event_1054562820(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

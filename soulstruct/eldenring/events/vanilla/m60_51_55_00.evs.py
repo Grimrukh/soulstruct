@@ -18,15 +18,16 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_51_55_00_entities import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, 1051550300, 1051550300, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1051550300, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005485(0, 1051550300)
+    CommonFunc_90005485(0, character=Characters.GuardianGolem)

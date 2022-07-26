@@ -100,7 +100,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 30122800, 30121695, 5)
+    CommonFunc_91005600(0, flag=30122800, asset=30121695, model_point=5)
 
 
 @RestartOnRest(30122520)
@@ -184,7 +184,7 @@ def Event_30122502(_, character: uint, seconds: float, animation_id: int):
     if FlagEnabled(30122502):
         return
     DisableAI(character)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -294,4 +294,14 @@ def Event_30122849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30120800, asset=Assets.AEG099_001_9001, model_point=3, right=0)
-    CommonFunc_9005822(0, 30120800, 930000, 30122805, 30122806, 0, 30122802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30120800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30122805,
+        flag_2=30122806,
+        right=0,
+        flag_3=30122802,
+        left=0,
+        left_1=0,
+    )

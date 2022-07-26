@@ -73,19 +73,19 @@ def Constructor():
         source_entity_1=30032602,
         source_entity_2=30032603,
     )
-    CommonFunc_90005525(0, flag=30030570, asset=Assets.AEG027_157_0500)
-    CommonFunc_90005525(0, flag=30030571, asset=Assets.AEG027_157_0501)
-    CommonFunc_90005525(0, flag=30030572, asset=Assets.AEG027_157_0502)
-    CommonFunc_90005525(0, flag=30030573, asset=Assets.AEG027_157_0503)
-    CommonFunc_90005525(0, flag=30030574, asset=Assets.AEG027_157_0504)
-    CommonFunc_90005525(0, flag=30030575, asset=Assets.AEG027_157_0505)
-    CommonFunc_90005525(0, flag=30030576, asset=Assets.AEG027_157_0506)
-    CommonFunc_90005525(0, flag=30030577, asset=Assets.AEG027_157_0507)
+    CommonFunc_90005525(0, flag=30030570, asset=30031570)
+    CommonFunc_90005525(0, flag=30030571, asset=30031571)
+    CommonFunc_90005525(0, flag=30030572, asset=30031572)
+    CommonFunc_90005525(0, flag=30030573, asset=30031573)
+    CommonFunc_90005525(0, flag=30030574, asset=30031574)
+    CommonFunc_90005525(0, flag=30030575, asset=30031575)
+    CommonFunc_90005525(0, flag=30030576, asset=30031576)
+    CommonFunc_90005525(0, flag=30030577, asset=30031577)
     Event_30032579()
     CommonFunc_90005410(0, flag=30032100, character=30031100, entity_b=30035100)
     CommonFunc_90005411(0, asset=Assets.AEG099_053_9000, character=Characters.TalkDummy1, left=10)
     CommonFunc_91005600(0, flag=30030800, asset=30031695, model_point=3)
-    CommonFunc_90005920(0, 30030520, 30031520, 30033520)
+    CommonFunc_90005920(0, flag=30030520, asset=Assets.AEG099_630_9000, obj_act_id=30033520)
 
 
 @ContinueOnRest(50)
@@ -162,7 +162,18 @@ def Preconstructor():
     Event_30032207(0, character=Characters.Imp7, region=30032307)
     Event_30032207(1, character=Characters.Imp8, region=30032308)
     Event_30032207(2, character=Characters.Imp9, region=30032307)
-    CommonFunc_90005200(0, 30030209, 30002, 20002, 30032207, 3.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Imp9,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=30032207,
+        seconds=3.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(30030050)
@@ -1049,7 +1060,7 @@ def Event_30032205(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1102,7 +1113,7 @@ def Event_30032207(_, character: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -1213,7 +1224,17 @@ def Event_30032849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30030800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30030800, 920200, 30032805, 30032806, 0, 30032860, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30030800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=30032805,
+        flag_2=30032806,
+        right=0,
+        flag_3=30032860,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30032890)

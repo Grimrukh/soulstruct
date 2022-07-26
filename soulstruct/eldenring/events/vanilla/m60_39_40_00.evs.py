@@ -80,7 +80,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.DemiHumanShaman, flag=3943, first_flag=3940, last_flag=3944)
     Event_1039403710(0, character=Characters.DemiHumanShaman)
-    Event_1039403711(0, 1039400710)
+    Event_1039403711(0, entity=Characters.DemiHumanShaman)
 
 
 @ContinueOnRest(50)
@@ -92,7 +92,19 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Skeleton1, region=1039402211, radius=5.0, seconds=0.5, animation_id=-1)
     CommonFunc_90005261(0, character=1039400212, region=1039402211, radius=5.0, seconds=1.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Skeleton2, region=1039402211, radius=5.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005211(0, 1039400220, 30001, 20001, 1039402220, 0.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.GiantLobster,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1039402220,
+        radius=0.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1039400700)

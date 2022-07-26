@@ -140,7 +140,7 @@ def Constructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005771(0, 1037520951, 1037522700)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1037522700)
 
 
 @ContinueOnRest(50)
@@ -244,7 +244,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1037520622, 30000, 20000, 1037522614, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.MirandaFlower8,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1037522614,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1035542210)

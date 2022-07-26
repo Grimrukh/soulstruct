@@ -90,14 +90,14 @@ def Constructor():
     Event_1044332230(19, character=1044330254)
     Event_1044332230(20, character=1044330255)
     Event_1044332230(21, character=1044330256)
-    Event_1044332280(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1044332280)
-    Event_1044332280(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1044332280)
+    Event_1044332280(0, character=Characters.DemiHuman0, asset=1044331280, region=1044332280)
+    Event_1044332280(1, character=Characters.DemiHuman1, asset=1044331281, region=1044332280)
     CommonFunc_90005400(0, character=Characters.Misbegotten4, special_effect_id=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98103, character=Characters.Misbegotten4)
     if FlagEnabled(57):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -109,7 +109,7 @@ def Constructor():
     if FlagEnabled(56):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -121,7 +121,7 @@ def Constructor():
     if FlagEnabled(55):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -133,7 +133,7 @@ def Constructor():
     if FlagEnabled(54):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -145,7 +145,7 @@ def Constructor():
     if FlagEnabled(53):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -157,7 +157,7 @@ def Constructor():
     if FlagEnabled(52):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -169,7 +169,7 @@ def Constructor():
     if FlagEnabled(51):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -181,7 +181,7 @@ def Constructor():
     if FlagEnabled(50):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG007_450_1000,
+            asset__asset_flag=1044331600,
             asset=Assets.AEG007_450_1000,
             model_point_start=200,
             model_point_end=0,
@@ -227,7 +227,14 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4736, flag_1=4735, flag_2=1044339207, right=3)
     CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1044332706, flag_1=1044332707)
-    CommonFunc_90005727(0, 4736, 1044330705, 1044330706, 4735, 4738)
+    CommonFunc_90005727(
+        0,
+        flag=4736,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4735,
+        last_flag=4738,
+    )
 
 
 @ContinueOnRest(50)
@@ -361,7 +368,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat3, region=1044332220, radius=15.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.GiantRat, region=1044332220, radius=15.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Commoner0, region=1044332200, radius=1.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005261(0, 1044330201, 1044332200, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Commoner1, region=1044332200, radius=1.0, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(200)

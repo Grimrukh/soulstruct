@@ -76,4 +76,4 @@ def Constructor():
         patrol_information_id=1050553600,
         right=0,
     )
-    CommonFunc_90005637(0, 1050558600, 1050550600, 1050552601)
+    CommonFunc_90005637(0, flag=1050558600, character=Characters.WanderingNoble, region=1050552601)

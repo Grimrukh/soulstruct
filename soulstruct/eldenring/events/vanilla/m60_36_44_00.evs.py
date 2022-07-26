@@ -32,7 +32,7 @@ def Constructor():
     CommonFunc_90005300(0, flag=1036440250, character=Characters.Scarab, item_lot=40202, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=1036440260, character=1036440260, item_lot=1036440200, seconds=0.0, left=0)
     CommonFunc_90005920(0, flag=1036440600, asset=1036441600, obj_act_id=1036443600)
-    CommonFunc_90005705(0, 1036440700)
+    CommonFunc_90005705(0, character=Characters.FingerReader)
 
 
 @ContinueOnRest(50)
@@ -55,7 +55,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=1036440230, region=1036442220, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1036440231, region=1036442220, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier0, radius=15.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005251(0, 1036440242, 15.0, 0.0, 0)
+    CommonFunc_90005251(0, character=Characters.RayaLucariaSoldier1, radius=15.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1036442203)

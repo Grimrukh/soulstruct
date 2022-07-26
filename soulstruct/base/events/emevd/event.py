@@ -40,32 +40,33 @@ _INSTRUCTION_RE = re.compile(r" *([\w\d]+)\((.*)\)")  # groups = (instruction_na
 _ARG_TUPLE_START_RE = re.compile(r"(\w[\w\d_]*)=([\[(]).*")  # groups = (arg_name, bracket_type)
 _CONDITION_RE = re.compile(r" *(AND|OR)_(\d+)\.Add\((.*)\)")  # groups = (condition_type, condition_i, condition)
 _MAIN_AWAIT_RE = re.compile(r" *MAIN\.Await\((.*)\)")  # groups = (condition_type, condition_i, condition)
+_IF_BLOCK_RE = re.compile(r" *if (.*):")  # groups = (condition)
 _LABEL_RE = re.compile(r"DefineLabel\((\d+)\)")
 _GOTO_RE = re.compile(r"Goto.*\(Label\.L(\d+)[,)].*")
 
 # High-level decompilation.
-_HLC_IF_CONDITION_RE = re.compile(
+_HLD_IF_CONDITION_RE = re.compile(
     r"^(?P<indent> *)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
     r"(?P<condition>(MAIN|((AND|OR)_\d+))), input_condition=(?P<input_condition>(MAIN|((AND|OR)_\d+)))\)$"
 )
-_HLC_IF_COMPARISON_RE = re.compile(
+_HLD_IF_COMPARISON_RE = re.compile(
     r"^(?P<indent> *)If(?P<test>.*?)(?P<comp>Equal|NotEqual|GreaterThan|LessThan|GreaterThanOrEqual|LessThanOrEqual)"
     r"\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<pre_args>.*?), value=(?P<value>[\w\d_.]+)(?P<post_args>, .*?)?\)$"
 )
-_HLC_IF_RE = re.compile(
+_HLD_IF_RE = re.compile(
     r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
 )
-_HLC_SKIP_RE = re.compile(
+_HLD_SKIP_RE = re.compile(
     r"^(?P<indent> *)SkipLinesIf(?P<test>.*)\((?P<line_count>\d+)(?P<args>.*?)\)$"
 )
-_HLC_UNCONDITIONAL_SKIP_RE = re.compile(
+_HLD_UNCONDITIONAL_SKIP_RE = re.compile(
     r"^(?P<indent> *)SkipLines\((?P<line_count>\d+)\)$"
 )
-_HLC_RETURN_CONDITION_RE = re.compile(
+_HLD_RETURN_CONDITION_RE = re.compile(
     r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
     r"input_condition=(?P<condition>((AND|OR)_\d+))\)$"
 )
-_HLC_RETURN_RE = re.compile(
+_HLD_RETURN_RE = re.compile(
     r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<test>.*)\((?P<args>.*?)\)$"
 )
 
@@ -335,7 +336,7 @@ class Event(abc.ABC):
         i = 0
         while i < len(instruction_lines):
             line = instruction_lines[i]
-            if match := _HLC_IF_CONDITION_RE.match(line):
+            if match := _HLD_IF_CONDITION_RE.match(line):
                 m = match.groupdict()
                 indent = m["indent"]
                 finished = m["finished"] is not None
@@ -362,7 +363,7 @@ class Event(abc.ABC):
                 else:
                     output_lines.append(f"{indent}{condition}.Add({input_condition})")
                     i += 1
-            elif match := _HLC_IF_COMPARISON_RE.match(line):
+            elif match := _HLD_IF_COMPARISON_RE.match(line):
                 m = match.groupdict()
                 indent = m["indent"]
                 test = m["test"]
@@ -383,7 +384,7 @@ class Event(abc.ABC):
                 else:
                     output_lines.append(f"{indent}{condition}.Add({test}({pre_args}{post_args}) {operator} {value})")
                     i += 1
-            elif match := _HLC_IF_RE.match(line):
+            elif match := _HLD_IF_RE.match(line):
                 m = match.groupdict()
                 indent = m["indent"]
                 test = m["test"]
@@ -401,7 +402,7 @@ class Event(abc.ABC):
                 else:
                     output_lines.append(f"{indent}{condition}.Add({test}({args}))")
                     i += 1
-            elif not conditions_only and (match := _HLC_SKIP_RE.match(line)):
+            elif not conditions_only and (match := _HLD_SKIP_RE.match(line)):
                 m = match.groupdict()
                 indent = m["indent"]
                 test = m["test"]
@@ -437,7 +438,7 @@ class Event(abc.ABC):
                     output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
                     i += len(if_block_lines)
                     continue
-                if unconditional_match := _HLC_UNCONDITIONAL_SKIP_RE.match(instruction_lines[i + line_count]):
+                if unconditional_match := _HLD_UNCONDITIONAL_SKIP_RE.match(instruction_lines[i + line_count]):
                     else_line_count = int(unconditional_match.groupdict()["line_count"])
                     else_block_lines = [
                         f"{indent}    {instruction_lines[i + line_count + 1 + j]}" for j in range(else_line_count)
@@ -464,7 +465,7 @@ class Event(abc.ABC):
                     # No need for `i += 1`, as `line_count` includes the unconditional skip that `else` is replacing.
                     output_lines += self.high_level_evs_decompile(else_block_lines)
                     i += else_line_count
-            elif not conditions_only and (match := _HLC_RETURN_CONDITION_RE.match(line)):
+            elif not conditions_only and (match := _HLD_RETURN_CONDITION_RE.match(line)):
                 m = match.groupdict()
                 indent = m["indent"]
                 return_type = m["return_type"].lower()
@@ -481,7 +482,7 @@ class Event(abc.ABC):
                 output_lines.append(f"{indent}if {condition}:")
                 output_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
                 i += 1
-            elif not conditions_only and (match := _HLC_RETURN_RE.match(line)):
+            elif not conditions_only and (match := _HLD_RETURN_RE.match(line)):
                 m = match.groupdict()
                 indent = m["indent"]
                 return_type = m["return_type"].lower()
@@ -563,8 +564,16 @@ class Event(abc.ABC):
                 )
                 wrapped_condition = wrapped_condition.lstrip("\n ")
                 return f"\n{base_indent}{existing_indent}MAIN.Await({wrapped_condition})"
+            elif match := _IF_BLOCK_RE.match(instr):
+                # Indent and wrap condition.
+                condition = match.group(1)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}if {wrapped_condition}:"
             else:
-                raise ValueError(f"Cannot indent/wrap malformed instruction or condition group definition: {instr}")
+                raise ValueError(f"Cannot indent/wrap malformed instruction or condition group definition: '{instr}'")
 
         # Indent and wrap basic instruction.
         instr_name, instr_args_string = match.group(1, 2)

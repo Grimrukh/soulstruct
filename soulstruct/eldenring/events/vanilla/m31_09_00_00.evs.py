@@ -170,7 +170,18 @@ def Constructor():
     Event_31092350()
     Event_31092351()
     Event_31092300()
-    CommonFunc_90005646(0, 31090800, 31092840, 31092841, 31091840, 31092840, 31, 9, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31090800,
+        left_flag=31092840,
+        cancel_flag__right_flag=31092841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31092840,
+        area_id=31,
+        block_id=9,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @RestartOnRest(31092300)
@@ -182,10 +193,10 @@ def Event_31092300():
     EndIffSpecialStandbyEndedFlagEnabled(character=Characters.LargeDemiHuman0)
     DisableAI(Characters.LargeDemiHuman0)
     ForceAnimation(Characters.LargeDemiHuman0, 30002)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHuman8, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHumanShaman2, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman0, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman1, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHuman8))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHumanShaman2))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman1))
     OR_1.Add(EntityWithinDistance(entity=Characters.LargeDemiHuman0, other_entity=PLAYER, radius=3.0))
     OR_1.Add(CharacterInsideRegion(character=PLAYER, region=31092301))
     AND_4.Add(CharacterHasSpecialEffect(Characters.LargeDemiHuman0, 481))
@@ -235,10 +246,10 @@ def Event_31092301(_, character: uint, seconds: float):
     if OR_15:
         return
     DisableAI(character)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHuman8, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHumanShaman2, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman0, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman1, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHuman8))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.DemiHumanShaman2))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.LargeDemiHuman1))
     OR_1.Add(AssetDestroyed(31091550))
     OR_1.Add(AssetDestroyed(31091551))
     OR_1.Add(AssetDestroyed(31091552))
@@ -398,4 +409,14 @@ def Event_31092849():
         action_button_id=10010,
     )
     CommonFunc_9005811(0, flag=31090800, asset=Assets.AEG099_001_9001, model_point=5, right=0)
-    CommonFunc_9005822(0, 31090800, 931000, 31092805, 31092806, 0, 31092802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31090800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31092805,
+        flag_2=31092806,
+        right=0,
+        flag_3=31092802,
+        left=0,
+        left_1=0,
+    )

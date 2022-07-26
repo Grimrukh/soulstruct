@@ -30,7 +30,18 @@ def Constructor():
     Event_31122849()
     Event_31122811()
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005646(0, 31120800, 31122840, 31122841, 31121840, 31122840, 31, 12, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31120800,
+        left_flag=31122840,
+        cancel_flag__right_flag=31122841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31122840,
+        area_id=31,
+        block_id=12,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -89,7 +100,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.SpiritJellyfish0, region=31122205, seconds=0.0, animation_id=0)
     CommonFunc_90005250(0, character=Characters.SpiritJellyfish0, region=31122220, seconds=0.0, animation_id=0)
     CommonFunc_90005250(0, character=Characters.SpiritJellyfish1, region=31122205, seconds=0.0, animation_id=0)
-    CommonFunc_90005250(0, 31120228, 31122220, 0.0, 0)
+    CommonFunc_90005250(0, character=Characters.SpiritJellyfish1, region=31122220, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31122800)
@@ -176,4 +187,14 @@ def Event_31122849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31120800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 31120800, 950000, 31122805, 31122806, 0, 31122802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31120800,
+        bgm_boss_conv_param_id=950000,
+        flag_1=31122805,
+        flag_2=31122806,
+        right=0,
+        flag_3=31122802,
+        left=0,
+        left_1=0,
+    )

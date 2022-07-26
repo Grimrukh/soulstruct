@@ -59,14 +59,14 @@ def Constructor():
     CommonFunc_90005300(0, flag=1037510500, character=Characters.Scarab1, item_lot=40300, seconds=0.0, left=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=39200514)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=39200514)
-    CommonFunc_90005771(0, 1037510950, 1037512700)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1037512700)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1037512350(0, character=Characters.AncientDragon)
-    Event_1037512301(0, 1037510800)
+    Event_1037512301(0, character=Characters.AncientDragon)
 
 
 @RestartOnRest(1037512208)
@@ -108,7 +108,7 @@ def Event_1037512208(_, character: uint, region: uint, radius: float, seconds: f
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

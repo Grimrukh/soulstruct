@@ -24,7 +24,7 @@ from .entities.m60_47_57_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005706(0, 1047570701, 930021, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930021, left=0)
 
 
 @ContinueOnRest(50)

@@ -96,15 +96,15 @@ def Constructor():
         asset=Assets.AEG099_090_9020,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=40)
-    CommonFunc_90005796(
-        0,
-        flag=7607,
-        character=Characters.BloodyFingerRavenmountAssassin,
-        banner_type=5,
-        region=1035462141,
-    )
-    Event_1035462145()
+    if CeremonyActive(ceremony=40):
+        CommonFunc_90005796(
+            0,
+            flag=7607,
+            character=Characters.BloodyFingerRavenmountAssassin,
+            banner_type=5,
+            region=1035462141,
+        )
+        Event_1035462145()
     CommonFunc_90005704(
         0,
         attacked_entity=Characters.YuraHunterofBloodyFingers1,
@@ -134,7 +134,7 @@ def Constructor():
     Event_1035463700(0, character=Characters.YuraHunterofBloodyFingers1)
     Event_1035463701()
     Event_1035463702(0, character=Characters.YuraHunterofBloodyFingers1)
-    CommonFunc_90005774(0, 7607, 1035460700, 1035467700)
+    CommonFunc_90005774(0, flag=7607, item_lot=1035460700, flag_1=1035467700)
 
 
 @ContinueOnRest(50)
@@ -144,13 +144,14 @@ def Preconstructor():
     DisableBackread(Characters.YuraHunterofBloodyFingers0)
     DisableBackread(Characters.BloodyFingerRavenmountAssassin)
     CommonFunc_90005251(0, character=Characters.Wolf0, radius=7.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005251(0, 1035460213, 7.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Wolf1, radius=7.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1035462145)
 def Event_1035462145():
     """Event 1035462145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=40)
+    if CeremonyInactive(ceremony=40):
+        return
     EnableBackread(Characters.BloodyFingerRavenmountAssassin)
     EnableBackread(Characters.YuraHunterofBloodyFingers0)
     SetTeamType(Characters.BloodyFingerRavenmountAssassin, TeamType.Human)

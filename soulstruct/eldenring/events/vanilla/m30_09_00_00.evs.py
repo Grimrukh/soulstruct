@@ -237,7 +237,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    Event_30090790(0, 30091670, 30090800)
+    Event_30090790(0, asset=Assets.AEG099_630_9000, flag=30090800)
 
 
 @ContinueOnRest(50)
@@ -280,19 +280,19 @@ def Event_30092510():
     """Event 30092510"""
     CommonFunc_90005500(
         0,
-        30090510,
-        30091510,
-        2,
-        30091510,
-        30091511,
-        30093511,
-        30091512,
-        30093512,
-        30092511,
-        30092512,
-        30090511,
-        30092512,
-        0,
+        flag=30090510,
+        flag_1=30091510,
+        left=2,
+        asset=Assets.AEG027_038_0500,
+        asset_1=Assets.AEG027_002_0501,
+        obj_act_id=30093511,
+        asset_2=Assets.AEG027_002_0500,
+        obj_act_id_1=30093512,
+        region=30092511,
+        region_1=30092512,
+        flag_2=30090511,
+        flag_3=30092512,
+        left_1=0,
     )
 
 
@@ -307,14 +307,7 @@ def Event_30090519():
 @RestartOnRest(30092500)
 def Event_30092500():
     """Event 30092500"""
-    CommonFunc_90005681(
-        0,
-        flag=30090500,
-        flag_1=30090501,
-        flag_2=30090502,
-        flag_3=30090503,
-        attacked_entity=Assets.AEG027_155_0500,
-    )
+    CommonFunc_90005681(0, flag=30090500, flag_1=30090501, flag_2=30090502, flag_3=30090503, attacked_entity=30091500)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -414,7 +407,19 @@ def Event_30092500():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 30090502, 30091500, 30092500, 30090500, 801103200, 801103205, 100, 101, 0, 0)
+        CommonFunc_90005682(
+            0,
+            flag=30090502,
+            source_entity=Assets.AEG027_155_0500,
+            region=30092500,
+            owner_entity=Characters.TalkDummy0,
+            behavior_id=801103200,
+            behavior_id_1=801103205,
+            model_point=100,
+            model_point_1=101,
+            model_point_2=0,
+            model_point_3=0,
+        )
 
 
 @RestartOnRest(30092300)
@@ -833,4 +838,14 @@ def Event_30092849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30090800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30090800, 921400, 30092805, 30092806, 0, 30092802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30090800,
+        bgm_boss_conv_param_id=921400,
+        flag_1=30092805,
+        flag_2=30092806,
+        right=0,
+        flag_3=30092802,
+        left=0,
+        left_1=0,
+    )

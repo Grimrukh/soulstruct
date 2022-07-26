@@ -145,7 +145,7 @@ def Constructor():
         special_effect=11131,
         animation_id=20015,
     )
-    Event_1049382821(0, 1049380800, 1049385800, 1049385801, 20016)
+    Event_1049382821(0, character=1049380800, character_1=1049385800, character_2=1049385801, animation_id=20016)
 
 
 @RestartOnRest(1049382200)

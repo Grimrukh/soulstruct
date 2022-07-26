@@ -34,7 +34,14 @@ def Constructor():
         left=0,
         item_lot=1043530100,
     )
-    CommonFunc_90005391(0, 1042530350, 1042532350, 1042530365, 1042530350, 0)
+    CommonFunc_90005391(
+        0,
+        flag=1042530350,
+        flag_1=1042532350,
+        character=Characters.WanderingNoble,
+        character_1=Characters.LionGuardian,
+        left=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -192,7 +199,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    Event_1042532365(0, 1042530365)
+    Event_1042532365(0, character=Characters.WanderingNoble)
 
 
 @RestartOnRest(1042532365)
@@ -201,7 +208,7 @@ def Event_1042532365(_, character: uint):
     EndIffSpecialStandbyEndedFlagEnabled(character=character)
     DisableAI(character)
     ForceAnimation(character, 30012, loop=True)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
@@ -277,4 +284,13 @@ def Event_200():
         region=1042532408,
         left=1,
     )
-    CommonFunc_90005490(0, 1042530412, 1042530413, 1042531412, 0, 0, 1042532412, 1)
+    CommonFunc_90005490(
+        0,
+        character=Characters.BulletDummy6,
+        character_1=Characters.LeyndellFootSoldier4,
+        asset=Assets.AEG110_181_9006,
+        asset_1=0,
+        obj_act_id=0,
+        region=1042532412,
+        left=1,
+    )

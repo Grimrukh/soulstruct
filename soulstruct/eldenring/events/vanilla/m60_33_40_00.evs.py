@@ -54,7 +54,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(0, 1033400610, 1033400610, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1033400610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -74,19 +74,19 @@ def Event_1033402510():
     """Event 1033402510"""
     CommonFunc_90005500(
         0,
-        1033400510,
-        1033400511,
-        0,
-        1033401510,
-        1033401511,
-        1033403511,
-        1033401512,
-        1033403512,
-        1033402511,
-        1033402512,
-        1033400512,
-        1033400513,
-        0,
+        flag=1033400510,
+        flag_1=1033400511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        obj_act_id=1033403511,
+        asset_2=Assets.AEG099_182_2000,
+        obj_act_id_1=1033403512,
+        region=1033402511,
+        region_1=1033402512,
+        flag_2=1033400512,
+        flag_3=1033400513,
+        left_1=0,
     )
 
 

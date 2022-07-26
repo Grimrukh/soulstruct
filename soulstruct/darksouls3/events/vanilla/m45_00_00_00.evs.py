@@ -879,7 +879,7 @@ def Constructor():
         last_flag=50006540,
         flag=14500733,
     )
-    CommonFunc_20006002(0, 4500720, 1798, 1795, 1799)
+    CommonFunc_20006002(0, character=4500720, flag=1798, first_flag=1795, last_flag=1799)
 
 
 @ContinueOnRest(50)
@@ -2289,18 +2289,18 @@ def Event_14505510():
     """Event 14505510"""
     CommonFunc_20005621(
         0,
-        14500510,
-        14501510,
-        4501510,
-        4501511,
-        4504511,
-        4501512,
-        4504512,
-        4502511,
-        4502512,
-        14501511,
-        14504510,
-        0,
+        flag=14500510,
+        flag_1=14501510,
+        obj=4501510,
+        obj_1=4501511,
+        obj_act_id=4504511,
+        obj_2=4501512,
+        obj_act_id_1=4504512,
+        region=4502511,
+        region_1=4502512,
+        flag_2=14501511,
+        flag_3=14504510,
+        left=0,
     )
 
 
@@ -2821,8 +2821,8 @@ def Event_14500800():
     
     MAIN.Await(HealthRatio(4500800) <= 0.0)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=4500800, special_effect=13146)
-    Wait(2.0)
+    if CharacterHasSpecialEffect(character=4500800, special_effect=13146):
+        Wait(2.0)
     Wait(1.5)
     PlaySoundEffect(4500800, 777777777, sound_type=SoundType.s_SFX)
     Wait(1.0)
@@ -3074,8 +3074,8 @@ def Event_14505812():
     
     AddSpecialEffect(4500800, 13133)
     WaitFrames(frames=1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=4500800, special_effect=13134)
-    ForceAnimation(4500800, 20003, unknown2=1.0)
+    if CharacterDoesNotHaveSpecialEffect(character=4500800, special_effect=13134):
+        ForceAnimation(4500800, 20003, unknown2=1.0)
     WaitFrames(frames=2)
     PlaySoundEffect(4500800, 777777777, sound_type=SoundType.s_SFX)
     
@@ -3102,11 +3102,11 @@ def Event_14505813():
     
     Wait(1.100000023841858)
     WaitFrames(frames=1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=4500800, special_effect=13136)
-    ForceAnimation(4500800, 20001, unknown2=1.0)
-    SkipLines(2)
-    ForceAnimation(4500800, 20002, unknown2=1.0)
-    WaitFrames(frames=1)
+    if CharacterDoesNotHaveSpecialEffect(character=4500800, special_effect=13136):
+        ForceAnimation(4500800, 20001, unknown2=1.0)
+    else:
+        ForceAnimation(4500800, 20002, unknown2=1.0)
+        WaitFrames(frames=1)
     OR_1.Add(CharacterHasTAEEvent(4500800, tae_event_id=10))
     OR_1.Add(TimeElapsed(seconds=6.0))
     
@@ -3268,7 +3268,7 @@ def Event_14505829():
         )
     CommonFunc_20005825(0, flag=14500800, obj=4501800, model_point=3, left=14500801, vfx_id=110)
     CommonFunc_20005820(0, flag=14500800, obj=4501801, model_point=0, left=14500801)
-    CommonFunc_20005810(0, 14500800, 4501800, 4502800, 10000)
+    CommonFunc_20005810(0, flag=14500800, entity=4501800, target_entity=4502800, action_button_id=10000)
 
 
 @RestartOnRest(14505830)
@@ -3643,7 +3643,7 @@ def Event_14505889():
             flag_3=14505863,
         )
     CommonFunc_20005820(0, flag=14500860, obj=4501860, model_point=5, left=14505861)
-    CommonFunc_20005810(0, 14500860, 4501860, 4502860, 10000)
+    CommonFunc_20005810(0, flag=14500860, entity=4501860, target_entity=4502860, action_button_id=10000)
 
 
 @RestartOnRest(14505890)

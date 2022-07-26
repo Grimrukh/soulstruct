@@ -26,7 +26,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301700, asset=Assets.AEG099_060_9000)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005525(0, flag=30170570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30170570, asset=30171570)
     CommonFunc_90005620(
         0,
         flag=30170560,
@@ -289,14 +289,7 @@ def Constructor():
         flag_3=30170503,
         asset=Assets.AEG027_051_0500,
     )
-    CommonFunc_90005681(
-        0,
-        flag=30170500,
-        flag_1=30170501,
-        flag_2=30170502,
-        flag_3=30170503,
-        attacked_entity=Assets.AEG027_051_0500,
-    )
+    CommonFunc_90005681(0, flag=30170500, flag_1=30170501, flag_2=30170502, flag_3=30170503, attacked_entity=30171500)
     Event_30172500()
     Event_30172525()
     Event_30172580()
@@ -371,7 +364,7 @@ def Event_30172200(_, character: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30172200))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -394,7 +387,7 @@ def Event_30172311():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=30172316))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=30170316, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=30170316))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -484,7 +477,7 @@ def Event_30172402(_, character: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     EnableSpawner(entity=30173216)
     Wait(4.0)
     AddSpecialEffect(character, 10120)
@@ -514,14 +507,7 @@ def Event_30172402(_, character: uint, region: uint):
 @ContinueOnRest(30172500)
 def Event_30172500():
     """Event 30172500"""
-    CommonFunc_90005681(
-        0,
-        flag=30170500,
-        flag_1=30170501,
-        flag_2=30170502,
-        flag_3=30170503,
-        attacked_entity=Assets.AEG027_051_0500,
-    )
+    CommonFunc_90005681(0, flag=30170500, flag_1=30170501, flag_2=30170502, flag_3=30170503, attacked_entity=30171500)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -621,7 +607,19 @@ def Event_30172500():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 30170502, 30171500, 30172500, 30170500, 801105000, 801105005, 101, 104, 100, 0)
+        CommonFunc_90005682(
+            0,
+            flag=30170502,
+            source_entity=Assets.AEG027_051_0500,
+            region=30172500,
+            owner_entity=Characters.TalkDummy0,
+            behavior_id=801105000,
+            behavior_id_1=801105005,
+            model_point=101,
+            model_point_1=104,
+            model_point_2=100,
+            model_point_3=0,
+        )
 
 
 @ContinueOnRest(30172501)
@@ -648,21 +646,13 @@ def Event_30172501(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, atta
     
     MAIN.Await(OR_4)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     DisableFlag(flag_1)
     DisableFlag(flag_2)
     ForceAnimation(attacked_entity, 21, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     Restart()
 
@@ -680,20 +670,12 @@ def Event_30172501(_, flag: uint, flag_1: uint, flag_2: uint, flag_3: uint, atta
     # --- Label 20 --- #
     DefineLabel(20)
     EnableFlag(30170504)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=2,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(2, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     EnableNetworkFlag(flag_3)
     EnableFlag(flag_1)
     ForceAnimation(attacked_entity, 12, wait_for_completion=True)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag_3)
     EnableFlag(flag_2)
     Restart()
@@ -945,19 +927,19 @@ def Event_30172510():
     )
     CommonFunc_90005500(
         0,
-        30170530,
-        30170531,
-        4,
-        30171530,
-        30171531,
-        30173531,
-        30171532,
-        30173532,
-        30172531,
-        30172532,
-        30170532,
-        30172532,
-        0,
+        flag=30170530,
+        flag_1=30170531,
+        left=4,
+        asset=Assets.AEG027_038_0500,
+        asset_1=Assets.AEG027_002_0502,
+        obj_act_id=30173531,
+        asset_2=Assets.AEG027_002_0503,
+        obj_act_id_1=30173532,
+        region=30172531,
+        region_1=30172532,
+        flag_2=30170532,
+        flag_3=30172532,
+        left_1=0,
     )
 
 
@@ -1117,7 +1099,17 @@ def Event_30172849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30170800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30170800, 920200, 30172805, 30172806, 0, 30172802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30170800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=30172805,
+        flag_2=30172806,
+        right=0,
+        flag_3=30172802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(16002520)

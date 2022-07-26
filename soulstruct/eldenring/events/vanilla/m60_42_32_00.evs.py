@@ -31,7 +31,7 @@ def Constructor():
     Event_1042322220()
     Event_1042322230()
     Event_1042322580()
-    Event_1042322510(0, 1042321510, 1042322510, 1042322500, 1042323900)
+    Event_1042322510(0, asset=Assets.AEG099_290_9000, region=1042322510, flag=1042322500, obj_act_id=1042323900)
 
 
 @RestartOnRest(1042322220)
@@ -257,7 +257,7 @@ def Event_1042322403(
     ForceAnimation(character_1, animation_id, loop=True)
     AND_1.Add(CharacterHasSpecialEffect(character_1, 5080))
     OR_1.Add(CharacterHasSpecialEffect(character, special_effect, target_comparison_type=ComparisonType.GreaterThanOrEqual))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character_1))
     OR_1.Add(HasAIStatus(character_1, ai_status=AIStatusType.Search))
     AND_1.Add(OR_1)
     

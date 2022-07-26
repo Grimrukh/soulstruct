@@ -311,11 +311,11 @@ def Event_19002500():
     
     if PlayerInOwnWorld():
         BanishInvaders(unknown=0)
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=2))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=3))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=4))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=5))
-    OR_9.Add(CharacterInvadeType(character=20000, invade_type=7))
+    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.BlackPhantom))
+    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown3))
+    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown4))
+    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown5))
+    OR_9.Add(CharacterInvadeType(character=20000, invade_type=CharacterType.Unknown7))
     if OR_9:
         return
     ForceAnimation(PLAYER, 67080)
@@ -603,7 +603,7 @@ def Event_19002821():
     Event_19002822(1, flag=19002831, model_point=111, model_point_1=112, model_point_2=113, model_point_3=114)
     Event_19002822(2, flag=19002832, model_point=112, model_point_1=113, model_point_2=114, model_point_3=115)
     Event_19002822(3, flag=19002833, model_point=113, model_point_1=114, model_point_2=115, model_point_3=116)
-    Event_19002822(4, 19002834, 114, 115, 116, 117)
+    Event_19002822(4, flag=19002834, model_point=114, model_point_1=115, model_point_2=116, model_point_3=117)
 
 
 @RestartOnRest(19002822)
@@ -697,7 +697,17 @@ def Event_19002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=19000800, asset=Assets.AEG099_001_9000, model_point=5, right=19002801)
-    CommonFunc_9005822(0, 19000800, 219000, 19002805, 19002806, 0, 19002802, 0, 1)
+    CommonFunc_9005822(
+        0,
+        flag=19000800,
+        bgm_boss_conv_param_id=219000,
+        flag_1=19002805,
+        flag_2=19002806,
+        right=0,
+        flag_3=19002802,
+        left=0,
+        left_1=1,
+    )
 
 
 @RestartOnRest(19002900)

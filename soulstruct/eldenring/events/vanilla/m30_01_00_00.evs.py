@@ -117,7 +117,7 @@ def Constructor():
     )
     Event_30012520()
     Event_30012580()
-    Event_30010790(0, 30011520, 30010800)
+    Event_30010790(0, asset=30011520, flag=30010800)
 
 
 @ContinueOnRest(50)
@@ -366,11 +366,23 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 30010311, 30000, 20000, 30012322, 5.0, 3.9000000953674316, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.PutridCorpse11,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=30012322,
+        radius=5.0,
+        seconds=3.9000000953674316,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(30012330)
-def Event_30012330(_, character: uint, character_1: uint):
+def Event_30012330(_, character: uint, spawner: uint):
     """Event 30012330"""
     AND_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_15.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -385,7 +397,7 @@ def Event_30012330(_, character: uint, character_1: uint):
     
     MAIN.Await(AND_5)
     
-    ForceSpawnerToSpawn(spawner=character_1)
+    ForceSpawnerToSpawn(spawner=spawner)
     Restart()
 
 
@@ -408,7 +420,7 @@ def Event_30012910(_, character: uint, region: uint, radius: float, seconds: flo
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -701,4 +713,14 @@ def Event_30012849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30010800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30010800, 930000, 30012805, 30012806, 0, 30012802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30010800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30012805,
+        flag_2=30012806,
+        right=0,
+        flag_3=30012802,
+        left=0,
+        left_1=0,
+    )

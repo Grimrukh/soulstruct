@@ -73,7 +73,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.KnightBernahl, flag=3883, first_flag=3880, last_flag=3884)
     CommonFunc_90005630(0, far_view_id=61423800, asset=1042381500, model_point=127)
-    CommonFunc_90005560(0, 1042380600, 1042381600, 0)
+    CommonFunc_90005560(0, flag=1042380600, asset=Assets.AEG099_635_9000, left=0)
 
 
 @ContinueOnRest(50)
@@ -119,7 +119,19 @@ def Preconstructor():
     CommonFunc_90005261(0, character=1042380262, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1042380263, region=1042382254, radius=1.0, seconds=0.0, animation_id=-1)
     Event_1042382300()
-    CommonFunc_90005211(0, 1042380800, 30000, 20000, 1042382340, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.DeathRiteBird,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1042382340,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(200)
@@ -206,7 +218,7 @@ def Event_1042382340(_, character: uint, region: uint, seconds: float, animation
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -245,7 +257,7 @@ def Event_1042382350():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(OR_1)
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=1042382350))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=Characters.Troll1, attacker=0))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=Characters.Troll1))
     OR_3.Add(CharacterHasStateInfo(character=Characters.Troll1, state_info=436))
     OR_3.Add(CharacterHasStateInfo(character=Characters.Troll1, state_info=2))
     OR_3.Add(CharacterHasStateInfo(character=Characters.Troll1, state_info=5))

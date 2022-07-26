@@ -18,13 +18,14 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_53_57_00_entities import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
     Event_1053572200(0, character=1053575200)
-    CommonFunc_90005300(0, 1053570210, 1053570210, 40510, 0.0, 0)
+    CommonFunc_90005300(0, flag=1053570210, character=Characters.Scarab, item_lot=40510, seconds=0.0, left=0)
 
 
 @RestartOnRest(1053572200)

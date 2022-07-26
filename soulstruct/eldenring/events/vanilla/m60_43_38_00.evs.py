@@ -45,7 +45,7 @@ def Constructor():
         destination_2=1043372708,
     )
     Event_1043383702(0, character=Characters.YuraHunterofBloodyFingers)
-    Event_1043383703(0, 1043380700, 1043372712, 160.0)
+    Event_1043383703(0, character=Characters.YuraHunterofBloodyFingers, flag=1043372712, distance=160.0)
 
 
 @ContinueOnRest(50)

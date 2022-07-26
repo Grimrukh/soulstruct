@@ -763,7 +763,7 @@ def Constructor():
     Event_13505100()
     CommonFunc_20006002(0, character=3500725, flag=1638, first_flag=1635, last_flag=1639)
     Event_13505751(0, character=3500725)
-    Event_13505752(0, 3501725)
+    Event_13505752(0, obj=3501725)
 
 
 @ContinueOnRest(50)
@@ -783,7 +783,7 @@ def Preconstructor():
     Event_13500400()
     DisableSoundEvent(sound_id=3504801)
     DisableSoundEvent(sound_id=3504802)
-    Event_13505750(0, 3500725, 3501725)
+    Event_13505750(0, character=3500725, obj=3501725)
 
 
 @ContinueOnRest(13505100)
@@ -1388,7 +1388,18 @@ def Event_13504400():
         flag_3=13505406,
         obj_act_id_1=350022,
     )
-    Event_13505401(2, 13500407, 13501407, 3506402, 3501402, 3501412, 3503402, 13504407, 13505407, 350023)
+    Event_13505401(
+        2,
+        flag=13500407,
+        flag_1=13501407,
+        entity=3506402,
+        obj=3501402,
+        obj_1=3501412,
+        obj_act_id=3503402,
+        flag_2=13504407,
+        flag_3=13505407,
+        obj_act_id_1=350023,
+    )
 
 
 @RestartOnRest(13504401)
@@ -1602,18 +1613,18 @@ def Event_13504411():
     )
     CommonFunc_20005623(
         0,
-        13500430,
-        13501430,
-        3501430,
-        3501431,
-        3503431,
-        3501432,
-        3503432,
-        3502431,
-        3502432,
-        13501431,
-        13504430,
-        13500431,
+        flag=13500430,
+        flag_1=13501430,
+        obj=3501430,
+        obj_1=3501431,
+        obj_act_id=3503431,
+        obj_2=3501432,
+        obj_act_id_1=3503432,
+        region=3502431,
+        region_1=3502432,
+        flag_2=13501431,
+        flag_3=13504430,
+        left=13500431,
     )
 
 
@@ -2186,7 +2197,7 @@ def Event_13505899():
         sound_id_1=3504802,
         flag_3=13505802,
     )
-    CommonFunc_20005810(0, 13500800, 3501800, 3502800, 10000)
+    CommonFunc_20005810(0, flag=13500800, entity=3501800, target_entity=3502800, action_button_id=10000)
 
 
 @RestartOnRest(13504900)
@@ -2723,8 +2734,8 @@ def Event_13505751(_, character: int):
     MAIN.Await(FlagEnabled(73500331))
     
     WaitFrames(frames=1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=151)
-    ForceAnimation(character, 91140, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character, special_effect=151):
+        ForceAnimation(character, 91140, unknown2=1.0)
     Restart()
 
 

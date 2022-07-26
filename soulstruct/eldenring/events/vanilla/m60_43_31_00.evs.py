@@ -173,7 +173,7 @@ def Constructor():
     if FlagEnabled(57):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -185,7 +185,7 @@ def Constructor():
     if FlagEnabled(56):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -197,7 +197,7 @@ def Constructor():
     if FlagEnabled(55):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -209,7 +209,7 @@ def Constructor():
     if FlagEnabled(54):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -221,7 +221,7 @@ def Constructor():
     if FlagEnabled(53):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -233,7 +233,7 @@ def Constructor():
     if FlagEnabled(52):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -245,7 +245,7 @@ def Constructor():
     if FlagEnabled(51):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -257,7 +257,7 @@ def Constructor():
     if FlagEnabled(50):
         CommonFunc_90005695(
             0,
-            asset__asset_flag=Assets.AEG030_924_2000,
+            asset__asset_flag=1043311600,
             asset=Assets.AEG030_924_2000,
             model_point_start=200,
             model_point_end=0,
@@ -294,7 +294,7 @@ def Constructor():
     Event_1043310706()
     Event_1043310707(0, other_entity=Characters.Edgar)
     Event_1043310708()
-    Event_1043312709(0, 1043310705, 1043311700)
+    Event_1043312709(0, character=Characters.Edgar, asset=Assets.AEG003_061_2019)
 
 
 @ContinueOnRest(50)
@@ -390,19 +390,19 @@ def Event_1043312510():
     """Event 1043312510"""
     CommonFunc_90005500(
         0,
-        1043310510,
-        1043310511,
-        3,
-        1043311510,
-        1043311511,
-        1043313511,
-        1043311512,
-        1043313512,
-        1043312511,
-        1043312512,
-        1043310512,
-        1043310513,
-        0,
+        flag=1043310510,
+        flag_1=1043310511,
+        left=3,
+        asset=Assets.AEG030_858_2000,
+        asset_1=Assets.AEG099_026_2001,
+        obj_act_id=1043313511,
+        asset_2=Assets.AEG099_026_2000,
+        obj_act_id_1=1043313512,
+        region=1043312511,
+        region_1=1043312512,
+        flag_2=1043310512,
+        flag_3=1043310513,
+        left_1=0,
     )
 
 

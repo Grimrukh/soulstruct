@@ -59,7 +59,7 @@ def Constructor():
     Event_11320300(8, character=1320208, first_flag=11325224, last_flag=11325226, flag=11325224)
     Event_11320300(9, character=1320209, first_flag=11325227, last_flag=11325229, flag=11325227)
     Event_11320300(10, character=1320210, first_flag=11325230, last_flag=11325232, flag=11325230)
-    Event_11320600(0, 1321650, 11320600)
+    Event_11320600(0, obj=1321650, obj_act_id=11320600)
 
 
 @ContinueOnRest(50)
@@ -216,7 +216,17 @@ def Event_11320110():
         bit_index_1=6,
         special_effect_id=5435,
     )
-    Event_11325110(6, 8, 3536, 3536, 1320707, 97, 6, 7, 5436)
+    Event_11325110(
+        6,
+        part_index=8,
+        npc_part_id=3536,
+        npc_part_id_1=3536,
+        character=1320707,
+        model_point=97,
+        bit_index=6,
+        bit_index_1=7,
+        special_effect_id=5436,
+    )
 
 
 @RestartOnRest(11325100)

@@ -103,8 +103,8 @@ def Constructor():
     Event_1034502802()
     Event_1034502803()
     CommonFunc_90005300(0, flag=1035510200, character=Characters.Scarab, item_lot=40200, seconds=0.0, left=0)
-    CommonFunc_90005525(0, flag=1034500620, asset=Assets.AEG004_983_1000)
-    CommonFunc_90005525(0, flag=1034500621, asset=Assets.AEG004_336_1000)
+    CommonFunc_90005525(0, flag=1034500620, asset=1034501620)
+    CommonFunc_90005525(0, flag=1034500621, asset=1034501621)
     Event_1034502580()
     Event_1034502510()
     CommonFunc_90005501(
@@ -272,19 +272,19 @@ def Event_1034502510():
     """Event 1034502510"""
     CommonFunc_90005500(
         0,
-        1034500510,
-        1034500511,
-        0,
-        1034501510,
-        1034501511,
-        1034503511,
-        1034501512,
-        1034503512,
-        1034502511,
-        1034502512,
-        1034500512,
-        1034500513,
-        0,
+        flag=1034500510,
+        flag_1=1034500511,
+        left=0,
+        asset=Assets.AEG110_112_2000,
+        asset_1=Assets.AEG099_182_2001,
+        obj_act_id=1034503511,
+        asset_2=Assets.AEG099_182_2000,
+        obj_act_id_1=1034503512,
+        region=1034502511,
+        region_1=1034502512,
+        flag_2=1034500512,
+        flag_3=1034500513,
+        left_1=0,
     )
 
 

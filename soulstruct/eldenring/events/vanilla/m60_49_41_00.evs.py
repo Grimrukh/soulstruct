@@ -29,7 +29,7 @@ def Constructor():
     Event_1049412580()
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
-    CommonFunc_900005610(0, 1049411652, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9002, vfx_id=100, model_point=800, right=0)
 
 
 @RestartOnRest(1049412580)

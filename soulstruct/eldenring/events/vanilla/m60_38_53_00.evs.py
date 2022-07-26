@@ -45,7 +45,7 @@ def Constructor():
         cancel_flag__right_flag=1038532571,
         right=1038532572,
     )
-    CommonFunc_90005621(0, 1038530570, 1038531573)
+    CommonFunc_90005621(0, flag=1038530570, asset=Assets.AEG099_272_9000)
 
 
 @RestartOnRest(1038532580)

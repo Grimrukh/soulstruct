@@ -49,18 +49,18 @@ def Constructor():
     CommonFunc_90005460(0, character=Characters.GiantOctopus1)
     CommonFunc_90005461(0, character=Characters.GiantOctopus1)
     CommonFunc_90005462(0, character=Characters.GiantOctopus1)
-    CommonFunc_90005525(0, flag=1034480610, asset=Assets.AEG004_984_1000)
-    CommonFunc_90005525(0, flag=1034480611, asset=Assets.AEG004_983_1000)
+    CommonFunc_90005525(0, flag=1034480610, asset=1034481610)
+    CommonFunc_90005525(0, flag=1034480611, asset=1034481611)
     Event_1034482600(0, asset=1034481620, entity=1034481621, flag=82022)
     Event_1034482800()
     Event_1034482810()
     Event_1034482849()
-    Event_1034482610(0, asset=Assets.AEG099_045_9000, flag=1034482640, owner_entity=Characters.Dummy)
-    Event_1034482610(1, asset=Assets.AEG099_045_9001, flag=1034482641, owner_entity=Characters.Dummy)
-    Event_1034482610(2, asset=Assets.AEG099_045_9002, flag=1034482642, owner_entity=Characters.Dummy)
+    Event_1034482610(0, asset=1034481640, flag=1034482640, owner_entity=Characters.Dummy)
+    Event_1034482610(1, asset=1034481641, flag=1034482641, owner_entity=Characters.Dummy)
+    Event_1034482610(2, asset=1034481642, flag=1034482642, owner_entity=Characters.Dummy)
     Event_1034482610(3, asset=1034481643, flag=1034482643, owner_entity=Characters.Dummy)
-    Event_1034482610(4, asset=Assets.AEG099_045_9004, flag=1034482644, owner_entity=Characters.Dummy)
-    Event_1034482610(5, asset=Assets.AEG099_045_9005, flag=1034482645, owner_entity=Characters.Dummy)
+    Event_1034482610(4, asset=1034481644, flag=1034482644, owner_entity=Characters.Dummy)
+    Event_1034482610(5, asset=1034481645, flag=1034482645, owner_entity=Characters.Dummy)
     Event_1034482610(6, asset=1034481646, flag=1034482646, owner_entity=Characters.Dummy)
     Event_1034482610(7, asset=1034481647, flag=1034482647, owner_entity=Characters.Dummy)
     Event_1034482610(8, asset=1034481648, flag=1034482648, owner_entity=Characters.Dummy)
@@ -121,7 +121,7 @@ def Constructor():
     )
     Event_1034482262(
         0,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -135,7 +135,7 @@ def Constructor():
     )
     Event_1034482262(
         1,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -149,7 +149,7 @@ def Constructor():
     )
     Event_1034482262(
         3,
-        character=Characters.Balloon0,
+        character=1034480250,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -163,7 +163,7 @@ def Constructor():
     )
     Event_1034482262(
         4,
-        character=Characters.Balloon1,
+        character=1034480251,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,
@@ -177,7 +177,7 @@ def Constructor():
     )
     Event_1034482262(
         5,
-        character=Characters.Balloon1,
+        character=1034480251,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,
@@ -189,7 +189,7 @@ def Constructor():
         seconds_3=0.0,
         flag=1034482251,
     )
-    CommonFunc_90005706(0, 1034480700, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble6, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -237,7 +237,14 @@ def Preconstructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005261(0, 1034480211, 1034482211, 15.0, 0.0, 0)
+    CommonFunc_90005261(
+        0,
+        character=Characters.WanderingNoble1,
+        region=1034482211,
+        radius=15.0,
+        seconds=0.0,
+        animation_id=0,
+    )
 
 
 @RestartOnRest(1034482260)
@@ -624,4 +631,4 @@ def Event_1034482849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, 1034480800, 1034481801, 3, 0, 0)
+    CommonFunc_9005812(0, flag=1034480800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)

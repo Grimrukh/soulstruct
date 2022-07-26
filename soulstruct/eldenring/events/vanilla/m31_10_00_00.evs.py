@@ -46,7 +46,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_900005610(0, 31101200, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
 
 
 @ContinueOnRest(50)
@@ -70,7 +70,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Springhare0, region=31102236, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare1, region=31102236, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Springhare2, region=31102238, radius=2.0, seconds=0.0, animation_id=0)
-    Event_31102200(1, 31100238)
+    Event_31102200(1, character=Characters.Springhare2)
 
 
 @RestartOnRest(31102200)
@@ -90,7 +90,7 @@ def Event_31102200(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=2.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -143,7 +143,7 @@ def Event_31102250(_, character: uint, region: uint, radius: float, seconds: flo
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=6))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=260))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     OR_2.Add(AND_4)
@@ -367,10 +367,10 @@ def Event_31102815():
     if FlagEnabled(31100800):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, 31102800, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, 31102800, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, 31102800, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -464,4 +464,14 @@ def Event_31102849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31100800, asset=Assets.AEG099_001_9000, model_point=3, right=31100801)
-    CommonFunc_9005822(0, 31100800, 931000, 31102805, 31102806, 31102810, 31102842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31100800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31102805,
+        flag_2=31102806,
+        right=31102810,
+        flag_3=31102842,
+        left=0,
+        left_1=0,
+    )

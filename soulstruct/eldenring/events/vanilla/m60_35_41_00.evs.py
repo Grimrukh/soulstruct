@@ -24,8 +24,8 @@ from .entities.m60_35_41_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005525(0, flag=1035410612, asset=Assets.AEG004_983_1000)
-    CommonFunc_90005525(0, flag=1035410611, asset=Assets.AEG004_983_1001)
+    CommonFunc_90005525(0, flag=1035410612, asset=1035411612)
+    CommonFunc_90005525(0, flag=1035410611, asset=1035411611)
     CommonFunc_90005620(
         0,
         flag=1035410570,
@@ -40,7 +40,7 @@ def Constructor():
     Event_1035412610(0, flag=1035410610, character=Characters.GiantTurtle)
     Event_1035412611(0, flag=1035410610, attacked_entity=Characters.GiantTurtle)
     CommonFunc_90005251(0, character=Characters.GiantTurtle, radius=0.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005300(0, 1035410610, 1035410610, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1035410610, character=Characters.GiantTurtle, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -110,7 +110,7 @@ def Preconstructor():
         seconds=0.0,
         animation_id=1700,
     )
-    CommonFunc_90005261(0, 1035410350, 1035412350, 1.0, 0.0, 1700)
+    CommonFunc_90005261(0, character=Characters.Revenant1, region=1035412350, radius=1.0, seconds=0.0, animation_id=1700)
 
 
 @RestartOnRest(1035412610)

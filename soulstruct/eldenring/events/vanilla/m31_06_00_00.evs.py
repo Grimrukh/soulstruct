@@ -31,7 +31,7 @@ def Constructor():
     Event_31062810()
     Event_31062849()
     Event_31062811()
-    CommonFunc_90005525(0, flag=31060600, asset=Assets.AEG027_069_1000)
+    CommonFunc_90005525(0, flag=31060600, asset=31061600)
     CommonFunc_90005511(0, flag=31060540, asset=Assets.AEG027_043_1000, obj_act_id=31063540, obj_act_id_1=27043, left=0)
     CommonFunc_90005512(0, flag=31060540, region=31062540, region_1=31062541)
     CommonFunc_90005646(
@@ -46,7 +46,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 31062800, 31061695, 5)
+    CommonFunc_91005600(0, flag=31062800, asset=Assets.AEG099_001_9002, model_point=5)
 
 
 @ContinueOnRest(50)
@@ -121,7 +121,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Rat1, region=31062281, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.Rat2, region=31062281, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=31060283, region=31062283, radius=2.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005261(0, 31060300, 31062300, 2.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.BattleMage, region=31062300, radius=2.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(31062300)
@@ -266,4 +266,14 @@ def Event_31062849():
     )
     CommonFunc_9005811(0, flag=31060800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
     CommonFunc_9005813(0, flag=31060800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=806760)
-    CommonFunc_9005822(0, 31060800, 931000, 31062805, 31062806, 0, 31062842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31060800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31062805,
+        flag_2=31062806,
+        right=0,
+        flag_3=31062842,
+        left=0,
+        left_1=0,
+    )

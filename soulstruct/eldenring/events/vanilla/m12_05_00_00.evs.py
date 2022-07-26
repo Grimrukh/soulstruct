@@ -753,9 +753,9 @@ def Constructor():
         asset=Assets.AEG099_090_9001,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    CommonFunc_90005796(0, flag=7601, character=Characters.WhiteMaskVarre0, banner_type=5, region=12052141)
-    Event_1039532145()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7601, character=Characters.WhiteMaskVarre0, banner_type=5, region=12052141)
+        Event_1039532145()
     Event_12052690()
     Event_12053700(0, character=Characters.Mohg, character_1=0, flag=9112, flag_1=12052805, distance=145.0)
     Event_12053701(0, character=Characters.Mohg)
@@ -795,7 +795,7 @@ def Constructor():
         flag=12059166,
         model_point=0,
     )
-    CommonFunc_90005702(0, 12050702, 3183, 3180, 3184)
+    CommonFunc_90005702(0, character=Characters.WhiteMaskVarre1, flag=3183, first_flag=3180, last_flag=3184)
 
 
 @ContinueOnRest(50)
@@ -812,7 +812,8 @@ def Preconstructor():
 @RestartOnRest(1039532145)
 def Event_1039532145():
     """Event 1039532145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.WhiteMaskVarre0)
     SetTeamType(Characters.WhiteMaskVarre0, TeamType.Human)
     DeleteAssetVFX(12056710)
@@ -993,7 +994,7 @@ def Event_12052200():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.MohgwynMonstrousCrow0, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.MohgwynMonstrousCrow0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.MohgwynMonstrousCrow0))
     OR_2.Add(CharacterHasStateInfo(character=Characters.MohgwynMonstrousCrow0, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.MohgwynMonstrousCrow0, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.MohgwynMonstrousCrow0, state_info=5))
@@ -1376,7 +1377,17 @@ def Event_12052849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12050800, asset=Assets.AEG099_002_9000, model_point=4, right=12050801)
-    CommonFunc_9005822(0, 12050800, 480000, 12052805, 12052806, 0, 12052802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12050800,
+        bgm_boss_conv_param_id=480000,
+        flag_1=12052805,
+        flag_2=12052806,
+        right=0,
+        flag_3=12052802,
+        left=0,
+        left_1=0,
+    )
 
 
 @ContinueOnRest(12052510)
@@ -1384,19 +1395,19 @@ def Event_12052510():
     """Event 12052510"""
     CommonFunc_90005500(
         0,
-        12050510,
-        12050511,
-        0,
-        12051510,
-        12051511,
-        12053511,
-        12051512,
-        12053512,
-        12052511,
-        12052512,
-        12050512,
-        12050513,
-        0,
+        flag=12050510,
+        flag_1=12050511,
+        left=0,
+        asset=Assets.AEG239_013_0500,
+        asset_1=Assets.AEG239_021_0500,
+        obj_act_id=12053511,
+        asset_2=Assets.AEG239_023_0500,
+        obj_act_id_1=12053512,
+        region=12052511,
+        region_1=12052512,
+        flag_2=12050512,
+        flag_3=12050513,
+        left_1=0,
     )
 
 

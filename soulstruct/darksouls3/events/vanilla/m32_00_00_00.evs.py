@@ -311,7 +311,7 @@ def Constructor():
         destination_1=3202290,
         region=3202234,
         character_1=3200235,
-        character_2=3204290,
+        spawner=3204290,
     )
     Event_13205370(
         1,
@@ -322,7 +322,7 @@ def Constructor():
         destination_1=3202290,
         region=3202234,
         character_1=3200235,
-        character_2=3204291,
+        spawner=3204291,
     )
     Event_13205375(
         0,
@@ -331,7 +331,7 @@ def Constructor():
         flag_1=13204360,
         destination=3202295,
         character_1=3200255,
-        character_2=3204295,
+        spawner=3204295,
     )
     Event_13205375(
         1,
@@ -340,7 +340,7 @@ def Constructor():
         flag_1=0,
         destination=3202295,
         character_1=3200255,
-        character_2=3204297,
+        spawner=3204297,
     )
     CommonFunc_20005120(0, character=3200299, radius=15.0)
     Event_13205380()
@@ -384,7 +384,7 @@ def Constructor():
     CommonFunc_20005525(0, flag=53200300, item_lot=3200300, obj=3201480, model_point=62)
     CommonFunc_20005525(0, flag=53200310, item_lot=3200310, obj=3201481, model_point=61)
     Event_13205910(0, flag=13200910, region=3202910, item_lot=3200900)
-    Event_13205910(1, 13200915, 3202915, 3200910)
+    Event_13205910(1, flag=13200915, region=3202915, item_lot=3200910)
 
 
 @ContinueOnRest(50)
@@ -913,7 +913,7 @@ def Event_13205370(
     destination_1: int,
     region: int,
     character_1: int,
-    character_2: int,
+    spawner: int,
 ):
     """Event 13205370"""
     SkipLinesIfClientTypeCountComparison(
@@ -938,7 +938,7 @@ def Event_13205370(
     DefineLabel(0)
     AND_9.Add(HealthRatio(character) != 0.0)
     SkipLinesIfConditionTrue(1, AND_9)
-    ForceSpawnerToSpawn(spawner=character_2)
+    ForceSpawnerToSpawn(spawner=spawner)
     Wait(1.100000023841858)
     AND_2.Add(AllPlayersOutsideRegion(region=region))
     GotoIfConditionTrue(Label.L1, input_condition=AND_2)
@@ -970,7 +970,7 @@ def Event_13205370(
 
 
 @RestartOnRest(13205375)
-def Event_13205375(_, character: int, flag: int, flag_1: int, destination: int, character_1: int, character_2: int):
+def Event_13205375(_, character: int, flag: int, flag_1: int, destination: int, character_1: int, spawner: int):
     """Event 13205375"""
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -993,7 +993,7 @@ def Event_13205375(_, character: int, flag: int, flag_1: int, destination: int, 
     DefineLabel(0)
     AND_9.Add(HealthRatio(character) != 0.0)
     SkipLinesIfConditionTrue(1, AND_9)
-    ForceSpawnerToSpawn(spawner=character_2)
+    ForceSpawnerToSpawn(spawner=spawner)
     Wait(1.100000023841858)
     ForceAnimation(character, 63010, unknown2=1.0)
     CreateTemporaryVFX(vfx_id=30300, anchor_entity=destination, anchor_type=CoordEntityType.Region)
@@ -1051,18 +1051,18 @@ def Event_13205401():
     """Event 13205401"""
     CommonFunc_20005621(
         0,
-        13200400,
-        13200405,
-        3201400,
-        3201401,
-        3204401,
-        3201402,
-        3204402,
-        3202401,
-        3202402,
-        13201400,
-        13204400,
-        13200401,
+        flag=13200400,
+        flag_1=13200405,
+        obj=3201400,
+        obj_1=3201401,
+        obj_act_id=3204401,
+        obj_2=3201402,
+        obj_act_id_1=3204402,
+        region=3202401,
+        region_1=3202402,
+        flag_2=13201400,
+        flag_3=13204400,
+        left=13200401,
     )
 
 
@@ -1385,7 +1385,7 @@ def Event_13205820():
     CommonFunc_20005820(0, flag=13200800, obj=3201800, model_point=3, left=13200801)
     CommonFunc_20005820(0, flag=13200800, obj=3201801, model_point=2, left=13200801)
     CommonFunc_20001835(0, flag=13200800, flag_1=13205805, flag_2=13205806, flag_3=13205802, sound_id=3204801)
-    CommonFunc_20005810(0, 13200800, 3201800, 3202800, 10000)
+    CommonFunc_20005810(0, flag=13200800, entity=3201800, target_entity=3202800, action_button_id=10000)
 
 
 @RestartOnRest(13205860)
@@ -1646,7 +1646,7 @@ def Event_13205870():
         flag_4=13205852,
     )
     CommonFunc_20005810(0, flag=13200850, entity=3201785, target_entity=3202785, action_button_id=10000)
-    CommonFunc_20005810(0, 13200850, 3201786, 3202786, 10000)
+    CommonFunc_20005810(0, flag=13200850, entity=3201786, target_entity=3202786, action_button_id=10000)
 
 
 @RestartOnRest(13205880)

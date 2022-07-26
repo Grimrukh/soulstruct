@@ -80,7 +80,7 @@ def Constructor():
         region_1=4102805,
         flag_2=14100801,
     )
-    CommonFunc_20005714(0, 14104191, 14105805, 4100191, 4102806, 14100801)
+    CommonFunc_20005714(0, flag=14104191, flag_1=14105805, character=4100191, region=4102806, flag_2=14100801)
 
 
 @ContinueOnRest(50)
@@ -504,7 +504,7 @@ def Event_14005829():
         flag_3=14105802,
     )
     CommonFunc_20005820(0, flag=14100800, obj=4101800, model_point=4, left=14100801)
-    CommonFunc_20005810(0, 14100800, 4101800, 4102800, 10000)
+    CommonFunc_20005810(0, flag=14100800, entity=4101800, target_entity=4102800, action_button_id=10000)
 
 
 @RestartOnRest(14005900)

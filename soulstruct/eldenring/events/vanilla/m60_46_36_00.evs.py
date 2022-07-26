@@ -59,7 +59,7 @@ def Constructor():
         right=-1,
     )
     CommonFunc_90005702(0, character=Characters.KennethHaight, flag=3583, first_flag=3580, last_flag=3583)
-    Event_1046360700(0, 1046360700)
+    Event_1046360700(0, character=Characters.KennethHaight)
 
 
 @ContinueOnRest(50)

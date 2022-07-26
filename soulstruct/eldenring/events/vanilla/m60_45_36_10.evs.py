@@ -337,8 +337,8 @@ def Event_1045363703(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
@@ -351,8 +351,8 @@ def Event_1045363703(_, character: uint):
     
     MAIN.Await(OR_7)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20010)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20010)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -373,9 +373,9 @@ def Event_1045363703(_, character: uint):
     
     MAIN.Await(OR_11)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=9603)
-    ForceAnimation(character, 20011)
-    DisableAI(character)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20011)
+        DisableAI(character)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -449,10 +449,10 @@ def Event_1045363706(_, character: uint, attacked_entity: uint):
     EnableNetworkFlag(1041362708)
     if FlagEnabled(4741):
         return
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9602)
-    ForceAnimation(character, 20006)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9602):
+        ForceAnimation(character, 20006)
 
 
 @ContinueOnRest(1045363707)

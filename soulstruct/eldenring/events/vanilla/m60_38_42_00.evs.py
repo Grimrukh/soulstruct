@@ -47,7 +47,14 @@ def Constructor():
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005261(0, 1038420240, 1038422240, 30.0, 0.0, 0)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RayaLucariaScholar,
+        region=1038422240,
+        radius=30.0,
+        seconds=0.0,
+        animation_id=0,
+    )
 
 
 @RestartOnRest(1038422200)

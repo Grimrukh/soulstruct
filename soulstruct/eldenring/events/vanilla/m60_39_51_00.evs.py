@@ -61,14 +61,7 @@ def Constructor():
         item_lot=1039510200,
         seconds=0.0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1039510800,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1039510800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
     CommonFunc_90005300(0, flag=1039510500, character=Characters.Scarab, item_lot=40304, seconds=0.0, left=0)
     CommonFunc_90005703(
@@ -94,7 +87,7 @@ def Constructor():
     Event_1039513700(0, character=Characters.DemiHumanShaman)
     Event_1039513701(0, entity=Characters.DemiHumanShaman)
     CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1039512710)
-    CommonFunc_90005771(0, 1039510950, 1039512711)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1039512711)
 
 
 @ContinueOnRest(50)
@@ -182,7 +175,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, 1039510361, 1039512361, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.LeyndellKnight0, region=1039512361, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1039512451)

@@ -26,14 +26,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1049370000, asset=Assets.AEG099_060_9000)
     CommonFunc_90005251(0, character=1049370200, radius=20.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(
-        0,
-        flag=1049370800,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1049370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     Event_1049372291(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     CommonFunc_90005871(
@@ -64,14 +57,7 @@ def Constructor():
         seconds=0.0,
     )
     Event_1049372299()
-    CommonFunc_90005300(
-        0,
-        flag=1049370299,
-        character=Characters.LionGuardian,
-        item_lot=1049370700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1049370299, character=Characters.LionGuardian, item_lot=1049370700, seconds=0.0, left=0)
     CommonFunc_90005725(
         0,
         flag=4780,
@@ -108,7 +94,14 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4781, flag_1=4780, flag_2=1049379207, right=3)
     CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1049372706, flag_1=1049372707)
-    CommonFunc_90005727(0, 4781, 1049370700, 1049370701, 4780, 4783)
+    CommonFunc_90005727(
+        0,
+        flag=4781,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4780,
+        last_flag=4783,
+    )
 
 
 @ContinueOnRest(50)

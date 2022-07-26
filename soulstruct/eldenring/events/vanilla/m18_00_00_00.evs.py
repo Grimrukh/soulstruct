@@ -257,7 +257,7 @@ def Constructor():
     Event_18002250(0, character=Characters.GodrickSoldier1, special_effect_id=8041)
     Event_18002250(1, character=Characters.WanderingNoble2, special_effect_id=8040)
     Event_18002690()
-    CommonFunc_90005706(0, 18000701, 30025, 0)
+    CommonFunc_90005706(0, character=Characters.Commoner, animation_id=30025, left=0)
 
 
 @ContinueOnRest(50)
@@ -295,22 +295,8 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=18000350,
-        character=Characters.GraftedScion0,
-        item_lot=18002000,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=18000351,
-        character=Characters.GraftedScion1,
-        item_lot=18002010,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=18000350, character=Characters.GraftedScion0, item_lot=18002000, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=18000351, character=Characters.GraftedScion1, item_lot=18002010, seconds=0.0, left=0)
     Event_18002520()
 
 
@@ -848,14 +834,7 @@ def Event_18002510():
         flag_3=18002517,
         left_1=0,
     )
-    CommonFunc_90005681(
-        0,
-        flag=18000530,
-        flag_1=18000531,
-        flag_2=18000532,
-        flag_3=18000533,
-        attacked_entity=Assets.AEG027_156_9000,
-    )
+    CommonFunc_90005681(0, flag=18000530, flag_1=18000531, flag_2=18000532, flag_3=18000533, attacked_entity=18001530)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -955,7 +934,19 @@ def Event_18002510():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 18000532, 18001530, 18002530, 18000530, 801100700, 801100705, 102, 0, 0, 0)
+        CommonFunc_90005682(
+            0,
+            flag=18000532,
+            source_entity=Assets.AEG027_156_9000,
+            region=18002530,
+            owner_entity=Characters.TalkDummy3,
+            behavior_id=801100700,
+            behavior_id_1=801100705,
+            model_point=102,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
 
 
 @ContinueOnRest(18002520)
@@ -1317,7 +1308,17 @@ def Event_18000820():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=18000800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 18000800, 920600, 18002805, 18002806, 0, 18002802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=18000800,
+        bgm_boss_conv_param_id=920600,
+        flag_1=18002805,
+        flag_2=18002806,
+        right=0,
+        flag_3=18002802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(18002850)
@@ -1386,4 +1387,14 @@ def Event_18000870():
     )
     CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9010, model_point=3, right=0)
     CommonFunc_9005811(0, flag=18000850, asset=Assets.AEG099_001_9011, model_point=4, right=0)
-    CommonFunc_9005822(0, 18000850, 931000, 18002855, 18002856, 0, 18002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=18000850,
+        bgm_boss_conv_param_id=931000,
+        flag_1=18002855,
+        flag_2=18002856,
+        right=0,
+        flag_3=18002852,
+        left=0,
+        left_1=0,
+    )

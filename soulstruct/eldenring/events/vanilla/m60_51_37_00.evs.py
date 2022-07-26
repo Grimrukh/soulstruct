@@ -157,10 +157,10 @@ def Event_1051372599():
     DisableNetworkSync()
     if PlayerInOwnWorld():
         return
-    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=2))
-    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=3))
-    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=4))
-    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=5))
+    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.BlackPhantom))
+    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown3))
+    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown4))
+    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown5))
     if OR_15:
         return
     

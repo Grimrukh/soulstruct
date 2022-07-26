@@ -43,14 +43,7 @@ def Constructor():
         seconds=0.0,
     )
     CommonFunc_90005870(0, character=Characters.DeathRiteBird, name=904980602, npc_threat_level=24)
-    CommonFunc_90005300(
-        0,
-        flag=1044320850,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1044320850, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1044322340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -70,13 +63,25 @@ def Constructor():
         npc_threat_level=10,
         character_1=Characters.NightsCavalryHorse,
     )
-    CommonFunc_90005872(0, 1044320342, 10, 0)
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005211(0, 1044320340, 30000, 20000, 1044322340, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.DeathRiteBird,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1044322340,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(1044322200)

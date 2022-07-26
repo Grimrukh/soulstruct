@@ -50,28 +50,28 @@ def Constructor():
     Event_11105170(4, character=1100137, region=1102007, seconds=0.30000001192092896)
     Event_11105170(5, character=1100138, region=1102007, seconds=0.0)
     Event_11106299()
-    Event_11106200(0, 1101011, 1101011, 12, -1)
+    Event_11106200(0, obj=1101011, other_entity=1101011, animation_id=12, left=-1)
     Event_11106200(1, obj=1101012, other_entity=1101012, animation_id=13, left=11006200)
     Event_11106200(2, obj=1101013, other_entity=1101011, animation_id=12, left=11006200)
     Event_11106200(3, obj=1101014, other_entity=1101014, animation_id=13, left=11006200)
     Event_11106200(4, obj=1101015, other_entity=1101016, animation_id=12, left=11006205)
-    Event_11106200(5, 1101016, 1101016, 13, -1)
+    Event_11106200(5, obj=1101016, other_entity=1101016, animation_id=13, left=-1)
     Event_11106200(6, obj=1101017, other_entity=1101016, animation_id=12, left=11006205)
-    Event_11106200(7, 1101018, 1101018, 13, -1)
-    Event_11106200(8, 1101019, 1101019, 13, -1)
-    Event_11106200(9, 1101020, 1101020, 12, -1)
-    Event_11106200(13, 1101024, 1101024, 13, -1)
-    Event_11106200(14, 1101025, 1101025, 12, -1)
-    Event_11106200(18, 1101029, 1101029, 12, -1)
-    Event_11106200(19, 1101030, 1101030, 13, -1)
-    Event_11106200(24, 1101035, 1101035, 12, -1)
-    Event_11106200(27, 1101038, 1101038, 12, -1)
-    Event_11106200(28, 1101039, 1101039, 13, -1)
-    Event_11106200(29, 1101040, 1101040, 12, -1)
-    Event_11106200(30, 1101041, 1101041, 12, -1)
-    Event_11106200(31, 1101042, 1101042, 13, -1)
-    Event_11106200(32, 1101043, 1101043, 12, -1)
-    Event_11106200(33, 1101044, 1101044, 12, -1)
+    Event_11106200(7, obj=1101018, other_entity=1101018, animation_id=13, left=-1)
+    Event_11106200(8, obj=1101019, other_entity=1101019, animation_id=13, left=-1)
+    Event_11106200(9, obj=1101020, other_entity=1101020, animation_id=12, left=-1)
+    Event_11106200(13, obj=1101024, other_entity=1101024, animation_id=13, left=-1)
+    Event_11106200(14, obj=1101025, other_entity=1101025, animation_id=12, left=-1)
+    Event_11106200(18, obj=1101029, other_entity=1101029, animation_id=12, left=-1)
+    Event_11106200(19, obj=1101030, other_entity=1101030, animation_id=13, left=-1)
+    Event_11106200(24, obj=1101035, other_entity=1101035, animation_id=12, left=-1)
+    Event_11106200(27, obj=1101038, other_entity=1101038, animation_id=12, left=-1)
+    Event_11106200(28, obj=1101039, other_entity=1101039, animation_id=13, left=-1)
+    Event_11106200(29, obj=1101040, other_entity=1101040, animation_id=12, left=-1)
+    Event_11106200(30, obj=1101041, other_entity=1101041, animation_id=12, left=-1)
+    Event_11106200(31, obj=1101042, other_entity=1101042, animation_id=13, left=-1)
+    Event_11106200(32, obj=1101043, other_entity=1101043, animation_id=12, left=-1)
+    Event_11106200(33, obj=1101044, other_entity=1101044, animation_id=12, left=-1)
     Event_11100070(0, obj=1101120, obj_1=1101600, animation_id=120, animation_id_1=121)
     Event_11100070(1, obj=1101121, obj_1=1101601, animation_id=125, animation_id_1=126)
     if FlagEnabled(11100400):
@@ -100,7 +100,7 @@ def Constructor():
         Event_11105397()
         Event_11105398()
     Event_11105843(0, flag=4, line_intersects=1101990, anchor_entity=1102998, target_entity=1102997)
-    Event_11105846(0, 4, 1101990, 1101991)
+    Event_11105846(0, flag=4, obj=1101990, vfx_id=1101991)
 
 
 @ContinueOnRest(50)
@@ -666,18 +666,18 @@ def Event_11106299():
     
     MAIN.Await(CharacterInsideRegion(PLAYER, region=1102000))
     
-    Event_11106298(-1, 1101300, 13)
-    Event_11106298(-1, 1101301, 12)
-    Event_11106298(-1, 1101302, 12)
-    Event_11106298(-1, 1101303, 13)
-    Event_11106298(-1, 1101304, 12)
-    Event_11106298(-1, 1101305, 12)
-    Event_11106298(-1, 1101306, 13)
-    Event_11106298(-1, 1101307, 12)
-    Event_11106298(-1, 1101308, 12)
-    Event_11106298(-1, 1101309, 13)
-    Event_11106298(-1, 1101310, 12)
-    Event_11106298(-1, 1101311, 12)
+    Event_11106298(-1, obj=1101300, animation_id=13)
+    Event_11106298(-1, obj=1101301, animation_id=12)
+    Event_11106298(-1, obj=1101302, animation_id=12)
+    Event_11106298(-1, obj=1101303, animation_id=13)
+    Event_11106298(-1, obj=1101304, animation_id=12)
+    Event_11106298(-1, obj=1101305, animation_id=12)
+    Event_11106298(-1, obj=1101306, animation_id=13)
+    Event_11106298(-1, obj=1101307, animation_id=12)
+    Event_11106298(-1, obj=1101308, animation_id=12)
+    Event_11106298(-1, obj=1101309, animation_id=13)
+    Event_11106298(-1, obj=1101310, animation_id=12)
+    Event_11106298(-1, obj=1101311, animation_id=12)
 
 
 @EndOnRest(11106298)
@@ -1419,7 +1419,16 @@ def Event_11100200():
         last_flag=11105245,
         flag_1=11105245,
     )
-    Event_11105280(5, 11105213, 1100303, 6, 1102040, 11105242, 11105245, 11105244)
+    Event_11105280(
+        5,
+        flag=11105213,
+        character=1100303,
+        command_id=6,
+        region=1102040,
+        first_flag=11105242,
+        last_flag=11105245,
+        flag_1=11105244,
+    )
 
 
 @EndOnRest(11105190)

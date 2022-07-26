@@ -1,5 +1,5 @@
 """
-Regal Ancestor (Lower)
+Ancestor Spirit Arena
 
 linked:
 0
@@ -126,4 +126,14 @@ def Event_12082849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12080800, asset=Assets.AEG099_002_9000, model_point=8, right=0)
-    CommonFunc_9005822(0, 12080800, 467000, 12082805, 12082806, 0, 12082802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12080800,
+        bgm_boss_conv_param_id=467000,
+        flag_1=12082805,
+        flag_2=12082806,
+        right=0,
+        flag_3=12082802,
+        left=0,
+        left_1=0,
+    )

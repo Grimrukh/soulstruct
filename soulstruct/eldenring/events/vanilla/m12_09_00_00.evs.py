@@ -166,34 +166,34 @@ def Constructor():
         character_31=Characters.Springhare4,
         character_32=Characters.Springhare5,
         character_33=Characters.Springhare6,
-        character_34=12093200,
-        character_35=12093201,
-        character_36=12093202,
-        character_37=12093203,
-        character_38=12093204,
-        character_39=12093205,
-        character_40=12093206,
-        character_41=12093220,
-        character_42=12093221,
-        character_43=12093222,
-        character_44=12093223,
-        character_45=12093224,
-        character_46=12093225,
-        character_47=12093226,
-        character_48=12093240,
-        character_49=12093241,
-        character_50=12093242,
-        character_51=12093243,
-        character_52=12093244,
-        character_53=12093245,
-        character_54=12093246,
-        character_55=12093260,
-        character_56=12093261,
-        character_57=12093262,
-        character_58=12093263,
-        character_59=12093264,
-        character_60=12093265,
-        character_61=12093266,
+        spawner=12093200,
+        spawner_1=12093201,
+        spawner_2=12093202,
+        spawner_3=12093203,
+        spawner_4=12093204,
+        spawner_5=12093205,
+        spawner_6=12093206,
+        spawner_7=12093220,
+        spawner_8=12093221,
+        spawner_9=12093222,
+        spawner_10=12093223,
+        spawner_11=12093224,
+        spawner_12=12093225,
+        spawner_13=12093226,
+        spawner_14=12093240,
+        spawner_15=12093241,
+        spawner_16=12093242,
+        spawner_17=12093243,
+        spawner_18=12093244,
+        spawner_19=12093245,
+        spawner_20=12093246,
+        spawner_21=12093260,
+        spawner_22=12093261,
+        spawner_23=12093262,
+        spawner_24=12093263,
+        spawner_25=12093264,
+        spawner_26=12093265,
+        spawner_27=12093266,
         flag_5=12092858,
     )
     Event_12092860(
@@ -262,7 +262,7 @@ def Constructor():
     Event_12092920(47, left=12092909, owner_entity=Characters.Dummy, source_entity=12092347)
     Event_12092920(48, left=12092909, owner_entity=Characters.Dummy, source_entity=12092348)
     Event_12092920(49, left=12092909, owner_entity=Characters.Dummy, source_entity=12092349)
-    Event_12092920(50, 12092909, 12090290, 12092350)
+    Event_12092920(50, left=12092909, owner_entity=Characters.Dummy, source_entity=12092350)
 
 
 @ContinueOnRest(12092848)
@@ -377,7 +377,17 @@ def Event_12092849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12090800, asset=Assets.AEG099_002_9000, model_point=8, right=0)
-    CommonFunc_9005822(0, 12090800, 467000, 12092805, 12092806, 0, 12092802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12090800,
+        bgm_boss_conv_param_id=467000,
+        flag_1=12092805,
+        flag_2=12092806,
+        right=0,
+        flag_3=12092802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(12092200)
@@ -435,21 +445,21 @@ def Event_12092260(_, flag: uint, character: uint, character_1: uint):
     ForceAnimation(character_1, 3014)
     SkipLines(1)
     ForceAnimation(character_1, 3037)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_1, special_effect=13601)
-    AddSpecialEffect(character_1, 13613)
-    AddSpecialEffect(character_1, 13618)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_1, special_effect=13602)
-    AddSpecialEffect(character_1, 13614)
-    AddSpecialEffect(character_1, 13619)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=3, character=character_1, special_effect=13603)
-    AddSpecialEffect(character_1, 13615)
-    AddSpecialEffect(character_1, 13620)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character_1, special_effect=13604)
-    AddSpecialEffect(character_1, 13616)
-    AddSpecialEffect(character_1, 13621)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=13601):
+        AddSpecialEffect(character_1, 13613)
+        AddSpecialEffect(character_1, 13618)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=13602):
+        AddSpecialEffect(character_1, 13614)
+        AddSpecialEffect(character_1, 13619)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=13603):
+        AddSpecialEffect(character_1, 13615)
+        AddSpecialEffect(character_1, 13620)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=13604):
+        AddSpecialEffect(character_1, 13616)
+        AddSpecialEffect(character_1, 13621)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -483,37 +493,21 @@ def Event_12092290():
         short_move=True,
     )
     ForceAnimation(Characters.AncestorSpirit, 3014)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.AncestorSpirit,
-        special_effect=13601,
-    )
-    AddSpecialEffect(Characters.AncestorSpirit, 13613)
-    AddSpecialEffect(Characters.AncestorSpirit, 13618)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.AncestorSpirit,
-        special_effect=13602,
-    )
-    AddSpecialEffect(Characters.AncestorSpirit, 13614)
-    AddSpecialEffect(Characters.AncestorSpirit, 13619)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=3,
-        character=Characters.AncestorSpirit,
-        special_effect=13603,
-    )
-    AddSpecialEffect(Characters.AncestorSpirit, 13615)
-    AddSpecialEffect(Characters.AncestorSpirit, 13620)
-    Goto(Label.L0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=2,
-        character=Characters.AncestorSpirit,
-        special_effect=13604,
-    )
-    AddSpecialEffect(Characters.AncestorSpirit, 13616)
-    AddSpecialEffect(Characters.AncestorSpirit, 13621)
+    if CharacterHasSpecialEffect(character=Characters.AncestorSpirit, special_effect=13601):
+        AddSpecialEffect(Characters.AncestorSpirit, 13613)
+        AddSpecialEffect(Characters.AncestorSpirit, 13618)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=Characters.AncestorSpirit, special_effect=13602):
+        AddSpecialEffect(Characters.AncestorSpirit, 13614)
+        AddSpecialEffect(Characters.AncestorSpirit, 13619)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=Characters.AncestorSpirit, special_effect=13603):
+        AddSpecialEffect(Characters.AncestorSpirit, 13615)
+        AddSpecialEffect(Characters.AncestorSpirit, 13620)
+        Goto(Label.L0)
+    if CharacterHasSpecialEffect(character=Characters.AncestorSpirit, special_effect=13604):
+        AddSpecialEffect(Characters.AncestorSpirit, 13616)
+        AddSpecialEffect(Characters.AncestorSpirit, 13621)
 
     # --- Label 0 --- #
     DefineLabel(0)
@@ -608,34 +602,34 @@ def Event_12092859(
     character_31: uint,
     character_32: uint,
     character_33: uint,
-    character_34: uint,
-    character_35: uint,
-    character_36: uint,
-    character_37: uint,
-    character_38: uint,
-    character_39: uint,
-    character_40: uint,
-    character_41: uint,
-    character_42: uint,
-    character_43: uint,
-    character_44: uint,
-    character_45: uint,
-    character_46: uint,
-    character_47: uint,
-    character_48: uint,
-    character_49: uint,
-    character_50: uint,
-    character_51: uint,
-    character_52: uint,
-    character_53: uint,
-    character_54: uint,
-    character_55: uint,
-    character_56: uint,
-    character_57: uint,
-    character_58: uint,
-    character_59: uint,
-    character_60: uint,
-    character_61: uint,
+    spawner: uint,
+    spawner_1: uint,
+    spawner_2: uint,
+    spawner_3: uint,
+    spawner_4: uint,
+    spawner_5: uint,
+    spawner_6: uint,
+    spawner_7: uint,
+    spawner_8: uint,
+    spawner_9: uint,
+    spawner_10: uint,
+    spawner_11: uint,
+    spawner_12: uint,
+    spawner_13: uint,
+    spawner_14: uint,
+    spawner_15: uint,
+    spawner_16: uint,
+    spawner_17: uint,
+    spawner_18: uint,
+    spawner_19: uint,
+    spawner_20: uint,
+    spawner_21: uint,
+    spawner_22: uint,
+    spawner_23: uint,
+    spawner_24: uint,
+    spawner_25: uint,
+    spawner_26: uint,
+    spawner_27: uint,
     flag_5: uint,
 ):
     """Event 12092859"""
@@ -658,7 +652,7 @@ def Event_12092859(
     )
     EnableCharacter(character_8)
     EnableAI(character_8)
-    ForceSpawnerToSpawn(spawner=character_36)
+    ForceSpawnerToSpawn(spawner=spawner_2)
     WaitFrames(frames=1)
     AddSpecialEffect(character_8, 13643)
     AddSpecialEffect(character_8, 13605)
@@ -668,20 +662,19 @@ def Event_12092859(
     # --- Label 0 --- #
     DefineLabel(0)
     GotoIfCharacterDoesNotHaveSpecialEffect(Label.L1, character=character, special_effect=13646)
-    SkipLinesIfCharacterHasSpecialEffect(
-        line_count=8,
+    if CharacterDoesNotHaveSpecialEffect(
         character=character_3,
         special_effect=13605,
         target_comparison_type=ComparisonType.GreaterThanOrEqual,
-    )
-    EnableCharacter(character_13)
-    EnableAI(character_13)
-    ForceSpawnerToSpawn(spawner=character_41)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_13, 13643)
-    AddSpecialEffect(character_13, 13605)
-    DisableAnimations(character_13)
-    Goto(Label.L20)
+    ):
+        EnableCharacter(character_13)
+        EnableAI(character_13)
+        ForceSpawnerToSpawn(spawner=spawner_7)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_13, 13643)
+        AddSpecialEffect(character_13, 13605)
+        DisableAnimations(character_13)
+        Goto(Label.L20)
     GotoIfCharacterHasSpecialEffect(
         Label.L1,
         character=character_5,
@@ -690,7 +683,7 @@ def Event_12092859(
     )
     EnableCharacter(character_27)
     EnableAI(character_27)
-    ForceSpawnerToSpawn(spawner=character_55)
+    ForceSpawnerToSpawn(spawner=spawner_21)
     WaitFrames(frames=1)
     AddSpecialEffect(character_27, 13643)
     AddSpecialEffect(character_27, 13605)
@@ -708,7 +701,7 @@ def Event_12092859(
     )
     EnableCharacter(character_20)
     EnableAI(character_20)
-    ForceSpawnerToSpawn(spawner=character_48)
+    ForceSpawnerToSpawn(spawner=spawner_14)
     WaitFrames(frames=1)
     AddSpecialEffect(character_20, 13643)
     AddSpecialEffect(character_20, 13605)
@@ -720,264 +713,264 @@ def Event_12092859(
     if FlagDisabled(first_flag):
         GotoIfFlagEnabled(Label.L3, flag=flag_4)
         GotoIfFlagEnabled(Label.L4, flag=last_flag)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_6, special_effect=13605)
-    EnableCharacter(character_6)
-    EnableAI(character_6)
-    ForceSpawnerToSpawn(spawner=character_34)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_6, 13643)
-    AddSpecialEffect(character_6, 13605)
-    DisableAnimations(character_6)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_13, special_effect=13605)
-    EnableCharacter(character_13)
-    EnableAI(character_13)
-    ForceSpawnerToSpawn(spawner=character_41)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_13, 13643)
-    AddSpecialEffect(character_13, 13605)
-    DisableAnimations(character_13)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_20, special_effect=13605)
-    EnableCharacter(character_20)
-    EnableAI(character_20)
-    ForceSpawnerToSpawn(spawner=character_48)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_20, 13643)
-    AddSpecialEffect(character_20, 13605)
-    DisableAnimations(character_20)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_27, special_effect=13605)
-    EnableCharacter(character_27)
-    EnableAI(character_27)
-    ForceSpawnerToSpawn(spawner=character_55)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_27, 13643)
-    AddSpecialEffect(character_27, 13605)
-    DisableAnimations(character_27)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_7, special_effect=13605)
-    EnableCharacter(character_7)
-    EnableAI(character_7)
-    ForceSpawnerToSpawn(spawner=character_35)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_7, 13643)
-    AddSpecialEffect(character_7, 13605)
-    DisableAnimations(character_7)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_14, special_effect=13605)
-    EnableCharacter(character_14)
-    EnableAI(character_14)
-    ForceSpawnerToSpawn(spawner=character_42)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_14, 13643)
-    AddSpecialEffect(character_14, 13605)
-    DisableAnimations(character_14)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_21, special_effect=13605)
-    EnableCharacter(character_21)
-    EnableAI(character_21)
-    ForceSpawnerToSpawn(spawner=character_49)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_21, 13643)
-    AddSpecialEffect(character_21, 13605)
-    DisableAnimations(character_21)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_28, special_effect=13605)
-    EnableCharacter(character_28)
-    EnableAI(character_28)
-    ForceSpawnerToSpawn(spawner=character_56)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_28, 13643)
-    AddSpecialEffect(character_28, 13605)
-    DisableAnimations(character_28)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_8, special_effect=13605)
-    EnableCharacter(character_8)
-    EnableAI(character_8)
-    ForceSpawnerToSpawn(spawner=character_36)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_8, 13643)
-    AddSpecialEffect(character_8, 13605)
-    DisableAnimations(character_8)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_15, special_effect=13605)
-    EnableCharacter(character_15)
-    EnableAI(character_15)
-    ForceSpawnerToSpawn(spawner=character_43)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_15, 13643)
-    AddSpecialEffect(character_15, 13605)
-    DisableAnimations(character_15)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_22, special_effect=13605)
-    EnableCharacter(character_22)
-    EnableAI(character_22)
-    ForceSpawnerToSpawn(spawner=character_50)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_22, 13643)
-    AddSpecialEffect(character_22, 13605)
-    DisableAnimations(character_22)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_29, special_effect=13605)
-    EnableCharacter(character_29)
-    EnableAI(character_29)
-    ForceSpawnerToSpawn(spawner=character_57)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_29, 13643)
-    AddSpecialEffect(character_29, 13605)
-    DisableAnimations(character_29)
-    Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_6, special_effect=13605):
+        EnableCharacter(character_6)
+        EnableAI(character_6)
+        ForceSpawnerToSpawn(spawner=spawner)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_6, 13643)
+        AddSpecialEffect(character_6, 13605)
+        DisableAnimations(character_6)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_13, special_effect=13605):
+        EnableCharacter(character_13)
+        EnableAI(character_13)
+        ForceSpawnerToSpawn(spawner=spawner_7)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_13, 13643)
+        AddSpecialEffect(character_13, 13605)
+        DisableAnimations(character_13)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_20, special_effect=13605):
+        EnableCharacter(character_20)
+        EnableAI(character_20)
+        ForceSpawnerToSpawn(spawner=spawner_14)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_20, 13643)
+        AddSpecialEffect(character_20, 13605)
+        DisableAnimations(character_20)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_27, special_effect=13605):
+        EnableCharacter(character_27)
+        EnableAI(character_27)
+        ForceSpawnerToSpawn(spawner=spawner_21)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_27, 13643)
+        AddSpecialEffect(character_27, 13605)
+        DisableAnimations(character_27)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_7, special_effect=13605):
+        EnableCharacter(character_7)
+        EnableAI(character_7)
+        ForceSpawnerToSpawn(spawner=spawner_1)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_7, 13643)
+        AddSpecialEffect(character_7, 13605)
+        DisableAnimations(character_7)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_14, special_effect=13605):
+        EnableCharacter(character_14)
+        EnableAI(character_14)
+        ForceSpawnerToSpawn(spawner=spawner_8)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_14, 13643)
+        AddSpecialEffect(character_14, 13605)
+        DisableAnimations(character_14)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_21, special_effect=13605):
+        EnableCharacter(character_21)
+        EnableAI(character_21)
+        ForceSpawnerToSpawn(spawner=spawner_15)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_21, 13643)
+        AddSpecialEffect(character_21, 13605)
+        DisableAnimations(character_21)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_28, special_effect=13605):
+        EnableCharacter(character_28)
+        EnableAI(character_28)
+        ForceSpawnerToSpawn(spawner=spawner_22)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_28, 13643)
+        AddSpecialEffect(character_28, 13605)
+        DisableAnimations(character_28)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_8, special_effect=13605):
+        EnableCharacter(character_8)
+        EnableAI(character_8)
+        ForceSpawnerToSpawn(spawner=spawner_2)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_8, 13643)
+        AddSpecialEffect(character_8, 13605)
+        DisableAnimations(character_8)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_15, special_effect=13605):
+        EnableCharacter(character_15)
+        EnableAI(character_15)
+        ForceSpawnerToSpawn(spawner=spawner_9)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_15, 13643)
+        AddSpecialEffect(character_15, 13605)
+        DisableAnimations(character_15)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_22, special_effect=13605):
+        EnableCharacter(character_22)
+        EnableAI(character_22)
+        ForceSpawnerToSpawn(spawner=spawner_16)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_22, 13643)
+        AddSpecialEffect(character_22, 13605)
+        DisableAnimations(character_22)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_29, special_effect=13605):
+        EnableCharacter(character_29)
+        EnableAI(character_29)
+        ForceSpawnerToSpawn(spawner=spawner_23)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_29, 13643)
+        AddSpecialEffect(character_29, 13605)
+        DisableAnimations(character_29)
+        Goto(Label.L20)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_23, special_effect=13605)
-    EnableCharacter(character_23)
-    EnableAI(character_23)
-    ForceSpawnerToSpawn(spawner=character_51)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_23, 13643)
-    AddSpecialEffect(character_23, 13605)
-    DisableAnimations(character_23)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_9, special_effect=13605)
-    EnableCharacter(character_9)
-    EnableAI(character_9)
-    ForceSpawnerToSpawn(spawner=character_37)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_9, 13643)
-    AddSpecialEffect(character_9, 13605)
-    DisableAnimations(character_9)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_30, special_effect=13605)
-    EnableCharacter(character_30)
-    EnableAI(character_30)
-    ForceSpawnerToSpawn(spawner=character_58)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_30, 13643)
-    AddSpecialEffect(character_30, 13605)
-    DisableAnimations(character_30)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_16, special_effect=13605)
-    EnableCharacter(character_16)
-    EnableAI(character_16)
-    ForceSpawnerToSpawn(spawner=character_44)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_16, 13643)
-    AddSpecialEffect(character_16, 13605)
-    DisableAnimations(character_16)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_24, special_effect=13605)
-    EnableCharacter(character_24)
-    EnableAI(character_24)
-    ForceSpawnerToSpawn(spawner=character_52)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_24, 13643)
-    AddSpecialEffect(character_24, 13605)
-    DisableAnimations(character_24)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_10, special_effect=13605)
-    EnableCharacter(character_10)
-    EnableAI(character_10)
-    ForceSpawnerToSpawn(spawner=character_38)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_10, 13643)
-    AddSpecialEffect(character_10, 13605)
-    DisableAnimations(character_10)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_31, special_effect=13605)
-    EnableCharacter(character_31)
-    EnableAI(character_31)
-    ForceSpawnerToSpawn(spawner=character_59)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_31, 13643)
-    AddSpecialEffect(character_31, 13605)
-    DisableAnimations(character_31)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_17, special_effect=13605)
-    EnableCharacter(character_17)
-    EnableAI(character_17)
-    ForceSpawnerToSpawn(spawner=character_45)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_17, 13643)
-    AddSpecialEffect(character_17, 13605)
-    DisableAnimations(character_17)
-    Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_23, special_effect=13605):
+        EnableCharacter(character_23)
+        EnableAI(character_23)
+        ForceSpawnerToSpawn(spawner=spawner_17)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_23, 13643)
+        AddSpecialEffect(character_23, 13605)
+        DisableAnimations(character_23)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_9, special_effect=13605):
+        EnableCharacter(character_9)
+        EnableAI(character_9)
+        ForceSpawnerToSpawn(spawner=spawner_3)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_9, 13643)
+        AddSpecialEffect(character_9, 13605)
+        DisableAnimations(character_9)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_30, special_effect=13605):
+        EnableCharacter(character_30)
+        EnableAI(character_30)
+        ForceSpawnerToSpawn(spawner=spawner_24)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_30, 13643)
+        AddSpecialEffect(character_30, 13605)
+        DisableAnimations(character_30)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_16, special_effect=13605):
+        EnableCharacter(character_16)
+        EnableAI(character_16)
+        ForceSpawnerToSpawn(spawner=spawner_10)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_16, 13643)
+        AddSpecialEffect(character_16, 13605)
+        DisableAnimations(character_16)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_24, special_effect=13605):
+        EnableCharacter(character_24)
+        EnableAI(character_24)
+        ForceSpawnerToSpawn(spawner=spawner_18)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_24, 13643)
+        AddSpecialEffect(character_24, 13605)
+        DisableAnimations(character_24)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_10, special_effect=13605):
+        EnableCharacter(character_10)
+        EnableAI(character_10)
+        ForceSpawnerToSpawn(spawner=spawner_4)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_10, 13643)
+        AddSpecialEffect(character_10, 13605)
+        DisableAnimations(character_10)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_31, special_effect=13605):
+        EnableCharacter(character_31)
+        EnableAI(character_31)
+        ForceSpawnerToSpawn(spawner=spawner_25)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_31, 13643)
+        AddSpecialEffect(character_31, 13605)
+        DisableAnimations(character_31)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_17, special_effect=13605):
+        EnableCharacter(character_17)
+        EnableAI(character_17)
+        ForceSpawnerToSpawn(spawner=spawner_11)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_17, 13643)
+        AddSpecialEffect(character_17, 13605)
+        DisableAnimations(character_17)
+        Goto(Label.L20)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_32, special_effect=13605)
-    EnableCharacter(character_32)
-    EnableAI(character_32)
-    ForceSpawnerToSpawn(spawner=character_60)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_32, 13643)
-    AddSpecialEffect(character_32, 13605)
-    DisableAnimations(character_32)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_25, special_effect=13605)
-    EnableCharacter(character_25)
-    EnableAI(character_25)
-    ForceSpawnerToSpawn(spawner=character_53)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_25, 13643)
-    AddSpecialEffect(character_25, 13605)
-    DisableAnimations(character_25)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_18, special_effect=13605)
-    EnableCharacter(character_18)
-    EnableAI(character_18)
-    ForceSpawnerToSpawn(spawner=character_46)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_18, 13643)
-    AddSpecialEffect(character_18, 13605)
-    DisableAnimations(character_18)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_11, special_effect=13605)
-    EnableCharacter(character_11)
-    EnableAI(character_11)
-    ForceSpawnerToSpawn(spawner=character_39)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_11, 13643)
-    AddSpecialEffect(character_11, 13605)
-    DisableAnimations(character_11)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_33, special_effect=13605)
-    EnableCharacter(character_33)
-    EnableAI(character_33)
-    ForceSpawnerToSpawn(spawner=character_61)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_33, 13643)
-    AddSpecialEffect(character_33, 13605)
-    DisableAnimations(character_33)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_26, special_effect=13605)
-    EnableCharacter(character_26)
-    EnableAI(character_26)
-    ForceSpawnerToSpawn(spawner=character_54)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_26, 13643)
-    AddSpecialEffect(character_26, 13605)
-    DisableAnimations(character_26)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_19, special_effect=13605)
-    EnableCharacter(character_19)
-    EnableAI(character_19)
-    ForceSpawnerToSpawn(spawner=character_47)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_19, 13643)
-    AddSpecialEffect(character_19, 13605)
-    DisableAnimations(character_19)
-    Goto(Label.L20)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=8, character=character_12, special_effect=13605)
-    EnableCharacter(character_12)
-    EnableAI(character_12)
-    ForceSpawnerToSpawn(spawner=character_40)
-    WaitFrames(frames=1)
-    AddSpecialEffect(character_12, 13643)
-    AddSpecialEffect(character_12, 13605)
-    DisableAnimations(character_12)
-    Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_32, special_effect=13605):
+        EnableCharacter(character_32)
+        EnableAI(character_32)
+        ForceSpawnerToSpawn(spawner=spawner_26)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_32, 13643)
+        AddSpecialEffect(character_32, 13605)
+        DisableAnimations(character_32)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_25, special_effect=13605):
+        EnableCharacter(character_25)
+        EnableAI(character_25)
+        ForceSpawnerToSpawn(spawner=spawner_19)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_25, 13643)
+        AddSpecialEffect(character_25, 13605)
+        DisableAnimations(character_25)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_18, special_effect=13605):
+        EnableCharacter(character_18)
+        EnableAI(character_18)
+        ForceSpawnerToSpawn(spawner=spawner_12)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_18, 13643)
+        AddSpecialEffect(character_18, 13605)
+        DisableAnimations(character_18)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_11, special_effect=13605):
+        EnableCharacter(character_11)
+        EnableAI(character_11)
+        ForceSpawnerToSpawn(spawner=spawner_5)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_11, 13643)
+        AddSpecialEffect(character_11, 13605)
+        DisableAnimations(character_11)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_33, special_effect=13605):
+        EnableCharacter(character_33)
+        EnableAI(character_33)
+        ForceSpawnerToSpawn(spawner=spawner_27)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_33, 13643)
+        AddSpecialEffect(character_33, 13605)
+        DisableAnimations(character_33)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_26, special_effect=13605):
+        EnableCharacter(character_26)
+        EnableAI(character_26)
+        ForceSpawnerToSpawn(spawner=spawner_20)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_26, 13643)
+        AddSpecialEffect(character_26, 13605)
+        DisableAnimations(character_26)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_19, special_effect=13605):
+        EnableCharacter(character_19)
+        EnableAI(character_19)
+        ForceSpawnerToSpawn(spawner=spawner_13)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_19, 13643)
+        AddSpecialEffect(character_19, 13605)
+        DisableAnimations(character_19)
+        Goto(Label.L20)
+    if CharacterDoesNotHaveSpecialEffect(character=character_12, special_effect=13605):
+        EnableCharacter(character_12)
+        EnableAI(character_12)
+        ForceSpawnerToSpawn(spawner=spawner_6)
+        WaitFrames(frames=1)
+        AddSpecialEffect(character_12, 13643)
+        AddSpecialEffect(character_12, 13605)
+        DisableAnimations(character_12)
+        Goto(Label.L20)
 
     # --- Label 20 --- #
     DefineLabel(20)
@@ -1062,21 +1055,21 @@ def Event_12092860(
     DisableFlag(12092908)
     DisableFlag(12092909)
     SkipLinesIfCharacterHasSpecialEffect(
-        line_count=3,
+        3,
         character=character_5,
         special_effect=13605,
         target_comparison_type=ComparisonType.GreaterThanOrEqual,
         target_count=20,
     )
     SkipLinesIfCharacterHasSpecialEffect(
-        line_count=4,
+        4,
         character=character_5,
         special_effect=13605,
         target_comparison_type=ComparisonType.GreaterThanOrEqual,
         target_count=13,
     )
     SkipLinesIfCharacterHasSpecialEffect(
-        line_count=5,
+        5,
         character=character_5,
         special_effect=13605,
         target_comparison_type=ComparisonType.GreaterThanOrEqual,

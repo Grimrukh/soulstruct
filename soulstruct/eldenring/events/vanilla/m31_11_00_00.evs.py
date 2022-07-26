@@ -46,12 +46,12 @@ def Constructor():
     )
     CommonFunc_91005600(0, flag=31112800, asset=31111695, model_point=5)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
-    CommonFunc_90005525(0, flag=31110600, asset=Assets.AEG027_069_1000)
-    CommonFunc_90005525(0, flag=31110601, asset=Assets.AEG027_069_1001)
+    CommonFunc_90005525(0, flag=31110600, asset=31111600)
+    CommonFunc_90005525(0, flag=31110601, asset=31111601)
     CommonFunc_90005525(0, flag=31110602, asset=31111602)
-    CommonFunc_90005525(0, flag=31110603, asset=Assets.AEG027_069_1003)
+    CommonFunc_90005525(0, flag=31110603, asset=31111603)
     Event_31112400()
-    Event_31113700(0, 31110700)
+    Event_31113700(0, character=Characters.Lusat)
 
 
 @ContinueOnRest(50)
@@ -276,7 +276,19 @@ def Preconstructor():
     Event_31112245(0, character=Characters.Snail10)
     Event_31112245(1, character=Characters.Snail11)
     CommonFunc_90005261(0, character=Characters.Revenant, region=31112300, radius=2.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005211(0, 31110310, 30006, 20006, 31112213, 2.0, 1.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.BigGlintstoneMiner,
+        animation_id=30006,
+        animation_id_1=20006,
+        region=31112213,
+        radius=2.0,
+        seconds=1.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(31112208)
@@ -320,7 +332,7 @@ def Event_31112208():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.GlintstoneMiner3, 90160))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(Characters.GlintstoneMiner3, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GlintstoneMiner3, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GlintstoneMiner3))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GlintstoneMiner3, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GlintstoneMiner3, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GlintstoneMiner3, state_info=5))
@@ -381,7 +393,7 @@ def Event_31112240(_, character: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -440,7 +452,7 @@ def Event_31112245(_, character: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -498,7 +510,7 @@ def Event_31112250(_, character: uint, region: uint, radius: float, seconds: flo
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -549,7 +561,7 @@ def Event_31112301():
     AND_1.Add(EntityWithinDistance(entity=31110301, other_entity=PLAYER, radius=4.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(31110301, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=31110301, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=31110301))
     
     MAIN.Await(OR_2)
     
@@ -732,7 +744,17 @@ def Event_31112849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31110800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 31110800, 931000, 31112805, 31112806, 0, 31112842, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31110800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31112805,
+        flag_2=31112806,
+        right=0,
+        flag_3=31112842,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31113700)

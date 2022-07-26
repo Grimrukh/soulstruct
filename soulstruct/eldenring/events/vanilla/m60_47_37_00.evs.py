@@ -41,19 +41,11 @@ def Constructor():
         character_1=Characters.Troll,
         left=1,
     )
-    CommonFunc_90005251(0, 1047370300, 10.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.WanderingNoble, radius=10.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1047372200)
-def Event_1047372200(
-    _,
-    flag: uint,
-    flag_1: uint,
-    anchor_entity: uint,
-    character: uint,
-    left: int,
-    item_lot: int,
-):
+def Event_1047372200(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
     """Event 1047372200"""
     if FlagEnabled(flag):
         return

@@ -71,7 +71,7 @@ def Constructor():
         left_flag=1033462613,
         cancel_flag__right_flag=1033462614,
     )
-    Event_1033462612(0, 1033460611, 1033461612)
+    Event_1033462612(0, flag=1033460611, asset=Assets.AEG027_216_9000)
 
 
 @RestartOnRest(1033462611)

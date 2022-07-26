@@ -25,7 +25,7 @@ from .entities.m60_51_41_00_entities import *
 def Constructor():
     """Event 0"""
     Event_1051412200(0, character=Characters.GiantBall, asset=Assets.AEG099_090_9000, region=1051412210)
-    CommonFunc_90005300(0, 1051410290, 1051410290, 40420, 0.0, 0)
+    CommonFunc_90005300(0, flag=1051410290, character=Characters.Scarab, item_lot=40420, seconds=0.0, left=0)
 
 
 @RestartOnRest(1051412200)

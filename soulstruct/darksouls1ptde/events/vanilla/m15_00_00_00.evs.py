@@ -130,7 +130,7 @@ def Constructor():
     Event_11505111(3, left=11505114, region=1502703, command_id=4)
     Event_11505111(4, left=11505115, region=1502704, command_id=5)
     Event_11505111(5, left=11505116, region=1502705, command_id=6)
-    Event_11505111(6, 11505117, 1502710, -1)
+    Event_11505111(6, left=11505117, region=1502710, command_id=-1)
     Event_11505060(0, character=1500100)
     Event_11505060(1, character=1500101)
     Event_11505060(2, character=1500102)
@@ -228,7 +228,7 @@ def Constructor():
     Event_11500600(2, obj=1501652, obj_act_id=11500602)
     Event_11500600(4, obj=1501654, obj_act_id=11500604)
     Event_11500600(9, obj=1501659, obj_act_id=11500609)
-    Event_11500600(10, 1501660, 11500610)
+    Event_11500600(10, obj=1501660, obj_act_id=11500610)
 
 
 @ContinueOnRest(50)
@@ -275,7 +275,7 @@ def Preconstructor():
     SkipLinesIfFlagRangeAnyEnabled(1, (1420, 1429))
     EnableFlag(1420)
     Event_11500510(3, character=6250, flag=1421)
-    Event_11500520(3, 6250, 1420, 1429, 1422)
+    Event_11500520(3, character=6250, first_flag=1420, last_flag=1429, flag=1422)
 
 
 @ContinueOnRest(1000000000)

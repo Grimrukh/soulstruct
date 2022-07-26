@@ -360,7 +360,17 @@ def Event_1036532500():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1036532202, 1036531202, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1036532202,
+            asset=Assets.AEG007_557_1002,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
 
 
 @RestartOnRest(1036533700)

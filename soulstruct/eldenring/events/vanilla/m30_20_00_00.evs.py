@@ -290,7 +290,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_90005525(0, flag=30200560, asset=Assets.AEG027_157_9000)
+    CommonFunc_90005525(0, flag=30200560, asset=30201560)
     CommonFunc_90005501(
         0,
         flag=30200510,
@@ -325,7 +325,7 @@ def Preconstructor():
     CommonFunc_90005462(0, character=Characters.GiantOctopus1)
     CommonFunc_90005460(0, character=Characters.GiantOctopus2)
     CommonFunc_90005461(0, character=Characters.GiantOctopus2)
-    CommonFunc_90005462(0, 30200202)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus2)
 
 
 @ContinueOnRest(30202510)
@@ -333,19 +333,19 @@ def Event_30202510():
     """Event 30202510"""
     CommonFunc_90005500(
         0,
-        30200510,
-        30200511,
-        4,
-        30201510,
-        30201511,
-        30203511,
-        30201512,
-        30203512,
-        30202511,
-        30202512,
-        30200512,
-        30200513,
-        0,
+        flag=30200510,
+        flag_1=30200511,
+        left=4,
+        asset=Assets.AEG027_016_0500,
+        asset_1=Assets.AEG027_002_0500,
+        obj_act_id=30203511,
+        asset_2=Assets.AEG027_002_0501,
+        obj_act_id_1=30203512,
+        region=30202511,
+        region_1=30202512,
+        flag_2=30200512,
+        flag_3=30200513,
+        left_1=0,
     )
 
 
@@ -480,4 +480,14 @@ def Event_30202829():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30200800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30200800, 921100, 30202805, 30202806, 0, 30202802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30200800,
+        bgm_boss_conv_param_id=921100,
+        flag_1=30202805,
+        flag_2=30202806,
+        right=0,
+        flag_3=30202802,
+        left=0,
+        left_1=0,
+    )

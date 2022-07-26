@@ -808,7 +808,7 @@ def Constructor():
     Event_1039543700(0, character=Characters.Patches)
     Event_1039543702(0, character=Characters.Patches, flag=1039549206)
     CommonFunc_90005702(0, character=Characters.Patches, flag=3683, first_flag=3680, last_flag=3684)
-    CommonFunc_90005706(0, 1039540701, 930025, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble4, animation_id=930025, left=0)
 
 
 @ContinueOnRest(50)
@@ -932,7 +932,7 @@ def Event_1039542200(_, character: uint, region: uint, seconds: float, animation
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -985,7 +985,17 @@ def Event_1039542849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=1039540800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 1039540800, 921000, 1039542805, 1039542806, 0, 1039542802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1039540800,
+        bgm_boss_conv_param_id=921000,
+        flag_1=1039542805,
+        flag_2=1039542806,
+        right=0,
+        flag_3=1039542802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(1039542800)
@@ -1054,19 +1064,19 @@ def Event_1039542510():
     """Event 1039542510"""
     CommonFunc_90005500(
         0,
-        1039540510,
-        1039540511,
-        5,
-        1039541510,
-        1039541511,
-        1039543511,
-        1039541512,
-        1039543512,
-        1039542511,
-        1039542512,
-        1039540512,
-        1039540513,
-        0,
+        flag=1039540510,
+        flag_1=1039540511,
+        left=5,
+        asset=Assets.AEG030_858_2001,
+        asset_1=Assets.AEG099_026_2001,
+        obj_act_id=1039543511,
+        asset_2=Assets.AEG099_026_2000,
+        obj_act_id_1=1039543512,
+        region=1039542511,
+        region_1=1039542512,
+        flag_2=1039540512,
+        flag_3=1039540513,
+        left_1=0,
     )
 
 
@@ -1076,7 +1086,7 @@ def Event_1039542520(_, asset_flag: uint, asset: uint):
     WaitFrames(frames=1)
     if AssetDestroyed(asset):
         return
-    OR_1.Add(AttackedWithDamageType(attacked_entity=asset, attacker=0, damage_type=DamageType.Fire))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=asset, damage_type=DamageType.Fire))
     
     MAIN.Await(OR_1)
     

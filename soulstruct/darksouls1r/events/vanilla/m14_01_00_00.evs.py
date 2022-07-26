@@ -353,7 +353,7 @@ def Constructor():
     Event_11415843(2, flag=11410901, line_intersects=1411890, anchor_entity=1412898, target_entity=1412897)
     Event_11415846(2, flag=11410901, obj=1411890, vfx_id=1411891)
     Event_11415843(3, flag=11410410, line_intersects=1411410, anchor_entity=1412411, target_entity=1412412)
-    Event_11415846(3, 11410410, 1411410, 1411411)
+    Event_11415846(3, flag=11410410, obj=1411410, vfx_id=1411411)
 
 
 @ContinueOnRest(50)
@@ -416,7 +416,7 @@ def Preconstructor():
     Event_11410549(0, character=6286)
     Event_11410550(0, character=6286, first_flag=1490, last_flag=1514, flag=1514)
     Event_11410547(0, character=6286)
-    Event_11410548(0, 6286)
+    Event_11410548(0, character=6286)
 
 
 @ContinueOnRest(11410090)
@@ -1461,7 +1461,7 @@ def Event_11415385():
     Event_11415320(6, flag=11415360, character=1410721)
     Event_11415320(7, flag=11415361, character=1410722)
     Event_11415320(8, flag=11415362, character=1410723)
-    Event_11415320(9, 11415363, 1410724)
+    Event_11415320(9, flag=11415363, character=1410724)
 
 
 @ContinueOnRest(11415386)
@@ -1946,29 +1946,93 @@ def Event_11415120(_, character: int, character_1: int, cancel_animation: int, r
 def Event_11415200():
     """Event 11415200"""
     Event_11415201(0, character=1410500, part_index=1, npc_part_id=3290, npc_part_id_1=3290, flag=11415201)
-    Event_5200(-1, 1410500, 11415201, 0, 1)
-    Event_5200(-1, 1410500, 11415201, 2, 3)
-    Event_5201(-1, 1410500, 11415201, 1411500, 1411501, 120, 123)
-    Event_5201(-1, 1410500, 11415201, 1411502, 1411503, 126, 129)
-    Event_5202(-1, 1410500, 11415201, 1410550, 1410551, 120, 123)
-    Event_5202(-1, 1410500, 11415201, 1410552, 1410553, 126, 129)
+    Event_5200(-1, character=1410500, flag=11415201, bit_index=0, bit_index_1=1)
+    Event_5200(-1, character=1410500, flag=11415201, bit_index=2, bit_index_1=3)
+    Event_5201(-1, character=1410500, flag=11415201, obj=1411500, obj_1=1411501, model_point=120, model_point_1=123)
+    Event_5201(-1, character=1410500, flag=11415201, obj=1411502, obj_1=1411503, model_point=126, model_point_1=129)
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415201,
+        character_1=1410550,
+        character_2=1410551,
+        model_point=120,
+        model_point_1=123,
+    )
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415201,
+        character_1=1410552,
+        character_2=1410553,
+        model_point=126,
+        model_point_1=129,
+    )
     Event_11415201(1, character=1410500, part_index=2, npc_part_id=3291, npc_part_id_1=3291, flag=11415202)
-    Event_5200(-1, 1410500, 11415202, 5, 11)
-    Event_5201(-1, 1410500, 11415202, 1411504, 1411505, 135, 137)
-    Event_5202(-1, 1410500, 11415202, 1410554, 1410555, 135, 137)
-    Event_5202(-1, 1410500, 11415202, 1410556, 1410557, 153, 155)
+    Event_5200(-1, character=1410500, flag=11415202, bit_index=5, bit_index_1=11)
+    Event_5201(-1, character=1410500, flag=11415202, obj=1411504, obj_1=1411505, model_point=135, model_point_1=137)
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415202,
+        character_1=1410554,
+        character_2=1410555,
+        model_point=135,
+        model_point_1=137,
+    )
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415202,
+        character_1=1410556,
+        character_2=1410557,
+        model_point=153,
+        model_point_1=155,
+    )
     Event_11415201(2, character=1410500, part_index=3, npc_part_id=3292, npc_part_id_1=3292, flag=11415203)
-    Event_5200(-1, 1410500, 11415203, 6, 7)
-    Event_5200(-1, 1410500, 11415203, 8, 10)
-    Event_5201(-1, 1410500, 11415203, 1411506, 1411507, 138, 141)
-    Event_5201(-1, 1410500, 11415203, 1411508, 1411509, 144, 150)
-    Event_5202(-1, 1410500, 11415203, 1410558, 1410559, 138, 141)
-    Event_5202(-1, 1410500, 11415203, 1410560, 1410561, 144, 150)
+    Event_5200(-1, character=1410500, flag=11415203, bit_index=6, bit_index_1=7)
+    Event_5200(-1, character=1410500, flag=11415203, bit_index=8, bit_index_1=10)
+    Event_5201(-1, character=1410500, flag=11415203, obj=1411506, obj_1=1411507, model_point=138, model_point_1=141)
+    Event_5201(-1, character=1410500, flag=11415203, obj=1411508, obj_1=1411509, model_point=144, model_point_1=150)
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415203,
+        character_1=1410558,
+        character_2=1410559,
+        model_point=138,
+        model_point_1=141,
+    )
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415203,
+        character_1=1410560,
+        character_2=1410561,
+        model_point=144,
+        model_point_1=150,
+    )
     Event_11415201(3, character=1410500, part_index=4, npc_part_id=3293, npc_part_id_1=3293, flag=11415204)
-    Event_5200(-1, 1410500, 11415204, 4, 9)
-    Event_5201(-1, 1410500, 11415204, 1411510, 1411511, 132, 134)
-    Event_5202(-1, 1410500, 11415204, 1410562, 1410563, 132, 134)
-    Event_5202(-1, 1410500, 11415204, 1410564, 1410565, 150, 152)
+    Event_5200(-1, character=1410500, flag=11415204, bit_index=4, bit_index_1=9)
+    Event_5201(-1, character=1410500, flag=11415204, obj=1411510, obj_1=1411511, model_point=132, model_point_1=134)
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415204,
+        character_1=1410562,
+        character_2=1410563,
+        model_point=132,
+        model_point_1=134,
+    )
+    Event_5202(
+        -1,
+        character=1410500,
+        flag=11415204,
+        character_1=1410564,
+        character_2=1410565,
+        model_point=150,
+        model_point_1=152,
+    )
 
 
 @EndOnRest(11415201)

@@ -120,14 +120,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=12010240,
-        character=Characters.GiantAnt10,
-        item_lot=12010105,
-        seconds=3.5,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=12010240, character=Characters.GiantAnt10, item_lot=12010105, seconds=3.5, left=0)
     Event_12012220(0, character=Characters.GiantAnt11)
     Event_12012220(1, character=Characters.GiantAnt12)
     Event_12012220(2, character=Characters.GiantAnt13)
@@ -346,14 +339,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005300(0, flag=12010400, character=Characters.MalformedStar0, item_lot=0, seconds=3.5, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=12010401,
-        character=Characters.MalformedStar1,
-        item_lot=12015995,
-        seconds=3.5,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=12010401, character=Characters.MalformedStar1, item_lot=12015995, seconds=3.5, left=0)
     CommonFunc_90005300(0, flag=12010403, character=Characters.Scarab0, item_lot=40600, seconds=1.5, left=0)
     CommonFunc_90005300(0, flag=12010404, character=Characters.Scarab1, item_lot=40602, seconds=1.5, left=0)
     CommonFunc_90005300(
@@ -572,7 +558,7 @@ def Constructor():
         right=0,
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4806, flag_1=4805, flag_2=12019006, right=3)
-    CommonFunc_90005702(0, 12010705, 4808, 4805, 4809)
+    CommonFunc_90005702(0, character=Characters.Merchant, flag=4808, first_flag=4805, last_flag=4809)
 
 
 @ContinueOnRest(50)
@@ -1348,7 +1334,7 @@ def Event_12012421():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.OnyxLord, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.OnyxLord, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.OnyxLord))
     OR_2.Add(CharacterHasStateInfo(character=Characters.OnyxLord, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.OnyxLord, state_info=5))
     OR_2.Add(CharacterHasStateInfo(character=Characters.OnyxLord, state_info=6))
@@ -1398,7 +1384,7 @@ def Event_12012220(_, character: uint):
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1422,7 +1408,7 @@ def Event_12012231(_, character: uint, seconds: float):
     DisableGravity(character)
     AddSpecialEffect(character, 2900)
     ForceAnimation(character, 30001, loop=True)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(FlagEnabled(12012230))
     
     MAIN.Await(OR_2)
@@ -1456,7 +1442,7 @@ def Event_12012249():
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(Characters.GiantBall2)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantBall2, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.GiantBall2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantBall2, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantBall2, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.GiantBall2, state_info=5))
@@ -1806,19 +1792,19 @@ def Event_12010509():
     )
     CommonFunc_90005500(
         0,
-        12010525,
-        12010526,
-        9,
-        12011525,
-        12011526,
-        12013526,
-        12011527,
-        12013527,
-        12012526,
-        12012527,
-        12010527,
-        12010528,
-        0,
+        flag=12010525,
+        flag_1=12010526,
+        left=9,
+        asset=Assets.AEG239_010_0503,
+        asset_1=Assets.AEG239_020_0506,
+        obj_act_id=12013526,
+        asset_2=Assets.AEG239_020_0507,
+        obj_act_id_1=12013527,
+        region=12012526,
+        region_1=12012527,
+        flag_2=12010527,
+        flag_3=12010528,
+        left_1=0,
     )
 
 
@@ -1905,7 +1891,7 @@ def Event_12012810():
     AND_1.Add(CharacterBackreadEnabled(Characters.DragonkinSoldier1))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.DragonkinSoldier1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.DragonkinSoldier1))
     OR_2.Add(CharacterHasStateInfo(character=Characters.DragonkinSoldier1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.DragonkinSoldier1, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.DragonkinSoldier1, state_info=5))
@@ -2049,4 +2035,14 @@ def Event_12012849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12010800, asset=Assets.AEG099_002_9000, model_point=5, right=12010801)
-    CommonFunc_9005822(0, 12010800, 920300, 12012805, 12012806, 12012803, 12012802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12010800,
+        bgm_boss_conv_param_id=920300,
+        flag_1=12012805,
+        flag_2=12012806,
+        right=12012803,
+        flag_3=12012802,
+        left=0,
+        left_1=0,
+    )

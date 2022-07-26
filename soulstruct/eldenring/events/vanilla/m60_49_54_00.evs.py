@@ -44,14 +44,7 @@ def Constructor():
         flag_10=78528,
         flag_11=78529,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1049540200,
-        character=Characters.Scarab,
-        item_lot=1049540700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1049540200, character=Characters.Scarab, item_lot=1049540700, seconds=0.0, left=0)
     CommonFunc_90005501(
         0,
         flag=1049540510,
@@ -71,7 +64,7 @@ def Constructor():
     Event_1049542350(0, character__region=1049540350, character=Characters.BigWolf)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
     Event_1049543700(0, character=Characters.TalkDummy1, region=1049542700, distance=155.0)
-    CommonFunc_90005706(0, 1049540710, 930023, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble4, animation_id=930023, left=0)
 
 
 @ContinueOnRest(50)
@@ -89,9 +82,9 @@ def Event_1049542210():
     DisableAI(Characters.WanderingNoble0)
     DisableAI(Characters.WanderingNoble1)
     DisableAI(Characters.WanderingNoble2)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble0, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble1, attacker=0))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble2, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble1))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.WanderingNoble2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.WanderingNoble0, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.WanderingNoble0, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.WanderingNoble0, state_info=5))
@@ -247,19 +240,19 @@ def Event_1049542510():
     """Event 1049542510"""
     CommonFunc_90005500(
         0,
-        1049540510,
-        1049540511,
-        10,
-        12031510,
-        1049541511,
-        1049543511,
-        12031512,
-        12033512,
-        1049542511,
-        12032512,
-        1049540512,
-        1049542513,
-        0,
+        flag=1049540510,
+        flag_1=1049540511,
+        left=10,
+        asset=m12_03_Assets.AEG239_010_0500,
+        asset_1=1049541511,
+        obj_act_id=1049543511,
+        asset_2=m12_03_Assets.AEG239_021_0502,
+        obj_act_id_1=12033512,
+        region=1049542511,
+        region_1=12032512,
+        flag_2=1049540512,
+        flag_3=1049542513,
+        left_1=0,
     )
 
 
@@ -305,7 +298,7 @@ def Event_1049543700(_, character: uint, region: uint, distance: float):
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1249548301)
+    CommonFunc_90005421(0, character=1249540300, asset=Assets.AEG100_101_9000, flag=1249548301)
     CommonFunc_90005422(0, flag=1249548301, asset=Assets.AEG100_120_9000, obj_act_id=1249543301)
     CommonFunc_90005424(
         0,
@@ -327,10 +320,19 @@ def Event_200():
     )
     CommonFunc_90005261(0, character=Characters.Dummy, region=1249542300, radius=10.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(0, character=Characters.SnowTroll0, region=1249542300, radius=10.0, seconds=0.0, animation_id=0)
-    CommonFunc_90005261(0, 1249540303, 1249542300, 10.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.SnowTroll1, region=1249542300, radius=10.0, seconds=0.0, animation_id=0)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005420(0, 1249540300, 1249541300, 1249541301, 1249540301, 1249540302, 1249540303, 0.0)
+    CommonFunc_90005420(
+        0,
+        character=Characters.CaravanDummy,
+        caravan_asset__parent_asset=Assets.AEG100_120_9000,
+        child_asset=Assets.AEG100_101_9000,
+        character_1=Characters.Dummy,
+        character_2=Characters.SnowTroll0,
+        character_3=Characters.SnowTroll1,
+        seconds=0.0,
+    )

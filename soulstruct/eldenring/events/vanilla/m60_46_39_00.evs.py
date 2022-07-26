@@ -26,13 +26,29 @@ def Constructor():
     """Event 0"""
     Event_1035472602()
     CommonFunc_90005300(0, flag=1046390210, character=Characters.Scarab, item_lot=40118, seconds=0.0, left=0)
-    Event_1035472200(0, 1046391600, 60, 51, 43, 0, 1051430600, 0, 1051432650, 1051432651, 1051432652, 0, 0, 0.0, 0.0)
+    Event_1035472200(
+        0,
+        asset=Assets.AEG099_510_9000,
+        area_id=60,
+        block_id=51,
+        cc_id=43,
+        dd_id=0,
+        player_start=1051430600,
+        unk_8_12=0,
+        flag=1051432650,
+        left_flag=1051432651,
+        cancel_flag__right_flag=1051432652,
+        left=0,
+        text=0,
+        seconds=0.0,
+        seconds_1=0.0,
+    )
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005261(0, 1046390340, 1046392340, 30.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.Troll, region=1046392340, radius=30.0, seconds=0.0, animation_id=0)
 
 
 @ContinueOnRest(1035472200)

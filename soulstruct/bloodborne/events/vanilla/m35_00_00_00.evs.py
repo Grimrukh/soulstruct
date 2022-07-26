@@ -212,13 +212,69 @@ def Constructor():
     Event_13501123()
     Event_13501124()
     Event_13501125()
-    Event_13501200(0, 3501120, 13504220, 1, 3500020, 0, -1)
-    Event_13501200(1, 3501130, 13504230, 1, 3500030, 0, -1)
-    Event_13501200(2, 3501141, 13504241, 2, 3500040, 0, -1)
-    Event_13501200(3, 3501142, 13504242, 2, 3500040, 0, -1)
-    Event_13501200(4, 3501145, 13504245, 2, 3500041, 0, -1)
-    Event_13501200(5, 3501146, 13504246, 2, 3500040, 0, -1)
-    Event_13501200(6, 3501140, 13504242, 2, 3500040, 0, -1)
+    Event_13501200(
+        0,
+        obj=3501120,
+        obj_act_id=13504220,
+        animation_id=1,
+        obj_act_id_1=3500020,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        1,
+        obj=3501130,
+        obj_act_id=13504230,
+        animation_id=1,
+        obj_act_id_1=3500030,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        2,
+        obj=3501141,
+        obj_act_id=13504241,
+        animation_id=2,
+        obj_act_id_1=3500040,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        3,
+        obj=3501142,
+        obj_act_id=13504242,
+        animation_id=2,
+        obj_act_id_1=3500040,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        4,
+        obj=3501145,
+        obj_act_id=13504245,
+        animation_id=2,
+        obj_act_id_1=3500041,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        5,
+        obj=3501146,
+        obj_act_id=13504246,
+        animation_id=2,
+        obj_act_id_1=3500040,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
+    Event_13501200(
+        6,
+        obj=3501140,
+        obj_act_id=13504242,
+        animation_id=2,
+        obj_act_id_1=3500040,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
     Event_13501200(
         7,
         obj=3501161,
@@ -273,7 +329,15 @@ def Constructor():
         obj_act_id_2=13504276,
         obj_act_id_3=3500063,
     )
-    Event_13501200(13, 3501170, 13504270, 1, 3500070, 0, -1)
+    Event_13501200(
+        13,
+        obj=3501170,
+        obj_act_id=13504270,
+        animation_id=1,
+        obj_act_id_1=3500070,
+        obj_act_id_2=0,
+        obj_act_id_3=-1,
+    )
     Event_13501250()
     Event_13501400(0, obj=3501350, obj_act_id=13500020, obj_act_id_1=9942)
     Event_13501400(1, obj=3501351, obj_act_id=13500021, obj_act_id_1=9942)
@@ -978,7 +1042,7 @@ def Preconstructor():
     Event_13500960(0, character=3500910, character_1=3500911)
     Event_13500400(0, character=3500331, destination=3502354, region=3502350)
     Event_13505630(0, character=3500771, region=3502318, seconds=0.0, seconds_1=5.0)
-    Event_13505630(1, 3500777, 3502318, 3.0, 5.0)
+    Event_13505630(1, character=3500777, region=3502318, seconds=3.0, seconds_1=5.0)
 
 
 @ContinueOnRest(13500000)

@@ -84,7 +84,7 @@ def Constructor():
         region_1=1033452201,
         region_2=1033452202,
     )
-    CommonFunc_90005300(0, 1033450200, 1033450200, 40264, 0.0, 0)
+    CommonFunc_90005300(0, flag=1033450200, character=Characters.Scarab, item_lot=40264, seconds=0.0, left=0)
 
 
 @RestartOnRest(1033452360)

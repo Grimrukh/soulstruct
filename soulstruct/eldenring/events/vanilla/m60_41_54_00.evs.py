@@ -43,7 +43,7 @@ def Constructor():
         flag_10=78318,
         flag_11=78319,
     )
-    CommonFunc_90005706(0, 1041540700, 930025, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930025, left=0)
 
 
 @ContinueOnRest(50)
@@ -56,7 +56,7 @@ def Preconstructor():
     Event_1041542230(1, character=Characters.DominulaCelebrant2, animation_id=30006, animation_id_1=20006, radius=3.0)
     Event_1041542230(2, character=Characters.DominulaCelebrant3, animation_id=30006, animation_id_1=20006, radius=3.0)
     Event_1041542230(3, character=1041540204, animation_id=30006, animation_id_1=20006, radius=5.0)
-    Event_1041542230(4, 1041540205, 30006, 20006, 3.0)
+    Event_1041542230(4, character=Characters.DominulaCelebrant4, animation_id=30006, animation_id_1=20006, radius=3.0)
 
 
 @RestartOnRest(1041542200)
@@ -110,7 +110,7 @@ def Event_1041542230(_, character: uint, animation_id: int, animation_id_1: int,
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

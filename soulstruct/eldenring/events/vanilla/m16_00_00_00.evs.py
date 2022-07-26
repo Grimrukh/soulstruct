@@ -231,7 +231,7 @@ def Constructor():
     )
     Event_16002185(
         0,
-        character=Characters.InquisitorGhiza,
+        character=16000180,
         flag=16002181,
         flag_1=16002182,
         flag_2=16000180,
@@ -389,7 +389,7 @@ def Constructor():
         flag_1=16002805,
         distance=195.0,
     )
-    Event_16003760(0, asset__character=16000770)
+    Event_16003760(0, asset__character=Characters.RykardHatingSpirit)
     Event_16003761(0, character=Characters.RykardHatingSpirit)
     Event_16003762(
         0,
@@ -540,14 +540,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=16000512,
-        character=Characters.MagmaWyrm,
-        item_lot=16002000,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=16000512, character=Characters.MagmaWyrm, item_lot=16002000, seconds=0.0, left=0)
     CommonFunc_90005261(0, character=Characters.IronVirgin1, region=16002461, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.ManSerpent8, region=16002338, radius=10.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.ManSerpent7, region=16002339, radius=5.0, seconds=0.0, animation_id=-1)
@@ -625,7 +618,7 @@ def Preconstructor():
     )
     Event_16009000()
     CommonFunc_90005300(0, flag=16000420, character=Characters.Scarab0, item_lot=40590, seconds=0.0, left=0)
-    CommonFunc_90005300(0, 16000421, 16000421, 40592, 0.0, 0)
+    CommonFunc_90005300(0, flag=16000421, character=Characters.Scarab1, item_lot=40592, seconds=0.0, left=0)
 
 
 @RestartOnRest(16002185)
@@ -686,7 +679,7 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -817,17 +810,17 @@ def Event_16002510():
     )
     CommonFunc_90005503(
         0,
-        16000530,
-        16001530,
-        1,
-        16001530,
-        16002531,
-        16002532,
-        16002533,
-        16002534,
-        16000531,
-        16002532,
-        0,
+        flag=16000530,
+        flag_1=16001530,
+        left=1,
+        asset=Assets.AEG277_020_0501,
+        asset__region=16002531,
+        region=16002532,
+        region_1=16002533,
+        region_2=16002534,
+        flag_2=16000531,
+        flag_3=16002532,
+        left_1=0,
     )
 
 
@@ -1255,12 +1248,8 @@ def Event_16002811():
     MAIN.Await(AND_1)
     
     Wait(0.10000000149011612)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(
-        line_count=1,
-        character=Characters.GodDevouringSerpent1,
-        special_effect=11955,
-    )
-    Restart()
+    if CharacterHasSpecialEffect(character=Characters.GodDevouringSerpent1, special_effect=11955):
+        Restart()
     ForceAnimation(Characters.GodDevouringSerpent1, 20001)
     AND_2.Add(PlayerInOwnWorld())
     AND_2.Add(CharacterAlive(PLAYER))
@@ -1659,10 +1648,10 @@ def Event_16002846(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1742,7 +1731,17 @@ def Event_16002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=16000800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 16000800, 471000, 16002805, 16002806, 16002803, 16002802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=16000800,
+        bgm_boss_conv_param_id=471000,
+        flag_1=16002805,
+        flag_2=16002806,
+        right=16002803,
+        flag_3=16002802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(16002850)
@@ -1892,7 +1891,17 @@ def Event_16002889():
     )
     CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9000, model_point=4, right=0)
     CommonFunc_9005811(0, flag=16000860, asset=Assets.AEG099_002_9001, model_point=5, right=0)
-    CommonFunc_9005822(0, 16000860, 931000, 16002865, 16002866, 0, 16002862, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=16000860,
+        bgm_boss_conv_param_id=931000,
+        flag_1=16002865,
+        flag_2=16002866,
+        right=0,
+        flag_3=16002862,
+        left=0,
+        left_1=0,
+    )
 
 
 @ContinueOnRest(16002899)
@@ -1920,7 +1929,17 @@ def Event_16002899():
     )
     CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0500, model_point=4, right=16000851)
     CommonFunc_9005811(0, flag=16000850, asset=Assets.AEG099_003_0501, model_point=3, right=0)
-    CommonFunc_9005822(0, 16000850, 356000, 16002855, 16002856, 0, 16002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=16000850,
+        bgm_boss_conv_param_id=356000,
+        flag_1=16002855,
+        flag_2=16002856,
+        right=0,
+        flag_3=16002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(16009000)

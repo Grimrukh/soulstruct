@@ -26,4 +26,4 @@ def Constructor():
     """Event 0"""
     CommonFunc_90005460(0, character=Characters.GiantOctopus)
     CommonFunc_90005461(0, character=Characters.GiantOctopus)
-    CommonFunc_90005462(0, 1041340200)
+    CommonFunc_90005462(0, character=Characters.GiantOctopus)

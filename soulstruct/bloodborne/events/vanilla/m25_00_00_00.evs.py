@@ -86,10 +86,50 @@ def Constructor():
     Event_12500630(3, character=2500132, animation_id=7010, animation_id_1=7011)
     Event_12500630(4, character=2500137, animation_id=7010, animation_id_1=7011)
     Event_12500630(5, character=2500138, animation_id=7000, animation_id_1=7001)
-    Event_12500454(0, 2500172, 7023, 7013, 2502020, -1, 122008, 122009, 150)
-    Event_12500454(1, 2500173, 7010, 7017, 2502021, -1, 122008, 122009, 150)
-    Event_12500454(2, 2500182, 7028, 7018, 2502024, -1, 122008, 122009, 150)
-    Event_12500454(3, 2500183, 7029, 7019, 2502024, -1, 122008, 122009, 150)
+    Event_12500454(
+        0,
+        character=2500172,
+        animation_id=7023,
+        animation_id_1=7013,
+        region=2502020,
+        animation_id_2=-1,
+        ai_param_id=122008,
+        ai_param_id_1=122009,
+        frames=150,
+    )
+    Event_12500454(
+        1,
+        character=2500173,
+        animation_id=7010,
+        animation_id_1=7017,
+        region=2502021,
+        animation_id_2=-1,
+        ai_param_id=122008,
+        ai_param_id_1=122009,
+        frames=150,
+    )
+    Event_12500454(
+        2,
+        character=2500182,
+        animation_id=7028,
+        animation_id_1=7018,
+        region=2502024,
+        animation_id_2=-1,
+        ai_param_id=122008,
+        ai_param_id_1=122009,
+        frames=150,
+    )
+    Event_12500454(
+        3,
+        character=2500183,
+        animation_id=7029,
+        animation_id_1=7019,
+        region=2502024,
+        animation_id_2=-1,
+        ai_param_id=122008,
+        ai_param_id_1=122009,
+        frames=150,
+    )
     Event_12500458(
         0,
         character=2500160,

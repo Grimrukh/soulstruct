@@ -276,9 +276,29 @@ def Constructor():
     CommonFunc_20006002(0, character=4000726, flag=1298, first_flag=1295, last_flag=1299)
     CommonFunc_20006002(0, character=4000727, flag=1298, first_flag=1295, last_flag=1299)
     Event_14005721()
-    CommonFunc_20006005(0, 4000725, 74000383, 74000384, 0, 1.0, 90280, 90291, -1)
+    CommonFunc_20006005(
+        0,
+        target_entity=4000725,
+        flag=74000383,
+        flag_1=74000384,
+        region=0,
+        radius=1.0,
+        animation=90280,
+        animation_id=90291,
+        special_effect=-1,
+    )
     Event_14005722(0, entity=4000726, animation_id=90641)
-    CommonFunc_20006005(0, 4000726, 74000386, 74000387, 0, 1.0, 90280, 90291, -1)
+    CommonFunc_20006005(
+        0,
+        target_entity=4000726,
+        flag=74000386,
+        flag_1=74000387,
+        region=0,
+        radius=1.0,
+        animation=90280,
+        animation_id=90291,
+        special_effect=-1,
+    )
     Event_14005723(
         0,
         character=4000726,
@@ -565,7 +585,7 @@ def Constructor():
     CommonFunc_20006032(0, character=4000791, obj=4001790)
     Event_14000621(0, character=4000790)
     Event_14000622(0, character=4000790, character_1=4000791, destination=4004791)
-    Event_14000624(0, 4000791)
+    Event_14000624(0, character=4000791)
 
 
 @ContinueOnRest(50)
@@ -1047,18 +1067,18 @@ def Event_14005401():
     """Event 14005401"""
     CommonFunc_20005621(
         0,
-        14000400,
-        14001400,
-        4001400,
-        4001401,
-        4003401,
-        4001402,
-        4003402,
-        4002401,
-        4002402,
-        14001401,
-        14004400,
-        0,
+        flag=14000400,
+        flag_1=14001400,
+        obj=4001400,
+        obj_1=4001401,
+        obj_act_id=4003401,
+        obj_2=4001402,
+        obj_act_id_1=4003402,
+        region=4002401,
+        region_1=4002402,
+        flag_2=14001401,
+        flag_3=14004400,
+        left=0,
     )
 
 
@@ -1866,7 +1886,16 @@ def Event_14005820():
             flag_3=14005802,
         )
         End()
-    CommonFunc_20001836(0, 14000800, 14005805, 14005822, 14000801, 4004800, 4004801, 14005802)
+    CommonFunc_20001836(
+        0,
+        flag=14000800,
+        flag_1=14005805,
+        flag_2=14005822,
+        flag_3=14000801,
+        sound_id=4004800,
+        sound_id_1=4004801,
+        flag_4=14005802,
+    )
 
 
 @ContinueOnRest(14005830)
@@ -1992,7 +2021,16 @@ def Event_14000859():
             flag_3=14005832,
         )
         End()
-    CommonFunc_20001836(0, 14000830, 14005835, 14005836, 14000831, 4004830, 4004831, 14005832)
+    CommonFunc_20001836(
+        0,
+        flag=14000830,
+        flag_1=14005835,
+        flag_2=14005836,
+        flag_3=14000831,
+        sound_id=4004830,
+        sound_id_1=4004831,
+        flag_4=14005832,
+    )
 
 
 @ContinueOnRest(14005500)
@@ -3022,12 +3060,12 @@ def Event_14005581(_, character: int, character_1: int, character_2: int, flag: 
     SetNetworkConnectedFlagState(flag=1496, state=FlagSetting.On)
     SaveRequest()
     WaitFrames(frames=1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=159)
-    ForceAnimation(character, 0, unknown2=1.0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character_1, special_effect=159)
-    ForceAnimation(character_1, 0, unknown2=1.0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character_2, special_effect=159)
-    ForceAnimation(character_2, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character, special_effect=159):
+        ForceAnimation(character, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=159):
+        ForceAnimation(character_1, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character_2, special_effect=159):
+        ForceAnimation(character_2, 0, unknown2=1.0)
 
 
 @ContinueOnRest(14005582)
@@ -3408,11 +3446,11 @@ def Event_14005604(_, character: int, region: int):
     WaitFrames(frames=1)
     DisableNetworkConnectedFlagRange(flag_range=(1000, 1014))
     SetNetworkConnectedFlagState(flag=1001, state=FlagSetting.On)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=151)
+    SkipLinesIfCharacterDoesNotHaveSpecialEffect(2, character=character, special_effect=151)
     ForceAnimation(character, 20017, wait_for_completion=True, unknown2=1.0)
     SkipLines(2)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=153)
-    ForceAnimation(character, 20019, wait_for_completion=True, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character, special_effect=153):
+        ForceAnimation(character, 20019, wait_for_completion=True, unknown2=1.0)
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     
@@ -3466,8 +3504,8 @@ def Event_14005616(_, character: int):
     
     MAIN.Await(FlagEnabled(74000139))
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=153)
-    ForceAnimation(character, 20018, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character, special_effect=153):
+        ForceAnimation(character, 20018, unknown2=1.0)
     Restart()
 
 
@@ -3694,7 +3732,7 @@ def Event_14000621(_, character: int):
     EnableObjectActivation(4001251, obj_act_id=1400340, relative_index=1)
     ForceAnimation(4001251, 1, unknown2=1.0)
     CommonFunc_20005610(0, flag=14000623, region=4002713, region_1=4002712)
-    CommonFunc_20005611(0, 14000623, 4003251, 4001251, 1400340)
+    CommonFunc_20005611(0, flag=14000623, obj_act_id=4003251, obj=4001251, obj_act_id_1=1400340)
 
 
 @RestartOnRest(14000622)
@@ -3724,7 +3762,7 @@ def Event_14000622(_, character: int, character_1: int, destination: int):
     EnableObjectActivation(4001251, obj_act_id=1400340, relative_index=0)
     DisableObjectActivation(4001251, obj_act_id=1400340, relative_index=1)
     CommonFunc_20005610(0, flag=14000623, region=4002713, region_1=4002712)
-    CommonFunc_20005611(0, 14000623, 4003251, 4001251, 1400340)
+    CommonFunc_20005611(0, flag=14000623, obj_act_id=4003251, obj=4001251, obj_act_id_1=1400340)
 
 
 @RestartOnRest(14000624)

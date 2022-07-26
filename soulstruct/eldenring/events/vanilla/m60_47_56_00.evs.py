@@ -72,4 +72,13 @@ def Constructor():
         item_lot=1047560700,
         seconds=0.0,
     )
-    CommonFunc_90005793(0, 1047560180, 1047562181, 1047562182, 1047560180, 1047562180, 1047562182, 0)
+    CommonFunc_90005793(
+        0,
+        flag=1047560180,
+        flag_1=1047562181,
+        flag_2=1047562182,
+        character=Characters.BloodyFingerNerijus,
+        other_entity=1047562180,
+        region=1047562182,
+        left=0,
+    )

@@ -28,7 +28,7 @@ def Constructor():
     CommonFunc_90005261(0, character=1047550210, region=1047552200, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=1047550220, region=1047552200, radius=2.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005261(0, character=Characters.Rat0, region=1047552211, radius=1.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005261(0, 1047550211, 1047552211, 1.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Rat7, region=1047552211, radius=1.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1047552300)

@@ -48,13 +48,32 @@ def Constructor():
         right_1=0,
     )
     CommonFunc_90005781(0, flag=1043300800, flag_1=1043302701, flag_2=1043302161, character=Characters.Edgar)
-    CommonFunc_90005782(0, 1043302701, 1043302805, 1043300700, 1043302850, 1043302809, 0)
+    CommonFunc_90005782(
+        0,
+        flag=1043302701,
+        region=1043302805,
+        character=Characters.Edgar,
+        target_entity=1043302850,
+        region_1=1043302809,
+        animation=0,
+    )
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005200(0, 1043300340, 30001, 20001, 1043302340, 0.5, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.LargeCrab,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1043302340,
+        seconds=0.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1043302500)
@@ -142,4 +161,14 @@ def Event_1043302849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=1043300800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 1043300800, 950000, 1043302805, 1043302806, 0, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1043300800,
+        bgm_boss_conv_param_id=950000,
+        flag_1=1043302805,
+        flag_2=1043302806,
+        right=0,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )

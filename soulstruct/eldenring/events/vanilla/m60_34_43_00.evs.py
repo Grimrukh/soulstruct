@@ -58,7 +58,7 @@ def Constructor():
     )
     Event_1034432262(
         0,
-        character=Characters.Balloon,
+        character=1034430250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -72,7 +72,7 @@ def Constructor():
     )
     Event_1034432262(
         1,
-        character=Characters.Balloon,
+        character=1034430250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -84,7 +84,20 @@ def Constructor():
         seconds_3=0.0,
         flag=1034432250,
     )
-    Event_1034432262(3, 1034430250, 0.0, 1034430250, 0.0, 1034430262, 30010, 20010, 20.0, 0.0, 0.0, 1034432250)
+    Event_1034432262(
+        3,
+        character=1034430250,
+        seconds=0.0,
+        attacked_entity=Characters.Balloon,
+        seconds_1=0.0,
+        character_1=Characters.Marionette2,
+        animation_id=30010,
+        animation_id_1=20010,
+        radius=20.0,
+        seconds_2=0.0,
+        seconds_3=0.0,
+        flag=1034432250,
+    )
 
 
 @ContinueOnRest(50)
@@ -93,7 +106,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=1034430300, region=1034432300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=1034430302, region=1034432302, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=1034430303, region=1034432300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 1034430305, 1034432305, 0.0, -1)
+    CommonFunc_90005250(0, character=1034430305, region=1034432305, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1034432260)

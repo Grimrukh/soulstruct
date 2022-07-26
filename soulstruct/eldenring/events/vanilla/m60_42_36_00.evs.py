@@ -176,7 +176,7 @@ def Constructor():
         flag_3=69370,
     )
     Event_1042362656(0, tutorial_param_id=1740, flag=710740, flag_1=69310)
-    Event_1042362660(0, 1730, 710730, 69300)
+    Event_1042362660(0, tutorial_param_id=1730, flag=710730, flag_1=69300)
 
 
 @ContinueOnRest(50)
@@ -186,7 +186,7 @@ def Preconstructor():
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
     DisableBackread(Characters.Ranni)
-    CommonFunc_90005300(0, 1042360200, 1042365200, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1042360200, character=1042365200, item_lot=0, seconds=0.0, left=0)
 
 
 @RestartOnRest(1042362200)

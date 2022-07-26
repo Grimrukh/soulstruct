@@ -208,7 +208,7 @@ def Constructor():
     Event_1036542450(6, asset=Assets.AEG007_434_9006)
     Event_1036542450(7, asset=Assets.AEG007_434_9007)
     Event_1036542450(8, asset=Assets.AEG007_434_9008)
-    CommonFunc_90005706(0, 1036540701, 930021, 0)
+    CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930021, left=0)
 
 
 @ContinueOnRest(50)
@@ -246,15 +246,7 @@ def Event_1036542240(_, asset: uint, entity: uint, flag: uint):
 
 
 @RestartOnRest(1036542250)
-def Event_1036542250(
-    _,
-    flag: uint,
-    flag_1: uint,
-    anchor_entity: uint,
-    character: uint,
-    left: int,
-    item_lot: int,
-):
+def Event_1036542250(_, flag: uint, flag_1: uint, anchor_entity: uint, character: uint, left: int, item_lot: int):
     """Event 1036542250"""
     if FlagEnabled(flag):
         return
@@ -1172,7 +1164,17 @@ def Event_1036542500():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1036542358, 1036541358, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1036542358,
+            asset=Assets.AEG007_557_1008,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
 
 
 @RestartOnRest(1036542300)
@@ -1411,4 +1413,14 @@ def Event_1036542810():
 @RestartOnRest(1036542849)
 def Event_1036542849():
     """Event 1036542849"""
-    CommonFunc_9005822(0, 1036540800, 90003101, 0, 0, 0, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1036540800,
+        bgm_boss_conv_param_id=90003101,
+        flag_1=0,
+        flag_2=0,
+        right=0,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )

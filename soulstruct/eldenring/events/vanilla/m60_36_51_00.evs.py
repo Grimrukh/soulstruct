@@ -64,7 +64,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.DepravedPerfurmer, region=1036512300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.DepravedPerfurmer, region=1036512301, seconds=0.0, animation_id=-1)
     Event_1036512300()
-    CommonFunc_90005261(0, 1036510310, 1036512300, 3.0, 1.0, -1)
+    CommonFunc_90005261(0, character=Characters.Omenkiller, region=1036512300, radius=3.0, seconds=1.0, animation_id=-1)
 
 
 @RestartOnRest(1036512300)
@@ -127,7 +127,7 @@ def Event_1036512400(_, character: uint, radius: float, seconds: float, animatio
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -173,7 +173,7 @@ def Event_1036512450(_, character: uint, radius: float, seconds: float, animatio
     AND_7.Add(HasAIStatus(1036510304, ai_status=AIStatusType.Battle))
     OR_2.Add(AND_7)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

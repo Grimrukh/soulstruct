@@ -50,7 +50,7 @@ def Constructor():
     Event_1038512500()
     CommonFunc_90005300(0, flag=1038510500, character=Characters.Scarab, item_lot=40302, seconds=0.0, left=0)
     Event_1038513700(0, character=Characters.RyatheScout, asset=Assets.AEG099_320_9000)
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=1038511700, vfx_id=200, model_point=120, seconds=3.0)
     Event_1038513701()
     Event_1038513702(0, attacked_entity=1038511700, other_entity=Characters.RyatheScout)
     Event_1038513703()
@@ -95,7 +95,7 @@ def Constructor():
         right=-1,
     )
     CommonFunc_90005702(0, character=Characters.Millicent, flag=4183, first_flag=4180, last_flag=4184)
-    CommonFunc_90005771(0, 1038510950, 1038512700)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy0, flag=1038512700)
 
 
 @ContinueOnRest(50)
@@ -226,7 +226,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    Event_1038512405(5, 1038510490, 30002, 20002, 2.0, 0.0, 0, 0, 0, 0)
+    Event_1038512405(
+        5,
+        character=Characters.DemiHumanShaman4,
+        animation_id=30002,
+        animation_id_1=20002,
+        radius=2.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1038512405)
@@ -302,7 +313,7 @@ def Event_1038512405(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -434,7 +445,7 @@ def Event_1038512849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, 1038510800, 1038511801, 3, 0, 0)
+    CommonFunc_9005812(0, flag=1038510800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
 
 
 @RestartOnRest(1038513700)

@@ -95,7 +95,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005771(0, 1052560950, 1052562700)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy1, flag=1052562700)
 
 
 @ContinueOnRest(1052562815)
@@ -286,7 +286,7 @@ def Event_1052562830(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

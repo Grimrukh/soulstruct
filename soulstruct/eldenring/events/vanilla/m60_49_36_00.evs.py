@@ -463,7 +463,7 @@ def Constructor():
     Event_1049362300(13, character=Characters.RadahnFootSoldier0, patrol_information_id=1049363309)
     Event_1049362300(14, character=Characters.RadahnFootSoldier1, patrol_information_id=1049363311)
     Event_1049362300(15, character=Characters.RadahnFootSoldier2, patrol_information_id=1049363312)
-    Event_1049362300(16, 1049360313, 1049363313)
+    Event_1049362300(16, character=Characters.RadahnFootSoldier3, patrol_information_id=1049363313)
 
 
 @RestartOnRest(1049362300)

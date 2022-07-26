@@ -83,11 +83,11 @@ def Constructor():
         asset=Assets.AEG099_090_9002,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=2, ceremony=20)
-    CommonFunc_90005796(0, flag=7603, character=Characters.RileightheIdle, banner_type=5, region=1039532141)
-    Event_1039532145()
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005796(0, flag=7603, character=Characters.RileightheIdle, banner_type=5, region=1039532141)
+        Event_1039532145()
     Event_1039533700()
-    CommonFunc_90005774(0, 7603, 1039530700, 1039537700)
+    CommonFunc_90005774(0, flag=7603, item_lot=1039530700, flag_1=1039537700)
 
 
 @ContinueOnRest(50)
@@ -105,7 +105,8 @@ def Event_100():
 @RestartOnRest(1039532145)
 def Event_1039532145():
     """Event 1039532145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.RileightheIdle)
     SetTeamType(Characters.RileightheIdle, TeamType.Human)
     DeleteAssetVFX(1039536700)

@@ -183,7 +183,7 @@ def Constructor():
     Event_1049392201(0, character=Characters.WanderingNoble0, special_effect_id=10113, seconds=3.0, seconds_1=5.0)
     Event_1049392201(2, character=Characters.WanderingNoble2, special_effect_id=10113, seconds=6.0, seconds_1=2.0)
     Event_1049392201(3, character=Characters.RayaLucariaScholar3, special_effect_id=10113, seconds=9.0, seconds_1=3.0)
-    CommonFunc_90005250(0, 1049390405, 1049392405, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Marionette, region=1049392405, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1049392200)
@@ -533,4 +533,14 @@ def Event_1049392849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=1049390800, asset=Assets.AEG099_002_9000, model_point=4, right=0)
-    CommonFunc_9005822(0, 1049390800, 920900, 1049392805, 1049392806, 0, 1049392802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1049390800,
+        bgm_boss_conv_param_id=920900,
+        flag_1=1049392805,
+        flag_2=1049392806,
+        right=0,
+        flag_3=1049392802,
+        left=0,
+        left_1=0,
+    )

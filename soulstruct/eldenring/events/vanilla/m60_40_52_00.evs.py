@@ -116,7 +116,7 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Merchant, flag=4766, flag_1=4765, flag_2=1035469206, right=3)
     CommonFunc_90005702(0, character=Characters.Merchant, flag=4768, first_flag=4765, last_flag=4769)
-    CommonFunc_90005705(0, 1040520720)
+    CommonFunc_90005705(0, character=Characters.FingerReader)
 
 
 @ContinueOnRest(50)
@@ -149,7 +149,19 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 1040520800, 30000, 20000, 1040522800, 20.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.BlackKnifeAssassin,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1040522800,
+        radius=20.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1040522240)

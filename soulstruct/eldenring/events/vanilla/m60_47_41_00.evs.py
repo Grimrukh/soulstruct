@@ -50,7 +50,16 @@ def Constructor():
         region=0,
         left=0,
     )
-    CommonFunc_90005793(0, 1047419201, 1047412222, 1047410232, 1047410703, 1047412202, 0, 0)
+    CommonFunc_90005793(
+        0,
+        flag=1047419201,
+        flag_1=1047412222,
+        flag_2=1047410232,
+        character=Characters.KnightoftheGreatJar2,
+        other_entity=1047412202,
+        region=0,
+        left=0,
+    )
 
 
 @ContinueOnRest(100)
@@ -65,13 +74,13 @@ def Event_100():
 @ContinueOnRest(150)
 def Event_150():
     """Event 150"""
-    Event_1047412303(0, 1047410700)
+    Event_1047412303(0, character=Characters.LargeLivingPot)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005485(0, 1047410300)
+    CommonFunc_90005485(0, character=Characters.GuardianGolem)
 
 
 @RestartOnRest(1047412300)

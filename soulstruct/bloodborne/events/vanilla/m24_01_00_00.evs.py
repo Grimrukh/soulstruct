@@ -219,7 +219,16 @@ def Constructor():
     Event_12415335(0, flag=12415330, character=2410213, region=2412134, region_1=2412122, patrol_information_id=2413503)
     Event_12415340(0, character=2410018, region=2412120, radius=2.0, region_1=2412096)
     Event_12415340(2, character=2410181, region=2412121, radius=2.0, region_1=2412083)
-    Event_12415345(0, 12415340, 2410018, 2412096, 0, 2.0, 0, -1)
+    Event_12415345(
+        0,
+        flag=12415340,
+        character=2410018,
+        region=2412096,
+        region_1=0,
+        radius=2.0,
+        left=0,
+        patrol_information_id=-1,
+    )
     Event_12415345(
         2,
         flag=12415342,
@@ -770,7 +779,7 @@ def Constructor():
     Event_12415779(0, obj=2411254)
     Event_12414100(0, entity=2411000, action_button_id=7400, text=10012000)
     Event_12414100(1, entity=2411001, action_button_id=7401, text=10012001)
-    Event_12414100(4, 2411004, 7404, 10012004)
+    Event_12414100(4, entity=2411004, action_button_id=7404, text=10012004)
 
 
 @ContinueOnRest(50)

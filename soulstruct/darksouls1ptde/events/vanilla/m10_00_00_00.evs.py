@@ -91,7 +91,7 @@ def Constructor():
     Event_11000850(0, character=1000110)
     Event_11000850(1, character=1000099)
     Event_11000850(2, character=1000090)
-    Event_11000850(3, 1000300)
+    Event_11000850(3, character=1000300)
 
 
 @ContinueOnRest(50)
@@ -127,7 +127,7 @@ def Preconstructor():
     DisableCharacter(6260)
     Event_11000532(0, character=6260, first_flag=1430, last_flag=1459, flag=1431)
     Event_11000510(1, character=6260, flag=1434)
-    Event_11000533(0, 6260, 1435)
+    Event_11000533(0, character=6260, flag=1435)
 
 
 @ContinueOnRest(11000090)

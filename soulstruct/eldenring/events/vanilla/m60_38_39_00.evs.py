@@ -50,4 +50,11 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1038390210, 1038392210, 7.0, 0.0, -1)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GraveSkeleton,
+        region=1038392210,
+        radius=7.0,
+        seconds=0.0,
+        animation_id=-1,
+    )

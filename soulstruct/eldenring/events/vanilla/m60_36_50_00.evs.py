@@ -78,7 +78,16 @@ def Constructor():
         left_1=1,
     )
     CommonFunc_90005300(0, flag=1036500340, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005633(0, 580310, 580010, 1036500600, 30016, 20016, 1036501600, 1036501610)
+    CommonFunc_90005633(
+        0,
+        character=580310,
+        flag=580010,
+        character_1=Characters.WanderingNoble,
+        animation_id=30016,
+        animation_id_1=20016,
+        asset=Assets.AEG099_166_9000,
+        asset_1=Assets.AEG099_990_9000,
+    )
 
 
 @ContinueOnRest(50)
@@ -142,4 +151,4 @@ def Preconstructor():
     )
     CommonFunc_90005261(0, character=1036500218, region=1036502218, radius=1.0, seconds=1.0, animation_id=1700)
     CommonFunc_90005261(0, character=1036500219, region=1036502218, radius=1.0, seconds=0.5, animation_id=1700)
-    CommonFunc_90005261(0, 1036500220, 1036502218, 1.0, 0.0, 1700)
+    CommonFunc_90005261(0, character=1036500220, region=1036502218, radius=1.0, seconds=0.0, animation_id=1700)

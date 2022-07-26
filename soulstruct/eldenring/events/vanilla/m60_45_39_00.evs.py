@@ -47,7 +47,7 @@ def Constructor():
     CommonFunc_90005621(0, flag=1045390570, asset=Assets.AEG099_272_9000)
     Event_1045392341(
         0,
-        character=Characters.TibiaMariner,
+        character=1045390800,
         entity=1045393240,
         entity_1=1045393241,
         entity_2=1045393242,
@@ -118,7 +118,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.DHunteroftheDead, flag=4043, first_flag=4040, last_flag=4043)
     Event_1045390700(0, character=Characters.DHunteroftheDead)
     Event_1045390701()
-    CommonFunc_90005775(0, 81463900, 1045399206, -1.0)
+    CommonFunc_90005775(0, world_map_point_param_id=81463900, flag=1045399206, distance=-1.0)
 
 
 @ContinueOnRest(50)
@@ -281,21 +281,21 @@ def Event_1045392341(
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character, special_effect=special_effect_1)
-    EnableSpawner(entity=entity)
-    EnableSpawner(entity=entity_3)
-    EnableSpawner(entity=entity_4)
-    EnableSpawner(entity=entity_5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character, special_effect=special_effect_2)
-    EnableSpawner(entity=entity_1)
-    EnableSpawner(entity=entity_3)
-    EnableSpawner(entity=entity_4)
-    EnableSpawner(entity=entity_5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=4, character=character, special_effect=special_effect_3)
-    EnableSpawner(entity=entity_2)
-    EnableSpawner(entity=entity_3)
-    EnableSpawner(entity=entity_4)
-    EnableSpawner(entity=entity_5)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_1):
+        EnableSpawner(entity=entity)
+        EnableSpawner(entity=entity_3)
+        EnableSpawner(entity=entity_4)
+        EnableSpawner(entity=entity_5)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_2):
+        EnableSpawner(entity=entity_1)
+        EnableSpawner(entity=entity_3)
+        EnableSpawner(entity=entity_4)
+        EnableSpawner(entity=entity_5)
+    if CharacterHasSpecialEffect(character=character, special_effect=special_effect_3):
+        EnableSpawner(entity=entity_2)
+        EnableSpawner(entity=entity_3)
+        EnableSpawner(entity=entity_4)
+        EnableSpawner(entity=entity_5)
     Wait(1.0)
     DisableSpawner(entity=entity)
     DisableSpawner(entity=entity_1)

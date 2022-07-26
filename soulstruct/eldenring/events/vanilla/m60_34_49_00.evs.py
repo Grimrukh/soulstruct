@@ -120,7 +120,16 @@ def Constructor():
     CommonFunc_90005709(0, attacked_entity=Characters.Iji1, model_point=960, vfx_id=603052)
     CommonFunc_90005708(0, character=Characters.Iji0, flag=3760, left=0)
     CommonFunc_90005708(0, character=Characters.Iji1, flag=3760, left=0)
-    CommonFunc_90005750(0, 1034491700, 6361, 102400, 400240, 400241, 3768, 0)
+    CommonFunc_90005750(
+        0,
+        asset=Assets.AEG099_090_9000,
+        action_button_id=6361,
+        item_lot=102400,
+        first_flag=400240,
+        last_flag=400241,
+        flag=3768,
+        model_point=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -131,7 +140,7 @@ def Preconstructor():
     DisableBackread(Characters.BlackKnifeAssassin1)
     DisableBackread(Characters.BlackKnifeAssassin2)
     DisableBackread(Characters.Iji1)
-    Event_1034492210(0, 1034490301)
+    Event_1034492210(0, character=Characters.BulletDummy)
 
 
 @RestartOnRest(1034492210)

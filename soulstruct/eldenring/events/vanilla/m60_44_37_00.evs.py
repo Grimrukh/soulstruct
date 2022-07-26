@@ -26,10 +26,10 @@ from .entities.m60_44_37_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1044370000, asset=Assets.AEG099_060_9000)
-    Event_1044372210(0, character=Characters.DemiHuman0, asset=Assets.AEG801_480_9000, region=1044372210)
-    Event_1044372210(1, character=Characters.DemiHuman1, asset=Assets.AEG801_480_9001, region=1044372210)
-    Event_1044372210(2, character=Characters.DemiHuman2, asset=Assets.AEG801_480_9002, region=1044372210)
-    Event_1044372210(3, character=Characters.DemiHuman3, asset=Assets.AEG801_480_9003, region=1044372210)
+    Event_1044372210(0, character=Characters.DemiHuman0, asset=1044371211, region=1044372210)
+    Event_1044372210(1, character=Characters.DemiHuman1, asset=1044371212, region=1044372210)
+    Event_1044372210(2, character=Characters.DemiHuman2, asset=1044371213, region=1044372210)
+    Event_1044372210(3, character=Characters.DemiHuman3, asset=1044371214, region=1044372210)
     CommonFunc_90005706(0, character=Characters.WanderingNoble, animation_id=930023, left=0)
     Event_1044373715(0, character=1044370705)
     Event_1044373716()
@@ -82,7 +82,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1044370350, 1044372350, 15.0, 0.0, 0)
+    CommonFunc_90005261(0, character=Characters.Runebear, region=1044372350, radius=15.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1044372210)

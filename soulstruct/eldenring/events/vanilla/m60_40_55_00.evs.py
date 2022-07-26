@@ -53,4 +53,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1040550403, 30000, 20000, 1040552403, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.PutridCorpse,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1040552403,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

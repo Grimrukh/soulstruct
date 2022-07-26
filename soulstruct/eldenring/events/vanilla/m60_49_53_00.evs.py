@@ -69,7 +69,7 @@ def Constructor():
     Event_1049533703(0, character=Characters.Shabriri)
     CommonFunc_90005705(0, character=Characters.FingerReader)
     Event_1049533705()
-    Event_1049533710(0, 1049532710)
+    Event_1049533710(0, flag=1049532710)
 
 
 @ContinueOnRest(50)

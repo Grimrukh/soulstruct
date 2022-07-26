@@ -1042,7 +1042,7 @@ def Constructor():
     Event_13600955()
     Event_13600956(0, character=3600905, flag=1723, flag_1=73600521)
     Event_13600900(1, character=3600905, first_flag=1710, last_flag=1729, last_flag_1=1719, flag=1713)
-    Event_13600954(0, 1713, 73600530, 43220)
+    Event_13600954(0, flag=1713, flag_1=73600530, item_lot=43220)
 
 
 @ContinueOnRest(50)

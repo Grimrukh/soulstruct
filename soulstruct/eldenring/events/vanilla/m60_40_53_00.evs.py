@@ -36,7 +36,7 @@ def Constructor():
     Event_1040532680()
     Event_1040532685()
     Event_1040532690()
-    CommonFunc_90005300(0, 1040530500, 1040530500, 40320, 0.0, 0)
+    CommonFunc_90005300(0, flag=1040530500, character=Characters.Scarab, item_lot=40320, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -336,7 +336,18 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1040530303, 30000, 20000, 1040532405, 0.800000011920929, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug3,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1040532405,
+        seconds=0.800000011920929,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1040532800)
@@ -421,7 +432,7 @@ def Event_1040532849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005812(0, 1040530800, 1040531801, 3, 0, 0)
+    CommonFunc_9005812(0, flag=1040530800, asset=Assets.AEG099_001_9001, model_point=3, right=0, model_point_1=0)
 
 
 @RestartOnRest(1040532650)

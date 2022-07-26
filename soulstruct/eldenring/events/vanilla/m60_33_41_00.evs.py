@@ -43,7 +43,7 @@ def Constructor():
     CommonFunc_90005300(0, flag=1033410340, character=Characters.RedWolf, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005920(0, flag=1033410600, asset=1033411600, obj_act_id=1033413600)
     CommonFunc_90005920(0, flag=1033410601, asset=1033411601, obj_act_id=1033413601)
-    CommonFunc_90005920(0, 1033410602, 1033411602, 1033413602)
+    CommonFunc_90005920(0, flag=1033410602, asset=1033411602, obj_act_id=1033413602)
 
 
 @ContinueOnRest(50)
@@ -74,4 +74,4 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005251(0, 1033410350, 17.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.GlintstoneDragon0, radius=17.0, seconds=0.0, animation_id=-1)

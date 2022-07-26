@@ -317,7 +317,7 @@ def Constructor():
     Event_1037542450(5, asset=Assets.AEG007_434_9005)
     Event_1037542450(6, asset=Assets.AEG007_434_9006)
     Event_1037542450(7, asset=Assets.AEG007_434_9007)
-    Event_1037542450(8, 1037541408)
+    Event_1037542450(8, asset=Assets.AEG007_434_9008)
 
 
 @ContinueOnRest(50)
@@ -335,7 +335,7 @@ def Preconstructor():
     Event_1037542400(3, character=Characters.Avionette2)
     Event_1037542210(0, character__targeting_character=Characters.Avionette0, region=1037542460)
     Event_1037542210(1, character__targeting_character=Characters.Avionette1, region=1037542461)
-    Event_1037542210(2, 1037540362, 1037542461)
+    Event_1037542210(2, character__targeting_character=Characters.Avionette2, region=1037542461)
 
 
 @RestartOnRest(1037542210)
@@ -1236,7 +1236,17 @@ def Event_1037542505():
             repetition_time=1.0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005694(0, 1037542418, 1037541308, 200, 0, 802003200, 1.0, 0.0, 1.0)
+        CommonFunc_90005694(
+            0,
+            asset_flag=1037542418,
+            asset=Assets.AEG007_557_1008,
+            model_point_start=200,
+            model_point_end=0,
+            behavior_param_id__behaviour_id=802003200,
+            radius=1.0,
+            life=0.0,
+            repetition_time=1.0,
+        )
 
 
 @ContinueOnRest(1037542580)

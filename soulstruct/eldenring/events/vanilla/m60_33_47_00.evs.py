@@ -49,7 +49,7 @@ def Constructor():
         left_flag=1033472613,
         cancel_flag__right_flag=1033472614,
     )
-    Event_1033472612(0, 1033470611, 1033471612)
+    Event_1033472612(0, flag=1033470611, asset=Assets.AEG027_216_9000)
 
 
 @ContinueOnRest(50)
@@ -95,13 +95,20 @@ def Preconstructor():
         seconds=0.0,
         animation_id=1705,
     )
-    CommonFunc_90005261(0, 1033470205, 1033472200, 0.0, 1.0, 1705)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower5,
+        region=1033472200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
 
 
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1033478301)
+    CommonFunc_90005421(0, character=1033470300, asset=Assets.AEG100_101_9000, flag=1033478301)
     CommonFunc_90005422(0, flag=1033478301, asset=Assets.AEG100_100_9000, obj_act_id=1033473301)
     CommonFunc_90005424(
         0,
@@ -112,13 +119,22 @@ def Event_200():
         asset_1=Assets.AEG100_101_9000,
     )
     CommonFunc_90005423(0, character=Characters.Troll0)
-    CommonFunc_90005423(0, 1033470303)
+    CommonFunc_90005423(0, character=Characters.Troll1)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005420(0, 1033470300, 1033471300, 1033471301, 1033470301, 1033470302, 1033470303, 0.0)
+    CommonFunc_90005420(
+        0,
+        character=Characters.CaravanDummy,
+        caravan_asset__parent_asset=Assets.AEG100_100_9000,
+        child_asset=Assets.AEG100_101_9000,
+        character_1=Characters.Dummy,
+        character_2=Characters.Troll0,
+        character_3=Characters.Troll1,
+        seconds=0.0,
+    )
 
 
 @RestartOnRest(1033472610)

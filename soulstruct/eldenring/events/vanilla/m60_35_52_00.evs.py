@@ -24,7 +24,7 @@ def Constructor():
     """Event 0"""
     Event_1035522200(0, character=Characters.DemiHuman2)
     Event_1035522200(1, character=Characters.DemiHuman0)
-    Event_1035522200(2, 1035520202)
+    Event_1035522200(2, character=Characters.DemiHuman1)
 
 
 @RestartOnRest(1035522200)

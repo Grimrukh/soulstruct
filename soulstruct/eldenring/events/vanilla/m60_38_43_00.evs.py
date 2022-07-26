@@ -55,7 +55,7 @@ def Constructor():
     )
     Event_1038432262(
         0,
-        character=Characters.Balloon,
+        character=1038430250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -69,7 +69,7 @@ def Constructor():
     )
     Event_1038432262(
         1,
-        character=Characters.Balloon,
+        character=1038430250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -83,7 +83,7 @@ def Constructor():
     )
     Event_1038432262(
         3,
-        character=Characters.Balloon,
+        character=1038430250,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -109,7 +109,7 @@ def Constructor():
     )
     CommonFunc_90005702(0, character=Characters.Hyetta, flag=3383, first_flag=3380, last_flag=3384)
     Event_1038430700(0, character=Characters.Hyetta)
-    Event_1038430701(0, 1038430700)
+    Event_1038430701(0, character=Characters.Hyetta)
 
 
 @ContinueOnRest(50)

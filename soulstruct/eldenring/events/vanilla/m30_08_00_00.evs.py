@@ -114,14 +114,7 @@ def Constructor():
     Event_30082400(10, character=Characters.Imp6)
     Event_30082400(11, character=Characters.Imp7)
     Event_30082400(12, character=Characters.GraveWardenDuelist)
-    CommonFunc_90005300(
-        0,
-        flag=30080450,
-        character=Characters.GraveWardenDuelist,
-        item_lot=0,
-        seconds=3.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=30080450, character=Characters.GraveWardenDuelist, item_lot=0, seconds=3.0, left=0)
     CommonFunc_90005250(0, character=Characters.RevenantFollower1, region=30082403, seconds=0.0, animation_id=3022)
     CommonFunc_90005250(
         1,
@@ -241,7 +234,7 @@ def Constructor():
     Event_30082510()
     Event_30082580()
     Event_30080520()
-    CommonFunc_90005525(0, flag=30080570, asset=Assets.AEG027_157_0500)
+    CommonFunc_90005525(0, flag=30080570, asset=30081570)
     Event_30080790(0, asset=30081520, flag=30080800)
     Event_30082800()
     Event_30082810()
@@ -829,7 +822,16 @@ def Event_30082500():
             right=1,
         )
     if FlagEnabled(50):
-        CommonFunc_90005675(0, 30082505, 30083505, 30081505, 30082500, 801203000, 0.0, 1)
+        CommonFunc_90005675(
+            0,
+            flag=30082505,
+            asset_flag=30083505,
+            asset=Assets.AEG027_013_0505,
+            region=30082500,
+            behaviour_id=801203000,
+            seconds=0.0,
+            right=1,
+        )
 
 
 @ContinueOnRest(30082510)
@@ -837,19 +839,19 @@ def Event_30082510():
     """Event 30082510"""
     CommonFunc_90005500(
         0,
-        30080510,
-        30081510,
-        3,
-        30081510,
-        30081511,
-        30083511,
-        30081512,
-        30083512,
-        30082511,
-        30082512,
-        30080511,
-        30082512,
-        0,
+        flag=30080510,
+        flag_1=30081510,
+        left=3,
+        asset=Assets.AEG027_038_0500,
+        asset_1=Assets.AEG027_002_0501,
+        obj_act_id=30083511,
+        asset_2=Assets.AEG027_002_0500,
+        obj_act_id_1=30083512,
+        region=30082511,
+        region_1=30082512,
+        flag_2=30080511,
+        flag_3=30082512,
+        left_1=0,
     )
 
 
@@ -1058,4 +1060,14 @@ def Event_30082849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30080800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30080800, 920200, 30082805, 30082806, 0, 30082802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30080800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=30082805,
+        flag_2=30082806,
+        right=0,
+        flag_3=30082802,
+        left=0,
+        left_1=0,
+    )

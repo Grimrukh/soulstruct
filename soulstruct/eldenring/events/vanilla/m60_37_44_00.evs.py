@@ -61,7 +61,7 @@ def Constructor():
         last_flag=3444,
         right=-1,
     )
-    CommonFunc_90005702(0, 1037440700, 3443, 3440, 3444)
+    CommonFunc_90005702(0, character=Characters.KnightDiallos, flag=3443, first_flag=3440, last_flag=3444)
 
 
 @ContinueOnRest(50)
@@ -106,7 +106,7 @@ def Preconstructor():
         seconds=0.0,
         animation_id=-1,
     )
-    CommonFunc_90005261(0, 1037440203, 1037442200, 1.0, 1.5, -1)
+    CommonFunc_90005261(0, character=Characters.Albinauric3, region=1037442200, radius=1.0, seconds=1.5, animation_id=-1)
 
 
 @RestartOnRest(1037442610)

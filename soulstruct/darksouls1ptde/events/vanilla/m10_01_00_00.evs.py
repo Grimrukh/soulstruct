@@ -215,7 +215,7 @@ def Constructor():
     Event_11010400(3, obj=1011653, obj_1=1011503)
     Event_11010400(4, obj=1011654, obj_1=1011504)
     Event_11010650(0, obj=1011670, obj_act_id=11010650)
-    Event_11010650(1, 1011671, 11010651)
+    Event_11010650(1, obj=1011671, obj_act_id=11010651)
 
 
 @ContinueOnRest(50)
@@ -281,7 +281,7 @@ def Preconstructor():
         DisableCharacter(6370)
     Event_11010510(7, character=6370, flag=1701)
     Event_11010520(7, character=6370, first_flag=1700, last_flag=1709, flag=1702)
-    Event_11010581(0, 6370)
+    Event_11010581(0, character=6370)
 
 
 @ContinueOnRest(11010008)
@@ -1793,7 +1793,7 @@ def Event_11010899():
     Event_11010805(11, first_flag=11015334, last_flag=11015335, animation_id=7009, flag=11015353)
     Event_11010805(12, first_flag=11015336, last_flag=11015337, animation_id=7011, flag=11015353)
     Event_11010800(0, first_flag=11015338, last_flag=11015339, animation_id=7010, flag=11015353)
-    Event_11010800(1, 11015320, 11015339, 7010, 11015354)
+    Event_11010800(1, first_flag=11015320, last_flag=11015339, animation_id=7010, flag=11015354)
 
 
 @RestartOnRest(11010900)

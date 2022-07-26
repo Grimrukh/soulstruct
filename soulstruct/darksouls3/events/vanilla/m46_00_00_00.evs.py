@@ -63,7 +63,7 @@ def Constructor():
 
     # --- Label 9 --- #
     DefineLabel(9)
-    CommonFunc_20005940(0, 14605300)
+    CommonFunc_20005940(0, flag=14605300)
 
 
 @ContinueOnRest(14605200)

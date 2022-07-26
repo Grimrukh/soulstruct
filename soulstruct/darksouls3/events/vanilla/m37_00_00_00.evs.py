@@ -940,8 +940,28 @@ def Constructor():
     Event_13700174(event_layers=[0, 1])
     Event_13700175(event_layers=[4])
     CommonFunc_20006002(0, character=3700700, flag=1098, first_flag=1095, last_flag=1099)
-    CommonFunc_20006005(0, 3700700, 73700115, 73700116, 3702710, 1.0, 91010, 91012, -1)
-    CommonFunc_20006005(0, 3700700, 73700118, 73700121, 3702710, 1.0, 91010, 91012, -1)
+    CommonFunc_20006005(
+        0,
+        target_entity=3700700,
+        flag=73700115,
+        flag_1=73700116,
+        region=3702710,
+        radius=1.0,
+        animation=91010,
+        animation_id=91012,
+        special_effect=-1,
+    )
+    CommonFunc_20006005(
+        0,
+        target_entity=3700700,
+        flag=73700118,
+        flag_1=73700121,
+        region=3702710,
+        radius=1.0,
+        animation=91010,
+        animation_id=91012,
+        special_effect=-1,
+    )
     CommonFunc_20006010(0, flag=73700119, animation_id=91013)
     Event_13705624(1, entity=3700700)
     CommonFunc_20006030(
@@ -1073,7 +1093,7 @@ def Constructor():
     Event_13700664()
     CommonFunc_20006010(0, flag=73700952, animation_id=69003)
     CommonFunc_20005780(0, obj=3701786, model_point=2)
-    CommonFunc_20005780(0, 3701787, 2)
+    CommonFunc_20005780(0, obj=3701787, model_point=2)
 
 
 @ContinueOnRest(50)
@@ -1473,49 +1493,49 @@ def Event_13705244():
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=3700240, special_effect=10652)
-    ShootProjectile(
-        owner_entity=3700249,
-        source_entity=3704371,
-        model_point=-1,
-        behavior_id=6110,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Wait(3.0)
+    if CharacterDoesNotHaveSpecialEffect(character=3700240, special_effect=10652):
+        ShootProjectile(
+            owner_entity=3700249,
+            source_entity=3704371,
+            model_point=-1,
+            behavior_id=6110,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Wait(3.0)
     EnableFlag(13705247)
     Restart()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=3700240, special_effect=10652)
-    ShootProjectile(
-        owner_entity=3700249,
-        source_entity=3704371,
-        model_point=-1,
-        behavior_id=6110,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Wait(3.0)
+    if CharacterDoesNotHaveSpecialEffect(character=3700240, special_effect=10652):
+        ShootProjectile(
+            owner_entity=3700249,
+            source_entity=3704371,
+            model_point=-1,
+            behavior_id=6110,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Wait(3.0)
     EnableFlag(13705248)
     Restart()
 
     # --- Label 2 --- #
     DefineLabel(2)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=3700240, special_effect=10652)
-    ShootProjectile(
-        owner_entity=3700249,
-        source_entity=3704371,
-        model_point=-1,
-        behavior_id=6100,
-        launch_angle_x=0,
-        launch_angle_y=0,
-        launch_angle_z=0,
-    )
-    Wait(3.0)
+    if CharacterDoesNotHaveSpecialEffect(character=3700240, special_effect=10652):
+        ShootProjectile(
+            owner_entity=3700249,
+            source_entity=3704371,
+            model_point=-1,
+            behavior_id=6100,
+            launch_angle_x=0,
+            launch_angle_y=0,
+            launch_angle_z=0,
+        )
+        Wait(3.0)
     Restart()
 
 
@@ -1747,18 +1767,18 @@ def Event_13705400():
     )
     CommonFunc_20005621(
         0,
-        13700420,
-        13700422,
-        3701420,
-        3701421,
-        3704421,
-        3701422,
-        3704422,
-        3702421,
-        3702422,
-        13701420,
-        13704420,
-        13700421,
+        flag=13700420,
+        flag_1=13700422,
+        obj=3701420,
+        obj_1=3701421,
+        obj_act_id=3704421,
+        obj_2=3701422,
+        obj_act_id_1=3704422,
+        region=3702421,
+        region_1=3702422,
+        flag_2=13701420,
+        flag_3=13704420,
+        left=13700421,
     )
 
 
@@ -1766,27 +1786,27 @@ def Event_13705400():
 def Event_13705430():
     """Event 13705430"""
     CommonFunc_20005610(0, flag=13700430, region=3702431, region_1=3702432)
-    CommonFunc_20005611(0, 13700430, 3703430, 3701430, 370301)
+    CommonFunc_20005611(0, flag=13700430, obj_act_id=3703430, obj=3701430, obj_act_id_1=370301)
 
 
 @ContinueOnRest(13705440)
 def Event_13705440():
     """Event 13705440"""
     CommonFunc_20005610(0, flag=13700440, region=3702441, region_1=3702442)
-    CommonFunc_20005611(0, 13700440, 3703440, 3701440, 370301)
+    CommonFunc_20005611(0, flag=13700440, obj_act_id=3703440, obj=3701440, obj_act_id_1=370301)
 
 
 @ContinueOnRest(13705450)
 def Event_13705450():
     """Event 13705450"""
     CommonFunc_20005610(0, flag=13700450, region=3702451, region_1=3702452)
-    CommonFunc_20005611(0, 13700450, 3703450, 3701450, 370301)
+    CommonFunc_20005611(0, flag=13700450, obj_act_id=3703450, obj=3701450, obj_act_id_1=370301)
 
 
 @ContinueOnRest(13705460)
 def Event_13705460():
     """Event 13705460"""
-    CommonFunc_20005614(0, 3701460, 63700460)
+    CommonFunc_20005614(0, entity=3701460, flag=63700460)
 
 
 @RestartOnRest(13700470)
@@ -2056,7 +2076,18 @@ def Event_13705512(_, flag: int, entity: int, action_button_id: int, action_butt
 @RestartOnRest(13705513)
 def Event_13705513():
     """Event 13705513"""
-    Event_13705511(0, 13700500, 13700501, 3701500, 3701502, 3704502, 3701501, 3704501, 13701500, 13704500)
+    Event_13705511(
+        0,
+        flag=13700500,
+        flag_1=13700501,
+        obj=3701500,
+        obj_1=3701502,
+        obj_act_id=3704502,
+        obj_2=3701501,
+        obj_act_id_1=3704501,
+        flag_2=13701500,
+        flag_3=13704500,
+    )
 
 
 @ContinueOnRest(13705520)
@@ -2410,7 +2441,7 @@ def Event_13705820():
     CommonFunc_20005820(0, flag=13700800, obj=3701802, model_point=2, left=0)
     CommonFunc_20005831(0, 13700800, 13705805, 13705806, 3702801, 3704801, 3704802, 13705815, event_layers=[0, 1])
     CommonFunc_20005831(0, 13700800, 13705687, 13705687, 3702801, 3704801, 3704802, 13705815, event_layers=[4])
-    CommonFunc_20005810(0, 13700800, 3701800, 3702800, 10000)
+    CommonFunc_20005810(0, flag=13700800, entity=3701800, target_entity=3702800, action_button_id=10000)
 
 
 @RestartOnRest(13700861)
@@ -2519,7 +2550,7 @@ def Event_13705870():
         sound_id_1=3704852,
         flag_3=13705865,
     )
-    CommonFunc_20005810(0, 13700850, 3701850, 3702850, 10000)
+    CommonFunc_20005810(0, flag=13700850, entity=3701850, target_entity=3702850, action_button_id=10000)
 
 
 @ContinueOnRest(13705880)

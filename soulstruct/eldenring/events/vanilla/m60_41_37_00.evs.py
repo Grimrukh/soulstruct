@@ -26,22 +26,22 @@ def Constructor():
     """Event 0"""
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1041378540)
     CommonFunc_90005300(0, flag=1041370200, character=Characters.Scarab, item_lot=40120, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=1041370340,
-        character=Characters.GuardianGolem,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005570(0, 60833, 91, 1041371520, 0, 1, 0)
+    CommonFunc_90005300(0, flag=1041370340, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
+    CommonFunc_90005570(0, flag=60833, gesture_param_id=91, asset=Assets.AEG099_610_9001, left=0, left_1=1, right=0)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
     Event_1041372340()
-    CommonFunc_90005261(0, 1041370340, 1041372340, 5.0, 0.0, 1700)
+    CommonFunc_90005261(
+        0,
+        character=Characters.GuardianGolem,
+        region=1041372340,
+        radius=5.0,
+        seconds=0.0,
+        animation_id=1700,
+    )
 
 
 @RestartOnRest(1041372340)

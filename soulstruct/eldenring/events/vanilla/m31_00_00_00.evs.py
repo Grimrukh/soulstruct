@@ -43,7 +43,7 @@ def Constructor():
         flag=31000845,
         left_flag=31002840,
         cancel_flag__right_flag=31002841,
-        asset=Assets.AEG099_065_9000,
+        asset=31001840,
         player_start=31002840,
         area_id=31,
         block_id=0,
@@ -116,7 +116,7 @@ def Constructor():
         last_flag=3684,
         right=-1,
     )
-    Event_31003716(0, 31000850, 3683, 3680, 3684)
+    Event_31003716(0, character=Characters.Patches2, flag=3683, first_flag=3680, last_flag=3684)
 
 
 @ContinueOnRest(50)
@@ -227,7 +227,7 @@ def Event_31002500(_, attacked_entity: uint, region: uint):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -318,7 +318,7 @@ def Event_31002200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region_2))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region_3))
@@ -400,7 +400,7 @@ def Event_31002210(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region_1))
     OR_2.Add(CharacterInsideRegion(character=PLAYER, region=region_2))
@@ -463,7 +463,7 @@ def Event_31002230(_, character: uint, region: uint, radius: float, seconds: flo
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -657,7 +657,17 @@ def Event_31002849():
         action_button_id=10000,
     )
     Event_31002832(0, flag=31000800, asset=Assets.AEG099_001_9000, model_point=4, right=0)
-    Event_31002833(0, 31000800, 931000, 31002805, 31002806, 31000811, 0, 0, 0)
+    Event_31002833(
+        0,
+        flag=31000800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31002805,
+        flag_2=31002806,
+        right=31000811,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31002831)
@@ -738,10 +748,10 @@ def Event_31002830(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -943,7 +953,17 @@ def Event_31002899():
         region_1=0,
     )
     Event_31002872(0, flag=31000850, asset=Assets.AEG099_001_9000, model_point=4, right=0)
-    Event_31002873(0, 31000850, 931000, 31002855, 31002856, 31000861, 0, 0, 0)
+    Event_31002873(
+        0,
+        flag=31000850,
+        bgm_boss_conv_param_id=931000,
+        flag_1=31002855,
+        flag_2=31002856,
+        right=31000861,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(31002850)
@@ -1126,10 +1146,10 @@ def Event_31002870(
     if FlagEnabled(flag):
         return RESTART
     SuppressSoundForFogGate(duration=5.0)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)

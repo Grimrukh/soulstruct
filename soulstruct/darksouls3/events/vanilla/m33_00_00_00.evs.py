@@ -1388,7 +1388,7 @@ def Constructor():
     CommonFunc_20006002(0, character=3300720, flag=1118, first_flag=1115, last_flag=1119)
     Event_13305763(0, character=3300720)
     CommonFunc_20006010(0, flag=73300952, animation_id=69003)
-    CommonFunc_20005900(0, 13300560, 6331)
+    CommonFunc_20005900(0, flag=13300560, flag_1=6331)
 
 
 @ContinueOnRest(50)
@@ -2088,18 +2088,18 @@ def Event_13305409():
     """Event 13305409"""
     CommonFunc_20005621(
         0,
-        13300405,
-        13301405,
-        3301405,
-        3301406,
-        3304406,
-        3301407,
-        3304407,
-        3302406,
-        3302407,
-        13301406,
-        13304405,
-        0,
+        flag=13300405,
+        flag_1=13301405,
+        obj=3301405,
+        obj_1=3301406,
+        obj_act_id=3304406,
+        obj_2=3301407,
+        obj_act_id_1=3304407,
+        region=3302406,
+        region_1=3302407,
+        flag_2=13301406,
+        flag_3=13304405,
+        left=0,
     )
 
 
@@ -2406,10 +2406,10 @@ def Event_13305811():
     
     AddSpecialEffect(3300802, 12245)
     WaitFrames(frames=1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=3300802, special_effect=12243)
-    ForceAnimation(3300802, 20001, unknown2=1.0)
-    SkipLines(1)
-    ForceAnimation(3300802, 20000, unknown2=1.0)
+    if CharacterDoesNotHaveSpecialEffect(character=3300802, special_effect=12243):
+        ForceAnimation(3300802, 20001, unknown2=1.0)
+    else:
+        ForceAnimation(3300802, 20000, unknown2=1.0)
     EnableAI(3300802)
     OR_2.Add(HealthValue(3300801) <= 1)
     OR_3.Add(OR_2)
@@ -2449,10 +2449,10 @@ def Event_13305812():
     
     AddSpecialEffect(3300803, 12245)
     WaitFrames(frames=1)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=3300803, special_effect=12243)
-    ForceAnimation(3300803, 20001, unknown2=1.0)
-    SkipLines(1)
-    ForceAnimation(3300803, 20000, unknown2=1.0)
+    if CharacterDoesNotHaveSpecialEffect(character=3300803, special_effect=12243):
+        ForceAnimation(3300803, 20001, unknown2=1.0)
+    else:
+        ForceAnimation(3300803, 20000, unknown2=1.0)
     EnableAI(3300803)
     OR_2.Add(HealthValue(3300801) <= 1)
     OR_3.Add(OR_2)
@@ -2591,7 +2591,7 @@ def Event_13305829():
     )
     CommonFunc_20005820(0, flag=13300800, obj=3301800, model_point=3, left=13300801)
     DisableObject(3301801)
-    CommonFunc_20005810(0, 13300800, 3301800, 3302800, 10000)
+    CommonFunc_20005810(0, flag=13300800, entity=3301800, target_entity=3302800, action_button_id=10000)
 
 
 @ContinueOnRest(13305850)
@@ -3073,7 +3073,7 @@ def Event_13305900():
     )
     CommonFunc_20005820(0, flag=13300850, obj=3301850, model_point=3, left=13300852)
     CommonFunc_20005820(0, flag=13300850, obj=3301851, model_point=3, left=0)
-    CommonFunc_20005810(0, 13300110, 3301850, 3302850, 10000)
+    CommonFunc_20005810(0, flag=13300110, entity=3301850, target_entity=3302850, action_button_id=10000)
 
 
 @ContinueOnRest(13305700)
@@ -3347,12 +3347,12 @@ def Event_13305741(_, character: int, character_1: int, character_2: int, flag: 
     SetNetworkConnectedFlagState(flag=1496, state=FlagSetting.On)
     SaveRequest()
     WaitFrames(frames=1)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=159)
-    ForceAnimation(character, 0, unknown2=1.0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character_1, special_effect=159)
-    ForceAnimation(character_1, 0, unknown2=1.0)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character_2, special_effect=159)
-    ForceAnimation(character_2, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character, special_effect=159):
+        ForceAnimation(character, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character_1, special_effect=159):
+        ForceAnimation(character_1, 0, unknown2=1.0)
+    if CharacterHasSpecialEffect(character=character_2, special_effect=159):
+        ForceAnimation(character_2, 0, unknown2=1.0)
 
 
 @ContinueOnRest(13305742)

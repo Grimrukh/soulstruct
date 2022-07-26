@@ -34,7 +34,7 @@ def Constructor():
     Event_1038492580()
     CommonFunc_90005250(0, character=Characters.Rat0, region=1038492302, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Rat1, region=1038492313, seconds=0.0, animation_id=-1)
-    CommonFunc_90005706(0, 1038490700, 930018, 0)
+    CommonFunc_90005706(0, character=Characters.Commoner0, animation_id=930018, left=0)
 
 
 @ContinueOnRest(50)
@@ -109,7 +109,7 @@ def Event_1038492301():
     """Event 1038492301"""
     EnableNetworkSync()
     OR_2.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_2.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
+    OR_2.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown7))
     if OR_2:
         return
     if FlagEnabled(1038490201):

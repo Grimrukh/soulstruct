@@ -38,7 +38,7 @@ def Constructor():
     CommonFunc_90005511(0, flag=1049400560, asset=1049404550, obj_act_id=1049405560, obj_act_id_1=257013, left=0)
     CommonFunc_90005512(0, flag=1049400560, region=1049402550, region_1=1049402551)
     CommonFunc_90005640(0, flag=1049400540, asset=Assets.AEG239_001_2000)
-    CommonFunc_90005706(0, 1049400700, 90100, 0)
+    CommonFunc_90005706(0, character=Characters.DragonbarrowSilentSpirit, animation_id=90100, left=0)
 
 
 @ContinueOnRest(50)

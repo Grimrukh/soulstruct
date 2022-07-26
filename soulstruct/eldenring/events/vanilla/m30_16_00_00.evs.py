@@ -66,7 +66,18 @@ def Constructor():
         obj_act_id_1=27115,
     )
     CommonFunc_90005651(0, flag=30160540, anchor_entity=Assets.AEG027_041_0500)
-    CommonFunc_90005646(0, 30160800, 30162840, 30162841, 30161840, 30162840, 30, 16, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=30160800,
+        left_flag=30162840,
+        cancel_flag__right_flag=30162841,
+        asset=Assets.AEG099_065_9000,
+        player_start=30162840,
+        area_id=30,
+        block_id=16,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -304,7 +315,7 @@ def Preconstructor():
     )
     Event_30162602(0, character=Characters.RedmaneKnight0, character_1=Characters.RedmaneKnight1, animation_id=20001)
     Event_30162602(1, character=Characters.RedmaneKnight3, character_1=Characters.RedmaneKnight0, animation_id=20001)
-    Event_30162621(0, 30165290)
+    Event_30162621(0, character=30165290)
 
 
 @RestartOnRest(30162601)
@@ -546,7 +557,17 @@ def Event_30162849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30160800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30160800, 920600, 30162805, 30162806, 30162803, 30162802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30160800,
+        bgm_boss_conv_param_id=920600,
+        flag_1=30162805,
+        flag_2=30162806,
+        right=30162803,
+        flag_3=30162802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30162900)

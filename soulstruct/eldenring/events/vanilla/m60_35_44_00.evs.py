@@ -63,7 +63,18 @@ def Constructor():
         special_effect=-1,
         radius_1=1.100000023841858,
     )
-    CommonFunc_90005741(0, 1035442708, 1035442709, 1035442707, 1053440700, 90203, 0, -1, -1, 0.5)
+    CommonFunc_90005741(
+        0,
+        flag=1035442708,
+        flag_1=1035442709,
+        left=1035442707,
+        character=Characters.WhiteMaskVarre,
+        animation__animation_id=90203,
+        left_1=0,
+        animation_id=-1,
+        special_effect=-1,
+        seconds=0.5,
+    )
 
 
 @ContinueOnRest(50)
@@ -97,7 +108,19 @@ def Preconstructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005211(0, 1035440220, 30000, 20000, 1035442220, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.SanguineNoble,
+        animation_id=30000,
+        animation_id_1=20000,
+        region=1035442220,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1035442650)

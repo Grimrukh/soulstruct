@@ -164,7 +164,7 @@ def Constructor():
         region_6=0,
     )
     CommonFunc_20005120(0, character=3900395, radius=7.5)
-    CommonFunc_20005290(0, 3900230, 30001, -1)
+    CommonFunc_20005290(0, character=3900230, animation_id=30001, animation_id_1=-1)
     CommonFunc_20005212(0, character=3900231, animation_id=30000, animation_id_1=20003, radius=5.0, region=3902231)
     CommonFunc_20005111(0, character=3900233, animation_id=3008, region=3902233)
     CommonFunc_20005133(0, character=3900234, animation_id=3001, radius=3.0, region=3902234)
@@ -466,7 +466,16 @@ def Constructor():
     Event_13905727()
     Event_13905728()
     Event_13900729(0, character=3900705)
-    CommonFunc_20006030(0, 3901706, 4000, 1, 62140, 50006215, 50006216, 1390)
+    CommonFunc_20006030(
+        0,
+        obj=3901706,
+        action_button_id=4000,
+        right=1,
+        item_lot=62140,
+        first_flag=50006215,
+        last_flag=50006216,
+        flag=1390,
+    )
 
 
 @ContinueOnRest(50)
@@ -928,18 +937,18 @@ def Event_13900411():
     """Event 13900411"""
     CommonFunc_20005621(
         0,
-        13900400,
-        13900402,
-        3901400,
-        3901401,
-        3904401,
-        3901402,
-        3904402,
-        3902401,
-        3902402,
-        13901400,
-        13904400,
-        13900401,
+        flag=13900400,
+        flag_1=13900402,
+        obj=3901400,
+        obj_1=3901401,
+        obj_act_id=3904401,
+        obj_2=3901402,
+        obj_act_id_1=3904402,
+        region=3902401,
+        region_1=3902402,
+        flag_2=13901400,
+        flag_3=13904400,
+        left=13900401,
     )
 
 
@@ -948,18 +957,18 @@ def Event_13900412():
     """Event 13900412"""
     CommonFunc_20005623(
         0,
-        13900405,
-        13900407,
-        3901405,
-        3901406,
-        3904406,
-        3901407,
-        3904407,
-        3902406,
-        3902407,
-        13901405,
-        13904405,
-        13900406,
+        flag=13900405,
+        flag_1=13900407,
+        obj=3901405,
+        obj_1=3901406,
+        obj_act_id=3904406,
+        obj_2=3901407,
+        obj_act_id_1=3904407,
+        region=3902406,
+        region_1=3902407,
+        flag_2=13901405,
+        flag_3=13904405,
+        left=13900406,
     )
 
 
@@ -967,34 +976,34 @@ def Event_13900412():
 def Event_13905420():
     """Event 13905420"""
     CommonFunc_20005610(0, flag=13900420, region=3902420, region_1=3902421)
-    CommonFunc_20005611(0, 13900420, 3903420, 3901420, 390305)
+    CommonFunc_20005611(0, flag=13900420, obj_act_id=3903420, obj=3901420, obj_act_id_1=390305)
 
 
 @ContinueOnRest(13905425)
 def Event_13905425():
     """Event 13905425"""
-    CommonFunc_20005613(0, 13900425, 3903425, 3901425, 390340, 10010872)
+    CommonFunc_20005613(0, flag=13900425, obj_act_id=3903425, obj=3901425, obj_act_id_1=390340, text=10010872)
 
 
 @ContinueOnRest(13905430)
 def Event_13905430():
     """Event 13905430"""
     CommonFunc_20005610(0, flag=13900430, region=3902430, region_1=3902431)
-    CommonFunc_20005611(0, 13900430, 3903430, 3901430, 390305)
+    CommonFunc_20005611(0, flag=13900430, obj_act_id=3903430, obj=3901430, obj_act_id_1=390305)
 
 
 @ContinueOnRest(13905435)
 def Event_13905435():
     """Event 13905435"""
     CommonFunc_20005610(0, flag=13900435, region=3902435, region_1=3902436)
-    CommonFunc_20005611(0, 13900435, 3903435, 3901435, 390300)
+    CommonFunc_20005611(0, flag=13900435, obj_act_id=3903435, obj=3901435, obj_act_id_1=390300)
 
 
 @ContinueOnRest(13905440)
 def Event_13905440():
     """Event 13905440"""
     CommonFunc_20005610(0, flag=13900440, region=3902440, region_1=3902441)
-    CommonFunc_20005611(0, 13900440, 3903440, 3901440, 390305)
+    CommonFunc_20005611(0, flag=13900440, obj_act_id=3903440, obj=3901440, obj_act_id_1=390305)
 
 
 @ContinueOnRest(13905445)
@@ -1006,13 +1015,13 @@ def Event_13905445():
 @ContinueOnRest(13905450)
 def Event_13905450():
     """Event 13905450"""
-    CommonFunc_20005613(0, 13900450, 3903450, 3901450, 390320, 10010867)
+    CommonFunc_20005613(0, flag=13900450, obj_act_id=3903450, obj=3901450, obj_act_id_1=390320, text=10010867)
 
 
 @ContinueOnRest(13905460)
 def Event_13905460():
     """Event 13905460"""
-    CommonFunc_20005614(0, 3901460, 63900460)
+    CommonFunc_20005614(0, entity=3901460, flag=63900460)
 
 
 @ContinueOnRest(13900465)
@@ -1750,7 +1759,7 @@ def Event_13905820():
         flag_1=13905805,
         flag_2=13905806,
     )
-    CommonFunc_20005810(0, 13900800, 3901800, 3902800, 10000)
+    CommonFunc_20005810(0, flag=13900800, entity=3901800, target_entity=3902800, action_button_id=10000)
 
 
 @RestartOnRest(13905830)
@@ -1852,26 +1861,26 @@ def Event_13905860():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11444)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11445)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11444)
+    else:
+        AddSpecialEffect(3900800, 11445)
     Goto(Label.L20)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11446)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11447)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11446)
+    else:
+        AddSpecialEffect(3900800, 11447)
     Goto(Label.L20)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11448)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11449)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11448)
+    else:
+        AddSpecialEffect(3900800, 11449)
     Goto(Label.L20)
 
     # --- Label 0 --- #
@@ -1884,26 +1893,26 @@ def Event_13905860():
 
     # --- Label 5 --- #
     DefineLabel(5)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11438)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11439)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11438)
+    else:
+        AddSpecialEffect(3900800, 11439)
     Goto(Label.L20)
 
     # --- Label 6 --- #
     DefineLabel(6)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11440)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11441)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11440)
+    else:
+        AddSpecialEffect(3900800, 11441)
     Goto(Label.L20)
 
     # --- Label 7 --- #
     DefineLabel(7)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11442)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11443)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11442)
+    else:
+        AddSpecialEffect(3900800, 11443)
     Goto(Label.L20)
 
     # --- Label 1 --- #
@@ -1912,34 +1921,34 @@ def Event_13905860():
     GotoIfFlagEnabled(Label.L9, flag=13905863)
     GotoIfFlagEnabled(Label.L10, flag=13905864)
     GotoIfFlagEnabled(Label.L10, flag=13905865)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11430)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11431)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11430)
+    else:
+        AddSpecialEffect(3900800, 11431)
     Goto(Label.L20)
 
     # --- Label 8 --- #
     DefineLabel(8)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11432)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11433)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11432)
+    else:
+        AddSpecialEffect(3900800, 11433)
     Goto(Label.L20)
 
     # --- Label 9 --- #
     DefineLabel(9)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11434)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11435)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11434)
+    else:
+        AddSpecialEffect(3900800, 11435)
     Goto(Label.L20)
 
     # --- Label 10 --- #
     DefineLabel(10)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=3900800, special_effect=5032)
-    AddSpecialEffect(3900800, 11436)
-    SkipLines(1)
-    AddSpecialEffect(3900800, 11437)
+    if CharacterHasSpecialEffect(character=3900800, special_effect=5032):
+        AddSpecialEffect(3900800, 11436)
+    else:
+        AddSpecialEffect(3900800, 11437)
     Goto(Label.L20)
 
     # --- Label 20 --- #

@@ -103,7 +103,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    Event_1037493700(0, 1037490700)
+    Event_1037493700(0, character=Characters.VykesFingerMaiden)
 
 
 @ContinueOnRest(50)
@@ -135,7 +135,16 @@ def Event_200():
         region=1037492402,
         left=1,
     )
-    CommonFunc_90005490(0, 1037490404, 1037490405, 1037491404, 0, 0, 1037492404, 1)
+    CommonFunc_90005490(
+        0,
+        character=Characters.BulletDummy2,
+        character_1=Characters.RayaLucariaFootSoldier1,
+        asset=Assets.AEG110_181_9002,
+        asset_1=0,
+        obj_act_id=0,
+        region=1037492404,
+        left=1,
+    )
 
 
 @RestartOnRest(1037493700)

@@ -71,14 +71,7 @@ def Constructor():
         seconds=10.0,
         animation_id=-1,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1037530400,
-        character=Characters.LargeScarab,
-        item_lot=40332,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1037530400, character=Characters.LargeScarab, item_lot=40332, seconds=0.0, left=0)
     CommonFunc_90005211(
         0,
         character=m60_37_Characters.LeyndellFootSoldier2,
@@ -237,7 +230,7 @@ def Constructor():
     Event_1037532200(15, source_entity=Assets.AEG099_048_9000, seconds=4.599999904632568)
     Event_1037532200(16, source_entity=1037531216, seconds=4.0)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1037538620)
-    Event_1037533700(0, 1037530700)
+    Event_1037533700(0, character=Characters.Azur)
 
 
 @RestartOnRest(1037532300)
@@ -520,7 +513,7 @@ def Event_1037532450(_, character: uint, region: uint, radius: float, seconds: f
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))

@@ -254,7 +254,15 @@ def Constructor():
         attacked_entity=Characters.Misbegotten5,
         attacked_entity_1=Characters.Misbegotten8,
     )
-    Event_32002310(18, 32000318, 32002315, 0.0, -1, 32000315, 32000316)
+    Event_32002310(
+        18,
+        character=Characters.Misbegotten8,
+        region=32002315,
+        seconds=0.0,
+        animation_id=-1,
+        attacked_entity=Characters.Misbegotten5,
+        attacked_entity_1=Characters.Misbegotten6,
+    )
 
 
 @ContinueOnRest(50)
@@ -280,7 +288,7 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.Misbegotten7, region=32002317, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 32000319, 32002315, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Misbegotten9, region=32002315, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(32002510)
@@ -288,19 +296,19 @@ def Event_32002510():
     """Event 32002510"""
     CommonFunc_90005500(
         0,
-        32000510,
-        32000511,
-        0,
-        32001510,
-        32001511,
-        32003511,
-        32001512,
-        32003512,
-        32002511,
-        32002512,
-        32000512,
-        32000513,
-        0,
+        flag=32000510,
+        flag_1=32000511,
+        left=0,
+        asset=Assets.AEG027_001_1000,
+        asset_1=Assets.AEG027_080_1000,
+        obj_act_id=32003511,
+        asset_2=Assets.AEG027_080_1001,
+        obj_act_id_1=32003512,
+        region=32002511,
+        region_1=32002512,
+        flag_2=32000512,
+        flag_3=32000513,
+        left_1=0,
     )
 
 
@@ -397,7 +405,7 @@ def Event_32002200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -512,7 +520,7 @@ def Event_32002250(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -621,7 +629,7 @@ def Event_32002270(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -670,7 +678,7 @@ def Event_32002300(_, character: uint, region: uint, seconds: float, animation_i
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(HasAIStatus(Characters.Misbegotten4, ai_status=AIStatusType.Battle))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -712,11 +720,11 @@ def Event_32002310(
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     OR_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity, attacker=0))
-    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_1, attacker=0))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity))
+    OR_3.Add(AttackedWithDamageType(attacked_entity=attacked_entity_1))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -845,4 +853,14 @@ def Event_32002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=32000800, asset=Assets.AEG099_002_9000, model_point=7, right=32000801)
-    CommonFunc_9005822(0, 32000800, 931000, 32002805, 32002806, 0, 32002802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=32000800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=32002805,
+        flag_2=32002806,
+        right=0,
+        flag_3=32002802,
+        left=0,
+        left_1=0,
+    )

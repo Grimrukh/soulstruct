@@ -27,14 +27,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1043370000, asset=Assets.AEG099_060_9000)
     CommonFunc_90005300(0, flag=1043370210, character=Characters.Scarab, item_lot=40108, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=1043370800,
-        character=Characters.NightsCavalryHorse,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1043370800, character=Characters.NightsCavalryHorse, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005476(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
     RunCommonEvent(90005477)
     Event_1043372340(0, character=Characters.NightsCavalry, character_1=Characters.NightsCavalryHorse)
@@ -166,7 +159,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.DemiHumanShaman, flag=3943, first_flag=3940, last_flag=3944)
     Event_1043373730(0, character=Characters.DemiHumanShaman, asset=Assets.AEG801_480_9000)
     Event_1043373731(0, seconds=13.0, seconds_1=13.0, seconds_2=25.0)
-    Event_1043373732(0, character=Characters.DemiHumanShaman, asset=Assets.AEG801_480_9000)
+    Event_1043373732(0, character=Characters.DemiHumanShaman, asset=1043371700)
     Event_1043373733(0, character=Characters.DemiHumanShaman)
     Event_1043373734(0, entity=Characters.DemiHumanShaman)
     CommonFunc_90005630(0, far_view_id=61433700, asset=Assets.AEG099_130_9000, model_point=127)
@@ -175,7 +168,15 @@ def Constructor():
     CommonFunc_90005462(0, character=1043370200)
     CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61010)
-    Event_1043372650(0, 1520, 710520, 1770, 710770, 69090, 69370)
+    Event_1043372650(
+        0,
+        tutorial_param_id=1520,
+        flag=710520,
+        tutorial_param_id_1=1770,
+        flag_1=710770,
+        flag_2=69090,
+        flag_3=69370,
+    )
 
 
 @ContinueOnRest(50)
@@ -245,7 +246,7 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005261(0, 1043370210, 1043372210, 3.0, 0.0, -1)
+    CommonFunc_90005261(0, character=Characters.Scarab, region=1043372210, radius=3.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1043372250)
@@ -486,8 +487,8 @@ def Event_1043373703(_, character: uint):
     
     MAIN.Await(OR_6)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9601))
     
@@ -500,8 +501,8 @@ def Event_1043373703(_, character: uint):
     
     MAIN.Await(OR_7)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20010)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20010)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -522,9 +523,9 @@ def Event_1043373703(_, character: uint):
     
     MAIN.Await(OR_11)
     
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=2, character=character, special_effect=9603)
-    ForceAnimation(character, 20011)
-    DisableAI(character)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20011)
+        DisableAI(character)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 9603))
     
@@ -584,10 +585,10 @@ def Event_1043373706(_, character: uint, attacked_entity: uint):
     EnableNetworkFlag(1043372708)
     if FlagEnabled(4701):
         return
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9601)
-    ForceAnimation(character, 20004)
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9602)
-    ForceAnimation(character, 20006)
+    if CharacterHasSpecialEffect(character=character, special_effect=9601):
+        ForceAnimation(character, 20004)
+    if CharacterHasSpecialEffect(character=character, special_effect=9602):
+        ForceAnimation(character, 20006)
 
 
 @ContinueOnRest(1043373707)

@@ -84,7 +84,14 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4746, flag_1=4745, flag_2=1041329207, right=3)
     CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1041322706, flag_1=1041322707)
-    CommonFunc_90005727(0, 4746, 1041320700, 1041320701, 4745, 4748)
+    CommonFunc_90005727(
+        0,
+        flag=4746,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4745,
+        last_flag=4748,
+    )
 
 
 @ContinueOnRest(50)

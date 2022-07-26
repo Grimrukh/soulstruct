@@ -253,7 +253,7 @@ def Constructor():
     Event_11215846(2, left=11210004, obj=1211690, vfx_id=1211691)
     Event_11215843(2, left=11210004, line_intersects=1211690, anchor_entity=1212908, target_entity=1212907)
     Event_11215846(3, left=11210002, obj=1211990, vfx_id=1211991)
-    Event_11215843(3, 11210002, 1211990, 1212998, 1212997)
+    Event_11215843(3, left=11210002, line_intersects=1211990, anchor_entity=1212998, target_entity=1212997)
 
 
 @ContinueOnRest(50)
@@ -6479,7 +6479,7 @@ def Event_11210407():
     Event_11216200(96, value=97, text=60000097)
     Event_11216200(97, value=98, text=60000098)
     Event_11216200(98, value=99, text=60000099)
-    Event_11216200(99, 100, 60000100)
+    Event_11216200(99, value=100, text=60000100)
 
 
 @ContinueOnRest(11216200)

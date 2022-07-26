@@ -47,19 +47,11 @@ def Constructor():
         character_1=Characters.NightsCavalryHorse,
     )
     RunCommonEvent(1048512800, slot=0, args=(1048510800, 0, 1048510800, 0, 1048510700, 0.0), arg_types="IIIIif")
-    CommonFunc_90005872(0, 1048510800, 10, 0)
+    CommonFunc_90005872(0, character=Characters.NightsCavalry, npc_threat_level=10, right=0)
 
 
 @RestartOnRest(1048512800)
-def Event_1048512800(
-    _,
-    flag: uint,
-    left: uint,
-    character: uint,
-    left_1: uint,
-    item_lot: int,
-    seconds: float,
-):
+def Event_1048512800(_, flag: uint, left: uint, character: uint, left_1: uint, item_lot: int, seconds: float):
     """Event 1048512800"""
     if ValueNotEqual(left=item_lot, right=0):
         Unknown_2004_76(flag=flag, item_lot=item_lot)

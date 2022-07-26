@@ -18,9 +18,17 @@ strings:
 from .common_func import *
 from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
+from .entities.m60_53_52_00_entities import *
 
 
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_9005810(0, 1252520800, 1053520000, 1053520950, 1053521950, 5.0)
+    CommonFunc_9005810(
+        0,
+        flag=1252520800,
+        grace_flag=1053520000,
+        character=Characters.TalkDummy,
+        asset=Assets.AEG099_060_9000,
+        enemy_block_distance=5.0,
+    )

@@ -70,11 +70,11 @@ def Constructor():
         flag_2=35000517,
     )
     Event_35002510()
-    CommonFunc_90005525(0, flag=35000570, asset=Assets.AEG027_157_0500)
-    CommonFunc_90005525(1, flag=35000571, asset=Assets.AEG027_157_0501)
-    CommonFunc_90005525(2, flag=35000572, asset=Assets.AEG027_157_0502)
-    CommonFunc_90005525(3, flag=35000573, asset=Assets.AEG027_157_0503)
-    CommonFunc_90005525(4, flag=35000574, asset=Assets.AEG027_157_0504)
+    CommonFunc_90005525(0, flag=35000570, asset=35001570)
+    CommonFunc_90005525(1, flag=35000571, asset=35001571)
+    CommonFunc_90005525(2, flag=35000572, asset=35001572)
+    CommonFunc_90005525(3, flag=35000573, asset=35001573)
+    CommonFunc_90005525(4, flag=35000574, asset=35001574)
     CommonFunc_90005540(
         0,
         flag=35000530,
@@ -1510,7 +1510,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=Characters.Omen6, region=35002366, radius=0.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Omen10, region=35002483, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.Omen8, region=35002483, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 35000485, 35002483, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.Omen12, region=35002483, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(35000050)
@@ -1733,14 +1733,7 @@ def Event_35002510():
         flag_3=35000518,
         left_1=0,
     )
-    CommonFunc_90005681(
-        0,
-        flag=35000670,
-        flag_1=35000671,
-        flag_2=35000672,
-        flag_3=35000673,
-        attacked_entity=Assets.AEG027_003_0500,
-    )
+    CommonFunc_90005681(0, flag=35000670, flag_1=35000671, flag_2=35000672, flag_3=35000673, attacked_entity=35001670)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -1853,14 +1846,7 @@ def Event_35002510():
             model_point_2=0,
             model_point_3=0,
         )
-    CommonFunc_90005681(
-        0,
-        flag=35000675,
-        flag_1=35000676,
-        flag_2=35000677,
-        flag_3=35000678,
-        attacked_entity=Assets.AEG027_003_0501,
-    )
+    CommonFunc_90005681(0, flag=35000675, flag_1=35000676, flag_2=35000677, flag_3=35000678, attacked_entity=35001675)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -1960,7 +1946,19 @@ def Event_35002510():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 35000677, 35001675, 35002675, 35000675, 801103300, 801103305, 102, 0, 0, 0)
+        CommonFunc_90005682(
+            0,
+            flag=35000677,
+            source_entity=Assets.AEG027_003_0501,
+            region=35002675,
+            owner_entity=Characters.TalkDummy5,
+            behavior_id=801103300,
+            behavior_id_1=801103305,
+            model_point=102,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
 
 
 @ContinueOnRest(35000519)
@@ -1975,7 +1973,7 @@ def Event_35000519():
 @ContinueOnRest(35002679)
 def Event_35002679():
     """Event 35002679"""
-    CommonFunc_90005681(0, 35000670, 35000671, 35000672, 35000672, 35001670)
+    CommonFunc_90005681(0, flag=35000670, flag_1=35000671, flag_2=35000672, flag_3=35000672, attacked_entity=35001670)
 
 
 @RestartOnRest(35002490)
@@ -2017,7 +2015,7 @@ def Event_35002200():
     AND_1.Add(OR_1)
     AND_1.Add(EntityWithinDistance(entity=Characters.Imp0, other_entity=PLAYER, radius=2.0))
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp0))
     
     MAIN.Await(OR_2)
     
@@ -2094,7 +2092,7 @@ def Event_35002208():
     AND_1.Add(EntityWithinDistance(entity=Characters.Imp8, other_entity=PLAYER, radius=2.0))
     OR_2.Add(AND_1)
     OR_2.Add(CharacterInsideRegion(character=Characters.Imp8, region=35002206))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp8, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp8))
     
     MAIN.Await(OR_2)
     
@@ -2121,7 +2119,7 @@ def Event_35002215():
     AND_1.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=35002216))
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp15, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Imp15))
     
     MAIN.Await(OR_2)
     
@@ -2174,11 +2172,11 @@ def Event_35002220(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot0, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot1, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot2, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot3, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LivingPot, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot1))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot2))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SmallLivingPot3))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LivingPot))
     OR_3.Add(HasAIStatus(Characters.SmallLivingPot0, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(Characters.SmallLivingPot1, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(Characters.SmallLivingPot2, ai_status=AIStatusType.Battle))
@@ -2259,9 +2257,9 @@ def Event_35002226(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000426, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000427, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000428, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000426))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000427))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000428))
     OR_3.Add(HasAIStatus(35000426, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(35000427, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(35000428, ai_status=AIStatusType.Battle))
@@ -2371,7 +2369,7 @@ def Event_35002239(_, character: uint, region: uint, radius: float, seconds: flo
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     
@@ -2408,7 +2406,7 @@ def Event_35002240(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=2.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -2461,7 +2459,7 @@ def Event_35002251():
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=35002380))
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(Characters.Snail, 15007))
     OR_5.Add(AND_1)
-    OR_5.Add(AttackedWithDamageType(attacked_entity=35000350, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=35000350))
     
     MAIN.Await(OR_5)
     
@@ -2522,7 +2520,7 @@ def Event_35002261(_, character: uint, region: uint, radius: float, seconds: flo
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     
@@ -2557,7 +2555,7 @@ def Event_35002290(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=4.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -2584,7 +2582,7 @@ def Event_35002296(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=4.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -2609,7 +2607,7 @@ def Event_35002297(_, character: uint, region: uint, radius: float, seconds: flo
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     OR_2.Add(AND_2)
     
@@ -2633,7 +2631,7 @@ def Event_35002298():
         return
     OR_1.Add(HasAIStatus(Characters.Basilisk6, ai_status=AIStatusType.Battle))
     OR_2.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Basilisk6, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Basilisk6))
     
     MAIN.Await(OR_2)
     
@@ -2719,9 +2717,9 @@ def Event_35002365(
     AND_2.Add(OR_1)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character_1))
     OR_2.Add(HasAIStatus(character_1, ai_status=AIStatusType.Battle))
-    OR_5.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=character))
     OR_5.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
     OR_5.Add(AND_1)
     OR_5.Add(AND_2)
@@ -2757,7 +2755,7 @@ def Event_35002390(_, character: uint):
     AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=3.0))
     OR_2.Add(AND_1)
     OR_2.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -2788,7 +2786,7 @@ def Event_35002400():
     OR_3.Add(EntityWithinDistance(entity=PLAYER, other_entity=Characters.GiantLobster0, radius=3.0))
     AND_1.Add(OR_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=35000385, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=35000385))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -2851,10 +2849,10 @@ def Event_35002410(
 
     # --- Label 9 --- #
     DefineLabel(9)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Fingercreeper, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper0, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper1, attacker=0))
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper2, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.Fingercreeper))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper1))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.LesserFingercreeper2))
     AND_4.Add(CharacterHasSpecialEffect(character, 481))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90100))
     AND_4.Add(CharacterDoesNotHaveSpecialEffect(character, 90110))
@@ -2968,7 +2966,7 @@ def Event_35002430(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -3193,7 +3191,17 @@ def Event_35002849():
     )
     CommonFunc_9005811(0, flag=35000800, asset=Assets.AEG099_001_9000, model_point=5, right=35000801)
     CommonFunc_9005812(0, flag=35000800, asset=Assets.AEG099_001_9001, model_point=5, right=35000801, model_point_1=5)
-    CommonFunc_9005822(0, 35000800, 921600, 35002805, 35002806, 0, 35002802, 0, 1)
+    CommonFunc_9005822(
+        0,
+        flag=35000800,
+        bgm_boss_conv_param_id=921600,
+        flag_1=35002805,
+        flag_2=35002806,
+        right=0,
+        flag_3=35002802,
+        left=0,
+        left_1=1,
+    )
 
 
 @RestartOnRest(35002850)
@@ -3267,7 +3275,17 @@ def Event_35002899():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=35000850, asset=Assets.AEG099_002_9100, model_point=5, right=0)
-    CommonFunc_9005822(0, 35000850, 921700, 35002855, 35002856, 0, 35002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=35000850,
+        bgm_boss_conv_param_id=921700,
+        flag_1=35002855,
+        flag_2=35002856,
+        right=0,
+        flag_3=35002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(35000700)

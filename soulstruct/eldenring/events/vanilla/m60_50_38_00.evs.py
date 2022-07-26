@@ -113,7 +113,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.Millicent1, flag=4183, first_flag=4180, last_flag=4184)
     Event_1050383713()
     Event_1050383714()
-    CommonFunc_90005752(0, 1050381700, 200, 120, 3.0)
+    CommonFunc_90005752(0, asset=1050381700, vfx_id=200, model_point=120, seconds=3.0)
 
 
 @ContinueOnRest(50)
@@ -269,11 +269,11 @@ def Event_1050383703(_, character: uint):
     if PlayerNotInOwnWorld():
         return
     OR_1.Add(HealthValue(Characters.SageGowry0) == 0)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.SageGowry0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.SageGowry0))
     AND_1.Add(OR_1)
     AND_1.Add(CharacterBackreadEnabled(Characters.SageGowry0))
     OR_2.Add(HealthValue(Characters.SageGowry1) == 0)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SageGowry1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.SageGowry1))
     AND_2.Add(OR_2)
     AND_2.Add(CharacterBackreadEnabled(Characters.SageGowry1))
     OR_3.Add(AND_1)

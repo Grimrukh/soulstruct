@@ -38,7 +38,7 @@ def Constructor():
     )
     CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
     Event_1038482580()
-    CommonFunc_90005683(0, 62201, 1038481684, 209, 78290, 78290)
+    CommonFunc_90005683(0, flag=62201, asset=Assets.AEG099_055_2000, vfx_id=209, flag_1=78290, flag_2=78290)
 
 
 @ContinueOnRest(50)
@@ -133,7 +133,14 @@ def Preconstructor():
         seconds=1.399999976158142,
         animation_id=1705,
     )
-    CommonFunc_90005261(0, 1038480211, 1038482200, 0.0, 1.0, 1705)
+    CommonFunc_90005261(
+        0,
+        character=Characters.RevenantFollower11,
+        region=1038482200,
+        radius=0.0,
+        seconds=1.0,
+        animation_id=1705,
+    )
 
 
 @ContinueOnRest(1038482580)

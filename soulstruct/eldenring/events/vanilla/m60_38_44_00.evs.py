@@ -62,4 +62,16 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 1038440211, 30002, 20002, 1038442210, 15.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.Albinauric1,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1038442210,
+        radius=15.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

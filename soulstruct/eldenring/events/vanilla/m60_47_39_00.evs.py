@@ -345,4 +345,4 @@ def Constructor():
     CommonFunc_90005250(0, character=Characters.RadahnSoldier4, region=1047392406, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=1047392450, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.TunnelMiner1, region=1047392450, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 1047390452, 1047392450, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.TunnelMiner2, region=1047392450, seconds=0.0, animation_id=-1)

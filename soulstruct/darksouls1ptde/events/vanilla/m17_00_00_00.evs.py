@@ -242,7 +242,7 @@ def Constructor():
     Event_11705110(16, character=1700126)
     Event_11705110(17, character=1700127)
     Event_11705110(18, character=1700908)
-    Event_11705110(19, 1700909)
+    Event_11705110(19, character=1700909)
 
 
 @ContinueOnRest(50)
@@ -278,7 +278,7 @@ def Preconstructor():
     if FlagDisabled(1181):
         DisableCharacter(6073)
     Event_11700520(3, character=6073, first_flag=1170, last_flag=1189, flag=1177)
-    Event_11700545(0, 6073, 1170, 1189, 1181)
+    Event_11700545(0, character=6073, first_flag=1170, last_flag=1189, flag=1181)
 
 
 @ContinueOnRest(11700080)
@@ -1496,7 +1496,7 @@ def Event_11705200():
     Event_11705201(13, flag=11705213, character=1700301, region=1702314, flag_1=11705213)
     EnableFlag(11705220)
     Event_11705201(20, flag=11705220, character=1700302, region=1702321, flag_1=11705221)
-    Event_11705201(21, 11705221, 1700302, 1702322, 11705221)
+    Event_11705201(21, flag=11705221, character=1700302, region=1702322, flag_1=11705221)
 
 
 @RestartOnRest(11705240)

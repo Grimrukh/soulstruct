@@ -105,14 +105,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1051530380,
-        character=Characters.BloodyFingerOkina,
-        item_lot=0,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1051530380, character=Characters.BloodyFingerOkina, item_lot=0, seconds=0.0, left=0)
     CommonFunc_90005790(
         0,
         right=0,
@@ -176,7 +169,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    CommonFunc_90005771(0, 1051530950, 1051532700)
+    CommonFunc_90005771(0, other_entity=Characters.TalkDummy, flag=1051532700)
 
 
 @RestartOnRest(1051532200)

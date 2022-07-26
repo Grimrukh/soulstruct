@@ -60,7 +60,7 @@ def Constructor():
     CommonFunc_90005702(0, character=Characters.BrotherCorhyn, flag=4203, first_flag=4200, last_flag=4204)
     Event_1040542705(0, character=Characters.Goldmask)
     Event_1040542706(0, character=Characters.Goldmask)
-    CommonFunc_90005706(0, 1040540710, 30023, 0)
+    CommonFunc_90005706(0, character=1040540710, animation_id=30023, left=0)
 
 
 @ContinueOnRest(50)
@@ -88,7 +88,18 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005251(0, character=1040540340, radius=0.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005201(0, 1040540402, 30000, 20000, 10.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.Wormface,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=10.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(200)
@@ -113,13 +124,22 @@ def Event_200():
     Event_1040542210(4, character=1040540313, patrol_information_id=1040542313)
     Event_1040542210(5, character=Characters.LeyndellSoldier1, patrol_information_id=1040542314)
     Event_1040542210(6, character=Characters.LeyndellSoldier0, patrol_information_id=1040542315)
-    Event_1040542210(7, 1040540316, 1040542316)
+    Event_1040542210(7, character=Characters.LeyndellSoldier2, patrol_information_id=1040542316)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005420(0, 1040540300, 1040541300, 1040541301, 1040540301, 1040540302, 1040540303, 0.0)
+    CommonFunc_90005420(
+        0,
+        character=Characters.CaravanDummy,
+        caravan_asset__parent_asset=Assets.AEG100_100_9001,
+        child_asset=Assets.AEG100_101_9001,
+        character_1=Characters.Dummy,
+        character_2=Characters.Troll0,
+        character_3=Characters.Troll1,
+        seconds=0.0,
+    )
 
 
 @RestartOnRest(1040542201)

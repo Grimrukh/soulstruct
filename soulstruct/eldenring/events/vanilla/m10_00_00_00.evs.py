@@ -266,14 +266,7 @@ def Constructor():
         left_3=0,
     )
     CommonFunc_90005300(0, flag=10000280, character=Characters.GraftedScion, item_lot=0, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=10000289,
-        character=Characters.LionGuardian,
-        item_lot=10001085,
-        seconds=1.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=10000289, character=Characters.LionGuardian, item_lot=10001085, seconds=1.0, left=0)
     Event_11002291(0, character=Characters.UlceratedTreeSpirit, region=10002291, seconds=3.0)
     CommonFunc_90005300(
         0,
@@ -283,14 +276,7 @@ def Constructor():
         seconds=0.0,
         left=0,
     )
-    CommonFunc_90005300(
-        0,
-        flag=10000498,
-        character=Characters.CrucibleKnight,
-        item_lot=10001295,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=10000498, character=Characters.CrucibleKnight, item_lot=10001295, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=10000495, character=Characters.Scarab0, item_lot=40170, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=10000496, character=Characters.Scarab1, item_lot=40172, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=10000497, character=Characters.Scarab2, item_lot=40174, seconds=0.0, left=0)
@@ -581,7 +567,7 @@ def Constructor():
     Event_10003745(0, character=Characters.DefeatedGodrick)
     CommonFunc_90005706(0, character=Characters.Commoner25, animation_id=930018, left=0)
     Event_10003500(0, region=10002740)
-    Event_10003500(1, 10002741)
+    Event_10003500(1, region=10002741)
 
 
 @ContinueOnRest(50)
@@ -937,7 +923,7 @@ def Preconstructor():
     Event_10003705(3, entity=Characters.GatekeeperGostoc3)
     Event_10003705(4, entity=Characters.GatekeeperGostoc4)
     Event_10003705(5, entity=Characters.GatekeeperGostoc5)
-    Event_10003705(6, 10000707)
+    Event_10003705(6, entity=Characters.GatekeeperGostoc6)
 
 
 @RestartOnRest(10002281)
@@ -956,7 +942,7 @@ def Event_10002281(_, character: uint, region: uint, seconds: float, animation_i
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(AND_1)
     
     MAIN.Await(OR_2)
@@ -1078,19 +1064,19 @@ def Event_10002510():
     )
     CommonFunc_90005500(
         0,
-        10000520,
-        10000521,
-        0,
-        10001520,
-        10001521,
-        10003521,
-        10001522,
-        10003522,
-        10002521,
-        10002522,
-        10000522,
-        10000523,
-        10000524,
+        flag=10000520,
+        flag_1=10000521,
+        left=0,
+        asset=Assets.AEG219_023_0500,
+        asset_1=Assets.AEG219_010_0506,
+        obj_act_id=10003521,
+        asset_2=Assets.AEG219_010_0505,
+        obj_act_id_1=10003522,
+        region=10002521,
+        region_1=10002522,
+        flag_2=10000522,
+        flag_3=10000523,
+        left_1=10000524,
     )
 
 
@@ -1166,7 +1152,7 @@ def Event_10002240(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1229,7 +1215,7 @@ def Event_11002291(_, character: uint, region: uint, seconds: float):
     AND_3.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(AND_3)
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1317,7 +1303,7 @@ def Event_10002311(
     DefineLabel(9)
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -1362,7 +1348,7 @@ def Event_10002320():
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=10002294))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=10000294, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=10000294))
     OR_2.Add(CharacterHasStateInfo(character=10000294, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=10000294, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=10000294, state_info=5))
@@ -1406,8 +1392,8 @@ def Event_10002340(_, character: uint, asset: uint):
     
     RemoveSpecialEffect(character, 10940)
     RemoveSpecialEffect(character, 10943)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=character, special_effect=10941)
-    SkipLinesIfCharacterHasSpecialEffect(line_count=1, character=character, special_effect=10936)
+    SkipLinesIfCharacterHasSpecialEffect(2, character=character, special_effect=10941)
+    SkipLinesIfCharacterHasSpecialEffect(1, character=character, special_effect=10936)
     ForceAnimation(character, 20005)
 
 
@@ -1426,7 +1412,7 @@ def Event_10002350(_, character: uint, region: uint, seconds: float, flag: uint)
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -2011,7 +1997,17 @@ def Event_10002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=10000800, asset=Assets.AEG099_002_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 10000800, 475000, 10002805, 10002806, 0, 10002802, 1, 1)
+    CommonFunc_9005822(
+        0,
+        flag=10000800,
+        bgm_boss_conv_param_id=475000,
+        flag_1=10002805,
+        flag_2=10002806,
+        right=0,
+        flag_3=10002802,
+        left=1,
+        left_1=1,
+    )
 
 
 @ContinueOnRest(10002850)
@@ -2050,7 +2046,7 @@ def Event_10002860():
     if PlayerInOwnWorld():
         DisableThisSlotFlag()
     OR_15.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
-    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
+    OR_15.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown7))
     if OR_15:
         return
     GotoIfThisEventSlotFlagEnabled(Label.L2)
@@ -2060,7 +2056,7 @@ def Event_10002860():
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(EntityWithinDistance(entity=Characters.Margit, other_entity=PLAYER, radius=25.0))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Margit, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Margit))
     AND_10.Add(OR_1)
     AND_10.Add(FlagDisabled(10000850))
     
@@ -2170,7 +2166,17 @@ def Event_10002889():
         right=10000851,
         model_point_1=806760,
     )
-    CommonFunc_9005822(0, 10000850, 213000, 10002855, 10002856, 0, 10002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=10000850,
+        bgm_boss_conv_param_id=213000,
+        flag_1=10002855,
+        flag_2=10002856,
+        right=0,
+        flag_3=10002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(10003700)
@@ -2463,9 +2469,9 @@ def Event_10003711(_, first_flag: uint, last_flag: uint, flag: uint, region: uin
     
     MAIN.Await(FlagEnabled(10009397))
     
-    SkipLinesIfCharacterInsideRegion(line_count=1, character=PLAYER, region=10002704)
-    if FlagEnabled(10009360):
-        return
+    if CharacterOutsideRegion(character=PLAYER, region=10002704):
+        if FlagEnabled(10009360):
+            return
     DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))
     EnableNetworkFlag(flag)
     
@@ -2691,8 +2697,8 @@ def Event_10003731():
             unk_24_25=False,
         )
         Goto(Label.L2)
-    OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=1))
-    OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=7))
+    OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.WhitePhantom))
+    OR_1.Add(CharacterInvadeType(character=PLAYER, invade_type=CharacterType.Unknown7))
     SkipLinesIfConditionFalse(2, OR_1)
     PlayCutsceneToPlayerAndWarp(
         cutscene_id=10000050,

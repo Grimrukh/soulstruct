@@ -24,13 +24,13 @@ from .entities.m60_48_55_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, 1048550200, 1048550200, 40522, 0.0, 0)
+    CommonFunc_90005300(0, flag=1048550200, character=1048550200, item_lot=40522, seconds=0.0, left=0)
 
 
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1248558301)
+    CommonFunc_90005421(0, character=1248550300, asset=Assets.AEG100_101_9000, flag=1248558301)
     CommonFunc_90005422(0, flag=1248558301, asset=Assets.AEG100_120_9000, obj_act_id=1248553301)
     CommonFunc_90005424(
         0,
@@ -87,13 +87,22 @@ def Event_200():
         npc_threat_level=10,
         flag=1248552815,
     )
-    Event_1248552320(0, 1248550800, 1248550801)
+    Event_1248552320(0, character=Characters.NightsCavalry0, character_1=Characters.NightsCavalry1)
 
 
 @ContinueOnRest(250)
 def Event_250():
     """Event 250"""
-    CommonFunc_90005420(0, 1248550300, 1248551300, 1248551301, 1248550301, 1248550302, 1248550303, 0.0)
+    CommonFunc_90005420(
+        0,
+        character=Characters.CaravanDummy,
+        caravan_asset__parent_asset=Assets.AEG100_120_9000,
+        child_asset=Assets.AEG100_101_9000,
+        character_1=Characters.Dummy,
+        character_2=Characters.SnowTroll0,
+        character_3=Characters.SnowTroll1,
+        seconds=0.0,
+    )
 
 
 @RestartOnRest(1248552320)

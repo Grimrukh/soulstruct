@@ -51,7 +51,7 @@ def Constructor():
     Event_11025200(11, other_entity=1020209, character=1020210, radius=11.0, seconds=0.800000011920929)
     Event_11025200(12, other_entity=1020209, character=1020211, radius=11.0, seconds=1.5)
     Event_11025200(13, other_entity=1020209, character=1020212, radius=11.0, seconds=2.200000047683716)
-    Event_11025200(14, 1020213, 1020213, 3.0, 0.0)
+    Event_11025200(14, other_entity=1020213, character=1020213, radius=3.0, seconds=0.0)
 
 
 @ContinueOnRest(11020899)

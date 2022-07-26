@@ -43,4 +43,4 @@ def Constructor():
         flag_10=78508,
         flag_11=78509,
     )
-    CommonFunc_900005610(0, 1047511600, 100, 800, 0)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)

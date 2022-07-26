@@ -30,4 +30,4 @@ def Constructor():
     CommonFunc_90005261(0, character=1040330204, region=1040332200, radius=5.0, seconds=1.0, animation_id=1701)
     CommonFunc_90005261(0, character=1040330205, region=1040332200, radius=5.0, seconds=2.0, animation_id=1702)
     CommonFunc_90005261(0, character=1040330206, region=1040332200, radius=5.0, seconds=0.0, animation_id=1701)
-    CommonFunc_90005261(0, 1040330207, 1040332200, 5.0, 1.0, 1702)
+    CommonFunc_90005261(0, character=1040330207, region=1040332200, radius=5.0, seconds=1.0, animation_id=1702)

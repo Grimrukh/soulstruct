@@ -34,13 +34,13 @@ def Constructor():
     Event_1040402200(7, character=Characters.RayaLucariaFootSoldier1)
     Event_1040402200(8, character=Characters.RayaLucariaFootSoldier2)
     Event_1040402220(0, character=Characters.Troll)
-    CommonFunc_90005423(0, 1040400220)
+    CommonFunc_90005423(0, character=Characters.Troll)
 
 
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005422(0, 1040408500, 1040401500, 1040403500)
+    CommonFunc_90005422(0, flag=1040408500, asset=Assets.AEG100_101_1000, obj_act_id=1040403500)
 
 
 @RestartOnRest(1040402200)

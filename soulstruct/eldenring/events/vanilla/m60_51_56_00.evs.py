@@ -43,14 +43,7 @@ def Constructor():
         flag_10=78508,
         flag_11=78509,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1051560210,
-        character=Characters.LargeScarab,
-        item_lot=1051560700,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=1051560210, character=Characters.LargeScarab, item_lot=1051560700, seconds=0.0, left=0)
     Event_1051562200(0, character=1051565200)
     Event_1051562500()
     Event_1051562510()
@@ -145,7 +138,14 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4796, flag_1=4795, flag_2=1051569407, right=3)
     CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1051562746, flag_1=1051562747)
-    CommonFunc_90005727(0, 4796, 1051560725, 1051560726, 4795, 4798)
+    CommonFunc_90005727(
+        0,
+        flag=4796,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4795,
+        last_flag=4798,
+    )
 
 
 @ContinueOnRest(50)

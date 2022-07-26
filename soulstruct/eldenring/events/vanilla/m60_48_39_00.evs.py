@@ -150,7 +150,7 @@ def Constructor():
             repetition_time=1.0,
         )
     CommonFunc_90005705(0, character=Characters.FingerReader)
-    CommonFunc_90005706(0, 1048390701, 930027, 0)
+    CommonFunc_90005706(0, character=Characters.PutridCorpse0, animation_id=930027, left=0)
 
 
 @ContinueOnRest(50)

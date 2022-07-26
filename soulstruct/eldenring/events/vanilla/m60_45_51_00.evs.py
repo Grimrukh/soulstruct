@@ -25,7 +25,7 @@ from .entities.m60_45_51_00_entities import *
 def Constructor():
     """Event 0"""
     Event_1045512620()
-    CommonFunc_900005610(0, 1045511680, 100, 800, 1045518620)
+    CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=1045518620)
 
 
 @RestartOnRest(1045512620)

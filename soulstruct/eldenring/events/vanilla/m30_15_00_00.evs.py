@@ -137,8 +137,8 @@ def Constructor():
         obj_act_id_1=27115,
     )
     CommonFunc_90005651(0, flag=30150540, anchor_entity=Assets.AEG027_041_0500)
-    CommonFunc_90005525(0, flag=30150570, asset=Assets.AEG027_157_0500)
-    CommonFunc_90005525(0, flag=30150571, asset=Assets.AEG027_157_0501)
+    CommonFunc_90005525(0, flag=30150570, asset=30151570)
+    CommonFunc_90005525(0, flag=30150571, asset=30151571)
     Event_30152800()
     Event_30152810()
     Event_30152849()
@@ -155,7 +155,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 30152800, 30151695, 5)
+    CommonFunc_91005600(0, flag=30152800, asset=30151695, model_point=5)
 
 
 @RestartOnRest(30152520)
@@ -261,4 +261,14 @@ def Event_30152849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30150800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30150800, 930000, 30152805, 30152806, 0, 30152802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30150800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30152805,
+        flag_2=30152806,
+        right=0,
+        flag_3=30152802,
+        left=0,
+        left_1=0,
+    )

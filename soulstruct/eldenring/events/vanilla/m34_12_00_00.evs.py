@@ -68,11 +68,11 @@ def Constructor():
     )
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9001, vfx_id=100, model_point=800, right=0)
     CommonFunc_90005560(0, flag=34120650, asset=Assets.AEG099_635_9000, left=0)
-    CommonFunc_90005525(0, flag=34120590, asset=Assets.AEG027_069_0500)
-    CommonFunc_90005525(0, flag=34120591, asset=Assets.AEG027_069_0501)
-    CommonFunc_90005525(0, flag=34120592, asset=Assets.AEG027_069_0502)
-    CommonFunc_90005525(0, flag=34120593, asset=Assets.AEG027_069_0503)
-    CommonFunc_90005525(0, flag=34120594, asset=Assets.AEG027_069_0504)
+    CommonFunc_90005525(0, flag=34120590, asset=34121590)
+    CommonFunc_90005525(0, flag=34120591, asset=34121591)
+    CommonFunc_90005525(0, flag=34120592, asset=34121592)
+    CommonFunc_90005525(0, flag=34120593, asset=34121593)
+    CommonFunc_90005525(0, flag=34120594, asset=34121594)
     CommonFunc_90005110(
         0,
         flag=194,
@@ -149,7 +149,7 @@ def Constructor():
         asset_2=0,
         asset_3=0,
     )
-    Event_34122400(0, 34120200, 34122200)
+    Event_34122400(0, character=34120200, region=34122200)
 
 
 @ContinueOnRest(50)
@@ -221,7 +221,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.AbnormalStoneCluster14, region=34122270, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.TunnelMiner0, region=34122300, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.TunnelMiner4, region=34122305, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, 34120350, 34122350, 0.0, -1)
+    CommonFunc_90005250(0, character=Characters.IronVirgin, region=34122350, seconds=0.0, animation_id=-1)
 
 
 @ContinueOnRest(34122510)
@@ -229,19 +229,19 @@ def Event_34122510():
     """Event 34122510"""
     CommonFunc_90005500(
         0,
-        34120510,
-        34120511,
-        0,
-        34121510,
-        34121511,
-        34123511,
-        34121512,
-        34123512,
-        34122511,
-        34122512,
-        34120512,
-        34120513,
-        0,
+        flag=34120510,
+        flag_1=34120511,
+        left=0,
+        asset=Assets.AEG027_001_7000,
+        asset_1=Assets.AEG027_080_7000,
+        obj_act_id=34123511,
+        asset_2=Assets.AEG027_080_7001,
+        obj_act_id_1=34123512,
+        region=34122511,
+        region_1=34122512,
+        flag_2=34120512,
+        flag_3=34120513,
+        left_1=0,
     )
 
 
@@ -250,19 +250,19 @@ def Event_34122515():
     """Event 34122515"""
     CommonFunc_90005507(
         0,
-        34120515,
-        34121515,
-        0,
-        34121515,
-        34121516,
-        34122518,
-        34121517,
-        34122519,
-        34122516,
-        34122517,
-        34120516,
-        34122517,
-        0,
+        flag=34120515,
+        flag_1=34121515,
+        left=0,
+        asset=Assets.AEG027_070_0500,
+        entity=Assets.AEG027_203_0501,
+        region=34122518,
+        entity_1=Assets.AEG027_203_0500,
+        region_1=34122519,
+        region_2=34122516,
+        region_3=34122517,
+        flag_2=34120516,
+        flag_3=34122517,
+        left_1=0,
     )
 
 
@@ -359,7 +359,7 @@ def Event_32012200(
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -409,7 +409,7 @@ def Event_34122400(_, character: uint, region: uint):
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=region))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -532,4 +532,4 @@ def Event_34122849():
         left=0,
         left_1=0,
     )
-    CommonFunc_9005811(0, 34120800, 34121801, 3, 34120801)
+    CommonFunc_9005811(0, flag=34120800, asset=Assets.AEG099_003_9001, model_point=3, right=34120801)

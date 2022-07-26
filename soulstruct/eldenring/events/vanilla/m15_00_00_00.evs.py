@@ -83,8 +83,8 @@ def Constructor():
         asset=Assets.AEG099_090_9002,
         model_point=30000,
     )
-    SkipLinesIfCeremonyInactive(line_count=1, ceremony=20)
-    CommonFunc_90005797(0, flag=7610, character=15005706, banner_type=7, region=15002142, special_effect_id=4823)
+    if CeremonyActive(ceremony=20):
+        CommonFunc_90005797(0, flag=7610, character=15005706, banner_type=7, region=15002142, special_effect_id=4823)
     Event_15002145()
     CommonFunc_90005795(
         0,
@@ -98,27 +98,13 @@ def Constructor():
         asset=Assets.AEG099_090_9003,
         model_point=30010,
     )
-    SkipLinesIfCeremonyInactive(line_count=1, ceremony=30)
-    CommonFunc_90005796(0, flag=7611, character=Characters.Millicent2, banner_type=5, region=15002151)
+    if CeremonyActive(ceremony=30):
+        CommonFunc_90005796(0, flag=7611, character=Characters.Millicent2, banner_type=5, region=15002151)
     Event_15002155()
     CommonFunc_90005300(0, flag=15000390, character=15000390, item_lot=15001250, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=15000391, character=15000391, item_lot=15001260, seconds=0.0, left=0)
-    CommonFunc_90005300(
-        0,
-        flag=15000392,
-        character=Characters.PutridAvatar0,
-        item_lot=15001270,
-        seconds=0.0,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=15000393,
-        character=Characters.PutridAvatar1,
-        item_lot=15001280,
-        seconds=0.0,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=15000392, character=Characters.PutridAvatar0, item_lot=15001270, seconds=0.0, left=0)
+    CommonFunc_90005300(0, flag=15000393, character=Characters.PutridAvatar1, item_lot=15001280, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=15000394, character=15000394, item_lot=15001290, seconds=0.0, left=0)
     CommonFunc_90005300(
         0,
@@ -1608,13 +1594,13 @@ def Constructor():
         flag=4192,
         model_point=0,
     )
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9000, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=15001704, vfx_id=200, model_point=120, seconds=3.0)
     Event_15000712(0, asset=Assets.AEG267_063_3000)
     Event_15000713(0, entity=Assets.AEG099_090_9001)
     Event_15000715()
     Event_15000716()
     CommonFunc_90005774(0, flag=7611, item_lot=103220, flag_1=400323)
-    CommonFunc_90005774(0, 7610, 104800, 400480)
+    CommonFunc_90005774(0, flag=7610, item_lot=104800, flag_1=400480)
 
 
 @ContinueOnRest(50)
@@ -1650,7 +1636,8 @@ def Event_15000050():
 @RestartOnRest(15002145)
 def Event_15002145():
     """Event 15002145"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     EnableBackread(Characters.Millicent1)
     EnableBackread(Characters.MaryEldestSister1)
     EnableBackread(Characters.MaureenSecondSister)
@@ -1667,7 +1654,8 @@ def Event_15002145():
 @RestartOnRest(15002155)
 def Event_15002155():
     """Event 15002155"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=30)
+    if CeremonyInactive(ceremony=30):
+        return
     EnableBackread(Characters.Millicent2)
     EnableBackread(Characters.MaryEldestSister0)
     CreateAssetVFX(Assets.AEG099_120_9000, vfx_id=200, model_point=806700)
@@ -1737,19 +1725,19 @@ def Event_15002520():
     CommonFunc_90015502(0, flag=15000523, asset=Assets.AEG267_023_0504, region=15002522)
     CommonFunc_90005500(
         0,
-        15000525,
-        15001525,
-        0,
-        15001525,
-        15001526,
-        15003526,
-        15001527,
-        15003527,
-        15002526,
-        15002527,
-        15000526,
-        15002527,
-        0,
+        flag=15000525,
+        flag_1=15001525,
+        left=0,
+        asset=Assets.AEG267_027_0500,
+        asset_1=Assets.AEG267_023_0507,
+        obj_act_id=15003526,
+        asset_2=Assets.AEG267_023_0506,
+        obj_act_id_1=15003527,
+        region=15002526,
+        region_1=15002527,
+        flag_2=15000526,
+        flag_3=15002527,
+        left_1=0,
     )
 
 
@@ -1775,19 +1763,19 @@ def Event_15002620():
     CommonFunc_90005502(0, flag=15000623, asset=Assets.AEG267_023_0501, region=15002622)
     CommonFunc_90005500(
         0,
-        15000625,
-        15001625,
-        0,
-        15001625,
-        15001626,
-        15003626,
-        15001627,
-        15003627,
-        15002626,
-        15002627,
-        15000626,
-        15002627,
-        0,
+        flag=15000625,
+        flag_1=15001625,
+        left=0,
+        asset=Assets.AEG267_026_0500,
+        asset_1=Assets.AEG267_038_0500,
+        obj_act_id=15003626,
+        asset_2=Assets.AEG267_038_0501,
+        obj_act_id_1=15003627,
+        region=15002626,
+        region_1=15002627,
+        flag_2=15000626,
+        flag_3=15002627,
+        left_1=0,
     )
 
 
@@ -1957,7 +1945,7 @@ def Event_15002811():
         return
     AND_1.Add(HealthValue(Characters.Malenia0) <= 1)
     AND_1.Add(CharacterDoesNotHaveSpecialEffect(Characters.Malenia0, 18480))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Malenia0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Malenia0))
     AND_1.Add(OR_1)
     
     MAIN.Await(AND_1)
@@ -2227,7 +2215,17 @@ def Event_15002849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=15000800, asset=Assets.AEG099_003_9000, model_point=5, right=0)
-    CommonFunc_9005822(0, 15002800, 212000, 15002805, 15002806, 0, 15002802, 1, 1)
+    CommonFunc_9005822(
+        0,
+        flag=15002800,
+        bgm_boss_conv_param_id=212000,
+        flag_1=15002805,
+        flag_2=15002806,
+        right=0,
+        flag_3=15002802,
+        left=1,
+        left_1=1,
+    )
 
 
 @RestartOnRest(15002850)
@@ -2336,7 +2334,17 @@ def Event_15002899():
     )
     CommonFunc_9005811(0, flag=15000850, asset=Assets.AEG099_003_9001, model_point=3, right=15000851)
     CommonFunc_9005811(0, flag=15000850, asset=Assets.AEG099_003_9002, model_point=3, right=0)
-    CommonFunc_9005822(0, 15000850, 920200, 15002855, 15002856, 0, 15002852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=15000850,
+        bgm_boss_conv_param_id=920200,
+        flag_1=15002855,
+        flag_2=15002856,
+        right=0,
+        flag_3=15002852,
+        left=0,
+        left_1=0,
+    )
 
 
 @ContinueOnRest(15000700)

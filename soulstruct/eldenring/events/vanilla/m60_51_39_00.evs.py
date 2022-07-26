@@ -53,7 +53,7 @@ def Constructor():
     Event_1051392200(9, character=Characters.RadahnSoldier9)
     Event_1051392580(0, start_climbing_flag=1051390580, stop_climbing_flag=1051390851, asset=Assets.AEG030_001_2000)
     Event_1051392580(1, start_climbing_flag=1051390582, stop_climbing_flag=1051390853, asset=Assets.AEG030_608_2100)
-    Event_1051392580(2, 1051390584, 1051390855, 1051391584)
+    Event_1051392580(2, start_climbing_flag=1051390584, stop_climbing_flag=1051390855, asset=Assets.AEG030_902_2001)
 
 
 @RestartOnRest(1051392200)

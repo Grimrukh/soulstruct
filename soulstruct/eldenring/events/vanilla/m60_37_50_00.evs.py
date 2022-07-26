@@ -23,4 +23,4 @@ from soulstruct.eldenring.events.instructions import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005221(0, 1037500200, 30005, 20020, 0.0, 0)
+    CommonFunc_90005221(0, character=1037500200, animation_id=30005, animation_id_1=20020, seconds=0.0, left=0)

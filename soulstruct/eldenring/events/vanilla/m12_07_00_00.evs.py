@@ -359,7 +359,7 @@ def Preconstructor():
     )
     CommonFunc_90005250(0, character=Characters.Dummy, region=12072382, seconds=0.0, animation_id=-1)
     CommonFunc_90005300(0, flag=12070402, character=Characters.Scarab1, item_lot=40652, seconds=1.5, left=0)
-    Event_12073700(0, 12070700, 12070701)
+    Event_12073700(0, character=12070700, character_1=12070701)
 
 
 @ContinueOnRest(12070510)
@@ -383,19 +383,19 @@ def Event_12070510():
     )
     CommonFunc_90005500(
         0,
-        12070515,
-        12071515,
-        7,
-        12071515,
-        12071516,
-        12073516,
-        12071517,
-        12073517,
-        12072516,
-        12072517,
-        12070516,
-        12072517,
-        0,
+        flag=12070515,
+        flag_1=12071515,
+        left=7,
+        asset=Assets.AEG239_010_0500,
+        asset_1=Assets.AEG239_020_0501,
+        obj_act_id=12073516,
+        asset_2=Assets.AEG239_020_0500,
+        obj_act_id_1=12073517,
+        region=12072516,
+        region_1=12072517,
+        flag_2=12070516,
+        flag_3=12072517,
+        left_1=0,
     )
 
 

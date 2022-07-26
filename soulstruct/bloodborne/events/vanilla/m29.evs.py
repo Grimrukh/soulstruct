@@ -4342,14 +4342,7 @@ def Event_12901728(_, flag: int, obj: int):
 
 
 @ContinueOnRest(12901730)
-def Event_12901730(
-    _,
-    flag: int,
-    item_lot: int,
-    item_lot_1: int,
-    item_lot_2: int,
-    item_lot_3: int,
-):
+def Event_12901730(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int, item_lot_3: int):
     """Event 12901730"""
     DisableNetworkSync()
     if FlagEnabled(flag):

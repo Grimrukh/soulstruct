@@ -87,7 +87,7 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Millicent0)
-    CommonFunc_90005251(0, 1042550800, 50.0, 0.0, 0)
+    CommonFunc_90005251(0, character=Characters.GodskinApostle, radius=50.0, seconds=0.0, animation_id=0)
 
 
 @RestartOnRest(1042553710)

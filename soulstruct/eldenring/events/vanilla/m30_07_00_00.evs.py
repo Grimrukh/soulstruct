@@ -694,19 +694,19 @@ def Event_30070510():
     """Event 30070510"""
     CommonFunc_90005500(
         0,
-        30070515,
-        30070516,
-        3,
-        30071515,
-        30071516,
-        30073516,
-        30071517,
-        30073517,
-        30072516,
-        30072517,
-        30070517,
-        30070518,
-        0,
+        flag=30070515,
+        flag_1=30070516,
+        left=3,
+        asset=Assets.AEG027_016_0500,
+        asset_1=Assets.AEG027_002_0500,
+        obj_act_id=30073516,
+        asset_2=Assets.AEG027_002_0502,
+        obj_act_id_1=30073517,
+        region=30072516,
+        region_1=30072517,
+        flag_2=30070517,
+        flag_3=30070518,
+        left_1=0,
     )
 
 
@@ -836,11 +836,7 @@ def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, s
     
     MAIN.Await(AND_1)
     
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     EnableNetworkFlag(flag)
     if ThisEventSlotFlagDisabled():
         Wait(seconds)
@@ -945,11 +941,7 @@ def Event_30072505(_, flag: uint, asset_flag: uint, asset: uint, region: uint, s
     RemoveAssetFlag(asset_flag=asset_flag)
     Wait(4.099999904632568)
     Wait(0.10000000149011612)
-    SkipLinesIfMapDoesNotHaveUpdatePermission(
-        line_count=1,
-        unk_state=False,
-        game_map=(0, 0, 0, 0),
-    )
+    SkipLinesIfMapDoesNotHaveUpdatePermission(1, unk_state=False, game_map=(0, 0, 0, 0))  # NOTE: useless skip
     DisableNetworkFlag(flag)
     Restart()
 
@@ -5156,7 +5148,16 @@ def Event_30072618():
             source_entity_2=30072608,
         )
     else:
-        CommonFunc_90005660(0, 30070605, 30071605, 30072605, 801020000, 30072606, 30072607, 30072608)
+        CommonFunc_90005660(
+            0,
+            owner_entity=Characters.Dummy1,
+            entity=Assets.AEG027_044_0503,
+            region=30072605,
+            behavior_id=801020000,
+            source_entity=30072606,
+            source_entity_1=30072607,
+            source_entity_2=30072608,
+        )
 
 
 @RestartOnRest(30072800)
@@ -5239,4 +5240,14 @@ def Event_30072849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30070800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30070800, 930000, 30072805, 30072806, 0, 30072802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30070800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30072805,
+        flag_2=30072806,
+        right=0,
+        flag_3=30072802,
+        left=0,
+        left_1=0,
+    )

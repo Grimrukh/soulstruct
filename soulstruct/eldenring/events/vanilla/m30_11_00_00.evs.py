@@ -52,7 +52,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    Event_30110790(0, 30111520, 30110800)
+    Event_30110790(0, asset=30111520, flag=30110800)
 
 
 @ContinueOnRest(50)
@@ -264,7 +264,19 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005211(0, 30110217, 30003, 20003, 30112217, 3.0, 8.5, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.CatacombsSkeleton17,
+        animation_id=30003,
+        animation_id_1=20003,
+        region=30112217,
+        radius=3.0,
+        seconds=8.5,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @ContinueOnRest(30112580)
@@ -384,7 +396,17 @@ def Event_30112849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30110800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30110800, 921500, 30112805, 30112806, 0, 30112802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30110800,
+        bgm_boss_conv_param_id=921500,
+        flag_1=30112805,
+        flag_2=30112806,
+        right=0,
+        flag_3=30112802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(30112900)

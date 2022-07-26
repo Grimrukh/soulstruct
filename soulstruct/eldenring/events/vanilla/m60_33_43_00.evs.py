@@ -37,4 +37,4 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.ErdtreeAvatar, radius=20.0, seconds=0.0, animation_id=0)
     CommonFunc_90005872(0, character=Characters.ErdtreeAvatar, npc_threat_level=18, right=0)
     CommonFunc_900005610(0, asset=Assets.AEG003_316_9000, vfx_id=100, model_point=800, right=1033438600)
-    CommonFunc_90005300(0, 1033430200, 1033430200, 40238, 0.0, 0)
+    CommonFunc_90005300(0, flag=1033430200, character=Characters.Scarab, item_lot=40238, seconds=0.0, left=0)

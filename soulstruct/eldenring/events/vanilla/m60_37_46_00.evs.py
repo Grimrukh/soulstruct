@@ -49,7 +49,7 @@ def Constructor():
     Event_1037460710(0, flag=1037469280)
     Event_1037460711(0, flag=1037469281)
     Event_1037460719(0, flag=1037469289)
-    CommonFunc_90005631(0, 1037461640, 61021)
+    CommonFunc_90005631(0, anchor_entity=Assets.AEG099_376_1000, text=61021)
 
 
 @ContinueOnRest(50)
@@ -60,7 +60,7 @@ def Preconstructor():
     CommonFunc_90005261(0, character=1037460201, region=1037462600, radius=3.0, seconds=0.0, animation_id=3020)
     CommonFunc_90005261(0, character=1037460202, region=1037462600, radius=3.0, seconds=0.0, animation_id=3020)
     CommonFunc_90005261(0, character=1037460203, region=1037462600, radius=3.0, seconds=0.0, animation_id=1700)
-    CommonFunc_90005261(0, 1037460204, 1037462600, 3.0, 0.0, 1700)
+    CommonFunc_90005261(0, character=1037460204, region=1037462600, radius=3.0, seconds=0.0, animation_id=1700)
 
 
 @RestartOnRest(1037460700)
@@ -130,7 +130,7 @@ def Event_1037460702(_, character: uint):
     if PlayerNotInOwnWorld():
         return
     
-    MAIN.Await(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    MAIN.Await(AttackedWithDamageType(attacked_entity=character))
     
     AddSpecialEffect(character, 9750)
     Restart()

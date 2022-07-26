@@ -26,7 +26,7 @@ def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=1054530000, asset=Assets.AEG099_060_9000)
     Event_1054530703()
-    CommonFunc_90005771(0, 1054531950, 1054532702)
+    CommonFunc_90005771(0, other_entity=Assets.AEG099_060_9000, flag=1054532702)
 
 
 @ContinueOnRest(1054532500)

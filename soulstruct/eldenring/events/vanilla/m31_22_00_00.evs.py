@@ -34,7 +34,18 @@ def Constructor():
     Event_31222813(1, character=Characters.GodskinNoble, flag=31222820)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     Event_31222500()
-    CommonFunc_90005646(0, 31220800, 31222840, 31222841, 31221840, 31222840, 31, 22, 0, 0)
+    CommonFunc_90005646(
+        0,
+        flag=31220800,
+        left_flag=31222840,
+        cancel_flag__right_flag=31222841,
+        asset=Assets.AEG099_065_9000,
+        player_start=31222840,
+        area_id=31,
+        block_id=22,
+        cc_id=0,
+        dd_id=0,
+    )
 
 
 @ContinueOnRest(50)
@@ -55,7 +66,7 @@ def Preconstructor():
     Event_31222330()
     Event_31222340(0, entity=Characters.InabaDiscipleofOkina0, flag=31222304, seconds=0.10000000149011612)
     Event_31222340(1, entity=Characters.InabaDiscipleofOkina1, flag=31222305, seconds=0.10000000149011612)
-    Event_31222340(2, 31220403, 31222306, 0.10000000149011612)
+    Event_31222340(2, entity=Characters.InabaDiscipleofOkina2, flag=31222306, seconds=0.10000000149011612)
 
 
 @RestartOnRest(31222300)
@@ -155,7 +166,7 @@ def Event_31222305():
     if OR_5:
         return
     OR_1.Add(HasAIStatus(Characters.Snail4, ai_status=AIStatusType.Battle))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Snail4, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Snail4))
     
     MAIN.Await(OR_1)
     
@@ -171,7 +182,7 @@ def Event_31222306():
     if OR_5:
         return
     OR_1.Add(HasAIStatus(Characters.Snail0, ai_status=AIStatusType.Battle))
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Snail0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Snail0))
     
     MAIN.Await(OR_1)
     
@@ -186,7 +197,7 @@ def Event_31222311():
     OR_15.Add(ThisEventSlotFlagEnabled())
     if OR_15:
         return
-    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail0, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail0))
     OR_5.Add(CharacterDead(Characters.Snail0))
     
     MAIN.Await(OR_5)
@@ -242,7 +253,7 @@ def Event_31222314():
     OR_15.Add(ThisEventSlotFlagEnabled())
     if OR_15:
         return
-    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail1, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail1))
     OR_5.Add(CharacterDead(Characters.Snail1))
     
     MAIN.Await(OR_5)
@@ -273,7 +284,7 @@ def Event_31222315():
     OR_15.Add(ThisEventSlotFlagEnabled())
     if OR_15:
         return
-    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail2, attacker=0))
+    OR_5.Add(AttackedWithDamageType(attacked_entity=Characters.Snail2))
     OR_5.Add(CharacterDead(Characters.Snail2))
     
     MAIN.Await(OR_5)
@@ -517,4 +528,14 @@ def Event_31222849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=31220800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 31220800, 356000, 31222805, 31222806, 0, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=31220800,
+        bgm_boss_conv_param_id=356000,
+        flag_1=31222805,
+        flag_2=31222806,
+        right=0,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )

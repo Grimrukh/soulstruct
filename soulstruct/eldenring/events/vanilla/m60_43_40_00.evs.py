@@ -26,7 +26,7 @@ from .entities.m60_43_40_00_entities import *
 def Constructor():
     """Event 0"""
     CommonFunc_90005251(0, character=Characters.GuardianGolem, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(0, 1043400200, 1043400200, 0, 0.0, 0)
+    CommonFunc_90005300(0, flag=1043400200, character=Characters.GuardianGolem, item_lot=0, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)

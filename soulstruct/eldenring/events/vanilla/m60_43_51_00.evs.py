@@ -24,7 +24,7 @@ from .entities.m60_43_51_00_entities import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    CommonFunc_90005300(0, 1043510500, 1043510500, 40314, 0.0, 0)
+    CommonFunc_90005300(0, flag=1043510500, character=Characters.Scarab, item_lot=40314, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -78,4 +78,15 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005200(0, 1043510404, 30001, 20001, 1043512400, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Slug4,
+        animation_id=30001,
+        animation_id_1=20001,
+        region=1043512400,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

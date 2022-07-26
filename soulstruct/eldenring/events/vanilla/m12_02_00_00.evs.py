@@ -20,6 +20,7 @@ from soulstruct.eldenring.events import *
 from soulstruct.eldenring.events.instructions import *
 from .entities.m12_02_00_00_entities import *
 from .entities.m60_35_45_00_entities import Characters as m60_35_Characters
+from .entities.m60_45_37_00_entities import Assets as m60_45_Assets
 from .entities.m60_49_40_00_entities import Assets as m60_49_Assets
 
 
@@ -299,30 +300,9 @@ def Constructor():
     CommonFunc_90005261(0, character=Characters.Dummy3, region=12022422, radius=45.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.Dummy1, radius=60.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.CrucibleKnight1, radius=10.0, seconds=0.0, animation_id=-1)
-    CommonFunc_90005300(
-        0,
-        flag=12020430,
-        character=Characters.CrucibleKnight0,
-        item_lot=12020435,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12020431,
-        character=Characters.CrucibleKnight1,
-        item_lot=12020445,
-        seconds=1.5,
-        left=0,
-    )
-    CommonFunc_90005300(
-        0,
-        flag=12020434,
-        character=Characters.CrucibleKnight2,
-        item_lot=0,
-        seconds=1.5,
-        left=0,
-    )
+    CommonFunc_90005300(0, flag=12020430, character=Characters.CrucibleKnight0, item_lot=12020435, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020431, character=Characters.CrucibleKnight1, item_lot=12020445, seconds=1.5, left=0)
+    CommonFunc_90005300(0, flag=12020434, character=Characters.CrucibleKnight2, item_lot=0, seconds=1.5, left=0)
     CommonFunc_90005261(
         0,
         character=Characters.FallenHawksSoldier0,
@@ -413,7 +393,7 @@ def Constructor():
         asset_1=Assets.AEG099_320_9001,
     )
     Event_12020701(0, entity=12022716)
-    CommonFunc_90005752(0, asset=Assets.AEG099_320_9001, vfx_id=200, model_point=120, seconds=3.0)
+    CommonFunc_90005752(0, asset=12021710, vfx_id=200, model_point=120, seconds=3.0)
     Event_12023720(0, character=Characters.Blaidd)
     CommonFunc_90005703(
         0,
@@ -1071,7 +1051,7 @@ def Event_12022371():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(12020390, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=12020390, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=12020390))
     OR_2.Add(CharacterHasStateInfo(character=12020390, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=12020390, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=12020390, state_info=5))
@@ -1140,7 +1120,7 @@ def Event_12022372():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman0, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.AncestralFollowerShaman0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.AncestralFollowerShaman0))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman0, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman0, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman0, state_info=5))
@@ -1213,7 +1193,7 @@ def Event_12022373():
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman1, 90160))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.AncestralFollowerShaman1, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.AncestralFollowerShaman1))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman1, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman1, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.AncestralFollowerShaman1, state_info=5))
@@ -1404,19 +1384,19 @@ def Event_12020510():
     )
     CommonFunc_90005500(
         0,
-        12020525,
-        12020526,
-        4,
-        12021525,
-        1045371526,
-        1045373526,
-        12021527,
-        12023527,
-        1045372526,
-        12022527,
-        12020527,
-        12020528,
-        0,
+        flag=12020525,
+        flag_1=12020526,
+        left=4,
+        asset=Assets.AEG239_010_0502,
+        asset_1=m60_45_Assets.AEG239_020_2000,
+        obj_act_id=1045373526,
+        asset_2=Assets.AEG239_021_0500,
+        obj_act_id_1=12023527,
+        region=1045372526,
+        region_1=12022527,
+        flag_2=12020527,
+        flag_3=12020528,
+        left_1=0,
     )
 
 
@@ -1496,7 +1476,7 @@ def Event_12022860():
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=12022851))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.SilverTear4, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.SilverTear4))
     OR_1.Add(CharacterHasStateInfo(character=Characters.SilverTear4, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.SilverTear4, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.SilverTear4, state_info=5))
@@ -1633,10 +1613,10 @@ def Event_12022869(
     GotoIfPlayerNotInOwnWorld(Label.L2)
     if FlagEnabled(flag):
         return RESTART
-    SkipLinesIfCharacterHasSpecialEffect(line_count=2, character=PLAYER, special_effect=4250)
-    RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
-    SkipLines(1)
-    RotateToFaceEntity(PLAYER, region, animation=60060)
+    if CharacterDoesNotHaveSpecialEffect(character=PLAYER, special_effect=4250):
+        RotateToFaceEntity(PLAYER, region, animation=60060, wait_for_completion=True)
+    else:
+        RotateToFaceEntity(PLAYER, region, animation=60060)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -1712,7 +1692,17 @@ def Event_12022899():
     )
     CommonFunc_9005811(0, flag=12020850, asset=Assets.AEG099_002_9000, model_point=8, right=0)
     CommonFunc_9005812(0, flag=12020850, asset=Assets.AEG099_002_9001, model_point=8, right=0, model_point_1=0)
-    CommonFunc_9005822(0, 12020850, 921100, 12022855, 12022856, 12022858, 12022852, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12020850,
+        bgm_boss_conv_param_id=921100,
+        flag_1=12022855,
+        flag_2=12022856,
+        right=12022858,
+        flag_3=12022852,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(12022800)
@@ -1761,7 +1751,7 @@ def Event_12022810():
     AND_1.Add(PlayerInOwnWorld())
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=12022801))
     OR_1.Add(AND_1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Gargoyle0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=Characters.Gargoyle0))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Gargoyle0, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Gargoyle0, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=Characters.Gargoyle0, state_info=5))
@@ -1864,7 +1854,17 @@ def Event_12022849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=12020800, asset=Assets.AEG099_002_9002, model_point=3, right=12020801)
-    CommonFunc_9005822(0, 12020800, 931000, 12022805, 12022806, 0, 12022802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=12020800,
+        bgm_boss_conv_param_id=931000,
+        flag_1=12022805,
+        flag_2=12022806,
+        right=0,
+        flag_3=12022802,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(12020700)

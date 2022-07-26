@@ -21,7 +21,7 @@ from soulstruct.eldenring.events.instructions import *
 @ContinueOnRest(0)
 def Constructor():
     """Event 0"""
-    Event_1050542200(0, 1050545200)
+    Event_1050542200(0, character=1050545200)
 
 
 @RestartOnRest(1050542200)

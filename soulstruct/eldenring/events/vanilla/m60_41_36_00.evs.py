@@ -68,7 +68,14 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.NomadMule, flag=4731, flag_1=4730, flag_2=1041369207, right=3)
     CommonFunc_90005728(0, attacked_entity=Characters.NomadMule, flag=1041362706, flag_1=1041362707)
-    CommonFunc_90005727(0, 4731, 1041360700, 1041360701, 4730, 4733)
+    CommonFunc_90005727(
+        0,
+        flag=4731,
+        character=Characters.Merchant,
+        character_1=Characters.NomadMule,
+        first_flag=4730,
+        last_flag=4733,
+    )
 
 
 @ContinueOnRest(50)
@@ -76,7 +83,7 @@ def Preconstructor():
     """Event 50"""
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
-    CommonFunc_90005251(0, 1041360250, 80.0, 0.0, -1)
+    CommonFunc_90005251(0, character=Characters.Troll, radius=80.0, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1041362650)
@@ -247,8 +254,8 @@ def Event_1041363707(
     DisableNetworkConnectedFlagRange(flag_range=(first_flag, last_flag))
     EnableNetworkFlag(flag)
     SaveRequest()
-    SkipLinesIfCharacterDoesNotHaveSpecialEffect(line_count=1, character=character, special_effect=9603)
-    ForceAnimation(character, 20009)
+    if CharacterHasSpecialEffect(character=character, special_effect=9603):
+        ForceAnimation(character, 20009)
     Goto(Label.L10)
 
     # --- Label 10 --- #

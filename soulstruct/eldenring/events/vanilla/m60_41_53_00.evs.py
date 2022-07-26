@@ -47,7 +47,7 @@ def Constructor():
         right=0,
     )
     CommonFunc_90005637(0, flag=32058691, character=Characters.WanderingNoble, region=1041531650)
-    CommonFunc_90005300(0, 1041530500, 1041530500, 40308, 0.0, 0)
+    CommonFunc_90005300(0, flag=1041530500, character=Characters.Scarab, item_lot=40308, seconds=0.0, left=0)
 
 
 @ContinueOnRest(50)
@@ -86,4 +86,15 @@ def Preconstructor():
         left_3=0,
     )
     CommonFunc_90005250(0, character=Characters.Wormface5, region=1041532361, seconds=0.0, animation_id=3011)
-    CommonFunc_90005201(0, 1041530800, 30000, 20000, 15.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005201(
+        0,
+        character=Characters.WormfaceLarge,
+        animation_id=30000,
+        animation_id_1=20000,
+        radius=15.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )

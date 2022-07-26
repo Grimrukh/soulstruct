@@ -269,14 +269,7 @@ def Constructor():
         flag_3=30190508,
         asset=Assets.AEG027_156_0500,
     )
-    CommonFunc_90005681(
-        0,
-        flag=30190505,
-        flag_1=30190506,
-        flag_2=30190507,
-        flag_3=30190508,
-        attacked_entity=Assets.AEG027_156_0500,
-    )
+    CommonFunc_90005681(0, flag=30190505, flag_1=30190506, flag_2=30190507, flag_3=30190508, attacked_entity=30191505)
     CommonFunc_90005680(
         0,
         flag=30190505,
@@ -293,14 +286,7 @@ def Constructor():
         flag_3=30190503,
         asset=Assets.AEG027_215_0500,
     )
-    CommonFunc_90005681(
-        0,
-        flag=30190500,
-        flag_1=30190501,
-        flag_2=30190502,
-        flag_3=30190503,
-        attacked_entity=Assets.AEG027_215_0500,
-    )
+    CommonFunc_90005681(0, flag=30190500, flag_1=30190501, flag_2=30190502, flag_3=30190503, attacked_entity=30191500)
     CommonFunc_90005680(
         0,
         flag=30190500,
@@ -463,7 +449,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 30192800, 30191695, 5)
+    CommonFunc_91005600(0, flag=30192800, asset=Assets.AEG099_001_9001, model_point=5)
 
 
 @ContinueOnRest(30190050)
@@ -494,7 +480,7 @@ def Event_30192201():
     """Event 30192201"""
     if ThisEventSlotFlagEnabled():
         return
-    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.ErdtreeBurialWatchdog0, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=Characters.ErdtreeBurialWatchdog0))
     OR_2.Add(CharacterHasStateInfo(character=Characters.ErdtreeBurialWatchdog0, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=Characters.ErdtreeBurialWatchdog0, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=Characters.ErdtreeBurialWatchdog0, state_info=5))
@@ -3676,14 +3662,7 @@ def Event_30192520(_, flag: uint, asset: uint, flag_1: uint):
 @ContinueOnRest(30192600)
 def Event_30192600():
     """Event 30192600"""
-    CommonFunc_90005681(
-        0,
-        flag=30190505,
-        flag_1=30190506,
-        flag_2=30190507,
-        flag_3=30190508,
-        attacked_entity=Assets.AEG027_156_0500,
-    )
+    CommonFunc_90005681(0, flag=30190505, flag_1=30190506, flag_2=30190507, flag_3=30190508, attacked_entity=30191505)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -3796,14 +3775,7 @@ def Event_30192600():
             model_point_2=0,
             model_point_3=0,
         )
-    CommonFunc_90005681(
-        0,
-        flag=30190500,
-        flag_1=30190501,
-        flag_2=30190502,
-        flag_3=30190503,
-        attacked_entity=Assets.AEG027_215_0500,
-    )
+    CommonFunc_90005681(0, flag=30190500, flag_1=30190501, flag_2=30190502, flag_3=30190503, attacked_entity=30191500)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -3903,7 +3875,19 @@ def Event_30192600():
             model_point_3=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005682(0, 30190502, 30191500, 30192500, 30190500, 801110000, 801110005, 104, 0, 0, 0)
+        CommonFunc_90005682(
+            0,
+            flag=30190502,
+            source_entity=Assets.AEG027_215_0500,
+            region=30192500,
+            owner_entity=Characters.TalkDummy0,
+            behavior_id=801110000,
+            behavior_id_1=801110005,
+            model_point=104,
+            model_point_1=0,
+            model_point_2=0,
+            model_point_3=0,
+        )
 
 
 @RestartOnRest(30192800)
@@ -3986,4 +3970,14 @@ def Event_30192849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30190800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30190800, 930000, 30192805, 30192806, 0, 30192802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30190800,
+        bgm_boss_conv_param_id=930000,
+        flag_1=30192805,
+        flag_2=30192806,
+        right=0,
+        flag_3=30192802,
+        left=0,
+        left_1=0,
+    )

@@ -591,14 +591,14 @@ def Constructor():
     Event_1035502840()
     Event_1035502841()
     Event_1035502842()
-    Event_1035502210(0, asset=Assets.AEG099_045_9000, flag=1035502600, owner_entity=Characters.Dummy)
-    Event_1035502210(1, asset=Assets.AEG099_045_9001, flag=1035502601, owner_entity=Characters.Dummy)
-    Event_1035502210(2, asset=Assets.AEG099_045_9002, flag=1035502602, owner_entity=Characters.Dummy)
-    Event_1035502210(3, asset=Assets.AEG099_045_9003, flag=1035502603, owner_entity=Characters.Dummy)
-    Event_1035502210(4, asset=Assets.AEG099_045_9004, flag=1035502604, owner_entity=Characters.Dummy)
-    Event_1035502210(5, asset=Assets.AEG099_045_9005, flag=1035502605, owner_entity=Characters.Dummy)
-    Event_1035502210(6, asset=Assets.AEG099_045_9006, flag=1035502606, owner_entity=Characters.Dummy)
-    Event_1035502210(7, asset=Assets.AEG099_045_9008, flag=1035502608, owner_entity=Characters.Dummy)
+    Event_1035502210(0, asset=1035501600, flag=1035502600, owner_entity=Characters.Dummy)
+    Event_1035502210(1, asset=1035501601, flag=1035502601, owner_entity=Characters.Dummy)
+    Event_1035502210(2, asset=1035501602, flag=1035502602, owner_entity=Characters.Dummy)
+    Event_1035502210(3, asset=1035501603, flag=1035502603, owner_entity=Characters.Dummy)
+    Event_1035502210(4, asset=1035501604, flag=1035502604, owner_entity=Characters.Dummy)
+    Event_1035502210(5, asset=1035501605, flag=1035502605, owner_entity=Characters.Dummy)
+    Event_1035502210(6, asset=1035501606, flag=1035502606, owner_entity=Characters.Dummy)
+    Event_1035502210(7, asset=1035501608, flag=1035502608, owner_entity=Characters.Dummy)
     Event_1035500700(
         0,
         character=Characters.AlbinauricLookout0,
@@ -638,7 +638,7 @@ def Constructor():
         flag=1035509216,
         model_point=0,
     )
-    CommonFunc_90005706(0, 1035500710, 90102, 0)
+    CommonFunc_90005706(0, character=Characters.CariaManorSilentSpirit, animation_id=90102, left=0)
 
 
 @ContinueOnRest(50)
@@ -837,7 +837,7 @@ def Event_1035502400(_, character: uint, region: uint, seconds: float, animation
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90150))
     AND_8.Add(CharacterDoesNotHaveSpecialEffect(character, 90160))
     AND_1.Add(OR_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -868,19 +868,19 @@ def Event_1035502510():
     """Event 1035502510"""
     CommonFunc_90005500(
         0,
-        1035500510,
-        1035500511,
-        4,
-        1035501510,
-        1035501511,
-        1035503511,
-        1035501512,
-        1035503512,
-        1035502511,
-        1035502512,
-        1035500512,
-        1035500513,
-        0,
+        flag=1035500510,
+        flag_1=1035500511,
+        left=4,
+        asset=Assets.AEG030_858_2002,
+        asset_1=Assets.AEG099_026_2002,
+        obj_act_id=1035503511,
+        asset_2=Assets.AEG099_026_2000,
+        obj_act_id_1=1035503512,
+        region=1035502511,
+        region_1=1035502512,
+        flag_2=1035500512,
+        flag_3=1035500513,
+        left_1=0,
     )
 
 
@@ -1153,7 +1153,17 @@ def Event_1035502849():
     )
     CommonFunc_9005811(0, flag=1035500800, asset=Assets.AEG099_003_9000, model_point=3, right=1035500801)
     CommonFunc_9005813(0, flag=1035500800, asset=Assets.AEG099_003_9001, model_point=3, right=0, model_point_1=3)
-    CommonFunc_9005822(0, 1035500800, 920200, 1035502805, 1035502806, 1035500801, 0, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1035500800,
+        bgm_boss_conv_param_id=920200,
+        flag_1=1035502805,
+        flag_2=1035502806,
+        right=1035500801,
+        flag_3=0,
+        left=0,
+        left_1=0,
+    )
 
 
 @RestartOnRest(1035500700)

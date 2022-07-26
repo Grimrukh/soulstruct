@@ -217,7 +217,7 @@ def Constructor():
     Event_11100797()
     Event_11102651(0, flag=710700, tutorial_param_id=1700, item=9125, flag_1=69250)
     Event_11102650(0, flag=710720, tutorial_param_id=1720, item=9128, flag_1=69280)
-    Event_11102652(0, 710780, 1780, 9132, 69320)
+    Event_11102652(0, flag=710780, tutorial_param_id=1780, item=9132, flag_1=69320)
 
 
 @ContinueOnRest(50)
@@ -564,7 +564,8 @@ def Event_11102652(_, flag: uint, tutorial_param_id: int, item: int, flag_1: uin
 @ContinueOnRest(11100680)
 def Event_11100680():
     """Event 11100680"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     if FlagEnabled(11109656):
         return
     DisableHealthBar(Characters.TalkDummy3)
@@ -586,7 +587,8 @@ def Event_11100680():
 @ContinueOnRest(11102680)
 def Event_11102680():
     """Event 11102680"""
-    ReturnIfCeremonyState(event_return_type=EventReturnType.End, state=False, ceremony=20)
+    if CeremonyInactive(ceremony=20):
+        return
     if FlagEnabled(11109656):
         return
     EnableBackread(Characters.EnshaoftheRoyalRemains1)

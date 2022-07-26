@@ -1380,7 +1380,7 @@ def Constructor():
 def Preconstructor():
     """Event 50"""
     Event_13400940()
-    Event_13400950(0, 3400902, 3400903)
+    Event_13400950(0, character=3400902, character_1=3400903)
 
 
 @ContinueOnRest(13400010)

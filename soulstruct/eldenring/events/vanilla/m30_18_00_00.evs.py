@@ -25,7 +25,7 @@ from .entities.m30_18_00_00_entities import *
 def Constructor():
     """Event 0"""
     RegisterGrace(grace_flag=301800, asset=Assets.AEG099_060_9000)
-    CommonFunc_90005525(0, flag=30180570, asset=Assets.AEG027_157_1000)
+    CommonFunc_90005525(0, flag=30180570, asset=30181570)
     CommonFunc_900005610(0, asset=Assets.AEG099_090_9000, vfx_id=100, model_point=800, right=0)
     CommonFunc_90005616(0, flag=30187900, region=30182700)
     CommonFunc_90005200(
@@ -661,14 +661,7 @@ def Constructor():
         flag_3=30180508,
         asset=Assets.AEG027_156_0500,
     )
-    CommonFunc_90005681(
-        0,
-        flag=30180505,
-        flag_1=30180506,
-        flag_2=30180507,
-        flag_3=30180508,
-        attacked_entity=Assets.AEG027_156_0500,
-    )
+    CommonFunc_90005681(0, flag=30180505, flag_1=30180506, flag_2=30180507, flag_3=30180508, attacked_entity=30181505)
     CommonFunc_90005680(
         0,
         flag=30180505,
@@ -686,14 +679,7 @@ def Constructor():
         flag_3=30180503,
         asset=Assets.AEG027_156_0501,
     )
-    CommonFunc_90005681(
-        0,
-        flag=30180500,
-        flag_1=30180501,
-        flag_2=30180502,
-        flag_3=30180503,
-        attacked_entity=Assets.AEG027_156_0501,
-    )
+    CommonFunc_90005681(0, flag=30180500, flag_1=30180501, flag_2=30180502, flag_3=30180503, attacked_entity=30181500)
     CommonFunc_90005680(
         0,
         flag=30180500,
@@ -729,7 +715,7 @@ def Constructor():
         cc_id=0,
         dd_id=0,
     )
-    CommonFunc_91005600(0, 30182800, 30181695, 5)
+    CommonFunc_91005600(0, flag=30182800, asset=30181695, model_point=5)
 
 
 @ContinueOnRest(50)
@@ -791,7 +777,7 @@ def Event_30182219(_, character: uint, animation_id: int):
     AND_1.Add(FlagEnabled(30182218))
     AND_1.Add(OR_1)
     OR_2.Add(AND_1)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=436))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=2))
     OR_2.Add(CharacterHasStateInfo(character=character, state_info=5))
@@ -813,7 +799,7 @@ def Event_30182220(_, character: uint, seconds: float, animation_id: int):
     if FlagEnabled(30182220):
         return
     DisableAI(character)
-    OR_2.Add(AttackedWithDamageType(attacked_entity=character, attacker=0))
+    OR_2.Add(AttackedWithDamageType(attacked_entity=character))
     
     MAIN.Await(OR_2)
     
@@ -843,14 +829,7 @@ def Event_30182227():
 @ContinueOnRest(30182500)
 def Event_30182500():
     """Event 30182500"""
-    CommonFunc_90005681(
-        0,
-        flag=30180500,
-        flag_1=30180501,
-        flag_2=30180502,
-        flag_3=30180503,
-        attacked_entity=Assets.AEG027_156_0501,
-    )
+    CommonFunc_90005681(0, flag=30180500, flag_1=30180501, flag_2=30180502, flag_3=30180503, attacked_entity=30181500)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -963,14 +942,7 @@ def Event_30182500():
             model_point_2=0,
             model_point_3=0,
         )
-    CommonFunc_90005681(
-        0,
-        flag=30180505,
-        flag_1=30180506,
-        flag_2=30180507,
-        flag_3=30180508,
-        attacked_entity=Assets.AEG027_156_0500,
-    )
+    CommonFunc_90005681(0, flag=30180505, flag_1=30180506, flag_2=30180507, flag_3=30180508, attacked_entity=30181505)
     if FlagEnabled(57):
         CommonFunc_90005682(
             0,
@@ -2071,7 +2043,16 @@ def Event_30182500():
             right=0,
         )
     if FlagEnabled(50):
-        CommonFunc_90005675(0, 30182564, 30183564, 30181564, 30182560, 801205000, 0.0, 0)
+        CommonFunc_90005675(
+            0,
+            flag=30182564,
+            asset_flag=30183564,
+            asset=Assets.AEG027_013_0505,
+            region=30182560,
+            behaviour_id=801205000,
+            seconds=0.0,
+            right=0,
+        )
 
 
 @ContinueOnRest(30182510)
@@ -2127,19 +2108,19 @@ def Event_30182510():
     )
     CommonFunc_90005500(
         0,
-        30180510,
-        30181511,
-        0,
-        30181510,
-        30181512,
-        30183512,
-        30181518,
-        30183518,
-        30182511,
-        30182512,
-        30180512,
-        30182512,
-        0,
+        flag=30180510,
+        flag_1=30181511,
+        left=0,
+        asset=Assets.AEG027_054_0500,
+        asset_1=Assets.AEG027_002_0504,
+        obj_act_id=30183512,
+        asset_2=Assets.AEG027_002_0505,
+        obj_act_id_1=30183518,
+        region=30182511,
+        region_1=30182512,
+        flag_2=30180512,
+        flag_3=30182512,
+        left_1=0,
     )
 
 
@@ -2255,4 +2236,14 @@ def Event_30182849():
         action_button_id=10000,
     )
     CommonFunc_9005811(0, flag=30180800, asset=Assets.AEG099_001_9000, model_point=3, right=0)
-    CommonFunc_9005822(0, 30180800, 920600, 30182805, 30182806, 30182803, 30182802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=30180800,
+        bgm_boss_conv_param_id=920600,
+        flag_1=30182805,
+        flag_2=30182806,
+        right=30182803,
+        flag_3=30182802,
+        left=0,
+        left_1=0,
+    )

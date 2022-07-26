@@ -68,7 +68,7 @@ def Event_1052532500():
 
     # --- Label 1 --- #
     DefineLabel(1)
-    OR_1.Add(AttackedWithDamageType(attacked_entity=m60_52_Characters.FireGiant0, attacker=0))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=m60_52_Characters.FireGiant0))
     OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=436))
     OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=2))
     OR_1.Add(CharacterHasStateInfo(character=m60_52_Characters.FireGiant0, state_info=5))
@@ -136,15 +136,15 @@ def Event_200():
     )
     Event_1052532400(
         1,
-        1252520800,
-        1252532164,
-        1252532165,
-        1052530701,
-        1052532701,
-        1035539209,
-        0,
-        1252532401,
-        1252532400,
+        flag=1252520800,
+        summon_flag=1252532164,
+        dismissal_flag=1252532165,
+        character=Characters.LivingPot1,
+        region=1052532701,
+        right=1035539209,
+        unknown=0,
+        flag_1=1252532401,
+        flag_2=1252532400,
     )
 
 

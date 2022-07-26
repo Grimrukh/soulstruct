@@ -29,7 +29,7 @@ def Constructor():
     Event_1048402800()
     Event_1048402810()
     Event_1048402849()
-    CommonFunc_90005706(0, 1048400700, 30018, 0)
+    CommonFunc_90005706(0, character=1048400700, animation_id=30018, left=0)
 
 
 @ContinueOnRest(50)
@@ -120,4 +120,14 @@ def Event_1048402849():
     )
     CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9000, model_point=3, right=0)
     CommonFunc_9005811(0, flag=1048400800, asset=Assets.AEG099_003_9001, model_point=3, right=0)
-    CommonFunc_9005822(0, 1048400800, 920900, 1048402805, 1048402806, 0, 1048402802, 0, 0)
+    CommonFunc_9005822(
+        0,
+        flag=1048400800,
+        bgm_boss_conv_param_id=920900,
+        flag_1=1048402805,
+        flag_2=1048402806,
+        right=0,
+        flag_3=1048402802,
+        left=0,
+        left_1=0,
+    )

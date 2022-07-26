@@ -43,21 +43,25 @@ def Constructor():
         flag_10=78308,
         flag_11=78309,
     )
-    CommonFunc_90005300(
-        0,
-        flag=1042510300,
-        character=Characters.Gargoyle,
-        item_lot=1042510900,
-        seconds=0.0,
-        left=0,
-    )
-    Event_1042512240(0, 1042511690, 1042511691, 62031)
+    CommonFunc_90005300(0, flag=1042510300, character=Characters.Gargoyle, item_lot=1042510900, seconds=0.0, left=0)
+    Event_1042512240(0, asset=Assets.AEG099_070_9000, entity=Assets.AEG099_071_9000, flag=62031)
 
 
 @ContinueOnRest(50)
 def Preconstructor():
     """Event 50"""
-    CommonFunc_90005200(0, 1042510300, 30004, 20004, 1042512301, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005200(
+        0,
+        character=Characters.Gargoyle,
+        animation_id=30004,
+        animation_id_1=20004,
+        region=1042512301,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1042512240)

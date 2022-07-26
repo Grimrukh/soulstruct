@@ -24,7 +24,7 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *\n")
+_EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\n|$)?")
 
 
 class EMEVD(GameFile, abc.ABC):
@@ -436,6 +436,7 @@ class EMEVD(GameFile, abc.ABC):
             indent = match.group(1)
             call_name = match.group(2)  # 'Event' or 'CommonFunc'
             event_id = int(match.group(3))
+            end = match.group(5)  # newline or empty
             if call_name == "CommonFunc" and not self.common_func_emevd:
                 continue  # cannot parse common event calls
             try:
@@ -473,18 +474,17 @@ class EMEVD(GameFile, abc.ABC):
                     except enums_manager.MissingEntityError:
                         pass
                 kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(event_arg_names, args[1:])]
-                one_line_event_call = f"{indent}{call_name}_{event_id}({slot}, {', '.join(kwargs)})\n"
+                one_line_event_call = f"{indent}{call_name}_{event_id}({slot}, {', '.join(kwargs)}){end}"
                 if len(one_line_event_call) > 121:  # last newline character doesn't count
                     # Multiline call.
                     arg_indent = " " * (len(indent) + 4)
                     multi_line_kwargs = f",\n{arg_indent}".join([slot] + kwargs) + ","
                     multi_line_event_call = (
-                        f"{indent}{call_name}_{event_id}(\n{arg_indent}{multi_line_kwargs}\n{indent})\n"
+                        f"{indent}{call_name}_{event_id}(\n{arg_indent}{multi_line_kwargs}\n{indent}){end}"
                     )
                     new_event_string = new_event_string.replace(match.group(0), multi_line_event_call)
                 else:
                     new_event_string = new_event_string.replace(match.group(0), one_line_event_call)
-
         return new_event_string
 
     def pack(self):

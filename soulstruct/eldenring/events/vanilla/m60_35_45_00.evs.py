@@ -101,7 +101,7 @@ def Constructor():
         animation_id=60470,
         action_button_id=9522,
     )
-    Event_1035452605(0, 1035450605, 1035452601, 60471)
+    Event_1035452605(0, flag=1035450605, target_entity=1035452601, animation=60471)
 
 
 @ContinueOnRest(50)
@@ -110,7 +110,19 @@ def Preconstructor():
     DisableBackread(Characters.Merchant)
     DisableBackread(Characters.NomadMule)
     CommonFunc_90005251(0, character=Characters.WolfPackLeader, radius=10.0, seconds=0.0, animation_id=3011)
-    CommonFunc_90005211(0, 1035450210, 30002, 20002, 1035452210, 3.0, 0.0, 0, 0, 0, 0)
+    CommonFunc_90005211(
+        0,
+        character=Characters.BloodhoundKnight,
+        animation_id=30002,
+        animation_id_1=20002,
+        region=1035452210,
+        radius=3.0,
+        seconds=0.0,
+        left=0,
+        left_1=0,
+        left_2=0,
+        left_3=0,
+    )
 
 
 @RestartOnRest(1035452500)

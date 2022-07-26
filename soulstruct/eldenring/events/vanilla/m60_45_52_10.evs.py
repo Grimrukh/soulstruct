@@ -274,4 +274,4 @@ def Event_1045520720():
 @ContinueOnRest(150)
 def Event_150():
     """Event 150"""
-    CommonFunc_90005485(0, 1045520202)
+    CommonFunc_90005485(0, character=m60_45_Characters.GuardianGolem1)
