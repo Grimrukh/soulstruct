@@ -97,7 +97,7 @@ class BaseFMG(GameFile, abc.ABC):
 
     def to_dict(self):
         return {
-            "dcx_type": self.dcx_type,
+            "dcx_type": self.dcx_type.value,
             "version": self.VERSION,
             "entries": self.entries.copy(),
         }

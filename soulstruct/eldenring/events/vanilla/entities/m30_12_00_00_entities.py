@@ -29,7 +29,7 @@ class Characters(Character):
     ScalyMisbegotten1 = 30120250  # c3451_9003 col h000200 npc 34510030 think 34510000
     ScalyMisbegotten2 = 30120251  # c3451_9004 col h000200 npc 34510030 think 34510000
     LeonineMisbegotten = 30120800  # c3460_9000 col h000400 npc 34600930 think 34600900 group 30125800,30125100
-    DepravedPerfurmer = 30120801  # c3701_9000 col h000400 npc 37011930 think 37010900 group 30125800,30125100
+    DepravedPerfumer = 30120801  # c3701_9000 col h000400 npc 37011930 think 37010900 group 30125800,30125100
     SmallerDog = 30120260  # c4161_9000 col h000300 npc 41610030 think 41610000
 
 

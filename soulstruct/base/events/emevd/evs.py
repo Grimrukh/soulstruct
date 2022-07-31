@@ -700,10 +700,12 @@ class EVSParser(abc.ABC):
             except TypeError:
                 raise EVSSyntaxError(node, f"Error in IF block:\n  {ast.dump(node)}")
 
-        # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a fully-fledged Condition,
-        #    depending on the test. Note that the body length has 1 added (an extra skip line) if there is an ELSE body
-        #    in the statement, and does not include arg replacement lines.
-        body_length = len([line for line in body_emevd if not line.startswith("    ^")]) + bool(node.orelse)
+        # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a skip that uses a fully-
+        #    fledged Condition, depending on the test. Note that the body length has 1 added (an extra skip line) if
+        #    there is an ELSE body in the statement, and does not include arg replacement lines.
+        body_length = len([line for line in body_emevd if not line.startswith("    ^")])
+        if node.orelse:
+            body_length += 1
         test_emevd = self._compile_test(node.test, body_length=body_length)
 
         # 3. Build the ELSE body of the IF statement, if it exists.
@@ -1085,13 +1087,16 @@ class EVSParser(abc.ABC):
                     node, *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs
                 )
             except (NoSkipOrReturnError, NoNegateError):
-                # No builtin tests for terminating/negating condition. Need to construct a temporary one.
+                # No builtin tests for skipping, terminating, and/or negating condition. Need temp Condition.
                 condition_emevd = []
                 temp_condition = self._check_out_TEMP(node.lineno)
                 skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
+                # Compile temporary condition.
+                condition_emevd += self._try_compile_test(
+                    node, *emevd_args, negate=skip_negate, condition=temp_condition, **emevd_kwargs
+                )
                 instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node, negate=skip_negate, condition=temp_condition)
                 condition_emevd += self._compile_instr(node, instr, skip_lines, temp_condition)
                 return condition_emevd
             except ValueError as ex:
@@ -1200,6 +1205,7 @@ class EVSParser(abc.ABC):
         try:
             return self.COMPILE(instr_name, *args, **kwargs)
         except Exception as ex:
+            print(instr_name, args, kwargs)
             raise EVSSyntaxError(node, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
 
     def _check_finished_conditions(self, output_condition: int, input_condition: int):
@@ -1583,9 +1589,8 @@ class EVSParser(abc.ABC):
         else:
             raise EVSSyntaxError(
                 event_node,
-                f"Event function decorator must be a single name, like `@ContinueOnRest`, or function call with an event "
-                f"ID, like `@RestartOnRest(11020100)`, not: {dec_node}.\n"
-                f"The restart type must be one of: {', '.join(_RESTART_TYPES)}",
+                f"Event function decorator must be `@ContinueOnRest`, `@RestartOnRest`, or `@EndOnRest`, with the event"
+                f" ID given as a decorator argument (e.g., `@RestartOnRest(11020100)`), not: {dec_node}.",
             )
 
         try:

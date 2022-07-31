@@ -34,6 +34,8 @@ class GameFile(abc.ABC):
     Typing = tp.Union[str, Path, bytes, BinderEntry, io.BufferedIOBase, BinaryReader]  # all globally valid source types
     Types = (str, Path, bytes, io.BufferedIOBase, BinaryReader)
 
+    dcx_type: DCXType
+
     def __init__(
         self,
         file_source: Typing = None,
@@ -84,7 +86,7 @@ class GameFile(abc.ABC):
                 raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
 
         if self._is_dcx(reader):
-            if self.dcx_type:
+            if self.dcx_type != DCXType.Null:
                 reader.close()
                 raise ValueError("Cannot manually set `dcx_type` before reading a DCX file source.")
             try:
@@ -242,7 +244,6 @@ class GameFile(abc.ABC):
             self._dcx_type = value
         else:
             raise ValueError(f"`dcx_type` must be `DCXType` or None, not {value}.")
-        self._dcx_type = value
 
     @classmethod
     def from_bak(cls: tp.Type[T], game_file_path: tp.Union[Path, str], dcx_type=None, create_bak_if_missing=True) -> T:

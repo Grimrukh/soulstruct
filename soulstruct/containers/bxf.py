@@ -109,7 +109,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         if make_dirs:
             bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
         packed_bhd, packed_bdt = self.pack()
-        if self.dcx_type:
+        if self.dcx_type != DCXType.Null:
             # I haven't actually seen any BDT archives with DCX compression.
             packed_bhd = compress(packed_bhd, self.dcx_type)
             packed_bdt = compress(packed_bdt, self.dcx_type)
@@ -198,7 +198,7 @@ class BXF3(BaseBXF):
             "big_endian": self.big_endian,
             "bit_big_endian": self.bit_big_endian,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_type": self.dcx_type,
+            "dcx_type": self.dcx_type.value,
         }
 
 
@@ -369,5 +369,5 @@ class BXF4(BaseBXF):
             "unknown1": self.unknown1,
             "unknown2": self.unknown2,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_type": self.dcx_type,
+            "dcx_type": self.dcx_type.value,
         }

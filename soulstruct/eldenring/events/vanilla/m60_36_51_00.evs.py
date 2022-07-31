@@ -61,8 +61,8 @@ def Preconstructor():
     Event_1036512450(16, character=Characters.MirandaFlower1, radius=2.0, seconds=0.0, animation_id=0)
     Event_1036512450(17, character=Characters.MirandaFlower4, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005251(0, character=Characters.GiantMirandaFlower, radius=5.0, seconds=0.0, animation_id=3001)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer, region=1036512300, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer, region=1036512301, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer, region=1036512300, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer, region=1036512301, seconds=0.0, animation_id=-1)
     Event_1036512300()
     CommonFunc_90005261(0, character=Characters.Omenkiller, region=1036512300, radius=3.0, seconds=1.0, animation_id=-1)
 
@@ -77,7 +77,7 @@ def Event_1036512300():
     
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=1036512301))
     
-    ChangePatrolBehavior(Characters.DepravedPerfurmer, patrol_information_id=1036513301)
+    ChangePatrolBehavior(Characters.DepravedPerfumer, patrol_information_id=1036513301)
 
     # --- Label 1 --- #
     DefineLabel(1)
@@ -97,8 +97,8 @@ def Event_1036512400(_, character: uint, radius: float, seconds: float, animatio
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_10.Add(CharacterInsideRegion(character=Characters.DepravedPerfurmer, region=1036512400))
-    AND_10.Add(HasAIStatus(Characters.DepravedPerfurmer, ai_status=AIStatusType.Battle))
+    AND_10.Add(CharacterInsideRegion(character=Characters.DepravedPerfumer, region=1036512400))
+    AND_10.Add(HasAIStatus(Characters.DepravedPerfumer, ai_status=AIStatusType.Battle))
     OR_2.Add(AND_10)
     AND_11.Add(CharacterInsideRegion(character=1036510304, region=1036512400))
     AND_11.Add(HasAIStatus(1036510304, ai_status=AIStatusType.Battle))
@@ -166,8 +166,8 @@ def Event_1036512450(_, character: uint, radius: float, seconds: float, animatio
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
     AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
-    AND_8.Add(EntityWithinDistance(entity=Characters.DepravedPerfurmer, other_entity=character, radius=8.0))
-    AND_8.Add(HasAIStatus(Characters.DepravedPerfurmer, ai_status=AIStatusType.Battle))
+    AND_8.Add(EntityWithinDistance(entity=Characters.DepravedPerfumer, other_entity=character, radius=8.0))
+    AND_8.Add(HasAIStatus(Characters.DepravedPerfumer, ai_status=AIStatusType.Battle))
     OR_2.Add(AND_8)
     AND_7.Add(EntityWithinDistance(entity=1036510304, other_entity=character, radius=8.0))
     AND_7.Add(HasAIStatus(1036510304, ai_status=AIStatusType.Battle))

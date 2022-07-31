@@ -422,7 +422,7 @@ def Event_30202810():
     
     SetNetworkUpdateRate(Characters.StrayMimicTear, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     ForceAnimation(Characters.SilverTear, 20010)
-    CopyPlayerCharacterData(source_character=PLAYER, dest_characterentity=Characters.StrayMimicTear)
+    CopyPlayerCharacterData(source_character=PLAYER, dest_character=Characters.StrayMimicTear)
     
     MAIN.Await(CharacterHasSpecialEffect(Characters.SilverTear, 16307))
     

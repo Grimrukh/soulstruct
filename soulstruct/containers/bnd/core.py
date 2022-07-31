@@ -101,7 +101,7 @@ class BND3(BaseBND):
             "big_endian": self.big_endian,
             "bit_big_endian": self.bit_big_endian,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_type": self.dcx_type,
+            "dcx_type": self.dcx_type.value,
         }
 
 
@@ -287,5 +287,5 @@ class BND4(BaseBND):
             "unknown1": self.unknown1,
             "unknown2": self.unknown2,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_type": self.dcx_type,
+            "dcx_type": self.dcx_type.value,
         }

@@ -764,7 +764,7 @@ def Event_11052860():
     DefineLabel(2)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir1,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -772,7 +772,7 @@ def Event_11052860():
     DefineLabel(3)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir2,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -780,7 +780,7 @@ def Event_11052860():
     DefineLabel(4)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir3,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -788,7 +788,7 @@ def Event_11052860():
     DefineLabel(5)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir4,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -796,7 +796,7 @@ def Event_11052860():
     DefineLabel(6)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir5,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -804,7 +804,7 @@ def Event_11052860():
     DefineLabel(7)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir6,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 
@@ -812,7 +812,7 @@ def Event_11052860():
     DefineLabel(8)
     CopyPlayerCharacterData(
         source_character=Characters.SirGideonOfnir7,
-        dest_characterentity=Characters.SirGideonOfnir0,
+        dest_character=Characters.SirGideonOfnir0,
     )
     Goto(Label.L1)
 

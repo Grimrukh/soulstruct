@@ -2,7 +2,7 @@ from soulstruct.eldenring.game_types import *
 
 
 class Characters(Character):
-    DepravedPerfurmer = 1036510300  # c3701_9000 npc 37010030 think 37010000
+    DepravedPerfumer = 1036510300  # c3701_9000 npc 37010030 think 37010000
     GiantMirandaFlower = 1036510450  # c4480_9000 npc 44800330 think 44800300 group 1036515100
     MirandaFlower0 = 1036510400  # c4481_9000 npc 44810330 think 44810300
     MirandaFlower1 = 1036510401  # c4481_9001 npc 44810330 think 44810300

@@ -1515,7 +1515,7 @@ def Event_12022860():
     EnableAI(Characters.SilverTear4)
     ForceAnimation(Characters.SilverTear4, 20010)
     if PlayerInOwnWorld():
-        CopyPlayerCharacterData(source_character=PLAYER, dest_characterentity=Characters.MimicTear)
+        CopyPlayerCharacterData(source_character=PLAYER, dest_character=Characters.MimicTear)
     SetNetworkUpdateRate(Characters.MimicTear, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     SetNest(Characters.MimicTear, region=12022852)
     Wait(8.0)

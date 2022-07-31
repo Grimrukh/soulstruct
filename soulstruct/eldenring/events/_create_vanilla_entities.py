@@ -33,7 +33,7 @@ NEW_NAMES = {
     "Rennala1": "RennalaPhaseOne",
     "Rennala2": "RennalaPhaseTwo",
     "DepravedPerfumer": "PerfumerTricia",
-    "DepravedPerfumer2": "DepravedPerfurmer",
+    "DepravedPerfumer2": "DepravedPerfumer",
     "PutridCorpse2": "PutridCorpseBare",
     "LargeCrab2": "LargeCrabInjured",
     "SmallCrab2": "SmallCrabWorms",

@@ -61,7 +61,7 @@ def Preconstructor():
     """Event 50"""
     CommonFunc_90005261(
         0,
-        character=Characters.DepravedPerfurmer0,
+        character=Characters.DepravedPerfumer0,
         region=31182200,
         radius=2.0,
         seconds=3.4000000953674316,
@@ -69,7 +69,7 @@ def Preconstructor():
     )
     CommonFunc_90005261(
         0,
-        character=Characters.DepravedPerfurmer2,
+        character=Characters.DepravedPerfumer2,
         region=31182200,
         radius=2.0,
         seconds=3.0,
@@ -77,7 +77,7 @@ def Preconstructor():
     )
     CommonFunc_90005211(
         0,
-        character=Characters.DepravedPerfurmer3,
+        character=Characters.DepravedPerfumer3,
         animation_id=30000,
         animation_id_1=20000,
         region=31182203,
@@ -90,7 +90,7 @@ def Preconstructor():
     )
     CommonFunc_90005211(
         0,
-        character=Characters.DepravedPerfurmer4,
+        character=Characters.DepravedPerfumer4,
         animation_id=30000,
         animation_id_1=20000,
         region=31182207,
@@ -101,10 +101,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    Event_31182200(0, character=Characters.DepravedPerfurmer0, region=31182250)
-    Event_31182200(1, character=Characters.DepravedPerfurmer1, region=31182251)
-    Event_31182200(2, character=Characters.DepravedPerfurmer2, region=31182252)
-    Event_31182200(3, character=Characters.DepravedPerfurmer4, region=31182257)
+    Event_31182200(0, character=Characters.DepravedPerfumer0, region=31182250)
+    Event_31182200(1, character=Characters.DepravedPerfumer1, region=31182251)
+    Event_31182200(2, character=Characters.DepravedPerfumer2, region=31182252)
+    Event_31182200(3, character=Characters.DepravedPerfumer4, region=31182257)
     CommonFunc_90005261(0, character=31180300, region=31182300, radius=2.0, seconds=0.0, animation_id=0)
     CommonFunc_90005261(
         0,

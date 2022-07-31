@@ -4589,7 +4589,14 @@ EMEDF = {
             "DisableNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Off),
             "ToggleNetworkFlag": dict(flag_type=FlagType.Absolute, state=FlagSetting.Change),
             "SetAbsoluteNetworkFlagState": dict(flag_type=FlagType.Absolute),
-            # Haven't bothered with relative flag partials for this one.
+            "EnableThisNetworkFlag": dict(flag_type=FlagType.RelativeToThisEvent, flag=0, state=FlagSetting.On),
+            "DisableThisNetworkFlag": dict(flag_type=FlagType.RelativeToThisEvent, flag=0, state=FlagSetting.Off),
+            "EnableThisNetworkSlotFlag": dict(flag_type=FlagType.RelativeToThisEventSlot, flag=0, state=FlagSetting.On),
+            "DisableThisNetworSlotFlag": dict(
+                flag_type=FlagType.RelativeToThisEventSlot,
+                flag=0,
+                state=FlagSetting.Off,
+            ),
         },
     },
     (2003, 70): {
@@ -4776,10 +4783,10 @@ EMEDF = {
     },
     (2004, 67): {
         "alias": "CopyPlayerCharacterData",
-        "docstring": "Used to initialize Mimics.",
+        "docstring": "Used, for example, to initialize Mimics and set up Gideon's boss loadout.",
         "args": {
             "source_character": NO_DEFAULT(CharacterTyping),
-            "dest_characterentity": NO_DEFAULT(CharacterTyping),
+            "dest_character": NO_DEFAULT(CharacterTyping),
         },
     },
     (2004, 68): {

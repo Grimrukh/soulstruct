@@ -170,7 +170,7 @@ TALK_PARAM_ST = {
     "nickname": "Dialogue",
     "fields": [
         FieldDisplayInfo("msgId", "SubtitleText", True, Subtitle, "Text ID for dialogue subtitle."),
-        FieldDisplayInfo("voiceId", "VoiceSound", True, VoiceSound, "Sound ID (voice) for dialogue."),
+        FieldDisplayInfo("voiceId", "VoiceSound", True, int, "Sound ID (voice) for dialogue."),
         FieldDisplayInfo(
             "motionId",
             "TalkingAnimation",

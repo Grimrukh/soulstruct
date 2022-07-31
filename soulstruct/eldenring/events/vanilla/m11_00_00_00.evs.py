@@ -531,7 +531,7 @@ def Constructor():
     CommonFunc_90005300(0, flag=11000393, character=Characters.Gargoyle2, item_lot=11001187, seconds=2.0, left=0)
     Event_11002402(
         2,
-        character=Characters.DepravedPerfurmer1,
+        character=Characters.DepravedPerfumer1,
         animation_id=30000,
         animation_id_1=20000,
         region=11002243,
@@ -544,7 +544,7 @@ def Constructor():
     )
     Event_11002402(
         0,
-        character=Characters.DepravedPerfurmer3,
+        character=Characters.DepravedPerfumer3,
         animation_id=30000,
         animation_id_1=20000,
         region=11002254,
@@ -557,7 +557,7 @@ def Constructor():
     )
     Event_11002402(
         1,
-        character=Characters.DepravedPerfurmer8,
+        character=Characters.DepravedPerfumer8,
         animation_id=30000,
         animation_id_1=20000,
         region=11002259,
@@ -569,7 +569,7 @@ def Constructor():
         left_4=1,
     )
     Event_11002317(0, character=Characters.LeyndellKnight8, region=11002359, seconds=0.0, radius=5.0)
-    Event_11002317(1, character=Characters.DepravedPerfurmer9, region=11002359, seconds=0.0, radius=10.0)
+    Event_11002317(1, character=Characters.DepravedPerfumer9, region=11002359, seconds=0.0, radius=10.0)
     CommonFunc_90005300(0, flag=11000389, character=Characters.ErdtreeAvatar, item_lot=11001198, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=11000399, character=Characters.LionGuardian, item_lot=11000185, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=11000495, character=Characters.CrucibleKnight0, item_lot=0, seconds=0.0, left=0)
@@ -958,7 +958,7 @@ def Preconstructor():
     CommonFunc_90005250(0, character=Characters.Page5, region=11002248, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
-        character=Characters.DepravedPerfurmer0,
+        character=Characters.DepravedPerfumer0,
         animation_id=30000,
         animation_id_1=20000,
         region=11002250,
@@ -968,12 +968,12 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer1, region=11002243, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer2, region=11002243, seconds=0.0, animation_id=-1)
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer4, region=11002255, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer1, region=11002243, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer2, region=11002243, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer4, region=11002255, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
-        character=Characters.DepravedPerfurmer5,
+        character=Characters.DepravedPerfumer5,
         animation_id=30002,
         animation_id_1=20002,
         region=11002256,
@@ -985,7 +985,7 @@ def Preconstructor():
     )
     CommonFunc_90005200(
         0,
-        character=Characters.DepravedPerfurmer6,
+        character=Characters.DepravedPerfumer6,
         animation_id=30002,
         animation_id_1=20002,
         region=11002625,
@@ -995,10 +995,10 @@ def Preconstructor():
         left_2=0,
         left_3=0,
     )
-    CommonFunc_90005250(0, character=Characters.DepravedPerfurmer7, region=11002625, seconds=0.0, animation_id=-1)
+    CommonFunc_90005250(0, character=Characters.DepravedPerfumer7, region=11002625, seconds=0.0, animation_id=-1)
     CommonFunc_90005200(
         0,
-        character=Characters.DepravedPerfurmer10,
+        character=Characters.DepravedPerfumer10,
         animation_id=30000,
         animation_id_1=20000,
         region=11002345,
@@ -1010,7 +1010,7 @@ def Preconstructor():
     )
     CommonFunc_90005261(
         0,
-        character=Characters.DepravedPerfurmer11,
+        character=Characters.DepravedPerfumer11,
         region=11002496,
         radius=9.0,
         seconds=0.0,
@@ -2563,8 +2563,8 @@ def Event_11002397(_, character: uint, region: uint, seconds: float):
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.Alive))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.GrayPhantom))
     OR_1.Add(CharacterType(PLAYER, character_type=CharacterType.WhitePhantom))
-    OR_3.Add(HasAIStatus(Characters.DepravedPerfurmer6, ai_status=AIStatusType.Battle))
-    OR_3.Add(HasAIStatus(Characters.DepravedPerfurmer7, ai_status=AIStatusType.Battle))
+    OR_3.Add(HasAIStatus(Characters.DepravedPerfumer6, ai_status=AIStatusType.Battle))
+    OR_3.Add(HasAIStatus(Characters.DepravedPerfumer7, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(Characters.Misbegotten3, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(Characters.Misbegotten4, ai_status=AIStatusType.Battle))
     OR_3.Add(HasAIStatus(Characters.Misbegotten5, ai_status=AIStatusType.Battle))

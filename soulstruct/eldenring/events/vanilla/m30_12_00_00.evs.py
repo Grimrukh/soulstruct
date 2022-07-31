@@ -205,14 +205,14 @@ def Event_30122800():
     if FlagEnabled(30120800):
         return
     AND_1.Add(HealthValue(Characters.LeonineMisbegotten) <= 0)
-    AND_1.Add(HealthValue(Characters.DepravedPerfurmer) <= 0)
+    AND_1.Add(HealthValue(Characters.DepravedPerfumer) <= 0)
     
     MAIN.Await(AND_1)
     
     Wait(4.0)
     PlaySoundEffect(m30_10_Characters.CrucibleKnight0, 888880000, sound_type=SoundType.s_SFX)
     AND_2.Add(CharacterDead(Characters.LeonineMisbegotten))
-    AND_2.Add(CharacterDead(Characters.DepravedPerfurmer))
+    AND_2.Add(CharacterDead(Characters.DepravedPerfumer))
     
     MAIN.Await(AND_2)
     
@@ -230,15 +230,15 @@ def Event_30122810():
     DisableCharacter(Characters.LeonineMisbegotten)
     DisableAnimations(Characters.LeonineMisbegotten)
     Kill(Characters.LeonineMisbegotten)
-    DisableCharacter(Characters.DepravedPerfurmer)
-    DisableAnimations(Characters.DepravedPerfurmer)
-    Kill(Characters.DepravedPerfurmer)
+    DisableCharacter(Characters.DepravedPerfumer)
+    DisableAnimations(Characters.DepravedPerfumer)
+    Kill(Characters.DepravedPerfumer)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(Characters.LeonineMisbegotten)
-    DisableAI(Characters.DepravedPerfurmer)
+    DisableAI(Characters.DepravedPerfumer)
     ForceAnimation(Characters.LeonineMisbegotten, 30001, loop=True)
     AND_2.Add(FlagEnabled(30122805))
     AND_2.Add(CharacterInsideRegion(character=PLAYER, region=30122800))
@@ -252,9 +252,9 @@ def Event_30122810():
     EnableAI(Characters.LeonineMisbegotten)
     SetNetworkUpdateRate(Characters.LeonineMisbegotten, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.LeonineMisbegotten, name=903460300)
-    EnableAI(Characters.DepravedPerfurmer)
-    SetNetworkUpdateRate(Characters.DepravedPerfurmer, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    EnableBossHealthBar(Characters.DepravedPerfurmer, name=903700300, bar_slot=1)
+    EnableAI(Characters.DepravedPerfumer)
+    SetNetworkUpdateRate(Characters.DepravedPerfumer, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    EnableBossHealthBar(Characters.DepravedPerfumer, name=903700300, bar_slot=1)
 
 
 @RestartOnRest(30122811)
@@ -263,7 +263,7 @@ def Event_30122811():
     if FlagEnabled(30120800):
         return
     OR_1.Add(HealthRatio(Characters.LeonineMisbegotten) <= 0.6000000238418579)
-    OR_1.Add(CharacterDead(Characters.DepravedPerfurmer))
+    OR_1.Add(CharacterDead(Characters.DepravedPerfumer))
     
     MAIN.Await(OR_1)
     

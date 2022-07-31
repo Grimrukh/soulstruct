@@ -7010,9 +7010,9 @@ def SetCharacterEnableDistance(character: Character | int, distance: float, even
     """
 
 
-def CopyPlayerCharacterData(source_character: Character | int, dest_characterentity: Character | int, event_layers=()):
+def CopyPlayerCharacterData(source_character: Character | int, dest_character: Character | int, event_layers=()):
     """
-    Used to initialize Mimics.
+    Used, for example, to initialize Mimics and set up Gideon's boss loadout.
     """
 
 
