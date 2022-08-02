@@ -33,11 +33,11 @@ def Constructor():
     CommonFunc_20005270(0, character=4500212, animation_id=700, animation_id_1=1700, special_effect=13034)
     CommonFunc_20005270(0, character=4500240, animation_id=700, animation_id_1=1700, special_effect=13034)
     CommonFunc_20005270(0, character=4500241, animation_id=701, animation_id_1=1701, special_effect=13034)
-    CommonFunc_20005360(0, character=4500212, region=10000, special_effect=13034)
-    CommonFunc_20005360(0, character=4500240, region=10000, special_effect=13034)
-    CommonFunc_20005360(0, character=4500241, region=10000, special_effect=13034)
-    Event_14505240(0, character=4500212, special_effect_id=5024)
-    Event_14505240(1, character=4500240, special_effect_id=5024)
+    CommonFunc_20005360(0, character=4500212, entity=10000, special_effect=13034)
+    CommonFunc_20005360(0, character=4500240, entity=10000, special_effect=13034)
+    CommonFunc_20005360(0, character=4500241, entity=10000, special_effect=13034)
+    Event_14505240(0, character=4500212, special_effect=5024)
+    Event_14505240(1, character=4500240, special_effect=5024)
     Event_14505280()
     Event_14505281()
     CommonFunc_20005270(0, character=4500242, animation_id=700, animation_id_1=1700, special_effect=13022)
@@ -52,10 +52,10 @@ def Constructor():
     Event_14505282(1, character=4500243, region=4502232)
     Event_14505282(2, character=4500244, region=4502232)
     Event_14505282(3, character=4500211, region=4502232)
-    CommonFunc_20005360(0, character=4500242, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500243, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500244, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500211, region=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500242, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500243, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500244, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500211, entity=10000, special_effect=13022)
     CommonFunc_20005221(0, character=4500210, animation_id=701, animation_id_1=1701, radius=30.0)
     Event_14505270(
         0,
@@ -90,9 +90,9 @@ def Constructor():
         seconds_1=1.0,
         region_1=4502235,
     )
-    CommonFunc_20005360(0, character=4500247, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500248, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500249, region=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500247, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500248, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500249, entity=10000, special_effect=13022)
     CommonFunc_20005220(0, character=4500214, animation_id=700, animation_id_1=1700)
     CommonFunc_20005220(0, character=4500215, animation_id=700, animation_id_1=1700)
     CommonFunc_20005220(0, character=4500216, animation_id=700, animation_id_1=1700)
@@ -193,8 +193,8 @@ def Constructor():
     CommonFunc_20005220(0, character=4500250, animation_id=701, animation_id_1=1701)
     CommonFunc_20005270(0, character=4500261, animation_id=700, animation_id_1=1700, special_effect=13022)
     CommonFunc_20005270(0, character=4500262, animation_id=701, animation_id_1=1701, special_effect=13022)
-    CommonFunc_20005360(0, character=4500261, region=10000, special_effect=13022)
-    CommonFunc_20005360(0, character=4500262, region=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500261, entity=10000, special_effect=13022)
+    CommonFunc_20005360(0, character=4500262, entity=10000, special_effect=13022)
     Event_14505200()
     Event_14505201()
     Event_14505202()
@@ -523,113 +523,113 @@ def Constructor():
         0,
         character=4500520,
         character_1=4500521,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500522,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500523,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500524,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500525,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500526,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500527,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500533,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500520,
         character_1=4500538,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500543,
         character_1=4500541,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500543,
         character_1=4500542,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500543,
         character_1=4500543,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500543,
         character_1=4500544,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005361(
         0,
         character=4500543,
         character_1=4500547,
-        region=10000,
+        entity=10000,
         special_effect=13083,
-        special_effect_id=13080,
+        special_effect_1=13080,
     )
     CommonFunc_20005218(
         0,
@@ -1303,9 +1303,9 @@ def Event_14505204():
     AddSpecialEffect(4505247, 13020)
     RemoveSpecialEffect(4505247, 13024)
     RemoveSpecialEffect(4505247, 5022)
-    SetCharacterEventTarget(4500247, region=PLAYER)
-    SetCharacterEventTarget(4500248, region=PLAYER)
-    SetCharacterEventTarget(4500249, region=PLAYER)
+    SetCharacterEventTarget(4500247, entity=PLAYER)
+    SetCharacterEventTarget(4500248, entity=PLAYER)
+    SetCharacterEventTarget(4500249, entity=PLAYER)
 
 
 @RestartOnRest(14505210)
@@ -1436,17 +1436,17 @@ def Event_14505213():
 
 
 @RestartOnRest(14505240)
-def Event_14505240(_, character: int, special_effect_id: int):
+def Event_14505240(_, character: int, special_effect: int):
     """Event 14505240"""
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(14505245)
-def Event_14505245(_, character: int, region: int):
+def Event_14505245(_, character: int, entity: int):
     """Event 14505245"""
     MAIN.Await(HasAIStatus(character, ai_status=AIStatusType.Battle))
     
-    SetCharacterEventTarget(character, region=region)
+    SetCharacterEventTarget(character, entity=entity)
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     OR_1.Add(TimeElapsed(seconds=60.0))
@@ -1459,7 +1459,7 @@ def Event_14505245(_, character: int, region: int):
 
 
 @RestartOnRest(14505250)
-def Event_14505250(_, character: int, character__region: int):
+def Event_14505250(_, character: int, character_1: int):
     """Event 14505250"""
     if ThisEventSlotFlagEnabled():
         return
@@ -1477,14 +1477,14 @@ def Event_14505250(_, character: int, character__region: int):
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     End()
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_3.Add(CharacterDead(character__region))
+    AND_3.Add(CharacterDead(character_1))
     SkipLinesIfConditionTrue(1, AND_3)
-    SetCharacterEventTarget(character, region=character__region)
+    SetCharacterEventTarget(character, entity=character_1)
     End()
 
 
@@ -1637,7 +1637,7 @@ def Event_14505280():
         AddSpecialEffect(4505242, 13031)
         End()
     RemoveSpecialEffect(4505242, 13031)
-    SetCharacterEventTarget(4505242, region=PLAYER)
+    SetCharacterEventTarget(4505242, entity=PLAYER)
 
 
 @RestartOnRest(14505281)
@@ -1668,7 +1668,7 @@ def Event_14505281():
     # --- Label 0 --- #
     DefineLabel(0)
     RemoveSpecialEffect(4505242, 13031)
-    SetCharacterEventTarget(4505242, region=PLAYER)
+    SetCharacterEventTarget(4505242, entity=PLAYER)
 
 
 @RestartOnRest(14505282)
@@ -1891,7 +1891,7 @@ def Event_14505382():
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(4500500, region=PLAYER)
+    SetCharacterEventTarget(4500500, entity=PLAYER)
     Restart()
 
 
@@ -1959,12 +1959,12 @@ def Event_14505410():
     Wait(0.0)
     AddSpecialEffect(4500403, 13250)
     AICommand(4500403, command_id=200, command_slot=0)
-    SetCharacterEventTarget(4500403, region=4500483)
+    SetCharacterEventTarget(4500403, entity=4500483)
     ReplanAI(4500403)
     
     MAIN.Await(CharacterDead(4500483))
     
-    SetCharacterEventTarget(4500403, region=4500484)
+    SetCharacterEventTarget(4500403, entity=4500484)
     End()
 
 
@@ -2948,7 +2948,7 @@ def Event_14505810():
     EnableCharacter(4500801)
     EnableAnimations(4500801)
     Move(4500801, destination=4502811, destination_type=CoordEntityType.Region, copy_draw_parent=4500801)
-    SetCharacterEventTarget(4500801, region=PLAYER)
+    SetCharacterEventTarget(4500801, entity=PLAYER)
     ForceAnimation(4500803, 30002, loop=True, unknown2=1.0)
     Goto(Label.L2)
 
@@ -3059,7 +3059,7 @@ def Event_14505811():
     CreateVFX(4503818)
     CreateVFX(4503819)
     CreateVFX(4503820)
-    SetCharacterEventTarget(4500800, region=4500802)
+    SetCharacterEventTarget(4500800, entity=4500802)
     ReferDamageToEntity(4500800, target_entity=4500802)
     SetNetworkConnectedFlagState(flag=14505802, state=FlagSetting.On)
 
@@ -3367,7 +3367,7 @@ def Event_14505832():
     EnableAnimations(4500170)
     SetBackreadStateAlternate(4500170, True)
     ForceAnimation(4500170, 63010, unknown2=1.0)
-    SetCharacterEventTarget(4500170, region=4500800)
+    SetCharacterEventTarget(4500170, entity=4500800)
     SetNetworkConnectedFlagState(flag=14505841, state=FlagSetting.On)
     AddSpecialEffect(4500800, 13123)
     AddSpecialEffect(4500802, 13124)

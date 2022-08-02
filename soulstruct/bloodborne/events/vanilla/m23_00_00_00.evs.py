@@ -415,8 +415,8 @@ def Constructor():
         npc_part_id=2300,
         npc_part_id_1=2300,
         part_index=1,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         animation_id=8000,
         part_health=130,
     )
@@ -425,8 +425,8 @@ def Constructor():
         npc_part_id=2301,
         npc_part_id_1=2301,
         part_index=2,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         animation_id=8010,
         part_health=150,
     )
@@ -435,8 +435,8 @@ def Constructor():
         npc_part_id=2302,
         npc_part_id_1=2302,
         part_index=3,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         animation_id=8030,
         part_health=150,
     )
@@ -445,8 +445,8 @@ def Constructor():
         npc_part_id=2303,
         npc_part_id_1=2303,
         part_index=4,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         animation_id=8020,
         part_health=200,
     )
@@ -455,8 +455,8 @@ def Constructor():
         npc_part_id=2304,
         npc_part_id_1=2304,
         part_index=5,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         animation_id=8040,
         part_health=200,
     )
@@ -492,10 +492,10 @@ def Constructor():
     Event_12305021()
     Event_12305022()
     Event_12305023()
-    Event_12305030(0, region=2302032, obj=2301269, region_1=2300910)
-    Event_12305030(1, region=2302033, obj=2301266, region_1=2300911)
-    Event_12305030(2, region=2302034, obj=2301265, region_1=2300913)
-    Event_12305030(3, region=2302035, obj=2301261, region_1=2300913)
+    Event_12305030(0, region=2302032, obj=2301269, entity=2300910)
+    Event_12305030(1, region=2302033, obj=2301266, entity=2300911)
+    Event_12305030(2, region=2302034, obj=2301265, entity=2300913)
+    Event_12305030(3, region=2302035, obj=2301261, entity=2300913)
     Event_12305040(0, obj=2301256, owner_entity=2300900)
     Event_12305040(1, obj=2301257, owner_entity=2300900)
     Event_12305040(2, obj=2301258, owner_entity=2300900)
@@ -845,38 +845,38 @@ def Constructor():
     Event_12305300(77, character=2300606, character_1=2300203, radius=25.0)
     Event_12305300(78, character=2300606, character_1=2300204, radius=25.0)
     Event_12305300(79, character=2300606, character_1=2300205, radius=25.0)
-    Event_12305440(0, character=2300309, special_effect_id=5522)
-    Event_12305440(1, character=2300310, special_effect_id=5522)
-    Event_12305440(2, character=2300311, special_effect_id=5522)
-    Event_12305440(3, character=2300312, special_effect_id=5522)
-    Event_12305440(4, character=2300313, special_effect_id=5522)
-    Event_12305440(5, character=2300314, special_effect_id=5522)
-    Event_12305440(6, character=2300315, special_effect_id=5522)
-    Event_12305440(7, character=2300316, special_effect_id=5522)
-    Event_12305440(8, character=2300317, special_effect_id=5522)
-    Event_12305440(9, character=2300318, special_effect_id=5522)
-    Event_12305440(10, character=2300319, special_effect_id=5522)
-    Event_12305440(11, character=2300320, special_effect_id=5522)
-    Event_12305440(12, character=2300321, special_effect_id=5522)
-    Event_12305440(13, character=2300322, special_effect_id=5522)
-    Event_12305440(14, character=2300323, special_effect_id=5522)
-    Event_12305440(15, character=2300324, special_effect_id=5522)
-    Event_12305440(16, character=2300325, special_effect_id=5522)
-    Event_12305440(17, character=2300326, special_effect_id=5522)
-    Event_12305440(18, character=2300327, special_effect_id=5522)
-    Event_12305440(19, character=2300403, special_effect_id=5524)
-    Event_12305440(20, character=2300404, special_effect_id=5524)
-    Event_12305440(21, character=2300405, special_effect_id=5524)
-    Event_12305440(22, character=2300406, special_effect_id=5524)
-    Event_12305440(23, character=2300407, special_effect_id=5524)
-    Event_12305440(24, character=2300408, special_effect_id=5524)
-    Event_12305440(25, character=2300409, special_effect_id=5524)
-    Event_12305440(26, character=2300410, special_effect_id=5524)
-    Event_12305440(27, character=2300201, special_effect_id=5523)
-    Event_12305440(28, character=2300202, special_effect_id=5523)
-    Event_12305440(29, character=2300203, special_effect_id=5523)
-    Event_12305440(30, character=2300204, special_effect_id=5523)
-    Event_12305440(31, character=2300205, special_effect_id=5523)
+    Event_12305440(0, character=2300309, special_effect=5522)
+    Event_12305440(1, character=2300310, special_effect=5522)
+    Event_12305440(2, character=2300311, special_effect=5522)
+    Event_12305440(3, character=2300312, special_effect=5522)
+    Event_12305440(4, character=2300313, special_effect=5522)
+    Event_12305440(5, character=2300314, special_effect=5522)
+    Event_12305440(6, character=2300315, special_effect=5522)
+    Event_12305440(7, character=2300316, special_effect=5522)
+    Event_12305440(8, character=2300317, special_effect=5522)
+    Event_12305440(9, character=2300318, special_effect=5522)
+    Event_12305440(10, character=2300319, special_effect=5522)
+    Event_12305440(11, character=2300320, special_effect=5522)
+    Event_12305440(12, character=2300321, special_effect=5522)
+    Event_12305440(13, character=2300322, special_effect=5522)
+    Event_12305440(14, character=2300323, special_effect=5522)
+    Event_12305440(15, character=2300324, special_effect=5522)
+    Event_12305440(16, character=2300325, special_effect=5522)
+    Event_12305440(17, character=2300326, special_effect=5522)
+    Event_12305440(18, character=2300327, special_effect=5522)
+    Event_12305440(19, character=2300403, special_effect=5524)
+    Event_12305440(20, character=2300404, special_effect=5524)
+    Event_12305440(21, character=2300405, special_effect=5524)
+    Event_12305440(22, character=2300406, special_effect=5524)
+    Event_12305440(23, character=2300407, special_effect=5524)
+    Event_12305440(24, character=2300408, special_effect=5524)
+    Event_12305440(25, character=2300409, special_effect=5524)
+    Event_12305440(26, character=2300410, special_effect=5524)
+    Event_12305440(27, character=2300201, special_effect=5523)
+    Event_12305440(28, character=2300202, special_effect=5523)
+    Event_12305440(29, character=2300203, special_effect=5523)
+    Event_12305440(30, character=2300204, special_effect=5523)
+    Event_12305440(31, character=2300205, special_effect=5523)
     Event_12305480()
     Event_12305481()
     Event_12305482()
@@ -1730,8 +1730,8 @@ def Event_12304715(
     npc_part_id: short,
     npc_part_id_1: int,
     part_index: short,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
     part_health: int,
 ):
@@ -1760,8 +1760,8 @@ def Event_12304715(
     WaitFrames(frames=1)
     ResetAnimation(2300810)
     ForceAnimation(2300810, animation_id)
-    AddSpecialEffect(2300810, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2300810, special_effect_id_1)
+    AddSpecialEffect(2300810, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2300810, special_effect_1)
     ReplanAI(2300810)
     Wait(10.0)
     AICommand(2300810, command_id=110, command_slot=0)
@@ -1770,8 +1770,8 @@ def Event_12304715(
     MAIN.Await(CharacterHasTAEEvent(2300810, tae_event_id=300))
     
     SetNPCPartHealth(2300810, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(2300810, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2300810, special_effect_id)
+    AddSpecialEffect(2300810, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2300810, special_effect)
     AICommand(2300810, command_id=-1, command_slot=0)
     ReplanAI(2300810)
     ChangeCharacterCloth(2300810, bit_count=10, state_id=1)
@@ -2746,7 +2746,7 @@ def Event_12305023():
 
 
 @RestartOnRest(12305030)
-def Event_12305030(_, region: int, obj: int, region_1: int):
+def Event_12305030(_, region: int, obj: int, entity: int):
     """Event 12305030"""
     OR_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterWhitePhantom(PLAYER))
@@ -2756,7 +2756,7 @@ def Event_12305030(_, region: int, obj: int, region_1: int):
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(2300730, region=region_1)
+    SetCharacterEventTarget(2300730, entity=entity)
     AICommand(2300730, command_id=100, command_slot=0)
     ReplanAI(2300730)
     
@@ -3009,7 +3009,7 @@ def Event_12305120():
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(2300605, region=2300921)
+    SetCharacterEventTarget(2300605, entity=2300921)
     AICommand(2300605, command_id=60, command_slot=0)
     
     MAIN.Await(HasAIStatus(2300605, ai_status=AIStatusType.Battle))
@@ -3247,15 +3247,15 @@ def Event_12305300(_, character: int, character_1: int, radius: float):
 
 
 @RestartOnRest(12305440)
-def Event_12305440(_, character: int, special_effect_id: int):
+def Event_12305440(_, character: int, special_effect: int):
     """Event 12305440"""
     MAIN.Await(CharacterHasSpecialEffect(character, 5645))
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 5645))
     
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     Restart()
 
 

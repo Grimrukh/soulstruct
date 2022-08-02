@@ -51,7 +51,7 @@ def Event_1042322220():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ForceAnimation(Characters.WolfPackLeader, 3011)
     Wait(5.0)
     TriggerAISound(ai_sound_param_id=4020, anchor_entity=1042322220, unk_8_12=1)
@@ -75,7 +75,7 @@ def Event_1042322230():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ForceAnimation(Characters.GodrickFootSoldier, 3031)
     End()
 

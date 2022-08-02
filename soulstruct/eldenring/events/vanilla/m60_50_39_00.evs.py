@@ -38,15 +38,15 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar4, radius=7.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.RayaLucariaScholar6, region=1050392208, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar7, radius=8.0, seconds=0.0, animation_id=-1)
-    Event_1050392200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14807)
-    Event_1050392200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14808)
-    Event_1050392200(4, character=Characters.RayaLucariaScholar2, special_effect_id=14808)
-    Event_1050392200(5, character=Characters.RayaLucariaScholar3, special_effect_id=14807)
-    Event_1050392200(6, character=Characters.RayaLucariaScholar4, special_effect_id=14807)
-    Event_1050392200(7, character=Characters.RayaLucariaScholar5, special_effect_id=14807)
-    Event_1050392200(8, character=Characters.RayaLucariaScholar6, special_effect_id=14807)
-    Event_1050392200(9, character=Characters.RayaLucariaScholar7, special_effect_id=14807)
-    Event_1050392200(10, character=Characters.RayaLucariaScholar8, special_effect_id=14807)
+    Event_1050392200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
+    Event_1050392200(1, character=Characters.RayaLucariaScholar1, special_effect=14808)
+    Event_1050392200(4, character=Characters.RayaLucariaScholar2, special_effect=14808)
+    Event_1050392200(5, character=Characters.RayaLucariaScholar3, special_effect=14807)
+    Event_1050392200(6, character=Characters.RayaLucariaScholar4, special_effect=14807)
+    Event_1050392200(7, character=Characters.RayaLucariaScholar5, special_effect=14807)
+    Event_1050392200(8, character=Characters.RayaLucariaScholar6, special_effect=14807)
+    Event_1050392200(9, character=Characters.RayaLucariaScholar7, special_effect=14807)
+    Event_1050392200(10, character=Characters.RayaLucariaScholar8, special_effect=14807)
     CommonFunc_90005200(
         0,
         character=Characters.Skeleton0,
@@ -71,17 +71,17 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    Event_1050392200(11, character=Characters.WanderingNoble0, special_effect_id=10113)
-    Event_1050392200(12, character=Characters.WanderingNoble4, special_effect_id=14807)
-    Event_1050392200(13, character=Characters.WanderingNoble9, special_effect_id=14807)
-    Event_1050392200(14, character=Characters.WanderingNoble10, special_effect_id=14807)
-    Event_1050392201(0, character=Characters.WanderingNoble1, special_effect_id=10113, seconds=4.0, seconds_1=3.0)
-    Event_1050392201(1, character=Characters.WanderingNoble2, special_effect_id=10113, seconds=5.0, seconds_1=4.0)
-    Event_1050392201(2, character=Characters.WanderingNoble3, special_effect_id=10113, seconds=6.0, seconds_1=2.0)
-    Event_1050392201(3, character=Characters.WanderingNoble5, special_effect_id=10113, seconds=4.0, seconds_1=4.0)
-    Event_1050392201(4, character=Characters.WanderingNoble6, special_effect_id=10113, seconds=6.0, seconds_1=3.0)
-    Event_1050392201(5, character=Characters.WanderingNoble7, special_effect_id=10113, seconds=5.0, seconds_1=3.0)
-    Event_1050392201(6, character=Characters.WanderingNoble8, special_effect_id=10113, seconds=6.0, seconds_1=4.0)
+    Event_1050392200(11, character=Characters.WanderingNoble0, special_effect=10113)
+    Event_1050392200(12, character=Characters.WanderingNoble4, special_effect=14807)
+    Event_1050392200(13, character=Characters.WanderingNoble9, special_effect=14807)
+    Event_1050392200(14, character=Characters.WanderingNoble10, special_effect=14807)
+    Event_1050392201(0, character=Characters.WanderingNoble1, special_effect=10113, seconds=4.0, seconds_1=3.0)
+    Event_1050392201(1, character=Characters.WanderingNoble2, special_effect=10113, seconds=5.0, seconds_1=4.0)
+    Event_1050392201(2, character=Characters.WanderingNoble3, special_effect=10113, seconds=6.0, seconds_1=2.0)
+    Event_1050392201(3, character=Characters.WanderingNoble5, special_effect=10113, seconds=4.0, seconds_1=4.0)
+    Event_1050392201(4, character=Characters.WanderingNoble6, special_effect=10113, seconds=6.0, seconds_1=3.0)
+    Event_1050392201(5, character=Characters.WanderingNoble7, special_effect=10113, seconds=5.0, seconds_1=3.0)
+    Event_1050392201(6, character=Characters.WanderingNoble8, special_effect=10113, seconds=6.0, seconds_1=4.0)
     CommonFunc_90005200(
         0,
         character=Characters.GraveSkeleton,
@@ -98,19 +98,19 @@ def Constructor():
 
 
 @RestartOnRest(1050392200)
-def Event_1050392200(_, character: uint, special_effect_id: int):
+def Event_1050392200(_, character: uint, special_effect: int):
     """Event 1050392200"""
     DisableNetworkSync()
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1050392201)
-def Event_1050392201(_, character: uint, special_effect_id: int, seconds: float, seconds_1: float):
+def Event_1050392201(_, character: uint, special_effect: int, seconds: float, seconds_1: float):
     """Event 1050392201"""
     DisableNetworkSync()
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Wait(seconds)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     Wait(seconds_1)
     Restart()
 

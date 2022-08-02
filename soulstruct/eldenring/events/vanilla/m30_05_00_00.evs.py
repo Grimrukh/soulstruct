@@ -403,7 +403,7 @@ def Event_30052203(_, character: uint):
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(character, 17210)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(30052300)
@@ -415,7 +415,7 @@ def Event_30052300(_, character: uint, character_1: uint):
     MAIN.Await(CharacterHasSpecialEffect(character, 14716))
     
     AddSpecialEffect(character_1, 14717)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(30052301)
@@ -436,7 +436,7 @@ def Event_30052301():
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(4.0)
     ChangePatrolBehavior(Characters.Commoner1, patrol_information_id=30053310)
 
@@ -459,7 +459,7 @@ def Event_30052302():
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ForceAnimation(Characters.Commoner0, 3015)
 
 
@@ -479,7 +479,7 @@ def Event_30052350(_, character: uint, character_1: uint):
     Wait(0.800000011920929)
     RemoveSpecialEffect(character_1, 5860)
     Kill(character_1, award_runes=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @ContinueOnRest(30052400)
@@ -809,7 +809,7 @@ def Event_30052450(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))

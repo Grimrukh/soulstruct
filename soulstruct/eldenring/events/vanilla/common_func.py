@@ -95,7 +95,7 @@ def CommonFunc_90005200(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -199,7 +199,7 @@ def CommonFunc_90005201(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -306,7 +306,7 @@ def CommonFunc_90005210(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -414,7 +414,7 @@ def CommonFunc_90005211(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -526,7 +526,7 @@ def CommonFunc_90005213(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -619,7 +619,7 @@ def CommonFunc_90005220(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -688,7 +688,7 @@ def CommonFunc_90005221(_, character: uint, animation_id: int, animation_id_1: i
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
@@ -757,7 +757,7 @@ def CommonFunc_90005250(_, character: uint, region: uint, seconds: float, animat
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -820,7 +820,7 @@ def CommonFunc_90005251(_, character: uint, radius: float, seconds: float, anima
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -885,7 +885,7 @@ def CommonFunc_90005260(_, character: uint, region: uint, radius: float, seconds
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -950,7 +950,7 @@ def CommonFunc_90005261(_, character: uint, region: uint, radius: float, seconds
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -1004,7 +1004,7 @@ def CommonFunc_90005271(_, character: uint, seconds: float, animation_id: int):
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -1165,15 +1165,15 @@ def CommonFunc_90005391(_, flag: uint, flag_1: uint, character: uint, character_
 
 
 @RestartOnRest(90005400)
-def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: float, seconds_1: float, left: uint):
+def CommonFunc_90005400(_, character: uint, special_effect: int, seconds: float, seconds_1: float, left: uint):
     """CommonFunc 90005400"""
     if ThisEventSlotFlagEnabled():
         return
     if UnsignedNotEqual(left=left, right=0):
         DisableGravity(character)
         DisableCharacterCollision(character)
-    if ValueNotEqual(left=special_effect_id, right=0):
-        AddSpecialEffect(character, special_effect_id)
+    if ValueNotEqual(left=special_effect, right=0):
+        AddSpecialEffect(character, special_effect)
     else:
         AddSpecialEffect(character, 4421)
     ForceAnimation(character, 14100, loop=True)
@@ -1185,7 +1185,7 @@ def CommonFunc_90005400(_, character: uint, special_effect_id: int, seconds: flo
     WaitFrames(frames=1)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5111))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     if CharacterDoesNotHaveSpecialEffect(character=character, special_effect=5112):
         Wait(seconds_1)
     else:
@@ -1561,7 +1561,7 @@ def CommonFunc_90005458(_, character: uint, asset: uint):
     # --- Label 0 --- #
     DefineLabel(0)
     EnableAsset(asset)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -4739,7 +4739,7 @@ def CommonFunc_90005636(
     flag: uint,
     character: uint,
     entity: uint,
-    special_effect_id: int,
+    special_effect: int,
     destination: uint,
     region: uint,
     flag_1: uint,
@@ -4803,7 +4803,7 @@ def CommonFunc_90005636(
     ForceAnimation(character, 20028)
     Wait(0.5)
     EnableAI(character)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
     # --- Label 3 --- #
     DefineLabel(3)
@@ -8045,7 +8045,7 @@ def CommonFunc_90005796(_, flag: uint, character: uint, banner_type: uchar, regi
 
 
 @RestartOnRest(90005797)
-def CommonFunc_90005797(_, flag: uint, character: uint, banner_type: uchar, region: uint, special_effect_id: int):
+def CommonFunc_90005797(_, flag: uint, character: uint, banner_type: uchar, region: uint, special_effect: int):
     """CommonFunc 90005797"""
     DisableNetworkSync()
     if PlayerInOwnWorld():
@@ -8058,7 +8058,7 @@ def CommonFunc_90005797(_, flag: uint, character: uint, banner_type: uchar, regi
     
     EnableFlag(flag)
     DisplayBanner(banner_type)
-    AddSpecialEffect(20000, special_effect_id)
+    AddSpecialEffect(20000, special_effect)
     if UnsignedNotEqual(left=region, right=0):
         SetPseudoMultiplayerReturnPosition(region=region)
     IssueEndOfPseudoMultiplayerNotification(success=True)

@@ -1657,7 +1657,7 @@ def Event_13905810():
     SetTeamType(3900706, TeamType.WhitePhantom)
     SetCharacterTalkRange(character=3900706, distance=100.0)
     EnableAI(3900706)
-    SetCharacterEventTarget(3900706, region=3900800)
+    SetCharacterEventTarget(3900706, entity=3900800)
     ReplanAI(3900706)
     EnableAnimations(3900706)
     if PlayerNotInOwnWorld():

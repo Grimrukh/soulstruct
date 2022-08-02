@@ -62,7 +62,7 @@ def Constructor():
         item_lot=30375,
         seconds=0.0,
     )
-    Event_1036542350(0, region=1036542450, special_effect_id=16488, special_effect_id_1=16489)
+    Event_1036542350(0, region=1036542450, special_effect=16488, special_effect_1=16489)
     CommonFunc_90005300(0, flag=1036540498, character=Characters.Scarab, item_lot=40334, seconds=0.0, left=0)
     CommonFunc_90005261(
         0,
@@ -1279,7 +1279,7 @@ def Event_1036542301():
 
 
 @RestartOnRest(1036542350)
-def Event_1036542350(_, region: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_1036542350(_, region: uint, special_effect: int, special_effect_1: int):
     """Event 1036542350"""
     if FlagEnabled(1036540800):
         return
@@ -1288,14 +1288,14 @@ def Event_1036542350(_, region: uint, special_effect_id: int, special_effect_id_
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, special_effect_id)
+    AddSpecialEffect(20000, special_effect)
     Wait(0.10000000149011612)
     AND_2.Add(CharacterOutsideRegion(character=20000, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(20000, special_effect_id_1)
+    AddSpecialEffect(20000, special_effect_1)
     Restart()
 
 

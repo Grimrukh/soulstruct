@@ -2828,7 +2828,7 @@ def Event_1252382280(
     ClearTargetList(character)
     EnableHealthBar(character)
     SetTeamType(character, TeamType.WhitePhantom)
-    SetCharacterEventTarget(character, region=1052380800)
+    SetCharacterEventTarget(character, entity=Characters.StarscourgeRadahn)
     DisplayFlashingMessage(text)
     DeleteAssetVFX(asset)
     DisableFlag(flag_1)

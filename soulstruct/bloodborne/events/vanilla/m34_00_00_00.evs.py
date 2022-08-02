@@ -141,7 +141,7 @@ def Constructor():
             npc_part_id_1=3400,
             part_index=1,
             part_health=300,
-            special_effect_id=480,
+            special_effect=480,
             animation_id=7001,
             frames=152,
         )
@@ -151,7 +151,7 @@ def Constructor():
             npc_part_id_1=3401,
             part_index=2,
             part_health=150,
-            special_effect_id=482,
+            special_effect=482,
             animation_id=7004,
             frames=72,
         )
@@ -161,7 +161,7 @@ def Constructor():
             npc_part_id_1=3402,
             part_index=3,
             part_health=150,
-            special_effect_id=481,
+            special_effect=481,
             animation_id=7002,
             frames=72,
         )
@@ -174,7 +174,7 @@ def Constructor():
             npc_part_id_1=3400,
             part_index=1,
             part_health=400,
-            special_effect_id=480,
+            special_effect=480,
             animation_id=7001,
             frames=152,
         )
@@ -184,7 +184,7 @@ def Constructor():
             npc_part_id_1=3401,
             part_index=2,
             part_health=200,
-            special_effect_id=482,
+            special_effect=482,
             animation_id=7004,
             frames=72,
         )
@@ -194,7 +194,7 @@ def Constructor():
             npc_part_id_1=3402,
             part_index=3,
             part_health=200,
-            special_effect_id=481,
+            special_effect=481,
             animation_id=7002,
             frames=72,
         )
@@ -214,8 +214,8 @@ def Constructor():
         npc_part_id=3450,
         npc_part_id_1=3450,
         part_index=1,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         part_health=60,
         animation_id=8020,
     )
@@ -224,8 +224,8 @@ def Constructor():
         npc_part_id=3451,
         npc_part_id_1=3451,
         part_index=2,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         part_health=150,
         animation_id=8000,
     )
@@ -234,8 +234,8 @@ def Constructor():
         npc_part_id=3452,
         npc_part_id_1=3452,
         part_index=3,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         part_health=150,
         animation_id=8010,
     )
@@ -244,8 +244,8 @@ def Constructor():
         npc_part_id=3453,
         npc_part_id_1=3453,
         part_index=4,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         part_health=250,
         animation_id=8030,
     )
@@ -254,8 +254,8 @@ def Constructor():
         npc_part_id=3454,
         npc_part_id_1=3454,
         part_index=5,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         part_health=250,
         animation_id=8040,
     )
@@ -2457,7 +2457,7 @@ def Event_13404830(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
+    special_effect: int,
     animation_id: int,
     frames: int,
 ):
@@ -2478,7 +2478,7 @@ def Event_13404830(
     CreateNPCPart(3400800, npc_part_id=npc_part_id, part_index=part_index, part_health=9999999, damage_correction=1.5)
     SetNPCPartEffects(3400800, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     ForceAnimation(3400800, animation_id)
-    AddSpecialEffect(3400800, special_effect_id)
+    AddSpecialEffect(3400800, special_effect)
     WaitFrames(frames=frames)
     AND_3.Add(FramesElapsed(frames=frames))
     OR_3.Add(HealthRatio(3400800) <= 0.0)
@@ -2500,7 +2500,7 @@ def Event_13404830(
     
     EndIfFinishedConditionTrue(input_condition=OR_5)
     SetNPCPartHealth(3400800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    RemoveSpecialEffect(3400800, special_effect_id)
+    RemoveSpecialEffect(3400800, special_effect)
     WaitFrames(frames=10)
     AND_5.Add(FramesElapsed(frames=10))
     OR_7.Add(HealthRatio(3400800) <= 0.0)
@@ -2994,8 +2994,8 @@ def Event_13404870(
     npc_part_id: short,
     npc_part_id_1: int,
     part_index: short,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     part_health: int,
     animation_id: int,
 ):
@@ -3018,8 +3018,8 @@ def Event_13404870(
     CreateNPCPart(3400850, npc_part_id=npc_part_id, part_index=part_index, part_health=9999999)
     SetNPCPartEffects(3400850, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
     ForceAnimation(3400850, animation_id)
-    AddSpecialEffect(3400850, special_effect_id)
-    RemoveSpecialEffect(3400850, special_effect_id_1)
+    AddSpecialEffect(3400850, special_effect)
+    RemoveSpecialEffect(3400850, special_effect_1)
     ReplanAI(3400850)
     AND_4.Add(TimeElapsed(seconds=30.0))
     AND_5.Add(CharacterHasSpecialEffect(3400850, 5402))
@@ -3040,8 +3040,8 @@ def Event_13404870(
     
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_7)
     SetNPCPartHealth(3400850, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    RemoveSpecialEffect(3400850, special_effect_id)
-    AddSpecialEffect(3400850, special_effect_id_1)
+    RemoveSpecialEffect(3400850, special_effect)
+    AddSpecialEffect(3400850, special_effect_1)
 
     # --- Label 0 --- #
     DefineLabel(0)

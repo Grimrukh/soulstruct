@@ -762,58 +762,37 @@ def Event_11052860():
 
     # --- Label 2 --- #
     DefineLabel(2)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir1,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir1, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 3 --- #
     DefineLabel(3)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir2,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir2, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 4 --- #
     DefineLabel(4)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir3,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir3, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 5 --- #
     DefineLabel(5)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir4,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir4, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 6 --- #
     DefineLabel(6)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir5,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir5, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 7 --- #
     DefineLabel(7)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir6,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir6, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 8 --- #
     DefineLabel(8)
-    CopyPlayerCharacterData(
-        source_character=Characters.SirGideonOfnir7,
-        dest_character=Characters.SirGideonOfnir0,
-    )
+    CopyPlayerCharacterData(source_character=Characters.SirGideonOfnir7, dest_character=Characters.SirGideonOfnir0)
     Goto(Label.L1)
 
     # --- Label 1 --- #
@@ -1121,12 +1100,12 @@ def Event_11053708(
 def Event_11053710(_, character: uint):
     """Event 11053710"""
     if PlayerInOwnWorld():
-        SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.Off)
+        DisableThisNetworSlotFlag()
     
     MAIN.Await(ThisEventSlotFlagEnabled())
     
     GotoIfPlayerNotInOwnWorld(Label.L0)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     EnableNetworkFlag(11050854)
 
     # --- Label 0 --- #

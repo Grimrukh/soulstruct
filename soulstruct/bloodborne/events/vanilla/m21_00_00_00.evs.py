@@ -198,8 +198,8 @@ def Constructor():
         npc_part_id_1=5,
         part_index=1,
         part_health=100,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         animation_id=8000,
     )
     Event_12104860(
@@ -208,8 +208,8 @@ def Constructor():
         npc_part_id_1=6,
         part_index=2,
         part_health=150,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         animation_id=8010,
     )
     Event_12104860(
@@ -218,8 +218,8 @@ def Constructor():
         npc_part_id_1=7,
         part_index=3,
         part_health=150,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         animation_id=8030,
     )
     Event_12104860(
@@ -228,8 +228,8 @@ def Constructor():
         npc_part_id_1=8,
         part_index=4,
         part_health=200,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         animation_id=8020,
     )
     Event_12104860(
@@ -238,8 +238,8 @@ def Constructor():
         npc_part_id_1=9,
         part_index=5,
         part_health=200,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         animation_id=8040,
     )
     Event_12104870()
@@ -2004,7 +2004,7 @@ def Event_12104802():
     EnableAI(2100800)
     EnableBossHealthBar(2100800, name=804000)
     DisableInvincibility(2100800)
-    SetCharacterEventTarget(2100800, region=2100801)
+    SetCharacterEventTarget(2100800, entity=2100801)
     CreatePlayLog(name=64)
     StartPlayLogMeasurement(measurement_id=2100010, name=80, overwrite=True)
 
@@ -2472,8 +2472,8 @@ def Event_12104860(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12104860"""
@@ -2499,8 +2499,8 @@ def Event_12104860(
     SetNPCPartEffects(2100810, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(2100810)
     ForceAnimation(2100810, animation_id)
-    AddSpecialEffect(2100810, special_effect_id)
-    RemoveSpecialEffect(2100810, special_effect_id_1)
+    AddSpecialEffect(2100810, special_effect)
+    RemoveSpecialEffect(2100810, special_effect_1)
     ReplanAI(2100810)
     Wait(30.0)
     AICommand(2100810, command_id=10, command_slot=1)
@@ -2509,8 +2509,8 @@ def Event_12104860(
     MAIN.Await(CharacterHasTAEEvent(2100810, tae_event_id=300))
     
     SetNPCPartHealth(2100810, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(2100810, special_effect_id_1)
-    RemoveSpecialEffect(2100810, special_effect_id)
+    AddSpecialEffect(2100810, special_effect_1)
+    RemoveSpecialEffect(2100810, special_effect)
     AICommand(2100810, command_id=-1, command_slot=1)
     ReplanAI(2100810)
     WaitFrames(frames=10)

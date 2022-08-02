@@ -73,7 +73,7 @@ def Constructor():
         flag=13002944,
         character=Characters.GodskinApostle0,
         character_1=Characters.GodskinNoble,
-        special_effect_id=15504,
+        special_effect=15504,
     )
     Event_13002891(
         0,
@@ -89,7 +89,7 @@ def Constructor():
         flag=13002945,
         character=Characters.GodskinNoble,
         character_1=Characters.GodskinApostle0,
-        special_effect_id=15454,
+        special_effect=15454,
     )
     Event_13002891(
         1,
@@ -1912,7 +1912,7 @@ def Event_13002834():
             weather=Weather.FlatClouds,
         )
     WaitFramesAfterCutscene(frames=1)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ChangeCamera(normal_camera_id=4525, locked_camera_id=4520)
 
 
@@ -1953,7 +1953,7 @@ def Event_13002835():
     SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=223, state=False)
     SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=224, state=False)
     SetLockOnPoint(character=Characters.DragonlordPlacidusax, lock_on_model_point=225, state=False)
-    SetCharacterEventTarget(Characters.DragonlordPlacidusax, region=13000840)
+    SetCharacterEventTarget(Characters.DragonlordPlacidusax, entity=Characters.TalkDummy15)
     SetBackreadStateAlternate(Characters.DragonlordPlacidusax, True)
     ForceAnimation(Characters.DragonlordPlacidusax, 30000, loop=True)
     AND_1.Add(CharacterInsideRegion(character=PLAYER, region=13002831))
@@ -2199,7 +2199,7 @@ def Event_13002861():
 
 
 @RestartOnRest(13002890)
-def Event_13002890(_, flag: uint, character: uint, character_1: uint, special_effect_id: int):
+def Event_13002890(_, flag: uint, character: uint, character_1: uint, special_effect: int):
     """Event 13002890"""
     if PlayerNotInOwnWorld():
         return
@@ -2219,7 +2219,7 @@ def Event_13002890(_, flag: uint, character: uint, character_1: uint, special_ef
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(character_1, special_effect_id)
+    AddSpecialEffect(character_1, special_effect)
     EnableNetworkFlag(flag)
     Restart()
 

@@ -69,7 +69,7 @@ def Constructor():
         flag=1050558600,
         character=Characters.WanderingNoble,
         entity=Assets.AEG099_374_9000,
-        special_effect_id=4470,
+        special_effect=4470,
         destination=1050552600,
         region=1050552601,
         flag_1=1050552600,

@@ -47,7 +47,7 @@ def Constructor():
     CommonFunc_90005621(0, flag=1045390570, asset=Assets.AEG099_272_9000)
     Event_1045392341(
         0,
-        character=1045390800,
+        character=Characters.TibiaMariner,
         entity=1045393240,
         entity_1=1045393241,
         entity_2=1045393242,
@@ -80,9 +80,9 @@ def Constructor():
         region=1045392340,
         region_1=1045392341,
         region_2=1045392342,
-        special_effect_id=15310,
-        special_effect_id_1=15311,
-        special_effect_id_2=15312,
+        special_effect=15310,
+        special_effect_1=15311,
+        special_effect_2=15312,
     )
     Event_1045392345(0, flag=1045390800, character=Characters.TibiaMariner, character_1=1045395230)
     Event_1045392346(0, character__targeting_character=Characters.TibiaMariner, region=1045392810)
@@ -214,7 +214,7 @@ def Event_1045392281(_, character: uint, region: uint, owner_entity: uint):
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     PlaySoundEffect(region, 407008100, sound_type=SoundType.c_CharacterMotion)
     Wait(1.0)
@@ -376,9 +376,9 @@ def Event_1045392343(
     region: uint,
     region_1: uint,
     region_2: uint,
-    special_effect_id: int,
-    special_effect_id_1: int,
-    special_effect_id_2: int,
+    special_effect: int,
+    special_effect_1: int,
+    special_effect_2: int,
 ):
     """Event 1045392343"""
     if FlagEnabled(1045390800):
@@ -393,17 +393,17 @@ def Event_1045392343(
     MAIN.Await(OR_5)
     
     GotoIfFinishedConditionFalse(Label.L2, input_condition=AND_2)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
     # --- Label 2 --- #
     DefineLabel(2)
     GotoIfFinishedConditionFalse(Label.L3, input_condition=AND_3)
-    AddSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect_1)
 
     # --- Label 3 --- #
     DefineLabel(3)
     GotoIfFinishedConditionFalse(Label.L4, input_condition=AND_4)
-    AddSpecialEffect(character, special_effect_id_2)
+    AddSpecialEffect(character, special_effect_2)
 
     # --- Label 4 --- #
     DefineLabel(4)

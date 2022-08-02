@@ -757,7 +757,7 @@ def Event_30182218(_, character: uint, animation_id: int):
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -823,7 +823,7 @@ def Event_30182227():
     MAIN.Await(FlagEnabled(30180570))
     
     ForceAnimation(Characters.Imp8, 3004, loop=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @ContinueOnRest(30182500)

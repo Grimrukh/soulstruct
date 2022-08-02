@@ -150,7 +150,7 @@ def Constructor():
         region=0,
         left=0,
     )
-    Event_1044352600(0, attacked_entity=Assets.AEG099_280_9000, region=1044352600)
+    Event_1044352600(0, attacked_entity=1044351600, region=1044352600)
     Event_1044352650(
         0,
         tutorial_param_id=1520,

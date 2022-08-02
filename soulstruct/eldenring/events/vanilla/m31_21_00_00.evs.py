@@ -591,7 +591,7 @@ def Event_31212205():
     # --- Label 10 --- #
     DefineLabel(10)
     EnableAI(Characters.VulgarMilitia0)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31212210)
@@ -664,7 +664,7 @@ def Event_31212250(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -708,7 +708,7 @@ def Event_31212260(_, character: uint, region: uint, patrol_information_id: uint
     
     RemoveSpecialEffect(character, 8082)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31212308)
@@ -742,7 +742,7 @@ def Event_31212308(_, character: uint, region: uint):
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
     RemoveSpecialEffect(character, 5000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31212400)

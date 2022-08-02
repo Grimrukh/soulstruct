@@ -66,7 +66,7 @@ def Event_1041542200():
         return
     AddSpecialEffect(Characters.DominulaCelebrant0, 12054)
     AddSpecialEffect(Characters.DominulaCelebrant0, 8092)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(1041542230)
@@ -126,7 +126,7 @@ def Event_1041542230(_, character: uint, animation_id: int, animation_id_1: int,
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     ForceAnimation(character, animation_id_1, loop=True)
     End()

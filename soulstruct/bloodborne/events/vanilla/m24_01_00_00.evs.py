@@ -341,8 +341,8 @@ def Constructor():
         npc_part_id_1=2410,
         part_index=1,
         part_health=20,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         animation_id=8020,
     )
     Event_12414710(
@@ -351,8 +351,8 @@ def Constructor():
         npc_part_id_1=2411,
         part_index=2,
         part_health=120,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         animation_id=8000,
     )
     Event_12414710(
@@ -361,8 +361,8 @@ def Constructor():
         npc_part_id_1=2412,
         part_index=3,
         part_health=300,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         animation_id=8010,
     )
     Event_12414710(
@@ -371,8 +371,8 @@ def Constructor():
         npc_part_id_1=2413,
         part_index=4,
         part_health=200,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         animation_id=8030,
     )
     Event_12414710(
@@ -381,8 +381,8 @@ def Constructor():
         npc_part_id_1=2414,
         part_index=5,
         part_health=200,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         animation_id=8040,
     )
     Event_12414720(0, special_effect=480, special_effect_1=490, bit_index=5, bit_index_1=10)
@@ -2029,8 +2029,8 @@ def Event_12414710(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12414710"""
@@ -2055,8 +2055,8 @@ def Event_12414710(
     )
     SetNPCPartEffects(2410800, npc_part_id=npc_part_id_1, material_sfx_id=73, material_vfx_id=73)
     ForceAnimation(2410800, animation_id)
-    AddSpecialEffect(2410800, special_effect_id)
-    RemoveSpecialEffect(2410800, special_effect_id_1)
+    AddSpecialEffect(2410800, special_effect)
+    RemoveSpecialEffect(2410800, special_effect_1)
     ReplanAI(2410800)
     Wait(30.0)
     AICommand(2410800, command_id=1, command_slot=0)
@@ -2065,8 +2065,8 @@ def Event_12414710(
     MAIN.Await(CharacterHasTAEEvent(2410800, tae_event_id=300))
     
     SetNPCPartHealth(2410800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(2410800, special_effect_id_1)
-    RemoveSpecialEffect(2410800, special_effect_id)
+    AddSpecialEffect(2410800, special_effect_1)
+    RemoveSpecialEffect(2410800, special_effect)
     AICommand(2410800, command_id=-1, command_slot=0)
     ReplanAI(2410800)
     WaitFrames(frames=10)

@@ -1881,16 +1881,16 @@ def CommonFunc_20005300(_, character: int):
 
 
 @RestartOnRest(2005310)
-def CommonFunc_2005310(_, character: int, special_effect: int, special_effect_id: int):
+def CommonFunc_2005310(_, character: int, special_effect: int, special_effect_1: int):
     """CommonFunc 2005310"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect_1)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, special_effect))
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1)
 
 
 @RestartOnRest(20005320)
@@ -2111,7 +2111,7 @@ def CommonFunc_20005351(_, character: int, item_lot: int, flag: int, seconds: fl
 
 
 @RestartOnRest(20005360)
-def CommonFunc_20005360(_, character: int, region: int, special_effect: int):
+def CommonFunc_20005360(_, character: int, entity: int, special_effect: int):
     """CommonFunc 20005360"""
     if ThisEventSlotFlagEnabled():
         return
@@ -2120,11 +2120,11 @@ def CommonFunc_20005360(_, character: int, region: int, special_effect: int):
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(character, region=region)
+    SetCharacterEventTarget(character, entity=entity)
 
 
 @RestartOnRest(20005361)
-def CommonFunc_20005361(_, character: int, character_1: int, region: int, special_effect: int, special_effect_id: int):
+def CommonFunc_20005361(_, character: int, character_1: int, entity: int, special_effect: int, special_effect_1: int):
     """CommonFunc 20005361"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
@@ -2138,8 +2138,8 @@ def CommonFunc_20005361(_, character: int, character_1: int, region: int, specia
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(character_1, special_effect_id)
-    SetCharacterEventTarget(character_1, region=region)
+    AddSpecialEffect(character_1, special_effect_1)
+    SetCharacterEventTarget(character_1, entity=entity)
 
 
 @RestartOnRest(20005380)

@@ -119,7 +119,7 @@ def Event_31192210(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_5)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=OR_2)
     Wait(seconds)
 
@@ -196,7 +196,7 @@ def Event_35002250(
     MAIN.Await(AND_10)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_5.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))

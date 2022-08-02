@@ -234,7 +234,7 @@ def Event_31092300():
     Wait(0.5)
     EnableAI(Characters.LargeDemiHuman0)
     ForceAnimation(Characters.LargeDemiHuman0, 20002, skip_transition=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.LargeDemiHuman0, state=True)
 
 
@@ -295,7 +295,7 @@ def Event_31092301(_, character: uint, seconds: float):
     
     Wait(seconds)
     EnableAI(character)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31092350)

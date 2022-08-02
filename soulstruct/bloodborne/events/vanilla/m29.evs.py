@@ -95,9 +95,9 @@ def Constructor():
     Event_12907030(6, flag=72102906, warp_object_id=2901956)
     Event_12907030(7, flag=72102907, warp_object_id=2901957)
     Event_12907030(8, flag=72102908, warp_object_id=2901958)
-    Event_12907420(0, special_effect_id=4730, flag=92905370, special_effect_id_1=4735, special_effect_id_2=4736)
-    Event_12907420(1, special_effect_id=4731, flag=92905371, special_effect_id_1=4735, special_effect_id_2=4736)
-    Event_12907420(2, special_effect_id=4732, flag=92905372, special_effect_id_1=4735, special_effect_id_2=4736)
+    Event_12907420(0, special_effect=4730, flag=92905370, special_effect_1=4735, special_effect_2=4736)
+    Event_12907420(1, special_effect=4731, flag=92905371, special_effect_1=4735, special_effect_2=4736)
+    Event_12907420(2, special_effect=4732, flag=92905372, special_effect_1=4735, special_effect_2=4736)
     DisableFlag(12907230)
     DisableFlag(12907231)
     Event_12907400()
@@ -6004,8 +6004,8 @@ def Event_12904506(
     npc_part_id_1: short,
     desired_health__part_health: int,
     animation_id: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
 ):
     """Event 12904506"""
     MAIN.Await(CharacterBackreadEnabled(character))
@@ -6030,8 +6030,8 @@ def Event_12904506(
     SetNPCPartEffects(character, npc_part_id=npc_part_id, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect_1)
     ReplanAI(character)
     Wait(30.0)
     AICommand(character, command_id=1, command_slot=0)
@@ -6045,8 +6045,8 @@ def Event_12904506(
         desired_health=desired_health__part_health,
         overwrite_max=True,
     )
-    AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -6583,7 +6583,7 @@ def Event_12904759(_, character: int, region: int):
 
 
 @ContinueOnRest(12904772)
-def Event_12904772(_, region: int, obj: int, character: int, region_1: int):
+def Event_12904772(_, region: int, obj: int, character: int, entity: int):
     """Event 12904772"""
     if ThisEventSlotFlagEnabled():
         return
@@ -6595,7 +6595,7 @@ def Event_12904772(_, region: int, obj: int, character: int, region_1: int):
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(character, region=region_1)
+    SetCharacterEventTarget(character, entity=entity)
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     
@@ -7544,8 +7544,8 @@ def Event_12904896(
     character: int,
     npc_part_id: short,
     npc_part_id_1: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     part_index: short,
     flag: int,
     flag_1: int,
@@ -7588,8 +7588,8 @@ def Event_12904896(
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(character, 5021, affect_npc_part_hp=True)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect_1)
     WaitFrames(frames=1)
     ResetAnimation(character)
     ForceAnimation(character, 7003)
@@ -7601,8 +7601,8 @@ def Event_12904896(
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     RemoveSpecialEffect(character, 5021)
-    AddSpecialEffect(character, special_effect_id_1)
-    RemoveSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1)
+    RemoveSpecialEffect(character, special_effect)
     WaitFrames(frames=10)
     Restart()
 
@@ -7613,8 +7613,8 @@ def Event_12904897(
     character: int,
     npc_part_id: short,
     npc_part_id_1: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     part_index: short,
     flag: int,
     flag_1: int,
@@ -7657,8 +7657,8 @@ def Event_12904897(
     )
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=66, material_vfx_id=66)
     AddSpecialEffect(character, 5021, affect_npc_part_hp=True)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect_1)
     WaitFrames(frames=1)
     ResetAnimation(character)
     ForceAnimation(character, 7000)
@@ -7670,8 +7670,8 @@ def Event_12904897(
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     RemoveSpecialEffect(character, 5021)
-    AddSpecialEffect(character, special_effect_id_1)
-    RemoveSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1)
+    RemoveSpecialEffect(character, special_effect)
     WaitFrames(frames=10)
     Restart()
 
@@ -8800,7 +8800,7 @@ def Event_12904917(
     npc_part_id: short,
     npc_part_id_1: int,
     part_index: short,
-    special_effect_id: int,
+    special_effect: int,
     flag: int,
     character: int,
 ):
@@ -8821,27 +8821,20 @@ def Event_12904917(
     EndIfFinishedConditionTrue(input_condition=AND_2)
     AND_7.Add(CharacterHasSpecialEffect(character, 420))
     SkipLinesIfConditionFalse(1, AND_7)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
     WaitFrames(frames=10)
     Restart()
 
 
 @ContinueOnRest(12904918)
-def Event_12904918(
-    _,
-    special_effect__special_effect_id: int,
-    animation_id: int,
-    npc_part_id: int,
-    flag: int,
-    character: int,
-):
+def Event_12904918(_, special_effect: int, animation_id: int, npc_part_id: int, flag: int, character: int):
     """Event 12904918"""
     if ThisEventSlotFlagDisabled():
         MAIN.Await(FlagEnabled(flag))
-    AND_1.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id))
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_1.Add(CharacterHasSpecialEffect(character, 421))
     AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id) <= 0)
-    AND_2.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id))
+    AND_2.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_2.Add(CharacterHasSpecialEffect(character, 421))
     AND_2.Add(CharacterPartHealthComparison(
         character,
@@ -8857,7 +8850,7 @@ def Event_12904918(
     SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     ForceAnimation(character, animation_id, wait_for_completion=True)
     SkipLines(1)
-    AddSpecialEffect(character, special_effect__special_effect_id, affect_npc_part_hp=True)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
     Restart()
 
 
@@ -12047,15 +12040,15 @@ def Event_12906548(_, character: int, character_1: int):
 
 
 @RestartOnRest(12906567)
-def Event_12906567(_, character: int, special_effect_id: int):
+def Event_12906567(_, character: int, special_effect: int):
     """Event 12906567"""
     MAIN.Await(CharacterHasSpecialEffect(character, 5645))
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(character, 5645))
     
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     Restart()
 
 
@@ -12571,8 +12564,8 @@ def Event_12906764(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12906764"""
@@ -12606,15 +12599,15 @@ def Event_12906764(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect_1)
     ReplanAI(character)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=100))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -12629,8 +12622,8 @@ def Event_12906765(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12906765"""
@@ -12658,15 +12651,15 @@ def Event_12906765(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
-    AddSpecialEffect(character, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id_1)
+    AddSpecialEffect(character, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect_1)
     ReplanAI(character)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=100))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(character, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -14342,7 +14335,7 @@ def Event_12906827(
     npc_part_id: short,
     npc_part_id_1: int,
     animation_id: int,
-    special_effect_id: int,
+    special_effect: int,
 ):
     """Event 12906827"""
     CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=100)
@@ -14365,10 +14358,10 @@ def Event_12906827(
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=60, material_vfx_id=60)
     ResetAnimation(character)
     ForceAnimation(character, animation_id)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ReplanAI(character)
     Wait(30.0)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     ReplanAI(character)
     Restart()
 
@@ -17748,19 +17741,19 @@ def Event_12907440(_, character: int, flag: int, flag_1: int):
 
 
 @ContinueOnRest(12907420)
-def Event_12907420(_, special_effect_id: int, flag: int, special_effect_id_1: int, special_effect_id_2: int):
+def Event_12907420(_, special_effect: int, flag: int, special_effect_1: int, special_effect_2: int):
     """Event 12907420"""
     if FlagDisabled(flag):
         return
     SkipLinesIfClient(2)
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect)
     End()
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6142))
     AND_1.Add(CharacterWhitePhantom(PLAYER))
     SkipLinesIfConditionTrue(2, AND_1)
-    AddSpecialEffect(PLAYER, special_effect_id_1)
+    AddSpecialEffect(PLAYER, special_effect_1)
     End()
-    AddSpecialEffect(PLAYER, special_effect_id_2)
+    AddSpecialEffect(PLAYER, special_effect_2)
 
 
 @ContinueOnRest(12907430)

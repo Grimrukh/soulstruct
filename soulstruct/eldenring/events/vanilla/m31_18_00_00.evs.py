@@ -267,7 +267,7 @@ def Event_31182200(_, character: uint, region: uint):
     MAIN.Await(OR_5)
     
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31182400)
@@ -344,7 +344,7 @@ def Event_31182402(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     OR_14.Add(CharacterInsideRegion(character=PLAYER, region=region_1))

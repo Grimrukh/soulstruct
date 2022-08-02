@@ -91,10 +91,10 @@ def Constructor():
     Event_34112460()
     Event_34112465()
     CommonFunc_90005300(0, flag=34110711, character=Characters.PreceptorMiriam1, item_lot=34110710, seconds=0.0, left=0)
-    Event_34112475(0, flag=34112485, character=34110710, region=34112411)
-    Event_34112475(1, flag=34112486, character=34110710, region=34112421)
-    Event_34112475(2, flag=34112487, character=34110710, region=34112431)
-    Event_34112475(3, flag=34112488, character=34110711, region=34112466)
+    Event_34112475(0, flag=34112485, character=Characters.PreceptorMiriam0, region=34112411)
+    Event_34112475(1, flag=34112486, character=Characters.PreceptorMiriam0, region=34112421)
+    Event_34112475(2, flag=34112487, character=Characters.PreceptorMiriam0, region=34112431)
+    Event_34112475(3, flag=34112488, character=Characters.PreceptorMiriam1, region=34112466)
     CommonFunc_90005706(0, character=Characters.WanderingNoble24, animation_id=930023, left=0)
 
 
@@ -1600,7 +1600,7 @@ def Event_34112400():
     Wait(0.5)
     EnableCharacter(Characters.PreceptorMiriam0)
     EnableAnimations(Characters.PreceptorMiriam0)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -1695,7 +1695,7 @@ def Event_34112410():
     )
     SetNest(Characters.PreceptorMiriam0, region=34112411)
     SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
     End()
 
@@ -1792,7 +1792,7 @@ def Event_34112420():
     )
     SetNest(Characters.PreceptorMiriam0, region=34112421)
     SetLockOnPoint(character=Characters.PreceptorMiriam0, lock_on_model_point=220, state=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     AddSpecialEffect(Characters.PreceptorMiriam0, 4241)
     End()
 
@@ -1892,7 +1892,7 @@ def Event_34112430():
     ReplanAI(Characters.PreceptorMiriam0)
     Wait(0.10000000149011612)
     DisableAI(Characters.PreceptorMiriam0)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -2288,7 +2288,7 @@ def Event_34112475(_, flag: uint, character: uint, region: uint):
     Move(character, destination=region, destination_type=CoordEntityType.Region, copy_draw_parent=character)
     SetNest(character, region=region)
     SetLockOnPoint(character=character, lock_on_model_point=220, state=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     AddSpecialEffect(character, 4241)
 
 

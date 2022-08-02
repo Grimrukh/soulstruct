@@ -34,7 +34,7 @@ def Constructor():
         character=Characters.TunnelMiner1,
         animation_id=30004,
         animation_id_1=20004,
-        special_effect_id=16576,
+        special_effect=16576,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -50,7 +50,7 @@ def Constructor():
         character=Characters.TunnelMiner2,
         animation_id=30000,
         animation_id_1=20000,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -80,7 +80,7 @@ def Constructor():
         character=Characters.TunnelMiner3,
         animation_id=30004,
         animation_id_1=20004,
-        special_effect_id=16576,
+        special_effect=16576,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -96,7 +96,7 @@ def Constructor():
         character=Characters.TunnelMiner4,
         animation_id=30004,
         animation_id_1=20004,
-        special_effect_id=16576,
+        special_effect=16576,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -297,7 +297,7 @@ def Event_32042200(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -387,13 +387,13 @@ def Event_32042200(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -411,7 +411,7 @@ def Event_32042250(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -508,7 +508,7 @@ def Event_32042250(
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -611,7 +611,7 @@ def Event_32042270(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)

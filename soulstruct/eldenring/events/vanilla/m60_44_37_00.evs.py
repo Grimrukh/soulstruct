@@ -143,7 +143,7 @@ def Event_1044372210(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(OR_3)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)

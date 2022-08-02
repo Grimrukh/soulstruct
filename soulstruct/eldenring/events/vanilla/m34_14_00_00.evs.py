@@ -397,7 +397,7 @@ def Event_34140860():
     SetNetworkUpdateRate(Characters.Omen1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.Omen0, name=902140000, bar_slot=1)
     EnableBossHealthBar(Characters.Omen1, name=902140001)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(34142865)

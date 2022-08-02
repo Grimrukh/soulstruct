@@ -1014,7 +1014,7 @@ def Event_12052200():
         update_rate=CharacterUpdateRate.AtLeastEveryTwoFrames,
     )
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.MohgwynMonstrousCrow0, state=True)
     ForceAnimation(Characters.MohgwynMonstrousCrow0, 20000, loop=True)
     Wait(3.0)

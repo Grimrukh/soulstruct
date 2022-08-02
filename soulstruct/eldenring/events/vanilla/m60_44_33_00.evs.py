@@ -92,7 +92,7 @@ def Constructor():
     Event_1044332230(21, character=1044330256)
     Event_1044332280(0, character=Characters.DemiHuman0, asset=1044331280, region=1044332280)
     Event_1044332280(1, character=Characters.DemiHuman1, asset=1044331281, region=1044332280)
-    CommonFunc_90005400(0, character=Characters.Misbegotten4, special_effect_id=0, seconds=0.0, seconds_1=0.0, left=0)
+    CommonFunc_90005400(0, character=Characters.Misbegotten4, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98103, character=Characters.Misbegotten4)
     if FlagEnabled(57):
         CommonFunc_90005695(
@@ -447,7 +447,7 @@ def Event_1044332280(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(OR_3)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)

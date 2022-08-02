@@ -172,10 +172,10 @@ def Constructor():
     Event_10002810()
     Event_10002811()
     Event_10002849()
-    Event_10002820(0, region=10002820, special_effect_id=14790, special_effect_id_1=14791)
-    Event_10002821(0, region=10002821, special_effect_id=14792, special_effect_id_1=14793)
-    Event_10002824(0, region=10002824, special_effect_id=14794, special_effect_id_1=14795)
-    Event_10002825(0, region=10002825, special_effect_id=14796, special_effect_id_1=14797)
+    Event_10002820(0, region=10002820, special_effect=14790, special_effect_1=14791)
+    Event_10002821(0, region=10002821, special_effect=14792, special_effect_1=14793)
+    Event_10002824(0, region=10002824, special_effect=14794, special_effect_1=14795)
+    Event_10002825(0, region=10002825, special_effect=14796, special_effect_1=14797)
     Event_10002850()
     Event_10002860()
     Event_10002861()
@@ -947,7 +947,7 @@ def Event_10002281(_, character: uint, region: uint, seconds: float, animation_i
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -1162,7 +1162,7 @@ def Event_10002240(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1225,7 +1225,7 @@ def Event_11002291(_, character: uint, region: uint, seconds: float):
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
 
@@ -1313,7 +1313,7 @@ def Event_10002311(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1888,7 +1888,7 @@ def Event_10002811():
 
 
 @RestartOnRest(10002820)
-def Event_10002820(_, region: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_10002820(_, region: uint, special_effect: int, special_effect_1: int):
     """Event 10002820"""
     if FlagEnabled(10000800):
         return
@@ -1898,19 +1898,19 @@ def Event_10002820(_, region: uint, special_effect_id: int, special_effect_id_1:
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_id)
+    AddSpecialEffect(Characters.GodricktheGrafted, special_effect)
     Wait(0.10000000149011612)
     AND_2.Add(CharacterOutsideRegion(character=Characters.GodricktheGrafted, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_id_1)
+    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_1)
     Restart()
 
 
 @RestartOnRest(10002821)
-def Event_10002821(_, region: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_10002821(_, region: uint, special_effect: int, special_effect_1: int):
     """Event 10002821"""
     if FlagEnabled(10000800):
         return
@@ -1919,19 +1919,19 @@ def Event_10002821(_, region: uint, special_effect_id: int, special_effect_id_1:
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, special_effect_id)
+    AddSpecialEffect(20000, special_effect)
     Wait(0.10000000149011612)
     AND_2.Add(CharacterOutsideRegion(character=20000, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(20000, special_effect_id_1)
+    AddSpecialEffect(20000, special_effect_1)
     Restart()
 
 
 @RestartOnRest(10002824)
-def Event_10002824(_, region: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_10002824(_, region: uint, special_effect: int, special_effect_1: int):
     """Event 10002824"""
     if FlagEnabled(10000800):
         return
@@ -1941,19 +1941,19 @@ def Event_10002824(_, region: uint, special_effect_id: int, special_effect_id_1:
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_id)
+    AddSpecialEffect(Characters.GodricktheGrafted, special_effect)
     Wait(0.10000000149011612)
     AND_2.Add(CharacterOutsideRegion(character=Characters.GodricktheGrafted, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_id_1)
+    AddSpecialEffect(Characters.GodricktheGrafted, special_effect_1)
     Restart()
 
 
 @RestartOnRest(10002825)
-def Event_10002825(_, region: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_10002825(_, region: uint, special_effect: int, special_effect_1: int):
     """Event 10002825"""
     if FlagEnabled(10000800):
         return
@@ -1962,14 +1962,14 @@ def Event_10002825(_, region: uint, special_effect_id: int, special_effect_id_1:
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(20000, special_effect_id)
+    AddSpecialEffect(20000, special_effect)
     Wait(0.10000000149011612)
     AND_2.Add(CharacterOutsideRegion(character=20000, region=region))
     
     MAIN.Await(AND_2)
     
     Wait(0.10000000149011612)
-    AddSpecialEffect(20000, special_effect_id_1)
+    AddSpecialEffect(20000, special_effect_1)
     Restart()
 
 
@@ -2098,7 +2098,7 @@ def Event_10002860():
     EnableAI(Characters.Margit)
     SetNetworkUpdateRate(Characters.Margit, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.Margit, name=902130000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(10002861)

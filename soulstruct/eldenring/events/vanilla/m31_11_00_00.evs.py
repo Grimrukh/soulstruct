@@ -350,7 +350,7 @@ def Event_31112208():
     RemoveSpecialEffect(Characters.GlintstoneMiner3, 8081)
     RemoveSpecialEffect(Characters.GlintstoneMiner3, 8082)
     RemoveSpecialEffect(Characters.GlintstoneMiner3, 5000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31112240)
@@ -409,7 +409,7 @@ def Event_31112240(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31112245)
@@ -468,7 +468,7 @@ def Event_31112245(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31112250)
@@ -526,7 +526,7 @@ def Event_31112250(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -568,7 +568,7 @@ def Event_31112301():
     RemoveSpecialEffect(31110301, 8081)
     RemoveSpecialEffect(31110301, 8082)
     RemoveSpecialEffect(31110301, 5000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @ContinueOnRest(31112400)

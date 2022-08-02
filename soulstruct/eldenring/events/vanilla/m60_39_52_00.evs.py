@@ -192,7 +192,7 @@ def Event_1039522400():
     
     MAIN.Await(OR_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
     # --- Label 0 --- #
     DefineLabel(0)

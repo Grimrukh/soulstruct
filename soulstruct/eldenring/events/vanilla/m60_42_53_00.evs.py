@@ -246,7 +246,7 @@ def Event_1042532365(_, character: uint):
     MAIN.Await(OR_1)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     EnableAI(character)
 

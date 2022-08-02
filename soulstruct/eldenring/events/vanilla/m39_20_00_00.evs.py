@@ -184,7 +184,7 @@ def Preconstructor():
         animation_id=30004,
         animation_id_1=20004,
         asset=Assets.AEG099_780_9000,
-        special_effect_id=16576,
+        special_effect=16576,
         seconds=0.10000000149011612,
         left=0,
     )
@@ -194,7 +194,7 @@ def Preconstructor():
         animation_id=30000,
         animation_id_1=20000,
         asset=Assets.AEG099_780_9001,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.10000000149011612,
         left=0,
     )
@@ -204,7 +204,7 @@ def Preconstructor():
         animation_id=30000,
         animation_id_1=20000,
         asset=Assets.AEG099_780_9002,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.10000000149011612,
         left=0,
     )
@@ -214,7 +214,7 @@ def Preconstructor():
         animation_id=30000,
         animation_id_1=20000,
         asset=Assets.AEG099_780_9004,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.10000000149011612,
         left=0,
     )
@@ -226,7 +226,7 @@ def Preconstructor():
         character=Characters.TunnelMiner0,
         animation_id=30002,
         animation_id_1=20002,
-        special_effect_id=16574,
+        special_effect=16574,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -432,7 +432,7 @@ def Event_39202200():
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.VulgarMilitia4, state=True)
     SetSpecialStandbyEndedFlag(character=Characters.VulgarMilitia5, state=True)
     AND_5.Add(CharacterInsideRegion(character=PLAYER, region=39202356))
@@ -457,7 +457,7 @@ def Event_39202280(
     animation_id: int,
     animation_id_1: int,
     asset: uint,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
 ):
@@ -519,7 +519,7 @@ def Event_39202280(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -529,7 +529,7 @@ def Event_39202280(
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -547,7 +547,7 @@ def Event_39202220(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -605,7 +605,7 @@ def Event_39202220(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -615,7 +615,7 @@ def Event_39202220(
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -633,7 +633,7 @@ def Event_39202230(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -732,7 +732,7 @@ def Event_39202230(
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -881,7 +881,7 @@ def Event_39202302():
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=39202301))
     
     AddSpecialEffect(Characters.Bat2, 8080)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(39202306)
@@ -900,7 +900,7 @@ def Event_39202306():
     AddSpecialEffect(39200306, 8080)
     SkipLinesIfFinishedConditionTrue(1, input_condition=AND_1)
     ForceAnimation(39200306, 3000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(39202318)
@@ -914,7 +914,7 @@ def Event_39202318():
     MAIN.Await(CharacterInsideRegion(character=PLAYER, region=39202318))
     
     AddSpecialEffect(Characters.Bat11, 8080)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(39202351)
@@ -967,7 +967,7 @@ def Event_39202351():
     AddSpecialEffect(Characters.OldWomanBat0, 8080)
     ChangePatrolBehavior(Characters.Bat5, patrol_information_id=39203307)
     ChangePatrolBehavior(Characters.Bat8, patrol_information_id=39203310)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(39202800)

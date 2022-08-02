@@ -496,7 +496,7 @@ def Constructor():
         npc_part_id_1=3290,
         part_index=8,
         animation_id=7000,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205700,
         flag_1=13205760,
         character=3200420,
@@ -507,7 +507,7 @@ def Constructor():
         npc_part_id_1=3291,
         part_index=9,
         animation_id=7022,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205700,
         flag_1=13205760,
         character=3200420,
@@ -518,7 +518,7 @@ def Constructor():
         npc_part_id_1=3292,
         part_index=10,
         animation_id=7023,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205700,
         flag_1=13205760,
         character=3200420,
@@ -529,7 +529,7 @@ def Constructor():
         npc_part_id_1=3290,
         part_index=8,
         animation_id=7000,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205701,
         flag_1=13205761,
         character=3200421,
@@ -540,7 +540,7 @@ def Constructor():
         npc_part_id_1=3291,
         part_index=9,
         animation_id=7022,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205701,
         flag_1=13205761,
         character=3200421,
@@ -551,7 +551,7 @@ def Constructor():
         npc_part_id_1=3292,
         part_index=10,
         animation_id=7023,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=13205701,
         flag_1=13205761,
         character=3200421,
@@ -1367,7 +1367,7 @@ def Event_13204730(_, character: int):
     
     MAIN.Await(FlagEnabled(13204802))
     
-    SetCharacterEventTarget(character, region=3200800)
+    SetCharacterEventTarget(character, entity=3200800)
 
 
 @ContinueOnRest(13204830)
@@ -2047,7 +2047,7 @@ def Event_13205600(
     npc_part_id_1: int,
     part_index: short,
     animation_id: int,
-    special_effect_id: int,
+    special_effect: int,
     flag: int,
     flag_1: int,
     character: int,
@@ -2076,14 +2076,14 @@ def Event_13205600(
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=400))
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     DisableFlag(flag_1)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)

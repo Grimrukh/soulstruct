@@ -191,8 +191,8 @@ def Constructor():
         npc_part_id_1=2800,
         part_index=1,
         part_health=100,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         animation_id=7000,
     )
     Event_12804820(
@@ -201,8 +201,8 @@ def Constructor():
         npc_part_id_1=2801,
         part_index=2,
         part_health=200,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         animation_id=7001,
     )
     Event_12804820(
@@ -211,8 +211,8 @@ def Constructor():
         npc_part_id_1=2802,
         part_index=3,
         part_health=200,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         animation_id=7002,
     )
     Event_12804820(
@@ -221,8 +221,8 @@ def Constructor():
         npc_part_id_1=2803,
         part_index=4,
         part_health=100,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         animation_id=7003,
     )
     Event_12804820(
@@ -231,8 +231,8 @@ def Constructor():
         npc_part_id_1=2804,
         part_index=5,
         part_health=200,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         animation_id=7004,
     )
     Event_12804820(
@@ -241,8 +241,8 @@ def Constructor():
         npc_part_id_1=2805,
         part_index=6,
         part_health=200,
-        special_effect_id=485,
-        special_effect_id_1=495,
+        special_effect=485,
+        special_effect_1=495,
         animation_id=7005,
     )
     Event_12804820(
@@ -251,8 +251,8 @@ def Constructor():
         npc_part_id_1=2806,
         part_index=7,
         part_health=100,
-        special_effect_id=486,
-        special_effect_id_1=496,
+        special_effect=486,
+        special_effect_1=496,
         animation_id=7006,
     )
     Event_12804830()
@@ -305,7 +305,7 @@ def Constructor():
         npc_part_id_1=11,
         part_index=7,
         animation_id=7003,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12805655,
         flag_1=12805665,
         character=2800210,
@@ -316,7 +316,7 @@ def Constructor():
         npc_part_id_1=12,
         part_index=8,
         animation_id=7000,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12805655,
         flag_1=12805665,
         character=2800210,
@@ -1099,7 +1099,7 @@ def Event_12805470(
     npc_part_id_1: int,
     part_index: short,
     animation_id: int,
-    special_effect_id: int,
+    special_effect: int,
     flag: int,
     flag_1: int,
     character: int,
@@ -1126,14 +1126,14 @@ def Event_12805470(
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=400))
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     DisableFlag(flag_1)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)
@@ -2629,8 +2629,8 @@ def Event_12804802():
     EnableBossHealthBar(2800803, name=507000)
     ReferDamageToEntity(2800800, target_entity=2800803)
     ReferDamageToEntity(2800801, target_entity=2800803)
-    SetCharacterEventTarget(2800800, region=2800803)
-    SetCharacterEventTarget(2800801, region=2800803)
+    SetCharacterEventTarget(2800800, entity=2800803)
+    SetCharacterEventTarget(2800801, entity=2800803)
     CreatePlayLog(name=238)
     StartPlayLogMeasurement(measurement_id=2800010, name=254, overwrite=True)
 
@@ -2754,8 +2754,8 @@ def Event_12804820(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12804820"""
@@ -2786,8 +2786,8 @@ def Event_12804820(
     ResetAnimation(2800801)
     ForceAnimation(2800800, animation_id)
     ForceAnimation(2800801, 7000)
-    AddSpecialEffect(2800800, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2800800, special_effect_id_1)
+    AddSpecialEffect(2800800, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2800800, special_effect_1)
     AND_3.Add(CharacterHasSpecialEffect(2800800, 489))
     SkipLinesIfConditionTrue(1, AND_3)
     ReplanAI(2800800)
@@ -2800,8 +2800,8 @@ def Event_12804820(
     
     CreateNPCPart(2800800, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
     SetNPCPartEffects(2800800, npc_part_id=npc_part_id_1, material_sfx_id=59, material_vfx_id=59)
-    AddSpecialEffect(2800800, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2800800, special_effect_id)
+    AddSpecialEffect(2800800, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2800800, special_effect)
     AND_5.Add(CharacterHasSpecialEffect(2800800, 489))
     SkipLinesIfConditionTrue(1, AND_5)
     ReplanAI(2800800)
@@ -3031,7 +3031,7 @@ def Event_12804840(_, character: int):
     """Event 12804840"""
     if FlagEnabled(12801800):
         return
-    SetCharacterEventTarget(character, region=2800801)
+    SetCharacterEventTarget(character, entity=2800801)
     if ThisEventSlotFlagEnabled():
         return
     AND_1.Add(FlagEnabled(12804802))
@@ -3573,6 +3573,6 @@ def Event_12804460(
     
     EnableGravity(character)
     EnableCharacterCollision(character)
-    SetCharacterEventTarget(character, region=2800800)
+    SetCharacterEventTarget(character, entity=2800800)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)

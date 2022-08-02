@@ -870,7 +870,7 @@ def Event_1039542290(_, character: uint):
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(character, 90000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(1039542283)
@@ -947,7 +947,7 @@ def Event_1039542200(_, character: uint, region: uint, seconds: float, animation
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):

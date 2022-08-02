@@ -52,7 +52,7 @@ def Constructor():
     Event_14002811()
     Event_14002849()
     Event_140028121()
-    Event_140028122(0, character=14000800, special_effect=14585, special_effect_1=14575)
+    Event_140028122(0, character=Characters.RennalaPhaseTwo, special_effect=14585, special_effect_1=14575)
     Event_14002606()
     Event_14002689()
     Event_14003500(0, region=14002700, flag=14000800)
@@ -243,11 +243,11 @@ def Constructor():
         flag_2=14003836,
         flag_3=14003837,
         flag_4=14003838,
-        asset__asset_flag=14001810,
-        asset__asset_flag_1=14001811,
-        asset__asset_flag_2=14001812,
-        asset__asset_flag_3=14001813,
-        asset__asset_flag_4=14001814,
+        asset__asset_flag=Assets.AEG257_031_5004,
+        asset__asset_flag_1=Assets.AEG257_031_5003,
+        asset__asset_flag_2=Assets.AEG257_031_5002,
+        asset__asset_flag_3=Assets.AEG257_031_5001,
+        asset__asset_flag_4=Assets.AEG257_031_5000,
         region=14002815,
         region_1=14002816,
         region_2=14002817,
@@ -267,11 +267,11 @@ def Constructor():
         flag_2=14003836,
         flag_3=14003837,
         flag_4=14003838,
-        asset__asset_flag=14001810,
-        asset__asset_flag_1=14001811,
-        asset__asset_flag_2=14001812,
-        asset__asset_flag_3=14001813,
-        asset__asset_flag_4=14001814,
+        asset__asset_flag=Assets.AEG257_031_5004,
+        asset__asset_flag_1=Assets.AEG257_031_5003,
+        asset__asset_flag_2=Assets.AEG257_031_5002,
+        asset__asset_flag_3=Assets.AEG257_031_5001,
+        asset__asset_flag_4=Assets.AEG257_031_5000,
         region=14002815,
         region_1=14002816,
         region_2=14002817,
@@ -1910,7 +1910,7 @@ def Event_14002360(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1955,7 +1955,7 @@ def Event_14002490(_, character: uint, region: uint, seconds: float, animation_i
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -1994,7 +1994,7 @@ def Event_14002491(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
         ForceAnimation(character, animation_id, loop=True)
@@ -3371,7 +3371,7 @@ def Event_14003817(_, character__character_group: uint):
 def Event_14003820(_, asset: uint):
     """Event 14003820"""
     if ThisEventSlotFlagDisabled():
-        SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+        EnableThisNetworkSlotFlag()
         Restart()
     
     MAIN.Await(ThisEventSlotFlagDisabled())
@@ -3381,7 +3381,7 @@ def Event_14003820(_, asset: uint):
     if AssetDestroyed(asset):
         RestoreAsset(asset)
     ForceAnimation(asset, 1, wait_for_completion=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Restart()
 
 
@@ -3434,7 +3434,7 @@ def Event_14003950(_, flag: uint, asset: uint):
 def Event_14003834(_, asset: uint):
     """Event 14003834"""
     if ThisEventSlotFlagDisabled():
-        SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+        EnableThisNetworkSlotFlag()
         Restart()
     
     MAIN.Await(ThisEventSlotFlagDisabled())
@@ -3443,7 +3443,7 @@ def Event_14003834(_, asset: uint):
     EnableAsset(asset)
     ForceAnimation(asset, 2, wait_for_completion=True)
     Wait(3.0)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Restart()
 
 
@@ -4490,14 +4490,14 @@ def Event_14003885(
 
 
 @RestartOnRest(14003886)
-def Event_14003886(_, character: uint, region: uint, special_effect__special_effect_id: int):
+def Event_14003886(_, character: uint, region: uint, special_effect: int):
     """Event 14003886"""
     AND_1.Add(CharacterInsideRegion(character=character, region=region))
-    AND_1.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id, target_count=0.0))
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect, target_count=0.0))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character, special_effect__special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Restart()
 
 

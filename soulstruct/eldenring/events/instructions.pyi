@@ -742,6 +742,10 @@ __all__ = [
     "DisableNetworkFlag",
     "ToggleNetworkFlag",
     "SetAbsoluteNetworkFlagState",
+    "EnableThisNetworkFlag",
+    "DisableThisNetworkFlag",
+    "EnableThisNetworkSlotFlag",
+    "DisableThisNetworSlotFlag",
     "SetNetworkInteractionState",  # 2003[70]
     "AwardGesture",  # 2003[71]
     "MultiplyBloodstainSouls",  # 2003[72]
@@ -3753,7 +3757,7 @@ def CreateProjectileOwner(entity: Asset | Region | Character | int, event_layers
     """
 
 
-def AddSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def AddSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -3799,7 +3803,7 @@ def DisableGravity(character: Character | int, event_layers=()):
     """
 
 
-def SetCharacterEventTarget(character: Character | int, region: Region | int, event_layers=()):
+def SetCharacterEventTarget(character: Character | int, entity: Asset | Region | Character | int, event_layers=()):
     """
     Likely refers to patrolling behavior.
     """
@@ -3894,7 +3898,7 @@ def ReplanAI(character: Character | int, event_layers=()):
     """
 
 
-def RemoveSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def RemoveSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -4017,21 +4021,21 @@ def DisableHealthBar(character: Character | int, event_layers=()):
     """
 
 
-def SetCharacterCollisionState(character: Character | int, is_disabled: bool | int, event_layers=()):
+def SetCharacterCollisionState(character: Character | int, state: bool | int, event_layers=()):
     """
-    Note that the bool is inverted from what you might expect.
+    Note that the bool is no longer inverted, as in older games.
     """
 
 
 def EnableCharacterCollision(character: Character | int, event_layers=()):
     """
-    Calls `SetCharacterCollisionState` with `is_disabled=False`.
+    Calls `SetCharacterCollisionState` with `state=True`.
     """
 
 
 def DisableCharacterCollision(character: Character | int, event_layers=()):
     """
-    Calls `SetCharacterCollisionState` with `is_disabled=True`.
+    Calls `SetCharacterCollisionState` with `state=False`.
     """
 
 
@@ -4596,7 +4600,7 @@ def IfUnsignedLessThanOrEqual(condition: ConditionGroup | int, left: int, right:
 def IfAttackedWithDamageType(
     condition: ConditionGroup | int,
     attacked_entity: Character | int,
-    attacker: Character | int = -1,
+    attacker: Character | int = 0,
     damage_type: DamageType | int = DamageType.Unspecified,
     event_layers=(),
 ):
@@ -4920,7 +4924,7 @@ def IfNPCPartAttackedWithDamageType(
 def IfCharacterInvadeType(
     condition: ConditionGroup | int,
     character: Character | int,
-    invade_type: int,
+    invade_type: CharacterType | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),
@@ -6067,7 +6071,7 @@ def EndIfCeremonyActive(ceremony: int, event_layers=()):
 
 def EndIfCeremonyInactive(ceremony: int, event_layers=()):
     """
-    Calls `ReturnIfCeremonyState` with `event_return_type=0`, `state=True`.
+    Calls `ReturnIfCeremonyState` with `event_return_type=0`, `state=False`.
     """
 
 
@@ -6079,7 +6083,7 @@ def RestartIfCeremonyActive(ceremony: int, event_layers=()):
 
 def RestartIfCeremonyInactive(ceremony: int, event_layers=()):
     """
-    Calls `ReturnIfCeremonyState` with `event_return_type=1`, `state=True`.
+    Calls `ReturnIfCeremonyState` with `event_return_type=1`, `state=False`.
     """
 
 
@@ -6756,7 +6760,7 @@ def TriggerAISound(
     """
 
 
-def ForceSpawnerToSpawn(spawner: Character | int, event_layers=()):
+def ForceSpawnerToSpawn(spawner: SpawnerEvent | int, event_layers=()):
     """
     TODO
     """
@@ -6861,6 +6865,30 @@ def ToggleNetworkFlag(flag: Flag | int, event_layers=()):
 def SetAbsoluteNetworkFlagState(flag: Flag | int, state: FlagSetting | int, event_layers=()):
     """
     Calls `SetNetworkFlagState` with `flag_type=0`.
+    """
+
+
+def EnableThisNetworkFlag(event_layers=()):
+    """
+    Calls `SetNetworkFlagState` with `flag_type=1`, `flag=0`, `state=1`.
+    """
+
+
+def DisableThisNetworkFlag(event_layers=()):
+    """
+    Calls `SetNetworkFlagState` with `flag_type=1`, `flag=0`, `state=0`.
+    """
+
+
+def EnableThisNetworkSlotFlag(event_layers=()):
+    """
+    Calls `SetNetworkFlagState` with `flag_type=2`, `flag=0`, `state=1`.
+    """
+
+
+def DisableThisNetworSlotFlag(event_layers=()):
+    """
+    Calls `SetNetworkFlagState` with `flag_type=2`, `flag=0`, `state=0`.
     """
 
 
@@ -8313,7 +8341,7 @@ def UnsignedLessThanOrEqual(left: int, right: int, event_layers=()) -> bool:
 
 def AttackedWithDamageType(
     attacked_entity: Character | int,
-    attacker: Character | int = -1,
+    attacker: Character | int = 0,
     damage_type: DamageType | int = DamageType.Unspecified,
     event_layers=(),
 ) -> bool:
@@ -8510,7 +8538,7 @@ def NPCPartAttackedWithDamageType(
 
 def CharacterInvadeType(
     character: Character | int,
-    invade_type: int,
+    invade_type: CharacterType | int,
     target_comparison_type: ComparisonType | int = ComparisonType.Equal,
     target_count: float = 1.0,
     event_layers=(),

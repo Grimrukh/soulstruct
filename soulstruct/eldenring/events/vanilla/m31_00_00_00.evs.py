@@ -43,16 +43,16 @@ def Constructor():
         flag=31000845,
         left_flag=31002840,
         cancel_flag__right_flag=31002841,
-        asset=31001840,
+        asset=Assets.AEG099_065_9000,
         player_start=31002840,
         area_id=31,
         block_id=0,
         cc_id=0,
         dd_id=0,
     )
-    Event_31002500(0, attacked_entity=Assets.AEG099_280_9000, region=31002500)
-    Event_31002500(1, attacked_entity=Assets.AEG099_280_9001, region=31002501)
-    Event_31002500(2, attacked_entity=Assets.AEG099_280_9002, region=31002502)
+    Event_31002500(0, attacked_entity=31001500, region=31002500)
+    Event_31002500(1, attacked_entity=31001501, region=31002501)
+    Event_31002500(2, attacked_entity=31001502, region=31002502)
     Event_31003700(0, character=Characters.Patches1)
     Event_31003710(0, character=Characters.Patches3)
     Event_31003701(0, character=Characters.Patches1, flag=31002709, flag_1=31009201, character_1=Characters.Patches0)
@@ -331,7 +331,7 @@ def Event_31002200(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -413,7 +413,7 @@ def Event_31002210(
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -473,7 +473,7 @@ def Event_31002230(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):

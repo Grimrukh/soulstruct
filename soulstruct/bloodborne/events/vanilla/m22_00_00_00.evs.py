@@ -312,8 +312,8 @@ def Constructor():
     Event_12205150(2, character=2200303, animation_id=7012, animation_id_1=7013, radius=0.0)
     Event_12205150(3, character=2200300, animation_id=7014, animation_id_1=0, radius=0.0)
     Event_12205150(4, character=2200212, animation_id=7014, animation_id_1=0, radius=0.0)
-    Event_12205160(0, region=2202040, obj=2201401, character=2200410, region_1=2200400)
-    Event_12205160(1, region=2202041, obj=2201406, character=2200411, region_1=2200401)
+    Event_12205160(0, region=2202040, obj=2201401, character=2200410, entity=2200400)
+    Event_12205160(1, region=2202041, obj=2201406, character=2200411, entity=2200401)
     Event_12205170(0, obj=2201400, owner_entity=2200420)
     Event_12205170(1, obj=2201401, owner_entity=2200420)
     Event_12205170(2, obj=2201402, owner_entity=2200420)
@@ -2270,7 +2270,7 @@ def Event_12205100(_, character: int, region: int, radius: float, flag: int, com
 
     # --- Label 0 --- #
     DefineLabel(0)
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     AICommand(character, command_id=command_id, command_slot=0)
     ReplanAI(character)
 
@@ -2371,7 +2371,7 @@ def Event_12205150(_, character: int, animation_id: int, animation_id_1: int, ra
 
 
 @RestartOnRest(12205160)
-def Event_12205160(_, region: int, obj: int, character: int, region_1: int):
+def Event_12205160(_, region: int, obj: int, character: int, entity: int):
     """Event 12205160"""
     OR_1.Add(CharacterHuman(PLAYER))
     OR_1.Add(CharacterWhitePhantom(PLAYER))
@@ -2381,7 +2381,7 @@ def Event_12205160(_, region: int, obj: int, character: int, region_1: int):
     
     MAIN.Await(AND_1)
     
-    SetCharacterEventTarget(character, region=region_1)
+    SetCharacterEventTarget(character, entity=entity)
     AICommand(character, command_id=100, command_slot=0)
     ReplanAI(character)
     

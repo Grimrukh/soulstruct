@@ -424,7 +424,7 @@ def Event_31072213(_, character: uint, region: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31072220)
@@ -593,7 +593,7 @@ def Event_31072230(
     MAIN.Await(OR_5)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -641,7 +641,7 @@ def Event_31072280(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(310722300)
@@ -666,7 +666,7 @@ def Event_310722300(_, character: uint, seconds: float):
     Wait(seconds)
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31072800)

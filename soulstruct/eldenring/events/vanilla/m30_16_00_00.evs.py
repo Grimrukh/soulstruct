@@ -335,7 +335,7 @@ def Event_30162601(_, region: uint, entity: uint):
     MAIN.Await(AND_1)
     
     EnableSpawner(entity=entity)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(30162602)
@@ -348,12 +348,12 @@ def Event_30162602(_, character: uint, character_1: uint, animation_id: int):
     
     EnableCharacter(character)
     ForceAnimation(character, animation_id)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
 
 
 @RestartOnRest(30162511)
-def Event_30162511(_, character: uint, special_effect_id: int, region: uint):
+def Event_30162511(_, character: uint, special_effect: int, region: uint):
     """Event 30162511"""
     if ThisEventSlotFlagEnabled():
         return
@@ -368,7 +368,7 @@ def Event_30162511(_, character: uint, special_effect_id: int, region: uint):
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(30162622)

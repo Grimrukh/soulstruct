@@ -135,7 +135,7 @@ def Event_31062300():
     
     Wait(2.0)
     ChangePatrolBehavior(Characters.BattleMage, patrol_information_id=31063301)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31062800)

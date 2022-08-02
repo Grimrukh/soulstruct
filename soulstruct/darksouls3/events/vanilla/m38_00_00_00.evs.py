@@ -406,7 +406,7 @@ def Constructor():
         npc_part_id_1=50,
         value_1=0,
         flag=13805812,
-        special_effect_id=12251,
+        special_effect=12251,
         animation_id=20001,
         animation_id_1=20002,
         animation_id_2=20003,
@@ -418,7 +418,7 @@ def Constructor():
         npc_part_id_1=30,
         value_1=0,
         flag=13805812,
-        special_effect_id=12253,
+        special_effect=12253,
         animation_id=20004,
         animation_id_1=20005,
         animation_id_2=20006,
@@ -430,7 +430,7 @@ def Constructor():
         npc_part_id_1=31,
         value_1=0,
         flag=13804814,
-        special_effect_id=12255,
+        special_effect=12255,
         animation_id=20007,
         animation_id_1=20008,
         animation_id_2=20009,
@@ -4031,7 +4031,7 @@ def Event_13805813(
     npc_part_id_1: int,
     value_1: int,
     flag: int,
-    special_effect_id: int,
+    special_effect: int,
     animation_id: int,
     animation_id_1: int,
     animation_id_2: int,
@@ -4082,7 +4082,7 @@ def Event_13805813(
     ReplanAI(3800800)
     IncrementEventValue(13805816, bit_count=2, max_value=3)
     End()
-    AddSpecialEffect(3800800, special_effect_id)
+    AddSpecialEffect(3800800, special_effect)
 
 
 @ContinueOnRest(13804814)

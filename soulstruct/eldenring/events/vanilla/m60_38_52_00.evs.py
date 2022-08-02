@@ -54,17 +54,17 @@ def Constructor():
     Event_1038522350()
     Event_1038522347(
         0,
-        character__region__targeting_character=1038520340,
+        character__targeting_character=Characters.TibiaMariner,
         region=1038522400,
         flag=1038520800,
-        character__region=1038520350,
+        character=Characters.GiantSkeletonTorso,
     )
     Event_1038522347(
         1,
-        character__region__targeting_character=1038520350,
+        character__targeting_character=Characters.GiantSkeletonTorso,
         region=1038522400,
         flag=1038520800,
-        character__region=1038520340,
+        character=Characters.TibiaMariner,
     )
     CommonFunc_90005870(0, character=Characters.TibiaMariner, name=904950602, npc_threat_level=24)
     CommonFunc_90005860(
@@ -76,7 +76,7 @@ def Constructor():
         item_lot=30385,
         seconds=0.0,
     )
-    Event_1038522339(0, character__region=1038520340, character__region_1=1038520350)
+    Event_1038522339(0, character=Characters.TibiaMariner, character_1=Characters.GiantSkeletonTorso)
     Event_1038522349()
     CommonFunc_90005616(0, flag=530385, region=1038522700)
     Event_1038522346(
@@ -93,9 +93,9 @@ def Constructor():
         destination_2=1038522344,
         destination_3=1038522345,
     )
-    Event_1038522343(0, character=Characters.TibiaMariner, region=1038522340, special_effect__special_effect_id=15310)
-    Event_1038522343(1, character=Characters.TibiaMariner, region=1038522341, special_effect__special_effect_id=15311)
-    Event_1038522343(2, character=Characters.TibiaMariner, region=1038522342, special_effect__special_effect_id=15312)
+    Event_1038522343(0, character=Characters.TibiaMariner, region=1038522340, special_effect=15310)
+    Event_1038522343(1, character=Characters.TibiaMariner, region=1038522341, special_effect=15311)
+    Event_1038522343(2, character=Characters.TibiaMariner, region=1038522342, special_effect=15312)
     Event_1038522344(
         0,
         flag=1038520800,
@@ -525,16 +525,16 @@ def Constructor():
 
 
 @RestartOnRest(1038522339)
-def Event_1038522339(_, character__region: uint, character__region_1: uint):
+def Event_1038522339(_, character: uint, character_1: uint):
     """Event 1038522339"""
     if FlagEnabled(1038520800):
         return
-    SetCharacterEventTarget(character__region, region=character__region_1)
-    SetCharacterEventTarget(character__region_1, region=character__region)
-    AND_1.Add(CharacterDead(character__region_1))
+    SetCharacterEventTarget(character, entity=character_1)
+    SetCharacterEventTarget(character_1, entity=character)
+    AND_1.Add(CharacterDead(character_1))
     AwaitConditionTrue(AND_1)
     Wait(5.0)
-    AND_2.Add(CharacterAlive(character__region_1))
+    AND_2.Add(CharacterAlive(character_1))
     AwaitConditionTrue(AND_2)
     Restart()
 
@@ -684,16 +684,16 @@ def Event_1038522342(
 
 
 @RestartOnRest(1038522343)
-def Event_1038522343(_, character: uint, region: uint, special_effect__special_effect_id: int):
+def Event_1038522343(_, character: uint, region: uint, special_effect: int):
     """Event 1038522343"""
     if FlagEnabled(1038520800):
         return
     AND_1.Add(CharacterInsideRegion(character=character, region=region))
-    AND_1.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id, target_count=0.0))
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect, target_count=0.0))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character, special_effect__special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Restart()
 
 
@@ -803,26 +803,20 @@ def Event_1038522346(
 
 
 @RestartOnRest(1038522347)
-def Event_1038522347(
-    _,
-    character__region__targeting_character: uint,
-    region: uint,
-    flag: uint,
-    character__region: uint,
-):
+def Event_1038522347(_, character__targeting_character: uint, region: uint, flag: uint, character: uint):
     """Event 1038522347"""
     DisableNetworkSync()
     if FlagEnabled(flag):
         return
-    AND_1.Add(CharacterTargeting(targeting_character=character__region__targeting_character, targeted_character=20000))
+    AND_1.Add(CharacterTargeting(targeting_character=character__targeting_character, targeted_character=20000))
     AND_1.Add(CharacterOutsideRegion(character=20000, region=region))
     
     MAIN.Await(AND_1)
     
-    ClearTargetList(character__region__targeting_character)
+    ClearTargetList(character__targeting_character)
     Wait(1.0)
-    SetCharacterEventTarget(character__region__targeting_character, region=character__region)
-    SetCharacterEventTarget(character__region, region=character__region__targeting_character)
+    SetCharacterEventTarget(character__targeting_character, entity=character)
+    SetCharacterEventTarget(character, entity=character__targeting_character)
     Wait(5.0)
     Restart()
 

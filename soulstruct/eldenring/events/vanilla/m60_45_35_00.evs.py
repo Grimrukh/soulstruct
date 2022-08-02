@@ -35,6 +35,6 @@ def Event_1045352200():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ForceAnimation(1045350200, 3011)
     End()

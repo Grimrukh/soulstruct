@@ -553,7 +553,7 @@ def Event_19002812():
     if PlayerInOwnWorld():
         SetCameraAngle(x_angle=-11.329999923706055, y_angle=-25.829999923706055)
     if PlayerInOwnWorld():
-        SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+        EnableThisNetworkSlotFlag()
 
     # --- Label 0 --- #
     DefineLabel(0)

@@ -124,7 +124,7 @@ def Constructor():
     )
     Event_1034472262(
         0,
-        character=1034470250,
+        character=Characters.Balloon0,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -138,7 +138,7 @@ def Constructor():
     )
     Event_1034472262(
         1,
-        character=1034470250,
+        character=Characters.Balloon0,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -152,7 +152,7 @@ def Constructor():
     )
     Event_1034472262(
         3,
-        character=1034470250,
+        character=Characters.Balloon0,
         seconds=0.0,
         attacked_entity=Characters.Balloon0,
         seconds_1=0.0,
@@ -166,7 +166,7 @@ def Constructor():
     )
     Event_1034472262(
         4,
-        character=1034470251,
+        character=Characters.Balloon1,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,
@@ -180,7 +180,7 @@ def Constructor():
     )
     Event_1034472262(
         5,
-        character=1034470251,
+        character=Characters.Balloon1,
         seconds=0.0,
         attacked_entity=Characters.Balloon1,
         seconds_1=0.0,

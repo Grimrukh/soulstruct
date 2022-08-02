@@ -39,287 +39,287 @@ def Constructor():
         0,
         value=0,
         value_1=20,
-        special_effect_id=9800,
-        special_effect_id_1=9801,
-        special_effect_id_2=9802,
-        special_effect_id_3=9803,
-        special_effect_id_4=10000,
-        special_effect_id_5=10001,
-        special_effect_id_6=10002,
-        special_effect_id_7=10003,
+        special_effect=9800,
+        special_effect_1=9801,
+        special_effect_2=9802,
+        special_effect_3=9803,
+        special_effect_4=10000,
+        special_effect_5=10001,
+        special_effect_6=10002,
+        special_effect_7=10003,
     )
     Event_15105920(
         1,
         value=20,
         value_1=30,
-        special_effect_id=9810,
-        special_effect_id_1=9811,
-        special_effect_id_2=9812,
-        special_effect_id_3=9813,
-        special_effect_id_4=10010,
-        special_effect_id_5=10011,
-        special_effect_id_6=10012,
-        special_effect_id_7=10013,
+        special_effect=9810,
+        special_effect_1=9811,
+        special_effect_2=9812,
+        special_effect_3=9813,
+        special_effect_4=10010,
+        special_effect_5=10011,
+        special_effect_6=10012,
+        special_effect_7=10013,
     )
     Event_15105920(
         2,
         value=30,
         value_1=40,
-        special_effect_id=9820,
-        special_effect_id_1=9821,
-        special_effect_id_2=9822,
-        special_effect_id_3=9823,
-        special_effect_id_4=10020,
-        special_effect_id_5=10021,
-        special_effect_id_6=10022,
-        special_effect_id_7=10023,
+        special_effect=9820,
+        special_effect_1=9821,
+        special_effect_2=9822,
+        special_effect_3=9823,
+        special_effect_4=10020,
+        special_effect_5=10021,
+        special_effect_6=10022,
+        special_effect_7=10023,
     )
     Event_15105920(
         3,
         value=40,
         value_1=50,
-        special_effect_id=9830,
-        special_effect_id_1=9831,
-        special_effect_id_2=9832,
-        special_effect_id_3=9833,
-        special_effect_id_4=10030,
-        special_effect_id_5=10031,
-        special_effect_id_6=10032,
-        special_effect_id_7=10033,
+        special_effect=9830,
+        special_effect_1=9831,
+        special_effect_2=9832,
+        special_effect_3=9833,
+        special_effect_4=10030,
+        special_effect_5=10031,
+        special_effect_6=10032,
+        special_effect_7=10033,
     )
     Event_15105920(
         4,
         value=50,
         value_1=60,
-        special_effect_id=9840,
-        special_effect_id_1=9841,
-        special_effect_id_2=9842,
-        special_effect_id_3=9843,
-        special_effect_id_4=10040,
-        special_effect_id_5=10041,
-        special_effect_id_6=10042,
-        special_effect_id_7=10043,
+        special_effect=9840,
+        special_effect_1=9841,
+        special_effect_2=9842,
+        special_effect_3=9843,
+        special_effect_4=10040,
+        special_effect_5=10041,
+        special_effect_6=10042,
+        special_effect_7=10043,
     )
     Event_15105920(
         5,
         value=60,
         value_1=70,
-        special_effect_id=9850,
-        special_effect_id_1=9851,
-        special_effect_id_2=9852,
-        special_effect_id_3=9853,
-        special_effect_id_4=10050,
-        special_effect_id_5=10051,
-        special_effect_id_6=10052,
-        special_effect_id_7=10053,
+        special_effect=9850,
+        special_effect_1=9851,
+        special_effect_2=9852,
+        special_effect_3=9853,
+        special_effect_4=10050,
+        special_effect_5=10051,
+        special_effect_6=10052,
+        special_effect_7=10053,
     )
     Event_15105920(
         6,
         value=70,
         value_1=80,
-        special_effect_id=9860,
-        special_effect_id_1=9861,
-        special_effect_id_2=9862,
-        special_effect_id_3=9863,
-        special_effect_id_4=10060,
-        special_effect_id_5=10061,
-        special_effect_id_6=10062,
-        special_effect_id_7=10063,
+        special_effect=9860,
+        special_effect_1=9861,
+        special_effect_2=9862,
+        special_effect_3=9863,
+        special_effect_4=10060,
+        special_effect_5=10061,
+        special_effect_6=10062,
+        special_effect_7=10063,
     )
     Event_15105920(
         7,
         value=80,
         value_1=90,
-        special_effect_id=9870,
-        special_effect_id_1=9871,
-        special_effect_id_2=9872,
-        special_effect_id_3=9873,
-        special_effect_id_4=10070,
-        special_effect_id_5=10071,
-        special_effect_id_6=10072,
-        special_effect_id_7=10073,
+        special_effect=9870,
+        special_effect_1=9871,
+        special_effect_2=9872,
+        special_effect_3=9873,
+        special_effect_4=10070,
+        special_effect_5=10071,
+        special_effect_6=10072,
+        special_effect_7=10073,
     )
     Event_15105920(
         8,
         value=90,
         value_1=100,
-        special_effect_id=9880,
-        special_effect_id_1=9881,
-        special_effect_id_2=9882,
-        special_effect_id_3=9883,
-        special_effect_id_4=10080,
-        special_effect_id_5=10081,
-        special_effect_id_6=10082,
-        special_effect_id_7=10083,
+        special_effect=9880,
+        special_effect_1=9881,
+        special_effect_2=9882,
+        special_effect_3=9883,
+        special_effect_4=10080,
+        special_effect_5=10081,
+        special_effect_6=10082,
+        special_effect_7=10083,
     )
     Event_15105920(
         9,
         value=100,
         value_1=120,
-        special_effect_id=9890,
-        special_effect_id_1=9891,
-        special_effect_id_2=9892,
-        special_effect_id_3=9893,
-        special_effect_id_4=10090,
-        special_effect_id_5=10091,
-        special_effect_id_6=10092,
-        special_effect_id_7=10093,
+        special_effect=9890,
+        special_effect_1=9891,
+        special_effect_2=9892,
+        special_effect_3=9893,
+        special_effect_4=10090,
+        special_effect_5=10091,
+        special_effect_6=10092,
+        special_effect_7=10093,
     )
     Event_15105920(
         10,
         value=120,
         value_1=150,
-        special_effect_id=9900,
-        special_effect_id_1=9901,
-        special_effect_id_2=9902,
-        special_effect_id_3=9903,
-        special_effect_id_4=10100,
-        special_effect_id_5=10101,
-        special_effect_id_6=10102,
-        special_effect_id_7=10103,
+        special_effect=9900,
+        special_effect_1=9901,
+        special_effect_2=9902,
+        special_effect_3=9903,
+        special_effect_4=10100,
+        special_effect_5=10101,
+        special_effect_6=10102,
+        special_effect_7=10103,
     )
     Event_15105920(
         11,
         value=150,
         value_1=180,
-        special_effect_id=9910,
-        special_effect_id_1=9911,
-        special_effect_id_2=9912,
-        special_effect_id_3=9913,
-        special_effect_id_4=10110,
-        special_effect_id_5=10111,
-        special_effect_id_6=10112,
-        special_effect_id_7=10113,
+        special_effect=9910,
+        special_effect_1=9911,
+        special_effect_2=9912,
+        special_effect_3=9913,
+        special_effect_4=10110,
+        special_effect_5=10111,
+        special_effect_6=10112,
+        special_effect_7=10113,
     )
     Event_15105920(
         12,
         value=180,
         value_1=230,
-        special_effect_id=9920,
-        special_effect_id_1=9921,
-        special_effect_id_2=9922,
-        special_effect_id_3=9923,
-        special_effect_id_4=10120,
-        special_effect_id_5=10121,
-        special_effect_id_6=10122,
-        special_effect_id_7=10123,
+        special_effect=9920,
+        special_effect_1=9921,
+        special_effect_2=9922,
+        special_effect_3=9923,
+        special_effect_4=10120,
+        special_effect_5=10121,
+        special_effect_6=10122,
+        special_effect_7=10123,
     )
     Event_15105920(
         13,
         value=230,
         value_1=280,
-        special_effect_id=9930,
-        special_effect_id_1=9931,
-        special_effect_id_2=9932,
-        special_effect_id_3=9933,
-        special_effect_id_4=10130,
-        special_effect_id_5=10131,
-        special_effect_id_6=10132,
-        special_effect_id_7=10133,
+        special_effect=9930,
+        special_effect_1=9931,
+        special_effect_2=9932,
+        special_effect_3=9933,
+        special_effect_4=10130,
+        special_effect_5=10131,
+        special_effect_6=10132,
+        special_effect_7=10133,
     )
     Event_15105920(
         14,
         value=280,
         value_1=350,
-        special_effect_id=9940,
-        special_effect_id_1=9941,
-        special_effect_id_2=9942,
-        special_effect_id_3=9943,
-        special_effect_id_4=10140,
-        special_effect_id_5=10141,
-        special_effect_id_6=10142,
-        special_effect_id_7=10143,
+        special_effect=9940,
+        special_effect_1=9941,
+        special_effect_2=9942,
+        special_effect_3=9943,
+        special_effect_4=10140,
+        special_effect_5=10141,
+        special_effect_6=10142,
+        special_effect_7=10143,
     )
     Event_15105920(
         15,
         value=350,
         value_1=450,
-        special_effect_id=9950,
-        special_effect_id_1=9951,
-        special_effect_id_2=9952,
-        special_effect_id_3=9953,
-        special_effect_id_4=10150,
-        special_effect_id_5=10151,
-        special_effect_id_6=10152,
-        special_effect_id_7=10153,
+        special_effect=9950,
+        special_effect_1=9951,
+        special_effect_2=9952,
+        special_effect_3=9953,
+        special_effect_4=10150,
+        special_effect_5=10151,
+        special_effect_6=10152,
+        special_effect_7=10153,
     )
     Event_15105920(
         16,
         value=450,
         value_1=600,
-        special_effect_id=9960,
-        special_effect_id_1=9961,
-        special_effect_id_2=9962,
-        special_effect_id_3=9963,
-        special_effect_id_4=10160,
-        special_effect_id_5=10161,
-        special_effect_id_6=10162,
-        special_effect_id_7=10163,
+        special_effect=9960,
+        special_effect_1=9961,
+        special_effect_2=9962,
+        special_effect_3=9963,
+        special_effect_4=10160,
+        special_effect_5=10161,
+        special_effect_6=10162,
+        special_effect_7=10163,
     )
     Event_15105920(
         17,
         value=600,
         value_1=750,
-        special_effect_id=9970,
-        special_effect_id_1=9971,
-        special_effect_id_2=9972,
-        special_effect_id_3=9973,
-        special_effect_id_4=10170,
-        special_effect_id_5=10171,
-        special_effect_id_6=10172,
-        special_effect_id_7=10173,
+        special_effect=9970,
+        special_effect_1=9971,
+        special_effect_2=9972,
+        special_effect_3=9973,
+        special_effect_4=10170,
+        special_effect_5=10171,
+        special_effect_6=10172,
+        special_effect_7=10173,
     )
     Event_15105920(
         18,
         value=750,
         value_1=900,
-        special_effect_id=9980,
-        special_effect_id_1=9981,
-        special_effect_id_2=9982,
-        special_effect_id_3=9983,
-        special_effect_id_4=10180,
-        special_effect_id_5=10181,
-        special_effect_id_6=10182,
-        special_effect_id_7=10183,
+        special_effect=9980,
+        special_effect_1=9981,
+        special_effect_2=9982,
+        special_effect_3=9983,
+        special_effect_4=10180,
+        special_effect_5=10181,
+        special_effect_6=10182,
+        special_effect_7=10183,
     )
-    Event_15105940(0, value=0, value_1=20, special_effect_id=10200, special_effect_id_1=10400)
-    Event_15105940(1, value=20, value_1=30, special_effect_id=10205, special_effect_id_1=10405)
-    Event_15105940(2, value=30, value_1=40, special_effect_id=10210, special_effect_id_1=10410)
-    Event_15105940(3, value=40, value_1=50, special_effect_id=10215, special_effect_id_1=10415)
-    Event_15105940(4, value=50, value_1=60, special_effect_id=10220, special_effect_id_1=10420)
-    Event_15105940(5, value=60, value_1=70, special_effect_id=10225, special_effect_id_1=10425)
-    Event_15105940(6, value=70, value_1=80, special_effect_id=10230, special_effect_id_1=10430)
-    Event_15105940(7, value=80, value_1=90, special_effect_id=10235, special_effect_id_1=10435)
-    Event_15105940(8, value=90, value_1=100, special_effect_id=10240, special_effect_id_1=10440)
-    Event_15105940(9, value=100, value_1=120, special_effect_id=10245, special_effect_id_1=10445)
-    Event_15105940(10, value=120, value_1=150, special_effect_id=10250, special_effect_id_1=10450)
-    Event_15105940(11, value=150, value_1=180, special_effect_id=10255, special_effect_id_1=10455)
-    Event_15105940(12, value=180, value_1=230, special_effect_id=10260, special_effect_id_1=10460)
-    Event_15105940(13, value=230, value_1=280, special_effect_id=10265, special_effect_id_1=10465)
-    Event_15105940(14, value=280, value_1=350, special_effect_id=10270, special_effect_id_1=10470)
-    Event_15105940(15, value=350, value_1=450, special_effect_id=10275, special_effect_id_1=10475)
-    Event_15105940(16, value=450, value_1=600, special_effect_id=10280, special_effect_id_1=10480)
-    Event_15105940(17, value=600, value_1=750, special_effect_id=10285, special_effect_id_1=10485)
-    Event_15105940(18, value=750, value_1=900, special_effect_id=10290, special_effect_id_1=10490)
-    Event_15105960(0, value=0, value_1=20, special_effect_id=10200, special_effect_id_1=10400, flag=15100724)
-    Event_15105960(1, value=20, value_1=30, special_effect_id=10205, special_effect_id_1=10405, flag=15100724)
-    Event_15105960(2, value=30, value_1=40, special_effect_id=10210, special_effect_id_1=10410, flag=15100724)
-    Event_15105960(3, value=40, value_1=50, special_effect_id=10215, special_effect_id_1=10415, flag=15100724)
-    Event_15105960(4, value=50, value_1=60, special_effect_id=10220, special_effect_id_1=10420, flag=15100724)
-    Event_15105960(5, value=60, value_1=70, special_effect_id=10225, special_effect_id_1=10425, flag=15100724)
-    Event_15105960(6, value=70, value_1=80, special_effect_id=10230, special_effect_id_1=10430, flag=15100724)
-    Event_15105960(7, value=80, value_1=90, special_effect_id=10235, special_effect_id_1=10435, flag=15100724)
-    Event_15105960(8, value=90, value_1=100, special_effect_id=10240, special_effect_id_1=10440, flag=15100724)
-    Event_15105960(9, value=100, value_1=120, special_effect_id=10245, special_effect_id_1=10445, flag=15100724)
-    Event_15105960(10, value=120, value_1=150, special_effect_id=10250, special_effect_id_1=10450, flag=15100724)
-    Event_15105960(11, value=150, value_1=180, special_effect_id=10255, special_effect_id_1=10455, flag=15100724)
-    Event_15105960(12, value=180, value_1=230, special_effect_id=10260, special_effect_id_1=10460, flag=15100724)
-    Event_15105960(13, value=230, value_1=280, special_effect_id=10265, special_effect_id_1=10465, flag=15100724)
-    Event_15105960(14, value=280, value_1=350, special_effect_id=10270, special_effect_id_1=10470, flag=15100724)
-    Event_15105960(15, value=350, value_1=450, special_effect_id=10275, special_effect_id_1=10475, flag=15100724)
-    Event_15105960(16, value=450, value_1=600, special_effect_id=10280, special_effect_id_1=10480, flag=15100724)
-    Event_15105960(17, value=600, value_1=750, special_effect_id=10285, special_effect_id_1=10485, flag=15100724)
-    Event_15105960(18, value=750, value_1=900, special_effect_id=10290, special_effect_id_1=10490, flag=15100724)
+    Event_15105940(0, value=0, value_1=20, special_effect=10200, special_effect_1=10400)
+    Event_15105940(1, value=20, value_1=30, special_effect=10205, special_effect_1=10405)
+    Event_15105940(2, value=30, value_1=40, special_effect=10210, special_effect_1=10410)
+    Event_15105940(3, value=40, value_1=50, special_effect=10215, special_effect_1=10415)
+    Event_15105940(4, value=50, value_1=60, special_effect=10220, special_effect_1=10420)
+    Event_15105940(5, value=60, value_1=70, special_effect=10225, special_effect_1=10425)
+    Event_15105940(6, value=70, value_1=80, special_effect=10230, special_effect_1=10430)
+    Event_15105940(7, value=80, value_1=90, special_effect=10235, special_effect_1=10435)
+    Event_15105940(8, value=90, value_1=100, special_effect=10240, special_effect_1=10440)
+    Event_15105940(9, value=100, value_1=120, special_effect=10245, special_effect_1=10445)
+    Event_15105940(10, value=120, value_1=150, special_effect=10250, special_effect_1=10450)
+    Event_15105940(11, value=150, value_1=180, special_effect=10255, special_effect_1=10455)
+    Event_15105940(12, value=180, value_1=230, special_effect=10260, special_effect_1=10460)
+    Event_15105940(13, value=230, value_1=280, special_effect=10265, special_effect_1=10465)
+    Event_15105940(14, value=280, value_1=350, special_effect=10270, special_effect_1=10470)
+    Event_15105940(15, value=350, value_1=450, special_effect=10275, special_effect_1=10475)
+    Event_15105940(16, value=450, value_1=600, special_effect=10280, special_effect_1=10480)
+    Event_15105940(17, value=600, value_1=750, special_effect=10285, special_effect_1=10485)
+    Event_15105940(18, value=750, value_1=900, special_effect=10290, special_effect_1=10490)
+    Event_15105960(0, value=0, value_1=20, special_effect=10200, special_effect_1=10400, flag=15100724)
+    Event_15105960(1, value=20, value_1=30, special_effect=10205, special_effect_1=10405, flag=15100724)
+    Event_15105960(2, value=30, value_1=40, special_effect=10210, special_effect_1=10410, flag=15100724)
+    Event_15105960(3, value=40, value_1=50, special_effect=10215, special_effect_1=10415, flag=15100724)
+    Event_15105960(4, value=50, value_1=60, special_effect=10220, special_effect_1=10420, flag=15100724)
+    Event_15105960(5, value=60, value_1=70, special_effect=10225, special_effect_1=10425, flag=15100724)
+    Event_15105960(6, value=70, value_1=80, special_effect=10230, special_effect_1=10430, flag=15100724)
+    Event_15105960(7, value=80, value_1=90, special_effect=10235, special_effect_1=10435, flag=15100724)
+    Event_15105960(8, value=90, value_1=100, special_effect=10240, special_effect_1=10440, flag=15100724)
+    Event_15105960(9, value=100, value_1=120, special_effect=10245, special_effect_1=10445, flag=15100724)
+    Event_15105960(10, value=120, value_1=150, special_effect=10250, special_effect_1=10450, flag=15100724)
+    Event_15105960(11, value=150, value_1=180, special_effect=10255, special_effect_1=10455, flag=15100724)
+    Event_15105960(12, value=180, value_1=230, special_effect=10260, special_effect_1=10460, flag=15100724)
+    Event_15105960(13, value=230, value_1=280, special_effect=10265, special_effect_1=10465, flag=15100724)
+    Event_15105960(14, value=280, value_1=350, special_effect=10270, special_effect_1=10470, flag=15100724)
+    Event_15105960(15, value=350, value_1=450, special_effect=10275, special_effect_1=10475, flag=15100724)
+    Event_15105960(16, value=450, value_1=600, special_effect=10280, special_effect_1=10480, flag=15100724)
+    Event_15105960(17, value=600, value_1=750, special_effect=10285, special_effect_1=10485, flag=15100724)
+    Event_15105960(18, value=750, value_1=900, special_effect=10290, special_effect_1=10490, flag=15100724)
     Event_15105820()
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -362,7 +362,7 @@ def Constructor():
     Event_15105350(
         0,
         flag=15105355,
-        special_effect_id=16443,
+        special_effect=16443,
         seconds=0.0,
         region=5102309,
         region_1=0,
@@ -372,7 +372,7 @@ def Constructor():
     Event_15105350(
         1,
         flag=15105356,
-        special_effect_id=16444,
+        special_effect=16444,
         seconds=0.0,
         region=5102325,
         region_1=5102326,
@@ -382,7 +382,7 @@ def Constructor():
     Event_15105350(
         2,
         flag=15105357,
-        special_effect_id=16443,
+        special_effect=16443,
         seconds=0.0,
         region=5102309,
         region_1=0,
@@ -392,7 +392,7 @@ def Constructor():
     Event_15105350(
         4,
         flag=15105358,
-        special_effect_id=16444,
+        special_effect=16444,
         seconds=0.0,
         region=5102325,
         region_1=5102326,
@@ -402,7 +402,7 @@ def Constructor():
     Event_15105340(
         0,
         character=5100300,
-        special_effect_id=16288,
+        special_effect=16288,
         radius=150.0,
         region=5102305,
         region_1=5102306,
@@ -413,7 +413,7 @@ def Constructor():
     Event_15105340(
         1,
         character=5100310,
-        special_effect_id=16403,
+        special_effect=16403,
         radius=250.0,
         region=5102315,
         region_1=0,
@@ -424,7 +424,7 @@ def Constructor():
     Event_15105340(
         2,
         character=5100320,
-        special_effect_id=16413,
+        special_effect=16413,
         radius=50.0,
         region=5102325,
         region_1=5102326,
@@ -1658,70 +1658,16 @@ def Event_15105283(_, character: int, character_1: int, spawner: int, destinatio
 @ContinueOnRest(15105300)
 def Event_15105300():
     """Event 15105300"""
-    Event_15105315(
-        0,
-        character__region=5100300,
-        character=5100301,
-        special_effect__special_effect_id=16280,
-        special_effect=16288,
-    )
-    Event_15105320(
-        1,
-        character=5100300,
-        character_1=5100301,
-        special_effect__special_effect_id=16282,
-        special_effect=16280,
-    )
-    Event_15105320(
-        2,
-        character=5100300,
-        character_1=5100301,
-        special_effect__special_effect_id=16283,
-        special_effect=16280,
-    )
-    Event_15105320(4, character=5100300, character_1=5100301, special_effect__special_effect_id=16285, special_effect=0)
-    Event_15105315(
-        1,
-        character__region=5100310,
-        character=5100311,
-        special_effect__special_effect_id=16400,
-        special_effect=16403,
-    )
-    Event_15105320(
-        6,
-        character=5100310,
-        character_1=5100311,
-        special_effect__special_effect_id=16282,
-        special_effect=16400,
-    )
-    Event_15105320(
-        7,
-        character=5100310,
-        character_1=5100311,
-        special_effect__special_effect_id=16283,
-        special_effect=16400,
-    )
-    Event_15105315(
-        2,
-        character__region=5100320,
-        character=5100321,
-        special_effect__special_effect_id=16410,
-        special_effect=16413,
-    )
-    Event_15105320(
-        11,
-        character=5100320,
-        character_1=5100321,
-        special_effect__special_effect_id=16282,
-        special_effect=16410,
-    )
-    Event_15105320(
-        12,
-        character=5100320,
-        character_1=5100321,
-        special_effect__special_effect_id=16283,
-        special_effect=16410,
-    )
+    Event_15105315(0, character=5100300, character_1=5100301, special_effect=16280, special_effect_1=16288)
+    Event_15105320(1, character=5100300, character_1=5100301, special_effect=16282, special_effect_1=16280)
+    Event_15105320(2, character=5100300, character_1=5100301, special_effect=16283, special_effect_1=16280)
+    Event_15105320(4, character=5100300, character_1=5100301, special_effect=16285, special_effect_1=0)
+    Event_15105315(1, character=5100310, character_1=5100311, special_effect=16400, special_effect_1=16403)
+    Event_15105320(6, character=5100310, character_1=5100311, special_effect=16282, special_effect_1=16400)
+    Event_15105320(7, character=5100310, character_1=5100311, special_effect=16283, special_effect_1=16400)
+    Event_15105315(2, character=5100320, character_1=5100321, special_effect=16410, special_effect_1=16413)
+    Event_15105320(11, character=5100320, character_1=5100321, special_effect=16282, special_effect_1=16410)
+    Event_15105320(12, character=5100320, character_1=5100321, special_effect=16283, special_effect_1=16410)
 
 
 @RestartOnRest(15105301)
@@ -1811,7 +1757,7 @@ def Event_15105305():
 
 
 @RestartOnRest(15105306)
-def Event_15105306(_, character: int, special_effect_id: int, region: int, region_1: int, region_2: int, region_3: int):
+def Event_15105306(_, character: int, special_effect: int, region: int, region_1: int, region_2: int, region_3: int):
     """Event 15105306"""
     AND_1.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -1842,7 +1788,7 @@ def Event_15105306(_, character: int, special_effect_id: int, region: int, regio
         AND_4.Add(AllPlayersOutsideRegion(region=region_3))
     if AND_4:
         return RESTART
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Wait(5.0)
     Restart()
 
@@ -1903,15 +1849,9 @@ def Event_15105310(_, character: int, character_1: int):
 
 
 @RestartOnRest(15105315)
-def Event_15105315(
-    _,
-    character__region: int,
-    character: int,
-    special_effect__special_effect_id: int,
-    special_effect: int,
-):
+def Event_15105315(_, character: int, character_1: int, special_effect: int, special_effect_1: int):
     """Event 15105315"""
-    RemoveSpecialEffect(PLAYER, special_effect__special_effect_id)
+    RemoveSpecialEffect(PLAYER, special_effect)
     AND_8.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_8.Add(CharacterHasSpecialEffect(PLAYER, 3710))
     OR_8.Add(AND_8)
@@ -1919,25 +1859,25 @@ def Event_15105315(
     OR_8.Add(CharacterHollow(PLAYER))
     OR_8.Add(CharacterWhitePhantom(PLAYER))
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, 16443))
-    AND_1.Add(CharacterHasSpecialEffect(character, 16450))
-    AND_1.Add(CharacterAlive(character__region))
+    AND_1.Add(CharacterHasSpecialEffect(character_1, 16450))
+    AND_1.Add(CharacterAlive(character))
     OR_1.Add(AND_1)
-    OR_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect__special_effect_id))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
     AND_2.Add(OR_1)
-    AND_3.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
+    AND_3.Add(CharacterHasSpecialEffect(PLAYER, special_effect_1))
     AND_3.Add(CharacterHasSpecialEffect(PLAYER, 16444))
     OR_3.Add(AND_3)
-    OR_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, special_effect))
+    OR_3.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, special_effect_1))
     AND_9.Add(AND_2)
     AND_9.Add(OR_3)
     AND_9.Add(OR_8)
     
     MAIN.Await(AND_9)
     
-    SetCharacterEventTarget(character, region=character__region)
+    SetCharacterEventTarget(character_1, entity=character)
     GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_1)
     Move(
-        character,
+        character_1,
         destination=PLAYER,
         destination_type=CoordEntityType.Character,
         model_point=260,
@@ -1949,30 +1889,30 @@ def Event_15105315(
     # --- Label 0 --- #
     DefineLabel(0)
     Move(
-        character,
-        destination=character__region,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=260,
-        copy_draw_parent=character__region,
+        copy_draw_parent=character,
     )
     WaitFrames(frames=1)
-    AddSpecialEffect(character, 16451)
+    AddSpecialEffect(character_1, 16451)
     Wait(7.0)
-    AddSpecialEffect(character__region, 16434)
+    AddSpecialEffect(character, 16434)
     Restart()
 
 
 @RestartOnRest(15105320)
-def Event_15105320(_, character: int, character_1: int, special_effect__special_effect_id: int, special_effect: int):
+def Event_15105320(_, character: int, character_1: int, special_effect: int, special_effect_1: int):
     """Event 15105320"""
-    RemoveSpecialEffect(character_1, special_effect__special_effect_id)
-    if ValueNotEqual(left=special_effect, right=0):
-        AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
-    AND_1.Add(CharacterHasSpecialEffect(character, special_effect__special_effect_id))
+    RemoveSpecialEffect(character_1, special_effect)
+    if ValueNotEqual(left=special_effect_1, right=0):
+        AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect_1))
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character_1, special_effect__special_effect_id)
+    AddSpecialEffect(character_1, special_effect)
     Wait(1.2000000476837158)
     Restart()
 
@@ -1981,7 +1921,7 @@ def Event_15105320(_, character: int, character_1: int, special_effect__special_
 def Event_15105340(
     _,
     character: int,
-    special_effect_id: int,
+    special_effect: int,
     radius: float,
     region: int,
     region_1: int,
@@ -2006,7 +1946,7 @@ def Event_15105340(
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect)
     Wait(1.600000023841858)
     Restart()
 
@@ -2015,7 +1955,7 @@ def Event_15105340(
 def Event_15105350(
     _,
     flag: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     region: int,
     region_1: int,
@@ -2053,7 +1993,7 @@ def Event_15105350(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect)
     AND_3.Add(CharacterOutsideRegion(character=PLAYER, region=region))
     if ValueNotEqual(left=region_1, right=0):
         AND_3.Add(CharacterOutsideRegion(character=PLAYER, region=region_1))
@@ -2770,9 +2710,9 @@ def Event_15105812():
     DefineLabel(1)
     WaitFrames(frames=1)
     RemoveSpecialEffect(5100800, 17010)
-    SetCharacterEventTarget(5100801, region=5100800)
-    SetCharacterEventTarget(5100803, region=5100800)
-    SetCharacterEventTarget(5100804, region=5100800)
+    SetCharacterEventTarget(5100801, entity=5100800)
+    SetCharacterEventTarget(5100803, entity=5100800)
+    SetCharacterEventTarget(5100804, entity=5100800)
     EnableBossHealthBar(5100800, name=45000)
     EnableAI(5100800)
     AddSpecialEffect(5100800, 9130)
@@ -2795,7 +2735,7 @@ def Event_15105813():
     MAIN.Await(AND_1)
     
     EnableFlag(15105804)
-    SetCharacterEventTarget(5100801, region=30000)
+    SetCharacterEventTarget(5100801, entity=30000)
     AddSpecialEffect(30000, 9130)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
@@ -2858,9 +2798,9 @@ def Event_15105814():
     )
     SetNetworkUpdateAuthority(5100803, authority_level=UpdateAuthority.Forced)
     if FlagDisabled(2100):
-        SetCharacterEventTarget(5100803, region=30000)
+        SetCharacterEventTarget(5100803, entity=30000)
     else:
-        SetCharacterEventTarget(5100803, region=5100800)
+        SetCharacterEventTarget(5100803, entity=5100800)
     AND_4.Add(AllyPhantomCountComparison(comparison_state=True, comparison_type=ComparisonType.Equal, value=3))
     GotoIfConditionTrue(Label.L4, input_condition=AND_4)
     AND_3.Add(AllyPhantomCountComparison(comparison_state=True, comparison_type=ComparisonType.Equal, value=2))
@@ -2933,14 +2873,14 @@ def Event_15105920(
     _,
     value: uint,
     value_1: uint,
-    special_effect_id: int,
-    special_effect_id_1: int,
-    special_effect_id_2: int,
-    special_effect_id_3: int,
-    special_effect_id_4: int,
-    special_effect_id_5: int,
-    special_effect_id_6: int,
-    special_effect_id_7: int,
+    special_effect: int,
+    special_effect_1: int,
+    special_effect_2: int,
+    special_effect_3: int,
+    special_effect_4: int,
+    special_effect_5: int,
+    special_effect_6: int,
+    special_effect_7: int,
 ):
     """Event 15105920"""
     if FlagEnabled(15100800):
@@ -2963,41 +2903,41 @@ def Event_15105920(
     # --- Label 1 --- #
     DefineLabel(1)
     if FlagEnabled(15105808):
-        AddSpecialEffect(5100800, special_effect_id_4)
-        AddSpecialEffect(30000, special_effect_id_4)
+        AddSpecialEffect(5100800, special_effect_4)
+        AddSpecialEffect(30000, special_effect_4)
         Goto(Label.L9)
-    AddSpecialEffect(5100800, special_effect_id)
-    AddSpecialEffect(30000, special_effect_id)
+    AddSpecialEffect(5100800, special_effect)
+    AddSpecialEffect(30000, special_effect)
     Goto(Label.L9)
 
     # --- Label 2 --- #
     DefineLabel(2)
     if FlagEnabled(15105808):
-        AddSpecialEffect(5100800, special_effect_id_5)
-        AddSpecialEffect(30000, special_effect_id_5)
+        AddSpecialEffect(5100800, special_effect_5)
+        AddSpecialEffect(30000, special_effect_5)
         Goto(Label.L9)
-    AddSpecialEffect(5100800, special_effect_id_1)
-    AddSpecialEffect(30000, special_effect_id_1)
+    AddSpecialEffect(5100800, special_effect_1)
+    AddSpecialEffect(30000, special_effect_1)
     Goto(Label.L9)
 
     # --- Label 3 --- #
     DefineLabel(3)
     if FlagEnabled(15105808):
-        AddSpecialEffect(5100800, special_effect_id_6)
-        AddSpecialEffect(30000, special_effect_id_6)
+        AddSpecialEffect(5100800, special_effect_6)
+        AddSpecialEffect(30000, special_effect_6)
         Goto(Label.L9)
-    AddSpecialEffect(5100800, special_effect_id_2)
-    AddSpecialEffect(30000, special_effect_id_2)
+    AddSpecialEffect(5100800, special_effect_2)
+    AddSpecialEffect(30000, special_effect_2)
     Goto(Label.L9)
 
     # --- Label 4 --- #
     DefineLabel(4)
     if FlagEnabled(15105808):
-        AddSpecialEffect(5100800, special_effect_id_7)
-        AddSpecialEffect(30000, special_effect_id_7)
+        AddSpecialEffect(5100800, special_effect_7)
+        AddSpecialEffect(30000, special_effect_7)
         Goto(Label.L9)
-    AddSpecialEffect(5100800, special_effect_id_3)
-    AddSpecialEffect(30000, special_effect_id_3)
+    AddSpecialEffect(5100800, special_effect_3)
+    AddSpecialEffect(30000, special_effect_3)
     Goto(Label.L9)
 
     # --- Label 9 --- #
@@ -3154,7 +3094,7 @@ def Event_15105831():
 
 
 @RestartOnRest(15105940)
-def Event_15105940(_, value: uint, value_1: uint, special_effect_id: int, special_effect_id_1: int):
+def Event_15105940(_, value: uint, value_1: uint, special_effect: int, special_effect_1: int):
     """Event 15105940"""
     if FlagEnabled(15100800):
         return
@@ -3166,17 +3106,17 @@ def Event_15105940(_, value: uint, value_1: uint, special_effect_id: int, specia
     MAIN.Await(AND_1)
     
     GotoIfFlagEnabled(Label.L0, flag=15105809)
-    AddSpecialEffect(30000, special_effect_id)
+    AddSpecialEffect(30000, special_effect)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(30000, special_effect_id_1)
+    AddSpecialEffect(30000, special_effect_1)
     End()
 
 
 @RestartOnRest(15105960)
-def Event_15105960(_, value: uint, value_1: uint, special_effect_id: int, special_effect_id_1: int, flag: int):
+def Event_15105960(_, value: uint, value_1: uint, special_effect: int, special_effect_1: int, flag: int):
     """Event 15105960"""
     if FlagEnabled(15100800):
         return
@@ -3188,12 +3128,12 @@ def Event_15105960(_, value: uint, value_1: uint, special_effect_id: int, specia
     MAIN.Await(AND_1)
     
     GotoIfFlagEnabled(Label.L0, flag=flag)
-    AddSpecialEffect(5100800, special_effect_id)
+    AddSpecialEffect(5100800, special_effect)
     End()
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(5100800, special_effect_id_1)
+    AddSpecialEffect(5100800, special_effect_1)
     AddSpecialEffect(5100800, 18010)
     End()
 

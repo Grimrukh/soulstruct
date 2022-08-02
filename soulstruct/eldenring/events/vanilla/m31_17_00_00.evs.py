@@ -327,7 +327,7 @@ def Event_31172208(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31172216)
@@ -351,7 +351,7 @@ def Event_31172216(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31172218)
@@ -409,7 +409,7 @@ def Event_31172218(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):

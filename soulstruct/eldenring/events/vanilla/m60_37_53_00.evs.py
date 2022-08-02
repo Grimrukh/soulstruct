@@ -445,7 +445,7 @@ def Event_1037532400(_, character: uint, region: uint, owner_entity: uint):
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     PlaySoundEffect(region, 407008100, sound_type=SoundType.c_CharacterMotion)
     Wait(1.0)
@@ -532,7 +532,7 @@ def Event_1037532450(_, character: uint, region: uint, radius: float, seconds: f
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):

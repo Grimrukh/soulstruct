@@ -134,6 +134,6 @@ def Event_1034442200():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     TriggerAISound(ai_sound_param_id=4020, anchor_entity=1034442200, unk_8_12=1)
     End()

@@ -97,9 +97,9 @@ def Constructor():
     Event_1049382211(7, source_entity=Assets.AEG099_046_9042, seconds=5.0)
     Event_1049382211(8, source_entity=Assets.AEG099_046_9043, seconds=4.0)
     CommonFunc_90005250(0, character=Characters.DeathRiteBird, region=1049382399, seconds=0.0, animation_id=-1)
-    Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14807)
-    Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14807)
-    Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect_id=14807)
+    Event_1049382200(0, character=Characters.RayaLucariaScholar0, special_effect=14807)
+    Event_1049382200(1, character=Characters.RayaLucariaScholar1, special_effect=14807)
+    Event_1049382200(2, character=Characters.RayaLucariaScholar2, special_effect=14807)
     CommonFunc_90005250(0, character=Characters.RayaLucariaScholar0, region=1049382200, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.RayaLucariaScholar1, region=1049382200, seconds=0.0, animation_id=-1)
     CommonFunc_90005250(0, character=Characters.RayaLucariaScholar2, region=1049382200, seconds=0.0, animation_id=-1)
@@ -145,13 +145,19 @@ def Constructor():
         special_effect=11131,
         animation_id=20015,
     )
-    Event_1049382821(0, character=1049380800, character_1=1049385800, character_2=1049385801, animation_id=20016)
+    Event_1049382821(
+        0,
+        character=Characters.Commander,
+        character_1=1049385800,
+        character_2=1049385801,
+        animation_id=20016,
+    )
 
 
 @RestartOnRest(1049382200)
-def Event_1049382200(_, character: uint, special_effect_id: int):
+def Event_1049382200(_, character: uint, special_effect: int):
     """Event 1049382200"""
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1049382210)

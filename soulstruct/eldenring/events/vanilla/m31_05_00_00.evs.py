@@ -267,7 +267,7 @@ def Event_31052301():
     
     RemoveSpecialEffect(Characters.Snail1, 8081)
     RemoveSpecialEffect(Characters.Snail1, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31052800)

@@ -37,13 +37,13 @@ def Constructor():
     Event_1042392200(10, character=Characters.Wolf10, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     Event_1042392200(11, character=Characters.Wolf11, region=1042392249, owner_entity=Characters.Dummy, flag=1042392249)
     CommonFunc_90005300(0, flag=1042390310, character=Characters.Scarab, item_lot=40146, seconds=0.0, left=0)
-    Event_1042392600(0, attacked_entity=Assets.AEG099_280_9000, region=1042392600)
-    Event_1042392600(1, attacked_entity=Assets.AEG099_280_9001, region=1042392601)
-    Event_1042392600(2, attacked_entity=Assets.AEG099_280_9002, region=1042392602)
-    Event_1042392600(3, attacked_entity=Assets.AEG099_280_9003, region=1042392603)
-    Event_1042392600(4, attacked_entity=Assets.AEG099_280_9004, region=1042392604)
-    Event_1042392600(5, attacked_entity=Assets.AEG099_280_9005, region=1042392605)
-    Event_1042392600(6, attacked_entity=Assets.AEG099_280_9006, region=1042392606)
+    Event_1042392600(0, attacked_entity=1042391600, region=1042392600)
+    Event_1042392600(1, attacked_entity=1042391601, region=1042392601)
+    Event_1042392600(2, attacked_entity=1042391602, region=1042392602)
+    Event_1042392600(3, attacked_entity=1042391603, region=1042392603)
+    Event_1042392600(4, attacked_entity=1042391604, region=1042392604)
+    Event_1042392600(5, attacked_entity=1042391605, region=1042392605)
+    Event_1042392600(6, attacked_entity=1042391606, region=1042392606)
     CommonFunc_90005790(
         0,
         right=0,
@@ -171,7 +171,7 @@ def Event_1042392200(_, character: uint, region: uint, owner_entity: uint, flag:
     MAIN.Await(OR_2)
     
     EnableFlag(flag)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     PlaySoundEffect(region, 407008100, sound_type=SoundType.c_CharacterMotion)
     Wait(1.0)

@@ -171,10 +171,10 @@ def Constructor():
     Event_9905(3, special_effect=4688)
     SkipLinesIfHost(1)
     AddSpecialEffect(PLAYER, 9110)
-    Event_9030(0, special_effect=6100, special_effect_id=180010)
-    Event_9030(1, special_effect=6110, special_effect_id=180000)
-    Event_9030(2, special_effect=6120, special_effect_id=180020)
-    Event_9035(0, special_effect=6142, special_effect_id=180040)
+    Event_9030(0, special_effect=6100, special_effect_1=180010)
+    Event_9030(1, special_effect=6110, special_effect_1=180000)
+    Event_9030(2, special_effect=6120, special_effect_1=180020)
+    Event_9035(0, special_effect=6142, special_effect_1=180040)
     AND_1.Add(PlayerHasGood(6302))
     SkipLinesIfConditionFalse(1, AND_1)
     EnableFlag(70009200)
@@ -1296,22 +1296,22 @@ def Event_7600(_, obj: int, vfx_id: int):
 
 
 @ContinueOnRest(9030)
-def Event_9030(_, special_effect: int, special_effect_id: int):
+def Event_9030(_, special_effect: int, special_effect_1: int):
     """Event 9030"""
     DisableNetworkSync()
     
     MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
     
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect_1)
     
     MAIN.Await(CharacterDoesNotHaveSpecialEffect(PLAYER, special_effect))
     
-    RemoveSpecialEffect(PLAYER, special_effect_id)
+    RemoveSpecialEffect(PLAYER, special_effect_1)
     Restart()
 
 
 @ContinueOnRest(9035)
-def Event_9035(_, special_effect: int, special_effect_id: int):
+def Event_9035(_, special_effect: int, special_effect_1: int):
     """Event 9035"""
     DisableNetworkSync()
     AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
@@ -1319,13 +1319,13 @@ def Event_9035(_, special_effect: int, special_effect_id: int):
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect_1)
     AND_2.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
     AND_2.Add(CharacterWhitePhantom(PLAYER))
     
     MAIN.Await(not AND_2)
     
-    RemoveSpecialEffect(PLAYER, special_effect_id)
+    RemoveSpecialEffect(PLAYER, special_effect_1)
     Restart()
 
 

@@ -48,7 +48,7 @@ def Constructor():
         flag=31018600,
         character=Characters.WanderingNoble,
         entity=Assets.AEG099_374_9000,
-        special_effect_id=4470,
+        special_effect=4470,
         destination=1044342620,
         region=1044342621,
         flag_1=1044342620,
@@ -268,7 +268,7 @@ def Event_1044342300(_, character: uint, asset: uint, region: uint):
     
     MAIN.Await(OR_3)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     CreateTemporaryVFX(vfx_id=641012, anchor_entity=character, model_point=900, anchor_type=CoordEntityType.Character)
     Wait(0.5)

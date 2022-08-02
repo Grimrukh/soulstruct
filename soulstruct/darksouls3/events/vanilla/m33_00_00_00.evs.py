@@ -154,7 +154,7 @@ def Constructor():
         character=3300477,
         character_1=3300479,
         special_effect=12142,
-        special_effect_id=12141,
+        special_effect_1=12141,
         ai_param_id=221002,
     )
     Event_13305211(
@@ -162,7 +162,7 @@ def Constructor():
         character=3300477,
         character_1=3305477,
         special_effect=12144,
-        special_effect_id=12141,
+        special_effect_1=12141,
         ai_param_id=221002,
     )
     Event_13305211(
@@ -170,7 +170,7 @@ def Constructor():
         character=3300477,
         character_1=3305478,
         special_effect=12144,
-        special_effect_id=12141,
+        special_effect_1=12141,
         ai_param_id=221012,
     )
     Event_13305211(
@@ -178,7 +178,7 @@ def Constructor():
         character=3300484,
         character_1=3305484,
         special_effect=12144,
-        special_effect_id=12141,
+        special_effect_1=12141,
         ai_param_id=221002,
     )
     Event_13305211(
@@ -186,7 +186,7 @@ def Constructor():
         character=3300484,
         character_1=3305485,
         special_effect=12144,
-        special_effect_id=12141,
+        special_effect_1=12141,
         ai_param_id=221012,
     )
     CommonFunc_20005350(0, character=3300494, item_lot=31200110, flag=53300995)
@@ -1803,7 +1803,7 @@ def Event_13305210():
 
 
 @RestartOnRest(13305211)
-def Event_13305211(_, character: int, character_1: int, special_effect: int, special_effect_id: int, ai_param_id: int):
+def Event_13305211(_, character: int, character_1: int, special_effect: int, special_effect_1: int, ai_param_id: int):
     """Event 13305211"""
     GotoIfThisEventSlotFlagEnabled(Label.L0)
     OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
@@ -1815,7 +1815,7 @@ def Event_13305211(_, character: int, character_1: int, special_effect: int, spe
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AddSpecialEffect(character_1, special_effect_id)
+    AddSpecialEffect(character_1, special_effect_1)
     if ValueEqual(left=ai_param_id, right=0):
         return
     SetAIParamID(character_1, ai_param_id=ai_param_id)

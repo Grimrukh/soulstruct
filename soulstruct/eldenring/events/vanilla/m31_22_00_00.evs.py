@@ -89,7 +89,7 @@ def Event_31222300():
     MAIN.Await(AND_1)
     
     EnableSpawner(entity=31223300)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222301)
@@ -133,7 +133,7 @@ def Event_31222303():
     MAIN.Await(OR_5)
     
     EnableSpawner(entity=31223303)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222304)
@@ -156,7 +156,7 @@ def Event_31222304():
     
     ForceAnimation(Characters.Snail3, 3002, wait_for_completion=True)
     EnableSpawner(entity=31223302)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222305)
@@ -172,7 +172,7 @@ def Event_31222305():
     
     ForceAnimation(Characters.Snail4, 3002, wait_for_completion=True)
     EnableSpawner(entity=31223304)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222306)
@@ -188,7 +188,7 @@ def Event_31222306():
     
     ForceAnimation(Characters.Snail0, 3002, wait_for_completion=True)
     EnableSpawner(entity=31223305)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222311)
@@ -203,7 +203,7 @@ def Event_31222311():
     MAIN.Await(OR_5)
     
     DisableSpawner(entity=31223300)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222312)
@@ -224,7 +224,7 @@ def Event_31222312():
     Kill(Characters.InabaDiscipleofOkina2, award_runes=True)
     Kill(Characters.WolfPackLeader9, award_runes=True)
     DisableSpawner(entity=31223300)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222317)
@@ -244,7 +244,7 @@ def Event_31222317():
     Kill(Characters.InabaDiscipleofOkina1, award_runes=True)
     Kill(Characters.WolfPackLeader8, award_runes=True)
     DisableSpawner(entity=31223304)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222314)
@@ -259,7 +259,7 @@ def Event_31222314():
     MAIN.Await(OR_5)
     
     DisableSpawner(entity=31223303)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222313)
@@ -275,7 +275,7 @@ def Event_31222313():
     Kill(Characters.Wolf1, award_runes=True)
     Kill(Characters.WolfPackLeader0, award_runes=True)
     DisableSpawner(entity=31223303)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222315)
@@ -290,7 +290,7 @@ def Event_31222315():
     MAIN.Await(OR_5)
     
     DisableSpawner(entity=31223303)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222316)
@@ -306,7 +306,7 @@ def Event_31222316():
     Kill(Characters.WolfPackLeader3, award_runes=True)
     Kill(Characters.WolfPackLeader4, award_runes=True)
     DisableSpawner(entity=31223301)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222330)
@@ -320,7 +320,7 @@ def Event_31222330():
     
     Kill(Characters.InabaDiscipleofOkina0, award_runes=True)
     DisableSpawner(entity=31223302)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222340)
@@ -335,7 +335,7 @@ def Event_31222340(_, entity: uint, flag: uint, seconds: float):
     
     Wait(seconds)
     ForceAnimation(entity, 60502)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31222500)

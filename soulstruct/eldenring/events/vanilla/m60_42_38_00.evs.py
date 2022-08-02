@@ -233,7 +233,7 @@ def Event_1042382340(_, character: uint, region: uint, seconds: float, animation
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
@@ -300,7 +300,7 @@ def Event_1042382350():
     
     MAIN.Await(OR_4)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.Troll1, state=True)
     ForceAnimation(Characters.Troll1, 20016, wait_for_completion=True)
     ChangePatrolBehavior(Characters.Troll1, patrol_information_id=1042383350)

@@ -324,8 +324,8 @@ def Constructor():
     Event_12704815(1, character=2700811, character__set_draw_parent=2700800, model_point=61)
     Event_12704815(3, character=2700813, character__set_draw_parent=2700801, model_point=61)
     Event_12704815(4, character=2700814, character__set_draw_parent=2700802, model_point=60)
-    Event_12704825(0, character=2700801, special_effect_id=5536)
-    Event_12704825(1, character=2700802, special_effect_id=5537)
+    Event_12704825(0, character=2700801, special_effect=5536)
+    Event_12704825(1, character=2700802, special_effect=5537)
     Event_12704830(0, character=2700803, entity=2705001, event_slot=0)
     Event_12704830(1, character=2700804, entity=2705002, event_slot=1)
     Event_12704830(2, character=2700805, entity=2705003, event_slot=2)
@@ -540,7 +540,7 @@ def Constructor():
         npc_part_id_1=2790,
         part_index=8,
         animation_id=7000,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705700,
         flag_1=12705760,
         character=2700750,
@@ -551,7 +551,7 @@ def Constructor():
         npc_part_id_1=2791,
         part_index=9,
         animation_id=7022,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705700,
         flag_1=12705760,
         character=2700750,
@@ -562,7 +562,7 @@ def Constructor():
         npc_part_id_1=2792,
         part_index=10,
         animation_id=7023,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705700,
         flag_1=12705760,
         character=2700750,
@@ -573,7 +573,7 @@ def Constructor():
         npc_part_id_1=2790,
         part_index=8,
         animation_id=7000,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705701,
         flag_1=12705761,
         character=2700751,
@@ -584,7 +584,7 @@ def Constructor():
         npc_part_id_1=2791,
         part_index=9,
         animation_id=7022,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705701,
         flag_1=12705761,
         character=2700751,
@@ -595,7 +595,7 @@ def Constructor():
         npc_part_id_1=2792,
         part_index=10,
         animation_id=7023,
-        special_effect_id=5907,
+        special_effect=5907,
         flag=12705701,
         flag_1=12705761,
         character=2700751,
@@ -1305,17 +1305,17 @@ def Event_12704815(_, character: int, character__set_draw_parent: int, model_poi
 
 
 @RestartOnRest(12704825)
-def Event_12704825(_, character: int, special_effect_id: int):
+def Event_12704825(_, character: int, special_effect: int):
     """Event 12704825"""
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=40))
     
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     OR_1.Add(FramesElapsed(frames=70))
     OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
     
     MAIN.Await(OR_1)
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Restart()
 
 
@@ -3153,7 +3153,7 @@ def Event_12705600(
     npc_part_id_1: int,
     part_index: short,
     animation_id: int,
-    special_effect_id: int,
+    special_effect: int,
     flag: int,
     flag_1: int,
     character: int,
@@ -3182,14 +3182,14 @@ def Event_12705600(
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=400))
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     DisableFlag(flag_1)
     
     MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
     
     SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
     SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     AICommand(character, command_id=-1, command_slot=0)
     ReplanAI(character)
     WaitFrames(frames=10)

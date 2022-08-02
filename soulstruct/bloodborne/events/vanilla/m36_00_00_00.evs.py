@@ -963,9 +963,9 @@ def Constructor():
     Event_13605799()
     Event_13605720(0, character=3600206)
     Event_13605720(1, character=3600314)
-    Event_13605740(0, character=3600215, region=3602215, region_1=3600720, radius=2.0)
-    Event_13605740(1, character=3600219, region=3602218, region_1=3600721, radius=2.0)
-    Event_13605740(2, character=3600250, region=3602250, region_1=3600722, radius=2.0)
+    Event_13605740(0, character=3600215, region=3602215, entity=3600720, radius=2.0)
+    Event_13605740(1, character=3600219, region=3602218, entity=3600721, radius=2.0)
+    Event_13605740(2, character=3600250, region=3602250, entity=3600722, radius=2.0)
     Event_13605750()
     Event_13605751()
     Event_13605752()
@@ -2684,7 +2684,7 @@ def Event_13605730():
 
 
 @RestartOnRest(13605740)
-def Event_13605740(_, character: int, region: int, region_1: int, radius: float):
+def Event_13605740(_, character: int, region: int, entity: int, radius: float):
     """Event 13605740"""
     if ThisEventFlagEnabled():
         return
@@ -2701,7 +2701,7 @@ def Event_13605740(_, character: int, region: int, region_1: int, radius: float)
     MAIN.Await(AND_1)
     
     SkipLinesIfFinishedConditionTrue(2, input_condition=AND_3)
-    SetCharacterEventTarget(character, region=region_1)
+    SetCharacterEventTarget(character, entity=entity)
     AICommand(character, command_id=100, command_slot=0)
     EnableAI(character)
     WaitFrames(frames=60)

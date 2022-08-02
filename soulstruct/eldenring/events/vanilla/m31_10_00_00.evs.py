@@ -96,7 +96,7 @@ def Event_31102200(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31102250)
@@ -154,7 +154,7 @@ def Event_31102250(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -188,7 +188,7 @@ def Event_31102255(_, character: uint, patrol_information_id: uint):
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     ClearTargetList(character)
     WaitFrames(frames=10)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)

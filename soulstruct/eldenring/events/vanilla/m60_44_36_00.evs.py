@@ -112,7 +112,7 @@ def Preconstructor():
 @ContinueOnRest(200)
 def Event_200():
     """Event 200"""
-    CommonFunc_90005421(0, character=1044360300, asset=Assets.AEG100_101_9000, flag=1044368301)
+    CommonFunc_90005421(0, character=Characters.CaravanDummy, asset=Assets.AEG100_101_9000, flag=1044368301)
     CommonFunc_90005422(0, flag=1044368301, asset=Assets.AEG100_100_9000, obj_act_id=1044363301)
     CommonFunc_90005424(
         0,

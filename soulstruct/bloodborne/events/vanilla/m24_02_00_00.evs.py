@@ -158,8 +158,8 @@ def Constructor():
         npc_part_id_1=2420,
         part_index=5,
         part_health=200,
-        special_effect_id=480,
-        special_effect_id_1=490,
+        special_effect=480,
+        special_effect_1=490,
         animation_id=8040,
     )
     Event_12424871(
@@ -168,8 +168,8 @@ def Constructor():
         npc_part_id_1=2421,
         part_index=1,
         part_health=200,
-        special_effect_id=481,
-        special_effect_id_1=491,
+        special_effect=481,
+        special_effect_1=491,
         animation_id=8010,
     )
     Event_12424871(
@@ -178,8 +178,8 @@ def Constructor():
         npc_part_id_1=2422,
         part_index=2,
         part_health=200,
-        special_effect_id=482,
-        special_effect_id_1=492,
+        special_effect=482,
+        special_effect_1=492,
         animation_id=8000,
     )
     Event_12424871(
@@ -188,8 +188,8 @@ def Constructor():
         npc_part_id_1=2423,
         part_index=3,
         part_health=200,
-        special_effect_id=483,
-        special_effect_id_1=493,
+        special_effect=483,
+        special_effect_1=493,
         animation_id=8030,
     )
     Event_12424871(
@@ -198,8 +198,8 @@ def Constructor():
         npc_part_id_1=2424,
         part_index=4,
         part_health=200,
-        special_effect_id=484,
-        special_effect_id_1=494,
+        special_effect=484,
+        special_effect_1=494,
         animation_id=8020,
     )
     Event_12424712()
@@ -738,8 +738,8 @@ def Event_12424870(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12424870"""
@@ -769,15 +769,15 @@ def Event_12424870(
     SetNPCPartEffects(2420800, npc_part_id=npc_part_id_1, material_sfx_id=75, material_vfx_id=75)
     ResetAnimation(2420800)
     ForceAnimation(2420800, animation_id)
-    AddSpecialEffect(2420800, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2420800, special_effect_id_1)
+    AddSpecialEffect(2420800, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2420800, special_effect_1)
     ReplanAI(2420800)
     
     MAIN.Await(CharacterHasTAEEvent(2420800, tae_event_id=100))
     
     SetNPCPartHealth(2420800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(2420800, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2420800, special_effect_id)
+    AddSpecialEffect(2420800, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2420800, special_effect)
     AICommand(2420800, command_id=-1, command_slot=0)
     ReplanAI(2420800)
     WaitFrames(frames=10)
@@ -791,8 +791,8 @@ def Event_12424871(
     npc_part_id_1: int,
     part_index: short,
     part_health: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
     animation_id: int,
 ):
     """Event 12424871"""
@@ -816,15 +816,15 @@ def Event_12424871(
     SetNPCPartEffects(2420800, npc_part_id=npc_part_id_1, material_sfx_id=74, material_vfx_id=74)
     ResetAnimation(2420800)
     ForceAnimation(2420800, animation_id)
-    AddSpecialEffect(2420800, special_effect_id, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2420800, special_effect_id_1)
+    AddSpecialEffect(2420800, special_effect, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2420800, special_effect_1)
     ReplanAI(2420800)
     
     MAIN.Await(CharacterHasTAEEvent(2420800, tae_event_id=100))
     
     SetNPCPartHealth(2420800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    AddSpecialEffect(2420800, special_effect_id_1, affect_npc_part_hp=True)
-    RemoveSpecialEffect(2420800, special_effect_id)
+    AddSpecialEffect(2420800, special_effect_1, affect_npc_part_hp=True)
+    RemoveSpecialEffect(2420800, special_effect)
     AICommand(2420800, command_id=-1, command_slot=0)
     ReplanAI(2420800)
     WaitFrames(frames=10)

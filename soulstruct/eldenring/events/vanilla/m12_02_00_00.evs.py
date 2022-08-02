@@ -408,7 +408,7 @@ def Constructor():
     )
     CommonFunc_90005704(0, attacked_entity=Characters.Blaidd, flag=3601, flag_1=3600, flag_2=12029151, right=3)
     CommonFunc_90005702(0, character=Characters.Blaidd, flag=3603, first_flag=3600, last_flag=3603)
-    Event_12023721(0, other_entity=Assets.AEG099_631_9000, radius=3.0, special_effect_id=9710, flag=1034509410)
+    Event_12023721(0, other_entity=Assets.AEG099_631_9000, radius=3.0, special_effect=9710, flag=1034509410)
     Event_12023710(0, character=12020700, character_1=12020701)
     CommonFunc_90005725(
         0,
@@ -913,7 +913,7 @@ def Event_12022680():
 
 
 @RestartOnRest(12022200)
-def Event_12022200(_, region: uint, character: uint, special_effect_id: int):
+def Event_12022200(_, region: uint, character: uint, special_effect: int):
     """Event 12022200"""
     if ThisEventSlotFlagEnabled():
         return
@@ -928,7 +928,7 @@ def Event_12022200(_, region: uint, character: uint, special_effect_id: int):
     
     MAIN.Await(AND_4)
     
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(12022404)
@@ -942,7 +942,7 @@ def Event_12022404():
     MAIN.Await(OR_15)
     
     ChangePatrolBehavior(12020405, patrol_information_id=12023405)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -1139,7 +1139,7 @@ def Event_12022372():
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.AncestralFollowerShaman0, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman0, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman0, 5450))
@@ -1212,7 +1212,7 @@ def Event_12022373():
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=Characters.AncestralFollowerShaman1, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman1, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(Characters.AncestralFollowerShaman1, 5450))
@@ -1526,7 +1526,7 @@ def Event_12022860():
     SkipLinesIfConditionTrue(1, AND_8)
     EnableBossHealthBar(Characters.MimicTear, name=903320000)
     EnableNetworkFlag(12022858)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(12022865)
@@ -1777,7 +1777,7 @@ def Event_12022810():
     DefineLabel(2)
     EnableAI(Characters.Gargoyle0)
     EnableBossHealthBar(Characters.Gargoyle0, name=904770000)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(12022820)
@@ -2029,7 +2029,7 @@ def Event_12023720(_, character: uint):
 
 
 @RestartOnRest(12023721)
-def Event_12023721(_, other_entity: uint, radius: float, special_effect_id: int, flag: uint):
+def Event_12023721(_, other_entity: uint, radius: float, special_effect: int, flag: uint):
     """Event 12023721"""
     DisableNetworkSync()
     if PlayerNotInOwnWorld():
@@ -2039,6 +2039,6 @@ def Event_12023721(_, other_entity: uint, radius: float, special_effect_id: int,
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(PLAYER, special_effect_id)
+    AddSpecialEffect(PLAYER, special_effect)
     Wait(3.0)
     Restart()

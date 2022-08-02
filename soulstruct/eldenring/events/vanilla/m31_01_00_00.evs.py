@@ -99,7 +99,7 @@ def Event_31012200(_, character: uint, patrol_information_id: uint):
     EnableAI(character)
     AddSpecialEffect(character, 5000)
     ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31012207)
@@ -158,7 +158,7 @@ def Event_31012207(_, character: uint, region: uint, radius: float, seconds: flo
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=OR_5)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -220,7 +220,7 @@ def Event_31012220(_, character: uint):
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     EnableAI(character)
 
 
@@ -247,7 +247,7 @@ def Event_31012230(_, character: uint):
     
     RemoveSpecialEffect(character, 8081)
     RemoveSpecialEffect(character, 8082)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(31012800)

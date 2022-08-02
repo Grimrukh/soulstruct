@@ -161,7 +161,7 @@ def Event_12042810():
     EnableAI(Characters.MalformedStar)
     SetNetworkUpdateRate(Characters.MalformedStar, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     EnableBossHealthBar(Characters.MalformedStar, name=904620001)
-    SetCharacterEventTarget(Characters.MalformedStar, region=12040810)
+    SetCharacterEventTarget(Characters.MalformedStar, entity=Characters.TalkDummy2)
 
 
 @ContinueOnRest(12042849)

@@ -697,7 +697,7 @@ def Event_12032241(_, character: uint, seconds: float):
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     Wait(seconds)
     ForceAnimation(character, 20001, loop=True)

@@ -55,16 +55,16 @@ def Constructor():
     Event_15002820(1, character=Characters.Malenia3, animation_id=3031, special_effect=18452)
     Event_15002820(2, character=Characters.Malenia4, animation_id=3032, special_effect=18453)
     Event_15002820(3, character=Characters.Malenia5, animation_id=3033, special_effect=18454)
-    Event_15002830(0, special_effect_id=18410, special_effect=18420)
-    Event_15002830(1, special_effect_id=18411, special_effect=18421)
-    Event_15002830(2, special_effect_id=18412, special_effect=18422)
-    Event_15002830(3, special_effect_id=18413, special_effect=18423)
-    Event_15002830(4, special_effect_id=18414, special_effect=18424)
-    Event_15002830(5, special_effect_id=18415, special_effect=18425)
-    Event_15002830(6, special_effect_id=18416, special_effect=18426)
-    Event_15002830(7, special_effect_id=18417, special_effect=18427)
-    Event_15002830(8, special_effect_id=18418, special_effect=18428)
-    Event_15002830(9, special_effect_id=18419, special_effect=18429)
+    Event_15002830(0, special_effect=18410, special_effect_1=18420)
+    Event_15002830(1, special_effect=18411, special_effect_1=18421)
+    Event_15002830(2, special_effect=18412, special_effect_1=18422)
+    Event_15002830(3, special_effect=18413, special_effect_1=18423)
+    Event_15002830(4, special_effect=18414, special_effect_1=18424)
+    Event_15002830(5, special_effect=18415, special_effect_1=18425)
+    Event_15002830(6, special_effect=18416, special_effect_1=18426)
+    Event_15002830(7, special_effect=18417, special_effect_1=18427)
+    Event_15002830(8, special_effect=18418, special_effect_1=18428)
+    Event_15002830(9, special_effect=18419, special_effect_1=18429)
     Event_15002848(0, special_effect=18031, locked_camera_id__normal_camera_id=2122)
     Event_15002849()
     Event_15002850()
@@ -84,7 +84,7 @@ def Constructor():
         model_point=30000,
     )
     if CeremonyActive(ceremony=20):
-        CommonFunc_90005797(0, flag=7610, character=15005706, banner_type=7, region=15002142, special_effect_id=4823)
+        CommonFunc_90005797(0, flag=7610, character=15005706, banner_type=7, region=15002142, special_effect=4823)
     Event_15002145()
     CommonFunc_90005795(
         0,
@@ -2057,17 +2057,17 @@ def Event_15002820(_, character: uint, animation_id: int, special_effect: int):
 
 
 @ContinueOnRest(15002830)
-def Event_15002830(_, special_effect_id: int, special_effect: int):
+def Event_15002830(_, special_effect: int, special_effect_1: int):
     """Event 15002830"""
     if FlagEnabled(15000800):
         return
     AND_1.Add(PlayerNotInOwnWorld())
-    AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect_1))
     
     MAIN.Await(AND_1)
     
     if PlayerInOwnWorld():
-        AddSpecialEffect(Characters.Malenia0, special_effect_id)
+        AddSpecialEffect(Characters.Malenia0, special_effect)
     Wait(0.20000000298023224)
     Restart()
 
@@ -2107,17 +2107,17 @@ def Event_15002840(_, character: uint, character_1: uint, state: uchar):
 
 
 @ContinueOnRest(15002842)
-def Event_15002842(_, character: uint, special_effect_id: int, special_effect: int):
+def Event_15002842(_, character: uint, special_effect: int, special_effect_1: int):
     """Event 15002842"""
     if FlagEnabled(15000800):
         return
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     DisableCharacter(character)
     DisableAnimations(character)
     AND_1.Add(FlagDisabled(15002803))
-    AND_1.Add(CharacterHasSpecialEffect(Characters.Malenia0, special_effect))
+    AND_1.Add(CharacterHasSpecialEffect(Characters.Malenia0, special_effect_1))
     AND_2.Add(FlagEnabled(15002803))
-    AND_2.Add(CharacterHasSpecialEffect(Characters.Malenia1, special_effect))
+    AND_2.Add(CharacterHasSpecialEffect(Characters.Malenia1, special_effect_1))
     OR_1.Add(AND_1)
     OR_1.Add(AND_2)
     

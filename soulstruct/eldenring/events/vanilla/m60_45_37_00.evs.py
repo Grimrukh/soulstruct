@@ -68,7 +68,7 @@ def Constructor():
     )
     Event_1045372344()
     CommonFunc_90005300(0, flag=1045370200, character=Characters.Scarab, item_lot=40116, seconds=0.0, left=0)
-    CommonFunc_90005400(0, character=Characters.Runebear3, special_effect_id=0, seconds=0.0, seconds_1=0.0, left=0)
+    CommonFunc_90005400(0, character=Characters.Runebear3, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=98101, character=Characters.Runebear3)
     CommonFunc_90005637(0, flag=1045378601, character=Characters.WanderingNoble, region=1045371620)
     CommonFunc_90005636(
@@ -76,7 +76,7 @@ def Constructor():
         flag=1045378601,
         character=Characters.WanderingNoble,
         entity=Assets.AEG099_374_9000,
-        special_effect_id=4470,
+        special_effect=4470,
         destination=1045372620,
         region=1045372621,
         flag_1=1045372620,
@@ -275,7 +275,7 @@ def Event_1045370711(_, character: uint, destination: uint):
     
     MAIN.Await(OR_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(0.30000001192092896)
     ForceAnimation(character, 20055)
     GotoIfPlayerNotInOwnWorld(Label.L0)

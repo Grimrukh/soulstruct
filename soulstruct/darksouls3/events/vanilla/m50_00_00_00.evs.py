@@ -65,8 +65,8 @@ def Constructor():
         flag=15005230,
         flag_1=15005215,
         character_1=5000210,
-        special_effect_id=16620,
-        special_effect_id_1=16640,
+        special_effect=16620,
+        special_effect_1=16640,
     )
     CommonFunc_20005203(
         0,
@@ -94,10 +94,10 @@ def Constructor():
         flag=15005231,
         flag_1=15005216,
         character_1=5000211,
-        special_effect_id=16621,
-        special_effect_id_1=16641,
+        special_effect=16621,
+        special_effect_1=16641,
     )
-    Event_15005240(0, character=5000201, region=5002228, special_effect_id=16255)
+    Event_15005240(0, character=5000201, region=5002228, special_effect=16255)
     Event_15005210(1, character=5000211, special_effect=16256, spawner=5004201, character_1=5000201, flag=15005216)
     Event_15005250(1, character=5000211, character_1=5000201)
     Event_15005270(1, character=5000201)
@@ -135,8 +135,8 @@ def Constructor():
         flag=15005232,
         flag_1=15005217,
         character_1=5000212,
-        special_effect_id=16622,
-        special_effect_id_1=16642,
+        special_effect=16622,
+        special_effect_1=16642,
     )
     Event_15005210(2, character=5000212, special_effect=16256, spawner=5004202, character_1=5000202, flag=15005217)
     Event_15005250(2, character=5000212, character_1=5000202)
@@ -638,15 +638,7 @@ def Constructor():
     Event_15005540(1, region=5002534, character=5000174)
     CommonFunc_20005342(0, flag=15000180, character=5000180)
     CommonFunc_20005132(0, character=5000180, radius=6.0, region=5002270)
-    Event_15005480(
-        0,
-        character=5000190,
-        radius=6.0,
-        region=5002270,
-        region_1=5000180,
-        flag=15000180,
-        character_1=5005190,
-    )
+    Event_15005480(0, character=5000190, radius=6.0, region=5002270, entity=5000180, flag=15000180, character_1=5005190)
     CommonFunc_20006002(0, character=5000700, flag=1818, first_flag=1815, last_flag=1819)
     CommonFunc_20006002(0, character=5000701, flag=1818, first_flag=1815, last_flag=1819)
     CommonFunc_20006002(0, character=5000702, flag=1818, first_flag=1815, last_flag=1819)
@@ -805,8 +797,8 @@ def Event_15005220(
     flag: int,
     flag_1: int,
     character_1: int,
-    special_effect_id: int,
-    special_effect_id_1: int,
+    special_effect: int,
+    special_effect_1: int,
 ):
     """Event 15005220"""
     SkipLinesIfClientTypeCountComparison(
@@ -829,7 +821,7 @@ def Event_15005220(
     )
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
     SetNetworkConnectedFlagState(flag=flag_1, state=FlagSetting.On)
-    AddSpecialEffect(character_1, special_effect_id)
+    AddSpecialEffect(character_1, special_effect)
     SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     AND_3.Add(CharacterAlive(character))
     AND_3.Add(PlayerInOwnWorld())
@@ -843,13 +835,13 @@ def Event_15005220(
         value=0,
     )
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.Off)
-    AddSpecialEffect(character_1, special_effect_id_1)
+    AddSpecialEffect(character_1, special_effect_1)
     SetNetworkUpdateRate(character_1, is_fixed=False, update_rate=CharacterUpdateRate.Always)
     Restart()
 
 
 @RestartOnRest(15005240)
-def Event_15005240(_, character: int, region: int, special_effect_id: int):
+def Event_15005240(_, character: int, region: int, special_effect: int):
     """Event 15005240"""
     AND_9.Add(CharacterType(PLAYER, character_type=CharacterType.BlackPhantom))
     AND_9.Add(CharacterHasSpecialEffect(PLAYER, 3710))
@@ -862,8 +854,8 @@ def Event_15005240(_, character: int, region: int, special_effect_id: int):
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character, special_effect_id)
-    SetCharacterEventTarget(character, region=PLAYER)
+    AddSpecialEffect(character, special_effect)
+    SetCharacterEventTarget(character, entity=PLAYER)
     Wait(3.0)
     Restart()
 
@@ -916,7 +908,7 @@ def Event_15005261():
     
     Wait(2.9000000953674316)
     AddSpecialEffect(5000200, 16611)
-    SetCharacterEventTarget(5000200, region=5000287)
+    SetCharacterEventTarget(5000200, entity=5000287)
     
     MAIN.Await(CharacterDead(5000287))
     
@@ -1556,7 +1548,7 @@ def Event_15005470():
 
 
 @RestartOnRest(15005480)
-def Event_15005480(_, character: int, radius: float, region: int, region_1: int, flag: int, character_1: int):
+def Event_15005480(_, character: int, radius: float, region: int, entity: int, flag: int, character_1: int):
     """Event 15005480"""
     GotoIfFlagDisabled(Label.L0, flag=flag)
     DisableAI(character)
@@ -1589,7 +1581,7 @@ def Event_15005480(_, character: int, radius: float, region: int, region_1: int,
     if ValueNotEqual(left=0, right=0):
         AddSpecialEffect(character_1, 5000)
     AICommand(character, command_id=100, command_slot=0)
-    SetCharacterEventTarget(character, region=region_1)
+    SetCharacterEventTarget(character, entity=entity)
 
 
 @RestartOnRest(15005500)
@@ -2034,8 +2026,8 @@ def Event_15005820(_, character: int, character_1: int, flag: int):
 @RestartOnRest(15005825)
 def Event_15005825(
     _,
-    character__region: int,
     character: int,
+    character_1: int,
     flag: int,
     special_effect: int,
     spawner: int,
@@ -2047,26 +2039,26 @@ def Event_15005825(
         return
     if FlagEnabled(15005803):
         return
-    DisableGravity(character)
-    AND_1.Add(CharacterHasSpecialEffect(character__region, special_effect))
+    DisableGravity(character_1)
+    AND_1.Add(CharacterHasSpecialEffect(character, special_effect))
     AND_1.Add(FlagDisabled(flag))
     
     MAIN.Await(AND_1)
     
     ForceSpawnerToSpawn(spawner=spawner)
     WaitFrames(frames=1)
-    SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    SetNetworkUpdateRate(character_1, is_fixed=True, update_rate=CharacterUpdateRate.Always)
     Move(
-        character,
-        destination=character__region,
+        character_1,
+        destination=character,
         destination_type=CoordEntityType.Character,
         model_point=model_point,
-        copy_draw_parent=character__region,
+        copy_draw_parent=character,
     )
     SetNetworkConnectedFlagState(flag=flag, state=FlagSetting.On)
-    ReplanAI(character)
+    ReplanAI(character_1)
     if ValueEqual(left=1, right=right):
-        SetCharacterEventTarget(character, region=character__region)
+        SetCharacterEventTarget(character_1, entity=character)
     WaitFrames(frames=1)
     Restart()
 
@@ -2318,8 +2310,8 @@ def Event_15005849():
     Event_15005820(4, character=5000802, character_1=5000814, flag=15005844)
     Event_15005825(
         0,
-        character__region=5000802,
-        character=5000810,
+        character=5000802,
+        character_1=5000810,
         flag=15005840,
         special_effect=15020,
         spawner=5004810,
@@ -2328,8 +2320,8 @@ def Event_15005849():
     )
     Event_15005825(
         1,
-        character__region=5000802,
-        character=5000811,
+        character=5000802,
+        character_1=5000811,
         flag=15005841,
         special_effect=15021,
         spawner=5004811,
@@ -2338,8 +2330,8 @@ def Event_15005849():
     )
     Event_15005825(
         2,
-        character__region=5000802,
-        character=5000812,
+        character=5000802,
+        character_1=5000812,
         flag=15005842,
         special_effect=15022,
         spawner=5004812,
@@ -2348,8 +2340,8 @@ def Event_15005849():
     )
     Event_15005825(
         3,
-        character__region=5000802,
-        character=5000813,
+        character=5000802,
+        character_1=5000813,
         flag=15005843,
         special_effect=15027,
         spawner=5004813,
@@ -2358,8 +2350,8 @@ def Event_15005849():
     )
     Event_15005825(
         4,
-        character__region=5000802,
-        character=5000814,
+        character=5000802,
+        character_1=5000814,
         flag=15005844,
         special_effect=15028,
         spawner=5004814,

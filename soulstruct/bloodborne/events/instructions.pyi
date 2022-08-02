@@ -4057,7 +4057,7 @@ def CreateProjectileOwner(entity: Object | Region | Character | int):
     """
 
 
-def AddSpecialEffect(character: Character | int, special_effect_id: int, affect_npc_part_hp: bool | int = False):
+def AddSpecialEffect(character: Character | int, special_effect: int, affect_npc_part_hp: bool | int = False):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one). This will
     do nothing if the character already has the special effect active (i.e. they do not stack or reset timers).
@@ -4106,7 +4106,7 @@ def DisableGravity(character: Character | int):
     """
 
 
-def SetCharacterEventTarget(character: Character | int, region: Region | int):
+def SetCharacterEventTarget(character: Character | int, entity: Object | Region | Character | int):
     """
     Likely refers to patrolling behavior.
     """
@@ -4200,7 +4200,7 @@ def ReplanAI(character: Character | int):
     """
 
 
-def RemoveSpecialEffect(character: Character | int, special_effect_id: int):
+def RemoveSpecialEffect(character: Character | int, special_effect: int):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """

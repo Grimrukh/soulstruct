@@ -47,7 +47,7 @@ def Constructor():
         npc_part_id_1=9,
         bit_index=3,
         bit_index_1=13,
-        special_effect_id=11461,
+        special_effect=11461,
         model_point=810,
         npc_part_id_2=29,
         npc_part_id_3=29,
@@ -62,7 +62,7 @@ def Constructor():
         npc_part_id_1=10,
         bit_index=2,
         bit_index_1=12,
-        special_effect_id=11462,
+        special_effect=11462,
         model_point=811,
         npc_part_id_2=30,
         npc_part_id_3=30,
@@ -77,7 +77,7 @@ def Constructor():
         npc_part_id_1=11,
         bit_index=1,
         bit_index_1=11,
-        special_effect_id=11463,
+        special_effect=11463,
         model_point=812,
         npc_part_id_2=31,
         npc_part_id_3=31,
@@ -92,7 +92,7 @@ def Constructor():
         npc_part_id_1=1,
         bit_index=8,
         bit_index_1=18,
-        special_effect_id=11464,
+        special_effect=11464,
         model_point=813,
         npc_part_id_2=21,
         npc_part_id_3=21,
@@ -107,7 +107,7 @@ def Constructor():
         npc_part_id_1=12,
         bit_index=6,
         bit_index_1=16,
-        special_effect_id=11465,
+        special_effect=11465,
         model_point=814,
         npc_part_id_2=32,
         npc_part_id_3=32,
@@ -122,7 +122,7 @@ def Constructor():
         npc_part_id_1=13,
         bit_index=4,
         bit_index_1=14,
-        special_effect_id=11466,
+        special_effect=11466,
         model_point=815,
         npc_part_id_2=33,
         npc_part_id_3=33,
@@ -137,7 +137,7 @@ def Constructor():
         npc_part_id_1=14,
         bit_index=5,
         bit_index_1=15,
-        special_effect_id=11467,
+        special_effect=11467,
         model_point=816,
         npc_part_id_2=34,
         npc_part_id_3=34,
@@ -152,7 +152,7 @@ def Constructor():
         npc_part_id_1=2,
         bit_index=7,
         bit_index_1=17,
-        special_effect_id=11460,
+        special_effect=11460,
         model_point=817,
         npc_part_id_2=22,
         npc_part_id_3=22,
@@ -2632,7 +2632,7 @@ def Event_13105825(
     npc_part_id_1: int,
     bit_index: uchar,
     bit_index_1: uchar,
-    special_effect_id: int,
+    special_effect: int,
     model_point: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
@@ -2659,7 +2659,7 @@ def Event_13105825(
     SetCollisionMask(3100800, bit_index=bit_index_2, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=bit_index, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-    AddSpecialEffect(3100800, special_effect_id)
+    AddSpecialEffect(3100800, special_effect)
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
@@ -2719,7 +2719,7 @@ def Event_13105830(
     npc_part_id_1: int,
     bit_index: uchar,
     bit_index_1: uchar,
-    special_effect_id: int,
+    special_effect: int,
     model_point: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
@@ -2751,7 +2751,7 @@ def Event_13105830(
     SetCollisionMask(3100800, bit_index=bit_index_2, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=bit_index, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-    AddSpecialEffect(3100800, special_effect_id)
+    AddSpecialEffect(3100800, special_effect)
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
@@ -2811,7 +2811,7 @@ def Event_13105835(
     npc_part_id_1: int,
     bit_index: uchar,
     bit_index_1: uchar,
-    special_effect_id: int,
+    special_effect: int,
     model_point: int,
     npc_part_id_2: short,
     npc_part_id_3: int,
@@ -2838,7 +2838,7 @@ def Event_13105835(
     SetCollisionMask(3100800, bit_index=bit_index_2, switch_type=OnOffChange.Off)
     SetDisplayMask(3100800, bit_index=bit_index, switch_type=OnOffChange.On)
     SetDisplayMask(3100800, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-    AddSpecialEffect(3100800, special_effect_id)
+    AddSpecialEffect(3100800, special_effect)
     CreateTemporaryVFX(
         vfx_id=651850,
         anchor_entity=3100800,
@@ -3923,7 +3923,7 @@ def Event_13105742(_, character: int, character_1: int):
     # --- Label 0 --- #
     DefineLabel(0)
     EnableAI(character)
-    SetCharacterEventTarget(character, region=3100831)
+    SetCharacterEventTarget(character, entity=3100831)
     DisableFlag(73100370)
     SetCharacterTalkRange(character=character, distance=50.0)
     SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)

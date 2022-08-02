@@ -59,7 +59,7 @@ def Constructor():
     )
     CommonFunc_90005872(0, character=Characters.PutridAvatar, npc_threat_level=18, right=0)
     Event_1050572320(0, character=Characters.GiantSkeletonTorso, destination=1051570320, special_effect=5030)
-    Event_1050572330(0, character=Characters.GiantSkeletonTorso, special_effect_id=5021)
+    Event_1050572330(0, character=Characters.GiantSkeletonTorso, special_effect=5021)
     Event_1050572340(0, character=Characters.GiantSkeletonTorso, region=1050572320, flag=1050572330)
     Event_1050572200(0, character=1050575200)
     Event_1050572250()
@@ -185,9 +185,9 @@ def Event_1050572320(_, character: uint, destination: uint, special_effect: int)
 
 
 @RestartOnRest(1050572330)
-def Event_1050572330(_, character: uint, special_effect_id: int):
+def Event_1050572330(_, character: uint, special_effect: int):
     """Event 1050572330"""
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1050572340)
@@ -321,7 +321,7 @@ def Event_1050572820(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))

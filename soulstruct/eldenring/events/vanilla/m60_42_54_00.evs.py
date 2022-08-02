@@ -156,7 +156,7 @@ def Event_1042542350(_, character: uint, region: uint, character_1: uint):
     
     MAIN.Await(OR_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(0.10000000149011612)
     ForceAnimation(character, 20008)
     EnableAI(character)

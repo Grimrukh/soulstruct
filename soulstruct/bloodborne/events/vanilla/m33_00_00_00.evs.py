@@ -68,7 +68,7 @@ def Constructor():
         npc_part_id=3301,
         npc_part_id_1=3301,
         part_index=4,
-        special_effect_id=482,
+        special_effect=482,
         part_health=200,
         animation_id=8020,
         body_damage_correction__damage_correction=1.0,
@@ -79,7 +79,7 @@ def Constructor():
         npc_part_id=3302,
         npc_part_id_1=3302,
         part_index=6,
-        special_effect_id=482,
+        special_effect=482,
         part_health=180,
         animation_id=8020,
         body_damage_correction__damage_correction=1.0,
@@ -90,7 +90,7 @@ def Constructor():
         npc_part_id=3303,
         npc_part_id_1=3303,
         part_index=8,
-        special_effect_id=482,
+        special_effect=482,
         part_health=150,
         animation_id=8020,
         body_damage_correction__damage_correction=1.0,
@@ -101,7 +101,7 @@ def Constructor():
         npc_part_id=3304,
         npc_part_id_1=3304,
         part_index=5,
-        special_effect_id=481,
+        special_effect=481,
         part_health=200,
         animation_id=8010,
         body_damage_correction__damage_correction=1.0,
@@ -112,7 +112,7 @@ def Constructor():
         npc_part_id=3305,
         npc_part_id_1=3305,
         part_index=7,
-        special_effect_id=481,
+        special_effect=481,
         part_health=150,
         animation_id=8010,
         body_damage_correction__damage_correction=1.0,
@@ -123,7 +123,7 @@ def Constructor():
         npc_part_id=3306,
         npc_part_id_1=3306,
         part_index=9,
-        special_effect_id=481,
+        special_effect=481,
         part_health=120,
         animation_id=8010,
         body_damage_correction__damage_correction=1.0,
@@ -134,7 +134,7 @@ def Constructor():
         npc_part_id=3307,
         npc_part_id_1=3307,
         part_index=10,
-        special_effect_id=481,
+        special_effect=481,
         part_health=120,
         animation_id=8010,
         body_damage_correction__damage_correction=1.0,
@@ -145,7 +145,7 @@ def Constructor():
         npc_part_id=3308,
         npc_part_id_1=3308,
         part_index=3,
-        special_effect_id=483,
+        special_effect=483,
         part_health=200,
         animation_id=8030,
         body_damage_correction__damage_correction=0.20000000298023224,
@@ -156,7 +156,7 @@ def Constructor():
         npc_part_id=3309,
         npc_part_id_1=3309,
         part_index=11,
-        special_effect_id=484,
+        special_effect=484,
         part_health=100,
         animation_id=8040,
         body_damage_correction__damage_correction=0.20000000298023224,
@@ -167,7 +167,7 @@ def Constructor():
         npc_part_id=3310,
         npc_part_id_1=3310,
         part_index=12,
-        special_effect_id=483,
+        special_effect=483,
         part_health=100,
         animation_id=8030,
         body_damage_correction__damage_correction=0.20000000298023224,
@@ -918,7 +918,7 @@ def Event_13304830(
     npc_part_id: short,
     npc_part_id_1: int,
     part_index: short,
-    special_effect_id: int,
+    special_effect: int,
     part_health: int,
     animation_id: int,
     body_damage_correction__damage_correction: float,
@@ -955,7 +955,7 @@ def Event_13304830(
     WaitFrames(frames=1)
     ResetAnimation(3300800)
     ForceAnimation(3300800, animation_id)
-    AddSpecialEffect(3300800, special_effect_id)
+    AddSpecialEffect(3300800, special_effect)
     ReplanAI(3300800)
     Wait(30.0)
     AICommand(3300800, command_id=100, command_slot=1)
@@ -964,7 +964,7 @@ def Event_13304830(
     MAIN.Await(CharacterHasTAEEvent(3300800, tae_event_id=300))
     
     SetNPCPartHealth(3300800, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=True)
-    RemoveSpecialEffect(3300800, special_effect_id)
+    RemoveSpecialEffect(3300800, special_effect)
     AICommand(3300800, command_id=-1, command_slot=1)
     ReplanAI(3300800)
     WaitFrames(frames=10)
@@ -1447,7 +1447,7 @@ def Event_13305230():
     
     MAIN.Await(FlagEnabled(13305220))
     
-    SetCharacterEventTarget(3300104, region=PLAYER)
+    SetCharacterEventTarget(3300104, entity=PLAYER)
     AICommand(3300104, command_id=50, command_slot=0)
     OR_1.Add(EntityWithinDistance(entity=3300104, other_entity=PLAYER, radius=5.0))
     OR_1.Add(TimeElapsed(seconds=10.0))

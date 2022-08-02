@@ -383,7 +383,7 @@ def Event_1052522815(
     # --- Label 18 --- #
     DefineLabel(18)
     AddSpecialEffect(Characters.FireGiant0, 12738)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     if CharacterHasSpecialEffect(character=Characters.FireGiant0, special_effect=12752):
         return
     AddSpecialEffect(Characters.FireGiant0, 12750)
@@ -563,7 +563,7 @@ def Event_1052522816(
     # --- Label 18 --- #
     DefineLabel(18)
     AddSpecialEffect(Characters.FireGiant0, 12748)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     if CharacterHasSpecialEffect(character=Characters.FireGiant0, special_effect=12752):
         return
     AddSpecialEffect(Characters.FireGiant0, 12750)

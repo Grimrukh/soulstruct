@@ -150,14 +150,14 @@ def Constructor():
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar0, radius=17.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar4, radius=8.0, seconds=0.0, animation_id=-1)
     CommonFunc_90005251(0, character=Characters.RayaLucariaScholar7, radius=17.0, seconds=0.0, animation_id=-1)
-    Event_1049392200(0, character=Characters.RayaLucariaScholar0, special_effect_id=14809)
-    Event_1049392200(1, character=Characters.RayaLucariaScholar1, special_effect_id=14807)
-    Event_1049392200(2, character=Characters.RayaLucariaScholar2, special_effect_id=14809)
-    Event_1049392200(3, character=Characters.WanderingNoble1, special_effect_id=10113)
-    Event_1049392200(4, character=Characters.RayaLucariaScholar4, special_effect_id=14807)
-    Event_1049392200(5, character=Characters.RayaLucariaScholar5, special_effect_id=14809)
-    Event_1049392200(7, character=Characters.RayaLucariaScholar6, special_effect_id=14808)
-    Event_1049392200(9, character=Characters.RayaLucariaScholar7, special_effect_id=14809)
+    Event_1049392200(0, character=Characters.RayaLucariaScholar0, special_effect=14809)
+    Event_1049392200(1, character=Characters.RayaLucariaScholar1, special_effect=14807)
+    Event_1049392200(2, character=Characters.RayaLucariaScholar2, special_effect=14809)
+    Event_1049392200(3, character=Characters.WanderingNoble1, special_effect=10113)
+    Event_1049392200(4, character=Characters.RayaLucariaScholar4, special_effect=14807)
+    Event_1049392200(5, character=Characters.RayaLucariaScholar5, special_effect=14809)
+    Event_1049392200(7, character=Characters.RayaLucariaScholar6, special_effect=14808)
+    Event_1049392200(9, character=Characters.RayaLucariaScholar7, special_effect=14809)
     CommonFunc_90005201(
         0,
         character=Characters.DragonbarrowDragon,
@@ -180,26 +180,26 @@ def Constructor():
     )
     CommonFunc_90005300(0, flag=1049390299, character=Characters.Scarab0, item_lot=40418, seconds=0.0, left=0)
     CommonFunc_90005300(0, flag=1049390298, character=Characters.Scarab1, item_lot=40416, seconds=0.0, left=0)
-    Event_1049392201(0, character=Characters.WanderingNoble0, special_effect_id=10113, seconds=3.0, seconds_1=5.0)
-    Event_1049392201(2, character=Characters.WanderingNoble2, special_effect_id=10113, seconds=6.0, seconds_1=2.0)
-    Event_1049392201(3, character=Characters.RayaLucariaScholar3, special_effect_id=10113, seconds=9.0, seconds_1=3.0)
+    Event_1049392201(0, character=Characters.WanderingNoble0, special_effect=10113, seconds=3.0, seconds_1=5.0)
+    Event_1049392201(2, character=Characters.WanderingNoble2, special_effect=10113, seconds=6.0, seconds_1=2.0)
+    Event_1049392201(3, character=Characters.RayaLucariaScholar3, special_effect=10113, seconds=9.0, seconds_1=3.0)
     CommonFunc_90005250(0, character=Characters.Marionette, region=1049392405, seconds=0.0, animation_id=-1)
 
 
 @RestartOnRest(1049392200)
-def Event_1049392200(_, character: uint, special_effect_id: int):
+def Event_1049392200(_, character: uint, special_effect: int):
     """Event 1049392200"""
     DisableNetworkSync()
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1049392201)
-def Event_1049392201(_, character: uint, special_effect_id: int, seconds: float, seconds_1: float):
+def Event_1049392201(_, character: uint, special_effect: int, seconds: float, seconds_1: float):
     """Event 1049392201"""
     DisableNetworkSync()
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Wait(seconds_1)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     Wait(seconds)
     Restart()
 

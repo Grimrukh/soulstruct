@@ -139,7 +139,7 @@ def Event_1034422230():
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     EnableAI(Characters.AlbinauricLookout7)
     EnableAI(Characters.AlbinauricLookout8)
     EnableAI(Characters.AlbinauricLookout9)

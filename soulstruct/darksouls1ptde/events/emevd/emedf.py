@@ -2274,7 +2274,7 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "special_effect_id": INT | HIDE_NAME,
+            "special_effect": INT | HIDE_NAME,
         },
     },
     (2004, 9): {
@@ -2342,7 +2342,7 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "region": NO_DEFAULT(RegionTyping),
+            "entity": NO_DEFAULT(CoordEntityTyping),
         },
     },
     (2004, 12): {
@@ -2452,7 +2452,7 @@ EMEDF = {
         """,
         "args": {
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
-            "special_effect_id": INT | HIDE_NAME,
+            "special_effect": INT | HIDE_NAME,
         },
     },
     (2004, 22): {

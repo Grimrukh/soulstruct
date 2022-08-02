@@ -3924,7 +3924,7 @@ def CreateProjectileOwner(entity: Object | Region | Character | int, event_layer
     """
 
 
-def AddSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def AddSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -3970,7 +3970,7 @@ def DisableGravity(character: Character | int, event_layers=()):
     """
 
 
-def SetCharacterEventTarget(character: Character | int, region: Region | int, event_layers=()):
+def SetCharacterEventTarget(character: Character | int, entity: Object | Region | Character | int, event_layers=()):
     """
     Likely refers to patrolling behavior.
     """
@@ -4065,7 +4065,7 @@ def ReplanAI(character: Character | int, event_layers=()):
     """
 
 
-def RemoveSpecialEffect(character: Character | int, special_effect_id: int, event_layers=()):
+def RemoveSpecialEffect(character: Character | int, special_effect: int, event_layers=()):
     """
     'Special effect' as in a buff/debuff, not graphical effects (though they may come with one).
     """
@@ -6420,7 +6420,7 @@ def InitializeWarpObject(warp_object_id: int, event_layers=()):
     """
 
 
-def ForceSpawnerToSpawn(spawner: Character | int, event_layers=()):
+def ForceSpawnerToSpawn(spawner: SpawnerEvent | int, event_layers=()):
     """
     TODO
     """

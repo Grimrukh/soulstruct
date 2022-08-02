@@ -55,7 +55,7 @@ def Constructor():
     )
     Event_1038432262(
         0,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -69,7 +69,7 @@ def Constructor():
     )
     Event_1038432262(
         1,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,
@@ -83,7 +83,7 @@ def Constructor():
     )
     Event_1038432262(
         3,
-        character=1038430250,
+        character=Characters.Balloon,
         seconds=0.0,
         attacked_entity=Characters.Balloon,
         seconds_1=0.0,

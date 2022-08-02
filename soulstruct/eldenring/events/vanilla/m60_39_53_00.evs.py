@@ -119,7 +119,7 @@ def Event_1039532300():
     if ThisEventSlotFlagEnabled():
         return
     EnableAssetInvulnerability(Assets.AEG110_302_2002)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(1039532400)

@@ -77,8 +77,8 @@ def Constructor():
     Event_16002695()
     Event_16002690(0, flag=16002696, asset=Assets.AEG099_340_9000, asset_1=Assets.AEG099_090_9005)
     Event_16002691(0, asset=Assets.AEG099_340_9000, asset_1=Assets.AEG099_090_9005, destination=16002690)
-    Event_16002620(0, flag=16000622, asset=Assets.AEG277_011_0501)
-    Event_16002620(1, flag=16000624, asset=Assets.AEG277_011_0503)
+    Event_16002620(0, flag=16000622, asset=16001622)
+    Event_16002620(1, flag=16000624, asset=16001624)
     Event_16002625()
     Event_16002500()
     Event_16002650()
@@ -231,7 +231,7 @@ def Constructor():
     )
     Event_16002185(
         0,
-        character=16000180,
+        character=Characters.InquisitorGhiza,
         flag=16002181,
         flag_1=16002182,
         flag_2=16000180,
@@ -694,7 +694,7 @@ def Event_16002310(_, character: uint, radius: float, seconds: float, animation_
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)

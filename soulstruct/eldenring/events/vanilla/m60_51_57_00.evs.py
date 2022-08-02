@@ -110,13 +110,19 @@ def Constructor():
         special_effect=11130,
         animation_id=20015,
     )
-    Event_1051572821(0, character=1051570800, character_1=1051575801, special_effect=11136, animation_id=20016)
+    Event_1051572821(
+        0,
+        character=Characters.Commander,
+        character_1=1051575801,
+        special_effect=11136,
+        animation_id=20016,
+    )
     Event_1051572822(
         0,
-        character=1051570800,
+        character=Characters.Commander,
         character_1=Characters.BanishedKnight5,
         character_2=Characters.BanishedKnight6,
-        special_effect_id=11135,
+        special_effect=11135,
     )
     Event_1051572828(0, region=1051572829)
     Event_1051572829(0, region=1051572829)
@@ -943,7 +949,7 @@ def Constructor():
         left_2=0,
         left_3=0,
     )
-    Event_1051572311(0, character=Characters.LionGuardian1, special_effect_id=13360)
+    Event_1051572311(0, character=Characters.LionGuardian1, special_effect=13360)
     CommonFunc_90005300(
         0,
         flag=1051570310,
@@ -1009,7 +1015,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    Event_1051572450(0, character=Characters.GiantSkeletonTorso0, special_effect_id=5021)
+    Event_1051572450(0, character=Characters.GiantSkeletonTorso0, special_effect=5021)
     Event_1051572430(0, character=Characters.GiantSkeletonTorso0, region=1051572430, flag=1051572440)
     Event_1051572430(1, character=Characters.GiantSkeletonTorso1, region=1051572430, flag=1051572441)
     Event_1051572430(2, character=Characters.GiantSkeletonTorso2, region=1051572430, flag=1051572442)
@@ -1174,9 +1180,9 @@ def Event_1051572430(_, character: uint, region: uint, flag: uint):
 
 
 @RestartOnRest(1051572450)
-def Event_1051572450(_, character: uint, special_effect_id: int):
+def Event_1051572450(_, character: uint, special_effect: int):
     """Event 1051572450"""
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1051572460)
@@ -1295,7 +1301,7 @@ def Event_1051572250(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1406,7 +1412,7 @@ def Event_1051572274(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1515,7 +1521,7 @@ def Event_1051572310(
     MAIN.Await(OR_2)
     
     Wait(0.10000000149011612)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     SetSpecialStandbyEndedFlag(character=character, state=True)
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
@@ -1536,12 +1542,12 @@ def Event_1051572310(
 
 
 @RestartOnRest(1051572311)
-def Event_1051572311(_, character: uint, special_effect_id: int):
+def Event_1051572311(_, character: uint, special_effect: int):
     """Event 1051572311"""
     if ThisEventSlotFlagEnabled():
         return
     DisableHealthBar(character)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     Wait(0.10000000149011612)
     EnableHealthBar(character)
     End()
@@ -1797,7 +1803,7 @@ def Event_1051572821(_, character: uint, character_1: uint, special_effect: int,
 
 
 @RestartOnRest(1051572822)
-def Event_1051572822(_, character: uint, character_1: uint, character_2: uint, special_effect_id: int):
+def Event_1051572822(_, character: uint, character_1: uint, character_2: uint, special_effect: int):
     """Event 1051572822"""
     if FlagEnabled(character):
         return
@@ -1806,7 +1812,7 @@ def Event_1051572822(_, character: uint, character_1: uint, character_2: uint, s
     
     MAIN.Await(AND_1)
     
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(1051572828)

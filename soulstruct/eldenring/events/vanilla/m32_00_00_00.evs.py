@@ -59,7 +59,7 @@ def Constructor():
         character=Characters.TunnelMiner0,
         animation_id=30000,
         animation_id_1=20000,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -89,7 +89,7 @@ def Constructor():
         character=Characters.TunnelMiner1,
         animation_id=30002,
         animation_id_1=20002,
-        special_effect_id=16574,
+        special_effect=16574,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -119,7 +119,7 @@ def Constructor():
         character=Characters.TunnelMiner2,
         animation_id=30000,
         animation_id_1=20000,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -149,7 +149,7 @@ def Constructor():
         character=Characters.TunnelMiner9,
         animation_id=30000,
         animation_id_1=20000,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -179,7 +179,7 @@ def Constructor():
         character=Characters.TunnelMiner10,
         animation_id=30002,
         animation_id_1=20002,
-        special_effect_id=16574,
+        special_effect=16574,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -209,7 +209,7 @@ def Constructor():
         character=Characters.TunnelMiner11,
         animation_id=30000,
         animation_id_1=20000,
-        special_effect_id=16572,
+        special_effect=16572,
         seconds=0.0,
         left=0,
         left_1=0,
@@ -333,7 +333,7 @@ def Event_32002200(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -423,13 +423,13 @@ def Event_32002200(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -447,7 +447,7 @@ def Event_32002250(
     character: uint,
     animation_id: int,
     animation_id_1: int,
-    special_effect_id: int,
+    special_effect: int,
     seconds: float,
     left: uint,
     left_1: uint,
@@ -544,7 +544,7 @@ def Event_32002250(
         EnableGravity(character)
         EnableCharacterCollision(character)
     AddSpecialEffect(character, 16571)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     ForceAnimation(character, animation_id_1, loop=True)
     End()
 
@@ -647,7 +647,7 @@ def Event_32002270(
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5080))
     AND_2.Add(CharacterDoesNotHaveSpecialEffect(character, 5450))
     GotoIfConditionTrue(Label.L0, input_condition=AND_2)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(seconds)
     if UnsignedNotEqual(left=left, right=0):
         EnableGravity(character)
@@ -688,7 +688,7 @@ def Event_32002300(_, character: uint, region: uint, seconds: float, animation_i
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):
@@ -734,7 +734,7 @@ def Event_32002310(
     
     MAIN.Await(OR_2)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     GotoIfFinishedConditionFalse(Label.L1, input_condition=AND_1)
     Wait(seconds)
     if ValueNotEqual(left=animation_id, right=-1):

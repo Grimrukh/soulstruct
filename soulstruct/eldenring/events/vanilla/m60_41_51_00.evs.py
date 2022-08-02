@@ -51,7 +51,7 @@ def Constructor():
         seconds=0.0,
         animation_id=0,
     )
-    Event_1041512310(0, character__region=1041510800, character__region_1=1041510801)
+    Event_1041512310(0, character=Characters.TreeSentinel0, character_1=Characters.TreeSentinel1)
     Event_1041512321(
         0,
         character=Characters.TreeSentinel0,
@@ -137,7 +137,7 @@ def Event_1041512200(_, character: uint):
     if ThisEventSlotFlagEnabled():
         return
     AddSpecialEffect(character, 8092)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(1041512270)
@@ -235,20 +235,20 @@ def Event_1041512270():
 
 
 @RestartOnRest(1041512310)
-def Event_1041512310(_, character__region: uint, character__region_1: uint):
+def Event_1041512310(_, character: uint, character_1: uint):
     """Event 1041512310"""
     if FlagEnabled(1041510800):
         return
-    OR_1.Add(HasAIStatus(character__region, ai_status=AIStatusType.Battle))
-    OR_1.Add(HasAIStatus(character__region_1, ai_status=AIStatusType.Battle))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(HasAIStatus(character_1, ai_status=AIStatusType.Battle))
     
     MAIN.Await(OR_1)
     
     Wait(30.0)
-    EnableAI(character__region)
-    EnableAI(character__region_1)
-    SetCharacterEventTarget(character__region, region=character__region_1)
-    SetCharacterEventTarget(character__region_1, region=character__region)
+    EnableAI(character)
+    EnableAI(character_1)
+    SetCharacterEventTarget(character, entity=character_1)
+    SetCharacterEventTarget(character_1, entity=character)
     Restart()
 
 

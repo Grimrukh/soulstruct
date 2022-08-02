@@ -90,7 +90,7 @@ def Constructor():
         flag_2=1042330570,
     )
     Event_1042332576(0, flag=1042330800, flag_1=1042330805, entity=Assets.AEG099_170_1000, flag_2=1042330570)
-    CommonFunc_90005400(0, character=1042330230, special_effect_id=0, seconds=0.0, seconds_1=0.0, left=0)
+    CommonFunc_90005400(0, character=1042330230, special_effect=0, seconds=0.0, seconds_1=0.0, left=0)
     CommonFunc_90005401(0, flag=0, character=1042330230)
     Event_1042332200(0, character=1042330200, seconds=0.0)
     Event_1042332200(1, character=1042330201, seconds=2.0)

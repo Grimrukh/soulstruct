@@ -159,7 +159,7 @@ def Event_11320110():
         model_point=91,
         bit_index=0,
         bit_index_1=1,
-        special_effect_id=5430,
+        special_effect=5430,
     )
     Event_11325110(
         1,
@@ -170,7 +170,7 @@ def Event_11320110():
         model_point=92,
         bit_index=1,
         bit_index_1=2,
-        special_effect_id=5431,
+        special_effect=5431,
     )
     Event_11325110(
         2,
@@ -181,7 +181,7 @@ def Event_11320110():
         model_point=93,
         bit_index=2,
         bit_index_1=3,
-        special_effect_id=5432,
+        special_effect=5432,
     )
     Event_11325110(
         3,
@@ -192,7 +192,7 @@ def Event_11320110():
         model_point=94,
         bit_index=3,
         bit_index_1=4,
-        special_effect_id=5433,
+        special_effect=5433,
     )
     Event_11325110(
         4,
@@ -203,7 +203,7 @@ def Event_11320110():
         model_point=95,
         bit_index=4,
         bit_index_1=5,
-        special_effect_id=5434,
+        special_effect=5434,
     )
     Event_11325110(
         5,
@@ -214,7 +214,7 @@ def Event_11320110():
         model_point=96,
         bit_index=5,
         bit_index_1=6,
-        special_effect_id=5435,
+        special_effect=5435,
     )
     Event_11325110(
         6,
@@ -225,7 +225,7 @@ def Event_11320110():
         model_point=97,
         bit_index=6,
         bit_index_1=7,
-        special_effect_id=5436,
+        special_effect=5436,
     )
 
 
@@ -266,13 +266,13 @@ def Event_11325110(
     model_point: int,
     bit_index: uchar,
     bit_index_1: uchar,
-    special_effect_id: int,
+    special_effect: int,
 ):
     """Event 11325110"""
     if ThisEventSlotFlagEnabled():
         SetDisplayMask(1320700, bit_index=bit_index, switch_type=OnOffChange.On)
         SetCollisionMask(1320700, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-        AddSpecialEffect(1320700, special_effect_id)
+        AddSpecialEffect(1320700, special_effect)
         End()
     
     MAIN.Await(CharacterBackreadEnabled(1320700))
@@ -301,7 +301,7 @@ def Event_11325110(
     ForceAnimation(1320700, 8000)
     SetDisplayMask(1320700, bit_index=bit_index, switch_type=OnOffChange.On)
     SetCollisionMask(1320700, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-    AddSpecialEffect(1320700, special_effect_id)
+    AddSpecialEffect(1320700, special_effect)
 
 
 @EndOnRest(11325121)

@@ -1006,7 +1006,7 @@ def Constructor():
         animation_id=90780,
         character_2=3700720,
         obj=3701720,
-        special_effect_id=12400,
+        special_effect=12400,
     )
     Event_13700643(
         0,
@@ -1062,7 +1062,7 @@ def Constructor():
     CommonFunc_20006002(0, character=3700710, flag=1358, first_flag=1355, last_flag=1359)
     CommonFunc_20006002(0, character=3700720, flag=1578, first_flag=1575, last_flag=1579)
     CommonFunc_20006002(0, character=3700721, flag=1578, first_flag=1575, last_flag=1579)
-    Event_13705646(0, character=3700720, obj=3701720, special_effect_id=12400)
+    Event_13705646(0, character=3700720, obj=3701720, special_effect=12400)
     Event_13705647(0, character=3700721, animation_id=20007, flag=73700330)
     CommonFunc_20006030(
         0,
@@ -1107,7 +1107,7 @@ def Preconstructor():
         character=3700720,
         character_1=3700721,
         obj=3701720,
-        special_effect_id=12400,
+        special_effect=12400,
         command_id=2160,
         obj_1=3701721,
         character_2=3700706,
@@ -2592,7 +2592,7 @@ def Event_13705881():
     """Event 13705881"""
     if FlagEnabled(13700850):
         return
-    SetCharacterEventTarget(3700850, region=3700851)
+    SetCharacterEventTarget(3700850, entity=3700851)
     DisableCharacter(3700851)
     SetLockOnPoint(character=3700851, lock_on_model_point=220, state=False)
     SetNetworkUpdateRate(3700851, is_fixed=True, update_rate=CharacterUpdateRate.Never)
@@ -3192,7 +3192,7 @@ def Event_13700642(
     animation_id: int,
     character_2: int,
     obj: int,
-    special_effect_id: int,
+    special_effect: int,
 ):
     """Event 13700642"""
     if ThisEventSlotFlagEnabled():
@@ -3228,7 +3228,7 @@ def Event_13700642(
     EnableBackread(character_2)
     EnableImmortality(character_2)
     EnableObject(obj)
-    AddSpecialEffect(character_2, special_effect_id)
+    AddSpecialEffect(character_2, special_effect)
     End()
 
 
@@ -3481,7 +3481,7 @@ def Event_13705645(
     character: int,
     character_1: int,
     obj: int,
-    special_effect_id: int,
+    special_effect: int,
     command_id: int,
     obj_1: int,
     character_2: int,
@@ -3546,7 +3546,7 @@ def Event_13705645(
     DisableObject(obj_2)
     GotoIfFlagEnabled(Label.L18, flag=1578)
     EnableImmortality(character)
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
     SkipLinesIfClientTypeCountComparison(
         skip_lines=1,
         client_type=ClientType.Coop,
@@ -3663,7 +3663,7 @@ def Event_13705645(
 
 
 @ContinueOnRest(13705646)
-def Event_13705646(_, character: int, obj: int, special_effect_id: int):
+def Event_13705646(_, character: int, obj: int, special_effect: int):
     """Event 13705646"""
     AND_2.Add(ThisEventSlotFlagEnabled())
     AND_2.Add(FlagEnabled(1561))
@@ -3684,7 +3684,7 @@ def Event_13705646(_, character: int, obj: int, special_effect_id: int):
     DisableObject(obj)
     SetNetworkConnectedFlagState(flag=13705646, state=FlagSetting.On)
     WaitFrames(frames=5)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
     End()
 
     # --- Label 20 --- #
@@ -3692,7 +3692,7 @@ def Event_13705646(_, character: int, obj: int, special_effect_id: int):
     DisableImmortality(character)
     DisableObject(obj)
     EnableCharacter(character)
-    RemoveSpecialEffect(character, special_effect_id)
+    RemoveSpecialEffect(character, special_effect)
 
 
 @ContinueOnRest(13705647)

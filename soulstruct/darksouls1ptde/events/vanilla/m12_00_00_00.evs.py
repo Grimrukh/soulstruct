@@ -99,7 +99,7 @@ def Constructor():
         model_point=91,
         bit_index=0,
         bit_index_1=1,
-        special_effect_id=5430,
+        special_effect=5430,
     )
     Event_11205300(
         1,
@@ -110,7 +110,7 @@ def Constructor():
         model_point=92,
         bit_index=1,
         bit_index_1=2,
-        special_effect_id=5431,
+        special_effect=5431,
     )
     Event_11205300(
         2,
@@ -121,7 +121,7 @@ def Constructor():
         model_point=93,
         bit_index=2,
         bit_index_1=3,
-        special_effect_id=5432,
+        special_effect=5432,
     )
     Event_11205300(
         3,
@@ -132,7 +132,7 @@ def Constructor():
         model_point=94,
         bit_index=3,
         bit_index_1=4,
-        special_effect_id=5433,
+        special_effect=5433,
     )
     Event_11205300(
         4,
@@ -143,7 +143,7 @@ def Constructor():
         model_point=95,
         bit_index=4,
         bit_index_1=5,
-        special_effect_id=5434,
+        special_effect=5434,
     )
     Event_11205300(
         5,
@@ -154,7 +154,7 @@ def Constructor():
         model_point=96,
         bit_index=5,
         bit_index_1=6,
-        special_effect_id=5435,
+        special_effect=5435,
     )
     Event_11205300(
         6,
@@ -165,7 +165,7 @@ def Constructor():
         model_point=97,
         bit_index=6,
         bit_index_1=7,
-        special_effect_id=5436,
+        special_effect=5436,
     )
     Event_11205250(0, character=1200100, region=1202110)
     Event_11205290(0, character=1200101, flag=51200170, seconds=0.0, right=1)
@@ -1121,14 +1121,14 @@ def Event_11205300(
     model_point: int,
     bit_index: uchar,
     bit_index_1: uchar,
-    special_effect_id: int,
+    special_effect: int,
 ):
     """Event 11205300"""
     DisableCharacter(character)
     if ThisEventSlotFlagEnabled():
         SetDisplayMask(1200010, bit_index=bit_index, switch_type=OnOffChange.On)
         SetCollisionMask(1200010, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-        AddSpecialEffect(1200010, special_effect_id)
+        AddSpecialEffect(1200010, special_effect)
         End()
     
     MAIN.Await(CharacterBackreadEnabled(1200010))
@@ -1155,7 +1155,7 @@ def Event_11205300(
     ForceAnimation(1200010, 8000)
     SetDisplayMask(1200010, bit_index=bit_index, switch_type=OnOffChange.On)
     SetCollisionMask(1200010, bit_index=bit_index_1, switch_type=OnOffChange.Off)
-    AddSpecialEffect(1200010, special_effect_id)
+    AddSpecialEffect(1200010, special_effect)
 
 
 @ContinueOnRest(11200200)

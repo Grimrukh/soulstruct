@@ -254,8 +254,8 @@ def Constructor():
     Event_18002671(20, flag=710210)
     Event_18002671(21, flag=710200)
     Event_18002671(22, flag=710190)
-    Event_18002250(0, character=Characters.GodrickSoldier1, special_effect_id=8041)
-    Event_18002250(1, character=Characters.WanderingNoble2, special_effect_id=8040)
+    Event_18002250(0, character=Characters.GodrickSoldier1, special_effect=8041)
+    Event_18002250(1, character=Characters.WanderingNoble2, special_effect=8040)
     Event_18002690()
     CommonFunc_90005706(0, character=Characters.Commoner, animation_id=30025, left=0)
 
@@ -490,9 +490,9 @@ def Event_18002211(_, other_entity: uint, flag: uint):
 
 
 @RestartOnRest(18002250)
-def Event_18002250(_, character: uint, special_effect_id: int):
+def Event_18002250(_, character: uint, special_effect: int):
     """Event 18002250"""
-    AddSpecialEffect(character, special_effect_id)
+    AddSpecialEffect(character, special_effect)
 
 
 @RestartOnRest(18002270)

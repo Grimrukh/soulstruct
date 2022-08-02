@@ -1645,7 +1645,7 @@ def Event_13504802():
     EnableAI(3500800)
     EnableBossHealthBar(3500800, name=452000)
     DisableInvincibility(3500800)
-    SetCharacterEventTarget(3500800, region=3500801)
+    SetCharacterEventTarget(3500800, entity=3500801)
     CreatePlayLog(name=58)
     StartPlayLogMeasurement(measurement_id=3500010, name=74, overwrite=True)
 
@@ -3849,7 +3849,7 @@ def Event_13505050(_, character: int):
     MAIN.Await(OR_3)
     
     RemoveSpecialEffect(character, 5410)
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     SetAIParamID(character, ai_param_id=402005)
     ReplanAI(character)
 
@@ -4400,7 +4400,7 @@ def Event_13505800(_, region: int, entity: int, obj: int, source_entity: int, ch
 
     # --- Label 1 --- #
     DefineLabel(1)
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     ReplanAI(character)
 
 
@@ -4436,7 +4436,7 @@ def Event_13505810(_, region: int, entity: int, obj: int, source_entity: int, so
         launch_angle_y=0,
         launch_angle_z=0,
     )
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     ReplanAI(character)
 
 
@@ -4460,7 +4460,7 @@ def Event_13505820(
     
     WaitFrames(frames=frames)
     ForceAnimation(character, animation_id_1)
-    SetCharacterEventTarget(character, region=PLAYER)
+    SetCharacterEventTarget(character, entity=PLAYER)
     ReplanAI(character)
     WaitFrames(frames=frames)
     

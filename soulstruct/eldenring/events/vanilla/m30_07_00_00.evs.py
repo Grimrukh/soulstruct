@@ -789,7 +789,7 @@ def Event_30072500():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     End()
 
 
@@ -811,7 +811,7 @@ def Event_30072501():
     
     MAIN.Await(AND_1)
     
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
     Wait(0.0)
     ForceAnimation(Characters.Imp6, 3017, loop=True, wait_for_completion=True)
     DisableNetworkFlag(30072500)

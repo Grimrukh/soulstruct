@@ -371,7 +371,7 @@ def Event_30172200(_, character: uint):
     
     RemoveSpecialEffect(character, 17153)
     AddSpecialEffect(character, 17152)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(30172311)
@@ -393,7 +393,7 @@ def Event_30172311():
     MAIN.Await(OR_2)
     
     ForceAnimation(30170316, 3004, wait_for_completion=True)
-    SetNetworkFlagState(FlagType.RelativeToThisEventSlot, 0, state=FlagSetting.On)
+    EnableThisNetworkSlotFlag()
 
 
 @RestartOnRest(30172400)
