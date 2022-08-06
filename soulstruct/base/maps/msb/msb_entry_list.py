@@ -111,7 +111,7 @@ class BaseMSBEntryList(abc.ABC):
         )
         packed_name = self.INTERNAL_NAME.encode("utf-8")
         name_offset = offset
-        while len(packed_name) < 32:
+        while len(packed_name) < 16:  # TODO: used to be 32
             packed_name += b"\0"
         offset += len(packed_name)
         for i, entry in enumerate(entries):

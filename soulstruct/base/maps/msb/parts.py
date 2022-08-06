@@ -18,7 +18,6 @@ import abc
 import logging
 import typing as tp
 import struct
-from collections import namedtuple
 
 from soulstruct.exceptions import InvalidFieldValueError, SoulstructError
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
@@ -31,44 +30,60 @@ from .msb_entry_list import BaseMSBEntryList
 _LOGGER = logging.getLogger(__name__)
 
 
-PartIndicesData = namedtuple(
-    "PartIndicesData",
-    [
-        "part_type_index",
-        "model_indices",
-        "local_environment_indices",
-        "region_indices",
-        "part_indices",
-        "local_collision_indices",
-    ],
-)
+class PartIndicesData(tp.NamedTuple):
+    part_type_index: int
+    model_indices: dict[str, int]
+    local_environment_indices: dict[str, int]
+    region_indices: dict[str, int]
+    part_indices: dict[str, int]
+    local_collision_indices: dict[str, int]
 
-PartNamesData = namedtuple(
-    "PartNamesData",
-    [
-        "model_names",
-        "region_names",
-        "environment_names",
-        "part_names",
-        "collision_names",
-    ],
-)
+
+class PartNamesData(tp.NamedTuple):
+    model_names: dict[int, str]
+    region_names: dict[int, str]
+    environment_names: dict[int, str]
+    part_names: dict[int, str]
+    collision_names: dict[int, str]
+
+
+class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
+
+    ENTRY_SUBTYPE: BaseMSBPartSubtype = None
+    PART_HEADER_STRUCT: BinaryStruct = None
+    PART_BASE_DATA_STRUCT: BinaryStruct = None
+    PART_TYPE_DATA_STRUCT: BinaryStruct = None
+    NAME_ENCODING = ""
+
+    def __init__(self, source=None, **kwargs):
+        self._part_type_index = -1
+        super().__init__(source=source, **kwargs)
+
+    def unpack_type_data(self, msb_reader: BinaryReader):
+        """This unpacks simple attributes by default, but some Parts need to process these values more."""
+        self.set(**msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True))
+
+    def pack_type_data(self):
+        try:
+            return self.PART_TYPE_DATA_STRUCT.pack(self)
+        except struct.error:
+            raise SoulstructError(f"Could not pack type data of MSB part '{self.name}'. See traceback.")
+
+    def set_indices(self, indices: PartIndicesData):
+        self._part_type_index = indices.part_type_index
+
+    def set_names(self, names: PartNamesData):
+        pass
 
 
 # region Part Mix-in Classes
-class MSB_BasePartMixin(abc.ABC):
+class MSB_BasePartMixin(BaseMSBPart, abc.ABC):
     """Type hinting for class attributes acquired from core `MSBEntry` subclasses."""
     ENTRY_SUBTYPE: BaseMSBPartSubtype
     name: str
 
     def __init__(self, source=None, **kwargs):
         super().__init__(source, **kwargs)
-
-    def set_indices(self, indices: PartIndicesData):
-        pass
-
-    def set_names(self, names: PartNamesData):
-        pass
 
 
 class MSB_ModelName(MSB_BasePartMixin, abc.ABC):
@@ -268,35 +283,6 @@ class MSB_Scale(MSB_BasePartMixin, abc.ABC):
     def scale(self, value):
         self._scale = Vector3(value)
 # endregion
-
-
-class BaseMSBPart(MSBEntryEntityCoordinates, abc.ABC):
-
-    ENTRY_SUBTYPE: BaseMSBPartSubtype = None
-    PART_HEADER_STRUCT: BinaryStruct = None
-    PART_BASE_DATA_STRUCT: BinaryStruct = None
-    PART_TYPE_DATA_STRUCT: BinaryStruct = None
-    NAME_ENCODING = ""
-
-    def __init__(self, source=None, **kwargs):
-        self._part_type_index = -1
-        super().__init__(source=source, **kwargs)
-
-    def unpack_type_data(self, msb_reader: BinaryReader):
-        """This unpacks simple attributes by default, but some Parts need to process these values more."""
-        self.set(**msb_reader.unpack_struct(self.PART_TYPE_DATA_STRUCT, exclude_asserted=True))
-
-    def pack_type_data(self):
-        try:
-            return self.PART_TYPE_DATA_STRUCT.pack(self)
-        except struct.error:
-            raise SoulstructError(f"Could not pack type data of MSB part '{self.name}'. See traceback.")
-
-    def set_indices(self, indices: PartIndicesData):
-        self._part_type_index = indices.part_type_index
-
-    def set_names(self, names: PartNamesData):
-        pass
 
 
 class BaseMSBPartList(BaseMSBEntryList, abc.ABC):

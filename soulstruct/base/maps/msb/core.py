@@ -5,7 +5,6 @@ import io
 import logging
 import re
 import typing as tp
-from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
@@ -18,7 +17,6 @@ from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 from .msb_entry import MSBEntry
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_types import BaseGameObject
     from .models import BaseMSBModelList
     from .events import BaseMSBEventList
     from .regions import BaseMSBRegionList
@@ -79,7 +77,6 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         self.events = self.EVENT_LIST_CLASS()
         self.regions = self.REGION_LIST_CLASS()
         self.parts = self.PART_LIST_CLASS()
-        self.dcx_type = None  # MSB files never use DCX
         super().__init__(msb_source, dcx_type=dcx_type)
 
     @property
