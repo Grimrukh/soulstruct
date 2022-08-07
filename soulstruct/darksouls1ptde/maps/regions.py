@@ -12,6 +12,7 @@ __all__ = [
 import abc
 import typing as tp
 
+from soulstruct.base.maps.msb.msb_entry_list import GenericMSBEntryList
 from soulstruct.base.maps.msb.regions import *
 from soulstruct.utilities.binary import BinaryStruct
 from soulstruct.utilities.misc import partialmethod
@@ -81,13 +82,6 @@ class MSBRegionList(MSBEntryList[MSBRegion]):
 
     _entries: list[MSBRegion]
 
-    Points: tp.Sequence[MSBRegionPoint]
-    Circles: tp.Sequence[MSBRegionCircle]
-    Spheres: tp.Sequence[MSBRegionSphere]
-    Cylinders: tp.Sequence[MSBRegionCylinder]
-    Rectangles: tp.Sequence[MSBRegionRect]
-    Boxes: tp.Sequence[MSBRegionBox]
-
     new_point: tp.Callable[..., MSBRegionPoint] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Point)
     new_circle: tp.Callable[..., MSBRegionCircle] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Circle)
     new_sphere: tp.Callable[..., MSBRegionSphere] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Sphere)
@@ -105,10 +99,26 @@ class MSBRegionList(MSBEntryList[MSBRegion]):
 
     _entries: list[MSBRegion]
 
+    @property
+    def Points(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionPoint)])
 
-for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:
-    setattr(
-        MSBRegionList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    @property
+    def Circles(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionCircle)])
+
+    @property
+    def Spheres(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionSphere)])
+
+    @property
+    def Cylinders(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionCylinder)])
+
+    @property
+    def Rectangles(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionRect)])
+
+    @property
+    def Boxes(self) -> GenericMSBEntryList[MSBRegionPoint]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBRegionBox)])

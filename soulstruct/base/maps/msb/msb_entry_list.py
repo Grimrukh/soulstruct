@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["BaseMSBEntryList"]
+__all__ = ["GenericMSBEntryList", "BaseMSBEntryList"]
 
 import abc
 import io
@@ -44,6 +44,46 @@ def _entry_lookup(func):
         return func(self, entry, *args, **kwargs)
 
     return wrapped
+
+
+class GenericMSBEntryList(list, tp.Generic[MSBEntryType]):
+    """Used for subtype lists, like `msb.parts.Characters`, and allows indexing via names, enums, or indices."""
+
+    def __init__(self, entries: tp.Iterable[MSBEntryType]):
+        super().__init__(entries)
+
+    def __getitem__(self, entry: tp.Union[int, IntEnum, str]) -> MSBEntryType:
+        """You can access entries using their global index or (if unique) name."""
+        if isinstance(entry, IntEnum):
+            return self.__get_entry_by_name(entry_name=entry.name)
+        elif isinstance(entry, int):
+            return super().__getitem__(entry)  # standard indexing
+        elif isinstance(entry, str):
+            return self.__get_entry_by_name(entry_name=entry)
+        raise TypeError(f"`MSBEntryList` key must be a global entry index or unique entry name, not {entry}.")
+
+    def __setitem__(self, index, value):
+        raise AttributeError("You cannot set items with a MSBEntry subtype list.")
+
+    def __get_entry_by_name(self, entry_name: str) -> MSBEntryType:
+        """Try to retrieve entry with given name.
+
+        You can optionally specify the subtype. Names shouldn't be base across subtypes, but if they are (or as an
+        assertion) this can be useful.
+
+        Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
+        calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
+        given name (and subtype) are found.
+        """
+        entries = [entry for entry in self if entry.name == entry_name]
+        if not entries:
+            raise KeyError(f"Entry name '{entry_name}' does not appear in {self.__class__.__name__}.")
+        elif len(entries) >= 2:
+            raise ValueError(
+                f"Entry name '{entry_name}' appears more than once in {self.__class__.__name__}. You must access it by "
+                f"global index or local subtype-specific index."
+            )
+        return entries[0]
 
 
 class BaseMSBEntryList(abc.ABC):

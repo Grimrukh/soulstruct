@@ -21,6 +21,7 @@ import typing as tp
 from soulstruct.base.maps.msb.utils import MapFieldInfo
 from soulstruct.base.maps.msb.exceptions import MapError
 from soulstruct.base.maps.msb.parts import *
+from soulstruct.base.maps.msb.msb_entry_list import GenericMSBEntryList
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import SoulstructError, InvalidFieldValueError
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
@@ -645,7 +646,10 @@ class MSBCharacter(MSBPart):
 
     def set_indices(self, indices: PartIndicesData):
         super().set_indices(indices)
-        self._patrol_region_indices = [indices.region_indices[n] if n else -1 for n in self._patrol_region_names]
+        self._patrol_region_indices = [
+            indices.region_indices[n] if isinstance(n, str) else -1
+            for n in self._patrol_region_names
+        ]
         while len(self._patrol_region_indices) < 8:
             self._patrol_region_indices.append(-1)
 
@@ -1222,16 +1226,6 @@ class MSBPartList(MSBEntryList[MSBPart]):
 
     _entries: list[MSBPart]
 
-    MapPieces: tp.Sequence[MSBMapPiece]
-    Objects: tp.Sequence[MSBObject]
-    Characters: tp.Sequence[MSBCharacter]
-    PlayerStarts: tp.Sequence[MSBPlayerStart]
-    Collisions: tp.Sequence[MSBCollision]
-    Navmeshes: tp.Sequence[MSBNavmesh]
-    UnusedObjects: tp.Sequence[MSBUnusedObject]
-    UnusedCharacters: tp.Sequence[MSBUnusedCharacter]
-    MapConnections: tp.Sequence[MSBMapConnection]
-
     new = MSBEntryList.new
     new_map_piece: tp.Callable[..., MSBMapPiece] = partialmethod(new, MSBPartSubtype.MapPiece)
     new_object: tp.Callable[..., MSBObject] = partialmethod(new, MSBPartSubtype.Object)
@@ -1369,10 +1363,38 @@ class MSBPartList(MSBEntryList[MSBPart]):
         """Useful to create basic c1000 instances as debug warp points."""
         return self.new_character(name=name, model_name="c1000", **kwargs)
 
+    @property
+    def MapPieces(self) -> GenericMSBEntryList[MSBMapPiece]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBMapPiece)])
 
-for _entry_subtype in iter(MSBPartSubtype):
-    setattr(
-        MSBPartList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    @property
+    def Objects(self) -> GenericMSBEntryList[MSBObject]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBObject)])
+
+    @property
+    def Characters(self) -> GenericMSBEntryList[MSBCharacter]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBCharacter)])
+
+    @property
+    def PlayerStarts(self) -> GenericMSBEntryList[MSBPlayerStart]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBPlayerStart)])
+
+    @property
+    def Collisions(self) -> GenericMSBEntryList[MSBCollision]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBCollision)])
+
+    @property
+    def Navmeshes(self) -> GenericMSBEntryList[MSBNavmesh]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBNavmesh)])
+
+    @property
+    def UnusedObjects(self) -> GenericMSBEntryList[MSBUnusedObject]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBUnusedObject)])
+
+    @property
+    def UnusedCharacters(self) -> GenericMSBEntryList[MSBUnusedCharacter]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBUnusedCharacter)])
+
+    @property
+    def MapConnections(self) -> GenericMSBEntryList[MSBMapConnection]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBMapConnection)])

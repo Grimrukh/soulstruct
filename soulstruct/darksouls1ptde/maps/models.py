@@ -11,6 +11,7 @@ __all__ = [
 
 import typing as tp
 
+from soulstruct.base.maps.msb.msb_entry_list import GenericMSBEntryList
 from soulstruct.base.maps.msb.models import BaseMSBModel, BaseMSBGeometryModel
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import BinaryStruct
@@ -77,13 +78,6 @@ class MSBModelList(MSBEntryList[MSBModel]):
 
     _entries: list[MSBModel]
 
-    MapPieces: list[MSBMapPieceModel]
-    Objects: list[MSBObjectModel]
-    Characters: list[MSBCharacterModel]
-    Players: list[MSBPlayerModel]
-    Collisions: list[MSBCollisionModel]
-    Navmeshes: list[MSBNavmeshModel]
-
     new = MSBEntryList.new
     new_map_piece_model: tp.Callable[..., MSBMapPieceModel] = partialmethod(new, MSBModelSubtype.MapPiece)
     new_object_model: tp.Callable[..., MSBObjectModel] = partialmethod(new, MSBModelSubtype.Object)
@@ -118,10 +112,26 @@ class MSBModelList(MSBEntryList[MSBModel]):
             sorted_entries += list(sorted(self.get_entries(entry_subtype), key=lambda m: m.name))
         self._entries = sorted_entries
 
+    @property
+    def MapPieces(self) -> GenericMSBEntryList[MSBMapPieceModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBMapPieceModel)])
 
-for _entry_subtype in MSBModelSubtype:
-    setattr(
-        MSBModelList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    @property
+    def Objects(self) -> GenericMSBEntryList[MSBObjectModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBObjectModel)])
+
+    @property
+    def Characters(self) -> GenericMSBEntryList[MSBCharacterModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBCharacterModel)])
+
+    @property
+    def Players(self) -> GenericMSBEntryList[MSBPlayerModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBPlayerModel)])
+
+    @property
+    def Collisions(self) -> GenericMSBEntryList[MSBCollisionModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBCollisionModel)])
+
+    @property
+    def Navmeshes(self) -> GenericMSBEntryList[MSBNavmeshModel]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBNavmeshModel)])

@@ -23,6 +23,7 @@ import typing as tp
 
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.darksouls1ptde.events.emevd.enums import SoundType
+from soulstruct.base.maps.msb.msb_entry_list import GenericMSBEntryList
 from soulstruct.base.maps.msb.events import *
 from soulstruct.base.maps.msb.exceptions import MapEventError
 from soulstruct.base.maps.msb.utils import MapFieldInfo
@@ -1105,20 +1106,6 @@ class MSBEventList(BaseMSBEventList, MSBEntryList[MSBEvent]):
     }
     SUBTYPE_OFFSET = 8
 
-    Lights: tp.Sequence[MSBLightEvent]
-    Sounds: tp.Sequence[MSBSoundEvent]
-    VFX: tp.Sequence[MSBVFXEvent]
-    Wind: tp.Sequence[MSBWindEvent]
-    Treasure: tp.Sequence[MSBTreasureEvent]
-    Spawners: tp.Sequence[MSBSpawnerEvent]
-    Messages: tp.Sequence[MSBMessageEvent]
-    ObjActs: tp.Sequence[MSBObjActEvent]
-    SpawnPoints: tp.Sequence[MSBSpawnPointEvent]
-    MapOffsets: tp.Sequence[MSBMapOffsetEvent]
-    Navigation: tp.Sequence[MSBNavigationEvent]
-    Environment: tp.Sequence[MSBEnvironmentEvent]
-    NPCInvasion: tp.Sequence[MSBNPCInvasionEvent]
-
     _entries: list[MSBEvent]
 
     new = MSBEntryList.new
@@ -1163,10 +1150,54 @@ class MSBEventList(BaseMSBEventList, MSBEntryList[MSBEvent]):
             names = EventsNamesData(region_names, part_names)
             entry.set_names(names)
 
+    @property
+    def Lights(self) -> GenericMSBEntryList[MSBLightEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBLightEvent)])
 
-for _entry_subtype in MSBEventList.ENTRY_SUBTYPE_ENUM:
-    setattr(
-        MSBEventList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    @property
+    def Sounds(self) -> GenericMSBEntryList[MSBSoundEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBSoundEvent)])
+
+    @property
+    def VFX(self) -> GenericMSBEntryList[MSBVFXEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBVFXEvent)])
+
+    @property
+    def Wind(self) -> GenericMSBEntryList[MSBWindEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBWindEvent)])
+
+    @property
+    def Treasure(self) -> GenericMSBEntryList[MSBTreasureEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBTreasureEvent)])
+
+    @property
+    def Spawners(self) -> GenericMSBEntryList[MSBSpawnerEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBSpawnerEvent)])
+
+    @property
+    def Messages(self) -> GenericMSBEntryList[MSBMessageEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBMessageEvent)])
+
+    @property
+    def ObjActs(self) -> GenericMSBEntryList[MSBObjActEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBObjActEvent)])
+
+    @property
+    def SpawnPoints(self) -> GenericMSBEntryList[MSBSpawnPointEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBSpawnPointEvent)])
+
+    @property
+    def MapOffsets(self) -> GenericMSBEntryList[MSBMapOffsetEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBMapOffsetEvent)])
+
+    @property
+    def Navigation(self) -> GenericMSBEntryList[MSBNavigationEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBNavigationEvent)])
+
+    @property
+    def Environments(self) -> GenericMSBEntryList[MSBEnvironmentEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBEnvironmentEvent)])
+
+    @property
+    def NPCInvasion(self) -> GenericMSBEntryList[MSBNPCInvasionEvent]:
+        return GenericMSBEntryList([e for e in self._entries if isinstance(e, MSBNPCInvasionEvent)])
