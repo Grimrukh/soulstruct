@@ -3,7 +3,7 @@ __all__ = ["RuntimeManager"]
 import typing as tp
 
 from soulstruct.base.project.runtime import RuntimeManager as _BaseRuntimeManager
-from soulstruct.utilities.memory import DSRMemoryHook
+from soulstruct.darksouls1r.utilities.memory import DSRMemoryHook
 
 
 class RuntimeManager(_BaseRuntimeManager):

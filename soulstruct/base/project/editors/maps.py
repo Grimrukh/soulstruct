@@ -22,7 +22,7 @@ from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.memory import MemoryHookError
+from soulstruct.utilities.memory import MemoryHookCallError
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
@@ -985,7 +985,7 @@ class MapsEditor(BaseFieldEditor):
                                 f"{display_groups}. No changes made.",
                     )
                     return
-        except MemoryHookError as e:
+        except MemoryHookCallError as e:
             _LOGGER.error(str(e), exc_info=True)
             self.CustomDialog(
                 title="Cannot Read Memory",
@@ -1066,7 +1066,7 @@ class MapsEditor(BaseFieldEditor):
             player_z = self.linker.get_game_value("player_z")
             new_translate = Vector3(player_x, player_y, player_z)
             new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
-        except MemoryHookError as e:
+        except MemoryHookCallError as e:
             _LOGGER.error(str(e), exc_info=True)
             self.CustomDialog(
                 title="Cannot Read Memory",

@@ -621,6 +621,15 @@ class SmartFrame(tk.Frame):
         return ttk.Progressbar(frame, **kwargs)
 
     @_embed_component
+    def Scale(self, frame=None, limits=(0, 100), orientation=HORIZONTAL, variable=None, **kwargs):
+        self.set_style_defaults(kwargs)
+        if variable is None:
+            variable = tk.IntVar()
+        scale = tk.Scale(frame, from_=limits[0], to=limits[1], orient=orientation, variable=variable, **kwargs)
+        scale.var = variable
+        return scale
+
+    @_embed_component
     def TextBox(self, frame=None, initial_text="", **kwargs):
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=False)
         text_box = tk.Text(frame, **kwargs)

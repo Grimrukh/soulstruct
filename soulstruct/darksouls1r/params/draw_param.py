@@ -51,6 +51,8 @@ class DrawParamBND(_BaseDrawParamBND, DarkSoulsDSRType):
     ToneMapping: list[DrawParam]
     # DebugAmbientLight: list[DrawParam]
 
+    params: dict[str, list[DrawParam | None]]
+
 
 class DrawParamDirectory(_BaseDrawParamDirectory, DarkSoulsDSRType):
 

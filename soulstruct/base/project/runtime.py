@@ -289,19 +289,11 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
     def hook_into_game(self):
         """Returns True if hook was successful, and False if not."""
-        for p in psutil.process_iter():
-            if p.name() == self.project.GAME.executable_name:
-                pid = p.pid
-                break
-        else:
-            self.CustomDialog("Game Not Running", "Could not find running game application to hook into.")
-            return False
-
         if self._THREADED_HOOK:
-            self._do_threaded_hook(pid)
+            self._do_threaded_hook()
         else:
             # Window will not respond while the hook loads.
-            self._hook = self.HOOK_CLASS(pid)
+            self._hook = self.HOOK_CLASS()
 
         self.CustomDialog(
             title="Hook Successful",
@@ -311,7 +303,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
         )
         return True
 
-    def _do_threaded_hook(self, pid):
+    def _do_threaded_hook(self):
         """Hooks in a separate thread while displaying a loading dialogue.
 
         Only needed if hooking takes forever because of the need to scan for base pointers.
@@ -319,7 +311,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
         def _threaded_hook():
             try:
-                self._hook = self.HOOK_CLASS(pid)
+                self._hook = self.HOOK_CLASS()
             except Exception as e:
                 self._THREAD_EXCEPTION = e
                 raise
