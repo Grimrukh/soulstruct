@@ -624,7 +624,9 @@ class SmartFrame(tk.Frame):
     def Scale(self, frame=None, limits=(0, 100), orientation=HORIZONTAL, variable=None, **kwargs):
         self.set_style_defaults(kwargs)
         if variable is None:
-            variable = tk.IntVar()
+            variable = tk.DoubleVar() if kwargs.pop("is_float", False) else tk.IntVar()
+        elif "is_float" in kwargs:
+            raise ValueError("Cannot set `is_float` for Scale if `variable` is given.")
         scale = tk.Scale(frame, from_=limits[0], to=limits[1], orient=orientation, variable=variable, **kwargs)
         scale.var = variable
         return scale
