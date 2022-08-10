@@ -24,8 +24,15 @@ class DSRMemoryHook(MemoryHook):
     _PARAM_MARKER = b"\xB8\xDF\x36\x41\x01\x00\x00\x00"  # appears at the start of every in-memory Param header struct
 
     PROCESS_NAME = "DarkSoulsRemastered.exe"
-    BASE_ADDRESS = 0x400000  # memory of process starts here
+    BASE_ADDRESS = 0x140000000
     EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
+
+    PARAM_MEM_SEARCH_REGIONS = [
+        (0x31000000, 0x32000000),
+        (0x35000000, 0x36000000),
+        (0x24000000, 0x25000000),
+        (0x10000000, 0x40000000),  # last resort
+    ]
 
     EVENT_FLAG_GROUPS = {
         "0": 0x00000,
@@ -265,14 +272,26 @@ class DSRMemoryHook(MemoryHook):
                     return cached_address  # address is still valid
 
         # Search for address.
-        param_string_address = self.scan(param_file_name.encode("utf-16-le"), max_address=0x40000000)
+        encoded_name = param_file_name.encode("utf-16-le")
+        param_string_address = self.param_scan(encoded_name)
         if param_string_address is None:
             raise MemoryError(f"Could not find memory address of Param '{param_file_name}' in game memory.")
-        string_offset_search = BasePointerSearch(self._PARAM_MARKER + struct.pack("Q", param_string_address))
-        string_offset_address = self.scan(string_offset_search, max_address=0x40000000)
+        # print(f"{param_file_name} string address: {hex(param_string_address)}")
+        marker_search = self._PARAM_MARKER + struct.pack("Q", param_string_address)
+        string_offset_address = self.param_scan(marker_search)
+        if string_offset_address is None:
+            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' in game memory.")
+        # print(f"{param_file_name} string offset address: {hex(string_offset_address)}")
         data_address = self.read(string_offset_address + 56, 8, "q")
         self._address_cache.setdefault("ds1r", {})[param_file_name] = data_address
         return data_address
+
+    def param_scan(self, pattern: bytes) -> int | None:
+        for start, end in self.PARAM_MEM_SEARCH_REGIONS:
+            result = self.scan(pattern, search_from_address=start, max_address=end)
+            if result is not None:
+                return result
+        return None
 
 
 def test_dsr_hook():

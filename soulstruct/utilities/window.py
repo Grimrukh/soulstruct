@@ -80,7 +80,7 @@ def _grid_label(frame, label, component, label_position):
 
 
 def _embed_component(component_func):
-    """ Handles labels and scrollbars for any decorated widget function. """
+    """Handles labels and scrollbars for any decorated widget function."""
 
     @wraps(component_func)
     def component_with_label(
@@ -554,6 +554,11 @@ class SmartFrame(tk.Frame):
 
     @_embed_component
     def Entry(self, frame=None, initial_text="", integers_only=False, numbers_only=False, **kwargs):
+        if "text" in kwargs:
+            _LOGGER.warning(
+                "'text' argument given to `SmartFrame.Entry()`. I recommend using `textvariable` to ensure this "
+                "argument is not mistaken for `initial_text`."
+            )
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=True)
         text_var = tk.StringVar(value=initial_text)
         entry = tk.Entry(frame, textvariable=text_var, **kwargs)

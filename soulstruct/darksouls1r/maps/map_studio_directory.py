@@ -3,7 +3,6 @@ __all__ = ["MapStudioDirectory"]
 import typing as tp
 
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
-from soulstruct.darksouls1ptde.game_types.map_types import Map
 from soulstruct.games import DarkSoulsDSRType
 
 from .constants import ALL_MAPS, get_map
@@ -46,3 +45,4 @@ class MapStudioDirectory(_BaseMapStudioDirectory, DarkSoulsDSRType):
     UndeadAsylum: MSB
 
     msbs: dict[str, MSB]
+    __getitem__: tp.Callable[[tp.Union[str, tuple]], MSB]

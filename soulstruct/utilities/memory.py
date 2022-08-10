@@ -174,14 +174,14 @@ class MemoryHook(abc.ABC):
         if psutil is None:
             raise ModuleNotFoundError("`psutil` package required to use Soulstruct `MemoryHook`.")
 
+        self.value_table = self.VALUE_TABLE
+        self._address_cache = {}
+        self.base_pointer_table = {}  # type: dict[str, int]  # named, resolved base pointer addresses
+
         self.process = None
         self.p_handle = None
         self.find_process()
 
-        self.value_table = self.VALUE_TABLE
-        self._address_cache = {}
-
-        self.base_pointer_table = {}  # type: dict[str, int]  # named, resolved base pointer addresses
         if self.p_handle and self.BASE_POINTER_TABLE:
             self._load_pointer_table(self.BASE_POINTER_TABLE)
 
@@ -201,6 +201,13 @@ class MemoryHook(abc.ABC):
             self.process.pid,
         )
         _LOGGER.info(f"Process handle for '{self.PROCESS_NAME}' opened successfully.")
+        if self.BASE_POINTER_TABLE:
+            try:
+                self._load_pointer_table(self.BASE_POINTER_TABLE)
+                _LOGGER.info(f"Base pointer table for '{self.PROCESS_NAME}' loaded successfully.")
+            except MemoryHookCallError as ex:
+                _LOGGER.error(f"Could not load base pointer table for '{self.PROCESS_NAME}'. Error: {ex}")
+                return False
         return True
 
     def __del__(self):
@@ -358,6 +365,7 @@ class MemoryHook(abc.ABC):
         chunk_size=8192,
         prefer_numpy=False,  # TODO: numpy method is slower and more restrictive, even with chunk size 8192!
         use_regex=False,
+        search_from_address=None,
         max_address=None,
         ignore_repeats=False,
     ) -> tp.Union[int, None, dict[str, tp.Union[int, None]]]:
@@ -369,7 +377,10 @@ class MemoryHook(abc.ABC):
         not found, the dictionary value will be `None`.
         """
         if isinstance(pointers, (bytes, BasePointerSearch)):
-            return self.scan({"x": pointers}, chunk_size, prefer_numpy, use_regex, max_address, ignore_repeats)["x"]
+            return self.scan(
+                {"x": pointers},
+                chunk_size, prefer_numpy, use_regex, search_from_address, max_address, ignore_repeats
+            )["x"]
 
         use_numpy = prefer_numpy and numpy
         pointer_int32_dict = {}
@@ -404,7 +415,8 @@ class MemoryHook(abc.ABC):
             buffer = (c.c_char * chunk_size)()
 
         bytes_read = SIZE_T()
-        search_from_address = self.BASE_ADDRESS
+        if search_from_address is None:
+            search_from_address = self.BASE_ADDRESS
         found_pointers = {pointer_name: None for pointer_name in pointers}
         while True:
 
