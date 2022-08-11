@@ -28,9 +28,9 @@ class DSRMemoryHook(MemoryHook):
     EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
 
     PARAM_MEM_SEARCH_REGIONS = [
-        (0x31000000, 0x32000000),
+        (0x31000000, 0x33000000),
         (0x35000000, 0x36000000),
-        (0x24000000, 0x25000000),
+        (0x24000000, 0x26000000),
         (0x10000000, 0x40000000),  # last resort
     ]
 

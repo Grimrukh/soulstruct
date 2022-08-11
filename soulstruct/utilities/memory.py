@@ -526,13 +526,16 @@ class MemoryHook(abc.ABC):
             return values[0]
         return values
 
+    def try_hooked(self):
+        if not self.process or not self.process.is_running():
+            # Lost (or never found) process. Try to reconnect.
+            return self.find_process()
+        return True
+
     @property
     def pid(self):
         return self.process.pid if self.process is not None else -1
 
     @property
     def hooked(self) -> bool:
-        if not self.process or not self.process.is_running():
-            # Lost (or never found) process. Try to reconnect.
-            return self.find_process()
-        return True
+        return self.process and self.process.is_running()
