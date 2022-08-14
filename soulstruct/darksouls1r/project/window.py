@@ -149,7 +149,7 @@ class ProjectWindow(_BaseProjectWindow):
             msb.translate_entity_id_names()
 
     def _reload_warp(self):
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Read Position",

@@ -50,89 +50,101 @@ class WindowLinker:
     ) -> list[BaseLink]:
         """Some field types are `GameObject` subclasses, which means that the field values are IDs to look up.
 
-        Currently, only `MapEntry`, `Text`, and `BaseParam` field types are supported here. In the future, `Texture`,
-        `Animation`, `AIScriptBase` etc. will also be supported.
+        Currently, only `MapEntry`, `Text`, and `BaseGameParam` field types are supported here. In the future,
+        `Texture`, `Animation`, `AIScriptBase` etc. will also be supported.
         """
-
         if valid_null_values is None:
             valid_null_values = {}
 
         if issubclass(field_type, MapEntry):
-            entry_name = field_value
-            if not entry_name:  # No link expected (None or empty string)
-                return [BaseLink(self, name="None")]
-            entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
-            active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-            entry_list = active_msb[entry_type_name]
-            try:
-                entry = entry_list[entry_name]
-            except KeyError:
-                # Entry name is missing.
-                return [BaseLink()]
-            if entry_subtype_name is not None:
-                # Technically, map links only care about entry list type (except for the collision field of Map
-                # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-                if (
-                    entry.ENTRY_SUBTYPE.name == "Player" and entry_subtype_name == "Character"
-                    and entry_name == "c0000"
-                ):
-                    # c0000 model happens to be in "Player" category for this map.
-                    pass
-                elif entry.ENTRY_SUBTYPE.name == "UnusedObject" and entry_subtype_name == "Object":
-                    pass
-                elif entry.ENTRY_SUBTYPE.name == "UnusedCharacter" and entry_subtype_name == "Character":
-                    pass
-                elif entry.ENTRY_SUBTYPE.name != entry_subtype_name:
-                    raise ValueError(
-                        f"Type of entry name in field ({entry.ENTRY_SUBTYPE.name}) "
-                        f"does not match enforced type of field ({entry_subtype_name})."
-                    )
-            try:
-                entry_local_index = entry_list.get_entry_subtype_index(entry_name)
-                entry_subtype = entry.ENTRY_SUBTYPE
-                pluralized_name = entry_subtype.pluralized_name
-                if pluralized_name == "Characters" and field_value == "c0000":
-                    if not [model for model in getattr(entry_list, "Characters") if model.name == "c0000"]:
-                        if not [model for model in getattr(entry_list, "Players") if model.name == "c0000"]:
-                            raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
-                        pluralized_name = "Players"  # redirect c0000 to 'Player' models
-                return [
-                    MapsLink(
-                        self,
-                        name=field_value,
-                        entry_type_name=entry_type_name,
-                        entry_subtype_name=pluralized_name,
-                        entry_local_index=entry_local_index,
-                    )
-                ]
-            except (KeyError, ValueError):
-                # Entry name is missing (or is not of the enforced entry type).
-                return [BaseLink()]
+            return self.map_entry_link(field_type, field_value)
 
         # This is the right time to check for null values.
         if field_value in valid_null_values:
-            return [BaseLink(self, name=valid_null_values[field_value])]
+            return [NullLink(self, name=valid_null_values[field_value])]
 
         if issubclass(field_type, Text):
-            text_category_name = field_type.get_text_category()
-            text_table = self.project.text[text_category_name]
-            if field_value not in text_table:
-                return [BaseLink()]
-            text = text_table[field_value]
-            return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
+            return self.text_link(field_type, field_value)
 
         if issubclass(field_type, BaseGameParam):
-            param_nickname = field_type.get_param_nickname()
-            param_table = self.project.params.get_param(param_nickname)
-            try:
-                name = param_table[field_value].name
-            except KeyError:
-                return [BaseLink()]
-            else:
-                return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
+            self.game_param_link(field_type, field_value)
 
-        # No other base data types (Texture, Map, Animation, etc.) supported yet.
+        # No other cross-game base data types (Texture, Map, Animation, etc.) supported yet.
 
+        return self.check_other_link_types(field_type, field_value, valid_null_values, map_override)
+
+    def map_entry_link(self, field_type, field_value):
+        entry_name = field_value
+        if not entry_name:  # No link expected (None or empty string)
+            return [BaseLink(self, name="None")]
+        entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
+        active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
+        entry_list = active_msb[entry_type_name]
+        try:
+            entry = entry_list[entry_name]
+        except KeyError:
+            # Entry name is missing.
+            return [BaseLink()]
+        if entry_subtype_name is not None:
+            # Technically, map links only care about entry list type (except for the collision field of Map
+            # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
+            if (
+                entry.ENTRY_SUBTYPE.name == "Player" and entry_subtype_name == "Character"
+                and entry_name == "c0000"
+            ):
+                # c0000 model happens to be in "Player" category for this map.
+                pass
+            elif entry.ENTRY_SUBTYPE.name == "UnusedObject" and entry_subtype_name == "Object":
+                pass
+            elif entry.ENTRY_SUBTYPE.name == "UnusedCharacter" and entry_subtype_name == "Character":
+                pass
+            elif entry.ENTRY_SUBTYPE.name != entry_subtype_name:
+                raise ValueError(
+                    f"Type of entry name in field ({entry.ENTRY_SUBTYPE.name}) "
+                    f"does not match enforced type of field ({entry_subtype_name})."
+                )
+        try:
+            entry_local_index = entry_list.get_entry_subtype_index(entry_name)
+            entry_subtype = entry.ENTRY_SUBTYPE
+            pluralized_name = entry_subtype.pluralized_name
+            if pluralized_name == "Characters" and field_value == "c0000":
+                if not [model for model in getattr(entry_list, "Characters") if model.name == "c0000"]:
+                    if not [model for model in getattr(entry_list, "Players") if model.name == "c0000"]:
+                        raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
+                    pluralized_name = "Players"  # redirect c0000 to 'Player' models
+            return [
+                MapsLink(
+                    self,
+                    name=field_value,
+                    entry_type_name=entry_type_name,
+                    entry_subtype_name=pluralized_name,
+                    entry_local_index=entry_local_index,
+                )
+            ]
+        except (KeyError, ValueError):
+            # Entry name is missing (or is not of the enforced entry type).
+            return [BaseLink()]
+
+    def text_link(self, field_type, field_value):
+        text_category_name = field_type.get_text_category()
+        text_table = self.project.text[text_category_name]
+        if field_value not in text_table:
+            return [BaseLink()]
+        text = text_table[field_value]
+        return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
+
+    def game_param_link(self, field_type, field_value):
+        param_nickname = field_type.get_param_nickname()
+        param_table = self.project.params.get_param(param_nickname)
+        try:
+            name = param_table[field_value].name
+        except KeyError:
+            return [BaseLink()]
+        else:
+            return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
+
+    def check_other_link_types(self, field_type, field_value, valid_null_values: dict, map_override) -> list[BaseLink]:
+        """Override this to check other game-specific types for links."""
         return []
 
     def get_map_entry_type_names(self, field_type: type):
@@ -156,8 +168,9 @@ class WindowLinker:
                 return names
             else:
                 return entry_list.get_entry_names()
+        # TODO: raise type error?
 
-    def param_entry_text_link(self, entry_id):
+    def get_param_entry_text_links(self, entry_id):
         """Return three (name, link) pairs for entries in item categories (Name, Summary, and Description).
 
         Returns empty list if no link is appropriate, and returns an empty tuple if text *should* exist but cannot be
@@ -232,14 +245,20 @@ class WindowLinker:
             return None
         return base_weapon
 
-    def text_link(self, text_type_name, text_id):
+    @abc.abstractmethod
+    def validate_model_subtype(self, model_subtype: BaseMSBModelSubtype, name: str, map_id: str):
+        """Check appropriate game model files to confirm the given model name is valid."""
+        ...
+
+    # region Link Execution
+    def execute_text_link(self, text_type_name, text_id):
         self.window.page_tabs.select(self.get_tab_index("text"))
         # TODO: Create entry if missing.
         self.window.text_tab.select_category(text_type_name)
         self.window.text_tab.select_entry_id(text_id, edit_if_already_selected=False)
         self.window.text_tab.update_idletasks()
 
-    def maps_link(self, entry_list_name, entry_type_name, entry_local_index):
+    def execute_maps_link(self, entry_list_name, entry_type_name, entry_local_index):
         self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index("maps"))
         self.window.maps_tab.refresh_categories()  # TODO: why do I need to call this?
@@ -248,12 +267,7 @@ class WindowLinker:
         self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
-    @abc.abstractmethod
-    def validate_model_subtype(self, model_subtype: BaseMSBModelSubtype, name: str, map_id: str):
-        """Check appropriate game model files to confirm the given model name is valid."""
-        ...
-
-    def params_link(self, param_name, param_entry_id, field_name=None):
+    def execute_params_link(self, param_name, param_entry_id, field_name=None):
         # TODO: Create if missing.
         if param_entry_id not in self.window.params_tab.get_category_data(param_name):
             self.window.CustomDialog(
@@ -267,7 +281,7 @@ class WindowLinker:
             self.window.params_tab.select_field_name(field_name)
         self.window.params_tab.update_idletasks()
 
-    def lighting_link(self, param_name, map_area_name, param_entry_id, lighting_slot=0, field_name=None):
+    def execute_lighting_link(self, param_name, map_area_name, param_entry_id, lighting_slot=0, field_name=None):
         # TODO: Create if missing.
         if param_entry_id not in self.window.lighting_tab.get_category_data(param_name):
             self.window.CustomDialog(
@@ -282,13 +296,14 @@ class WindowLinker:
         if field_name is not None:
             self.window.lighting_tab.select_field_name(field_name)
         self.window.lighting_tab.update_idletasks()
+    # endregion
 
     def runtime_hook(self):
         return self.window.runtime_tab.hook_into_game()
 
     @property
-    def is_hooked(self):
-        return self.window.runtime_tab.is_hooked
+    def hook_created(self):
+        return self.window.runtime_tab.hook_created
 
     def get_game_value(self, value_name):
         """Try to retrieve given game value (e.g. 'player_x') from runtime memory hook."""
@@ -347,8 +362,8 @@ class NullLink(BaseLink):
     """Dummy link for a normally-linked field has a null value, usually 0 or -1, which means the field is unused or set
     to a default. Simply displays '{None/Default}' next to name."""
 
-    def __init__(self, linker: WindowLinker):
-        super().__init__(linker, name="None/Default", menu_text="")
+    def __init__(self, linker: WindowLinker, name="None/Default"):
+        super().__init__(linker, name=name, menu_text="")
 
     def __call__(self):
         raise AttributeError("Null link cannot be called.")
@@ -368,7 +383,7 @@ class MapsLink(BaseLink):
         self.entry_local_index = entry_local_index
 
     def __call__(self):
-        self.linker.maps_link(self.entry_list_name, self.entry_type_name, self.entry_local_index)
+        self.linker.execute_maps_link(self.entry_list_name, self.entry_type_name, self.entry_local_index)
 
 
 class ParamsLink(BaseLink):
@@ -382,7 +397,7 @@ class ParamsLink(BaseLink):
         self.param_entry_id = param_entry_id
 
     def __call__(self):
-        self.linker.params_link(self.param_name, self.param_entry_id)
+        self.linker.execute_params_link(self.param_name, self.param_entry_id)
 
 
 class TextLink(BaseLink):
@@ -392,7 +407,7 @@ class TextLink(BaseLink):
         self.text_id = text_id
 
     def __call__(self):
-        self.linker.text_link(self.text_type_name, self.text_id)
+        self.linker.execute_text_link(self.text_type_name, self.text_id)
 
 
 class LightingLink(BaseLink):
@@ -409,4 +424,4 @@ class LightingLink(BaseLink):
         self.lighting_slot = slot
 
     def __call__(self):
-        self.linker.lighting_link(self.param_name, self.map_area_name, self.param_entry_id, self.lighting_slot)
+        self.linker.execute_lighting_link(self.param_name, self.map_area_name, self.param_entry_id, self.lighting_slot)

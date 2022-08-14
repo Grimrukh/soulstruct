@@ -930,7 +930,7 @@ class MapsEditor(BaseFieldEditor):
         new_translate = None
         new_rotate_y = None
         new_collision = None
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Read Memory",
@@ -1026,7 +1026,7 @@ class MapsEditor(BaseFieldEditor):
             self.refresh_fields()
 
     def add_point_from_player_position(self, sequence_field: str, field_nickname: str):
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Read Memory",

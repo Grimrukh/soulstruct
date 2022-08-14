@@ -125,7 +125,7 @@ class MSBPart(MSB_Scale, MSB_ModelName, MSB_DrawParent, MSB_DrawGroups, MSB_Disp
         ),
         "lens_flare_id": MapFieldInfo(
             "Lens Flare ID",
-            LensFlareParam,
+            LensFlareSourceParam,
             0,
             "ID of Lens Flare parameter (both types) to use from this map's lighting parameters (DrawParam).",
         ),
@@ -448,7 +448,9 @@ class MSBObject(MSBPart):
         "default_animation",
         # "unk_x0e_x10",
         # "unk_x10_x14",
-    ) + MSBPart.LIGHTING_FIELD_ORDER + (
+        "ambient_light_id",
+        "fog_id",
+        "scattered_light_id",  # other lighting fields not used for Objects
         "is_shadow_source",
         "is_shadow_destination",
         "is_shadow_only",
@@ -598,7 +600,7 @@ class MSBCharacter(MSBPart):
         "damage_animation",
         "patrol_type",
         # "platoon_id",
-    ) + MSBPart.LIGHTING_FIELD_ORDER + (
+        # NOTE: no lighting fields for Characters
         "is_shadow_source",
         "is_shadow_destination",
         "is_shadow_only",

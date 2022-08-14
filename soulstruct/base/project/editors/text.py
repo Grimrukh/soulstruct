@@ -38,7 +38,7 @@ class TextEntryRow(EntryRow):
                         separator_added = True
                     self.context_menu.add_command(
                         label=f"Go to Text.{item_type}{link_category}[{linked_id}]",
-                        command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.text_link(
+                        command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.execute_text_link(
                             it + lc, i
                         ),
                     )
@@ -48,7 +48,7 @@ class TextEntryRow(EntryRow):
             param_category = item_type + ("s" if item_type != "Armor" else "")
             self.context_menu.add_command(
                 label=f"Go to Params.{param_category}[{linked_id}]",
-                command=lambda c=param_category, i=linked_id: self.master.linker.params_link(c, i),
+                command=lambda c=param_category, i=linked_id: self.master.linker.execute_params_link(c, i),
             )
 
             # Automatic upgrade text generation.

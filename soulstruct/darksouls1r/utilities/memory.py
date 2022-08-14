@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import logging
+import pickle
 import struct
 import typing as tp
 
 from soulstruct.utilities.memory import *
+from soulstruct.utilities.files import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params import Param, GameParamBND
@@ -27,12 +29,12 @@ class DSRMemoryHook(MemoryHook):
     BASE_ADDRESS = 0x140000000
     EVENT_FLAG_OFFSETS = (0x141D19950, 0, 0)
 
-    PARAM_MEM_SEARCH_REGIONS = [
+    PARAM_MEM_SEARCH_REGIONS = (
         (0x31000000, 0x33000000),
         (0x35000000, 0x36000000),
         (0x24000000, 0x26000000),
         (0x10000000, 0x40000000),  # last resort
-    ]
+    )
 
     EVENT_FLAG_GROUPS = {
         "0": 0x00000,
@@ -256,6 +258,20 @@ class DSRMemoryHook(MemoryHook):
         self.get_param_address(param_file_name, paramdef_name, force_recache)
 
     @memory_hook_validate
+    def pre_cache_drawparams(self, draw_params: list[DrawParam], area_id: int, slot: int, force_recache=False):
+        """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
+        param_file_names = []
+        paramdef_names = []
+        for draw_param in draw_params:
+            if not draw_param.param_info:
+                raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
+            if slot not in {0, 1}:
+                raise ValueError(f"Slot must be 0 or 1, not {slot}.")
+            param_file_names.append(f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}")
+            paramdef_names.append(draw_param.param_info["paramdef_name"])
+        self.get_param_addresses(param_file_names, paramdef_names, force_recache)
+
+    @memory_hook_validate
     @memory_hook_cache
     def get_param_address(self, param_file_name: str, paramdef_name: str, force_recache=False):
         """Find memory address of given `param_file_name` (e.g. "NpcThinkParam" or "m15_1_LightScatteringBank").
@@ -263,32 +279,123 @@ class DSRMemoryHook(MemoryHook):
         If an address is already cached, it is validated using `paramdef_name` (e.g. "NPC_THINK_PARAM_ST" or
         "LIGHT_SCATTERING_BANK") first.
         """
-        if not force_recache:
-            cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
-            if cached_address is not None:
+        cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+        if cached_address is not None:
+            if not force_recache:
                 # Try cached address first.
                 paramdef_name_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string (32j)
                 if paramdef_name_at_cached == paramdef_name.encode():
                     return cached_address  # address is still valid
+            extra_memory_region_start = cached_address // 0x1000000 * 0x1000000
+            extra_memory_regions = ((extra_memory_region_start, extra_memory_region_start + 0x1000000),)
+        else:
+            extra_memory_regions = ()
 
         # Search for address.
+        print(f"Getting address of param {param_file_name}")
         encoded_name = param_file_name.encode("utf-16-le")
-        param_string_address = self.param_scan(encoded_name)
+        param_string_address = self.single_param_scan(
+            encoded_name, extra_memory_regions=extra_memory_regions
+        )
         if param_string_address is None:
-            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' in game memory.")
+            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' string in game memory.")
         # print(f"{param_file_name} string address: {hex(param_string_address)}")
         marker_search = self._PARAM_MARKER + struct.pack("Q", param_string_address)
-        string_offset_address = self.param_scan(marker_search)
+        string_offset_address = self.single_param_scan(
+            marker_search, extra_memory_regions=extra_memory_regions, ignore_repeats=True
+        )
         if string_offset_address is None:
-            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' in game memory.")
+            raise MemoryError(f"Could not find memory address of Param '{param_file_name}' table in game memory.")
         # print(f"{param_file_name} string offset address: {hex(string_offset_address)}")
         data_address = self.read(string_offset_address + 56, 8, "q")
         self._address_cache.setdefault("ds1r", {})[param_file_name] = data_address
         return data_address
 
-    def param_scan(self, pattern: bytes) -> int | None:
-        for start, end in self.PARAM_MEM_SEARCH_REGIONS:
-            result = self.scan(pattern, search_from_address=start, max_address=end)
+    @memory_hook_validate
+    def get_param_addresses(self, param_file_names: list[str], paramdef_names: list[str], force_recache=False):
+        """Find memory address of all given `param_file_names` at once, which leads to more efficient scanning.
+
+        If an address is already cached, it is validated using `paramdef_name` (e.g. "NPC_THINK_PARAM_ST" or
+        "LIGHT_SCATTERING_BANK") first.
+        """
+        if len(param_file_names) != len(paramdef_names):
+            raise ValueError("Number of param file names and paramdef names to scan for must match.")
+
+        try:
+            with PACKAGE_PATH("__address_cache__").open("rb") as f:
+                self._address_cache = pickle.load(f)
+        except (FileNotFoundError, EOFError, ValueError):
+            self._address_cache = {}
+
+        params_to_find = list(param_file_names)
+        param_addresses = {param_file_name: None for param_file_name in param_file_names}
+
+        if not force_recache:
+            for param_file_name, paramdef_name in zip(param_addresses.keys(), paramdef_names):
+                cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+                if cached_address is not None:
+                    # Try cached address first.
+                    paramdef_name_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string
+                    if paramdef_name_at_cached == paramdef_name.encode():
+                        param_addresses[param_file_name] = cached_address  # address is still valid
+                        params_to_find.remove(param_file_name)
+
+        # Use cached address as a clue to memory region.
+        extra_memory_regions = []
+        for param_file_name in param_addresses:
+            cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
+            if cached_address is not None:
+                extra_memory_region_start = cached_address // 0x1000000 * 0x1000000  # e.g., `0x33000000`
+                extra_memory_regions.append((extra_memory_region_start, extra_memory_region_start + 0x1000000))
+        extra_memory_regions = sorted(set(extra_memory_regions))
+
+        encoded_names = {param_file_name: param_file_name.encode("utf-16-le") for param_file_name in params_to_find}
+        param_string_addresses = self.param_scan(
+            encoded_names, extra_memory_regions=extra_memory_regions, ignore_repeats=True,
+        )
+        for param_file_name, string_address in param_string_addresses.items():
+            if string_address is None:
+                print(param_string_addresses)
+                raise MemoryError(f"Could not find memory address of Param '{param_file_name}' string in game memory.")
+        # print(f"{param_file_name} string address: {hex(param_string_address)}")
+        marker_search = {
+            param_file_name: self._PARAM_MARKER + struct.pack("Q", param_string_addresses[param_file_name])
+            for param_file_name in params_to_find
+        }
+        string_offset_addresses = self.param_scan(
+            marker_search, extra_memory_regions=extra_memory_regions, ignore_repeats=True
+        )
+        for param_file_name, offset_address in string_offset_addresses.items():
+            if offset_address is None:
+                raise MemoryError(f"Could not find memory address of Param '{param_file_name}' table in game memory.")
+            else:
+                param_addresses[param_file_name] = self.read(offset_address + 56, 8, "q")
+                self._address_cache.setdefault("ds1r", {})[param_file_name] = param_addresses[param_file_name]
+
+        with PACKAGE_PATH("__address_cache__").open("wb") as f:
+            pickle.dump(self._address_cache, f)
+
+        return param_addresses
+
+    def param_scan(
+        self,
+        patterns: bytes | dict[str, bytes],
+        extra_memory_regions=(),
+        ignore_repeats=False,
+    ) -> dict[str, int | None]:
+        for address_range in tuple(extra_memory_regions) + self.PARAM_MEM_SEARCH_REGIONS:
+            print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
+            result = self.scan(patterns, address_range=address_range, ignore_repeats=ignore_repeats)
+            if all(v is not None for v in result.values()):
+                return result  # all patterns found
+        return {}
+
+    def single_param_scan(self, pattern: bytes, extra_memory_regions=(), ignore_repeats=False) -> int | None:
+        for address_range in tuple(extra_memory_regions) + self.PARAM_MEM_SEARCH_REGIONS:
+            print(f"Searching mem region: {hex(address_range[0])} - {hex(address_range[1])}")
+            result = self.single_scan(
+                pattern, address_range=address_range, ignore_repeats=ignore_repeats
+            )
             if result is not None:
                 return result
         return None

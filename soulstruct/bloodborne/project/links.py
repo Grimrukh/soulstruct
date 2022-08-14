@@ -18,76 +18,70 @@ class WindowLinker(_BaseWindowLinker):
 
     window: ProjectWindow
 
-    def soulstruct_link(
-        self, field_type, field_value, valid_null_values: dict = None, map_override=None,
-    ) -> list[BaseLink]:
+    def game_param_link(self, field_type, field_value) -> list[BaseLink]:
         """Currently identical to PTDE, but still kept separate."""
+        name_extension = ""
 
-        if issubclass(field_type, BaseGameParam):
-            name_extension = ""
-
-            if field_type in {AttackParam, BehaviorParam}:
-                # Try to determine Player vs. Non Player table.
-                param_nickname = ""
-                if field_type == AttackParam:
-                    if self.window.params_tab.active_category == "PlayerBehaviors":
-                        param_nickname = "PlayerAttacks"
-                    elif self.window.params_tab.active_category == "NonPlayerBehaviors":
-                        param_nickname = "NonPlayerAttacks"
-                elif field_type == BehaviorParam:
-                    if self.window.params_tab.active_category == "Players":
-                        param_nickname = "PlayerBehaviors"
-                if not param_nickname:
-                    # Could be Player or Non Player. Provide both links.
-                    param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
-                    player_table = self.project.params.get_param(f"Player{param_nickname}")
-                    non_player_table = self.project.params.get_param(f"NonPlayer{param_nickname}")
-                    links = []
-                    if field_value in player_table:
-                        links.append(
-                            ParamsLink(
-                                self,
-                                param_name=f"Player{param_nickname}",
-                                param_entry_id=field_value,
-                                name=player_table[field_value].name,
-                            )
+        if field_type in {AttackParam, BehaviorParam}:
+            # Try to determine Player vs. Non Player table.
+            param_nickname = ""
+            if field_type == AttackParam:
+                if self.window.params_tab.active_category == "PlayerBehaviors":
+                    param_nickname = "PlayerAttacks"
+                elif self.window.params_tab.active_category == "NonPlayerBehaviors":
+                    param_nickname = "NonPlayerAttacks"
+            elif field_type == BehaviorParam:
+                if self.window.params_tab.active_category == "Players":
+                    param_nickname = "PlayerBehaviors"
+            if not param_nickname:
+                # Could be Player or Non Player. Provide both links.
+                param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
+                player_table = self.project.params.get_param(f"Player{param_nickname}")
+                non_player_table = self.project.params.get_param(f"NonPlayer{param_nickname}")
+                links = []
+                if field_value in player_table:
+                    links.append(
+                        ParamsLink(
+                            self,
+                            param_name=f"Player{param_nickname}",
+                            param_entry_id=field_value,
+                            name=player_table[field_value].name,
                         )
-                    if field_value in non_player_table:
-                        links.append(
-                            ParamsLink(
-                                self,
-                                param_name=f"NonPlayer{param_nickname}",
-                                param_entry_id=field_value,
-                                name=non_player_table[field_value].name,
-                            )
+                    )
+                if field_value in non_player_table:
+                    links.append(
+                        ParamsLink(
+                            self,
+                            param_name=f"NonPlayer{param_nickname}",
+                            param_entry_id=field_value,
+                            name=non_player_table[field_value].name,
                         )
-                    if links:
-                        return links
-                    return [BaseLink()]
-
-            elif field_type in {ArmorParam, WeaponParam}:
-                param_nickname = field_type.get_param_nickname()
-                true_param_id = (
-                    self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
-                )
-                if true_param_id is None:
-                    return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
-                if field_value != true_param_id:
-                    name_extension = "+" + str(field_value - true_param_id)
-                field_value = true_param_id
-
-            else:
-                param_nickname = field_type.get_param_nickname()
-
-            param_table = self.project.params.get_param(param_nickname)
-            try:
-                name = param_table[field_value].name + name_extension
-            except KeyError:
+                    )
+                if links:
+                    return links
                 return [BaseLink()]
-            else:
-                return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-        return super().soulstruct_link(field_type, field_value, valid_null_values, map_override)
+        elif field_type in {ArmorParam, WeaponParam}:
+            param_nickname = field_type.get_param_nickname()
+            true_param_id = (
+                self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
+            )
+            if true_param_id is None:
+                return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
+            if field_value != true_param_id:
+                name_extension = "+" + str(field_value - true_param_id)
+            field_value = true_param_id
+
+        else:
+            param_nickname = field_type.get_param_nickname()
+
+        param_table = self.project.params.get_param(param_nickname)
+        try:
+            name = param_table[field_value].name + name_extension
+        except KeyError:
+            return [BaseLink()]
+        else:
+            return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
     def validate_model_subtype(self, model_subtype: MSBModelSubtype, name: str, map_id: str):
         """Check appropriate game model files to confirm the given model name is valid.

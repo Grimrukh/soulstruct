@@ -19,6 +19,7 @@ class MapsEditor(BaseMapsEditor):
                 pass
             else:
                 field_value = int(obj_act_part.model_name[1:5])
+
         if valid_null_values is None:
             if field_type == PlaceName:
                 valid_null_values = {-1: "Default Map Name + Force Banner"}
@@ -26,6 +27,7 @@ class MapsEditor(BaseMapsEditor):
                 valid_null_values = {-1: "Default/None"}
             else:
                 valid_null_values = {0: "Default/None", -1: "Default/None"}
+
         if issubclass(field_type, BaseDrawParam) and self.active_category.endswith("MapConnections"):
             map_override = self.get_selected_field_dict().connected_map.emevd_file_stem
         else:

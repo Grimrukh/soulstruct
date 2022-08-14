@@ -361,27 +361,20 @@ class MemoryHook(abc.ABC):
     @memory_hook_validate
     def scan(
         self,
-        pointers: tp.Union[bytes, BasePointerSearch, dict[str, tp.Union[bytes, BasePointerSearch]]],
+        pointers: dict[str, bytes | BasePointerSearch],
         chunk_size=8192,
         prefer_numpy=False,  # TODO: numpy method is slower and more restrictive, even with chunk size 8192!
         use_regex=False,
-        search_from_address=None,
-        max_address=None,
+        address_range: tuple[int, int] = None,
         ignore_repeats=False,
     ) -> tp.Union[int, None, dict[str, tp.Union[int, None]]]:
         """Scan process memory, `chunk_size` at a time, looking for all the pointer byte-strings specified in
-        `pointer_dict`.
+        `pointers` dictionary.
 
         Returns a dictionary mapping pointer names to the address where `pointer.sequence` starts. If
         `pointer.address_func` is not `None`, the address will be fed through that function first. If the address is
         not found, the dictionary value will be `None`.
         """
-        if isinstance(pointers, (bytes, BasePointerSearch)):
-            return self.scan(
-                {"x": pointers},
-                chunk_size, prefer_numpy, use_regex, search_from_address, max_address, ignore_repeats
-            )["x"]
-
         use_numpy = prefer_numpy and numpy
         pointer_int32_dict = {}
         if use_numpy:
@@ -415,8 +408,11 @@ class MemoryHook(abc.ABC):
             buffer = (c.c_char * chunk_size)()
 
         bytes_read = SIZE_T()
-        if search_from_address is None:
+        if address_range is None:
             search_from_address = self.BASE_ADDRESS
+            max_address = 0x7FFFFFFF
+        else:
+            search_from_address, max_address = address_range
         found_pointers = {pointer_name: None for pointer_name in pointers}
         while True:
 
@@ -489,6 +485,26 @@ class MemoryHook(abc.ABC):
                 search_from_address += stride
 
         return found_pointers
+
+    @memory_hook_validate
+    def single_scan(
+        self,
+        pointer: bytes | BasePointerSearch,
+        chunk_size=8192,
+        prefer_numpy=False,  # TODO: numpy method is slower and more restrictive, even with chunk size 8192!
+        use_regex=False,
+        address_range: tuple[int, int] = None,
+        ignore_repeats=False,
+    ) -> int | None:
+        scan_result = self.scan(
+            pointers={"x": pointer},
+            chunk_size=chunk_size,
+            prefer_numpy=prefer_numpy,
+            use_regex=use_regex,
+            address_range=address_range,
+            ignore_repeats=ignore_repeats,
+        )
+        return scan_result["x"]
 
     @memory_hook_validate
     def get(self, value_name):

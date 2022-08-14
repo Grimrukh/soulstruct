@@ -81,7 +81,7 @@ class LightingEditor(_BaseLightingEditor):
 
     def inject_current_param(self):
         """Hook into game memory and update the current param."""
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Write Memory",
@@ -109,7 +109,7 @@ class LightingEditor(_BaseLightingEditor):
     def toggle_auto_inject(self):
         if not self.auto_inject.var.get():
             return
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Write Memory",

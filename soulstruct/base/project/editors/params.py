@@ -49,7 +49,7 @@ class ParamEntryRow(EntryRow):
     def update_entry(self, entry_id: int, entry_text: str):
         """Adds linked text from text data (if present and not already identical to param entry name)."""
         self.entry_id = entry_id
-        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        text_links = self.master.linker.get_param_entry_text_links(self.entry_id)
         self.linked_text = ""
         if text_links and text_links[0].name and text_links[0].name != entry_text:
             self.linked_text = f"    {{{text_links[0].name}}}"
@@ -73,7 +73,7 @@ class ParamEntryRow(EntryRow):
             label="Duplicate Entry to Next Available ID",
             command=lambda: self.master.add_entry_to_next_available_id(self.entry_id),
         )
-        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        text_links = self.master.linker.get_param_entry_text_links(self.entry_id)
         if text_links:
             self.context_menu.add_separator()
             for text_link in text_links:

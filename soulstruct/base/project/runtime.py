@@ -345,7 +345,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
         return self._hook.get(value_name)
 
     @property
-    def is_hooked(self):
+    def hook_created(self):
         return self._hook is not None
 
     def _install_psutil(self):
