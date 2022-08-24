@@ -194,6 +194,7 @@ class MapFieldRow(FieldRow):
             )
             self.value_label.var.set(str(value) + "  {LINK ERROR}")
             self._activate_value_widget(self.value_label)
+
         if issubclass(self.field_type, MapEntry):
             # `value` is the name of another MSB entry, or an empty string to reset to `None`.
             if not value:
@@ -212,8 +213,9 @@ class MapFieldRow(FieldRow):
                             msb_entry_name += "  {UNKNOWN}"
                 self.value_label.var.set(msb_entry_name)
             self._activate_value_widget(self.value_label)
-        else:
-            self._update_field_int(value)
+            return
+
+        self._update_field_int(value)
 
     def _update_field_Vector3(self, value: Vector3):
         """Update field with a `Vector3` value. (No chance of a link.)"""

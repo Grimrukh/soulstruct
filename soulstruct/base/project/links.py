@@ -67,7 +67,7 @@ class WindowLinker:
             return self.text_link(field_type, field_value)
 
         if issubclass(field_type, BaseGameParam):
-            self.game_param_link(field_type, field_value)
+            return self.game_param_link(field_type, field_value)
 
         # No other cross-game base data types (Texture, Map, Animation, etc.) supported yet.
 
@@ -75,8 +75,8 @@ class WindowLinker:
 
     def map_entry_link(self, field_type, field_value):
         entry_name = field_value
-        if not entry_name:  # No link expected (None or empty string)
-            return [BaseLink(self, name="None")]
+        if not entry_name:  # no link expected (None or empty string)
+            return [NullLink(self, name="None")]
         entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
         active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
         entry_list = active_msb[entry_type_name]
@@ -84,7 +84,7 @@ class WindowLinker:
             entry = entry_list[entry_name]
         except KeyError:
             # Entry name is missing.
-            return [BaseLink()]
+            return [BrokenLink()]
         if entry_subtype_name is not None:
             # Technically, map links only care about entry list type (except for the collision field of Map
             # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
@@ -123,13 +123,13 @@ class WindowLinker:
             ]
         except (KeyError, ValueError):
             # Entry name is missing (or is not of the enforced entry type).
-            return [BaseLink()]
+            return [BrokenLink()]
 
     def text_link(self, field_type, field_value):
         text_category_name = field_type.get_text_category()
         text_table = self.project.text[text_category_name]
         if field_value not in text_table:
-            return [BaseLink()]
+            return [BrokenLink()]
         text = text_table[field_value]
         return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
@@ -139,7 +139,7 @@ class WindowLinker:
         try:
             name = param_table[field_value].name
         except KeyError:
-            return [BaseLink()]
+            return [BrokenLink()]
         else:
             return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
@@ -196,7 +196,7 @@ class WindowLinker:
                 text_ids["Descriptions"] = base_armor_id
         for text_category, text_id in text_ids.items():
             if text_ids[text_category] not in self.project.text[prefix + text_category]:
-                links.append(BaseLink())
+                links.append(BrokenLink())
             else:
                 links.append(
                     TextLink(
@@ -337,7 +337,7 @@ class WindowLinker:
             getattr(self.project.text, item_type + "Descriptions")[item_id] = description
 
 
-class BaseLink:
+class BaseLink(abc.ABC):
     def __init__(self, linker: WindowLinker = None, name=None, menu_text=None):
         """Bundles right-click context menu text with a GUI-jumping link callback, with an optional name.
 
@@ -354,15 +354,25 @@ class BaseLink:
         if self.menu_text:
             context_menu.add_command(label=self.menu_text, command=self, **kwargs)
 
+    @abc.abstractmethod
     def __call__(self):
-        raise NotImplementedError
+        ...
+
+
+class BrokenLink(BaseLink):
+    """Link with an invalid, non-default value that cannot be found in the target table/file."""
+    def __init__(self):
+        super().__init__()  # all None
+
+    def __call__(self):
+        raise AttributeError("Broken link cannot be called.")
 
 
 class NullLink(BaseLink):
-    """Dummy link for a normally-linked field has a null value, usually 0 or -1, which means the field is unused or set
-    to a default. Simply displays '{None/Default}' next to name."""
+    """Dummy link for a normally-linked field that has a null value, usually 0 or -1, which means the field is unused or
+    set to a default. Will simply display `name`, eg '{Default/None}', next to field value."""
 
-    def __init__(self, linker: WindowLinker, name="None/Default"):
+    def __init__(self, linker: WindowLinker, name="Default/None"):
         super().__init__(linker, name=name, menu_text="")
 
     def __call__(self):

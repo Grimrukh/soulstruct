@@ -59,7 +59,7 @@ class WindowLinker(_BaseWindowLinker):
                     )
                 if links:
                     return links
-                return [BaseLink()]
+                return [BrokenLink()]
 
         elif field_type in {ArmorParam, WeaponParam}:
             param_nickname = field_type.get_param_nickname()
@@ -67,7 +67,7 @@ class WindowLinker(_BaseWindowLinker):
                 self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
             )
             if true_param_id is None:
-                return [BaseLink()]  # Invalid weapon/armor ID, even considering reinforcement.
+                return [BrokenLink()]  # Invalid weapon/armor ID, even considering reinforcement.
             if field_value != true_param_id:
                 name_extension = "+" + str(field_value - true_param_id)
             field_value = true_param_id
@@ -79,7 +79,7 @@ class WindowLinker(_BaseWindowLinker):
         try:
             name = param_table[field_value].name + name_extension
         except KeyError:
-            return [BaseLink()]
+            return [BrokenLink()]
         else:
             return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 

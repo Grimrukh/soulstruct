@@ -146,7 +146,7 @@ class MSBSoundEvent(MSBEvent):
         ),
         "sound_id": MapFieldInfo(
             "Sound ID",
-            Sound,
+            int,
             -1,
             "Sound data ID, which refers to an ID in loaded sound events.",
         ),

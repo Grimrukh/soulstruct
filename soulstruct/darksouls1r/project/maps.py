@@ -13,7 +13,7 @@ class MapsEditor(BaseMapsEditor):
             obj_act_part_name = self.get_selected_field_dict()["obj_act_part_name"]
             try:
                 if obj_act_part_name is None:
-                    raise KeyError(f"`obj_act_part_name` is None.")
+                    raise KeyError("`obj_act_part_name` is None.")
                 obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
             except KeyError:  # invalid or `None` part name
                 pass

@@ -47,10 +47,8 @@ class ProjectWindow(_BaseProjectWindow):
         self._build_params_submenu(params_submenu)
         tools_menu.add_cascade(label="Params", foreground="#FFF", menu=params_submenu)
 
-        events_submenu = self.Menu(tearoff=0)
-
-
-        tools_menu.add_separator()
+        # events_submenu = self.Menu(tearoff=0)
+        # tools_menu.add_separator()
 
         super()._build_tools_menu(tools_menu)
 
@@ -84,7 +82,7 @@ class ProjectWindow(_BaseProjectWindow):
         events_menu.add_command(
             label="Copy Events Module to Project",
             foreground="#FFF",
-            command=self.project.offer_events_submodule_copy(with_window=True),
+            command=self.project.offer_events_submodule_copy(with_window=self),
         )
         events_menu.add_command(
             label="Translate Vanilla Event/Region Entries with Entity IDs",

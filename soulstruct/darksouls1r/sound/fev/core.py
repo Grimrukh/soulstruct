@@ -1636,7 +1636,7 @@ class FEV(GameFile):
         self,
         write_bank_dir: Path | str = "",
         fsb_dir: Path | str = None,
-        ignore_fsb_sample_names: tp.Iterable[str] = (),
+        ignore_fsb_sample_names: tp.Iterable[str | re.Pattern] = (),
         convert_to_wav=False,
     ) -> str:
         """Read FEV and FSB files and reconstruct FDP project file for FMOD Designer (just plaintext XML).
@@ -1646,8 +1646,9 @@ class FEV(GameFile):
             "bank/{fev_name}". Optional; defaults to empty string.
             fsb_dir (Path or str): directory to find FSB files in (typically just the one FSB). If omitted, the
                 directory containing the FEV file will be used.
-            ignore_fsb_sample_names (sequence of Path or str): any FSB sample header names contained in this sequence
-                will be ignored for the FDP file and deleted after FSB extraction.
+            ignore_fsb_sample_names (sequence of Path or str or re.Pattern): any FSB sample header names contained in
+                this sequence or that match a regex in this sequence will be ignored for the FDP file and deleted after
+                FSB extraction.
             convert_to_wav (bool): if True, and `write_bank_path` is given, the MP3 files written to the bank directory
                 will also be converted to WAV files for easy re-use in FMOD. Voice files starting with "v" will further
                 be converted to single-channel, which is the format expected by DSR.
@@ -1702,7 +1703,13 @@ class FEV(GameFile):
                     )
 
                 for index, sample in enumerate(fsb.samples):
-                    if Path(sample.header.name).stem in ignore_fsb_sample_names:
+                    ignore_file = False
+                    stem = Path(sample.header.name).stem
+                    for ignore_name in ignore_fsb_sample_names:
+                        if (isinstance(ignore_name, re.Pattern) and ignore_name.match(stem)) or ignore_name == stem:
+                            ignore_file = True
+                            break
+                    if ignore_file:
                         extracted_file_path = write_bank_dir / f"{sample.header.name}{suffix}"
                         os.remove(extracted_file_path)
                         _LOGGER.info(f"Deleted ignored extracted FSB sample: {extracted_file_path}")
@@ -1771,7 +1778,7 @@ class FEV(GameFile):
         self,
         fdp_path: Path | str,
         write_bank_dir: Path | str = "",
-        ignore_fsb_sample_names: tp.Iterable[str] = (),
+        ignore_fsb_sample_names: tp.Iterable[str | re.Pattern] = (),
         fsb_dir: Path | str = None,
         convert_to_wav=False,
     ):
