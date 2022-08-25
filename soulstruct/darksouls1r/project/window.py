@@ -193,8 +193,7 @@ class ProjectWindow(_BaseProjectWindow):
         current_msb.write()
         self.linker.enable_flag(request_warp_flag_id)
 
-        # TODO: Remove
-        print(
+        _LOGGER.info(
             f"Wrote MSB {current_msb_path.name} with altered Player Start {player_start_id} "
             f"and enabled flag {request_warp_flag_id}"
         )

@@ -506,19 +506,19 @@ class SoundInstance(XMLObject):
         POWER_30_EARLY = 7
 
     sounddef_index: int
-    start: int
-    length: int
+    start: float
+    length: float
     start_mode: SoundInstance.StartMode
     loop_mode: SoundInstance.LoopMode
     autopitch_param: SoundInstance.AutopitchParameter
     loop_count: int
     autopitch_enabled: int
-    autopitch_reference: int
-    autopitch_at_min: int
-    fine_tune: int
-    volume: int
-    fade_in_length: int
-    fade_out_length: int
+    autopitch_reference: float
+    autopitch_at_min: float
+    fine_tune: float
+    volume: float
+    fade_in_length: float
+    fade_out_length: float
     fade_in_type: SoundInstance.CrossfadeType
     fade_out_type: SoundInstance.CrossfadeType
 
