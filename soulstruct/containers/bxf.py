@@ -45,17 +45,24 @@ class BaseBXF(BaseBinder, abc.ABC):
             file_source = Path(file_source)
             if file_source.is_dir() and (file_source / "binder_manifest.json").is_file():
                 pass  # will be handled by parent class
-            elif file_source.name.endswith("bhd"):
-                bdt_source = file_source.with_name(file_source.name[:-3] + "bdt")
-                if not bdt_source.is_file():
-                    raise FileNotFoundError(f"Could not find BDT data file next to BHD header file: {file_source}")
-            elif file_source.name.endswith("bdt"):
-                bdt_source = file_source
-                file_source = bdt_source.with_name(bdt_source.name[:-3] + "bhd")
-                if not file_source.is_file():
-                    raise FileNotFoundError(f"Could not find BHD header file next to BDT data file: {bdt_source}")
             else:
-                raise ValueError(f"Could not tell if file source {file_source} is a BHD or BDT file.")
+                if file_source.suffix == ".bak":
+                    check_name = file_source.name.removesuffix(".bak")
+                    bak_suffix = ".bak"
+                else:
+                    check_name = file_source.name
+                    bak_suffix = ""
+                if check_name.endswith("bhd"):
+                    bdt_source = file_source.with_name(check_name[:-3] + f"bdt{bak_suffix}")
+                    if not bdt_source.is_file():
+                        raise FileNotFoundError(f"Could not find BDT data file next to BHD header file: {file_source}")
+                elif check_name.endswith("bdt"):
+                    bdt_source = file_source
+                    file_source = bdt_source.with_name(check_name[:-3] + f"bhd{bak_suffix}")
+                    if not file_source.is_file():
+                        raise FileNotFoundError(f"Could not find BHD header file next to BDT data file: {bdt_source}")
+                else:
+                    raise ValueError(f"Could not tell if file source {file_source} is a BHD or BDT file.")
 
         super().__init__(file_source, dcx_type=dcx_type, bdt_source=bdt_source)
 
