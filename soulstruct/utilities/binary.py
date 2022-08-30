@@ -644,6 +644,10 @@ class BinaryObject(abc.ABC):
 class BinaryReader:
     """Manages an buffered binary IO stream, with methods for unpacking data and moving to temporary offsets."""
 
+    class ReaderError(Exception):
+        """Exception raised when trying to unpack data."""
+        pass
+
     def __init__(
         self,
         buffer: tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader],
@@ -781,7 +785,10 @@ class BinaryReader:
         Encoding defaults to "utf-8". If a "utf-16" encoding is given, two bytes will be read at a time, and a double
         null terminator is required. See `read_chars_from_buffer()` for more.
         """
-        return read_chars_from_buffer(self.buffer, offset, length, reset_old_offset, encoding=encoding, strip=strip)
+        try:
+            return read_chars_from_buffer(self.buffer, offset, length, reset_old_offset, encoding=encoding, strip=strip)
+        except struct.error as ex:
+            raise self.ReaderError(f"Could not unpack string. Error: {ex}")
 
     def read(self, size: int = None, offset: int = None) -> bytes:
         if offset is not None:

@@ -312,7 +312,7 @@ class Quaternion(Vector4):
 class Matrix(abc.ABC):
     SIZE = None
     PRECISION = 3
-    data: list[list[tp.Union[int, float]]]
+    data: list[list[int] | list[float]]
 
     @abc.abstractmethod
     def __init__(self):
@@ -339,14 +339,14 @@ class Matrix(abc.ABC):
             m.data[row] = data[row * cls.SIZE:(row + 1) * cls.SIZE]
         return m
 
-    def to_flat_row_order(self) -> list[tp.Union[int, float]]:
+    def to_flat_row_order(self) -> list[int] | list[float]:
         flat = []
         for row in self.data:
             flat.extend(row)
         return flat
 
     @classmethod
-    def from_flat_column_order(cls, data):
+    def from_flat_column_order(cls, data) -> Matrix:
         """Create `Matrix` from flattened elements, in column-first order."""
         if len(data) != cls.SIZE ** 2:
             raise ValueError(f"`data` should be {cls.SIZE ** 2} elements.")
@@ -355,7 +355,7 @@ class Matrix(abc.ABC):
             m.data[row] = [data[i * cls.SIZE + row] for i in range(cls.SIZE)]
         return m
 
-    def to_flat_column_order(self) -> list[tp.Union[int, float]]:
+    def to_flat_column_order(self) -> list[int] | list[float]:
         flat = []
         for c in range(self.SIZE):
             flat.extend([row[c] for row in self.data])
@@ -384,13 +384,15 @@ class Matrix(abc.ABC):
                 row, col = indices
                 try:
                     self.data[row][col] = value
+                    return
                 except IndexError:
                     raise IndexError(f"Invalid matrix indices: {row}, {col}")
             raise ValueError("Only one index (to set row) or two indices (to set value) are permitted.")
         raise TypeError("Matrix index must be one or two integers.")
 
     def __repr__(self):
-        return "\n".join(f"[{', '.join(f'{v:.{self.PRECISION}}' for v in row)}]" for row in self.data)
+        rows = "\n  ".join(f"[{', '.join(f'{v:>10.{self.PRECISION}}' for v in row)}]" for row in self.data)
+        return f"[\n  {rows}\n]"
 
 
 class Matrix3(Matrix):
