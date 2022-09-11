@@ -222,6 +222,17 @@ class EventEditor(SmartFrame):
             )
 
     def scan_evs_files(self):
+        """Detect all EVS files in project event directory."""
+
+        # Check for `common_func.py` first, which does not use EVS extension (for importing purposes).
+        common_func_path = self.evs_directory / "common_func.py"
+        if common_func_path.is_file():
+            self.evs_file_paths["common_func"] = common_func_path
+            with common_func_path.open("r", encoding="utf-8") as f:
+                self.evs_text["common_func"] = f.read()
+
+        # Search for all `evs.py` files.
+        # TODO: Extension should be modifiable, surely?
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
             if evs_file_path.name.startswith("_"):
                 # Ignore files starting with an underscore.

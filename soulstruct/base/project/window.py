@@ -155,7 +155,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.build()
         self.deiconify()
 
-        self.maps_tab.check_for_repeated_entity_ids()
+        if self.maps_tab:
+            self.maps_tab.check_for_repeated_entity_ids()
 
     def build(self):
         self.build_top_menu()
@@ -594,14 +595,17 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return data_type
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
+        data_types = self.data_types
+        if "maps" not in data_types:
+            # Cannot get map to set it globally.
+            return
         # noinspection PyUnresolvedReferences
         game_map = self.PROJECT_CLASS.DATA_TYPES["maps"].GET_MAP(map_id)
-        data_types = self.data_types
-        if "maps" in data_types and "maps" not in ignore_tabs:
+        if "maps" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-        if "maps" in data_types and "entities" not in ignore_tabs:
+        if "entities" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.entities_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.entities_tab.on_map_choice()

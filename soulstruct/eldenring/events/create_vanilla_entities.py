@@ -2,7 +2,14 @@
 
 Source: https://soulsmods.github.io/data/er/entities.html
 """
+
+__all__ = [
+    "create_vanilla_entities",
+    "copy_vanilla_entities",
+]
+
 import re
+import shutil
 from pathlib import Path
 
 
@@ -45,11 +52,14 @@ NEW_NAMES = {
 }
 
 
-def main():
+def create_vanilla_entities(entities_dir: Path | str = None):
 
     entities = {}
 
-    (Path(__file__).parent / "vanilla/entities").mkdir(exist_ok=True)
+    entities_dir = Path(entities_dir)
+    if entities_dir is None:
+        entities_dir = Path(__file__).parent / "vanilla/entities"
+    entities_dir.mkdir(parents=True, exist_ok=True)
 
     for line in (Path(__file__).parent / "entities.txt").read_text(encoding="utf-8").split("\n"):
         if match := CHARACTER_RE.match(line):
@@ -113,8 +123,17 @@ def main():
             for name, (entity_id, desc) in map_entities["Assets"].items():
                 module_string += f"    {name} = {entity_id}  # {desc}\n"
 
-        (Path(__file__).parent / f"vanilla/entities/{map_id}_entities.py").write_text(module_string)
+        (entities_dir / f"{map_id}_entities.py").write_text(module_string)
+
+
+def copy_vanilla_entities(entities_dir: Path | str):
+    """Save time by copying vanilla entities bundled in Soulstruct.
+
+    May require updates when Elden Ring updates.
+    """
+    source_entities = Path(__file__).parent / "vanilla/entities"
+    shutil.copytree(source_entities, entities_dir)
 
 
 if __name__ == '__main__':
-    main()
+    create_vanilla_entities()

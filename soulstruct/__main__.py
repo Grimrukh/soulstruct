@@ -175,7 +175,7 @@ def soulstruct_main(ss_args) -> bool:
         return ss_args.console
 
     if ss_args.text:
-        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "darksouls3").go()
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "darksouls3", "eldenring").go()
         global Text
         Text = game.import_game_submodule("text").MSGDirectory(source)
         return ss_args.console
@@ -205,7 +205,7 @@ def soulstruct_main(ss_args) -> bool:
     # No specific type. Open entire Soulstruct Project.
     game = get_existing_project_game(source) if source else None
     if game is None:
-        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne").go()
+        game = GameSelector("darksouls1ptde", "darksouls1r", "bloodborne", "eldenring").go()
     if ss_args.console:
         # Console only.
         global Project

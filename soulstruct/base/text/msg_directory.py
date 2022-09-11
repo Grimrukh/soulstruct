@@ -104,7 +104,11 @@ class MSGDirectory(abc.ABC):
                 raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
             self._original_names[attr_name] = entry.name
             self._is_menu[attr_name] = is_menu
-            fmg = self.FMG_CLASS(entry.get_uncompressed_data())
+            try:
+                fmg = self.FMG_CLASS(entry.get_uncompressed_data())
+            except Exception as ex:
+                _LOGGER.error(f"Error encountered while loading FMG '{entry.name}': {ex}")
+                raise
             if attr_name.endswith("Patch"):
                 # Patch FMGs are used to update the base FMGs here.
                 # Original source (patch or no) is not tracked; all entries will be written to patch FMG by `pack()`.

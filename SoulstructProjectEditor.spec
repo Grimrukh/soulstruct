@@ -21,6 +21,7 @@ added_files = [
     ("soulstruct\\darksouls1r\\params\\resources\\darksouls1r.paramdefbnd.dcx", "darksouls1r\\params\\resources"),
     ("soulstruct\\bloodborne\\events", "bloodborne\\events"),
     ("soulstruct\\bloodborne\\params\\resources\\bloodborne.paramdefbnd.dcx", "bloodborne\\params\\resources"),
+    ("soulstruct\\eldenring\\events", "eldenring\\events"),
 ]
 
 a = Analysis(
@@ -32,6 +33,7 @@ a = Analysis(
         "soulstruct.darksouls1ptde.project",
         "soulstruct.darksouls1r.project",
         "soulstruct.bloodborne.project",
+        "soulstruct.eldenring.project",
     ],
     hookspath=[],
     runtime_hooks=[],

@@ -410,6 +410,8 @@ class EMEVD(GameFile, abc.ABC):
         if enums_manager:
             if warn_missing_enums:
                 for entity_cls_name, missing_id in enums_manager.missing_enums:
+                    if entity_cls_name == "Flag":
+                        continue  # TODO: Too many missing Flags to print.
                     _LOGGER.warning(f"Missing '{entity_cls_name}' entity ID: {missing_id}")
             for name in sorted(enums_manager.used_star_modules):
                 imports += f"\nfrom {entity_module_prefix}{name} import *"

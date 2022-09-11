@@ -355,7 +355,7 @@ class FMG1(BaseFMG):
 
 
 class FMG2(BaseFMG):
-    """Used in Bloodborne, Dark Souls 3, and Sekiro."""
+    """Used in Bloodborne, Dark Souls 3, Sekiro, and Elden Ring."""
 
     HEADER_STRUCT = BinaryStruct(
         "x",

@@ -10,6 +10,11 @@ from soulstruct.base.game_types.map_types import Map
 
 _LOGGER = logging.getLogger(__name__)
 
+SPECIAL_MAP_NAMES = (
+    "aicommon",
+    "common_func",
+)
+
 
 def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
     """Flexible-input function for retrieving valid `Map` object instances for a particular FromSoft game.
@@ -71,11 +76,11 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
                 block_id = 0
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, str):
-        if (source.startswith("m") and "_" in source) or source.lower() == "aicommon":
+        if (source.startswith("m") and "_" in source) or source.lower() in SPECIAL_MAP_NAMES:
             source = Path(source).stem  # remove file extensions
             matches = [g for g in game_maps if source in g.stem_set()]
         else:
-            # Canonical name. Change to lower case and remove underscores.
+            # Canonical name, eg `FIRELINK_SHRINE` or `FirelinkShrine`. Change to lower case and remove underscores.
             source = source.lower().replace("_", "")
             matches = [g for g in game_maps if source == g.name.lower().replace("_", "")]
     else:

@@ -1602,6 +1602,8 @@ def get_map(source, block_id=None, cc_id=None, dd_id=None):
         return _get_map_base((source, block_id, cc_id, dd_id), game_maps=ALL_MAPS)
     elif dd_id is not None:
         return _get_map_base((source, block_id, 0, dd_id), game_maps=ALL_MAPS)
+    elif source == "common_func":
+        return COMMON_FUNC
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
 
 

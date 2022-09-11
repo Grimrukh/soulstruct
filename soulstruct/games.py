@@ -283,6 +283,10 @@ ELDEN_RING = Game(
     default_dcx=DCXType.DCX_KRAK,
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
+    default_file_paths={
+        "EMEVDDirectory": "event",
+        "MSGDirectory": "msg/engus",
+    },
 )
 
 
