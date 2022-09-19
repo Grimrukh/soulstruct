@@ -1843,7 +1843,17 @@ EMEDF = {
             "target_count": TARGET_COUNT_FLOAT,
         },
     },
-    # TODO: Increment NG+ may still work in ER.
+    (2003, 21): {
+        "alias": "IncrementNewGameCycle",
+        "docstring": "Increase NG+ level by one.",
+        "args": {
+            "dummy": {
+                "type": int,
+                "default": 0,
+                "hide_name": True,
+            },
+        },
+    },
     (2003, 22): {
         "alias": "SetFlagRangeState",
         "docstring": "Set the state of an entire flag range (inclusive).",
