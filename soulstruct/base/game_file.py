@@ -116,11 +116,19 @@ class GameFile(abc.ABC):
         raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
 
     @classmethod
-    def from_binder(cls, binder_source, entry_id: int):
-        """Open a file of this type from the given `entry_id` of the given `Binder` source."""
+    def from_binder(cls, binder_source: Typing, entry_id_or_name: tp.Union[int, str], from_bak=False):
+        """Open a file of this type from the given `entry_id_or_name` (`str` or `int`) of the given `Binder` source."""
         from soulstruct.containers import Binder
-        binder = Binder(binder_source)
-        return cls(binder[entry_id])
+        binder = Binder(binder_source, from_bak=from_bak)
+        return cls(binder[entry_id_or_name])
+
+    @classmethod
+    def multiple_from_binder(cls, binder_source, entry_ids_or_names: tp.Sequence[tp.Union[int, str]], from_bak=False):
+        """Open multiple files of this type from the given `entry_ids_or_names` (`str` or `int`) from
+        `Binder` source."""
+        from soulstruct.containers import Binder
+        binder = Binder(binder_source, from_bak=from_bak)
+        return [cls(binder[entry_id_or_name]) for entry_id_or_name in entry_ids_or_names]
 
     @abc.abstractmethod
     def unpack(self, reader: BinaryReader, **kwargs):

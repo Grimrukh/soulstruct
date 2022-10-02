@@ -455,7 +455,7 @@ class BinaryObject(abc.ABC):
     STRUCT: BinaryStruct = None
     DEFAULTS: dict[str, tp.Any] = {}
 
-    Z_STRING_RE = re.compile(r"^__(\w[\w\d]+)__z$")
+    Z_STRING_RE = re.compile(r"^__(\w\w+)__z$")
 
     _TYPE_HINTS = None  # type: tp.Optional[dict]
 
@@ -722,9 +722,11 @@ class BinaryReader:
         """Utility function for simplifying little-endian one-byte reads."""
         return self.unpack_value(">B" if big_endian else "<B")
 
-    def peek(self, fmt):
-        """Unpack `fmt` and return the unpacked values without changing the offset."""
-        return self.unpack(fmt, offset=self.position)
+    def peek(self, fmt_or_size: tp.Union[str, int]):
+        """Unpack `fmt_or_size` (or just read bytes) and return the unpacked values without changing the offset."""
+        if isinstance(fmt_or_size, int):
+            return self.read(fmt_or_size, offset=self.position)
+        return self.unpack(fmt_or_size, offset=self.position)
 
     def peek_value(self, fmt) -> tp.Union[bool, int, float]:
         """Unpack `fmt` and return the unpacked value without changing the offset."""
