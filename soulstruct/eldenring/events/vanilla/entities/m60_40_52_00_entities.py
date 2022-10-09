@@ -1,0 +1,22 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    BrotherCorhyn = 1040520705  # c0000_9001 npc 523510030 think 523510000 chara 23510 talk 351006000
+    TalkDummy0 = 1040520950  # c1000_9000 npc 10000000 think 1 talk 1000
+    TalkDummy1 = 1040520100  # c1000_9001 npc 10001000 think 1 talk 2000
+    BlackKnifeAssassin = 1040520800  # c2100_9000 npc 21000830 think 21000030 group 1040525800,1040525100
+    FingerReader = 1040520720  # c2160_9000 npc 21601030 think 21600000 talk 101306000
+    Merchant = 1040520715  # c3200_9000 npc 32002030 think 32000000 talk 801206000
+    LeyndellSoldier0 = 1040520303  # c4313_9003 npc 43132030 think 43132000
+    LeyndellSoldier1 = 1040520304  # c4313_9004 npc 43130030 think 43130000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1040521950  # AEG099
+    AEG099_060_9001 = 1040521980  # AEG099
+    AEG099_053_9000 = 1040521100  # AEG099
+    AEG099_070_9000 = 1040521690  # AEG099
+    AEG099_071_9000 = 1040521691  # AEG099
+    AEG099_090_9006 = 1040521680  # AEG099
+    AEG099_510_9000 = 1040521640  # AEG099

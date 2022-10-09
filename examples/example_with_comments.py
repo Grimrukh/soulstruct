@@ -56,16 +56,17 @@
                         EVS helps.
                                                                    Grimrukh
 """
-# This star import is purely so your intelli-sense can pick up all the instructions, tests, and other EVS wrapper
-# functions. It is ignored by the compiler and can actually be removed entirely if you don't care about auto-completion
-# or intelli-sense inspection, etc. Make sure you import from the right game, or your intelli-sense may lead you down
-# paths that the game-specific compiler you call on this script can't follow...
+# These two critical star imports are purely so your intelli-sense can pick up all the instructions, tests, and other
+# EVS wrapper functions. It is ignored by the compiler and can actually be removed entirely if you don't care about
+# auto-completionor intelli-sense inspection, etc. Make sure you import from the right game, or your intelli-sense may
+# lead you down paths that the game-specific compiler you call on this script can't follow...
 from soulstruct.darksouls1r.events import *
+from soulstruct.darksouls1r.events.instructions import *
 
 # We'll need this import to declare our event arguments as specific game types like Character and Region, which in turn
 # allows us to test certain boolean properties of those objects directly. (Again, this is just for intelli-sense - the
-# compiler is fully aware of all the game types, whether you import them here or not.)
-from soulstruct.game_types import *
+# EVS compiler is fully aware of all the game types, whether you import them here or not.)
+from soulstruct.darksouls1r.game_types import *
 
 # This import actually matters. You should define your constants in a separate Python script, and import them here.
 # See 'example_constants.py' for examples. You can then use these constants in your EVS script below. The intent is
@@ -107,7 +108,7 @@ def Constructor():
     # This event takes arguments when run, which creates an 'instance' of the event that has specific constants.
     # The names and types of the arguments are defined in the event argument list. You can only use positional
     # arguments here, as order matters, and the first argument must always be the slot number.
-    DespawnChanneler(0, CHARACTERS.DepthsChanneler)
+    DespawnChanneler(0, Characters.DepthsChanneler)
 
     # The event above could probably have had the Channeler hard-coded into it, but here's an event that actually has
     # multiple instance slots created: the trigger for Slimes falling onto you from the ceiling. I've just used the IDs
@@ -124,11 +125,11 @@ def Constructor():
     # This loop is made even more compact by only changing the values of our arguments relative to some base ID, which
     # is hard-coded inside the loop and added to the changing loop variables.
     for slot, trigger_region_1, trigger_region_2, slime, fall_delay in zip(
-            (2, 3, 4),  # slot
-            (2, 2, 2),  # trigger_region_1
-            (3, 3, 3),  # trigger_region_2
-            (2, 3, 4),  # slime
-            (0.4, 0.2, 0.2)  # fall_delay
+        (2, 3, 4),  # slot
+        (2, 2, 2),  # trigger_region_1
+        (3, 3, 3),  # trigger_region_2
+        (2, 3, 4),  # slime
+        (0.4, 0.2, 0.2)  # fall_delay
     ):
         SlimeAmbush(slot, 1002100 + trigger_region_1, 1002110 + trigger_region_2, 1000100 + slime, fall_delay)
 
@@ -156,7 +157,7 @@ def PullOutMeltedIronKey():
     # Our first actual instruction (aside from running an event). This stops the player from being able to activate the
     # door via its ObjAct event (specified in the MSB file). An objact_param_id of -1 finds the params that shares the
     # door's ID.
-    DisableObjectActivation(OBJECTS.DepthsDoor, -1)
+    DisableObjectActivation(Objects.DepthsDoor, -1)
 
     # The Await() instruction is one of the most important. It takes a test as an argument, and will halt the event
     # logic until the test is met. We're kicking things off with one of the most complex tests, which waits for the
@@ -167,37 +168,37 @@ def PullOutMeltedIronKey():
         # You can pass in positional arguments and/or keyword arguments to any instruction or test. I've used a mixture
         # of both here, and intentionally put the keywords out of order, so you can see that it works. This particular
         # test has a lot of optional arguments. You can see their default values in `tests.pyi`.
-        ActionButton(TEXT.Open, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+        ActionButton(EventTexts.Open, anchor_entity=Objects.DepthsDoor, facing_angle=60.0,
                      model_point=100, max_distance=1.5)
     )
 
     # I've made the button-controlling arguments optional here, as I usually display dialogs with no buttons (they
     # don't do anything).
-    DisplayDialog(TEXT.SomethingInDoor, anchor_entity=OBJECTS.DepthsDoor)
+    DisplayDialog(EventTexts.SomethingInDoor, anchor_entity=Objects.DepthsDoor)
 
     # We halt here for one second. Note that I like to pass floats where they're expected, but integers work fine too.
     Wait(1.0)
 
     # We can also equivalently use the built-in 'await' keyword, which I find helps these critical instruction stand out
     # from the rest. Again, note that the prompt won't appear until the previous conditions are true.
-    await ActionButton(TEXT.RemoveItemFromDoor, anchor_entity=OBJECTS.DepthsDoor, facing_angle=60.0,
+    await ActionButton(EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0,
                        model_point=100, max_distance=1.5)
 
     # This instruction defaults to 'host_only', which you can set to False to share the love with your summons.
-    AwardItemLot(ITEMLOT.InDepthsDoor)
+    AwardItemLot(ItemLots.InDepthsDoor)
 
     # Here, we use the constant we defined at the top of the EVS script.
     Wait(DOOR_INACTIVE_DELAY)
 
     # The player can open the door again.
-    EnableObjectActivation(OBJECTS.DepthsDoor, -1)
+    EnableObjectActivation(Objects.DepthsDoor, -1)
 
     # As always, when the processor reaches the end of the event function, the event flag that matches the event's ID
     # (in our docstring) is enabled. (Note that flags that end in 5*** are disabled on every map load.)
 
 
-# You can add this decorator to make this event restart when you rest at a bonfire. There's also a 'NeverRestart'
-# decorator, but that's applied by default if you leave it out. (The third decorator, 'UnknownRestart', is used only
+# You can add this decorator to make this event restart when you rest at a bonfire. There's also a 'ContinueOnRest'
+# decorator, but that's applied by default if you leave it out. (The third decorator, 'EndOnRest', is used only
 # by skeleton assembly scripts and we haven't figured out exactly how it works yet. You're welcome to experiment.)
 @RestartOnRest
 def DespawnChanneler(channeler: int):
@@ -209,7 +210,7 @@ def DespawnChanneler(channeler: int):
     # Note that it's a bad idea to give a flag name to an event that takes arguments, as the actual flag value that is
     # automatically enabled when the event finishes will have the slot number added to it.
 
-    if not FLAGS.PaintedWorldVisited:
+    if not Flags.PaintedWorldVisited:
         return
 
     # This is pointless, but just demonstrating the built-in map name constants you can use.
@@ -246,14 +247,14 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
             # comparison, but it's generally only used to query event arguments, because comparing two predefined
             # constants and expecting to ever be surprised is a lost cause. Also note the built-in PLAYER constant,
             # which is always equal to 10000. (10001-10006 refer to summoned players. Not sure about invaders...)
-            Await(trigger_region_1 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or Attacked(slime, PLAYER))
         else:
             # If were were writing in raw EMEVD, we would probably just conditionally skip over a single line that adds
             # trigger_region_2 to the condition if it is not equal to 0. (That's what I did in Daughters of Ash.) But
             # this happens so rarely (and doesn't even affect performance, just script length) that I don't think it's
             # a good enough reason to bother implementing front-end condition control. The whole point is that you
             # never have to manually build a condition or calculate a line skip again.
-            Await(trigger_region_1 or trigger_region_2 or IsAttacked(slime, PLAYER))
+            Await(trigger_region_1 or trigger_region_2 or Attacked(slime, PLAYER))
         Wait(delay)
 
     EnableGravity(slime)

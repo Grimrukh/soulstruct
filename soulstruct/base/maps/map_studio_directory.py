@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["MapStudioDirectory"]
+
 import abc
 import json
 import logging
@@ -8,7 +12,8 @@ from soulstruct.base.maps.msb.exceptions import MapError
 
 if tp.TYPE_CHECKING:
     from .msb import MSB
-    from soulstruct.game_types.msb_types import Map
+    from soulstruct.base.maps.utilities import GET_MAP_TYPING
+    from soulstruct.darksouls1ptde.game_types.map_types import Map
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,7 +22,7 @@ class MapStudioDirectory(abc.ABC):
 
     MSB_CLASS = None  # type: tp.Type[MSB]
     ALL_MAPS = ()  # type: tuple[Map]
-    GET_MAP = None  # type: tp.Callable[[tp.Union[str, tuple], tp.Optional[int]], Map]
+    GET_MAP: GET_MAP_TYPING = None
     IS_DCX = False
 
     directory: tp.Optional[Path]

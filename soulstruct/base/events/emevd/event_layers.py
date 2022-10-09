@@ -49,4 +49,4 @@ class EventLayers:
         return f" <{', '.join(str(e) for e in self.event_layers)}>"
 
     def to_evs(self):
-        return f", event_layers={self.event_layers})"
+        return f"event_layers={self.event_layers}"

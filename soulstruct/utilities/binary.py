@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-__all__ = ["BinaryStruct", "BinaryObject", "BinaryReader", "BinaryWriter", "read_chars_from_bytes", "get_blake2b_hash"]
+__all__ = [
+    "BinaryStruct",
+    "BinaryObject",
+    "BinaryReader",
+    "BinaryWriter",
+    "read_chars_from_bytes",
+    "get_blake2b_hash",
+    "ReadableTyping",
+]
 
 import abc
 import enum
@@ -447,7 +455,7 @@ class BinaryObject(abc.ABC):
     STRUCT: BinaryStruct = None
     DEFAULTS: dict[str, tp.Any] = {}
 
-    Z_STRING_RE = re.compile(r"^__(\w[\w\d]+)__z$")
+    Z_STRING_RE = re.compile(r"^__(\w\w+)__z$")
 
     _TYPE_HINTS = None  # type: tp.Optional[dict]
 
@@ -636,6 +644,10 @@ class BinaryObject(abc.ABC):
 class BinaryReader:
     """Manages an buffered binary IO stream, with methods for unpacking data and moving to temporary offsets."""
 
+    class ReaderError(Exception):
+        """Exception raised when trying to unpack data."""
+        pass
+
     def __init__(
         self,
         buffer: tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader],
@@ -710,9 +722,11 @@ class BinaryReader:
         """Utility function for simplifying little-endian one-byte reads."""
         return self.unpack_value(">B" if big_endian else "<B")
 
-    def peek(self, fmt):
-        """Unpack `fmt` and return the unpacked values without changing the offset."""
-        return self.unpack(fmt, offset=self.position)
+    def peek(self, fmt_or_size: tp.Union[str, int]):
+        """Unpack `fmt_or_size` (or just read bytes) and return the unpacked values without changing the offset."""
+        if isinstance(fmt_or_size, int):
+            return self.read(fmt_or_size, offset=self.position)
+        return self.unpack(fmt_or_size, offset=self.position)
 
     def peek_value(self, fmt) -> tp.Union[bool, int, float]:
         """Unpack `fmt` and return the unpacked value without changing the offset."""
@@ -773,7 +787,10 @@ class BinaryReader:
         Encoding defaults to "utf-8". If a "utf-16" encoding is given, two bytes will be read at a time, and a double
         null terminator is required. See `read_chars_from_buffer()` for more.
         """
-        return read_chars_from_buffer(self.buffer, offset, length, reset_old_offset, encoding=encoding, strip=strip)
+        try:
+            return read_chars_from_buffer(self.buffer, offset, length, reset_old_offset, encoding=encoding, strip=strip)
+        except struct.error as ex:
+            raise self.ReaderError(f"Could not unpack string. Error: {ex}")
 
     def read(self, size: int = None, offset: int = None) -> bytes:
         if offset is not None:
@@ -1098,3 +1115,6 @@ def get_blake2b_hash(data: tp.Union[bytes, str, Path]) -> bytes:
     elif isinstance(data, bytes):
         return hashlib.blake2b(data).digest()
     raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
+
+
+ReadableTyping = tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader]

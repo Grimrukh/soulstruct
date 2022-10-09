@@ -1,0 +1,27 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Dummy0 = 1049570100  # c0100_9003 npc 1000000 think 1000000 talk 2000
+    Dummy1 = 1049570350  # c0100_9004 npc 1000000 think 1000000
+    Albinauric0 = 1049570214  # c3470_9014 npc 34701552 think 34701000 group 1048575300
+    Albinauric1 = 1049570215  # c3470_9015 npc 34702552 think 34702000 group 1048575300
+    Albinauric2 = 1049570216  # c3470_9016 npc 34700452 think 34700000 group 1048575300
+    Albinauric3 = 1049570217  # c3470_9017 npc 34700452 think 34700000 group 1048575300
+    Albinauric4 = 1049570218  # c3470_9018 npc 34702552 think 34702052 group 1048575300
+    Albinauric5 = 1049570219  # c3470_9019 npc 34703252 think 34703000 group 1048575300
+    ErdtreeGuardian0 = 1049570251  # c3650_9001 npc 36502052 think 36500000
+    ErdtreeGuardian1 = 1049570252  # c3650_9002 npc 36502052 think 36500000
+    ErdtreeGuardian2 = 1049570254  # c3650_9004 npc 36502052 think 36500000
+    ErdtreeGuardian3 = 1049570256  # c3650_9006 npc 36502052 think 36500000
+    ErdtreeGuardian4 = 1049570257  # c3650_9007 npc 36502052 think 36500000
+    ErdtreeGuardian5 = 1049570258  # c3650_9008 npc 36502052 think 36500000
+    ErdtreeGuardian6 = 1049570259  # c3650_9009 npc 36502052 think 36500000
+    LargeScarab = 1049570300  # c4190_9000 npc 41905052 think 41900000
+    Scarab = 1049570310  # c4191_9001 npc 41915052 think 41910000
+    ExtraLargeScarab = 1049570320  # c4192_9000 npc 41925052 think 41920000
+
+
+class Assets(Asset):
+    AEG099_053_9000 = 1049571100  # AEG099
+    AEG099_503_9000 = 1049571940  # AEG099

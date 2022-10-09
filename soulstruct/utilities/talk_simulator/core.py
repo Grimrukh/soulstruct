@@ -10,7 +10,7 @@ import logging
 from queue import Queue
 
 from soulstruct.darksouls1r.events import enums
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.darksouls1ptde.ezstate import TalkESD as TalkESDPTDE
 from soulstruct.darksouls1r.ezstate import TalkESD as TalkESDDSR
 from soulstruct.base.ezstate.esd.ezl_parser import decompile

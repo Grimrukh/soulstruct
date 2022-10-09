@@ -12,23 +12,15 @@ __all__ = [
 import abc
 import typing as tp
 
-from soulstruct.base.maps.msb.regions import (
-    MSBRegion as _BaseMSBRegion,
-    MSBRegionPoint as _BaseMSBRegionPoint,
-    MSBRegionCircle as _BaseMSBRegionCircle,
-    MSBRegionSphere as _BaseMSBRegionSphere,
-    MSBRegionCylinder as _BaseMSBRegionCylinder,
-    MSBRegionRect as _BaseMSBRegionRect,
-    MSBRegionBox as _BaseMSBRegionBox,
-    MSBRegionList as _BaseMSBRegionList,
-)
-from soulstruct.base.maps.msb.enums import MSBRegionSubtype
+from soulstruct.base.maps.msb.regions import *
 from soulstruct.utilities.binary import BinaryStruct
+from soulstruct.utilities.misc import partialmethod
 
+from .enums import MSBRegionSubtype
 from .msb_entry import MSBEntryList
 
 
-class MSBRegion(_BaseMSBRegion, abc.ABC):
+class MSBRegion(BaseMSBRegion, abc.ABC):
 
     REGION_STRUCT = BinaryStruct(
         ("name_offset", "q"),
@@ -48,31 +40,35 @@ class MSBRegion(_BaseMSBRegion, abc.ABC):
     UNKNOWN_DATA_SIZE = 2
 
 
-class MSBRegionPoint(_BaseMSBRegionPoint, MSBRegion):
-    pass
+class MSBRegionPoint(BaseMSBRegionPoint, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Point
 
 
-class MSBRegionCircle(_BaseMSBRegionCircle, MSBRegion):
-    pass
+class MSBRegionCircle(BaseMSBRegionCircle, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Circle
 
 
-class MSBRegionSphere(_BaseMSBRegionSphere, MSBRegion):
-    pass
+class MSBRegionSphere(BaseMSBRegionSphere, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
 
 
-class MSBRegionCylinder(_BaseMSBRegionCylinder, MSBRegion):
-    pass
+class MSBRegionCylinder(BaseMSBRegionCylinder, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
 
 
-class MSBRegionRect(_BaseMSBRegionRect, MSBRegion):
-    pass
+class MSBRegionRect(BaseMSBRegionRect, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Rect
 
 
-class MSBRegionBox(_BaseMSBRegionBox, MSBRegion):
-    pass
+class MSBRegionBox(BaseMSBRegionBox, MSBRegion):
+    ENTRY_SUBTYPE = MSBRegionSubtype.Box
 
 
-class MSBRegionList(_BaseMSBRegionList, MSBEntryList):
+class MSBRegionList(MSBEntryList[MSBRegion]):
+    INTERNAL_NAME = "POINT_PARAM_ST"
+    ENTRY_LIST_NAME = "Regions"
+    ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
+
     SUBTYPE_CLASSES = {
         MSBRegionSubtype.Point: MSBRegionPoint,
         MSBRegionSubtype.Circle: MSBRegionCircle,
@@ -92,9 +88,27 @@ class MSBRegionList(_BaseMSBRegionList, MSBEntryList):
     Rectangles: tp.Sequence[MSBRegionRect]
     Boxes: tp.Sequence[MSBRegionBox]
 
-    new_point: tp.Callable[..., MSBRegionPoint]
-    new_circle: tp.Callable[..., MSBRegionCircle]
-    new_sphere: tp.Callable[..., MSBRegionSphere]
-    new_cylinder: tp.Callable[..., MSBRegionCylinder]
-    new_rect: tp.Callable[..., MSBRegionRect]
-    new_box: tp.Callable[..., MSBRegionBox]
+    new_point: tp.Callable[..., MSBRegionPoint] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Point)
+    new_circle: tp.Callable[..., MSBRegionCircle] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Circle)
+    new_sphere: tp.Callable[..., MSBRegionSphere] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Sphere)
+    new_cylinder: tp.Callable[..., MSBRegionCylinder] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Cylinder)
+    new_rect: tp.Callable[..., MSBRegionRect] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Rect)
+    new_box: tp.Callable[..., MSBRegionBox] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Box)
+
+    def pack_entry(self, index: int, entry: MSBRegion):
+        return entry.pack(index)
+
+    def set_indices(self):
+        """Global region index only."""
+        for i, entry in enumerate(self._entries):
+            entry.set_indices(region_index=i)
+
+    _entries: list[MSBRegion]
+
+
+for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:
+    setattr(
+        MSBRegionList,
+        _entry_subtype.pluralized_name,
+        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
+    )

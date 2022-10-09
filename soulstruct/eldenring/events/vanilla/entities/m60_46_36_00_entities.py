@@ -1,0 +1,17 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    KennethHaight = 1046360700  # c0000_9000 npc 523210110 think 523210000 chara 23210 talk 321006000
+    TalkDummy = 1046360100  # c1000_9000 npc 10001000 think 1 talk 2000
+    Commoner = 1046360240  # c3660_9000 npc 36600110 think 36600210 group 1046365300
+    MadPumpkinHead = 1046360300  # c4340_9001 npc 43400010 think 43400000 group 1046365300
+    GodrickKnight = 1046360250  # c4351_9000 npc 43510110 think 43510000 group 1046365100,1046365150,1046365300
+    Ballista = 1046360230  # c8100_9000 npc 81000010 think 81000000 group 1046365100,1046365300
+
+
+class Assets(Asset):
+    AEG030_902_2001 = 1046361580  # AEG030
+    AEG099_053_9000 = 1046361100  # AEG099
+    AEG099_090_9003 = 1046361650  # AEG099
+    AEG099_630_9000 = 1046361600  # AEG099

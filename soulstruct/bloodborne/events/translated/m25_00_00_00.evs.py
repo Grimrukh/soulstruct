@@ -432,7 +432,7 @@ def Preconstructor():
 
 def CainhurstFirstArrivalCutscene():
     """ 12500000: Event 12500000 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
@@ -445,7 +445,7 @@ def CainhurstFirstArrivalCutscene():
 
 def Event12500001():
     """ 12500001: Event 12500001 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
     IfCharacterInsideRegion(0, PLAYER, region=2502500)
     RunEvent(9350, 0, args=(2,))
@@ -454,15 +454,15 @@ def Event12500001():
 def Event12500010():
     """ 12500010: Event 12500010 """
     GotoIfClient(Label.L0)
-    IfFlagOn(1, 1041)
+    IfFlagEnabled(1, 1041)
     GotoIfConditionFalse(Label.L1, input_condition=1)
     DisableFlagRange((1040, 1059))
     EnableFlag(1042)
 
     # --- 1 --- #
     DefineLabel(1)
-    IfFlagOn(2, 1042)
-    IfFlagOn(2, 72500328)
+    IfFlagEnabled(2, 1042)
+    IfFlagEnabled(2, 72500328)
     GotoIfConditionFalse(Label.L2, input_condition=2)
     DisableFlag(72500328)
     DisableFlagRange((1040, 1059))
@@ -470,10 +470,10 @@ def Event12500010():
 
     # --- 2 --- #
     DefineLabel(2)
-    IfFlagOn(3, 1040)
-    IfFlagOn(-1, 1347)
-    IfFlagOn(-1, 1348)
-    IfFlagOn(-1, 1349)
+    IfFlagEnabled(3, 1040)
+    IfFlagEnabled(-1, 1347)
+    IfFlagEnabled(-1, 1348)
+    IfFlagEnabled(-1, 1349)
     IfConditionTrue(3, input_condition=-1)
     GotoIfConditionFalse(Label.L3, input_condition=3)
     DisableFlagRange((1040, 1059))
@@ -491,9 +491,9 @@ def Event12500010():
     EnableImmortality(2500600)
     DisableHealthBar(2500600)
     SetDistanceLimitForConversationStateChanges(2500600, distance=60.0)
-    GotoIfFlagOn(Label.L0, 1040)
-    GotoIfFlagOn(Label.L0, 1041)
-    GotoIfFlagOn(Label.L1, 1042)
+    GotoIfFlagEnabled(Label.L0, 1040)
+    GotoIfFlagEnabled(Label.L0, 1041)
+    GotoIfFlagEnabled(Label.L1, 1042)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -527,9 +527,9 @@ def Event12500012():
     """ 12500012: Event 12500012 """
     EndIfClient()
     DisableFlag(72500329)
-    IfFlagOn(0, 72500329)
+    IfFlagEnabled(0, 72500329)
     RotateToFaceEntity(PLAYER, 2500600, animation=101260)
-    IfFlagOff(0, 72500329)
+    IfFlagDisabled(0, 72500329)
     ForceAnimation(PLAYER, 101262)
     Restart()
 
@@ -538,7 +538,7 @@ def Event12500013():
     """ 12500013: Event 12500013 """
     EndIfClient()
     DisableFlag(72500339)
-    IfFlagOn(0, 72500339)
+    IfFlagEnabled(0, 72500339)
     ForceAnimation(2500600, 103013)
     ForceAnimation(PLAYER, 101263)
     WaitFrames(180)
@@ -550,7 +550,7 @@ def Event12500014():
     """ 12500014: Event 12500014 """
     EndIfClient()
     DisableFlag(72500337)
-    IfFlagOn(0, 72500337)
+    IfFlagEnabled(0, 72500337)
     ForceAnimation(2500600, 103013)
     ForceAnimation(PLAYER, 101263)
     WaitFrames(180)
@@ -591,9 +591,9 @@ def Event12500016():
 def Event12500018():
     """ 12500018: Event 12500018 """
     EndIfClient()
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterInsideRegion(1, PLAYER, region=2502500)
-    IfFlagOn(1, 1042)
+    IfFlagEnabled(1, 1042)
     RunEvent(9350, 0, args=(3,))
 
 
@@ -601,9 +601,9 @@ def Event12500019():
     """ 12500019: Event 12500019 """
     EndIfClient()
     DisableFlag(72500333)
-    IfFlagOn(0, 72500333)
+    IfFlagEnabled(0, 72500333)
     DisableFlag(72500333)
-    EndIfFlagOff(72500332)
+    EndIfFlagDisabled(72500332)
     IncrementEventValue(72500317, bit_count=3, max_value=5)
     IfEventValueComparison(1, 72500317, bit_count=3, comparison_type=ComparisonType.GreaterThanOrEqual, value=5)
     SkipLinesIfConditionFalse(1, 1)
@@ -613,8 +613,8 @@ def Event12500019():
 def Event12500020():
     """ 12500020: Event 12500020 """
     EndIfClient()
-    IfFlagOn(0, 1042)
-    IfActionButtonParam(0, action_button_id=2500020, entity=2501016)
+    IfFlagEnabled(0, 1042)
+    IfActionButtonParamActivated(0, action_button_id=2500020, entity=2501016)
     IfPlayerDoesNotHaveGood(1, 4305, including_box=False)
     GotoIfConditionTrue(Label.L0, input_condition=1)
     DisplayDialog(
@@ -653,7 +653,7 @@ def Event12500030():
 @RestartOnRest
 def Event12500031(_, arg_0_3: int, arg_4_7: int):
     """ 12500031: Event 12500031 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_4_7, 0)
     DisableObjectActivation(arg_4_7, obj_act_id=-1)
     EnableTreasure(arg_4_7)
@@ -669,15 +669,15 @@ def Event12500031(_, arg_0_3: int, arg_4_7: int):
 def Event12500050():
     """ 12500050: Event 12500050 """
     GotoIfClient(Label.L0)
-    IfFlagOn(1, 1347)
+    IfFlagEnabled(1, 1347)
     GotoIfConditionFalse(Label.L1, input_condition=1)
     DisableFlagRange((1340, 1359))
     EnableFlag(1348)
 
     # --- 1 --- #
     DefineLabel(1)
-    IfFlagOn(2, 1351)
-    IfFlagOn(2, 72500359)
+    IfFlagEnabled(2, 1351)
+    IfFlagEnabled(2, 72500359)
     GotoIfConditionFalse(Label.L2, input_condition=2)
     DisableFlagRange((1340, 1359))
     EnableFlag(1343)
@@ -687,10 +687,10 @@ def Event12500050():
 
     # --- 0 --- #
     DefineLabel(0)
-    GotoIfFlagOn(Label.L0, 1348)
-    GotoIfFlagOn(Label.L2, 1349)
-    GotoIfFlagOn(Label.L3, 1350)
-    GotoIfFlagOn(Label.L1, 1351)
+    GotoIfFlagEnabled(Label.L0, 1348)
+    GotoIfFlagEnabled(Label.L2, 1349)
+    GotoIfFlagEnabled(Label.L3, 1350)
+    GotoIfFlagEnabled(Label.L1, 1351)
     DisableBackread(2500790)
     End()
 
@@ -727,8 +727,8 @@ def Event12500051():
     """ 12500051: Event 12500051 """
     EndIfClient()
     WaitFrames(10)
-    IfFlagOn(1, 72500357)
-    IfFlagOn(1, 1348)
+    IfFlagEnabled(1, 72500357)
+    IfFlagEnabled(1, 1348)
     IfConditionTrue(0, input_condition=1)
     DisableFlag(72500357)
     SetDistanceLimitForConversationStateChanges(2500790, distance=17.0)
@@ -754,7 +754,7 @@ def Event12500052(_, arg_0_3: int, arg_4_7: int):
 def Event12500053(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12500053: Event 12500053 """
     EndIfClient()
-    IfFlagOn(-1, arg_8_11)
+    IfFlagEnabled(-1, arg_8_11)
     IfHealthLessThanOrEqual(-1, 2500790, 0.8999999761581421)
     IfConditionTrue(1, input_condition=-1)
     IfHealthNotEqual(1, 2500790, 0.0)
@@ -769,7 +769,7 @@ def Event12500053(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 def Event12500054(_, arg_0_3: int, arg_4_7: int):
     """ 12500054: Event 12500054 """
     EndIfClient()
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterDead(0, arg_0_3)
     DisableFlagRange((1340, 1359))
     EnableFlag(arg_4_7)
@@ -778,7 +778,7 @@ def Event12500054(_, arg_0_3: int, arg_4_7: int):
 
 def Event12500070(_, arg_0_3: int, arg_4_7: int):
     """ 12500070: Event 12500070 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 0)
     NotifyDoorEventSoundDampening(arg_0_3, state=DoorState.DoorOpening)
     End()
@@ -793,12 +793,12 @@ def Event12500070(_, arg_0_3: int, arg_4_7: int):
 def Event12500072(_, arg_0_3: int, arg_4_4: uchar):
     """ 12500072: Event 12500072 """
     DisableNetworkSync()
-    IfFlagRangeAllOff(1, (12500076, 12500077))
-    IfActionButtonParam(1, action_button_id=2500010, entity=arg_0_3)
-    IfFlagOn(2, 12505074)
-    IfActionButtonParam(2, action_button_id=2500010, entity=arg_0_3)
+    IfFlagRangeAllDisabled(1, (12500076, 12500077))
+    IfActionButtonParamActivated(1, action_button_id=2500010, entity=arg_0_3)
+    IfFlagEnabled(2, 12505074)
+    IfActionButtonParamActivated(2, action_button_id=2500010, entity=arg_0_3)
     IfFlagState(3, state=arg_4_4, flag_type=FlagType.Absolute, flag=12500074)
-    IfActionButtonParam(3, action_button_id=2500010, entity=arg_0_3)
+    IfActionButtonParamActivated(3, action_button_id=2500010, entity=arg_0_3)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -815,7 +815,7 @@ def Event12500072(_, arg_0_3: int, arg_4_4: uchar):
 
 def Event12500075():
     """ 12500075: Event 12500075 """
-    GotoIfFlagOff(Label.L0, 12500074)
+    GotoIfFlagDisabled(Label.L0, 12500074)
     EndOfAnimation(2501010, 1)
     Wait(1.0)
     EnableObjectActivation(2501011, obj_act_id=2500010)
@@ -828,17 +828,17 @@ def Event12500075():
     Wait(1.0)
     DisableObjectActivation(2501011, obj_act_id=2500010)
     EnableObjectActivation(2501012, obj_act_id=2500010)
-    EndIfFlagRangeAnyOn((12500076, 12500077))
+    EndIfFlagRangeAnyEnabled((12500076, 12500077))
     DisableObjectActivation(2501012, obj_act_id=2500010)
 
 
 def Event12500076():
     """ 12500076: Event 12500076 """
-    IfFlagOff(1, 12505074)
-    IfFlagOn(1, 12500074)
+    IfFlagDisabled(1, 12505074)
+    IfFlagEnabled(1, 12500074)
     IfCharacterInsideRegion(1, PLAYER, region=2502000)
-    IfFlagOff(2, 12505074)
-    IfFlagOn(2, 12500074)
+    IfFlagDisabled(2, 12505074)
+    IfFlagEnabled(2, 12500074)
     IfObjectActivated(2, obj_act_id=12500501)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -856,11 +856,11 @@ def Event12500076():
 
 def Event12500077():
     """ 12500077: Event 12500077 """
-    IfFlagOff(1, 12505074)
-    IfFlagOff(1, 12500074)
+    IfFlagDisabled(1, 12505074)
+    IfFlagDisabled(1, 12500074)
     IfCharacterInsideRegion(1, PLAYER, region=2502001)
-    IfFlagOff(2, 12505074)
-    IfFlagOff(2, 12500074)
+    IfFlagDisabled(2, 12505074)
+    IfFlagDisabled(2, 12500074)
     IfObjectActivated(2, obj_act_id=12500501)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -884,7 +884,7 @@ def Event12500078():
 @RestartOnRest
 def Event12505100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12505100: Event 12505100 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     SetNest(arg_0_3, arg_8_11)
     ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_12_15)
     End()
@@ -932,7 +932,7 @@ def Event12500206(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     EnableFlag(arg_4_7)
     EnableFlag(arg_8_11)
     IfCharacterDead(-1, arg_0_3)
-    IfFlagOff(-1, arg_8_11)
+    IfFlagDisabled(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     DisableFlag(arg_4_7)
     Restart()
@@ -940,7 +940,7 @@ def Event12500206(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event12500220(_, arg_0_3: int, arg_4_7: int):
     """ 12500220: Event 12500220 """
-    SkipLinesIfFlagOn(3, arg_4_7)
+    SkipLinesIfFlagEnabled(3, arg_4_7)
     IfAttackedWithDamageType(0, attacked_entity=PLAYER, attacker=arg_0_3)
     EnableFlag(arg_4_7)
     Wait(1.0)
@@ -959,7 +959,7 @@ def Event12500235(_, arg_0_3: int, arg_4_7: int):
     """ 12500235: Event 12500235 """
     DisableGravity(arg_0_3)
     DisableCharacterCollision(arg_0_3)
-    IfFlagOn(0, arg_4_7)
+    IfFlagEnabled(0, arg_4_7)
     ForceAnimation(arg_0_3, 6200, wait_for_completion=True)
     EnableGravity(arg_0_3)
     EnableCharacterCollision(arg_0_3)
@@ -988,7 +988,7 @@ def Event12500390(_, arg_0_3: int):
 @RestartOnRest
 def Event12500400(_, arg_0_3: int, arg_4_7: int):
     """ 12500400: Event 12500400 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     DisableCharacter(arg_0_3)
     End()
 
@@ -996,7 +996,7 @@ def Event12500400(_, arg_0_3: int, arg_4_7: int):
     DefineLabel(0)
     IfCharacterHuman(1, PLAYER)
     SkipLinesIfClient(1)
-    IfFlagOn(1, arg_4_7)
+    IfFlagEnabled(1, arg_4_7)
     IfConditionTrue(0, input_condition=1)
     Wait(0.0)
 
@@ -1067,7 +1067,7 @@ def Event12500454(
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(7, 2)
     ForceAnimation(arg_0_3, arg_8_11)
-    SkipLinesIfNotEqual(2, left=arg_12_15, right=2502021)
+    SkipLinesIfValueNotEqual(2, left=arg_12_15, right=2502021)
     SetNest(arg_0_3, arg_12_15)
     WaitFrames(arg_28_31)
     SetAIParamID(arg_0_3, arg_24_27)
@@ -1098,7 +1098,7 @@ def Event12500458(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 
 def Event12500501():
     """ 12500501: Event 12500501 """
-    SkipLinesIfThisEventSlotOff(5)
+    SkipLinesIfThisEventSlotFlagDisabled(5)
     EndOfAnimation(2501500, 0)
     RegisterLadder(start_climbing_flag=12500996, stop_climbing_flag=12500997, obj=2501510)
     DisableObjectActivation(2501501, obj_act_id=2500000)
@@ -1113,13 +1113,13 @@ def Event12500502(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12500502: Event 12500502 """
     DisableGravity(arg_0_3)
     ForceAnimation(arg_0_3, 7010, loop=True)
-    SkipLinesIfThisEventSlotOff(5)
+    SkipLinesIfThisEventSlotFlagDisabled(5)
     IfCharacterInsideRegion(0, PLAYER, region=arg_8_11)
     ForceAnimation(arg_0_3, 7011)
     WaitFrames(35)
     EnableGravity(arg_0_3)
     End()
-    IfFlagOn(-1, arg_4_7)
+    IfFlagEnabled(-1, arg_4_7)
     IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacker=PLAYER)
     IfConditionTrue(0, input_condition=-1)
     ForceAnimation(arg_0_3, 7011, skip_transition=True)
@@ -1163,17 +1163,17 @@ def Event12500520(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float
 def Event12500620(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12500620: Event 12500620 """
     ForceAnimation(arg_0_3, arg_4_7, loop=True, skip_transition=True)
-    EndIfFlagOn(arg_12_15)
+    EndIfFlagEnabled(arg_12_15)
     IfAttackedWithDamageType(1, attacked_entity=arg_0_3, attacker=-1)
-    IfFlagOn(2, arg_12_15)
+    IfFlagEnabled(2, arg_12_15)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
     SkipLinesIfFinishedConditionTrue(2, 1)
     ForceAnimation(arg_0_3, arg_8_11, wait_for_completion=True, skip_transition=True)
     End()
-    EndIfFlagOn(arg_12_15)
-    IfFlagOn(0, arg_12_15)
+    EndIfFlagEnabled(arg_12_15)
+    IfFlagEnabled(0, arg_12_15)
     ForceAnimation(arg_0_3, 7021, wait_for_completion=True, skip_transition=True)
 
 
@@ -1205,7 +1205,7 @@ def Event12500740(_, arg_0_3: int):
 @RestartOnRest
 def Event12504000(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: float):
     """ 12504000: Event 12504000 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableCharacter(arg_0_3)
     IfPlayerInsightAmountGreaterThanOrEqual(1, arg_4_4)
     IfCharacterHuman(1, PLAYER)
@@ -1218,8 +1218,8 @@ def Event12504000(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: float):
 @RestartOnRest
 def Event12504005(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: int):
     """ 12504005: Event 12504005 """
-    GotoIfThisEventSlotOn(Label.L0)
-    IfFlagOn(1, arg_8_11)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
+    IfFlagEnabled(1, arg_8_11)
     IfPlayerInsightAmountLessThanOrEqual(1, arg_4_4)
     IfConditionTrue(0, input_condition=1)
 
@@ -1230,16 +1230,16 @@ def Event12504005(_, arg_0_3: int, arg_4_4: uchar, arg_8_11: int):
 
 def Event101():
     """ 101: Event 101 """
-    IfFlagOn(0, 100)
+    IfFlagEnabled(0, 100)
     EnableMapPiece(2506001)
-    IfFlagOff(0, 100)
+    IfFlagDisabled(0, 100)
     DisableMapPiece(2506001)
     Restart()
 
 
 def PlayerDiscoversVilebloodQueenChamber():
     """ 12500810: Event 12500810 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableObject(2501810)
     End()
 
@@ -1327,9 +1327,9 @@ def PlayerDiscoversVilebloodQueenChamber():
     DeleteVFX(2503306, erase_root_only=False)
     DeleteVFX(2503307, erase_root_only=False)
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.MartyrLogariusDead)
+    IfFlagEnabled(1, Flags.MartyrLogariusDead)
     IfCharacterInsideRegion(1, PLAYER, region=2502806)
-    IfPlayerArmorType(1, armor_type=ArmorType.Head, required_armor_range_first=250000, required_armor_range_last=250000)
+    IfPlayerArmorInRange(1, armor_type=ArmorType.Head, required_armor_range_first=250000, required_armor_range_last=250000)
     IfConditionTrue(0, input_condition=1)
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
@@ -1424,7 +1424,7 @@ def PlayerDiscoversVilebloodQueenChamber():
 
 def MartyrLogariusDies():
     """ 12501800: Event 12501800 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSoundEvent(2503802)
     DisableSoundEvent(2503803)
     DisableCharacter(Characters.MartyrLogarius)
@@ -1472,8 +1472,8 @@ def MartyrLogariusDies():
 def PlayMartyrLogariusDeathSound():
     """ 12501801: Event 12501801 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    IfFlagOn(1, Flags.MartyrLogariusDead)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    IfFlagEnabled(1, Flags.MartyrLogariusDead)
     IfCharacterBackreadDisabled(2, Characters.MartyrLogarius)
     IfHealthLessThanOrEqual(2, Characters.MartyrLogarius, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -1485,11 +1485,11 @@ def PlayMartyrLogariusDeathSound():
 
 def MartyrLogariusFirstTime():
     """ 12501802: Event 12501802 """
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    SkipLinesIfThisEventSlotOn(1)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    SkipLinesIfThisEventSlotFlagEnabled(1)
     ForceAnimation(Characters.MartyrLogarius, 7000)
-    IfFlagOff(1, Flags.MartyrLogariusDead)
-    IfThisEventSlotOff(1)
+    IfFlagDisabled(1, Flags.MartyrLogariusDead)
+    IfThisEventSlotFlagDisabled(1)
     IfCharacterHuman(1, PLAYER)
     IfCharacterInsideRegion(1, PLAYER, region=2502805)
     IfConditionTrue(0, input_condition=1)
@@ -1507,7 +1507,7 @@ def MartyrLogariusFirstTime():
     WaitFrames(1)
     DisableFlag(CommonFlags.CutsceneActive)
     EnableFlag(Flags.MartyrLogariusFogEntered)
-    EndIfFlagOn(9341)
+    EndIfFlagEnabled(9341)
     RunEvent(9350, 0, args=(1,))
     EnableFlag(9341)
 
@@ -1515,10 +1515,10 @@ def MartyrLogariusFirstTime():
 def GiftCrownOfIllusions():
     """ 12501803: Event 12501803 """
     EndIfClient()
-    EndIfThisEventOn()
-    IfFlagOn(0, Flags.MartyrLogariusDead)
+    EndIfThisEventFlagEnabled()
+    IfFlagEnabled(0, Flags.MartyrLogariusDead)
     CreateObjectVFX(900201, obj=2500850, model_point=200)
-    IfActionButtonParam(0, action_button_id=2500030, entity=2500850)
+    IfActionButtonParamActivated(0, action_button_id=2500030, entity=2500850)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2502000, host_only=False)
     DeleteObjectVFX(2500850, erase_root=True)
@@ -1527,7 +1527,7 @@ def GiftCrownOfIllusions():
 def SummonStartMartyrLogariusBattle():
     """ 12501804: Event 12501804 """
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.MartyrLogariusFogEntered)
+    IfFlagEnabled(1, Flags.MartyrLogariusFogEntered)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
     EnableFlag(Flags.MartyrLogariusFogEntered)
@@ -1537,10 +1537,10 @@ def SummonStartMartyrLogariusBattle():
 def Event12500600():
     """ 12500600: Event 12500600 """
     EndIfClient()
-    EndIfThisEventOn()
-    IfFlagOn(0, 12500810)
+    EndIfThisEventFlagEnabled()
+    IfFlagEnabled(0, 12500810)
     CreateObjectVFX(900201, obj=2500851, model_point=200)
-    IfActionButtonParam(0, action_button_id=2500040, entity=2500851)
+    IfActionButtonParamActivated(0, action_button_id=2500040, entity=2500851)
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(2500910, host_only=False)
     DeleteObjectVFX(2500851, erase_root=True)
@@ -1548,13 +1548,13 @@ def Event12500600():
 
 def EnterMartyrLogariusFog():
     """ 12504810: Event 12504810 """
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    GotoIfFlagOn(Label.L0, Flags.MartyrLogariusFirstTimeDone)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    GotoIfFlagEnabled(Label.L0, Flags.MartyrLogariusFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossFog)
     DeleteVFX(VFX.BossFog, erase_root_only=False)
-    IfFlagOff(1, Flags.MartyrLogariusDead)
-    IfFlagOn(1, Flags.MartyrLogariusFirstTimeDone)
+    IfFlagDisabled(1, Flags.MartyrLogariusDead)
+    IfFlagEnabled(1, Flags.MartyrLogariusFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossFog)
     CreateVFX(VFX.BossFog)
@@ -1563,10 +1563,10 @@ def EnterMartyrLogariusFog():
     DefineLabel(0)
     Move(Characters.MartyrLogarius, destination=2502807, destination_type=CoordEntityType.Region, short_move=True)
     ForceAnimation(Characters.MartyrLogarius, 0)
-    IfFlagOff(1, Flags.MartyrLogariusDead)
+    IfFlagDisabled(1, Flags.MartyrLogariusDead)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2500800, entity=Objects.BossFog)
-    IfFlagOn(3, Flags.MartyrLogariusDead)
+    IfActionButtonParamActivated(2, action_button_id=2500800, entity=Objects.BossFog)
+    IfFlagEnabled(3, Flags.MartyrLogariusDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -1587,12 +1587,12 @@ def EnterMartyrLogariusFog():
 def EnterMartyrLogariusFogAsSummon():
     """ 12504811: Event 12504811 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    IfFlagOff(1, Flags.MartyrLogariusDead)
-    IfFlagOn(1, Flags.MartyrLogariusFirstTimeDone)
-    IfFlagOn(1, Flags.MartyrLogariusFogEntered)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    IfFlagDisabled(1, Flags.MartyrLogariusDead)
+    IfFlagEnabled(1, Flags.MartyrLogariusFirstTimeDone)
+    IfFlagEnabled(1, Flags.MartyrLogariusFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2500800, entity=Objects.BossFog)
+    IfActionButtonParamActivated(1, action_button_id=2500800, entity=Objects.BossFog)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2502500, animation=101130, wait_for_completion=True)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -1629,7 +1629,7 @@ def Event12504813():
 
 def StartMartyrLogariusBattle():
     """ 12504802: Event 12504802 """
-    EndIfFlagOn(Flags.MartyrLogariusDead)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
     DisableAI(Characters.MartyrLogarius)
     DisableAI(Characters.MartyrLogariusSword)
     DisableHealthBar(Characters.MartyrLogarius)
@@ -1638,10 +1638,10 @@ def StartMartyrLogariusBattle():
     DisableCharacter(Characters.MartyrLogariusSword)
     CreateProjectileOwner(Characters.MartyrLogariusBulletOwner)
     DisableCharacter(Characters.MartyrLogariusBulletOwner)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(0, Flags.MartyrLogariusFogEntered)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagEnabled(0, Flags.MartyrLogariusFogEntered)
     GotoIfClient(Label.L0)
-    SkipLinesIfFlagOn(1, 12504223)
+    SkipLinesIfFlagEnabled(1, 12504223)
     NotifyBossBattleStart()
     SetNetworkUpdateAuthority(Characters.MartyrLogarius, UpdateAuthority.Forced)
     SetNetworkUpdateAuthority(Characters.MartyrLogariusSword, UpdateAuthority.Forced)
@@ -1691,14 +1691,14 @@ def StartMartyrLogariusBattle():
 def ControlMartyrLogariusMusic():
     """ 12504803: Event 12504803 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableSoundEvent(2503802)
     DisableSoundEvent(2503803)
-    IfFlagOff(1, Flags.MartyrLogariusDead)
-    IfFlagOn(1, 12504802)
+    IfFlagDisabled(1, Flags.MartyrLogariusDead)
+    IfFlagEnabled(1, 12504802)
     SkipLinesIfHost(1)
-    IfFlagOn(1, 12504801)
+    IfFlagEnabled(1, 12504801)
     IfCharacterInsideRegion(1, PLAYER, region=2502802)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(2503802)
@@ -1706,10 +1706,10 @@ def ControlMartyrLogariusMusic():
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.MartyrLogariusDead)
-    IfFlagOn(2, 12504802)
+    IfFlagDisabled(2, Flags.MartyrLogariusDead)
+    IfFlagEnabled(2, 12504802)
     SkipLinesIfHost(1)
-    IfFlagOn(2, 12504801)
+    IfFlagEnabled(2, 12504801)
     IfCharacterInsideRegion(2, PLAYER, region=2502802)
     IfConditionTrue(0, input_condition=2)
     DisableBossMusic(2503802)
@@ -1720,8 +1720,8 @@ def ControlMartyrLogariusMusic():
 def ControlMartyrLogariusCamera():
     """ 12504804: Event 12504804 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    IfHasTAEEvent(0, Characters.MartyrLogarius, tae_event_id=100)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    IfCharacterHasTAEEvent(0, Characters.MartyrLogarius, tae_event_id=100)
     SetLockedCameraSlot(game_map=CASTLE_CAINHURST, camera_slot=1)
     IfCharacterHasSpecialEffect(0, Characters.MartyrLogariusSword, 5610)
     SetLockedCameraSlot(game_map=CASTLE_CAINHURST, camera_slot=0)
@@ -1731,8 +1731,8 @@ def ControlMartyrLogariusCamera():
 def StopMartyrLogariusMusic():
     """ 12504805: Event 12504805 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    IfFlagOn(0, Flags.MartyrLogariusDead)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    IfFlagEnabled(0, Flags.MartyrLogariusDead)
     DisableBossMusic(2503802)
     DisableBossMusic(2503803)
     DisableBossMusic(-1)
@@ -1740,8 +1740,8 @@ def StopMartyrLogariusMusic():
 
 def CreateMartyrLogariusSword():
     """ 12504806: Event 12504806 """
-    EndIfFlagOn(Flags.MartyrLogariusDead)
-    IfHasTAEEvent(0, Characters.MartyrLogarius, tae_event_id=100)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
+    IfCharacterHasTAEEvent(0, Characters.MartyrLogarius, tae_event_id=100)
     AICommand(Characters.MartyrLogarius, command_id=1, slot=0)
     ReplanAI(Characters.MartyrLogarius)
     StartPlayLogMeasurement(2501000, 116, overwrite=True)
@@ -1773,7 +1773,7 @@ def CreateMartyrLogariusSword():
 def MartyrLogariusChargesUp():
     """ 12504807: Event 12504807 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.MartyrLogariusDead)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
     IfCharacterHasSpecialEffect(0, Characters.MartyrLogarius, 5633)
     ShootProjectile(
         owner_entity=Characters.MartyrLogariusBulletOwner,
@@ -1790,12 +1790,12 @@ def MartyrLogariusChargesUp():
 
 def CancelMartyrLogariusCharge():
     """ 12504808: Probably when he is knocked out of charging animation? """
-    EndIfFlagOn(Flags.MartyrLogariusDead)
+    EndIfFlagEnabled(Flags.MartyrLogariusDead)
     IfCharacterHasSpecialEffect(1, Characters.MartyrLogarius, 5633)
-    IfHasTAEEvent(1, Characters.MartyrLogarius, tae_event_id=10)
+    IfCharacterHasTAEEvent(1, Characters.MartyrLogarius, tae_event_id=10)
     IfConditionTrue(0, input_condition=1)
-    CancelSpecialEffect(Characters.MartyrLogarius, 5633)
-    CancelSpecialEffect(Characters.MartyrLogarius, 5599)
+    RemoveSpecialEffect(Characters.MartyrLogarius, 5633)
+    RemoveSpecialEffect(Characters.MartyrLogarius, 5599)
     WaitFrames(1)
     ForceAnimation(Characters.MartyrLogarius, 2100, wait_for_completion=True)
     Restart()
@@ -1803,7 +1803,7 @@ def CancelMartyrLogariusCharge():
 
 def Event12500896(_, arg_0_3: int):
     """ 12500896: Event 12500896 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DeleteVFX(2503200, erase_root_only=False)
     DeleteVFX(2503201, erase_root_only=False)
     End()
@@ -1818,44 +1818,44 @@ def Event12500896(_, arg_0_3: int):
 
 def Event12500898(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12500898: Event 12500898 """
-    IfFlagOn(-1, arg_0_3)
-    IfFlagOn(-1, arg_4_7)
-    IfFlagOn(-1, arg_8_11)
-    IfFlagOn(-1, arg_12_15)
+    IfFlagEnabled(-1, arg_0_3)
+    IfFlagEnabled(-1, arg_4_7)
+    IfFlagEnabled(-1, arg_8_11)
+    IfFlagEnabled(-1, arg_12_15)
     IfConditionTrue(0, input_condition=-1)
     WaitFrames(10)
     EnableFlag(12500898)
-    SkipLinesIfFlagOff(1, arg_0_3)
+    SkipLinesIfFlagDisabled(1, arg_0_3)
     CreatePlayLog(146)
-    SkipLinesIfFlagOff(1, arg_4_7)
+    SkipLinesIfFlagDisabled(1, arg_4_7)
     CreatePlayLog(180)
-    SkipLinesIfFlagOff(1, arg_8_11)
+    SkipLinesIfFlagDisabled(1, arg_8_11)
     CreatePlayLog(214)
-    SkipLinesIfFlagOff(1, arg_12_15)
+    SkipLinesIfFlagDisabled(1, arg_12_15)
     CreatePlayLog(248)
 
 
 def Event12500900(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12500900: Event 12500900 """
-    GotoIfFlagOn(Label.L0, arg_4_7)
+    GotoIfFlagEnabled(Label.L0, arg_4_7)
     DisableAI(arg_0_3)
     DisableAnimations(arg_0_3)
     AddSpecialEffect_WithUnknownEffect(arg_0_3, 5686, affect_npc_parts_hp=False)
-    CancelSpecialEffect(arg_0_3, 5684)
-    IfFlagOn(0, arg_4_7)
+    RemoveSpecialEffect(arg_0_3, 5684)
+    IfFlagEnabled(0, arg_4_7)
     WaitRandomFrames(min_frames=10, max_frames=70)
     EnableAI(arg_0_3)
-    CancelSpecialEffect(arg_0_3, 5686)
+    RemoveSpecialEffect(arg_0_3, 5686)
     AddSpecialEffect(arg_0_3, 5684, affect_npc_part_hp=False)
 
     # --- 0 --- #
     DefineLabel(0)
     AddSpecialEffect_WithUnknownEffect(arg_0_3, 5685, affect_npc_parts_hp=False)
     DisableAnimations(arg_0_3)
-    IfFlagOn(0, arg_8_11)
-    CancelSpecialEffect(arg_0_3, 5685)
+    IfFlagEnabled(0, arg_8_11)
+    RemoveSpecialEffect(arg_0_3, 5685)
     EnableAnimations(arg_0_3)
-    IfFlagOff(0, arg_8_11)
+    IfFlagDisabled(0, arg_8_11)
     Restart()
 
 
@@ -1886,18 +1886,18 @@ def Event12505000(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event12505300(_, arg_0_3: int):
     """ 12505300: Event 12505300 """
-    IfFlagOn(0, arg_0_3)
+    IfFlagEnabled(0, arg_0_3)
     EnableFlag(arg_0_3)
-    IfFlagOff(0, arg_0_3)
+    IfFlagDisabled(0, arg_0_3)
     DisableFlag(arg_0_3)
     Restart()
 
 
 def Event12500090():
     """ 12500090: Event 12500090 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     EndIfClient()
-    IfStandingOnCollision(0, 2503500)
+    IfPlayerStandingOnCollision(0, 2503500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 282, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 282, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 282, PlayLogMultiplayerType.HostOnly)
@@ -1907,7 +1907,7 @@ def Event12500090():
 
 def Event12507010(_, arg_0_3: int, arg_4_7: int):
     """ 12507010: Event 12507010 """
-    IfFlagOn(0, arg_0_3)
+    IfFlagEnabled(0, arg_0_3)
     Move(PLAYER, destination=arg_4_7, destination_type=CoordEntityType.Object, model_point=200, short_move=True)
     ForceAnimation(PLAYER, 101160, skip_transition=True)
     Wait(4.0)
@@ -1916,7 +1916,7 @@ def Event12507010(_, arg_0_3: int, arg_4_7: int):
 
 def Event12507020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12507020: Event 12507020 """
-    IfFlagOn(0, arg_0_3)
+    IfFlagEnabled(0, arg_0_3)
     DisableFlag(arg_0_3)
     WarpPlayerToRespawnPoint(arg_4_7)
     EnableFlag(arg_8_11)
@@ -1924,47 +1924,47 @@ def Event12507020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 
 def Event12507040():
     """ 12507040: Event 12507040 """
-    SkipLinesIfFlagRangeAnyOn(1, (9001, 9010))
+    SkipLinesIfFlagRangeAnyEnabled(1, (9001, 9010))
     End()
     EnableFlag(9210)
-    IfFlagOff(0, 9210)
-    SkipLinesIfFlagOff(3, 9001)
+    IfFlagDisabled(0, 9210)
+    SkipLinesIfFlagDisabled(3, 9001)
     EnableFlag(12507811)
     EnableFlag(12507810)
     SetRespawnPoint(2502950)
-    SkipLinesIfFlagOff(3, 9002)
+    SkipLinesIfFlagDisabled(3, 9002)
     EnableFlag(12507831)
     EnableFlag(12507830)
     SetRespawnPoint(2502951)
-    SkipLinesIfFlagOff(3, 9003)
+    SkipLinesIfFlagDisabled(3, 9003)
     EnableFlag(12507851)
     EnableFlag(12507850)
     SetRespawnPoint(2502952)
-    SkipLinesIfFlagOff(3, 9004)
+    SkipLinesIfFlagDisabled(3, 9004)
     EnableFlag(12507871)
     EnableFlag(12507870)
     SetRespawnPoint(2502953)
-    SkipLinesIfFlagOff(3, 9005)
+    SkipLinesIfFlagDisabled(3, 9005)
     EnableFlag(12507891)
     EnableFlag(12507890)
     SetRespawnPoint(2502954)
-    SkipLinesIfFlagOff(3, 9006)
+    SkipLinesIfFlagDisabled(3, 9006)
     EnableFlag(12507911)
     EnableFlag(12507910)
     SetRespawnPoint(2502955)
-    SkipLinesIfFlagOff(3, 9007)
+    SkipLinesIfFlagDisabled(3, 9007)
     EnableFlag(12507931)
     EnableFlag(12507930)
     SetRespawnPoint(2502956)
-    SkipLinesIfFlagOff(3, 9008)
+    SkipLinesIfFlagDisabled(3, 9008)
     EnableFlag(12507951)
     EnableFlag(12507950)
     SetRespawnPoint(2502957)
-    SkipLinesIfFlagOff(3, 9009)
+    SkipLinesIfFlagDisabled(3, 9009)
     EnableFlag(12507971)
     EnableFlag(12507970)
     SetRespawnPoint(2502958)
-    SkipLinesIfFlagOff(3, 9010)
+    SkipLinesIfFlagDisabled(3, 9010)
     EnableFlag(12507991)
     EnableFlag(12507990)
     SetRespawnPoint(2502959)
@@ -1973,13 +1973,13 @@ def Event12507040():
 
 def Event12507050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12507050: Event 12507050 """
-    EndIfFlagOn(arg_0_3)
+    EndIfFlagEnabled(arg_0_3)
     DisableGravity(arg_4_7)
     IfCharacterBackreadEnabled(0, arg_4_7)
     Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
     ForceAnimation(arg_4_7, 101165, loop=True)
     Wait(1.0)
     Move(arg_4_7, destination=arg_8_11, destination_type=CoordEntityType.Object, model_point=250, short_move=True)
-    IfFlagOn(0, arg_0_3)
+    IfFlagEnabled(0, arg_0_3)
     ForceAnimation(arg_4_7, 101166, wait_for_completion=True)
     DisableCharacter(arg_4_7)

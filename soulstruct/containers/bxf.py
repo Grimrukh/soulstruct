@@ -13,7 +13,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash
 
 from .base import BaseBinder, BinderHashTable, BinderFlags
-from .dcx import DCX
+from .dcx import DCXType, compress, decompress
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         self,
         file_source: GameFile.Typing = None,
         bdt_source: GameFile.Typing = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type=None,
     ):
         """Data archive that is basically a `BND` split into a `BHD` header file and `BDT` data file.
 
@@ -45,19 +45,26 @@ class BaseBXF(BaseBinder, abc.ABC):
             file_source = Path(file_source)
             if file_source.is_dir() and (file_source / "binder_manifest.json").is_file():
                 pass  # will be handled by parent class
-            elif file_source.name.endswith("bhd"):
-                bdt_source = file_source.with_name(file_source.name[:-3] + "bdt")
-                if not bdt_source.is_file():
-                    raise FileNotFoundError(f"Could not find BDT data file next to BHD header file: {file_source}")
-            elif file_source.name.endswith("bdt"):
-                bdt_source = file_source
-                file_source = bdt_source.with_name(bdt_source.name[:-3] + "bhd")
-                if not file_source.is_file():
-                    raise FileNotFoundError(f"Could not find BHD header file next to BDT data file: {bdt_source}")
             else:
-                raise ValueError(f"Could not tell if file source {file_source} is a BHD or BDT file.")
+                if file_source.suffix == ".bak":
+                    check_name = file_source.name.removesuffix(".bak")
+                    bak_suffix = ".bak"
+                else:
+                    check_name = file_source.name
+                    bak_suffix = ""
+                if check_name.endswith("bhd"):
+                    bdt_source = file_source.with_name(check_name[:-3] + f"bdt{bak_suffix}")
+                    if not bdt_source.is_file():
+                        raise FileNotFoundError(f"Could not find BDT data file next to BHD header file: {file_source}")
+                elif check_name.endswith("bdt"):
+                    bdt_source = file_source
+                    file_source = bdt_source.with_name(check_name[:-3] + f"bhd{bak_suffix}")
+                    if not file_source.is_file():
+                        raise FileNotFoundError(f"Could not find BHD header file next to BDT data file: {bdt_source}")
+                else:
+                    raise ValueError(f"Could not tell if file source {file_source} is a BHD or BDT file.")
 
-        super().__init__(file_source, dcx_magic=dcx_magic, bdt_source=bdt_source)
+        super().__init__(file_source, dcx_type=dcx_type, bdt_source=bdt_source)
 
     @abc.abstractmethod
     def unpack_header(self, reader: BinaryReader) -> list[BinderEntryHeader]:
@@ -87,7 +94,7 @@ class BaseBXF(BaseBinder, abc.ABC):
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
         already exist.
 
-        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_magic` is defined. Will also
+        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_type` is defined. Will also
         automatically create a `.bak` version of the `file_path`, if a backup does not already exist.
 
         Args:
@@ -109,10 +116,10 @@ class BaseBXF(BaseBinder, abc.ABC):
         if make_dirs:
             bdt_file_path.parent.mkdir(parents=True, exist_ok=True)
         packed_bhd, packed_bdt = self.pack()
-        if self.dcx_magic:
+        if self.dcx_type != DCXType.Null:
             # I haven't actually seen any BDT archives with DCX compression.
-            packed_bhd = DCX(packed_bhd, magic=self.dcx_magic).pack()
-            packed_bdt = DCX(packed_bdt, magic=self.dcx_magic).pack()
+            packed_bhd = compress(packed_bhd, self.dcx_type)
+            packed_bdt = compress(packed_bdt, self.dcx_type)
         if check_hash and file_path.is_file() and bdt_file_path.is_file():
             bhd_match = get_blake2b_hash(file_path) == get_blake2b_hash(packed_bhd)
             bdt_match = get_blake2b_hash(bdt_file_path) == get_blake2b_hash(packed_bdt)
@@ -198,7 +205,7 @@ class BXF3(BaseBXF):
             "big_endian": self.big_endian,
             "bit_big_endian": self.bit_big_endian,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_magic": self.dcx_magic,
+            "dcx_type": self.dcx_type.value,
         }
 
 
@@ -213,14 +220,14 @@ class BXF4(BaseBXF):
         self,
         file_source: GameFile.Typing = None,
         bdt_source: GameFile.Typing = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type: DCXType = None,
     ):
         self.unknown1 = False
         self.unknown2 = False
         self.hash_table_type = 0
         self.unicode = True
         self._most_recent_hash_table = b""
-        super().__init__(file_source, bdt_source, dcx_magic)
+        super().__init__(file_source, bdt_source, dcx_type)
 
     def unpack_header(self, reader: BinaryReader):
         reader.unpack_value("4s", asserted=b"BND4")
@@ -307,6 +314,7 @@ class BXF4(BaseBXF):
         entries = list(sorted(self._entries, key=lambda e: e.id))
 
         rebuild_hash_table = not self._most_recent_hash_table
+        # TODO: _most_recent_entry_count and _most_recent_paths not defined elsewhere
         if not self._most_recent_hash_table or len(entries) != self._most_recent_entry_count:
             rebuild_hash_table = True
         else:
@@ -368,5 +376,5 @@ class BXF4(BaseBXF):
             "unknown1": self.unknown1,
             "unknown2": self.unknown2,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_magic": self.dcx_magic,
+            "dcx_type": self.dcx_type.value,
         }

@@ -1,22 +1,22 @@
 from __future__ import annotations
 
+__all__ = ["BaseMSBModel", "BaseMSBGeometryModel", "BaseMSBModelList"]
+
+import abc
 import typing as tp
 
-from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities.misc import partialmethod
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
-from .enums import MSBModelSubtype
-from .msb_entry import MSBEntryList, MSBEntry
+from .enums import BaseMSBModelSubtype
+from .msb_entry import MSBEntry
+from .msb_entry_list import BaseMSBEntryList
 from .utils import MapFieldInfo
 
 
-class MSBModel(MSBEntry):
+class BaseMSBModel(MSBEntry, abc.ABC):
     """Class used by all MSB models."""
 
-    # Spoofed as an instance variable, since all Models have identical binary formats.
-    ENTRY_SUBTYPE: MSBModelSubtype
-
+    ENTRY_SUBTYPE: BaseMSBModelSubtype
     MODEL_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""
     NULL = b"\0"
@@ -34,49 +34,36 @@ class MSBModel(MSBEntry):
 
     sib_path: str
 
-    def __init__(self, source=None, model_subtype=None, **kwargs):
+    def __init__(self, source=None, map_id=(), **kwargs):
         """Create an instance of an MSB model entry using packed data (`source`) or keyword arguments.
 
-        If `source` is not given, then at least `name`, `sib_path`, and `model_subtype` must be, with optional
-        (defaults to `None`) and `sib_path` auto-generated using `name` and `entry_type`. For MapPiece, Collision, and
-        Navmesh models, `sib_path` must be a full string or a sequence of map ID parts (e.g. (10, 2) or (10, 2, 0, 0)
-        for map `m10_02_00_00.msb`), as the models for these MSB parts are map-specific.
+        If `source` is not given, then at least `sib_path` or both `name` (in kwargs) and `map_id` must be.
         """
-        self.ENTRY_SUBTYPE = None  # type: tp.Optional[MSBModelSubtype]
         self._model_type_index = None  # not sure if this matters
         self._instance_count = None
-
         if source is None:
-            if model_subtype is None:
-                raise ValueError("`model_subtype` must be passed to `MSBModel` if binary `source` is not given.")
-            self.ENTRY_SUBTYPE = MSBModelList.resolve_entry_subtype(model_subtype)
-            try:
-                name = kwargs["name"]
-            except KeyError:
-                raise ValueError(
-                    "`name` and (for some model subtypes) `sib_path` must be given to `MSBModel` "
-                    "if no binary `source` is given."
-                )
-            kwargs["sib_path"] = self.auto_sib_path(
-                name=name, model_subtype=self.ENTRY_SUBTYPE, sib_path=kwargs.get("sib_path", None),
-            )
+            if "sib_path" not in kwargs:
+                if "name" not in kwargs:
+                    raise ValueError(f"`name` must be given to `{self.__class__.__name__}` if `sib_path` is not given.")
+                kwargs["sib_path"] = self.ENTRY_SUBTYPE.get_default_sib_path(kwargs["name"], map_id)
 
         super().__init__(source=source, **kwargs)
 
     def unpack(self, msb_reader: BinaryReader):
         model_offset = msb_reader.position
-        model_data = msb_reader.unpack_struct(self.MODEL_STRUCT)
+        header = msb_reader.unpack_struct(self.MODEL_STRUCT)
         self.name = msb_reader.unpack_string(
-            offset=model_offset + model_data["__name_offset"], encoding=self.NAME_ENCODING
+            offset=model_offset + header["__name_offset"], encoding=self.NAME_ENCODING
         )
         self.sib_path = msb_reader.unpack_string(
-            offset=model_offset + model_data["__sib_path_offset"], encoding=self.NAME_ENCODING,
+            offset=model_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING,
         )
-        try:
-            self.ENTRY_SUBTYPE = MSBModelSubtype(model_data["__model_type"])
-        except TypeError:
-            raise ValueError(f"Unrecognized MSB model type: {model_data['__model_type']}")
-        self.set(**model_data)
+        if header["__model_type"] != self.ENTRY_SUBTYPE.value:
+            raise ValueError(
+                f"Unexpected MSB model type value {header['__model_type']} for {self.__class__.__name__}. "
+                f"Expected {self.ENTRY_SUBTYPE.value}."
+            )
+        self.set(**header)
 
     def pack(self):
         name_offset = self.MODEL_STRUCT.size
@@ -98,47 +85,6 @@ class MSBModel(MSBEntry):
         self._model_type_index = model_type_index
         self._instance_count = instance_count
 
-    def set_sib_path_from_map_id(self, map_id):
-        """Use given map ID sequence, e.g. (10, 2, 0, 0), to auto-set SIB path."""
-        self.sib_path = self.auto_sib_path(name=self.name, model_subtype=self.ENTRY_SUBTYPE, sib_path=map_id)
-
-    @classmethod
-    def auto_sib_path(cls, name, model_subtype, sib_path):
-        if isinstance(sib_path, str):
-            return sib_path
-
-        if model_subtype in (MSBModelSubtype.MapPiece, MSBModelSubtype.Collision, MSBModelSubtype.Navmesh):
-            if not isinstance(sib_path, (list, tuple)) or len(sib_path) not in {2, 4}:
-                raise TypeError(
-                    f"`sib_path` for Map Pieces, Collisions, and Navmeshes must be a full string or a "
-                    f"sequence of map ID parts, e.g. (10, 2), not: {repr(sib_path)}"
-                )
-            if len(sib_path) == 2:
-                sib_path = (sib_path[0], sib_path[1], 0, 0)
-            sib_path = f"m{sib_path[0]:02d}_{sib_path[1]:02d}_{sib_path[2]:02d}_{sib_path[3]:02d}"
-            stem = cls.SIB_PATH_STEM + f"map\\{sib_path}\\"
-            if model_subtype == MSBModelSubtype.MapPiece:
-                if not name.startswith("m"):
-                    raise ValueError(f"MapPiece model name did not start with 'm': {name}")
-                return stem + f"sib\\{name}.sib"
-            elif model_subtype == MSBModelSubtype.Collision:
-                if not name.startswith("h"):
-                    raise ValueError(f"Collision model name did not start with 'h': {name}")
-                return stem + f"hkxwin\\{name}.hkxwin"
-            elif model_subtype == MSBModelSubtype.Navmesh:
-                if not name.startswith("n"):
-                    raise ValueError(f"Navmesh model name did not start with 'n': {name}")
-                return stem + f"navimesh\\{name}.SIB"
-        elif model_subtype in (MSBModelSubtype.Character, MSBModelSubtype.Player):
-            if not name.startswith("c"):
-                raise ValueError(f"Character/Player model name did not start with 'c': {name}")
-            return cls.SIB_PATH_STEM + f"chr\\{name}\\sib\\{name}.sib"
-        elif model_subtype == MSBModelSubtype.Object:
-            if not name.startswith("o"):
-                raise ValueError(f"Object model name did not start with 'o': {name}")
-            return cls.SIB_PATH_STEM + f"obj\\{name}\\sib\\{name}.sib"
-        raise ValueError(f"Invalid MSB model type: {repr(model_subtype)}. Cannot determine SIB path.")
-
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         # TODO: Do some models use generic sib paths?
         return {"name": self.name, "sib_path": self.sib_path}
@@ -149,69 +95,26 @@ class MSBModel(MSBEntry):
             fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
             return (
                 f"{self.__class__.__name__}(\n"
-                f"    model_subtype={repr(self.ENTRY_SUBTYPE.name)},\n"
                 f"    name={repr(self.name)},\n"
                 f"    {fields}\n"
                 f")"
             )
-        return f"{self.__class__.__name__}(model_subtype={repr(self.ENTRY_SUBTYPE.name)}, name={repr(self.name)})"
+        return f"{self.__class__.__name__}(name={repr(self.name)})"
 
 
-class MSBModelList(MSBEntryList[MSBModel]):
-    INTERNAL_NAME = "MODEL_PARAM_ST"
-    PLURALIZED_NAME = "Models"
-    ENTRY_SUBTYPE_ENUM = MSBModelSubtype
-    SUBTYPE_CLASSES = {}  # type: dict[MSBModelSubtype, tp.Callable]
-    ENTRY_CLASS: tp.Type[MSBModel] = None
+class BaseMSBGeometryModel(BaseMSBModel):
 
-    _entries: list[MSBModel]
+    def __init__(self, source=None, **kwargs):
+        """Additionally Requires `map_id` if `source` is None."""
+        if source is None and "sib_path" not in kwargs and ("map_id" not in kwargs or "name" not in kwargs):
+            raise ValueError(
+                f"`name` and `map_id` must be given to `{self.__class__.__name__}` if `sib_path` is not given."
+            )
+        super().__init__(source, **kwargs)
 
-    MapPieces: list[MSBModel]
-    Objects: list[MSBModel]
-    Characters: list[MSBModel]
-    Items: list[MSBModel]
-    Players: list[MSBModel]
-    Collisions: list[MSBModel]
-    Navmeshes: list[MSBModel]
 
-    new_map_piece_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.MapPiece)
-    new_object_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Object)
-    new_character_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Character)
-    new_item_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Item)
-    new_player_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Player)
-    new_collision_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Collision)
-    new_navmesh_model: tp.Callable[..., MSBModel] = partialmethod(MSBEntryList.new, MSBModelSubtype.Navmesh)
+class BaseMSBModelList(BaseMSBEntryList, abc.ABC):
 
-    def pack_entry(self, index: int, entry: MSBModel):
-        return entry.pack()
-
+    @abc.abstractmethod
     def set_indices(self, part_instance_counts):
-        """Local type-specific index only. (Note that global entry index is still used by Parts.)"""
-        type_indices = {}
-        for entry in self._entries:
-            try:
-                entry.set_indices(
-                    model_type_index=type_indices.setdefault(entry.ENTRY_SUBTYPE, 0),
-                    instance_count=part_instance_counts.get(entry.name, 0),
-                )
-            except KeyError as e:
-                raise SoulstructError(
-                    f"Invalid map component name for {entry.ENTRY_SUBTYPE.name} model {entry.name}: {e}"
-                )
-            else:
-                type_indices[entry.ENTRY_SUBTYPE] += 1
-
-    def sort(self):
-        """Sort all models by type, then alphabetically."""
-        sorted_entries = []  # type: list[MSBModel]
-        for entry_subtype in MSBModelSubtype:
-            sorted_entries += list(sorted(self.get_entries(entry_subtype), key=lambda m: m.name))
-        self._entries = sorted_entries
-
-
-for _entry_subtype in MSBModelSubtype:
-    setattr(
-        MSBModelList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+        pass

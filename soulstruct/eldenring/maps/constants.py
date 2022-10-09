@@ -2,9 +2,6 @@ __all__ = [
     "COMMON",
     "COMMON_FUNC",
 
-    "MapTileException",
-    "MapTile",
-
     # Legacy/unique dungeons
     "STORMVEIL_CASTLE",
     "CHAPEL_OF_ANTICIPATION",
@@ -17,8 +14,8 @@ __all__ = [
     "ASTEL_ARENA",
     "MOHGWYN_PALACE",
     "SIOFRA_RIVER_START",
-    "REGAL_ANCESTOR_LOWER",
-    "REGAL_ANCESTOR_UPPER",
+    "ANCESTOR_SPIRIT_ARENA",
+    "REGAL_ANCESTOR_ARENA",
     "CRUMBLING_FARUM_AZULA",
     "RAYA_LUCARIA",
     "HALIGTREE",
@@ -484,10 +481,11 @@ __all__ = [
     "ALL_MAPS",
     "ALL_MSB_FILE_NAMES",
     "get_map",
+    "get_map_variable_name",
 ]
 
 from soulstruct.base.maps.utilities import get_map as _get_map_base
-from soulstruct.game_types.msb_types import Map
+from soulstruct.darksouls1ptde.game_types.map_types import Map
 from soulstruct.eldenring.maps.generic_dungeons import *
 from soulstruct.eldenring.maps.overworld import *
 
@@ -580,17 +578,17 @@ SIOFRA_RIVER_START = Map(
     variable_name="SIOFRA_RIVER_START",
     verbose_name="Siofra River (Start)",
 )
-REGAL_ANCESTOR_LOWER = Map(
+ANCESTOR_SPIRIT_ARENA = Map(
     12, 8, 0, 0,
-    name="RegalAncestorLower",
-    variable_name="REGAL_ANCESTOR_LOWER",
-    verbose_name="Regal Ancestor (Lower)",
+    name="AncestorSpiritArena",
+    variable_name="ANCESTOR_SPIRIT_ARENA",
+    verbose_name="Ancestor Spirit Arena",
 )
-REGAL_ANCESTOR_UPPER = Map(
+REGAL_ANCESTOR_ARENA = Map(
     12, 9, 0, 0,
-    name="RegalAncestorUpper",
-    variable_name="REGAL_ANCESTOR_UPPER",
-    verbose_name="Regal Ancestor (Upper)",
+    name="RegalAncestorArena",
+    variable_name="REGAL_ANCESTOR_ARENA",
+    verbose_name="Regal Ancestor Arena",
 )
 CRUMBLING_FARUM_AZULA = Map(
     13, 0, 0, 0,
@@ -643,7 +641,6 @@ RUIN_STREWN_PRECIPICE = Map(
 
 ALL_MAPS = (
     COMMON,
-    COMMON_FUNC,
     STORMVEIL_CASTLE,
     CHAPEL_OF_ANTICIPATION,
     LEYNDELL_ROYAL_CAPITAL,
@@ -655,8 +652,8 @@ ALL_MAPS = (
     ASTEL_ARENA,
     MOHGWYN_PALACE,
     SIOFRA_RIVER_START,
-    REGAL_ANCESTOR_LOWER,
-    REGAL_ANCESTOR_UPPER,
+    ANCESTOR_SPIRIT_ARENA,
+    REGAL_ANCESTOR_ARENA,
     CRUMBLING_FARUM_AZULA,
     RAYA_LUCARIA,
     HALIGTREE,
@@ -1128,8 +1125,8 @@ ALL_LEGACY_DUNGEON_MAPS = [
     ASTEL_ARENA,
     MOHGWYN_PALACE,
     SIOFRA_RIVER_START,
-    REGAL_ANCESTOR_LOWER,
-    REGAL_ANCESTOR_UPPER,
+    ANCESTOR_SPIRIT_ARENA,
+    REGAL_ANCESTOR_ARENA,
     CRUMBLING_FARUM_AZULA,
     RAYA_LUCARIA,
     HALIGTREE,
@@ -1598,10 +1595,20 @@ ALL_OVERWORLD_MAPS = [
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 
-def get_map(source, block_id=None):
+def get_map(source, block_id=None, cc_id=None, dd_id=None):
+    if cc_id is not None:
+        if dd_id is None:
+            dd_id = 0
+        return _get_map_base((source, block_id, cc_id, dd_id), game_maps=ALL_MAPS)
+    elif dd_id is not None:
+        return _get_map_base((source, block_id, 0, dd_id), game_maps=ALL_MAPS)
+    elif source == "common_func":
+        return COMMON_FUNC
     return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
 
 
-if __name__ == '__main__':
-    m = get_map((10, 0, 0, 0))
-    print(m.variable_name)
+def get_map_variable_name(area_id: int, block_id: int, cc_id: int, dd_id: int):
+    try:
+        return get_map((area_id, block_id, cc_id, dd_id)).variable_name
+    except (KeyError, ValueError):
+        return f"({area_id}, {block_id}, {cc_id}, {dd_id})"

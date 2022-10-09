@@ -1,12 +1,11 @@
-from soulstruct.games import DARK_SOULS_DSR
-from soulstruct.game_types import *
+from soulstruct.darksouls1r.game_types import *
 
 
 class Objects(Object):
 
     # noinspection PyMethodParameters
     def _generate_next_value_(name, start, count, last_values):
-        return Object.auto_generate(count, DARK_SOULS_DSR, 1000000)
+        return Object.auto_generate(count, 1000000)
 
     o0100_0000 = 1001900
     o0100_0001 = 1001901
@@ -19,9 +18,6 @@ class Objects(Object):
     o0200_0000 = 1001960  # Bonfire
     o1401_0000 = 1001994  # Entrance fog
     o1402_0000 = 1001996  # Blighttown fog
-
-
-print(Objects.o0100_0000, Objects.o0100_0000.value)
 
 
 class VFXEvents(VFXEvent):

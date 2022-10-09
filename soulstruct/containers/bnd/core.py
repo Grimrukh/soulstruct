@@ -101,7 +101,7 @@ class BND3(BaseBND):
             "big_endian": self.big_endian,
             "bit_big_endian": self.bit_big_endian,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_magic": self.dcx_magic,
+            "dcx_type": self.dcx_type.value,
         }
 
 
@@ -141,7 +141,7 @@ class BND4(BaseBND):
     unicode: bool
     hash_table_type: int
 
-    def __init__(self, file_source=None, dcx_magic=()):
+    def __init__(self, file_source=None, dcx_type=None):
         self.unknown1 = False
         self.unknown2 = False
         self.unicode = False  # If False, paths are written in Shift-JIS.
@@ -151,7 +151,7 @@ class BND4(BaseBND):
         self._most_recent_entry_count = 0
         self._most_recent_paths = []
 
-        super().__init__(file_source=file_source, dcx_magic=dcx_magic)
+        super().__init__(file_source=file_source, dcx_type=dcx_type)
 
     def unpack_header(self, reader: BinaryReader):
         reader.unpack_value("4s", asserted=b"BND4")
@@ -287,5 +287,5 @@ class BND4(BaseBND):
             "unknown1": self.unknown1,
             "unknown2": self.unknown2,
             "use_id_prefix": self.has_repeated_entry_names,
-            "dcx_magic": self.dcx_magic,
+            "dcx_type": self.dcx_type.value,
         }

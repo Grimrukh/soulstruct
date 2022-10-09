@@ -20,18 +20,18 @@ class MSGDirectory(_BaseMSGDirectory):
         (10, "GoodNames"),
         (11, "WeaponNames"),
         (12, "ArmorNames"),
-        (13, "RingNames"),
+        (13, "AccessoryNames"),
         (14, "SpellNames"),
         (18, "NPCNames"),
         (19, "PlaceNames"),
         (20, "GoodSummaries"),
         (21, "WeaponSummaries"),
         (22, "ArmorSummaries"),
-        (23, "RingSummaries"),
+        (23, "AccessorySummaries"),
         (24, "GoodDescriptions"),
         (25, "WeaponDescriptions"),
         (26, "ArmorDescriptions"),
-        (27, "RingDescriptions"),
+        (27, "AccessoryDescriptions"),
         (28, "SpellSummaries"),
         (29, "SpellDescriptions"),
         (30, "EventText"),
@@ -70,9 +70,9 @@ class MSGDirectory(_BaseMSGDirectory):
         "ArmorNames",
         "ArmorSummaries",
         "ArmorDescriptions",
-        "RingNames",
-        "RingSummaries",
-        "RingDescriptions",
+        "AccessoryNames",
+        "AccessorySummaries",
+        "AccessoryDescriptions",
         "GoodNames",
         "GoodSummaries",
         "GoodDescriptions",
@@ -147,9 +147,9 @@ class MSGDirectory(_BaseMSGDirectory):
     NPCNames: dict
     OpeningSubtitles: dict
     PlaceNames: dict
-    RingDescriptions: dict
-    RingNames: dict
-    RingSummaries: dict
+    AccessoryDescriptions: dict
+    AccessoryNames: dict
+    AccessorySummaries: dict
     SoapstoneMessages: dict
     SystemMessages_Win64: dict
     SystemMessages_Win64_SP: dict

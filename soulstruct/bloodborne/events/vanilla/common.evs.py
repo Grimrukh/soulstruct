@@ -1,4 +1,6 @@
 """
+Common
+
 linked:
 
 
@@ -6,423 +8,434 @@ strings:
 
 """
 from soulstruct.bloodborne.events import *
+from soulstruct.bloodborne.events.instructions import *
 
 
+@ContinueOnRest(0)
 def Constructor():
-    """ 0: Event 0 """
+    """Event 0"""
     DisableFlag(7501)
-    RunEvent(9190)
-    RunEvent(9191)
-    RunEvent(9192)
-    RunEvent(9193)
-    RunEvent(9198)
-    RunEvent(6788)
-    RunEvent(6789)
-    RunEvent(6809)
-    RunEvent(6815)
-    RunEvent(6816)
-    RunEvent(9181)
-    RunEvent(9182)
-    RunEvent(9183)
-    RunEvent(9186)
-    RunEvent(6680)
-    RunEvent(6681)
-    RunEvent(6682)
-    RunEvent(6683)
-    RunEvent(6684)
-    RunEvent(6685)
-    RunEvent(6686)
-    RunEvent(6687)
-    RunEvent(6688)
-    RunEvent(6689)
-    RunEvent(6690)
-    RunEvent(6691)
-    RunEvent(6692)
-    RunEvent(6693)
-    RunEvent(6694)
-    RunEvent(6695)
-    RunEvent(6696)
-    RunEvent(6697)
-    RunEvent(5500, slot=0, args=(23010000,))
-    RunEvent(5500, slot=1, args=(23020000,))
-    RunEvent(5500, slot=2, args=(24010000,))
-    RunEvent(5500, slot=3, args=(24020000,))
-    RunEvent(5500, slot=4, args=(30010000,))
-    RunEvent(5500, slot=5, args=(30020000,))
-    RunEvent(5500, slot=6, args=(32010000,))
-    RunEvent(5500, slot=7, args=(32020000,))
-    RunEvent(5500, slot=8, args=(26010000,))
-    RunEvent(5500, slot=9, args=(26020000,))
-    RunEvent(5500, slot=10, args=(27010000,))
-    RunEvent(5500, slot=11, args=(27020000,))
-    RunEvent(5500, slot=12, args=(31010000,))
-    RunEvent(5500, slot=13, args=(31020000,))
-    RunEvent(5500, slot=14, args=(28010000,))
-    RunEvent(5500, slot=15, args=(28020000,))
-    RunEvent(5500, slot=16, args=(29010000,))
-    RunEvent(5500, slot=17, args=(29020000,))
-    RunEvent(5500, slot=18, args=(25010000,))
-    RunEvent(5500, slot=19, args=(25020000,))
-    RunEvent(5500, slot=20, args=(38010000,))
-    RunEvent(5500, slot=21, args=(38020000,))
-    RunEvent(9500, slot=0, args=(3400, 100000))
-    RunEvent(9500, slot=1, args=(3401, 100010))
-    RunEvent(9500, slot=2, args=(3402, 100020))
-    RunEvent(9500, slot=3, args=(3403, 100030))
-    RunEvent(9500, slot=4, args=(3404, 100040))
-    RunEvent(9500, slot=5, args=(3405, 100050))
-    RunEvent(9500, slot=6, args=(3406, 100060))
-    RunEvent(9500, slot=7, args=(3407, 100070))
-    RunEvent(9500, slot=8, args=(3408, 100080))
-    RunEvent(9500, slot=9, args=(3409, 100090))
-    RunEvent(9500, slot=10, args=(3410, 100100))
-    RunEvent(9500, slot=11, args=(3411, 100110))
-    RunEvent(9500, slot=12, args=(3412, 100120))
-    RunEvent(9500, slot=13, args=(3390, 100500))
-    RunEvent(9500, slot=14, args=(3391, 100510))
-    RunEvent(9500, slot=15, args=(3392, 100520))
-    RunEvent(9500, slot=16, args=(3450, 101000))
-    RunEvent(9500, slot=17, args=(3451, 101010))
-    RunEvent(9500, slot=18, args=(3452, 101020))
-    RunEvent(9500, slot=19, args=(3453, 101030))
-    RunEvent(9500, slot=20, args=(3454, 101040))
-    RunEvent(9500, slot=21, args=(3455, 101050))
-    RunEvent(9500, slot=22, args=(3456, 101060))
-    RunEvent(9500, slot=23, args=(3457, 101070))
-    RunEvent(9500, slot=24, args=(3458, 101080))
-    RunEvent(9500, slot=25, args=(3459, 101090))
-    RunEvent(9500, slot=26, args=(3460, 101100))
-    RunEvent(9500, slot=27, args=(3461, 101110))
-    RunEvent(9500, slot=28, args=(3462, 101120))
-    RunEvent(9500, slot=29, args=(3463, 101130))
-    RunEvent(9500, slot=30, args=(3464, 101140))
-    RunEvent(9500, slot=31, args=(3465, 101150))
-    RunEvent(9500, slot=32, args=(3466, 101160))
-    RunEvent(9500, slot=33, args=(3467, 101170))
-    RunEvent(9500, slot=34, args=(3468, 101180))
-    RunEvent(9500, slot=35, args=(3469, 101190))
-    RunEvent(9500, slot=36, args=(3470, 101200))
-    RunEvent(9500, slot=37, args=(3471, 101210))
-    RunEvent(9500, slot=38, args=(3472, 101220))
-    RunEvent(9500, slot=39, args=(3473, 101230))
-    RunEvent(9500, slot=40, args=(3474, 101240))
-    RunEvent(9500, slot=41, args=(3475, 101250))
-    RunEvent(9500, slot=42, args=(3476, 101260))
-    RunEvent(9500, slot=43, args=(3477, 101270))
-    RunEvent(9500, slot=44, args=(3478, 101280))
-    RunEvent(9500, slot=45, args=(3479, 101290))
-    RunEvent(9500, slot=46, args=(3480, 101300))
-    RunEvent(9500, slot=47, args=(3481, 101310))
-    RunEvent(9500, slot=48, args=(3482, 101320))
-    RunEvent(9500, slot=49, args=(3483, 101330))
-    RunEvent(9500, slot=50, args=(3484, 101340))
-    RunEvent(9440, slot=0, args=(9440, 10500))
-    RunEvent(9440, slot=1, args=(9441, 11500))
-    RunEvent(9440, slot=2, args=(9442, 12500))
-    RunEvent(9215)
-    RunEvent(9421)
-    RunEvent(9422)
-    RunEvent(9400)
-    RunEvent(9404)
-    RunEvent(9040, slot=2, args=(9042, 17000))
-    RunEvent(9040, slot=5, args=(9045, 22000))
-    RunEvent(9040, slot=6, args=(9046, 23000))
-    RunEvent(9040, slot=7, args=(9047, 24000))
-    RunEvent(9040, slot=8, args=(9048, 24010))
-    RunEvent(9040, slot=9, args=(9049, 24020))
-    RunEvent(9040, slot=10, args=(9050, 24030))
-    RunEvent(9040, slot=11, args=(9051, 24040))
-    RunEvent(9040, slot=12, args=(9052, 24050))
-    RunEvent(9040, slot=14, args=(9054, 26000))
-    RunEvent(9040, slot=15, args=(9055, 26010))
-    RunEvent(9040, slot=16, args=(9056, 26020))
-    RunEvent(9040, slot=17, args=(9057, 26030))
-    RunEvent(9040, slot=18, args=(9058, 27000))
-    RunEvent(9040, slot=19, args=(9059, 27010))
-    RunEvent(9040, slot=20, args=(9060, 27020))
-    RunEvent(9040, slot=21, args=(9061, 27030))
-    RunEvent(9040, slot=22, args=(9062, 27040))
-    RunEvent(9040, slot=23, args=(9063, 27050))
-    RunEvent(9040, slot=24, args=(9064, 27060))
-    RunEvent(9040, slot=26, args=(9066, 29000))
-    RunEvent(9040, slot=27, args=(9067, 30000))
-    RunEvent(9040, slot=29, args=(9069, 32000))
-    RunEvent(9040, slot=31, args=(9071, 33000))
-    RunEvent(9040, slot=32, args=(9072, 34000))
-    RunEvent(9040, slot=33, args=(9073, 34010))
-    RunEvent(9040, slot=34, args=(9074, 35000))
-    RunEvent(9040, slot=35, args=(9075, 35010))
-    RunEvent(9040, slot=36, args=(9076, 39000))
-    RunEvent(9040, slot=37, args=(9077, 39010))
-    RunEvent(9100, slot=0, args=(72410359, 24060))
-    RunEvent(9100, slot=1, args=(72410310, 23000))
-    RunEvent(9100, slot=2, args=(72400398, 32020))
-    RunEvent(9100, slot=3, args=(72400489, 28000))
-    RunEvent(9100, slot=4, args=(9043, 17010))
-    RunEvent(9910)
-    RunEvent(9909)
-    RunEvent(9905, slot=0, args=(4685,))
-    RunEvent(9905, slot=1, args=(4686,))
-    RunEvent(9905, slot=2, args=(4687,))
-    RunEvent(9905, slot=3, args=(4688,))
+    Event_9190()
+    Event_9191()
+    Event_9192()
+    Event_9193()
+    Event_9198()
+    Event_6788()
+    Event_6789()
+    Event_6809()
+    Event_6815()
+    Event_6816()
+    Event_9181()
+    Event_9182()
+    Event_9183()
+    Event_9186()
+    Event_6680()
+    Event_6681()
+    Event_6682()
+    Event_6683()
+    Event_6684()
+    Event_6685()
+    Event_6686()
+    Event_6687()
+    Event_6688()
+    Event_6689()
+    Event_6690()
+    Event_6691()
+    Event_6692()
+    Event_6693()
+    Event_6694()
+    Event_6695()
+    Event_6696()
+    Event_6697()
+    Event_5500(0, item=23010000)
+    Event_5500(1, item=23020000)
+    Event_5500(2, item=24010000)
+    Event_5500(3, item=24020000)
+    Event_5500(4, item=30010000)
+    Event_5500(5, item=30020000)
+    Event_5500(6, item=32010000)
+    Event_5500(7, item=32020000)
+    Event_5500(8, item=26010000)
+    Event_5500(9, item=26020000)
+    Event_5500(10, item=27010000)
+    Event_5500(11, item=27020000)
+    Event_5500(12, item=31010000)
+    Event_5500(13, item=31020000)
+    Event_5500(14, item=28010000)
+    Event_5500(15, item=28020000)
+    Event_5500(16, item=29010000)
+    Event_5500(17, item=29020000)
+    Event_5500(18, item=25010000)
+    Event_5500(19, item=25020000)
+    Event_5500(20, item=38010000)
+    Event_5500(21, item=38020000)
+    Event_9500(0, special_effect=3400, item_lot=100000)
+    Event_9500(1, special_effect=3401, item_lot=100010)
+    Event_9500(2, special_effect=3402, item_lot=100020)
+    Event_9500(3, special_effect=3403, item_lot=100030)
+    Event_9500(4, special_effect=3404, item_lot=100040)
+    Event_9500(5, special_effect=3405, item_lot=100050)
+    Event_9500(6, special_effect=3406, item_lot=100060)
+    Event_9500(7, special_effect=3407, item_lot=100070)
+    Event_9500(8, special_effect=3408, item_lot=100080)
+    Event_9500(9, special_effect=3409, item_lot=100090)
+    Event_9500(10, special_effect=3410, item_lot=100100)
+    Event_9500(11, special_effect=3411, item_lot=100110)
+    Event_9500(12, special_effect=3412, item_lot=100120)
+    Event_9500(13, special_effect=3390, item_lot=100500)
+    Event_9500(14, special_effect=3391, item_lot=100510)
+    Event_9500(15, special_effect=3392, item_lot=100520)
+    Event_9500(16, special_effect=3450, item_lot=101000)
+    Event_9500(17, special_effect=3451, item_lot=101010)
+    Event_9500(18, special_effect=3452, item_lot=101020)
+    Event_9500(19, special_effect=3453, item_lot=101030)
+    Event_9500(20, special_effect=3454, item_lot=101040)
+    Event_9500(21, special_effect=3455, item_lot=101050)
+    Event_9500(22, special_effect=3456, item_lot=101060)
+    Event_9500(23, special_effect=3457, item_lot=101070)
+    Event_9500(24, special_effect=3458, item_lot=101080)
+    Event_9500(25, special_effect=3459, item_lot=101090)
+    Event_9500(26, special_effect=3460, item_lot=101100)
+    Event_9500(27, special_effect=3461, item_lot=101110)
+    Event_9500(28, special_effect=3462, item_lot=101120)
+    Event_9500(29, special_effect=3463, item_lot=101130)
+    Event_9500(30, special_effect=3464, item_lot=101140)
+    Event_9500(31, special_effect=3465, item_lot=101150)
+    Event_9500(32, special_effect=3466, item_lot=101160)
+    Event_9500(33, special_effect=3467, item_lot=101170)
+    Event_9500(34, special_effect=3468, item_lot=101180)
+    Event_9500(35, special_effect=3469, item_lot=101190)
+    Event_9500(36, special_effect=3470, item_lot=101200)
+    Event_9500(37, special_effect=3471, item_lot=101210)
+    Event_9500(38, special_effect=3472, item_lot=101220)
+    Event_9500(39, special_effect=3473, item_lot=101230)
+    Event_9500(40, special_effect=3474, item_lot=101240)
+    Event_9500(41, special_effect=3475, item_lot=101250)
+    Event_9500(42, special_effect=3476, item_lot=101260)
+    Event_9500(43, special_effect=3477, item_lot=101270)
+    Event_9500(44, special_effect=3478, item_lot=101280)
+    Event_9500(45, special_effect=3479, item_lot=101290)
+    Event_9500(46, special_effect=3480, item_lot=101300)
+    Event_9500(47, special_effect=3481, item_lot=101310)
+    Event_9500(48, special_effect=3482, item_lot=101320)
+    Event_9500(49, special_effect=3483, item_lot=101330)
+    Event_9500(50, special_effect=3484, item_lot=101340)
+    Event_9440(0, flag=9440, item_lot=10500)
+    Event_9440(1, flag=9441, item_lot=11500)
+    Event_9440(2, flag=9442, item_lot=12500)
+    Event_9215()
+    Event_9421()
+    Event_9422()
+    Event_9400()
+    Event_9404()
+    Event_9040(2, flag=9042, item_lot=17000)
+    Event_9040(5, flag=9045, item_lot=22000)
+    Event_9040(6, flag=9046, item_lot=23000)
+    Event_9040(7, flag=9047, item_lot=24000)
+    Event_9040(8, flag=9048, item_lot=24010)
+    Event_9040(9, flag=9049, item_lot=24020)
+    Event_9040(10, flag=9050, item_lot=24030)
+    Event_9040(11, flag=9051, item_lot=24040)
+    Event_9040(12, flag=9052, item_lot=24050)
+    Event_9040(14, flag=9054, item_lot=26000)
+    Event_9040(15, flag=9055, item_lot=26010)
+    Event_9040(16, flag=9056, item_lot=26020)
+    Event_9040(17, flag=9057, item_lot=26030)
+    Event_9040(18, flag=9058, item_lot=27000)
+    Event_9040(19, flag=9059, item_lot=27010)
+    Event_9040(20, flag=9060, item_lot=27020)
+    Event_9040(21, flag=9061, item_lot=27030)
+    Event_9040(22, flag=9062, item_lot=27040)
+    Event_9040(23, flag=9063, item_lot=27050)
+    Event_9040(24, flag=9064, item_lot=27060)
+    Event_9040(26, flag=9066, item_lot=29000)
+    Event_9040(27, flag=9067, item_lot=30000)
+    Event_9040(29, flag=9069, item_lot=32000)
+    Event_9040(31, flag=9071, item_lot=33000)
+    Event_9040(32, flag=9072, item_lot=34000)
+    Event_9040(33, flag=9073, item_lot=34010)
+    Event_9040(34, flag=9074, item_lot=35000)
+    Event_9040(35, flag=9075, item_lot=35010)
+    Event_9040(36, flag=9076, item_lot=39000)
+    Event_9040(37, flag=9077, item_lot=39010)
+    Event_9100(0, flag=72410359, item_lot=24060)
+    Event_9100(1, flag=72410310, item_lot=23000)
+    Event_9100(2, flag=72400398, item_lot=32020)
+    Event_9100(3, flag=72400489, item_lot=28000)
+    Event_9100(4, flag=9043, item_lot=17010)
+    Event_9910()
+    Event_9909()
+    Event_9905(0, special_effect=4685)
+    Event_9905(1, special_effect=4686)
+    Event_9905(2, special_effect=4687)
+    Event_9905(3, special_effect=4688)
     SkipLinesIfHost(1)
-    AddSpecialEffect(PLAYER, 9110, affect_npc_part_hp=False)
-    RunEvent(9030, slot=0, args=(6100, 180010))
-    RunEvent(9030, slot=1, args=(6110, 180000))
-    RunEvent(9030, slot=2, args=(6120, 180020))
-    RunEvent(9035, slot=0, args=(6142, 180040))
-    IfPlayerHasGood(1, 6302, including_box=False)
-    SkipLinesIfConditionFalse(1, 1)
+    AddSpecialEffect(PLAYER, 9110)
+    Event_9030(0, special_effect=6100, special_effect_1=180010)
+    Event_9030(1, special_effect=6110, special_effect_1=180000)
+    Event_9030(2, special_effect=6120, special_effect_1=180020)
+    Event_9035(0, special_effect=6142, special_effect_1=180040)
+    AND_1.Add(PlayerHasGood(6302))
+    SkipLinesIfConditionFalse(1, AND_1)
     EnableFlag(70009200)
-    IfPlayerHasGood(2, 6312, including_box=False)
-    SkipLinesIfConditionFalse(1, 2)
+    AND_2.Add(PlayerHasGood(6312))
+    SkipLinesIfConditionFalse(1, AND_2)
     EnableFlag(70009210)
-    IfPlayerHasGood(3, 6502, including_box=False)
-    SkipLinesIfConditionFalse(1, 3)
+    AND_3.Add(PlayerHasGood(6502))
+    SkipLinesIfConditionFalse(1, AND_3)
     EnableFlag(70009220)
-    IfPlayerHasGood(4, 6522, including_box=False)
-    SkipLinesIfConditionFalse(1, 4)
+    AND_4.Add(PlayerHasGood(6522))
+    SkipLinesIfConditionFalse(1, AND_4)
     EnableFlag(70009230)
-    IfPlayerHasGood(5, 6532, including_box=False)
-    SkipLinesIfConditionFalse(1, 5)
+    AND_5.Add(PlayerHasGood(6532))
+    SkipLinesIfConditionFalse(1, AND_5)
     EnableFlag(70009240)
 
 
+@ContinueOnRest(50)
 def Preconstructor():
-    """ 50: Event 50 """
-    RunEvent(6002)
+    """Event 50"""
+    Event_6002()
     GotoIfClient(Label.L2)
-    SkipLinesIfFlagOff(2, 12101800)
-    EnableFlag(9450)
-    DisableFlag(3210)
-    SkipLinesIfFlagOff(2, 12101850)
-    EnableFlag(9451)
-    DisableFlag(3211)
-    SkipLinesIfFlagOff(3, 12201800)
-    EnableFlag(9452)
-    EnableFlag(5911)
-    DisableFlag(3220)
-    SkipLinesIfFlagOff(2, 12301800)
-    EnableFlag(9453)
-    DisableFlag(3230)
-    SkipLinesIfFlagOff(2, 12301700)
-    EnableFlag(9454)
-    DisableFlag(3231)
-    SkipLinesIfFlagOff(2, 12401800)
-    EnableFlag(9455)
-    DisableFlag(3240)
-    SkipLinesIfFlagOff(2, 12411700)
-    EnableFlag(9456)
-    DisableFlag(3241)
-    SkipLinesIfFlagOff(3, 12411800)
-    EnableFlag(9457)
-    EnableFlag(5910)
-    DisableFlag(3242)
-    SkipLinesIfFlagOff(2, 12421700)
-    EnableFlag(9458)
-    DisableFlag(3243)
-    SkipLinesIfFlagOff(2, 12421800)
-    EnableFlag(9459)
-    DisableFlag(3244)
-    SkipLinesIfFlagOff(2, 12501800)
-    EnableFlag(9460)
-    DisableFlag(3250)
-    SkipLinesIfFlagOff(4, 12601850)
+    if FlagEnabled(12101800):
+        EnableFlag(9450)
+        DisableFlag(3210)
+    if FlagEnabled(12101850):
+        EnableFlag(9451)
+        DisableFlag(3211)
+    if FlagEnabled(12201800):
+        EnableFlag(9452)
+        EnableFlag(5911)
+        DisableFlag(3220)
+    if FlagEnabled(12301800):
+        EnableFlag(9453)
+        DisableFlag(3230)
+    if FlagEnabled(12301700):
+        EnableFlag(9454)
+        DisableFlag(3231)
+    if FlagEnabled(12401800):
+        EnableFlag(9455)
+        DisableFlag(3240)
+    if FlagEnabled(12411700):
+        EnableFlag(9456)
+        DisableFlag(3241)
+    if FlagEnabled(12411800):
+        EnableFlag(9457)
+        EnableFlag(5910)
+        DisableFlag(3242)
+    if FlagEnabled(12421700):
+        EnableFlag(9458)
+        DisableFlag(3243)
+    if FlagEnabled(12421800):
+        EnableFlag(9459)
+        DisableFlag(3244)
+    if FlagEnabled(12501800):
+        EnableFlag(9460)
+        DisableFlag(3250)
+    SkipLinesIfFlagDisabled(4, 12601850)
     EnableFlag(9461)
     DisableFlag(3260)
-    SkipLinesIfFlagOff(1, 12607850)
+    SkipLinesIfFlagDisabled(1, 12607850)
     EnableFlag(12601854)
-    SkipLinesIfFlagOff(2, 12601800)
-    EnableFlag(9462)
-    DisableFlag(3261)
-    SkipLinesIfFlagOff(2, 12701800)
-    EnableFlag(9463)
-    DisableFlag(3270)
-    SkipLinesIfFlagOff(2, 12801800)
-    EnableFlag(9464)
-    DisableFlag(3280)
-    SkipLinesIfFlagOff(2, 13201800)
-    EnableFlag(9465)
-    DisableFlag(3320)
-    SkipLinesIfFlagOff(2, 13301800)
-    EnableFlag(9466)
-    DisableFlag(3330)
-    SkipLinesIfFlagOff(1, 12410810)
-    EnableFlag(5912)
-    SkipLinesIfFlagOff(1, 12300704)
-    EnableFlag(5914)
-    SkipLinesIfFlagOff(1, 12600029)
-    EnableFlag(5913)
-    SkipLinesIfFlagOff(1, 12700710)
-    EnableFlag(9467)
-    SkipLinesIfFlagOff(1, 12410322)
-    EnableFlag(12410330)
+    if FlagEnabled(12601800):
+        EnableFlag(9462)
+        DisableFlag(3261)
+    if FlagEnabled(12701800):
+        EnableFlag(9463)
+        DisableFlag(3270)
+    if FlagEnabled(12801800):
+        EnableFlag(9464)
+        DisableFlag(3280)
+    if FlagEnabled(13201800):
+        EnableFlag(9465)
+        DisableFlag(3320)
+    if FlagEnabled(13301800):
+        EnableFlag(9466)
+        DisableFlag(3330)
+    if FlagEnabled(12410810):
+        EnableFlag(5912)
+    if FlagEnabled(12300704):
+        EnableFlag(5914)
+    if FlagEnabled(12600029):
+        EnableFlag(5913)
+    if FlagEnabled(12700710):
+        EnableFlag(9467)
+    if FlagEnabled(12410322):
+        EnableFlag(12410330)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
     DisableFlag(9180)
-    RunEvent(9360, slot=19, args=(1324, 1324, 1324, 6001))
-    RunEvent(9360, slot=20, args=(1342, 1346, 1350, 6001))
-    RunEvent(9360, slot=22, args=(1368, 1368, 1368, 1376))
-    RunEvent(9360, slot=25, args=(12300210, 12300210, 12300210, 6001))
-    RunEvent(9360, slot=26, args=(12800700, 12800700, 12800700, 6001))
-    RunEvent(9360, slot=27, args=(12800701, 12800701, 12800701, 6001))
-    RunEvent(9360, slot=28, args=(12800702, 12800702, 12800702, 6001))
-    RunEvent(9360, slot=30, args=(12410810, 12410810, 12410810, 6001))
-    RunEvent(9360, slot=31, args=(12400654, 12400654, 12400654, 6001))
-    RunEvent(9360, slot=32, args=(13300220, 13300220, 13300220, 6001))
-    RunEvent(9360, slot=33, args=(13300221, 13300221, 13300221, 6001))
-    RunEvent(9360, slot=34, args=(12400865, 12400865, 12400865, 6001))
-    RunEvent(9360, slot=35, args=(12400866, 12400866, 12400866, 6001))
-    RunEvent(9360, slot=36, args=(12600500, 12600500, 12600500, 6001))
-    RunEvent(9360, slot=37, args=(13200500, 13200500, 13200500, 6001))
-    RunEvent(9480, slot=0, args=(1710, 1711, 1712, 1713, 73600521))
-    RunEvent(9480, slot=1, args=(1730, 1730, 1730, 1730, 6001))
-    RunEvent(9480, slot=2, args=(1790, 1790, 1790, 1790, 6001))
-    RunEvent(9480, slot=3, args=(13501900, 13501900, 13501900, 13501900, 6001))
-    RunEvent(9480, slot=4, args=(12700909, 12700909, 12700909, 12700909, 6001))
-    RunEvent(9480, slot=5, args=(13400970, 13400970, 13400970, 13400970, 6001))
-    RunEvent(9480, slot=6, args=(13400971, 13400971, 13400971, 13400971, 6001))
-    RunEvent(9480, slot=7, args=(13501901, 13501901, 13501901, 13501901, 6001))
-    RunEvent(9480, slot=8, args=(13501902, 13501902, 13501902, 13501902, 6001))
-    RunEvent(9480, slot=9, args=(13501903, 13501903, 13501903, 13501903, 6001))
-    RunEvent(9480, slot=10, args=(13501904, 13501904, 13501904, 13501904, 6001))
-    GotoIfFlagOn(Label.L0, 999)
-    SkipLinesIfFlagRangeAnyOn(1, (1000, 1019))
+    Event_9360(19, flag=1324, flag_1=1324, flag_2=1324, flag_3=6001)
+    Event_9360(20, flag=1342, flag_1=1346, flag_2=1350, flag_3=6001)
+    Event_9360(22, flag=1368, flag_1=1368, flag_2=1368, flag_3=1376)
+    Event_9360(25, flag=12300210, flag_1=12300210, flag_2=12300210, flag_3=6001)
+    Event_9360(26, flag=12800700, flag_1=12800700, flag_2=12800700, flag_3=6001)
+    Event_9360(27, flag=12800701, flag_1=12800701, flag_2=12800701, flag_3=6001)
+    Event_9360(28, flag=12800702, flag_1=12800702, flag_2=12800702, flag_3=6001)
+    Event_9360(30, flag=12410810, flag_1=12410810, flag_2=12410810, flag_3=6001)
+    Event_9360(31, flag=12400654, flag_1=12400654, flag_2=12400654, flag_3=6001)
+    Event_9360(32, flag=13300220, flag_1=13300220, flag_2=13300220, flag_3=6001)
+    Event_9360(33, flag=13300221, flag_1=13300221, flag_2=13300221, flag_3=6001)
+    Event_9360(34, flag=12400865, flag_1=12400865, flag_2=12400865, flag_3=6001)
+    Event_9360(35, flag=12400866, flag_1=12400866, flag_2=12400866, flag_3=6001)
+    Event_9360(36, flag=12600500, flag_1=12600500, flag_2=12600500, flag_3=6001)
+    Event_9360(37, flag=13200500, flag_1=13200500, flag_2=13200500, flag_3=6001)
+    Event_9480(0, flag=1710, flag_1=1711, flag_2=1712, flag_3=1713, flag_4=73600521)
+    Event_9480(1, flag=1730, flag_1=1730, flag_2=1730, flag_3=1730, flag_4=6001)
+    Event_9480(2, flag=1790, flag_1=1790, flag_2=1790, flag_3=1790, flag_4=6001)
+    Event_9480(3, flag=13501900, flag_1=13501900, flag_2=13501900, flag_3=13501900, flag_4=6001)
+    Event_9480(4, flag=12700909, flag_1=12700909, flag_2=12700909, flag_3=12700909, flag_4=6001)
+    Event_9480(5, flag=13400970, flag_1=13400970, flag_2=13400970, flag_3=13400970, flag_4=6001)
+    Event_9480(6, flag=13400971, flag_1=13400971, flag_2=13400971, flag_3=13400971, flag_4=6001)
+    Event_9480(7, flag=13501901, flag_1=13501901, flag_2=13501901, flag_3=13501901, flag_4=6001)
+    Event_9480(8, flag=13501902, flag_1=13501902, flag_2=13501902, flag_3=13501902, flag_4=6001)
+    Event_9480(9, flag=13501903, flag_1=13501903, flag_2=13501903, flag_3=13501903, flag_4=6001)
+    Event_9480(10, flag=13501904, flag_1=13501904, flag_2=13501904, flag_3=13501904, flag_4=6001)
+    GotoIfFlagEnabled(Label.L0, flag=999)
+    SkipLinesIfFlagRangeAnyEnabled(1, (1000, 1019))
     EnableFlag(1000)
-    SkipLinesIfFlagRangeAnyOn(1, (1020, 1039))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1020, 1039))
     EnableFlag(1020)
-    SkipLinesIfFlagRangeAnyOn(1, (1040, 1059))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1040, 1059))
     EnableFlag(1040)
-    SkipLinesIfFlagRangeAnyOn(1, (1060, 1079))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1060, 1079))
     EnableFlag(1060)
-    SkipLinesIfFlagRangeAnyOn(1, (1080, 1099))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1080, 1099))
     EnableFlag(1080)
-    SkipLinesIfFlagRangeAnyOn(1, (1100, 1119))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1100, 1119))
     EnableFlag(1100)
-    SkipLinesIfFlagRangeAnyOn(1, (1120, 1139))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1120, 1139))
     EnableFlag(1120)
-    SkipLinesIfFlagRangeAnyOn(1, (1140, 1159))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1140, 1159))
     EnableFlag(1140)
-    SkipLinesIfFlagRangeAnyOn(1, (1160, 1179))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1160, 1179))
     EnableFlag(1160)
-    SkipLinesIfFlagRangeAnyOn(1, (1180, 1199))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1180, 1199))
     EnableFlag(1180)
-    SkipLinesIfFlagRangeAnyOn(1, (1200, 1219))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1200, 1219))
     EnableFlag(1200)
-    SkipLinesIfFlagRangeAnyOn(1, (1220, 1239))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1220, 1239))
     EnableFlag(1220)
-    SkipLinesIfFlagRangeAnyOn(1, (1240, 1259))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1240, 1259))
     EnableFlag(1240)
-    SkipLinesIfFlagRangeAnyOn(1, (1260, 1279))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1260, 1279))
     EnableFlag(1260)
-    SkipLinesIfFlagRangeAnyOn(1, (1280, 1289))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1280, 1289))
     EnableFlag(1280)
-    SkipLinesIfFlagRangeAnyOn(1, (1290, 1299))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1290, 1299))
     EnableFlag(1290)
-    SkipLinesIfFlagRangeAnyOn(1, (1300, 1319))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1300, 1319))
     EnableFlag(1300)
-    SkipLinesIfFlagRangeAnyOn(1, (1320, 1339))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1320, 1339))
     EnableFlag(1320)
-    SkipLinesIfFlagRangeAnyOn(1, (1340, 1359))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1340, 1359))
     EnableFlag(1340)
-    SkipLinesIfFlagRangeAnyOn(1, (1360, 1379))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1360, 1379))
     EnableFlag(1360)
-    SkipLinesIfFlagRangeAnyOn(1, (1380, 1399))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1380, 1399))
     EnableFlag(1380)
-    SkipLinesIfFlagRangeAnyOn(1, (1400, 1419))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1400, 1419))
     EnableFlag(1400)
-    SkipLinesIfFlagRangeAnyOn(1, (1420, 1439))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1420, 1439))
     EnableFlag(1420)
-    SkipLinesIfFlagRangeAnyOn(1, (1440, 1459))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1440, 1459))
     EnableFlag(1440)
     EnableFlag(999)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    RunEvent(9700, slot=0, args=(1020, 1039))
-    RunEvent(9701, slot=0, args=(1020, 1039))
-    RunEvent(9702, slot=0, args=(1020, 1039))
-    RunEvent(9703, slot=0, args=(1020, 1039))
-    RunEvent(9710, slot=0, args=(1000, 1019))
-    RunEvent(9720)
-    RunEvent(9721)
-    RunEvent(9722)
-    RunEvent(9723)
-    RunEvent(9755)
-    RunEvent(9756)
-    RunEvent(9770)
-    RunEvent(9780)
-    RunEvent(9781)
-    RunEvent(9782)
-    RunEvent(3500, slot=0, args=(4900, 6900, 6071, 6011))
-    RunEvent(3500, slot=1, args=(4901, 6901, 6072, 6012))
-    RunEvent(3500, slot=2, args=(4902, 6902, 6073, 6013))
-    RunEvent(3503)
-    GotoIfFlagOff(Label.L1, 6604)
-    RemoveGoodFromPlayer(4000, quantity=1)
-    RemoveGoodFromPlayer(4001, quantity=1)
-    RemoveGoodFromPlayer(4003, quantity=1)
-    RemoveGoodFromPlayer(4006, quantity=1)
-    RemoveGoodFromPlayer(4009, quantity=1)
-    RemoveGoodFromPlayer(4010, quantity=1)
-    RemoveGoodFromPlayer(4011, quantity=1)
-    RemoveGoodFromPlayer(4012, quantity=1)
-    RemoveGoodFromPlayer(4013, quantity=1)
-    RemoveGoodFromPlayer(4300, quantity=1)
-    RemoveGoodFromPlayer(4305, quantity=1)
-    RemoveGoodFromPlayer(4308, quantity=1)
-    RemoveGoodFromPlayer(4310, quantity=1)
-    RemoveGoodFromPlayer(4320, quantity=1)
-    RemoveGoodFromPlayer(4321, quantity=1)
-    RemoveGoodFromPlayer(4322, quantity=1)
-    RemoveGoodFromPlayer(4323, quantity=1)
-    RemoveGoodFromPlayer(4900, quantity=1)
-    RemoveGoodFromPlayer(4901, quantity=1)
-    RemoveGoodFromPlayer(4902, quantity=1)
-    RemoveGoodFromPlayer(4903, quantity=1)
-    RemoveGoodFromPlayer(4904, quantity=1)
-    RemoveGoodFromPlayer(4905, quantity=1)
-    RemoveGoodFromPlayer(4906, quantity=1)
-    RemoveGoodFromPlayer(4907, quantity=1)
-    RemoveGoodFromPlayer(4908, quantity=1)
-    RemoveGoodFromPlayer(4014, quantity=1)
-    RemoveGoodFromPlayer(4015, quantity=1)
-    RemoveGoodFromPlayer(4021, quantity=1)
-    RemoveGoodFromPlayer(4017, quantity=1)
-    RemoveGoodFromPlayer(4018, quantity=1)
-    RemoveGoodFromPlayer(4019, quantity=1)
-    RemoveGoodFromPlayer(4020, quantity=1)
-    RemoveGoodFromPlayer(4311, quantity=1)
-    RemoveGoodFromPlayer(4340, quantity=1)
-    RemoveGoodFromPlayer(4341, quantity=1)
-    RemoveGoodFromPlayer(4342, quantity=1)
-    RemoveGoodFromPlayer(700, quantity=99)
+    Event_9700(0, first_flag=1020, last_flag=1039)
+    Event_9701(0, first_flag=1020, last_flag=1039)
+    Event_9702(0, first_flag=1020, last_flag=1039)
+    Event_9703(0, first_flag=1020, last_flag=1039)
+    Event_9710(0, first_flag=1000, last_flag=1019)
+    Event_9720()
+    Event_9721()
+    Event_9722()
+    Event_9723()
+    Event_9755()
+    Event_9756()
+    Event_9770()
+    Event_9780()
+    Event_9781()
+    Event_9782()
+    Event_3500(0, item=4900, flag=6900, flag_1=6071, flag_2=6011)
+    Event_3500(1, item=4901, flag=6901, flag_1=6072, flag_2=6012)
+    Event_3500(2, item=4902, flag=6902, flag_1=6073, flag_2=6013)
+    Event_3503()
+    GotoIfFlagDisabled(Label.L1, flag=6604)
+    RemoveGoodFromPlayer(item=4000, quantity=1)
+    RemoveGoodFromPlayer(item=4001, quantity=1)
+    RemoveGoodFromPlayer(item=4003, quantity=1)
+    RemoveGoodFromPlayer(item=4006, quantity=1)
+    RemoveGoodFromPlayer(item=4009, quantity=1)
+    RemoveGoodFromPlayer(item=4010, quantity=1)
+    RemoveGoodFromPlayer(item=4011, quantity=1)
+    RemoveGoodFromPlayer(item=4012, quantity=1)
+    RemoveGoodFromPlayer(item=4013, quantity=1)
+    RemoveGoodFromPlayer(item=4300, quantity=1)
+    RemoveGoodFromPlayer(item=4305, quantity=1)
+    RemoveGoodFromPlayer(item=4308, quantity=1)
+    RemoveGoodFromPlayer(item=4310, quantity=1)
+    RemoveGoodFromPlayer(item=4320, quantity=1)
+    RemoveGoodFromPlayer(item=4321, quantity=1)
+    RemoveGoodFromPlayer(item=4322, quantity=1)
+    RemoveGoodFromPlayer(item=4323, quantity=1)
+    RemoveGoodFromPlayer(item=4900, quantity=1)
+    RemoveGoodFromPlayer(item=4901, quantity=1)
+    RemoveGoodFromPlayer(item=4902, quantity=1)
+    RemoveGoodFromPlayer(item=4903, quantity=1)
+    RemoveGoodFromPlayer(item=4904, quantity=1)
+    RemoveGoodFromPlayer(item=4905, quantity=1)
+    RemoveGoodFromPlayer(item=4906, quantity=1)
+    RemoveGoodFromPlayer(item=4907, quantity=1)
+    RemoveGoodFromPlayer(item=4908, quantity=1)
+    RemoveGoodFromPlayer(item=4014, quantity=1)
+    RemoveGoodFromPlayer(item=4015, quantity=1)
+    RemoveGoodFromPlayer(item=4021, quantity=1)
+    RemoveGoodFromPlayer(item=4017, quantity=1)
+    RemoveGoodFromPlayer(item=4018, quantity=1)
+    RemoveGoodFromPlayer(item=4019, quantity=1)
+    RemoveGoodFromPlayer(item=4020, quantity=1)
+    RemoveGoodFromPlayer(item=4311, quantity=1)
+    RemoveGoodFromPlayer(item=4340, quantity=1)
+    RemoveGoodFromPlayer(item=4341, quantity=1)
+    RemoveGoodFromPlayer(item=4342, quantity=1)
+    RemoveGoodFromPlayer(item=700, quantity=99)
     DisableFlag(6604)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
 
 
-def Event3500(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 3500: Event 3500 """
+@ContinueOnRest(3500)
+def Event_3500(_, item: int, flag: int, flag_1: int, flag_2: int):
+    """Event 3500"""
     DisableNetworkSync()
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOff(1, arg_4_7)
-    IfConditionTrue(0, input_condition=1)
-    RemoveGoodFromPlayer(arg_0_3, quantity=99)
-    DisableFlag(arg_8_11)
-    DisableFlag(arg_12_15)
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    AND_1.Add(FlagDisabled(flag))
+    
+    MAIN.Await(AND_1)
+    
+    RemoveGoodFromPlayer(item=item, quantity=99)
+    DisableFlag(flag_1)
+    DisableFlag(flag_2)
 
 
-def Event3503():
-    """ 3503: Event 3503 """
+@ContinueOnRest(3503)
+def Event_3503():
+    """Event 3503"""
     DisableNetworkSync()
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOff(0, 6899)
-    RemoveGoodFromPlayer(4311, quantity=99)
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    
+    MAIN.Await(FlagDisabled(6899))
+    
+    RemoveGoodFromPlayer(item=4311, quantity=99)
     DisableFlag(50000100)
     DisableFlag(12101029)
     DisableFlag(13407810)
@@ -445,531 +458,651 @@ def Event3503():
     DisableFlag(73600200)
     DisableFlag(73600201)
     DisableFlag(73600202)
-    IfInsideMap(-1, game_map=HUNTERS_NIGHTMARE)
-    IfInsideMap(-1, game_map=RESEARCH_HALL)
-    IfInsideMap(-1, game_map=FISHING_HAMLET)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(InsideMap(game_map=HUNTERS_NIGHTMARE))
+    OR_1.Add(InsideMap(game_map=RESEARCH_HALL))
+    OR_1.Add(InsideMap(game_map=FISHING_HAMLET))
+    
+    MAIN.Await(OR_1)
+    
     WarpPlayerToRespawnPoint(2102961)
 
 
-@RestartOnRest
-def Event6002():
-    """ 6002: Event 6002 """
+@RestartOnRest(6002)
+def Event_6002():
+    """Event 6002"""
     EnableFlag(6000)
     DisableFlag(6001)
 
 
-@RestartOnRest
-def Event5500(_, arg_0_3: int):
-    """ 5500: Event 5500 """
+@RestartOnRest(5500)
+def Event_5500(_, item: int):
+    """Event 5500"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    EndIfConditionFalse(1)
-    EndIfThisEventSlotOn()
-    IfPlayerHasWeapon(0, arg_0_3, including_box=False)
+    AND_1.Add(CharacterHuman(PLAYER))
+    if not AND_1:
+        return
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(PlayerHasWeapon(item))
+    
     Wait(0.0)
 
 
-def Event6680():
-    """ 6680: Event 6680 """
+@ContinueOnRest(6680)
+def Event_6680():
+    """Event 6680"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6680)
-    IfPlayerHasWeapon(-1, 9000000, including_box=True)
-    IfPlayerHasWeapon(-1, 9000100, including_box=True)
-    IfPlayerHasWeapon(-1, 9000200, including_box=True)
-    IfPlayerHasWeapon(-1, 9000300, including_box=True)
-    IfPlayerHasWeapon(-1, 9000400, including_box=True)
-    IfPlayerHasWeapon(-1, 9000500, including_box=True)
-    IfPlayerHasWeapon(-1, 9000600, including_box=True)
-    IfPlayerHasWeapon(-1, 9000700, including_box=True)
-    IfPlayerHasWeapon(-1, 9000800, including_box=True)
-    IfPlayerHasWeapon(-1, 9000900, including_box=True)
-    IfPlayerHasWeapon(-1, 9001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6680):
+        return
+    OR_1.Add(PlayerHasWeapon(9000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(9001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6680)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6681():
-    """ 6681: Event 6681 """
+@ContinueOnRest(6681)
+def Event_6681():
+    """Event 6681"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6681)
-    IfPlayerHasWeapon(-1, 15000000, including_box=True)
-    IfPlayerHasWeapon(-1, 15000100, including_box=True)
-    IfPlayerHasWeapon(-1, 15000200, including_box=True)
-    IfPlayerHasWeapon(-1, 15000300, including_box=True)
-    IfPlayerHasWeapon(-1, 15000400, including_box=True)
-    IfPlayerHasWeapon(-1, 15000500, including_box=True)
-    IfPlayerHasWeapon(-1, 15000600, including_box=True)
-    IfPlayerHasWeapon(-1, 15000700, including_box=True)
-    IfPlayerHasWeapon(-1, 15000800, including_box=True)
-    IfPlayerHasWeapon(-1, 15000900, including_box=True)
-    IfPlayerHasWeapon(-1, 15001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6681):
+        return
+    OR_1.Add(PlayerHasWeapon(15000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(15001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6681)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6682():
-    """ 6682: Event 6682 """
+@ContinueOnRest(6682)
+def Event_6682():
+    """Event 6682"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6682)
-    IfPlayerHasWeapon(-1, 20000000, including_box=True)
-    IfPlayerHasWeapon(-1, 20000100, including_box=True)
-    IfPlayerHasWeapon(-1, 20000200, including_box=True)
-    IfPlayerHasWeapon(-1, 20000300, including_box=True)
-    IfPlayerHasWeapon(-1, 20000400, including_box=True)
-    IfPlayerHasWeapon(-1, 20000500, including_box=True)
-    IfPlayerHasWeapon(-1, 20000600, including_box=True)
-    IfPlayerHasWeapon(-1, 20000700, including_box=True)
-    IfPlayerHasWeapon(-1, 20000800, including_box=True)
-    IfPlayerHasWeapon(-1, 20000900, including_box=True)
-    IfPlayerHasWeapon(-1, 20001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6682):
+        return
+    OR_1.Add(PlayerHasWeapon(20000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(20001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6682)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6683():
-    """ 6683: Event 6683 """
+@ContinueOnRest(6683)
+def Event_6683():
+    """Event 6683"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6683)
-    IfPlayerHasWeapon(-1, 23000000, including_box=True)
-    IfPlayerHasWeapon(-1, 23000100, including_box=True)
-    IfPlayerHasWeapon(-1, 23000200, including_box=True)
-    IfPlayerHasWeapon(-1, 23000300, including_box=True)
-    IfPlayerHasWeapon(-1, 23000400, including_box=True)
-    IfPlayerHasWeapon(-1, 23000500, including_box=True)
-    IfPlayerHasWeapon(-1, 23000600, including_box=True)
-    IfPlayerHasWeapon(-1, 23000700, including_box=True)
-    IfPlayerHasWeapon(-1, 23000800, including_box=True)
-    IfPlayerHasWeapon(-1, 23000900, including_box=True)
-    IfPlayerHasWeapon(-1, 23001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6683):
+        return
+    OR_1.Add(PlayerHasWeapon(23000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(23001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6683)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6684():
-    """ 6684: Event 6684 """
+@ContinueOnRest(6684)
+def Event_6684():
+    """Event 6684"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6684)
-    IfPlayerHasWeapon(-1, 24000000, including_box=True)
-    IfPlayerHasWeapon(-1, 24000100, including_box=True)
-    IfPlayerHasWeapon(-1, 24000200, including_box=True)
-    IfPlayerHasWeapon(-1, 24000300, including_box=True)
-    IfPlayerHasWeapon(-1, 24000400, including_box=True)
-    IfPlayerHasWeapon(-1, 24000500, including_box=True)
-    IfPlayerHasWeapon(-1, 24000600, including_box=True)
-    IfPlayerHasWeapon(-1, 24000700, including_box=True)
-    IfPlayerHasWeapon(-1, 24000800, including_box=True)
-    IfPlayerHasWeapon(-1, 24000900, including_box=True)
-    IfPlayerHasWeapon(-1, 24001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6684):
+        return
+    OR_1.Add(PlayerHasWeapon(24000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(24001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6684)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6685():
-    """ 6685: Event 6685 """
+@ContinueOnRest(6685)
+def Event_6685():
+    """Event 6685"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6685)
-    IfPlayerHasWeapon(-1, 30000000, including_box=True)
-    IfPlayerHasWeapon(-1, 30000100, including_box=True)
-    IfPlayerHasWeapon(-1, 30000200, including_box=True)
-    IfPlayerHasWeapon(-1, 30000300, including_box=True)
-    IfPlayerHasWeapon(-1, 30000400, including_box=True)
-    IfPlayerHasWeapon(-1, 30000500, including_box=True)
-    IfPlayerHasWeapon(-1, 30000600, including_box=True)
-    IfPlayerHasWeapon(-1, 30000700, including_box=True)
-    IfPlayerHasWeapon(-1, 30000800, including_box=True)
-    IfPlayerHasWeapon(-1, 30000900, including_box=True)
-    IfPlayerHasWeapon(-1, 30001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6685):
+        return
+    OR_1.Add(PlayerHasWeapon(30000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(30001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6685)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6686():
-    """ 6686: Event 6686 """
+@ContinueOnRest(6686)
+def Event_6686():
+    """Event 6686"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6686)
-    IfPlayerHasWeapon(-1, 32000000, including_box=True)
-    IfPlayerHasWeapon(-1, 32000100, including_box=True)
-    IfPlayerHasWeapon(-1, 32000200, including_box=True)
-    IfPlayerHasWeapon(-1, 32000300, including_box=True)
-    IfPlayerHasWeapon(-1, 32000400, including_box=True)
-    IfPlayerHasWeapon(-1, 32000500, including_box=True)
-    IfPlayerHasWeapon(-1, 32000600, including_box=True)
-    IfPlayerHasWeapon(-1, 32000700, including_box=True)
-    IfPlayerHasWeapon(-1, 32000800, including_box=True)
-    IfPlayerHasWeapon(-1, 32000900, including_box=True)
-    IfPlayerHasWeapon(-1, 32001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6686):
+        return
+    OR_1.Add(PlayerHasWeapon(32000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(32001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6686)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6687():
-    """ 6687: Event 6687 """
+@ContinueOnRest(6687)
+def Event_6687():
+    """Event 6687"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6687)
-    IfPlayerHasWeapon(-1, 26000000, including_box=True)
-    IfPlayerHasWeapon(-1, 26000100, including_box=True)
-    IfPlayerHasWeapon(-1, 26000200, including_box=True)
-    IfPlayerHasWeapon(-1, 26000300, including_box=True)
-    IfPlayerHasWeapon(-1, 26000400, including_box=True)
-    IfPlayerHasWeapon(-1, 26000500, including_box=True)
-    IfPlayerHasWeapon(-1, 26000600, including_box=True)
-    IfPlayerHasWeapon(-1, 26000700, including_box=True)
-    IfPlayerHasWeapon(-1, 26000800, including_box=True)
-    IfPlayerHasWeapon(-1, 26000900, including_box=True)
-    IfPlayerHasWeapon(-1, 26001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6687):
+        return
+    OR_1.Add(PlayerHasWeapon(26000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(26001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6687)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6688():
-    """ 6688: Event 6688 """
+@ContinueOnRest(6688)
+def Event_6688():
+    """Event 6688"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6688)
-    IfPlayerHasWeapon(-1, 27000000, including_box=True)
-    IfPlayerHasWeapon(-1, 27000100, including_box=True)
-    IfPlayerHasWeapon(-1, 27000200, including_box=True)
-    IfPlayerHasWeapon(-1, 27000300, including_box=True)
-    IfPlayerHasWeapon(-1, 27000400, including_box=True)
-    IfPlayerHasWeapon(-1, 27000500, including_box=True)
-    IfPlayerHasWeapon(-1, 27000600, including_box=True)
-    IfPlayerHasWeapon(-1, 27000700, including_box=True)
-    IfPlayerHasWeapon(-1, 27000800, including_box=True)
-    IfPlayerHasWeapon(-1, 27000900, including_box=True)
-    IfPlayerHasWeapon(-1, 27001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6688):
+        return
+    OR_1.Add(PlayerHasWeapon(27000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(27001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6688)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6689():
-    """ 6689: Event 6689 """
+@ContinueOnRest(6689)
+def Event_6689():
+    """Event 6689"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6689)
-    IfPlayerHasWeapon(-1, 31000000, including_box=True)
-    IfPlayerHasWeapon(-1, 31000100, including_box=True)
-    IfPlayerHasWeapon(-1, 31000200, including_box=True)
-    IfPlayerHasWeapon(-1, 31000300, including_box=True)
-    IfPlayerHasWeapon(-1, 31000400, including_box=True)
-    IfPlayerHasWeapon(-1, 31000500, including_box=True)
-    IfPlayerHasWeapon(-1, 31000600, including_box=True)
-    IfPlayerHasWeapon(-1, 31000700, including_box=True)
-    IfPlayerHasWeapon(-1, 31000800, including_box=True)
-    IfPlayerHasWeapon(-1, 31000900, including_box=True)
-    IfPlayerHasWeapon(-1, 31001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6689):
+        return
+    OR_1.Add(PlayerHasWeapon(31000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(31001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6689)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6690():
-    """ 6690: Event 6690 """
+@ContinueOnRest(6690)
+def Event_6690():
+    """Event 6690"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6690)
-    IfPlayerHasWeapon(-1, 28000000, including_box=True)
-    IfPlayerHasWeapon(-1, 28000100, including_box=True)
-    IfPlayerHasWeapon(-1, 28000200, including_box=True)
-    IfPlayerHasWeapon(-1, 28000300, including_box=True)
-    IfPlayerHasWeapon(-1, 28000400, including_box=True)
-    IfPlayerHasWeapon(-1, 28000500, including_box=True)
-    IfPlayerHasWeapon(-1, 28000600, including_box=True)
-    IfPlayerHasWeapon(-1, 28000700, including_box=True)
-    IfPlayerHasWeapon(-1, 28000800, including_box=True)
-    IfPlayerHasWeapon(-1, 28000900, including_box=True)
-    IfPlayerHasWeapon(-1, 28001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6690):
+        return
+    OR_1.Add(PlayerHasWeapon(28000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(28001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6690)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6691():
-    """ 6691: Event 6691 """
+@ContinueOnRest(6691)
+def Event_6691():
+    """Event 6691"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6691)
-    IfPlayerHasWeapon(-1, 29000000, including_box=True)
-    IfPlayerHasWeapon(-1, 29000100, including_box=True)
-    IfPlayerHasWeapon(-1, 29000200, including_box=True)
-    IfPlayerHasWeapon(-1, 29000300, including_box=True)
-    IfPlayerHasWeapon(-1, 29000400, including_box=True)
-    IfPlayerHasWeapon(-1, 29000500, including_box=True)
-    IfPlayerHasWeapon(-1, 29000600, including_box=True)
-    IfPlayerHasWeapon(-1, 29000700, including_box=True)
-    IfPlayerHasWeapon(-1, 29000800, including_box=True)
-    IfPlayerHasWeapon(-1, 29000900, including_box=True)
-    IfPlayerHasWeapon(-1, 29001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6691):
+        return
+    OR_1.Add(PlayerHasWeapon(29000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(29001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6691)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6692():
-    """ 6692: Event 6692 """
+@ContinueOnRest(6692)
+def Event_6692():
+    """Event 6692"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6692)
-    IfPlayerHasWeapon(-1, 25000000, including_box=True)
-    IfPlayerHasWeapon(-1, 25000100, including_box=True)
-    IfPlayerHasWeapon(-1, 25000200, including_box=True)
-    IfPlayerHasWeapon(-1, 25000300, including_box=True)
-    IfPlayerHasWeapon(-1, 25000400, including_box=True)
-    IfPlayerHasWeapon(-1, 25000500, including_box=True)
-    IfPlayerHasWeapon(-1, 25000600, including_box=True)
-    IfPlayerHasWeapon(-1, 25000700, including_box=True)
-    IfPlayerHasWeapon(-1, 25000800, including_box=True)
-    IfPlayerHasWeapon(-1, 25000900, including_box=True)
-    IfPlayerHasWeapon(-1, 25001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6692):
+        return
+    OR_1.Add(PlayerHasWeapon(25000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(25001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6692)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6693():
-    """ 6693: Event 6693 """
+@ContinueOnRest(6693)
+def Event_6693():
+    """Event 6693"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6693)
-    IfPlayerHasWeapon(-1, 38000000, including_box=True)
-    IfPlayerHasWeapon(-1, 38000100, including_box=True)
-    IfPlayerHasWeapon(-1, 38000200, including_box=True)
-    IfPlayerHasWeapon(-1, 38000300, including_box=True)
-    IfPlayerHasWeapon(-1, 38000400, including_box=True)
-    IfPlayerHasWeapon(-1, 38000500, including_box=True)
-    IfPlayerHasWeapon(-1, 38000600, including_box=True)
-    IfPlayerHasWeapon(-1, 38000700, including_box=True)
-    IfPlayerHasWeapon(-1, 38000800, including_box=True)
-    IfPlayerHasWeapon(-1, 38000900, including_box=True)
-    IfPlayerHasWeapon(-1, 38001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6693):
+        return
+    OR_1.Add(PlayerHasWeapon(38000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(38001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6693)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6694():
-    """ 6694: Event 6694 """
+@ContinueOnRest(6694)
+def Event_6694():
+    """Event 6694"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6694)
-    IfPlayerHasWeapon(-1, 33000000, including_box=True)
-    IfPlayerHasWeapon(-1, 33000100, including_box=True)
-    IfPlayerHasWeapon(-1, 33000200, including_box=True)
-    IfPlayerHasWeapon(-1, 33000300, including_box=True)
-    IfPlayerHasWeapon(-1, 33000400, including_box=True)
-    IfPlayerHasWeapon(-1, 33000500, including_box=True)
-    IfPlayerHasWeapon(-1, 33000600, including_box=True)
-    IfPlayerHasWeapon(-1, 33000700, including_box=True)
-    IfPlayerHasWeapon(-1, 33000800, including_box=True)
-    IfPlayerHasWeapon(-1, 33000900, including_box=True)
-    IfPlayerHasWeapon(-1, 33001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6694):
+        return
+    OR_1.Add(PlayerHasWeapon(33000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(33001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6694)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6695():
-    """ 6695: Event 6695 """
+@ContinueOnRest(6695)
+def Event_6695():
+    """Event 6695"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6695)
-    IfPlayerHasWeapon(-1, 35000000, including_box=True)
-    IfPlayerHasWeapon(-1, 35000100, including_box=True)
-    IfPlayerHasWeapon(-1, 35000200, including_box=True)
-    IfPlayerHasWeapon(-1, 35000300, including_box=True)
-    IfPlayerHasWeapon(-1, 35000400, including_box=True)
-    IfPlayerHasWeapon(-1, 35000500, including_box=True)
-    IfPlayerHasWeapon(-1, 35000600, including_box=True)
-    IfPlayerHasWeapon(-1, 35000700, including_box=True)
-    IfPlayerHasWeapon(-1, 35000800, including_box=True)
-    IfPlayerHasWeapon(-1, 35000900, including_box=True)
-    IfPlayerHasWeapon(-1, 35001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6695):
+        return
+    OR_1.Add(PlayerHasWeapon(35000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(35001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6695)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6696():
-    """ 6696: Event 6696 """
+@ContinueOnRest(6696)
+def Event_6696():
+    """Event 6696"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6696)
-    IfPlayerHasWeapon(-1, 34000000, including_box=True)
-    IfPlayerHasWeapon(-1, 34000100, including_box=True)
-    IfPlayerHasWeapon(-1, 34000200, including_box=True)
-    IfPlayerHasWeapon(-1, 34000300, including_box=True)
-    IfPlayerHasWeapon(-1, 34000400, including_box=True)
-    IfPlayerHasWeapon(-1, 34000500, including_box=True)
-    IfPlayerHasWeapon(-1, 34000600, including_box=True)
-    IfPlayerHasWeapon(-1, 34000700, including_box=True)
-    IfPlayerHasWeapon(-1, 34000800, including_box=True)
-    IfPlayerHasWeapon(-1, 34000900, including_box=True)
-    IfPlayerHasWeapon(-1, 34001000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6696):
+        return
+    OR_1.Add(PlayerHasWeapon(34000000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34000900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(34001000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6696)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6697():
-    """ 6697: Event 6697 """
+@ContinueOnRest(6697)
+def Event_6697():
+    """Event 6697"""
     DisableNetworkSync()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    EndIfFlagOn(6697)
-    IfPlayerHasWeapon(-1, 19100000, including_box=True)
-    IfPlayerHasWeapon(-1, 19100100, including_box=True)
-    IfPlayerHasWeapon(-1, 19100200, including_box=True)
-    IfPlayerHasWeapon(-1, 19100300, including_box=True)
-    IfPlayerHasWeapon(-1, 19100400, including_box=True)
-    IfPlayerHasWeapon(-1, 19100500, including_box=True)
-    IfPlayerHasWeapon(-1, 19100600, including_box=True)
-    IfPlayerHasWeapon(-1, 19100700, including_box=True)
-    IfPlayerHasWeapon(-1, 19100800, including_box=True)
-    IfPlayerHasWeapon(-1, 19100900, including_box=True)
-    IfPlayerHasWeapon(-1, 19101000, including_box=True)
-    IfConditionTrue(0, input_condition=-1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    if FlagEnabled(6697):
+        return
+    OR_1.Add(PlayerHasWeapon(19100000, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100100, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100200, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100300, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100400, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100500, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100600, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100700, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100800, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19100900, including_storage=True))
+    OR_1.Add(PlayerHasWeapon(19101000, including_storage=True))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(6697)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event6788():
-    """ 6788: Event 6788 """
+@ContinueOnRest(6788)
+def Event_6788():
+    """Event 6788"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(0, PLAYER, 6141)
-    StoreItemAmountSpecifiedByFlagValue(ItemType.Good, 1700, flag=6780, bit_count=8)
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, 6141))
+    
+    StoreItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=1700, flag=6780, bit_count=8)
     Wait(0.10000000149011612)
     Restart()
 
 
-def Event6789():
-    """ 6789: Event 6789 """
+@ContinueOnRest(6789)
+def Event_6789():
+    """Event 6789"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(0, PLAYER, 6143)
-    StoreItemAmountSpecifiedByFlagValue(ItemType.Good, 1700, flag=6790, bit_count=8)
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, 6143))
+    
+    StoreItemAmountSpecifiedByFlagValue(item_type=ItemType.Good, item=1700, flag=6790, bit_count=8)
     EventValueOperation(
         source_flag=6780,
         source_flag_bit_count=8,
@@ -986,8 +1119,8 @@ def Event6789():
         target_flag_bit_count=8,
         calculation_type=CalculationType.Add,
     )
-    IfEventValueComparison(1, 6800, bit_count=9, comparison_type=ComparisonType.GreaterThanOrEqual, value=255)
-    SkipLinesIfConditionFalse(1, 1)
+    AND_1.Add(EventValue(flag=6800, bit_count=9) >= 255)
+    SkipLinesIfConditionFalse(1, AND_1)
     EventValueOperation(
         source_flag=6800,
         source_flag_bit_count=9,
@@ -1000,999 +1133,1248 @@ def Event6789():
     Restart()
 
 
-def Event6809():
-    """ 6809: Event 6809 """
+@ContinueOnRest(6809)
+def Event_6809():
+    """Event 6809"""
     DisableNetworkSync()
-    IfEventValueComparison(0, 6800, bit_count=9, comparison_type=ComparisonType.GreaterThanOrEqual, value=1)
+    
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 1)
+    
     EnableFlag(6810)
-    IfEventValueComparison(0, 6800, bit_count=9, comparison_type=ComparisonType.GreaterThanOrEqual, value=2)
+    
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 2)
+    
     EnableFlag(6811)
-    IfEventValueComparison(0, 6800, bit_count=9, comparison_type=ComparisonType.GreaterThanOrEqual, value=5)
+    
+    MAIN.Await(EventValue(flag=6800, bit_count=9) >= 5)
+    
     EnableFlag(6812)
 
 
-def Event6815():
-    """ 6815: Event 6815 """
+@ContinueOnRest(6815)
+def Event_6815():
+    """Event 6815"""
     DisableNetworkSync()
-    IfFlagOn(1, 6813)
-    IfCharacterHasSpecialEffect(1, PLAYER, 6142)
-    IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(PLAYER, 6150, affect_npc_part_hp=False)
-    IfFlagOff(-1, 6813)
-    IfCharacterDoesNotHaveSpecialEffect(-1, PLAYER, 6142)
-    IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(PLAYER, 6150)
+    AND_1.Add(FlagEnabled(6813))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    
+    MAIN.Await(AND_1)
+    
+    AddSpecialEffect(PLAYER, 6150)
+    OR_1.Add(FlagDisabled(6813))
+    OR_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 6142))
+    
+    MAIN.Await(OR_1)
+    
+    RemoveSpecialEffect(PLAYER, 6150)
     Restart()
 
 
-def Event6816():
-    """ 6816: Event 6816 """
+@ContinueOnRest(6816)
+def Event_6816():
+    """Event 6816"""
     DisableNetworkSync()
-    IfFlagOn(1, 6814)
-    IfCharacterHasSpecialEffect(1, PLAYER, 6142)
-    IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(PLAYER, 6140, affect_npc_part_hp=False)
-    IfFlagOff(-1, 6814)
-    IfCharacterDoesNotHaveSpecialEffect(-1, PLAYER, 6142)
-    IfConditionTrue(0, input_condition=-1)
-    CancelSpecialEffect(PLAYER, 6140)
+    AND_1.Add(FlagEnabled(6814))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    
+    MAIN.Await(AND_1)
+    
+    AddSpecialEffect(PLAYER, 6140)
+    OR_1.Add(FlagDisabled(6814))
+    OR_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 6142))
+    
+    MAIN.Await(OR_1)
+    
+    RemoveSpecialEffect(PLAYER, 6140)
     Restart()
 
 
-def Event7000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 7000: Event 7000 """
+@ContinueOnRest(7000)
+def Event_7000(_, character: int, obj: int, flag: int, flag_1: int):
+    """Event 7000"""
     DisableNetworkSync()
-    DisableCharacter(arg_0_3)
-    DisableObject(arg_4_7)
-    IfCharacterBackreadEnabled(0, arg_0_3)
-    GotoIfFlagOn(Label.L0, arg_8_11)
-    DisableCharacter(arg_0_3)
-    DisableObject(arg_4_7)
-    IfFlagOn(0, arg_8_11)
-    EnableObject(arg_4_7)
-    EnableCharacter(arg_0_3)
-    CreateTemporaryVFX(100330, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    DisableCharacter(character)
+    DisableObject(obj)
+    
+    MAIN.Await(CharacterBackreadEnabled(character))
+    
+    GotoIfFlagEnabled(Label.L0, flag=flag)
+    DisableCharacter(character)
+    DisableObject(obj)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    EnableObject(obj)
+    EnableCharacter(character)
+    CreateTemporaryVFX(vfx_id=100330, anchor_entity=obj, model_point=100, anchor_type=CoordEntityType.Object)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    EnableObject(arg_4_7)
-    EnableCharacter(arg_0_3)
-    RegisterLantern(
-        arg_12_15,
-        arg_4_7,
-        reaction_distance=0.0,
-        reaction_angle=0.0,
-        initial_sword_number=0,
-        sword_level=0,
-    )
+    EnableObject(obj)
+    EnableCharacter(character)
+    RegisterLantern(flag=flag_1, obj=obj, reaction_distance=0.0, reaction_angle=0.0)
 
 
-def Event7100(_, arg_0_3: int, arg_4_7: int):
-    """ 7100: Event 7100 """
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    RotateToFaceEntity(PLAYER, arg_4_7, animation=101170)
-    WaitFrames(32)
-    InitializeWarpObject(arg_4_7)
-    EndIfFlagOn(6715)
-    WaitFrames(58)
+@ContinueOnRest(7100)
+def Event_7100(_, flag: int, warp_object_id: int):
+    """Event 7100"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    RotateToFaceEntity(PLAYER, warp_object_id, animation=101170)
+    WaitFrames(frames=32)
+    InitializeWarpObject(warp_object_id=warp_object_id)
+    if FlagEnabled(6715):
+        return
+    WaitFrames(frames=58)
     EnableFlag(70000030)
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
     EnableFlag(6715)
 
 
-def Event7200(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 7200: Event 7200 """
-    EndIfClient()
-    IfFlagOn(0, arg_0_3)
-    DisableFlag(arg_0_3)
-    RotateToFaceEntity(PLAYER, arg_4_7, animation=101160)
+@ContinueOnRest(7200)
+def Event_7200(_, flag: int, anchor_entity: int, respawn_point_id: int):
+    """Event 7200"""
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    DisableFlag(flag)
+    RotateToFaceEntity(PLAYER, anchor_entity, animation=101160)
     Wait(1.0)
-    CreateTemporaryVFX(100320, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
+    CreateTemporaryVFX(vfx_id=100320, anchor_entity=anchor_entity, model_point=100, anchor_type=CoordEntityType.Object)
     Wait(3.0)
-    SkipLinesIfFlagOff(2, 9401)
-    WarpPlayerToRespawnPoint(arg_8_11)
-    End()
+    if FlagEnabled(9401):
+        WarpPlayerToRespawnPoint(respawn_point_id)
+        End()
     WarpPlayerToRespawnPoint(2102962)
 
 
-def Event7300(_, arg_0_3: int, arg_4_7: int):
-    """ 7300: Event 7300 """
-    EndIfClient()
-    IfFlagOn(0, arg_0_3)
-    WaitFrames(1)
-    CreateTemporaryVFX(100321, anchor_entity=arg_4_7, anchor_type=CoordEntityType.Object, model_point=100)
-    InitializeWarpObject(arg_4_7)
-    DisableFlag(arg_0_3)
+@ContinueOnRest(7300)
+def Event_7300(_, flag: int, warp_object_id: int):
+    """Event 7300"""
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    WaitFrames(frames=1)
+    CreateTemporaryVFX(
+        vfx_id=100321,
+        anchor_entity=warp_object_id,
+        model_point=100,
+        anchor_type=CoordEntityType.Object,
+    )
+    InitializeWarpObject(warp_object_id=warp_object_id)
+    DisableFlag(flag)
 
 
-def Event7600(_, arg_0_3: int, arg_4_7: int):
-    """ 7600: Event 7600 """
+@ContinueOnRest(7600)
+def Event_7600(_, obj: int, vfx_id: int):
+    """Event 7600"""
     DisableNetworkSync()
-    DisableObject(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
-    IfConnectingMultiplayer(-1)
-    IfMultiplayer(-1)
-    IfConditionTrue(0, input_condition=-1)
-    EnableObject(arg_0_3)
-    CreateVFX(arg_4_7)
-    IfConnectingMultiplayer(-2)
-    IfMultiplayer(-2)
-    IfConditionFalse(0, input_condition=-2)
+    DisableObject(obj)
+    DeleteVFX(vfx_id)
+    OR_1.Add(ConnectingMultiplayer())
+    OR_1.Add(Multiplayer())
+    
+    MAIN.Await(OR_1)
+    
+    EnableObject(obj)
+    CreateVFX(vfx_id)
+    OR_2.Add(ConnectingMultiplayer())
+    OR_2.Add(Multiplayer())
+    
+    MAIN.Await(not OR_2)
+    
     Restart()
 
 
-def Event9030(_, arg_0_3: int, arg_4_7: int):
-    """ 9030: Event 9030 """
+@ContinueOnRest(9030)
+def Event_9030(_, special_effect: int, special_effect_1: int):
+    """Event 9030"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
-    AddSpecialEffect(PLAYER, arg_4_7, affect_npc_part_hp=False)
-    IfCharacterDoesNotHaveSpecialEffect(0, PLAYER, arg_0_3)
-    CancelSpecialEffect(PLAYER, arg_4_7)
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
+    
+    AddSpecialEffect(PLAYER, special_effect_1)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(PLAYER, special_effect))
+    
+    RemoveSpecialEffect(PLAYER, special_effect_1)
     Restart()
 
 
-def Event9035(_, arg_0_3: int, arg_4_7: int):
-    """ 9035: Event 9035 """
+@ContinueOnRest(9035)
+def Event_9035(_, special_effect: int, special_effect_1: int):
+    """Event 9035"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(1, PLAYER, arg_0_3)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(PLAYER, arg_4_7, affect_npc_part_hp=False)
-    IfCharacterHasSpecialEffect(2, PLAYER, arg_0_3)
-    IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
-    IfConditionFalse(0, input_condition=2)
-    CancelSpecialEffect(PLAYER, arg_4_7)
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
+    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    
+    MAIN.Await(AND_1)
+    
+    AddSpecialEffect(PLAYER, special_effect_1)
+    AND_2.Add(CharacterHasSpecialEffect(PLAYER, special_effect))
+    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    
+    MAIN.Await(not AND_2)
+    
+    RemoveSpecialEffect(PLAYER, special_effect_1)
     Restart()
 
 
-def Event9040(_, arg_0_3: int, arg_4_7: int):
-    """ 9040: Event 9040 """
-    EndIfFlagOn(arg_0_3)
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOn(0, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=False)
+@ContinueOnRest(9040)
+def Event_9040(_, flag: int, item_lot: int):
+    """Event 9040"""
+    if FlagEnabled(flag):
+        return
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    AwardItemLot(item_lot, host_only=False)
 
 
-def Event9100(_, arg_0_3: int, arg_4_7: int):
-    """ 9100: Event 9100 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOn(0, arg_0_3)
-    DisableFlag(arg_0_3)
-    AwardItemLot(arg_4_7, host_only=False)
+@ContinueOnRest(9100)
+def Event_9100(_, flag: int, item_lot: int):
+    """Event 9100"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    DisableFlag(flag)
+    AwardItemLot(item_lot, host_only=False)
     Restart()
 
 
-def Event9110(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 9110: Event 9110 """
-    EndIfFlagOn(arg_0_3)
-    EndIfClient()
-    IfFlagOn(0, arg_0_3)
-    SkipLinesIfFlagOn(2, arg_12_15)
-    AwardItemLot(arg_4_7, host_only=False)
-    SkipLines(1)
-    AwardItemLot(arg_8_11, host_only=False)
+@ContinueOnRest(9110)
+def Event_9110(_, flag: int, item_lot: int, item_lot_1: int, flag_1: int):
+    """Event 9110"""
+    if FlagEnabled(flag):
+        return
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    if FlagDisabled(flag_1):
+        AwardItemLot(item_lot, host_only=False)
+    else:
+        AwardItemLot(item_lot_1, host_only=False)
 
 
-def Event9181():
-    """ 9181: Event 9181 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfClientTypeCountComparison(0, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
+@ContinueOnRest(9181)
+def Event_9181():
+    """Event 9181"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    
+    MAIN.Await(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.GreaterThanOrEqual, value=1))
+    
     DisableFlag(9185)
-    IfCharacterDoesNotHaveSpecialEffect(0, PLAYER, 9000)
+    
+    MAIN.Await(CharacterDoesNotHaveSpecialEffect(PLAYER, 9000))
+    
     Restart()
 
 
-def Event9182():
-    """ 9182: Event 9182 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
+@ContinueOnRest(9182)
+def Event_9182():
+    """Event 9182"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
     DisableFlag(9184)
-    IfConnectingMultiplayer(1)
-    IfMultiplayer(2)
-    IfConditionFalse(1, input_condition=2)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(ConnectingMultiplayer())
+    AND_2.Add(Multiplayer())
+    AND_1.Add(not AND_2)
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(9184)
-    IfConnectingMultiplayer(3)
-    IfConditionFalse(-1, input_condition=3)
-    IfMultiplayer(-1)
-    IfConditionTrue(0, input_condition=-1)
+    AND_3.Add(ConnectingMultiplayer())
+    OR_1.Add(not AND_3)
+    OR_1.Add(Multiplayer())
+    
+    MAIN.Await(OR_1)
+    
     Restart()
 
 
-def Event9183():
-    """ 9183: Event 9183 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 9000)
-    IfFlagOn(1, 9185)
-    IfFlagOff(1, 9184)
-    IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
+@ContinueOnRest(9183)
+def Event_9183():
+    """Event 9183"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9000))
+    AND_1.Add(FlagEnabled(9185))
+    AND_1.Add(FlagDisabled(9184))
+    
+    MAIN.Await(AND_1)
+    
+    AddSpecialEffect(PLAYER, 4680)
     DisableFlag(9185)
     Wait(2.5)
     DisplayBattlefieldMessage(100300, display_location_index=0)
     Restart()
 
 
-def Event9186():
-    """ 9186: Event 9186 """
+@ContinueOnRest(9186)
+def Event_9186():
+    """Event 9186"""
     DisableNetworkSync()
     EnableFlag(9187)
-    IfCharacterHuman(1, PLAYER)
-    EndIfConditionFalse(1)
+    AND_1.Add(CharacterHuman(PLAYER))
+    if not AND_1:
+        return
     EnableFlag(9187)
-    IfPlayerInsightAmountGreaterThanOrEqual(1, 1)
-    IfFlagOff(1, 6009)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(PlayerInsightAmount() >= 1)
+    AND_1.Add(FlagDisabled(6009))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(9187)
-    IfPlayerInsightAmountGreaterThanOrEqual(2, 1)
-    IfFlagOff(2, 6009)
-    IfConditionFalse(0, input_condition=2)
+    AND_2.Add(PlayerInsightAmount() >= 1)
+    AND_2.Add(FlagDisabled(6009))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9190():
-    """ 9190: Event 9190 """
+@ContinueOnRest(9190)
+def Event_9190():
+    """Event 9190"""
     DisableNetworkSync()
-    IfMultiplayer(1)
-    IfHost(1)
-    IfConditionTrue(0, input_condition=1)
-    AddSpecialEffect(PLAYER, 9001, affect_npc_part_hp=False)
-    IfMultiplayer(2)
-    IfHost(2)
-    IfConditionFalse(0, input_condition=2)
-    CancelSpecialEffect(PLAYER, 9001)
+    AND_1.Add(Multiplayer())
+    AND_1.Add(Host())
+    
+    MAIN.Await(AND_1)
+    
+    AddSpecialEffect(PLAYER, 9001)
+    AND_2.Add(Multiplayer())
+    AND_2.Add(Host())
+    
+    MAIN.Await(not AND_2)
+    
+    RemoveSpecialEffect(PLAYER, 9001)
     Restart()
 
 
-def Event9191():
-    """ 9191: Event 9191 """
-    EndIfClient()
-    IfInsideMap(-1, game_map=CHALICE_DUNGEON)
-    IfInsideMap(-1, game_map=NIGHTMARE_OF_MENSIS)
-    IfInsideMap(-1, game_map=NIGHTMARE_FRONTIER)
-    GotoIfConditionTrue(Label.L0, input_condition=-1)
+@ContinueOnRest(9191)
+def Event_9191():
+    """Event 9191"""
+    if Client():
+        return
+    OR_1.Add(InsideMap(game_map=CHALICE_DUNGEON))
+    OR_1.Add(InsideMap(game_map=NIGHTMARE_OF_MENSIS))
+    OR_1.Add(InsideMap(game_map=NIGHTMARE_FRONTIER))
+    GotoIfConditionTrue(Label.L0, input_condition=OR_1)
     EnableFlag(6500)
-    IfFlagOn(0, 9800)
+    
+    MAIN.Await(FlagEnabled(9800))
+    
     EnableFlag(6501)
-    IfFlagOn(0, 9801)
+    
+    MAIN.Await(FlagEnabled(9801))
+    
     EnableFlag(6502)
-    IfFlagOn(0, 9802)
+    
+    MAIN.Await(FlagEnabled(9802))
+    
     EnableFlag(6503)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     EnableFlagRange((6500, 6503))
     End()
 
 
-def Event9192():
-    """ 9192: Event 9192 """
-    EndIfClient()
+@ContinueOnRest(9192)
+def Event_9192():
+    """Event 9192"""
+    if Client():
+        return
     EnableFlag(6400)
-    IfFlagOn(0, 9800)
+    
+    MAIN.Await(FlagEnabled(9800))
+    
     EnableFlag(6401)
-    IfFlagOn(0, 9801)
+    
+    MAIN.Await(FlagEnabled(9801))
+    
     EnableFlag(6402)
-    IfFlagOn(0, 9802)
+    
+    MAIN.Await(FlagEnabled(9802))
+    
     EnableFlag(6403)
 
 
-def Event9193():
-    """ 9193: Event 9193 """
-    EndIfClient()
-    IfFlagOn(0, 6006)
-    AddSpecialEffect(PLAYER, 6130, affect_npc_part_hp=False)
-    IfFlagOff(0, 6006)
-    CancelSpecialEffect(PLAYER, 6130)
+@ContinueOnRest(9193)
+def Event_9193():
+    """Event 9193"""
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(6006))
+    
+    AddSpecialEffect(PLAYER, 6130)
+    
+    MAIN.Await(FlagDisabled(6006))
+    
+    RemoveSpecialEffect(PLAYER, 6130)
     Restart()
 
 
-def Event9198():
-    """ 9198: Event 9198 """
-    GotoIfFlagOn(Label.L0, 9199)
-    IfCharacterHuman(1, PLAYER)
-    IfCharacterHasSpecialEffect(1, PLAYER, 9000)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9198)
+def Event_9198():
+    """Event 9198"""
+    GotoIfFlagEnabled(Label.L0, flag=9199)
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 9000))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(9185)
-    IfTimeElapsed(0, 5.0)
+    
+    MAIN.Await(TimeElapsed(seconds=5.0))
+    
     DisplayBattlefieldMessage(100001, display_location_index=0)
     EnableFlag(9199)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterHuman(2, PLAYER)
-    IfCharacterDoesNotHaveSpecialEffect(2, PLAYER, 9000)
-    IfConditionTrue(0, input_condition=2)
+    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 9000))
+    
+    MAIN.Await(AND_2)
+    
     DisableFlag(9199)
     Restart()
 
 
-def Event9200(_, arg_0_3: int):
-    """ 9200: Event 9200 """
+@ContinueOnRest(9200)
+def Event_9200(_, sound_id: int):
+    """Event 9200"""
     DisableNetworkSync()
-    DisableSoundEvent(arg_0_3)
-    IfPlayerInsightAmountGreaterThanOrEqual(-1, 60)
-    IfFlagOn(-1, 9802)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagOff(1, 9180)
-    IfFlagOff(1, 9462)
-    IfOutsideMap(1, game_map=NIGHTMARE_OF_MENSIS)
-    IfConditionTrue(0, input_condition=1)
-    EnableSoundEvent(arg_0_3)
-    IfPlayerInsightAmountGreaterThanOrEqual(-2, 60)
-    IfFlagOn(-2, 9802)
-    IfConditionTrue(2, input_condition=-2)
-    IfFlagOff(2, 9180)
-    IfFlagOff(2, 9462)
-    IfOutsideMap(2, game_map=NIGHTMARE_OF_MENSIS)
-    IfConditionFalse(0, input_condition=2)
+    DisableSoundEvent(sound_id=sound_id)
+    OR_1.Add(PlayerInsightAmount() >= 60)
+    OR_1.Add(FlagEnabled(9802))
+    AND_1.Add(OR_1)
+    AND_1.Add(FlagDisabled(9180))
+    AND_1.Add(FlagDisabled(9462))
+    AND_1.Add(OutsideMap(game_map=NIGHTMARE_OF_MENSIS))
+    
+    MAIN.Await(AND_1)
+    
+    EnableSoundEvent(sound_id=sound_id)
+    OR_2.Add(PlayerInsightAmount() >= 60)
+    OR_2.Add(FlagEnabled(9802))
+    AND_2.Add(OR_2)
+    AND_2.Add(FlagDisabled(9180))
+    AND_2.Add(FlagDisabled(9462))
+    AND_2.Add(OutsideMap(game_map=NIGHTMARE_OF_MENSIS))
+    
+    MAIN.Await(not AND_2)
+    
     Restart()
 
 
-def Event9215():
-    """ 9215: Event 9215 """
+@ContinueOnRest(9215)
+def Event_9215():
+    """Event 9215"""
     DisableNetworkSync()
-    IfFlagOn(1, 9468)
-    IfFlagOff(1, 1730)
-    IfInsideMap(-1, game_map=RESEARCH_HALL)
-    IfInsideMap(-1, game_map=FISHING_HAMLET)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(9468))
+    AND_1.Add(FlagDisabled(1730))
+    OR_1.Add(InsideMap(game_map=RESEARCH_HALL))
+    OR_1.Add(InsideMap(game_map=FISHING_HAMLET))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     WaitRandomSeconds(min_seconds=60.0, max_seconds=120.0)
-    PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=10307)
+    PlaySoundEffect(PLAYER, 10307, sound_type=SoundType.s_SFX)
     WaitRandomSeconds(min_seconds=2.0, max_seconds=4.0)
-    PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=10307)
+    PlaySoundEffect(PLAYER, 10307, sound_type=SoundType.s_SFX)
     Restart()
 
 
-@RestartOnRest
-def Event9220(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
-    """ 9220: Event 9220 """
-    GotoIfFlagOff(Label.L0, arg_8_11)
-    DisableAI(arg_0_3)
-    ForceAnimation(arg_0_3, 7010)
+@RestartOnRest(9220)
+def Event_9220(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: uchar, block_id: uchar):
+    """Event 9220"""
+    GotoIfFlagDisabled(Label.L0, flag=flag_1)
+    DisableAI(character)
+    ForceAnimation(character, 7010)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    EndIfFlagOn(arg_4_7)
-    DisableAI(arg_0_3)
-    ForceAnimation(arg_0_3, 7010, loop=True)
-    IfOnline(1)
-    IfFlagOff(1, arg_8_11)
-    IfCharacterAlive(1, arg_0_3)
-    IfFlagOff(1, arg_12_15)
-    IfInsideMap(1, game_map=(arg_16_16, arg_17_17))
-    IfCharacterHuman(2, PLAYER)
-    IfPlayerSoulLevelGreaterThanOrEqual(2, 30)
-    IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.GreaterThanOrEqual, value=1)
-    IfCharacterHasSpecialEffect(3, PLAYER, 9025)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
-    IfRandomTimeElapsed(0, min_seconds=10.0, max_seconds=10.0)
+    if FlagEnabled(flag):
+        return
+    DisableAI(character)
+    ForceAnimation(character, 7010, loop=True)
+    AND_1.Add(Online())
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(CharacterAlive(character))
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(InsideMap(game_map=(area_id, block_id)))
+    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(PlayerLevel() >= 30)
+    AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.GreaterThanOrEqual, value=1))
+    AND_3.Add(CharacterHasSpecialEffect(PLAYER, 9025))
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    MAIN.Await(RandomTimeElapsed(min_seconds=10.0, max_seconds=10.0))
+    
     DisplayBattlefieldMessage(109000, display_location_index=0)
-    ForceAnimation(arg_0_3, 7011)
-    WaitFrames(59)
-    EnableAI(arg_0_3)
-    EnableFlag(arg_4_7)
+    ForceAnimation(character, 7011)
+    WaitFrames(frames=59)
+    EnableAI(character)
+    EnableFlag(flag)
 
 
-@RestartOnRest
-def Event9240(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
-    """ 9240: Event 9240 """
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(1, arg_4_7)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_8_11)
-    IfInsideMap(1, game_map=(arg_16_16, arg_17_17))
-    IfClientTypeCountComparison(1, ClientType.Invader, ComparisonType.Equal, value=0)
-    IfConditionTrue(0, input_condition=1)
-    IfCharacterHuman(2, PLAYER)
-    IfRandomTimeElapsed(2, min_seconds=10.0, max_seconds=10.0)
-    IfConditionTrue(0, input_condition=2)
-    AddSpecialEffect(PLAYER, 9020, affect_npc_part_hp=False)
-    AddSpecialEffect(arg_0_3, 9100, affect_npc_part_hp=False)
-    ReplanAI(arg_0_3)
-    EnableFlag(arg_12_15)
+@RestartOnRest(9240)
+def Event_9240(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: uchar, block_id: uchar):
+    """Event 9240"""
+    if FlagEnabled(flag_1):
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(InsideMap(game_map=(area_id, block_id)))
+    AND_1.Add(ClientTypeCountComparison(client_type=ClientType.Invader, comparison_type=ComparisonType.Equal, value=0))
+    
+    MAIN.Await(AND_1)
+    
+    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(RandomTimeElapsed(min_seconds=10.0, max_seconds=10.0))
+    
+    MAIN.Await(AND_2)
+    
+    AddSpecialEffect(PLAYER, 9020)
+    AddSpecialEffect(character, 9100)
+    ReplanAI(character)
+    EnableFlag(flag_2)
     DisplayBattlefieldMessage(100002, display_location_index=0)
     Restart()
 
 
-@RestartOnRest
-def Event9260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
-    """ 9260: Event 9260 """
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(1, arg_4_7)
-    IfFlagOn(1, arg_12_15)
-    IfFlagOn(-1, arg_8_11)
-    IfClientTypeCountComparison(-1, ClientType.Invader, ComparisonType.GreaterThanOrEqual, value=1)
-    IfOutsideMap(-1, game_map=(arg_16_16, arg_17_17))
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
-    IfCharacterHuman(0, PLAYER)
-    CancelSpecialEffect(PLAYER, 9020)
-    CancelSpecialEffect(arg_0_3, 9100)
-    ReplanAI(arg_0_3)
-    DisableFlag(arg_12_15)
+@RestartOnRest(9260)
+def Event_9260(_, character: int, flag: int, flag_1: int, flag_2: int, area_id: uchar, block_id: uchar):
+    """Event 9260"""
+    if FlagEnabled(flag_1):
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(FlagEnabled(flag_2))
+    OR_1.Add(FlagEnabled(flag_1))
+    OR_1.Add(ClientTypeCountComparison(
+        client_type=ClientType.Invader,
+        comparison_type=ComparisonType.GreaterThanOrEqual,
+        value=1,
+    ))
+    OR_1.Add(OutsideMap(game_map=(area_id, block_id)))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    MAIN.Await(CharacterHuman(PLAYER))
+    
+    RemoveSpecialEffect(PLAYER, 9020)
+    RemoveSpecialEffect(character, 9100)
+    ReplanAI(character)
+    DisableFlag(flag_2)
     Restart()
 
 
-def Event9280(
-    _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_20: uchar,
-    arg_21_21: uchar,
-):
-    """ 9280: Event 9280 """
-    IfFlagOn(-15, arg_8_11)
-    IfFlagOn(-15, arg_12_15)
-    IfFlagOn(-15, arg_16_19)
-    EndIfConditionTrue(-15)
-    IfFlagOn(1, arg_4_7)
-    IfInsideMap(1, game_map=(arg_20_20, arg_21_21))
-    IfHealthEqual(2, arg_0_3, 0.0)
-    IfFlagOn(3, arg_16_19)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
-    EnableFlag(arg_8_11)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
+@ContinueOnRest(9280)
+def Event_9280(_, character: int, flag: int, flag_1: int, flag_2: int, flag_3: int, area_id: uchar, block_id: uchar):
+    """Event 9280"""
+    OR_15.Add(FlagEnabled(flag_1))
+    OR_15.Add(FlagEnabled(flag_2))
+    OR_15.Add(FlagEnabled(flag_3))
+    if OR_15:
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(InsideMap(game_map=(area_id, block_id)))
+    AND_2.Add(HealthRatio(character) == 0.0)
+    AND_3.Add(FlagEnabled(flag_3))
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    EnableFlag(flag_1)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
     Wait(5.0)
     DisplayBattlefieldMessage(109001, display_location_index=0)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    DisableAI(arg_0_3)
-    ForceAnimation(arg_0_3, 7012)
-    WaitFrames(88)
-    ForceAnimation(arg_0_3, 7010)
+    DisableAI(character)
+    ForceAnimation(character, 7012)
+    WaitFrames(frames=88)
+    ForceAnimation(character, 7010)
 
 
-def Event9350(_, arg_0_3: int):
-    """ 9350: Event 9350 """
-    EndIfClient()
-    GotoIfValueComparison(Label.L1, ComparisonType.Equal, left=arg_0_3, right=1)
-    GotoIfValueComparison(Label.L2, ComparisonType.Equal, left=arg_0_3, right=2)
-    GotoIfValueComparison(Label.L3, ComparisonType.Equal, left=arg_0_3, right=3)
-    GotoIfValueComparison(Label.L4, ComparisonType.Equal, left=arg_0_3, right=4)
-    GotoIfValueComparison(Label.L5, ComparisonType.Equal, left=arg_0_3, right=5)
-    GotoIfValueComparison(Label.L6, ComparisonType.Equal, left=arg_0_3, right=6)
-    GotoIfValueComparison(Label.L7, ComparisonType.Equal, left=arg_0_3, right=7)
-    GotoIfValueComparison(Label.L8, ComparisonType.Equal, left=arg_0_3, right=8)
-    GotoIfValueComparison(Label.L9, ComparisonType.Equal, left=arg_0_3, right=9)
+@ContinueOnRest(9350)
+def Event_9350(_, left: int):
+    """Event 9350"""
+    if Client():
+        return
+    GotoIfValueComparison(Label.L1, comparison_type=ComparisonType.Equal, left=left, right=1)
+    GotoIfValueComparison(Label.L2, comparison_type=ComparisonType.Equal, left=left, right=2)
+    GotoIfValueComparison(Label.L3, comparison_type=ComparisonType.Equal, left=left, right=3)
+    GotoIfValueComparison(Label.L4, comparison_type=ComparisonType.Equal, left=left, right=4)
+    GotoIfValueComparison(Label.L5, comparison_type=ComparisonType.Equal, left=left, right=5)
+    GotoIfValueComparison(Label.L6, comparison_type=ComparisonType.Equal, left=left, right=6)
+    GotoIfValueComparison(Label.L7, comparison_type=ComparisonType.Equal, left=left, right=7)
+    GotoIfValueComparison(Label.L8, comparison_type=ComparisonType.Equal, left=left, right=8)
+    GotoIfValueComparison(Label.L9, comparison_type=ComparisonType.Equal, left=left, right=9)
     End()
 
-    # --- 9 --- #
+    # --- Label 9 --- #
     DefineLabel(9)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 8 --- #
+    # --- Label 8 --- #
     DefineLabel(8)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 7 --- #
+    # --- Label 7 --- #
     DefineLabel(7)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 6 --- #
+    # --- Label 6 --- #
     DefineLabel(6)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 5 --- #
+    # --- Label 5 --- #
     DefineLabel(5)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 4 --- #
+    # --- Label 4 --- #
     DefineLabel(4)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 3 --- #
+    # --- Label 3 --- #
     DefineLabel(3)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
-    WaitFrames(10)
+    AddSpecialEffect(PLAYER, 4680)
+    WaitFrames(frames=10)
 
 
-def Event9360(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 9360: Event 9360 """
-    EndIfThisEventSlotOn()
-    EndIfFlagOn(arg_0_3)
-    EndIfFlagOn(arg_4_7)
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(-1, arg_0_3)
-    IfFlagOn(-1, arg_4_7)
-    IfFlagOn(-1, arg_8_11)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagOn(2, arg_12_15)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(2)
-    IfCharacterHuman(-3, PLAYER)
-    IfCharacterType(-3, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(3, input_condition=-3)
-    IfCharacterHasSpecialEffect(3, PLAYER, 6100)
-    EndIfConditionFalse(3)
+@ContinueOnRest(9360)
+def Event_9360(_, flag: int, flag_1: int, flag_2: int, flag_3: int):
+    """Event 9360"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if FlagEnabled(flag):
+        return
+    if FlagEnabled(flag_1):
+        return
+    if FlagEnabled(flag_2):
+        return
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(FlagEnabled(flag_1))
+    OR_1.Add(FlagEnabled(flag_2))
+    AND_1.Add(OR_1)
+    AND_2.Add(FlagEnabled(flag_3))
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    OR_3.Add(CharacterHuman(PLAYER))
+    OR_3.Add(CharacterWhitePhantom(PLAYER))
+    AND_3.Add(OR_3)
+    AND_3.Add(CharacterHasSpecialEffect(PLAYER, 6100))
+    if not AND_3:
+        return
     AwardItemLot(5520, host_only=True)
 
 
-def Event9400():
-    """ 9400: Event 9400 """
-    EndIfClient()
-    EndIfFlagOn(12410999)
-    EndIfFlagOn(9401)
-    SkipLinesIfFlagOn(1, 9402)
-    IfInsideMap(0, game_map=CENTRAL_YHARNAM)
+@ContinueOnRest(9400)
+def Event_9400():
+    """Event 9400"""
+    if Client():
+        return
+    if FlagEnabled(12410999):
+        return
+    if FlagEnabled(9401):
+        return
+    if FlagDisabled(9402):
+        MAIN.Await(InsideMap(game_map=CENTRAL_YHARNAM))
     EnableFlag(9402)
-    IfCharacterDead(0, PLAYER)
-    SetRespawnPoint(2102962)
+    
+    MAIN.Await(CharacterDead(PLAYER))
+    
+    SetRespawnPoint(respawn_point=2102962)
 
 
-def Event9404():
-    """ 9404: Event 9404 """
-    EndIfClient()
-    EndIfThisEventOn()
-    IfFlagOn(1, 9401)
-    IfPlayerInsightAmountGreaterThanOrEqual(1, 1)
-    IfCharacterDead(1, PLAYER)
-    IfConditionTrue(0, input_condition=1)
-    SetRespawnPoint(2102961)
+@ContinueOnRest(9404)
+def Event_9404():
+    """Event 9404"""
+    if Client():
+        return
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(9401))
+    AND_1.Add(PlayerInsightAmount() >= 1)
+    AND_1.Add(CharacterDead(PLAYER))
+    
+    MAIN.Await(AND_1)
+    
+    SetRespawnPoint(respawn_point=2102961)
 
 
-def Event9410():
-    """ 9410: Event 9410 """
-    EndIfThisEventOn()
-    IfFlagOn(1, 13201803)
-    IfCharacterHuman(1, PLAYER)
-    IfCharacterInsideRegion(1, PLAYER, region=2802010)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9410)
+def Event_9410():
+    """Event 9410"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(13201803))
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=2802010))
+    
+    MAIN.Await(AND_1)
+    
     Wait(0.0)
     AwardItemLot(3200800, host_only=False)
 
 
-def Event9421():
-    """ 9421: Event 9421 """
-    EndIfFlagOn(9423)
-    EndIfClient()
-    IfFlagOn(0, 9420)
-    SetRespawnPoint(2802959)
+@ContinueOnRest(9421)
+def Event_9421():
+    """Event 9421"""
+    if FlagEnabled(9423):
+        return
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(9420))
+    
+    SetRespawnPoint(respawn_point=2802959)
     DisableFlag(9420)
 
 
-def Event9422():
-    """ 9422: Event 9422 """
-    EndIfFlagOn(9423)
-    EndIfClient()
-    IfFlagOn(1, 9421)
-    IfInsideMap(1, game_map=YAHARGUL)
-    EndIfConditionFalse(1)
+@ContinueOnRest(9422)
+def Event_9422():
+    """Event 9422"""
+    if FlagEnabled(9423):
+        return
+    if Client():
+        return
+    AND_1.Add(FlagEnabled(9421))
+    AND_1.Add(InsideMap(game_map=YAHARGUL))
+    if not AND_1:
+        return
     EnableFlag(9180)
-    PlayCutscene(28000010, skippable=True, fade_out=True, player_id=PLAYER)
-    WaitFrames(1)
+    PlayCutscene(28000010, cutscene_flags=CutsceneFlags.FadeOut, player_id=10000)
+    WaitFrames(frames=1)
     DisableFlag(9180)
     EnableFlag(9423)
-    AddSpecialEffect(PLAYER, 4680, affect_npc_part_hp=False)
+    AddSpecialEffect(PLAYER, 4680)
 
 
-def Event9440(_, arg_0_3: int, arg_4_7: int):
-    """ 9440: Event 9440 """
+@ContinueOnRest(9440)
+def Event_9440(_, flag: int, item_lot: int):
+    """Event 9440"""
     DisableNetworkSync()
-    EndIfThisEventSlotOn()
-    EndIfClient()
-    IfFlagOn(0, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=False)
+    if ThisEventSlotFlagEnabled():
+        return
+    if Client():
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    AwardItemLot(item_lot, host_only=False)
 
 
-def Event9480(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
-    """ 9480: Event 9480 """
-    EndIfThisEventSlotOn()
-    EndIfFlagOn(arg_0_3)
-    EndIfFlagOn(arg_4_7)
-    EndIfFlagOn(arg_8_11)
-    IfFlagOn(-1, arg_0_3)
-    IfFlagOn(-1, arg_4_7)
-    IfFlagOn(-1, arg_8_11)
-    IfFlagOn(-1, arg_12_15)
-    IfConditionTrue(1, input_condition=-1)
-    IfFlagOn(2, arg_16_19)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(2)
-    IfCharacterHuman(-3, PLAYER)
-    IfCharacterType(-3, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(3, input_condition=-3)
-    IfCharacterHasSpecialEffect(3, PLAYER, 6100)
-    EndIfConditionFalse(3)
+@ContinueOnRest(9480)
+def Event_9480(_, flag: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
+    """Event 9480"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if FlagEnabled(flag):
+        return
+    if FlagEnabled(flag_1):
+        return
+    if FlagEnabled(flag_2):
+        return
+    OR_1.Add(FlagEnabled(flag))
+    OR_1.Add(FlagEnabled(flag_1))
+    OR_1.Add(FlagEnabled(flag_2))
+    OR_1.Add(FlagEnabled(flag_3))
+    AND_1.Add(OR_1)
+    AND_2.Add(FlagEnabled(flag_4))
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    OR_3.Add(CharacterHuman(PLAYER))
+    OR_3.Add(CharacterWhitePhantom(PLAYER))
+    AND_3.Add(OR_3)
+    AND_3.Add(CharacterHasSpecialEffect(PLAYER, 6100))
+    if not AND_3:
+        return
     AwardItemLot(5520, host_only=True)
 
 
-def Event9500(_, arg_0_3: int, arg_4_7: int):
-    """ 9500: Event 9500 """
+@ContinueOnRest(9500)
+def Event_9500(_, special_effect: int, item_lot: int):
+    """Event 9500"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=True)
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
+    
+    AwardItemLot(item_lot, host_only=True)
     Wait(0.10000000149011612)
     Restart()
 
 
-def Event9700(_, arg_0_3: int, arg_4_7: int):
-    """ 9700: Event 9700 """
-    IfFlagOn(1, 1021)
-    IfFlagOn(1, 72100121)
-    IfOutsideMap(1, game_map=HUNTERS_DREAM)
-    IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_0_3, arg_4_7))
+@ContinueOnRest(9700)
+def Event_9700(_, first_flag: int, last_flag: int):
+    """Event 9700"""
+    AND_1.Add(FlagEnabled(1021))
+    AND_1.Add(FlagEnabled(72100121))
+    AND_1.Add(OutsideMap(game_map=HUNTERS_DREAM))
+    
+    MAIN.Await(AND_1)
+    
+    DisableFlagRange((first_flag, last_flag))
     EnableFlag(1022)
 
 
-def Event9701(_, arg_0_3: int, arg_4_7: int):
-    """ 9701: Event 9701 """
-    IfFlagOn(1, 1023)
-    IfFlagOn(1, 72100123)
-    IfOutsideMap(1, game_map=HUNTERS_DREAM)
-    IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_0_3, arg_4_7))
+@ContinueOnRest(9701)
+def Event_9701(_, first_flag: int, last_flag: int):
+    """Event 9701"""
+    AND_1.Add(FlagEnabled(1023))
+    AND_1.Add(FlagEnabled(72100123))
+    AND_1.Add(OutsideMap(game_map=HUNTERS_DREAM))
+    
+    MAIN.Await(AND_1)
+    
+    DisableFlagRange((first_flag, last_flag))
     EnableFlag(1024)
 
 
-def Event9702(_, arg_0_3: int, arg_4_7: int):
-    """ 9702: Event 9702 """
-    IfFlagOn(1, 1025)
-    IfFlagOn(1, 72100125)
-    IfOutsideMap(1, game_map=HUNTERS_DREAM)
-    IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_0_3, arg_4_7))
+@ContinueOnRest(9702)
+def Event_9702(_, first_flag: int, last_flag: int):
+    """Event 9702"""
+    AND_1.Add(FlagEnabled(1025))
+    AND_1.Add(FlagEnabled(72100125))
+    AND_1.Add(OutsideMap(game_map=HUNTERS_DREAM))
+    
+    MAIN.Await(AND_1)
+    
+    DisableFlagRange((first_flag, last_flag))
     EnableFlag(1026)
 
 
-def Event9703(_, arg_0_3: int, arg_4_7: int):
-    """ 9703: Event 9703 """
-    IfFlagOn(1, 1026)
-    IfFlagOn(1, 9802)
-    IfFlagOn(1, 72100128)
-    IfOutsideMap(1, game_map=HUNTERS_DREAM)
-    IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_0_3, arg_4_7))
+@ContinueOnRest(9703)
+def Event_9703(_, first_flag: int, last_flag: int):
+    """Event 9703"""
+    AND_1.Add(FlagEnabled(1026))
+    AND_1.Add(FlagEnabled(9802))
+    AND_1.Add(FlagEnabled(72100128))
+    AND_1.Add(OutsideMap(game_map=HUNTERS_DREAM))
+    
+    MAIN.Await(AND_1)
+    
+    DisableFlagRange((first_flag, last_flag))
     EnableFlag(1027)
 
 
-def Event9710(_, arg_0_3: int, arg_4_7: int):
-    """ 9710: Event 9710 """
-    IfFlagOn(1, 1000)
-    IfFlagOn(1, 72100110)
-    IfOutsideMap(1, game_map=HUNTERS_DREAM)
-    IfConditionTrue(0, input_condition=1)
-    DisableFlagRange((arg_0_3, arg_4_7))
+@ContinueOnRest(9710)
+def Event_9710(_, first_flag: int, last_flag: int):
+    """Event 9710"""
+    AND_1.Add(FlagEnabled(1000))
+    AND_1.Add(FlagEnabled(72100110))
+    AND_1.Add(OutsideMap(game_map=HUNTERS_DREAM))
+    
+    MAIN.Await(AND_1)
+    
+    DisableFlagRange((first_flag, last_flag))
     EnableFlag(1001)
 
 
-def Event9720():
-    """ 9720: Event 9720 """
-    GotoIfThisEventOn(Label.L0)
-    GotoIfFlagOn(Label.L0, 12410810)
-    GotoIfFlagOn(Label.L0, 9467)
-    IfFlagOn(1, 1362)
-    IfFlagOn(1, 72400520)
-    IfInsideMap(1, game_map=HUNTERS_DREAM)
-    IfFlagOn(2, 1363)
-    IfFlagOn(-1, 1701)
-    IfFlagOn(-1, 1702)
-    IfConditionTrue(3, input_condition=-1)
-    IfFlagOn(-2, 1368)
-    IfFlagOn(-2, 1369)
-    IfConditionTrue(3, input_condition=-2)
-    IfFlagOn(-3, 12410810)
-    IfFlagOn(-3, 9467)
-    IfConditionTrue(-4, input_condition=1)
-    IfConditionTrue(-4, input_condition=2)
-    IfConditionTrue(-4, input_condition=3)
-    IfConditionTrue(-4, input_condition=-3)
-    IfConditionTrue(0, input_condition=-4)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=-3)
+@ContinueOnRest(9720)
+def Event_9720():
+    """Event 9720"""
+    GotoIfThisEventFlagEnabled(Label.L0)
+    GotoIfFlagEnabled(Label.L0, flag=12410810)
+    GotoIfFlagEnabled(Label.L0, flag=9467)
+    AND_1.Add(FlagEnabled(1362))
+    AND_1.Add(FlagEnabled(72400520))
+    AND_1.Add(InsideMap(game_map=HUNTERS_DREAM))
+    AND_2.Add(FlagEnabled(1363))
+    OR_1.Add(FlagEnabled(1701))
+    OR_1.Add(FlagEnabled(1702))
+    AND_3.Add(OR_1)
+    OR_2.Add(FlagEnabled(1368))
+    OR_2.Add(FlagEnabled(1369))
+    AND_3.Add(OR_2)
+    OR_3.Add(FlagEnabled(12410810))
+    OR_3.Add(FlagEnabled(9467))
+    OR_4.Add(AND_1)
+    OR_4.Add(AND_2)
+    OR_4.Add(AND_3)
+    OR_4.Add(OR_3)
+    
+    MAIN.Await(OR_4)
+    
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=OR_3)
     EnableFlag(70002413)
-    IfFlagOn(-5, 12410810)
-    IfFlagOn(-5, 9467)
-    IfConditionTrue(0, input_condition=-5)
+    OR_5.Add(FlagEnabled(12410810))
+    OR_5.Add(FlagEnabled(9467))
+    
+    MAIN.Await(OR_5)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     DisableFlag(70002413)
 
 
-def Event9721():
-    """ 9721: Event 9721 """
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(1, 1371)
-    IfFlagOn(2, 1705)
-    IfCharacterDead(2, 2400902)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+@ContinueOnRest(9721)
+def Event_9721():
+    """Event 9721"""
+    GotoIfThisEventFlagEnabled(Label.L0)
+    AND_1.Add(FlagEnabled(1371))
+    AND_2.Add(FlagEnabled(1705))
+    AND_2.Add(CharacterDead(2400902))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     DisableFlag(70002401)
 
 
-def Event9722():
-    """ 9722: Event 9722 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOn(1, 1373)
-    IfFlagOn(1, 9802)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9722)
+def Event_9722():
+    """Event 9722"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    AND_1.Add(FlagEnabled(1373))
+    AND_1.Add(FlagEnabled(9802))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1360, 1379))
     EnableFlag(1370)
     EnableFlag(70002401)
 
 
-def Event9723():
-    """ 9723: Event 9723 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOn(1, 1374)
-    IfFlagOn(1, 9802)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9723)
+def Event_9723():
+    """Event 9723"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    AND_1.Add(FlagEnabled(1374))
+    AND_1.Add(FlagEnabled(9802))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1360, 1379))
     EnableFlag(1372)
     EnableFlag(70002401)
 
 
-def Event9755():
-    """ 9755: Event 9755 """
-    IfFlagOn(-2, 1205)
-    IfFlagOn(-2, 1207)
-    IfConditionTrue(1, input_condition=-2)
-    IfFlagOn(1, 72400360)
-    IfFlagChange(-1, 12201800)
-    IfFlagChange(-1, 12301800)
-    IfFlagChange(-1, 12301700)
-    IfFlagChange(-1, 12401800)
-    IfFlagChange(-1, 12411800)
-    IfFlagChange(-1, 12411700)
-    IfFlagChange(-1, 12421800)
-    IfFlagChange(-1, 12421700)
-    IfFlagChange(-1, 12501800)
-    IfFlagChange(-1, 12601800)
-    IfFlagChange(-1, 12601850)
-    IfFlagChange(-1, 12701800)
-    IfFlagChange(-1, 12801800)
-    IfFlagChange(-1, 13201800)
-    IfFlagChange(-1, 13301800)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9755)
+def Event_9755():
+    """Event 9755"""
+    OR_2.Add(FlagEnabled(1205))
+    OR_2.Add(FlagEnabled(1207))
+    AND_1.Add(OR_2)
+    AND_1.Add(FlagEnabled(72400360))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12201800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12301800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12301700))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12401800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12411800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12411700))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12421800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12421700))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12501800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12601800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12601850))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12701800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12801800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 13201800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 13301800))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     IncrementEventValue(70000200, bit_count=3, max_value=7)
     Restart()
 
 
-def Event9756():
-    """ 9756: Event 9756 """
-    IfFlagOn(-2, 1205)
-    IfFlagOn(-2, 1207)
-    IfConditionTrue(1, input_condition=-2)
-    IfFlagOn(1, 72400360)
-    IfInsideMap(1, game_map=CHALICE_DUNGEON)
-    IfFlagChange(-1, 12901800)
-    IfFlagChange(-1, 12901801)
-    IfFlagChange(-1, 12901802)
-    IfFlagChange(-1, 12901803)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9756)
+def Event_9756():
+    """Event 9756"""
+    OR_2.Add(FlagEnabled(1205))
+    OR_2.Add(FlagEnabled(1207))
+    AND_1.Add(OR_2)
+    AND_1.Add(FlagEnabled(72400360))
+    AND_1.Add(InsideMap(game_map=CHALICE_DUNGEON))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12901800))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12901801))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12901802))
+    OR_1.Add(FlagState(FlagSetting.Change, FlagType.Absolute, 12901803))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     IncrementEventValue(70000200, bit_count=3, max_value=7)
     Restart()
 
 
-def Event9770():
-    """ 9770: Event 9770 """
-    IfFlagOn(1, 1351)
-    IfOutsideMap(1, game_map=CASTLE_CAINHURST)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9770)
+def Event_9770():
+    """Event 9770"""
+    AND_1.Add(FlagEnabled(1351))
+    AND_1.Add(OutsideMap(game_map=CASTLE_CAINHURST))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(72500359)
 
 
-def Event9780():
-    """ 9780: Event 9780 """
-    IfFlagOn(1, 1422)
-    IfOutsideMap(1, game_map=BYRGENWERTH)
-    IfFlagOn(1, 73200326)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(9780)
+def Event_9780():
+    """Event 9780"""
+    AND_1.Add(FlagEnabled(1422))
+    AND_1.Add(OutsideMap(game_map=BYRGENWERTH))
+    AND_1.Add(FlagEnabled(73200326))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1420, 1437))
     EnableFlag(1423)
 
 
-def Event9781():
-    """ 9781: Event 9781 """
-    EndIfThisEventOn()
-    IfCharacterHuman(1, PLAYER)
-    IfInsideMap(1, game_map=FORBIDDEN_WOODS)
-    IfConditionTrue(0, input_condition=1)
-    EndIfFlagOn(1438)
+@ContinueOnRest(9781)
+def Event_9781():
+    """Event 9781"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(InsideMap(game_map=FORBIDDEN_WOODS))
+    
+    MAIN.Await(AND_1)
+    
+    if FlagEnabled(1438):
+        return
     EnableFlag(1439)
     EnableFlag(72410382)
 
 
-def Event9782():
-    """ 9782: Event 9782 """
-    IfPlayerHasGood(1, 4310, including_box=False)
-    IfInsideMap(-2, game_map=HUNTERS_DREAM)
-    IfCharacterDead(-2, PLAYER)
-    IfConditionTrue(1, input_condition=-2)
-    IfFlagOn(2, 1431)
-    IfConditionTrue(-3, input_condition=1)
-    IfConditionTrue(-3, input_condition=2)
-    IfConditionTrue(0, input_condition=-3)
+@ContinueOnRest(9782)
+def Event_9782():
+    """Event 9782"""
+    AND_1.Add(PlayerHasGood(4310))
+    OR_2.Add(InsideMap(game_map=HUNTERS_DREAM))
+    OR_2.Add(CharacterDead(PLAYER))
+    AND_1.Add(OR_2)
+    AND_2.Add(FlagEnabled(1431))
+    OR_3.Add(AND_1)
+    OR_3.Add(AND_2)
+    
+    MAIN.Await(OR_3)
+    
     EnableFlag(1438)
     DisableFlag(1439)
 
 
-def Event9909():
-    """ 9909: Event 9909 """
-    EndIfFlagOn(9900)
-    IfEventValueComparison(0, 9901, bit_count=4, comparison_type=ComparisonType.GreaterThanOrEqual, value=3)
+@ContinueOnRest(9909)
+def Event_9909():
+    """Event 9909"""
+    if FlagEnabled(9900):
+        return
+    
+    MAIN.Await(EventValue(flag=9901, bit_count=4) >= 3)
+    
     EnableFlag(9900)
 
 
-def Event9905(_, arg_0_3: int):
-    """ 9905: Event 9905 """
-    EndIfThisEventSlotOn()
-    IfCharacterHasSpecialEffect(0, PLAYER, arg_0_3)
+@ContinueOnRest(9905)
+def Event_9905(_, special_effect: int):
+    """Event 9905"""
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(CharacterHasSpecialEffect(PLAYER, special_effect))
+    
     IncrementEventValue(9901, bit_count=4, max_value=4)
 
 
-def Event9910():
-    """ 9910: Event 9910 """
+@ContinueOnRest(9910)
+def Event_9910():
+    """Event 9910"""
     DisableNetworkSync()
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    EndIfThisEventOn()
-    SkipLinesIfFlagOn(3, 6300)
-    DisableFlag(50000400)
-    EnableFlag(50000405)
-    SkipLines(2)
-    EnableFlag(50000400)
-    DisableFlag(50000405)
-    SkipLinesIfFlagOn(3, 6301)
-    DisableFlag(50000600)
-    EnableFlag(50000605)
-    SkipLines(2)
-    EnableFlag(50000600)
-    DisableFlag(50000605)
-    SkipLinesIfFlagOn(3, 6302)
-    DisableFlag(50000800)
-    EnableFlag(50000801)
-    SkipLines(2)
-    EnableFlag(50000800)
-    DisableFlag(50000801)
-    SkipLinesIfFlagOn(3, 6303)
-    DisableFlag(50001100)
-    EnableFlag(50001105)
-    SkipLines(2)
-    EnableFlag(50001100)
-    DisableFlag(50001105)
-    SkipLinesIfFlagOn(3, 6304)
-    DisableFlag(50001300)
-    EnableFlag(50001301)
-    SkipLines(2)
-    EnableFlag(50001300)
-    DisableFlag(50001301)
-    SkipLinesIfFlagOn(3, 6305)
-    DisableFlag(50001610)
-    EnableFlag(50001611)
-    SkipLines(2)
-    EnableFlag(50001610)
-    DisableFlag(50001611)
-    SkipLinesIfFlagOn(3, 6306)
-    DisableFlag(50002110)
-    EnableFlag(50002115)
-    SkipLines(2)
-    EnableFlag(50002110)
-    DisableFlag(50002115)
-    SkipLinesIfFlagOn(3, 6307)
-    DisableFlag(50003400)
-    EnableFlag(50003405)
-    SkipLines(2)
-    EnableFlag(50003400)
-    DisableFlag(50003405)
-    SkipLinesIfFlagOn(3, 6308)
-    DisableFlag(50003500)
-    EnableFlag(50003505)
-    SkipLines(2)
-    EnableFlag(50003500)
-    DisableFlag(50003505)
-    SkipLinesIfFlagOn(4, 6340)
-    DisableFlag(50000200)
-    DisableFlag(50000205)
-    EnableFlag(50000210)
-    SkipLines(3)
-    EnableFlag(50000200)
-    EnableFlag(50000205)
-    DisableFlag(50000210)
-    SkipLinesIfFlagOn(3, 6341)
-    DisableFlag(50001820)
-    EnableFlag(50001825)
-    SkipLines(2)
-    EnableFlag(50001820)
-    DisableFlag(50001825)
-    SkipLinesIfFlagOn(5, 6342)
-    DisableFlag(50001910)
-    EnableFlag(50001915)
-    DisableFlag(50001900)
-    EnableFlag(50001905)
-    SkipLines(4)
-    EnableFlag(50001910)
-    DisableFlag(50001915)
-    DisableFlag(50001900)
-    EnableFlag(50001905)
-    SkipLinesIfFlagOn(3, 6334)
-    DisableFlag(50003100)
-    EnableFlag(50003105)
-    SkipLines(2)
-    EnableFlag(50003100)
-    DisableFlag(50003105)
-    SkipLinesIfFlagOn(3, 6335)
-    DisableFlag(50001500)
-    EnableFlag(50001505)
-    SkipLines(2)
-    EnableFlag(50001500)
-    DisableFlag(50001505)
-    SkipLinesIfFlagOn(3, 6641)
-    DisableFlag(50001700)
-    EnableFlag(50001701)
-    SkipLines(2)
-    EnableFlag(50001700)
-    DisableFlag(50001701)
-    SkipLinesIfFlagOn(3, 6643)
-    DisableFlag(50001900)
-    EnableFlag(50001905)
-    SkipLines(2)
-    EnableFlag(50001900)
-    DisableFlag(50001905)
-    SkipLinesIfFlagOn(3, 6647)
-    DisableFlag(50001810)
-    EnableFlag(50001805)
-    SkipLines(2)
-    EnableFlag(50001810)
-    DisableFlag(50001805)
-    SkipLinesIfFlagOn(3, 6649)
-    DisableFlag(50000205)
-    EnableFlag(50000210)
-    SkipLines(2)
-    EnableFlag(50000205)
-    DisableFlag(50000210)
-    SkipLinesIfFlagOn(3, 6677)
-    DisableFlag(50002260)
-    EnableFlag(50002261)
-    SkipLines(2)
-    EnableFlag(50002260)
-    DisableFlag(50002261)
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    if ThisEventFlagEnabled():
+        return
+    if FlagDisabled(6300):
+        DisableFlag(50000400)
+        EnableFlag(50000405)
+    else:
+        EnableFlag(50000400)
+        DisableFlag(50000405)
+    if FlagDisabled(6301):
+        DisableFlag(50000600)
+        EnableFlag(50000605)
+    else:
+        EnableFlag(50000600)
+        DisableFlag(50000605)
+    if FlagDisabled(6302):
+        DisableFlag(50000800)
+        EnableFlag(50000801)
+    else:
+        EnableFlag(50000800)
+        DisableFlag(50000801)
+    if FlagDisabled(6303):
+        DisableFlag(50001100)
+        EnableFlag(50001105)
+    else:
+        EnableFlag(50001100)
+        DisableFlag(50001105)
+    if FlagDisabled(6304):
+        DisableFlag(50001300)
+        EnableFlag(50001301)
+    else:
+        EnableFlag(50001300)
+        DisableFlag(50001301)
+    if FlagDisabled(6305):
+        DisableFlag(50001610)
+        EnableFlag(50001611)
+    else:
+        EnableFlag(50001610)
+        DisableFlag(50001611)
+    if FlagDisabled(6306):
+        DisableFlag(50002110)
+        EnableFlag(50002115)
+    else:
+        EnableFlag(50002110)
+        DisableFlag(50002115)
+    if FlagDisabled(6307):
+        DisableFlag(50003400)
+        EnableFlag(50003405)
+    else:
+        EnableFlag(50003400)
+        DisableFlag(50003405)
+    if FlagDisabled(6308):
+        DisableFlag(50003500)
+        EnableFlag(50003505)
+    else:
+        EnableFlag(50003500)
+        DisableFlag(50003505)
+    if FlagDisabled(6340):
+        DisableFlag(50000200)
+        DisableFlag(50000205)
+        EnableFlag(50000210)
+    else:
+        EnableFlag(50000200)
+        EnableFlag(50000205)
+        DisableFlag(50000210)
+    if FlagDisabled(6341):
+        DisableFlag(50001820)
+        EnableFlag(50001825)
+    else:
+        EnableFlag(50001820)
+        DisableFlag(50001825)
+    if FlagDisabled(6342):
+        DisableFlag(50001910)
+        EnableFlag(50001915)
+        DisableFlag(50001900)
+        EnableFlag(50001905)
+    else:
+        EnableFlag(50001910)
+        DisableFlag(50001915)
+        DisableFlag(50001900)
+        EnableFlag(50001905)
+    if FlagDisabled(6334):
+        DisableFlag(50003100)
+        EnableFlag(50003105)
+    else:
+        EnableFlag(50003100)
+        DisableFlag(50003105)
+    if FlagDisabled(6335):
+        DisableFlag(50001500)
+        EnableFlag(50001505)
+    else:
+        EnableFlag(50001500)
+        DisableFlag(50001505)
+    if FlagDisabled(6641):
+        DisableFlag(50001700)
+        EnableFlag(50001701)
+    else:
+        EnableFlag(50001700)
+        DisableFlag(50001701)
+    if FlagDisabled(6643):
+        DisableFlag(50001900)
+        EnableFlag(50001905)
+    else:
+        EnableFlag(50001900)
+        DisableFlag(50001905)
+    if FlagDisabled(6647):
+        DisableFlag(50001810)
+        EnableFlag(50001805)
+    else:
+        EnableFlag(50001810)
+        DisableFlag(50001805)
+    if FlagDisabled(6649):
+        DisableFlag(50000205)
+        EnableFlag(50000210)
+    else:
+        EnableFlag(50000205)
+        DisableFlag(50000210)
+    if FlagDisabled(6677):
+        DisableFlag(50002260)
+        EnableFlag(50002261)
+    else:
+        EnableFlag(50002260)
+        DisableFlag(50002261)

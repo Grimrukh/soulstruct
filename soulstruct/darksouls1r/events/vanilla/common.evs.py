@@ -1,4 +1,6 @@
 """
+Common
+
 linked:
 
 
@@ -6,953 +8,1125 @@ strings:
 
 """
 from soulstruct.darksouls1r.events import *
+from soulstruct.darksouls1r.events.instructions import *
 
 
+@ContinueOnRest(0)
 def Constructor():
-    """ 0: Event 0 """
-    EndIfClient()
+    """Event 0"""
+    if Client():
+        return
     DisableFlag(760)
     DisableFlag(762)
     DisableFlag(765)
-    RunEvent(260, slot=0, args=(11810000, 10010600, 0.0), arg_types="iif")
-    RunEvent(260, slot=1, args=(257, 10010610, 0.0), arg_types="iif")
-    RunEvent(260, slot=2, args=(710, 10010620, 0.0), arg_types="iif")
-    RunEvent(761)
-    RunEvent(763)
-    RunEvent(290)
-    RunEvent(701)
-    RunEvent(702)
-    RunEvent(717)
-    RunEvent(718)
-    RunEvent(706)
-    RunEvent(740)
-    RunEvent(750)
-    RunEvent(752)
-    RunEvent(757)
-    RunEvent(758)
-    RunEvent(759)
-    RunEvent(754)
-    RunEvent(770)
-    RunEvent(772)
-    RunEvent(730)
-    RunEvent(731)
-    RunEvent(766)
-    RunEvent(710)
-    RunEvent(711, slot=0, args=(2500, 711))
-    RunEvent(711, slot=1, args=(2501, 712))
-    RunEvent(711, slot=2, args=(2502, 713))
-    RunEvent(711, slot=3, args=(2504, 714))
-    RunEvent(715)
-    RunEvent(716)
-    RunEvent(8131, slot=0, args=(202, 203))
-    RunEvent(8131, slot=1, args=(204, 205))
-    RunEvent(8131, slot=2, args=(206, 207))
-    RunEvent(8131, slot=3, args=(208, 209))
-    RunEvent(8131, slot=4, args=(210, 211))
-    RunEvent(8131, slot=5, args=(212, 213))
-    RunEvent(8131, slot=6, args=(214, 215))
-    RunEvent(819)
-    RunEvent(970, slot=0, args=(2, 2500, 9020, 9030))
-    RunEvent(970, slot=1, args=(11010901, 0, 9000, 9030))
-    RunEvent(970, slot=2, args=(11010902, 2510, 9000, 9030))
-    RunEvent(970, slot=3, args=(3, 0, 9020, 0))
-    RunEvent(970, slot=4, args=(4, 2520, 9020, 0))
-    RunEvent(970, slot=5, args=(11200900, 2530, 9000, 0))
-    RunEvent(970, slot=6, args=(5, 2540, 9000, 9030))
-    RunEvent(970, slot=7, args=(6, 2550, 9000, 9030))
-    RunEvent(970, slot=8, args=(7, 2560, 9000, 0))
-    RunEvent(970, slot=9, args=(9, 2570, 9020, 0))
-    RunEvent(970, slot=10, args=(11410900, 0, 9000, 9030))
-    RunEvent(970, slot=11, args=(11410410, 0, 9000, 0))
-    RunEvent(970, slot=12, args=(11410901, 0, 9000, 9030))
-    RunEvent(970, slot=13, args=(10, 2580, 9000, 0))
-    RunEvent(970, slot=14, args=(11, 2590, 9000, 0))
-    RunEvent(970, slot=15, args=(11510900, 2600, 0, 0))
-    RunEvent(970, slot=16, args=(11510902, 2610, 9000, 0))
-    RunEvent(970, slot=17, args=(11510903, 2620, 9000, 0))
-    RunEvent(970, slot=18, args=(13, 2630, 9010, 0))
-    RunEvent(970, slot=19, args=(14, 2640, 9000, 0))
-    RunEvent(970, slot=20, args=(15, 2650, 0, 0))
-    RunEvent(970, slot=21, args=(16, 2660, 9000, 0))
-    RunEvent(970, slot=22, args=(11810900, 0, 9000, 9030))
-    RunEvent(970, slot=23, args=(11210000, 2680, 9000, 0))
-    RunEvent(970, slot=24, args=(11210001, 2690, 0, 0))
-    RunEvent(970, slot=25, args=(17, 2700, 9040, 0))
-    RunEvent(970, slot=26, args=(11210004, 2710, 0, 0))
-    RunEvent(250, slot=0, args=(2600, 250))
-    RunEvent(250, slot=1, args=(2601, 251))
-    RunEvent(250, slot=2, args=(2602, 252))
-    RunEvent(250, slot=3, args=(2603, 253))
-    RunEvent(250, slot=4, args=(2604, 254))
-    RunEvent(250, slot=5, args=(2605, 255))
-    RunEvent(250, slot=6, args=(2606, 256))
-    RunEvent(250, slot=7, args=(2607, 257))
-    RunEvent(250, slot=8, args=(2608, 258))
-    RunEvent(250, slot=9, args=(2609, 259))
-    RunEvent(350, slot=0, args=(350, 800))
-    RunEvent(350, slot=1, args=(351, 801))
-    RunEvent(350, slot=2, args=(352, 802))
-    RunEvent(350, slot=6, args=(356, 806))
-    RunEvent(350, slot=7, args=(357, 807))
-    RunEvent(350, slot=8, args=(358, 808))
-    RunEvent(350, slot=9, args=(359, 809))
-    RunEvent(350, slot=10, args=(360, 810))
-    RunEvent(350, slot=12, args=(362, 812))
-    RunEvent(350, slot=13, args=(363, 813))
-    RunEvent(780, slot=0, args=(1000, 780))
-    RunEvent(780, slot=1, args=(1010, 781))
-    RunEvent(780, slot=2, args=(1020, 782))
-    RunEvent(780, slot=3, args=(1030, 783))
-    RunEvent(780, slot=4, args=(1040, 784))
-    RunEvent(780, slot=5, args=(1050, 785))
-    RunEvent(780, slot=6, args=(1060, 786))
-    RunEvent(780, slot=7, args=(1070, 787))
-    RunEvent(780, slot=8, args=(1080, 788))
-    RunEvent(780, slot=9, args=(1090, 789))
-    RunEvent(780, slot=10, args=(1100, 790))
-    RunEvent(780, slot=11, args=(1110, 791))
-    RunEvent(780, slot=12, args=(1120, 792))
-    RunEvent(780, slot=13, args=(1130, 793))
-    RunEvent(870, slot=0, args=(0, 850), arg_types="Bi")
-    RunEvent(870, slot=1, args=(1, 851), arg_types="Bi")
-    RunEvent(870, slot=2, args=(2, 852), arg_types="Bi")
-    RunEvent(870, slot=3, args=(3, 853), arg_types="Bi")
-    RunEvent(870, slot=4, args=(4, 854), arg_types="Bi")
-    RunEvent(870, slot=5, args=(5, 855), arg_types="Bi")
-    RunEvent(870, slot=6, args=(6, 856), arg_types="Bi")
-    RunEvent(870, slot=7, args=(7, 857), arg_types="Bi")
-    RunEvent(870, slot=8, args=(8, 858), arg_types="Bi")
-    RunEvent(870, slot=9, args=(9, 859), arg_types="Bi")
-    RunEvent(840, slot=0, args=(840, 7905, 6370, 4294967295))
-    RunEvent(840, slot=1, args=(841, 7905, 6072, 4294967295))
-    RunEvent(840, slot=2, args=(842, 7905, 6080, 4294967295))
-    RunEvent(840, slot=3, args=(843, 7905, 6001, 4294967295))
-    RunEvent(840, slot=4, args=(844, 7898, 10000, 7896))
-    RunEvent(840, slot=5, args=(845, 7905, 6340, 4294967295))
-    RunEvent(840, slot=6, args=(846, 7905, 6341, 4294967295))
-    RunEvent(840, slot=7, args=(847, 7913, 10000, 7911))
-    RunEvent(840, slot=8, args=(848, 7905, 6380, 4294967295))
-    RunEvent(840, slot=9, args=(849, 7905, 1400700, 4294967295))
-    RunEvent(840, slot=10, args=(860, 7905, 16969, 4294967295))
-    RunEvent(690, slot=0, args=(600, 4, 16, 1175), arg_types="iIIi")
-    RunEvent(719)
-    RunEvent(720)
-    RunEvent(721)
-    RunEvent(722)
-    RunEvent(723)
-    RunEvent(724)
-    RunEvent(725)
-    RunEvent(726)
-    RunEvent(727)
-    RunEvent(745)
-    RunEvent(818)
-    RunEvent(810)
-    RunEvent(812, slot=0, args=(51400350,))
-    RunEvent(812, slot=1, args=(51010050,))
-    RunEvent(822)
-    RunEvent(823)
-    RunEvent(910, slot=0, args=(11400591, 1280))
-    RunEvent(911, slot=0, args=(11010591, 1000, 1), arg_types="iiB")
-    RunEvent(911, slot=1, args=(11510590, 1010, 1), arg_types="iiB")
-    RunEvent(911, slot=2, args=(11700591, 1020, 1), arg_types="iiB")
-    RunEvent(911, slot=3, args=(11000591, 1030, 1), arg_types="iiB")
-    RunEvent(911, slot=4, args=(11400590, 1040, 1), arg_types="iiB")
-    RunEvent(911, slot=5, args=(11410594, 1050, 1), arg_types="iiB")
-    RunEvent(911, slot=6, args=(11020594, 1060, 1), arg_types="iiB")
-    RunEvent(911, slot=7, args=(11020595, 1070, 1), arg_types="iiB")
-    RunEvent(911, slot=8, args=(11810590, 1082, 1), arg_types="iiB")
-    RunEvent(911, slot=9, args=(11810591, 1080, 1), arg_types="iiB")
-    RunEvent(911, slot=10, args=(11510592, 1090, 1), arg_types="iiB")
-    RunEvent(911, slot=11, args=(11600592, 1100, 1), arg_types="iiB")
-    RunEvent(911, slot=12, args=(11020602, 1110, 1), arg_types="iiB")
-    RunEvent(911, slot=13, args=(11010594, 1120, 1), arg_types="iiB")
-    RunEvent(911, slot=14, args=(11010595, 1130, 1), arg_types="iiB")
-    RunEvent(911, slot=15, args=(11020599, 1140, 1), arg_types="iiB")
-    RunEvent(911, slot=16, args=(11020607, 1150, 1), arg_types="iiB")
-    RunEvent(911, slot=17, args=(11200592, 1160, 1), arg_types="iiB")
-    RunEvent(911, slot=18, args=(11200593, 1170, 1), arg_types="iiB")
-    RunEvent(911, slot=19, args=(11200594, 1180, 1), arg_types="iiB")
-    RunEvent(911, slot=20, args=(11300590, 1190, 1), arg_types="iiB")
-    RunEvent(911, slot=21, args=(11300591, 1200, 1), arg_types="iiB")
-    RunEvent(911, slot=22, args=(11310590, 1210, 1), arg_types="iiB")
-    RunEvent(911, slot=23, args=(11310592, 1220, 1), arg_types="iiB")
-    RunEvent(911, slot=24, args=(11310593, 1230, 1), arg_types="iiB")
-    RunEvent(911, slot=25, args=(11310594, 1240, 1), arg_types="iiB")
-    RunEvent(911, slot=26, args=(11320590, 1250, 1), arg_types="iiB")
-    RunEvent(911, slot=27, args=(11320581, 1260, 1), arg_types="iiB")
-    RunEvent(911, slot=28, args=(11320593, 1270, 1), arg_types="iiB")
-    RunEvent(911, slot=29, args=(11400592, 1290, 1), arg_types="iiB")
-    RunEvent(911, slot=30, args=(11400594, 1300, 1), arg_types="iiB")
-    RunEvent(911, slot=31, args=(11400596, 1310, 1), arg_types="iiB")
-    RunEvent(911, slot=32, args=(11400597, 1320, 1), arg_types="iiB")
-    RunEvent(911, slot=33, args=(11400598, 1330, 1), arg_types="iiB")
-    RunEvent(911, slot=34, args=(11400599, 1340, 1), arg_types="iiB")
-    RunEvent(911, slot=35, args=(11510595, 1350, 1), arg_types="iiB")
-    RunEvent(911, slot=36, args=(11510596, 1360, 1), arg_types="iiB")
-    RunEvent(911, slot=37, args=(11510597, 1370, 1), arg_types="iiB")
-    RunEvent(911, slot=38, args=(11600594, 1380, 1), arg_types="iiB")
-    RunEvent(911, slot=39, args=(11600595, 1390, 1), arg_types="iiB")
-    RunEvent(911, slot=40, args=(11600596, 1400, 1), arg_types="iiB")
-    RunEvent(911, slot=41, args=(11010598, 1410, 0), arg_types="iiB")
-    RunEvent(911, slot=42, args=(11210590, 1500, 1), arg_types="iiB")
-    RunEvent(911, slot=43, args=(11210593, 1510, 1), arg_types="iiB")
-    RunEvent(911, slot=44, args=(11210594, 1520, 1), arg_types="iiB")
-    RunEvent(911, slot=45, args=(11600580, 1401, 1), arg_types="iiB")
-    RunEvent(911, slot=46, args=(11600581, 1402, 1), arg_types="iiB")
-    RunEvent(911, slot=47, args=(11600582, 1403, 1), arg_types="iiB")
-    RunEvent(911, slot=48, args=(11600583, 1404, 1), arg_types="iiB")
-    RunEvent(911, slot=49, args=(11020905, 1800, 1), arg_types="iiB")
-    RunEvent(911, slot=50, args=(11510905, 1810, 1), arg_types="iiB")
-    RunEvent(911, slot=51, args=(11010905, 1820, 1), arg_types="iiB")
-    RunEvent(911, slot=52, args=(11600905, 1830, 1), arg_types="iiB")
-    RunEvent(911, slot=53, args=(11320905, 1840, 1), arg_types="iiB")
-    RunEvent(911, slot=54, args=(11300906, 1850, 1), arg_types="iiB")
-    RunEvent(911, slot=55, args=(11200905, 1860, 1), arg_types="iiB")
-    RunEvent(911, slot=56, args=(11510906, 1870, 1), arg_types="iiB")
-    RunEvent(911, slot=57, args=(11400905, 1880, 1), arg_types="iiB")
-    RunEvent(890, slot=0, args=(11310580, 1221, 1), arg_types="iiB")
-    RunEvent(890, slot=1, args=(11510580, 1361, 1), arg_types="iiB")
-    RunEvent(890, slot=2, args=(11510581, 1371, 1), arg_types="iiB")
-    RunEvent(890, slot=3, args=(11320592, 1261, 1), arg_types="iiB")
-    RunEvent(960, slot=0, args=(1322, 6190, 6190))
-    RunEvent(960, slot=1, args=(1315, 6180, 1100))
-    RunEvent(960, slot=2, args=(1402, 6230, 6230))
-    RunEvent(960, slot=3, args=(1402, 6230, 6231))
-    RunEvent(8200, slot=0, args=(3, 5500, 50000120, 11010594), arg_types="Biii")
-    RunEvent(8200, slot=1, args=(3, 5510, 50000130, 11010595), arg_types="Biii")
-    RunEvent(8200, slot=2, args=(2, 103, 50000160, 11200592), arg_types="Biii")
-    RunEvent(8200, slot=3, args=(3, 240, 50000170, 11200593), arg_types="Biii")
-    RunEvent(8200, slot=4, args=(2, 124, 50000180, 11200594), arg_types="Biii")
-    RunEvent(8200, slot=5, args=(0, 453000, 50000220, 11310592), arg_types="Biii")
-    RunEvent(8200, slot=6, args=(3, 5100, 50000225, 11310580), arg_types="Biii")
-    RunEvent(8200, slot=7, args=(3, 5110, 50000230, 11310593), arg_types="Biii")
-    RunEvent(8200, slot=8, args=(3, 114, 50000265, 11320581), arg_types="Biii")
-    RunEvent(8200, slot=9, args=(3, 377, 50000260, 11320592), arg_types="Biii")
-    RunEvent(8200, slot=10, args=(3, 378, 50000270, 11320593), arg_types="Biii")
-    RunEvent(8200, slot=11, args=(3, 4500, 50000310, 11400596), arg_types="Biii")
-    RunEvent(8200, slot=12, args=(3, 4520, 50000320, 11400597), arg_types="Biii")
-    RunEvent(8200, slot=13, args=(3, 4510, 50000330, 11400598), arg_types="Biii")
-    RunEvent(8200, slot=14, args=(2, 130, 50000350, 11510595), arg_types="Biii")
-    RunEvent(8200, slot=15, args=(3, 113, 50000360, 11510596), arg_types="Biii")
-    RunEvent(8200, slot=16, args=(2, 102, 50000365, 11510580), arg_types="Biii")
-    RunEvent(8200, slot=17, args=(3, 5910, 50000370, 11510597), arg_types="Biii")
-    RunEvent(8200, slot=18, args=(0, 1366000, 50000375, 11510581), arg_types="Biii")
-    RunEvent(8200, slot=19, args=(0, 904000, 50000380, 11600594), arg_types="Biii")
-    RunEvent(8200, slot=20, args=(3, 102, 50000390, 11600595), arg_types="Biii")
-    RunEvent(8200, slot=21, args=(0, 210000, 50000400, 11600596), arg_types="Biii")
-    RunEvent(8200, slot=22, args=(1, 40000, 50000410, 11600580), arg_types="Biii")
-    RunEvent(8200, slot=23, args=(1, 41000, 50000420, 11600581), arg_types="Biii")
-    RunEvent(8200, slot=24, args=(1, 42000, 50000430, 11600582), arg_types="Biii")
-    RunEvent(8200, slot=25, args=(1, 43000, 50000440, 11600583), arg_types="Biii")
-    RunEvent(8200, slot=26, args=(3, 131, 50000800, 11020905), arg_types="Biii")
-    RunEvent(8200, slot=27, args=(3, 132, 50000810, 11510905), arg_types="Biii")
-    RunEvent(8200, slot=28, args=(3, 133, 50000820, 11010905), arg_types="Biii")
-    RunEvent(8200, slot=29, args=(3, 134, 50000830, 11600905), arg_types="Biii")
-    RunEvent(8200, slot=30, args=(3, 135, 50000840, 11320905), arg_types="Biii")
-    RunEvent(8200, slot=31, args=(3, 136, 50000850, 11300906), arg_types="Biii")
-    RunEvent(8200, slot=32, args=(3, 137, 50000860, 11200905), arg_types="Biii")
-    RunEvent(8200, slot=33, args=(3, 138, 50000870, 11510906), arg_types="Biii")
-    RunEvent(8200, slot=34, args=(3, 139, 50000880, 11400905), arg_types="Biii")
-    RunEvent(8300, slot=0, args=(3, 100, 50000000), arg_types="Bii")
-    RunEvent(8300, slot=1, args=(3, 101, 51100330), arg_types="Bii")
-    RunEvent(8300, slot=2, args=(3, 102, 50000390), arg_types="Bii")
-    RunEvent(8300, slot=3, args=(3, 106, 11017020), arg_types="Bii")
-    RunEvent(8300, slot=4, args=(3, 108, 11607020), arg_types="Bii")
-    RunEvent(8300, slot=5, args=(3, 112, 11407080), arg_types="Bii")
-    RunEvent(8300, slot=6, args=(3, 2508, 11007010), arg_types="Bii")
-    RunEvent(8300, slot=7, args=(3, 385, 11017210), arg_types="Bii")
-    RunEvent(8090, slot=0, args=(3, 510, 11217010), arg_types="Bii")
-    RunEvent(8090, slot=1, args=(3, 511, 11217020), arg_types="Bii")
-    RunEvent(8090, slot=2, args=(3, 512, 11217030), arg_types="Bii")
-    RunEvent(8090, slot=3, args=(3, 513, 11217040), arg_types="Bii")
-    RunEvent(8090, slot=4, args=(3, 514, 11217050), arg_types="Bii")
+    Event_260(0, flag=11810000, text=10010600, seconds=0.0)
+    Event_260(1, flag=257, text=10010610, seconds=0.0)
+    Event_260(2, flag=710, text=10010620, seconds=0.0)
+    Event_761()
+    Event_763()
+    Event_290()
+    Event_701()
+    Event_702()
+    Event_717()
+    Event_718()
+    Event_706()
+    Event_740()
+    Event_750()
+    Event_752()
+    Event_757()
+    Event_758()
+    Event_759()
+    Event_754()
+    Event_770()
+    Event_772()
+    Event_730()
+    Event_731()
+    Event_766()
+    Event_710()
+    Event_711(0, item=2500, flag=711)
+    Event_711(1, item=2501, flag=712)
+    Event_711(2, item=2502, flag=713)
+    Event_711(3, item=2504, flag=714)
+    Event_715()
+    Event_716()
+    Event_8131(0, item=202, item_1=203)
+    Event_8131(1, item=204, item_1=205)
+    Event_8131(2, item=206, item_1=207)
+    Event_8131(3, item=208, item_1=209)
+    Event_8131(4, item=210, item_1=211)
+    Event_8131(5, item=212, item_1=213)
+    Event_8131(6, item=214, item_1=215)
+    Event_819()
+    Event_970(0, flag=2, item_lot=2500, item_lot_1=9020, item_lot_2=9030)
+    Event_970(1, flag=11010901, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(2, flag=11010902, item_lot=2510, item_lot_1=9000, item_lot_2=9030)
+    Event_970(3, flag=3, item_lot=0, item_lot_1=9020, item_lot_2=0)
+    Event_970(4, flag=4, item_lot=2520, item_lot_1=9020, item_lot_2=0)
+    Event_970(5, flag=11200900, item_lot=2530, item_lot_1=9000, item_lot_2=0)
+    Event_970(6, flag=5, item_lot=2540, item_lot_1=9000, item_lot_2=9030)
+    Event_970(7, flag=6, item_lot=2550, item_lot_1=9000, item_lot_2=9030)
+    Event_970(8, flag=7, item_lot=2560, item_lot_1=9000, item_lot_2=0)
+    Event_970(9, flag=9, item_lot=2570, item_lot_1=9020, item_lot_2=0)
+    Event_970(10, flag=11410900, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(11, flag=11410410, item_lot=0, item_lot_1=9000, item_lot_2=0)
+    Event_970(12, flag=11410901, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(13, flag=10, item_lot=2580, item_lot_1=9000, item_lot_2=0)
+    Event_970(14, flag=11, item_lot=2590, item_lot_1=9000, item_lot_2=0)
+    Event_970(15, flag=11510900, item_lot=2600, item_lot_1=0, item_lot_2=0)
+    Event_970(16, flag=11510902, item_lot=2610, item_lot_1=9000, item_lot_2=0)
+    Event_970(17, flag=11510903, item_lot=2620, item_lot_1=9000, item_lot_2=0)
+    Event_970(18, flag=13, item_lot=2630, item_lot_1=9010, item_lot_2=0)
+    Event_970(19, flag=14, item_lot=2640, item_lot_1=9000, item_lot_2=0)
+    Event_970(20, flag=15, item_lot=2650, item_lot_1=0, item_lot_2=0)
+    Event_970(21, flag=16, item_lot=2660, item_lot_1=9000, item_lot_2=0)
+    Event_970(22, flag=11810900, item_lot=0, item_lot_1=9000, item_lot_2=9030)
+    Event_970(23, flag=11210000, item_lot=2680, item_lot_1=9000, item_lot_2=0)
+    Event_970(24, flag=11210001, item_lot=2690, item_lot_1=0, item_lot_2=0)
+    Event_970(25, flag=17, item_lot=2700, item_lot_1=9040, item_lot_2=0)
+    Event_970(26, flag=11210004, item_lot=2710, item_lot_1=0, item_lot_2=0)
+    Event_250(0, item=2600, flag=250)
+    Event_250(1, item=2601, flag=251)
+    Event_250(2, item=2602, flag=252)
+    Event_250(3, item=2603, flag=253)
+    Event_250(4, item=2604, flag=254)
+    Event_250(5, item=2605, flag=255)
+    Event_250(6, item=2606, flag=256)
+    Event_250(7, item=2607, flag=257)
+    Event_250(8, item=2608, flag=258)
+    Event_250(9, item=2609, flag=259)
+    Event_350(0, flag=350, item=800)
+    Event_350(1, flag=351, item=801)
+    Event_350(2, flag=352, item=802)
+    Event_350(6, flag=356, item=806)
+    Event_350(7, flag=357, item=807)
+    Event_350(8, flag=358, item=808)
+    Event_350(9, flag=359, item=809)
+    Event_350(10, flag=360, item=810)
+    Event_350(12, flag=362, item=812)
+    Event_350(13, flag=363, item=813)
+    Event_780(0, item=1000, flag=780)
+    Event_780(1, item=1010, flag=781)
+    Event_780(2, item=1020, flag=782)
+    Event_780(3, item=1030, flag=783)
+    Event_780(4, item=1040, flag=784)
+    Event_780(5, item=1050, flag=785)
+    Event_780(6, item=1060, flag=786)
+    Event_780(7, item=1070, flag=787)
+    Event_780(8, item=1080, flag=788)
+    Event_780(9, item=1090, flag=789)
+    Event_780(10, item=1100, flag=790)
+    Event_780(11, item=1110, flag=791)
+    Event_780(12, item=1120, flag=792)
+    Event_780(13, item=1130, flag=793)
+    Event_870(0, covenant=0, flag=850)
+    Event_870(1, covenant=1, flag=851)
+    Event_870(2, covenant=2, flag=852)
+    Event_870(3, covenant=3, flag=853)
+    Event_870(4, covenant=4, flag=854)
+    Event_870(5, covenant=5, flag=855)
+    Event_870(6, covenant=6, flag=856)
+    Event_870(7, covenant=7, flag=857)
+    Event_870(8, covenant=8, flag=858)
+    Event_870(9, covenant=9, flag=859)
+    Event_840(0, flag=840, animation_id=7905, target_entity=6370, animation_id_1=-1)
+    Event_840(1, flag=841, animation_id=7905, target_entity=6072, animation_id_1=-1)
+    Event_840(2, flag=842, animation_id=7905, target_entity=6080, animation_id_1=-1)
+    Event_840(3, flag=843, animation_id=7905, target_entity=6001, animation_id_1=-1)
+    Event_840(4, flag=844, animation_id=7898, target_entity=10000, animation_id_1=7896)
+    Event_840(5, flag=845, animation_id=7905, target_entity=6340, animation_id_1=-1)
+    Event_840(6, flag=846, animation_id=7905, target_entity=6341, animation_id_1=-1)
+    Event_840(7, flag=847, animation_id=7913, target_entity=10000, animation_id_1=7911)
+    Event_840(8, flag=848, animation_id=7905, target_entity=6380, animation_id_1=-1)
+    Event_840(9, flag=849, animation_id=7905, target_entity=1400700, animation_id_1=-1)
+    Event_840(10, flag=860, animation_id=7905, target_entity=16969, animation_id_1=-1)
+    Event_690(0, flag=600, bit_count=4, max_value=16, flag_1=1175)
+    Event_719()
+    Event_720()
+    Event_721()
+    Event_722()
+    Event_723()
+    Event_724()
+    Event_725()
+    Event_726()
+    Event_727()
+    Event_745()
+    Event_818()
+    Event_810()
+    Event_812(0, flag=51400350)
+    Event_812(1, flag=51010050)
+    Event_822()
+    Event_823()
+    Event_910(0, flag=11400591, item_lot=1280)
+    Event_911(0, flag=11010591, item_lot=1000, state=1)
+    Event_911(1, flag=11510590, item_lot=1010, state=1)
+    Event_911(2, flag=11700591, item_lot=1020, state=1)
+    Event_911(3, flag=11000591, item_lot=1030, state=1)
+    Event_911(4, flag=11400590, item_lot=1040, state=1)
+    Event_911(5, flag=11410594, item_lot=1050, state=1)
+    Event_911(6, flag=11020594, item_lot=1060, state=1)
+    Event_911(7, flag=11020595, item_lot=1070, state=1)
+    Event_911(8, flag=11810590, item_lot=1082, state=1)
+    Event_911(9, flag=11810591, item_lot=1080, state=1)
+    Event_911(10, flag=11510592, item_lot=1090, state=1)
+    Event_911(11, flag=11600592, item_lot=1100, state=1)
+    Event_911(12, flag=11020602, item_lot=1110, state=1)
+    Event_911(13, flag=11010594, item_lot=1120, state=1)
+    Event_911(14, flag=11010595, item_lot=1130, state=1)
+    Event_911(15, flag=11020599, item_lot=1140, state=1)
+    Event_911(16, flag=11020607, item_lot=1150, state=1)
+    Event_911(17, flag=11200592, item_lot=1160, state=1)
+    Event_911(18, flag=11200593, item_lot=1170, state=1)
+    Event_911(19, flag=11200594, item_lot=1180, state=1)
+    Event_911(20, flag=11300590, item_lot=1190, state=1)
+    Event_911(21, flag=11300591, item_lot=1200, state=1)
+    Event_911(22, flag=11310590, item_lot=1210, state=1)
+    Event_911(23, flag=11310592, item_lot=1220, state=1)
+    Event_911(24, flag=11310593, item_lot=1230, state=1)
+    Event_911(25, flag=11310594, item_lot=1240, state=1)
+    Event_911(26, flag=11320590, item_lot=1250, state=1)
+    Event_911(27, flag=11320581, item_lot=1260, state=1)
+    Event_911(28, flag=11320593, item_lot=1270, state=1)
+    Event_911(29, flag=11400592, item_lot=1290, state=1)
+    Event_911(30, flag=11400594, item_lot=1300, state=1)
+    Event_911(31, flag=11400596, item_lot=1310, state=1)
+    Event_911(32, flag=11400597, item_lot=1320, state=1)
+    Event_911(33, flag=11400598, item_lot=1330, state=1)
+    Event_911(34, flag=11400599, item_lot=1340, state=1)
+    Event_911(35, flag=11510595, item_lot=1350, state=1)
+    Event_911(36, flag=11510596, item_lot=1360, state=1)
+    Event_911(37, flag=11510597, item_lot=1370, state=1)
+    Event_911(38, flag=11600594, item_lot=1380, state=1)
+    Event_911(39, flag=11600595, item_lot=1390, state=1)
+    Event_911(40, flag=11600596, item_lot=1400, state=1)
+    Event_911(41, flag=11010598, item_lot=1410, state=0)
+    Event_911(42, flag=11210590, item_lot=1500, state=1)
+    Event_911(43, flag=11210593, item_lot=1510, state=1)
+    Event_911(44, flag=11210594, item_lot=1520, state=1)
+    Event_911(45, flag=11600580, item_lot=1401, state=1)
+    Event_911(46, flag=11600581, item_lot=1402, state=1)
+    Event_911(47, flag=11600582, item_lot=1403, state=1)
+    Event_911(48, flag=11600583, item_lot=1404, state=1)
+    Event_911(49, flag=11020905, item_lot=1800, state=1)
+    Event_911(50, flag=11510905, item_lot=1810, state=1)
+    Event_911(51, flag=11010905, item_lot=1820, state=1)
+    Event_911(52, flag=11600905, item_lot=1830, state=1)
+    Event_911(53, flag=11320905, item_lot=1840, state=1)
+    Event_911(54, flag=11300906, item_lot=1850, state=1)
+    Event_911(55, flag=11200905, item_lot=1860, state=1)
+    Event_911(56, flag=11510906, item_lot=1870, state=1)
+    Event_911(57, flag=11400905, item_lot=1880, state=1)
+    Event_890(0, flag=11310580, item_lot=1221, state=1)
+    Event_890(1, flag=11510580, item_lot=1361, state=1)
+    Event_890(2, flag=11510581, item_lot=1371, state=1)
+    Event_890(3, flag=11320592, item_lot=1261, state=1)
+    Event_960(0, flag=1322, character=6190, item_lot=6190)
+    Event_960(1, flag=1315, character=6180, item_lot=1100)
+    Event_960(2, flag=1402, character=6230, item_lot=6230)
+    Event_960(3, flag=1402, character=6230, item_lot=6231)
+    Event_8200(0, item_type=3, item=5500, flag=50000120, flag_1=11010594)
+    Event_8200(1, item_type=3, item=5510, flag=50000130, flag_1=11010595)
+    Event_8200(2, item_type=2, item=103, flag=50000160, flag_1=11200592)
+    Event_8200(3, item_type=3, item=240, flag=50000170, flag_1=11200593)
+    Event_8200(4, item_type=2, item=124, flag=50000180, flag_1=11200594)
+    Event_8200(5, item_type=0, item=453000, flag=50000220, flag_1=11310592)
+    Event_8200(6, item_type=3, item=5100, flag=50000225, flag_1=11310580)
+    Event_8200(7, item_type=3, item=5110, flag=50000230, flag_1=11310593)
+    Event_8200(8, item_type=3, item=114, flag=50000265, flag_1=11320581)
+    Event_8200(9, item_type=3, item=377, flag=50000260, flag_1=11320592)
+    Event_8200(10, item_type=3, item=378, flag=50000270, flag_1=11320593)
+    Event_8200(11, item_type=3, item=4500, flag=50000310, flag_1=11400596)
+    Event_8200(12, item_type=3, item=4520, flag=50000320, flag_1=11400597)
+    Event_8200(13, item_type=3, item=4510, flag=50000330, flag_1=11400598)
+    Event_8200(14, item_type=2, item=130, flag=50000350, flag_1=11510595)
+    Event_8200(15, item_type=3, item=113, flag=50000360, flag_1=11510596)
+    Event_8200(16, item_type=2, item=102, flag=50000365, flag_1=11510580)
+    Event_8200(17, item_type=3, item=5910, flag=50000370, flag_1=11510597)
+    Event_8200(18, item_type=0, item=1366000, flag=50000375, flag_1=11510581)
+    Event_8200(19, item_type=0, item=904000, flag=50000380, flag_1=11600594)
+    Event_8200(20, item_type=3, item=102, flag=50000390, flag_1=11600595)
+    Event_8200(21, item_type=0, item=210000, flag=50000400, flag_1=11600596)
+    Event_8200(22, item_type=1, item=40000, flag=50000410, flag_1=11600580)
+    Event_8200(23, item_type=1, item=41000, flag=50000420, flag_1=11600581)
+    Event_8200(24, item_type=1, item=42000, flag=50000430, flag_1=11600582)
+    Event_8200(25, item_type=1, item=43000, flag=50000440, flag_1=11600583)
+    Event_8200(26, item_type=3, item=131, flag=50000800, flag_1=11020905)
+    Event_8200(27, item_type=3, item=132, flag=50000810, flag_1=11510905)
+    Event_8200(28, item_type=3, item=133, flag=50000820, flag_1=11010905)
+    Event_8200(29, item_type=3, item=134, flag=50000830, flag_1=11600905)
+    Event_8200(30, item_type=3, item=135, flag=50000840, flag_1=11320905)
+    Event_8200(31, item_type=3, item=136, flag=50000850, flag_1=11300906)
+    Event_8200(32, item_type=3, item=137, flag=50000860, flag_1=11200905)
+    Event_8200(33, item_type=3, item=138, flag=50000870, flag_1=11510906)
+    Event_8200(34, item_type=3, item=139, flag=50000880, flag_1=11400905)
+    Event_8300(0, item_type=3, item=100, flag=50000000)
+    Event_8300(1, item_type=3, item=101, flag=51100330)
+    Event_8300(2, item_type=3, item=102, flag=50000390)
+    Event_8300(3, item_type=3, item=106, flag=11017020)
+    Event_8300(4, item_type=3, item=108, flag=11607020)
+    Event_8300(5, item_type=3, item=112, flag=11407080)
+    Event_8300(6, item_type=3, item=2508, flag=11007010)
+    Event_8300(7, item_type=3, item=385, flag=11017210)
+    Event_8090(0, item_type=3, item=510, flag=11217010)
+    Event_8090(1, item_type=3, item=511, flag=11217020)
+    Event_8090(2, item_type=3, item=512, flag=11217030)
+    Event_8090(3, item_type=3, item=513, flag=11217040)
+    Event_8090(4, item_type=3, item=514, flag=11217050)
 
 
+@ContinueOnRest(50)
 def Preconstructor():
-    """ 50: Event 50 """
-    SkipLinesIfFlagOn(80, 909)
-    SkipLinesIfFlagRangeAnyOn(1, (1000, 1029))
+    """Event 50"""
+    SkipLinesIfFlagEnabled(80, 909)
+    SkipLinesIfFlagRangeAnyEnabled(1, (1000, 1029))
     EnableFlag(1000)
-    SkipLinesIfFlagRangeAnyOn(1, (1030, 1059))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1030, 1059))
     EnableFlag(1030)
-    SkipLinesIfFlagRangeAnyOn(1, (1060, 1089))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1060, 1089))
     EnableFlag(1060)
-    SkipLinesIfFlagRangeAnyOn(1, (1090, 1109))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1090, 1109))
     EnableFlag(1090)
-    SkipLinesIfFlagRangeAnyOn(1, (1110, 1119))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1110, 1119))
     EnableFlag(1110)
-    SkipLinesIfFlagRangeAnyOn(1, (1120, 1139))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1120, 1139))
     EnableFlag(1120)
-    SkipLinesIfFlagRangeAnyOn(1, (1140, 1169))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1140, 1169))
     EnableFlag(1140)
-    SkipLinesIfFlagRangeAnyOn(1, (1170, 1189))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1170, 1189))
     EnableFlag(1170)
-    SkipLinesIfFlagRangeAnyOn(1, (1190, 1209))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1190, 1209))
     EnableFlag(1202)
-    SkipLinesIfFlagRangeAnyOn(1, (1210, 1219))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1210, 1219))
     EnableFlag(1210)
-    SkipLinesIfFlagRangeAnyOn(1, (1220, 1229))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1220, 1229))
     EnableFlag(1220)
-    SkipLinesIfFlagRangeAnyOn(1, (1230, 1239))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1230, 1239))
     EnableFlag(1230)
-    SkipLinesIfFlagRangeAnyOn(1, (1240, 1249))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1240, 1249))
     EnableFlag(1240)
-    SkipLinesIfFlagRangeAnyOn(1, (1250, 1259))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1250, 1259))
     EnableFlag(1250)
-    SkipLinesIfFlagRangeAnyOn(1, (1270, 1279))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1270, 1279))
     EnableFlag(1270)
-    SkipLinesIfFlagRangeAnyOn(1, (1280, 1289))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1280, 1289))
     EnableFlag(1280)
-    SkipLinesIfFlagRangeAnyOn(1, (1290, 1309))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1290, 1309))
     EnableFlag(1290)
-    SkipLinesIfFlagRangeAnyOn(1, (1310, 1319))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1310, 1319))
     EnableFlag(1310)
-    SkipLinesIfFlagRangeAnyOn(1, (1320, 1339))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1320, 1339))
     EnableFlag(1320)
-    SkipLinesIfFlagRangeAnyOn(1, (1340, 1359))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1340, 1359))
     EnableFlag(1340)
-    SkipLinesIfFlagRangeAnyOn(1, (1360, 1379))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1360, 1379))
     EnableFlag(1360)
-    SkipLinesIfFlagRangeAnyOn(1, (1380, 1399))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1380, 1399))
     EnableFlag(1380)
-    SkipLinesIfFlagRangeAnyOn(1, (1400, 1409))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1400, 1409))
     EnableFlag(1400)
-    SkipLinesIfFlagRangeAnyOn(1, (1410, 1419))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1410, 1419))
     EnableFlag(1410)
-    SkipLinesIfFlagRangeAnyOn(1, (1420, 1429))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1420, 1429))
     EnableFlag(1420)
-    SkipLinesIfFlagRangeAnyOn(1, (1430, 1459))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1430, 1459))
     EnableFlag(1430)
-    SkipLinesIfFlagRangeAnyOn(1, (1460, 1489))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1460, 1489))
     EnableFlag(1460)
-    SkipLinesIfFlagRangeAnyOn(1, (1490, 1539))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1490, 1539))
     EnableFlag(1490)
-    SkipLinesIfFlagRangeAnyOn(1, (1540, 1569))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1540, 1569))
     EnableFlag(1540)
-    SkipLinesIfFlagRangeAnyOn(1, (1570, 1599))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1570, 1599))
     EnableFlag(1570)
-    SkipLinesIfFlagRangeAnyOn(1, (1600, 1619))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1600, 1619))
     EnableFlag(1600)
-    SkipLinesIfFlagRangeAnyOn(1, (1620, 1639))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1620, 1639))
     EnableFlag(1620)
-    SkipLinesIfFlagRangeAnyOn(1, (1640, 1669))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1640, 1669))
     EnableFlag(1640)
-    SkipLinesIfFlagRangeAnyOn(1, (1670, 1679))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1670, 1679))
     EnableFlag(1670)
-    SkipLinesIfFlagRangeAnyOn(1, (1690, 1699))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1690, 1699))
     EnableFlag(1690)
-    SkipLinesIfFlagRangeAnyOn(1, (1700, 1709))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1700, 1709))
     EnableFlag(1700)
-    SkipLinesIfFlagRangeAnyOn(1, (1710, 1729))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1710, 1729))
     EnableFlag(1710)
-    SkipLinesIfFlagRangeAnyOn(1, (1760, 1769))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1760, 1769))
     EnableFlag(1760)
-    SkipLinesIfFlagRangeAnyOn(1, (1770, 1779))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1770, 1779))
     EnableFlag(1770)
-    SkipLinesIfFlagRangeAnyOn(1, (1780, 1789))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1780, 1789))
     EnableFlag(1780)
-    SkipLinesIfFlagRangeAnyOn(1, (1820, 1839))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1820, 1839))
     EnableFlag(1820)
-    SkipLinesIfFlagRangeAnyOn(1, (1840, 1859))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1840, 1859))
     EnableFlag(1840)
-    SkipLinesIfFlagRangeAnyOn(1, (1860, 1869))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1860, 1869))
     EnableFlag(1860)
-    SkipLinesIfFlagRangeAnyOn(1, (1870, 1889))
+    SkipLinesIfFlagRangeAnyEnabled(1, (1870, 1889))
     EnableFlag(1870)
-    SkipLinesIfFlagOn(24, 909)
-    EnableFlag(11807020)
-    EnableFlag(11807030)
-    EnableFlag(11807040)
-    EnableFlag(11807050)
-    EnableFlag(11807060)
-    EnableFlag(11807070)
-    EnableFlag(11807080)
-    EnableFlag(11807090)
-    EnableFlag(11807100)
-    EnableFlag(11807110)
-    EnableFlag(11807120)
-    EnableFlag(11807130)
-    EnableFlag(11807170)
-    EnableFlag(11807180)
-    EnableFlag(11807190)
-    EnableFlag(11807200)
-    EnableFlag(11807210)
-    EnableFlag(11807220)
-    EnableFlag(11807230)
-    EnableFlag(11807240)
-    EnableFlag(11217060)
-    EnableFlag(11217070)
-    EnableFlag(11217080)
-    EnableFlag(11217090)
-    SkipLinesIfFlagOn(4, 909)
-    EnableFlag(909)
-    EnableFlag(814)
-    EnableFlag(50006071)
-    EnableFlag(50006080)
+    if FlagDisabled(909):
+        EnableFlag(11807020)
+        EnableFlag(11807030)
+        EnableFlag(11807040)
+        EnableFlag(11807050)
+        EnableFlag(11807060)
+        EnableFlag(11807070)
+        EnableFlag(11807080)
+        EnableFlag(11807090)
+        EnableFlag(11807100)
+        EnableFlag(11807110)
+        EnableFlag(11807120)
+        EnableFlag(11807130)
+        EnableFlag(11807170)
+        EnableFlag(11807180)
+        EnableFlag(11807190)
+        EnableFlag(11807200)
+        EnableFlag(11807210)
+        EnableFlag(11807220)
+        EnableFlag(11807230)
+        EnableFlag(11807240)
+        EnableFlag(11217060)
+        EnableFlag(11217070)
+        EnableFlag(11217080)
+        EnableFlag(11217090)
+    if FlagDisabled(909):
+        EnableFlag(909)
+        EnableFlag(814)
+        EnableFlag(50006071)
+        EnableFlag(50006080)
 
 
-def Event290():
-    """ 290: Event 290 """
-    EndIfThisEventOn()
+@ContinueOnRest(290)
+def Event_290():
+    """Event 290"""
+    if ThisEventFlagEnabled():
+        return
     EnableFlagRange((280, 290))
-    IfPlayerClass(-1, ClassType.Knight)
-    IfPlayerClass(-1, ClassType.Cleric)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionFalse(2, input_condition=-1)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    SkipLinesIfFinishedConditionTrue(2, 2)
+    OR_1.Add(PlayerClass(ClassType.Knight))
+    OR_1.Add(PlayerClass(ClassType.Cleric))
+    AND_1.Add(OR_1)
+    AND_2.Add(not OR_1)
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_2)
     DisableFlag(287)
     End()
     DisableFlag(288)
 
 
-def Event701():
-    """ 701: Event 701 """
-    EndIfThisEventOn()
+@ContinueOnRest(701)
+def Event_701():
+    """Event 701"""
+    if ThisEventFlagEnabled():
+        return
     EnableVagrantSpawning()
-    IfInsideMap(0, game_map=UNDEAD_ASYLUM)
+    
+    MAIN.Await(InsideMap(game_map=UNDEAD_ASYLUM))
+    
     DisableVagrantSpawning()
-    IfFlagOn(0, 11810000)
+    
+    MAIN.Await(FlagEnabled(11810000))
+    
     EnableVagrantSpawning()
 
 
-def Event702():
-    """ 702: Event 702 """
+@ContinueOnRest(702)
+def Event_702():
+    """Event 702"""
     DisableFlag(702)
-    IfFlagOff(1, 11800210)
-    IfInsideMap(1, game_map=KILN_OF_THE_FIRST_FLAME)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(11800210))
+    AND_1.Add(InsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(702)
-    IfOutsideMap(-1, game_map=KILN_OF_THE_FIRST_FLAME)
-    IfFlagOn(-1, 11800210)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(OutsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
+    OR_1.Add(FlagEnabled(11800210))
+    
+    MAIN.Await(OR_1)
+    
     DisableFlag(702)
     Restart()
 
 
-def Event717():
-    """ 717: Event 717 """
+@ContinueOnRest(717)
+def Event_717():
+    """Event 717"""
     DisableFlag(717)
-    IfFlagOff(1, 710)
-    IfInsideMap(1, game_map=NEW_LONDO_RUINS)
-    IfStandingOnCollision(1, 1603300)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(710))
+    AND_1.Add(InsideMap(game_map=NEW_LONDO_RUINS))
+    AND_1.Add(PlayerStandingOnCollision(1603300))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(717)
-    IfStandingOnCollision(2, 1603300)
-    IfConditionFalse(0, input_condition=2)
+    AND_2.Add(PlayerStandingOnCollision(1603300))
+    
+    MAIN.Await(not AND_2)
+    
     DisableFlag(717)
     Restart()
 
 
-def Event718():
-    """ 718: Event 718 """
-    EndIfFlagOff(8120)
-    DisplayStatus(10010650, pad_enabled=True)
+@ContinueOnRest(718)
+def Event_718():
+    """Event 718"""
+    if FlagDisabled(8120):
+        return
+    DisplayStatus(10010650)
     DisableFlag(8120)
 
 
-def Event706():
-    """ 706: Event 706 """
-    IfFlagOn(0, 710)
+@ContinueOnRest(706)
+def Event_706():
+    """Event 706"""
+    MAIN.Await(FlagEnabled(710))
+    
     EnableFlag(706)
-    IfFlagOn(-1, 11705170)
-    IfInsideMap(-1, game_map=PAINTED_WORLD)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(FlagEnabled(11705170))
+    OR_1.Add(InsideMap(game_map=PAINTED_WORLD))
+    
+    MAIN.Await(OR_1)
+    
     DisableFlag(706)
-    IfFlagOff(1, 11705170)
-    IfOutsideMap(1, game_map=PAINTED_WORLD)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagDisabled(11705170))
+    AND_1.Add(OutsideMap(game_map=PAINTED_WORLD))
+    
+    MAIN.Await(AND_1)
+    
     Restart()
 
 
-def Event710():
-    """ 710: Event 710 """
-    EndIfThisEventOn()
-    IfPlayerHasGood(0, 2510, including_box=False)
+@ContinueOnRest(710)
+def Event_710():
+    """Event 710"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(PlayerHasGood(2510))
+    
     EnableFlag(710)
 
 
-def Event711(_, arg_0_3: int, arg_4_7: int):
-    """ 711: Event 711 """
-    EndIfThisEventSlotOn()
-    IfPlayerHasGood(0, arg_0_3, including_box=False)
-    EnableFlag(arg_4_7)
+@ContinueOnRest(711)
+def Event_711(_, item: int, flag: int):
+    """Event 711"""
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(PlayerHasGood(item))
+    
+    EnableFlag(flag)
 
 
-def Event715():
-    """ 715: Event 715 """
+@ContinueOnRest(715)
+def Event_715():
+    """Event 715"""
     DisableFlag(715)
-    IfFlagOn(1, 11010595)
-    IfPlayerHasGood(1, 702, including_box=False)
-    IfPlayerDoesNotHaveGood(1, 5520, including_box=True)
-    IfPlayerCovenant(1, Covenant.WarriorOfSunlight)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(11010595))
+    AND_1.Add(PlayerHasGood(702))
+    AND_1.Add(PlayerDoesNotHaveGood(5520, including_storage=True))
+    AND_1.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(715)
-    IfPlayerDoesNotHaveGood(-1, 702, including_box=False)
-    IfPlayerHasGood(-1, 5520, including_box=True)
-    IfPlayerCovenant(2, Covenant.WarriorOfSunlight)
-    IfConditionFalse(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(PlayerDoesNotHaveGood(702))
+    OR_1.Add(PlayerHasGood(5520, including_storage=True))
+    AND_2.Add(PlayerCovenant(Covenant.WarriorOfSunlight))
+    OR_1.Add(not AND_2)
+    
+    MAIN.Await(OR_1)
+    
     Restart()
 
 
-def Event716():
-    """ 716: Event 716 """
-    EndIfThisEventOn()
-    IfFlagOn(0, 50000082)
+@ContinueOnRest(716)
+def Event_716():
+    """Event 716"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(FlagEnabled(50000082))
+    
     EnableFlag(716)
 
 
-def Event8131(_, arg_0_3: int, arg_4_7: int):
-    """ 8131: Event 8131 """
-    EndIfThisEventSlotOn()
-    IfPlayerHasGood(-1, arg_0_3, including_box=False)
-    IfPlayerHasGood(-1, arg_4_7, including_box=False)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=202)
-    EnableFlag(8131)
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=204)
-    EnableFlagRange((8131, 8132))
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=206)
-    EnableFlagRange((8131, 8133))
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=208)
-    EnableFlagRange((8131, 8134))
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=210)
-    EnableFlagRange((8131, 8135))
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=212)
-    EnableFlagRange((8131, 8136))
-    SkipLinesIfNotEqual(1, left=arg_0_3, right=214)
-    EnableFlagRange((8131, 8137))
+@ContinueOnRest(8131)
+def Event_8131(_, item: int, item_1: int):
+    """Event 8131"""
+    if ThisEventSlotFlagEnabled():
+        return
+    OR_1.Add(PlayerHasGood(item))
+    OR_1.Add(PlayerHasGood(item_1))
+    
+    MAIN.Await(OR_1)
+    
+    if ValueEqual(left=item, right=202):
+        EnableFlag(8131)
+    if ValueEqual(left=item, right=204):
+        EnableFlagRange((8131, 8132))
+    if ValueEqual(left=item, right=206):
+        EnableFlagRange((8131, 8133))
+    if ValueEqual(left=item, right=208):
+        EnableFlagRange((8131, 8134))
+    if ValueEqual(left=item, right=210):
+        EnableFlagRange((8131, 8135))
+    if ValueEqual(left=item, right=212):
+        EnableFlagRange((8131, 8136))
+    if ValueEqual(left=item, right=214):
+        EnableFlagRange((8131, 8137))
 
 
-def Event819():
-    """ 819: Event 819 """
-    EndIfThisEventOn()
-    IfFlagOn(-1, 11017040)
-    IfFlagOn(-1, 11017170)
-    IfConditionTrue(0, input_condition=-1)
+@ContinueOnRest(819)
+def Event_819():
+    """Event 819"""
+    if ThisEventFlagEnabled():
+        return
+    OR_1.Add(FlagEnabled(11017040))
+    OR_1.Add(FlagEnabled(11017170))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(11017040)
     EnableFlag(11017170)
 
 
-def Event719():
-    """ 719: Event 719 """
-    EndIfThisEventOn()
-    IfPlayerHasGood(-1, 3000, including_box=False)
-    IfPlayerHasGood(-1, 3010, including_box=False)
-    IfPlayerHasGood(-1, 3020, including_box=False)
-    IfPlayerHasGood(-1, 3030, including_box=False)
-    IfPlayerHasGood(-1, 3040, including_box=False)
-    IfPlayerHasGood(-1, 3050, including_box=False)
-    IfPlayerHasGood(-1, 3060, including_box=False)
-    IfPlayerHasGood(-1, 3070, including_box=False)
-    IfPlayerHasGood(-1, 3100, including_box=False)
-    IfPlayerHasGood(-1, 3110, including_box=False)
-    IfPlayerHasGood(-1, 3120, including_box=False)
-    IfPlayerHasGood(-1, 3300, including_box=False)
-    IfPlayerHasGood(-1, 3310, including_box=False)
-    IfPlayerHasGood(-1, 3400, including_box=False)
-    IfPlayerHasGood(-1, 3410, including_box=False)
-    IfPlayerHasGood(-1, 3500, including_box=False)
-    IfPlayerHasGood(-1, 3510, including_box=False)
-    IfPlayerHasGood(-1, 3520, including_box=False)
-    IfPlayerHasGood(-1, 3530, including_box=False)
-    IfPlayerHasGood(-1, 3540, including_box=False)
-    IfPlayerHasGood(-1, 3550, including_box=False)
-    IfPlayerHasGood(-1, 3600, including_box=False)
-    IfPlayerHasGood(-1, 3610, including_box=False)
-    IfPlayerHasGood(-1, 3700, including_box=False)
-    IfPlayerHasGood(-1, 4000, including_box=False)
-    IfPlayerHasGood(-1, 4010, including_box=False)
-    IfPlayerHasGood(-1, 4020, including_box=False)
-    IfPlayerHasGood(-1, 4030, including_box=False)
-    IfPlayerHasGood(-1, 4040, including_box=False)
-    IfPlayerHasGood(-1, 4050, including_box=False)
-    IfPlayerHasGood(-1, 4060, including_box=False)
-    IfPlayerHasGood(-1, 4100, including_box=False)
-    IfPlayerHasGood(-1, 4110, including_box=False)
-    IfPlayerHasGood(-1, 4200, including_box=False)
-    IfPlayerHasGood(-1, 4210, including_box=False)
-    IfPlayerHasGood(-1, 4220, including_box=False)
-    IfPlayerHasGood(-1, 4300, including_box=False)
-    IfPlayerHasGood(-1, 4310, including_box=False)
-    IfPlayerHasGood(-1, 4360, including_box=False)
-    IfPlayerHasGood(-1, 4400, including_box=False)
-    IfPlayerHasGood(-1, 4500, including_box=False)
-    IfPlayerHasGood(-1, 4510, including_box=False)
-    IfPlayerHasGood(-1, 4520, including_box=False)
-    IfPlayerHasGood(-1, 5000, including_box=False)
-    IfPlayerHasGood(-1, 5010, including_box=False)
-    IfPlayerHasGood(-1, 5020, including_box=False)
-    IfPlayerHasGood(-1, 5030, including_box=False)
-    IfPlayerHasGood(-1, 5040, including_box=False)
-    IfPlayerHasGood(-1, 5050, including_box=False)
-    IfPlayerHasGood(-1, 5100, including_box=False)
-    IfPlayerHasGood(-1, 5110, including_box=False)
-    IfPlayerHasGood(-1, 5200, including_box=False)
-    IfPlayerHasGood(-1, 5210, including_box=False)
-    IfPlayerHasGood(-1, 5300, including_box=False)
-    IfPlayerHasGood(-1, 5310, including_box=False)
-    IfPlayerHasGood(-1, 5320, including_box=False)
-    IfPlayerHasGood(-1, 5400, including_box=False)
-    IfPlayerHasGood(-1, 5500, including_box=False)
-    IfPlayerHasGood(-1, 5510, including_box=False)
-    IfPlayerHasGood(-1, 5520, including_box=False)
-    IfPlayerHasGood(-1, 5600, including_box=False)
-    IfPlayerHasGood(-1, 5610, including_box=False)
-    IfPlayerHasGood(-1, 5700, including_box=False)
-    IfPlayerHasGood(-1, 5710, including_box=False)
-    IfPlayerHasGood(-1, 5800, including_box=False)
-    IfPlayerHasGood(-1, 5810, including_box=False)
-    IfPlayerHasGood(-1, 5900, including_box=False)
-    IfPlayerHasGood(-1, 5910, including_box=False)
-    IfPlayerHasGood(-1, 3710, including_box=False)
-    IfPlayerHasGood(-1, 3720, including_box=False)
-    IfPlayerHasGood(-1, 3730, including_box=False)
-    IfPlayerHasGood(-1, 3740, including_box=False)
-    IfPlayerHasGood(-1, 4530, including_box=False)
-    IfConditionTrue(0, input_condition=-1)
+@ContinueOnRest(719)
+def Event_719():
+    """Event 719"""
+    if ThisEventFlagEnabled():
+        return
+    OR_1.Add(PlayerHasGood(3000))
+    OR_1.Add(PlayerHasGood(3010))
+    OR_1.Add(PlayerHasGood(3020))
+    OR_1.Add(PlayerHasGood(3030))
+    OR_1.Add(PlayerHasGood(3040))
+    OR_1.Add(PlayerHasGood(3050))
+    OR_1.Add(PlayerHasGood(3060))
+    OR_1.Add(PlayerHasGood(3070))
+    OR_1.Add(PlayerHasGood(3100))
+    OR_1.Add(PlayerHasGood(3110))
+    OR_1.Add(PlayerHasGood(3120))
+    OR_1.Add(PlayerHasGood(3300))
+    OR_1.Add(PlayerHasGood(3310))
+    OR_1.Add(PlayerHasGood(3400))
+    OR_1.Add(PlayerHasGood(3410))
+    OR_1.Add(PlayerHasGood(3500))
+    OR_1.Add(PlayerHasGood(3510))
+    OR_1.Add(PlayerHasGood(3520))
+    OR_1.Add(PlayerHasGood(3530))
+    OR_1.Add(PlayerHasGood(3540))
+    OR_1.Add(PlayerHasGood(3550))
+    OR_1.Add(PlayerHasGood(3600))
+    OR_1.Add(PlayerHasGood(3610))
+    OR_1.Add(PlayerHasGood(3700))
+    OR_1.Add(PlayerHasGood(4000))
+    OR_1.Add(PlayerHasGood(4010))
+    OR_1.Add(PlayerHasGood(4020))
+    OR_1.Add(PlayerHasGood(4030))
+    OR_1.Add(PlayerHasGood(4040))
+    OR_1.Add(PlayerHasGood(4050))
+    OR_1.Add(PlayerHasGood(4060))
+    OR_1.Add(PlayerHasGood(4100))
+    OR_1.Add(PlayerHasGood(4110))
+    OR_1.Add(PlayerHasGood(4200))
+    OR_1.Add(PlayerHasGood(4210))
+    OR_1.Add(PlayerHasGood(4220))
+    OR_1.Add(PlayerHasGood(4300))
+    OR_1.Add(PlayerHasGood(4310))
+    OR_1.Add(PlayerHasGood(4360))
+    OR_1.Add(PlayerHasGood(4400))
+    OR_1.Add(PlayerHasGood(4500))
+    OR_1.Add(PlayerHasGood(4510))
+    OR_1.Add(PlayerHasGood(4520))
+    OR_1.Add(PlayerHasGood(5000))
+    OR_1.Add(PlayerHasGood(5010))
+    OR_1.Add(PlayerHasGood(5020))
+    OR_1.Add(PlayerHasGood(5030))
+    OR_1.Add(PlayerHasGood(5040))
+    OR_1.Add(PlayerHasGood(5050))
+    OR_1.Add(PlayerHasGood(5100))
+    OR_1.Add(PlayerHasGood(5110))
+    OR_1.Add(PlayerHasGood(5200))
+    OR_1.Add(PlayerHasGood(5210))
+    OR_1.Add(PlayerHasGood(5300))
+    OR_1.Add(PlayerHasGood(5310))
+    OR_1.Add(PlayerHasGood(5320))
+    OR_1.Add(PlayerHasGood(5400))
+    OR_1.Add(PlayerHasGood(5500))
+    OR_1.Add(PlayerHasGood(5510))
+    OR_1.Add(PlayerHasGood(5520))
+    OR_1.Add(PlayerHasGood(5600))
+    OR_1.Add(PlayerHasGood(5610))
+    OR_1.Add(PlayerHasGood(5700))
+    OR_1.Add(PlayerHasGood(5710))
+    OR_1.Add(PlayerHasGood(5800))
+    OR_1.Add(PlayerHasGood(5810))
+    OR_1.Add(PlayerHasGood(5900))
+    OR_1.Add(PlayerHasGood(5910))
+    OR_1.Add(PlayerHasGood(3710))
+    OR_1.Add(PlayerHasGood(3720))
+    OR_1.Add(PlayerHasGood(3730))
+    OR_1.Add(PlayerHasGood(3740))
+    OR_1.Add(PlayerHasGood(4530))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(719)
 
 
-def Event720():
-    """ 720: Event 720 """
-    EndIfThisEventOn()
-    IfPlayerHasGood(-1, 4020, including_box=False)
-    IfPlayerHasGood(-1, 4030, including_box=False)
-    IfPlayerHasGood(-1, 4040, including_box=False)
-    IfPlayerHasGood(-1, 4060, including_box=False)
-    IfPlayerHasGood(-1, 4110, including_box=False)
-    IfPlayerHasGood(-1, 4500, including_box=False)
-    IfPlayerHasGood(-1, 4510, including_box=False)
-    IfPlayerHasGood(-1, 4520, including_box=False)
-    IfConditionTrue(0, input_condition=-1)
+@ContinueOnRest(720)
+def Event_720():
+    """Event 720"""
+    if ThisEventFlagEnabled():
+        return
+    OR_1.Add(PlayerHasGood(4020))
+    OR_1.Add(PlayerHasGood(4030))
+    OR_1.Add(PlayerHasGood(4040))
+    OR_1.Add(PlayerHasGood(4060))
+    OR_1.Add(PlayerHasGood(4110))
+    OR_1.Add(PlayerHasGood(4500))
+    OR_1.Add(PlayerHasGood(4510))
+    OR_1.Add(PlayerHasGood(4520))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(11020102)
 
 
-def Event730():
-    """ 730: Event 730 """
-    IfFlagOff(1, 732)
-    IfFlagOn(1, 8000)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(730)
+def Event_730():
+    """Event 730"""
+    AND_1.Add(FlagDisabled(732))
+    AND_1.Add(FlagEnabled(8000))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(732)
     EnableFlag(735)
     Restart()
 
 
-def Event731():
-    """ 731: Event 731 """
-    IfFlagOff(0, 8000)
+@ContinueOnRest(731)
+def Event_731():
+    """Event 731"""
+    MAIN.Await(FlagDisabled(8000))
+    
     DisableFlag(732)
     DisableFlag(735)
-    IfFlagOn(0, 8000)
+    
+    MAIN.Await(FlagEnabled(8000))
+    
     Restart()
 
 
-def Event250(_, arg_0_3: int, arg_4_7: int):
-    """ 250: Event 250 """
-    EndIfThisEventSlotOn()
-    IfPlayerHasGood(0, arg_0_3, including_box=False)
-    EnableFlag(arg_4_7)
+@ContinueOnRest(250)
+def Event_250(_, item: int, flag: int):
+    """Event 250"""
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(PlayerHasGood(item))
+    
+    EnableFlag(flag)
 
 
-def Event350(_, arg_0_3: int, arg_4_7: int):
-    """ 350: Event 350 """
-    SkipLinesIfThisEventSlotOff(2)
-    IfPlayerHasGood(1, arg_4_7, including_box=False)
-    EndIfConditionFalse(1)
-    IfFlagOn(0, arg_0_3)
-    RemoveGoodFromPlayer(arg_4_7, quantity=1)
+@ContinueOnRest(350)
+def Event_350(_, flag: int, item: int):
+    """Event 350"""
+    if ThisEventSlotFlagEnabled():
+        AND_1.Add(PlayerHasGood(item))
+        if not AND_1:
+            return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    RemoveGoodFromPlayer(item=item, quantity=1)
 
 
-def Event780(_, arg_0_3: int, arg_4_7: int):
-    """ 780: Event 780 """
-    DisableFlag(arg_4_7)
-    IfPlayerHasGood(0, arg_0_3, including_box=False)
-    EnableFlag(arg_4_7)
-    IfPlayerDoesNotHaveGood(0, arg_0_3, including_box=False)
+@ContinueOnRest(780)
+def Event_780(_, item: int, flag: int):
+    """Event 780"""
+    DisableFlag(flag)
+    
+    MAIN.Await(PlayerHasGood(item))
+    
+    EnableFlag(flag)
+    
+    MAIN.Await(PlayerDoesNotHaveGood(item))
+    
     Restart()
 
 
-def Event870(_, arg_0_0: uchar, arg_4_7: int):
-    """ 870: Event 870 """
-    IfPlayerCovenant(0, arg_0_0)
-    EnableFlag(arg_4_7)
-    IfPlayerCovenant(1, arg_0_0)
-    IfConditionFalse(0, input_condition=1)
-    DisableFlag(arg_4_7)
+@ContinueOnRest(870)
+def Event_870(_, covenant: uchar, flag: int):
+    """Event 870"""
+    MAIN.Await(PlayerCovenant(covenant))
+    
+    EnableFlag(flag)
+    AND_1.Add(PlayerCovenant(covenant))
+    
+    MAIN.Await(not AND_1)
+    
+    DisableFlag(flag)
     Restart()
 
 
-def Event260(_, arg_0_3: int, arg_4_7: int, arg_8_11: float):
-    """ 260: Event 260 """
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    SkipLinesIfFlagOn(2, 9121)
-    Wait(arg_8_11)
-    DisplayStatus(arg_4_7, pad_enabled=True)
+@ContinueOnRest(260)
+def Event_260(_, flag: int, text: int, seconds: float):
+    """Event 260"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    if FlagDisabled(9121):
+        Wait(seconds)
+        DisplayStatus(text)
 
 
-def Event970(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 970: Event 970 """
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    SkipLinesIfEqual(1, left=arg_4_7, right=0)
-    AwardItemLot(arg_4_7, host_only=True)
+@ContinueOnRest(970)
+def Event_970(_, flag: int, item_lot: int, item_lot_1: int, item_lot_2: int):
+    """Event 970"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    if ValueNotEqual(left=item_lot, right=0):
+        AwardItemLot(item_lot, host_only=True)
     DisableNetworkSync()
     Wait(5.0)
-    SkipLinesIfEqual(1, left=arg_8_11, right=0)
-    AwardItemLot(arg_8_11, host_only=True)
-    SkipLinesIfEqual(1, left=arg_12_15, right=0)
-    AwardItemLot(arg_12_15, host_only=True)
+    if ValueNotEqual(left=item_lot_1, right=0):
+        AwardItemLot(item_lot_1, host_only=True)
+    if ValueNotEqual(left=item_lot_2, right=0):
+        AwardItemLot(item_lot_2, host_only=True)
 
 
-def Event911(_, arg_0_3: int, arg_4_7: int, arg_8_8: uchar):
-    """ 911: Event 911 """
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=True)
-    SetFlagState(arg_0_3, state=arg_8_8)
-    EndIfFlagOn(arg_0_3)
+@ContinueOnRest(911)
+def Event_911(_, flag: int, item_lot: int, state: uchar):
+    """Event 911"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    AwardItemLot(item_lot, host_only=True)
+    SetFlagState(flag, state)
+    if FlagEnabled(flag):
+        return
     Restart()
 
 
-def Event890(_, arg_0_3: int, arg_4_7: int, arg_8_8: uchar):
-    """ 890: Event 890 """
-    EndIfFlagOn(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=True)
-    SetFlagState(arg_0_3, state=arg_8_8)
-    EndIfFlagOn(arg_0_3)
+@ContinueOnRest(890)
+def Event_890(_, flag: int, item_lot: int, state: uchar):
+    """Event 890"""
+    if FlagEnabled(flag):
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    AwardItemLot(item_lot, host_only=True)
+    SetFlagState(flag, state)
+    if FlagEnabled(flag):
+        return
     Restart()
 
 
-def Event960(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 960: Event 960 """
-    EndIfThisEventSlotOn()
-    IfFlagOn(1, arg_0_3)
-    IfCharacterDead(1, arg_4_7)
-    IfConditionTrue(0, input_condition=1)
-    AwardItemLot(arg_8_11, host_only=True)
+@ContinueOnRest(960)
+def Event_960(_, flag: int, character: int, item_lot: int):
+    """Event 960"""
+    if ThisEventSlotFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(CharacterDead(character))
+    
+    MAIN.Await(AND_1)
+    
+    AwardItemLot(item_lot, host_only=True)
 
 
-def Event8200(_, arg_0_0: uchar, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 8200: Event 8200 """
-    EndIfFlagOn(arg_8_11)
-    IfNewGameCycleGreaterThanOrEqual(1, completion_count=1)
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, arg_4_7, item_type=arg_0_0, including_box=True)
-    EndIfConditionFalse(2)
-    EnableFlag(arg_8_11)
-    EnableFlag(arg_12_15)
+@ContinueOnRest(8200)
+def Event_8200(_, item_type: uchar, item: int, flag: int, flag_1: int):
+    """Event 8200"""
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
+    EnableFlag(flag)
+    EnableFlag(flag_1)
 
 
-def Event8300(_, arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
-    """ 8300: Event 8300 """
-    EndIfFlagOn(arg_8_11)
-    IfNewGameCycleGreaterThanOrEqual(1, completion_count=1)
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, arg_4_7, item_type=arg_0_0, including_box=True)
-    EndIfConditionFalse(2)
-    EnableFlag(arg_8_11)
+@ContinueOnRest(8300)
+def Event_8300(_, item_type: uchar, item: int, flag: int):
+    """Event 8300"""
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
+    EnableFlag(flag)
 
 
-def Event8090(_, arg_0_0: uchar, arg_4_7: int, arg_8_11: int):
-    """ 8090: Event 8090 """
-    EndIfFlagOn(arg_8_11)
-    IfNewGameCycleGreaterThanOrEqual(1, completion_count=1)
-    EndIfConditionFalse(1)
-    IfPlayerHasItem(2, arg_4_7, item_type=arg_0_0, including_box=True)
-    EndIfConditionFalse(2)
-    EnableFlag(arg_8_11)
+@ContinueOnRest(8090)
+def Event_8090(_, item_type: uchar, item: int, flag: int):
+    """Event 8090"""
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(NewGameCycleGreaterThanOrEqual(completion_count=1))
+    if not AND_1:
+        return
+    IfPlayerHasItem(AND_2, item, item_type=item_type, including_storage=True)
+    if not AND_2:
+        return
+    EnableFlag(flag)
 
 
-def Event910(_, arg_0_3: int, arg_4_7: int):
-    """ 910: Event 910 """
-    SkipLinesIfFlagOn(2, arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    AwardItemLot(arg_4_7, host_only=True)
-    IfFlagOff(0, arg_0_3)
+@ContinueOnRest(910)
+def Event_910(_, flag: int, item_lot: int):
+    """Event 910"""
+    if FlagDisabled(flag):
+        MAIN.Await(FlagEnabled(flag))
+    
+        AwardItemLot(item_lot, host_only=True)
+    
+    MAIN.Await(FlagDisabled(flag))
+    
     Restart()
 
 
-def Event690(_, arg_0_3: int, arg_4_7: uint, arg_8_11: uint, arg_12_15: int):
-    """ 690: Event 690 """
-    SkipLinesIfThisEventSlotOn(1)
-    IfFlagOn(0, arg_12_15)
-    SkipLinesIfFlagOn(1, 2)
-    IfFlagOn(-1, 2)
-    SkipLinesIfFlagOn(1, 3)
-    IfFlagOn(-1, 3)
-    SkipLinesIfFlagOn(1, 4)
-    IfFlagOn(-1, 4)
-    SkipLinesIfFlagOn(1, 5)
-    IfFlagOn(-1, 5)
-    SkipLinesIfFlagOn(1, 6)
-    IfFlagOn(-1, 6)
-    SkipLinesIfFlagOn(1, 7)
-    IfFlagOn(-1, 7)
-    SkipLinesIfFlagOn(1, 8)
-    IfFlagOn(-1, 8)
-    SkipLinesIfFlagOn(1, 9)
-    IfFlagOn(-1, 9)
-    SkipLinesIfFlagOn(1, 10)
-    IfFlagOn(-1, 10)
-    SkipLinesIfFlagOn(1, 11)
-    IfFlagOn(-1, 11)
-    SkipLinesIfFlagOn(1, 12)
-    IfFlagOn(-1, 12)
-    SkipLinesIfFlagOn(1, 13)
-    IfFlagOn(-1, 13)
-    SkipLinesIfFlagOn(1, 14)
-    IfFlagOn(-1, 14)
-    SkipLinesIfFlagOn(1, 15)
-    IfFlagOn(-1, 15)
-    IfConditionTrue(0, input_condition=-1)
-    IncrementEventValue(arg_0_3, bit_count=arg_4_7, max_value=arg_8_11)
+@ContinueOnRest(690)
+def Event_690(_, flag: int, bit_count: uint, max_value: uint, flag_1: int):
+    """Event 690"""
+    if ThisEventSlotFlagDisabled():
+        MAIN.Await(FlagEnabled(flag_1))
+    if FlagDisabled(2):
+        OR_1.Add(FlagEnabled(2))
+    if FlagDisabled(3):
+        OR_1.Add(FlagEnabled(3))
+    if FlagDisabled(4):
+        OR_1.Add(FlagEnabled(4))
+    if FlagDisabled(5):
+        OR_1.Add(FlagEnabled(5))
+    if FlagDisabled(6):
+        OR_1.Add(FlagEnabled(6))
+    if FlagDisabled(7):
+        OR_1.Add(FlagEnabled(7))
+    if FlagDisabled(8):
+        OR_1.Add(FlagEnabled(8))
+    if FlagDisabled(9):
+        OR_1.Add(FlagEnabled(9))
+    if FlagDisabled(10):
+        OR_1.Add(FlagEnabled(10))
+    if FlagDisabled(11):
+        OR_1.Add(FlagEnabled(11))
+    if FlagDisabled(12):
+        OR_1.Add(FlagEnabled(12))
+    if FlagDisabled(13):
+        OR_1.Add(FlagEnabled(13))
+    if FlagDisabled(14):
+        OR_1.Add(FlagEnabled(14))
+    if FlagDisabled(15):
+        OR_1.Add(FlagEnabled(15))
+    
+    MAIN.Await(OR_1)
+    
+    IncrementEventValue(flag, bit_count=bit_count, max_value=max_value)
     Restart()
 
 
-def Event721():
-    """ 721: Event 721 """
-    EndIfFlagOn(728)
-    IfFlagOn(1, 11707000)
-    IfFlagOn(1, 11707010)
-    IfFlagOn(1, 11707020)
-    IfFlagOn(1, 11707030)
-    IfFlagOn(1, 11707040)
-    IfFlagOn(1, 11707050)
-    IfFlagOn(1, 11707060)
-    IfFlagOn(1, 11707070)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(721)
+def Event_721():
+    """Event 721"""
+    if FlagEnabled(728):
+        return
+    AND_1.Add(FlagEnabled(11707000))
+    AND_1.Add(FlagEnabled(11707010))
+    AND_1.Add(FlagEnabled(11707020))
+    AND_1.Add(FlagEnabled(11707030))
+    AND_1.Add(FlagEnabled(11707040))
+    AND_1.Add(FlagEnabled(11707050))
+    AND_1.Add(FlagEnabled(11707060))
+    AND_1.Add(FlagEnabled(11707070))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(721)
-    IfFlagOn(2, 11707090)
-    IfFlagOn(2, 11707100)
-    IfFlagOn(2, 11707110)
-    IfConditionTrue(0, input_condition=2)
+    AND_2.Add(FlagEnabled(11707090))
+    AND_2.Add(FlagEnabled(11707100))
+    AND_2.Add(FlagEnabled(11707110))
+    
+    MAIN.Await(AND_2)
+    
     EnableFlag(728)
 
 
-def Event722():
-    """ 722: Event 722 """
-    EndIfThisEventOn()
-    IfFlagOn(1, 11407120)
-    IfFlagOn(1, 11407130)
-    IfFlagOn(1, 11407150)
-    IfFlagOn(1, 11407160)
-    IfFlagOn(1, 11407170)
-    IfFlagOn(1, 11407140)
-    IfFlagOn(1, 11407180)
-    IfFlagOn(1, 11407190)
-    IfFlagOn(1, 10)
-    IfPlayerHasWeapon(1, 1332500, including_box=False)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(722)
+def Event_722():
+    """Event 722"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(11407120))
+    AND_1.Add(FlagEnabled(11407130))
+    AND_1.Add(FlagEnabled(11407150))
+    AND_1.Add(FlagEnabled(11407160))
+    AND_1.Add(FlagEnabled(11407170))
+    AND_1.Add(FlagEnabled(11407140))
+    AND_1.Add(FlagEnabled(11407180))
+    AND_1.Add(FlagEnabled(11407190))
+    AND_1.Add(FlagEnabled(10))
+    AND_1.Add(PlayerHasWeapon(1332500))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(722)
 
 
-def Event723():
-    """ 723: Event 723 """
-    EndIfThisEventOn()
-    IfFlagOn(1, 11027130)
-    IfFlagOn(1, 11027140)
-    IfFlagOn(1, 11027150)
-    IfFlagOn(1, 11027160)
-    IfFlagOn(1, 11027170)
-    IfFlagOn(1, 11027180)
-    IfFlagOn(1, 11027190)
-    IfFlagOn(1, 11027200)
-    IfFlagOn(1, 11027210)
-    IfFlagOn(1, 11027220)
-    IfFlagOn(1, 11027230)
-    IfFlagOn(1, 11027240)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(723)
+def Event_723():
+    """Event 723"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(11027130))
+    AND_1.Add(FlagEnabled(11027140))
+    AND_1.Add(FlagEnabled(11027150))
+    AND_1.Add(FlagEnabled(11027160))
+    AND_1.Add(FlagEnabled(11027170))
+    AND_1.Add(FlagEnabled(11027180))
+    AND_1.Add(FlagEnabled(11027190))
+    AND_1.Add(FlagEnabled(11027200))
+    AND_1.Add(FlagEnabled(11027210))
+    AND_1.Add(FlagEnabled(11027220))
+    AND_1.Add(FlagEnabled(11027230))
+    AND_1.Add(FlagEnabled(11027240))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(723)
 
 
-def Event724():
-    """ 724: Event 724 """
-    EndIfThisEventOn()
-    IfFlagOn(1, 11017050)
-    IfFlagOn(1, 11017060)
-    IfFlagOn(1, 11017070)
-    IfFlagOn(1, 11017080)
-    IfFlagOn(1, 11017090)
-    IfFlagOn(1, 11017100)
-    IfFlagOn(1, 11017110)
-    IfFlagOn(1, 11017120)
-    IfFlagOn(1, 11017130)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(724)
+def Event_724():
+    """Event 724"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(11017050))
+    AND_1.Add(FlagEnabled(11017060))
+    AND_1.Add(FlagEnabled(11017070))
+    AND_1.Add(FlagEnabled(11017080))
+    AND_1.Add(FlagEnabled(11017090))
+    AND_1.Add(FlagEnabled(11017100))
+    AND_1.Add(FlagEnabled(11017110))
+    AND_1.Add(FlagEnabled(11017120))
+    AND_1.Add(FlagEnabled(11017130))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(724)
 
 
-def Event725():
-    """ 725: Event 725 """
-    EndIfThisEventOn()
-    IfTrueFlagCountGreaterThanOrEqual(0, 2, (11707100, 11707190))
+@ContinueOnRest(725)
+def Event_725():
+    """Event 725"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(11707100, 11707190)) >= 2)
+    
     EnableFlag(725)
 
 
-def Event726():
-    """ 726: Event 726 """
-    EndIfThisEventOn()
-    IfTrueFlagCountGreaterThanOrEqual(0, 2, (11607000, 11607090))
+@ContinueOnRest(726)
+def Event_726():
+    """Event 726"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(EnabledFlagCount(FlagType.Absolute, flag_range=(11607000, 11607090)) >= 2)
+    
     EnableFlag(726)
 
 
-def Event727():
-    """ 727: Event 727 """
-    EndIfThisEventOn()
-    IfFlagOn(1, 11327000)
-    IfFlagOn(1, 11327010)
-    IfFlagOn(1, 11327020)
-    IfFlagOn(1, 11327030)
-    IfFlagOn(1, 11327040)
-    IfFlagOn(1, 11327050)
-    IfFlagOn(1, 11327060)
-    IfFlagOn(1, 11327070)
-    IfFlagOn(1, 11327080)
-    IfFlagOn(1, 11327090)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(727)
+def Event_727():
+    """Event 727"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagEnabled(11327000))
+    AND_1.Add(FlagEnabled(11327010))
+    AND_1.Add(FlagEnabled(11327020))
+    AND_1.Add(FlagEnabled(11327030))
+    AND_1.Add(FlagEnabled(11327040))
+    AND_1.Add(FlagEnabled(11327050))
+    AND_1.Add(FlagEnabled(11327060))
+    AND_1.Add(FlagEnabled(11327070))
+    AND_1.Add(FlagEnabled(11327080))
+    AND_1.Add(FlagEnabled(11327090))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(727)
 
 
-def Event740():
-    """ 740: Event 740 """
-    IfPlayerClass(0, ClassType.Pyromancer)
+@ContinueOnRest(740)
+def Event_740():
+    """Event 740"""
+    MAIN.Await(PlayerClass(ClassType.Pyromancer))
+    
     EnableFlag(740)
 
 
-def Event745():
-    """ 745: Event 745 """
-    IfFlagOn(7, 1604)
-    IfFlagOn(7, 1764)
-    SkipLinesIfConditionFalse(1, 7)
-    IfFlagOn(0, 703)
-    SkipLinesIfFlagOn(1, 1604)
-    IfFlagOn(-1, 1604)
-    SkipLinesIfFlagOn(1, 1764)
-    IfFlagOn(-1, 1764)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(745)
+def Event_745():
+    """Event 745"""
+    AND_7.Add(FlagEnabled(1604))
+    AND_7.Add(FlagEnabled(1764))
+    SkipLinesIfConditionFalse(1, AND_7)
+    
+    MAIN.Await(FlagEnabled(703))
+    
+    if FlagDisabled(1604):
+        OR_1.Add(FlagEnabled(1604))
+    if FlagDisabled(1764):
+        OR_1.Add(FlagEnabled(1764))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     End()
 
 
-def Event754():
-    """ 754: Event 754 """
+@ContinueOnRest(754)
+def Event_754():
+    """Event 754"""
     DisableFlag(754)
-    IfFlagOn(0, 754)
+    
+    MAIN.Await(FlagEnabled(754))
+    
     DisableFlag(754)
     AddSpecialEffect(PLAYER, 4600)
     AddSpecialEffect(PLAYER, 4601)
-    CreateTemporaryVFX(22715, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=7)
+    CreateTemporaryVFX(vfx_id=22715, anchor_entity=PLAYER, model_point=7, anchor_type=CoordEntityType.Character)
     Restart()
 
 
-def Event770():
-    """ 770: Event 770 """
-    IfFlagOn(0, 755)
+@ContinueOnRest(770)
+def Event_770():
+    """Event 770"""
+    MAIN.Await(FlagEnabled(755))
+    
     DisableFlag(755)
     DisableFlag(742)
     DisableFlag(743)
@@ -1030,71 +1204,83 @@ def Event770():
     Restart()
 
 
-def Event772():
-    """ 772: Event 772 """
-    IfFlagOff(0, 744)
-    IfFlagOn(-1, 1004)
-    IfFlagOn(-1, 1033)
-    IfFlagOn(-1, 1096)
-    IfFlagOn(-1, 1114)
-    IfFlagOn(-1, 1176)
-    IfFlagOn(-1, 1179)
-    IfFlagOn(-1, 1195)
-    IfFlagOn(-1, 1197)
-    IfFlagOn(-1, 1213)
-    IfFlagOn(-1, 1223)
-    IfFlagOn(-1, 1241)
-    IfFlagOn(-1, 1253)
-    IfFlagOn(-1, 1282)
-    IfFlagOn(-1, 1283)
-    IfFlagOn(-1, 1287)
-    IfFlagOn(-1, 1294)
-    IfFlagOn(-1, 1314)
-    IfFlagOn(-1, 1321)
-    IfFlagOn(-1, 1341)
-    IfFlagOn(-1, 1361)
-    IfFlagOn(-1, 1381)
-    IfFlagOn(-1, 1401)
-    IfFlagOn(-1, 1411)
-    IfFlagOn(-1, 1421)
-    IfFlagOn(-1, 1434)
-    IfFlagOn(-1, 1461)
-    IfFlagOn(-1, 1512)
-    IfFlagOn(-1, 1547)
-    IfFlagOn(-1, 1574)
-    IfFlagOn(-1, 1603)
-    IfFlagOn(-1, 1627)
-    IfFlagOn(-1, 1646)
-    IfFlagOn(-1, 1675)
-    IfFlagOn(-1, 1691)
-    IfFlagOn(-1, 1711)
-    IfFlagOn(-1, 1712)
-    IfFlagOn(-1, 71200035)
-    IfFlagOn(-1, 71200042)
-    IfFlagOn(-1, 1763)
-    IfFlagOn(-1, 1822)
-    IfFlagOn(-1, 1841)
-    IfFlagOn(-1, 1863)
-    IfFlagOn(-1, 1871)
-    IfConditionTrue(0, input_condition=-1)
+@ContinueOnRest(772)
+def Event_772():
+    """Event 772"""
+    MAIN.Await(FlagDisabled(744))
+    
+    OR_1.Add(FlagEnabled(1004))
+    OR_1.Add(FlagEnabled(1033))
+    OR_1.Add(FlagEnabled(1096))
+    OR_1.Add(FlagEnabled(1114))
+    OR_1.Add(FlagEnabled(1176))
+    OR_1.Add(FlagEnabled(1179))
+    OR_1.Add(FlagEnabled(1195))
+    OR_1.Add(FlagEnabled(1197))
+    OR_1.Add(FlagEnabled(1213))
+    OR_1.Add(FlagEnabled(1223))
+    OR_1.Add(FlagEnabled(1241))
+    OR_1.Add(FlagEnabled(1253))
+    OR_1.Add(FlagEnabled(1282))
+    OR_1.Add(FlagEnabled(1283))
+    OR_1.Add(FlagEnabled(1287))
+    OR_1.Add(FlagEnabled(1294))
+    OR_1.Add(FlagEnabled(1314))
+    OR_1.Add(FlagEnabled(1321))
+    OR_1.Add(FlagEnabled(1341))
+    OR_1.Add(FlagEnabled(1361))
+    OR_1.Add(FlagEnabled(1381))
+    OR_1.Add(FlagEnabled(1401))
+    OR_1.Add(FlagEnabled(1411))
+    OR_1.Add(FlagEnabled(1421))
+    OR_1.Add(FlagEnabled(1434))
+    OR_1.Add(FlagEnabled(1461))
+    OR_1.Add(FlagEnabled(1512))
+    OR_1.Add(FlagEnabled(1547))
+    OR_1.Add(FlagEnabled(1574))
+    OR_1.Add(FlagEnabled(1603))
+    OR_1.Add(FlagEnabled(1627))
+    OR_1.Add(FlagEnabled(1646))
+    OR_1.Add(FlagEnabled(1675))
+    OR_1.Add(FlagEnabled(1691))
+    OR_1.Add(FlagEnabled(1711))
+    OR_1.Add(FlagEnabled(1712))
+    OR_1.Add(FlagEnabled(71200035))
+    OR_1.Add(FlagEnabled(71200042))
+    OR_1.Add(FlagEnabled(1763))
+    OR_1.Add(FlagEnabled(1822))
+    OR_1.Add(FlagEnabled(1841))
+    OR_1.Add(FlagEnabled(1863))
+    OR_1.Add(FlagEnabled(1871))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(744)
-    IfFlagOff(0, 744)
+    
+    MAIN.Await(FlagDisabled(744))
+    
     Restart()
 
 
-def Event761():
-    """ 761: Event 761 """
+@ContinueOnRest(761)
+def Event_761():
+    """Event 761"""
     DisableNetworkSync()
-    IfFlagOn(0, 760)
-    WaitFrames(200)
+    
+    MAIN.Await(FlagEnabled(760))
+    
+    WaitFrames(frames=200)
     DisableFlag(760)
     Restart()
 
 
-def Event763():
-    """ 763: Event 763 """
+@ContinueOnRest(763)
+def Event_763():
+    """Event 763"""
     DisableNetworkSync()
-    IfFlagOn(0, 762)
+    
+    MAIN.Await(FlagEnabled(762))
+    
     ForceAnimation(PLAYER, 7697)
     Wait(3.5)
     DisableFlag(762)
@@ -1104,164 +1290,212 @@ def Event763():
     Restart()
 
 
-def Event750():
-    """ 750: Event 750 """
+@ContinueOnRest(750)
+def Event_750():
+    """Event 750"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(-1, PLAYER, 71)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 72)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 73)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 74)
-    IfFlagOn(-1, 751)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 71))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 72))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 73))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 74))
+    OR_1.Add(FlagEnabled(751))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(751)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 71)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 72)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 73)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 74)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 71))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 72))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 73))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 74))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(751)
     Restart()
 
 
-def Event752():
-    """ 752: Event 752 """
+@ContinueOnRest(752)
+def Event_752():
+    """Event 752"""
     DisableNetworkSync()
-    IfCharacterHasSpecialEffect(-1, PLAYER, 5213)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 5214)
-    IfFlagOn(-1, 753)
-    IfConditionTrue(0, input_condition=-1)
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 5213))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 5214))
+    OR_1.Add(FlagEnabled(753))
+    
+    MAIN.Await(OR_1)
+    
     EnableFlag(753)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 5213)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 5214)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 5213))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 5214))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(753)
     DisableFlag(11400591)
     Restart()
 
 
-def Event757():
-    """ 757: Event 757 """
-    SkipLinesIfFlagOff(1, 757)
-    DisplayStatus(10010660, pad_enabled=True)
+@ContinueOnRest(757)
+def Event_757():
+    """Event 757"""
+    if FlagEnabled(757):
+        DisplayStatus(10010660)
     DisableFlag(757)
-    IfHost(1)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 71)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 72)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 73)
-    IfCharacterDoesNotHaveSpecialEffect(1, PLAYER, 74)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 33)
-    IfCharacterHasSpecialEffect(-1, PLAYER, 34)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(Host())
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 71))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 72))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 73))
+    AND_1.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 74))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 33))
+    OR_1.Add(CharacterHasSpecialEffect(PLAYER, 34))
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     End()
 
 
-def Event758():
-    """ 758: Event 758 """
-    SkipLinesIfThisEventOff(1)
-    DisplayStatus(10010670, pad_enabled=True)
+@ContinueOnRest(758)
+def Event_758():
+    """Event 758"""
+    if ThisEventFlagEnabled():
+        DisplayStatus(10010670)
     DisableFlag(758)
-    IfHost(1)
-    IfHealthLessThanOrEqual(1, PLAYER, 0.0)
-    IfCharacterHasSpecialEffect(1, PLAYER, 2130)
-    IfConditionTrue(0, input_condition=1)
-    IfHost(2)
-    IfCharacterDead(2, PLAYER)
-    IfCharacterDoesNotHaveSpecialEffect(2, PLAYER, 2130)
-    IfConditionTrue(0, input_condition=2)
+    AND_1.Add(Host())
+    AND_1.Add(HealthRatio(PLAYER) <= 0.0)
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2130))
+    
+    MAIN.Await(AND_1)
+    
+    AND_2.Add(Host())
+    AND_2.Add(CharacterDead(PLAYER))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 2130))
+    
+    MAIN.Await(AND_2)
+    
     End()
 
 
-def Event759():
-    """ 759: Event 759 """
-    SkipLinesIfThisEventOff(1)
-    DisplayStatus(10010680, pad_enabled=True)
+@ContinueOnRest(759)
+def Event_759():
+    """Event 759"""
+    if ThisEventFlagEnabled():
+        DisplayStatus(10010680)
     DisableFlag(759)
-    IfHost(1)
-    IfHealthLessThanOrEqual(1, PLAYER, 0.0)
-    IfCharacterHasSpecialEffect(1, PLAYER, 2131)
-    IfConditionTrue(0, input_condition=1)
-    IfHost(2)
-    IfCharacterDead(2, PLAYER)
-    IfCharacterDoesNotHaveSpecialEffect(2, PLAYER, 2131)
-    IfConditionTrue(0, input_condition=2)
+    AND_1.Add(Host())
+    AND_1.Add(HealthRatio(PLAYER) <= 0.0)
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 2131))
+    
+    MAIN.Await(AND_1)
+    
+    AND_2.Add(Host())
+    AND_2.Add(CharacterDead(PLAYER))
+    AND_2.Add(CharacterDoesNotHaveSpecialEffect(PLAYER, 2131))
+    
+    MAIN.Await(AND_2)
+    
     End()
 
 
-def Event818():
-    """ 818: Event 818 """
-    SkipLinesIfFlagOn(2, 11510150)
-    IfFlagOn(0, 11510150)
-    DisplayStatus(10010690, pad_enabled=True)
-    IfFlagOn(1, 11510150)
-    IfOutsideMap(1, game_map=ANOR_LONDO)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(818)
+def Event_818():
+    """Event 818"""
+    if FlagDisabled(11510150):
+        MAIN.Await(FlagEnabled(11510150))
+    
+        DisplayStatus(10010690)
+    AND_1.Add(FlagEnabled(11510150))
+    AND_1.Add(OutsideMap(game_map=ANOR_LONDO))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(11510150)
     Restart()
 
 
-def Event810():
-    """ 810: Event 810 """
-    EndIfThisEventOn()
-    IfFlagOn(0, 50001031)
+@ContinueOnRest(810)
+def Event_810():
+    """Event 810"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(FlagEnabled(50001031))
+    
     EnableFlag(810)
 
 
-def Event812(_, arg_0_3: int):
-    """ 812: Event 812 """
-    EndIfThisEventSlotOn()
-    IfFlagOn(0, arg_0_3)
+@ContinueOnRest(812)
+def Event_812(_, flag: int):
+    """Event 812"""
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(FlagEnabled(flag))
+    
     End()
 
 
-def Event822():
-    """ 822: Event 822 """
-    IfFlagOn(0, 830)
-    IfTimeElapsed(1, 0.5)
-    IfOutsideMap(1, game_map=KILN_OF_THE_FIRST_FLAME)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(822)
+def Event_822():
+    """Event 822"""
+    MAIN.Await(FlagEnabled(830))
+    
+    AND_1.Add(TimeElapsed(seconds=0.5))
+    AND_1.Add(OutsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(830)
     Restart()
 
 
-def Event823():
-    """ 823: Event 823 """
-    IfFlagOn(0, 831)
-    IfTimeElapsed(1, 0.5)
-    IfOutsideMap(1, game_map=KILN_OF_THE_FIRST_FLAME)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(823)
+def Event_823():
+    """Event 823"""
+    MAIN.Await(FlagEnabled(831))
+    
+    AND_1.Add(TimeElapsed(seconds=0.5))
+    AND_1.Add(OutsideMap(game_map=KILN_OF_THE_FIRST_FLAME))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(831)
     Restart()
 
 
-def Event840(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 840: Event 840 """
-    DisableFlag(arg_0_3)
-    IfFlagOn(0, arg_0_3)
-    SkipLinesIfFlagOn(3, 844)
-    SkipLinesIfFlagOn(2, 847)
-    RotateToFaceEntity(PLAYER, arg_8_11)
-    ForceAnimation(PLAYER, arg_4_7)
-    SkipLinesIfFlagOn(9, 840)
-    SkipLinesIfFlagOn(8, 841)
-    SkipLinesIfFlagOn(7, 842)
-    SkipLinesIfFlagOn(6, 843)
-    SkipLinesIfFlagOn(5, 845)
-    SkipLinesIfFlagOn(4, 846)
-    SkipLinesIfFlagOn(3, 848)
-    SkipLinesIfFlagOn(2, 849)
-    SkipLinesIfFlagOn(1, 860)
-    ForceAnimation(PLAYER, arg_4_7, skip_transition=True)
+@ContinueOnRest(840)
+def Event_840(_, flag: int, animation_id: int, target_entity: int, animation_id_1: int):
+    """Event 840"""
+    DisableFlag(flag)
+    
+    MAIN.Await(FlagEnabled(flag))
+    
+    SkipLinesIfFlagEnabled(3, 844)
+    SkipLinesIfFlagEnabled(2, 847)
+    RotateToFaceEntity(PLAYER, target_entity=target_entity)
+    ForceAnimation(PLAYER, animation_id)
+    SkipLinesIfFlagEnabled(9, 840)
+    SkipLinesIfFlagEnabled(8, 841)
+    SkipLinesIfFlagEnabled(7, 842)
+    SkipLinesIfFlagEnabled(6, 843)
+    SkipLinesIfFlagEnabled(5, 845)
+    SkipLinesIfFlagEnabled(4, 846)
+    SkipLinesIfFlagEnabled(3, 848)
+    SkipLinesIfFlagEnabled(2, 849)
+    SkipLinesIfFlagEnabled(1, 860)
+    ForceAnimation(PLAYER, animation_id, skip_transition=True)
     Wait(1.0)
-    PlaySoundEffect(anchor_entity=PLAYER, sound_type=SoundType.s_SFX, sound_id=123456789)
+    PlaySoundEffect(PLAYER, 123456789, sound_type=SoundType.s_SFX)
     Wait(4.0)
-    SkipLinesIfEqual(1, left=arg_12_15, right=-1)
-    ForceAnimation(PLAYER, arg_12_15, loop=True)
+    if ValueNotEqual(left=animation_id_1, right=-1):
+        ForceAnimation(PLAYER, animation_id_1, loop=True)
     Restart()
 
 
-def Event766():
-    """ 766: Event 766 """
-    IfOnline(1)
-    EndIfConditionTrue(1)
+@ContinueOnRest(766)
+def Event_766():
+    """Event 766"""
+    AND_1.Add(Online())
+    if AND_1:
+        return
     EnableFlag(765)

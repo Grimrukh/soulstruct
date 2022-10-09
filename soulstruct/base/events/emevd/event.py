@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["Event", "EventArg"]
+__all__ = ["Event"]
 
 import abc
 import logging
@@ -8,12 +8,14 @@ import re
 import struct
 import typing as tp
 
+from soulstruct.base.game_types.basic_types import Flag
 from .enums import RestartType
-from .instruction import Instruction
+from .instruction import Instruction, EventArg
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-    from .utils import EntityEnumsManager
+    from .core import EMEVD
+    from .entity_enums_manager import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,65 +36,61 @@ _SPECIAL_EVENT_NAMES = {
     50: "Preconstructor",
 }
 
-_INSTRUCTION_RE = re.compile(r"([\w\d]+)\((.*)\)")  # groups = (instruction_name, args)
+_INSTRUCTION_RE = re.compile(r" *([\w\d]+)\((.*)\)")  # groups = (instruction_name, args)
+_ARG_TUPLE_START_RE = re.compile(r"(\w[\w\d_]*)=([\[(]).*")  # groups = (arg_name, bracket_type)
+_CONDITION_RE = re.compile(r" *(AND|OR)_(\d+)\.Add\((.*)\)")  # groups = (condition_type, condition_i, condition)
+_MAIN_AWAIT_RE = re.compile(r" *MAIN\.Await\((.*)\)")  # groups = (condition_type, condition_i, condition)
+_IF_BLOCK_RE = re.compile(r" *if (.*):")  # groups = (condition)
 _LABEL_RE = re.compile(r"DefineLabel\((\d+)\)")
+_GOTO_RE = re.compile(r"Goto.*\(Label\.L(\d+)[,)].*")
 
+# High-level decompilation.
+_HLD_IF_CONDITION_RE = re.compile(
+    r"^(?P<indent> *)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
+    r"(?P<condition>(MAIN|((AND|OR)_\d+))), input_condition=(?P<input_condition>(MAIN|((AND|OR)_\d+)))\)$"
+)
+_HLD_IF_COMPARISON_RE = re.compile(
+    r"^(?P<indent> *)If(?P<test>.*?)(?P<comp>Equal|NotEqual|GreaterThan|LessThan|GreaterThanOrEqual|LessThanOrEqual)"
+    r"\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<pre_args>.*?), value=(?P<value>[\w\d_.]+)(?P<post_args>, .*?)?\)$"
+)
+_HLD_IF_RE = re.compile(
+    r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
+)
+_HLD_SKIP_RE = re.compile(
+    r"^(?P<indent> *)SkipLinesIf(?P<test>.*)\((?P<line_count>\d+)(?P<args>.*?)\)$"
+)
+_HLD_UNCONDITIONAL_SKIP_RE = re.compile(
+    r"^(?P<indent> *)SkipLines\((?P<line_count>\d+)\)$"
+)
+_HLD_RETURN_CONDITION_RE = re.compile(
+    r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<finished>Finished)?Condition(?P<state>True|False)\("
+    r"input_condition=(?P<condition>((AND|OR)_\d+))\)$"
+)
+_HLD_RETURN_RE = re.compile(
+    r"^(?P<indent> *)(?P<return_type>End|Restart)If(?P<test>.*)\((?P<args>.*?)\)$"
+)
 
-class EventArg(abc.ABC):
-    HEADER_STRUCT: BinaryStruct = None
-
-    def __init__(self, instruction_line, write_from_byte=0, read_from_byte=0, bytes_to_write=0, unknown=0):
-        """Overrides argument data in a particular instruction using from dynamic args attached to the event."""
-        self.line = instruction_line
-        self.write_from_byte = write_from_byte
-        self.read_from_byte = read_from_byte
-        self.bytes_to_write = bytes_to_write
-        self.unknown = unknown
-
-    @classmethod
-    def unpack(cls, reader: BinaryReader, count=1):
-        event_args = []
-        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
-        for d in struct_dicts:
-            event_args.append(cls(**d))
-        return event_args
-
-    def to_numeric(self):
-        # TODO: Should include `unknown`, since (as of Elden Ring?) it is not always zero.
-        return f"({self.write_from_byte} <- {self.read_from_byte}, {self.bytes_to_write})"
-
-    def to_binary(self):
-        return self.HEADER_STRUCT.pack(
-            instruction_line=self.line,
-            write_from_byte=self.write_from_byte,
-            read_from_byte=self.read_from_byte,
-            bytes_to_write=self.bytes_to_write,
-            unknown=self.unknown,
-        )
-
-    def __repr__(self) -> str:
-        if self.unknown == 0:
-            return (
-                f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
-                f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write})"
-            )
-        return (
-            f"EventArg(line={self.line}, write_from_bytes={self.write_from_byte}, "
-            f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write}, unknown={self.unknown})"
-        )
+_COMPARISON_OPERATORS = {
+    "Equal": "==",
+    "NotEqual": "!=",
+    "GreaterThan": ">",
+    "LessThan": "<",
+    "GreaterThanOrEqual": ">=",
+    "LessThanOrEqual": "<=",
+}
 
 
 class Event(abc.ABC):
 
     instructions: list[Instruction]
 
-    HEADER_STRUCT: BinaryStruct = None
-    Instruction: tp.Type[Instruction] = None
-    EventArg: tp.Type[EventArg] = None
-    EVENT_ARG_TYPES = {}  # updated on load and before each write
-    WRAP_LIMIT = 121  # PyCharm default line length
-
-    DEFAULT_ARG_SIZE_TYPE = {1: "B", 2: "H", 4: "I"}
+    HEADER_STRUCT: BinaryStruct
+    Instruction: tp.Type[Instruction]
+    EventArg: tp.Type[EventArg]
+    EMEDF_TESTS: dict[str, dict[str, str]]
+    EMEDF_COMPARISON_TESTS: dict[str, dict[str, str]]
+    WRAP_LIMIT = 120  # PyCharm default line length
+    USE_HIGH_LEVEL_LANGUAGE = True
 
     def __init__(self, event_id=0, restart_type=0, instructions=None):
         self.event_id = event_id
@@ -134,23 +132,28 @@ class Event(abc.ABC):
 
         return event_dict
 
-    def update_run_event_instructions(self):
+    def update_run_event_instructions(self, all_event_arg_fmts: dict[int, str], common_func_emevd: EMEVD = None):
         """Iterates over instructions and updates any `RunEvent` or `RunCommonEvent` instructions with event arguments
-        with their proper `args_format` and `args_list` values.
+        with their proper `args` and `arg_types` values.
 
         Called after all events have been loaded and `update_evs_function_args()` has been called (to scan events and
         detect their arguments).
         """
+        all_common_arg_fmts = common_func_emevd.all_event_arg_fmts if common_func_emevd else {}
+
         for instruction in self.instructions:
             if (event_id := instruction.get_called_event()) is not None:
-                try:
-                    var_format = self.EVENT_ARG_TYPES[event_id]
-                except KeyError:
-                    # Undefined event was called. This has only been seen once in vanilla files, in DSR m12_01_00_00,
-                    # where event `4294967295` (2 ** 32 - 1) is run near the end of the constructor for unknown reasons.
-                    # TODO: Handle imported common events.
-                    _LOGGER.warning(f"Event {event_id} was run, but is not defined anywhere.")
-                    continue
+                if event_id in all_event_arg_fmts:
+                    var_format = all_event_arg_fmts[event_id]
+                else:
+                    # Event is not defined locally. Check common events, if provided.
+                    # TODO: These special indices (0, 6) should be defined more centrally.
+                    if instruction.index == 6 and event_id in all_common_arg_fmts:
+                        var_format = all_common_arg_fmts[event_id]
+                    else:
+                        if instruction.index == 0:
+                            _LOGGER.warning(f"Map event {event_id} was run, but is not defined in map.")
+                        continue
                 if not var_format:
                     # No arguments (zero). Leave "I" in arg types.
                     continue
@@ -194,86 +197,311 @@ class Event(abc.ABC):
             event_string += "\n" + "\n".join(instruction.to_numeric())
         return event_string
 
-    def process_all_event_args(self) -> dict[tuple[int, int], set[str]]:
-        """Process event args for all instructions and maintain a dictionary mapping `(read_start, read_stop)` event
-        arg tuples to sets of detected format strings (should generally only contain one value)."""
-        event_arg_types = {}
+    def process_all_event_args(self) -> dict[tuple[int, int], EventArg]:
+        """Process event arg information for ALL instructions at once.
+
+        Returns a dictionary that maps each (i, j) arg read range to a single generic `EventArg` storing combined
+        information about all individual uses (replacements) with that event arg.
+        """
+        all_event_args = {}
         for instruction in self.instructions:
             try:
-                instruction_arg_types = instruction.process_event_args()
-            except ValueError:
+                instruction.process_event_args()
+            except ValueError as ex:
                 raise ValueError(
-                    f"Error occurred while applying event args in instruction "
-                    f"{self.instructions.index(instruction)}, {instruction.category}[{instruction.index}], of "
-                    f"event {self.event_id}."
+                    f"Error occurred while processing event args in instruction "
+                    f"{self.instructions.index(instruction)}, {instruction.instruction_id}], of "
+                    f"event {self.event_id}.\n    Error: {ex}"
                 )
-            for arg_range, arg_types in instruction_arg_types.items():
-                arg_range_types = event_arg_types.setdefault(arg_range, set())
-                arg_range_types |= arg_types
-        return {arg_range: event_arg_types[arg_range] for arg_range in sorted(event_arg_types)}
+            for event_arg in instruction.event_args:
+                if event_arg.arg_range not in all_event_args:
+                    all_event_args[event_arg.arg_range] = self.EventArg.generic(event_arg.arg_range)
+                all_event_args[event_arg.arg_range].add_info(event_arg)
 
-    def update_evs_function_args(self):
-        event_arg_types = self.process_all_event_args()
+        # Sort by arg range before returning.
+        return {arg_range: all_event_args[arg_range] for arg_range in sorted(all_event_args)}
+
+    def update_evs_function_args(
+        self,
+        all_event_arg_names: dict,
+        all_event_arg_fmts: dict,
+        all_event_arg_types: dict,
+    ):
+        all_event_args = self.process_all_event_args()
         all_arg_names = []
-        all_arg_types = []
-        for (i, j), arg_types in event_arg_types.items():
-            arg_name = f"arg_{i}_{j}"
-            if len(arg_types) > 1:
-                # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
-                sizes = {struct.calcsize(fmt) for fmt in arg_types}
-                if len(sizes) == 1:
-                    arg_size = next(iter(sizes))
-                    arg_type = self.DEFAULT_ARG_SIZE_TYPE[arg_size]
-                    _LOGGER.warning(
-                        f"Detected multiple types for event arg '{arg_name}' in event {self.event_id}: {arg_types}. "
-                        f"Using default type '{arg_type}' for this arg size ({arg_size})."
-                    )
-                else:
-                    raise ValueError(
-                        f"Detected multiple types for event arg '{arg_name}' in event {self.event_id}: {arg_types}. "
-                        f"They have incompatible sizes, which is not permitted."
-                    )
-            else:
-                arg_type = next(iter(arg_types))
+        all_arg_fmts = []
+        all_arg_py_types = []
+
+        for (i, j), generic_event_arg in all_event_args.items():
+            generic_event_arg.remove_generic_names()
+            arg_name, arg_fmt, arg_py_types = generic_event_arg.get_combined_info(all_arg_names, self.event_id)
+
+            default_arg_name = f"arg_{i}_{j}"
+            for instruction in self.instructions:
+                # Replace default arg name with detected EVS arg name.
+                for arg_index, old_arg_name in enumerate(instruction.evs_args_list):
+                    if old_arg_name == default_arg_name:
+                        instruction.evs_args_list[arg_index] = arg_name
 
             all_arg_names.append(arg_name)
-            all_arg_types.append(arg_type)
+            all_arg_fmts.append(arg_fmt)
+            all_arg_py_types.append(arg_py_types)
 
+        # TODO: Event argument type hint should be able to be a single game type, if possible.
         evs_function_arg_strings = [
-            f"{arg_name}: {EVS_ARG_TYPES[arg_type]}" for arg_name, arg_type in zip(all_arg_names, all_arg_types)
+            f"{arg_name}: {EVS_ARG_TYPES[arg_type]}" for arg_name, arg_type in zip(all_arg_names, all_arg_fmts)
         ]
         if evs_function_arg_strings:
             evs_function_arg_strings = ["_"] + evs_function_arg_strings  # prepend blank argument for slot intellisense
 
-        # Record event function args in class attribute.
-        self.EVENT_ARG_TYPES[self.event_id] = "".join(all_arg_types)
+        # TODO: warn/raise if key already exists.
+        all_event_arg_names[self.event_id] = all_arg_names
+        all_event_arg_fmts[self.event_id] = "".join(all_arg_fmts)
+        all_event_arg_types[self.event_id] = all_arg_py_types
 
         return ", ".join(evs_function_arg_strings)
 
-    def to_evs(self, enums_manager: EntityEnumsManager):
-        """Convert single event script to EVS.
+    def to_evs(
+        self,
+        enums_manager: EntityEnumsManager,
+        all_event_arg_names: dict,
+        all_event_arg_fmts: dict,
+        all_event_arg_types: dict,
+        is_common_func=False,
+    ) -> str:
+        """Convert single event script to EVS."""
+        function_name = _SPECIAL_EVENT_NAMES.get(
+            self.event_id, f"CommonFunc_{self.event_id}" if is_common_func else f"Event_{self.event_id}"
+        )
+        function_docstring = f'"""{"CommonFunc" if is_common_func else "Event"} {self.event_id}"""'
+        # starts with an empty '_' slot arg, if any other args exist
+        function_args = self.update_evs_function_args(
+            all_event_arg_names,
+            all_event_arg_fmts,
+            all_event_arg_types,
+        )
 
-        If `enums` is given (e.g. via `EMEVD.to_evs()`), it should map `MapEntity` subclass names to dictionaries that
-        map entity IDs to enum attributes to print in their place (e.g. `1510100: <Characters.BlackKnight2>`).
+        try:
+            event_flag_enum = enums_manager.check_out_enum(self.event_id, Flag)
+            restart_type_decorator = f"@{RestartType(self.restart_type).name}({event_flag_enum})\n"
+        except enums_manager.MissingEntityError:
+            restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
 
-        If `enums` is given and `warn_missing_enums=True`, entity IDs that do not appear in `enums` will cause a warning
-        to be logged.
-        """
-        function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"Event{self.event_id}")
-        function_docstring = f'"""Event {self.event_id}"""'
-        function_args = self.update_evs_function_args()  # starts with an empty '_' slot arg, if any other args exist
-        restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
-        function_def = self._indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
+        function_def = self.indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
         function_def += f"\n    {function_docstring}"
         evs_event_string = restart_type_decorator + function_def
-        for i, instr in enumerate(self.instructions):
-            instruction = instr.to_evs(self.EVENT_ARG_TYPES, enums_manager)
-            if label_match := _LABEL_RE.match(instruction):
-                if evs_event_string[-1] != "\n":
-                    evs_event_string += "\n"
-                evs_event_string += f"\n    # --- {label_match.group(1)} --- #"
-            evs_event_string += self._indent_and_wrap_instruction(instruction, wrap_limit=self.WRAP_LIMIT, indent=4)
+
+        instruction_lines = [instr.to_evs(enums_manager, all_event_arg_fmts) for instr in self.instructions]
+
+        if self.USE_HIGH_LEVEL_LANGUAGE:
+            try:
+                instruction_lines = self.high_level_evs_decompile(instruction_lines)
+            except Exception as ex:
+                _LOGGER.error(
+                    f"Error while trying to decompile event {self.event_id} with high-level language:\n  {ex}")
+                raise
+
+        # SIMPLE DECOMPILATION
+        for instr_line in instruction_lines:
+            if label_match := _LABEL_RE.match(instr_line):
+                evs_event_string = evs_event_string.rstrip("\n ")  # we want exactly two newlines
+                evs_event_string += f"\n\n    # --- Label {label_match.group(1)} --- #"
+            new_lines = self._indent_and_wrap_instruction(instr_line, wrap_limit=self.WRAP_LIMIT, indent=4)
+            # TODO: Goto comment needs to contribute to max line length for wrap. Also might just be redundant.
+            # if goto_match := _GOTO_RE.match(instr_line):
+            #     label = goto_match.group(1)
+            #     new_lines_split = new_lines.split("\n")
+            #     new_lines_split[1] = new_lines_split[1] + f"  # --> Label {label}"
+            #     new_lines = "\n".join(new_lines_split)
+            evs_event_string += new_lines
+
         return evs_event_string
+
+    def high_level_evs_decompile(self, instruction_lines: list[str], conditions_only=False):
+        """Parses basic EVS output and replaces it with Python `if/else` tests and `Await()` calls where possible.
+
+        Note that none of the input `instruction_lines` have been indented yet, so we can add our own indentation here
+        as necessary and ALL of it will be indented by the rest of `to_evs()`.
+
+        TODO:
+            - Currently, only "End/RestartIf" and "SkipIf" instructions (that do NOT skip other skip instructions) are
+            being converted to `if` blocks.
+            - Work to do for "If" condition decompilation:
+                - Uses a modified condition-building EVS syntax that hasn't actually been implemented.
+                - Main struggle is with line skips that skip OTHER skips (skip chains) or condition instructions (so
+                it's ambiguous as to where the group instance should first be defined in EVS).
+        """
+        output_lines = []
+
+        i = 0
+        while i < len(instruction_lines):
+            line = instruction_lines[i]
+            if match := _HLD_IF_CONDITION_RE.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                finished = m["finished"] is not None
+                if finished:
+                    # TODO: Cannot yet decompile these.
+                    output_lines.append(line)
+                    i += 1
+                    continue
+                state = m["state"] == "True"
+                condition = m["condition"]
+                input_condition = m["input_condition"]
+                if not state:
+                    input_condition = f"not {input_condition}"
+
+                # TODO: If condition was just defined on previous line, we could move the whole thing here.
+                #  However, this veers into "lost info" territory, as we won't know what condition number the game
+                #  originally used (and would have to look ahead for "finished" usage).
+
+                if condition == "MAIN":
+                    if output_lines and output_lines[-1] != "":
+                        output_lines.append("")
+                    output_lines += [f"{indent}MAIN.Await({input_condition})", ""]
+                    i += 1
+                else:
+                    output_lines.append(f"{indent}{condition}.Add({input_condition})")
+                    i += 1
+            elif match := _HLD_IF_COMPARISON_RE.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                test = m["test"]
+                operator = _COMPARISON_OPERATORS[m["comp"]]
+                if test not in self.EMEDF_COMPARISON_TESTS:
+                    output_lines.append(line)
+                    i += 1
+                    continue
+                condition = m["condition"]
+                pre_args = m["pre_args"].removeprefix(", ")
+                value = m["value"]
+                post_args = m["post_args"] if m["post_args"] else ""
+                if condition == "MAIN":
+                    if output_lines and output_lines[-1] != "":
+                        output_lines.append("")
+                    output_lines += [f"{indent}MAIN.Await({test}({pre_args}{post_args}) {operator} {value})", ""]
+                    i += 1
+                else:
+                    output_lines.append(f"{indent}{condition}.Add({test}({pre_args}{post_args}) {operator} {value})")
+                    i += 1
+            elif match := _HLD_IF_RE.match(line):
+                m = match.groupdict()
+                indent = m["indent"]
+                test = m["test"]
+                if test not in self.EMEDF_TESTS or "if" not in self.EMEDF_TESTS[test]:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # 'if' should always be in tests dict, but just for clarity
+                condition = m["condition"]
+                args = m["args"].removeprefix(", ")  # no need to split or parse (and could be empty)
+                if condition == "MAIN":
+                    if output_lines and output_lines[-1] != "":
+                        output_lines.append("")
+                    output_lines += [f"{indent}MAIN.Await({test}({args}))", ""]
+                    i += 1
+                else:
+                    output_lines.append(f"{indent}{condition}.Add({test}({args}))")
+                    i += 1
+            elif not conditions_only and (match := _HLD_SKIP_RE.match(line)):
+                m = match.groupdict()
+                indent = m["indent"]
+                test = m["test"]
+                line_count = int(m["line_count"])
+                if line_count == 0:
+                    # Occurs rarely.
+                    output_lines.append(f"{line}  # NOTE: useless skip")
+                    i += 1
+                    continue
+                args = m["args"].removeprefix(", ")
+                # Find negated skip.
+                for test_name, tests in self.EMEDF_TESTS.items():
+                    if tests.get("skip", "") == f"SkipLinesIf{test}":
+                        break
+                else:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # could not find test name (possibly no negation)
+                if_block_lines = [f"{indent}{instruction_lines[i + 1 + j]}" for j in range(line_count)]
+                if any("SkipLinesIf" in instr for instr in if_block_lines):
+                    # Cannot yet skip other skips. Ignore this line, and recur on block lines for conditions only.
+                    output_lines.append(line)
+                    i += 1
+                    output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                    i += len(if_block_lines)
+                    continue
+                if any("SkipLines(" in instr for instr in (
+                    if_block_lines[:-1] if len(if_block_lines) > 1 else if_block_lines
+                )):
+                    # Cannot yet skip other unconditional skips EXCEPT as the last block instruction (`else`).
+                    output_lines.append(line)
+                    i += 1
+                    output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                    i += len(if_block_lines)
+                    continue
+                if unconditional_match := _HLD_UNCONDITIONAL_SKIP_RE.match(instruction_lines[i + line_count]):
+                    else_line_count = int(unconditional_match.groupdict()["line_count"])
+                    else_block_lines = [
+                        f"{indent}    {instruction_lines[i + line_count + 1 + j]}" for j in range(else_line_count)
+                    ]
+                    if any("SkipLines" in instr for instr in else_block_lines):
+                        # Cannot yet skip other skips (conditional or unconditional) in `else` block.
+                        output_lines.append(line)
+                        i += 1
+                        output_lines += self.high_level_evs_decompile(if_block_lines, conditions_only=True)
+                        i += len(if_block_lines)
+                        continue
+                    if_block_lines = if_block_lines[:-1]  # ignore unconditional skip
+                else:
+                    else_line_count = 0
+                    else_block_lines = []
+                output_lines.append(f"{indent}if {test_name}({args}):")
+                i += 1
+                # Recur on indented `if` block (which contains no skips, as per above).
+                output_lines += self.high_level_evs_decompile([f"    {if_line}" for if_line in if_block_lines])
+                i += line_count
+                if else_block_lines:
+                    # Recur on indented `else` block (which contains no skips, as per above).
+                    output_lines.append(f"{indent}else:")
+                    # No need for `i += 1`, as `line_count` includes the unconditional skip that `else` is replacing.
+                    output_lines += self.high_level_evs_decompile(else_block_lines)
+                    i += else_line_count
+            elif not conditions_only and (match := _HLD_RETURN_CONDITION_RE.match(line)):
+                m = match.groupdict()
+                indent = m["indent"]
+                return_type = m["return_type"].lower()
+                finished = m["finished"] is not None
+                if finished:
+                    # TODO: Cannot yet decompile these.
+                    output_lines.append(line)
+                    i += 1
+                    continue
+                state = m["state"] == "True"
+                condition = m["condition"]
+                if not state:
+                    condition = f"not {condition}"
+                output_lines.append(f"{indent}if {condition}:")
+                output_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
+                i += 1
+            elif not conditions_only and (match := _HLD_RETURN_RE.match(line)):
+                m = match.groupdict()
+                indent = m["indent"]
+                return_type = m["return_type"].lower()
+                test = m["test"]
+                if test not in self.EMEDF_TESTS or return_type not in self.EMEDF_TESTS[test]:
+                    output_lines.append(line)
+                    i += 1
+                    continue  # ignore (no end/restart test)
+                args = m["args"].removeprefix(", ")
+                output_lines.append(f"{indent}if {test}({args}):")
+                output_lines.append(f"{indent}    return{' RESTART' if return_type == 'restart' else ''}")
+                i += 1
+            else:
+                output_lines.append(line)
+                i += 1
+
+        while output_lines[-1] == "":
+            output_lines = output_lines[:-1]
+        return output_lines
 
     def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
         if self.event_arg_count == 0:
@@ -294,11 +522,11 @@ class Event(abc.ABC):
         args_binary = b""
         event_args_list = []
         for i, instruction in enumerate(self.instructions):
-            print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
+            # print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
             instructions_binary += instruction.to_binary(base_arg_offset)
 
             arg_binary = instruction.args_list_to_binary()
-            print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
+            # print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
             args_binary += arg_binary
             base_arg_offset += len(arg_binary)
 
@@ -314,66 +542,80 @@ class Event(abc.ABC):
     def _indent_and_wrap_instruction(instr: str, wrap_limit=121, indent=4):
         """Indent instruction with `indent` spaces and put each argument on a separate line if the instruction exceeds
         `wrap_limit`."""
-        name_indent = " " * indent
-        indented_instr = f"\n{name_indent}{instr}"
+        existing_indent = " " * (len(instr) - len(instr.lstrip(" ")))
+        base_indent = " " * indent
+        indented_instr = f"\n{base_indent}{instr}"
         if len(indented_instr) <= wrap_limit:
             return indented_instr
         if not (match := _INSTRUCTION_RE.match(instr)):
-            raise ValueError(f"Malformed instruction generated: {instr}")
+            if match := _CONDITION_RE.match(instr):
+                # Indent and wrap condition.
+                c_type, c_index, condition = match.group(1, 2, 3)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}{c_type}_{c_index}.Add({wrapped_condition})"
+            elif match := _MAIN_AWAIT_RE.match(instr):
+                # Indent and wrap condition.
+                condition = match.group(1)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}MAIN.Await({wrapped_condition})"
+            elif match := _IF_BLOCK_RE.match(instr):
+                # Indent and wrap condition.
+                condition = match.group(1)
+                wrapped_condition = Event._indent_and_wrap_instruction(
+                    condition, wrap_limit=wrap_limit - len(existing_indent), indent=len(existing_indent) + indent
+                )
+                wrapped_condition = wrapped_condition.lstrip("\n ")
+                return f"\n{base_indent}{existing_indent}if {wrapped_condition}:"
+            else:
+                raise ValueError(f"Cannot indent/wrap malformed instruction or condition group definition: '{instr}'")
+
+        # Indent and wrap basic instruction.
         instr_name, instr_args_string = match.group(1, 2)
         if not instr_args_string:
             return indented_instr  # shouldn't happen (super-long instruction name)
-        arg_indent = name_indent + "    "
+        arg_indent = existing_indent + base_indent + "    "
         args = instr_args_string.split(", ")
         i = 0
         arg_strings = []
         while i < len(args):
             arg = args[i]
-            if arg.startswith("args=("):
+            if tuple_match := _ARG_TUPLE_START_RE.match(arg):
                 # Consume additional args to reconstruct and properly indent tuple argument.
-                event_args = [arg[6:]]
+                arg_name, opening_bracket = tuple_match.group(1, 2)
+                closing_bracket = ")" if opening_bracket == "(" else "]"
+                event_args = [arg[len(arg_name) + 2:]]  # first arg value
                 i += 1
-                while not (test_arg := args[i]).endswith(")"):
-                    event_args.append(test_arg)
-                    i += 1
-                event_args.append(test_arg[:-1])  # cut off closing parenthesis
-                one_line_event_args = f"args=({', '.join(event_args)}),"
+                if event_args[0].endswith(closing_bracket):  # e.g., `event_layers=[2]`
+                    event_args[0] = event_args[0][:-1]  # cut off closing bracket
+                else:
+                    while not (test_arg := args[i]).endswith(closing_bracket):
+                        event_args.append(test_arg)
+                        i += 1
+                    event_args.append(test_arg[:-1])  # cut off closing bracket
+
+                one_line_event_args = f"{arg_name}={opening_bracket}{', '.join(event_args)}{closing_bracket},"
                 if len(arg_indent + one_line_event_args) <= wrap_limit:
                     arg_strings.append(one_line_event_args)
                 else:
                     # Place each args element on a separate line, further indented.
-                    arg_strings.append("args=(")
+                    arg_strings.append(f"{arg_name}={opening_bracket}")
                     arg_strings += [" " * 4 + event_arg + "," for event_arg in event_args]
-                    arg_strings.append("),")
-            elif arg.startswith("event_layers=["):
-                # Consume additional args to reconstruct event layers list (not bothering to handle multi-line).
-                event_layer_indices = [arg[14:]]
-                i += 1
-                while not (test_arg := args[i]).endswith("]"):
-                    event_layer_indices.append(test_arg)
-                    i += 1
-                event_layer_indices.append(test_arg[:-1])  # cut off closing bracket
-                one_line_event_layers = f"event_layers=[{', '.join(event_layer_indices)}],"
-                arg_strings.append(one_line_event_layers)
-            elif map_match := re.match(r"(\w*map=)\((\d+)", arg):
-                # Consume one additional arg to get map tuple.
-                map_indices = [map_match.group(2)]
-                i += 1
-                while not (test_arg := args[i]).endswith(")"):
-                    map_indices.append(test_arg)
-                    i += 1
-                map_indices.append(test_arg[:-1])  # cut off closing parenthesis
-                one_line_map_tuple = f"{map_match.group(1)}({', '.join(map_indices)}),"
-                arg_strings.append(one_line_map_tuple)
+                    arg_strings.append(f"{closing_bracket},")
             else:
                 arg_strings.append(arg + ",")
             i += 1
 
         arg_lines = "\n".join(arg_indent + arg_string for arg_string in arg_strings)
-        return f"\n{name_indent}{instr_name}(\n{arg_lines}\n{name_indent})"
+        return f"\n{base_indent}{existing_indent}{instr_name}(\n{arg_lines}\n{base_indent}{existing_indent})"
 
     @staticmethod
-    def _indent_and_wrap_function_def(function_name: str, function_args, wrap_limit=121):
+    def indent_and_wrap_function_def(function_name: str, function_args, wrap_limit=120):
         one_line_def = f"def {function_name}({function_args}):"
         if len(one_line_def) <= wrap_limit:
             return one_line_def

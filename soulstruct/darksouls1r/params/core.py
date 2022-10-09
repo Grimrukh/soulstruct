@@ -5,7 +5,7 @@ __all__ = ["Param", "GameParamBND"]
 import typing as tp
 
 from soulstruct.containers.bnd import BND3
-from soulstruct.game_types import *
+from soulstruct.darksouls1r.game_types import *
 from soulstruct.games import DarkSoulsDSRType
 from soulstruct.darksouls1ptde.constants import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
 from soulstruct.base.params.param import Param as _BaseParam
@@ -46,7 +46,7 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsDSRType, BND3):
         "SpecialEffects": SpecialEffectParam,
         "Weapons": WeaponParam,
         "Armor": ArmorParam,
-        "Rings": RingParam,
+        "Rings": AccessoryParam,
         "Goods": GoodParam,
         "WeaponUpgrades": WeaponUpgradeParam,
         "ArmorUpgrades": ArmorUpgradeParam,
@@ -117,7 +117,7 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsDSRType, BND3):
         for item_type_check, param_table, text_dict in zip(
             ("weapon", "armor", "ring", "good", "spell"),
             (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
-            (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
+            (text.WeaponNames, text.ArmorNames, text.AccessoryNames, text.GoodNames, text.SpellNames),
         ):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_entry in param_table.items():

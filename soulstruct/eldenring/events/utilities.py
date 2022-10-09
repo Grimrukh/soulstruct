@@ -2,7 +2,7 @@ from pathlib import Path
 
 from soulstruct.base.events.core import convert_events as convert_events_base, compare_events as compare_events_base
 from .emevd import EMEVD
-from ..maps.constants import ALL_MAPS
+from ..maps.constants import COMMON_FUNC, ALL_MAPS
 
 
 def convert_events(
@@ -29,7 +29,7 @@ def convert_events(
     """
     input_directory = Path(input_directory) if input_directory is not None else Path(__file__).parent / "vanilla"
     if maps is None:
-        maps = ALL_MAPS
+        maps = [COMMON_FUNC] + ALL_MAPS
     return convert_events_base(
         output_type=output_type,
         output_directory=output_directory,

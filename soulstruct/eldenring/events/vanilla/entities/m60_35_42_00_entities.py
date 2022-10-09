@@ -1,0 +1,34 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    NepheliLoux = 1035420710  # c0000_9001 npc 533340020 think 533340000 chara 23341
+    TalkDummy0 = 1035420100  # c1000_9000 npc 10001000 think 1 talk 2000
+    TalkDummy1 = 1035420950  # c1000_9002 npc 10000000 think 1 talk 1000
+    Ranni = 1035420706  # c2050_9006 npc 20500122 think 20500000 talk 106026000
+    LargeCrabSnow0 = 1035420370  # c2274_9000 npc 22740020 think 22740000
+    LargeCrabSnow1 = 1035420374  # c2274_9004 npc 22740020 think 22740000
+    SmallCrabCrystal0 = 1035420315  # c2275_9015 npc 22750020 think 22750000
+    SmallCrabCrystal1 = 1035420317  # c2275_9017 npc 22750020 think 22750010
+    AlbinauricLookout0 = 1035420700  # c3670_9000 npc 36708020 think 36708000 talk 219006000
+    AlbinauricLookout1 = 1035420202  # c3670_9002 npc 36704020 think 36704000
+    AlbinauricLookout2 = 1035420203  # c3670_9003 npc 36700120 think 36700000
+    AlbinauricLookout3 = 1035420208  # c3670_9008 npc 36700120 think 36700000
+    AlbinauricLookout4 = 1035420209  # c3670_9009 npc 36701120 think 36701120
+    AlbinauricLookout5 = 1035420210  # c3670_9010 npc 36700120 think 36700000
+    AlbinauricLookout6 = 1035420211  # c3670_9011 npc 36700120 think 36700000
+    AlbinauricLookout7 = 1035420212  # c3670_9012 npc 36700120 think 36700000
+    Scarab = 1035420220  # c4191_9000 npc 41912020 think 41910000
+    Omenkiller = 1035420800  # c4820_9000 npc 48200920 think 48200900 group 1035425100
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1035421950  # AEG099
+    AEG110_233_2001 = 1035421380  # AEG110
+    AEG003_088_2000 = 1035421300  # AEG003
+    AEG099_053_9000 = 1035421100  # AEG099
+    AEG099_090_9000 = 1035421152  # AEG099
+    AEG099_090_9020 = 1035421701  # AEG099
+    AEG099_990_9000 = 1035421710  # AEG099
+    AEG110_243_2000 = 1035421151  # AEG110
+    AEG110_334_9000 = 1035421700  # AEG110

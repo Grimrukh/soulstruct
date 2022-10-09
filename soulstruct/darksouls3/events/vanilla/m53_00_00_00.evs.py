@@ -1,4 +1,6 @@
 """
+Arena (Dragon Ruins)
+
 linked:
 0
 
@@ -11,11 +13,15 @@ strings:
 92: 
 94: 
 """
+# [COMMON_FUNC]
+from .common_func import *
 from soulstruct.darksouls3.events import *
+from soulstruct.darksouls3.events.instructions import *
 
 
+@ContinueOnRest(0)
 def Constructor():
-    """ 0: Event 0 """
+    """Event 0"""
     GotoIfHollowArenaMatchType(Label.L0, match_type=HollowArenaMatchType.Duel)
     GotoIfHollowArenaMatchType(Label.L1, match_type=HollowArenaMatchType.TwoPlayerBrawl)
     GotoIfHollowArenaMatchType(Label.L2, match_type=HollowArenaMatchType.FourPlayerBrawl)
@@ -23,38 +29,38 @@ def Constructor():
     GotoIfHollowArenaMatchType(Label.L4, match_type=HollowArenaMatchType.TwoVsTwo)
     GotoIfHollowArenaMatchType(Label.L5, match_type=HollowArenaMatchType.ThreeVsThree)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    RunCommonEvent(20005920, args=(0, 15305300, 10020000, 10020010))
-    RunCommonEvent(20005930, args=(15305300,))
-    RunCommonEvent(20005941, args=(15305300,))
+    CommonFunc_20005920(0, match_type=0, flag=15305300, message=10020000, message_1=10020010)
+    CommonFunc_20005930(0, flag=15305300)
+    CommonFunc_20005941(0, flag=15305300)
     End()
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    RunCommonEvent(20005920, args=(1, 15305300, 10020001, 10020011))
+    CommonFunc_20005920(0, match_type=1, flag=15305300, message=10020001, message_1=10020011)
     Goto(Label.L9)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
-    RunCommonEvent(20005920, args=(2, 15305300, 10020002, 10020012))
+    CommonFunc_20005920(0, match_type=2, flag=15305300, message=10020002, message_1=10020012)
     Goto(Label.L9)
 
-    # --- 3 --- #
+    # --- Label 3 --- #
     DefineLabel(3)
-    RunCommonEvent(20005920, args=(3, 15305300, 10020003, 10020013))
+    CommonFunc_20005920(0, match_type=3, flag=15305300, message=10020003, message_1=10020013)
     Goto(Label.L9)
 
-    # --- 4 --- #
+    # --- Label 4 --- #
     DefineLabel(4)
-    RunCommonEvent(20005920, args=(4, 15305300, 10020004, 10020014))
+    CommonFunc_20005920(0, match_type=4, flag=15305300, message=10020004, message_1=10020014)
     Goto(Label.L9)
 
-    # --- 5 --- #
+    # --- Label 5 --- #
     DefineLabel(5)
-    RunCommonEvent(20005920, args=(5, 15305300, 10020005, 10020015))
+    CommonFunc_20005920(0, match_type=5, flag=15305300, message=10020005, message_1=10020015)
     Goto(Label.L9)
 
-    # --- 9 --- #
+    # --- Label 9 --- #
     DefineLabel(9)
-    RunCommonEvent(20005940, args=(15305300,))
+    CommonFunc_20005940(0, flag=15305300)

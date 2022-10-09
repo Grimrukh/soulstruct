@@ -1,0 +1,35 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1037520951  # c1000_9001 npc 10000000 think 1 talk 1000
+    RayaLucariaScholar = 1037520350  # c3702_9000 npc 37021032 think 37020000
+    DemiHuman0 = 1037520200  # c4100_9000 npc 41000032 think 41000100
+    DemiHuman1 = 1037520310  # c4100_9001 npc 41000032 think 41001100
+    DemiHuman2 = 1037520207  # c4100_9002 npc 41000032 think 41000100
+    DemiHuman3 = 1037520311  # c4100_9004 npc 41000032 think 41001100
+    DemiHuman4 = 1037520313  # c4100_9006 npc 41002032 think 41001100
+    DemiHuman5 = 1037520302  # c4100_9011 npc 41001032 think 41001100
+    DemiHuman6 = 1037520300  # c4100_9012 npc 41001032 think 41001100
+    DemiHuman7 = 1037520314  # c4100_9014 npc 41001032 think 41001100
+    DemiHuman8 = 1037520305  # c4100_9015 npc 41000032 think 41000100
+    LargeDemiHuman = 1037520304  # c4101_9000 npc 41010032 think 41010100
+    DemiHumanShaman0 = 1037520301  # c4110_9000 npc 41100032 think 41100100
+    DemiHumanShaman1 = 1037520303  # c4110_9001 npc 41100032 think 41100100
+    DemiHumanBeastman0 = 1037520400  # c4120_9001 npc 41200032 think 41200100
+    DemiHumanBeastman1 = 1037520401  # c4120_9002 npc 41200032 think 41200100
+    IronVirgin = 1037520500  # c4470_9000 npc 44701132 think 44701000
+    MirandaFlower0 = 1037520614  # c4481_9014 npc 44810330 think 44810100
+    MirandaFlower1 = 1037520615  # c4481_9015 npc 44810330 think 44810100
+    MirandaFlower2 = 1037520616  # c4481_9016 npc 44810330 think 44810100
+    MirandaFlower3 = 1037520617  # c4481_9017 npc 44810330 think 44810100
+    MirandaFlower4 = 1037520618  # c4481_9018 npc 44810330 think 44810100
+    MirandaFlower5 = 1037520619  # c4481_9019 npc 44810330 think 44810100
+    MirandaFlower6 = 1037520620  # c4481_9020 npc 44810330 think 44810100
+    MirandaFlower7 = 1037520621  # c4481_9021 npc 44810330 think 44810100
+    MirandaFlower8 = 1037520622  # c4481_9022 npc 44810330 think 44810100
+
+
+class Assets(Asset):
+    AEG099_060_9001 = 1037521951  # AEG099
+    AEG099_502_9000 = 1037521940  # AEG099

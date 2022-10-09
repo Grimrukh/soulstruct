@@ -1,7 +1,7 @@
 __all__ = ["MAGIC_PARAM_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 from ..enums import *
 
 
@@ -58,7 +58,7 @@ MAGIC_PARAM_ST = {
         ),
         FieldDisplayInfo(
             "limitCancelSpEffectId",
-            "LimitCancelSpecialEffect",
+            "LimitRemoveSpecialEffect",
             False,
             SpecialEffectParam,
             "Unknown. Never used.",

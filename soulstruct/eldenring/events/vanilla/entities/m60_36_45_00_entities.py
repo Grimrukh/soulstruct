@@ -1,0 +1,23 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1036450950  # c1000_9000 npc 10000000 think 1 talk 1000
+    GraveSkeleton = 1036450250  # c3060_9000 npc 30600020 think 30600000
+    Skeleton0 = 1036450220  # c3500_9000 npc 35000020 think 35000000
+    Skeleton1 = 1036450221  # c3500_9001 npc 35004020 think 35004000
+    Skeleton2 = 1036450222  # c3500_9002 npc 35002020 think 35002000
+    Skeleton3 = 1036450223  # c3500_9003 npc 35000020 think 35000000
+    Skeleton4 = 1036450224  # c3500_9004 npc 35002020 think 35002000
+    Skeleton5 = 1036450225  # c3500_9005 npc 35002020 think 35002000
+    Skeleton6 = 1036450241  # c3500_9011 npc 35002020 think 35002000
+    Skeleton7 = 1036450242  # c3500_9012 npc 35002020 think 35002000
+    Skeleton8 = 1036450243  # c3500_9013 npc 35002020 think 35002000
+    DeathRiteBird = 1036450340  # c4980_9000 npc 49801020 think 49800100
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1036451950  # AEG099
+    AEG099_503_9000 = 1036451940  # AEG099
+    AEG099_510_9000 = 1036451620  # AEG099
+    AEG099_630_9001 = 1036451610  # AEG099

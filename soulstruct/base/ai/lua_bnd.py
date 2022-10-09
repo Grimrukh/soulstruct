@@ -667,7 +667,7 @@ class LuaInfo(GameFile):
     def __init__(
         self,
         file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader, list[LuaGoal, ...]] = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type=None,
         big_endian=False,
         use_struct_64=False,
     ):
@@ -679,7 +679,7 @@ class LuaInfo(GameFile):
         self.big_endian = big_endian
         self.use_struct_64 = use_struct_64
         self.goals = []  # type: list[LuaGoal]
-        super().__init__(file_source, dcx_magic, big_endian=big_endian)
+        super().__init__(file_source, dcx_type, big_endian=big_endian)
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         if isinstance(file_source, (list, tuple)) and all(isinstance(g, LuaGoal) for g in file_source):
@@ -791,7 +791,7 @@ class LuaGNL(GameFile):
     def __init__(
         self,
         file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader, tp.Sequence[str, ...]] = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type=None,
         big_endian=False,
         use_struct_64=False,
     ):
@@ -803,7 +803,7 @@ class LuaGNL(GameFile):
         self.big_endian = big_endian
         self.use_struct_64 = use_struct_64
         self.names = []  # type: list[str]
-        super().__init__(file_source, dcx_magic, big_endian=big_endian, use_struct_64=use_struct_64)
+        super().__init__(file_source, dcx_type, big_endian=big_endian, use_struct_64=use_struct_64)
 
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         if isinstance(file_source, (list, tuple)) and all(isinstance(s, str) for s in file_source):

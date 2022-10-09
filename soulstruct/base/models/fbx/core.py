@@ -30,13 +30,13 @@ class FBX(GameFile):
     def __init__(
         self,
         file_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader] = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type=None,
         **kwargs,
     ):
         self.root_nodes = []  # type: tp.Union[list[FBXNode32, ...], list[FBXNode64, ...]]
         self.node_class = FBXNode64  # defaults to 64-bit offsets
 
-        super().__init__(file_source, dcx_magic, **kwargs)
+        super().__init__(file_source, dcx_type, **kwargs)
 
     def unpack(self, reader: BinaryReader, **kwargs):
         header = reader.unpack_struct(self.HEADER_STRUCT)

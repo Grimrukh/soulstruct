@@ -80,7 +80,7 @@ def _grid_label(frame, label, component, label_position):
 
 
 def _embed_component(component_func):
-    """ Handles labels and scrollbars for any decorated widget function. """
+    """Handles labels and scrollbars for any decorated widget function."""
 
     @wraps(component_func)
     def component_with_label(
@@ -554,6 +554,11 @@ class SmartFrame(tk.Frame):
 
     @_embed_component
     def Entry(self, frame=None, initial_text="", integers_only=False, numbers_only=False, **kwargs):
+        if "text" in kwargs:
+            _LOGGER.warning(
+                "'text' argument given to `SmartFrame.Entry()`. I recommend using `textvariable` to ensure this "
+                "argument is not mistaken for `initial_text`."
+            )
         self.set_style_defaults(kwargs, text=True, cursor=True, entry=True)
         text_var = tk.StringVar(value=initial_text)
         entry = tk.Entry(frame, textvariable=text_var, **kwargs)
@@ -619,6 +624,17 @@ class SmartFrame(tk.Frame):
     @_embed_component
     def Progressbar(self, frame=None, **kwargs):
         return ttk.Progressbar(frame, **kwargs)
+
+    @_embed_component
+    def Scale(self, frame=None, limits=(0, 100), orientation=HORIZONTAL, variable=None, **kwargs):
+        self.set_style_defaults(kwargs)
+        if variable is None:
+            variable = tk.DoubleVar() if kwargs.pop("is_float", False) else tk.IntVar()
+        elif "is_float" in kwargs:
+            raise ValueError("Cannot set `is_float` for Scale if `variable` is given.")
+        scale = tk.Scale(frame, from_=limits[0], to=limits[1], orient=orientation, variable=variable, **kwargs)
+        scale.var = variable
+        return scale
 
     @_embed_component
     def TextBox(self, frame=None, initial_text="", **kwargs):

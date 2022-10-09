@@ -7,7 +7,7 @@ from soulstruct.base.ezstate.esd import (
     State as _BaseState,
 )
 from soulstruct.games import DarkSouls3Type
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
 __all__ = ["TalkESD", "ChrESD"]

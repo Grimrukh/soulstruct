@@ -11,7 +11,7 @@ from pathlib import Path
 
 from .exceptions import ESDTypeError
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 
 from .state import State
@@ -19,7 +19,7 @@ from .esp_compiler import ESPCompiler
 from .ezl_parser import SET_INTERNAL_SYMBOLS
 
 if tp.TYPE_CHECKING:
-    from soulstruct.games import Game
+    from soulstruct.containers.dcx import DCXType
     from .command import Command
     from .condition import Condition
 
@@ -33,12 +33,12 @@ class ESD(GameFile, abc.ABC):
     EXTERNAL_HEADER_STRUCT: BinaryStruct = None
     INTERNAL_HEADER_STRUCT: BinaryStruct = None
     STATE_MACHINE_HEADER_STRUCT: BinaryStruct = None
-    DCX_MAGIC: tuple[int, int] = (36, 44)  # TODO: True for DS1R, possibly not later games.
+    DCX_TYPE: DCXType = None
     ESD_TYPE: ESDType = None
 
     State: tp.Type[State] = None
 
-    def __init__(self, esd_source, dcx_magic=(), esd_name=""):
+    def __init__(self, esd_source, dcx_type=None, esd_name=""):
         """ Source can be one of:
             - file path of a '.esd[.dcx]' file.
             - raw binary data (e.g. from a BND entry).
@@ -49,7 +49,7 @@ class ESD(GameFile, abc.ABC):
         self.magic = ()
         self.file_tail = b""
         self.state_machines = {}  # type: dict[int, dict[int, State]]
-        super().__init__(esd_source, dcx_magic)
+        super().__init__(esd_source, dcx_type)
         if esd_name:  # override any auto-detected name
             self.esd_name = esd_name
 
@@ -66,7 +66,10 @@ class ESD(GameFile, abc.ABC):
                 if file_source.name.endswith(ext):
                     self.esd_name = file_source.name[len(ext)]
                     self.path = file_source.parent / self.esd_name
-                    self.compile_from_esp_single_file(file_source)
+                    try:
+                        self.compile_from_esp_single_file(file_source)
+                    except Exception as ex:
+                        raise ValueError(f"Error encountered while parsing '{file_source}': {ex}")
                     return None
 
         raise InvalidGameFileTypeError("`esd_source` is not a `.esp[.py]` file or directory.")
@@ -151,7 +154,7 @@ class ESD(GameFile, abc.ABC):
                             f"ESP file ESD_TYPE is {esd_type}. Cannot load with {self.__class__.__name__}."
                         )
                 elif line.startswith("MAGIC = "):
-                    magic = line[len("MAGIC = ") :]
+                    magic = line[len("MAGIC = "):]
                     try:
                         self.magic = tuple(ast.literal_eval(magic))
                     except ValueError:

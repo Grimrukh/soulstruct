@@ -1,14 +1,19 @@
 from __future__ import annotations
 
-__all__ = ["get_map"]
+__all__ = ["get_map", "GET_MAP_TYPING"]
 
 import logging
 import typing as tp
 from pathlib import Path
 
-from soulstruct.game_types.msb_types import Map
+from soulstruct.base.game_types.map_types import Map
 
 _LOGGER = logging.getLogger(__name__)
+
+SPECIAL_MAP_NAMES = (
+    "aicommon",
+    "common_func",
+)
 
 
 def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
@@ -71,11 +76,11 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
                 block_id = 0
             matches = [g for g in game_maps if g.area_id == area_id and g.block_id == block_id]
     elif isinstance(source, str):
-        if (source.startswith("m") and "_" in source) or source.lower() == "aicommon":
+        if (source.startswith("m") and "_" in source) or source.lower() in SPECIAL_MAP_NAMES:
             source = Path(source).stem  # remove file extensions
             matches = [g for g in game_maps if source in g.stem_set()]
         else:
-            # Canonical name. Change to lower case and remove underscores.
+            # Canonical name, eg `FIRELINK_SHRINE` or `FirelinkShrine`. Change to lower case and remove underscores.
             source = source.lower().replace("_", "")
             matches = [g for g in game_maps if source == g.name.lower().replace("_", "")]
     else:
@@ -87,3 +92,9 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
         raise ValueError(f"No maps matched for '{source_orig}'.")
 
     return matches[0]
+
+
+class GET_MAP_TYPING(tp.Protocol):
+    """Type hint for `get_map` function that can be used for base classes."""
+    def __call__(self, source: tp.Union[str, tuple], block_id: int = ...):
+        ...

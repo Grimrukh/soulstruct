@@ -219,6 +219,7 @@ class BaseEditor(SmartFrame, abc.ABC):
     ENTRY_ROW_CLASS = EntryRow
     entry_rows: list[EntryRow]
 
+    # noinspection PyCallingNonCallable
     TRANSLATOR = Translator() if Translator is not None else None
 
     def __init__(

@@ -1,13 +1,13 @@
 __all__ = ["SHOP_LINEUP_PARAM"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 from ..enums import *
 
 
 class DynamicShopRef(DynamicFieldDisplayInfo):
 
-    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam, SpellParam}
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, AccessoryParam, GoodParam, SpellParam}
 
     def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]
@@ -16,7 +16,7 @@ class DynamicShopRef(DynamicFieldDisplayInfo):
         if item_type == SHOP_LINEUP_EQUIPTYPE.Armor:
             return FieldDisplayInfo(self.name, f"Armor", True, ArmorParam, f"Armor to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Ring:
-            return FieldDisplayInfo(self.name, f"Ring", True, RingParam, f"Ring to be listed in shop menu.")
+            return FieldDisplayInfo(self.name, f"Ring", True, AccessoryParam, f"Ring to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Good:
             return FieldDisplayInfo(self.name, f"Good", True, GoodParam, f"Good to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Spell:

@@ -144,7 +144,7 @@ class FLVER(GameFile):
     def __init__(
         self,
         file_source: GameFile.Typing = None,
-        dcx_magic: tuple[int, int] = (),
+        dcx_type=None,
         **kwargs,
     ):
         self.header = FLVERHeader()
@@ -155,7 +155,7 @@ class FLVER(GameFile):
         self.meshes = []
         self.buffer_layouts = []
 
-        super().__init__(file_source, dcx_magic, **kwargs)
+        super().__init__(file_source, dcx_type, **kwargs)
 
     def unpack(self, reader: BinaryReader, **kwargs):
         self.header = FLVERHeader(reader)

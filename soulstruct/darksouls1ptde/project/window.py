@@ -2,11 +2,15 @@ from soulstruct.darksouls1ptde.constants import CHARACTER_MODELS
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 
 from .core import GameDirectoryProject
+from .links import WindowLinker
+from .maps import MapsEditor
 from .runtime import RuntimeManager
 
 
 class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
+    LINKER_CLASS = WindowLinker
+    MAPS_EDITOR_CLASS = MapsEditor
     RUNTIME_MANAGER_CLASS = RuntimeManager
     CHARACTER_MODELS = CHARACTER_MODELS
 

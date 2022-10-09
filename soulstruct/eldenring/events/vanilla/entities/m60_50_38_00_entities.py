@@ -1,0 +1,19 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Millicent0 = 1050380705  # c0000_9001 npc 523480040 think 523480000 chara 23481 talk 348006000
+    Millicent1 = 1050380706  # c0000_9003 npc 523480340 think 523480000 chara 23482 talk 348006000
+    SageGowry0 = 1050380700  # c0000_9002 npc 523490040 think 523490000 chara 23490 talk 349006000
+    SageGowry1 = 1050380702  # c0000_9004 npc 523490140 think 523490000 chara 23490 talk 349006000
+    Millicent2 = 1050380710  # c0000_9006 npc 523480440 think 523480000 chara 23482 talk 348006000
+    TalkDummy = 1050380950  # c1000_9000 npc 10000000 think 1 talk 1000
+    KindredofRot = 1050380701  # c3810_9000 npc 38109040 think 38100000
+    Bat = 1050380200  # c4200_9000 npc 42000040 think 42000000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1050381950  # AEG099
+    AEG099_320_9000 = 1050381700  # AEG099
+    AEG007_506_2000 = 1050381702  # AEG007
+    AEG099_990_9001 = 1050381703  # AEG099

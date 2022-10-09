@@ -11,7 +11,7 @@ class EMEVDTest(unittest.TestCase):
         emevd = EMEVD("resources/m10_00_00_00.emevd.dcx")
         emevd.write_evs(
             "_test_emevd.evs.py",
-            entity_module_paths=(Path("resources/m10_00_00_00_entities.py"),),
+            entity_star_module_paths=(Path("resources/m10_00_00_00_entities.py"),),
             warn_missing_enums=False,
             entity_module_prefix="resources.",
         )

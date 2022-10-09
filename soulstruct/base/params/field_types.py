@@ -36,6 +36,10 @@ class base_type:
     def maximum():
         raise NotImplementedError
 
+    @staticmethod
+    def default():
+        raise NotImplementedError
+
 
 class unsigned(base_type, IntEnum):
     @staticmethod
@@ -61,6 +65,10 @@ class unsigned(base_type, IntEnum):
     @classmethod
     def maximum(cls):
         return 2 ** cls.bit_size() - 1
+
+    @staticmethod
+    def default():
+        return 0
 
 
 class u8(unsigned):
@@ -122,6 +130,10 @@ class signed(base_type, IntEnum):
     def maximum(cls):
         return 2 ** (cls.bit_size() - 1) - 1
 
+    @staticmethod
+    def default():
+        return 0
+
 
 class s8(signed):
     @staticmethod
@@ -178,8 +190,12 @@ class f32:
     def maximum():
         return float("inf")
 
+    @staticmethod
+    def default():
+        return 0.0
 
-class f64:
+
+class f64(base_type):
     """Not actually used in any known game."""
 
     @staticmethod
@@ -205,6 +221,10 @@ class f64:
     @staticmethod
     def maximum():
         return float("inf")
+
+    @staticmethod
+    def default():
+        return 0
 
 
 class basestring(base_type):
@@ -235,6 +255,10 @@ class basestring(base_type):
     @staticmethod
     def maximum():
         return None
+
+    @staticmethod
+    def default():
+        return ""
 
 
 class fixstr(basestring):

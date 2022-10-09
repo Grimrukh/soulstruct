@@ -8,7 +8,7 @@ __all__ = [
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 EQUIP_GEN_PARAM_BOOL32 = bool  # override u32

@@ -1,9 +1,10 @@
 from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
 from soulstruct.darksouls3.events.emevd.core import EMEVD
-from soulstruct.darksouls3.maps import ALL_MAPS, get_map
+from soulstruct.darksouls3.maps import COMMON_FUNC, ALL_MAPS, get_map
 
 
 class EMEVDDirectory(_BaseEMEVDDirectory):
+    COMMON_FUNC = COMMON_FUNC
     ALL_MAPS = ALL_MAPS
     GET_MAP = staticmethod(get_map)
     IS_DCX = True

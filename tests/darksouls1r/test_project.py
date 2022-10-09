@@ -14,7 +14,7 @@ class ProjectTest(unittest.TestCase):
             pass
 
     def test_project_console(self):
-        GameDirectoryProject(project_path="_test_project", game_root="G:/Steam/steamapps/common/DARK SOULS REMASTERED")
+        GameDirectoryProject(project_path="_test_project", game_root="C:/Steam/steamapps/common/DARK SOULS REMASTERED")
 
 
 if __name__ == '__main__':

@@ -47,7 +47,7 @@ TAB_EDITORS = {
     "events": EventEditor,
     "ai": AIEditor,
     "talk": TalkEditor,
-}  # also specifies tab order ("runtime" always comes last)
+}  # also specifies tab order ("runtime" always comes last, followed by any other game-specific extras)
 
 
 class ProjectWindow(SmartFrame, abc.ABC):
@@ -63,6 +63,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     AI_EDITOR_CLASS: tp.Type[AIEditor] = AIEditor
     TALK_EDITOR_CLASS: tp.Type[TalkEditor] = TalkEditor
     RUNTIME_MANAGER_CLASS: tp.Type[RuntimeManager] = None
+    EXTRA_TAB_CLASSES = {}  # maps tab names to classes
     CHARACTER_MODELS = {}
 
     maps_tab: tp.Optional[MapsEditor]
@@ -75,7 +76,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     talk_tab: tp.Optional[TalkEditor]
     runtime_tab: tp.Optional[RuntimeManager]
 
-    def __init__(self, project_path=None, master=None):
+    def __init__(self, project_path="", game_root=None, master=None):
         super().__init__(
             master=master,
             toplevel=True,
@@ -104,7 +105,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.toplevel.title(f"{self.PROJECT_CLASS.GAME.name} Project Editor: {Path(project_path)}")
 
         try:
-            self.project = self.PROJECT_CLASS(project_path, with_window=self)
+            self.project = self.PROJECT_CLASS(project_path, with_window=self, game_root=game_root)
             _LOGGER.info(f"Opened project: {project_path}")
         except SoulstructProjectError as e:
             self.deiconify()
@@ -140,6 +141,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.ai_tab = None
         self.talk_tab = None
         self.runtime_tab = None
+        self.extra_tabs = []
 
         self.save_all_button = None
         self.save_tab_button = None
@@ -153,7 +155,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.build()
         self.deiconify()
 
-        self.maps_tab.check_for_repeated_entity_ids()
+        if self.maps_tab:
+            self.maps_tab.check_for_repeated_entity_ids()
 
     def build(self):
         self.build_top_menu()
@@ -197,6 +200,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
             tab_name: self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
             for tab_name in self.ordered_tabs
         }
+        for tab_name in self.EXTRA_TAB_CLASSES:
+            tab_frames[tab_name] = self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
 
         if "maps" in self.data_types:
             self.maps_tab = self.SmartFrame(
@@ -301,6 +306,16 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 sticky="nsew",
             )
             self.runtime_tab.bind("<Visibility>", self._update_banner)
+
+        for tab_name, smart_frame_class in self.EXTRA_TAB_CLASSES.items():
+            extra_tab = self.SmartFrame(
+                frame=tab_frames[tab_name],
+                smart_frame_class=smart_frame_class,
+                project=self.project,
+                sticky="nsew",
+            )
+            extra_tab.bind("<Visibility>", self._update_banner)
+            self.extra_tabs.append(extra_tab)
 
         for tab_name, tab_frame in tab_frames.items():
             self.page_tabs.add(tab_frame, text=f"  {data_type_caps(tab_name)}  ")
@@ -462,6 +477,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     def _open_console(self):
         try:
+            # noinspection PyPackageRequirements
             import IPython
         except ImportError:
             self.CustomDialog(
@@ -469,7 +485,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 message="Interactive console requires the `ipython` package to be installed\n"
                         "in your Python environment.",
             )
-            _LOGGER.info(f"Interactive console aborted as `ipython` not installed.")
+            _LOGGER.info(f"Interactive console aborted. `ipython` package is not installed.")
             return
 
         _LOGGER.info("Starting interactive console in new window. Note that it will load the LAST SAVED project data.")
@@ -579,14 +595,17 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return data_type
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
+        data_types = self.data_types
+        if "maps" not in data_types:
+            # Cannot get map to set it globally.
+            return
         # noinspection PyUnresolvedReferences
         game_map = self.PROJECT_CLASS.DATA_TYPES["maps"].GET_MAP(map_id)
-        data_types = self.data_types
-        if "maps" in data_types and "maps" not in ignore_tabs:
+        if "maps" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-        if "maps" in data_types and "entities" not in ignore_tabs:
+        if "entities" not in ignore_tabs:
             if game_map.msb_file_stem is not None:
                 self.entities_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.entities_tab.on_map_choice()

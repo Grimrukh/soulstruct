@@ -49,7 +49,7 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
         "LIGHT_BANK": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
     }
 
-    def __init__(self, draw_param_bnd_source=None, dcx_magic=(), paramdef_bnd=None, use_json=False):
+    def __init__(self, draw_param_bnd_source=None, dcx_type=None, paramdef_bnd=None, use_json=False):
         """Structure that manages double-slots and table nicknames for one `DrawParamBND` file (i.e. one map "area")."""
         self.params = {}  # type: dict[str, list[tp.Optional[Param], tp.Optional[Param]]]
         self._slot_entry_paths = {}  # type: dict[tuple[str, int], str]
@@ -62,10 +62,10 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
             raise TypeError(f"`paramdef_bnd` must be None or an existing `ParamDefBND`, not {type(paramdef_bnd)}.")
 
         if use_json:  # source is a folder with individual `*Param.json` files and a manifest
-            super().__init__(None, dcx_magic=dcx_magic)
+            super().__init__(None, dcx_type=dcx_type)
             self.load_json_dir(draw_param_bnd_source, clear_old_data=True)
         else:  # must be a standard `BaseBND` source
-            super().__init__(draw_param_bnd_source, dcx_magic=dcx_magic)
+            super().__init__(draw_param_bnd_source, dcx_type=dcx_type)
 
         if self.params:
             return  # already generated

@@ -1,0 +1,32 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    TalkDummy = 1038420100  # c1000_9000 npc 10001000 think 1 talk 2000
+    RayaLucariaScholar = 1038420240  # c3702_9000 npc 37023020 think 37020121 group 1038425100
+    WanderingNoble0 = 1038420220  # c4300_9000 npc 43002220 think 43002010 group 1038425100
+    WanderingNoble1 = 1038420221  # c4300_9001 npc 43002220 think 43002010 group 1038425100
+    WanderingNoble2 = 1038420222  # c4300_9002 npc 43000320 think 43000000 group 1038425100
+    WanderingNoble3 = 1038420223  # c4300_9003 npc 43000320 think 43000000 group 1038425100
+    WanderingNoble4 = 1038420224  # c4300_9004 npc 43000320 think 43000000 group 1038425100
+    WanderingNoble5 = 1038420225  # c4300_9005 npc 43001120 think 43001000 group 1038425100
+    WanderingNoble6 = 1038420226  # c4300_9006 npc 43001120 think 43001000 group 1038425100
+    WanderingNoble7 = 1038420227  # c4300_9007 npc 43000320 think 43000000 group 1038425100
+    WanderingNoble8 = 1038420228  # c4300_9008 npc 43000320 think 43000000 group 1038425100
+    WanderingNoble9 = 1038420229  # c4300_9009 npc 43002220 think 43002010 group 1038425100
+    WanderingNoble10 = 1038420230  # c4300_9010 npc 43001120 think 43001000 group 1038425100
+    RayaLucariaSoldier0 = 1038420200  # c4312_9000 npc 43120020 think 43120000
+    RayaLucariaSoldier1 = 1038420201  # c4312_9001 npc 43120020 think 1
+    RayaLucariaSoldier2 = 1038420202  # c4312_9002 npc 43120020 think 43120000
+    RayaLucariaFootSoldier0 = 1038420210  # c4372_9000 npc 43722020 think 43720000
+    RayaLucariaFootSoldier1 = 1038420211  # c4372_9001 npc 43722020 think 43720000
+    RayaLucariaFootSoldier2 = 1038420212  # c4372_9002 npc 43722020 think 43720000
+
+
+class Assets(Asset):
+    AEG110_012_2000 = 1038421580  # AEG110
+    AEG110_012_2001 = 1038421582  # AEG110
+    AEG110_012_2002 = 1038421584  # AEG110
+    AEG099_053_9000 = 1038421100  # AEG099
+    AEG099_503_9000 = 1038421940  # AEG099
+    AEG099_630_9000 = 1038421600  # AEG099

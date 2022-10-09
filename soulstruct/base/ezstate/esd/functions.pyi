@@ -9,7 +9,7 @@ Currently identical for all (supported) games.
 """
 import typing as tp
 
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.darksouls1ptde.game_types.internal_types import ESDType
 
 
 COMMANDS: dict[ESDType, dict[int, dict[int, tuple]]]

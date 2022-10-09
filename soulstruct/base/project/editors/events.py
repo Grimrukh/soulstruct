@@ -10,6 +10,7 @@ import logging
 import re
 import typing as tp
 from pathlib import Path
+from tkinter import TclError
 
 from soulstruct.base.events.emevd.evs import EVSError
 from soulstruct.base.project.utilities import TagData, TextEditor
@@ -26,21 +27,23 @@ class EvsTextEditor(TextEditor):
     TAGS = {
         "restart_type": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
-            "#FF7F50", r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
+            "#FF7F50", r"(^| )(class|def|if|and|or|not|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
         ),
-        "true_false": TagData("#FF7F50", r"[ =](True|False)(\n| |:|\))", (1, 1)),
+        "true_false": TagData("#FF7F50", r"[ =](True|False)(,|\n| |:|\))", (1, 1)),
         "event_def": TagData("#FF6980", r"^def [\w\d_]+", (4, 0)),
         "import": TagData("#FFAAAA", r"^(from|import) [\w\d_ .*]+", (0, 0)),
         "instruction_or_high_level_test": TagData("#E6C975", r"[ \(][\w\d_]+(?=\()", (1, 0)),
-        "low_level_test": TagData("#AAAAFF", r"^[ ]+(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "main_condition": TagData("#FF3355", r"^[ ]+If[\w\d_]+(?=[(]0[ ]*,)", (0, 0)),
+        "low_level_test": TagData("#AAAAFF", r"^ +(If|Skip|Goto)[\w\d_]+", (0, 0)),
+        "if_main_condition": TagData("#FF3355", r"^ +If[\w\d_]+(?=[(]0 *,)", (0, 0)),
+        "main_condition": TagData("#FF3355", r"^ +MAIN\.Await\(", (0, 1)),
         "await_statement": TagData("#FF3355", r" await ", (0, 0)),
-        "named_arg": TagData("#AAFFFF", r"[(,=][ ]*(?!False)(?!True)[A-z][\w\d.]*[ ]*[,)]", (1, 1)),
-        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+[ ]*(?=\=)", (0, 0)),
+        "named_arg": TagData("#AAFFFF", r"[(,=\|][ \n]*(?!False)(?!True)\w[\w\d.]* *[,)\|]", (1, 1)),
+        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+ *(?=\=)", (0, 0)),
         "event_arg_name": TagData("#FFAAFF", r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
+        "and_or_condition": TagData("#AAAAFF", r"[ \(] *(AND|OR)_[\d]+(\.Add)?", (1, 0)),
         "comment": TagData("#777777", r"#.*$", (0, 0)),
-        "docstring": TagData("#00ABA9", r"^[ ]+\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
+        "docstring": TagData("#00ABA9", r"^ +\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
         "module_docstring": TagData("#00ABA9", r'^"""(.|\n)*"""', (0, 0)),
     }
 
@@ -52,7 +55,7 @@ class EvsTextEditor(TextEditor):
         """Get all event arg names (e.g. "arg_0_3") and color them."""
         self.tag_remove("event_arg_name", "1.0", "end")
         start_index = "1.0"
-        while 1:
+        while True:
             def_index = self.search(r"^def [\w\d_]+\(", start_index, regexp=True)
             if not def_index:
                 break
@@ -64,6 +67,8 @@ class EvsTextEditor(TextEditor):
             if event_args_match:
                 event_args = event_args_match.group(1).replace("\n", "").replace(" ", "")
                 for event_arg in event_args.split(","):
+                    if event_arg == "_":
+                        continue  # don't recolor `slot` underscore argument
                     parts = event_arg.split(":")
                     if len(parts) == 2:
                         arg_name, arg_type = parts
@@ -217,6 +222,17 @@ class EventEditor(SmartFrame):
             )
 
     def scan_evs_files(self):
+        """Detect all EVS files in project event directory."""
+
+        # Check for `common_func.py` first, which does not use EVS extension (for importing purposes).
+        common_func_path = self.evs_directory / "common_func.py"
+        if common_func_path.is_file():
+            self.evs_file_paths["common_func"] = common_func_path
+            with common_func_path.open("r", encoding="utf-8") as f:
+                self.evs_text["common_func"] = f.read()
+
+        # Search for all `evs.py` files.
+        # TODO: Extension should be modifiable, surely?
         for evs_file_path in self.evs_directory.glob("*.evs.py"):
             if evs_file_path.name.startswith("_"):
                 # Ignore files starting with an underscore.
@@ -244,11 +260,15 @@ class EventEditor(SmartFrame):
 
     def _control_f_search(self, _):
         if self.selected_map_id:
-            highlighted = self.text_editor.selection_get()
-            self.string_to_find.var.set(highlighted)
-            self.string_to_find.select_range(0, "end")
-            self.string_to_find.icursor("end")
-            self.string_to_find.focus_force()
+            try:
+                highlighted = self.text_editor.selection_get()
+            except TclError:  # just focus on search box
+                self.string_to_find.focus_force()
+            else:
+                self.string_to_find.var.set(highlighted)
+                self.string_to_find.select_range(0, "end")
+                self.string_to_find.icursor("end")
+                self.string_to_find.focus_force()
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()
@@ -380,7 +400,7 @@ class EventEditor(SmartFrame):
             emevd = self.events.EMEVD_CLASS(
                 self.evs_file_paths[self.selected_map_id],
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
-                dcx_magic=self.events.EMEVD_CLASS.DCX_MAGIC if self.events.IS_DCX else (),
+                dcx_type=self.events.EMEVD_CLASS.DCX_TYPE if self.events.IS_DCX else None,
             )
         except Exception as e:
             return self.error_dialog(

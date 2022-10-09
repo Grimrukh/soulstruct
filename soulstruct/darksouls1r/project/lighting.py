@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import logging
+import math
 import typing as tp
 
 from soulstruct.base.project.editors.lighting import LightingEditor as _BaseLightingEditor
 from soulstruct.exceptions import InvalidFieldValueError
+from soulstruct.darksouls1r.maps import MSB
+from soulstruct.darksouls1r.maps.parts import MSBPlayerStart
+from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
@@ -63,7 +67,7 @@ class LightingEditor(_BaseLightingEditor):
                     label="Auto Inject", command=self.toggle_auto_inject,
                 )
 
-            super().build(super_only=True)
+            super(_BaseLightingEditor, self).build()
 
     def get_category_data(self, category=None) -> tp.Union[DrawParam, dict]:
         """Overridden just for return type."""
@@ -77,7 +81,7 @@ class LightingEditor(_BaseLightingEditor):
 
     def inject_current_param(self):
         """Hook into game memory and update the current param."""
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Write Memory",
@@ -105,7 +109,7 @@ class LightingEditor(_BaseLightingEditor):
     def toggle_auto_inject(self):
         if not self.auto_inject.var.get():
             return
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Write Memory",

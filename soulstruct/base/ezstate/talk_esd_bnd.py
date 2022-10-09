@@ -32,9 +32,9 @@ class TalkESDBND(BaseBND, abc.ABC):
 
     talk: dict[int, ESD]
 
-    def __init__(self, talkesdbnd_source, dcx_magic=()):
+    def __init__(self, talkesdbnd_source, dcx_type=None):
         self.talk = {}
-        super().__init__(talkesdbnd_source, dcx_magic=dcx_magic)
+        super().__init__(talkesdbnd_source, dcx_type=dcx_type)
 
     def _handle_other_source_types(self, file_source, **kwargs):
         if isinstance(file_source, Path) and file_source.is_dir() and not (file_source / "bnd_manifest.json").exists():

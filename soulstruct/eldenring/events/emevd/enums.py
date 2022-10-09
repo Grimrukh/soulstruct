@@ -1,6 +1,4 @@
-from enum import IntEnum
-
-from soulstruct.base.events.emevd.enums import *
+from __future__ import annotations
 
 __all__ = [
     # Basic enums
@@ -11,24 +9,19 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "CLIENT_PLAYER_1",
-    "CLIENT_PLAYER_2",
-    "CLIENT_PLAYER_3",
-    "CLIENT_PLAYER_4",
-    "CLIENT_PLAYER_5",
-    "PlayerEntity",
-    # Enums identical in all games
+    "ProtectedEntities",
     "AIStatusType",
     "BitOperation",
+    "BossMusicState",
     "ButtonType",
     "CharacterType",
     "CharacterUpdateRate",
     "ClassType",
     "ComparisonType",
-    "CutsceneType",
+    "CutsceneFlags",
     "DamageTargetType",
     "EventReturnType",
-    "FlagState",
+    "FlagSetting",
     "FlagType",
     "InterpolationState",
     "ItemType",
@@ -42,15 +35,12 @@ __all__ = [
     "StatueType",
     "SummonSignType",
     "TriggerAttribute",
-    "WorldTendencyType",
     "UpdateAuthority",
-    # Enums in Dark Souls 3 only
     "ArmorType",
     "BannerType",
     "CalculationType",
     "ClientType",
     "ConditionGroup",
-    "Covenant",
     "DamageType",
     "DeleteOrAdd",
     "DialogResult",
@@ -60,40 +50,343 @@ __all__ = [
     "Label",
     "MultiplayerState",
     "NPCPartType",
-    "PlayGoState",
-    "PlayLogMultiplayerType",
-    "PlayerPlayLogParameter",
     "SingleplayerSummonSignType",
     "TeamType",
-    "HollowArenaMatchType",
-    "HollowArenaResult",
+    "Weather",
 ]
 
+from enum import IntEnum
 
-class ArmorType(IntEnum):
+from soulstruct.base.events.emevd.enums import *
+
+
+class ProtectedEntities(IntEnum):
+    Player = PLAYER
+    ClientPlayer1 = 10001
+    ClientPlayer2 = 10002
+    ClientPlayer3 = 10003
+    ClientPlayer4 = 10004
+    ClientPlayer5 = 10005
+
+
+class AIStatusType(BaseEMEVDEnum):
+    Normal = 0
+    Caution = 1
+    Search = 2
+    Battle = 3
+    Unknown4 = 4
+    Unknown5 = 5
+    Unknown6 = 6
+
+
+class BitOperation(BaseEMEVDEnum):
+    Add = 0
+    Delete = 1
+    Invert = 2
+
+
+class BossMusicState(BaseEMEVDEnum):
+    Stop1 = -2
+    Stop2 = -1
+    Start = 0
+    HeatUp = 1
+
+
+class ButtonType(BaseEMEVDEnum):
+    Yes_or_No = 0
+    OK_or_Cancel = 1
+
+
+class CharacterType(BaseEMEVDEnum):
+    Alive = 0
+    WhitePhantom = 1
+    BlackPhantom = 2
+    Unknown3 = 3
+    Unknown4 = 4
+    Unknown5 = 5
+    Unknown6 = 6
+    Unknown7 = 7
+    GrayPhantom = 8
+    Invader = 15
+    Invader2 = 16
+    BluePhantom = 17
+    Invader3 = 18
+
+
+class CharacterUpdateRate(BaseEMEVDEnum):
+    Never = -1
+    Always = 0
+    EveryTwoFrames = 2
+    EveryFiveFrames = 5
+    AtLeastEveryTwoFrames = 102
+    AtLeastEveryFiveFrames = 105
+
+
+class ClassType(BaseEMEVDEnum):
+    Vagabond = 0
+    Warrior = 1
+    Hero = 2
+    Bandit = 3
+    Astrologer = 4
+    Prophet = 5
+    Confessor = 6
+    Samurai = 7
+    Prisoner = 8
+    Wretch = 9
+
+
+class ComparisonType(BaseNegatableEMEVDEnum):
+    Equal = 0
+    NotEqual = 1
+    GreaterThan = 2
+    LessThan = 3
+    GreaterThanOrEqual = 4
+    LessThanOrEqual = 5
+
+    def negate(self):
+        if self == ComparisonType.Equal:
+            return ComparisonType.NotEqual
+        elif self == ComparisonType.NotEqual:
+            return ComparisonType.Equal
+        elif self == ComparisonType.GreaterThan:
+            return ComparisonType.LessThanOrEqual
+        elif self == ComparisonType.LessThan:
+            return ComparisonType.GreaterThanOrEqual
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ComparisonType.LessThan
+        elif self == ComparisonType.LessThanOrEqual:
+            return ComparisonType.GreaterThan
+        return super().negate()
+
+    def get_operator(self):
+        if self == ComparisonType.Equal:
+            return "=="
+        elif self == ComparisonType.NotEqual:
+            return "!="
+        elif self == ComparisonType.GreaterThan:
+            return ">"
+        elif self == ComparisonType.LessThan:
+            return "<"
+        elif self == ComparisonType.GreaterThanOrEqual:
+            return ">="
+        elif self == ComparisonType.LessThanOrEqual:
+            return "<="
+
+
+class CutsceneFlags(BaseEMEVDFlags):
+    """Bit flags, stored in one byte."""
+    Unskippable = 0b0000_0010  # 2
+    FadeOut = 0b0000_1000  # 8
+    # TODO: These could have been introduced in Sekiro?
+    Unknown16 = 0b0001_0000  # 16
+    Unknown32 = 0b0010_0000  # 32
+    IsEndingCutscene = 0b0100_0000  # 64
+
+
+class DamageTargetType(BaseEMEVDEnum):
+    Character = 1
+    Map = 2
+    Character_and_Map = 3
+
+
+class EventReturnType(BaseEMEVDEnum):
+    End = 0
+    Restart = 1
+
+
+class FlagSetting(BaseNegatableEMEVDEnum):
+    Off = 0
+    On = 1
+    Change = 2
+
+    def negate(self):
+        if self == FlagSetting.Off:
+            return FlagSetting.On
+        elif self == FlagSetting.On:
+            return FlagSetting.Off
+        return super().negate()
+
+
+class FlagType(BaseEMEVDEnum):
+    Absolute = 0
+    RelativeToThisEvent = 1
+    RelativeToThisEventSlot = 2
+
+
+class InterpolationState(BaseNegatableEMEVDEnum):
+    Interpolated = 0
+    NotInterpolated = 1
+
+    def negate(self):
+        if self == InterpolationState.Interpolated:
+            return InterpolationState.NotInterpolated
+        elif self == InterpolationState.NotInterpolated:
+            return InterpolationState.Interpolated
+        return super().negate()
+
+
+class ItemType(BaseEMEVDEnum):
+    Weapon = 0
+    Armor = 1
+    Ring = 2
+    Good = 3
+
+
+class RangeState(BaseNegatableEMEVDEnum):
+    AllOn = 0
+    AllOff = 1
+    AnyOn = 2  # or "not all off"
+    AnyOff = 3  # or "not all on"
+
+    def negate(self):
+        if self == RangeState.AllOn:
+            return RangeState.AnyOff
+        elif self == RangeState.AllOff:
+            return RangeState.AnyOn
+        elif self == RangeState.AnyOn:
+            return RangeState.AllOff
+        elif self == RangeState.AnyOff:
+            return RangeState.AllOn
+        return super().negate()
+
+
+class CoordEntityType(BaseEMEVDEnum):
+    """Originally "Category", which was ambiguous. Used often to identify the type of an MSB part (or region).
+
+    Note that all MSB parts (Map Pieces, Collisions, Navmesh, etc.) technically have `translate` coordinates, but these
+    are the big three types/subtypes.
+    """
+    Asset = 0
+    Region = 1
+    Character = 2
+
+
+class NavmeshType(BaseEMEVDEnum):
+    """Bit flags for Navmesh types."""
+
+    Solid = 0b00000000000001
+    Exit = 0b00000000000010
+    Obstacle = 0b00000000000100
+    Wall = 0b00000000001000
+    # Note enum 16 (fifth bit) is missing.
+    WallTouchingFloor = 0b00000000100000
+    LandingPoint = 0b00000001000000
+    Event = 0b00000010000000
+    Cliff = 0b00000100000000
+    WideSpace = 0b00001000000000
+    Ladder = 0b00010000000000
+    Hole = 0b00100000000000
+    Door = 0b01000000000000
+    ClosedDoor = 0b10000000000000
+
+
+class NumberButtons(BaseEMEVDEnum):
+    OneButton = 1
+    TwoButton = 2
+    NoButton = 6
+
+
+class OnOffChange(BaseNegatableEMEVDEnum):
+    On = 0
+    Off = 1
+    Change = 2
+
+    def negate(self):
+        if self == OnOffChange.On:
+            return OnOffChange.Off
+        elif self == OnOffChange.Off:
+            return OnOffChange.On
+        return super().negate()
+
+
+class RestartType(BaseEMEVDEnum):
+    ContinueOnRest = 0
+    RestartOnRest = 1
+    EndOnRest = 2
+
+
+class SummonSignType(BaseEMEVDEnum):
+    WhiteSign = 0
+    BlackSign = 1
+    RedSign = 2
+    NPCWhiteSign = 20
+
+
+class SoundType(BaseEMEVDEnum):
+    # The initial letter is prefixed to the sound ID to find the sound file in the FEV.
+    a_Ambient = 0
+    c_CharacterMotion = 1
+    f_MenuEffect = 2
+    o_Object = 3
+    p_Cutscene = 4  # the 'p' stands for 'poly play' or 'poly-scn'.
+    s_SFX = 5
+    m_Music = 6
+    v_Voice = 7
+    x_FloorMaterialDependent = 8
+    b_ArmorMaterialDependent = 9
+    g_Ghost = 10
+    Unknown14 = 14
+
+
+class StatueType(BaseEMEVDEnum):
+    Stone = 0  # e.g. in the Depths, from Basilisk breath
+    Crystal = 1  # e.g. in Crystal Cave, from Seath crystals
+
+
+class TriggerAttribute(BaseEMEVDFlags):
+    """Bit flags that determine which categories of player are able to use a given action button trigger.
+
+    If you want multiple player types to be able to use it, simply add those enums together. The vanilla events almost
+    always use Human + Hollow (48), for which I have provided a shortcut enum name, or All (255).
+
+    Fairly confident that these are base by all games, but not completely confirmed.
+    """
+
+    Session = 0b00000001
+    NoSession = 0b00000010
+    Host = 0b00000100
+    Client = 0b00001000
+    Human = 0b00010000  # "Live"
+    Hollow = 0b00100000  # "Gray"
+    WhitePhantom = 0b01000000
+    BlackPhantom = 0b10000000
+    All = 0b11111111
+
+
+class UpdateAuthority(BaseEMEVDEnum):
+
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
+
+    Normal = 0
+    Forced = 8192
+
+
+class ArmorType(BaseEMEVDEnum):
     Head = 0
     Body = 1
     Arms = 2
     Legs = 3
 
 
-class BannerType(IntEnum):
-    HeirOfFireDestroyed = 1
+class BannerType(BaseEMEVDEnum):
     YouDied = 2
-    Revival = 3
-    SoulRecovery = 4
-    TargetedDefeated = 5
-    PhantomDeath = 6  # Phantom version of "YOU DIED"
-    BlackPhantomDestroyed = 7
-    AreaName = 8  # Name determined by current floor Collision.
-    BeginMatch = 12
-    HollowArenaDraw = 14
-    HollowArenaWin = 15
-    HollowArenaLoss = 16
-    Unknown = 17
-    DutyFulfilled = 18
-    LordOfCinderFallen = 19
-    UnknownBossDefeat = 22  # Used for Lords of Cinder (including last boss); probably the actual version of the above.
+    HostVanquished = 5
+    BloodyFingerVanquished = 7
+    LostGraceDiscovered = 13
+    Unknown14 = 14
+    LegendFelled = 15
+    DemigodFelled = 16
+    GreatEnemyFelled = 17
+    EnemyFelled = 18
+    DutyFulfilled = 20
+    MapFound = 22
+    GreatRuneRestored = 26
+    GodSlain = 27
+    DuelistVanquished = 28
+    RecusantVanquished = 29
+    InvaderVanquished = 30
 
 
 class CalculationType(IntEnum):
@@ -144,10 +437,16 @@ class ConditionGroup(IntEnum):
     AND_14 = 14
     AND_15 = 15
 
+    def Await(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally.
 
-class Covenant(IntEnum):
-    # TODO
-    pass
+        Only permitted for `MAIN`.
+        """
+        ...
+
+    def Add(self, condition: bool | int | ConditionGroup):
+        """For EVS intellisense. Handled internally."""
+        ...
 
 
 class DamageType(IntEnum):
@@ -218,10 +517,11 @@ class Label(IntEnum):
 class MultiplayerState(IntEnum):
     Host = 0
     Client = 1
-    TryingToCreateSession = 2
-    TryingToJoinSession = 3
-    LeavingSession = 4
-    FailedToCreateSession = 5
+    Multiplayer = 2
+    MultiplayerPending = 3
+    Singleplayer = 4
+    Invasion = 5
+    InvasionPending = 6
 
 
 class NPCPartType(IntEnum):
@@ -258,25 +558,6 @@ class NPCPartType(IntEnum):
     Part29 = 29
     Part30 = 30
     WeakPoint = 31
-
-
-class PlayGoState(IntEnum):
-    DownloadedFirstChunk = 0
-    BDInstalling = 1
-    Installed = 2
-
-
-class PlayLogMultiplayerType(IntEnum):
-    HostOnly = 0
-    GuestOnly = 1
-    BothHostAndGuest = 2
-
-
-class PlayerPlayLogParameter(IntEnum):
-    PrimaryParameters = 0
-    TemporaryParameters = 1
-    Weapon = 2
-    Armor = 3
 
 
 class SingleplayerSummonSignType(IntEnum):
@@ -325,15 +606,29 @@ class TeamType(IntEnum):
     ArchEnemyTeam = 33
 
 
-class HollowArenaMatchType(IntEnum):
-    Duel = 0
-    TwoPlayerBrawl = 1
-    FourPlayerBrawl = 2
-    SixPlayerBrawl = 3
-    TwoVsTwo = 4
-    ThreeVsThree = 5
-
-
-class HollowArenaResult(IntEnum):
-    Win = 0
-    Draw = 1
+class Weather(IntEnum):
+    Null = -1
+    Default = 0
+    Rain = 1
+    Snow = 2
+    WindyRain = 3
+    Fog = 4
+    Cloudless = 5
+    FlatClouds = 6
+    PuffyClouds = 7
+    RainyClouds = 8
+    WindyFog = 9
+    HeavySnow = 10
+    HeavyFog = 11
+    WindyPuffyClouds = 12
+    Default2 = 13
+    Default3 = 14
+    RainyHeavyFog = 15
+    SnowyHeavyFog = 16
+    ScatteredRain = 17
+    Unknown18 = 18
+    Unknown19 = 19
+    Unknown20 = 20
+    Unknown21 = 21
+    Unknown22 = 22
+    Unknown23 = 23

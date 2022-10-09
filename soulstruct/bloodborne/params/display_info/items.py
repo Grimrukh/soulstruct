@@ -14,7 +14,7 @@ __all__ = [
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
-from soulstruct.game_types import *
+from soulstruct.bloodborne.game_types import *
 
 
 class DynamicGoodRef(DynamicFieldDisplayInfo):
@@ -58,7 +58,7 @@ class DynamicGoodRef(DynamicFieldDisplayInfo):
 
 class DynamicItemLotRef(DynamicFieldDisplayInfo):
 
-    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam}
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, AccessoryParam, GoodParam}
 
     def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]

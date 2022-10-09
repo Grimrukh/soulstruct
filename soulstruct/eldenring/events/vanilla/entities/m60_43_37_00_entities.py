@@ -1,0 +1,25 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    BloodyFingerNerijus = 1043370740  # c0000_9001 npc 543430010 think 543430000 chara 23430
+    TalkDummy = 1043370950  # c1000_9002 npc 10000000 think 1 talk 1000
+    NightsCavalry = 1043370340  # c3150_9000 npc 31500010 think 31500000
+    NightsCavalryHorse = 1043370341  # c3160_9000 npc 31600010 think 31600000
+    Skeleton0 = 1043370240  # c3500_9000 npc 35000010 think 35000000
+    Skeleton1 = 1043370241  # c3500_9001 npc 35000010 think 35000000
+    Skeleton2 = 1043370242  # c3500_9002 npc 35003010 think 35003000
+    Skeleton3 = 1043370243  # c3500_9003 npc 35000010 think 35000000
+    Skeleton4 = 1043370244  # c3500_9004 npc 35000010 think 35000000
+    DemiHumanShaman = 1043370750  # c4110_9000 npc 41109010 think 41109000 talk 223006000
+    Scarab = 1043370210  # c4191_9000 npc 41912010 think 41910000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1043371950  # AEG099
+    AEG003_316_9000 = 1043371680  # AEG003
+    AEG099_130_9000 = 1043371500  # AEG099
+    AEG099_376_1000 = 1043371640  # AEG099
+    AEG099_502_9000 = 1043371941  # AEG099
+    AEG099_503_9000 = 1043371940  # AEG099
+    AEG801_480_9000 = 1043371700  # AEG801

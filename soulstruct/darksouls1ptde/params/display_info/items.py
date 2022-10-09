@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 from ..enums import *
 
 
@@ -55,7 +55,7 @@ class DynamicGoodRef(DynamicFieldDisplayInfo):
 
 class DynamicItemLotRef(DynamicFieldDisplayInfo):
 
-    POSSIBLE_TYPES = {WeaponParam, ArmorParam, RingParam, GoodParam}
+    POSSIBLE_TYPES = {WeaponParam, ArmorParam, AccessoryParam, GoodParam}
 
     def __call__(self, entry) -> FieldDisplayInfo:
         item_type = entry[self.type_field_name]
@@ -81,7 +81,7 @@ class DynamicItemLotRef(DynamicFieldDisplayInfo):
                 self.name,
                 f"ItemSlot{item_lot_slot}",
                 True,
-                RingParam,
+                AccessoryParam,
                 f"Item slot {item_lot_slot} (Ring).",
             )
         elif item_type == ITEMLOT_ITEMCATEGORY.Good:

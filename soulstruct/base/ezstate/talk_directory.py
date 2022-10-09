@@ -8,7 +8,8 @@ import typing as tp
 from pathlib import Path
 
 if tp.TYPE_CHECKING:
-    from soulstruct.game_types import Map
+    from soulstruct.base.game_types.map_types import Map
+    from soulstruct.base.maps.utilities import GET_MAP_TYPING
     from .talk_esd_bnd import TalkESDBND
 
 _LOGGER = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ class TalkDirectory(abc.ABC):
     """Directory containing `TalkESDBND` files."""
 
     ALL_MAPS: tuple[Map] = None
-    GET_MAP: tp.Callable = None
+    GET_MAP: GET_MAP_TYPING = None
     IS_DCX: bool = None
     TALKESDBND_CLASS: tp.Type[TalkESDBND] = None
 

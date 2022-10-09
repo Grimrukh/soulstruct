@@ -1,12 +1,17 @@
 import logging
+import math
 
 from soulstruct.base.project.exceptions import SoulstructProjectError
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
+from soulstruct.darksouls1r.maps import MSB
+from soulstruct.darksouls1r.maps.parts import MSBPlayerStart
 from soulstruct.darksouls1r.maps.utilities import build_ffxbnd
 from soulstruct.darksouls1r.constants import CHARACTER_MODELS
+from soulstruct.utilities.maths import Vector3
 from .core import GameDirectoryProject
 from .lighting import LightingEditor
 from .links import WindowLinker
+from .maps import MapsEditor
 from .runtime import RuntimeManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -16,11 +21,22 @@ class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
     LINKER_CLASS = WindowLinker
     LIGHTING_EDITOR_CLASS = LightingEditor
+    MAPS_EDITOR_CLASS = MapsEditor
     RUNTIME_MANAGER_CLASS = RuntimeManager
     CHARACTER_MODELS = CHARACTER_MODELS
 
     project: GameDirectoryProject
     runtime_tab: RuntimeManager
+
+    RELOAD_WARP_PLAYER_START_SUFFIX = 995
+    RELOAD_WARP_FLAG_SUFFIX = 5555
+
+    def __init__(self, project_path="", game_root=None, master=None):
+
+        super().__init__(project_path, game_root, master)
+
+        # Ctrl + Shift + R triggers reload warp from anywhere in Lighting editor.
+        self.bind_all("<Control-R>", lambda _: self._reload_warp())
 
     def _build_tools_menu(self, tools_menu):
         maps_submenu = self.Menu(tearoff=0)
@@ -31,7 +47,8 @@ class ProjectWindow(_BaseProjectWindow):
         self._build_params_submenu(params_submenu)
         tools_menu.add_cascade(label="Params", foreground="#FFF", menu=params_submenu)
 
-        tools_menu.add_separator()
+        # events_submenu = self.Menu(tearoff=0)
+        # tools_menu.add_separator()
 
         super()._build_tools_menu(tools_menu)
 
@@ -56,6 +73,18 @@ class ProjectWindow(_BaseProjectWindow):
             command=self._rebuild_ffxbnds_from_maps,
         )
         maps_menu.add_command(
+            label="Translate Vanilla Event/Region Entries with Entity IDs",
+            foreground="#FFF",
+            command=self._translate_all_event_region_entity_id_names,
+        )
+
+    def _build_events_submenu(self, events_menu):
+        events_menu.add_command(
+            label="Copy Events Module to Project",
+            foreground="#FFF",
+            command=self.project.offer_events_submodule_copy(with_window=self),
+        )
+        events_menu.add_command(
             label="Translate Vanilla Event/Region Entries with Entity IDs",
             foreground="#FFF",
             command=self._translate_all_event_region_entity_id_names,
@@ -116,3 +145,55 @@ class ProjectWindow(_BaseProjectWindow):
         """
         for msb in self.project.maps.msbs.values():
             msb.translate_entity_id_names()
+
+    def _reload_warp(self):
+        if not self.linker.hook_created:
+            if (
+                self.CustomDialog(
+                    title="Cannot Read Position",
+                    message="Game has not been hooked. Would you like to try hooking into the game now?",
+                    default_output=0,
+                    cancel_output=1,
+                    return_output=0,
+                    button_names=("Yes, hook in", "No, forget it"),
+                    button_kwargs=("YES", "NO"),
+                )
+                == 1
+            ):
+                return
+            if not self.linker.runtime_hook():
+                return
+
+        map_id = self.linker.get_current_map_id()
+        if map_id is None:
+            return self.CustomDialog("Game Not Loaded", "Could not detect player in any game map.")
+        player_start_id = map_id[0] * 100000 + map_id[1] * 10000 + self.RELOAD_WARP_PLAYER_START_SUFFIX
+        request_warp_flag_id = 10000000 + map_id[0] * 100000 + map_id[1] * 10000 + self.RELOAD_WARP_FLAG_SUFFIX
+        current_map = self.project.maps.GET_MAP(map_id)
+        current_msb_path = self.project.get_game_path_of_data_type("maps") / f"{current_map.msb_file_stem}.msb"
+        current_msb = MSB(current_msb_path)
+        try:
+            player_start = current_msb.get_entry_by_entity_id(player_start_id)
+        except KeyError:
+            return self.CustomDialog(
+                "Reload Warp Failed",
+                f"MSB '{current_msb_path.stem}' has no Player Start with entity ID {player_start_id}."
+            )
+        if not isinstance(player_start, MSBPlayerStart):
+            return self.CustomDialog(
+                "Reload Warp Failed",
+                f"MSB '{current_msb_path.stem}' has an entity ID {player_start_id}, but it is not a Player Start."
+            )
+        player_x = self.linker.get_game_value("player_x")
+        player_y = self.linker.get_game_value("player_y")
+        player_z = self.linker.get_game_value("player_z")
+        player_start.translate = Vector3(player_x, player_y, player_z)
+        player_start.rotate.y = math.degrees(self.linker.get_game_value("player_angle"))
+
+        current_msb.write()
+        self.linker.enable_flag(request_warp_flag_id)
+
+        _LOGGER.info(
+            f"Wrote MSB {current_msb_path.name} with altered Player Start {player_start_id} "
+            f"and enabled flag {request_warp_flag_id}"
+        )

@@ -625,7 +625,7 @@ TONE_MAP_BANK = {
             "Minimum brightness for tone adaptation. Smaller values mean that darker places will be adapted.",
         ),
         FieldDisplayInfo(
-            "maxAdapredLum",
+            "maxAdapredLum",  # NOT A TYPO
             "MaximumAdaptationBrightness",
             True,
             float,
@@ -663,17 +663,23 @@ TONE_CORRECT_BANK = {
     "nickname": "ToneCorrection",
     "fields": [
         FieldDisplayInfo(
-            "brightnessR", "BrightnessRed", True, float, "Red channel (0-255) of tone correction brightness."
+            "brightnessR", "BrightnessRed", True, float, "Red channel (relative to 1) of tone correct brightness."
         ),
         FieldDisplayInfo(
-            "brightnessG", "BrightnessGreen", True, float, "Green channel (0-255) of tone correction brightness."
+            "brightnessG", "BrightnessGreen", True, float, "Green channel (relative to 1) of tone correct brightness."
         ),
         FieldDisplayInfo(
-            "brightnessB", "BrightnessBlue", True, float, "Blue channel (0-255) of tone correction brightness."
+            "brightnessB", "BrightnessBlue", True, float, "Blue channel (relative to 1) of tone correct brightness."
         ),
-        FieldDisplayInfo("contrastR", "ContrastRed", True, float, "Red channel (0-255) of tone correction contrast."),
-        FieldDisplayInfo("contrastG", "ContrastGreen", True, float, "Green channel (0-255) of tone correction contrast."),
-        FieldDisplayInfo("contrastB", "ContrastBlue", True, float, "Blue channel (0-255) of tone correction contrast."),
+        FieldDisplayInfo(
+            "contrastR", "ContrastRed", True, float, "Red channel (relative to 1) of tone correct contrast."
+        ),
+        FieldDisplayInfo(
+            "contrastG", "ContrastGreen", True, float, "Green channel (relative to 1) of tone correct contrast."
+        ),
+        FieldDisplayInfo(
+            "contrastB", "ContrastBlue", True, float, "Blue channel (relative to 1) of tone correct contrast."
+        ),
         FieldDisplayInfo("saturation", "SaturationCorrection", True, float, "Color saturation correction value."),
         FieldDisplayInfo("hue", "HueCorrection", True, float, "Color hue correction value."),
     ],

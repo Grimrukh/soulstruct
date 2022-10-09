@@ -7,10 +7,10 @@ import math
 import typing as tp
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.game_types import GameObject, GameObjectSequence, PlaceName, BaseLightingParam, ObjActParam
-from soulstruct.game_types.msb_types import *
-from soulstruct.base.maps.msb.enums import *
-from soulstruct.base.maps.msb.models import MSBModel
+from soulstruct.base.game_types import BaseGameObject, GameObjectSequence
+from soulstruct.darksouls1ptde.game_types.map_types import *
+from soulstruct.base.maps.msb.enums import BaseMSBModelSubtype, BaseMSBRegionSubtype
+from soulstruct.base.maps.msb.models import BaseMSBModel
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
@@ -22,7 +22,7 @@ from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor, FieldRow
 from soulstruct.utilities.conversion import int_group_to_bit_set
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.memory import MemoryHookError
+from soulstruct.utilities.memory import MemoryHookCallError
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
@@ -62,7 +62,7 @@ class MapEntryRow(EntryRow):
         entry_data = self.master.get_category_data()[entry_index]
         if hasattr(entry_data, "entity_id"):
             text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
-        elif isinstance(entry_data, MSBModel) and entry_data.ENTRY_SUBTYPE.name in {"Character", "Player"}:
+        elif isinstance(entry_data, BaseMSBModel) and entry_data.ENTRY_SUBTYPE.name in {"Character", "Player"}:
             try:
                 model_id = int(entry_text.lstrip("c"))
             except ValueError:
@@ -194,6 +194,7 @@ class MapFieldRow(FieldRow):
             )
             self.value_label.var.set(str(value) + "  {LINK ERROR}")
             self._activate_value_widget(self.value_label)
+
         if issubclass(self.field_type, MapEntry):
             # `value` is the name of another MSB entry, or an empty string to reset to `None`.
             if not value:
@@ -212,8 +213,9 @@ class MapFieldRow(FieldRow):
                             msb_entry_name += "  {UNKNOWN}"
                 self.value_label.var.set(msb_entry_name)
             self._activate_value_widget(self.value_label)
-        else:
-            self._update_field_int(value)
+            return
+
+        self._update_field_int(value)
 
     def _update_field_Vector3(self, value: Vector3):
         """Update field with a `Vector3` value. (No chance of a link.)"""
@@ -268,7 +270,7 @@ class MapFieldRow(FieldRow):
     def build_field_context_menu(self):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
-        if issubclass(self.field_type, GameObject):
+        if issubclass(self.field_type, BaseGameObject):
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
             if issubclass(self.field_type, MapEntry):
@@ -813,9 +815,9 @@ class MapsEditor(BaseFieldEditor):
         categories = []
         for msb_type, subtypes in self.maps.MSB_CLASS.get_subtype_dict().items():
             for msb_subtype in subtypes:
-                if isinstance(msb_subtype, MSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
+                if isinstance(msb_subtype, BaseMSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
                     continue  # These useless 2D region types are hidden.
-                if isinstance(msb_subtype, MSBModelSubtype) and msb_subtype.name in {"Items"}:
+                if isinstance(msb_subtype, BaseMSBModelSubtype) and msb_subtype.name in {"Items"}:
                     continue  # Unused 'item' model type hidden.
                 categories.append(f"{msb_type}: {msb_subtype.pluralized_name}")
         return categories
@@ -878,7 +880,7 @@ class MapsEditor(BaseFieldEditor):
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Not implemented for Map Editor."""
-        raise NotImplementedError
+        raise ValueError("Cannot set entry IDs in Maps Editor.")
 
     def get_field_dict(self, entry_index: int, category=None) -> MSBEntry:
         """Uses entry index instad of entry ID."""
@@ -892,30 +894,11 @@ class MapsEditor(BaseFieldEditor):
         return field_dict.all_field_names if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
-        if field_type == ObjActParam and field_value == -1:
-            # Link to ObjActParam with the object's model ID.
-            obj_act_part_name = self.get_selected_field_dict()["obj_act_part_name"]
-            try:
-                if obj_act_part_name is None:
-                    raise KeyError(f"`obj_act_part_name` is None.")
-                obj_act_part = self.get_selected_msb().parts[obj_act_part_name]
-            except KeyError:  # invalid or `None` part name
-                pass
-            else:
-                field_value = int(obj_act_part.model_name[1:5])
+        """Game subclasses can override this to support more link types."""
         if valid_null_values is None:
-            if field_type == PlaceName:
-                valid_null_values = {-1: "Default Map Name + Force Banner"}
-            elif issubclass(field_type, BaseLightingParam):
-                valid_null_values = {-1: "Default/None"}
-            else:
-                valid_null_values = {0: "Default/None", -1: "Default/None"}
-        if issubclass(field_type, BaseLightingParam) and self.active_category.endswith("MapConnections"):
-            map_override = self.get_selected_field_dict().connected_map.emevd_file_stem
-        else:
-            map_override = None
+            valid_null_values = {0: "Default/None", -1: "Default/None"}
         return self.linker.soulstruct_link(
-            field_type, field_value, valid_null_values=valid_null_values, map_override=map_override,
+            field_type, field_value, valid_null_values=valid_null_values, map_override=None,
         )
 
     def add_models(self, model_subtype: tp.Type[MapModel], model_name):
@@ -949,7 +932,7 @@ class MapsEditor(BaseFieldEditor):
         new_translate = None
         new_rotate_y = None
         new_collision = None
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Read Memory",
@@ -1004,7 +987,7 @@ class MapsEditor(BaseFieldEditor):
                                 f"{display_groups}. No changes made.",
                     )
                     return
-        except MemoryHookError as e:
+        except MemoryHookCallError as e:
             _LOGGER.error(str(e), exc_info=True)
             self.CustomDialog(
                 title="Cannot Read Memory",
@@ -1045,7 +1028,7 @@ class MapsEditor(BaseFieldEditor):
             self.refresh_fields()
 
     def add_point_from_player_position(self, sequence_field: str, field_nickname: str):
-        if not self.linker.is_hooked:
+        if not self.linker.hook_created:
             if (
                 self.CustomDialog(
                     title="Cannot Read Memory",
@@ -1085,7 +1068,7 @@ class MapsEditor(BaseFieldEditor):
             player_z = self.linker.get_game_value("player_z")
             new_translate = Vector3(player_x, player_y, player_z)
             new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
-        except MemoryHookError as e:
+        except MemoryHookCallError as e:
             _LOGGER.error(str(e), exc_info=True)
             self.CustomDialog(
                 title="Cannot Read Memory",

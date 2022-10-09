@@ -3,6 +3,7 @@ __all__ = ["TalkESDBND"]
 from soulstruct.containers.base import BinderFlags
 from soulstruct.containers.bnd import BND4
 from soulstruct.base.ezstate.talk_esd_bnd import TalkESDBND as _BaseTalkESDBND
+from soulstruct.games import BLOODBORNE
 
 from .esd import TalkESD
 
@@ -19,4 +20,4 @@ class TalkESDBND(_BaseTalkESDBND, BND4):
         self.hash_table_type = 0
         self.unknown1 = False
         self.unknown2 = False
-        self.dcx_magic = (68, 76)
+        self.dcx_type = BLOODBORNE.default_dcx

@@ -1,0 +1,29 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Balloon0 = 1034470250  # c0130_9000 npc 1300000 think 1300000
+    Balloon1 = 1034470251  # c0130_9001 npc 1300000 think 1300000
+    TalkDummy = 1034470951  # c1000_9001 npc 10000000 think 1 talk 1000
+    Marionette0 = 1034470260  # c3850_9000 npc 38501020 think 38501000 group 1034475260
+    Marionette1 = 1034470261  # c3850_9001 npc 38500020 think 38500000 group 1034475260
+    Marionette2 = 1034470262  # c3850_9002 npc 38500020 think 38500000 group 1034475260
+    Marionette3 = 1034470263  # c3850_9003 npc 38501020 think 38501000 group 1034475263
+    Marionette4 = 1034470264  # c3850_9004 npc 38500020 think 38500000 group 1034475263
+    RevenantFollower0 = 1034470200  # c4000_9000 npc 40000020 think 40000000
+    RevenantFollower1 = 1034470201  # c4000_9001 npc 40000020 think 40000000
+    RevenantFollower2 = 1034470202  # c4000_9002 npc 40000020 think 40000000
+    RevenantFollower3 = 1034470203  # c4000_9003 npc 40000020 think 40000000
+    RevenantFollower4 = 1034470204  # c4000_9004 npc 40000020 think 40000000
+    RevenantFollower5 = 1034470205  # c4000_9005 npc 40000020 think 40000000
+    RevenantFollower6 = 1034470206  # c4000_9006 npc 40000020 think 40000000
+
+
+class Assets(Asset):
+    AEG099_060_9001 = 1034471951  # AEG099
+    AEG099_160_9000 = 1034471250  # AEG099
+    AEG099_160_9001 = 1034471251  # AEG099
+    AEG027_216_9000 = 1034471612  # AEG027
+    AEG099_090_9001 = 1034471981  # AEG099
+    AEG099_295_9000 = 1034471611  # AEG099
+    AEG099_510_9000 = 1034471610  # AEG099

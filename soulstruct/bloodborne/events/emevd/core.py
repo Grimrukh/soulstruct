@@ -7,9 +7,13 @@ from soulstruct.base.events.emevd import (
     Event as _BaseEvent,
     EMEVD as _BaseEMEVD,
 )
+from soulstruct.containers.dcx import DCXType
+from soulstruct.games import BloodborneType
 from soulstruct.utilities.binary import BinaryStruct
-from .arg_types import INSTRUCTION_ARG_TYPES
-from .decompiler import InstructionDecompiler
+from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
+from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
+from .entity_enums_manager import EntityEnumsManager
+
 from .evs import EVSParser
 
 
@@ -30,8 +34,6 @@ class EventArg(_BaseEventArg):
 
 
 class Instruction(_BaseInstruction):
-    DECOMPILER = InstructionDecompiler()
-    INSTRUCTION_ARG_TYPES = INSTRUCTION_ARG_TYPES
     EventLayers = EventLayers
     HEADER_STRUCT = BinaryStruct(
         ("category", "I"),
@@ -42,12 +44,17 @@ class Instruction(_BaseInstruction):
         ("first_event_layers_offset", "i"),  # unused in BB
         "4x",
     )
+    EMEDF = EMEDF
+    DECOMPILER = DECOMPILER
+    OPT_ARGS_DECOMPILER = OPT_ARGS_DECOMPILER
+    DECOMPILE = staticmethod(decompile_instruction)
 
 
 class Event(_BaseEvent):
     Instruction = Instruction
     EventArg = EventArg
-    EVENT_ARG_TYPES = {}
+    EMEDF_TESTS = EMEDF_TESTS
+    EMEDF_COMPARISON_TESTS = EMEDF_COMPARISON_TESTS
     HEADER_STRUCT = BinaryStruct(
         ("event_id", "Q"),
         ("instruction_count", "Q"),
@@ -60,15 +67,15 @@ class Event(_BaseEvent):
     )
 
 
-class EMEVD(_BaseEMEVD):
+class EMEVD(BloodborneType, _BaseEMEVD):
 
     events: dict[int, Event]
 
     Event = Event
+    ENTITY_ENUMS_MANAGER = EntityEnumsManager
     EVS_PARSER = EVSParser
-    IMPORT_STRING = "soulstruct.bloodborne.events"
     STRING_ENCODING = "utf-16le"
-    DCX_MAGIC = (68, 76)
+    DCX_TYPE = DCXType.DCX_DFLT_10000_44_9
     HEADER_STRUCT = BinaryStruct(
         ("signature", "4s", b"EVD\0"),
         ("big_endian", "?", False),

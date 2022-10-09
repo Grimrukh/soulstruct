@@ -1,6 +1,6 @@
-__all__ = ["ALL_MAPS", "get_map", "VANILLA_MSB_TRANSLATIONS"]
+__all__ = ["ALL_MAPS", "get_map", "get_map_variable_name", "VANILLA_MSB_TRANSLATIONS"]
 
-from soulstruct.darksouls1ptde.maps.constants import ALL_MAPS, get_map
+from soulstruct.darksouls1ptde.maps.constants import ALL_MAPS, get_map, get_map_variable_name
 
 
 # Translations of all events and regions with entity IDs in all MSBs.

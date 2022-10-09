@@ -1,7 +1,7 @@
 __all__ = ["CHARACTER_INIT_PARAM", "NPC_PARAM_ST", "CACL_CORRECT_GRAPH_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field, bit_pad_field
-from soulstruct.game_types import *
+from soulstruct.darksouls1ptde.game_types import *
 from ..enums import *
 
 
@@ -54,35 +54,35 @@ CHARACTER_INIT_PARAM = {
             "equip_Accessory01",
             "RingSlot1",
             True,
-            RingParam,
+            AccessoryParam,
             "First ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
         FieldDisplayInfo(
             "equip_Accessory02",
             "RingSlot2",
             True,
-            RingParam,
+            AccessoryParam,
             "Second ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
         FieldDisplayInfo(
             "equip_Accessory03",
             "RingSlot3",
             True,
-            RingParam,
+            AccessoryParam,
             "Third ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
         FieldDisplayInfo(
             "equip_Accessory04",
             "RingSlot4",
             True,
-            RingParam,
+            AccessoryParam,
             "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
         FieldDisplayInfo(
             "equip_Accessory05",
             "RingSlot5",
             True,
-            RingParam,
+            AccessoryParam,
             "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
         FieldDisplayInfo("equip_Skill_01", "SkillSlot1", False, int, ""),
@@ -119,7 +119,7 @@ CHARACTER_INIT_PARAM = {
         FieldDisplayInfo("QWC_cd", "QWC_CD", False, int, "Unknown. Likely to be unused world tendency effect."),
         FieldDisplayInfo(
             "soulLv",
-            "SoulLevel",
+            "Level",
             True,
             int,
             "Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs.",

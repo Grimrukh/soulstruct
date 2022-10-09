@@ -1,0 +1,22 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    Dummy = 1035470270  # c0100_9000 npc 1000000 think 1000000
+    TalkDummy = 1035470950  # c1000_9000 npc 10000000 think 1 talk 1000
+    PutridCorpse0 = 1035470210  # c3661_9000 npc 36610820 think 36610000 group 1035475210
+    PutridCorpse1 = 1035470211  # c3661_9001 npc 36610820 think 36610000 group 1035475210
+    PutridCorpse2 = 1035470212  # c3661_9002 npc 36610820 think 36610000 group 1035475210
+    Scarab0 = 1035470260  # c4191_9000 npc 41912220 think 41910000
+    Scarab1 = 1035470220  # c4191_9001 npc 41912020 think 1
+    Turtle0 = 1035470200  # c6090_9000 npc 60900020 think 60900000
+    Turtle1 = 1035470201  # c6090_9001 npc 60900020 think 60900000
+    Turtle2 = 1035470202  # c6090_9002 npc 60900020 think 60900000
+
+
+class Assets(Asset):
+    AEG099_060_9000 = 1035471950  # AEG099
+    AEG099_004_2000 = 1035471211  # AEG099
+    AEG099_251_2000 = 1035471210  # AEG099
+    AEG099_630_9000 = 1035471600  # AEG099
+    AEG110_119_2000 = 1035471580  # AEG110

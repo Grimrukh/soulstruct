@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 __all__ = ["EVSParser", "EVSError"]
 
 import abc
@@ -10,14 +12,13 @@ import typing as tp
 from functools import partial
 from pathlib import Path
 
-import soulstruct.game_types as gt
+from soulstruct.base.game_types.basic_types import BaseGameObject, FlagRange, MapFlagSuffix
+from soulstruct.games import Game
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
-from .numeric import SET_INSTRUCTION_ARG_TYPES
 from .utils import (
     COMPARISON_NODES,
     NEG_COMPARISON_NODES,
-    ConstantCondition,
     EventArgumentData,
     format_event_layers,
     get_write_offset,
@@ -31,13 +32,15 @@ _LOGGER = logging.getLogger(__name__)
 
 
 _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
-_COMMON_FUNC_IMPORT_RE = re.compile(r"\nfrom (\.*)([\w\d_]+) +import ([\w\d_, ]+) +# *\[COMMON_FUNC] *\n")
-_RESTART_TYPES = {"NeverRestart": 0, "RestartOnRest": 1, "UnknownRestart": 2}  # avoiding circular import
-_EVENT_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?", re.DOTALL)
+_COMMON_FUNC_IMPORT_RE = re.compile(
+    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[*\w\d_, \n]+)\)?\n"
+)
+_RESTART_TYPES = {"ContinueOnRest": 0, "RestartOnRest": 1, "EndOnRest": 2}  # avoiding circular import
+_EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
+_CONDITION_GROUP_RE = re.compile(r"(MAIN|(AND|OR)_(\d+))")
 _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
-_BUILTIN_NAMES = {"Condition", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
-_GAME_IMPORT_RE = re.compile(r"^(from|import) soulstruct\.\w[\w\d]+\.events")
+_BUILTIN_NAMES = {"Condition", "MAIN", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
 _IGNORE_IMPORT_RE = re.compile(r"^import typing.*")
 
 
@@ -54,7 +57,7 @@ class EventInfo(tp.NamedTuple):
     id: int
     args: dict[str, tuple[int, int]]
     arg_types: str
-    arg_classes: dict[str, tp.Type[gt.GameObject]]
+    arg_classes: dict[str, tp.Type[BaseGameObject]]
     restart_type: int
     nodes: list[ast.stmt]
     description: str
@@ -62,11 +65,19 @@ class EventInfo(tp.NamedTuple):
 
 class EVSParser(abc.ABC):
 
-    GAME_MODULE = None  # type: tp.Any
+    GAME: Game = None  # mixed in by subclasses
+    EMEDF_ALIASES: dict[str, tp.Any] = None
+    EMEDF_TESTS: dict[str, tp.Any] = None
+    EMEDF_COMPARISON_TESTS: dict[str, tp.Any] = None
+    EVENTS_MODULE = None  # type: tp.Any
+    GAME_TYPES = None  # type: tp.Any
     OR_SLOTS = []  # type: list[int, ...]
     AND_SLOTS = []  # type: list[int, ...]
-    CONDITION_COUNT = 0
-    INSTRUCTION_ARG_TYPES = {}
+    COMPILER: dict[str, tp.Callable]
+    COMPILE: tp.Callable
+    COMPILE_OBJECT_TEST: tp.Callable
+    SUPPORTS_COMMON_FUNC: bool = False
+    USES_COMMON_FUNC_SLOT: bool = False
 
     tree: ast.Module
     map_name: str
@@ -77,10 +88,8 @@ class EVSParser(abc.ABC):
     globals: dict[str, tp.Any]  # global script namespace
     for_vars: dict[str, tp.Any]  # local to each event function
 
-    instructions: dict[str, tp.Callable]
-    tests: dict[str, tp.Union[tp.Callable, ConstantCondition, gt.FlagRange, gt.Character]]
     events: dict[str, EventInfo]  # information about each event function (collected before proper statement parsing)
-    common_func_events: dict[str, EventInfo]  # information about [COMMON_FUNC] imported events
+    common_func_evs: EVSParser | None  # parser instance called on a COMMON_FUNC tagged import
     event_ids: set[int]  # set of event IDs used, so duplicates can easily be spotted
 
     held_conditions: list[int]
@@ -99,9 +108,6 @@ class EVSParser(abc.ABC):
                 any newlines being present in value).
             map_name: optional override for map name, which will otherwise be auto-detected from the EVS file name.
         """
-
-        SET_INSTRUCTION_ARG_TYPES(self.INSTRUCTION_ARG_TYPES)
-
         if isinstance(evs_source, Path) or "\n" not in evs_source:
             evs_path = Path(evs_source)
             with evs_path.open("r", encoding="utf-8") as script:
@@ -123,29 +129,21 @@ class EVSParser(abc.ABC):
         self.strings_with_offsets = []
 
         # Global namespace with game-specific enums and constants. May be updated with user imports and definitions.
-        self.globals = vars(self.GAME_MODULE.enums)
-        self.globals.update(vars(self.GAME_MODULE.constants))
-        self.globals.update(vars(gt))
+        self.globals = vars(self.EVENTS_MODULE.enums)
+        self.globals.update(vars(self.EVENTS_MODULE.constants))
+        self.globals.update(vars(self.GAME_TYPES))
         # Note that there is no event-specific local namespace, except for this dictionary of 'for' loop variables:
         self.for_vars = {}
 
-        self.instructions = {
-            name: attr for name, attr in vars(self.GAME_MODULE.instructions).items() if not name.startswith("__")
-        }
-        self.tests = {
-            name: attr
-            for name, attr in vars(self.GAME_MODULE.tests).items()
-            if not name.startswith("_")
-            and (isinstance(attr, ConstantCondition) or getattr(attr, "__module__", "").endswith("tests"))
-        }
         self.events = {}  # Maps your event names to their IDs, so you can call them to initialize them.
-        self.common_func_events = {}  # Same, but for [COMMON_FUNC] imports, which are added to `events` last.
+        self.common_func_evs = None
         self.event_ids = set()  # Used to ensure the same ID is not repeated.
 
         self._reset_conditions()
 
         self.held_conditions = []  # These conditions won't be re-allocated.
         self.finished_conditions = []  # These conditions need to be accessed with 'finished' instruction variants.
+        self.yoked_conditions = {}  # Maps conditions to sets of other conditions that have been loaded into them.
 
         self.script_event_flags = {}
         self.current_event = None
@@ -159,36 +157,50 @@ class EVSParser(abc.ABC):
 
     def _reset_conditions(self):
         """Reset for every new event. Contains names of `Condition` and/or `HeldCondition` instances created in EVS."""
-        self.conditions = [""] * self.CONDITION_COUNT
+        self.conditions = [""] * (len(self.OR_SLOTS) + len(self.AND_SLOTS) + 1)
 
     def _import_common_funcs(self, evs_string: str):
         for common_func_import_match in re.finditer(_COMMON_FUNC_IMPORT_RE, evs_string):
-            level = len(common_func_import_match.group(1))
+            # TODO: Could theoretically support importing from multiple COMMON_FUNC modules (especially for DS1).
+            groups = common_func_import_match.groupdict()
+            level = len(groups["dots"])
             if level == 1:
                 level = 0  # single dot is the same as no dot (same directory)
-            cf_module_name = common_func_import_match.group(2)
-            cf_imported_names = [name.strip() for name in common_func_import_match.group(3).split(",")]
+            cf_module_name = groups["module"]
+            if self.common_func_evs:
+                raise EVSCommonFuncImportError(cf_module_name, "", "Can only import one [COMMON_FUNC] module.")
+            if groups["names"] != "*" and "*" in groups["names"]:
+                raise EVSCommonFuncImportError(
+                    cf_module_name, groups["names"], "Invalid import names from COMMON_FUNC (contains asterisk)."
+                )
             cf_module_path = self.script_directory / ("../" * level + cf_module_name.replace(".", "/") + ".py")
             if not cf_module_path.is_file():
                 raise EVSCommonFuncImportError(
                     cf_module_name, "", f"Cannot import missing COMMON_FUNC file: {cf_module_path}."
                 )
-            common_func_parser = self.__class__(  # force this map's base flag
-                cf_module_path, map_name=self.map_name, script_directory=self.script_directory
-            )
-            for cf_name in cf_imported_names:
-                if cf_name in self.common_func_events:
-                    raise EVSCommonFuncImportError(
-                        cf_module_name, cf_name, "Common func name imported more than once."
-                    )
-                try:
-                    self.common_func_events[cf_name] = common_func_parser.events[cf_name]
-                except KeyError:
-                    raise EVSCommonFuncImportError(
-                        cf_module_name, cf_name, "Common func name not found in parsed EVS source file."
-                    )
+            if self.SUPPORTS_COMMON_FUNC:
+                self.common_func_evs = self.__class__(
+                    cf_module_path, script_directory=self.script_directory
+                )
+            else:
+                self.common_func_evs = self.__class__(  # force this map's base flag
+                    cf_module_path, map_name=self.map_name, script_directory=self.script_directory
+                )
+            if groups["names"] != "*":
+                cf_imported_names = [name.strip(" \n") for name in groups["names"].split(",")]
+                for cf_name in cf_imported_names:
+                    if cf_name not in self.common_func_evs.events:
+                        raise EVSCommonFuncImportError(
+                            cf_module_name, cf_name, "Common func name not found in parsed EVS source file."
+                        )
+                # Remove non-imported names from common EVS.
+                for event_name in tuple(self.common_func_evs.events):
+                    if event_name not in cf_imported_names:
+                        event_info = self.common_func_evs.events.pop(event_name)
+                        self.common_func_evs.event_ids.remove(event_info.id)
+            # Otherise, star import preserves all names from common module.
 
-        # Strip these imports from the EVS string to be parsed properly.
+        # Strip these imports from the EVS string before it is parsed properly.
         return re.sub(_COMMON_FUNC_IMPORT_RE, "\n", evs_string)
 
     # ~~~~~~~~~~~~~~~~~~~
@@ -249,7 +261,7 @@ class EVSParser(abc.ABC):
 
         description = "" if not description else description.lstrip(":")  # Remove leading colon.
 
-        arg_dict, arg_types, arg_classes = _parse_event_arguments(node)
+        arg_dict, arg_types, arg_classes = _parse_event_arguments(node, self.globals)
 
         self.events[event_name] = EventInfo(
             name=event_name,
@@ -265,9 +277,9 @@ class EVSParser(abc.ABC):
 
     def _validate_event_name(self, event_node: ast.FunctionDef):
         name = event_node.name
-        if name in self.instructions or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
+        if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
             raise EVSSyntaxError(event_node, f"Event name cannot match an instruction name ({name}).")
-        if name in _BUILTIN_NAMES:
+        if name in _BUILTIN_NAMES or _CONDITION_GROUP_RE.match(name):
             raise EVSSyntaxError(event_node, f"Event name cannot match a builtin EVS name ({name}).")
         if name in self.events:
             raise EVSSyntaxError(event_node, f"An event named {name} has already been defined in this script.")
@@ -293,11 +305,18 @@ class EVSParser(abc.ABC):
                         self.strings_with_offsets.append(offset_with_string)
                 # Otherwise ignore (you can add anything else to the docstring, provided you leave blank lines between).
 
+        ignore_import_names = [
+            "typing",
+            f"soulstruct.{self.GAME.submodule_name}.events",
+            f"soulstruct.{self.GAME.submodule_name}.events.instructions",
+            f"soulstruct.{self.GAME.submodule_name}.events.tests",
+        ]
+
         for node in self.tree.body[1:]:
             if isinstance(node, ast.Import):
-                _import_module(node, self.globals)
+                self.globals |= _import_module(node, ignore_names=ignore_import_names)
             elif isinstance(node, ast.ImportFrom):
-                _import_from(node, self.globals, self.script_directory)
+                self.globals |= _import_from(node, self.script_directory, ignore_names=ignore_import_names)
             elif isinstance(node, ast.FunctionDef):
                 self._scan_event(node)
             elif isinstance(node, ast.Assign):
@@ -313,9 +332,10 @@ class EVSParser(abc.ABC):
                     f"from-imports, event script function definitions, and global name assignments.",
                 )
 
-        # Add common_func events in now, after local events.
-        self.events |= self.common_func_events
-        self.event_ids |= {event.id for event in self.common_func_events.values()}
+        if self.common_func_evs and not self.SUPPORTS_COMMON_FUNC:
+            # Add common_func events in now, after local events.
+            self.events |= self.common_func_evs.events
+            self.event_ids |= self.common_func_evs.event_ids
 
         for event_name, event_function in self.events.items():
             self.current_event = self.events[event_name]
@@ -391,9 +411,9 @@ class EVSParser(abc.ABC):
         # RETURN
         if isinstance(node, ast.Return):
             if node.value is None or (isinstance(node.value, ast.Name) and node.value.id == "END"):
-                return self.instructions["End"]()
+                return self.COMPILE("End")
             elif isinstance(node.value, ast.Name) and node.value.id == "RESTART":
-                return self.instructions["Restart"]()
+                return self.COMPILE("Restart")
             else:
                 raise EVSSyntaxError(
                     node,
@@ -406,16 +426,20 @@ class EVSParser(abc.ABC):
             f"Invalid line: {ast.dump(node)}. Must be `Condition()` assignment, IF/ELSE block, or instruction.",
         )
 
-    def _compile_event_call(self, node: ast.Call):
+    def _compile_event_call(self, node: ast.Call, is_common_func=False):
         """Shortcut for RunEvent(...) instruction."""
         name, args, kwargs = self._parse_function_call(node)
-        event_info = self.events[name]
+        event_info = self.common_func_evs.events[name] if is_common_func else self.events[name]
         kwargs = self._parse_keyword_nodes(node.keywords)
         event_layer_string = format_event_layers(kwargs.pop("event_layers", None))
 
         if not args and not kwargs and not event_info.args:
             # Events with no arguments can be called with no argument, ignoring `event_layers` (`slot` defaults to 0).
-            instruction = self.instructions["RunEvent"](event_info.id)
+            # Common events can also be called without arguments.
+            if is_common_func:
+                instruction = self._compile_instr(node, "RunCommonEvent", event_info.id)
+            else:
+                instruction = self._compile_instr(node, "RunEvent", event_info.id)
             instruction[0] += event_layer_string
             return instruction
 
@@ -432,6 +456,13 @@ class EVSParser(abc.ABC):
         if not isinstance(slot, int):
             raise EVSValueError(node, "Slot ('slot' keyword or first positional argument) must be an integer.")
 
+        if is_common_func and not self.USES_COMMON_FUNC_SLOT:
+            if slot != 0:
+                raise EVSSyntaxError(
+                    node.lineno, f"This game does not support non-zero slot arguments for imported common events."
+                )
+            slot = None
+
         if kwargs:
             args = []
             for arg_name in event_info.args:
@@ -443,19 +474,24 @@ class EVSParser(abc.ABC):
                 raise EVSValueError(node, f"Invalid keyword arguments in event call: {kwargs}")
         else:
             if len(args) != len(event_info.args):
+                print(name, args, kwargs)
+                print(event_info.args)
                 raise EVSValueError(
                     node,
-                    f"Number of positional arguments in event call (excluding the slot) "
-                    f"does not match the event function signature:\n"
+                    f"Number of positional arguments in event call (excluding the slot), {len(args)}, does not match "
+                    f"the event function signature:\n"
                     f"    {['slot'] + list(event_info.args.keys())}.",
                 )
 
         event_id = event_info.id
-        slot = 0 if slot is None else slot
         args = (0,) if not args else args
         arg_types = event_info.arg_types if event_info.arg_types else None
 
-        instruction = self.instructions["RunEvent"](event_id, slot=slot, args=args, arg_types=arg_types)
+        instr_name = "RunCommonEvent" if is_common_func else "RunEvent"
+        if slot is None:
+            instruction = self.COMPILER[instr_name](event_id, args=args, arg_types=arg_types)
+        else:
+            instruction = self.COMPILER[instr_name](event_id, slot=slot, args=args, arg_types=arg_types)
         instruction[0] += event_layer_string
         return instruction
 
@@ -463,25 +499,59 @@ class EVSParser(abc.ABC):
         """Build instruction arguments and call the instruction (which will return a numeric line)."""
         name, args, kwargs = self._parse_function_call(node)
         event_layers = kwargs.pop("event_layers", None)
-        try:
-            instruction_lines = self.instructions[name](*args, **kwargs)  # includes event arg load lines
-        except Exception as e:
-            raise EVSSyntaxError(node, f"Failed to compile instruction {name}.\n    Error: {str(e)}")
+        instruction_lines = self._compile_instr(node, name, *args, **kwargs)
+
         try:
             instruction_lines[0] += format_event_layers(event_layers)
         except TypeError:
-            raise EVSSyntaxError(node, f"If given, `event_layers` must be a list, tuple, or single integer.")
+            raise EVSSyntaxError(node, "If given, `event_layers` must be a list, tuple, or single integer.")
         return instruction_lines
+
+    @staticmethod
+    def _check_condition_group_add(node: ast.Call) -> tp.Optional[int]:
+        """Returns condition index if this is a condition group `.Add()` or `.Await()` call, or `None` otherwise."""
+        if (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr == "Add"
+            and isinstance(node.func.value, ast.Name)
+            and (match := _CONDITION_GROUP_RE.match(node.func.value.id))
+        ):
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(f"MAIN condition used in an `Add()` call on line {node.lineno}. This is unusual.")
+                return 0
+            return (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
+        elif (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr == "Await"
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "MAIN"
+        ):
+            return 0
+        return None
 
     def _compile_function_expression(self, node: ast.Call):
 
+        if (condition := self._check_condition_group_add(node)) is not None:
+            if node.keywords or len(node.args) != 1:
+                raise EVSSyntaxError(
+                    node,
+                    ".Add() or .Await() take exactly one positional argument (Condition or boolean expression)."
+                )
+            arg = node.args[0]
+            if not isinstance(arg, ConditionNodeTypes):
+                raise EVSSyntaxError(
+                    node,
+                    f".ADd() or .Await() argument must be a Condition or boolean expression, not: {type(arg)}."
+                )
+            return self._compile_condition(arg, condition=condition)
+
         if isinstance(node.func, ast.Attribute):
-            # Method of a game object.
+            # Method of a game object or `.Add` method of a condition group.
             attr = node.func.attr
             game_object = self._parse_nodes(node.func.value)
-            if not isinstance(game_object, gt.GameObject):
+            if not isinstance(game_object, BaseGameObject):
                 raise EVSSyntaxError(
-                    node, "Only methods of builtin GameObject types can be called as instructions."
+                    node, "Only methods of `BaseGameObject` subclasses can be called as instructions."
                 )
             _, args, kwargs = self._parse_function_call(node)
             try:
@@ -497,6 +567,8 @@ class EVSParser(abc.ABC):
 
         if name in self.events:
             return self._compile_event_call(node)
+        if self.common_func_evs and self.SUPPORTS_COMMON_FUNC and name in self.common_func_evs.events:
+            return self._compile_event_call(node, is_common_func=True)
 
         if name == "Condition":
             raise EVSError(node, "You must assign the Condition() to a variable.")
@@ -525,10 +597,10 @@ class EVSParser(abc.ABC):
                     "takes arguments (the slot number cannot be determined from within).",
                 )
             if name == "EnableThisFlag":
-                return self.instructions["EnableFlag"](self.current_event.id)
-            return self.instructions["DisableFlag"](self.current_event.id)
+                return self._compile_instr(node, "EnableFlag", self.current_event.id)
+            return self._compile_instr(node, "DisableFlag", self.current_event.id)
 
-        if name in self.instructions:
+        if name in self.EMEDF_ALIASES or name in self.COMPILER:
             return self._compile_instruction(node)
 
         raise EVSSyntaxError(
@@ -628,10 +700,12 @@ class EVSParser(abc.ABC):
             except TypeError:
                 raise EVSSyntaxError(node, f"Error in IF block:\n  {ast.dump(node)}")
 
-        # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a fully-fledged Condition,
-        #    depending on the test. Note that the body length has 1 added (an extra skip line) if there is an ELSE body
-        #    in the statement, and does not include arg replacement lines.
-        body_length = len([line for line in body_emevd if not line.startswith("    ^")]) + bool(node.orelse)
+        # 2. Build the test line. This could be a simple skip, a multi-line chain skip, or a skip that uses a fully-
+        #    fledged Condition, depending on the test. Note that the body length has 1 added (an extra skip line) if
+        #    there is an ELSE body in the statement, and does not include arg replacement lines.
+        body_length = len([line for line in body_emevd if not line.startswith("    ^")])
+        if node.orelse:
+            body_length += 1
         test_emevd = self._compile_test(node.test, body_length=body_length)
 
         # 3. Build the ELSE body of the IF statement, if it exists.
@@ -645,7 +719,7 @@ class EVSParser(abc.ABC):
         if_emevd += test_emevd + body_emevd
         if else_emevd:
             skip_line_count = len([line for line in else_emevd if not line.startswith("    ^")])
-            if_emevd += self.instructions["SkipLines"](skip_line_count)
+            if_emevd += self._compile_instr(node, "SkipLines", skip_line_count)
             if_emevd += else_emevd
 
         return if_emevd
@@ -706,21 +780,31 @@ class EVSParser(abc.ABC):
             if node.id in self.current_event.arg_classes:
                 arg = self.current_event.args[node.id]
                 arg_class = self.current_event.arg_classes[node.id]
-                test_func = partial(arg_class.__call__, arg)
-                if not callable(test_func):
+                try:
+                    return self.COMPILE_OBJECT_TEST(
+                        arg_class,
+                        arg,
+                        negate=negate,
+                        skip_lines=skip_lines,
+                        end_event=end_event,
+                        restart_event=restart_event,
+                    )
+                except TypeError:
                     raise EVSValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
-                return test_func(negate=negate, skip_lines=skip_lines, end_event=end_event, restart_event=restart_event)
             raise EVSValueError(
                 node.lineno,
                 f"Cannot use an event argument as a test condition unless it has a testable game type\n "
-                f"such as Flag (tests for enabled state), Region (tests if player is inside), etc.",
+                f"such as `Flag` (tests for enabled state), `Region` (tests if player is inside), etc.",
             )
 
         # 3. The condition is a previously-defined `Condition` or `HeldCondition` instance.
         if isinstance(node, ast.Name) and node.id in self.conditions:
             i = self.conditions.index(node.id)
+            if i > len(self.AND_SLOTS):
+                # Negative OR slot, e.g., 9 -> -6 for MAIN/7/7 slot games
+                i -= len(self.conditions)
             try:
-                return self._compile_condition_skip_or_return(i, negate, skip_lines, end_event, restart_event)
+                return self._compile_condition_skip_or_return(node, i, negate, skip_lines, end_event, restart_event)
             except ValueError:
                 raise EVSError(
                     node.lineno,
@@ -728,58 +812,64 @@ class EVSParser(abc.ABC):
                     "'restart_event' are all 0 or False.",
                 )
 
-        # 4. The condition is a builtin test constant (e.g. THIS_FLAG, HOST, OFFLINE, SKULL_LANTERN_ACTIVE, ...)
-        if isinstance(node, ast.Name) and node.id in self.tests:
+        # 4. The condition is a condition group such as `AND_01`. (It cannot be `MAIN`.)
+        if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(
+                    f"MAIN condition used in a skip/return instruction on line {node.lineno}. This is unusual."
+                )
+                i = 0
+            else:
+                i = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
             try:
-                test = self.tests[node.id]
-            except KeyError:  # No other permitted names.
-                raise EVSNameError(node.lineno, node.id)
-            if isinstance(test, ConstantCondition):
-                return test(negate=negate, skip_lines=skip_lines, end_event=end_event, restart_event=restart_event)
-            if isinstance(test, gt.FlagRange):
-                raise EVSSyntaxError(
+                return self._compile_condition_skip_or_return(node, i, negate, skip_lines, end_event, restart_event)
+            except ValueError:
+                raise EVSError(
                     node.lineno,
-                    "Cannot implicitly use a FlagRange as a condition. Call any() "
-                    "or all() on it (with or without 'not' in front) to test it.",
+                    "(internal) Cannot resolve simple condition check: 'skip_lines, 'end_event', and "
+                    "'restart_event' are all 0 or False.",
                 )
-            if isinstance(test, gt.Character):
-                raise EVSSyntaxError(
-                    node.lineno,
-                    "Cannot implicitly use a Character as a test. Call IsAlive(), "
-                    "IsDead(), etc. on the Character to test its state.",
-                )
-            raise NoSkipOrReturnError
 
-        # 5. The condition is a callable 'boolean' object in the global namespace that requires no arguments.
+        # 5. The condition is a 'compilable' game object in the global namespace that requires no arguments.
         if isinstance(node, (ast.Attribute, ast.Name)):
-            test_func = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
-            if isinstance(test_func, gt.FlagRange):
+            game_object = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
+            if not isinstance(game_object, BaseGameObject):
+                raise EVSValueError(
+                    node.lineno, f"Only (some) `BaseGameObjectObject` subclasses are directly testable."
+                )
+            if isinstance(game_object, FlagRange):
                 raise EVSValueError(
                     node.lineno,
-                    "Cannot implicitly use a FlagRange as a condition.\n"
+                    "Cannot implicitly use a `FlagRange` as a condition.\n"
                     "Call `any()`, `all()`, `not any()`, or `not all()` on it to test it.",
                 )
-            if not callable(test_func):
-                raise EVSValueError(node.lineno, f"Object {repr(test_func)} is not testable.")
             try:
-                return test_func(negate=negate, skip_lines=skip_lines, end_event=end_event, restart_event=restart_event)
-            except TypeError as ex:
-                if "unexpected keyword argument" in str(ex):
-                    raise NoSkipOrReturnError  # This object does not support simple/chain skip or return.
-                raise
+                return self.COMPILE_OBJECT_TEST(
+                    type(game_object),
+                    game_object,
+                    negate=negate,
+                    skip_lines=skip_lines,
+                    end_event=end_event,
+                    restart_event=restart_event,
+                )
+            except TypeError:
+                raise EVSValueError(node.lineno, f"Object `{game_object}` is not testable.")
 
         # 6. The condition is a binary comparison operation.
         if isinstance(node, ast.Compare):
             return self._compile_simple_comparison(node, negate, skip_lines)
 
         # 7. The condition is a test function call.
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.tests:
-            test_function = self.tests[node.func.id]
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.EMEDF_TESTS:
             # Get arguments.
             args = self._parse_nodes(node.args)
             kwargs = self._parse_keyword_nodes(node.keywords)
-            return test_function(
-                *args, skip_lines=skip_lines, negate=negate, end_event=end_event, restart_event=restart_event, **kwargs
+            # TODO: event_layers
+            return self._try_compile_test(
+                node.func,
+                *args,
+                skip_lines=skip_lines, negate=negate, end_event=end_event, restart_event=restart_event,
+                **kwargs,
             )  # This will raise the same error as below.
 
         # 8. The condition is any() or all() called on a FlagRange or a sequence of simple skips that can be chained.
@@ -806,11 +896,11 @@ class EVSParser(abc.ABC):
             except KeyError:
                 raise NoSkipOrReturnError
             if not negate:  # note inversion
-                return self.instructions["SkipLinesIfComparison"](
-                    skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
+                return self._compile_instr(
+                    node, "SkipLinesIfValueComparison", skip_lines, NEG_COMPARISON_NODES[op_node], arg, comparison_value
                 )
-            return self.instructions["SkipLinesIfComparison"](
-                skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
+            return self._compile_instr(
+                node, "SkipLinesIfValueComparison", skip_lines, COMPARISON_NODES[op_node], arg, comparison_value
             )
         raise NoSkipOrReturnError
 
@@ -823,7 +913,10 @@ class EVSParser(abc.ABC):
         arg = node.args[0]
 
         # Note negation here, because this will be a skip.
-        tests = ["AllOff", "AnyOn"] if node.func.id == "all" else ["AllOn", "AnyOff"]  # "any"
+        if node.func.id == "all":
+            tests = ["AllDisabled", "AnyEnabled"]
+        else:  # if node.func.id == "any":
+            tests = ["AllEnabled", "AnyDisabled"]
 
         if isinstance(arg, ast.Call) and isinstance(arg.func, ast.Name) and arg.func.id == "range":
             if len(arg.args) != 2:
@@ -831,11 +924,11 @@ class EVSParser(abc.ABC):
                     node, "`range()` used inside `all()` or `any()` must have exactly two arguments: `(first, last)`."
                 )
             first, last = self._parse_nodes(arg.args)
-            return self.instructions["SkipLinesIfFlagRange" + tests[negate]](skip_lines, (first, last))
+            return self._compile_instr(node, "SkipLinesIfFlagRange" + tests[negate], skip_lines, (first, last))
         else:
             flag_range = self._parse_nodes(arg)
-            if isinstance(flag_range, gt.FlagRange):
-                return self.instructions["SkipLinesIfFlagRange" + tests[negate]](skip_lines, flag_range)
+            if isinstance(flag_range, FlagRange):
+                return self._compile_instr(node, "SkipLinesIfFlagRange" + tests[negate], skip_lines, flag_range)
             raise EVSSyntaxError(node, "The only valid non-sequence argument to 'all' is a FlagRange.")
 
     def _compile_chain_test(self, node: tp.Union[ast.Tuple, ast.List], func_name: str, negate, skip_lines):
@@ -860,7 +953,7 @@ class EVSParser(abc.ABC):
                 )
             if chain_skip_emevd:
                 if negate:
-                    chain_skip_emevd += self.instructions["SkipLines"](skip_lines)  # Extra skip required.
+                    chain_skip_emevd += self._compile_instr(node, "SkipLines", skip_lines)  # Extra skip required.
                 return chain_skip_emevd
 
         raise NoSkipOrReturnError
@@ -872,7 +965,11 @@ class EVSParser(abc.ABC):
         condition=None,
         skip_lines=0,
     ):
-        """Called on the argument of Condition() or Await(), or on a non-simple IF test node."""
+        """Called on the argument of Condition() or Await(), or on a non-simple IF test node.
+
+        Always results in the use of a condition group, but if `skip_lines` is given instead of `condition`, that group
+        may just be temporary group that is immediately used in a line skip.
+        """
         if condition is None and skip_lines == 0:
             raise ValueError("Either 'condition' index or 'skip_lines' count must be specified.")
         if condition is not None and skip_lines != 0:
@@ -882,7 +979,6 @@ class EVSParser(abc.ABC):
 
         emevd_args = []
         emevd_kwargs = {}
-        node_to_recur = node
 
         # NOT (recurred)
         if isinstance(node, ast.UnaryOp):
@@ -901,36 +997,82 @@ class EVSParser(abc.ABC):
         # Compare
         if isinstance(node, ast.Compare):
             node, op_node, comparison_value = self._validate_comparison_node(node)
-            emevd_args += [op_node, comparison_value]
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+                if node.func.id not in self.EMEDF_COMPARISON_TESTS:
+                    raise EVSSyntaxError(node.lineno, f"Invalid test function for binary comparison: {node.func.id}")
+                emevd_args += self._parse_nodes(node.args)
+                emevd_kwargs.update(self._parse_keyword_nodes(node.keywords))
+                emevd_kwargs.update(
+                    comparison_type=(NEG_COMPARISON_NODES if negate else COMPARISON_NODES)[op_node],
+                    value=comparison_value,
+                )
+                node = node.func  # `Name` node handled below.
+                # Modify test name, e.g., `HealthRatio` -> `HealthRatioComparison`, so 'Test function' check catches it.
+                node.id = self.EMEDF_COMPARISON_TESTS[node.id]["test_name"]
+            else:
+                raise EVSSyntaxError(
+                    node.lineno,
+                    "Left value in a binary comparison must be a test function call, "
+                    "such as `if Health(character) <= 0.1: ...`."
+                )
 
         # Testable event argument
         if isinstance(node, ast.Name) and node.id in self.current_event.args:
             if node.id in self.current_event.arg_classes:
                 arg = self.current_event.args[node.id]
                 arg_class = self.current_event.arg_classes[node.id]
-                test_func = partial(arg_class.__call__, arg)
-                if not callable(test_func):
-                    raise EVSValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
                 try:
-                    return test_func(negate=negate, condition=condition, skip_lines=skip_lines)
-                except AttributeError:
-                    raise EVSValueError(node.lineno, f"Cannot parse test function of '{node.id}'")
+                    return self.COMPILE_OBJECT_TEST(
+                        arg_class,
+                        arg,
+                        negate=negate,
+                        condition=condition,
+                        skip_lines=skip_lines,
+                    )
+                except TypeError:
+                    raise EVSValueError(node.lineno, f"Event argument type {repr(arg_class)} is not testable.")
             raise EVSValueError(
                 node.lineno,
                 f"Cannot use an event argument as a test condition unless it has a testable game type\n "
-                f"such as Flag (tests for enabled state), Region (tests if player is inside), etc.",
+                f"such as `Flag` (tests for enabled state), `Region` (tests if player is inside), etc.",
             )
 
-        # Existing condition
-        if isinstance(node, ast.Name) and node.id in self.conditions:
-            i = self.conditions.index(node.id)
-            if i in self.finished_conditions:
+        # Existing condition (with standard name)
+        if isinstance(node, ast.Name) and (match := _CONDITION_GROUP_RE.match(node.id)):
+            if not isinstance(condition, int):
                 raise EVSSyntaxError(
-                    node.lineno, f"Finished condition {node.id} cannot be an input condition. You must use line skips."
+                    node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
                 )
-            self.finished_conditions.append(i)
+            if match.group(1) == "MAIN":
+                _LOGGER.warning(f"MAIN condition used in another condition on line {node.lineno}. This is unusual.")
+                i = 0  # does happen very rarely
+            else:
+                i = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
+                if i in self.finished_conditions:
+                    # This condition slot is being used again. It is no longer considered 'finished' and cannot be used
+                    # in 'IfFinishedCondition' checks.
+                    self.finished_conditions.remove(i)
+                self._check_finished_conditions(condition, i)
             logic = "False" if negate else "True"
-            return self.instructions[f"IfCondition{logic}"](condition, i)
+            return self._compile_instr(node, f"IfCondition{logic}", condition, i)
+
+        # Existing condition (with custom name)
+        if isinstance(node, ast.Name) and node.id in self.conditions:
+            if not isinstance(condition, int):
+                raise EVSSyntaxError(
+                    node.lineno, f"(internal) Tried to compile custom condition '{node.id}' with `condition=None`."
+                )
+            i = self.conditions.index(node.id)
+            if i > len(self.AND_SLOTS):
+                # Negative OR slot, e.g., 9 -> -6 for MAIN/7/7 slot games
+                i -= len(self.conditions)
+            if i in self.finished_conditions:
+                # This condition slot is being used again. It is no longer considered 'finished' and cannot be used in
+                # 'IfFinishedCondition' checks.
+                self.finished_conditions.remove(i)
+            self._check_finished_conditions(condition, i)
+            logic = "False" if negate else "True"
+            return self._compile_instr(node, f"IfCondition{logic}", condition, i)
 
         # Call
         if isinstance(node, ast.Call):
@@ -939,38 +1081,51 @@ class EVSParser(abc.ABC):
             node = node.func  # -> ast.Name (parsed below)
 
         # Test function
-        if isinstance(node, ast.Name) and node.id in self.tests:
-            test_function = self.tests[node.id]
+        if isinstance(node, ast.Name) and node.id in self.EMEDF_TESTS:
             try:
-                return test_function(
-                    *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs
+                return self._try_compile_test(
+                    node, *emevd_args, negate=negate, condition=condition, skip_lines=skip_lines, **emevd_kwargs
                 )
             except (NoSkipOrReturnError, NoNegateError):
-                # No builtin tests for terminating/negating condition. Need to construct a temporary one.
+                # No builtin tests for skipping, terminating, and/or negating condition. Need temp Condition.
                 condition_emevd = []
                 temp_condition = self._check_out_TEMP(node.lineno)
                 skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
+                # Compile temporary condition.
+                condition_emevd += self._try_compile_test(
+                    node, *emevd_args, negate=skip_negate, condition=temp_condition, **emevd_kwargs
+                )
                 instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
-                condition_emevd += self.instructions[instr](skip_lines, temp_condition)
+                condition_emevd += self._compile_instr(node, instr, skip_lines, temp_condition)
                 return condition_emevd
             except ValueError as ex:
                 raise EVSError(node.lineno, f"Error occurred in test function '{node.id}': {ex}")
 
         # Constant / Event Argument
         if isinstance(node, (ast.Attribute, ast.Name)):
-            test_func = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
-            if isinstance(test_func, gt.FlagRange):
+            game_object = self._parse_nodes(node)  # This will raise an `EmevdNameError` if the name is invalid.
+            if not isinstance(game_object, BaseGameObject):
                 raise EVSValueError(
                     node.lineno,
-                    "Cannot implicitly use a FlagRange as a condition.\n"
+                    f"Only (some) `BaseGameObject` subclasses are directly testable, not {type(game_object).__name__}.",
+                )
+            elif isinstance(game_object, FlagRange):
+                raise EVSValueError(
+                    node.lineno,
+                    "Cannot implicitly use a `FlagRange` as a condition.\n"
                     "Call any() or all() on it (with or without 'not' in front) to test it.",
                 )
-            if not callable(test_func):
-                raise EVSValueError(node.lineno, f"Object {repr(test_func)} is not testable.")
             try:
-                return test_func(negate=negate, condition=condition, skip_lines=skip_lines)
+                return self.COMPILE_OBJECT_TEST(
+                    type(game_object),
+                    game_object,
+                    negate=negate,
+                    condition=condition,
+                    skip_lines=skip_lines,
+                )
+            except TypeError:
+                raise EVSValueError(node.lineno, f"Object {repr(game_object)} is not testable.")
             except (NoSkipOrReturnError, NoNegateError):
                 # No builtin tests for terminating/negating condition. Need to construct a temporary one.
                 condition_emevd = []
@@ -978,8 +1133,8 @@ class EVSParser(abc.ABC):
                 skip_negate = False if skip_lines > 0 else negate  # avoids double negative with negated skip
                 logic = str(bool(negate) if skip_lines > 0 else not bool(negate))
                 instr = f"SkipLinesIfCondition{logic}"
-                condition_emevd += self._compile_condition(node_to_recur, negate=skip_negate, condition=temp_condition)
-                condition_emevd += self.instructions[instr](skip_lines, temp_condition)
+                condition_emevd += self._compile_condition(node, negate=skip_negate, condition=temp_condition)
+                condition_emevd += self._compile_instr(node, instr, skip_lines, temp_condition)
                 return condition_emevd
 
         # Failure to compile the condition will be raised as a genuine syntax error, unlike the skip/return compiler.
@@ -987,38 +1142,32 @@ class EVSParser(abc.ABC):
         raise EVSSyntaxError(node.lineno, f"Invalid node for condition content:\n{ast.dump(node)}")
 
     def _compile_condition_skip_or_return(
-        self, condition, negate=False, skip_lines=0, end_event=False, restart_event=False
+        self, node, condition, negate=False, skip_lines=0, end_event=False, restart_event=False
     ):
         if skip_lines > 0:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["SkipLinesIfFinishedConditionTrue"](skip_lines, condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["SkipLinesIfConditionTrue"](skip_lines, condition)
+                    return self._compile_instr(node, "SkipLinesIfFinishedConditionTrue", skip_lines, condition)
+                return self._compile_instr(node, "SkipLinesIfConditionTrue", skip_lines, condition)
             if condition in self.finished_conditions:
-                return self.instructions["SkipLinesIfFinishedConditionFalse"](skip_lines, condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["SkipLinesIfConditionFalse"](skip_lines, condition)
+                return self._compile_instr(node, "SkipLinesIfFinishedConditionFalse", skip_lines, condition)
+            return self._compile_instr(node, "SkipLinesIfConditionFalse", skip_lines, condition)
         elif end_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["EndIfFinishedConditionFalse"](condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["EndIfConditionFalse"](condition)
+                    return self._compile_instr(node, "EndIfFinishedConditionFalse", condition)
+                return self._compile_instr(node, "EndIfConditionFalse", condition)
             if condition in self.finished_conditions:
-                return self.instructions["EndIfFinishedConditionTrue"](condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["EndIfConditionTrue"](condition)
+                return self._compile_instr(node, "EndIfFinishedConditionTrue", condition)
+            return self._compile_instr(node, "EndIfConditionTrue", condition)
         elif restart_event:
             if negate:
                 if condition in self.finished_conditions:
-                    return self.instructions["RestartIfFinishedConditionFalse"](condition)
-                self.finished_conditions.append(condition)  # Condition is now finished.
-                return self.instructions["RestartIfConditionFalse"](condition)
+                    return self._compile_instr(node, "RestartIfFinishedConditionFalse", condition)
+                return self._compile_instr(node, "RestartIfConditionFalse", condition)
             if condition in self.finished_conditions:
-                return self.instructions["RestartIfFinishedConditionTrue"](condition)
-            self.finished_conditions.append(condition)  # Condition is now finished.
-            return self.instructions["RestartIfConditionTrue"](condition)
+                return self._compile_instr(node, "RestartIfFinishedConditionTrue", condition)
+            return self._compile_instr(node, "RestartIfConditionTrue", condition)
         else:
             raise ValueError
 
@@ -1041,18 +1190,97 @@ class EVSParser(abc.ABC):
         if skip_lines > 0:
             logic = "True" if negate else "False"
             instr = f"SkipLinesIf{finished}Condition{logic}"
-            condition_emevd += self.instructions[instr](skip_lines, i)
+            condition_emevd += self._compile_instr(node, instr, skip_lines, i)
         elif finished:
             raise EVSValueError(node, "Cannot use a finished condition as an input to another condition.")
         else:
             logic = "False" if negate else "True"
             instr = f"IfCondition{logic}"
-            condition_emevd += self.instructions[instr](condition, i)
-
-        if i not in self.finished_conditions:
-            self.finished_conditions.append(i)
-
+            condition_emevd += self._compile_instr(node, instr, condition, i)
+            self._check_finished_conditions(condition, i)
         return condition_emevd
+
+    def _compile_instr(self, node, instr_name, *args, **kwargs) -> list[str]:
+        """Try to `COMPILE` instruction, raising a syntax error if it fails."""
+        try:
+            return self.COMPILE(instr_name, *args, **kwargs)
+        except Exception as ex:
+            print(instr_name, args, kwargs)
+            raise EVSSyntaxError(node, f"Failed to auto-compile instruction {instr_name}.\n    Error: {ex}")
+
+    def _check_finished_conditions(self, output_condition: int, input_condition: int):
+        if output_condition == 0:
+            self.finished_conditions.append(input_condition)
+            if input_condition in self.yoked_conditions:
+                # We pop condition keys first, as some dodgy vanilla events do create loops of condition groups.
+                yoked_conditions = sorted(self.yoked_conditions.pop(input_condition))
+                self._finish_yoked_conditions(*yoked_conditions)  # recursive
+        else:
+            # Input condition `i` is now yoked to `condition` and will be finished whenever `condition` is loaded
+            # into MAIN (0).
+            self.yoked_conditions.setdefault(output_condition, set()).add(input_condition)
+
+    def _finish_yoked_conditions(self, *conditions: int):
+        for condition in conditions:
+            if condition not in self.finished_conditions:
+                self.finished_conditions.append(condition)
+            if condition in self.yoked_conditions:
+                yoked_conditions = sorted(self.yoked_conditions.pop(condition))
+                self._finish_yoked_conditions(*yoked_conditions)
+
+    def _try_compile_test(
+        self,
+        node: ast.Name,
+        *args,
+        condition=None,
+        skip_lines=0,
+        negate=False,
+        end_event=False,
+        restart_event=False,
+        **kwargs,
+    ):
+        tests = self.EMEDF_TESTS[node.id]
+        event_layers = format_event_layers(kwargs.pop("event_layers", None))
+        instruction_lines = []
+
+        if negate:
+            # TODO: Look up 'negate' key of test to redirect (or raise `NoNegateError`).
+            # tests = tests["negate"]
+            raise EVSError(node, f"Cannot yet support `not` keyword with test functions.")
+
+        if skip_lines > 0:
+            if condition is not None or end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if "skip" not in tests:
+                raise NoSkipOrReturnError
+            # `line_count` is always the first positional argument.
+            instruction_lines = self._compile_instr(node, tests["skip"], skip_lines, *args, **kwargs)
+        elif skip_lines < 0:
+            raise ValueError("You cannot skip a negative number of lines.")
+
+        if condition is not None:
+            if end_event or restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            # "if" is always present in tests. `condition` is always the first positional argument.
+            instruction_lines = self._compile_instr(node, tests["if"], condition, *args, **kwargs)
+
+        if end_event:
+            if restart_event:
+                raise ValueError("You cannot use more than one of: condition, skip_lines, end_event, restart_event.")
+            if "end" not in tests:
+                raise NoSkipOrReturnError
+            instruction_lines = self._compile_instr(node, tests["end"], *args, **kwargs)
+
+        if restart_event:
+            if "restart" not in tests:
+                raise NoSkipOrReturnError
+            instruction_lines = self._compile_instr(node, tests["restart"], *args, **kwargs)
+
+        if instruction_lines:
+            instruction_lines[0] += event_layers
+            return instruction_lines
+
+        raise ValueError("Must specify one condition outcome (condition, skip, end, restart).")
 
     # ~~~~~~~~~~~~~~~~~~~~
     #  ASSIGNMENT METHODS: These create global/local objects, including Conditions, from assignment nodes.
@@ -1065,7 +1293,7 @@ class EVSParser(abc.ABC):
             if not isinstance(target, ast.Name):
                 raise EVSSyntaxError(node, "Values can only be assigned to (any number of) single names.")
             name = target.id
-            if name in self.instructions or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
+            if name in self.EMEDF_ALIASES or name in {"Await", "EnableThisFlag", "DisableThisFlag"}:
                 raise EVSSyntaxError(node, f"Cannot assign to an instruction name ({name}).")
             if name in _BUILTIN_NAMES:
                 raise EVSSyntaxError(node, f"Cannot assign to a builtin EVS name ({name}).")
@@ -1160,6 +1388,7 @@ class EVSParser(abc.ABC):
         """
         name = node.id
         if self.current_event and name in self.current_event.args:
+            # Name is an event argument.
             if name in {"slot", "event_layers"}:
                 raise EVSSyntaxError(node, f"Cannot use reserved event argument {repr(name)}.")
             arg = EventArgumentData(
@@ -1172,9 +1401,16 @@ class EVSParser(abc.ABC):
                 return partial(self.current_event.arg_classes[name].__call__, arg)
             return arg
 
-        # Look in tests first (boolean objects), then 'for' loop variables, then globals.
-        if name in self.tests:
-            return self.tests[name]
+        # Check if name is a condition group.
+        if match := _CONDITION_GROUP_RE.match(name):
+            if match.group(1) == "MAIN":
+                return 0
+            condition = (-1 if match.group(2) == "OR" else 1) * int(match.group(3))
+            if condition not in self.AND_SLOTS + self.OR_SLOTS:
+                raise EVSValueError(node, f"Invalid condition group name for EMEVD: {name} (group index {condition})")
+            return condition
+
+        # Look in 'for' loop variables, then globals.
         if name in self.for_vars:
             return self.for_vars[name]
         if name in self.globals:
@@ -1195,6 +1431,10 @@ class EVSParser(abc.ABC):
             return left / right
         elif isinstance(node.op, ast.FloorDiv):
             return left // right
+        elif isinstance(node.op, ast.BitOr):
+            return left | right
+        elif isinstance(node.op, ast.BitAnd):
+            return left & right
         raise EVSSyntaxError(node, f"Unsupported binary operation: {node.op}")
 
     def _parse_function_call(self, node: ast.Call):
@@ -1316,7 +1556,7 @@ class EVSParser(abc.ABC):
         """Extract `RestartType` enum value (default is 0) and event ID (default is -1) from function decorator."""
         decorators = event_node.decorator_list
         if not decorators:
-            return _RESTART_TYPES["NeverRestart"], -1
+            return _RESTART_TYPES["ContinueOnRest"], -1
 
         if len(decorators) > 1:
             raise EVSSyntaxError(
@@ -1326,10 +1566,10 @@ class EVSParser(abc.ABC):
             )
 
         dec_node = decorators[0]
-        if isinstance(dec_node, ast.Name):  # e.g. just `@NeverRestart`
+        if isinstance(dec_node, ast.Name):  # e.g. just `@ContinueOnRest`
             name = dec_node.id
             event_id = -1
-        elif isinstance(dec_node, ast.Call):  # e.g. `@NeverRestart(11020000)`
+        elif isinstance(dec_node, ast.Call):  # e.g. `@ContinueOnRest(11020000)`
             name, args, kwargs = self._parse_function_call(dec_node)
             if kwargs or len(args) != 1 or not isinstance(args[0], int):
                 raise EVSSyntaxError(
@@ -1337,8 +1577,9 @@ class EVSParser(abc.ABC):
                     f"Event function decorator must have exactly one numeric argument (event ID).",
                 )
             event_id = args[0]
-            if isinstance(event_id, gt.MapFlagSuffix):
+            if isinstance(event_id, MapFlagSuffix):
                 if self.map_base_flag is None:
+                    # noinspection PyTypeChecker
                     raise EVSSyntaxError(
                         dec_node,
                         f"MapFlagSuffix `{event_id}` cannot be used when map base flag is unknown. (Pass `map_name` to "
@@ -1348,9 +1589,8 @@ class EVSParser(abc.ABC):
         else:
             raise EVSSyntaxError(
                 event_node,
-                f"Event function decorator must be a single name, like `@NeverRestart`, or function call with an event "
-                f"ID, like `@RestartOnRest(11020100)`, not: {dec_node}.\n"
-                f"The restart type must be one of: {', '.join(_RESTART_TYPES)}",
+                f"Event function decorator must be `@ContinueOnRest`, `@RestartOnRest`, or `@EndOnRest`, with the event"
+                f" ID given as a decorator argument (e.g., `@RestartOnRest(11020100)`), not: {dec_node}.",
             )
 
         try:
@@ -1391,7 +1631,7 @@ class EVSParser(abc.ABC):
         raise ConditionLimitError(node, "No available OR conditions left in this event.")
 
     def _check_out_AND(self, node: ast.AST, name="_", hold=False):
-        """ Check out next available AND condition register index. """
+        """Check out next available AND condition register index."""
         if name != "_" and name in self.conditions:
             raise ConditionNameError(node, f"A condition named '{name}' already exists in this event.")
         for i in self.AND_SLOTS:
@@ -1440,8 +1680,8 @@ class EVSParser(abc.ABC):
 
 
 def _parse_event_arguments(
-    event_node: ast.FunctionDef
-) -> tuple[dict[str, tuple[int, int]], str, dict[str, tp.Type[gt.GameObject]]]:
+    event_node: ast.FunctionDef, namespace: dict[str, tp.Any],
+) -> tuple[dict[str, tuple[int, int]], str, dict[str, tp.Type[BaseGameObject]]]:
     """Parse argument nodes of given event function node and return:
         - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArg` instances
         - event's argument format string, e.g. `"iIIBh"`
@@ -1449,7 +1689,7 @@ def _parse_event_arguments(
     """
     arg_names = []  # type: list[str]
     arg_types = ""
-    arg_classes = {}  # type: dict[str, tp.Type[gt.GameObject]]
+    arg_classes = {}  # type: dict[str, tp.Type[BaseGameObject]]
 
     if event_node.args.defaults:
         raise EVSSyntaxError(event_node, "You cannot provide default values for event arguments.")
@@ -1484,15 +1724,23 @@ def _parse_event_arguments(
                 arg_type = _PY_TYPES[arg_type_node.id]
             except KeyError:
                 class_name = arg_type_node.id
-                if class_name in gt.EMEVD_GAME_TYPES:
-                    arg_classes[arg_name] = getattr(gt, class_name)
-                    arg_type = "I"
-                else:
+                try:
+                    arg_class = namespace[class_name]
+                except KeyError:
                     raise EVSSyntaxError(
                         event_node,
-                        f"{repr(class_name)} is not a valid game type for argument hinting.\n"
-                        f"The available types are: {gt.EMEVD_GAME_TYPES}",
+                        f"{repr(class_name)} is not a valid game type for argument hinting.",
                     )
+                try:
+                    fmt = arg_class.get_event_arg_fmt()
+                except AttributeError:
+                    raise EVSSyntaxError(
+                        event_node,
+                        f"{repr(class_name)} is not a valid game type for argument hinting.",
+                    )
+                else:
+                    arg_classes[arg_name] = arg_class
+                    arg_type = fmt
         else:
             raise EVSSyntaxError(
                 event_node,
@@ -1508,11 +1756,12 @@ def _parse_event_arguments(
     return arg_dict, arg_types, arg_classes
 
 
-def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
+def _import_module(node: ast.Import, ignore_names: list[str] = ()) -> dict[str, tp.Any]:
+    module_dict = {}
     for alias in node.names:
         name = alias.name
-        if _GAME_IMPORT_RE.match(name) or name == "typing":
-            return
+        if name in ignore_names:
+            continue
         try:
             module = importlib.import_module(alias.name)
             importlib.reload(module)
@@ -1520,13 +1769,19 @@ def _import_module(node: ast.Import, namespace: dict[str, tp.Any]):
             raise EVSImportError(node, alias.name, str(e))
         as_name = alias.asname if alias.asname is not None else name
         try:
-            namespace[as_name] = getattr(module, name)
+            module_dict[as_name] = getattr(module, name)
         except AttributeError as e:
             raise EVSImportError(node, name, str(e))
+    del module
+    return module_dict
 
 
-def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
+def _import_from(
+    node: ast.ImportFrom, script_directory: Path, ignore_names: list[str] = ()
+) -> dict[str, tp.Any]:
     """Import names into given namespace dictionary."""
+    if node.module in ignore_names:
+        return {}
     try:
         # Try to import and reload module normally.
         module = importlib.import_module(node.module)
@@ -1537,7 +1792,7 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
             raise EVSImportError(
                 node,
                 node.module,
-                "`script_directory` needed for relative import, but was not given to `EVSParser` or be detected.",
+                "`script_directory` needed for relative import, but was not given to `EVSParser` or auto-detected.",
             )
         level = 0 if node.level == 0 else node.level - 1  # single dot (level 1) is the same as no dot (level 0)
         module_path = script_directory / ("../" * level + node.module.replace(".", "/") + ".py")
@@ -1545,10 +1800,11 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
             raise EVSImportError(node, node.module, f"Cannot import missing module file: {module_path}")
         module = import_arbitrary_file(module_path)
 
+    module_dict = {}
     for alias in node.names:
         name = alias.name
-        if _GAME_IMPORT_RE.match(name):
-            return  # already imported
+        if name in ignore_names:
+            continue  # already imported
         if name == "*":
             if "__all__" in vars(module):
                 all_names = vars(module)["__all__"]
@@ -1562,7 +1818,7 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
                 ]
             for name_ in all_names:
                 try:
-                    namespace[name_] = getattr(module, name_)
+                    module_dict[name_] = getattr(module, name_)
                 except AttributeError as e:
                     _LOGGER.error(
                         f"EVS error: could not import {name_} from module {node.module} " f"(__all__ = {all_names})"
@@ -1571,10 +1827,11 @@ def _import_from(node: ast.ImportFrom, namespace: dict, script_directory: Path):
         else:
             as_name = alias.asname if alias.asname is not None else name
             try:
-                namespace[as_name] = getattr(module, name)
+                module_dict[as_name] = getattr(module, name)
             except AttributeError as e:
                 raise EVSImportFromError(node, node.module, name, str(e))
     del module
+    return module_dict
 
 
 def _import_from_common_func(

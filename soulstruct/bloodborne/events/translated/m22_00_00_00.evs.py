@@ -189,9 +189,9 @@ def Constructor():
     RunEvent(12200220, slot=2, args=(2200110, 52200970))
     IfCharacterHuman(15, PLAYER)
     SkipLinesIfConditionFalse(2, 15)
-    SkipLinesIfFlagOff(1, 6631)
+    SkipLinesIfFlagDisabled(1, 6631)
     EnableFlag(12201999)
-    SkipLinesIfFlagOn(5, 12201999)
+    SkipLinesIfFlagEnabled(5, 12201999)
     EnableObject(2201150)
     DisableObject(2201151)
     EnableTreasure(2201150)
@@ -203,9 +203,9 @@ def Constructor():
     EnableTreasure(2201151)
     IfCharacterHuman(14, PLAYER)
     SkipLinesIfConditionFalse(2, 14)
-    SkipLinesIfFlagOff(1, 6309)
+    SkipLinesIfFlagDisabled(1, 6309)
     EnableFlag(12201998)
-    SkipLinesIfFlagOn(5, 12201998)
+    SkipLinesIfFlagEnabled(5, 12201998)
     EnableObject(2201500)
     DisableObject(2201501)
     EnableTreasure(2201500)
@@ -359,7 +359,7 @@ def Preconstructor():
 
 def WitchesOfHemwickDie():
     """ 12201800: Witches of Hemwick are killed. """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSoundEvent(Music.BossPhase1)
     DisableSoundEvent(Music.BossPhase2)
     DisableCharacter(Characters.FirstWitchOfHemwick)
@@ -414,8 +414,8 @@ def WitchesOfHemwickDie():
 def PlayWitchesOfHemwickDeathSound():
     """ 12201801: Event 12201801 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    IfFlagOn(1, Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickDead)
     IfCharacterBackreadDisabled(2, Characters.FirstWitchOfHemwick)
     IfHealthLessThanOrEqual(2, Characters.FirstWitchOfHemwick, 0.0)
     IfConditionTrue(-1, input_condition=1)
@@ -430,11 +430,11 @@ def WitchesOfHemwickFirstTime():
 
     Witch immediately performs animation 3011 unless the player's insight is zero.
     """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    EndIfThisEventOn()
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    EndIfThisEventFlagEnabled()
     DisableCharacter(Characters.FirstWitchOfHemwick)
-    IfFlagOff(1, Flags.WitchesOfHemwickDead)
-    IfThisEventOff(1)
+    IfFlagDisabled(1, Flags.WitchesOfHemwickDead)
+    IfThisEventFlagDisabled(1)
     IfCharacterHuman(1, PLAYER)
     IfCharacterInsideRegion(1, PLAYER, region=2202805)
     IfConditionTrue(0, input_condition=1)
@@ -445,14 +445,14 @@ def WitchesOfHemwickFirstTime():
     SkipLinesIfConditionTrue(1, 2)
     ForceAnimation(Characters.FirstWitchOfHemwick, 3011)
     EnableFlag(Flags.WitchesOfHemwickFogEntered)
-    EndIfFlagOn(9338)
+    EndIfFlagEnabled(9338)
     RunEvent(9350, 0, args=(1,))
     EnableFlag(9338)
 
 
 def DisableBossMadOneSpawners():
     """ 12201803: Disable spawners and kill remaining Mad Ones when boss is dead. """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableSpawner(2205000)
     DisableSpawner(2205001)
     DisableSpawner(2205002)
@@ -463,7 +463,7 @@ def DisableBossMadOneSpawners():
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(0, Flags.WitchesOfHemwickDead)
     DisableSpawner(2205000)
     DisableSpawner(2205001)
     DisableSpawner(2205002)
@@ -475,7 +475,7 @@ def DisableBossMadOneSpawners():
 def SummonStartWitchesOfHemwickBattle():
     """ 12201804: First Witch appears. """
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.WitchesOfHemwickFogEntered)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickFogEntered)
     IfConditionTrue(0, input_condition=1)
     EndIfHost()
     EnableCharacter(Characters.FirstWitchOfHemwick)
@@ -485,15 +485,15 @@ def SummonStartWitchesOfHemwickBattle():
 
 def EnterWitchesOfHemwickBossFog():
     """ 12204890: Event 12204890 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    GotoIfFlagOn(Label.L0, Flags.WitchesOfHemwickFirstTimeDone)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    GotoIfFlagEnabled(Label.L0, Flags.WitchesOfHemwickFirstTimeDone)
     SkipLinesIfClient(2)
     DisableObject(Objects.BossEntryFogGate)
     DeleteVFX(VFX.BossEntryFog, erase_root_only=False)
     DisableObject(Objects.BossExitFogGate)
     DeleteVFX(VFX.BossExitFog, erase_root_only=False)
-    IfFlagOff(1, Flags.WitchesOfHemwickDead)
-    IfFlagOn(1, Flags.WitchesOfHemwickFirstTimeDone)
+    IfFlagDisabled(1, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickFirstTimeDone)
     IfConditionTrue(0, input_condition=1)
     EnableObject(Objects.BossEntryFogGate)
     EnableObject(Objects.BossExitFogGate)
@@ -503,9 +503,9 @@ def EnterWitchesOfHemwickBossFog():
     # --- 0 --- #
     DefineLabel(0)
     IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=2200800, entity=Objects.BossEntryFogGate)
-    IfFlagOff(2, Flags.WitchesOfHemwickDead)
-    IfFlagOn(3, Flags.WitchesOfHemwickDead)
+    IfActionButtonParamActivated(2, action_button_id=2200800, entity=Objects.BossEntryFogGate)
+    IfFlagDisabled(2, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(3, Flags.WitchesOfHemwickDead)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -526,12 +526,12 @@ def EnterWitchesOfHemwickBossFog():
 def EnterWitchesOfHemwickBossFogAsSummon():
     """ 12204891: Event 12204891 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    IfFlagOff(1, Flags.WitchesOfHemwickDead)
-    IfFlagOn(1, Flags.WitchesOfHemwickFirstTimeDone)
-    IfFlagOn(1, Flags.WitchesOfHemwickFogEntered)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    IfFlagDisabled(1, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickFirstTimeDone)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickFogEntered)
     IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=2200800, entity=Objects.BossEntryFogGate)
+    IfActionButtonParamActivated(1, action_button_id=2200800, entity=Objects.BossEntryFogGate)
     IfConditionTrue(0, input_condition=1)
     RotateToFaceEntity(PLAYER, 2202800, animation=101130, wait_for_completion=False)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
@@ -569,11 +569,11 @@ def Event12204893():
 
 def StartWitchesOfHemwickBossBattle():
     """ 12204802: Event 12204802 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     DisableAI(Characters.FirstWitchOfHemwick)
     DisableHealthBar(Characters.FirstWitchOfHemwick)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(0, Flags.WitchesOfHemwickFogEntered)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagEnabled(0, Flags.WitchesOfHemwickFogEntered)
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
     SetNetworkUpdateAuthority(Characters.FirstWitchOfHemwick, UpdateAuthority.Forced)
@@ -614,14 +614,14 @@ def StartWitchesOfHemwickBossBattle():
 def ControlWitchesOfHemwickMusic():
     """ 12204803: Event 12204803 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableSoundEvent(Music.BossPhase1)
     DisableSoundEvent(Music.BossPhase2)
-    IfFlagOff(1, Flags.WitchesOfHemwickDead)
-    IfFlagOn(1, Flags.WitchesOfHemwickBattleStarted)
+    IfFlagDisabled(1, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(1, 12204801)
+    IfFlagEnabled(1, 12204801)
     IfCharacterInsideRegion(1, PLAYER, region=2202801)
     IfConditionTrue(0, input_condition=1)
     EnableBossMusic(Music.BossPhase1)
@@ -631,10 +631,10 @@ def ControlWitchesOfHemwickMusic():
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, Flags.WitchesOfHemwickDead)
-    IfFlagOn(2, Flags.WitchesOfHemwickBattleStarted)
+    IfFlagDisabled(2, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(2, Flags.WitchesOfHemwickBattleStarted)
     SkipLinesIfHost(1)
-    IfFlagOn(2, 12204801)
+    IfFlagEnabled(2, 12204801)
     IfCharacterInsideRegion(2, PLAYER, region=2202801)
     IfConditionTrue(0, input_condition=2)
     DisableBossMusic(Music.BossPhase1)
@@ -644,12 +644,12 @@ def ControlWitchesOfHemwickMusic():
 
 def ToggleWitchesOfHemwickCamera():
     """ 12204804: Event 12204804 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     DisableNetworkSync()
     IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, Flags.WitchesOfHemwickFogEntered)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickFogEntered)
     IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
-    IfFlagOn(2, 12204801)
+    IfFlagEnabled(2, 12204801)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -659,8 +659,8 @@ def ToggleWitchesOfHemwickCamera():
 def StopWitchesOfHemwickBossMusic():
     """ 12204805: Event 12204805 """
     DisableNetworkSync()
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    IfFlagOn(0, Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(0, Flags.WitchesOfHemwickDead)
     DisableBossMusic(Music.BossPhase1)
     DisableBossMusic(Music.BossPhase2)
     DisableBossMusic(-1)
@@ -668,7 +668,7 @@ def StopWitchesOfHemwickBossMusic():
 
 def EnableSecondWitchOfHemwickHealthBar():
     """ 12204807: Event 12204807 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfHealthValueEqual(-1, Characters.FirstWitchOfHemwick, 1)
     IfHealthValueEqual(-1, Characters.SecondWitchOfHemwick, 1)
     IfConditionTrue(0, input_condition=-1)
@@ -683,10 +683,10 @@ def EnableSecondWitchOfHemwickHealthBar():
 
 def ControlWitchOpacity(_, witch: int, witch_moving_flag: int):
     """ 12204808: Event 12204808 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     DisableNetworkSync()
     IfEntityBeyondDistance(1, PLAYER, witch, radius=12.0)
-    IfHasTAEEvent(3, witch, tae_event_id=10)
+    IfCharacterHasTAEEvent(3, witch, tae_event_id=10)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=3)
     IfConditionTrue(0, input_condition=-1)
@@ -695,7 +695,7 @@ def ControlWitchOpacity(_, witch: int, witch_moving_flag: int):
     # --- 0 --- #
     DefineLabel(0)
     IfEntityWithinDistance(2, PLAYER, witch, radius=6.0)
-    IfFlagOff(2, witch_moving_flag)
+    IfFlagDisabled(2, witch_moving_flag)
     IfConditionTrue(0, input_condition=2)
     AddSpecialEffect_WithUnknownEffect(witch, Effects.NoTransparency, affect_npc_parts_hp=False)
     Restart()
@@ -703,8 +703,8 @@ def ControlWitchOpacity(_, witch: int, witch_moving_flag: int):
 
 def ActivateSecondWitchOfHemwick():
     """ 12204810: Event 12204810 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(Characters.SecondWitchOfHemwick)
     DisableHealthBar(Characters.SecondWitchOfHemwick)
     DisableCharacter(Characters.SecondWitchOfHemwick)
@@ -745,8 +745,8 @@ def ActivateSecondWitchOfHemwick():
 
 def AggravateFirstWitchOfHemwick():
     """ 12204811: Event 12204811 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    GotoIfThisEventFlagEnabled(Label.L0)
     SetAIParamID(Characters.FirstWitchOfHemwick, 210021)
     IfCharacterDead(-1, Characters.BossMadOne1)
     IfAttackedWithDamageType(
@@ -760,7 +760,7 @@ def AggravateFirstWitchOfHemwick():
 
 def ResurrectWitch(_, witch: int, other_witch: int, warp_region: int, witch_moving_flag: int):
     """ 12204812: Resurrect (and warp) first witch after 45 seconds if second witch isn't dead. """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     EnableImmortality(witch)
     IfHealthValueEqual(3, witch, 1)
     IfHealthValueLessThan(3, other_witch, 1)
@@ -812,45 +812,45 @@ def RequestRandomWitchOfHemwickWarp(
     witch_moving_flag: int,
 ):
     """ 12204814: Event 12204814 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    IfHasTAEEvent(0, witch, tae_event_id=30)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    IfCharacterHasTAEEvent(0, witch, tae_event_id=30)
     AddSpecialEffect(witch, Effects.FullTransparency, affect_npc_part_hp=False)
-    IfHasTAEEvent(1, witch, tae_event_id=10)
+    IfCharacterHasTAEEvent(1, witch, tae_event_id=10)
     IfHealthValueNotEqual(1, witch, 1)
     IfConditionTrue(0, input_condition=1)
     GotoIfClient(Label.L0)
     EnableRandomFlagInRange((random_first_flag, random_last_flag))
-    GotoIfFlagOff(Label.L1, warp_flag_1)
+    GotoIfFlagDisabled(Label.L1, warp_flag_1)
     DisableFlagRange((warp_flag_1, warp_flag_4))
     EnableFlag(warp_flag_1)
     Goto(Label.L0)
 
     # --- 1 --- #
     DefineLabel(1)
-    GotoIfFlagOff(Label.L2, warp_flag_2)
+    GotoIfFlagDisabled(Label.L2, warp_flag_2)
     DisableFlagRange((warp_flag_1, warp_flag_4))
     EnableFlag(warp_flag_2)
     Goto(Label.L0)
 
     # --- 2 --- #
     DefineLabel(2)
-    GotoIfFlagOff(Label.L3, warp_flag_3)
+    GotoIfFlagDisabled(Label.L3, warp_flag_3)
     DisableFlagRange((warp_flag_1, warp_flag_4))
     EnableFlag(warp_flag_3)
     Goto(Label.L0)
 
     # --- 3 --- #
     DefineLabel(3)
-    GotoIfFlagOff(Label.L0, warp_flag_4)
+    GotoIfFlagDisabled(Label.L0, warp_flag_4)
     DisableFlagRange((warp_flag_1, warp_flag_4))
     EnableFlag(warp_flag_4)
 
     # --- 0 --- #
     DefineLabel(0)
-    IfFlagOn(-1, warp_flag_1)
-    IfFlagOn(-1, warp_flag_2)
-    IfFlagOn(-1, warp_flag_3)
-    IfFlagOn(-1, warp_flag_4)
+    IfFlagEnabled(-1, warp_flag_1)
+    IfFlagEnabled(-1, warp_flag_2)
+    IfFlagEnabled(-1, warp_flag_3)
+    IfFlagEnabled(-1, warp_flag_4)
     IfConditionTrue(0, input_condition=-1)
     EnableFlag(witch_moving_flag)
     Restart()
@@ -861,8 +861,8 @@ def WarpWitchOfHemwick(
 ):
     """ 12204820: Warp given Witch of Hemwick to the requested region. If the witch is already inside that region,
     they are warped to a second backup region instead. """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
-    IfFlagOn(0, warp_request_flag)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(0, warp_request_flag)
     DisableFlag(warp_request_flag)
     IfCharacterInsideRegion(1, witch, region=warp_region)
     GotoIfConditionTrue(Label.L0, input_condition=1)
@@ -883,9 +883,9 @@ def WarpWitchOfHemwick(
 
 def MakeWitchReappear(_, witch: int, trigger_flag: int, witch_moving_flag: int):
     """ 12204830: Event 12204830 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     DisableNetworkSync()
-    IfFlagOn(0, trigger_flag)
+    IfFlagEnabled(0, trigger_flag)
     Wait(2.0)
     EnableCharacter(witch)
     ReplanAI(witch)
@@ -896,10 +896,10 @@ def MakeWitchReappear(_, witch: int, trigger_flag: int, witch_moving_flag: int):
 
 def CountBossMadOneDeaths(_, mad_one: int):
     """ 12204832: Event 12204832 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfCharacterDead(0, mad_one)
     IncrementEventValue(12204860, bit_count=10, max_value=10)
-    IfHasTAEEvent(0, mad_one, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, mad_one, tae_event_id=10)
     Restart()
 
 
@@ -909,33 +909,33 @@ def MonitorBossMadOneStatus(_, mad_one: int, mad_one_dead_flag: int):
     Since the Mad One can't die until it's spawned for the first time, this prevents Mad Ones from respawning through
     event 12204838 if they haven't been manually spawned for the first time by event 12204839.
     """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfCharacterDead(0, mad_one)
     EnableFlag(mad_one_dead_flag)
-    IfHasTAEEvent(0, mad_one, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, mad_one, tae_event_id=10)
     DisableFlag(mad_one_dead_flag)
     Restart()
 
 
 def RespawnBossMadOne():
     """ 12204838: Event 12204838 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
 
-    IfFlagOff(4, Flags.PlayerHasZeroInsight)
+    IfFlagDisabled(4, Flags.PlayerHasZeroInsight)
     IfConditionTrue(0, input_condition=4)
 
-    IfHasTAEEvent(-1, Characters.FirstWitchOfHemwick, tae_event_id=20)
-    IfHasTAEEvent(-1, Characters.SecondWitchOfHemwick, tae_event_id=20)
+    IfCharacterHasTAEEvent(-1, Characters.FirstWitchOfHemwick, tae_event_id=20)
+    IfCharacterHasTAEEvent(-1, Characters.SecondWitchOfHemwick, tae_event_id=20)
     IfConditionTrue(1, input_condition=-1)
-    IfFlagOn(1, 12204870)
-    IfHasTAEEvent(-2, Characters.FirstWitchOfHemwick, tae_event_id=20)
-    IfHasTAEEvent(-2, Characters.SecondWitchOfHemwick, tae_event_id=20)
+    IfFlagEnabled(1, 12204870)
+    IfCharacterHasTAEEvent(-2, Characters.FirstWitchOfHemwick, tae_event_id=20)
+    IfCharacterHasTAEEvent(-2, Characters.SecondWitchOfHemwick, tae_event_id=20)
     IfConditionTrue(2, input_condition=-2)
-    IfFlagOn(2, 12204871)
-    IfHasTAEEvent(-3, Characters.FirstWitchOfHemwick, tae_event_id=20)
-    IfHasTAEEvent(-3, Characters.SecondWitchOfHemwick, tae_event_id=20)
+    IfFlagEnabled(2, 12204871)
+    IfCharacterHasTAEEvent(-3, Characters.FirstWitchOfHemwick, tae_event_id=20)
+    IfCharacterHasTAEEvent(-3, Characters.SecondWitchOfHemwick, tae_event_id=20)
     IfConditionTrue(3, input_condition=-3)
-    IfFlagOn(3, 12204872)
+    IfFlagEnabled(3, 12204872)
     IfConditionTrue(-4, input_condition=1)
     IfConditionTrue(-4, input_condition=2)
     IfConditionTrue(-4, input_condition=3)
@@ -943,7 +943,7 @@ def RespawnBossMadOne():
 
     GotoIfFinishedConditionFalse(Label.L0, input_condition=1)
     EnableSpawner(2205000)
-    IfHasTAEEvent(0, Characters.BossMadOne1, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, Characters.BossMadOne1, tae_event_id=10)
     DisableSpawner(2205000)
     Restart()
 
@@ -951,14 +951,14 @@ def RespawnBossMadOne():
     DefineLabel(0)
     GotoIfFinishedConditionFalse(Label.L1, input_condition=2)
     EnableSpawner(2205001)
-    IfHasTAEEvent(0, Characters.BossMadOne2, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, Characters.BossMadOne2, tae_event_id=10)
     DisableSpawner(2205001)
     Restart()
 
     # --- 1 --- #
     DefineLabel(1)
     EnableSpawner(2205002)
-    IfHasTAEEvent(0, Characters.BossMadOne3, tae_event_id=10)
+    IfCharacterHasTAEEvent(0, Characters.BossMadOne3, tae_event_id=10)
     DisableSpawner(2205002)
     Restart()
 
@@ -966,26 +966,26 @@ def RespawnBossMadOne():
 @RestartOnRest
 def SpawnBossMadOnesForFirstTime():
     """ 12204839: Event 12204839 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
 
-    IfFlagOff(1, Flags.PlayerHasZeroInsight)
+    IfFlagDisabled(1, Flags.PlayerHasZeroInsight)
     IfConditionTrue(0, input_condition=1)
 
     IfHealthValueEqual(-1, Characters.FirstWitchOfHemwick, 1)
     IfHealthValueEqual(-1, Characters.SecondWitchOfHemwick, 1)
     IfConditionTrue(-2, input_condition=-1)
-    IfFlagOn(-2, 12204812)  # first witch has resurrected at least once
-    IfFlagOn(2, Flags.WitchesOfHemwickFirstTimeDone)
-    IfThisEventOff(2)
-    IfFlagOff(2, 12201810)
+    IfFlagEnabled(-2, 12204812)  # first witch has resurrected at least once
+    IfFlagEnabled(2, Flags.WitchesOfHemwickFirstTimeDone)
+    IfThisEventFlagDisabled(2)
+    IfFlagDisabled(2, 12201810)
     IfEventValueEqual(3, 12204860, bit_count=10, value=3)
-    IfFlagOff(3, 12204875)
+    IfFlagDisabled(3, 12204875)
     IfHealthLessThanOrEqual(4, Characters.FirstWitchOfHemwick, 0.30000001192092896)
     IfEventValueComparison(4, 12204860, bit_count=10, comparison_type=ComparisonType.LessThanOrEqual, value=2)
-    IfFlagOff(4, 12204875)
+    IfFlagDisabled(4, 12204875)
     IfHealthLessThanOrEqual(5, Characters.SecondWitchOfHemwick, 0.5)
     IfEventValueComparison(5, 12204860, bit_count=10, comparison_type=ComparisonType.LessThanOrEqual, value=2)
-    IfFlagOff(5, 12204875)
+    IfFlagDisabled(5, 12204875)
     IfConditionTrue(-3, input_condition=3)
     IfConditionTrue(-3, input_condition=4)
     IfConditionTrue(-3, input_condition=5)
@@ -1081,14 +1081,14 @@ def SpawnBossMadOnesForFirstTime():
 @RestartOnRest
 def WitchesSummonOneMadOne():
     """ 12204840: Event 12204840 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfFlagOff(5, Flags.PlayerHasZeroInsight)
+    IfFlagDisabled(5, Flags.PlayerHasZeroInsight)
     IfConditionTrue(0, input_condition=5)
 
     IfEventValueComparison(1, 12204860, bit_count=10, comparison_type=ComparisonType.GreaterThanOrEqual, value=3)
-    IfFlagOn(2, 12204870)
+    IfFlagEnabled(2, 12204870)
     IfEventValueComparison(2, 12204860, bit_count=10, comparison_type=ComparisonType.LessThanOrEqual, value=2)
     IfHealthValueEqual(5, Characters.FirstWitchOfHemwick, 1)
     IfHealthValueEqual(5, Characters.SecondWitchOfHemwick, 1)
@@ -1119,7 +1119,7 @@ def WitchesSummonOneMadOne():
 
     # --- 2 --- #
     DefineLabel(2)
-    IfFlagOff(0, 12204870)
+    IfFlagDisabled(0, 12204870)
     AICommand(Characters.FirstWitchOfHemwick, command_id=-1, slot=2)
     ReplanAI(Characters.FirstWitchOfHemwick)
     Restart()
@@ -1132,16 +1132,16 @@ def WitchesSummonOneMadOne():
 @RestartOnRest
 def WitchesSummonTwoMadOnes():
     """ 12204841: Event 12204841 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
 
-    IfFlagOn(0, 12204880)
+    IfFlagEnabled(0, 12204880)
     IfEventValueComparison(1, 12204860, bit_count=10, comparison_type=ComparisonType.GreaterThanOrEqual, value=5)
     IfEventValueComparison(2, 12204860, bit_count=10, comparison_type=ComparisonType.LessThanOrEqual, value=4)
-    IfFlagOn(2, 12204870)
+    IfFlagEnabled(2, 12204870)
     IfEventValueComparison(3, 12204860, bit_count=10, comparison_type=ComparisonType.LessThanOrEqual, value=4)
-    IfFlagOn(3, 12204871)
+    IfFlagEnabled(3, 12204871)
     IfHealthValueEqual(6, Characters.FirstWitchOfHemwick, 1)
     IfHealthValueEqual(6, Characters.SecondWitchOfHemwick, 1)
     IfConditionTrue(-1, input_condition=1)
@@ -1173,8 +1173,8 @@ def WitchesSummonTwoMadOnes():
 
     # --- 2 --- #
     DefineLabel(2)
-    IfFlagOff(4, 12204870)
-    IfFlagOff(4, 12204871)
+    IfFlagDisabled(4, 12204870)
+    IfFlagDisabled(4, 12204871)
     IfConditionTrue(0, input_condition=4)
     AICommand(Characters.FirstWitchOfHemwick, command_id=-1, slot=2)
     ReplanAI(Characters.FirstWitchOfHemwick)
@@ -1188,22 +1188,22 @@ def WitchesSummonTwoMadOnes():
 @RestartOnRest
 def WitchesSummonThreeMadOnes():
     """ 12204842: Event 12204842 """
-    EndIfFlagOn(Flags.WitchesOfHemwickDead)
+    EndIfFlagEnabled(Flags.WitchesOfHemwickDead)
     IfCharacterHuman(15, PLAYER)
     EndIfConditionFalse(15)
-    IfFlagOn(0, 12204881)
-    IfFlagOn(-1, 12204870)
-    IfFlagOn(-1, 12204871)
-    IfFlagOn(-1, 12204872)
+    IfFlagEnabled(0, 12204881)
+    IfFlagEnabled(-1, 12204870)
+    IfFlagEnabled(-1, 12204871)
+    IfFlagEnabled(-1, 12204872)
     IfConditionTrue(0, input_condition=-1)
     WaitRandomSeconds(min_seconds=15.0, max_seconds=25.0)
     AICommand(Characters.FirstWitchOfHemwick, command_id=10, slot=2)
     AICommand(Characters.SecondWitchOfHemwick, command_id=10, slot=2)
     ReplanAI(Characters.FirstWitchOfHemwick)
     ReplanAI(Characters.SecondWitchOfHemwick)
-    IfFlagOff(1, 12204870)
-    IfFlagOff(1, 12204871)
-    IfFlagOff(1, 12204872)
+    IfFlagDisabled(1, 12204870)
+    IfFlagDisabled(1, 12204871)
+    IfFlagDisabled(1, 12204872)
     IfConditionTrue(0, input_condition=1)
     AICommand(Characters.FirstWitchOfHemwick, command_id=-1, slot=2)
     AICommand(Characters.SecondWitchOfHemwick, command_id=-1, slot=2)
@@ -1223,10 +1223,10 @@ def SpawnFirstBossMadOneAtStart():
     DisableAnimations(Characters.BossMadOne1)
     DisableAnimations(Characters.BossMadOne2)
     DisableAnimations(Characters.BossMadOne3)
-    IfFlagOff(1, 12201810)
+    IfFlagDisabled(1, 12201810)
     EndIfConditionTrue(1)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOff(0, Flags.PlayerHasZeroInsight)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    IfFlagDisabled(0, Flags.PlayerHasZeroInsight)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1251,7 +1251,7 @@ def MonitorZeroInsight():
 
 def Event12200100():
     """ 12200100: Event 12200100 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     EndOfAnimation(2201001, 1)
     DisableObjectActivation(2201001, obj_act_id=2200010)
     NotifyDoorEventSoundDampening(2201001, state=DoorState.DoorOpening)
@@ -1266,7 +1266,7 @@ def Event12200100():
 
 def Event12200101():
     """ 12200101: Event 12200101 """
-    GotoIfThisEventOff(Label.L0)
+    GotoIfThisEventFlagDisabled(Label.L0)
     EndOfAnimation(2201060, 0)
     DisableObjectActivation(2201060, obj_act_id=2200030)
     NotifyDoorEventSoundDampening(2201060, state=DoorState.DoorOpening)
@@ -1280,7 +1280,7 @@ def Event12200101():
 
 def Event12200110():
     """ 12200110: Event 12200110 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(2201002, 1)
     DisableObjectActivation(2201220, obj_act_id=100)
     NotifyDoorEventSoundDampening(2201002, state=DoorState.DoorOpening)
@@ -1298,10 +1298,10 @@ def Event12200110():
 def Event12200111():
     """ 12200111: Event 12200111 """
     DisableNetworkSync()
-    EndIfFlagOn(12200110)
-    IfActionButtonParam(1, action_button_id=2200000, entity=2201002)
-    IfActionButtonParam(2, action_button_id=2200001, entity=2201002)
-    IfFlagOn(3, 12200110)
+    EndIfFlagEnabled(12200110)
+    IfActionButtonParamActivated(1, action_button_id=2200000, entity=2201002)
+    IfActionButtonParamActivated(2, action_button_id=2200001, entity=2201002)
+    IfFlagEnabled(3, 12200110)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1321,8 +1321,8 @@ def Event12200111():
 def Event12200112():
     """ 12200112: Event 12200112 """
     DisableNetworkSync()
-    IfFlagOn(1, 12200110)
-    IfActionButtonParam(1, action_button_id=7100, entity=2201220)
+    IfFlagEnabled(1, 12200110)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2201220)
     IfConditionTrue(0, input_condition=1)
     DisplayDialog(
         10010172,
@@ -1337,8 +1337,8 @@ def Event12200112():
 
 def Event12200120():
     """ 12200120: Event 12200120 """
-    IfFlagOn(1, 12200125)
-    IfFlagOff(2, 12200125)
+    IfFlagEnabled(1, 12200125)
+    IfFlagDisabled(2, 12200125)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(0, input_condition=-1)
@@ -1356,7 +1356,7 @@ def Event12200120():
 
     # --- 1 --- #
     DefineLabel(1)
-    GotoIfFlagOn(Label.L2, 12200121)
+    GotoIfFlagEnabled(Label.L2, 12200121)
     DisableObjectActivation(2201200, obj_act_id=100)
     DisableObjectActivation(2201201, obj_act_id=100)
 
@@ -1366,7 +1366,7 @@ def Event12200120():
 
 def Event12200121():
     """ 12200121: Event 12200121 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableObjectActivation(2201200, obj_act_id=100)
     DisableObjectActivation(2201201, obj_act_id=100)
     IfCharacterInsideRegion(0, PLAYER, region=2202010)
@@ -1377,14 +1377,14 @@ def Event12200121():
 
 def Event12200122():
     """ 12200122: Event 12200122 """
-    IfFlagOff(3, 12200125)
-    IfFlagOn(3, 12200126)
+    IfFlagDisabled(3, 12200125)
+    IfFlagEnabled(3, 12200126)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOff(1, 12200125)
-    IfFlagOff(1, 12200126)
+    IfFlagDisabled(1, 12200125)
+    IfFlagDisabled(1, 12200126)
     IfCharacterInsideRegion(1, PLAYER, region=2202000)
-    IfFlagOff(2, 12200125)
-    IfFlagOff(2, 12200126)
+    IfFlagDisabled(2, 12200125)
+    IfFlagDisabled(2, 12200126)
     IfObjectActivated(2, obj_act_id=12200128)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1409,14 +1409,14 @@ def Event12200122():
 
 def Event12200123():
     """ 12200123: Event 12200123 """
-    IfFlagOn(3, 12200125)
-    IfFlagOn(3, 12200126)
+    IfFlagEnabled(3, 12200125)
+    IfFlagEnabled(3, 12200126)
     GotoIfConditionTrue(Label.L0, input_condition=3)
-    IfFlagOn(1, 12200125)
-    IfFlagOff(1, 12200126)
+    IfFlagEnabled(1, 12200125)
+    IfFlagDisabled(1, 12200126)
     IfCharacterInsideRegion(1, PLAYER, region=2202001)
-    IfFlagOn(2, 12200125)
-    IfFlagOff(2, 12200126)
+    IfFlagEnabled(2, 12200125)
+    IfFlagDisabled(2, 12200126)
     IfObjectActivated(2, obj_act_id=12200127)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
@@ -1442,20 +1442,20 @@ def Event12200123():
 def Event12200124():
     """ 12200124: Event 12200124 """
     DisableNetworkSync()
-    IfFlagOff(1, 12200121)
-    IfActionButtonParam(1, action_button_id=7100, entity=2201200)
-    IfFlagOff(2, 12200121)
-    IfActionButtonParam(2, action_button_id=7100, entity=2201201)
-    IfFlagOff(3, 12200126)
-    IfFlagOff(3, 12200125)
-    IfActionButtonParam(3, action_button_id=7100, entity=2201200)
-    IfFlagOff(4, 12200126)
-    IfFlagOn(4, 12200125)
-    IfActionButtonParam(4, action_button_id=7100, entity=2201201)
-    IfFlagOn(5, 12200126)
-    IfActionButtonParam(5, action_button_id=7100, entity=2201200)
-    IfFlagOn(6, 12200126)
-    IfActionButtonParam(6, action_button_id=7100, entity=2201201)
+    IfFlagDisabled(1, 12200121)
+    IfActionButtonParamActivated(1, action_button_id=7100, entity=2201200)
+    IfFlagDisabled(2, 12200121)
+    IfActionButtonParamActivated(2, action_button_id=7100, entity=2201201)
+    IfFlagDisabled(3, 12200126)
+    IfFlagDisabled(3, 12200125)
+    IfActionButtonParamActivated(3, action_button_id=7100, entity=2201200)
+    IfFlagDisabled(4, 12200126)
+    IfFlagEnabled(4, 12200125)
+    IfActionButtonParamActivated(4, action_button_id=7100, entity=2201201)
+    IfFlagEnabled(5, 12200126)
+    IfActionButtonParamActivated(5, action_button_id=7100, entity=2201200)
+    IfFlagEnabled(6, 12200126)
+    IfActionButtonParamActivated(6, action_button_id=7100, entity=2201201)
     IfConditionTrue(-1, input_condition=1)
     IfConditionTrue(-1, input_condition=2)
     IfConditionTrue(-1, input_condition=3)
@@ -1480,10 +1480,10 @@ def Event12200130():
     DisableCharacter(2201310)
     DisableObject(2201300)
     DisableHealthBar(2201310)
-    EndIfFlagOn(12507810)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(12507810)
+    GotoIfThisEventFlagEnabled(Label.L0)
     IfPlayerHasGood(1, 4003, including_box=False)
-    IfFlagOn(1, Flags.WitchesOfHemwickDead)
+    IfFlagEnabled(1, Flags.WitchesOfHemwickDead)
     IfCharacterInsideRegion(1, PLAYER, region=2202410)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(CommonFlags.CutsceneActive)
@@ -1503,10 +1503,10 @@ def Event12200130():
 @RestartOnRest
 def Event12200131():
     """ 12200131: Event 12200131 """
-    EndIfFlagOn(12507810)
-    IfFlagOn(1, 12200130)
+    EndIfFlagEnabled(12507810)
+    IfFlagEnabled(1, 12200130)
     IfCharacterAlive(1, 2201310)
-    IfActionButtonParam(1, action_button_id=2200010, entity=2201300)
+    IfActionButtonParamActivated(1, action_button_id=2200010, entity=2201300)
     IfConditionTrue(0, input_condition=1)
     EnableFlag(CommonFlags.CutsceneActive)
     WaitFrames(1)
@@ -1519,7 +1519,7 @@ def Event12200131():
 @RestartOnRest
 def Event12200132():
     """ 12200132: Event 12200132 """
-    EndIfFlagOn(12507810)
+    EndIfFlagEnabled(12507810)
     IfHealthLessThanOrEqual(0, 2201310, 0.0)
     StopEvent(12200131)
 
@@ -1527,8 +1527,8 @@ def Event12200132():
 @RestartOnRest
 def Event12200150(_, arg_0_3: int, arg_4_7: int):
     """ 12200150: Event 12200150 """
-    EndIfFlagOn(12200130)
-    IfFlagOn(0, 12204020)
+    EndIfFlagEnabled(12200130)
+    IfFlagEnabled(0, 12204020)
     IfCharacterInsideRegion(1, arg_0_3, region=2202640)
     EndIfConditionFalse(1)
     Move(arg_0_3, destination=arg_4_7, destination_type=CoordEntityType.Region, set_draw_parent=0)
@@ -1537,7 +1537,7 @@ def Event12200150(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event12200210(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12200210: Event 12200210 """
-    SkipLinesIfThisEventSlotOff(3)
+    SkipLinesIfThisEventSlotFlagDisabled(3)
     EndOfAnimation(arg_0_3, arg_16_19)
     DisableObject(arg_0_3)
     End()
@@ -1552,7 +1552,7 @@ def Event12200210(_, arg_0_3: int, arg_4_7: float, arg_8_11: int, arg_12_15: int
 @RestartOnRest
 def Event12200220(_, arg_0_3: int, arg_4_7: int):
     """ 12200220: Event 12200220 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     DisableCharacter(arg_0_3)
     End()
 
@@ -1560,16 +1560,16 @@ def Event12200220(_, arg_0_3: int, arg_4_7: int):
     DefineLabel(0)
     IfCharacterHuman(1, PLAYER)
     SkipLinesIfClient(1)
-    IfFlagOn(1, arg_4_7)
+    IfFlagEnabled(1, arg_4_7)
     IfConditionTrue(0, input_condition=1)
     Wait(0.0)
 
 
 def Event12200300():
     """ 12200300: Event 12200300 """
-    GotoIfFlagOn(Label.L2, 9802)
-    GotoIfFlagOn(Label.L1, 9801)
-    GotoIfFlagOn(Label.L0, 9800)
+    GotoIfFlagEnabled(Label.L2, 9802)
+    GotoIfFlagEnabled(Label.L1, 9801)
+    GotoIfFlagEnabled(Label.L0, 9800)
 
     # --- 0 --- #
     DefineLabel(0)
@@ -1599,7 +1599,7 @@ def Event12200300():
 
 def Event12200310(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
     """ 12200310: Event 12200310 """
-    GotoIfThisEventSlotOff(Label.L0)
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
     EndOfAnimation(arg_0_3, 0)
     DisableObjectActivation(arg_0_3, obj_act_id=arg_8_11)
     EnableTreasure(arg_0_3)
@@ -1615,19 +1615,19 @@ def Event12200310(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
 @RestartOnRest
 def Event12204000(_, arg_0_3: int, arg_4_7: float):
     """ 12204000: Event 12204000 """
-    GotoIfFlagOn(Label.L0, 12204011)
+    GotoIfFlagEnabled(Label.L0, 12204011)
     DisableCharacter(arg_0_3)
     End()
 
     # --- 0 --- #
     DefineLabel(0)
     DisableCharacter(arg_0_3)
-    IfFlagOn(-1, 9801)
-    IfFlagOn(-1, 9802)
+    IfFlagEnabled(-1, 9801)
+    IfFlagEnabled(-1, 9802)
     IfConditionTrue(1, input_condition=-1)
     IfEntityWithinDistance(1, PLAYER, arg_0_3, radius=arg_4_7)
     IfCharacterHuman(1, PLAYER)
-    IfThisEventSlotOn(2)
+    IfThisEventSlotFlagEnabled(2)
     IfConditionTrue(-2, input_condition=1)
     IfConditionTrue(-2, input_condition=2)
     IfConditionTrue(0, input_condition=-2)
@@ -1648,8 +1648,8 @@ def Event12204010():
 @RestartOnRest
 def Event12205000():
     """ 12205000: Event 12205000 """
-    EndIfFlagOn(12205001)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(12205001)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200120)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1669,8 +1669,8 @@ def Event12205000():
 @RestartOnRest
 def Event12205001():
     """ 12205001: Event 12205001 """
-    EndIfFlagOn(12205000)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(12205000)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200120)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1692,7 +1692,7 @@ def Event12205001():
 @RestartOnRest
 def Event12205002():
     """ 12205002: Event 12205002 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     IfCharacterInsideRegion(1, 2200120, region=2202360)
     IfHasAIStatus(1, 2200120, ai_status=AIStatusType.Normal)
     IfConditionTrue(0, input_condition=1)
@@ -1707,7 +1707,7 @@ def Event12205002():
 @RestartOnRest
 def Event12205003():
     """ 12205003: Event 12205003 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -1715,7 +1715,7 @@ def Event12205003():
     IfConditionTrue(-2, input_condition=1)
     IfAttackedWithDamageType(-2, attacked_entity=2200120, attacker=-1)
     IfHasAIStatus(-2, 2200120, ai_status=AIStatusType.Battle)
-    IfFlagOn(-2, 12205002)
+    IfFlagEnabled(-2, 12205002)
     IfConditionTrue(0, input_condition=-2)
     AICommand(2200120, command_id=-1, slot=0)
     ReplanAI(2200120)
@@ -1724,8 +1724,8 @@ def Event12205003():
 @RestartOnRest
 def Event12205010(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12205010: Event 12205010 """
-    EndIfFlagOn(arg_20_23)
-    GotoIfThisEventSlotOn(Label.L0)
+    EndIfFlagEnabled(arg_20_23)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     DisableAI(arg_4_7)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1753,8 +1753,8 @@ def Event12205010(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event12205015(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205015: Event 12205015 """
-    EndIfThisEventSlotOn()
-    IfFlagOn(0, arg_12_15)
+    EndIfThisEventSlotFlagEnabled()
+    IfFlagEnabled(0, arg_12_15)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -1770,8 +1770,8 @@ def Event12205015(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12205040():
     """ 12205040: Event 12205040 """
-    EndIfFlagOn(12205041)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(12205041)
+    GotoIfThisEventFlagEnabled(Label.L0)
     IfHasAIStatus(2, 2200212, ai_status=AIStatusType.Battle)
     IfCharacterAlive(2, 2200212)
     IfHasAIStatus(3, 2200303, ai_status=AIStatusType.Battle)
@@ -1804,12 +1804,12 @@ def Event12205040():
 @RestartOnRest
 def Event12205041():
     """ 12205041: Event 12205041 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfHasAIStatus(-1, 2200211, ai_status=AIStatusType.Battle)
     IfCharacterInsideRegion(-1, 2200211, region=2202320)
     IfConditionTrue(0, input_condition=-1)
     IfHasAIStatus(0, 2200211, ai_status=AIStatusType.Normal)
-    CancelSpecialEffect(2200211, 5000)
+    RemoveSpecialEffect(2200211, 5000)
     ChangePatrolBehavior(2200211, patrol_information_id=2203031)
     ReplanAI(2200211)
 
@@ -1817,7 +1817,7 @@ def Event12205041():
 @RestartOnRest
 def Event12205020():
     """ 12205020: Event 12205020 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     ForceAnimation(2200140, 7004, loop=True)
     SetAIParamID(2200140, 261091)
     IfCharacterHuman(-1, PLAYER)
@@ -1839,7 +1839,7 @@ def Event12205020():
 @RestartOnRest
 def Event12205030():
     """ 12205030: Event 12205030 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     IfCharacterInsideRegion(1, PLAYER, region=2202090)
     IfEntityWithinDistance(2, PLAYER, 2200150, radius=10.0)
     IfConditionTrue(-1, input_condition=1)
@@ -1857,7 +1857,7 @@ def Event12205030():
 @RestartOnRest
 def Event12205031():
     """ 12205031: Event 12205031 """
-    EndIfThisEventOn()
+    EndIfThisEventFlagEnabled()
     IfCharacterInsideRegion(1, 2200150, region=2202390)
     IfCharacterHuman(-2, PLAYER)
     IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
@@ -1879,8 +1879,8 @@ def Event12205031():
 @RestartOnRest
 def Event12205050():
     """ 12205050: Event 12205050 """
-    EndIfFlagOn(12205051)
-    GotoIfThisEventOn(Label.L0)
+    EndIfFlagEnabled(12205051)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200280)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1906,7 +1906,7 @@ def Event12205050():
 @RestartOnRest
 def Event12205051():
     """ 12205051: Event 12205051 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -1925,7 +1925,7 @@ def Event12205051():
 @RestartOnRest
 def Event12205060():
     """ 12205060: Event 12205060 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200170)
     DisableGravity(2200170)
     EnableInvincibility(2200170)
@@ -1945,7 +1945,7 @@ def Event12205060():
 @RestartOnRest
 def Event12205070():
     """ 12205070: Event 12205070 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200411)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -1965,7 +1965,7 @@ def Event12205070():
 @RestartOnRest
 def Event12205080():
     """ 12205080: Event 12205080 """
-    GotoIfThisEventOn(Label.L0)
+    GotoIfThisEventFlagEnabled(Label.L0)
     DisableAI(2200205)
     IfCharacterInsideRegion(1, PLAYER, region=2202155)
     IfCharacterInsideRegion(2, PLAYER, region=2202156)
@@ -1986,8 +1986,8 @@ def Event12205080():
 @RestartOnRest
 def Event12205100(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int, arg_16_19: int):
     """ 12205100: Event 12205100 """
-    EndIfFlagOn(arg_12_15)
-    GotoIfThisEventSlotOn(Label.L0)
+    EndIfFlagEnabled(arg_12_15)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -2009,7 +2009,7 @@ def Event12205100(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
 @RestartOnRest
 def Event12205105(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float):
     """ 12205105: Event 12205105 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -2033,7 +2033,7 @@ def Event12205105(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float
 @RestartOnRest
 def Event12205110(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 12205110: Event 12205110 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableAI(arg_0_3)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -2054,7 +2054,7 @@ def Event12205110(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
 @RestartOnRest
 def Event12205120(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int):
     """ 12205120: Event 12205120 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     DisableAI(arg_0_3)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -2073,7 +2073,7 @@ def Event12205120(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: int
 @RestartOnRest
 def Event12205150(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float):
     """ 12205150: Event 12205150 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, arg_4_7, loop=True)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
@@ -2101,7 +2101,7 @@ def Event12205160(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     SetCharacterEventTarget(arg_8_11, arg_12_15)
     AICommand(arg_8_11, command_id=100, slot=0)
     ReplanAI(arg_8_11)
-    IfHasTAEEvent(0, arg_8_11, tae_event_id=100)
+    IfCharacterHasTAEEvent(0, arg_8_11, tae_event_id=100)
     AICommand(arg_8_11, command_id=-1, slot=0)
     ReplanAI(arg_8_11)
     Restart()
@@ -2110,7 +2110,7 @@ def Event12205160(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12205170(_, arg_0_3: int, arg_4_7: int):
     """ 12205170: Event 12205170 """
-    GotoIfThisEventSlotOff(Label.L1)
+    GotoIfThisEventSlotFlagDisabled(Label.L1)
     PostDestruction(arg_0_3)
     End()
 
@@ -2204,7 +2204,7 @@ def Event12205200(_, arg_0_3: int):
 @RestartOnRest
 def Event12205210(_, arg_0_3: int):
     """ 12205210: Event 12205210 """
-    EndIfThisEventSlotOn()
+    EndIfThisEventSlotFlagEnabled()
     ForceAnimation(arg_0_3, 9003, loop=True)
     SetAIParamID(arg_0_3, 117007)
     IfCharacterHuman(-1, PLAYER)
@@ -2296,9 +2296,9 @@ def Event12205230(_, arg_0_3: int, arg_4_7: int):
 @RestartOnRest
 def Event12205240(_, arg_0_3: int):
     """ 12205240: Event 12205240 """
-    GotoIfThisEventSlotOn(Label.L1)
+    GotoIfThisEventSlotFlagEnabled(Label.L1)
     DisableAI(arg_0_3)
-    GotoIfFlagOff(Label.L0, 12200110)
+    GotoIfFlagDisabled(Label.L0, 12200110)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -2356,9 +2356,9 @@ def Event12205250(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12205260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205260: Event 12205260 """
-    EndIfFlagOn(arg_8_11)
-    EndIfFlagOn(arg_12_15)
-    GotoIfThisEventSlotOn(Label.L0)
+    EndIfFlagEnabled(arg_8_11)
+    EndIfFlagEnabled(arg_12_15)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     DisableAI(arg_0_3)
     AddSpecialEffect(arg_0_3, 5000, affect_npc_part_hp=False)
     IfCharacterHuman(-1, PLAYER)
@@ -2379,8 +2379,8 @@ def Event12205260(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 @RestartOnRest
 def Event12205265(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
     """ 12205265: Event 12205265 """
-    EndIfFlagOn(arg_12_15)
-    EndIfThisEventSlotOn()
+    EndIfFlagEnabled(arg_12_15)
+    EndIfThisEventSlotFlagEnabled()
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -2397,8 +2397,8 @@ def Event12205265(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, 
 @RestartOnRest
 def Event12205270(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
     """ 12205270: Event 12205270 """
-    EndIfFlagOn(arg_8_11)
-    GotoIfThisEventSlotOn(Label.L0)
+    EndIfFlagEnabled(arg_8_11)
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     IfCharacterHuman(-1, PLAYER)
     IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
     IfConditionTrue(1, input_condition=-1)
@@ -2419,14 +2419,14 @@ def Event12205300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
     """ 12205300: Event 12205300 """
     DisableSoundEvent(arg_0_3)
     DeleteVFX(2203040, erase_root_only=False)
-    EndIfFlagOn(arg_12_15)
+    EndIfFlagEnabled(arg_12_15)
     CreateVFX(2203040)
-    IfFlagOff(1, arg_4_7)
-    IfFlagOff(1, arg_8_11)
+    IfFlagDisabled(1, arg_4_7)
+    IfFlagDisabled(1, arg_8_11)
     IfConditionTrue(0, input_condition=1)
     EnableSoundEvent(arg_0_3)
-    IfFlagOn(-1, arg_4_7)
-    IfFlagOn(-1, arg_8_11)
+    IfFlagEnabled(-1, arg_4_7)
+    IfFlagEnabled(-1, arg_8_11)
     IfConditionTrue(0, input_condition=-1)
     DisableSoundEvent(arg_0_3)
     Restart()
@@ -2434,8 +2434,8 @@ def Event12205300(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
 
 def Event12200990():
     """ 12200990: Event 12200990 """
-    EndIfThisEventOn()
-    IfStandingOnCollision(0, 2203500)
+    EndIfThisEventFlagEnabled()
+    IfPlayerStandingOnCollision(0, 2203500)
     PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 214, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 214, PlayLogMultiplayerType.HostOnly)
     PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 214, PlayLogMultiplayerType.HostOnly)

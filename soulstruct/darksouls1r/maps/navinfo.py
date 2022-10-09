@@ -100,6 +100,7 @@ __all__ = [
 import copy
 import shutil
 import struct
+import types
 import typing as tp
 from itertools import product
 from pathlib import Path
@@ -270,10 +271,7 @@ class NavmeshAABB(BinaryObject):
         return copy.deepcopy(self)
 
     def draw(self, label="", axes=None, show=False, aabb_color="cyan"):
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
+        plt = import_matplotlib_plt(raise_if_missing=True)
         from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
         if axes is None:
@@ -303,7 +301,7 @@ class MCP(GameFile):
 
     aabbs: list[NavmeshAABB, ...]
 
-    def __init__(self, mcp_source=None, dcx_magic=()):
+    def __init__(self, mcp_source=None, dcx_type=None):
         """Straightforward file containing AABB volumes for navmeshes in the MSB.
 
         The number of AABBs must exactly match the number of `MSBNavmesh` entries in the corresponding MSB. Each one
@@ -311,7 +309,7 @@ class MCP(GameFile):
         convenience) for backread purposes.
         """
         self.aabbs = []
-        super().__init__(mcp_source, dcx_magic)
+        super().__init__(mcp_source, dcx_type)
 
     def unpack(self, reader: BinaryReader, **kwargs):
         header = reader.unpack_struct(self.HEADER_STRUCT)
@@ -521,10 +519,7 @@ class MCP(GameFile):
         """Draw all AABBs in `MCP` and their connections in 3D."""
         if aabb_labels == "auto":
             aabb_labels = list(range(len(self.aabbs)))
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
+        plt = import_matplotlib_plt(raise_if_missing=True)
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
             axes = fig.add_subplot(111, projection="3d")
@@ -831,9 +826,9 @@ class MCG(GameFile):
     edges: list[GateEdge]
     unknowns: tuple[int, int, int]
 
-    def __init__(self, mcg_source=None, dcx_magic=()):
+    def __init__(self, mcg_source=None, dcx_type=None):
         self.unknowns = (-1, -1, -1)
-        super().__init__(mcg_source, dcx_magic=dcx_magic)
+        super().__init__(mcg_source, dcx_type=dcx_type)
 
     def unpack(self, reader: BinaryReader, **kwargs):
         mcg = reader.unpack_struct(self.HEADER_STRUCT)
@@ -1089,10 +1084,7 @@ class MCG(GameFile):
                 node.translate += translate
 
     def draw(self, node_labels: tp.Union[None, str, list[str]] = None, axes=None, auto_show=True):
-        try:
-            import matplotlib.pyplot as plt
-        except ImportError:
-            raise ModuleNotFoundError("Optional `matplotlib` module is needed to draw MCG graphs.")
+        plt = import_matplotlib_plt(raise_if_missing=True)
         if node_labels == "auto":
             node_labels = [str(i) for i in range(len(self.nodes))]
         if axes is None:
@@ -1423,7 +1415,7 @@ class NavInfo:
         focus_xzy=None,
         focus_size=50,
     ):
-        import matplotlib.pyplot as plt
+        plt = import_matplotlib_plt(raise_if_missing=True)
 
         if axes is None:
             fig = plt.figure(figsize=(8, 8))
@@ -1477,7 +1469,7 @@ def backup_all_mcp_msg(source_map, dest_map):
 
 
 def draw_multiple_maps(map_ids):
-    import matplotlib.pyplot as plt
+    plt = import_matplotlib_plt(raise_if_missing=True)
     from soulstruct import DSR_PATH
 
     fig = plt.figure(figsize=(8, 8))
@@ -1487,3 +1479,14 @@ def draw_multiple_maps(map_ids):
         graph = NavInfo(DSR_PATH + f"/map/{map_id}")
         graph.draw(axes=axes, auto_show=False, aabb_color=colors[i])
     plt.show()
+
+
+def import_matplotlib_plt(raise_if_missing=False) -> tp.Optional[types.ModuleType]:
+    try:
+        # noinspection PyPackageRequirements
+        import matplotlib.pyplot as plt
+    except ImportError:
+        if raise_if_missing:
+            raise
+        return None
+    return plt

@@ -23,7 +23,7 @@ class LightingEntryRow(EntryRow):
     def update_entry(self, entry_id: int, entry_text: str):
         """If 'linked_text' is an empty string, then text was expected, but not found (entry highlighted)."""
         self.entry_id = entry_id
-        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        text_links = self.master.linker.get_param_entry_text_links(self.entry_id)
         self.linked_text = (f"    {{{text_links[0].name}}}" if text_links[0].name else "") if text_links else None
         self.entry_text = entry_text
         self._update_colors()
@@ -45,7 +45,7 @@ class LightingEntryRow(EntryRow):
             label="Duplicate Entry to Next Available ID",
             command=lambda: self.master.add_entry_to_next_available_id(self.entry_id),
         )
-        text_links = self.master.linker.param_entry_text_link(self.entry_id)
+        text_links = self.master.linker.get_param_entry_text_links(self.entry_id)
         if text_links:
             self.context_menu.add_separator()
             for text_link in text_links:
@@ -76,12 +76,7 @@ class LightingEditor(BaseFieldEditor):
     def lighting(self) -> DrawParamDirectory:
         return self._project.lighting
 
-    def build(self, super_only=False):
-        if super_only:
-            # TODO: Very hacky.
-            super().build()
-            return
-
+    def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):

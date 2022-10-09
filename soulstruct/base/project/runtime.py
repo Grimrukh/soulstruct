@@ -19,6 +19,7 @@ if tp.TYPE_CHECKING:
     from .core import GameDirectoryProject
 
 try:
+    # noinspection PyPackageRequirements
     import psutil
 except ImportError:
     psutil = None
@@ -28,7 +29,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
     DATA_NAME = None
     _THREADED_HOOK = False
 
-    HOOK_CLASS = None
+    HOOK_CLASS = None  # type: tp.Type[MemoryHook]
 
     def __init__(self, project: GameDirectoryProject, master=None, toplevel=False):
         super().__init__(master=master, toplevel=toplevel, window_title="Soulstruct Runtime Manager")
@@ -36,13 +37,15 @@ class RuntimeManager(SmartFrame, abc.ABC):
         self.game_save_entry = None
         self.game_save_list = None
         self.install_psutil_button = None
+        self.flag_id = None
+        self.flag_enabled = None
         self._hook = None  # type: tp.Optional[MemoryHook]
         self._THREAD_EXCEPTION = None
 
         self.build()
 
     def build(self):
-        with self.set_master(padx=10, pady=10, row_weights=[1, 1], column_weights=[1], auto_rows=0):
+        with self.set_master(padx=10, pady=10, row_weights=[1, 1, 1], column_weights=[1], auto_rows=0):
 
             if psutil is None:
                 with self.set_master(padx=10, pady=10):
@@ -165,6 +168,106 @@ class RuntimeManager(SmartFrame, abc.ABC):
                         "<Shift-Button-1>", self._error_as_dialog(lambda _: self.create_game_save(overwrite=True))
                     )
 
+            if self.HOOK_CLASS.EVENT_FLAG_OFFSETS:
+                with self.set_master(padx=20, pady=20, column_weights=[1, 1, 1, 1], auto_columns=0):
+                    self.flag_id = self.Entry(
+                        label="Event Flag ID:",
+                        label_position="left",
+                        width=15,
+                        integers_only=True,
+                    ).var
+                    self.flag_enabled = self.Checkbutton(
+                        initial_state=False,
+                        label="State:",
+                        label_position="left",
+                        selectcolor="#000",
+                        padx=20,
+                    )
+                    self.Button(
+                        text="Read Flag",
+                        font_size=10,
+                        bg="#222",
+                        padx=10,
+                        pady=(10, 0),
+                        width=15,
+                        command=self._read_flag_checkbutton,
+                    )
+                    self.Button(
+                        text="Write Flag",
+                        font_size=10,
+                        bg="#422",
+                        padx=10,
+                        pady=(10, 0),
+                        width=15,
+                        command=self._write_flag_checkbutton,
+                    )
+
+            else:
+                with self.set_master(padx=10, pady=20):
+                    self.Label(
+                        text="Event flag read/write not supported for this game.",
+                        font_size=14,
+                        pady=10,
+                        row=0,
+                    )
+
+    def _read_flag_checkbutton(self):
+        """Set flag Checkbutton state to flag ID state."""
+        try:
+            flag_id = int(self.flag_id.get())
+        except ValueError:
+            self.CustomDialog("Invalid Event Flag", "Event flag must be an integer.")
+            return
+        flag_state = self.get_flag(flag_id)
+        if flag_state is None:
+            return
+        self.flag_enabled.var.set(flag_state)
+        self.flag_enabled.config(fg="#4F4" if flag_state else "#555")
+
+    def _write_flag_checkbutton(self):
+        """Write flag ID state from flag Checkbutton state."""
+        try:
+            flag_id = int(self.flag_id.get())
+        except ValueError:
+            self.CustomDialog("Invalid Event Flag", "Event flag must be an integer.")
+            return
+        flag_state = self.flag_enabled.var.get()
+        self.set_flag(flag_id, flag_state)
+
+    def get_flag(self, flag_id: int) -> tp.Optional[bool]:
+        if not self._hook:
+            self.CustomDialog("Game Not Hooked", "You must hook into the game before reading an event flag.")
+            return None
+        if not self._hook.EVENT_FLAG_OFFSETS:
+            self.CustomDialog("Cannot Read Flags", "Soulstruct cannot read event flags for this game.")
+            return None
+        try:
+            flag_state = self._hook.read_event_flag(flag_id)
+        except Exception as ex:
+            self.CustomDialog("Flag Read Error", f"An error occurred while reading event flag ID {flag_id}:\n{ex}")
+            return None
+        return flag_state
+
+    def set_flag(self, flag_id: int, state: bool):
+        """Enable given flag ID."""
+        if not self._hook:
+            self.CustomDialog("Game Not Hooked", "You must hook into the game before writing an event flag.")
+            return
+        if not self._hook.EVENT_FLAG_OFFSETS:
+            self.CustomDialog("Cannot Write Flags", "Soulstruct cannot write event flags for this game.")
+            return
+        try:
+            self._hook.write_event_flag(flag_id, state)
+        except Exception as ex:
+            self.CustomDialog("Flag Write Error", f"An error occurred while writing event flag ID {flag_id}:\n{ex}")
+            return
+
+    def enable_flag(self, flag_id: int):
+        self.set_flag(flag_id, True)
+
+    def disable_flag(self, flag_id: int):
+        self.set_flag(flag_id, False)
+
     def load_game_save(self):
         selected_game_save = self.game_save_list.get()
         if not selected_game_save:
@@ -186,19 +289,11 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
     def hook_into_game(self):
         """Returns True if hook was successful, and False if not."""
-        for p in psutil.process_iter():
-            if p.name() == self.project.GAME.executable_name:
-                pid = p.pid
-                break
-        else:
-            self.CustomDialog("Game Not Running", "Could not find running game application to hook into.")
-            return False
-
         if self._THREADED_HOOK:
-            self._do_threaded_hook(pid)
+            self._do_threaded_hook()
         else:
             # Window will not respond while the hook loads.
-            self._hook = self.HOOK_CLASS(pid)
+            self._hook = self.HOOK_CLASS()
 
         self.CustomDialog(
             title="Hook Successful",
@@ -208,7 +303,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
         )
         return True
 
-    def _do_threaded_hook(self, pid):
+    def _do_threaded_hook(self):
         """Hooks in a separate thread while displaying a loading dialogue.
 
         Only needed if hooking takes forever because of the need to scan for base pointers.
@@ -216,7 +311,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
         def _threaded_hook():
             try:
-                self._hook = self.HOOK_CLASS(pid)
+                self._hook = self.HOOK_CLASS()
             except Exception as e:
                 self._THREAD_EXCEPTION = e
                 raise
@@ -250,7 +345,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
         return self._hook.get(value_name)
 
     @property
-    def is_hooked(self):
+    def hook_created(self):
         return self._hook is not None
 
     def _install_psutil(self):

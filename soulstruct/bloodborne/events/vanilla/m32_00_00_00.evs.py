@@ -1,4 +1,6 @@
 """
+Byrgenwerth / Lecture Building
+
 linked:
 140
 
@@ -17,10 +19,12 @@ strings:
 222: 
 """
 from soulstruct.bloodborne.events import *
+from soulstruct.bloodborne.events.instructions import *
 
 
+@ContinueOnRest(0)
 def Constructor():
-    """ 0: Event 0 """
+    """Event 0"""
     RunEvent(7000, slot=45, args=(3200950, 3201950, 999, 13207800))
     RunEvent(7000, slot=46, args=(3200951, 3201951, 999, 13207820))
     RunEvent(7000, slot=47, args=(3200952, 3201952, 13201803, 13207840))
@@ -39,474 +43,784 @@ def Constructor():
     RunEvent(7300, slot=48, args=(72103203, 3201953))
     RunEvent(7600, slot=70, args=(3201999, 3203999))
     RunEvent(9200, slot=9, args=(3203900,))
-    RunEvent(9220, slot=8, args=(3200710, 13204220, 13204221, 3200, 32, 0), arg_types="iiiiBB")
-    RunEvent(9240, slot=8, args=(3200710, 13204220, 13204221, 13204222, 32, 0), arg_types="iiiiBB")
-    RunEvent(9260, slot=8, args=(3200710, 13204220, 13204221, 13204222, 32, 0), arg_types="iiiiBB")
-    RunEvent(9280, slot=8, args=(3200710, 13204220, 13204221, 3200, 13204800, 32, 0), arg_types="iiiiiBB")
+    RunEvent(9220, slot=8, args=(3200710, 13204220, 13204221, 3200, 32))
+    RunEvent(9240, slot=8, args=(3200710, 13204220, 13204221, 13204222, 32))
+    RunEvent(9260, slot=8, args=(3200710, 13204220, 13204221, 13204222, 32))
+    RunEvent(9280, slot=8, args=(3200710, 13204220, 13204221, 3200, 13204800, 32))
     RegisterLadder(start_climbing_flag=13200000, stop_climbing_flag=13200001, obj=3201130)
     RegisterLadder(start_climbing_flag=13200002, stop_climbing_flag=13200003, obj=3201131)
-    RunEvent(13200990)
-    RunEvent(13200950)
-    RunEvent(13200960)
-    CreateObjectVFX(900130, obj=3201000, model_point=200)
-    CreateObjectVFX(900130, obj=3201001, model_point=200)
-    CreateObjectVFX(900130, obj=3201002, model_point=200)
-    CreateObjectVFX(900130, obj=3201003, model_point=200)
-    CreateObjectVFX(900130, obj=3201004, model_point=200)
-    CreateObjectVFX(900130, obj=3201005, model_point=200)
+    Event_13200990()
+    Event_13200950()
+    Event_13200960()
+    CreateObjectVFX(3201000, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201001, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201002, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201003, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201004, vfx_id=200, model_point=900130)
+    CreateObjectVFX(3201005, vfx_id=200, model_point=900130)
     DeleteVFX(3203910, erase_root_only=False)
     DeleteVFX(3203911, erase_root_only=False)
     DeleteVFX(3203912, erase_root_only=False)
-    RunEvent(13204400, slot=0, args=(13204440, 3203910, 13204420, 13204430, 13201800, 6001))
-    RunEvent(13204401, slot=0, args=(13204441, 3203911, 13204421, 13204431, 13201800, 13204420))
-    RunEvent(13204402, slot=0, args=(13204442, 3203912, 13204422, 13204432, 13201800, 13204420))
-    RunEvent(13204410, slot=0, args=(0, 3200910, 3202910, 13204420, 13204430, 13204440, 13201800, 10566))
-    RunEvent(13204410, slot=1, args=(5, 3200911, 3202913, 13204421, 13204431, 13204441, 13201800, 10565))
-    RunEvent(13204410, slot=2, args=(5, 3200912, 3202914, 13204422, 13204432, 13204442, 13201800, 10561))
-    RunEvent(13204450, slot=0, args=(3200910, 3202911, 13204420, 13204430, 13204800))
-    RunEvent(13204450, slot=1, args=(3200911, 3202915, 13204421, 13204431, 13204800))
-    RunEvent(13204450, slot=2, args=(3200912, 3202916, 13204422, 13204432, 13204800))
-    RunEvent(13204460, slot=0, args=(3200910, 3202911, 3202800, 3202809, 101130, 13204450, 3202809))
-    RunEvent(13204460, slot=1, args=(3200911, 3202915, 3202800, 3202809, 101130, 13204451, 3202809))
-    RunEvent(13204460, slot=2, args=(3200912, 3202916, 3202800, 3202809, 101130, 13204452, 3202809))
-    RunEvent(13204470, slot=0, args=(3200910,))
-    RunEvent(13204470, slot=1, args=(3200911,))
-    RunEvent(13204470, slot=2, args=(3200912,))
-    RunEvent(13204832)
-    RunEvent(13204833)
-    RunEvent(13204834)
-    RunEvent(13201800)
-    RunEvent(13201801)
-    RunEvent(13201802)
-    RunEvent(13201803)
-    RunEvent(13204830)
-    RunEvent(13204831)
-    RunEvent(13204802)
-    RunEvent(13204803)
-    RunEvent(13204804)
-    RunEvent(13204805)
-    RunEvent(13204807)
-    RunEvent(13204808)
-    RunEvent(13204809)
-    RunEvent(13204810)
-    RunEvent(13204820)
-    RunEvent(13204821)
-    RunEvent(13201804)
-    RunEvent(13204000, slot=0, args=(3200200, 13204802))
-    RunEvent(13204000, slot=1, args=(3200201, 13204802))
-    RunEvent(13204000, slot=2, args=(3200202, 13204802))
-    RunEvent(13204000, slot=3, args=(3200203, 13204802))
-    RunEvent(13204000, slot=4, args=(3200204, 13204802))
-    RunEvent(13204000, slot=5, args=(3200205, 13204802))
-    RunEvent(13204000, slot=6, args=(3200206, 13204802))
-    RunEvent(13204000, slot=7, args=(3200207, 13204802))
-    RunEvent(13204000, slot=8, args=(3200208, 13204802))
-    RunEvent(13204000, slot=9, args=(3200209, 13204802))
-    RunEvent(13204000, slot=10, args=(3200210, 13204811))
-    RunEvent(13204000, slot=11, args=(3200211, 13204811))
-    RunEvent(13204000, slot=12, args=(3200212, 13204811))
-    RunEvent(13204000, slot=13, args=(3200213, 13204811))
-    RunEvent(13204000, slot=14, args=(3200214, 13204811))
-    RunEvent(13204000, slot=15, args=(3200215, 13204811))
-    RunEvent(13204000, slot=16, args=(3200216, 13204811))
-    RunEvent(13204000, slot=17, args=(3200217, 13204811))
-    RunEvent(13204000, slot=18, args=(3200218, 13204811))
-    RunEvent(13204000, slot=19, args=(3200219, 13204811))
-    RunEvent(13204000, slot=20, args=(3200220, 13204812))
-    RunEvent(13204000, slot=21, args=(3200221, 13204812))
-    RunEvent(13204000, slot=22, args=(3200222, 13204812))
-    RunEvent(13204000, slot=23, args=(3200223, 13204812))
-    RunEvent(13204000, slot=24, args=(3200224, 13204812))
-    RunEvent(13204000, slot=25, args=(3200225, 13204812))
-    RunEvent(13204000, slot=26, args=(3200226, 13204812))
-    RunEvent(13204000, slot=27, args=(3200227, 13204812))
-    RunEvent(13204000, slot=28, args=(3200228, 13204812))
-    RunEvent(13204000, slot=29, args=(3200229, 13204812))
-    RunEvent(13204050, slot=0, args=(3200200, 13204802))
-    RunEvent(13204050, slot=1, args=(3200201, 13204802))
-    RunEvent(13204050, slot=2, args=(3200202, 13204802))
-    RunEvent(13204050, slot=3, args=(3200203, 13204802))
-    RunEvent(13204050, slot=4, args=(3200204, 13204802))
-    RunEvent(13204050, slot=5, args=(3200205, 13204802))
-    RunEvent(13204050, slot=6, args=(3200206, 13204802))
-    RunEvent(13204050, slot=7, args=(3200207, 13204802))
-    RunEvent(13204050, slot=8, args=(3200208, 13204802))
-    RunEvent(13204050, slot=9, args=(3200209, 13204802))
-    RunEvent(13204050, slot=10, args=(3200210, 13204811))
-    RunEvent(13204050, slot=11, args=(3200211, 13204811))
-    RunEvent(13204050, slot=12, args=(3200212, 13204811))
-    RunEvent(13204050, slot=13, args=(3200213, 13204811))
-    RunEvent(13204050, slot=14, args=(3200214, 13204811))
-    RunEvent(13204050, slot=15, args=(3200215, 13204811))
-    RunEvent(13204050, slot=16, args=(3200216, 13204811))
-    RunEvent(13204050, slot=17, args=(3200217, 13204811))
-    RunEvent(13204050, slot=18, args=(3200218, 13204811))
-    RunEvent(13204050, slot=19, args=(3200219, 13204811))
-    RunEvent(13204050, slot=20, args=(3200220, 13204812))
-    RunEvent(13204050, slot=21, args=(3200221, 13204812))
-    RunEvent(13204050, slot=22, args=(3200222, 13204812))
-    RunEvent(13204050, slot=23, args=(3200223, 13204812))
-    RunEvent(13204050, slot=24, args=(3200224, 13204812))
-    RunEvent(13204050, slot=25, args=(3200225, 13204812))
-    RunEvent(13204050, slot=26, args=(3200226, 13204812))
-    RunEvent(13204050, slot=27, args=(3200227, 13204812))
-    RunEvent(13204050, slot=28, args=(3200228, 13204812))
-    RunEvent(13204050, slot=29, args=(3200229, 13204812))
-    RunEvent(13204730, slot=0, args=(3200200,))
-    RunEvent(13204730, slot=1, args=(3200201,))
-    RunEvent(13204730, slot=2, args=(3200202,))
-    RunEvent(13204730, slot=3, args=(3200203,))
-    RunEvent(13204730, slot=4, args=(3200204,))
-    RunEvent(13204730, slot=5, args=(3200205,))
-    RunEvent(13204730, slot=6, args=(3200206,))
-    RunEvent(13204730, slot=7, args=(3200207,))
-    RunEvent(13204730, slot=8, args=(3200208,))
-    RunEvent(13204730, slot=9, args=(3200209,))
-    RunEvent(13204730, slot=10, args=(3200210,))
-    RunEvent(13204730, slot=11, args=(3200211,))
-    RunEvent(13204730, slot=12, args=(3200212,))
-    RunEvent(13204730, slot=13, args=(3200213,))
-    RunEvent(13204730, slot=14, args=(3200214,))
-    RunEvent(13204730, slot=15, args=(3200215,))
-    RunEvent(13204730, slot=16, args=(3200216,))
-    RunEvent(13204730, slot=17, args=(3200217,))
-    RunEvent(13204730, slot=18, args=(3200218,))
-    RunEvent(13204730, slot=19, args=(3200219,))
-    RunEvent(13204730, slot=20, args=(3200220,))
-    RunEvent(13204730, slot=21, args=(3200221,))
-    RunEvent(13204730, slot=22, args=(3200222,))
-    RunEvent(13204730, slot=23, args=(3200223,))
-    RunEvent(13204730, slot=24, args=(3200224,))
-    RunEvent(13204730, slot=25, args=(3200225,))
-    RunEvent(13204730, slot=26, args=(3200226,))
-    RunEvent(13204730, slot=27, args=(3200227,))
-    RunEvent(13204730, slot=28, args=(3200228,))
-    RunEvent(13204730, slot=29, args=(3200229,))
-    RunEvent(13200010, slot=0, args=(3201110, 1, 13200100, 3201100, 100))
-    RunEvent(13200020, slot=0, args=(7030, 7031, 3201110, 13200010))
-    RunEvent(13200030, slot=0, args=(3201100, 7100, 10010172, 13200010))
-    RunEvent(13200040, slot=0, args=(3201120, 13200120, 1, 3200040))
-    RunEvent(13200040, slot=1, args=(3201122, 13200122, 1, 31))
-    RunEvent(13200040, slot=2, args=(3201201, 13200203, 1, 31))
-    RunEvent(13200040, slot=3, args=(3201210, 13200211, 1, 31))
-    RunEvent(13200050, slot=0, args=(7030, 3201122, 13200041))
-    RunEvent(13200050, slot=1, args=(7030, 3201201, 13200042))
-    RunEvent(13200055, slot=0, args=(7030, 3201210, 13200043))
-    RunEvent(13200060, slot=0, args=(3201200, 13200200, 13200201, 1, 30, 31))
-    RunEvent(13200060, slot=2, args=(3201202, 13200204, 13200205, 1, 30, 31))
-    RunEvent(13200060, slot=3, args=(3201203, 13200206, 13200207, 1, 3200030, 31))
-    RunEvent(13200060, slot=4, args=(3201204, 13200208, 13200209, 1, 30, 31))
-    RunEvent(13200060, slot=6, args=(3201211, 13200212, 13200213, 1, 30, 31))
-    RunEvent(13200060, slot=7, args=(3201212, 13200214, 13200215, 1, 30, 31))
-    RunEvent(13200060, slot=8, args=(3201213, 13200216, 13200217, 1, 30, 31))
-    RunEvent(13200060, slot=9, args=(3201214, 13200218, 13200219, 1, 30, 31))
-    RunEvent(13200060, slot=10, args=(3201220, 13200220, 13200221, 1, 30, 31))
-    RunEvent(13200060, slot=11, args=(3201221, 13200222, 13200223, 1, 30, 31))
-    RunEvent(13200060, slot=12, args=(3201222, 13200224, 13200225, 1, 30, 31))
-    RunEvent(13200060, slot=13, args=(3201223, 13200226, 13200227, 1, 30, 31))
-    RunEvent(13200060, slot=14, args=(3201224, 13200228, 13200229, 1, 30, 31))
-    RunEvent(13200060, slot=17, args=(3201232, 13200234, 13200235, 1, 30, 31))
-    RunEvent(13200060, slot=18, args=(3201233, 13200236, 13200237, 1, 30, 31))
-    RunEvent(13200060, slot=19, args=(3201234, 13200238, 13200239, 1, 30, 31))
-    RunEvent(13200200, slot=0, args=(3201050, 13200050))
-    RunEvent(13200200, slot=1, args=(3201051, 13200051))
-    RunEvent(13200200, slot=3, args=(3201053, 13200053))
-    RunEvent(13200200, slot=4, args=(3201054, 13200054))
-    RunEvent(13200200, slot=10, args=(3201060, 13200060))
-    RunEvent(13200200, slot=12, args=(3201062, 13200062))
-    IfCharacterHuman(15, PLAYER)
-    SkipLinesIfConditionFalse(2, 15)
-    SkipLinesIfFlagOff(1, 6325)
-    EnableFlag(13201999)
-    SkipLinesIfFlagOn(5, 13201999)
-    EnableObject(3201500)
-    DisableObject(3201501)
-    EnableTreasure(3201500)
-    DisableTreasure(3201501)
-    SkipLines(4)
-    DisableObject(3201500)
-    EnableObject(3201501)
-    DisableTreasure(3201500)
-    EnableTreasure(3201501)
-    IfCharacterHuman(14, PLAYER)
-    SkipLinesIfConditionFalse(2, 14)
-    SkipLinesIfFlagOff(1, 6326)
-    EnableFlag(13201998)
-    SkipLinesIfFlagOn(6, 13201998)
-    EnableObject(3201064)
-    DisableObject(3201065)
-    EnableObjectActivation(3201064, obj_act_id=9942)
-    DisableObjectActivation(3201065, obj_act_id=9942)
-    RunEvent(13200200, slot=14, args=(3201064, 13200064))
-    SkipLines(5)
-    DisableObject(3201064)
-    EnableObject(3201065)
-    DisableObjectActivation(3201064, obj_act_id=9942)
-    EnableObjectActivation(3201065, obj_act_id=9942)
-    RunEvent(13200200, slot=15, args=(3201065, 13200065))
-    RunEvent(13204100, slot=0, args=(3201000, 7407, 10012007))
-    RunEvent(13204100, slot=1, args=(3201001, 7408, 10012008))
-    RunEvent(13204100, slot=2, args=(3201002, 7409, 10012009))
-    RunEvent(13204100, slot=3, args=(3201003, 7410, 10012010))
-    RunEvent(13204100, slot=4, args=(3201004, 7411, 10012011))
-    RunEvent(13204100, slot=5, args=(3201005, 7412, 10012012))
-    RunEvent(13200400)
-    RunEvent(13200500, slot=0, args=(3200110,))
-    RunEvent(13205000, slot=0, args=(3200500, 3202500, 0, 2.0, 3203500), arg_types="iiifi")
-    RunEvent(13205000, slot=1, args=(3200501, 3202501, 0, 2.0, 3203501), arg_types="iiifi")
-    RunEvent(13205000, slot=11, args=(3200315, 3202315, 0, 2.0, 3203315), arg_types="iiifi")
-    RunEvent(13205000, slot=12, args=(3200337, 3202337, 0, 2.0, 3203337), arg_types="iiifi")
-    RunEvent(13205000, slot=13, args=(3200340, 3202337, 0, 2.0, 3203340), arg_types="iiifi")
-    RunEvent(13205000, slot=14, args=(3200341, 3202337, 0, 2.0, 3203341), arg_types="iiifi")
-    RunEvent(13205000, slot=15, args=(3200345, 3202337, 0, 2.0, 3203345), arg_types="iiifi")
-    RunEvent(13205000, slot=16, args=(3200343, 3202342, 0, 2.0, 3203343), arg_types="iiifi")
-    RunEvent(13205000, slot=17, args=(3200110, 3202110, 0, 2.0, 3203110), arg_types="iiifi")
-    RunEvent(13205000, slot=18, args=(3200620, 3202620, 0, 2.0, 3203620), arg_types="iiifi")
-    RunEvent(13205200)
-    RunEvent(13205040, slot=0, args=(3200505, 3202505, 2.0, 0.0, 3202506), arg_types="iiffi")
-    RunEvent(13205040, slot=1, args=(3200508, 3202505, 2.0, 1.0, 3202507), arg_types="iiffi")
-    RunEvent(13205080, slot=0, args=(3200333, 3202334, 7000, 7001, 0, 0))
-    RunEvent(13205080, slot=1, args=(3200336, 3202336, 7002, 7003, 1, 53200110))
-    RunEvent(13205080, slot=2, args=(3200342, 3202342, 7000, 7001, 0, 0))
-    RunEvent(13205080, slot=3, args=(3200346, 3202315, 7000, 7001, 0, 0))
-    RunEvent(13205100, slot=0, args=(3200300, 0))
-    RunEvent(13205100, slot=1, args=(3200301, 0))
-    RunEvent(13205100, slot=2, args=(3200302, 0))
-    RunEvent(13205100, slot=3, args=(3200303, 0))
-    RunEvent(13205100, slot=4, args=(3200304, 0))
-    RunEvent(13205100, slot=5, args=(3200305, 0))
-    RunEvent(13205100, slot=6, args=(3200306, 0))
-    RunEvent(13205100, slot=7, args=(3200307, 0))
-    RunEvent(13205100, slot=8, args=(3200308, 0))
-    RunEvent(13205100, slot=9, args=(3200309, 0))
-    RunEvent(13205100, slot=10, args=(3200310, 0))
-    RunEvent(13205100, slot=11, args=(3200311, 0))
-    RunEvent(13205100, slot=12, args=(3200312, 0))
-    RunEvent(13205100, slot=13, args=(3200313, 0))
-    RunEvent(13205100, slot=14, args=(3200314, 0))
-    RunEvent(13205100, slot=16, args=(3200316, 0))
-    RunEvent(13205100, slot=17, args=(3200317, 0))
-    RunEvent(13205100, slot=18, args=(3200318, 0))
-    RunEvent(13205100, slot=19, args=(3200319, 0))
-    RunEvent(13205100, slot=20, args=(3200320, 0))
-    RunEvent(13205100, slot=21, args=(3200321, 0))
-    RunEvent(13205100, slot=22, args=(3200322, 0))
-    RunEvent(13205100, slot=23, args=(3200323, 0))
-    RunEvent(13205100, slot=24, args=(3200324, 0))
-    RunEvent(13205100, slot=25, args=(3200325, 0))
-    RunEvent(13205100, slot=26, args=(3200326, 0))
-    RunEvent(13205100, slot=27, args=(3200327, 0))
-    RunEvent(13205100, slot=28, args=(3200328, 0))
-    RunEvent(13205100, slot=29, args=(3200329, 0))
-    RunEvent(13205100, slot=30, args=(3200330, 0))
-    RunEvent(13205100, slot=31, args=(3200331, 0))
-    RunEvent(13205140, slot=0, args=(3200347, 3202347))
-    RunEvent(13205600, slot=0, args=(3290, 3290, 8, 7000, 5907, 13205700, 13205760, 3200420), arg_types="hihiiiii")
-    RunEvent(13205600, slot=1, args=(3291, 3291, 9, 7022, 5907, 13205700, 13205760, 3200420), arg_types="hihiiiii")
-    RunEvent(13205600, slot=2, args=(3292, 3292, 10, 7023, 5907, 13205700, 13205760, 3200420), arg_types="hihiiiii")
-    RunEvent(13205600, slot=3, args=(3290, 3290, 8, 7000, 5907, 13205701, 13205761, 3200421), arg_types="hihiiiii")
-    RunEvent(13205600, slot=4, args=(3291, 3291, 9, 7022, 5907, 13205701, 13205761, 3200421), arg_types="hihiiiii")
-    RunEvent(13205600, slot=5, args=(3292, 3292, 10, 7023, 5907, 13205701, 13205761, 3200421), arg_types="hihiiiii")
-    RunEvent(13205630, slot=0, args=(3290, 3290, 8, 40, 13205700, 3200420), arg_types="hihiii")
-    RunEvent(13205630, slot=1, args=(3291, 3291, 9, 40, 13205700, 3200420), arg_types="hihiii")
-    RunEvent(13205630, slot=2, args=(3292, 3292, 10, 40, 13205700, 3200420), arg_types="hihiii")
-    RunEvent(13205630, slot=3, args=(3290, 3290, 8, 40, 13205701, 3200421), arg_types="hihiii")
-    RunEvent(13205630, slot=4, args=(3291, 3291, 9, 40, 13205701, 3200421), arg_types="hihiii")
-    RunEvent(13205630, slot=5, args=(3292, 3292, 10, 40, 13205701, 3200421), arg_types="hihiii")
-    RunEvent(13205660, slot=0, args=(30, 40, 13205760, 3200420, 1, 11), arg_types="iiiiBB")
-    RunEvent(13205660, slot=1, args=(50, 40, 13205760, 3200420, 2, 12), arg_types="iiiiBB")
-    RunEvent(13205660, slot=2, args=(60, 40, 13205760, 3200420, 3, 13), arg_types="iiiiBB")
-    RunEvent(13205660, slot=3, args=(30, 40, 13205761, 3200421, 1, 11), arg_types="iiiiBB")
-    RunEvent(13205660, slot=4, args=(50, 40, 13205761, 3200421, 2, 12), arg_types="iiiiBB")
-    RunEvent(13205660, slot=5, args=(60, 40, 13205761, 3200421, 3, 13), arg_types="iiiiBB")
-    RunEvent(13200310)
-    RunEvent(13200311)
+    Event_13204400(0, flag=13204440, vfx_id=3203910, flag_1=13204420, flag_2=13204430, flag_3=13201800, flag_4=6001)
+    Event_13204401(0, flag=13204441, vfx_id=3203911, flag_1=13204421, flag_2=13204431, flag_3=13201800, flag_4=13204420)
+    Event_13204402(0, flag=13204442, vfx_id=3203912, flag_1=13204422, flag_2=13204432, flag_3=13201800, flag_4=13204420)
+    Event_13204410(
+        0,
+        sign_type=0,
+        character=3200910,
+        region=3202910,
+        summon_flag=13204420,
+        dismissal_flag=13204430,
+        flag=13204440,
+        flag_1=13201800,
+        action_button_id=10566,
+    )
+    Event_13204410(
+        1,
+        sign_type=5,
+        character=3200911,
+        region=3202913,
+        summon_flag=13204421,
+        dismissal_flag=13204431,
+        flag=13204441,
+        flag_1=13201800,
+        action_button_id=10565,
+    )
+    Event_13204410(
+        2,
+        sign_type=5,
+        character=3200912,
+        region=3202914,
+        summon_flag=13204422,
+        dismissal_flag=13204432,
+        flag=13204442,
+        flag_1=13201800,
+        action_button_id=10561,
+    )
+    Event_13204450(0, character=3200910, region=3202911, flag=13204420, flag_1=13204430, flag_2=13204800)
+    Event_13204450(1, character=3200911, region=3202915, flag=13204421, flag_1=13204431, flag_2=13204800)
+    Event_13204450(2, character=3200912, region=3202916, flag=13204422, flag_1=13204432, flag_2=13204800)
+    Event_13204460(
+        0,
+        character=3200910,
+        region=3202911,
+        region_1=3202800,
+        region_2=3202809,
+        animation=101130,
+        flag=13204450,
+        region_3=3202809,
+    )
+    Event_13204460(
+        1,
+        character=3200911,
+        region=3202915,
+        region_1=3202800,
+        region_2=3202809,
+        animation=101130,
+        flag=13204451,
+        region_3=3202809,
+    )
+    Event_13204460(
+        2,
+        character=3200912,
+        region=3202916,
+        region_1=3202800,
+        region_2=3202809,
+        animation=101130,
+        flag=13204452,
+        region_3=3202809,
+    )
+    Event_13204470(0, character=3200910)
+    Event_13204470(1, character=3200911)
+    Event_13204470(2, character=3200912)
+    Event_13204832()
+    Event_13204833()
+    Event_13204834()
+    Event_13201800()
+    Event_13201801()
+    Event_13201802()
+    Event_13201803()
+    Event_13204830()
+    Event_13204831()
+    Event_13204802()
+    Event_13204803()
+    Event_13204804()
+    Event_13204805()
+    Event_13204807()
+    Event_13204808()
+    Event_13204809()
+    Event_13204810()
+    Event_13204820()
+    Event_13204821()
+    Event_13201804()
+    Event_13204000(0, character=3200200, flag=13204802)
+    Event_13204000(1, character=3200201, flag=13204802)
+    Event_13204000(2, character=3200202, flag=13204802)
+    Event_13204000(3, character=3200203, flag=13204802)
+    Event_13204000(4, character=3200204, flag=13204802)
+    Event_13204000(5, character=3200205, flag=13204802)
+    Event_13204000(6, character=3200206, flag=13204802)
+    Event_13204000(7, character=3200207, flag=13204802)
+    Event_13204000(8, character=3200208, flag=13204802)
+    Event_13204000(9, character=3200209, flag=13204802)
+    Event_13204000(10, character=3200210, flag=13204811)
+    Event_13204000(11, character=3200211, flag=13204811)
+    Event_13204000(12, character=3200212, flag=13204811)
+    Event_13204000(13, character=3200213, flag=13204811)
+    Event_13204000(14, character=3200214, flag=13204811)
+    Event_13204000(15, character=3200215, flag=13204811)
+    Event_13204000(16, character=3200216, flag=13204811)
+    Event_13204000(17, character=3200217, flag=13204811)
+    Event_13204000(18, character=3200218, flag=13204811)
+    Event_13204000(19, character=3200219, flag=13204811)
+    Event_13204000(20, character=3200220, flag=13204812)
+    Event_13204000(21, character=3200221, flag=13204812)
+    Event_13204000(22, character=3200222, flag=13204812)
+    Event_13204000(23, character=3200223, flag=13204812)
+    Event_13204000(24, character=3200224, flag=13204812)
+    Event_13204000(25, character=3200225, flag=13204812)
+    Event_13204000(26, character=3200226, flag=13204812)
+    Event_13204000(27, character=3200227, flag=13204812)
+    Event_13204000(28, character=3200228, flag=13204812)
+    Event_13204000(29, character=3200229, flag=13204812)
+    Event_13204050(0, character=3200200, flag=13204802)
+    Event_13204050(1, character=3200201, flag=13204802)
+    Event_13204050(2, character=3200202, flag=13204802)
+    Event_13204050(3, character=3200203, flag=13204802)
+    Event_13204050(4, character=3200204, flag=13204802)
+    Event_13204050(5, character=3200205, flag=13204802)
+    Event_13204050(6, character=3200206, flag=13204802)
+    Event_13204050(7, character=3200207, flag=13204802)
+    Event_13204050(8, character=3200208, flag=13204802)
+    Event_13204050(9, character=3200209, flag=13204802)
+    Event_13204050(10, character=3200210, flag=13204811)
+    Event_13204050(11, character=3200211, flag=13204811)
+    Event_13204050(12, character=3200212, flag=13204811)
+    Event_13204050(13, character=3200213, flag=13204811)
+    Event_13204050(14, character=3200214, flag=13204811)
+    Event_13204050(15, character=3200215, flag=13204811)
+    Event_13204050(16, character=3200216, flag=13204811)
+    Event_13204050(17, character=3200217, flag=13204811)
+    Event_13204050(18, character=3200218, flag=13204811)
+    Event_13204050(19, character=3200219, flag=13204811)
+    Event_13204050(20, character=3200220, flag=13204812)
+    Event_13204050(21, character=3200221, flag=13204812)
+    Event_13204050(22, character=3200222, flag=13204812)
+    Event_13204050(23, character=3200223, flag=13204812)
+    Event_13204050(24, character=3200224, flag=13204812)
+    Event_13204050(25, character=3200225, flag=13204812)
+    Event_13204050(26, character=3200226, flag=13204812)
+    Event_13204050(27, character=3200227, flag=13204812)
+    Event_13204050(28, character=3200228, flag=13204812)
+    Event_13204050(29, character=3200229, flag=13204812)
+    Event_13204730(0, character=3200200)
+    Event_13204730(1, character=3200201)
+    Event_13204730(2, character=3200202)
+    Event_13204730(3, character=3200203)
+    Event_13204730(4, character=3200204)
+    Event_13204730(5, character=3200205)
+    Event_13204730(6, character=3200206)
+    Event_13204730(7, character=3200207)
+    Event_13204730(8, character=3200208)
+    Event_13204730(9, character=3200209)
+    Event_13204730(10, character=3200210)
+    Event_13204730(11, character=3200211)
+    Event_13204730(12, character=3200212)
+    Event_13204730(13, character=3200213)
+    Event_13204730(14, character=3200214)
+    Event_13204730(15, character=3200215)
+    Event_13204730(16, character=3200216)
+    Event_13204730(17, character=3200217)
+    Event_13204730(18, character=3200218)
+    Event_13204730(19, character=3200219)
+    Event_13204730(20, character=3200220)
+    Event_13204730(21, character=3200221)
+    Event_13204730(22, character=3200222)
+    Event_13204730(23, character=3200223)
+    Event_13204730(24, character=3200224)
+    Event_13204730(25, character=3200225)
+    Event_13204730(26, character=3200226)
+    Event_13204730(27, character=3200227)
+    Event_13204730(28, character=3200228)
+    Event_13204730(29, character=3200229)
+    Event_13200010(0, obj=3201110, animation_id=1, obj_act_id=13200100, obj_1=3201100, obj_act_id_1=100)
+    Event_13200020(0, action_button_id=7030, action_button_id_1=7031, entity=3201110, flag=13200010)
+    Event_13200030(0, entity=3201100, action_button_id=7100, text=10010172, flag=13200010)
+    Event_13200040(0, obj=3201120, obj_act_id=13200120, animation_id=1, obj_act_id_1=3200040)
+    Event_13200040(1, obj=3201122, obj_act_id=13200122, animation_id=1, obj_act_id_1=31)
+    Event_13200040(2, obj=3201201, obj_act_id=13200203, animation_id=1, obj_act_id_1=31)
+    Event_13200040(3, obj=3201210, obj_act_id=13200211, animation_id=1, obj_act_id_1=31)
+    Event_13200050(0, action_button_id=7030, entity=3201122, flag=13200041)
+    Event_13200050(1, action_button_id=7030, entity=3201201, flag=13200042)
+    Event_13200055(0, action_button_id=7030, entity=3201210, flag=13200043)
+    Event_13200060(
+        0,
+        obj=3201200,
+        obj_act_id=13200200,
+        obj_act_id_1=13200201,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        2,
+        obj=3201202,
+        obj_act_id=13200204,
+        obj_act_id_1=13200205,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        3,
+        obj=3201203,
+        obj_act_id=13200206,
+        obj_act_id_1=13200207,
+        animation_id=1,
+        obj_act_id_2=3200030,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        4,
+        obj=3201204,
+        obj_act_id=13200208,
+        obj_act_id_1=13200209,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        6,
+        obj=3201211,
+        obj_act_id=13200212,
+        obj_act_id_1=13200213,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        7,
+        obj=3201212,
+        obj_act_id=13200214,
+        obj_act_id_1=13200215,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        8,
+        obj=3201213,
+        obj_act_id=13200216,
+        obj_act_id_1=13200217,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        9,
+        obj=3201214,
+        obj_act_id=13200218,
+        obj_act_id_1=13200219,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        10,
+        obj=3201220,
+        obj_act_id=13200220,
+        obj_act_id_1=13200221,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        11,
+        obj=3201221,
+        obj_act_id=13200222,
+        obj_act_id_1=13200223,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        12,
+        obj=3201222,
+        obj_act_id=13200224,
+        obj_act_id_1=13200225,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        13,
+        obj=3201223,
+        obj_act_id=13200226,
+        obj_act_id_1=13200227,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        14,
+        obj=3201224,
+        obj_act_id=13200228,
+        obj_act_id_1=13200229,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        17,
+        obj=3201232,
+        obj_act_id=13200234,
+        obj_act_id_1=13200235,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        18,
+        obj=3201233,
+        obj_act_id=13200236,
+        obj_act_id_1=13200237,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200060(
+        19,
+        obj=3201234,
+        obj_act_id=13200238,
+        obj_act_id_1=13200239,
+        animation_id=1,
+        obj_act_id_2=30,
+        obj_act_id_3=31,
+    )
+    Event_13200200(0, obj=3201050, obj_act_id=13200050)
+    Event_13200200(1, obj=3201051, obj_act_id=13200051)
+    Event_13200200(3, obj=3201053, obj_act_id=13200053)
+    Event_13200200(4, obj=3201054, obj_act_id=13200054)
+    Event_13200200(10, obj=3201060, obj_act_id=13200060)
+    Event_13200200(12, obj=3201062, obj_act_id=13200062)
+    AND_15.Add(CharacterHuman(PLAYER))
+    SkipLinesIfConditionFalse(2, AND_15)
+    if FlagEnabled(6325):
+        EnableFlag(13201999)
+    if FlagDisabled(13201999):
+        EnableObject(3201500)
+        DisableObject(3201501)
+        EnableTreasure(obj=3201500)
+        DisableTreasure(obj=3201501)
+    else:
+        DisableObject(3201500)
+        EnableObject(3201501)
+        DisableTreasure(obj=3201500)
+        EnableTreasure(obj=3201501)
+    AND_14.Add(CharacterHuman(PLAYER))
+    SkipLinesIfConditionFalse(2, AND_14)
+    if FlagEnabled(6326):
+        EnableFlag(13201998)
+    if FlagDisabled(13201998):
+        EnableObject(3201064)
+        DisableObject(3201065)
+        EnableObjectActivation(3201064, obj_act_id=9942)
+        DisableObjectActivation(3201065, obj_act_id=9942)
+        Event_13200200(14, obj=3201064, obj_act_id=13200064)
+    else:
+        DisableObject(3201064)
+        EnableObject(3201065)
+        DisableObjectActivation(3201064, obj_act_id=9942)
+        EnableObjectActivation(3201065, obj_act_id=9942)
+        Event_13200200(15, obj=3201065, obj_act_id=13200065)
+    Event_13204100(0, entity=3201000, action_button_id=7407, text=10012007)
+    Event_13204100(1, entity=3201001, action_button_id=7408, text=10012008)
+    Event_13204100(2, entity=3201002, action_button_id=7409, text=10012009)
+    Event_13204100(3, entity=3201003, action_button_id=7410, text=10012010)
+    Event_13204100(4, entity=3201004, action_button_id=7411, text=10012011)
+    Event_13204100(5, entity=3201005, action_button_id=7412, text=10012012)
+    Event_13200400()
+    Event_13200500(0, character=3200110)
+    Event_13205000(0, character=3200500, region=3202500, region_1=0, radius=2.0, patrol_information_id=3203500)
+    Event_13205000(1, character=3200501, region=3202501, region_1=0, radius=2.0, patrol_information_id=3203501)
+    Event_13205000(11, character=3200315, region=3202315, region_1=0, radius=2.0, patrol_information_id=3203315)
+    Event_13205000(12, character=3200337, region=3202337, region_1=0, radius=2.0, patrol_information_id=3203337)
+    Event_13205000(13, character=3200340, region=3202337, region_1=0, radius=2.0, patrol_information_id=3203340)
+    Event_13205000(14, character=3200341, region=3202337, region_1=0, radius=2.0, patrol_information_id=3203341)
+    Event_13205000(15, character=3200345, region=3202337, region_1=0, radius=2.0, patrol_information_id=3203345)
+    Event_13205000(16, character=3200343, region=3202342, region_1=0, radius=2.0, patrol_information_id=3203343)
+    Event_13205000(17, character=3200110, region=3202110, region_1=0, radius=2.0, patrol_information_id=3203110)
+    Event_13205000(18, character=3200620, region=3202620, region_1=0, radius=2.0, patrol_information_id=3203620)
+    Event_13205200()
+    Event_13205040(0, character=3200505, region=3202505, radius=2.0, seconds=0.0, region_1=3202506)
+    Event_13205040(1, character=3200508, region=3202505, radius=2.0, seconds=1.0, region_1=3202507)
+    Event_13205080(0, character=3200333, region=3202334, animation_id=7000, animation_id_1=7001, left=0, flag=0)
+    Event_13205080(1, character=3200336, region=3202336, animation_id=7002, animation_id_1=7003, left=1, flag=53200110)
+    Event_13205080(2, character=3200342, region=3202342, animation_id=7000, animation_id_1=7001, left=0, flag=0)
+    Event_13205080(3, character=3200346, region=3202315, animation_id=7000, animation_id_1=7001, left=0, flag=0)
+    Event_13205100(0, character=3200300, region=0)
+    Event_13205100(1, character=3200301, region=0)
+    Event_13205100(2, character=3200302, region=0)
+    Event_13205100(3, character=3200303, region=0)
+    Event_13205100(4, character=3200304, region=0)
+    Event_13205100(5, character=3200305, region=0)
+    Event_13205100(6, character=3200306, region=0)
+    Event_13205100(7, character=3200307, region=0)
+    Event_13205100(8, character=3200308, region=0)
+    Event_13205100(9, character=3200309, region=0)
+    Event_13205100(10, character=3200310, region=0)
+    Event_13205100(11, character=3200311, region=0)
+    Event_13205100(12, character=3200312, region=0)
+    Event_13205100(13, character=3200313, region=0)
+    Event_13205100(14, character=3200314, region=0)
+    Event_13205100(16, character=3200316, region=0)
+    Event_13205100(17, character=3200317, region=0)
+    Event_13205100(18, character=3200318, region=0)
+    Event_13205100(19, character=3200319, region=0)
+    Event_13205100(20, character=3200320, region=0)
+    Event_13205100(21, character=3200321, region=0)
+    Event_13205100(22, character=3200322, region=0)
+    Event_13205100(23, character=3200323, region=0)
+    Event_13205100(24, character=3200324, region=0)
+    Event_13205100(25, character=3200325, region=0)
+    Event_13205100(26, character=3200326, region=0)
+    Event_13205100(27, character=3200327, region=0)
+    Event_13205100(28, character=3200328, region=0)
+    Event_13205100(29, character=3200329, region=0)
+    Event_13205100(30, character=3200330, region=0)
+    Event_13205100(31, character=3200331, region=0)
+    Event_13205140(0, character=3200347, region=3202347)
+    Event_13205600(
+        0,
+        npc_part_id=3290,
+        npc_part_id_1=3290,
+        part_index=8,
+        animation_id=7000,
+        special_effect=5907,
+        flag=13205700,
+        flag_1=13205760,
+        character=3200420,
+    )
+    Event_13205600(
+        1,
+        npc_part_id=3291,
+        npc_part_id_1=3291,
+        part_index=9,
+        animation_id=7022,
+        special_effect=5907,
+        flag=13205700,
+        flag_1=13205760,
+        character=3200420,
+    )
+    Event_13205600(
+        2,
+        npc_part_id=3292,
+        npc_part_id_1=3292,
+        part_index=10,
+        animation_id=7023,
+        special_effect=5907,
+        flag=13205700,
+        flag_1=13205760,
+        character=3200420,
+    )
+    Event_13205600(
+        3,
+        npc_part_id=3290,
+        npc_part_id_1=3290,
+        part_index=8,
+        animation_id=7000,
+        special_effect=5907,
+        flag=13205701,
+        flag_1=13205761,
+        character=3200421,
+    )
+    Event_13205600(
+        4,
+        npc_part_id=3291,
+        npc_part_id_1=3291,
+        part_index=9,
+        animation_id=7022,
+        special_effect=5907,
+        flag=13205701,
+        flag_1=13205761,
+        character=3200421,
+    )
+    Event_13205600(
+        5,
+        npc_part_id=3292,
+        npc_part_id_1=3292,
+        part_index=10,
+        animation_id=7023,
+        special_effect=5907,
+        flag=13205701,
+        flag_1=13205761,
+        character=3200421,
+    )
+    Event_13205630(
+        0,
+        npc_part_id=3290,
+        npc_part_id_1=3290,
+        part_index=8,
+        part_health=40,
+        flag=13205700,
+        character=3200420,
+    )
+    Event_13205630(
+        1,
+        npc_part_id=3291,
+        npc_part_id_1=3291,
+        part_index=9,
+        part_health=40,
+        flag=13205700,
+        character=3200420,
+    )
+    Event_13205630(
+        2,
+        npc_part_id=3292,
+        npc_part_id_1=3292,
+        part_index=10,
+        part_health=40,
+        flag=13205700,
+        character=3200420,
+    )
+    Event_13205630(
+        3,
+        npc_part_id=3290,
+        npc_part_id_1=3290,
+        part_index=8,
+        part_health=40,
+        flag=13205701,
+        character=3200421,
+    )
+    Event_13205630(
+        4,
+        npc_part_id=3291,
+        npc_part_id_1=3291,
+        part_index=9,
+        part_health=40,
+        flag=13205701,
+        character=3200421,
+    )
+    Event_13205630(
+        5,
+        npc_part_id=3292,
+        npc_part_id_1=3292,
+        part_index=10,
+        part_health=40,
+        flag=13205701,
+        character=3200421,
+    )
+    Event_13205660(0, tae_event_id=30, tae_event_id_1=40, flag=13205760, character=3200420, bit_index=1, bit_index_1=11)
+    Event_13205660(1, tae_event_id=50, tae_event_id_1=40, flag=13205760, character=3200420, bit_index=2, bit_index_1=12)
+    Event_13205660(2, tae_event_id=60, tae_event_id_1=40, flag=13205760, character=3200420, bit_index=3, bit_index_1=13)
+    Event_13205660(3, tae_event_id=30, tae_event_id_1=40, flag=13205761, character=3200421, bit_index=1, bit_index_1=11)
+    Event_13205660(4, tae_event_id=50, tae_event_id_1=40, flag=13205761, character=3200421, bit_index=2, bit_index_1=12)
+    Event_13205660(5, tae_event_id=60, tae_event_id_1=40, flag=13205761, character=3200421, bit_index=3, bit_index_1=13)
+    Event_13200310()
+    Event_13200311()
 
 
+@ContinueOnRest(50)
 def Preconstructor():
-    """ 50: Event 50 """
-    RunEvent(13200100)
-    RunEvent(13200102)
-    RunEvent(13200103)
-    RunEvent(13200105)
-    RunEvent(13200106)
-    RunEvent(13200107)
-    RunEvent(13200108)
-    RunEvent(13200109)
-    RunEvent(13200110)
-    RunEvent(13200120)
-    RunEvent(13200121)
-    SkipLinesIfFlagOff(3, 1420)
-    DisableGravity(3200101)
-    DisableCharacterCollision(3200101)
-    RunEvent(13200102)
+    """Event 50"""
+    Event_13200100()
+    Event_13200102()
+    Event_13200103()
+    Event_13200105()
+    Event_13200106()
+    Event_13200107()
+    Event_13200108()
+    Event_13200109()
+    Event_13200110()
+    Event_13200120()
+    Event_13200121()
+    if FlagEnabled(1420):
+        DisableGravity(3200101)
+        DisableCharacterCollision(3200101)
+        Event_13200102()
 
 
-def Event13200010(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
-    """ 13200010: Event 13200010 """
-    GotoIfThisEventSlotOff(Label.L0)
-    EndOfAnimation(arg_0_3, arg_4_7)
-    DisableObjectActivation(arg_12_15, obj_act_id=arg_16_19)
-    NotifyDoorEventSoundDampening(arg_0_3, state=DoorState.DoorOpening)
+@ContinueOnRest(13200010)
+def Event_13200010(_, obj: int, animation_id: int, obj_act_id: int, obj_1: int, obj_act_id_1: int):
+    """Event 13200010"""
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
+    EndOfAnimation(obj=obj, animation_id=animation_id)
+    DisableObjectActivation(obj_1, obj_act_id=obj_act_id_1)
+    NotifyDoorEventSoundDampening(obj=obj, state=DoorState.DoorOpening)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfObjectActivated(0, obj_act_id=arg_8_11)
-    DisableObjectActivation(arg_12_15, obj_act_id=arg_16_19)
-    ForceAnimation(arg_0_3, arg_4_7, wait_for_completion=True)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
+    DisableObjectActivation(obj_1, obj_act_id=obj_act_id_1)
+    ForceAnimation(obj, animation_id, wait_for_completion=True)
     Wait(0.0)
 
 
-def Event13200020(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 13200020: Event 13200020 """
+@ContinueOnRest(13200020)
+def Event_13200020(_, action_button_id: int, action_button_id_1: int, entity: int, flag: int):
+    """Event 13200020"""
     DisableNetworkSync()
-    EndIfFlagOn(arg_12_15)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_8_11)
-    IfActionButtonParam(2, action_button_id=arg_4_7, entity=arg_8_11)
-    IfFlagOn(3, arg_12_15)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
-    DisplayDialog(
-        10010160,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
+    AND_2.Add(ActionButtonParamActivated(action_button_id=action_button_id_1, entity=entity))
+    AND_3.Add(FlagEnabled(flag))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_3)
+    DisplayDialog(text=10010160, number_buttons=NumberButtons.OneButton)
     Restart()
 
 
-def Event13200030(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 13200030: Event 13200030 """
+@ContinueOnRest(13200030)
+def Event_13200030(_, entity: int, action_button_id: int, text: int, flag: int):
+    """Event 13200030"""
     DisableNetworkSync()
-    IfFlagOn(1, arg_12_15)
-    IfActionButtonParam(1, action_button_id=arg_4_7, entity=arg_0_3)
-    IfConditionTrue(0, input_condition=1)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
+    
+    MAIN.Await(AND_1)
+    
+    DisplayDialog(text=text, number_buttons=NumberButtons.OneButton)
     Restart()
 
 
-def Event13200040(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int):
-    """ 13200040: Event 13200040 """
-    GotoIfThisEventSlotOff(Label.L0)
-    EndOfAnimation(arg_0_3, arg_8_11)
-    DisableObjectActivation(arg_0_3, obj_act_id=arg_12_15)
-    NotifyDoorEventSoundDampening(arg_0_3, state=DoorState.DoorOpening)
+@ContinueOnRest(13200040)
+def Event_13200040(_, obj: int, obj_act_id: int, animation_id: int, obj_act_id_1: int):
+    """Event 13200040"""
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
+    EndOfAnimation(obj=obj, animation_id=animation_id)
+    DisableObjectActivation(obj, obj_act_id=obj_act_id_1)
+    NotifyDoorEventSoundDampening(obj=obj, state=DoorState.DoorOpening)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfObjectActivated(0, obj_act_id=arg_4_7)
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
     Wait(0.0)
 
 
-def Event13200050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 13200050: Event 13200050 """
+@ContinueOnRest(13200050)
+def Event_13200050(_, action_button_id: int, entity: int, flag: int):
+    """Event 13200050"""
     DisableNetworkSync()
-    EndIfFlagOn(arg_8_11)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
-    IfFlagOn(2, arg_8_11)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
+    AND_2.Add(FlagEnabled(flag))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    DisplayDialog(text=10010161, number_buttons=NumberButtons.OneButton)
     Restart()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     Restart()
 
 
-def Event13200055(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 13200055: Event 13200055 """
+@ContinueOnRest(13200055)
+def Event_13200055(_, action_button_id: int, entity: int, flag: int):
+    """Event 13200055"""
     DisableNetworkSync()
-    EndIfFlagOn(arg_8_11)
-    IfFlagOff(1, 1420)
-    IfConditionTrue(1, input_condition=-1)
-    IfActionButtonParam(1, action_button_id=arg_0_3, entity=arg_4_7)
-    IfFlagOn(2, arg_8_11)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=2)
-    DisplayDialog(
-        10010161,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    if FlagEnabled(flag):
+        return
+    AND_1.Add(FlagDisabled(1420))
+    AND_1.Add(OR_1)
+    AND_1.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
+    AND_2.Add(FlagEnabled(flag))
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_2)
+    DisplayDialog(text=10010161, number_buttons=NumberButtons.OneButton)
     Wait(1.0)
     Restart()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     Wait(1.0)
     Restart()
 
 
-def Event13200060(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13200060: Event 13200060 """
-    GotoIfThisEventSlotOff(Label.L0)
-    EndOfAnimation(arg_0_3, arg_12_15)
-    DisableObjectActivation(arg_0_3, obj_act_id=arg_16_19)
-    DisableObjectActivation(arg_0_3, obj_act_id=arg_20_23)
-    NotifyDoorEventSoundDampening(arg_0_3, state=DoorState.DoorOpening)
+@ContinueOnRest(13200060)
+def Event_13200060(
+    _,
+    obj: int,
+    obj_act_id: int,
+    obj_act_id_1: int,
+    animation_id: int,
+    obj_act_id_2: int,
+    obj_act_id_3: int,
+):
+    """Event 13200060"""
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
+    EndOfAnimation(obj=obj, animation_id=animation_id)
+    DisableObjectActivation(obj, obj_act_id=obj_act_id_2)
+    DisableObjectActivation(obj, obj_act_id=obj_act_id_3)
+    NotifyDoorEventSoundDampening(obj=obj, state=DoorState.DoorOpening)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfObjectActivated(1, obj_act_id=arg_4_7)
-    IfObjectActivated(2, obj_act_id=arg_8_11)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(2, 1)
-    DisableObjectActivation(arg_0_3, obj_act_id=arg_16_19)
+    AND_1.Add(ObjectActivated(obj_act_id=obj_act_id))
+    AND_2.Add(ObjectActivated(obj_act_id=obj_act_id_1))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_1)
+    DisableObjectActivation(obj, obj_act_id=obj_act_id_2)
     SkipLines(1)
-    DisableObjectActivation(arg_0_3, obj_act_id=arg_20_23)
+    DisableObjectActivation(obj, obj_act_id=obj_act_id_3)
 
 
-def Event13200100():
-    """ 13200100: Event 13200100 """
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
+@ContinueOnRest(13200100)
+def Event_13200100():
+    """Event 13200100"""
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
     DisableFlag(13200101)
-    EndIfFlagOff(1420)
+    if FlagDisabled(1420):
+        return
     DisableAnimations(3200101)
-    IfCharacterInsideRegion(0, PLAYER, region=3202850)
+    
+    MAIN.Await(CharacterInsideRegion(PLAYER, region=3202850))
+    
     EnableFlag(13200101)
     EnableAnimations(3200101)
-    IfCharacterOutsideRegion(0, PLAYER, region=3202850)
+    
+    MAIN.Await(CharacterOutsideRegion(PLAYER, region=3202850))
+    
     Restart()
 
 
-def Event13200102():
-    """ 13200102: Event 13200102 """
-    GotoIfFlagOn(Label.L0, 1431)
-    GotoIfFlagOn(Label.L0, 1430)
-    GotoIfFlagOn(Label.L0, 1423)
-    GotoIfFlagOn(Label.L0, 1422)
-    GotoIfFlagOn(Label.L0, 1421)
-    GotoIfFlagOn(Label.L1, 1420)
+@ContinueOnRest(13200102)
+def Event_13200102():
+    """Event 13200102"""
+    GotoIfFlagEnabled(Label.L0, flag=1431)
+    GotoIfFlagEnabled(Label.L0, flag=1430)
+    GotoIfFlagEnabled(Label.L0, flag=1423)
+    GotoIfFlagEnabled(Label.L0, flag=1422)
+    GotoIfFlagEnabled(Label.L0, flag=1421)
+    GotoIfFlagEnabled(Label.L1, flag=1420)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     PostDestruction(3201300)
     PostDestruction(3201301)
@@ -529,318 +843,423 @@ def Event13200102():
     PostDestruction(3201318)
     PostDestruction(3201319)
     PostDestruction(3201320)
-    SetNest(3200101, 3202852)
+    SetNest(3200101, region=3202852)
     Move(3200101, destination=3202852, destination_type=CoordEntityType.Region, short_move=True)
-    AddSpecialEffect(3200101, 5327, affect_npc_part_hp=False)
-    AddSpecialEffect(3200101, 5403, affect_npc_part_hp=False)
-    IfFlagOn(-1, 1423)
-    IfFlagOn(-1, 1432)
-    SkipLinesIfConditionFalse(1, -1)
+    AddSpecialEffect(3200101, 5327)
+    AddSpecialEffect(3200101, 5403)
+    OR_1.Add(FlagEnabled(1423))
+    OR_1.Add(FlagEnabled(1432))
+    SkipLinesIfConditionFalse(1, OR_1)
     DisableBackread(3200101)
-    SkipLinesIfFlagOff(1, 1431)
-    DropMandatoryTreasure(3200101)
+    if FlagEnabled(1431):
+        DropMandatoryTreasure(3200101)
     End()
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
     ForceAnimation(3200101, 7010, loop=True)
     Move(3200101, destination=3202851, destination_type=CoordEntityType.Region, short_move=True)
     DisableObjectActivation(3201210, obj_act_id=31)
 
 
-def Event13200103():
-    """ 13200103: Event 13200103 """
-    EndIfFlagRangeAnyOn((1421, 1437))
+@ContinueOnRest(13200103)
+def Event_13200103():
+    """Event 13200103"""
+    EndIfFlagRangeAnyEnabled(flag_range=(1421, 1437))
     DisableFlag(73200327)
-    IfFlagOn(1, 1420)
-    IfFlagOn(1, 73200327)
-    IfAttackedWithDamageType(2, attacked_entity=3200101, attacker=PLAYER)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionFalse(1, 2)
+    AND_1.Add(FlagEnabled(1420))
+    AND_1.Add(FlagEnabled(73200327))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=3200101, attacker=PLAYER))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionFalse(1, input_condition=AND_2)
     EnableFlag(13200104)
-    SetNest(3200101, 3202852)
-    AddSpecialEffect(3200101, 5327, affect_npc_part_hp=False)
+    SetNest(3200101, region=3202852)
+    AddSpecialEffect(3200101, 5327)
     ForceAnimation(3200101, 7011)
-    WaitFrames(54)
+    WaitFrames(frames=54)
     EnableGravity(3200101)
     EnableCharacterCollision(3200101)
     EnableObjectActivation(3201210, obj_act_id=31)
 
 
-def Event13200105():
-    """ 13200105: Event 13200105 """
-    IfFlagOn(1, 1420)
-    IfFlagOn(-1, 73200321)
-    IfFlagOn(2, 13200104)
-    IfFlagOn(2, 73200321)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13200105)
+def Event_13200105():
+    """Event 13200105"""
+    AND_1.Add(FlagEnabled(1420))
+    OR_1.Add(FlagEnabled(73200321))
+    AND_2.Add(FlagEnabled(13200104))
+    AND_2.Add(FlagEnabled(73200321))
+    OR_1.Add(AND_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1420, 1437))
     EnableFlag(1421)
     SaveRequest()
 
 
-def Event13200106():
-    """ 13200106: Event 13200106 """
-    EndIfThisEventOn()
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    IfFlagOn(1, 13200101)
-    IfEntityWithinDistance(1, PLAYER, 3200101, radius=5.0)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13200106)
+def Event_13200106():
+    """Event 13200106"""
+    if ThisEventFlagEnabled():
+        return
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    AND_1.Add(FlagEnabled(13200101))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3200101, radius=5.0))
+    
+    MAIN.Await(AND_1)
+    
     RunEvent(9350, slot=0, args=(2,))
 
 
-def Event13200107():
-    """ 13200107: Event 13200107 """
-    IfFlagOn(1, 9466)
-    IfFlagOn(1, 9461)
-    IfFlagOn(1, 1421)
-    IfFlagOn(1, 73200324)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13200107)
+def Event_13200107():
+    """Event 13200107"""
+    AND_1.Add(FlagEnabled(9466))
+    AND_1.Add(FlagEnabled(9461))
+    AND_1.Add(FlagEnabled(1421))
+    AND_1.Add(FlagEnabled(73200324))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlagRange((1420, 1437))
     EnableFlag(1422)
 
 
-def Event13200108():
-    """ 13200108: Event 13200108 """
-    EndIfFlagOn(1430)
-    EndIfFlagOn(1431)
-    IfFlagOn(-1, 1421)
-    IfFlagOn(-1, 1422)
-    IfConditionTrue(1, input_condition=-1)
-    IfHealthLessThan(1, 3200101, 0.5)
-    IfAttacked(1, 3200101, attacker=PLAYER)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13200108)
+def Event_13200108():
+    """Event 13200108"""
+    if FlagEnabled(1430):
+        return
+    if FlagEnabled(1431):
+        return
+    OR_1.Add(FlagEnabled(1421))
+    OR_1.Add(FlagEnabled(1422))
+    AND_1.Add(OR_1)
+    AND_1.Add(HealthRatio(3200101) < 0.5)
+    AND_1.Add(Attacked(attacked_entity=3200101, attacker=PLAYER))
+    
+    MAIN.Await(AND_1)
+    
     ForceAnimation(3200101, 3000)
     DisableFlagRange((1420, 1437))
     EnableFlag(1430)
     SaveRequest()
 
 
-def Event13200109():
-    """ 13200109: Event 13200109 """
-    EndIfFlagOn(1431)
+@ContinueOnRest(13200109)
+def Event_13200109():
+    """Event 13200109"""
+    if FlagEnabled(1431):
+        return
     SetTeamType(3200101, TeamType.FriendlyNPC)
-    IfFlagOn(0, 1430)
+    
+    MAIN.Await(FlagEnabled(1430))
+    
     SetTeamType(3200101, TeamType.HostileNPC)
 
 
-def Event13200110():
-    """ 13200110: Event 13200110 """
-    GotoIfFlagOff(Label.L0, 1431)
+@ContinueOnRest(13200110)
+def Event_13200110():
+    """Event 13200110"""
+    GotoIfFlagDisabled(Label.L0, flag=1431)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDead(0, 3200101)
+    
+    MAIN.Await(CharacterDead(3200101))
+    
     DisableFlagRange((1420, 1437))
     EnableFlag(1431)
     SaveRequest()
 
 
-def Event13200120():
-    """ 13200120: Event 13200120 """
-    GotoIfFlagOff(Label.L0, 1061)
+@ContinueOnRest(13200120)
+def Event_13200120():
+    """Event 13200120"""
+    GotoIfFlagDisabled(Label.L0, flag=1061)
     DisableCharacter(3200100)
     DropMandatoryTreasure(3200100)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDead(0, 3200100)
+    
+    MAIN.Await(CharacterDead(3200100))
+    
     DisableFlagRange((1060, 1079))
     EnableFlag(1061)
     SaveRequest()
 
 
-def Event13200121():
-    """ 13200121: Event 13200121 """
-    EndIfFlagOn(1061)
-    IfFlagOn(1, 73200300)
-    IfCharacterHasSpecialEffect(1, 3200100, 151)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13200121)
+def Event_13200121():
+    """Event 13200121"""
+    if FlagEnabled(1061):
+        return
+    AND_1.Add(FlagEnabled(73200300))
+    AND_1.Add(CharacterHasSpecialEffect(3200100, 151))
+    
+    MAIN.Await(AND_1)
+    
     DisableFlag(73200300)
     ForceAnimation(3200100, 7010)
-    SkipLinesIfThisEventOn(1)
-    RunEvent(9350, slot=0, args=(2,))
+    if ThisEventFlagDisabled():
+        RunEvent(9350, slot=0, args=(2,))
     Restart()
 
 
-def Event13200200(_, arg_0_3: int, arg_4_7: int):
-    """ 13200200: Event 13200200 """
-    SkipLinesIfThisEventSlotOff(4)
-    EndOfAnimation(arg_0_3, 0)
-    DisableObjectActivation(arg_0_3, obj_act_id=-1)
-    EnableTreasure(arg_0_3)
-    End()
-    IfObjectActivated(0, obj_act_id=arg_4_7)
-    WaitFrames(10)
-    EnableTreasure(arg_0_3)
+@ContinueOnRest(13200200)
+def Event_13200200(_, obj: int, obj_act_id: int):
+    """Event 13200200"""
+    if ThisEventSlotFlagEnabled():
+        EndOfAnimation(obj=obj, animation_id=0)
+        DisableObjectActivation(obj, obj_act_id=-1)
+        EnableTreasure(obj=obj)
+        End()
+    
+    MAIN.Await(ObjectActivated(obj_act_id=obj_act_id))
+    
+    WaitFrames(frames=10)
+    EnableTreasure(obj=obj)
 
 
-def Event13200310():
-    """ 13200310: Event 13200310 """
-    IfObjectActivated(0, obj_act_id=13200124)
-    CreateTemporaryVFX(932201, anchor_entity=3202001, anchor_type=CoordEntityType.Region)
+@ContinueOnRest(13200310)
+def Event_13200310():
+    """Event 13200310"""
+    MAIN.Await(ObjectActivated(obj_act_id=13200124))
+    
+    CreateTemporaryVFX(vfx_id=932201, anchor_entity=3202001, anchor_type=CoordEntityType.Region)
     Wait(6.0)
     WarpPlayerToRespawnPoint(2602959)
 
 
-def Event13200311():
-    """ 13200311: Event 13200311 """
-    IfObjectActivated(0, obj_act_id=13200123)
-    CreateTemporaryVFX(932201, anchor_entity=3202000, anchor_type=CoordEntityType.Region)
+@ContinueOnRest(13200311)
+def Event_13200311():
+    """Event 13200311"""
+    MAIN.Await(ObjectActivated(obj_act_id=13200123))
+    
+    CreateTemporaryVFX(vfx_id=932201, anchor_entity=3202000, anchor_type=CoordEntityType.Region)
     Wait(6.0)
     WarpPlayerToRespawnPoint(3302959)
 
 
-def Event13200400():
-    """ 13200400: Event 13200400 """
-    EndIfFlagOn(53200810)
-    IfCharacterHuman(15, PLAYER)
-    EndIfConditionFalse(15)
-    CreateObjectVFX(900201, obj=3201010, model_point=200)
-    IfActionButtonParam(0, action_button_id=3200010, entity=3201010)
+@ContinueOnRest(13200400)
+def Event_13200400():
+    """Event 13200400"""
+    if FlagEnabled(53200810):
+        return
+    AND_15.Add(CharacterHuman(PLAYER))
+    if not AND_15:
+        return
+    CreateObjectVFX(3201010, vfx_id=200, model_point=900201)
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=3200010, entity=3201010))
+    
     ForceAnimation(PLAYER, 101140)
     AwardItemLot(3200810, host_only=False)
-    DeleteObjectVFX(3201010, erase_root=True)
+    DeleteObjectVFX(3201010)
 
 
-def Event13200500(_, arg_0_3: int):
-    """ 13200500: Event 13200500 """
-    GotoIfThisEventSlotOff(Label.L0)
-    DisableBackread(arg_0_3)
-    DisableCharacter(arg_0_3)
-    DropMandatoryTreasure(arg_0_3)
+@ContinueOnRest(13200500)
+def Event_13200500(_, character: int):
+    """Event 13200500"""
+    GotoIfThisEventSlotFlagDisabled(Label.L0)
+    DisableBackread(character)
+    DisableCharacter(character)
+    DropMandatoryTreasure(character)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDead(0, arg_0_3)
+    
+    MAIN.Await(CharacterDead(character))
+    
     Wait(0.0)
 
 
-def Event13200990():
-    """ 13200990: Event 13200990 """
-    EndIfThisEventOn()
-    IfStandingOnCollision(0, 3204000)
-    PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 0, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Armor, 0, PlayLogMultiplayerType.HostOnly)
+@ContinueOnRest(13200990)
+def Event_13200990():
+    """Event 13200990"""
+    if ThisEventFlagEnabled():
+        return
+    
+    MAIN.Await(PlayerStandingOnCollision(3204000))
+    
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.PrimaryParameters,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.TemporaryParameters,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Weapon,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Armor,
+        name=0,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
 
 
-def Event13201800():
-    """ 13201800: Event 13201800 """
-    GotoIfThisEventOff(Label.L0)
-    DisableSoundEvent(3203802)
-    DisableSoundEvent(3203803)
+@ContinueOnRest(13201800)
+def Event_13201800():
+    """Event 13201800"""
+    GotoIfThisEventFlagDisabled(Label.L0)
+    DisableSoundEvent(sound_id=3203802)
+    DisableSoundEvent(sound_id=3203803)
     DisableCharacter(3200800)
-    Kill(3200800, award_souls=False)
+    Kill(3200800)
     DisableObject(3201800)
     DeleteVFX(3203800, erase_root_only=False)
-    DisableMapCollision(3204010)
+    DisableMapCollision(collision=3204010)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfCharacterDead(0, 3200800)
+    
+    MAIN.Await(CharacterDead(3200800))
+    
     DisplayBanner(BannerType.PreySlaughtered)
     DisableObject(3201800)
-    DeleteVFX(3203800, erase_root_only=True)
-    DisableMapCollision(3204010)
+    DeleteVFX(3203800)
+    DisableMapCollision(collision=3204010)
     SetLockedCameraSlot(game_map=BYRGENWERTH, camera_slot=0)
     Wait(3.0)
-    KillBoss(3200800)
+    KillBoss(game_area_param_id=3200800)
     DisableNetworkSync()
     GotoIfClient(Label.L1)
-    IfCharacterHuman(0, PLAYER)
+    
+    MAIN.Await(CharacterHuman(PLAYER))
+    
     RunEvent(9350, slot=0, args=(2,))
-    AwardAchievement(17)
+    AwardAchievement(achievement_id=17)
     AwardItemLot(51001900, host_only=False)
     EnableFlag(3200)
     EnableFlag(9465)
-    StartPlayLogMeasurement(3200000, 22, overwrite=False)
-    StartPlayLogMeasurement(3200001, 40, overwrite=False)
-    StartPlayLogMeasurement(3200010, 62, overwrite=False)
-    CreatePlayLog(80)
-    PlayLogParameterOutput(PlayerPlayLogParameter.PrimaryParameters, 92, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.TemporaryParameters, 92, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Weapon, 92, PlayLogMultiplayerType.HostOnly)
-    PlayLogParameterOutput(PlayerPlayLogParameter.Armor, 92, PlayLogMultiplayerType.HostOnly)
+    StartPlayLogMeasurement(measurement_id=3200000, name=22, overwrite=False)
+    StartPlayLogMeasurement(measurement_id=3200001, name=40, overwrite=False)
+    StartPlayLogMeasurement(measurement_id=3200010, name=62, overwrite=False)
+    CreatePlayLog(name=80)
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.PrimaryParameters,
+        name=92,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.TemporaryParameters,
+        name=92,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Weapon,
+        name=92,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
+    PlayLogParameterOutput(
+        category=PlayerPlayLogParameter.Armor,
+        name=92,
+        output_multiplayer_state=PlayLogMultiplayerType.HostOnly,
+    )
     End()
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
-    IfCharacterType(0, PLAYER, CharacterType.WhitePhantom)
+    
+    MAIN.Await(CharacterWhitePhantom(PLAYER))
+    
     Wait(0.0)
 
 
-def Event13201801():
-    """ 13201801: Event 13201801 """
+@ContinueOnRest(13201801)
+def Event_13201801():
+    """Event 13201801"""
     DisableNetworkSync()
-    EndIfFlagOn(13201800)
-    IfFlagOn(1, 13201800)
-    IfCharacterBackreadDisabled(2, 3200800)
-    IfHealthLessThanOrEqual(2, 3200800, 0.0)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(1)
-    PlaySoundEffect(anchor_entity=3202800, sound_type=SoundType.c_CharacterMotion, sound_id=0)
+    if FlagEnabled(13201800):
+        return
+    AND_1.Add(FlagEnabled(13201800))
+    AND_2.Add(CharacterBackreadDisabled(3200800))
+    AND_2.Add(HealthRatio(3200800) <= 0.0)
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_1)
+    PlaySoundEffect(3202800, 0, sound_type=SoundType.c_CharacterMotion)
 
 
-def Event13201802():
-    """ 13201802: Event 13201802 """
-    EndIfFlagOn(13201800)
-    EndIfThisEventOn()
-    IfFlagOff(1, 13201800)
-    IfThisEventOff(1)
-    IfAttackedWithDamageType(1, attacked_entity=3200800)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13201802)
+def Event_13201802():
+    """Event 13201802"""
+    if FlagEnabled(13201800):
+        return
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(FlagDisabled(13201800))
+    AND_1.Add(ThisEventFlagDisabled())
+    AND_1.Add(AttackedWithDamageType(attacked_entity=3200800))
+    
+    MAIN.Await(AND_1)
+    
     EnableFlag(13204800)
-    EndIfFlagOn(9303)
+    if FlagEnabled(9303):
+        return
     RunEvent(9350, slot=0, args=(2,))
     EnableFlag(9303)
 
 
-@RestartOnRest
-def Event13201803():
-    """ 13201803: Event 13201803 """
-    GotoIfThisEventOff(Label.L0)
+@RestartOnRest(13201803)
+def Event_13201803():
+    """Event 13201803"""
+    GotoIfThisEventFlagDisabled(Label.L0)
     DisableCharacter(3200801)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     DisableAI(3200801)
-    IfCharacterHuman(1, PLAYER)
-    SkipLinesIfConditionFalse(1, 1)
-    SetNetworkUpdateAuthority(3200801, UpdateAuthority.Forced)
-    GotoIfFlagOn(Label.L1, 13201800)
-    IfCharacterHuman(2, PLAYER)
-    GotoIfConditionFalse(Label.L2, input_condition=2)
-    IfFlagOn(0, 13201800)
-    IfCharacterHuman(3, PLAYER)
-    IfCharacterInsideRegion(3, PLAYER, region=3202811)
-    IfCharacterHuman(4, PLAYER)
-    IfCharacterInsideRegion(4, PLAYER, region=3202812)
-    IfCharacterHuman(5, PLAYER)
-    IfCharacterInsideRegion(5, PLAYER, region=3202813)
-    IfCharacterHuman(6, PLAYER)
-    IfCharacterInsideRegion(6, PLAYER, region=3202814)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(-1, input_condition=4)
-    IfConditionTrue(-1, input_condition=5)
-    IfConditionTrue(-1, input_condition=6)
-    IfConditionTrue(0, input_condition=-1)
-    SkipLinesIfFinishedConditionTrue(8, 3)
-    SkipLinesIfFinishedConditionTrue(5, 4)
-    SkipLinesIfFinishedConditionTrue(2, 5)
+    AND_1.Add(CharacterHuman(PLAYER))
+    SkipLinesIfConditionFalse(1, AND_1)
+    SetNetworkUpdateAuthority(3200801, authority_level=UpdateAuthority.Forced)
+    GotoIfFlagEnabled(Label.L1, flag=13201800)
+    AND_2.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L2, input_condition=AND_2)
+    
+    MAIN.Await(FlagEnabled(13201800))
+    
+    AND_3.Add(CharacterHuman(PLAYER))
+    AND_3.Add(CharacterInsideRegion(PLAYER, region=3202811))
+    AND_4.Add(CharacterHuman(PLAYER))
+    AND_4.Add(CharacterInsideRegion(PLAYER, region=3202812))
+    AND_5.Add(CharacterHuman(PLAYER))
+    AND_5.Add(CharacterInsideRegion(PLAYER, region=3202813))
+    AND_6.Add(CharacterHuman(PLAYER))
+    AND_6.Add(CharacterInsideRegion(PLAYER, region=3202814))
+    OR_1.Add(AND_3)
+    OR_1.Add(AND_4)
+    OR_1.Add(AND_5)
+    OR_1.Add(AND_6)
+    
+    MAIN.Await(OR_1)
+    
+    SkipLinesIfFinishedConditionTrue(8, input_condition=AND_3)
+    SkipLinesIfFinishedConditionTrue(5, input_condition=AND_4)
+    SkipLinesIfFinishedConditionTrue(2, input_condition=AND_5)
     Move(3200801, destination=3202815, destination_type=CoordEntityType.Region, short_move=True)
     Goto(Label.L1)
     Move(3200801, destination=3202816, destination_type=CoordEntityType.Region, short_move=True)
@@ -849,456 +1268,523 @@ def Event13201803():
     Goto(Label.L1)
     Move(3200801, destination=3202818, destination_type=CoordEntityType.Region, short_move=True)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
     ForceAnimation(3200801, 7001)
-    IfCharacterHuman(8, PLAYER)
-    IfEntityWithinDistance(8, PLAYER, 3200801, radius=12.0)
-    IfConditionTrue(0, input_condition=8)
+    AND_8.Add(CharacterHuman(PLAYER))
+    AND_8.Add(EntityWithinDistance(entity=PLAYER, other_entity=3200801, radius=12.0))
+    
+    MAIN.Await(AND_8)
+    
     EnableFlag(9180)
-    WaitFrames(1)
-    PlayCutsceneAndSetTimePeriod(32000000, CutsceneType.Skippable, player_id=PLAYER, time_period_id=3)
-    WaitFrames(1)
+    WaitFrames(frames=1)
+    PlayCutsceneAndSetTimePeriod(cutscene=32000000, cutscene_flags=0, player_id=10000, time_period_id=3)
+    WaitFrames(frames=1)
     DisableFlag(9180)
     EnableFlag(70002802)
     WarpPlayerToRespawnPoint(2802958)
     End()
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event13201804():
-    """ 13201804: Event 13201804 """
-    IfCharacterHuman(1, PLAYER)
-    IfFlagOn(1, 13204800)
-    IfConditionTrue(0, input_condition=1)
-    EndIfHost()
+@ContinueOnRest(13201804)
+def Event_13201804():
+    """Event 13201804"""
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(FlagEnabled(13204800))
+    
+    MAIN.Await(AND_1)
+    
+    if Host():
+        return
     EnableFlag(13204800)
     EnableFlag(13201802)
 
 
-def Event13204000(_, arg_0_3: int, arg_4_7: int):
-    """ 13204000: Event 13204000 """
-    EndIfThisEventSlotOn()
-    DisableAI(arg_0_3)
-    DisableGravity(arg_0_3)
-    IfFlagOn(1, arg_4_7)
-    IfRandomTimeElapsed(-1, min_seconds=2.0, max_seconds=3.0)
-    IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
-    IfTimeElapsed(2, 3.0)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(1, input_condition=-1)
-    IfConditionTrue(0, input_condition=1)
-    EnableAI(arg_0_3)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=7000, wait_for_completion=True)
-    EnableGravity(arg_0_3)
+@ContinueOnRest(13204000)
+def Event_13204000(_, character: int, flag: int):
+    """Event 13204000"""
+    if ThisEventSlotFlagEnabled():
+        return
+    DisableAI(character)
+    DisableGravity(character)
+    AND_1.Add(FlagEnabled(flag))
+    OR_1.Add(RandomTimeElapsed(min_seconds=2.0, max_seconds=3.0))
+    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    AND_2.Add(TimeElapsed(seconds=3.0))
+    OR_1.Add(AND_2)
+    AND_1.Add(OR_1)
+    
+    MAIN.Await(AND_1)
+    
+    EnableAI(character)
+    RotateToFaceEntity(character, PLAYER, animation=7000, wait_for_completion=True)
+    EnableGravity(character)
 
 
-def Event13204050(_, arg_0_3: int, arg_4_7: int):
-    """ 13204050: Event 13204050 """
-    GotoIfFlagOff(Label.L0, 13201800)
-    DisableCharacter(arg_0_3)
-    Kill(arg_0_3, award_souls=False)
+@ContinueOnRest(13204050)
+def Event_13204050(_, character: int, flag: int):
+    """Event 13204050"""
+    GotoIfFlagDisabled(Label.L0, flag=13201800)
+    DisableCharacter(character)
+    Kill(character)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(1, arg_4_7)
-    IfCharacterDead(1, 3200800)
-    IfConditionTrue(0, input_condition=1)
-    IfRandomTimeElapsed(0, min_seconds=0.0, max_seconds=1.0)
-    Kill(arg_0_3, award_souls=False)
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(CharacterDead(3200800))
+    
+    MAIN.Await(AND_1)
+    
+    MAIN.Await(RandomTimeElapsed(min_seconds=0.0, max_seconds=1.0))
+    
+    Kill(character)
 
 
-def Event13204100(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 13204100: Event 13204100 """
+@ContinueOnRest(13204100)
+def Event_13204100(_, entity: int, action_button_id: int, text: int):
+    """Event 13204100"""
     DisableNetworkSync()
-    IfActionButtonParam(0, action_button_id=arg_4_7, entity=arg_0_3)
-    DisplayDialog(
-        arg_8_11,
-        anchor_entity=-1,
-        display_distance=3.0,
-        button_type=ButtonType.OK_or_Cancel,
-        number_buttons=NumberButtons.OneButton,
-    )
+    
+    MAIN.Await(ActionButtonParamActivated(action_button_id=action_button_id, entity=entity))
+    
+    DisplayDialog(text=text, number_buttons=NumberButtons.OneButton)
     Restart()
 
 
-def Event13204730(_, arg_0_3: int):
-    """ 13204730: Event 13204730 """
-    EndIfFlagOn(13201800)
-    IfFlagOn(0, 13204802)
-    SetCharacterEventTarget(arg_0_3, 3200800)
+@ContinueOnRest(13204730)
+def Event_13204730(_, character: int):
+    """Event 13204730"""
+    if FlagEnabled(13201800):
+        return
+    
+    MAIN.Await(FlagEnabled(13204802))
+    
+    SetCharacterEventTarget(character, entity=3200800)
 
 
-def Event13204830():
-    """ 13204830: Event 13204830 """
-    EndIfFlagOn(13201800)
-    GotoIfFlagOn(Label.L0, 13201802)
+@ContinueOnRest(13204830)
+def Event_13204830():
+    """Event 13204830"""
+    if FlagEnabled(13201800):
+        return
+    GotoIfFlagEnabled(Label.L0, flag=13201802)
     SkipLinesIfClient(2)
     DisableObject(3201800)
     DeleteVFX(3203800, erase_root_only=False)
-    DisableMapCollision(3204010)
-    IfFlagOff(1, 13201800)
-    IfFlagOn(1, 13201802)
-    IfConditionTrue(0, input_condition=1)
+    DisableMapCollision(collision=3204010)
+    AND_1.Add(FlagDisabled(13201800))
+    AND_1.Add(FlagEnabled(13201802))
+    
+    MAIN.Await(AND_1)
+    
     EnableObject(3201800)
     CreateVFX(3203800)
-    EnableMapCollision(3204010)
+    EnableMapCollision(collision=3204010)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, 13201800)
-    IfCharacterHuman(2, PLAYER)
-    IfActionButtonParam(2, action_button_id=3200800, entity=3201800)
-    IfFlagOn(3, 13201800)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(3)
+    AND_2.Add(FlagDisabled(13201800))
+    AND_2.Add(CharacterHuman(PLAYER))
+    AND_2.Add(ActionButtonParamActivated(action_button_id=3200800, entity=3201800))
+    AND_3.Add(FlagEnabled(13201800))
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_3)
     RotateToFaceEntity(PLAYER, 3202800, animation=101130)
-    IfCharacterHuman(4, PLAYER)
-    IfCharacterInsideRegion(4, PLAYER, region=3202809)
-    IfCharacterHuman(5, PLAYER)
-    IfTimeElapsed(5, 2.0)
-    IfConditionTrue(-2, input_condition=4)
-    IfConditionTrue(-2, input_condition=5)
-    IfConditionTrue(0, input_condition=-2)
+    AND_4.Add(CharacterHuman(PLAYER))
+    AND_4.Add(CharacterInsideRegion(PLAYER, region=3202809))
+    AND_5.Add(CharacterHuman(PLAYER))
+    AND_5.Add(TimeElapsed(seconds=2.0))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    
+    MAIN.Await(OR_2)
+    
     Restart()
 
 
-def Event13204831():
-    """ 13204831: Event 13204831 """
+@ContinueOnRest(13204831)
+def Event_13204831():
+    """Event 13204831"""
     DisableNetworkSync()
-    EndIfFlagOn(13201800)
-    IfFlagOff(1, 13201800)
-    IfFlagOn(1, 13201802)
-    IfFlagOn(1, 13204800)
-    IfCharacterType(1, PLAYER, CharacterType.WhitePhantom)
-    IfActionButtonParam(1, action_button_id=3200800, entity=3201800)
-    IfConditionTrue(0, input_condition=1)
+    if FlagEnabled(13201800):
+        return
+    AND_1.Add(FlagDisabled(13201800))
+    AND_1.Add(FlagEnabled(13201802))
+    AND_1.Add(FlagEnabled(13204800))
+    AND_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(ActionButtonParamActivated(action_button_id=3200800, entity=3201800))
+    
+    MAIN.Await(AND_1)
+    
     RotateToFaceEntity(PLAYER, 3202800, animation=101130)
-    IfCharacterType(2, PLAYER, CharacterType.WhitePhantom)
-    IfCharacterInsideRegion(2, PLAYER, region=3202801)
-    IfCharacterType(3, PLAYER, CharacterType.WhitePhantom)
-    IfTimeElapsed(3, 2.0)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
+    AND_2.Add(CharacterWhitePhantom(PLAYER))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=3202801))
+    AND_3.Add(CharacterWhitePhantom(PLAYER))
+    AND_3.Add(TimeElapsed(seconds=2.0))
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
     Restart()
 
 
-def Event13204832():
-    """ 13204832: Event 13204832 """
-    IfCharacterHuman(1, PLAYER)
-    IfEntityWithinDistance(1, PLAYER, 3201800, radius=2.0)
-    IfConditionTrue(0, input_condition=1)
-    SetGravityAndCollisionExcludingOwnWorld(PLAYER, False)
-    WaitFrames(6)
+@ContinueOnRest(13204832)
+def Event_13204832():
+    """Event 13204832"""
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3201800, radius=2.0))
+    
+    MAIN.Await(AND_1)
+    
+    SetGravityAndCollisionExcludingOwnWorld(character=PLAYER, state=False)
+    WaitFrames(frames=6)
     Restart()
 
 
-def Event13204833():
-    """ 13204833: Event 13204833 """
-    IfCharacterHuman(1, PLAYER)
-    IfEntityBeyondDistance(1, PLAYER, 3201800, radius=2.0)
-    IfEntityWithinDistance(1, PLAYER, 3201800, radius=4.0)
-    IfConditionTrue(0, input_condition=1)
-    SetGravityAndCollisionExcludingOwnWorld(PLAYER, True)
-    WaitFrames(6)
+@ContinueOnRest(13204833)
+def Event_13204833():
+    """Event 13204833"""
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(EntityBeyondDistance(entity=PLAYER, other_entity=3201800, radius=2.0))
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3201800, radius=4.0))
+    
+    MAIN.Await(AND_1)
+    
+    SetGravityAndCollisionExcludingOwnWorld(character=PLAYER, state=True)
+    WaitFrames(frames=6)
     Restart()
 
 
-def Event13204834():
-    """ 13204834: Event 13204834 """
-    IfEntityWithinDistance(0, 3200110, 3201800, radius=2.0)
-    SetGravityAndCollisionExcludingOwnWorld(3200110, False)
-    IfEntityBeyondDistance(0, 3200110, 3201800, radius=2.0)
-    SetGravityAndCollisionExcludingOwnWorld(3200110, True)
+@ContinueOnRest(13204834)
+def Event_13204834():
+    """Event 13204834"""
+    MAIN.Await(EntityWithinDistance(entity=3200110, other_entity=3201800, radius=2.0))
+    
+    SetGravityAndCollisionExcludingOwnWorld(character=3200110, state=False)
+    
+    MAIN.Await(EntityBeyondDistance(entity=3200110, other_entity=3201800, radius=2.0))
+    
+    SetGravityAndCollisionExcludingOwnWorld(character=3200110, state=True)
     Restart()
 
 
-def Event13204802():
-    """ 13204802: Event 13204802 """
-    EndIfFlagOn(13201800)
+@ContinueOnRest(13204802)
+def Event_13204802():
+    """Event 13204802"""
+    if FlagEnabled(13201800):
+        return
     DisableAI(3200800)
     DisableHealthBar(3200800)
     EnableImmortality(3200800)
-    GotoIfThisEventOn(Label.L0)
-    IfFlagOn(1, 13201802)
-    IfFlagOn(1, 13204800)
-    IfConditionTrue(0, input_condition=1)
+    GotoIfThisEventFlagEnabled(Label.L0)
+    AND_1.Add(FlagEnabled(13201802))
+    AND_1.Add(FlagEnabled(13204800))
+    
+    MAIN.Await(AND_1)
+    
     GotoIfClient(Label.L0)
     NotifyBossBattleStart()
-    SetNetworkUpdateAuthority(3200800, UpdateAuthority.Forced)
+    SetNetworkUpdateAuthority(3200800, authority_level=UpdateAuthority.Forced)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     EnableFlag(13204800)
-    GotoIfCoopClientCountComparison(Label.L1, ComparisonType.Equal, 0)
-    GotoIfCoopClientCountComparison(Label.L2, ComparisonType.Equal, 1)
-    GotoIfCoopClientCountComparison(Label.L3, ComparisonType.Equal, 2)
+    GotoIfCoopClientCountComparison(Label.L1, comparison_type=ComparisonType.Equal, value=0)
+    GotoIfCoopClientCountComparison(Label.L2, comparison_type=ComparisonType.Equal, value=1)
+    GotoIfCoopClientCountComparison(Label.L3, comparison_type=ComparisonType.Equal, value=2)
 
-    # --- 1 --- #
+    # --- Label 1 --- #
     DefineLabel(1)
     Goto(Label.L4)
 
-    # --- 2 --- #
+    # --- Label 2 --- #
     DefineLabel(2)
     AddSpecialEffect(3200800, 7500, affect_npc_part_hp=True)
-    WaitFrames(1)
-    AdaptSpecialEffectHealthChangeToNPCPart(3200800)
+    WaitFrames(frames=1)
+    AdaptSpecialEffectHealthChangeToNPCPart(character=3200800)
     Goto(Label.L4)
 
-    # --- 3 --- #
+    # --- Label 3 --- #
     DefineLabel(3)
     AddSpecialEffect(3200800, 7501, affect_npc_part_hp=True)
-    WaitFrames(1)
-    AdaptSpecialEffectHealthChangeToNPCPart(3200800)
+    WaitFrames(frames=1)
+    AdaptSpecialEffectHealthChangeToNPCPart(character=3200800)
     Goto(Label.L4)
 
-    # --- 4 --- #
+    # --- Label 4 --- #
     DefineLabel(4)
     EnableAI(3200800)
     DisableImmortality(3200800)
     AddSpecialEffect(3200800, 3011, affect_npc_part_hp=True)
-    EnableBossHealthBar(3200800, name=510000, slot=0)
+    EnableBossHealthBar(3200800, name=510000)
     SetNetworkUpdateRate(3200800, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    CreatePlayLog(124)
-    StartPlayLogMeasurement(3200010, 62, overwrite=True)
+    CreatePlayLog(name=124)
+    StartPlayLogMeasurement(measurement_id=3200010, name=62, overwrite=True)
 
 
-def Event13204803():
-    """ 13204803: Event 13204803 """
+@ContinueOnRest(13204803)
+def Event_13204803():
+    """Event 13204803"""
     DisableNetworkSync()
-    EndIfFlagOn(13201800)
-    GotoIfThisEventOn(Label.L0)
-    DisableSoundEvent(3203802)
-    DisableSoundEvent(3203803)
-    IfFlagOff(1, 13201800)
-    IfFlagOn(1, 13204802)
+    if FlagEnabled(13201800):
+        return
+    GotoIfThisEventFlagEnabled(Label.L0)
+    DisableSoundEvent(sound_id=3203802)
+    DisableSoundEvent(sound_id=3203803)
+    AND_1.Add(FlagDisabled(13201800))
+    AND_1.Add(FlagEnabled(13204802))
     SkipLinesIfHost(1)
-    IfFlagOn(1, 13204801)
-    IfCharacterInsideRegion(1, PLAYER, region=3202801)
-    IfConditionTrue(0, input_condition=1)
-    EnableBossMusic(3203802)
-    IfHasTAEEvent(2, 3200800, tae_event_id=10)
+    AND_1.Add(FlagEnabled(13204801))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=3202801))
+    
+    MAIN.Await(AND_1)
+    
+    EnableBossMusic(sound_id=3203802)
+    AND_2.Add(CharacterHasTAEEvent(3200800, tae_event_id=10))
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOff(2, 13201800)
-    IfFlagOn(2, 13204802)
+    AND_2.Add(FlagDisabled(13201800))
+    AND_2.Add(FlagEnabled(13204802))
     SkipLinesIfHost(1)
-    IfFlagOn(2, 13204801)
-    IfCharacterInsideRegion(2, PLAYER, region=3202801)
-    IfConditionTrue(0, input_condition=2)
-    DisableBossMusic(3203802)
-    WaitFrames(0)
-    EnableBossMusic(3203803)
+    AND_2.Add(FlagEnabled(13204801))
+    AND_2.Add(CharacterInsideRegion(PLAYER, region=3202801))
+    
+    MAIN.Await(AND_2)
+    
+    DisableBossMusic(sound_id=3203802)
+    WaitFrames(frames=0)
+    EnableBossMusic(sound_id=3203803)
 
 
-def Event13204804():
-    """ 13204804: Event 13204804 """
+@ContinueOnRest(13204804)
+def Event_13204804():
+    """Event 13204804"""
     DisableNetworkSync()
-    EndIfFlagOn(13201800)
-    IfHealthGreaterThan(1, 3200800, 0.0)
-    IfEntityWithinDistance(1, PLAYER, 3200800, radius=4.0)
-    IfConditionTrue(0, input_condition=1)
+    if FlagEnabled(13201800):
+        return
+    AND_1.Add(HealthRatio(3200800) > 0.0)
+    AND_1.Add(EntityWithinDistance(entity=PLAYER, other_entity=3200800, radius=4.0))
+    
+    MAIN.Await(AND_1)
+    
     SetLockedCameraSlot(game_map=BYRGENWERTH, camera_slot=1)
-    IfHealthGreaterThan(2, 3200800, 0.0)
-    IfEntityBeyondDistance(2, PLAYER, 3200800, radius=6.0)
-    IfConditionTrue(0, input_condition=2)
+    AND_2.Add(HealthRatio(3200800) > 0.0)
+    AND_2.Add(EntityBeyondDistance(entity=PLAYER, other_entity=3200800, radius=6.0))
+    
+    MAIN.Await(AND_2)
+    
     SetLockedCameraSlot(game_map=BYRGENWERTH, camera_slot=0)
     Restart()
 
 
-def Event13204805():
-    """ 13204805: Event 13204805 """
+@ContinueOnRest(13204805)
+def Event_13204805():
+    """Event 13204805"""
     DisableNetworkSync()
-    EndIfFlagOn(13201800)
-    IfFlagOn(0, 13201800)
-    DisableBossMusic(3203802)
-    DisableBossMusic(3203803)
-    DisableBossMusic(-1)
+    if FlagEnabled(13201800):
+        return
+    
+    MAIN.Await(FlagEnabled(13201800))
+    
+    DisableBossMusic(sound_id=3203802)
+    DisableBossMusic(sound_id=3203803)
+    DisableBossMusic(sound_id=-1)
 
 
-def Event13204807():
-    """ 13204807: Event 13204807 """
-    EndIfFlagOn(13201800)
-    IfHealthLessThanOrEqual(0, 3200800, 0.75)
-    AICommand(3200800, command_id=100, slot=0)
+@ContinueOnRest(13204807)
+def Event_13204807():
+    """Event 13204807"""
+    if FlagEnabled(13201800):
+        return
+    
+    MAIN.Await(HealthRatio(3200800) <= 0.75)
+    
+    AICommand(3200800, command_id=100, command_slot=0)
     ReplanAI(3200800)
-    IfHasTAEEvent(0, 3200800, tae_event_id=10)
+    
+    MAIN.Await(CharacterHasTAEEvent(3200800, tae_event_id=10))
+    
     DisableCharacter(3200800)
     Wait(3.0)
     Move(3200800, destination=3202806, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(3200800)
     ForceAnimation(3200800, 3021)
-    AICommand(3200800, command_id=101, slot=0)
+    AICommand(3200800, command_id=101, command_slot=0)
     ReplanAI(3200800)
     EnableFlag(13204811)
-    IfHealthLessThanOrEqual(0, 3200800, 0.5)
-    AICommand(3200800, command_id=110, slot=0)
+    
+    MAIN.Await(HealthRatio(3200800) <= 0.5)
+    
+    AICommand(3200800, command_id=110, command_slot=0)
     ReplanAI(3200800)
-    IfHasTAEEvent(0, 3200800, tae_event_id=10)
+    
+    MAIN.Await(CharacterHasTAEEvent(3200800, tae_event_id=10))
+    
     DisableCharacter(3200800)
     Wait(3.0)
     Move(3200800, destination=3202807, destination_type=CoordEntityType.Region, short_move=True)
     EnableCharacter(3200800)
     ForceAnimation(3200800, 3021)
-    AICommand(3200800, command_id=111, slot=0)
+    AICommand(3200800, command_id=111, command_slot=0)
     ReplanAI(3200800)
     EnableFlag(13204812)
 
 
-def Event13204808():
-    """ 13204808: Event 13204808 """
-    EndIfFlagOn(13201800)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3201,
-        part_index=NPCPartType.Part2,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+@ContinueOnRest(13204808)
+def Event_13204808():
+    """Event 13204808"""
+    if FlagEnabled(13201800):
+        return
+    CreateNPCPart(3200800, npc_part_id=3201, part_index=NPCPartType.Part2, part_health=100)
     SetNPCPartEffects(3200800, npc_part_id=3201, material_sfx_id=59, material_vfx_id=59)
-    IfCharacterPartHealthLessThanOrEqual(1, 3200800, npc_part_id=3201, value=0)
-    IfHealthLessThanOrEqual(2, 3200800, 0.0)
-    IfHasTAEEvent(3, 3200800, tae_event_id=20)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_1.Add(CharacterPartHealth(3200800, npc_part_id=3201) <= 0)
+    AND_2.Add(HealthRatio(3200800) <= 0.0)
+    AND_3.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7000)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=50, overwrite_max=True)
-    IfCharacterPartHealthLessThanOrEqual(4, 3200800, npc_part_id=3201, value=0)
-    IfHealthLessThanOrEqual(5, 3200800, 0.0)
-    IfHasTAEEvent(6, 3200800, tae_event_id=20)
-    IfConditionTrue(-2, input_condition=4)
-    IfConditionTrue(-2, input_condition=5)
-    IfConditionTrue(-2, input_condition=6)
-    IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_4.Add(CharacterPartHealth(3200800, npc_part_id=3201) <= 0)
+    AND_5.Add(HealthRatio(3200800) <= 0.0)
+    AND_6.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    
+    MAIN.Await(OR_2)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_5)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7001)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=25, overwrite_max=True)
-    IfCharacterPartHealthLessThanOrEqual(7, 3200800, npc_part_id=3201, value=0)
-    IfHealthLessThanOrEqual(8, 3200800, 0.0)
-    IfHasTAEEvent(9, 3200800, tae_event_id=20)
-    IfConditionTrue(-3, input_condition=7)
-    IfConditionTrue(-3, input_condition=8)
-    IfConditionTrue(-3, input_condition=9)
-    IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_7.Add(CharacterPartHealth(3200800, npc_part_id=3201) <= 0)
+    AND_8.Add(HealthRatio(3200800) <= 0.0)
+    AND_9.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_3.Add(AND_7)
+    OR_3.Add(AND_8)
+    OR_3.Add(AND_9)
+    
+    MAIN.Await(OR_3)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_8)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7002)
     CreateNPCPart(
         3200800,
         npc_part_id=3201,
         part_index=NPCPartType.Part2,
         part_health=9999,
-        damage_correction=1.0,
         body_damage_correction=1.25,
-        is_invincible=False,
-        start_in_stop_state=False,
     )
     SetNPCPartEffects(3200800, npc_part_id=3201, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(3200800)
-    IfTimeElapsed(0, 30.0)
+    
+    MAIN.Await(TimeElapsed(seconds=30.0))
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     SetNPCPartHealth(3200800, npc_part_id=3201, desired_health=-1, overwrite_max=True)
     ReplanAI(2420800)
-    WaitFrames(10)
+    WaitFrames(frames=10)
     Restart()
 
 
-def Event13204809():
-    """ 13204809: Event 13204809 """
-    EndIfFlagOn(13201800)
-    CreateNPCPart(
-        3200800,
-        npc_part_id=3202,
-        part_index=NPCPartType.Part3,
-        part_health=100,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
+@ContinueOnRest(13204809)
+def Event_13204809():
+    """Event 13204809"""
+    if FlagEnabled(13201800):
+        return
+    CreateNPCPart(3200800, npc_part_id=3202, part_index=NPCPartType.Part3, part_health=100)
     SetNPCPartEffects(3200800, npc_part_id=3202, material_sfx_id=59, material_vfx_id=59)
-    IfCharacterPartHealthLessThanOrEqual(1, 3200800, npc_part_id=3202, value=0)
-    IfHealthLessThanOrEqual(2, 3200800, 0.0)
-    IfHasTAEEvent(3, 3200800, tae_event_id=20)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(-1, input_condition=3)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=3)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_1.Add(CharacterPartHealth(3200800, npc_part_id=3202) <= 0)
+    AND_2.Add(HealthRatio(3200800) <= 0.0)
+    AND_3.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    OR_1.Add(AND_3)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_3)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7005)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=50, overwrite_max=True)
-    IfCharacterPartHealthLessThanOrEqual(4, 3200800, npc_part_id=3202, value=0)
-    IfHealthLessThanOrEqual(5, 3200800, 0.0)
-    IfHasTAEEvent(6, 3200800, tae_event_id=20)
-    IfConditionTrue(-2, input_condition=4)
-    IfConditionTrue(-2, input_condition=5)
-    IfConditionTrue(-2, input_condition=6)
-    IfConditionTrue(0, input_condition=-2)
-    EndIfFinishedConditionTrue(5)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=6)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_4.Add(CharacterPartHealth(3200800, npc_part_id=3202) <= 0)
+    AND_5.Add(HealthRatio(3200800) <= 0.0)
+    AND_6.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_2.Add(AND_4)
+    OR_2.Add(AND_5)
+    OR_2.Add(AND_6)
+    
+    MAIN.Await(OR_2)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_5)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_6)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7006)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=25, overwrite_max=True)
-    IfCharacterPartHealthLessThanOrEqual(7, 3200800, npc_part_id=3, value=0)
-    IfHealthLessThanOrEqual(8, 3200800, 0.0)
-    IfHasTAEEvent(9, 3200800, tae_event_id=20)
-    IfConditionTrue(-3, input_condition=7)
-    IfConditionTrue(-3, input_condition=8)
-    IfConditionTrue(-3, input_condition=9)
-    IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(8)
-    GotoIfFinishedConditionTrue(Label.L0, input_condition=9)
-    ResetAnimation(3200800, disable_interpolation=False)
+    AND_7.Add(CharacterPartHealth(3200800, npc_part_id=3) <= 0)
+    AND_8.Add(HealthRatio(3200800) <= 0.0)
+    AND_9.Add(CharacterHasTAEEvent(3200800, tae_event_id=20))
+    OR_3.Add(AND_7)
+    OR_3.Add(AND_8)
+    OR_3.Add(AND_9)
+    
+    MAIN.Await(OR_3)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_8)
+    GotoIfFinishedConditionTrue(Label.L0, input_condition=AND_9)
+    ResetAnimation(3200800)
     ForceAnimation(3200800, 7007)
     CreateNPCPart(
         3200800,
         npc_part_id=3202,
         part_index=NPCPartType.Part3,
         part_health=9999,
-        damage_correction=1.0,
         body_damage_correction=1.2999999523162842,
-        is_invincible=False,
-        start_in_stop_state=False,
     )
     SetNPCPartEffects(3200800, npc_part_id=3202, material_sfx_id=60, material_vfx_id=60)
     ReplanAI(3200800)
-    IfTimeElapsed(0, 30.0)
+    
+    MAIN.Await(TimeElapsed(seconds=30.0))
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     SetNPCPartHealth(3200800, npc_part_id=3202, desired_health=-1, overwrite_max=True)
     ReplanAI(2420800)
-    WaitFrames(10)
+    WaitFrames(frames=10)
     Restart()
 
 
-def Event13204810():
-    """ 13204810: Event 13204810 """
-    EndIfFlagOn(13201800)
+@ContinueOnRest(13204810)
+def Event_13204810():
+    """Event 13204810"""
+    if FlagEnabled(13201800):
+        return
     CreateNPCPart(
         3200800,
         npc_part_id=3200,
@@ -1306,196 +1792,224 @@ def Event13204810():
         part_health=50,
         damage_correction=0.5,
         body_damage_correction=0.5,
-        is_invincible=False,
-        start_in_stop_state=False,
     )
     SetNPCPartEffects(3200800, npc_part_id=3200, material_sfx_id=61, material_vfx_id=61)
-    IfCharacterPartHealthLessThanOrEqual(0, 3200800, npc_part_id=3200, value=0)
+    
+    MAIN.Await(CharacterPartHealth(3200800, npc_part_id=3200) <= 0)
+    
     Restart()
 
 
-def Event13204820():
-    """ 13204820: Event 13204820 """
-    IfCharacterHuman(1, PLAYER)
-    IfCharacterInsideRegion(1, PLAYER, region=3202800)
-    IfConditionTrue(0, input_condition=1)
+@ContinueOnRest(13204820)
+def Event_13204820():
+    """Event 13204820"""
+    AND_1.Add(CharacterHuman(PLAYER))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=3202800))
+    
+    MAIN.Await(AND_1)
+    
     GotoIfClient(Label.L0)
     EnableInvincibility(PLAYER)
-    CreateTemporaryVFX(932210, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=246)
+    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, model_point=246, anchor_type=CoordEntityType.Character)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     Wait(5.0)
     DisableInvincibility(PLAYER)
-    SkipLinesIfFlagOff(1, 13201802)
-    EnableFlag(13204800)
+    if FlagEnabled(13201802):
+        EnableFlag(13204800)
     Restart()
 
 
-def Event13204821():
-    """ 13204821: Event 13204821 """
+@ContinueOnRest(13204821)
+def Event_13204821():
+    """Event 13204821"""
     DisableNetworkSync()
-    IfFlagOn(1, 13204800)
-    IfCharacterInsideRegion(1, PLAYER, region=3202800)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(FlagEnabled(13204800))
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=3202800))
+    
+    MAIN.Await(AND_1)
+    
     EnableInvincibility(PLAYER)
-    CreateTemporaryVFX(932210, anchor_entity=PLAYER, anchor_type=CoordEntityType.Character, model_point=246)
+    CreateTemporaryVFX(vfx_id=932210, anchor_entity=PLAYER, model_point=246, anchor_type=CoordEntityType.Character)
     Wait(5.0)
     DisableInvincibility(PLAYER)
     EnableFlag(13204801)
     Restart()
 
 
-@RestartOnRest
-def Event13205000(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: float, arg_16_19: int):
-    """ 13205000: Event 13205000 """
-    GotoIfThisEventSlotOn(Label.L0)
-    ChangePatrolBehavior(arg_0_3, patrol_information_id=-1)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(1, input_condition=-1)
-    IfCharacterInsideRegion(-2, PLAYER, region=arg_4_7)
-    IfCharacterInsideRegion(-2, PLAYER, region=arg_8_11)
-    IfEntityWithinDistance(-2, PLAYER, arg_0_3, radius=arg_12_15)
-    IfConditionTrue(1, input_condition=-2)
-    IfAttackedWithDamageType(2, attacked_entity=arg_0_3)
-    IfConditionTrue(-3, input_condition=1)
-    IfConditionTrue(-3, input_condition=2)
-    IfConditionTrue(0, input_condition=-3)
+@RestartOnRest(13205000)
+def Event_13205000(_, character: int, region: int, region_1: int, radius: float, patrol_information_id: int):
+    """Event 13205000"""
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
+    ChangePatrolBehavior(character, patrol_information_id=-1)
+    OR_1.Add(CharacterHuman(PLAYER))
+    OR_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(OR_1)
+    OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
+    OR_2.Add(CharacterInsideRegion(PLAYER, region=region_1))
+    OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
+    AND_1.Add(OR_2)
+    AND_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_3.Add(AND_1)
+    OR_3.Add(AND_2)
+    
+    MAIN.Await(OR_3)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_16_19)
-    ReplanAI(arg_0_3)
+    ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
+    ReplanAI(character)
 
 
-@RestartOnRest
-def Event13205040(_, arg_0_3: int, arg_4_7: int, arg_8_11: float, arg_12_15: float, arg_16_19: int):
-    """ 13205040: Event 13205040 """
-    EndIfThisEventSlotOn()
-    DisableAI(arg_0_3)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(1, input_condition=-1)
-    IfCharacterInsideRegion(-2, PLAYER, region=arg_4_7)
-    IfEntityWithinDistance(-2, PLAYER, arg_0_3, radius=arg_8_11)
-    IfConditionTrue(1, input_condition=-2)
-    IfAttackedWithDamageType(2, attacked_entity=arg_0_3)
-    IfConditionTrue(-3, input_condition=1)
-    IfConditionTrue(-3, input_condition=2)
-    IfConditionTrue(0, input_condition=-3)
-    GotoIfFinishedConditionFalse(Label.L0, input_condition=2)
-    EnableAI(arg_0_3)
+@RestartOnRest(13205040)
+def Event_13205040(_, character: int, region: int, radius: float, seconds: float, region_1: int):
+    """Event 13205040"""
+    if ThisEventSlotFlagEnabled():
+        return
+    DisableAI(character)
+    OR_1.Add(CharacterHuman(PLAYER))
+    OR_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(OR_1)
+    OR_2.Add(CharacterInsideRegion(PLAYER, region=region))
+    OR_2.Add(EntityWithinDistance(entity=PLAYER, other_entity=character, radius=radius))
+    AND_1.Add(OR_2)
+    AND_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_3.Add(AND_1)
+    OR_3.Add(AND_2)
+    
+    MAIN.Await(OR_3)
+    
+    GotoIfFinishedConditionFalse(Label.L0, input_condition=AND_2)
+    EnableAI(character)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    Wait(arg_12_15)
-    EnableAI(arg_0_3)
-    SetNest(arg_0_3, arg_16_19)
-    AICommand(arg_0_3, command_id=10, slot=0)
-    ReplanAI(arg_0_3)
-    IfCharacterInsideRegion(0, arg_0_3, region=arg_16_19)
-    ForceAnimation(arg_0_3, 3013)
-    WaitFrames(34)
-    AICommand(arg_0_3, command_id=-1, slot=0)
-    ReplanAI(arg_0_3)
+    Wait(seconds)
+    EnableAI(character)
+    SetNest(character, region=region_1)
+    AICommand(character, command_id=10, command_slot=0)
+    ReplanAI(character)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region_1))
+    
+    ForceAnimation(character, 3013)
+    WaitFrames(frames=34)
+    AICommand(character, command_id=-1, command_slot=0)
+    ReplanAI(character)
 
 
-@RestartOnRest
-def Event13205050(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 13205050: Event 13205050 """
-    GotoIfThisEventSlotOn(Label.L0)
-    ChangePatrolBehavior(arg_0_3, patrol_information_id=-1)
-    IfCharacterInsideRegion(0, arg_0_3, region=arg_4_7)
+@RestartOnRest(13205050)
+def Event_13205050(_, character: int, region: int, patrol_information_id: int):
+    """Event 13205050"""
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
+    ChangePatrolBehavior(character, patrol_information_id=-1)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region))
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_8_11)
-    ReplanAI(arg_0_3)
+    ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
+    ReplanAI(character)
 
 
-@RestartOnRest
-def Event13205060(_, arg_0_3: int, arg_4_7: int, arg_8_11: int):
-    """ 13205060: Event 13205060 """
-    IfCharacterInsideRegion(-1, arg_0_3, region=arg_4_7)
-    IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
-    IfAttackedWithDamageType(-1, attacked_entity=arg_0_3, attacker=PLAYER)
-    IfConditionTrue(0, input_condition=-1)
-    ChangePatrolBehavior(arg_0_3, patrol_information_id=arg_8_11)
+@RestartOnRest(13205060)
+def Event_13205060(_, character: int, region: int, patrol_information_id: int):
+    """Event 13205060"""
+    OR_1.Add(CharacterInsideRegion(character, region=region))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_1.Add(AttackedWithDamageType(attacked_entity=character, attacker=PLAYER))
+    
+    MAIN.Await(OR_1)
+    
+    ChangePatrolBehavior(character, patrol_information_id=patrol_information_id)
 
 
-@RestartOnRest
-def Event13205080(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13205080: Event 13205080 """
-    EndIfThisEventSlotOn()
-    DisableGravity(arg_0_3)
-    DisableCharacterCollision(arg_0_3)
-    DisableAI(arg_0_3)
-    ForceAnimation(arg_0_3, arg_8_11, loop=True)
-    IfCharacterHuman(-1, PLAYER)
-    IfCharacterType(-1, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(1, input_condition=-1)
-    IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
-    SkipLinesIfEqual(1, left=arg_16_19, right=0)
-    IfFlagOn(1, arg_20_23)
-    IfAttackedWithDamageType(2, attacked_entity=arg_0_3)
-    IfConditionTrue(-2, input_condition=1)
-    IfConditionTrue(-2, input_condition=2)
-    IfConditionTrue(0, input_condition=-2)
-    EnableGravity(arg_0_3)
-    EnableAI(arg_0_3)
-    ForceAnimation(arg_0_3, arg_12_15, wait_for_completion=True)
-    EnableCharacterCollision(arg_0_3)
+@RestartOnRest(13205080)
+def Event_13205080(_, character: int, region: int, animation_id: int, animation_id_1: int, left: int, flag: int):
+    """Event 13205080"""
+    if ThisEventSlotFlagEnabled():
+        return
+    DisableGravity(character)
+    DisableCharacterCollision(character)
+    DisableAI(character)
+    ForceAnimation(character, animation_id, loop=True)
+    OR_1.Add(CharacterHuman(PLAYER))
+    OR_1.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(OR_1)
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=region))
+    if ValueNotEqual(left=left, right=0):
+        AND_1.Add(FlagEnabled(flag))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_2.Add(AND_1)
+    OR_2.Add(AND_2)
+    
+    MAIN.Await(OR_2)
+    
+    EnableGravity(character)
+    EnableAI(character)
+    ForceAnimation(character, animation_id_1, wait_for_completion=True)
+    EnableCharacterCollision(character)
 
 
-@RestartOnRest
-def Event13205100(_, arg_0_3: int, arg_4_7: int):
-    """ 13205100: Event 13205100 """
-    EndIfThisEventSlotOn()
-    IfCharacterBackreadEnabled(0, arg_0_3)
-    ForceAnimation(arg_0_3, 7004, loop=True)
-    IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
-    IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(1, input_condition=-2)
-    IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(0, input_condition=-1)
-    ForceAnimation(arg_0_3, 7005)
-    WaitFrames(59)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=3011)
+@RestartOnRest(13205100)
+def Event_13205100(_, character: int, region: int):
+    """Event 13205100"""
+    if ThisEventSlotFlagEnabled():
+        return
+    
+    MAIN.Await(CharacterBackreadEnabled(character))
+    
+    ForceAnimation(character, 7004, loop=True)
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_2.Add(CharacterHuman(PLAYER))
+    OR_2.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(OR_2)
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=region))
+    OR_1.Add(AND_1)
+    
+    MAIN.Await(OR_1)
+    
+    ForceAnimation(character, 7005)
+    WaitFrames(frames=59)
+    RotateToFaceEntity(character, PLAYER, animation=3011)
 
 
-@RestartOnRest
-def Event13205140(_, arg_0_3: int, arg_4_7: int):
-    """ 13205140: Event 13205140 """
-    EndIfThisEventSlotOn()
-    IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Caution)
-    IfHasAIStatus(-1, arg_0_3, ai_status=AIStatusType.Battle)
-    IfCharacterHuman(-2, PLAYER)
-    IfCharacterType(-2, PLAYER, CharacterType.WhitePhantom)
-    IfConditionTrue(1, input_condition=-2)
-    IfCharacterInsideRegion(1, PLAYER, region=arg_4_7)
-    IfAttackedWithDamageType(2, attacked_entity=arg_0_3)
-    IfConditionTrue(-3, input_condition=-1)
-    IfConditionTrue(-3, input_condition=1)
-    IfConditionTrue(-3, input_condition=2)
-    IfConditionTrue(0, input_condition=-3)
-    EndIfFinishedConditionTrue(-1)
-    EndIfFinishedConditionTrue(2)
-    RotateToFaceEntity(arg_0_3, PLAYER, animation=3002)
+@RestartOnRest(13205140)
+def Event_13205140(_, character: int, region: int):
+    """Event 13205140"""
+    if ThisEventSlotFlagEnabled():
+        return
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Caution))
+    OR_1.Add(HasAIStatus(character, ai_status=AIStatusType.Battle))
+    OR_2.Add(CharacterHuman(PLAYER))
+    OR_2.Add(CharacterWhitePhantom(PLAYER))
+    AND_1.Add(OR_2)
+    AND_1.Add(CharacterInsideRegion(PLAYER, region=region))
+    AND_2.Add(AttackedWithDamageType(attacked_entity=character))
+    OR_3.Add(OR_1)
+    OR_3.Add(AND_1)
+    OR_3.Add(AND_2)
+    
+    MAIN.Await(OR_3)
+    
+    EndIfFinishedConditionTrue(input_condition=OR_1)
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    RotateToFaceEntity(character, PLAYER, animation=3002)
 
 
-@RestartOnRest
-def Event13205200():
-    """ 13205200: Event 13205200 """
-    GotoIfThisEventSlotOn(Label.L0)
+@RestartOnRest(13205200)
+def Event_13205200():
+    """Event 13205200"""
+    GotoIfThisEventSlotFlagEnabled(Label.L0)
     DisableCharacter(3200621)
-    IfHealthEqual(1, 3200620, 0.0)
-    IfHasTAEEvent(1, 3200620, tae_event_id=10)
-    IfConditionTrue(0, input_condition=1)
+    AND_1.Add(HealthRatio(3200620) == 0.0)
+    AND_1.Add(CharacterHasTAEEvent(3200620, tae_event_id=10))
+    
+    MAIN.Await(AND_1)
+    
     Move(
         3200621,
         destination=3200620,
@@ -1505,372 +2019,416 @@ def Event13205200():
     )
     EnableCharacter(3200621)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     DropMandatoryTreasure(3200621)
 
 
-@RestartOnRest
-def Event13205300(_, arg_0_3: int, arg_4_5: short, arg_8_11: int):
-    """ 13205300: Event 13205300 """
-    IfCharacterBackreadEnabled(0, arg_0_3)
-    CreateNPCPart(
-        arg_0_3,
-        npc_part_id=arg_4_5,
-        part_index=NPCPartType.Part1,
-        part_health=30,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
-    SetNPCPartEffects(arg_0_3, npc_part_id=arg_8_11, material_sfx_id=61, material_vfx_id=61)
-    IfCharacterPartHealthLessThanOrEqual(0, arg_0_3, npc_part_id=arg_8_11, value=0)
-    ResetAnimation(arg_0_3, disable_interpolation=True)
-    ForceAnimation(arg_0_3, 9930)
-    SetNPCPartHealth(arg_0_3, npc_part_id=arg_8_11, desired_health=-1, overwrite_max=False)
+@RestartOnRest(13205300)
+def Event_13205300(_, character: int, npc_part_id: short, npc_part_id_1: int):
+    """Event 13205300"""
+    MAIN.Await(CharacterBackreadEnabled(character))
+    
+    CreateNPCPart(character, npc_part_id=npc_part_id, part_index=NPCPartType.Part1, part_health=30)
+    SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=61, material_vfx_id=61)
+    
+    MAIN.Await(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    
+    ResetAnimation(character, disable_interpolation=True)
+    ForceAnimation(character, 9930)
+    SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=-1, overwrite_max=False)
     Restart()
 
 
-def Event13205600(
+@ContinueOnRest(13205600)
+def Event_13205600(
     _,
-    arg_0_1: short,
-    arg_4_7: int,
-    arg_8_9: short,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
+    npc_part_id: short,
+    npc_part_id_1: int,
+    part_index: short,
+    animation_id: int,
+    special_effect: int,
+    flag: int,
+    flag_1: int,
+    character: int,
 ):
-    """ 13205600: Event 13205600 """
-    IfFlagOn(0, arg_20_23)
-    IfCharacterPartHealthLessThanOrEqual(1, arg_28_31, npc_part_id=arg_4_7, value=0)
-    IfAttacked(1, arg_28_31, attacker=PLAYER)
-    IfFlagOn(1, arg_24_27)
-    IfHealthLessThanOrEqual(2, arg_28_31, 0.0)
-    IfFlagOn(2, arg_20_23)
-    IfConditionTrue(-1, input_condition=1)
-    IfConditionTrue(-1, input_condition=2)
-    IfConditionTrue(0, input_condition=-1)
-    EndIfFinishedConditionTrue(2)
-    SkipLinesIfFlagOn(2, arg_20_23)
-    SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_health=1, overwrite_max=False)
-    Restart()
-    CreateNPCPart(
-        arg_28_31,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=999999,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=65, material_vfx_id=65)
-    ResetAnimation(arg_28_31, disable_interpolation=False)
-    ForceAnimation(arg_28_31, arg_12_15)
-    IfHasTAEEvent(0, arg_28_31, tae_event_id=400)
-    AddSpecialEffect(arg_28_31, arg_16_19, affect_npc_part_hp=False)
-    DisableFlag(arg_24_27)
-    IfHasTAEEvent(0, arg_28_31, tae_event_id=300)
-    SetNPCPartHealth(arg_28_31, npc_part_id=arg_4_7, desired_health=80, overwrite_max=True)
-    SetNPCPartEffects(arg_28_31, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
-    CancelSpecialEffect(arg_28_31, arg_16_19)
-    AICommand(arg_28_31, command_id=-1, slot=0)
-    ReplanAI(arg_28_31)
-    WaitFrames(10)
+    """Event 13205600"""
+    MAIN.Await(FlagEnabled(flag))
+    
+    AND_1.Add(CharacterPartHealth(character, npc_part_id=npc_part_id_1) <= 0)
+    AND_1.Add(Attacked(attacked_entity=character, attacker=PLAYER))
+    AND_1.Add(FlagEnabled(flag_1))
+    AND_2.Add(HealthRatio(character) <= 0.0)
+    AND_2.Add(FlagEnabled(flag))
+    OR_1.Add(AND_1)
+    OR_1.Add(AND_2)
+    
+    MAIN.Await(OR_1)
+    
+    EndIfFinishedConditionTrue(input_condition=AND_2)
+    if FlagDisabled(flag):
+        SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=1, overwrite_max=False)
+        Restart()
+    CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=999999)
+    SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=65, material_vfx_id=65)
+    ResetAnimation(character)
+    ForceAnimation(character, animation_id)
+    
+    MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=400))
+    
+    AddSpecialEffect(character, special_effect)
+    DisableFlag(flag_1)
+    
+    MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=300))
+    
+    SetNPCPartHealth(character, npc_part_id=npc_part_id_1, desired_health=80, overwrite_max=True)
+    SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
+    RemoveSpecialEffect(character, special_effect)
+    AICommand(character, command_id=-1, command_slot=0)
+    ReplanAI(character)
+    WaitFrames(frames=10)
     Restart()
 
 
-def Event13205630(_, arg_0_1: short, arg_4_7: int, arg_8_9: short, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13205630: Event 13205630 """
-    IfEntityWithinDistance(1, arg_20_23, PLAYER, radius=10.0)
-    IfConditionTrue(0, input_condition=1)
-    CreateNPCPart(
-        arg_20_23,
-        npc_part_id=arg_0_1,
-        part_index=arg_8_9,
-        part_health=arg_12_15,
-        damage_correction=1.0,
-        body_damage_correction=1.0,
-        is_invincible=False,
-        start_in_stop_state=False,
-    )
-    SetNPCPartEffects(arg_20_23, npc_part_id=arg_4_7, material_sfx_id=64, material_vfx_id=64)
-    EnableFlag(arg_16_19)
+@ContinueOnRest(13205630)
+def Event_13205630(
+    _,
+    npc_part_id: short,
+    npc_part_id_1: int,
+    part_index: short,
+    part_health: int,
+    flag: int,
+    character: int,
+):
+    """Event 13205630"""
+    AND_1.Add(EntityWithinDistance(entity=character, other_entity=PLAYER, radius=10.0))
+    
+    MAIN.Await(AND_1)
+    
+    CreateNPCPart(character, npc_part_id=npc_part_id, part_index=part_index, part_health=part_health)
+    SetNPCPartEffects(character, npc_part_id=npc_part_id_1, material_sfx_id=64, material_vfx_id=64)
+    EnableFlag(flag)
 
 
-def Event13205660(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_16: uchar, arg_17_17: uchar):
-    """ 13205660: Event 13205660 """
-    SetCollisionMask(arg_12_15, bit_index=arg_16_16, switch_type=OnOffChange.On)
-    SetCollisionMask(arg_12_15, bit_index=arg_17_17, switch_type=OnOffChange.Off)
-    IfHasTAEEvent(0, arg_12_15, tae_event_id=arg_0_3)
-    EnableFlag(arg_8_11)
-    SetCollisionMask(arg_12_15, bit_index=arg_16_16, switch_type=OnOffChange.Off)
-    SetCollisionMask(arg_12_15, bit_index=arg_17_17, switch_type=OnOffChange.On)
-    IfHasTAEEvent(0, arg_12_15, tae_event_id=arg_4_7)
-    DisableFlag(arg_8_11)
+@ContinueOnRest(13205660)
+def Event_13205660(
+    _,
+    tae_event_id: int,
+    tae_event_id_1: int,
+    flag: int,
+    character: int,
+    bit_index: uchar,
+    bit_index_1: uchar,
+):
+    """Event 13205660"""
+    SetCollisionMask(character, bit_index=bit_index, switch_type=OnOffChange.On)
+    SetCollisionMask(character, bit_index=bit_index_1, switch_type=OnOffChange.Off)
+    
+    MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=tae_event_id))
+    
+    EnableFlag(flag)
+    SetCollisionMask(character, bit_index=bit_index, switch_type=OnOffChange.Off)
+    SetCollisionMask(character, bit_index=bit_index_1, switch_type=OnOffChange.On)
+    
+    MAIN.Await(CharacterHasTAEEvent(character, tae_event_id=tae_event_id_1))
+    
+    DisableFlag(flag)
     Restart()
 
 
-def Event13200950():
-    """ 13200950: Event 13200950 """
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    IfStandingOnCollision(2, 3204001)
-    IfFlagOn(2, 12800434)
-    IfConditionTrue(0, input_condition=2)
+@ContinueOnRest(13200950)
+def Event_13200950():
+    """Event 13200950"""
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    AND_2.Add(PlayerStandingOnCollision(3204001))
+    AND_2.Add(FlagEnabled(12800434))
+    
+    MAIN.Await(AND_2)
+    
     DisableFlag(12800434)
-    AddSpecialEffect(PLAYER, 110, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 111, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 112, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 113, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 114, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 115, affect_npc_part_hp=False)
-    AddSpecialEffect(PLAYER, 116, affect_npc_part_hp=False)
-    EndIfThisEventOn()
+    AddSpecialEffect(PLAYER, 110)
+    AddSpecialEffect(PLAYER, 111)
+    AddSpecialEffect(PLAYER, 112)
+    AddSpecialEffect(PLAYER, 113)
+    AddSpecialEffect(PLAYER, 114)
+    AddSpecialEffect(PLAYER, 115)
+    AddSpecialEffect(PLAYER, 116)
+    if ThisEventFlagEnabled():
+        return
     RunEvent(9350, slot=0, args=(2,))
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-def Event13200960():
-    """ 13200960: Event 13200960 """
-    EndIfThisEventOn()
-    IfCharacterHuman(1, PLAYER)
-    GotoIfConditionFalse(Label.L0, input_condition=1)
-    IfStandingOnCollision(-1, 3204001)
-    IfStandingOnCollision(-1, 3204002)
-    IfConditionTrue(0, input_condition=-1)
-    AwardAchievement(13)
+@ContinueOnRest(13200960)
+def Event_13200960():
+    """Event 13200960"""
+    if ThisEventFlagEnabled():
+        return
+    AND_1.Add(CharacterHuman(PLAYER))
+    GotoIfConditionFalse(Label.L0, input_condition=AND_1)
+    OR_1.Add(PlayerStandingOnCollision(3204001))
+    OR_1.Add(PlayerStandingOnCollision(3204002))
+    
+    MAIN.Await(OR_1)
+    
+    AwardAchievement(achievement_id=13)
     End()
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    IfFlagOn(0, 6001)
+    
+    MAIN.Await(FlagEnabled(6001))
+    
     Wait(0.0)
 
 
-@RestartOnRest
-def Event13204450(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int):
-    """ 13204450: Event 13204450 """
-    EndIfThisEventSlotOn()
-    EndIfClient()
-    SetEventPoint(arg_0_3, region=arg_4_7, reaction_range=1.0)
-    IfFlagOn(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOn(1, arg_16_19)
-    IfConditionTrue(0, input_condition=1)
-    AICommand(arg_0_3, command_id=990, slot=0)
-    ReplanAI(arg_0_3)
+@RestartOnRest(13204450)
+def Event_13204450(_, character: int, region: int, flag: int, flag_1: int, flag_2: int):
+    """Event 13204450"""
+    if ThisEventSlotFlagEnabled():
+        return
+    if Client():
+        return
+    SetEventPoint(character, region=region, reaction_range=1.0)
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(FlagEnabled(flag_2))
+    
+    MAIN.Await(AND_1)
+    
+    AICommand(character, command_id=990, command_slot=0)
+    ReplanAI(character)
 
 
-def Event13204470(_, arg_0_3: int):
-    """ 13204470: Event 13204470 """
-    IfCharacterInsideRegion(0, arg_0_3, region=3202800)
-    EnableInvincibility(arg_0_3)
+@ContinueOnRest(13204470)
+def Event_13204470(_, character: int):
+    """Event 13204470"""
+    MAIN.Await(CharacterInsideRegion(character, region=3202800))
+    
+    EnableInvincibility(character)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
     Wait(5.0)
-    DisableInvincibility(arg_0_3)
+    DisableInvincibility(character)
 
 
-@RestartOnRest
-def Event13204400(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13204400: Event 13204400 """
-    GotoIfFlagOn(Label.L0, arg_0_3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
-    IfPlayerHasGood(1, 4312, including_box=False)
-    IfFlagOff(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_16_19)
-    IfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfFlagOff(1, 13204421)
-    IfFlagOff(1, 13204422)
-    IfFlagOff(-1, arg_20_23)
-    IfConditionTrue(1, input_condition=-1)
-    IfHost(1)
-    IfConditionTrue(0, input_condition=1)
+@RestartOnRest(13204400)
+def Event_13204400(_, flag: int, vfx_id: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
+    """Event 13204400"""
+    GotoIfFlagEnabled(Label.L0, flag=flag)
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
+    AND_1.Add(PlayerHasGood(4312))
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(FlagDisabled(flag_3))
+    AND_1.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_1.Add(FlagDisabled(13204421))
+    AND_1.Add(FlagDisabled(13204422))
+    OR_1.Add(FlagDisabled(flag_4))
+    AND_1.Add(OR_1)
+    AND_1.Add(Host())
+    
+    MAIN.Await(AND_1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    EnableFlag(arg_0_3)
-    CreateVFX(arg_4_7)
-    IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_8_11)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
-    IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfFlagOff(2, 13204421)
-    IfFlagOff(2, 13204422)
-    IfFlagOff(-3, arg_20_23)
-    IfConditionTrue(2, input_condition=-3)
-    IfHost(3)
-    IfConditionFalse(3, input_condition=2)
-    IfConditionTrue(0, input_condition=3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
+    EnableFlag(flag)
+    CreateVFX(vfx_id)
+    AND_2.Add(PlayerHasGood(4312))
+    AND_2.Add(FlagDisabled(flag_1))
+    AND_2.Add(FlagDisabled(flag_2))
+    AND_2.Add(FlagDisabled(flag_3))
+    AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_2.Add(FlagDisabled(13204421))
+    AND_2.Add(FlagDisabled(13204422))
+    OR_3.Add(FlagDisabled(flag_4))
+    AND_2.Add(OR_3)
+    AND_3.Add(Host())
+    AND_3.Add(not AND_2)
+    
+    MAIN.Await(AND_3)
+    
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
     Restart()
 
 
-@RestartOnRest
-def Event13204401(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13204401: Event 13204401 """
-    GotoIfFlagOn(Label.L0, arg_0_3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
-    IfPlayerHasGood(1, 4312, including_box=False)
-    IfFlagOff(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_16_19)
-    IfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfCharacterHasSpecialEffect(1, PLAYER, 6142)
-    IfFlagOff(1, 6813)
-    IfFlagOff(-1, arg_20_23)
-    IfConditionTrue(1, input_condition=-1)
-    IfHost(1)
-    IfConditionTrue(0, input_condition=1)
+@RestartOnRest(13204401)
+def Event_13204401(_, flag: int, vfx_id: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
+    """Event 13204401"""
+    GotoIfFlagEnabled(Label.L0, flag=flag)
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
+    AND_1.Add(PlayerHasGood(4312))
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(FlagDisabled(flag_3))
+    AND_1.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    AND_1.Add(FlagDisabled(6813))
+    OR_1.Add(FlagDisabled(flag_4))
+    AND_1.Add(OR_1)
+    AND_1.Add(Host())
+    
+    MAIN.Await(AND_1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    EnableFlag(arg_0_3)
-    CreateVFX(arg_4_7)
-    IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_8_11)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
-    IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfCharacterHasSpecialEffect(2, PLAYER, 6142)
-    IfFlagOff(2, 6813)
-    IfFlagOff(-3, arg_20_23)
-    IfConditionTrue(2, input_condition=-3)
-    IfHost(3)
-    IfConditionFalse(3, input_condition=2)
-    IfConditionTrue(0, input_condition=3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
+    EnableFlag(flag)
+    CreateVFX(vfx_id)
+    AND_2.Add(PlayerHasGood(4312))
+    AND_2.Add(FlagDisabled(flag_1))
+    AND_2.Add(FlagDisabled(flag_2))
+    AND_2.Add(FlagDisabled(flag_3))
+    AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_2.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    AND_2.Add(FlagDisabled(6813))
+    OR_3.Add(FlagDisabled(flag_4))
+    AND_2.Add(OR_3)
+    AND_3.Add(Host())
+    AND_3.Add(not AND_2)
+    
+    MAIN.Await(AND_3)
+    
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
     Restart()
 
 
-@RestartOnRest
-def Event13204402(_, arg_0_3: int, arg_4_7: int, arg_8_11: int, arg_12_15: int, arg_16_19: int, arg_20_23: int):
-    """ 13204402: Event 13204402 """
-    GotoIfFlagOn(Label.L0, arg_0_3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
-    IfPlayerHasGood(1, 4312, including_box=False)
-    IfFlagOff(1, arg_8_11)
-    IfFlagOff(1, arg_12_15)
-    IfFlagOff(1, arg_16_19)
-    IfClientTypeCountComparison(1, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfCharacterHasSpecialEffect(1, PLAYER, 6142)
-    IfFlagOn(-4, 12410803)
-    IfFlagOn(-4, 12410804)
-    IfConditionTrue(1, input_condition=-4)
-    IfFlagOff(-1, arg_20_23)
-    IfConditionTrue(1, input_condition=-1)
-    IfHost(1)
-    IfConditionTrue(0, input_condition=1)
+@RestartOnRest(13204402)
+def Event_13204402(_, flag: int, vfx_id: int, flag_1: int, flag_2: int, flag_3: int, flag_4: int):
+    """Event 13204402"""
+    GotoIfFlagEnabled(Label.L0, flag=flag)
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
+    AND_1.Add(PlayerHasGood(4312))
+    AND_1.Add(FlagDisabled(flag_1))
+    AND_1.Add(FlagDisabled(flag_2))
+    AND_1.Add(FlagDisabled(flag_3))
+    AND_1.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_1.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    OR_4.Add(FlagEnabled(12410803))
+    OR_4.Add(FlagEnabled(12410804))
+    AND_1.Add(OR_4)
+    OR_1.Add(FlagDisabled(flag_4))
+    AND_1.Add(OR_1)
+    AND_1.Add(Host())
+    
+    MAIN.Await(AND_1)
 
-    # --- 0 --- #
+    # --- Label 0 --- #
     DefineLabel(0)
-    EnableFlag(arg_0_3)
-    CreateVFX(arg_4_7)
-    IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_8_11)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
-    IfClientTypeCountComparison(2, ClientType.Coop, ComparisonType.LessThan, value=2)
-    IfCharacterHasSpecialEffect(2, PLAYER, 6142)
-    IfFlagOn(-5, 12410803)
-    IfFlagOn(-5, 12410804)
-    IfConditionTrue(2, input_condition=-5)
-    IfFlagOff(-3, arg_20_23)
-    IfConditionTrue(2, input_condition=-3)
-    IfHost(3)
-    IfConditionFalse(3, input_condition=2)
-    IfConditionTrue(0, input_condition=3)
-    DisableFlag(arg_0_3)
-    DeleteVFX(arg_4_7, erase_root_only=True)
+    EnableFlag(flag)
+    CreateVFX(vfx_id)
+    AND_2.Add(PlayerHasGood(4312))
+    AND_2.Add(FlagDisabled(flag_1))
+    AND_2.Add(FlagDisabled(flag_2))
+    AND_2.Add(FlagDisabled(flag_3))
+    AND_2.Add(ClientTypeCountComparison(client_type=ClientType.Coop, comparison_type=ComparisonType.LessThan, value=2))
+    AND_2.Add(CharacterHasSpecialEffect(PLAYER, 6142))
+    OR_5.Add(FlagEnabled(12410803))
+    OR_5.Add(FlagEnabled(12410804))
+    AND_2.Add(OR_5)
+    OR_3.Add(FlagDisabled(flag_4))
+    AND_2.Add(OR_3)
+    AND_3.Add(Host())
+    AND_3.Add(not AND_2)
+    
+    MAIN.Await(AND_3)
+    
+    DisableFlag(flag)
+    DeleteVFX(vfx_id)
     Restart()
 
 
-@RestartOnRest
-def Event13204410(
+@RestartOnRest(13204410)
+def Event_13204410(
     _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
-    arg_28_31: int,
+    sign_type: int,
+    character: int,
+    region: int,
+    summon_flag: int,
+    dismissal_flag: int,
+    flag: int,
+    flag_1: int,
+    action_button_id: int,
 ):
-    """ 13204410: Event 13204410 """
-    SetBackreadStateAlternate(arg_4_7, state=True)
-    SetNetworkUpdateRate(arg_4_7, is_fixed=True, update_rate=CharacterUpdateRate.Always)
-    SkipLinesIfFlagOn(1, arg_12_15)
-    DisableCharacter(arg_4_7)
-    SkipLinesIfFlagOn(3, arg_16_19)
-    IfClient(1)
-    IfFlagOn(1, arg_12_15)
-    SkipLinesIfConditionTrue(1, 1)
-    DisableCharacter(arg_4_7)
-    EndIfFlagOn(arg_24_27)
-    IfClient(3)
-    SkipLinesIfConditionTrue(1, 3)
-    SetNetworkUpdateAuthority(arg_4_7, UpdateAuthority.Forced)
-    IfPlayerHasGood(2, 4312, including_box=False)
-    IfFlagOff(2, arg_12_15)
-    IfFlagOff(2, arg_16_19)
-    IfFlagOn(2, arg_20_23)
-    IfFlagOff(2, arg_24_27)
-    IfActionButtonParam(2, action_button_id=arg_28_31, entity=arg_4_7)
-    IfConditionTrue(0, input_condition=2)
+    """Event 13204410"""
+    SetBackreadStateAlternate(character, True)
+    SetNetworkUpdateRate(character, is_fixed=True, update_rate=CharacterUpdateRate.Always)
+    if FlagDisabled(summon_flag):
+        DisableCharacter(character)
+    SkipLinesIfFlagEnabled(3, dismissal_flag)
+    AND_1.Add(Client())
+    AND_1.Add(FlagEnabled(summon_flag))
+    SkipLinesIfConditionTrue(1, AND_1)
+    DisableCharacter(character)
+    if FlagEnabled(flag_1):
+        return
+    AND_3.Add(Client())
+    SkipLinesIfConditionTrue(1, AND_3)
+    SetNetworkUpdateAuthority(character, authority_level=UpdateAuthority.Forced)
+    AND_2.Add(PlayerHasGood(4312))
+    AND_2.Add(FlagDisabled(summon_flag))
+    AND_2.Add(FlagDisabled(dismissal_flag))
+    AND_2.Add(FlagEnabled(flag))
+    AND_2.Add(FlagDisabled(flag_1))
+    AND_2.Add(ActionButtonParamActivated(action_button_id=action_button_id, entity=character))
+    
+    MAIN.Await(AND_2)
+    
     ForceAnimation(PLAYER, 100111)
-    AddSpecialEffect(PLAYER, 4682, affect_npc_part_hp=False)
-    SummonNPC(arg_0_3, arg_4_7, arg_8_11, summon_flag=arg_12_15, dismissal_flag=arg_16_19)
-    CancelSpecialEffect(PLAYER, 9005)
-    CancelSpecialEffect(PLAYER, 9025)
+    AddSpecialEffect(PLAYER, 4682)
+    SummonNPC(sign_type, character, region=region, summon_flag=summon_flag, dismissal_flag=dismissal_flag)
+    RemoveSpecialEffect(PLAYER, 9005)
+    RemoveSpecialEffect(PLAYER, 9025)
     Wait(5.0)
     DisplayBattlefieldMessage(100051, display_location_index=0)
 
 
-@RestartOnRest
-def Event13204460(
+@RestartOnRest(13204460)
+def Event_13204460(
     _,
-    arg_0_3: int,
-    arg_4_7: int,
-    arg_8_11: int,
-    arg_12_15: int,
-    arg_16_19: int,
-    arg_20_23: int,
-    arg_24_27: int,
+    character: int,
+    region: int,
+    region_1: int,
+    region_2: int,
+    animation: int,
+    flag: int,
+    region_3: int,
 ):
-    """ 13204460: Event 13204460 """
-    EndIfClient()
-    IfFlagOn(1, arg_20_23)
-    IfCharacterInsideRegion(1, arg_0_3, region=arg_4_7)
-    IfConditionTrue(0, input_condition=1)
-    ResetAnimation(arg_0_3, disable_interpolation=False)
-    RotateToFaceEntity(arg_0_3, arg_8_11, animation=arg_16_19, wait_for_completion=True)
-    IfCharacterInsideRegion(2, arg_0_3, region=arg_12_15)
-    RestartIfConditionFalse(2)
-    SetEventPoint(arg_0_3, region=arg_8_11, reaction_range=1.0)
-    AICommand(arg_0_3, command_id=990, slot=0)
-    ReplanAI(arg_0_3)
-    DisableGravity(arg_0_3)
-    DisableCharacterCollision(arg_0_3)
-    IfCharacterInsideRegion(0, arg_0_3, region=arg_24_27)
-    EnableGravity(arg_0_3)
-    EnableCharacterCollision(arg_0_3)
-    AICommand(arg_0_3, command_id=-1, slot=0)
-    ReplanAI(arg_0_3)
+    """Event 13204460"""
+    if Client():
+        return
+    AND_1.Add(FlagEnabled(flag))
+    AND_1.Add(CharacterInsideRegion(character, region=region))
+    
+    MAIN.Await(AND_1)
+    
+    ResetAnimation(character)
+    RotateToFaceEntity(character, region_1, animation=animation, wait_for_completion=True)
+    AND_2.Add(CharacterInsideRegion(character, region=region_2))
+    if not AND_2:
+        return RESTART
+    SetEventPoint(character, region=region_1, reaction_range=1.0)
+    AICommand(character, command_id=990, command_slot=0)
+    ReplanAI(character)
+    DisableGravity(character)
+    DisableCharacterCollision(character)
+    
+    MAIN.Await(CharacterInsideRegion(character, region=region_3))
+    
+    EnableGravity(character)
+    EnableCharacterCollision(character)
+    AICommand(character, command_id=-1, command_slot=0)
+    ReplanAI(character)

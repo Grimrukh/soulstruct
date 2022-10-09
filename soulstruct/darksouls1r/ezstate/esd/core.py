@@ -6,8 +6,9 @@ from soulstruct.base.ezstate.esd import (
     Condition as _BaseCondition,
     State as _BaseState,
 )
+from soulstruct.containers.dcx import DCXType
 from soulstruct.games import DarkSoulsDSRType
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import BinaryStruct
 
 __all__ = ["TalkESD", "ChrESD"]
@@ -59,7 +60,9 @@ class State(_BaseState, abc.ABC):
     )
 
 
-class ESD(_BaseESD, DarkSoulsDSRType, abc.ABC):
+class ESD(DarkSoulsDSRType, _BaseESD, abc.ABC):
+
+    DCX_TYPE = DCXType.DCX_DFLT_10000_24_9
 
     EXTERNAL_HEADER_STRUCT = BinaryStruct(
         ("version", "4s", b"fsSL"),  # Note specific case.

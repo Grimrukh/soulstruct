@@ -1,36 +1,39 @@
 from __future__ import annotations
 
 __all__ = [
-    "MSBRegion",
-    "MSBRegionPoint",
-    "MSBRegionCircle",
-    "MSBRegionCylinder",
-    "MSBRegionSphere",
-    "MSBRegionRect",
-    "MSBRegionBox",
-    "MSBRegionList",
+    "BaseMSBRegion",
+    "BaseMSBRegionPoint",
+    "BaseMSBRegionCircle",
+    "BaseMSBRegionCylinder",
+    "BaseMSBRegionSphere",
+    "BaseMSBRegionRect",
+    "BaseMSBRegionBox",
+    "BaseMSBRegionList",
 ]
 
 import abc
-import typing as tp
 import logging
 import struct
 
-from soulstruct.utilities.misc import partialmethod
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
 from soulstruct.utilities.maths import Vector3
 
-from .enums import MSBRegionSubtype
-from .msb_entry import MSBEntryList, MSBEntryEntityCoordinates
+from .enums import BaseMSBRegionSubtype
+from .msb_entry import MSBEntryEntityCoordinates
+from .msb_entry_list import BaseMSBEntryList
 from .utils import MapFieldInfo
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
+# TODO: Migrate Regions and Models subtypes into games.
+#  Regions can probably keep detailed base classes and just leave the enum assignment to game subclasses.
 
-    ENTRY_SUBTYPE: MSBRegionSubtype = None
+
+class BaseMSBRegion(MSBEntryEntityCoordinates, abc.ABC):
+
+    ENTRY_SUBTYPE: BaseMSBRegionSubtype = None
     REGION_STRUCT: BinaryStruct = None
     REGION_TYPE_DATA_STRUCT: BinaryStruct = None
     NAME_ENCODING = ""
@@ -123,11 +126,10 @@ class MSBRegion(MSBEntryEntityCoordinates, abc.ABC):
             _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
 
 
-class MSBRegionPoint(MSBRegion, abc.ABC):
+class BaseMSBRegionPoint(BaseMSBRegion, abc.ABC):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
     player be facing when they spawn?)."""
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Point
     REGION_TYPE_DATA_STRUCT = None
 
     FIELD_ORDER = (
@@ -143,15 +145,14 @@ class MSBRegionPoint(MSBRegion, abc.ABC):
         return b""
 
 
-class MSBRegionCircle(MSBRegion, abc.ABC):
+class BaseMSBRegionCircle(BaseMSBRegion, abc.ABC):
     """Almost never used (no volume)."""
 
-    ENTRY_SUBTYPE = MSBRegionSubtype.Circle
     REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
     )
 
-    FIELD_INFO = MSBRegion.FIELD_INFO | {
+    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
         "radius": MapFieldInfo(
             "Radius",
             float,
@@ -170,13 +171,12 @@ class MSBRegionCircle(MSBRegion, abc.ABC):
     radius: float
 
 
-class MSBRegionSphere(MSBRegion, abc.ABC):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
+class BaseMSBRegionSphere(BaseMSBRegion, abc.ABC):
     REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
     )
 
-    FIELD_INFO = MSBRegion.FIELD_INFO | {
+    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
         "radius": MapFieldInfo(
             "Radius",
             float,
@@ -195,14 +195,13 @@ class MSBRegionSphere(MSBRegion, abc.ABC):
     radius: float
 
 
-class MSBRegionCylinder(MSBRegion, abc.ABC):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
+class BaseMSBRegionCylinder(BaseMSBRegion, abc.ABC):
     REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("radius", "f"),
         ("height", "f"),
     )
 
-    FIELD_INFO = MSBRegion.FIELD_INFO | {
+    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
         "radius": MapFieldInfo(
             "Radius",
             float,
@@ -229,16 +228,14 @@ class MSBRegionCylinder(MSBRegion, abc.ABC):
     height: float
 
 
-class MSBRegionRect(MSBRegion, abc.ABC):
+class BaseMSBRegionRect(BaseMSBRegion, abc.ABC):
     """Almost never used (no volume)."""
-
-    ENTRY_SUBTYPE = MSBRegionSubtype.Rect
     REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("width", "f"),
         ("depth", "f"),
     )
 
-    FIELD_INFO = MSBRegion.FIELD_INFO | {
+    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
         "width": MapFieldInfo(
             "Width",
             float,
@@ -265,15 +262,14 @@ class MSBRegionRect(MSBRegion, abc.ABC):
     height: float
 
 
-class MSBRegionBox(MSBRegion, abc.ABC):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Box
+class BaseMSBRegionBox(BaseMSBRegion, abc.ABC):
     REGION_TYPE_DATA_STRUCT = BinaryStruct(
         ("width", "f"),
         ("depth", "f"),
         ("height", "f"),
     )
 
-    FIELD_INFO = MSBRegion.FIELD_INFO | {
+    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
         "width": MapFieldInfo(
             "Width",
             float,
@@ -308,41 +304,8 @@ class MSBRegionBox(MSBRegion, abc.ABC):
     height: float
 
 
-class MSBRegionList(MSBEntryList[MSBRegion], abc.ABC):
-    INTERNAL_NAME = "POINT_PARAM_ST"
-    ENTRY_LIST_NAME = "Regions"
-    ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
-    SUBTYPE_CLASSES = {}  # type: dict[MSBRegionSubtype, tp.Type[MSBRegion]]
-    SUBTYPE_OFFSET = -1  # type: int
+class BaseMSBRegionList(BaseMSBEntryList, abc.ABC):
 
-    _entries: list[MSBRegion]
-
-    Points: tp.Sequence[MSBRegionPoint]
-    Circles: tp.Sequence[MSBRegionCircle]
-    Spheres: tp.Sequence[MSBRegionSphere]
-    Cylinders: tp.Sequence[MSBRegionCylinder]
-    Rectangles: tp.Sequence[MSBRegionRect]
-    Boxes: tp.Sequence[MSBRegionBox]
-
-    new_point: tp.Callable[..., MSBRegionPoint] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Point)
-    new_circle: tp.Callable[..., MSBRegionCircle] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Circle)
-    new_sphere: tp.Callable[..., MSBRegionSphere] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Sphere)
-    new_cylinder: tp.Callable[..., MSBRegionCylinder] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Cylinder)
-    new_rect: tp.Callable[..., MSBRegionRect] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Rect)
-    new_box: tp.Callable[..., MSBRegionBox] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Box)
-
-    def pack_entry(self, index: int, entry: MSBRegion):
-        return entry.pack(index)
-
+    @abc.abstractmethod
     def set_indices(self):
-        """Global region index only."""
-        for i, entry in enumerate(self._entries):
-            entry.set_indices(region_index=i)
-
-
-for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:
-    setattr(
-        MSBRegionList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+        pass

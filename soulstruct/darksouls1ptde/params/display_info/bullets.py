@@ -1,7 +1,7 @@
 __all__ = ["BULLET_PARAM_ST"]
 
 from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
-from soulstruct.game_types.param_types import *
+from soulstruct.darksouls1ptde.game_types.param_types import *
 from ..enums import *
 
 

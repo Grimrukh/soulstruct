@@ -7,7 +7,7 @@ __all__ = ["COMMANDS", "TEST_FUNCTIONS", "State"]
 
 import re
 
-from soulstruct.game_types.internal_types import ESDType
+from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.files import PACKAGE_PATH
 
 

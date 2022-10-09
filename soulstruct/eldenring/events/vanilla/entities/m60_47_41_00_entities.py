@@ -1,0 +1,20 @@
+from soulstruct.eldenring.game_types import *
+
+
+class Characters(Character):
+    LargeLivingPot = 1047410700  # c4492_9000 npc 44920040 think 44920000 talk 221006000
+    GuardianGolem = 1047410300  # c4660_9001 npc 46605140 think 46601000
+    KnightoftheGreatJar0 = 1047410701  # c0000_9000 npc 523730040 think 523730000 chara 23730
+    KnightoftheGreatJar1 = 1047410702  # c0000_9001 npc 523740040 think 523740000 chara 23740
+    KnightoftheGreatJar2 = 1047410703  # c0000_9002 npc 523750040 think 523750000 chara 23750
+
+
+class Assets(Asset):
+    AEG099_028_1001 = 1047411500  # AEG099
+    AEG099_029_1001 = 1047411501  # AEG099
+    AEG099_090_9000 = 1047411300  # AEG099
+    AEG099_090_9001 = 1047411301  # AEG099
+    AEG099_090_9002 = 1047411302  # AEG099
+    AEG099_990_9000 = 1047411200  # AEG099
+    AEG099_990_9001 = 1047411201  # AEG099
+    AEG099_990_9002 = 1047411202  # AEG099
