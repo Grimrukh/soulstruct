@@ -96,6 +96,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         self.custom_script_directory = Path()
         self.entities_in_events_directory = False
+        self.include_vanila_entities = False
         self.prefer_json = False
         # TODO: Record last edit time for each file/structure.
 
@@ -628,6 +629,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     self._vanilla_game_root = Path(vanilla_game_root)
                 self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
                 self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
+                self.include_vanila_entities = config.get("IncludeVanillaEntities", False)
                 self.prefer_json = config.get("PreferJSON", False)
             except KeyError:
                 raise SoulstructProjectError(
@@ -752,6 +754,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             "VanillaGameDirectory": str(self._vanilla_game_root),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
             "EntitiesInEventsDirectory": self.entities_in_events_directory,
+            "IncludeVanillaEntities": self.include_vanila_entities,
             "PreferJSON": self.prefer_json,
         }
 
