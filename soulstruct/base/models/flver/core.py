@@ -490,7 +490,7 @@ class FLVER(GameFile):
             )
         for bone in self.bones:
             bone_position = bone.get_absolute_translate(self.bones)
-            axes.scatter(*bone_position.swap_yz(), color="blue", s=10)
+            axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
 

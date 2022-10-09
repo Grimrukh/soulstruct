@@ -393,10 +393,10 @@ class Mesh(BinaryObject):
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        positions = [v.position.swap_yz() for v in self.vertices]
+        positions = [v.position.to_xzy() for v in self.vertices]
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
-            normals = [v.normal.swap_yz() for v in self.vertices]
+            normals = [v.normal.to_xzy() for v in self.vertices]
             for position, normal in zip(positions, normals):
                 axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
@@ -406,7 +406,7 @@ class Mesh(BinaryObject):
         if show_face_sets:
             import numpy as np
             from mpl_toolkits.mplot3d import art3d
-            vertices = np.array([list(v.position.swap_yz()) for v in self.vertices])
+            vertices = np.array([list(v.position.to_xzy()) for v in self.vertices])
             faces = []
             for i, face_set in enumerate(self.face_sets):
                 if i in show_face_sets:

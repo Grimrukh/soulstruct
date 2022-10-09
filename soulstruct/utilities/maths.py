@@ -9,10 +9,8 @@ __all__ = [
     "Vector2",
     "Vector3",
     "Vector4",
-    "Quaternion",
     "Matrix3",
     "Matrix4",
-    "QuatTransform",
     "shift_msb_coordinates",
     "shift",
     "matrix_multiply",
@@ -113,6 +111,9 @@ class Vector(abc.ABC):
     def __truediv__(self, other):
         return self._arithmetic(other, float.__truediv__, "divide")
 
+    def __rtruediv__(self, other):
+        return self._arithmetic(other, float.__rtruediv__, "divide")
+
     def __neg__(self):
         return self.__class__([-self[i] for i in range(self.LENGTH)])
 
@@ -130,7 +131,7 @@ class Vector(abc.ABC):
                 elements.append(f"{x:.{self.REPR_PRECISION}}")
         return f"{self.__class__.__name__}({', '.join(elements)})"
 
-    def __abs__(self):
+    def __abs__(self) -> float:
         """Get norm of `Vector`."""
         return math.sqrt(sum(v ** 2 for v in self))
 
@@ -138,7 +139,13 @@ class Vector(abc.ABC):
         """Simply hashed by data."""
         return hash(tuple(self._data))
 
-    def normalize(self) -> Vector:
+    def get_magnitude(self) -> float:
+        return abs(self)
+
+    def get_squared_magnitude(self) -> float:
+        return sum(v ** 2 for v in self)
+
+    def normalize(self):
         """Return a copy of this `Vector` with unit magnitude."""
         return self.copy() / abs(self)
 
@@ -261,7 +268,7 @@ class Vector3(Vector):
         else:
             raise ValueError(f"Not enough axes given in `axes`: '{axes}'. Must be at least 2.")
 
-    def swap_yz(self) -> Vector3:
+    def to_xzy(self) -> Vector3:
         return Vector3(self.x, self.z, self.y)
 
 
@@ -301,106 +308,13 @@ class Vector4(Vector):
     def w(self, value: float):
         self._data[3] = value
 
-
-class Quaternion(Vector4):
-
-    def to_rotation_matrix(self) -> Matrix3:
-        """Convert `Quaternion` to equivalent 3x3 rotation matrix, which may also be used as the top-left 3x3 submatrix
-        of a complete 4x4 transform matrix."""
-        x, y, z, r = self
-
-        # Rotation sub-matrix.
-        v00 = 2 * (r * r + x * x) - 1
-        v01 = 2 * (x * y - r * z)
-        v02 = 2 * (x * z + r * y)
-        v10 = 2 * (x * y + r * z)
-        v11 = 2 * (r * r + y * y) - 1
-        v12 = 2 * (y * z - r * x)
-        v20 = 2 * (x * z - r * y)
-        v21 = 2 * (y * z + r * x)
-        v22 = 2 * (r * r + z * z) - 1
-
-        return Matrix3(v00, v01, v02, v10, v11, v12, v20, v21, v22)
-
-    def largest_abs_value_index(self) -> int:
-        """Returns the index 0-3 of the quaternion's largest absolute value."""
-        max_abs = max(self._data, key=lambda x: abs(x))
-        return self._data.index(max_abs)
-
-    def conjugate(self) -> Quaternion:
-        """Return conjugate `Quaternion` to this one."""
-        return Quaternion(-self.x, -self.y, -self.z, self.w)
-
-    def inverse(self) -> Quaternion:
-        """Return inverse `Quaternion` to this one."""
-        return self.conjugate() / abs(self)
-
-    def imag(self) -> Vector3:
-        """Return imaginary components of `Quaternion` in a `Vector3`."""
-        return Vector3(self.x, self.y, self.z)
-
-    def real(self) -> float:
-        """Return real component of `Quaternion`."""
-        return self.w
-
-    def apply_to_vector(self, vector: tp.Union[Vector3, Vector4]):
-        v = Vector3(vector[:3]) if isinstance(vector, Vector4) else vector
-        imag, real = self.imag(), self.real()
-        a = 2.0 * imag.dot(v) * imag
-        b = (real ** 2 - imag.dot(imag)) * v
-        c = 2.0 * real * imag.cross(v)
-        new_v = a + b + c
-        if isinstance(vector, Vector4):
-            return Vector4(*new_v, vector[3])
-        return new_v
-
-    def __mul__(self, other: tp.Union[Quaternion, int, float]):
-        if isinstance(other, (float, int)):  # scalar
-            return Quaternion(other * self.x, other * self.y, other * self.z, other * self.w)
-        elif isinstance(other, Quaternion):
-            imag, real = self.imag(), self.real()
-            other_imag, other_real = other.imag(), other.real()
-            new_imag = imag.cross(other_imag) + real * other_imag + other_real * imag
-            new_real = real * other_real - imag.dot(other_imag)
-            return Quaternion(*new_imag, new_real)
-        raise TypeError("Can only multiply `Quaternion` with a scalar or another `Quaternion`.")
+    @classmethod
+    def from_row_mat(cls, row_mat):
+        return cls(row_mat[0][0], row_mat[0][1], row_mat[0][2], row_mat[0][3])
 
     @classmethod
-    def from_axis_angle(cls, axis: Vector3, angle: float, radians=False):
-        """Construct a unit `Quaternion` that represents a rotation of `angle` degrees/radians around `axis`."""
-        if not radians:
-            angle = math.radians(angle)
-        factor = math.sin(angle / 2)
-        quat_xyz = Vector3(axis) * factor
-        w = math.cos(angle / 2)
-        return cls(*quat_xyz, w).normalize()
-
-    @classmethod
-    def identity(cls):
-        return cls(0.0, 0.0, 0.0, 1.0)
-
-    @staticmethod
-    def slerp(q1: Quaternion, q2: Quaternion, t: float) -> Quaternion:
-        """Spherically interpolate between two Quaternions by parameter `t` in interval [0, 1].
-
-        Adapted from:
-            https://stackoverflow.com/questions/44706591/how-to-test-quaternion-slerp
-        """
-        q1 = q1.normalize()
-        q2 = q2.normalize()
-        dot = q1.dot(q2)
-
-        if dot < 0.0:
-            # Quaternions have opposite-handedness, so slerp won't take the shortest path unless one is negated.
-            q2 = -q2
-            dot = -dot
-
-        dot = min(1.0, max(0.0, dot))
-        theta = math.acos(dot) * t
-        q3 = q2 - q1 * dot
-        a = q1 * math.cos(theta)
-        b = q3 * math.sin(theta)
-        return a + b
+    def from_column_mat(cls, column_mat):
+        return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0], column_mat[3][0])
 
 
 class Matrix(abc.ABC):
@@ -591,7 +505,8 @@ class Matrix4(Matrix):
             return Matrix4(*matrix_multiply(self.data, other.data, flat=True))
         elif isinstance(other, Vector3):
             return Vector3.from_column_mat(matrix_multiply(self.data, other.to_mat_column() + [[1]]))
-        # TODO: May as well support `Vector4`.
+        elif isinstance(other, Vector4):
+            return Vector4.from_column_mat(matrix_multiply(self.data, other.to_mat_column()))
         raise TypeError(f"Cannot matrix multiply with type {type(other)}.")
 
     def get_scale(self) -> Vector3:
@@ -610,6 +525,31 @@ class Matrix4(Matrix):
         else:
             raise TypeError("`scale_vector` must be a Vector3, list, tuple, int, or float.")
 
+    def get_rotation_submatrix(self) -> Matrix3:
+        return Matrix3(
+            self[0][0], self[0][1], self[0][2],
+            self[1][0], self[1][1], self[1][2],
+            self[2][0], self[2][1], self[2][2],
+        )
+
+    @classmethod
+    def from_translate(cls, translate: Vector3) -> Matrix4:
+        return cls(
+            1.0, 0.0, 0.0, translate.x,
+            0.0, 1.0, 0.0, translate.y,
+            0.0, 0.0, 1.0, translate.z,
+            0.0, 0.0, 0.0, 1.0,
+        )
+
+    @classmethod
+    def from_scale(cls, scale: Vector3) -> Matrix4:
+        return cls(
+            scale.x, 0.0, 0.0, 0.0,
+            0.0, scale.y, 0.0, 0.0,
+            0.0, 0.0, scale.z, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        )
+
     def get_translate(self) -> Vector3:
         return Vector3(self.data[0][3], self.data[1][3], self.data[2][3])
 
@@ -623,84 +563,6 @@ class Matrix4(Matrix):
             raise TypeError("`translate_vector` must be a Vector3, list, tuple, int, or float.")
         for i in range(3):
             self.data[i][3] = float(translate_vector[i])
-
-
-class QuatTransform:
-
-    translate: Vector3
-    rotation: Quaternion
-    scale: Vector3
-
-    def __init__(self, translate: tp.Union[Vector3, Vector4], rotation: Quaternion, scale: tp.Union[Vector3, Vector4]):
-        self.translate = Vector3(translate)
-        self.rotation = Quaternion(rotation)
-        self.scale = Vector3(scale)
-
-    @classmethod
-    def identity(cls) -> QuatTransform:
-        return cls(
-            Vector3.zero(),
-            Quaternion.identity(),
-            Vector3.ones(),
-        )
-
-    @classmethod
-    def lerp(cls, transform1: QuatTransform, transform2: QuatTransform, t: float):
-        """Linearly interpolate translate and scale, and spherically interpolate rotation Quaternion.
-
-        `t` will be clamped to [0, 1] interval.
-        """
-        t = min(1.0, max(0.0, t))
-        translate = transform1.translate + (transform2.translate - transform1.translate) * t
-        rotation = Quaternion.slerp(transform1.rotation, transform2.rotation, t)
-        scale = transform1.scale + (transform2.scale - transform1.scale) * t
-        return cls(translate, rotation, scale)
-
-    def inverse_mul(self, other: QuatTransform) -> QuatTransform:
-        """Compose the inverse of this `QuatTransform` with another `QuatTransform`.
-
-        Simply inverts all the sub-transformations done in `__matmul__` below.
-        """
-        inverse_rotation = self.rotation.inverse()
-        new_scale = other.scale / self.scale
-        new_rotation = inverse_rotation * other.rotation
-        new_translate = (inverse_rotation * other.translate) / self.scale - self.translate
-        return QuatTransform(new_translate, new_rotation, new_scale)
-
-    def __matmul__(self, other: QuatTransform) -> QuatTransform:
-        """Compose two `QuatTransforms`. Not generally commutative, of course.
-
-        This is equivalent to composing the two 4x4 matrices represented by these `QuatTransform`s.
-        """
-
-        new_translate = self.translate + self.scale * self.rotation.apply_to_vector(other.translate)
-        new_rotation = self.rotation * other.rotation  # `Quaternion` multiplication
-        new_scale = self.scale * other.scale
-
-        return QuatTransform(new_translate, new_rotation, new_scale)
-
-    def to_matrix4(self) -> Matrix4:
-        """Convert `translate` vector, `rotation` quaternion, and `scale` vector to a 4x4 transform matrix."""
-        rotation_submatrix = self.rotation.to_rotation_matrix()
-        # Apply scale on top of rotation sub-matrix.
-        for i in range(3):
-            rotation_submatrix[i][i] *= self.scale[i]
-
-        return Matrix4(
-            *rotation_submatrix[0], self.translate[0],
-            *rotation_submatrix[1], self.translate[1],
-            *rotation_submatrix[2], self.translate[2],
-            0.0, 0.0, 0.0, 1.0,
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"QuatTransform(\n"
-            f"    translate={self.translate}\n"
-            f"    rotation={self.rotation}\n"
-            f"    scale={self.scale}\n"
-            f")"
-        )
 
 
 def shift_msb_coordinates(distance: float, translate=(0.0, 0.0, 0.0), ry=0.0):

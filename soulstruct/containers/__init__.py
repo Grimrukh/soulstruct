@@ -26,7 +26,7 @@ def Binder(
     detect_source = binder_source
     if isinstance(binder_source, (str, Path)):
         if not Path(binder_source).is_dir():
-            binder_path = Path(binder_source).absolute()
+            binder_path = Path(binder_source).resolve()
             if not binder_path.is_file():
                 raise FileNotFoundError(f"Could not find binder file: {binder_path}")
             if binder_path.suffix == ".dcx":
