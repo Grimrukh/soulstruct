@@ -13,6 +13,7 @@ from soulstruct.containers.dcx import DCXType
 from soulstruct.games import GameSpecificType
 from soulstruct.utilities.binary import BinaryReader
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
+from soulstruct.utilities.files import PACKAGE_PATH
 
 from .msb_entry import MSBEntry
 
@@ -434,11 +435,12 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         area_id: int = None,
         block_id: int = None,
         # TODO: cc_id and dd_id for Elden Ring
-        append_to_module: str = ""
+        include_vanilla_entities: bool = False,
     ):
         """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script.
-
-        If `append_to_module` text is given, all map entities will be appended to it.
+        
+        If include_vanilla_entities is true, attempts to append this map's vanilla_entities
+        content to the generated file.
         """
         if module_path is None:
             if self.path is None:
@@ -482,6 +484,21 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
         module_path = Path(module_path)
 
         game_types_import = f"from soulstruct.{self.GAME.submodule_name}.game_types import *\n"
+
+        if include_vanilla_entities:
+            game_folder = self.GAME.submodule_name
+            # DS1R vanilla_entities are located in PTDE folder
+            if game_folder == 'darksouls1r':
+                game_folder = 'darksouls1ptde'
+            try:
+                append_to_module = PACKAGE_PATH(
+                    f"{game_folder}/events/vanilla_entities/{self.path.stem}_entities.py"
+                ).read_text()
+            except FileNotFoundError:
+                append_to_module = ""
+        else:
+            append_to_module = ""
+
         if append_to_module:
             if game_types_import not in append_to_module:
                 # Add game type start import to module. (Very rare that it wouldn't already be there.)

@@ -193,18 +193,11 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
                 game_map = self.maps.GET_MAP(map_name)
 
                 if write_vanilla_entities_result == 0:
-                    try:
-                        vanilla_module = PACKAGE_PATH(
-                            f"darksouls1ptde/events/vanilla_entities/{game_map.emevd_file_stem}_entities.py"
-                        ).read_text()
-                    except FileNotFoundError:
-                        vanilla_module = ""
-                else:
-                    vanilla_module = ""
+                    self.include_vanila_entities = True
 
                 msb.write_entities_module(
                     self.project_root / f"entities/{game_map.emevd_file_stem}_entities.py",
-                    append_to_module=vanilla_module,
+                    include_vanilla_entities=self.include_vanila_entities
                 )
             return True
         else:
