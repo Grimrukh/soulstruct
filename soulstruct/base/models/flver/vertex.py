@@ -589,19 +589,21 @@ class Vertex:
         return f"Vertex{repr(self.position)[7:]}"
 
     def __repr__(self):
-        return (
-            f"Vertex(\n"
-            f"    position = {self.position}\n"
-            f"    bone_weights = {self.bone_weights}\n"
-            f"    bone_indices = {self.bone_indices}\n"
-            f"    normal = {self.normal}\n"
-            f"    normal_w = {self.normal_w}\n"
-            f"    uvs = {self.uvs}\n"
-            f"    tangents = {self.tangents}\n"
-            f"    bitangent = {self.bitangent}\n"
-            f"    colors = {self.colors}\n"
-            f")"
-        )
+        lines = [f"    position = {self.position},"]
+        if any(self.bone_weights):
+            lines += [f"    bone_weights = {self.bone_weights},"]
+        if any(self.bone_indices) or any(self.bone_weights):
+            lines += [f"    bone_indices = {self.bone_indices},"]
+        lines += [f"    normal = {self.normal},"]
+        if self.normal_w != 127:
+            lines += [f"    normal_w = {self.normal_w},"]
+        lines += [f"    uvs = {self.uvs},"]
+        lines += [f"    tangents = {self.tangents},"]
+        if any(self.bitangent):
+            lines += [f"    bitangent = {self.bitangent},"]
+        if any(c != 1.0 for v in self.colors for c in v):
+            lines += [f"    colors = {self.colors},"]
+        return "Vertex(\n" + "\n".join(lines) + "\n)"
 
 
 class VertexBufferSizeError(SoulstructError):

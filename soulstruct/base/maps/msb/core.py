@@ -335,8 +335,8 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
                 existing_entries.add_entry(other_entry)
                 existing_entry_list.add(other_entry.name)
             if skipped_repeated_entries:
-                print(
-                    f"# WARNING: {len(skipped_repeated_entries)} MSB {entry_type} entries already exist in MSB and "
+                _LOGGER.warning(
+                    f"{len(skipped_repeated_entries)} MSB {entry_type} entries already exist in MSB and "
                     f"were not merged in from '{other_msb_path.name}'."
                 )
         return merged_msb
