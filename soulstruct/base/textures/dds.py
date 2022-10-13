@@ -1,5 +1,4 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use.
-
+"""
 As always, courtesy of SoulsFormats by TKGP:
     https://github.com/JKAnderson/SoulsFormats/blob/master/SoulsFormats/Formats/TPF/DDS.cs
 """
@@ -304,7 +303,7 @@ class DDS(GameFile):
 
 
 def convert_dds_file(
-    dds_path: tp.Union[str, Path], output_dir: tp.Union[str, Path], output_format: str, input_format: str = None
+    dds_path: str | Path, output_dir: str | Path, output_format: str, input_format: str = None
 ):
     """Convert DDS file path to a different format using DirectX-powered `texconv.exe`.
 

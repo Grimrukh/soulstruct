@@ -1,10 +1,7 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
-
 from __future__ import annotations
 
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
 
-import typing as tp
 from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
@@ -55,7 +52,7 @@ class GXList:
 
     gx_items: list[GXItem]
 
-    def __init__(self, source: tp.Union[BinaryReader, list[GXItem], None], version: Version = None):
+    def __init__(self, source: BinaryReader | list[GXItem] | None, version: Version = None):
         self.gx_items = []
         self.terminator_id = 2 ** 31 - 1  # max value of signed int; sometimes also -1
         self.terminator_null_count = 0

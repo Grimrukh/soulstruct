@@ -1,4 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["BinderFlags", "BinderError", "BaseBinder", "BinderHashTable"]
@@ -215,7 +214,7 @@ class BaseBinder(GameFile, abc.ABC):
             loaded_manifest[field] = value
         return loaded_manifest
 
-    def add_entries_from_manifest(self, entries: dict, directory: tp.Union[str, Path], use_id_prefix: bool):
+    def add_entries_from_manifest(self, entries: dict, directory: str | Path, use_id_prefix: bool):
         directory = Path(directory)
         unsorted_entries = {}  # maps ID to `(path, data, flags)` tuple
         for root, entry_dicts in entries.items():

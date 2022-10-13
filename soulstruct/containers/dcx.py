@@ -1,5 +1,4 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use.
-
+"""
 This module originally used a `DCX` class, but I changed it to static functions to avoid the unnecessary OOP confusion
 when loading files, since `DCX(data).pack()` and `DCX(path).data` were the most common use cases anyway.
 """

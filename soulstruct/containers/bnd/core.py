@@ -1,4 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 __all__ = ["BaseBND", "BND3", "BND4"]
 
 import abc

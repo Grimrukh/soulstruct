@@ -1,9 +1,6 @@
 """Basic information structures for all FromSoftware games used across Soulstruct.
 
-These `Game` instances are also used as singletons for game checking.
-
-NOTE: This file is Python 3.9 compatible for Blender 3.X use.
-"""
+These `Game` instances are also used as singletons for game checking."""
 from __future__ import annotations
 
 __all__ = [
@@ -76,7 +73,7 @@ class Game:
         # TODO: other file version info
         # TODO: Soulstruct event import shortcut functions, etc.
 
-    def dcxify(self, path: tp.Union[str, Path]) -> Path:
+    def dcxify(self, path: str | Path) -> Path:
         """Append or remove ".dcx" to/from given path according to `.default_dcx`."""
         path = Path(path)
         if not self.default_dcx and path.suffix == ".dcx":
@@ -308,7 +305,7 @@ GAMES = (
 )
 
 
-def get_game(game_name: tp.Union[str, Game]):
+def get_game(game_name: str | Game):
     """Spaces, case, apostrophes, and colons in aliases don't matter."""
     if isinstance(game_name, Game):
         return game_name

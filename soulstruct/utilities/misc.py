@@ -1,5 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
-
 from __future__ import annotations
 
 __all__ = [

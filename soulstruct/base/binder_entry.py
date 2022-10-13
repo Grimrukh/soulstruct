@@ -3,8 +3,6 @@
 File is located here, rather than in `soulstruct.containers`, because it is both a valid `GameFile` source *and* one
 element appearing inside `BaseBinder` subclass of `GameFile`, and must therefore be carefully placed to avoid circular
 imports in Soulstruct.
-
-NOTE: This file is Python 3.9 compatible for Blender 3.X use.
 """
 from __future__ import annotations
 

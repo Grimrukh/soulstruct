@@ -1,4 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["BaseBXF", "BXF3", "BXF4"]
@@ -13,7 +12,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash
 
 from .base import BaseBinder, BinderHashTable, BinderFlags
-from .dcx import DCXType, compress, decompress
+from .dcx import DCXType, compress
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -84,8 +83,8 @@ class BaseBXF(BaseBinder, abc.ABC):
 
     def write(
         self,
-        file_path: tp.Union[None, str, Path] = None,
-        bdt_file_path: tp.Union[None, str, Path] = None,
+        file_path: None | str | Path = None,
+        bdt_file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
     ):

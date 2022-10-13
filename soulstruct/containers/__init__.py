@@ -1,9 +1,7 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["Binder"]
 
-import typing as tp
 from pathlib import Path
 
 from .bnd import BND3, BND4
@@ -14,7 +12,7 @@ from .tpf import TPF
 
 def Binder(
     binder_source=None, dcx_type=None, from_bak=False, create_bak_if_missing=True
-) -> tp.Union[BND3, BND4, BXF3, BXF4]:
+) -> BND3 | BND4 | BXF3 | BXF4:
     """Auto-detects binder format (BND/BXF) and version (3/4) to use when opening the source.
 
     Args:

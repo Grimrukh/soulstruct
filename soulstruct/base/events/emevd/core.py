@@ -339,8 +339,8 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_evs(
         self,
-        entity_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
-        entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        entity_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        entity_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
         warn_missing_enums=True,
         entity_module_prefix=".",
         is_common_func=False,
@@ -606,8 +606,8 @@ class EMEVD(GameFile, abc.ABC):
     def write_evs(
         self,
         evs_path=None,
-        entity_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
-        entity_non_star_module_paths: tp.Sequence[tp.Union[str, Path], ...] = (),
+        entity_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        entity_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
         warn_missing_enums=True,
         entity_module_prefix=".",
         is_common_func=False,

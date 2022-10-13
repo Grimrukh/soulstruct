@@ -128,7 +128,7 @@ class TalkESDBND(BaseBND, abc.ABC):
 
     def write(
         self,
-        file_path: tp.Union[None, str, Path] = None,
+        file_path: None | str | Path = None,
         make_dirs=True,
         check_hash=False,
         skip_update=False,

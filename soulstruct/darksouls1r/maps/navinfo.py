@@ -1106,7 +1106,7 @@ class NavInfo:
 
     def __init__(
         self,
-        map_path: tp.Union[str, Path],
+        map_path: str | Path,
         msb_source: tp.Union[None, MSB, str, Path] = None,
         map_id: str = None,
     ):

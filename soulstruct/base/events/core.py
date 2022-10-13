@@ -24,13 +24,13 @@ EVENT_EXTENSIONS = {
 
 def convert_events(
     output_type: str,
-    output_directory: tp.Union[str, Path],
-    input_directory: tp.Union[str, Path],
+    output_directory: str | Path,
+    input_directory: str | Path,
     maps: tp.Iterable[Map],
     emevd_class: tp.Type[EMEVD],
     input_type: tp.Optional[str] = None,
     check_hash=False,
-    merge_emevd_sources: tp.Sequence[tp.Union[str, Path]] = (),
+    merge_emevd_sources: tp.Sequence[str | Path] = (),
 ):
     """Convert all events from one format to another.
 

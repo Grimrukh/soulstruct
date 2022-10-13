@@ -1,5 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
-
 from __future__ import annotations
 
 __all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
@@ -116,14 +114,14 @@ class GameFile(abc.ABC):
         raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
 
     @classmethod
-    def from_binder(cls, binder_source: Typing, entry_id_or_name: tp.Union[int, str], from_bak=False):
+    def from_binder(cls, binder_source: Typing, entry_id_or_name: int | str, from_bak=False):
         """Open a file of this type from the given `entry_id_or_name` (`str` or `int`) of the given `Binder` source."""
         from soulstruct.containers import Binder
         binder = Binder(binder_source, from_bak=from_bak)
         return cls(binder[entry_id_or_name])
 
     @classmethod
-    def multiple_from_binder(cls, binder_source, entry_ids_or_names: tp.Sequence[tp.Union[int, str]], from_bak=False):
+    def multiple_from_binder(cls, binder_source, entry_ids_or_names: tp.Sequence[int | str], from_bak=False):
         """Open multiple files of this type from the given `entry_ids_or_names` (`str` or `int`) from
         `Binder` source."""
         from soulstruct.containers import Binder
@@ -159,7 +157,7 @@ class GameFile(abc.ABC):
         """Create a dictionary from `GameFile` instance. Not supported by default."""
         raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -188,7 +186,7 @@ class GameFile(abc.ABC):
         with file_path.open("wb") as f:
             f.write(packed)
 
-    def write_json(self, file_path: tp.Union[None, str, Path], encoding="utf-8", indent=4, **kwargs):
+    def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4, **kwargs):
         """Create a dictionary from `GameFile` instance. Requires `.to_dict()` to be implemented by `GameFile` subclass.
 
         The file path will have the `.json` suffix added automatically.
@@ -203,7 +201,7 @@ class GameFile(abc.ABC):
             file_path = file_path.with_suffix(file_path.suffix + ".json")
         write_json(file_path, json_dict, indent=indent, encoding=encoding)
 
-    def create_bak(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True):
+    def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
         file_path = self._get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -212,7 +210,7 @@ class GameFile(abc.ABC):
     def copy(self):
         return copy.deepcopy(self)
 
-    def _get_file_path(self, file_path: tp.Union[None, str, Path]) -> Path:
+    def _get_file_path(self, file_path: None | str | Path) -> Path:
         """Get default path of binary file, based on `EXT` and `dcx_type`."""
         if file_path is None:
             if self.path is None:

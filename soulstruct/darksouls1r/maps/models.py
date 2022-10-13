@@ -23,7 +23,7 @@ class MSBModelList(_BaseMSBModelList):
         source_model_id: tp.Union[int, str],
         dest_map,
         dest_model_id: tp.Union[int, str] = None,
-        map_directory: tp.Union[None, str, Path] = None,
+        map_directory: None | str | Path = None,
         overwrite=False,
     ):
         """Import a Map Piece model from `source_map` to `dest_map` (should be this map)."""

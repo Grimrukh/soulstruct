@@ -1,5 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
-
 from __future__ import annotations
 
 __all__ = [
@@ -192,7 +190,7 @@ class BinaryStruct:
 
     def unpack(
         self,
-        source: tp.Union[bytes, io.BufferedIOBase],
+        source: bytes | io.BufferedIOBase,
         *fields,
         byte_order: str = None,
         exclude_asserted=False,
@@ -344,7 +342,7 @@ class BinaryStruct:
         return struct_dict
 
     def pack(
-        self, source: tp.Union[dict, object] = None, **kwargs
+        self, source: dict | object = None, **kwargs
     ) -> tp.Optional[bytes]:
         """Pack this `BinaryStruct` with field data given in `source`, which can be a `dict` (fields as keys) or
         `object` (fields as attributes). Any field names given as `kwargs` will take precedence over the fields given by
@@ -606,7 +604,7 @@ class BinaryObject(abc.ABC):
         return output
 
     @classmethod
-    def get_field_default(cls, field: BinaryStruct.BinaryField) -> tp.Union[str, bytes, bool, int, float]:
+    def get_field_default(cls, field: BinaryStruct.BinaryField) -> str | bytes | bool | int | float:
         if field.asserted:
             return field.asserted
         field_types = cls._get_type_hints()
@@ -650,7 +648,7 @@ class BinaryReader:
 
     def __init__(
         self,
-        buffer: tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader],
+        buffer: str | Path | bytes | bytearray | io.BufferedIOBase | BinderEntry | BinaryReader,
         byte_order="<",
     ):
         self.buffer = None
@@ -701,7 +699,7 @@ class BinaryReader:
             self.seek(initial_offset)
         return data
 
-    def unpack_value(self, fmt, offset=None, relative_offset=False, asserted=None) -> tp.Union[bool, int, float, bytes]:
+    def unpack_value(self, fmt, offset=None, relative_offset=False, asserted=None) -> bool | int | float | bytes:
         """Call `unpack()` and return the single value returned.
 
         If `asserted` is given, an `AssertionError` will be raised if the unpacked value is not equal to `asserted`.
@@ -722,13 +720,13 @@ class BinaryReader:
         """Utility function for simplifying little-endian one-byte reads."""
         return self.unpack_value(">B" if big_endian else "<B")
 
-    def peek(self, fmt_or_size: tp.Union[str, int]):
+    def peek(self, fmt_or_size: str | int) -> bool | int | float | bytes | tuple:
         """Unpack `fmt_or_size` (or just read bytes) and return the unpacked values without changing the offset."""
         if isinstance(fmt_or_size, int):
             return self.read(fmt_or_size, offset=self.position)
         return self.unpack(fmt_or_size, offset=self.position)
 
-    def peek_value(self, fmt) -> tp.Union[bool, int, float]:
+    def peek_value(self, fmt) -> bool | int | float:
         """Unpack `fmt` and return the unpacked value without changing the offset."""
         return self.unpack_value(fmt, offset=self.position)
 
@@ -885,14 +883,14 @@ class BinaryWriter:
         packed = struct.pack(self.parse_fmt(fmt), *values)
         self._array[offset:offset + len(packed)] = packed
 
-    def append(self, other: tp.Union[bytearray, bytes]):
+    def append(self, other: bytearray | bytes):
         """Manually add existing binary data (e.g. a packed `BinaryStruct`) all at once."""
         self._array += other
 
     def pack_struct(
         self,
         binary_struct: BinaryStruct,
-        source: tp.Union[dict, object] = None,
+        source: dict | object = None,
         **kwargs,
     ):
         """Pack and/or reserve all fields present in `binary_struct`.
@@ -1008,7 +1006,7 @@ class BinaryWriter:
         return bytes(self._array)
 
 
-def read_chars_from_bytes(data, offset=0, length=None, encoding=None) -> tp.Union[bytes, str]:
+def read_chars_from_bytes(data, offset=0, length=None, encoding=None) -> bytes | str:
     """Read characters from a bytes object (an encoded string). Use 'read_chars_from_buffer' if you are using a buffer.
 
     If 'length=None' (default), characters will be read until null termination from the given offset. Otherwise,
@@ -1044,7 +1042,7 @@ def read_chars_from_buffer(
     reset_old_offset=True,
     encoding: str = None,
     strip=True,
-) -> tp.Union[str, bytes]:
+) -> str | bytes:
     """Read characters from a buffer (type IOBase). Use 'read_chars_from_bytes' if your data is already in bytes format.
 
     Args:
@@ -1103,7 +1101,7 @@ def read_chars_from_buffer(
                 return stripped_array
 
 
-def get_blake2b_hash(data: tp.Union[bytes, str, Path]) -> bytes:
+def get_blake2b_hash(data: bytes | str | Path) -> bytes:
     if isinstance(data, (str, Path)):
         file_hash = hashlib.blake2b()
         with Path(data).open("rb") as f:

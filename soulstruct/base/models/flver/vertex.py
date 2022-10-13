@@ -1,4 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = [
@@ -12,7 +11,6 @@ __all__ = [
 ]
 
 import logging
-import typing as tp
 from enum import IntEnum
 
 from soulstruct.base.models.color import ColorRGBA
@@ -126,7 +124,7 @@ class BufferLayout:
 
     members: list[LayoutMember]
 
-    def __init__(self, source: tp.Union[BinaryReader, list[LayoutMember]]):
+    def __init__(self, source: BinaryReader | list[LayoutMember]):
         self.members = []
 
         if isinstance(source, BinaryReader):
@@ -225,7 +223,7 @@ class VertexBoneIndices:
         for i in range(4):
             yield self[i]
 
-    def __eq__(self, other: tp.Union[VertexBoneIndices, tuple, list]):
+    def __eq__(self, other: VertexBoneIndices | tuple | list):
         if len(other) != 4:
             raise ValueError("Cannot only compare `VertexBoneIndices` for equality to a sequence of length 4.")
         return all(self[i] == other[i] for i in range(4))
@@ -273,7 +271,7 @@ class VertexBoneWeights:
         for i in range(4):
             yield self[i]
 
-    def __eq__(self, other: tp.Union[VertexBoneWeights, tuple, list]):
+    def __eq__(self, other: VertexBoneWeights | tuple | list):
         if len(other) != 4:
             raise ValueError("Cannot only compare `VertexBoneWeights` for equality to a sequence of length 4.")
         return all(self[i] == other[i] for i in range(4))

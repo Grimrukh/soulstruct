@@ -87,7 +87,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
     DATA_TYPES = {}  # type: dict[str, type]
 
-    def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: tp.Union[str, Path] = None):
+    def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: str | Path = None):
 
         self.game_root = Path()
         self.last_import_time = ""

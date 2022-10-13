@@ -20,8 +20,8 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_[\w]+\.param)")  # e.g. 'm12_1_LensFlare.param'
-_DRAW_PARAM_BND_FILE_NAME_RE = re.compile(r"(a\d\d|default)(_[\w]+\.DrawParam\.parambnd)(\.dcx)?")
+_DRAW_PARAM_FILE_NAME_RE = re.compile(r"([ms]\d\d|default)(_\d)?(_\w+\.param)")  # e.g. 'm12_1_LensFlare.param'
+_DRAW_PARAM_BND_FILE_NAME_RE = re.compile(r"(a\d\d|default)(_\w+\.DrawParam\.parambnd)(\.dcx)?")
 
 
 DRAW_PARAMS = (
@@ -149,7 +149,7 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
                 else:
                     self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Write to `DrawParamBND` file after updating entries."""
         self.update_entries()
         super().write(file_path, make_dirs, check_hash=check_hash, **pack_kwargs)

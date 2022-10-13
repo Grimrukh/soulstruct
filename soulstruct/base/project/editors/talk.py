@@ -137,7 +137,7 @@ class TalkEditor(BaseEditor):
     def __init__(
         self,
         project,
-        esp_directory: tp.Union[str, Path],
+        esp_directory: str | Path,
         global_map_choice_func: tp.Callable,
         text_font_size=10,
         linker=None,

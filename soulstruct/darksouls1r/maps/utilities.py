@@ -298,8 +298,8 @@ def build_ffxbnd(
 
 
 def import_map_piece_flver(
-    source_flver_path: tp.Union[str, Path],
-    dest_flver_path: tp.Union[str, Path],
+    source_flver_path: str | Path,
+    dest_flver_path: str | Path,
     overwrite=False,
 ):
     """Move (copy) a map piece from one map to another. Handles all FLVER (model) and TPF (texture) files - everything
@@ -367,7 +367,7 @@ def import_map_piece_flver(
     shutil.copy(source_flver_path, dest_flver_path)  # intentionally not using `copy2` so file appears modified
 
 
-def find_flver_textures(flver_path: tp.Union[str, Path]) -> list[BinderEntry]:
+def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     """Search all TPFBHD binders in the area folder (e.g. "map/m10") of the given FLVER for that FLVER's textures."""
     flver_path = Path(flver_path)
     texture_dir = flver_path.parent.parent / flver_path.parent.name[0:3]  # e.g. "m10"
@@ -394,7 +394,7 @@ def find_flver_textures(flver_path: tp.Union[str, Path]) -> list[BinderEntry]:
     return tpf_entries
 
 
-def dump_all_map_textures(dump_directory: tp.Union[str, Path], map_directory: tp.Union[str, Path] = None):
+def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path = None):
     """Unpacks all `TPFBHD` binders in all map area folders (e.g. `MapStudio/m10`) and dumps the textures into the given
     folder. For vanilla installations, this amounts to 5912 files taking up a total of 1.7 GB.
 

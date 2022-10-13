@@ -430,7 +430,7 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
 
     def write_entities_module(
         self,
-        module_path: tp.Union[str, Path] = None,
+        module_path: str | Path = None,
         area_id: int = None,
         block_id: int = None,
         # TODO: cc_id and dd_id for Elden Ring

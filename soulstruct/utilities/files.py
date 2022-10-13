@@ -1,5 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
-
 __all__ = [
     "PACKAGE_PATH",
     "find_dcx",
@@ -19,7 +17,6 @@ import shutil
 import string
 import sys
 import types
-import typing as tp
 from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
@@ -82,7 +79,7 @@ def _get_drives():
     return drives
 
 
-def import_arbitrary_file(path: tp.Union[str, Path]) -> types.ModuleType:
+def import_arbitrary_file(path: str | Path) -> types.ModuleType:
     path = Path(path)
     spec = importlib.util.spec_from_file_location(path.stem, str(path))
     module = importlib.util.module_from_spec(spec)
@@ -92,7 +89,7 @@ def import_arbitrary_file(path: tp.Union[str, Path]) -> types.ModuleType:
     return module
 
 
-def read_json(json_path: tp.Union[str, Path], encoding=None) -> tp.Union[dict, list]:
+def read_json(json_path: str | Path, encoding=None) -> dict | list:
     """Read JSON file using given `encoding` into list or dictionary."""
     try:
         return json.loads(Path(json_path).read_text(encoding=encoding))
@@ -113,7 +110,7 @@ def read_json(json_path: tp.Union[str, Path], encoding=None) -> tp.Union[dict, l
 
 
 def write_json(
-    json_path: tp.Union[str, Path], data: tp.Union[list, dict], indent=4, encoding="utf-8", ensure_ascii=True
+    json_path: str | Path, data: list | dict, indent=4, encoding="utf-8", ensure_ascii=True
 ):
     """Write given `data` list or dictionary to JSON file with given `encoding`."""
     json_str = json.dumps(data, indent=indent, ensure_ascii=ensure_ascii)

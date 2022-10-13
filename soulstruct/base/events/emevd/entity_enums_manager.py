@@ -65,8 +65,8 @@ class EntityEnumsManager(abc.ABC):
 
     def __init__(
         self,
-        star_module_paths: tp.Sequence[tp.Union[str, Path]],
-        non_star_module_paths: tp.Sequence[tp.Union[str, Path]],
+        star_module_paths: tp.Sequence[str | Path],
+        non_star_module_paths: tp.Sequence[str | Path],
         all_event_ids: list[int],
     ):
         """Loads modules and monitors non-star enum usage for `EMEVD.to_evs()`.

@@ -1,4 +1,3 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["TPFTexture", "TPF"]
@@ -90,7 +89,7 @@ class TPFTexture:
         platform: TPFPlatform,
         tpf_flags: int,
         encoding: str,
-        tpf_path: tp.Union[None, str, Path] = None,
+        tpf_path: None | str | Path = None,
     ):
         self = cls()
         self.tpf_path = tpf_path
@@ -211,7 +210,7 @@ class TPFTexture:
     def get_dds(self) -> DDS:
         return DDS(self.data)
 
-    def write_dds(self, dds_path: tp.Union[None, str, Path] = None):
+    def write_dds(self, dds_path: None | str | Path = None):
         if dds_path is None:
             if self.tpf_path is None:
                 raise ValueError(f"Cannot determine DDS path automatically (TPF path not known).")
@@ -335,7 +334,7 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpfs(cls, tpfbhd_directory: tp.Union[str, Path]) -> dict[str, TPF]:
+    def collect_tpfs(cls, tpfbhd_directory: str | Path) -> dict[str, TPF]:
         """Build a dictionary mapping TGA texture names to TPF instances."""
         from soulstruct.containers import Binder
 

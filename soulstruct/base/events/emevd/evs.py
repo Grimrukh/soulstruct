@@ -33,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _MAP_ID_RE = re.compile(r"m(\d\d)_(\d\d)_")
 _COMMON_FUNC_IMPORT_RE = re.compile(
-    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w\d_]+) +import \(?(?P<names>[*\w\d_, \n]+)\)?\n"
+    r"\n *# *\[COMMON_FUNC] *\nfrom (?P<dots>\.*)(?P<module>[\w_]+) +import \(?(?P<names>[*\w_, \n]+)\)?\n"
 )
 _RESTART_TYPES = {"ContinueOnRest": 0, "RestartOnRest": 1, "EndOnRest": 2}  # avoiding circular import
 _EVENT_DOCSTRING_RE = re.compile(r"(\d+)(:\s*.*)?", re.DOTALL)
@@ -100,7 +100,7 @@ class EVSParser(abc.ABC):
 
     numeric_emevd: str
 
-    def __init__(self, evs_source: tp.Union[str, Path], map_name=None, script_directory=None):
+    def __init__(self, evs_source: str | Path, map_name=None, script_directory=None):
         """Converts Python-like EVS code to numeric EMEVD (in `.numeric_emevd`), which can be fed to an `EMEVD` class.
 
         Args:

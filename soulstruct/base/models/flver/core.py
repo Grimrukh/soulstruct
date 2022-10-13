@@ -1,11 +1,9 @@
-"""NOTE: This file is Python 3.9 compatible for Blender 3.X use."""
 from __future__ import annotations
 
 __all__ = ["FLVER"]
 
 import logging
 import re
-import typing as tp
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
@@ -423,7 +421,7 @@ class FLVER(GameFile):
             vertex_offset += len(mesh.vertices)
         return "\n\n".join(mesh_objs)
 
-    def write_obj(self, obj_path: tp.Union[Path, str] = None, obj_name="", make_dirs=True, meshes=()):
+    def write_obj(self, obj_path: Path | str = None, obj_name="", make_dirs=True, meshes=()):
         if obj_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -535,7 +533,7 @@ class FLVER(GameFile):
             raise FileNotFoundError(f"Required TPFBHD directory does not exist: {tpfbhd_directory}")
         return tpfbhd_directory
 
-    def find_all_tpfs(self, tpfbhd_directory: tp.Union[None, str, Path] = None) -> dict[Path, TPF]:
+    def find_all_tpfs(self, tpfbhd_directory: None | str | Path = None) -> dict[Path, TPF]:
         if tpfbhd_directory is None:
             tpfbhd_directory = self.get_tpfbhd_directory_path()
         else:

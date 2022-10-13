@@ -117,7 +117,7 @@ class MapStudioDirectory(abc.ABC):
                 raise MapError(f"Error encountered while writing MSB {msb_path.name}:\n\n{e}")
         _LOGGER.info("All map files (MSBs) in MapStudio directory written successfully.")
 
-    def write_json(self, json_path: tp.Union[str, Path], ignore_defaults=True):
+    def write_json(self, json_path: str | Path, ignore_defaults=True):
         """Write all MSBs to one giant JSON file, keyed by MSB name stem."""
         data = {}
         for msb_file_stem, msb in self.msbs.items():
@@ -127,7 +127,7 @@ class MapStudioDirectory(abc.ABC):
         with Path(json_path).open("wb") as f:
             json.dump(data, f)
 
-    def write_json_dir(self, dir_path: tp.Union[str, Path], ignore_defaults=True):
+    def write_json_dir(self, dir_path: str | Path, ignore_defaults=True):
         """Write each MSB to a separate JSON file, named by MSB stem, inside `dir_path`."""
         dir_path = Path(dir_path)
         dir_path.mkdir(exist_ok=True, parents=True)

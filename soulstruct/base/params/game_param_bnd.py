@@ -67,7 +67,7 @@ class GameParamBND(BaseBND, abc.ABC):
         for param_table_entry_path, param_table in self.params.items():
             self.entries_by_path[param_table_entry_path].set_uncompressed_data(param_table.pack())
 
-    def write(self, file_path: tp.Union[None, str, Path] = None, make_dirs=True, check_hash=False, **pack_kwargs):
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
         """Write the `GameParamBND` file after updating the binary BND entries from the loadewd `Param` instances.
 
         See `GameFile.write()` for more.

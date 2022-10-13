@@ -1,7 +1,4 @@
-"""Mathematical classes and functions uses by Soulstruct.
-
-NOTE: This file is Python 3.9 compatible for Blender 3.X use.
-"""
+"""Mathematical classes and functions uses by Soulstruct."""
 from __future__ import annotations
 
 __all__ = [
@@ -245,7 +242,7 @@ class Vector3(Vector):
     def transform(self, matrix3: Matrix3):
         return Vector3(list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
 
-    def get_as_axes(self, axes: str) -> tp.Union[Vector2, Vector3]:
+    def get_as_axes(self, axes: str) -> Vector2 | Vector3:
         """Reorder and/or negate axes, e.g. `get_as_axes("-x-zy")`."""
         new_data = []
         axes_done = set()
@@ -512,7 +509,7 @@ class Matrix4(Matrix):
     def get_scale(self) -> Vector3:
         return Vector3(self.data[0][0], self.data[1][1], self.data[2][2])
 
-    def set_scale(self, scale_vector: tp.Union[Vector3, list, tuple, int, float]):
+    def set_scale(self, scale_vector: Vector3 | list | tuple | int | float):
         """Set the scale part of the matrix (diagonal of top-left 3x3 sub-matrix)."""
         if isinstance(scale_vector, (list, tuple)):
             scale_vector = Vector3(scale_vector)
@@ -553,7 +550,7 @@ class Matrix4(Matrix):
     def get_translate(self) -> Vector3:
         return Vector3(self.data[0][3], self.data[1][3], self.data[2][3])
 
-    def set_translate(self, translate_vector: tp.Union[Vector3, list, tuple, int, float]):
+    def set_translate(self, translate_vector: Vector3 | list | tuple | int | float):
         """Set the translate part of the matrix (first three elements of last column)."""
         if isinstance(translate_vector, (list, tuple)):
             translate_vector = Vector3(translate_vector)
@@ -592,7 +589,7 @@ def matrix_multiply(a, b, flat=False):
     return m
 
 
-def resolve_rotation(rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], radians=False) -> Matrix3:
+def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float, radians=False) -> Matrix3:
     """Return a rotation `Matrix3` from various shortcut input types (e.g. single value or Euler angle vector)."""
     if isinstance(rotation, (int, float)):
         # Single rotation value is a shortcut for Y rotation.
