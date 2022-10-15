@@ -187,8 +187,10 @@ class ProjectWindow(_BaseProjectWindow):
         player_x = self.linker.get_game_value("player_x")
         player_y = self.linker.get_game_value("player_y")
         player_z = self.linker.get_game_value("player_z")
+        player_angle = math.degrees(self.linker.get_game_value("player_angle"))
+        _LOGGER.info(f"Reloading player at {player_x}, {player_y}, {player_z} (angle {player_angle})")
         player_start.translate = Vector3(player_x, player_y, player_z)
-        player_start.rotate.y = math.degrees(self.linker.get_game_value("player_angle"))
+        player_start.rotate.y = player_angle
 
         current_msb.write()
         self.linker.enable_flag(request_warp_flag_id)

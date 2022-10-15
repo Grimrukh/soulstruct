@@ -313,12 +313,12 @@ def convert_dds_file(
     if not texconv_path.is_file():
         raise FileNotFoundError("Cannot find `texconv.exe` that should be bundled with Soulstruct in 'base/textures'.")
     if input_format is not None:
+        # Check that DDS starts with the asserted format.
         dds = DDS(dds_path)
         if dds.header.fourcc.decode() != input_format:
             raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_format}")
-    subprocess.run(
-        f"{texconv_path} -f {output_format} -o {output_dir} {dds_path}",
+    return subprocess.run(
+        [texconv_path, "-f", output_format, "-o", output_dir, "-y", dds_path],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    # TODO: Check if texconv ran successfully.

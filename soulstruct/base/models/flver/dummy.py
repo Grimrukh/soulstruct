@@ -17,8 +17,8 @@ class Dummy(BinaryObject):
         ("attach_bone_index", "h"),
         ("flag_1", "?"),
         ("use_upward_vector", "?"),
-        ("unk_x30", "i"),
-        ("unk_x34", "i"),
+        ("unk_x30", "i"),  # only used in Sekiro
+        ("unk_x34", "i"),  # only used in Sekiro
         "8x",
     )
 

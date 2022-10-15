@@ -18,6 +18,13 @@ from soulstruct.utilities.files import read_json, write_json
 _LOGGER = logging.getLogger(__name__)
 
 
+class BinderEntryMissing(KeyError):
+    """Raised when a `BinderEntry` is not found.
+
+    Subclass of `KeyError` for legacy compatibility.
+    """
+
+
 class BinderFlags(int):
     """Bit flags for binder file. Note that the bit order is 'big endian' here.
 
@@ -94,6 +101,8 @@ class BinderError(Exception):
 
 class BaseBinder(GameFile, abc.ABC):
     """Base class for both BND and BXF (BHD/BDT) binder files."""
+
+    BinderEntryMissing = BinderEntryMissing
 
     # `EXT` depends on files contained in binder.
     MANIFEST_FIELDS = (
@@ -355,11 +364,11 @@ class BaseBinder(GameFile, abc.ABC):
         entry_names = [e.name for e in self.entries]
         return len(set(entry_names)) < len(entry_names)
 
-    def find_entries_matching_name(self, regex: str) -> list[BinderEntry]:
+    def find_entries_matching_name(self, regex: str | re.Pattern) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
         return [entry for entry in self._entries if re.match(regex, entry.name)]
 
-    def find_entry_matching_name(self, regex: str) -> BinderEntry:
+    def find_entry_matching_name(self, regex: str | re.Pattern) -> BinderEntry:
         """Returns a single entry whose name matches the given `regex` pattern.
 
         Only one match must exist.
@@ -368,7 +377,7 @@ class BaseBinder(GameFile, abc.ABC):
         if len(matches) > 1:
             raise ValueError(f"Found multiple Binder entries with name matching '{regex}'.")
         if not matches:
-            raise ValueError(f"No Binder entries found with name matching '{regex}'.")
+            raise BinderEntryMissing(f"No Binder entries found with name matching '{regex}'.")
         return matches[0]
 
     def __getitem__(self, id_or_path_or_basename) -> BinderEntry:
@@ -383,7 +392,10 @@ class BaseBinder(GameFile, abc.ABC):
             try:
                 return self.entries_by_path[id_or_path_or_basename]
             except KeyError:
-                return self.entries_by_basename[id_or_path_or_basename]
+                try:
+                    return self.entries_by_basename[id_or_path_or_basename]
+                except KeyError:
+                    raise BinderEntryMissing(f"No entry with this ID/path/name: {id_or_path_or_basename}")
         raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BinderEntry]:

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["TPFTexture", "TPF"]
 
+import logging
 import json
 import re
 import typing as tp
@@ -10,9 +11,11 @@ from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.base.textures.dds import DDS, DDSCAPS2
+from soulstruct.base.textures.dds import DDS, DDSCAPS2, convert_dds_file
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 from .dcx import decompress
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class TPFPlatform(IntEnum):
@@ -210,6 +213,9 @@ class TPFTexture:
     def get_dds(self) -> DDS:
         return DDS(self.data)
 
+    def get_dds_format(self) -> str:
+        return DDS(self.data).header.fourcc.decode()
+
     def write_dds(self, dds_path: None | str | Path = None):
         if dds_path is None:
             if self.tpf_path is None:
@@ -217,8 +223,38 @@ class TPFTexture:
             dds_path = self.tpf_path / f"{Path(self.name).stem}.dds"
         else:
             dds_path = Path(dds_path)
-        with dds_path.open("wb") as f:
-            f.write(self.data)
+        dds_path.write_bytes(self.data)
+
+    def convert_dds_format(self, output_format: str, assert_input_format: str = None) -> bool:
+        """Convert `data` DDS format in place. Returns `True` if conversion succeeds."""
+        dds = self.get_dds()
+        current_format = dds.header.fourcc.decode()
+        current_dxgi_format = dds.dxt10_header.dxgi_format if dds.dxt10_header else None
+        if assert_input_format is not None and current_format != assert_input_format.encode():
+            raise ValueError(
+                f"TPF texture DDS format {current_format} does not match "
+                f"`assert_input_format` {assert_input_format} ({current_format}"
+            )
+        temp_dds_path = Path(__file__).parent / "__temp__.dds"
+        temp_dds_path.write_bytes(self.data)
+        result = convert_dds_file(temp_dds_path, Path(__file__).parent, output_format)  # overwrite temp file
+        if result.returncode == 0:
+            self.data = temp_dds_path.read_bytes()
+            if current_dxgi_format:
+                _LOGGER.info(
+                    f"Converted TPF texture {self.name} from format {current_format} "
+                    f"(DXGI {current_dxgi_format}) to {output_format}."
+                )
+            else:
+                _LOGGER.info(f"Converted TPF texture {self.name} from format {current_format} to {output_format}.")
+            return True
+        else:
+            _LOGGER.error(
+                f"Could not convert TPF texture {self.name} from format {current_format} to {output_format}.\n"
+                f"   stdout: {result.stdout}\n"
+                f"   stderr: {result.stderr}"
+            )
+            return False
 
     def __repr__(self) -> str:
         return (
@@ -323,6 +359,25 @@ class TPF(GameFile):
             "tpf_flags": self.tpf_flags,
         }
 
+    def convert_dds_formats(self, input_format: str, output_format: str):
+        """Convert all DDS files that currently have format `input_format` to `output_format`.
+
+        Formats should look like b"DX10", b"DXT1", etc.
+        """
+        fail_count = 0
+        total_count = 0
+        for texture in self.textures:
+            dds = texture.get_dds()
+            if dds.header.fourcc.decode() == input_format:
+                success = texture.convert_dds_format(output_format)
+                total_count += 1
+                if not success:
+                    fail_count += 1
+        if fail_count > 0:
+            _LOGGER.warning(
+                f"Failed to convert {fail_count} out of {total_count} textures from {input_format} to {output_format}."
+            )
+
     def __repr__(self) -> str:
         return (
             f"TPF(\n"
@@ -334,7 +389,7 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpfs(cls, tpfbhd_directory: str | Path) -> dict[str, TPF]:
+    def collect_tpfs(cls, tpfbhd_directory: str | Path, convert_formats: tp.Tuple[str, str] = None) -> dict[str, TPF]:
         """Build a dictionary mapping TGA texture names to TPF instances."""
         from soulstruct.containers import Binder
 
@@ -346,5 +401,9 @@ class TPF(GameFile):
             for entry in bxf.entries:
                 match = tpf_re.match(entry.name)
                 if match:
-                    tpf_sources[f"{match.group(1)}.tga"] = TPF(entry.data)
+                    tpf = TPF(entry.data)
+                    if convert_formats is not None:
+                        input_format, output_format = convert_formats
+                        tpf.convert_dds_formats(input_format, output_format)
+                    tpf_sources[f"{match.group(1)}.tga"] = tpf
         return tpf_sources
