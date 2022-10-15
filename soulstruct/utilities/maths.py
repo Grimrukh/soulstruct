@@ -33,9 +33,6 @@ class Vector(abc.ABC):
         if x is None:
             self._data = [0.0] * self.LENGTH
         else:
-            if isinstance(x, Vector) and x.LENGTH >= self.LENGTH:
-                # Downgrade a larger `Vector`.
-                x = x[:self.LENGTH]
             try:
                 if len(x) != self.LENGTH:
                     raise ValueError

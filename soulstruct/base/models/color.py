@@ -6,6 +6,7 @@ from soulstruct.utilities.maths import Vector, Vector3, Vector4
 
 
 class ColorBase(Vector, abc.ABC):
+    """Mix-in class that defines wrapper properties for color channels."""
 
     @property
     def red(self):

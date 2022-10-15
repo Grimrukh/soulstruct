@@ -281,6 +281,13 @@ class Mesh(BinaryObject):
             self.vertex_buffers.append(vertex_buffers.pop(i))
         self._vertex_buffer_indices = None
 
+        # Check that all vertex buffers for this Mesh have the same length.
+        if self.vertex_buffers:
+            if len({buffer.vertex_count for buffer in self.vertex_buffers}) != 1:
+                raise ValueError("Vertex buffers for Mesh do not all have the same size.")
+        else:
+            _LOGGER.warning("Mesh has no vertex buffers.")
+
         # Check that unique `LayoutSemantic` types do not occur more than once among all `BufferLayout` members.
         existing_semantics = set()
         for vertex_buffer in self.vertex_buffers:
@@ -302,7 +309,9 @@ class Mesh(BinaryObject):
         layouts: list[BufferLayout],
         uv_factor: int,
     ):
+        # Start with empty vertices.
         self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]
+        # Load data into them from all buffers (usually just one) attached to this Mesh.
         for vertex_buffer in self.vertex_buffers:
             vertex_buffer.read_buffer(reader, layouts, self.vertices, vertex_data_offset, uv_factor)
 
