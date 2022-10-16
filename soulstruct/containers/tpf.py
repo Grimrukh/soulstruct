@@ -389,13 +389,15 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpfs(cls, tpfbhd_directory: str | Path, convert_formats: tp.Tuple[str, str] = None) -> dict[str, TPF]:
-        """Build a dictionary mapping TGA texture names to TPF instances."""
+    def collect_tpfs(
+        cls, tpfbhd_directory: str | Path, convert_formats: tp.Tuple[str, str] = None
+    ) -> dict[str, TPFTexture]:
+        """Build a dictionary mapping TGA texture names to `TPFTexture` instances."""
         from soulstruct.containers import Binder
 
         tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
         tpfbhd_directory = Path(tpfbhd_directory)
-        tpf_sources = {}
+        textures = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
             bxf = Binder(bhd_path, create_bak_if_missing=False)
             for entry in bxf.entries:
@@ -405,5 +407,6 @@ class TPF(GameFile):
                     if convert_formats is not None:
                         input_format, output_format = convert_formats
                         tpf.convert_dds_formats(input_format, output_format)
-                    tpf_sources[f"{match.group(1)}.tga"] = tpf
-        return tpf_sources
+                    for texture in tpf.textures:
+                        textures[texture.name] = texture
+        return textures

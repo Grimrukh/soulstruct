@@ -15,7 +15,6 @@ import struct
 import typing as tp
 from enum import IntEnum
 
-from soulstruct.base.models.color import ColorRGBA
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 from soulstruct.utilities.maths import Vector3, Vector4
@@ -23,104 +22,6 @@ from soulstruct.utilities.maths import Vector3, Vector4
 from .version import Version
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class VertexBoneIndices:
-
-    def __init__(self, a=0, b=0, c=0, d=0):
-        if isinstance(a, (tuple, list)):
-            a, b, c, d = a
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-
-    def __getitem__(self, index):
-        if index == 0:
-            return self.a
-        elif index == 1:
-            return self.b
-        elif index == 2:
-            return self.c
-        elif index == 3:
-            return self.d
-        raise IndexError(f"`VertexBoneIndices` index must range from 0 to 3, not {index}.")
-
-    def __setitem__(self, index, value):
-        if not isinstance(value, int):
-            raise TypeError(f"`VertexBoneIndices` values must be integers, not {type(value)}.")
-        if index == 0:
-            self.a = value
-        elif index == 1:
-            self.b = value
-        elif index == 2:
-            self.c = value
-        elif index == 3:
-            self.d = value
-        raise IndexError(f"`VertexBoneIndices` index must range from 0 to 3, not {index}.")
-
-    def __len__(self):
-        return 4
-
-    def __iter__(self):
-        for i in range(4):
-            yield self[i]
-
-    def __eq__(self, other: VertexBoneIndices | tuple | list):
-        if len(other) != 4:
-            raise ValueError("Cannot only compare `VertexBoneIndices` for equality to a sequence of length 4.")
-        return all(self[i] == other[i] for i in range(4))
-
-    def __repr__(self):
-        return f"VertexBoneIndices{tuple(self)}"
-
-
-class VertexBoneWeights:
-
-    def __init__(self, a=0.0, b=0.0, c=0.0, d=0.0):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-
-    def __getitem__(self, index):
-        if index == 0:
-            return self.a
-        elif index == 1:
-            return self.b
-        elif index == 2:
-            return self.c
-        elif index == 3:
-            return self.d
-        raise IndexError(f"`VertexBoneWeights` index must range from 0 to 3, not {index}.")
-
-    def __setitem__(self, index, value):
-        if not isinstance(value, float):
-            raise TypeError(f"`VertexBoneWeights` values must be floats, not {type(value)}.")
-        if index == 0:
-            self.a = value
-        elif index == 1:
-            self.b = value
-        elif index == 2:
-            self.c = value
-        elif index == 3:
-            self.d = value
-        raise IndexError(f"`VertexBoneWeights` index must range from 0 to 3, not {index}.")
-
-    def __len__(self):
-        return 4
-
-    def __iter__(self):
-        for i in range(4):
-            yield self[i]
-
-    def __eq__(self, other: VertexBoneWeights | tuple | list):
-        if len(other) != 4:
-            raise ValueError("Cannot only compare `VertexBoneWeights` for equality to a sequence of length 4.")
-        return all(self[i] == other[i] for i in range(4))
-
-    def __repr__(self):
-        return f"VertexBoneWeights{tuple(self)}"
 
 
 class LayoutSemantic(IntEnum):
@@ -224,80 +125,176 @@ TANGENT_SIGNED_8BIT_FLOAT_TYPES = SIGNED_8BIT_FLOAT_TYPES | {LayoutType.Short4To
 COLOR_UNSIGNED_8BIT_FLOAT_TYPES = {LayoutType.Byte4A, LayoutType.Byte4C}
 
 
-def _UV_4H_CALLBACK(v: tuple[int, int, int, int]) -> list[Vector3]:
+def _int_to_float(scale: float, make_signed=False) -> (tp.Callable, tp.Callable):
+    if make_signed:
+        def read_func(v: tuple[int, ...]):
+            return [(x - scale) / scale for x in v]
+
+        def write_func(d: list[float]):
+            return [int(x * scale + scale) for x in d]
+    else:
+        def read_func(v: tuple[int, ...]):
+            return [x / scale for x in v]
+
+        def write_func(d: list[float]):
+            return [int(x * scale) for x in d]
+    return read_func, write_func
+
+
+def _int_to_float_normal(v: tuple[int, int, int, int]) -> list[float, float, float, float]:
+    """Does not un-quantize fourth element."""
+    return [(x - 127) / 127.0 for x in v[:3]] + [float(v[3])]
+
+
+def _float_to_int_normal(d: list[float, float, float, float]) -> list[int, int, int, int]:
+    """Does not quantize fourth element."""
+    return [int(d[0] * 127 + 127), int(d[1] * 127 + 127), int(d[2] * 127 + 127), int(d[3])]
+
+
+def _two_shorts_to_one_uv(v: tuple[int, int]) -> list[list[float]]:
+    return [[float(v[0]), float(v[1]), 0.0]]
+
+
+def _one_uv_to_two_shorts(d: list[float]) -> list[int, int]:
+    return [int(d[0]), int(d[1])]
+
+
+def _four_shorts_to_one_uv(v: tuple[int, int, int, int]) -> list[list[float]]:
     if v[3] != 0:
         raise ValueError("Expected fourth short to be zero in reading UV | Short4ToFloat4B vertex member.")
-    return [Vector3(v[:3])]
+    return [[float(v[0]), float(v[1]), float(v[2])]]
+
+
+def _one_uv_to_four_shorts(d: list[float]) -> list[int, int, int, int]:
+    return [int(d[0]), int(d[1]), int(d[2]), 0]
+
+
+def _four_shorts_to_two_uvs(v: tuple[int, int, int, int]) -> list[list[float], list[float]]:
+    return [[float(v[0]), float(v[1]), 0.0], [float(v[2]), float(v[3]), 0.0]]
+
+
+def _four_floats_to_two_uvs(v: tuple[float, float, float, float]) -> list[list[float], list[float]]:
+    return [[v[0], v[1], 0.0], [v[2], v[3], 0.0]]
+
+
+def _one_uv_to_two_floats(d: list[float]) -> list[float, float]:
+    return [d[0], d[1]]
+
+
+class LayoutMemberInfo(tp.NamedTuple):
+    attr: str
+    fmt: str
+    size: int
+    read_callback: tp.Callable = None  # converts `struct.unpack` output tuples to attribute lists (default is `list()`)
+    write_callback: tp.Callable = None  # converts attribute lists to `v` as in `struct.pack(fmt, *v)` (default skipped)
+    has_two_uvs: bool = False
 
 
 # Maps `(LayoutSemantic, LayoutType)` key pairs (nested) to `(name, fmt, size, callback)` quadruples.
 # Note that the layout is aware that `uvs`, `tangents`, and `colors` attributes are lists; `+=` will be used on the
 # callback result in these cases.
+
+"""
+            if member.semantic == LayoutSemantic.BoneWeights:
+                if member.layout_type == LayoutType.Byte4A:
+                    writer.pack("4b", *[int(w * 127) for w in self.bone_weights])
+                elif member.layout_type == LayoutType.Byte4C:
+                    writer.pack("4B", *[int(w * 255) for w in self.bone_weights])
+                elif member.layout_type in {LayoutType.UVPair, LayoutType.Short4ToFloat4A}:
+                    writer.pack("4h", *[int(w * 32767) for w in self.bone_weights])
+                else:
+                    not_implemented = True
+"""
+
 LAYOUT_PARSER = {
     LayoutSemantic.Position: {
-        LayoutType.Float3: ("position", "3f", 3, Vector3),
-        LayoutType.Float4: ("position", "4f", 4, lambda v: Vector3(v[:3])),
+        LayoutType.Float3: LayoutMemberInfo("position", "3f", 3),
+        LayoutType.Float4: LayoutMemberInfo(
+            "position", "4f", 4,
+            lambda v: [v[0], v[1], v[2]],
+            lambda d: (d[0], d[1], d[2], 0.0),
+        ),
         # LayoutType.EdgeCompressed is explicitly not supported.
     },
     LayoutSemantic.BoneWeights: {
-        LayoutType.Byte4A: ("bone_weights", "4b", 4, lambda v: VertexBoneWeights(*[x / 127.0 for x in v])),
-        LayoutType.Byte4C: ("bone_weights", "4B", 4, lambda v: VertexBoneWeights(*[x / 255.0 for x in v])),
-        LayoutType.UVPair: ("bone_weights", "4h", 4, lambda v: VertexBoneWeights(*[x / 32767.0 for x in v])),
-        LayoutType.Short4ToFloat4A: ("bone_weights", "4h", 4, lambda v: VertexBoneWeights(*[x / 32767.0 for x in v])),
+        LayoutType.Byte4A: LayoutMemberInfo("bone_weights", "4b", 4, *_int_to_float(127.0)),
+        LayoutType.Byte4C: LayoutMemberInfo("bone_weights", "4B", 4, *_int_to_float(255.0)),
+        LayoutType.UVPair: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
+        LayoutType.Short4ToFloat4A: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
     },
     LayoutSemantic.BoneIndices: {
-        LayoutType.Byte4B: ("bone_indices", "4B", 4, VertexBoneIndices),
-        LayoutType.Byte4E: ("bone_indices", "4B", 4, VertexBoneIndices),
-        LayoutType.ShortBoneIndices: ("bone_indices", "4h", 4, VertexBoneIndices),
+        LayoutType.Byte4B: LayoutMemberInfo("bone_indices", "4B", 4),
+        LayoutType.Byte4E: LayoutMemberInfo("bone_indices", "4B", 4),
+        LayoutType.ShortBoneIndices: LayoutMemberInfo("bone_indices", "4h", 4),
     },
     LayoutSemantic.Normal: {
-        LayoutType.Float3: ("normal", "3f", 3, Vector4),
-        LayoutType.Float4: ("normal", "4f", 4, Vector4),
-        # Note that we don't modify `w` in any of these quantization cases.
-        LayoutType.Byte4A: ("normal", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v[:3]] + [v[3]])),
-        LayoutType.Byte4B: ("normal", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v[:3]] + [v[3]])),
-        LayoutType.Byte4C: ("normal", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v[:3]] + [v[3]])),
-        LayoutType.Byte4E: ("normal", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v[:3]] + [v[3]])),
-        LayoutType.Short2toFloat2:
-            ("normal", "B3b", 4, lambda v: Vector4([v[3]] + [x / 127.0 for x in v[1:]])),
-        LayoutType.Short4ToFloat4A:
-            ("normal", "4h", 4, lambda v: Vector4([x / 32767.0 for x in v[:3]] + [v[3]])),
-        LayoutType.Short4ToFloat4B:
-            ("normal", "3Hh", 4, lambda v: Vector4([(x - 32767) / 32767.0 for x in v[:3]] + [v[3]])),
+        LayoutType.Float3: LayoutMemberInfo(
+            "normal", "3f", 3,
+            lambda v: [v[0], v[1], v[2], -1.0],
+            lambda d: [d[0], d[1], d[2]],
+        ),
+        LayoutType.Float4: LayoutMemberInfo("normal", "4f", 4),
+        # Note that we don't modify `w` in any of these quantization cases, except to make it a `float`.
+        LayoutType.Byte4A: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        LayoutType.Byte4B: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        LayoutType.Byte4C: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        LayoutType.Byte4E: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        LayoutType.Short2toFloat2: LayoutMemberInfo(
+            "normal", "B3b", 4,
+            lambda v: [v[1] / 127.0, v[2] / 127.0, v[3] / 127.0, v[0]],  # packed in `wxyz` order
+            lambda d: [d[3], int(d[0] * 127), int(d[1] * 127), int(d[2] * 127)],
+        ),
+        LayoutType.Short4ToFloat4A: LayoutMemberInfo(
+            "normal", "4h", 4,
+            lambda v: [v[0] / 32767.0, v[1] / 32767.0, v[2] / 32767.0, float(v[3])],
+            lambda d: [int(d[0] * 32767), int(d[1] * 32767), int(d[2] * 32767), int(d[3])],
+        ),
+        LayoutType.Short4ToFloat4B: LayoutMemberInfo(
+            "normal", "3Hh", 4,
+            lambda v: [(v[0] - 32767) / 32767.0, (v[1] - 32767) / 32767.0, (v[2] - 32767) / 32767.0, float(v[3])],
+            lambda d: [int(d[0] * 32767 + 32767), int(d[1] * 32767 + 32767), int(d[2] * 32767 + 32767), int(d[3])],
+        ),
     },
     LayoutSemantic.UV: {
-        LayoutType.Float2: ("uvs", "2f", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.Float3: ("uvs", "3f", 3, lambda v: [Vector3(v)]),
-        LayoutType.Float4: ("uvs", "4f", 4, lambda v: [Vector3(v[0], v[1], 0.0), Vector3(v[2], v[3], 0.0)]),
-        # All types below this will have their UVs divided by local `uv_factor`.
-        LayoutType.Byte4A: ("uvs", "2h", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.Byte4B: ("uvs", "2h", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.Short2toFloat2: ("uvs", "2h", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.Byte4C: ("uvs", "2h", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.UV: ("uvs", "2h", 2, lambda v: [Vector3(*v, 0.0)]),
-        LayoutType.UVPair: ("uvs", "4h", 4, lambda v: [Vector3(v[0], v[1], 0.0), Vector3(v[2], v[3], 0.0)]),
-        LayoutType.Short4ToFloat4B: ("uvs", "4h", 4, _UV_4H_CALLBACK),  # asserts fourth short is zero
+        # UV read callbacks return a list of 1-2 UV lists, but write callbacks still process one UV list at a time.
+        # Writer will detect `Float4` and `UVPair` types are write two queued UVs (in reverse order) as needed.
+        LayoutType.Float2: LayoutMemberInfo("uvs", "2f", 2, lambda v: [[*v, 0.0]], lambda d: [d[0], d[1]]),
+        LayoutType.Float3: LayoutMemberInfo("uvs", "3f", 3, lambda v: [list(v)]),
+        LayoutType.Float4: LayoutMemberInfo(
+            "uvs", "4f", 4, _four_floats_to_two_uvs, _one_uv_to_two_floats, has_two_uvs=True
+        ),
+        # All types below this will have their UVs divided by local `uv_factor` by the unpacker.
+        LayoutType.Byte4A: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        LayoutType.Byte4B: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        LayoutType.Short2toFloat2: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        LayoutType.Byte4C: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        LayoutType.UV: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        LayoutType.UVPair: LayoutMemberInfo(
+            "uvs", "4h", 4, _four_shorts_to_two_uvs, _one_uv_to_two_shorts, has_two_uvs=True
+        ),
+        LayoutType.Short4ToFloat4B: LayoutMemberInfo("uvs", "4h", 4, _four_shorts_to_one_uv, _one_uv_to_four_shorts),
     },
     LayoutSemantic.Tangent: {
-        LayoutType.Float4: ("tangents", "4f", 4, lambda v: [Vector4(v)]),
-        LayoutType.Byte4A: ("tangents", "4B", 4, lambda v: [Vector4([(x - 127) / 127.0 for x in v])]),
-        LayoutType.Byte4B: ("tangents", "4B", 4, lambda v: [Vector4([(x - 127) / 127.0 for x in v])]),
-        LayoutType.Byte4C: ("tangents", "4B", 4, lambda v: [Vector4([(x - 127) / 127.0 for x in v])]),
-        LayoutType.Byte4E: ("tangents", "4B", 4, lambda v: [Vector4([(x - 127) / 127.0 for x in v])]),
-        LayoutType.Short4ToFloat4A: ("tangents", "4B", 4, lambda v: [Vector4([(x - 127) / 127.0 for x in v])]),
+        LayoutType.Float4: LayoutMemberInfo("tangents", "4f", 4),
+        LayoutType.Byte4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4B: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4C: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4E: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Short4ToFloat4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
     },
     LayoutSemantic.Bitangent: {
-        LayoutType.Byte4A: ("bitangent", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v])),
-        LayoutType.Byte4B: ("bitangent", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v])),
-        LayoutType.Byte4C: ("bitangent", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v])),
-        LayoutType.Byte4E: ("bitangent", "4B", 4, lambda v: Vector4([(x - 127) / 127.0 for x in v])),
+        LayoutType.Byte4A: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4B: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4C: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        LayoutType.Byte4E: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
     },
     LayoutSemantic.VertexColor: {
-        LayoutType.Float4: ("colors", "4f", 4, lambda v: [ColorRGBA(*v)]),
-        LayoutType.Byte4A: ("colors", "4B", 4, lambda v: [ColorRGBA(*[x / 255.0 for x in v])]),
-        LayoutType.Byte4C: ("colors", "4B", 4, lambda v: [ColorRGBA(*[x / 255.0 for x in v])]),
+        LayoutType.Float4: LayoutMemberInfo("colors", "4f", 4),
+        LayoutType.Byte4A: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
+        LayoutType.Byte4C: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
     },
 }
+
 
 USES_UV_FACTOR = {
     LayoutType.Byte4A,
@@ -360,10 +357,8 @@ class BufferLayout:
         """Construct a relatively efficient function that can be used to read data for each `Vertex` whose data lies
         in a `VertexBuffer` with this layout."""
 
-        attr_names = []  # attributes of `Vertex` to assign from unpacked `struct.unpack(fmt)` (maybe with func below)
+        member_infos = []  # type: list[LayoutMemberInfo]
         full_fmt = ""  # fmt of data to read
-        attr_sizes = []  # number of elements in `struct.unpack(fmt)` result to eat for corresponding attr name above
-        attr_funcs = []  # callbacks (or `None`) to process tuples of elements above
 
         for member in self.members:
 
@@ -379,33 +374,115 @@ class BufferLayout:
                     f"Unsupported vertex buffer layout member semantic/type combination: "
                     f"{member.semantic.name} | {member.layout_type.name}"
                 )
-            attr_name, fmt, attr_size, attr_func = semantic_parser[member.layout_type]
 
-            attr_names.append(attr_name)
-            full_fmt += fmt
-            attr_sizes.append(attr_size)
+            member_info = semantic_parser[member.layout_type]
 
+            # Modify UV callbacks with scale factor, if appropriate.
             if member.semantic == LayoutSemantic.UV and member.layout_type in USES_UV_FACTOR:
-                def uv_attr_func(v) -> list[Vector3]:
-                    return [vec / uv_factor for vec in attr_func(v)]
-                attr_funcs.append(uv_attr_func)
-            else:
-                attr_funcs.append(attr_func)
+                def scaled_uv_callback(v, info=member_info):  # this `member_info` baked in
+                    return [[x / uv_factor for x in uv_list] for uv_list in info.read_callback(v)]
+
+                member_info = LayoutMemberInfo(
+                    member_info.attr, member_info.fmt, member_info.size, read_callback=scaled_uv_callback
+                )
+
+            member_infos.append(member_info)
+            full_fmt += member_info.fmt
 
         def read_vertex_data(reader: BinaryReader, vertex: Vertex):
             vertex.raw = reader.read(struct.calcsize("<" + full_fmt))
             data = struct.unpack("<" + full_fmt, vertex.raw)
             index = 0
-            for name, size, func in zip(attr_names, attr_sizes, attr_funcs, strict=True):
-                raw_value = data[index:index + size]  # raw tuple
-                value = func(raw_value)
-                if isinstance(value, list):  # extend list
-                    getattr(vertex, name).extend(value)
+            for info in member_infos:
+                raw_value = data[index:index + info.size]  # raw tuple
+                value = info.read_callback(raw_value) if info.read_callback is not None else list(raw_value)
+                if info.attr == "uvs":
+                    vertex.uvs += value  # extend with list of one/two UV lists
+                elif info.attr == "tangents":
+                    vertex.tangents.append(value)
+                elif info.attr == "colors":
+                    vertex.colors.append(value)
                 else:
-                    setattr(vertex, name, value)
-                index += size
+                    setattr(vertex, info.attr, value)
+                index += info.size
 
         return read_vertex_data
+
+    def get_vertex_write_function(self, uv_factor: int) -> tp.Callable[[BinaryWriter, Vertex], None]:
+        """Construct a relatively efficient function that can be used to write data for each `Vertex` into a packed
+        `VertexBuffer` with this layout."""
+
+        member_infos = []  # type: list[LayoutMemberInfo]
+        full_fmt = ""  # fmt of data to read
+
+        for member in self.members:
+
+            if member.semantic == LayoutSemantic.Position and member.layout_type == LayoutType.EdgeCompressed:
+                # Explicitly not supported.
+                raise NotImplementedError("Cannot write FLVERs with edge-compressed vertex positions.")
+            if member.semantic not in LAYOUT_PARSER:
+                raise ValueError(f"Invalid vertex buffer layout member semantic: {member.semantic}")
+
+            semantic_parser = LAYOUT_PARSER[member.semantic]
+            if member.layout_type not in semantic_parser:
+                raise NotImplementedError(
+                    f"Unsupported vertex buffer layout member semantic/type combination: "
+                    f"{member.semantic.name} | {member.layout_type.name}"
+                )
+
+            member_info = semantic_parser[member.layout_type]
+
+            # Modify UV callbacks with scale factor, if appropriate.
+            if member.semantic == LayoutSemantic.UV and member.layout_type in USES_UV_FACTOR:
+                def scaled_uv_callback(d, info=member_info):  # this `member_info` baked in
+                    return info.write_callback([x * uv_factor for x in d])
+
+                member_info = LayoutMemberInfo(
+                    member_info.attr, member_info.fmt, member_info.size,
+                    write_callback=scaled_uv_callback,
+                    has_two_uvs=member_info.has_two_uvs,
+                )
+
+            member_infos.append(member_info)
+            full_fmt += member_info.fmt
+
+        def write_vertex_data(writer: BinaryWriter, vertex: Vertex):
+
+            # TODO: Change write callbacks to return lists for faster extending here.
+            values = []
+            for info in member_infos:
+
+                if info.attr == "uvs":
+                    try:
+                        uv1 = vertex.uv_queue.pop()
+                    except IndexError:
+                        raise IndexError("Ran out of vertex UVs to buffer.")
+                    values += info.write_callback(uv1) if info.write_callback else uv1
+                    if info.has_two_uvs:
+                        try:
+                            uv2 = vertex.uv_queue.pop()
+                        except IndexError:
+                            raise IndexError("Ran out of vertex UVs to buffer.")
+                        values += info.write_callback(uv2) if info.write_callback else uv2
+                elif info.attr == "tangents":
+                    try:
+                        tangent = vertex.tangent_queue.pop()
+                    except IndexError:
+                        raise IndexError("Ran out of vertex tangents to buffer.")
+                    values += info.write_callback(tangent) if info.write_callback else tangent
+                elif info.attr == "colors":
+                    try:
+                        color = vertex.color_queue.pop()
+                    except IndexError:
+                        raise IndexError("Ran out of vertex colors to buffer.")
+                    values += info.write_callback(color) if info.write_callback else color
+                else:
+                    value = getattr(vertex, info.attr)
+                    values += info.write_callback(value) if info.write_callback else value
+
+            writer.pack("<" + full_fmt, *values)
+
+        return write_vertex_data
 
     def __iter__(self):
         return iter(self.members)
@@ -430,64 +507,75 @@ class BufferLayout:
 
 
 class Vertex:
+    """A single mesh vertex.
 
-    VertexBoneWeights = VertexBoneWeights
-    VertexBoneIndices = VertexBoneIndices
+    This class used to store its data in `Vector` and `Color` classes, but in Python, all that instantiation gets real
+    expensive real quick for large meshes. All data is now stored as lists of floats (ints for `bone_indices`). If you
+    assign a `Vector` to them, it will work fine, as long as it supports sequence iteration and has the right length.
+
+    Note that multiple values (lists of floats) are supported for `uvs`, `tangents`, and `colors`, though most buffer
+    layouts will only have one of each.
+
+    Also note that the fourth element of `normal` is used as an (integer) index for binding to a single bone in some
+    cases. It is not part of the actual 3D normal vector.
+    """
 
     def __init__(
         self,
-        position: Vector3 = None,
-        bone_weights: VertexBoneWeights = None,
-        bone_indices: VertexBoneIndices = None,
-        normal: Vector3 | Vector4 = None,  # NOTE: `w` element can be used to bind to a single bone (as an `int`)
-        uvs: list[Vector3] = None,
-        tangents: list[Vector4] = None,
-        bitangent: Vector4 = None,
-        colors: list[ColorRGBA] = None,
+        position: list[float] = None,
+        bone_weights: list[float] = None,
+        bone_indices: list[int] = None,
+        normal: list[float] = None,  # NOTE: `w` element can be used to bind to a single bone (as an `int`)
+        uvs: list[list[float]] = None,  # NOTE: proportion of 1024 (pre-`DarkSouls2_NT`) or 2048
+        tangents: list[list[float]] = None,
+        bitangent: list[float] = None,
+        colors: list[list[float]] = None,
     ):
-        self.position = Vector3.zero() if position is None else position
-        self.bone_weights = VertexBoneWeights() if bone_weights is None else bone_weights
-        self.bone_indices = VertexBoneIndices() if bone_indices is None else bone_indices
-        if isinstance(normal, Vector4):
-            self._normal = Vector4.zero()
-        elif isinstance(normal, Vector3):
-            self._normal = Vector4(*normal, 0.0)
+        self.position = [0.0, 0.0, 0.0] if position is None else position
+        self.bone_weights = [0.0, 0.0, 0.0, 0.0] if bone_weights is None else bone_weights
+        self.bone_indices = [0, 0, 0, 0] if bone_indices is None else bone_indices
+        if normal is None:
+            self.normal = [0.0, 0.0, 0.0, 0.0]
+        elif len(normal) == 3:
+            self.normal = [*normal, 0.0]
+        elif len(normal) == 4:
+            self.normal = list(normal)
         else:
-            self._normal = Vector4.zero()  # default
+            raise TypeError(f"Invalid value for `normal`: {normal}. Should be `None`, three floats, or four floats.")
         self.uvs = [] if uvs is None else uvs
         self.tangents = [] if tangents is None else tangents
-        self.bitangent = Vector4.zero() if bitangent is None else bitangent
+        self.bitangent = [0.0, 0.0, 0.0, 0.0] if bitangent is None else bitangent
         self.colors = [] if colors is None else colors
 
         self.raw = b""
 
-        self.uv_queue = []  # type: list[Vector3]
-        self.tangent_queue = []  # type: list[Vector4]
-        self.color_queue = []  # type: list[ColorRGBA]
+        self.uv_queue = []  # type: list[list[float]]
+        self.tangent_queue = []  # type: list[list[float]]
+        self.color_queue = []  # type: list[list[float]]
 
     @property
-    def normal(self) -> Vector3:
-        """Get XYZ of `_normal` as a `Vector3`, which is suitable for most uses."""
-        return Vector3(self._normal[:3])
+    def normal_xyz(self) -> list[float]:
+        """Get XYZ of `_normal` as a three-float list, which is suitable for most uses."""
+        return self.normal[:3]
 
-    @normal.setter
-    def normal(self, value: Vector3 | Vector4 | tuple | list):
+    @normal_xyz.setter
+    def normal_xyz(self, value: Vector3 | Vector4 | tuple | list):
         """Set XYZ or full XYZW of `_normal`."""
         if len(value) == 3:
-            self._normal = Vector4(*value, self._normal.w)  # keep current `w`
+            self.normal = [*value, self.normal[3]]  # keep current `w`
         elif len(value) == 4:
-            self._normal = Vector4(*value)
+            self.normal = Vector4(*value)
         else:
             raise TypeError(f"`Vertex.normal` can only be set to a 3 or 4 length sequence/vector, not: {value}")
 
     @property
     def normal_w(self) -> int:
-        """Get `_normal.w` as an `int`, which is sometimes used to bind the `Vertex` to a single bone."""
-        return int(self._normal.w)
+        """Get `_normal[3]` as an `int`, which is sometimes used to bind the `Vertex` to a single bone."""
+        return int(self.normal[3])
 
     @normal_w.setter
     def normal_w(self, value: float | int):
-        self._normal.w = float(value)
+        self.normal[3] = float(value)
 
     def clear_lists(self):
         self.uvs = []
@@ -500,144 +588,6 @@ class Vertex:
         self.tangent_queue = list(reversed(self.tangents))
         self.color_queue = list(reversed(self.colors))
 
-    def pack(self, writer: BinaryWriter, layout: BufferLayout, uv_factor: float):
-
-        # TODO: Speed up in the same way as reading parser.
-
-        for member in layout:
-
-            not_implemented = False
-
-            if member.semantic == LayoutSemantic.Position:
-                if member.layout_type == LayoutType.Float3:
-                    writer.pack("3f", *self.position)
-                elif member.layout_type == LayoutType.Float4:
-                    writer.pack("4f", *self.position, 0.0)
-                elif member.layout_type == LayoutType.EdgeCompressed:
-                    raise NotImplementedError("Soulstruct cannot load FLVERs with edge-compressed vertex positions.")
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.BoneWeights:
-                if member.layout_type == LayoutType.Byte4A:
-                    writer.pack("4b", *[int(w * 127) for w in self.bone_weights])
-                elif member.layout_type == LayoutType.Byte4C:
-                    writer.pack("4B", *[int(w * 255) for w in self.bone_weights])
-                elif member.layout_type in {LayoutType.UVPair, LayoutType.Short4ToFloat4A}:
-                    writer.pack("4h", *[int(w * 32767) for w in self.bone_weights])
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.BoneIndices:
-                if member.layout_type in {LayoutType.Byte4B, LayoutType.Byte4E}:
-                    writer.pack("4B", *self.bone_indices)
-                elif member.layout_type == LayoutType.ShortBoneIndices:
-                    writer.pack("4h", *self.bone_indices)
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.Normal:
-                if member.layout_type == LayoutType.Float3:
-                    writer.pack("3f", *self.normal)
-                elif member.layout_type == LayoutType.Float4:
-                    writer.pack("4f", *self.normal, self.normal_w)
-                elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E}:
-                    writer.pack("4B", *[int(x * 127 + 127) for x in self.normal], self.normal_w)
-                elif member.layout_type == LayoutType.Short2toFloat2:
-                    writer.pack("B3b", self.normal_w, *[int(x * 127) for x in self.normal])
-                elif member.layout_type == LayoutType.Short4ToFloat4A:
-                    writer.pack("4h", *[int(x * 32767) for x in self.normal], self.normal_w)
-                elif member.layout_type == LayoutType.Short4ToFloat4B:
-                    writer.pack("4H", *[int(x * 32767 + 32767) for x in self.normal], self.normal_w)
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.UV:
-                try:
-                    uv = self.uv_queue.pop() * uv_factor
-                except IndexError:
-                    print(layout)
-                    print(member)
-                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
-                    raise IndexError("Ran out of vertex UVs to buffer.")
-                if member.layout_type == LayoutType.Float2:
-                    writer.pack("2f", uv.x, uv.y)
-                elif member.layout_type == LayoutType.Float3:
-                    writer.pack("3f", uv.x, uv.y, uv.z)
-                elif member.layout_type == LayoutType.Float4:
-                    writer.pack("2f", uv.x, uv.y)
-                    try:
-                        uv = self.uv_queue.pop() * uv_factor
-                    except IndexError:
-                        print(layout)
-                        print(member)
-                        print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
-                        raise IndexError("Ran out of vertex UVs to buffer.")
-                    writer.pack("2f", uv.x, uv.y)
-                elif member.layout_type in {
-                    LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Short2toFloat2, LayoutType.Byte4C, LayoutType.UV
-                }:
-                    writer.pack("2h", int(uv.x), int(uv.y))
-                elif member.layout_type == LayoutType.UVPair:
-                    writer.pack("2h", int(uv.x), int(uv.y))
-                    try:
-                        uv = self.uv_queue.pop() * uv_factor
-                    except IndexError:
-                        print(layout)
-                        print(member)
-                        print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
-                        raise IndexError("Ran out of vertex UVs to buffer.")
-                    writer.pack("2h", int(uv.x), int(uv.y))
-                elif member.layout_type == LayoutType.Short4ToFloat4B:
-                    writer.pack("4h", int(uv.x), int(uv.y), int(uv.z), 0)
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.Tangent:
-                try:
-                    tangent = self.tangent_queue.pop()
-                except IndexError:
-                    print(layout)
-                    print(member)
-                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
-                    raise IndexError("Ran out of vertex tangents to buffer.")
-                if member.layout_type == LayoutType.Float4:
-                    writer.pack("4f", *tangent)
-                elif member.layout_type in {
-                    LayoutType.Byte4A,
-                    LayoutType.Byte4B,
-                    LayoutType.Byte4C,
-                    LayoutType.Short4ToFloat4A,
-                    LayoutType.Byte4E,
-                }:
-                    writer.pack("4B", *[int(x * 127 + 127) for x in tangent])
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.Bitangent:
-                if member.layout_type in {
-                    LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E
-                }:
-                    writer.pack("4B", *[int(x * 127 + 127) for x in self.bitangent])
-                else:
-                    not_implemented = True
-            elif member.semantic == LayoutSemantic.VertexColor:
-                try:
-                    color = self.color_queue.pop()
-                except IndexError:
-                    print(layout)
-                    print(member)
-                    print(f"{len(self.uvs)} UVS, {len(self.tangents)} tangents, {len(self.colors)} colors")
-                    raise IndexError("Ran out of vertex colors to buffer.")
-                if member.layout_type == LayoutType.Float4:
-                    writer.pack("4f", *color)
-                elif member.layout_type in {LayoutType.Byte4A, LayoutType.Byte4C}:
-                    writer.pack("4B", *[int(c * 255) for c in color])
-                else:
-                    not_implemented = True
-            else:
-                not_implemented = True
-
-            if not_implemented:
-                raise NotImplementedError(
-                    f"Unsupported vertex member semantic/type combination: "
-                    f"{member.semantic.name} | {member.layout_type.name}"
-                )
-
     def finish_pack(self):
         """Check queues are empty."""
         if self.uv_queue:
@@ -648,7 +598,7 @@ class Vertex:
             raise ValueError(f"{len(self.color_queue)} vertex colors left in vertex queue after it was packed.")
 
     def repr_position_only(self):
-        return f"Vertex{repr(self.position)[7:]}"
+        return f"Vertex({self.position[0]}, {self.position[1]}, {self.position[2]})"
 
     def __repr__(self):
         lines = [f"    position = {self.position},"]
@@ -762,8 +712,11 @@ class VertexBuffer(BinaryObject):
     ):
         layout = buffer_layouts[self.layout_index]
         self.fill(writer, _buffer_offset=buffer_offset)
+
+        write_func = layout.get_vertex_write_function(uv_factor)
+
         for vertex in vertices:
-            vertex.pack(writer, layout, uv_factor)
+            write_func(writer, vertex)
 
     def __repr__(self):
         return (

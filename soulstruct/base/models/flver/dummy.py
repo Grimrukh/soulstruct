@@ -1,6 +1,5 @@
 __all__ = ["Dummy"]
 
-from soulstruct.base.models.color import ColorRGBA8
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
 from soulstruct.utilities.maths import Vector3
 
@@ -9,7 +8,7 @@ class Dummy(BinaryObject):
 
     STRUCT = BinaryStruct(
         ("position", "3f"),
-        ("__color", "4B"),
+        ("__color", "4B"),  # could be ARGB or BGRA
         ("forward", "3f"),
         ("reference_id", "h"),
         ("parent_bone_index", "h"),
@@ -23,7 +22,7 @@ class Dummy(BinaryObject):
     )
 
     position: Vector3
-    color: ColorRGBA8
+    color: list[int, int, int, int]  # always stored as RGBA
     forward: Vector3
     reference_id: int
     parent_bone_index: int
@@ -42,15 +41,15 @@ class Dummy(BinaryObject):
             alpha, red, green, blue = data.pop("__color")
         else:
             blue, green, red, alpha = data.pop("__color")
-        self.color = ColorRGBA8(red, green, blue, alpha)
+        self.color = [red, green, blue, alpha]
         self.set(**data)
 
     def pack(self, writer: BinaryWriter, color_is_argb: bool):
         """Nothing to reserve."""
         if color_is_argb:
-            color = (self.color.alpha, self.color.red, self.color.green, self.color.blue)
+            color = (self.color[3], self.color[0], self.color[1], self.color[2])
         else:
-            color = (self.color.blue, self.color.green, self.color.red, self.color.alpha)
+            color = (self.color[2], self.color[1], self.color[0], self.color[3])
         writer.pack_struct(self.STRUCT, self, __color=color)
 
     def __repr__(self) -> str:
