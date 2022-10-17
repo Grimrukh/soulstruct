@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["GXItem", "GXList", "Material", "Texture"]
 
+import re
 from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
@@ -169,6 +170,10 @@ class Material(BinaryObject):
 
     Texture = Texture
 
+    MTD_DSB_RE = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")  # g_Diffuse, g_Specular, g_Bumpmap, g_Height
+    MTD_ML_RE = re.compile(r".*\[(M)?(L)?].*")  # g_Lightmap, double DSB slots
+    # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
+
     STRUCT = BinaryStruct(
         ("__name__z", "i"),
         ("__mtd_path__z", "i"),
@@ -265,10 +270,43 @@ class Material(BinaryObject):
             textures[texture.texture_type] = texture
         return textures
 
-    def set_mtd_name(self, name: str):
+    def find_texture_type(self, texture_type: str) -> Texture | None:
+        for texture in self.textures:
+            if texture.texture_type == texture_type:
+                return texture
+        return None
+
+    @property
+    def mtd_name(self):
+        return Path(self.mtd_path).name
+
+    @mtd_name.setter
+    def mtd_name(self, name: str):
         """Set '.mtd' name of `mtd_path`."""
         name = name.removesuffix(".mtd") + ".mtd"
         self.mtd_path = str(Path(self.mtd_path).with_name(name))
+
+    def get_mtd_bools(self) -> dict[str, bool]:
+        mtd_name = self.mtd_name
+        bool_dict = {
+            key: False
+            for key in ("diffuse", "specular", "bumpmap", "height", "multiple", "lightmap", "alpha", "edge")
+        }
+        if dsbh_match := self.MTD_DSB_RE.match(mtd_name):
+            bool_dict["diffuse"] = bool(dsbh_match.group(1))
+            bool_dict["specular"] = bool(dsbh_match.group(2))
+            bool_dict["bumpmap"] = bool(dsbh_match.group(3))
+            bool_dict["height"] = bool(dsbh_match.group(4))
+        if ml_match := self.MTD_ML_RE.match(mtd_name):
+            bool_dict["multiple"] = bool(ml_match.group(1))
+            bool_dict["lightmap"] = bool(ml_match.group(2))
+        if "[Dn]" in mtd_name:
+            bool_dict["diffuse"] = True
+        if "[We]" in mtd_name:
+            bool_dict["bumpmap"] = True
+        bool_dict["alpha"] = "_Alp" in mtd_name
+        bool_dict["edge"] = "_Edge" in mtd_name
+        return bool_dict
 
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""

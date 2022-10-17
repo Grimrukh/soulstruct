@@ -73,12 +73,17 @@ class Bone(BinaryObject):
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()
-        indent = ""
         for bone in self.get_all_parents(bones):
             absolute_translate += rotate @ bone.translate
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
-            indent += "    "
         return absolute_translate
+
+    def get_vector_in_world_space(self, bones: list[Bone], v: Vector3) -> Vector3:
+        """Accumulates parents' rotations and applies them all to given vector `v`."""
+        rotate = Matrix3.identity()
+        for bone in self.get_all_parents(bones):
+            rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
+        return rotate @ v
 
     def __repr__(self):
         lines = [

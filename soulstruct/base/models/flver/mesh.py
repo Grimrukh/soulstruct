@@ -445,7 +445,7 @@ class Mesh(BinaryObject):
 
         ]
         if not self.is_bind_pose:
-            lines.append("  is_bind_post = False")
+            lines.append("  is_bind_pose = False")
         if self.bounding_box:
             lines.append(f"  bounding_box = {self.bounding_box}")
         lines.append(f"  face_sets = [\n{face_sets}\n  ]")
