@@ -8,12 +8,13 @@ from soulstruct.utilities.binary import BinaryStruct, BinaryObject
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 
+# TODO: Decent candidate for a `dataclass slots` refactor test.
 class Bone(BinaryObject):
 
     STRUCT = BinaryStruct(
         ("translate", "3f"),
         ("__name__z", "i"),
-        ("rotate", "3f"),
+        ("rotate", "3f"),  # Euler angles (radians)
         ("parent_index", "h"),
         ("child_index", "h"),
         ("scale", "3f"),
@@ -45,9 +46,9 @@ class Bone(BinaryObject):
             return bones[self.parent_index]
         return None
 
-    def get_all_parents(self, bones: list[Bone]) -> list[Bone]:
+    def get_all_parents(self, bones: list[Bone], include_self=True) -> list[Bone]:
         """Get all parents, from the highest to this Bone."""
-        parents = [self]
+        parents = [self] if include_self else []
         bone = self
         while bone.parent_index != -1:
             bone = bones[bone.parent_index]
@@ -69,21 +70,14 @@ class Bone(BinaryObject):
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate(self, bones: list[Bone]) -> Vector3:
+    def get_absolute_translate_rotate(self, bones: list[Bone]) -> (Vector3, Matrix3):
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()
-        for bone in self.get_all_parents(bones):
+        for bone in self.get_all_parents(bones, include_self=True):
             absolute_translate += rotate @ bone.translate
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
-        return absolute_translate
-
-    def get_vector_in_world_space(self, bones: list[Bone], v: Vector3) -> Vector3:
-        """Accumulates parents' rotations and applies them all to given vector `v`."""
-        rotate = Matrix3.identity()
-        for bone in self.get_all_parents(bones):
-            rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
-        return rotate @ v
+        return absolute_translate, rotate
 
     def __repr__(self):
         lines = [

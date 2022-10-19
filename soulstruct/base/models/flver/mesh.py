@@ -229,6 +229,7 @@ class Mesh(BinaryObject):
         self.vertex_buffers = []
         self.vertices = []
         self.invalid_vertex_size = False
+        self.bounding_box = None
         super().__init__(reader, **kwargs)
 
     def unpack(self, reader: BinaryReader, bounding_box_has_unknown: bool = None):
@@ -288,17 +289,17 @@ class Mesh(BinaryObject):
         else:
             _LOGGER.warning("Mesh has no vertex buffers.")
 
-        # Check that unique `LayoutSemantic` types do not occur more than once among all `BufferLayout` members.
-        existing_semantics = set()
+        # Check that unique `MemberType`s do not occur more than once among all `BufferLayout` members.
+        existing_types = set()
         for vertex_buffer in self.vertex_buffers:
             for member in layouts[vertex_buffer.layout_index]:
-                if member.semantic.unique():
-                    if member.semantic in existing_semantics:
+                if member.member_type.unique():
+                    if member.member_type in existing_types:
                         raise ValueError(
-                            f"Unique `LayoutSemantic` {member.semantic} found more than once in `BufferLayouts` "
+                            f"Unique `LayoutFormat` {member.member_type} found more than once in `BufferLayouts` "
                             f"of `Mesh`."
                         )
-                    existing_semantics.add(member.semantic)
+                    existing_types.add(member.member_type)
 
         # TODO: SoulsFormats does an extra check here for edge-compressed vertex buffers, which are not supported here.
 

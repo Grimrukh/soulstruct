@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 __all__ = [
-    "LayoutSemantic",
-    "LayoutType",
+    "MemberType",
+    "MemberFormat",
     "LayoutMember",
     "BufferLayout",
     "Vertex",
@@ -24,8 +24,8 @@ from .version import Version
 _LOGGER = logging.getLogger(__name__)
 
 
-class LayoutSemantic(IntEnum):
-    """Vertex property."""
+class MemberType(IntEnum):
+    """Data type of a `Vertex` property."""
     Position = 0  # vertex position
     BoneWeights = 1  # weight of the attached bones
     BoneIndices = 2  # bones to which the vertex is attached (indices of the parent mesh's bone indices)
@@ -36,12 +36,12 @@ class LayoutSemantic(IntEnum):
     VertexColor = 10  # blending, alpha, etc.
 
     def unique(self):
-        """If `True`, this `LayoutSemantic` only appears in one `LayoutMember` per `Mesh`."""
+        """If `True`, this `LayoutFormat` must only appear in one `LayoutMember` per `Mesh`."""
         return self in {self.BoneWeights, self.BoneIndices, self.Bitangent}
 
 
-class LayoutType(IntEnum):
-    """Format of a vertex property."""
+class MemberFormat(IntEnum):
+    """Data format of a `Vertex` property."""
     Float2 = 0x01
     Float3 = 0x02
     Float4 = 0x03
@@ -74,21 +74,33 @@ class LayoutType(IntEnum):
 class LayoutMember(BinaryObject):
 
     STRUCT = BinaryStruct(
-        ("unk_x00", "i"),
+        ("unk_x00", "i"),  # always zero in DS1 at least
         ("__struct_offset", "i"),  # validated, but not needed
-        ("layout_type", "i"),
-        ("semantic", "i"),
-        ("index", "i"),
+        ("member_format", "i"),
+        ("member_type", "i"),
+        ("index", "i"),  # instance index of this `type` in this `BufferLayout`
     )
     DEFAULTS = {
-        "layout_type": LayoutType.Float3,
-        "semantic": LayoutSemantic.Position,
+        "unk_x00": 0,
+        "index": 0,
     }
 
     unk_x00: int
-    layout_type: LayoutType
-    semantic: LayoutSemantic
+    member_format: MemberFormat
+    member_type: MemberType
     index: int
+
+    def __init__(
+        self, reader: BinaryReader = None, **kwargs
+    ):
+        if reader is None:
+            if "member_type" not in kwargs or "member_format" not in kwargs:
+                raise ValueError(
+                    "`member_type` and `member_format` must be given to `MemberLayout()` if `reader` not given."
+                )
+            self.member_type = kwargs.pop("member_type")
+            self.member_format = kwargs.pop("member_format")
+        super().__init__(reader, **kwargs)
 
     def unpack(self, reader: BinaryReader, struct_offset: int):
         layout_member = reader.unpack_struct(self.STRUCT)
@@ -107,24 +119,22 @@ class LayoutMember(BinaryObject):
             __struct_offset=struct_offset,
         )
 
+    def __eq__(self, other: LayoutMember):
+        return (
+            self.unk_x00 == other.unk_x00
+            and self.member_format == other.member_format
+            and self.member_type == other.member_type
+        )
+
     def __repr__(self):
-        return f"{self.semantic.name} | {self.layout_type.name} | {self.size}"
+        return f"{self.member_type.name}<{self.size}, {self.member_format.name}>"
 
     @property
     def size(self) -> int:
-        return self.layout_type.size()
+        return self.member_format.size()
 
 
-# Layout types for which two short UV coordinates should be read.
-TWO_SHORT_UV_TYPES = {
-    LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Short2toFloat2, LayoutType.Byte4C, LayoutType.UV
-}
-# Layout types for which a `Vector4` with quantized 8-bit floats in [-1, 1] range should be read.
-SIGNED_8BIT_FLOAT_TYPES = {LayoutType.Byte4A, LayoutType.Byte4B, LayoutType.Byte4C, LayoutType.Byte4E}
-TANGENT_SIGNED_8BIT_FLOAT_TYPES = SIGNED_8BIT_FLOAT_TYPES | {LayoutType.Short4ToFloat4A}  # one extra type
-COLOR_UNSIGNED_8BIT_FLOAT_TYPES = {LayoutType.Byte4A, LayoutType.Byte4C}
-
-
+# region Buffer Parser Callbacks
 def _int_to_float(scale: float, make_signed=False) -> (tp.Callable, tp.Callable):
     if make_signed:
         def read_func(v: tuple[int, ...]):
@@ -179,6 +189,7 @@ def _four_floats_to_two_uvs(v: tuple[float, float, float, float]) -> list[list[f
 
 def _one_uv_to_two_floats(d: list[float]) -> list[float, float]:
     return [d[0], d[1]]
+# endregion
 
 
 class LayoutMemberInfo(tp.NamedTuple):
@@ -190,120 +201,107 @@ class LayoutMemberInfo(tp.NamedTuple):
     has_two_uvs: bool = False
 
 
-# Maps `(LayoutSemantic, LayoutType)` key pairs (nested) to `(name, fmt, size, callback)` quadruples.
+# Maps `(LayoutFormat, LayoutType)` key pairs (nested) to `(name, fmt, size, callback)` quadruples.
 # Note that the layout is aware that `uvs`, `tangents`, and `colors` attributes are lists; `+=` will be used on the
 # callback result in these cases.
-
-"""
-            if member.semantic == LayoutSemantic.BoneWeights:
-                if member.layout_type == LayoutType.Byte4A:
-                    writer.pack("4b", *[int(w * 127) for w in self.bone_weights])
-                elif member.layout_type == LayoutType.Byte4C:
-                    writer.pack("4B", *[int(w * 255) for w in self.bone_weights])
-                elif member.layout_type in {LayoutType.UVPair, LayoutType.Short4ToFloat4A}:
-                    writer.pack("4h", *[int(w * 32767) for w in self.bone_weights])
-                else:
-                    not_implemented = True
-"""
-
 LAYOUT_PARSER = {
-    LayoutSemantic.Position: {
-        LayoutType.Float3: LayoutMemberInfo("position", "3f", 3),
-        LayoutType.Float4: LayoutMemberInfo(
+    MemberType.Position: {
+        MemberFormat.Float3: LayoutMemberInfo("position", "3f", 3),
+        MemberFormat.Float4: LayoutMemberInfo(
             "position", "4f", 4,
             lambda v: [v[0], v[1], v[2]],
             lambda d: (d[0], d[1], d[2], 0.0),
         ),
         # LayoutType.EdgeCompressed is explicitly not supported.
     },
-    LayoutSemantic.BoneWeights: {
-        LayoutType.Byte4A: LayoutMemberInfo("bone_weights", "4b", 4, *_int_to_float(127.0)),
-        LayoutType.Byte4C: LayoutMemberInfo("bone_weights", "4B", 4, *_int_to_float(255.0)),
-        LayoutType.UVPair: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
-        LayoutType.Short4ToFloat4A: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
+    MemberType.BoneWeights: {
+        MemberFormat.Byte4A: LayoutMemberInfo("bone_weights", "4b", 4, *_int_to_float(127.0)),
+        MemberFormat.Byte4C: LayoutMemberInfo("bone_weights", "4B", 4, *_int_to_float(255.0)),
+        MemberFormat.UVPair: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
+        MemberFormat.Short4ToFloat4A: LayoutMemberInfo("bone_weights", "4h", 4, *_int_to_float(32767.0)),
     },
-    LayoutSemantic.BoneIndices: {
-        LayoutType.Byte4B: LayoutMemberInfo("bone_indices", "4B", 4),
-        LayoutType.Byte4E: LayoutMemberInfo("bone_indices", "4B", 4),
-        LayoutType.ShortBoneIndices: LayoutMemberInfo("bone_indices", "4h", 4),
+    MemberType.BoneIndices: {
+        MemberFormat.Byte4B: LayoutMemberInfo("bone_indices", "4B", 4),
+        MemberFormat.Byte4E: LayoutMemberInfo("bone_indices", "4B", 4),
+        MemberFormat.ShortBoneIndices: LayoutMemberInfo("bone_indices", "4h", 4),
     },
-    LayoutSemantic.Normal: {
-        LayoutType.Float3: LayoutMemberInfo(
+    MemberType.Normal: {
+        MemberFormat.Float3: LayoutMemberInfo(
             "normal", "3f", 3,
             lambda v: [v[0], v[1], v[2], -1.0],
             lambda d: [d[0], d[1], d[2]],
         ),
-        LayoutType.Float4: LayoutMemberInfo("normal", "4f", 4),
+        MemberFormat.Float4: LayoutMemberInfo("normal", "4f", 4),
         # Note that we don't modify `w` in any of these quantization cases, except to make it a `float`.
-        LayoutType.Byte4A: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        LayoutType.Byte4B: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        LayoutType.Byte4C: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        LayoutType.Byte4E: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
-        LayoutType.Short2toFloat2: LayoutMemberInfo(
+        MemberFormat.Byte4A: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        MemberFormat.Byte4B: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        MemberFormat.Byte4C: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        MemberFormat.Byte4E: LayoutMemberInfo("normal", "4B", 4, _int_to_float_normal, _float_to_int_normal),
+        MemberFormat.Short2toFloat2: LayoutMemberInfo(
             "normal", "B3b", 4,
             lambda v: [v[1] / 127.0, v[2] / 127.0, v[3] / 127.0, v[0]],  # packed in `wxyz` order
             lambda d: [d[3], int(d[0] * 127), int(d[1] * 127), int(d[2] * 127)],
         ),
-        LayoutType.Short4ToFloat4A: LayoutMemberInfo(
+        MemberFormat.Short4ToFloat4A: LayoutMemberInfo(
             "normal", "4h", 4,
             lambda v: [v[0] / 32767.0, v[1] / 32767.0, v[2] / 32767.0, float(v[3])],
             lambda d: [int(d[0] * 32767), int(d[1] * 32767), int(d[2] * 32767), int(d[3])],
         ),
-        LayoutType.Short4ToFloat4B: LayoutMemberInfo(
+        MemberFormat.Short4ToFloat4B: LayoutMemberInfo(
             "normal", "3Hh", 4,
             lambda v: [(v[0] - 32767) / 32767.0, (v[1] - 32767) / 32767.0, (v[2] - 32767) / 32767.0, float(v[3])],
             lambda d: [int(d[0] * 32767 + 32767), int(d[1] * 32767 + 32767), int(d[2] * 32767 + 32767), int(d[3])],
         ),
     },
-    LayoutSemantic.UV: {
+    MemberType.UV: {
         # UV read callbacks return a list of 1-2 UV lists, but write callbacks still process one UV list at a time.
         # Writer will detect `Float4` and `UVPair` types are write two queued UVs (in reverse order) as needed.
-        LayoutType.Float2: LayoutMemberInfo("uvs", "2f", 2, lambda v: [[*v, 0.0]], lambda d: [d[0], d[1]]),
-        LayoutType.Float3: LayoutMemberInfo("uvs", "3f", 3, lambda v: [list(v)]),
-        LayoutType.Float4: LayoutMemberInfo(
+        MemberFormat.Float2: LayoutMemberInfo("uvs", "2f", 2, lambda v: [[*v, 0.0]], lambda d: [d[0], d[1]]),
+        MemberFormat.Float3: LayoutMemberInfo("uvs", "3f", 3, lambda v: [list(v)]),
+        MemberFormat.Float4: LayoutMemberInfo(
             "uvs", "4f", 4, _four_floats_to_two_uvs, _one_uv_to_two_floats, has_two_uvs=True
         ),
         # All types below this will have their UVs divided by local `uv_factor` by the unpacker.
-        LayoutType.Byte4A: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        LayoutType.Byte4B: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        LayoutType.Short2toFloat2: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        LayoutType.Byte4C: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        LayoutType.UV: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
-        LayoutType.UVPair: LayoutMemberInfo(
+        MemberFormat.Byte4A: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        MemberFormat.Byte4B: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        MemberFormat.Short2toFloat2: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        MemberFormat.Byte4C: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        MemberFormat.UV: LayoutMemberInfo("uvs", "2h", 2, _two_shorts_to_one_uv, _one_uv_to_two_shorts),
+        MemberFormat.UVPair: LayoutMemberInfo(
             "uvs", "4h", 4, _four_shorts_to_two_uvs, _one_uv_to_two_shorts, has_two_uvs=True
         ),
-        LayoutType.Short4ToFloat4B: LayoutMemberInfo("uvs", "4h", 4, _four_shorts_to_one_uv, _one_uv_to_four_shorts),
+        MemberFormat.Short4ToFloat4B: LayoutMemberInfo("uvs", "4h", 4, _four_shorts_to_one_uv, _one_uv_to_four_shorts),
     },
-    LayoutSemantic.Tangent: {
-        LayoutType.Float4: LayoutMemberInfo("tangents", "4f", 4),
-        LayoutType.Byte4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4B: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4C: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4E: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Short4ToFloat4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+    MemberType.Tangent: {
+        MemberFormat.Float4: LayoutMemberInfo("tangents", "4f", 4),
+        MemberFormat.Byte4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4B: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4C: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4E: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Short4ToFloat4A: LayoutMemberInfo("tangents", "4B", 4, *_int_to_float(127.0, make_signed=True)),
     },
-    LayoutSemantic.Bitangent: {
-        LayoutType.Byte4A: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4B: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4C: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
-        LayoutType.Byte4E: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+    MemberType.Bitangent: {
+        MemberFormat.Byte4A: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4B: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4C: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
+        MemberFormat.Byte4E: LayoutMemberInfo("bitangent", "4B", 4, *_int_to_float(127.0, make_signed=True)),
     },
-    LayoutSemantic.VertexColor: {
-        LayoutType.Float4: LayoutMemberInfo("colors", "4f", 4),
-        LayoutType.Byte4A: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
-        LayoutType.Byte4C: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
+    MemberType.VertexColor: {
+        MemberFormat.Float4: LayoutMemberInfo("colors", "4f", 4),
+        MemberFormat.Byte4A: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
+        MemberFormat.Byte4C: LayoutMemberInfo("colors", "4B", 4, *_int_to_float(255.0)),
     },
 }
 
 
 USES_UV_FACTOR = {
-    LayoutType.Byte4A,
-    LayoutType.Byte4B,
-    LayoutType.Short2toFloat2,
-    LayoutType.Byte4C,
-    LayoutType.UV,
-    LayoutType.UVPair,
-    LayoutType.Short4ToFloat4B,
+    MemberFormat.Byte4A,
+    MemberFormat.Byte4B,
+    MemberFormat.Short2toFloat2,
+    MemberFormat.Byte4C,
+    MemberFormat.UV,
+    MemberFormat.UVPair,
+    MemberFormat.Short4ToFloat4B,
 }
 
 
@@ -336,7 +334,7 @@ class BufferLayout:
             for _ in range(buffer_layout.pop("__member_count")):
                 member = LayoutMember(reader, struct_offset=struct_offset)
                 self.members.append(member)
-                struct_offset += member.layout_type.size()
+                struct_offset += member.member_format.size()
 
     def pack(self, writer: BinaryWriter):
         writer.pack_struct(
@@ -353,6 +351,9 @@ class BufferLayout:
             member.pack(writer, struct_offset)
             struct_offset += member.size
 
+    def has_member_type(self, member_type: MemberType) -> bool:
+        return any(member.member_type == member_type for member in self.members)
+
     def get_vertex_read_function(self, uv_factor: int) -> tp.Callable[[BinaryReader, Vertex], None]:
         """Construct a relatively efficient function that can be used to read data for each `Vertex` whose data lies
         in a `VertexBuffer` with this layout."""
@@ -362,23 +363,20 @@ class BufferLayout:
 
         for member in self.members:
 
-            if member.semantic == LayoutSemantic.Position and member.layout_type == LayoutType.EdgeCompressed:
+            if member.member_type == MemberType.Position and member.member_format == MemberFormat.EdgeCompressed:
                 # Explicitly not supported.
                 raise NotImplementedError("Cannot read FLVERs with edge-compressed vertex positions.")
-            if member.semantic not in LAYOUT_PARSER:
-                raise ValueError(f"Invalid vertex buffer layout member semantic: {member.semantic}")
+            if member.member_type not in LAYOUT_PARSER:
+                raise ValueError(f"Invalid vertex buffer layout member type: {member.member_type}")
 
-            semantic_parser = LAYOUT_PARSER[member.semantic]
-            if member.layout_type not in semantic_parser:
-                raise NotImplementedError(
-                    f"Unsupported vertex buffer layout member semantic/type combination: "
-                    f"{member.semantic.name} | {member.layout_type.name}"
-                )
+            type_parser = LAYOUT_PARSER[member.member_type]
+            if member.member_format not in type_parser:
+                raise NotImplementedError(f"Unsupported vertex buffer layout member type/format: {member}")
 
-            member_info = semantic_parser[member.layout_type]
+            member_info = type_parser[member.member_format]
 
             # Modify UV callbacks with scale factor, if appropriate.
-            if member.semantic == LayoutSemantic.UV and member.layout_type in USES_UV_FACTOR:
+            if member.member_type == MemberType.UV and member.member_format in USES_UV_FACTOR:
                 def scaled_uv_callback(v, info=member_info):  # this `member_info` baked in
                     return [[x / uv_factor for x in uv_list] for uv_list in info.read_callback(v)]
 
@@ -417,23 +415,20 @@ class BufferLayout:
 
         for member in self.members:
 
-            if member.semantic == LayoutSemantic.Position and member.layout_type == LayoutType.EdgeCompressed:
+            if member.member_type == MemberType.Position and member.member_format == MemberFormat.EdgeCompressed:
                 # Explicitly not supported.
                 raise NotImplementedError("Cannot write FLVERs with edge-compressed vertex positions.")
-            if member.semantic not in LAYOUT_PARSER:
-                raise ValueError(f"Invalid vertex buffer layout member semantic: {member.semantic}")
+            if member.member_type not in LAYOUT_PARSER:
+                raise ValueError(f"Invalid vertex buffer layout member type: {member.member_type}")
 
-            semantic_parser = LAYOUT_PARSER[member.semantic]
-            if member.layout_type not in semantic_parser:
-                raise NotImplementedError(
-                    f"Unsupported vertex buffer layout member semantic/type combination: "
-                    f"{member.semantic.name} | {member.layout_type.name}"
-                )
+            type_parser = LAYOUT_PARSER[member.member_type]
+            if member.member_format not in type_parser:
+                raise NotImplementedError(f"Unsupported vertex buffer layout member type/format: {member}")
 
-            member_info = semantic_parser[member.layout_type]
+            member_info = type_parser[member.member_format]
 
             # Modify UV callbacks with scale factor, if appropriate.
-            if member.semantic == LayoutSemantic.UV and member.layout_type in USES_UV_FACTOR:
+            if member.member_type == MemberType.UV and member.member_format in USES_UV_FACTOR:
                 def scaled_uv_callback(d, info=member_info):  # this `member_info` baked in
                     return info.write_callback([x * uv_factor for x in d])
 
@@ -484,6 +479,12 @@ class BufferLayout:
 
         return write_vertex_data
 
+    def __hash__(self):
+        return hash(", ".join(str(m) for m in self.members))
+
+    def __eq__(self, other: BufferLayout):
+        return self.members == other.members
+
     def __iter__(self):
         return iter(self.members)
 
@@ -494,7 +495,7 @@ class BufferLayout:
         return len(self.members)
 
     def get_total_size(self):
-        return sum(member.layout_type.size() for member in self.members)
+        return sum(member.member_format.size() for member in self.members)
 
     def __repr__(self):
         members = "\n        ".join(repr(m) for m in self.members)
@@ -518,6 +519,8 @@ class Vertex:
 
     Also note that the fourth element of `normal` is used as an (integer) index for binding to a single bone in some
     cases. It is not part of the actual 3D normal vector.
+
+    TODO: Could remove this class altogether and just use dictionaries?
     """
 
     def __init__(

@@ -371,7 +371,7 @@ class FLVER(GameFile):
         vertex_data_start = writer.position
         self.header.fill(writer, vertex_data_offset=vertex_data_start)
 
-        for mesh in self.meshes:
+        for i, mesh in enumerate(self.meshes):
             for face_set in mesh.face_sets:
                 if header_vertex_indices_size == 0:
                     face_set_vertex_index_size = face_set.get_vertex_index_size()
@@ -400,7 +400,16 @@ class FLVER(GameFile):
                 )
 
             for vertex in mesh.vertices:
-                vertex.finish_pack()
+                try:
+                    vertex.finish_pack()
+                except ValueError as ex:
+                    mesh_material = self.materials[mesh.material_index]
+                    raise ValueError(
+                        f"Mesh {i} left in invalid state after pack.\n"
+                        f"Material MTD: {mesh_material.mtd_name}\n"
+                        f"Material textures: {', '.join(tex.texture_type for tex in mesh_material.textures)}"
+                        f"Error: {ex}"
+                    )
 
         writer.pad_align(16)
         self.header.fill(writer, vertex_data_size=writer.position - vertex_data_start)
