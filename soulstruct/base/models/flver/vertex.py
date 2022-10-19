@@ -13,11 +13,12 @@ __all__ = [
 import logging
 import struct
 import typing as tp
+from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
-from soulstruct.utilities.maths import Vector3, Vector4
+from soulstruct.utilities.maths import Vector3
 
 from .version import Version
 
@@ -507,6 +508,7 @@ class BufferLayout:
         )
 
 
+@dataclass(slots=True)
 class Vertex:
     """A single mesh vertex.
 
@@ -519,42 +521,28 @@ class Vertex:
 
     Also note that the fourth element of `normal` is used as an (integer) index for binding to a single bone in some
     cases. It is not part of the actual 3D normal vector.
-
-    TODO: Could remove this class altogether and just use dictionaries?
     """
+    DEFAULT_NORMAL_W = 127.0
 
-    def __init__(
-        self,
-        position: list[float] = None,
-        bone_weights: list[float] = None,
-        bone_indices: list[int] = None,
-        normal: list[float] = None,  # NOTE: `w` element can be used to bind to a single bone (as an `int`)
-        uvs: list[list[float]] = None,  # NOTE: proportion of 1024 (pre-`DarkSouls2_NT`) or 2048
-        tangents: list[list[float]] = None,
-        bitangent: list[float] = None,
-        colors: list[list[float]] = None,
-    ):
-        self.position = [0.0, 0.0, 0.0] if position is None else position
-        self.bone_weights = [0.0, 0.0, 0.0, 0.0] if bone_weights is None else bone_weights
-        self.bone_indices = [0, 0, 0, 0] if bone_indices is None else bone_indices
-        if normal is None:
-            self.normal = [0.0, 0.0, 0.0, 0.0]
-        elif len(normal) == 3:
-            self.normal = [*normal, 0.0]
-        elif len(normal) == 4:
-            self.normal = list(normal)
-        else:
-            raise TypeError(f"Invalid value for `normal`: {normal}. Should be `None`, three floats, or four floats.")
-        self.uvs = [] if uvs is None else uvs
-        self.tangents = [] if tangents is None else tangents
-        self.bitangent = [0.0, 0.0, 0.0, 0.0] if bitangent is None else bitangent
-        self.colors = [] if colors is None else colors
+    position: list[float] = field(default_factory=lambda: [0.0] * 3)
+    bone_weights: list[float] = field(default_factory=lambda: [0.0] * 4)
+    bone_indices: list[int] = field(default_factory=lambda: [0] * 4)
+    # NOTE: `normal[3]` can be used to bind to a single bone (as an `int`).
+    normal: list[float] = field(default_factory=lambda: [0.0] * 4)
+    # NOTE: proportion of 1024 (pre-`DarkSouls2_NT`) or 2048
+    uvs: list[list[float]] = field(default_factory=list)
+    tangents: list[list[float]] = field(default_factory=list)
+    bitangent: list[float] = field(default_factory=lambda: [0.0] * 4)
+    colors: list[list[float]] = field(default_factory=list)
 
-        self.raw = b""
+    raw: bytes = field(default=b"", init=False, repr=False)
+    uv_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
+    tangent_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
+    color_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
 
-        self.uv_queue = []  # type: list[list[float]]
-        self.tangent_queue = []  # type: list[list[float]]
-        self.color_queue = []  # type: list[list[float]]
+    def __post_init__(self):
+        if len(self.normal) == 3:
+            self.normal = [*self.normal, self.DEFAULT_NORMAL_W]
 
     @property
     def normal_xyz(self) -> list[float]:
@@ -562,14 +550,12 @@ class Vertex:
         return self.normal[:3]
 
     @normal_xyz.setter
-    def normal_xyz(self, value: Vector3 | Vector4 | tuple | list):
-        """Set XYZ or full XYZW of `_normal`."""
+    def normal_xyz(self, value: Vector3 | tuple | list):
+        """Set XYZ of `normal`."""
         if len(value) == 3:
             self.normal = [*value, self.normal[3]]  # keep current `w`
-        elif len(value) == 4:
-            self.normal = Vector4(*value)
         else:
-            raise TypeError(f"`Vertex.normal` can only be set to a 3 or 4 length sequence/vector, not: {value}")
+            raise TypeError(f"`Vertex.normal_xyz` can only be set to a 3-length sequence/vector, not: {value}")
 
     @property
     def normal_w(self) -> int:
@@ -604,6 +590,7 @@ class Vertex:
         return f"Vertex({self.position[0]}, {self.position[1]}, {self.position[2]})"
 
     def __repr__(self):
+        """Omits default/empty values."""
         lines = [f"    position = {self.position},"]
         if any(self.bone_weights):
             lines += [f"    bone_weights = {self.bone_weights},"]
