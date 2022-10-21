@@ -692,7 +692,12 @@ class EntityEditor(BaseEditor):
 
         msb = self.get_selected_msb()
         try:
-            msb.write_entities_module(module_path, area_id=game_map.area_id, block_id=game_map.block_id)
+            msb.write_entities_module(
+                module_path,
+                area_id=game_map.area_id,
+                block_id=game_map.block_id,
+                include_vanilla_entities=self._project.include_vanila_entities
+            )
         except Exception as ex:
             self.CustomDialog(
                 "Write Failed", f"An error occurred while writing '{{project}}/events/{module_path.name}':\n{ex}"
