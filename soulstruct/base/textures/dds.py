@@ -313,6 +313,13 @@ class DDS(GameFile):
     def dxgi_format(self) -> tp.Optional[DXGI_FORMAT]:
         return self.dxt10_header.dxgi_format if self.dxt10_header else None
 
+    @property
+    def texconv_format(self) -> str:
+        """Returns DXGI format name if present, or `fourcc` otherwise."""
+        if self.dxt10_header:
+            return self.dxt10_header.dxgi_format.name
+        return self.fourcc
+
     def __repr__(self):
         if self.dxt10_header:
             return f"DDS(DX10, dxgi_format={self.dxt10_header.dxgi_format.name})"

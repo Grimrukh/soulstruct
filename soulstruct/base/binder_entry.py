@@ -195,6 +195,10 @@ class BinderEntry:
         """Encodes path and null-terminates."""
         return self.path.encode(encoding) + (b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0")
 
+    def set_path_name(self, new_name: str):
+        """Update just the basename of `path`."""
+        self.path = str(Path(self.path).parent) + f"\\{new_name}"
+
     @property
     def data_size(self) -> int:
         return len(self.data)

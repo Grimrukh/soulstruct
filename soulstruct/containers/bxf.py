@@ -131,6 +131,53 @@ class BaseBXF(BaseBinder, abc.ABC):
         with bdt_file_path.open("wb") as f:
             f.write(packed_bdt)
 
+    def write_split(
+        self,
+        bhd_path_or_entry: None | str | Path | BinderEntry,
+        bdt_path_or_entry: None | str | Path | BinderEntry,
+        make_dirs=True,
+        check_hash=False,
+    ):
+        """Writes both the `BHD` and `BDT` files at once, but also supports writing their data into an existing
+        `BinderEntry`. Most useful for split 'CHRTPFBHD/BDT' files in `chr` folders.
+
+        Note that any `BinderEntry` written into will still need to be written separately.
+
+        Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
+        already exist.
+
+        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_type` is defined. Will also
+        automatically create a `.bak` version of the `file_path`, if a backup does not already exist.
+
+        Args:
+            bhd_path_or_entry (None, str, Path, BinderEntry): file path or `BinderEntry` to write `BHD` to.
+            bdt_path_or_entry (None, str, Path, BinderEntry): file path or `BinderEntry` to write `BDT` to.
+            make_dirs (bool): if True, any absent directories in either path will be created.
+            check_hash (bool): if True, files will not be written if both BHD and BDT files with same hashes already
+                exist. (Default: False)
+        """
+        packed_bhd, packed_bdt = self.pack()
+        if self.dcx_type != DCXType.Null:
+            # I haven't actually seen any BDT archives with DCX compression.
+            packed_bhd = compress(packed_bhd, self.dcx_type)
+            packed_bdt = compress(packed_bdt, self.dcx_type)
+
+        for path_or_entry, packed in zip((bhd_path_or_entry, bdt_path_or_entry), (packed_bhd, packed_bdt)):
+            if isinstance(path_or_entry, (str, Path)):
+                path_or_entry = Path(path_or_entry)
+                if make_dirs:
+                    path_or_entry.parent.mkdir(parents=True, exist_ok=True)
+                if check_hash and path_or_entry.is_file():
+                    bhd_match = get_blake2b_hash(path_or_entry) == get_blake2b_hash(packed)
+                    if not bhd_match:
+                        self.create_bak(path_or_entry, make_dirs=make_dirs)
+                        path_or_entry.write_bytes(packed)
+                else:
+                    self.create_bak(path_or_entry, make_dirs=make_dirs)
+                    path_or_entry.write_bytes(packed)
+            elif isinstance(path_or_entry, BinderEntry):
+                path_or_entry.set_uncompressed_data(packed)
+
 
 class BXF3(BaseBXF):
 
