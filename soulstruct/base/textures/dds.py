@@ -4,8 +4,9 @@ As always, courtesy of SoulsFormats by TKGP:
 """
 from __future__ import annotations
 
-__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "convert_dds_file"]
+__all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "texconv", "get_converted_texture_data", "convert_dds_file"]
 
+import logging
 import subprocess
 import typing as tp
 from enum import IntEnum, auto
@@ -14,6 +15,8 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryObject, BinaryStruct
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DDSD(IntEnum):
@@ -80,6 +83,7 @@ class ALPHA_MODE(IntEnum):
     CUSTOM = 4
 
 
+# Extra enum in `DX10` files.
 class DXGI_FORMAT(IntEnum):
     UNKNOWN = auto()
     R32G32B32A32_TYPELESS = auto()
@@ -301,24 +305,67 @@ class DDS(GameFile):
             self.dxt10_header.pack(writer)
         return writer.finish()
 
+    @property
+    def fourcc(self) -> str:
+        return self.header.fourcc.decode()
+
+    @property
+    def dxgi_format(self) -> tp.Optional[DXGI_FORMAT]:
+        return self.dxt10_header.dxgi_format if self.dxt10_header else None
+
+    def __repr__(self):
+        if self.dxt10_header:
+            return f"DDS(DX10, dxgi_format={self.dxt10_header.dxgi_format.name})"
+        return f"DDS({self.header.fourcc.decode()})"
+
+
+def texconv(*args):
+    texconv_path = PACKAGE_PATH("base/textures/texconv.exe")
+    if not texconv_path.is_file():
+        raise FileNotFoundError("Cannot find `texconv.exe` that should be bundled with Soulstruct in 'base/textures'.")
+    return subprocess.run(
+        [texconv_path, *args],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+
+
+# TODO: use `tempfile` module
+def get_converted_texture_data(input_source: bytes | Path | str, *texconv_args) -> bytes:
+    if isinstance(input_source, bytes):
+        temp_dds_path = Path(__file__).parent / "__temp__.dds"
+        temp_dds_path.write_bytes(input_source)
+        result = texconv("-o", str(Path(__file__).parent), "-y", *texconv_args, str(temp_dds_path))
+        if result.returncode == 0:
+            return temp_dds_path.read_bytes()
+        raise ValueError(
+            f"Could not convert texture source bytes.\n"
+            f"   stdout: {result.stdout}\n"
+            f"   stderr: {result.stderr}"
+        )
+    else:
+        result = texconv(*texconv_args, str(input_source))
+        output_path = Path(input_source).with_suffix(".DDS")
+        if result.returncode == 0 and output_path.is_file():
+            return output_path.read_bytes()
+        else:
+            raise ValueError(
+                f"Could not convert texture source {input_source}.\n"
+                f"   stdout: {result.stdout}\n"
+                f"   stderr: {result.stderr}"
+            )
+
 
 def convert_dds_file(
-    dds_path: str | Path, output_dir: str | Path, output_format: str, input_format: str = None
+    dds_path: str | Path, output_dir: str | Path, output_format: str, input_fourcc: str = None
 ):
     """Convert DDS file path to a different format using DirectX-powered `texconv.exe`.
 
     If `input_format` is given, the source DDS will be checked to make sure it matches that format.
     """
-    texconv_path = PACKAGE_PATH("base/textures/texconv.exe")
-    if not texconv_path.is_file():
-        raise FileNotFoundError("Cannot find `texconv.exe` that should be bundled with Soulstruct in 'base/textures'.")
-    if input_format is not None:
+    if input_fourcc is not None:
         # Check that DDS starts with the asserted format.
         dds = DDS(dds_path)
-        if dds.header.fourcc.decode() != input_format:
-            raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_format}")
-    return subprocess.run(
-        [texconv_path, "-f", output_format, "-o", output_dir, "-y", dds_path],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
+        if dds.header.fourcc.decode() != input_fourcc:
+            raise ValueError(f"DDS format {dds.header.fourcc} does not match `input_format` {input_fourcc}")
+    return texconv("-f", output_format, "-o", output_dir, "-y", dds_path)

@@ -16,38 +16,40 @@ if tp.TYPE_CHECKING:
 
 
 class BinderEntryFlags(int):
+    """Note that `SoulsFormats` represents these flags as big-endian, including in Yabber XML files. I have noted the
+    comparative values next to each bit flag."""
 
     @property
     def is_compressed(self):
-        return self & 0b0000_0001  # 0x80
+        return self & 0b0000_0001 != 0  # big endian: 0x80
 
     @property
     def has_flag_1(self):
-        return self & 0b0000_0010  # 0x40
+        return self & 0b0000_0010 != 0  # big endian: 0x40
 
     @property
     def has_flag_2(self):
-        return self & 0b0000_0100  # 0x20
+        return self & 0b0000_0100 != 0  # big endian: 0x20
 
     @property
     def has_flag_3(self):
-        return self & 0b0000_1000  # 0x10
+        return self & 0b0000_1000 != 0  # big endian: 0x10
 
     @property
     def has_flag_4(self):
-        return self & 0b0001_0000  # 0x08
+        return self & 0b0001_0000 != 0  # big endian: 0x08
 
     @property
     def has_flag_5(self):
-        return self & 0b0010_0000  # 0x04
+        return self & 0b0010_0000 != 0  # big endian: 0x04
 
     @property
     def has_flag_6(self):
-        return self & 0b0100_0000  # 0x02
+        return self & 0b0100_0000 != 0  # big endian: 0x02
 
     @property
     def has_flag_7(self):
-        return self & 0b1000_0000  # 0x01
+        return self & 0b1000_0000 != 0  # big endian: 0x01
 
     @classmethod
     def read(cls, reader: BinaryReader, bit_big_endian: bool) -> BinderEntryFlags:
@@ -159,7 +161,7 @@ class BinderEntryHeader:
 
 class BinderEntry:
 
-    def __init__(self, data: bytes, entry_id: int = None, path: str = None, flags=0x40):
+    def __init__(self, data: bytes, entry_id: int = None, path: str = None, flags=0x2):
         self.data = data  # packed binary data, identical to what the unpacked file would look like (may be compressed)
         self.id = entry_id  # index that may be used by the game engine to access the packed data
         self.path = path  # full internal 'path' (in most cases), encoded in UTF-16 or Shift-JIS with double backslashes

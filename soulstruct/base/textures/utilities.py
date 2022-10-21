@@ -8,7 +8,6 @@ import re
 import shutil
 from pathlib import Path
 
-from soulstruct import DSR_PATH
 from soulstruct.base.textures.dds import DDS, convert_dds_file
 from soulstruct.containers.tpf import TPF
 
@@ -18,10 +17,10 @@ def dump_map_dds(game_map_dir: Path, dump_path: Path):
     for map_subdir in game_map_dir.glob("m*"):
         if re.match(r"^m\d\d$", map_subdir.name):
             print(f"Dumping from {map_subdir}...")
-            tpf_dict = TPF.collect_tpfs(map_subdir)
-            for tga_path, tpf in tpf_dict.items():
+            tpf_dict = TPF.collect_tpf_textures(map_subdir)
+            for tga_path, texture in tpf_dict.items():
                 dds_name = f"{Path(tga_path).stem}.dds"
-                tpf.textures[0].write_dds(dump_path / dds_name)
+                texture.write_dds(dump_path / dds_name)
                 print(f"   {dds_name}")
 
 

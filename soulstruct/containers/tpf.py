@@ -5,13 +5,15 @@ __all__ = ["TPFTexture", "TPF"]
 import logging
 import json
 import re
+import shutil
+import tempfile
 import typing as tp
 import zlib
 from enum import IntEnum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.base.textures.dds import DDS, DDSCAPS2, convert_dds_file
+from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 from .dcx import decompress
 
@@ -72,7 +74,6 @@ class TPFTexture:
     data: bytes
     header: tp.Optional[TextureHeader]
     float_struct: tp.Optional[FloatStruct]
-    tpf_path: tp.Optional[Path]
 
     def __init__(self):
         self.name = ""
@@ -83,7 +84,6 @@ class TPFTexture:
         self.data = b""
         self.header = None
         self.float_struct = None
-        self.tpf_path = None
 
     @classmethod
     def unpack_from(
@@ -92,10 +92,8 @@ class TPFTexture:
         platform: TPFPlatform,
         tpf_flags: int,
         encoding: str,
-        tpf_path: None | str | Path = None,
     ):
         self = cls()
-        self.tpf_path = tpf_path
 
         file_offset = reader.unpack_value("I")
         file_size = reader.unpack_value("i")
@@ -216,14 +214,23 @@ class TPFTexture:
     def get_dds_format(self) -> str:
         return DDS(self.data).header.fourcc.decode()
 
-    def write_dds(self, dds_path: None | str | Path = None):
-        if dds_path is None:
-            if self.tpf_path is None:
-                raise ValueError(f"Cannot determine DDS path automatically (TPF path not known).")
-            dds_path = self.tpf_path / f"{Path(self.name).stem}.dds"
-        else:
-            dds_path = Path(dds_path)
-        dds_path.write_bytes(self.data)
+    def write_dds(self, dds_path: str | Path):
+        Path(dds_path).write_bytes(self.data)
+
+    def get_png_data(self, fmt="rgba") -> bytes:
+        with tempfile.TemporaryDirectory() as png_dir:
+            temp_dds_path = Path(png_dir, "temp.dds")
+            temp_dds_path.write_bytes(self.data)
+            texconv_result = texconv("-o", png_dir, "-ft", "png", "-f", fmt, temp_dds_path)
+            try:
+                return Path(png_dir, "temp.png").read_bytes()
+            except FileNotFoundError:
+                stdout = "\n    ".join(texconv_result.stdout.decode().split("\r\n")[3:])  # drop copyright lines
+                raise ValueError(f"Could not convert texture DDS to PNG:\n    {stdout}")
+
+    def export_png(self, png_path: str | Path, fmt="rgba"):
+        png_data = self.get_png_data(fmt)
+        png_path.write_bytes(png_data)
 
     def convert_dds_format(self, output_format: str, assert_input_format: str = None) -> bool:
         """Convert `data` DDS format in place. Returns `True` if conversion succeeds."""
@@ -378,6 +385,24 @@ class TPF(GameFile):
                 f"Failed to convert {fail_count} out of {total_count} textures from {input_format} to {output_format}."
             )
 
+    def get_all_png_data(self, fmt="rgba") -> list[tp.Optional[bytes]]:
+        png_datas = []
+        for tex in self.textures:
+            try:
+                png_datas.append(tex.get_png_data(fmt))
+            except ValueError as ex:
+                _LOGGER.warning(str(ex))
+                png_datas.append(None)
+        return png_datas
+
+    def export_to_pngs(self, png_dir_path: Path | str, fmt="rgba"):
+        for tex in self.textures:
+            png_name = Path(tex.name).with_suffix(".png")
+            try:
+                tex.export_png(png_dir_path / png_name, fmt=fmt)
+            except ValueError as ex:
+                _LOGGER.warning(str(ex))
+
     def __repr__(self) -> str:
         return (
             f"TPF(\n"
@@ -389,7 +414,7 @@ class TPF(GameFile):
         )
 
     @classmethod
-    def collect_tpfs(
+    def collect_tpf_textures(
         cls, tpfbhd_directory: str | Path, convert_formats: tp.Tuple[str, str] = None
     ) -> dict[str, TPFTexture]:
         """Build a dictionary mapping TGA texture names to `TPFTexture` instances."""
@@ -403,7 +428,7 @@ class TPF(GameFile):
             for entry in bxf.entries:
                 match = tpf_re.match(entry.name)
                 if match:
-                    tpf = TPF(entry.data)
+                    tpf = cls(entry.data)
                     if convert_formats is not None:
                         input_format, output_format = convert_formats
                         tpf.convert_dds_formats(input_format, output_format)
