@@ -6,6 +6,7 @@ import io
 import logging
 import struct
 import typing as tp
+from dataclasses import dataclass
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader
@@ -18,42 +19,39 @@ from .paramdef import ParamDef, ParamDefField, ParamDefBND
 _LOGGER = logging.getLogger(__name__)
 
 
+@dataclass(slots=True, init=False, repr=False)
 class ParamRow:
+
+    name: str | bytes  # may be 'undecodable' bytes
+    fields: dict[str, bool | int | float | str | bytes]
+    paramdef: ParamDef
 
     def __init__(
         self,
-        row_source: tp.Union[dict, bytes, io.BufferedIOBase, BinaryReader],
+        fields: dict[str, bool | int | float | str | bytes],
         paramdef: ParamDef,
-        name: tp.Union[bytes, str] = None,
+        name: str | bytes = None,
+        validate_fields=True,
     ):
-        self.fields = {}  # type: dict[str, tp.Union[bool, int, float, str, bytes]]
-        self.paramdef = paramdef
-        self.bit_reader = BitFieldReader()
-        self.bit_writer = BitFieldWriter()
-        self.name = ""
+        if not isinstance(fields, dict):
+            raise TypeError("ParamRow `fields` must be a dict.")
+        if name is None:
+            try:
+                name = fields.pop("name")
+            except KeyError:
+                raise ValueError("ParamRow name must be specified with `name` argument or in `fields` dict.")
+        elif "name" in fields:
+            _LOGGER.warning(
+                f"Name '{fields['name']}' in `fields` of ParamRow will be overridden with `name` arg: '{name}'."
+            )
+            fields.pop("name")
 
-        if isinstance(row_source, dict):
-            if name is None:
-                if "name" not in row_source:
-                    raise ValueError("Name must be specified with `name` argument or in `ParamRow` source dictionary.")
-                self.name = row_source["name"]
-            elif isinstance(name, str):
-                if "name" in row_source:
-                    _LOGGER.warning(
-                        f"Name '{row_source['name']}' in source dictionary of ParamRow will be overridden with `name` "
-                        f"argument value '{name}'."
-                    )
-                self.name = name
-            else:
-                raise ValueError("`name` must be a string if given.")
-            self.load_dict(row_source)
-        elif isinstance(row_source, (bytes, io.BufferedIOBase, BinaryReader)):
-            if name is None:
-                raise ValueError("`name` argument must be given explictly alongside raw `ParamRow` data.")
-            self.name = name
-            self.unpack(BinaryReader(row_source))
-        else:
-            raise TypeError(f"Cannot load `ParamRow` from source type: `{type(row_source)}`")
+        self.name = name
+        self.paramdef = paramdef
+        if validate_fields:
+            self.fields = self.validate_fields(fields, paramdef)
+        else:  # assert that `fields` is correct (eg from `unpack()` class method).
+            self.fields = fields
 
     def __iter__(self):
         return iter(self.fields.items())
@@ -108,21 +106,27 @@ class ParamRow:
     def copy(self):
         return copy.deepcopy(self)
 
-    def unpack(self, row_reader: BinaryReader):
+    @classmethod
+    def unpack(cls, row_source: bytes | io.BufferedIOBase | BinaryReader, paramdef: ParamDef, name: str) -> ParamRow:
+        """Unpack `ParamRow` from binary game data using `paramdef`."""
+        bit_reader = BitFieldReader()
+        if not isinstance(row_source, BinaryReader):
+            row_source = BinaryReader(row_source)
 
-        for field in self.paramdef.fields.values():
+        fields = {}
+        for field in paramdef.fields.values():
 
             if field.bit_count != -1:
-                field_value = self.bit_reader.read(row_reader, field.bit_count, field.fmt)
+                field_value = bit_reader.read(row_source, field.bit_count, field.fmt)
             else:
-                self.bit_reader.clear()
+                bit_reader.clear()
                 if issubclass(field.type_class, ft.basestring):
-                    field_value = field.type_class.read(row_reader, field.size)
+                    field_value = field.type_class.read(row_source, field.size)
                 elif field.type_class is ft.dummy8:
                     # These are often 'array' fields, but we don't even bother unpacking them.
-                    field_value = row_reader.read(field.size)
+                    field_value = row_source.read(field.size)
                 else:
-                    data = row_reader.read(field.type_class.size())
+                    data = row_source.read(field.type_class.size())
                     try:
                         field_value = struct.unpack(field.fmt, data)[0]
                     except struct.error as e:
@@ -131,39 +135,54 @@ class ParamRow:
                             field_value = 1.0
                         else:
                             raise ValueError(
-                                f"Could not unpack data for field {field.name} in ParamRow {self.name}.\n"
+                                f"Could not unpack data for field {field.name} in ParamRow {name}.\n"
                                 f"Field type: {field.display_type}\n"
                                 f"Raw bytes: {data}\n"
                                 f"Error:\n{str(e)}"
                             )
-            self.fields[field.name] = bool(field_value) if field.bit_count == 1 else field_value
+            fields[field.name] = bool(field_value) if field.bit_count == 1 else field_value
 
-    def load_dict(self, data: dict):
-        for field in self.paramdef.fields.values():
+        return cls(fields, paramdef, name, validate_fields=False)
+
+    @staticmethod
+    def validate_fields(fields: dict, paramdef: ParamDef) -> dict[str, bool | int | float | str | bytes]:
+        """Ensures that all ParamDef fields are present in dictionary, or assigns defaults."""
+        fields = fields.copy()
+        parsed_fields = {}
+        for field in paramdef.fields.values():
             if field.type_class is ft.dummy8 and field.bit_count == -1:  # padding bytes
                 # TODO: The exceptions identified in `unpack()` will be overridden with nulls. Probably fine.
-                data.pop(field.name, None)  # ignore given value
-                self.fields[field.name] = b"\0" * field.size
+                fields.pop(field.name, None)  # ignore given value
+                parsed_fields[field.name] = b"\0" * field.size
             else:
-                self.fields[field.name] = data.get(field.name, field.new_default)
+                parsed_fields[field.name] = fields.pop(field.name, field.new_default)
+
+        if fields:
+            leftover = ", ".join(fields.keys())
+            _LOGGER.warning(f"Ignoring unknown fields in ParamRow of type {paramdef.param_type}: {leftover}")
+
+        return parsed_fields
 
     def pack(self) -> bytes:
+
+        bit_writer = BitFieldWriter()
+
         packed_row = b""
         for field_name, value in self.fields.items():  # These are ordered correctly already.
             field = self.paramdef[field_name]
             field.check_python_type(value)
             field.check_range(value)
             if field.bit_count != -1:
-                packed_row += self.bit_writer.write(value, field.bit_count, field.fmt)
+                packed_row += bit_writer.write(value, field.bit_count, field.fmt)
             else:
-                packed_row += self.bit_writer.finish_field()
+                packed_row += bit_writer.finish_field()
                 if issubclass(field.type_class, ft.basestring):
                     packed_row += field.type_class.write(value, field.size)
                 elif field.type_class is ft.dummy8:
-                    packed_row += value  # already bytes
+                    packed_row += value  # already null bytes
                 else:
                     packed_row += struct.pack(field.fmt, value)
-        packed_row += self.bit_writer.finish_field()
+        packed_row += bit_writer.finish_field()
         return packed_row
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True, ignore_sizes=False) -> dict[str, tp.Any]:
@@ -402,7 +421,7 @@ class Param(GameFile, abc.ABC):
                     raise
             else:
                 name = ""
-            self.rows[row_struct["id"]] = ParamRow(row_data, self.paramdef, name=name)
+            self.rows[row_struct["id"]] = ParamRow.unpack(row_data, self.paramdef, name=name)
 
     def pack(self, sort=True):
         # if len(self.entries) > 5461:
