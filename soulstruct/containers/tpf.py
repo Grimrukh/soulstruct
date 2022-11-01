@@ -5,7 +5,6 @@ __all__ = ["TPFTexture", "TPF"]
 import logging
 import json
 import re
-import shutil
 import tempfile
 import typing as tp
 import zlib

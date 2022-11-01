@@ -9,6 +9,7 @@ __all__ = [
     "BaseBXF",
     "BXF3",
     "BXF4",
+    "DCXType",
     "decompress",
     "compress",
     "TPF",
@@ -20,7 +21,7 @@ from pathlib import Path
 from .base import BaseBinder
 from .bnd import BaseBND, BND3, BND4
 from .bxf import BaseBXF, BXF3, BXF4
-from .dcx import decompress, compress
+from .dcx import DCXType, decompress, compress
 from .tpf import TPF, TPFTexture
 
 

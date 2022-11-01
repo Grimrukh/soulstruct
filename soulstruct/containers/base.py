@@ -360,6 +360,11 @@ class BaseBinder(GameFile, abc.ABC):
         return len(self._entries)
 
     @property
+    def highest_entry_id(self) -> int:
+        """Returns largest `id` of all current entries. Useful for calculating a new ID in most cases."""
+        return max(entry.id for entry in self._entries)
+
+    @property
     def has_repeated_entry_names(self):
         entry_names = [e.name for e in self.entries]
         return len(set(entry_names)) < len(entry_names)

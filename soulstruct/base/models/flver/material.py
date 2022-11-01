@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-__all__ = ["GXItem", "GXList", "Material", "Texture"]
+__all__ = ["MTDInfo", "GXItem", "GXList", "Material", "Texture"]
 
 import re
+from dataclasses import dataclass
 from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
@@ -10,6 +11,53 @@ from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
 from soulstruct.utilities.maths import Vector2
 
 from .version import Version
+
+
+@dataclass(slots=True, init=False)
+class MTDInfo:
+    """Various booleans that indicate required textures for a specific MTD shader."""
+
+    MTD_DSB_RE = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")  # g_Diffuse, g_Specular, g_Bumpmap, g_Height
+    MTD_ML_RE = re.compile(r".*\[(M)?(L)?].*")  # g_Lightmap, double DSB slots
+    # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
+
+    mtd_name: str
+    diffuse: bool
+    specular: bool
+    bumpmap: bool
+    height: bool
+    multiple: bool
+    lightmap: bool
+    alpha: bool
+    edge: bool
+    water: bool
+
+    def __init__(self, mtd_name: str):
+        self.mtd_name = mtd_name
+        self.diffuse = False
+        self.specular = False
+        self.bumpmap = False
+        self.height = False
+        self.multiple = False
+        self.lightmap = False
+        self.alpha = False
+        self.edge = False
+        self.water = False
+        if dsbh_match := self.MTD_DSB_RE.match(mtd_name):
+            self.diffuse = bool(dsbh_match.group(1))
+            self.specular = bool(dsbh_match.group(2))
+            self.bumpmap = bool(dsbh_match.group(3))
+            self.height = bool(dsbh_match.group(4))
+        if ml_match := self.MTD_ML_RE.match(mtd_name):
+            self.multiple = bool(ml_match.group(1))
+            self.lightmap = bool(ml_match.group(2))
+        if "[Dn]" in mtd_name:
+            self.diffuse = True
+        if "[We]" in mtd_name:
+            self.water = True
+            self.bumpmap = True
+        self.alpha = "_Alp" in mtd_name
+        self.edge = "_Edge" in mtd_name
 
 
 class GXItem(BinaryObject):
@@ -170,10 +218,6 @@ class Material(BinaryObject):
 
     Texture = Texture
 
-    MTD_DSB_RE = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")  # g_Diffuse, g_Specular, g_Bumpmap, g_Height
-    MTD_ML_RE = re.compile(r".*\[(M)?(L)?].*")  # g_Lightmap, double DSB slots
-    # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
-
     STRUCT = BinaryStruct(
         ("__name__z", "i"),
         ("__mtd_path__z", "i"),
@@ -286,27 +330,8 @@ class Material(BinaryObject):
         name = name.removesuffix(".mtd") + ".mtd"
         self.mtd_path = str(Path(self.mtd_path).with_name(name))
 
-    def get_mtd_bools(self) -> dict[str, bool]:
-        mtd_name = self.mtd_name
-        bool_dict = {
-            key: False
-            for key in ("diffuse", "specular", "bumpmap", "height", "multiple", "lightmap", "alpha", "edge")
-        }
-        if dsbh_match := self.MTD_DSB_RE.match(mtd_name):
-            bool_dict["diffuse"] = bool(dsbh_match.group(1))
-            bool_dict["specular"] = bool(dsbh_match.group(2))
-            bool_dict["bumpmap"] = bool(dsbh_match.group(3))
-            bool_dict["height"] = bool(dsbh_match.group(4))
-        if ml_match := self.MTD_ML_RE.match(mtd_name):
-            bool_dict["multiple"] = bool(ml_match.group(1))
-            bool_dict["lightmap"] = bool(ml_match.group(2))
-        if "[Dn]" in mtd_name:
-            bool_dict["diffuse"] = True
-        if "[We]" in mtd_name:
-            bool_dict["bumpmap"] = True
-        bool_dict["alpha"] = "_Alp" in mtd_name
-        bool_dict["edge"] = "_Edge" in mtd_name
-        return bool_dict
+    def get_mtd_info(self) -> MTDInfo:
+        return MTDInfo(self.mtd_name)
 
     def replace_in_all_texture_names(self, old_string: str, new_string: str):
         """Replace all occurrences of `old_string` in all texture names (at end of paths) with `new_string`."""

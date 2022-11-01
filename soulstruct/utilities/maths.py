@@ -23,6 +23,8 @@ import typing as tp
 class Vector(abc.ABC):
     """Simple float container."""
 
+    __slots__ = ("_data",)
+
     LENGTH = 1
     REPR_PRECISION = 3
 
@@ -34,14 +36,15 @@ class Vector(abc.ABC):
             self._data = [0.0] * self.LENGTH
         else:
             try:
-                if len(x) != self.LENGTH:
+                if len(x) < self.LENGTH:
                     raise ValueError
             except ValueError:
                 cls = self.__class__.__name__
                 raise ValueError(
-                    f"`{cls}` must be initialized with a sequence of {self.LENGTH} elements (optionally unpacked)."
+                    f"`{cls}` must be initialized with a sequence of at least {self.LENGTH} "
+                    f"elements (optionally unpacked)."
                 )
-            self._data = [float(x_) if x_ is not None else 0 for x_ in x]
+            self._data = [float(x_) if x_ is not None else 0 for x_ in x[:3]]
 
     def __len__(self):
         """Number of elements in `Vector`, which also reveals which child class it is."""
