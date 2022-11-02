@@ -44,7 +44,7 @@ class Vector(abc.ABC):
                     f"`{cls}` must be initialized with a sequence of at least {self.LENGTH} "
                     f"elements (optionally unpacked)."
                 )
-            self._data = [float(x_) if x_ is not None else 0 for x_ in x[:3]]
+            self._data = [float(x_) if x_ is not None else 0 for x_ in x[:self.LENGTH]]
 
     def __len__(self):
         """Number of elements in `Vector`, which also reveals which child class it is."""
