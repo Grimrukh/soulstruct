@@ -522,7 +522,10 @@ class FLVER(GameFile):
                 texture.path = texture.path.replace(old_name, new_name)
 
     def get_all_texture_paths(self) -> set[Path]:
-        """Get set of all texture paths from all materials. Ignores textures with empty `path`."""
+        """Get set of all texture paths from all materials, which typically end in '.tga'.
+
+        Ignores textures with empty `path`.
+        """
         return {Path(texture.path) for material in self.materials for texture in material.textures if texture.path}
 
     def get_tpfbhd_directory_path(self) -> Path:

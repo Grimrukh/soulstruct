@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-__all__ = ["TPFTexture", "TPF"]
+__all__ = ["TPFTexture", "TPF", "batch_get_tpf_texture_png_data"]
 
 import logging
+import multiprocessing
 import json
 import re
 import tempfile
@@ -11,6 +12,7 @@ import zlib
 from enum import IntEnum
 from pathlib import Path
 
+from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
@@ -207,6 +209,10 @@ class TPFTexture:
         writer.fill(f"file_size_{index}", len(data))
         writer.append(data)
 
+    @property
+    def stem(self) -> str:
+        return Path(self.name).stem
+
     def get_dds(self) -> DDS:
         return DDS(self.data)
 
@@ -350,7 +356,7 @@ class TPF(GameFile):
                 "texture_flags": texture.texture_flags,
             }
             texture_entries.append(texture_dict)
-            texture.write_dds(directory / f"{Path(texture.name).stem}.dds")
+            texture.write_dds(directory / f"{texture.stem}.dds")  # TODO: should already be '.dds', no?
         json_dict = self.get_json_header()
         json_dict["entries"] = texture_entries
 
@@ -413,10 +419,31 @@ class TPF(GameFile):
         )
 
     @classmethod
+    def collect_tpf_entries(cls, tpfbhd_directory: str | Path) -> dict[str, BinderEntry]:
+        """Build a dictionary mapping TPF entry stems to `BinderEntry` instances."""
+        from soulstruct.containers import Binder
+
+        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
+        tpfbhd_directory = Path(tpfbhd_directory)
+        tpf_entries = {}
+        for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
+            bxf = Binder(bhd_path, create_bak_if_missing=False)
+            for entry in bxf.entries:
+                match = tpf_re.match(entry.name)
+                if match:
+                    tpf_entries[entry.minimal_stem] = entry
+        return tpf_entries
+
+    @classmethod
     def collect_tpf_textures(
         cls, tpfbhd_directory: str | Path, convert_formats: tp.Tuple[str, str] = None
     ) -> dict[str, TPFTexture]:
-        """Build a dictionary mapping TGA texture names to `TPFTexture` instances."""
+        """Build a dictionary mapping TGA texture names to `TPFTexture` instances.
+
+        NOTE: This decompresses/unpacks every TPF in every BXF in the directory, which can be slow and redundant. Use
+        `collect_tpf_entries()` above and only open the TPFs needed (since map TPFBHD TPFs should only have one DDS
+        texture in them matching the TPF entry name).
+        """
         from soulstruct.containers import Binder
 
         tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
@@ -434,3 +461,18 @@ class TPF(GameFile):
                     for texture in tpf.textures:
                         textures[texture.name] = texture
         return textures
+
+
+def get_png_data(tex: TPFTexture, fmt: str):
+    return tex.get_png_data(fmt=fmt)
+
+
+def batch_get_tpf_texture_png_data(tpf_textures: list[TPFTexture], fmt="rgba", processes: int = None) -> list[bytes]:
+    """Use multiprocessing to retrieve PNG data (converted from DDS) for a collection of `TPFTexture`s."""
+
+    mp_args = [(tpf_texture, fmt) for tpf_texture in tpf_textures]
+
+    with multiprocessing.Pool(processes=processes) as pool:
+        png_data = pool.starmap(get_png_data, mp_args)  # blocks here until all done
+
+    return png_data

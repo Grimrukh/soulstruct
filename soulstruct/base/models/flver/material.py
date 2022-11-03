@@ -192,6 +192,11 @@ class Texture(BinaryObject):
         name = name.removesuffix(".tga").removesuffix(".tpf") + ".tga"
         self.path = str(Path(self.path).with_name(name))
 
+    @property
+    def stem(self):
+        """Typically just removes '.tga' extension from FLVER texture path."""
+        return Path(self.path).stem
+
     def __repr__(self):
         lines = [
             f"Texture(",

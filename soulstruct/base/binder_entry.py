@@ -212,6 +212,11 @@ class BinderEntry:
         return Path(self.path).stem
 
     @property
+    def minimal_stem(self) -> str:
+        """Returns only the part of the path name before ANY dots, rather than only removing the final extension."""
+        return Path(self.path).name.split(".")[0]
+
+    @property
     def path_with_forward_slashes(self) -> str:
         return self.path.replace("\\", "/")
 

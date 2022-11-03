@@ -671,7 +671,7 @@ class BinaryReader:
             )
         self.byte_order = byte_order
 
-    def unpack(self, fmt, offset=None, relative_offset=False, asserted=None):
+    def unpack(self, fmt, offset=None, relative_offset=False, asserted=None) -> None | tuple:
         """Unpack appropriate number of bytes from `buffer` using `fmt` string from the given (or current) `offset`.
 
         Args:
@@ -685,9 +685,9 @@ class BinaryReader:
         """
         if fmt[0] not in "<>@":
             fmt = self.byte_order + fmt
-        initial_offset = self.position if offset is not None else None
+        initial_offset = self.buffer.tell() if offset is not None else None
         if offset is not None:
-            self.seek(initial_offset + offset if relative_offset else offset)
+            self.buffer.seek(initial_offset + offset if relative_offset else offset)
         fmt_size = struct.calcsize(fmt)
         raw_data = self.buffer.read(fmt_size)
         if not raw_data and fmt_size > 0:
@@ -696,7 +696,7 @@ class BinaryReader:
         if asserted is not None and data != asserted:
             raise AssertionError(f"Unpacked data {repr(data)} does not equal asserted data {repr(asserted)}.")
         if initial_offset is not None:
-            self.seek(initial_offset)
+            self.buffer.seek(initial_offset)
         return data
 
     def unpack_value(self, fmt, offset=None, relative_offset=False, asserted=None) -> bool | int | float | bytes:
