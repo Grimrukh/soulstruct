@@ -227,6 +227,11 @@ class BinderEntry:
     def copy(self) -> BinderEntry:
         return BinderEntry(data=self.data, entry_id=self.id, path=self.path, flags=self.flags)
 
+    def write(self, path: str | Path = None):
+        if path is None:
+            path = self.name  # relative path only
+        Path(path).write_bytes(self.data)
+
     def __eq__(self, other_bnd_entry) -> bool:
         return all(getattr(self, field) == getattr(other_bnd_entry, field) for field in ("id", "path", "flags", "data"))
 

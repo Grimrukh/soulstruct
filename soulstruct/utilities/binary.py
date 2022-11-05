@@ -981,6 +981,10 @@ class BinaryWriter:
         self._array[offset:offset + len(packed)] = packed
         self.reserved.pop(name)  # pop after successful fill only
 
+    def fill_with_position(self, name: str, obj: object = None):
+        """Fill `name` (optionally also identified by `id(obj)` with current `writer.position`."""
+        self.fill(name, self.position, obj=obj)
+
     def finish(self) -> bytes:
         """Just checks that no reserved offsets remain, then converts stored `bytearray` to immutable `bytes`."""
         if self.reserved:
