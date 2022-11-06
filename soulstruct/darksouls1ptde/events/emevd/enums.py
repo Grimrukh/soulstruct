@@ -244,22 +244,27 @@ class CoordEntityType(BaseEMEVDEnum):
 
 
 class NavmeshType(BaseEMEVDEnum):
-    """Bit flags for Navmesh types."""
+    """Bit flags for Navmesh types.
 
-    Solid = 0b00000000000001
-    Exit = 0b00000000000010
-    Obstacle = 0b00000000000100
-    Wall = 0b00000000001000
-    # Note enum 16 (fifth bit) is missing.
-    WallTouchingFloor = 0b00000000100000
-    LandingPoint = 0b00000001000000
-    Event = 0b00000010000000
-    Cliff = 0b00000100000000
-    WideSpace = 0b00001000000000
-    Ladder = 0b00010000000000
-    Hole = 0b00100000000000
-    Door = 0b01000000000000
-    ClosedDoor = 0b10000000000000
+    NOTE: These bits are in reverse order to the actual NVM triangle flag.
+    """
+    Default = 0b0000_0000_0000_0000
+    Solid = 0b0000_0000_0000_0001
+    Exit = 0b0000_0000_0000_0010
+    Obstacle = 0b0000_0000_0000_0100  # can stack with other flags
+    Wall = 0b0000_0000_0000_1000
+    Degenerate = 0b0000_0000_0001_0000  # can stack with other flags; likely not supported in EMEVD
+    WallTouchingFloor = 0b0000_0000_0010_0000
+    LandingPoint = 0b0000_0000_0100_0000
+    Event = 0b0000_0000_1000_0000
+    Cliff = 0b0000_0001_0000_0000
+    WideSpace = 0b0000_0010_0000_0000
+    Ladder = 0b0000_0100_0000_0000
+    Hole = 0b0000_1000_0000_0000
+    Door = 0b0001_0000_0000_0000
+    ClosedDoor = 0b0010_0000_0000_0000
+    ObstacleExit = 0b0100_0000_0000_0000
+    InsideWall = 0b1000_0000_0000_0000
 
 
 class NumberButtons(BaseEMEVDEnum):
