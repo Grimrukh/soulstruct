@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.games import DarkSoulsDSRType
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryStruct
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import Vector2, Vector3
 from ..events.emevd.enums import NavmeshType
 
 _LOGGER = logging.getLogger(__name__)
@@ -25,18 +25,10 @@ class NVMTriangle:
     flag: None | NavmeshType = field(init=False, default=None)
 
     def __post_init__(self):
-        if self.all_flags == NavmeshType.Default:
-            self.flag = NavmeshType.Default
-        elif self.all_flags in {NavmeshType.Obstacle, NavmeshType.Obstacle | NavmeshType.Degenerate}:
-            self.flag = NavmeshType.Obstacle
-        elif self.all_flags == NavmeshType.Degenerate:
-            self.flag = NavmeshType.Degenerate
-        else:
-            single_flag = self.all_flags & ~NavmeshType.Degenerate & ~NavmeshType.Obstacle
-            try:
-                self.flag = NavmeshType(single_flag)
-            except ValueError:  # unexpected multiple flags
-                self.flag = None
+        try:
+            self.flag = NavmeshType(self.all_flags)
+        except ValueError:  # unexpected multiple flags
+            self.flag = None
 
     @classmethod
     def unpack(cls, reader: BinaryReader) -> NVMTriangle:
@@ -55,17 +47,24 @@ class NVMTriangle:
         obstacles_and_flags = (self.obstacle_count << 2) | (self.reverse_flags_bits(self.all_flags) << 16)
         writer.pack("i", obstacles_and_flags)
 
-    @property
-    def is_obstacle(self):
-        return self.all_flags & NavmeshType.Obstacle == NavmeshType.Obstacle
+    def has_flag(self, navmesh_type: NavmeshType):
+        return self.all_flags & navmesh_type == navmesh_type
 
-    @property
-    def is_degenerate(self):
-        return self.all_flags & NavmeshType.Degenerate == NavmeshType.Degenerate
+    def get_centroid(self, vertices: list[Vector3]) -> Vector3:
+        """Return centroid point of triangle (just average of vertices)."""
+        v1, v2, v3 = (vertices[i] for i in self.vertex_indices)
+        x = sum(v.x for v in (v1, v2, v3)) / 3.0
+        y = sum(v.y for v in (v1, v2, v3)) / 3.0
+        z = sum(v.z for v in (v1, v2, v3)) / 3.0
+        return Vector3(x, y, z)
 
     @staticmethod
     def reverse_flags_bits(n):
         return int(f"{{0:016b}}".format(n)[::-1], 2)
+
+    def is_clockwise(self, vertices: list[Vector3]):
+        v1, v2, v3 = (vertices[i] for i in self.vertex_indices)
+        return line_point_cross(v1, v2, v3) < 0
 
 
 @dataclass(slots=True)
@@ -87,6 +86,7 @@ class NVMBox:
         child_box_offsets = reader.unpack("iiii")
         reader.assert_pad(16)
 
+        # Box triangle indices are stored separately (earlier in file).
         if triangle_count > 0:
             triangle_indices = list(reader.unpack(f"{triangle_count}i", offset=triangles_offset))
         else:
@@ -103,7 +103,11 @@ class NVMBox:
         return cls(start_corner, end_corner, triangle_indices, child_boxes)
 
     def pack(self, writer: BinaryWriter, triangle_index_offsets: deque[int]) -> int:
-        """Pack `NVMBox` to `writer`. Returns start offset of pack. Dequeues triangle indices from given list."""
+        """Pack `NVMBox` to `writer`. Returns start offset of pack. Dequeues triangle indices from given list.
+
+        Boxes are packed depth-first, starting with the deepest zero-indexed child of the root box, and ending with the
+        root box itself. A queue of triangle indices (packed earlier in the same order) are passed in.
+        """
 
         child_box_offsets = []
         for child_box in self.child_boxes:
@@ -144,6 +148,18 @@ class NVMEventEntity:
 
 
 class NVM(GameFile, DarkSoulsDSRType):
+    """Holds a navigation mesh (vertices and triangles), per-triangle navigation flags, groups of triangles that can be
+    manipulated with EMEVDS, and a box hierarchy that covers the mesh (which is simple to generate)."""
+
+    # TODO: Always correct for DS1. Not sure about DeS.
+    BOX_LEVELS = 3  # number of nested quaternary levels in box tree
+    BOX_BORDER = 0.5  # in-game distance units
+
+    # NOTE: I can't find any tolerance that produces EXACTLY the same box contents as the vanilla files in DS1.
+    #  The best inspection I can muster simple indicates that some barely-untouched faces are still assigned to boxes,
+    #  but similarly narrow gaps are correctly interpreted in other cases (maybe a triangle vs. quad test thing).
+    #  It almost certainly should not matter.
+    BOX_TRIANGLE_TOLERANCE = 1E-9  # absolute cross-products smaller than this will NOT be counted as outside triangle
 
     big_endian: bool
     vertices: list[Vector3]
@@ -179,11 +195,14 @@ class NVM(GameFile, DarkSoulsDSRType):
 
         self.vertices = [Vector3(reader.unpack("3f")) for _ in range(header["vertex_count"])]
         self.triangles = [NVMTriangle.unpack(reader) for _ in range(header["triangle_count"])]
-        if any(triangle.flag is None for triangle in self.triangles):
-            _LOGGER.warning("`NVM` has at least one triangle with multiple non-BLOCK non-DEGENERATE flags.")
 
         reader.seek(header["root_box_offset"])
         self.root_box = NVMBox.unpack(reader)
+        if (box_count := len(self.get_all_boxes())) != 85:
+            _LOGGER.warning(
+                f"`NVM` has {box_count} boxes in its hierarchy, but 85 are always expected "
+                f"(root + three quaternary levels)."
+            )
 
         reader.seek(header["entities_offset"])
         self.event_entities = [NVMEventEntity.unpack(reader) for _ in range(header["entities_count"])]
@@ -209,6 +228,8 @@ class NVM(GameFile, DarkSoulsDSRType):
         box_triangle_index_offsets = deque()
 
         def write_box_triangle_indices(box: NVMBox):
+            """Recursive depth-first indices. Note that the root box's indices are written LAST, and its deepest zero-
+            indexed child's indices are written FIRST."""
             if box is None:
                 return
             # Recur on children.
@@ -262,3 +283,125 @@ class NVM(GameFile, DarkSoulsDSRType):
         add_children(self.root_box)
 
         return list(zip(all_boxes, all_indices))
+
+    def generate_boxes(self):
+        """Use level count and bordering to automatically generate boxes.
+
+        These boxes simply divide the axis-aligned XZ extents of the mesh into eight, and stretch Y as needed (same for
+        all boxes). Leaf boxes contain bounded mesh vertices, though some may still be empty.
+
+        NOTE: Child box order (0, 1, 2, 3) is lowX/lowZ, highX/lowZ, highX/highZ, lowX/highZ.
+        """
+        x_min = min(v.x for v in self.vertices)
+        y_min = min(v.y for v in self.vertices)  # same for all boxes
+        z_min = min(v.z for v in self.vertices)
+        root_start_corner = Vector3(x_min, y_min, z_min) - self.BOX_BORDER
+        x_max = max(v.x for v in self.vertices)
+        y_max = max(v.y for v in self.vertices)  # same for all boxes
+        z_max = max(v.z for v in self.vertices)
+        root_end_corner = Vector3(x_max, y_max, z_max) + self.BOX_BORDER
+
+        def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
+            # Box will either start or end at these halfway points, depending on its index.
+
+            if level == self.BOX_LEVELS:  # leaf boxes have indices
+                triangle_indices = self.get_triangle_indices_in_box(start_corner, end_corner)
+                child_boxes = []
+            else:
+                triangle_indices = []
+                child_boxes = []
+                for i in range(4):
+                    x_bisect = start_corner.x + (end_corner.x - start_corner.x) / 2.0
+                    z_bisect = start_corner.z + (end_corner.z - start_corner.z) / 2.0
+                    if i in {0, 3}:  # low X
+                        x_start, x_end = start_corner.x, x_bisect
+                    else:  # high X
+                        x_start, x_end = x_bisect, end_corner.x
+                    if i in {0, 1}:  # low Z
+                        z_start, z_end = start_corner.z, z_bisect
+                    else:  # high Z
+                        z_start, z_end = z_bisect, end_corner.z
+
+                    child_start_corner = Vector3(x_start, root_start_corner.y, z_start)
+                    child_end_corner = Vector3(x_end, root_end_corner.y, z_end)
+
+                    child_box = create_box(child_start_corner, child_end_corner, level + 1)
+                    child_boxes.append(child_box)
+
+            return NVMBox(
+                start_corner,
+                end_corner,
+                triangle_indices,
+                child_boxes,
+            )
+
+        self.root_box = create_box(root_start_corner, root_end_corner, level=0)
+
+    def get_triangle_indices_in_box(self, start_corner: Vector3, end_corner: Vector3) -> list[int]:
+        """For automatic AABB box generation. Any triangle with a vertex in the box will count. Triangles can be part of
+        multiple leaf boxes.
+
+        TODO: Currently guessing that box intervals are half-open (closed at start, open at end). The border will ensure
+         that no edge vertices are lost anyway, and vertices are obviously not likely to land exactly on the bounds.
+        """
+        triangle_indices = []
+
+        quad_vertices = [
+            Vector2(start_corner.x, start_corner.z),
+            Vector2(end_corner.x, start_corner.z),
+            Vector2(end_corner.x, end_corner.z),
+            Vector2(start_corner.x, end_corner.z),
+        ]
+
+        for i, triangle in enumerate(self.triangles):
+            tri_vertices = [Vector2(self.vertices[i].x, self.vertices[i].z) for i in triangle.vertex_indices]
+            clockwise = line_point_cross(*tri_vertices) < 0
+            if self.collides(quad_vertices, tri_vertices, clockwise):
+                triangle_indices.append(i)
+
+        return triangle_indices
+
+    @classmethod
+    def collides(cls, aabb_vertices: list[Vector2], tri_vertices: list[Vector2], clockwise: bool) -> bool:
+        """2D collision test for an AABB quad and a triangle."""
+        tolerance = cls.BOX_TRIANGLE_TOLERANCE
+
+        for a, b in ((0, 1), (1, 2), (2, 0)):
+            if all(is_outside(tri_vertices[a], tri_vertices[b], q, clockwise, tolerance) for q in aabb_vertices):
+                # All quad vertices are outside this triangle edge. No collision.
+                return False
+
+        # If triangle is fully outside any line of AABB, no collision.
+        start_x = aabb_vertices[0].x
+        start_y = aabb_vertices[0].y
+        end_x = aabb_vertices[2].x
+        end_y = aabb_vertices[2].y
+        if all(v.x < start_x for v in tri_vertices):
+            return False
+        if all(v.x > end_x for v in tri_vertices):
+            return False
+        if all(v.y < start_y for v in tri_vertices):
+            return False
+        if all(v.y > end_y for v in tri_vertices):
+            return False
+
+        # Triangle collides with AABB.
+        return True
+
+
+def line_point_cross(a: Vector2, b: Vector2, point: Vector2) -> float:
+    return (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x)
+
+
+def is_outside(tri_a: Vector2, tri_b: Vector2, point: Vector2, tri_clockwise: bool, tolerance: float = 0.0) -> bool:
+    """Uses line/point 'cross product' (determinant) to determine if `point` is outside the triangle edge
+    `(tri_a, tri_b)` (using `clockwise` to determine which side of the line is outside).
+
+    Returns True if `point` is outside the edge.
+
+    Values less than `tolerance` in the expected 'outside' direction will still return False.
+    """
+    cross = line_point_cross(tri_a, tri_b, point)
+    if tri_clockwise:
+        return cross > tolerance  # outside == left
+    return cross < -tolerance  # outside == right
