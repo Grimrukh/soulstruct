@@ -151,3 +151,14 @@ class State(abc.ABC):
                 s += command.to_html()
 
         return s
+
+    def __repr__(self) -> str:
+        s = f"State[{self.index}](<{len(self.conditions)} conditions>"
+        if self.enter_commands:
+            s += f", <{len(self.enter_commands)} enter commands>"
+        if self.ongoing_commands:
+            s += f", <{len(self.ongoing_commands)} ongoing commands>"
+        if self.exit_commands:
+            s += f", <{len(self.exit_commands)} exit commands>"
+        s += ")"
+        return s
