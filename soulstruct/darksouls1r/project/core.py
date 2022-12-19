@@ -93,7 +93,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
             result = 1 if (
                 input(
                     "In vanilla Dark Souls, the Duke's Archives has four unused regions that can break event\n"
-                    "scripts. Would you like Soulstruct to delete those four regions now? [y]/n",
+                    "scripts. Would you like Soulstruct to delete those four regions now? [y]/n ",
                 ).lower() == "n"
             ) else 0
         if result == 0:
@@ -124,7 +124,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
                 input(
                     "Would you like to translate vanilla event/region MSB entries with entity IDs?\n"
                     "This is necessary to properly export their names as event entities for EVS scripting,\n"
-                    "but will overwrite any name changes you've made for vanilla entity IDs. [y]/n",
+                    "but will overwrite any name changes you've made for vanilla entity IDs. [y]/n ",
                 ).lower() == "n"
             ) else 0
         if result == 0:
@@ -150,7 +150,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
         else:
             result = 1 if (
                 input(
-                    "Would you also like to export all 'entities' Python modules for EVS use? [y]/n"
+                    "Would you also like to export all 'entities' Python modules for EVS use? [y]/n "
                 ).lower() == "n"
             ) else 0
         if result == 0:
@@ -167,7 +167,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
             else:
                 write_vanilla_entities_result = 1 if (
                     input(
-                        "Would you also like to include pre-identified game IDs in the 'entities' module?\n",
+                        "Would you also like to include pre-identified game IDs in the 'entities' module? [y]/n ",
                     ).lower() == "n"
                 ) else 0
 

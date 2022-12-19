@@ -30,6 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
+PY_NAME_RE = re.compile(r"^[A-z_][\w_]*$")  # valid Python variable name
 
 
 class MSB(GameFile, GameSpecificType, abc.ABC):
@@ -503,13 +504,16 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
                     k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
                 }
                 for entity_id, entry in sorted_entity_id_dict.items():
-                    name = entry.name.replace(" ", "_")
+                    # name = entry.name.replace(" ", "_")
                     try:
-                        name = name.encode("utf-8").decode("ascii")
+                        name = entry.name.encode("utf-8").decode("ascii")
                     except UnicodeDecodeError:
-                        class_text += f"    # {name} = {entity_id}  # TODO: Invalid name characters."
+                        class_text += f"    # TODO: Non-ASCII name characters.\n    # {entry.name} = {entity_id}"
                     else:
-                        class_text += f"    {name} = {entity_id}"
+                        if not PY_NAME_RE.match(name):
+                            class_text += f"    # TODO: Invalid variable name.\n    # {entry.name} = {entity_id}"
+                        else:
+                            class_text += f"    {name} = {entity_id}"
                     if entry.description:
                         class_text += f"  # {entry.description}"
                     class_text += "\n"

@@ -409,7 +409,9 @@ class Param(GameFile, abc.ABC):
                             reset_old_offset=False,  # no need to reset
                         )
                     else:
-                        raise
+                        raise ValueError(
+                            f"Could not use '{name_encoding}' to decode {self.param_type} row name bytes: {ex.object}"
+                        )
                 except ValueError:
                     reader.seek(row_struct["name_offset"])
                     _LOGGER.error(

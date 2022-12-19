@@ -36,8 +36,8 @@ _SPECIAL_EVENT_NAMES = {
     50: "Preconstructor",
 }
 
-_INSTRUCTION_RE = re.compile(r" *([\w\d]+)\((.*)\)")  # groups = (instruction_name, args)
-_ARG_TUPLE_START_RE = re.compile(r"(\w[\w\d_]*)=([\[(]).*")  # groups = (arg_name, bracket_type)
+_INSTRUCTION_RE = re.compile(r" *(\w+)\((.*)\)")  # groups = (instruction_name, args)
+_ARG_TUPLE_START_RE = re.compile(r"(\w[\w_]*)=([\[(]).*")  # groups = (arg_name, bracket_type)
 _CONDITION_RE = re.compile(r" *(AND|OR)_(\d+)\.Add\((.*)\)")  # groups = (condition_type, condition_i, condition)
 _MAIN_AWAIT_RE = re.compile(r" *MAIN\.Await\((.*)\)")  # groups = (condition_type, condition_i, condition)
 _IF_BLOCK_RE = re.compile(r" *if (.*):")  # groups = (condition)
@@ -51,7 +51,7 @@ _HLD_IF_CONDITION_RE = re.compile(
 )
 _HLD_IF_COMPARISON_RE = re.compile(
     r"^(?P<indent> *)If(?P<test>.*?)(?P<comp>Equal|NotEqual|GreaterThan|LessThan|GreaterThanOrEqual|LessThanOrEqual)"
-    r"\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<pre_args>.*?), value=(?P<value>[\w\d_.]+)(?P<post_args>, .*?)?\)$"
+    r"\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<pre_args>.*?), value=(?P<value>[\w_.]+)(?P<post_args>, .*?)?\)$"
 )
 _HLD_IF_RE = re.compile(
     r"^(?P<indent> *)If(?P<test>.*)\((?P<condition>(MAIN|((AND|OR)_\d+)))(?P<args>.*?)\)$"
@@ -138,6 +138,10 @@ class Event(abc.ABC):
 
         Called after all events have been loaded and `update_evs_function_args()` has been called (to scan events and
         detect their arguments).
+
+        If a `RunEvent` instruction contains more arguments than the event can actually use (which is fine by the game -
+        the extra packed argument data will simply never be index), this will log a warning, and you should see error
+        highlighting in your decompiled EVS script (wrong number of arguments).
         """
         all_common_arg_fmts = common_func_emevd.all_event_arg_fmts if common_func_emevd else {}
 
@@ -165,18 +169,52 @@ class Event(abc.ABC):
                 else:
                     new_display_types = f"{instruction.struct_arg_types[:var_ind - 1]}{var_format[0]}|{var_format[1:]}"
 
-                old_format = "@" + instruction.struct_arg_types
+                old_format = "@" + instruction.struct_arg_types  # property processes old display types
                 instruction.display_arg_types = new_display_types
-                try:
-                    real_args = list(struct.unpack(
-                        instruction.struct_arg_types + "0i", struct.pack(old_format + "0i", *instruction.args_list))
+                new_format = instruction.struct_arg_types  # property processes new display types set above
+
+                # TODO: calcsize different is not the correct way to check this. It should be more about the length of
+                #  'args_list', or the size of the packed data.
+
+                old_packed_size = struct.calcsize(old_format + "0i")  # aligned to 4
+                new_packed_size = struct.calcsize(new_format + "0i")  # aligned to 4
+
+                if new_packed_size < old_packed_size:
+                    # `RunEvent` instruction contains more argument data than the event can take. This will not cause a
+                    # fatal error in the game, as the extra data will simply never be used. However, as we cannot use
+                    # the event signature to detect the format of the excess data, we must represent it with integers.
+                    excess_size = old_packed_size - new_packed_size  # always a multiple of four
+                    new_format_with_excess = new_format + f"{excess_size // 4}I"
+                    _LOGGER.warning(
+                        f"Found {excess_size} extra bytes of arguments in event-running {instruction}. Extra argument "
+                        f"data will be included in EMEVD as unsigned integers, but will never have an effect in game, "
+                        f"as the corresponding event {event_id} does not use it."
                     )
-                except struct.error:
-                    _LOGGER.error(
-                        f"Failed to convert event arguments for instruction {instruction} from old format {old_format} "
-                        f"to new format {instruction.struct_arg_types}. Args: {instruction.args_list}"
-                    )
-                    raise
+                    try:
+                        real_args = list(
+                            struct.unpack(
+                                new_format_with_excess + "0i", struct.pack(old_format + "0i", *instruction.args_list)
+                            )
+                        )
+                    except struct.error:
+                        _LOGGER.error(
+                            f"Failed to handle excess event arguments for instruction {instruction} with original "
+                            f"arguments {old_format} and new padded arguments {new_format_with_excess}. Args: "
+                            f"{instruction.args_list}"
+                        )
+                        raise
+                else:
+                    # `RunEvent` instruction argument data matches size of expected event arguments.
+                    try:
+                        real_args = list(struct.unpack(
+                            new_format + "0i", struct.pack(old_format + "0i", *instruction.args_list))
+                        )
+                    except struct.error:
+                        _LOGGER.error(
+                            f"Failed to convert event arguments for instruction {instruction} from old format "
+                            f"{old_format} to new format {new_format}. Args: {instruction.args_list}"
+                        )
+                        raise
                 instruction.args_list = real_args
 
     @property
@@ -299,7 +337,7 @@ class Event(abc.ABC):
             except Exception as ex:
                 _LOGGER.error(
                     f"Error while trying to decompile event {self.event_id} with high-level language:\n  {ex}")
-                raise
+                # raise
 
         # SIMPLE DECOMPILATION
         for instr_line in instruction_lines:

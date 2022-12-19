@@ -46,7 +46,8 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
     DRAW_PARAM_CLASS: tp.Type[Param] = None
     GET_BUNDLED_PARAMDEF: tp.Callable = None
     UNDECODABLE_ROW_NAMES = {
-        "LIGHT_BANK": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
+        "LightBank.param": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
+        "s_LightBank.param": (b"\x80\x1e", b"\xfe\x1e"),  # invalid single-character used in both versions of DS1
     }
 
     def __init__(self, draw_param_bnd_source=None, dcx_type=None, paramdef_bnd=None, use_json=False):
