@@ -346,10 +346,11 @@ class _ESDPacker:
             self.current_state_machine_index = state_machine_index
             self.existing_condition_pointers = {}  # TODO: Current resetting it for every state machine.
             self.state_machines[state_machine_index] = self.build_state_machine(state_machine)
+            state_count = len({sm["index"] for sm in self.state_machines[state_machine_index]})  # duplicate 0 excluded
             self.state_machine_headers[state_machine_index] = {
                 "state_machine_index": state_machine_index,  # index starts at 1
                 "state_machine_offset": len(self.state_machine_headers) * self.esd.STATE_MACHINE_HEADER_STRUCT.size,
-                "state_count": len(self.state_machines[state_machine_index]) - 1,  # state 0 repeat not included
+                "state_count": state_count,
                 "state_machine_offset_2": len(self.state_machine_headers) * self.esd.STATE_MACHINE_HEADER_STRUCT.size,
             }
 
@@ -415,7 +416,8 @@ class _ESDPacker:
             states_done = set()
             for state in sm:
                 if state["index"] not in states_done:
-                    state["condition_pointers_offset"] += self.offsets["condition_pointers"]
+                    if state["condition_pointers_offset"] >= 0:
+                        state["condition_pointers_offset"] += self.offsets["condition_pointers"]
                     if state["enter_commands_offset"] >= 0:
                         state["enter_commands_offset"] += self.offsets["commands"]
                     if state["exit_commands_offset"] >= 0:
@@ -469,7 +471,7 @@ class _ESDPacker:
         }
 
         condition_pointers_offset, condition_pointers_count = self.build_condition_list(state.conditions)
-        built["condition_pointers_offset"] = condition_pointers_offset
+        built["condition_pointers_offset"] = condition_pointers_offset if condition_pointers_count > 0 else -1
         built["condition_pointers_count"] = condition_pointers_count
 
         enter_commands = []
