@@ -18,6 +18,7 @@ from enum import IntEnum
 
 
 class RestartType(IntEnum):
+    """Defines what happens to the event script when you rest at a checkpoint."""
     ContinueOnRest = 0
     RestartOnRest = 1
     EndOnRest = 2

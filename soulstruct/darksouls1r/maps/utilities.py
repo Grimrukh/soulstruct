@@ -35,7 +35,7 @@ _TPF_FILE_MATCH = re.compile(r"s(\d+[_\w]*)\.tpf")  # typically 5 digits
 
 
 def build_ffxbnd(
-    msb: MSB,
+    msb: MSB | None,
     ffxbnd_path: Path,
     ffxbnd_search_directory: Path = None,
     write_ffxbnd_path: Path = None,
@@ -205,6 +205,11 @@ def build_ffxbnd(
         elif file_type == ".flver":
             next_flver_id += 1
         # No way for `else` to occur.
+
+    if msb is None:
+        # Do not check character FFX.
+        ffxbnd.write(write_ffxbnd_path)
+        return ffxbnd
 
     for chr_model in msb.models.Characters:
         model_id = int(chr_model.name[1:])

@@ -23,7 +23,8 @@ import typing as tp
 class Vector(abc.ABC):
     """Simple float container."""
 
-    __slots__ = ("_data",)
+    # TODO: Sort out.
+    # __slots__ = ("_data",)
 
     LENGTH = 1
     REPR_PRECISION = 3
