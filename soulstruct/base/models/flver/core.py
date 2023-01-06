@@ -496,7 +496,7 @@ class FLVER(GameFile):
                 **kwargs,
             )
         for bone in self.bones:
-            bone_position = bone.get_absolute_translate(self.bones)
+            bone_position = bone.get_absolute_translate_rotate(self.bones)[0]
             axes.scatter(*bone_position.to_xzy(), color="blue", s=10)
         if auto_show:
             plt.show()
@@ -565,6 +565,17 @@ class FLVER(GameFile):
             if not tpf_paths:
                 break
         return tpf_sources
+
+    def get_mesh_material(self, mesh_or_index: Mesh | int) -> Material:
+        if isinstance(mesh_or_index, int):
+            if mesh_or_index >= len(self.meshes):
+                raise ValueError(f"Invalid mesh index: {mesh_or_index} (only {len(self.meshes)} meshes in FLVER).")
+            return self.materials[self.meshes[mesh_or_index].material_index]
+        elif isinstance(mesh_or_index, Mesh):
+            if mesh_or_index not in self.meshes:
+                raise ValueError("Given mesh is not in this FLVER.")
+            return self.materials[mesh_or_index.material_index]
+        raise TypeError("Argument must be a `FLVER.Mesh` in this FLVER or a mesh index.")
 
     def check_if_all_zero_bone_weights(self) -> bool:
         """Reliable (so far) indicator of map piece FLVER, as opposed to character/object FLVER.

@@ -20,6 +20,7 @@ class MTDInfo:
     MTD_DSB_RE = re.compile(r".*\[(D)?(S)?(B)?(H)?].*")  # g_Diffuse, g_Specular, g_Bumpmap, g_Height
     MTD_ML_RE = re.compile(r".*\[(M)?(L)?].*")  # g_Lightmap, double DSB slots
     # Checked separately: [Dn] (g_Diffuse only), [We] (g_Bumpmap only)
+    MTD_FOLIAGE_PREFIXES = {"M_2Foliage", "M_3Ivy"}  # MTD name prefixes that indicate two extra UV slots
 
     mtd_name: str
     diffuse: bool
@@ -31,6 +32,7 @@ class MTDInfo:
     alpha: bool
     edge: bool
     water: bool
+    foliage: bool  # extra two UV slots for foliage animation (in DS1)
 
     def __init__(self, mtd_name: str):
         self.mtd_name = mtd_name
@@ -43,6 +45,7 @@ class MTDInfo:
         self.alpha = False
         self.edge = False
         self.water = False
+        self.foliage = False
         if dsbh_match := self.MTD_DSB_RE.match(mtd_name):
             self.diffuse = bool(dsbh_match.group(1))
             self.specular = bool(dsbh_match.group(2))
@@ -56,6 +59,8 @@ class MTDInfo:
         if "[We]" in mtd_name:
             self.water = True
             self.bumpmap = True
+        if any(mtd_name.startswith(prefix) for prefix in self.MTD_FOLIAGE_PREFIXES):
+            self.foliage = True
         self.alpha = "_Alp" in mtd_name
         self.edge = "_Edge" in mtd_name
 

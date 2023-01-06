@@ -355,6 +355,17 @@ class BufferLayout:
     def has_member_type(self, member_type: MemberType) -> bool:
         return any(member.member_type == member_type for member in self.members)
 
+    def get_uv_count(self):
+        """Return total number of UV slots."""
+        count = 0
+        for member in self.members:
+            if member.member_type == MemberType.UV:
+                if member.member_format == MemberFormat.UV:
+                    count += 1
+                elif member.member_format == MemberFormat.UVPair:
+                    count += 2
+        return count
+
     def get_vertex_read_function(self, uv_factor: int) -> tp.Callable[[BinaryReader, Vertex], None]:
         """Construct a relatively efficient function that can be used to read data for each `Vertex` whose data lies
         in a `VertexBuffer` with this layout."""
@@ -476,7 +487,15 @@ class BufferLayout:
                     value = getattr(vertex, info.attr)
                     values += info.write_callback(value) if info.write_callback else value
 
-            writer.pack("<" + full_fmt, *values)
+            try:
+                writer.pack("<" + full_fmt, *values)
+            except struct.error:
+                raise ValueError(
+                    f"Could not pack vertex data.\n"
+                    f"    Info: {member_infos}\n"
+                    f"    Format: {full_fmt}\n"
+                    f"    Values: {values}"
+                )
 
         return write_vertex_data
 

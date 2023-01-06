@@ -26,6 +26,13 @@ class Bone(BinaryObject):
         "52x",
     )
 
+    DEFAULTS = {
+        "parent_index": -1,
+        "child_index": -1,
+        "next_sibling_index": -1,
+        "previous_sibling_index": -1,
+    }
+
     translate: Vector3
     name: str
     rotate: Vector3
@@ -78,6 +85,9 @@ class Bone(BinaryObject):
             absolute_translate += rotate @ bone.translate
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
         return absolute_translate, rotate
+
+    def __eq__(self, other_bone: Bone):
+        return self.__dict__ == other_bone.__dict__
 
     def __repr__(self):
         lines = [
