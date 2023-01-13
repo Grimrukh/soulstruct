@@ -94,10 +94,17 @@ class MapStudioDirectory(abc.ABC):
             msb = self.msbs[msb_path.stem] = self.MSB_CLASS(msb_path)
             setattr(self, msb_path.stem, msb)
 
-    def __getitem__(self, map_source: tp.Union[str, tuple]):
+    def __getitem__(self, map_source: str | tuple):
         """Look up the MSB corresponding to `map_source` specifier. See `get_map()`."""
         game_map = self.GET_MAP(map_source)
         return self.msbs[game_map.msb_file_stem]
+
+    def __setitem__(self, map_source: str | tuple, msb: MSB):
+        """Manually set a new `MSB`."""
+        game_map = self.GET_MAP(map_source)
+        if game_map is None:
+            raise ValueError(f"Invalid map specifier: {map_source}")
+        self.msbs[game_map.msb_file_stem] = msb
 
     def __iter__(self):
         return iter(self.msbs)
