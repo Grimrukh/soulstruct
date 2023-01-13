@@ -316,6 +316,8 @@ class _ESDPacker:
         # Various constants.
         self.magic = esd.magic
         self.esd_name = esd.esd_name.encode("utf-16le")
+        if self.esd_name:
+            self.esd_name += b"\0"
         self.file_tail = esd.file_tail
 
         self.state_machine_headers = {}
