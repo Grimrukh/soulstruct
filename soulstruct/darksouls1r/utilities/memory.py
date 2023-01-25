@@ -146,7 +146,7 @@ class DSRMemoryHook(MemoryHook):
     }
 
     @memory_hook_validate
-    def get_event_flag_offset_mask(self, flag_id: int) -> (int, int):
+    def get_event_flag_offset_mask(self, flag_id: int) -> tuple[int, int]:
         """Returns offset and bit mask of given flag ID.
 
         Raises a ValueError if the flag ID is not valid.

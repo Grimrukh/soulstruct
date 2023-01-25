@@ -77,7 +77,7 @@ class Bone(BinaryObject):
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate_rotate(self, bones: list[Bone]) -> (Vector3, Matrix3):
+    def get_absolute_translate_rotate(self, bones: list[Bone]) -> tuple[Vector3, Matrix3]:
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()

@@ -424,6 +424,13 @@ class Matrix3(Matrix):
             return Vector3.from_column_mat(matrix_multiply(self.data, other.to_mat_column()))
         raise TypeError(f"Cannot matrix multiply with type {type(other)}.")
 
+    def __neg__(self):
+        return self.__class__(*[
+            -x
+            for row in self.data
+            for x in row
+        ])
+
     @classmethod
     def zero(cls) -> Matrix3:
         return cls(0, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -433,7 +440,7 @@ class Matrix3(Matrix):
         return cls(1, 0, 0, 0, 1, 0, 0, 0, 1)
 
     @classmethod
-    def from_euler_angles(cls, rx, ry=None, rz=None, radians=False, order="xzy"):
+    def from_euler_angles(cls, rx, ry=None, rz=None, radians=False, order="xzy") -> Matrix3:
         """Order defaults to XZY as per FromSoft usage (i.e. Rx @ Ry @ Rz @ p)."""
         if ry is None and rz is None:
             rx, ry, rz = rx
@@ -449,14 +456,14 @@ class Matrix3(Matrix):
         return m[order[2]] @ m[order[1]] @ m[order[0]]
 
     @property
-    def T(self):
+    def T(self) -> Matrix3:
         """Transpose of matrix."""
         return Matrix3.from_nested_lists([list(col) for col in zip(*self.data)])
 
     def to_euler_angles(self, radians=False, order="xzy") -> Vector3:
         """Only supports order XZY for now (standard FromSoft usage)."""
         if order != "xzy":
-            raise ValueError("Can only compute Eular matrix for XZY rotation, as used in DS1 at least.")
+            raise ValueError("Can only compute Euler angles for XZY rotation, as used in DS1 at least.")
 
         if self[1, 0] < 1:
             if self[1, 0] > -1:
@@ -507,6 +514,13 @@ class Matrix4(Matrix):
             return Vector4.from_column_mat(matrix_multiply(self.data, other.to_mat_column()))
         raise TypeError(f"Cannot matrix multiply with type {type(other)}.")
 
+    def __neg__(self):
+        return self.__class__(*[
+            -x
+            for row in self.data
+            for x in row
+        ])
+
     def get_scale(self) -> Vector3:
         return Vector3(self.data[0][0], self.data[1][1], self.data[2][2])
 
@@ -545,6 +559,15 @@ class Matrix4(Matrix):
             scale.x, 0.0, 0.0, 0.0,
             0.0, scale.y, 0.0, 0.0,
             0.0, 0.0, scale.z, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        )
+
+    @classmethod
+    def from_rotation_matrix3(cls, rotation: Matrix3) -> Matrix4:
+        return cls(
+            rotation[0][0], rotation[0][1], rotation[0][2], 0.0,
+            rotation[1][0], rotation[1][1], rotation[1][2], 0.0,
+            rotation[2][0], rotation[2][1], rotation[2][2], 0.0,
             0.0, 0.0, 0.0, 1.0,
         )
 

@@ -136,7 +136,7 @@ class LayoutMember(BinaryObject):
 
 
 # region Buffer Parser Callbacks
-def _int_to_float(scale: float, make_signed=False) -> (tp.Callable, tp.Callable):
+def _int_to_float(scale: float, make_signed=False) -> tuple[tp.Callable, tp.Callable]:
     if make_signed:
         def read_func(v: tuple[int, ...]):
             return [(x - scale) / scale for x in v]
