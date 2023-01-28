@@ -355,7 +355,7 @@ class Param(GameFile, abc.ABC):
     # TODO: __repr__ method returns basic information about Param (but not entire row list).
 
     def unpack(self, reader: BinaryReader, **kwargs):
-        self.byte_order = reader.byte_order = ">" if reader.unpack_value("B", offset=44) == 255 else "<"
+        self.byte_order = reader.default_byte_order = ">" if reader.unpack_value("B", offset=44) == 255 else "<"
         version_info = reader.unpack("bbb", offset=45)
         self.flags1 = ParamFlags1(version_info[0])
         self.flags2 = ParamFlags2(version_info[1])

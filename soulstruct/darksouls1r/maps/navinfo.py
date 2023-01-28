@@ -219,12 +219,12 @@ class NavmeshAABB(BinaryObject):
             rotation = Matrix3.from_euler_angles(rotation, radians=radians)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(pivot_point)
+        pivot_point = Vector3(*pivot_point)
 
         if enclose_original:
-            rotated_vertices = [(rotation @ (Vector3(v) - pivot_point)) + pivot_point for v in self.get_vertices()]
-            self.aabb_start = Vector3([min(v[i] for v in rotated_vertices) for i in range(3)])
-            self.aabb_end = Vector3([max(v[i] for v in rotated_vertices) for i in range(3)])
+            rotated_vertices = [(rotation @ (Vector3(*v) - pivot_point)) + pivot_point for v in self.get_vertices()]
+            self.aabb_start = Vector3(*[min(v[i] for v in rotated_vertices) for i in range(3)])
+            self.aabb_end = Vector3(*[max(v[i] for v in rotated_vertices) for i in range(3)])
         else:
             self.aabb_start = (rotation @ (self.aabb_start - pivot_point)) + pivot_point
             self.aabb_end = (rotation @ (self.aabb_end - pivot_point)) + pivot_point
@@ -446,23 +446,23 @@ class MCP(GameFile):
         if start_translate is None:
             start_translate = Vector3.zero()
         elif not isinstance(start_translate, Vector3):
-            start_translate = Vector3(start_translate)
+            start_translate = Vector3(*start_translate)
         if end_translate is None:
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
-            end_translate = Vector3(end_translate)
+            end_translate = Vector3(*end_translate)
         if start_rotate is None:
             start_rotate = Vector3.zero()
         elif isinstance(start_rotate, (int, float)):
             start_rotate = Vector3(0, start_rotate, 0)
         else:
-            start_rotate = Vector3(start_rotate)
+            start_rotate = Vector3(*start_rotate)
         if end_rotate is None:
             end_rotate = Vector3.zero()
         elif isinstance(end_rotate, (int, float)):
             end_rotate = Vector3(0, end_rotate, 0)
         else:
-            end_rotate = Vector3(end_rotate)
+            end_rotate = Vector3(*end_rotate)
 
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
         m_start_rotate = Matrix3.from_euler_angles(start_rotate)
@@ -497,7 +497,7 @@ class MCP(GameFile):
             rotation = Matrix3.from_euler_angles(rotation)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(pivot_point)
+        pivot_point = Vector3(*pivot_point)
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
                 aabb.rotate_in_world(rotation, pivot_point, radians=radians, enclose_original=enclose_original)
@@ -532,8 +532,8 @@ class MCP(GameFile):
                 axes.plot(x, y, z, color="red")
 
         # Get min/max values on each axis to simulate equal aspect ratio.
-        mins = Vector3([min(aabb.aabb_start[i] for aabb in self.aabbs) for i in range(3)])
-        maxs = Vector3([max(aabb.aabb_end[i] for aabb in self.aabbs) for i in range(3)])
+        mins = Vector3(*[min(aabb.aabb_start[i] for aabb in self.aabbs) for i in range(3)])
+        maxs = Vector3(*[max(aabb.aabb_end[i] for aabb in self.aabbs) for i in range(3)])
         mids = (mins + maxs) / 2
         max_range = max(maxs - mins) / 2
         axes.set_xlim(mids.x - max_range, mids.x + max_range)
@@ -687,7 +687,7 @@ class GateNode(BinaryObject):
             rotation = Matrix3.from_euler_angles(rotation, radians=radians)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(pivot_point)
+        pivot_point = Vector3(*pivot_point)
 
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
@@ -1022,23 +1022,23 @@ class MCG(GameFile):
         if start_translate is None:
             start_translate = Vector3.zero()
         elif not isinstance(start_translate, Vector3):
-            start_translate = Vector3(start_translate)
+            start_translate = Vector3(*start_translate)
         if end_translate is None:
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
-            end_translate = Vector3(end_translate)
+            end_translate = Vector3(*end_translate)
         if start_rotate is None:
             start_rotate = Vector3.zero()
         elif isinstance(start_rotate, (int, float)):
             start_rotate = Vector3(0, start_rotate, 0)
         else:
-            start_rotate = Vector3(start_rotate)
+            start_rotate = Vector3(*start_rotate)
         if end_rotate is None:
             end_rotate = Vector3.zero()
         elif isinstance(end_rotate, (int, float)):
             end_rotate = Vector3(0, end_rotate, 0)
         else:
-            end_rotate = Vector3(end_rotate)
+            end_rotate = Vector3(*end_rotate)
 
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
         m_start_rotate = Matrix3.from_euler_angles(start_rotate)
@@ -1068,7 +1068,7 @@ class MCG(GameFile):
             rotation = Matrix3.from_euler_angles(rotation)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(pivot_point)
+        pivot_point = Vector3(*pivot_point)
         for i, node in enumerate(self.nodes):
             if selected_nodes is None or i in selected_nodes or node in selected_nodes:
                 node.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)

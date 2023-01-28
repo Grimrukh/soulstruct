@@ -15,7 +15,7 @@ import zlib
 from enum import Enum
 
 from soulstruct.containers import oodle
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ReadableTyping
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ReadableTyping, ByteOrder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -93,7 +93,7 @@ DCX_HEADER_STRUCTS = {
         ("dcs", "4s", b"DCS\0"),
         ("decompressed_size", "i"),
         ("compressed_size", "i"),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
     # TODO: DCP_EDGE
     # TODO: DCX_EDGE
@@ -108,7 +108,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
     DCXType.DCX_DFLT_10000_44_9: BinaryStruct(
         ("type", "4s", b"DCX\0"),
@@ -121,7 +121,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
     DCXType.DCX_DFLT_11000_44_8: BinaryStruct(
         ("type", "4s", b"DCX\0"),
@@ -134,7 +134,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x8000000, 0, 0, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
     DCXType.DCX_DFLT_11000_44_9: BinaryStruct(
         ("type", "4s", b"DCX\0"),
@@ -147,7 +147,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
     DCXType.DCX_DFLT_11000_44_9_15: BinaryStruct(
         ("type", "4s", b"DCX\0"),
@@ -160,7 +160,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x9000000, 0, 0xF000000, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
 
     DCXType.DCX_KRAK: BinaryStruct(
@@ -174,7 +174,7 @@ DCX_HEADER_STRUCTS = {
         ("unks2", "6i", (0x20, 0x6000000, 0, 0, 0, 0x10100)),
         ("dca", "4s", b"DCA\0"),
         ("compressed_header_size", "i", 8),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     ),
 }
 
@@ -197,13 +197,13 @@ def decompress(dcx_source: ReadableTyping) -> tuple[bytes, DCXType]:
     Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later
     with the same DCX type/parameters.
     """
-    reader = BinaryReader(dcx_source, byte_order=">")  # always big-endian
+    reader = BinaryReader(dcx_source, default_byte_order=ByteOrder.BigEndian)  # always big-endian
     dcx_type = DCXType.detect(reader)
 
     if dcx_type == DCXType.Unknown:
         raise ValueError("Unknown DCX type. Cannot decompress.")
 
-    header = reader.unpack_struct(DCX_HEADER_STRUCTS[dcx_type], byte_order=">")
+    header = reader.unpack_struct(DCX_HEADER_STRUCTS[dcx_type], byte_order=ByteOrder.BigEndian)
     compressed = reader.read(header["compressed_size"])  # TODO: do I need to rstrip nulls?
 
     if dcx_type == DCXType.DCX_KRAK:

@@ -10,7 +10,7 @@ from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder
 from soulstruct.containers.tpf import TPF
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter, ByteOrder
 
 from .bone import Bone
 from .dummy import Dummy
@@ -239,8 +239,8 @@ class FLVER(GameFile):
 
     def pack(self):
 
-        writer = BinaryWriter(big_endian=self.header.endian == b"B\0")
-        encoding = ("utf-16-be" if writer.big_endian else "utf-16-le") if self.header.unicode else "shift_jis_2004"
+        writer = BinaryWriter(ByteOrder.BigEndian if self.header.endian == b"B\0" else ByteOrder.LittleEndian)
+        encoding = writer.get_utf_16_encoding() if self.header.unicode else "shift_jis_2004"
 
         true_face_count = 0
         total_face_count = 0

@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.games import DarkSoulsDSRType
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryStruct
+from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryStruct, ByteOrder
 from soulstruct.utilities.maths import Vector2, Vector3
 from ..events.emevd.enums import NavmeshType
 
@@ -181,11 +181,12 @@ class NVM(GameFile, DarkSoulsDSRType):
     )
 
     def unpack(self, reader: BinaryReader, **kwargs):
-        reader.byte_order = "<"
+        self.big_endian = reader.byte(big_endian=False)
+        reader.default_byte_order = "<"
         first_byte = reader.peek_value("i")
         self.big_endian = first_byte != 1
         if self.big_endian:
-            reader.byte_order = ">"
+            reader.default_byte_order = ">"
 
         header = reader.unpack_struct(self.HEADER_STRUCT)
         expected_triangles_offset = 0x80 + header["vertex_count"] * 0xC
@@ -208,7 +209,7 @@ class NVM(GameFile, DarkSoulsDSRType):
         self.event_entities = [NVMEventEntity.unpack(reader) for _ in range(header["entities_count"])]
 
     def pack(self, **kwargs) -> bytes:
-        writer = BinaryWriter(big_endian=self.big_endian)
+        writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
 
         writer.pack("4i", 1, len(self.vertices), self.HEADER_STRUCT.size, len(self.triangles))
         writer.reserve("triangles_offset", "i")

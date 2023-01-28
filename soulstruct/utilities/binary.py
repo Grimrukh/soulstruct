@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
+    "ByteOrder",
     "BinaryStruct",
     "BinaryObject",
     "BinaryReader",
@@ -32,7 +33,35 @@ _LOGGER = logging.getLogger(__name__)
 
 
 PAD_RE = re.compile(r"(\d*)x")
-FMT_RE = re.compile(r"([<>@])?(\d*)([\w?])")
+FMT_RE = re.compile(r"([@=<>!])?(\d*)([\w?])")
+
+
+class ByteOrder(enum.Enum):
+    # TODO: Use `StrEnum` once Blender supports Python 3.11.
+    NativeAutoAligned = "@"
+    NativeNotAutoAligned = "="  # standard size, no alignment
+    LittleEndian = "<"  # default
+    BigEndian = ">"
+    Network = "!"  # big-endian
+
+    def get_utf_16_encoding(self):
+        if self in {ByteOrder.BigEndian, ByteOrder.Network}:
+            return "utf-16-be"
+        # TODO: Technically should check `sys.byteorder` for native orders.
+        return "utf-16-le"
+
+    @classmethod
+    def big_endian_bool(cls, is_big_endian: bool):
+        """Utility shortcut for switching between big/little endian based on a bool (common in game formats)."""
+        return cls.BigEndian if is_big_endian else cls.LittleEndian
+
+    @classmethod
+    def __contains__(cls, item):
+        try:
+            cls(item)
+        except ValueError:
+            return False
+        return True
 
 
 class BinaryStruct:
@@ -81,7 +110,7 @@ class BinaryStruct:
         def __repr__(self):
             return f"{self.name} :: {self.fmt}" + (f" (== {self.asserted})" if self.asserted is not None else "")
 
-    def __init__(self, *fields, byte_order="<"):
+    def __init__(self, *fields, byte_order=ByteOrder.LittleEndian):
         """Flexible binary unpacker/repacker."""
         self.fields = []  # type: list[BinaryStruct.BinaryField]
         self._struct_format = []  # type: list[str]  # fmt chunks with different byte orders are stored here
@@ -90,13 +119,13 @@ class BinaryStruct:
         if fields:
             self.add_fields(*fields, byte_order=byte_order)
 
-    def add_fields(self, *fields, byte_order=None) -> tuple[list[BinaryField], str]:
+    def add_fields(self, *fields, byte_order: ByteOrder = None) -> tuple[list[BinaryField], str]:
         """Add new fields to the BinaryStruct.
 
         Args:
              *fields: sequence of fields to add.
-             byte_order: byte order for the added fields to use, which can be different from the byte order of other
-                fields. By default, the most recent byte order is used.
+             byte_order (ByteOrder: byte order for the added fields to use, which can be different from the byte order
+                of otherfields. By default, the most recent byte order is used.
 
         Returns:
             field_list, struct_format
@@ -105,14 +134,13 @@ class BinaryStruct:
             raise ValueError(f"No fields were passed to `add_fields()`.")
         if byte_order is None:
             if self._struct_format:
-                byte_order = self._struct_format[-1][0]
+                byte_order = ByteOrder(self._struct_format[-1][0])
                 new_fmt = False
             else:
-                byte_order = "<"  # default
+                byte_order = ByteOrder.LittleEndian  # default
                 new_fmt = True
         elif not self._struct_format or byte_order != self._struct_format[-1][0]:
-            if byte_order not in {"<", ">", "@"}:
-                raise ValueError("byte_order must be '<', '>', or '@'.")
+            byte_order = ByteOrder(byte_order)
             new_fmt = True
         else:
             # Append to most recent sub-format (same byte order).
@@ -159,14 +187,16 @@ class BinaryStruct:
                 raise ValueError(f"Invalid field format: '{fmt}'.")
 
             if field_byte_order:
-                raise ValueError("Individual field format should not have its own byte order. Use `byte_order` arg.")
+                raise ValueError(
+                    "Individual field format should not have its own byte order character. Use `byte_order` arg."
+                )
             if field_type == "j":
                 fmt = f"{field_length}s"
                 encoding = "shift_jis_2004"
                 length = 1
             elif field_type == "u":
                 fmt = f"{field_length}s"
-                encoding = "utf-16-be" if byte_order == ">" else "utf-16-le"
+                encoding = byte_order.get_utf_16_encoding()
                 length = 1
             elif field_type == "s":
                 length = 1
@@ -179,20 +209,20 @@ class BinaryStruct:
 
         self.fields += new_fields
         if new_fmt:
-            self._struct_format.append(byte_order + sub_fmt)
+            self._struct_format.append(byte_order.value + sub_fmt)
             self._struct_length.append(sub_fmt_length)
         else:
             self._struct_format[-1] += sub_fmt
             self._struct_length[-1] += sub_fmt_length
         self.size = sum(struct.calcsize(sub_fmt) for sub_fmt in self._struct_format)
 
-        return new_fields, byte_order + sub_fmt
+        return new_fields, byte_order.value + sub_fmt
 
     def unpack(
         self,
         source: bytes | io.BufferedIOBase,
         *fields,
-        byte_order: str = None,
+        byte_order: ByteOrder = None,
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
@@ -207,14 +237,14 @@ class BinaryStruct:
         Args:
             source: bytes or open buffer to unpack from.
             fields: optional list of new fields to simultaneously add and unpack (instead of full struct).
-            byte_order (str): byte order ('<', '>', etc.) of the new fields, or new byte order to fully override all
+            byte_order (ByteOrder): byte order of the new fields, or new byte order to fully override all
                 previous byte orders passed along with fields, if no new fields are given.
             exclude_asserted: exclude any asserted fields in the returned dictionary.
             exclude_prefix: exclude any fields whose names start with this prefix, if given.
             offset (int): optional offset to unpack from. Old offset (for buffers) will be restored if this is given.
 
         Returns:
-            AttributeDict
+            Dictionary mapping field names to unpacked values.
         """
         old_offset = None
         if fields:
@@ -262,7 +292,7 @@ class BinaryStruct:
         unpacked = []
         for sub_fmt in self._struct_format:
             if byte_order:
-                sub_fmt = f"{byte_order}{sub_fmt.lstrip('<>@')}"
+                sub_fmt = byte_order.value + sub_fmt.lstrip('<>@')
             size = struct.calcsize(sub_fmt)
             try:
                 unpacked += struct.unpack(sub_fmt, data[data_offset:data_offset + size])
@@ -287,14 +317,20 @@ class BinaryStruct:
         return output
 
     def unpack_count(
-        self, source, count: int, byte_order: str = None, exclude_asserted=False, exclude_prefix="", offset: int = None
+        self,
+        source,
+        count: int,
+        byte_order: ByteOrder = None,
+        exclude_asserted=False,
+        exclude_prefix="",
+        offset: int = None,
     ) -> list[dict[str, tp.Any]]:
         """Unpack `count` identical structs from `source`. See `unpack()` for more.
 
         Args:
             source: bytes or open buffer to unpack from.
             count: number of contiguous structs to unpack from source.
-            byte_order (str): byte order to unpack with. Defaults to order specified by fields.
+            byte_order (ByteOrder): byte order to unpack with. Defaults to order specified by fields.
             exclude_asserted (bool): exclude asserted fields in the output dictionary. (Default: False)
             exclude_prefix (str): exclude fields whose names start with this string, if given. (Default: "")
             offset (int): optional offset to unpack from. Old offset (for buffers) will be restored if this is given.
@@ -533,7 +569,7 @@ class BinaryObject(abc.ABC):
         super().__setattr__(field_name, value)
 
     def extract_kwargs_from_struct(
-        self, reader: BinaryReader, binary_struct: BinaryStruct = None, encoding=None, byte_order=None
+        self, reader: BinaryReader, binary_struct: BinaryStruct = None, encoding=None, byte_order: ByteOrder = None
     ) -> dict[str, tp.Any]:
         if binary_struct is None:
             binary_struct = self.STRUCT
@@ -552,7 +588,7 @@ class BinaryObject(abc.ABC):
                 kwargs[field] = data[field]
         return kwargs
 
-    def default_unpack(self, reader: BinaryReader, encoding=None, byte_order=None):
+    def default_unpack(self, reader: BinaryReader, encoding=None, byte_order: ByteOrder = None):
         """`BinaryObject` unpack methods will frequently require extra arguments, so the exact signature of `unpack()
         is left to each subclass.
 
@@ -639,19 +675,52 @@ class BinaryObject(abc.ABC):
         raise TypeError(f"Unrecognized field type for `BinaryObject`: {repr(field_type)}")
 
 
-class BinaryReader:
+class BinaryBase:
+
+    # Special format characters that become 'iI' or 'qQ' depending on `var_int_size`.
+    VAR_INT = "v"
+    VAR_UINT = "V"
+    default_byte_order: ByteOrder
+    var_int_size: int  # 4 or 8 (determines size of 'v' and 'V' format characters)
+
+    def __init__(self, byte_order=ByteOrder.LittleEndian, var_int_size=4):
+        self.default_byte_order = ByteOrder(byte_order)
+        if var_int_size not in {4, 8}:
+            raise ValueError(f"{self.__class__.__name__} `var_int_size` must be 4 or 8, not {var_int_size}.")
+        self.var_int_size = var_int_size
+
+    def parse_fmt(self, fmt: str) -> str:
+        """Insert default byte order and replace 'vV' var int characters."""
+        if fmt[0] not in "@=><!":
+            fmt = self.default_byte_order.value + fmt
+        if self.var_int_size == 4:
+            fmt = fmt.replace("v", "i").replace("V", "I")
+        elif self.var_int_size == 8:
+            fmt = fmt.replace("v", "q").replace("V", "Q")
+        else:
+            raise ValueError(f"`BinaryWriter.var_int_size` must be 4 or 8, not {self.var_int_size}.")
+        return fmt
+
+    def get_utf_16_encoding(self) -> str:
+        return self.default_byte_order.get_utf_16_encoding()
+
+
+class BinaryReader(BinaryBase):
     """Manages an buffered binary IO stream, with methods for unpacking data and moving to temporary offsets."""
 
     class ReaderError(Exception):
         """Exception raised when trying to unpack data."""
         pass
 
+    buffer: tp.BinaryIO | io.BufferedIOBase
+
     def __init__(
         self,
         buffer: str | Path | bytes | bytearray | io.BufferedIOBase | BinderEntry | BinaryReader,
-        byte_order="<",
+        default_byte_order=ByteOrder.LittleEndian,
+        var_int_size=8,
     ):
-        self.buffer = None
+        super().__init__(default_byte_order, var_int_size)
 
         if isinstance(buffer, str):
             buffer = Path(buffer)
@@ -669,29 +738,28 @@ class BinaryReader:
             raise TypeError(
                 f"Invalid `buffer`: {buffer}. Should be a binary IO stream, `bytes, or `Path` of a file to open."
             )
-        self.byte_order = byte_order
 
-    def unpack(self, fmt, offset=None, relative_offset=False, asserted=None) -> None | tuple:
+    def unpack(self, fmt, offset=None, relative_offset=False, asserted=None) -> tuple:
         """Unpack appropriate number of bytes from `buffer` using `fmt` string from the given (or current) `offset`.
 
         Args:
             fmt (str): format string for `struct.unpack()`.
             offset (int): optional offset to seek to before reading. Old offset will be restored afterward.
             relative_offset (bool): indicates that `offset` is relative to current position.
-            asserted: assert that the unpacked data is equal to this, if given.
+            asserted: assert that the unpacked data is equal to this, if given..
 
         Returns:
             (tuple) Output of `struct.unpack()`.
         """
-        if fmt[0] not in "<>@":
-            fmt = self.byte_order + fmt
+        fmt = self.parse_fmt(fmt)
+
         initial_offset = self.buffer.tell() if offset is not None else None
         if offset is not None:
             self.buffer.seek(initial_offset + offset if relative_offset else offset)
         fmt_size = struct.calcsize(fmt)
         raw_data = self.buffer.read(fmt_size)
         if not raw_data and fmt_size > 0:
-            return None
+            raise ValueError(f"Could not unpack {fmt_size} bytes from reader for format '{fmt}'.")
         data = struct.unpack(fmt, raw_data)
         if asserted is not None and data != asserted:
             raise AssertionError(f"Unpacked data {repr(data)} does not equal asserted data {repr(asserted)}.")
@@ -707,18 +775,12 @@ class BinaryReader:
         Also raises a `ValueError` if more than one value is unpacked.
         """
         data = self.unpack(fmt, offset, relative_offset)
-        if data is None:
-            raise ValueError(f"Could not unpack data with format '{fmt}'.")
         if len(data) > 1:
             raise ValueError(f"More than one value unpacked with `unpack_value()`: {data}")
         value = data[0]
         if asserted is not None and value != asserted:
             raise AssertionError(f"Unpacked value {repr(value)} does not equal asserted value {repr(asserted)}.")
         return data[0]
-
-    def byte(self, big_endian=False):
-        """Utility function for simplifying little-endian one-byte reads."""
-        return self.unpack_value(">B" if big_endian else "<B")
 
     def peek(self, fmt_or_size: str | int) -> bool | int | float | bytes | tuple:
         """Unpack `fmt_or_size` (or just read bytes) and return the unpacked values without changing the offset."""
@@ -734,7 +796,7 @@ class BinaryReader:
         self,
         binary_struct: BinaryStruct,
         *fields,
-        byte_order: str = None,
+        byte_order: ByteOrder = None,
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
@@ -752,7 +814,7 @@ class BinaryReader:
         self,
         binary_struct: BinaryStruct,
         count: int,
-        byte_order: str = None,
+        byte_order: ByteOrder = None,
         exclude_asserted=False,
         exclude_prefix="",
         offset: int = None,
@@ -797,7 +859,10 @@ class BinaryReader:
         return self.buffer.read(size)
 
     def seek(self, offset: int, whence=None) -> int:
-        """Returns final position."""
+        """Returns final position.
+
+        Reminder: `whence` is zero (or None) for absolute offset, 1 for relative to current, and 2 for relative to end.
+        """
         if whence is not None:
             self.buffer.seek(offset, whence)
         else:
@@ -818,9 +883,6 @@ class BinaryReader:
         """Align reader position to next multiple of `alignment`."""
         while self.buffer.tell() % alignment:
             self.buffer.read(1)
-
-    def get_utf_16_encoding(self) -> str:
-        return "utf-16-be" if self.byte_order == ">" else "utf-16-le"
 
     def close(self):
         self.buffer.close()
@@ -852,7 +914,7 @@ class BinaryReader:
             print(f"{label} position: {self.position}")
 
 
-class BinaryWriter:
+class BinaryWriter(BinaryBase):
     """Manages `bytearray` binary data, with features like reserved offsets for later writing and big endian mode."""
 
     class Reserved(str):
@@ -863,18 +925,12 @@ class BinaryWriter:
 
     AUTO_RESERVE = Reserved()  # reserve using `id(source)` and field name
 
-    big_endian: bool
     reserved: dict[str, tuple[int, str]]
 
-    def __init__(self, big_endian=False):
-        self.big_endian = big_endian
+    def __init__(self, byte_order=ByteOrder.LittleEndian, var_int_size=8):
+        super().__init__(byte_order, var_int_size)
         self.reserved = {}
         self._array = bytearray()
-
-    def parse_fmt(self, fmt: str) -> str:
-        if fmt[0] not in "<>@":
-            fmt = (">" if self.big_endian else "<") + fmt
-        return fmt
 
     def pack(self, fmt: str, *values):
         self._array += struct.pack(self.parse_fmt(fmt), *values)

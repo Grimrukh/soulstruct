@@ -6,7 +6,7 @@ import typing as tp
 
 from soulstruct.base.binder_entry import BinderEntryHeader, BinderEntry
 from soulstruct.containers.base import BaseBinder, BinderHashTable, BinderFlags
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter, ByteOrder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,12 +35,12 @@ class BND3(BaseBND):
 
     def unpack_header(self, reader: BinaryReader) -> int:
         self.big_endian = reader.unpack_value("?", offset=0xD)
-        reader.byte_order = ">" if self.big_endian else "<"
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)
         self.bit_big_endian = reader.unpack_value("?", offset=0xE)
         reader.unpack_value("4s", asserted=b"BND3")
         self.signature = reader.unpack_value("8s").decode("ascii").rstrip("\0")
         self.flags = BinderFlags.read(reader, self.bit_big_endian)
-        reader.byte_order = ">" if self.big_endian or self.flags.is_big_endian else "<"
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian or self.flags.is_big_endian)
         reader.seek(2, 1)  # skip peeked endian bytes
         reader.assert_pad(1)
         entry_count = reader.unpack_value("i")
@@ -69,7 +69,7 @@ class BND3(BaseBND):
         writer.pad(8)
 
     def pack(self) -> bytes:
-        writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
+        writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian or self.flags.is_big_endian))
         self.pack_header(writer)
 
         entries = list(sorted(self._entries, key=lambda e: e.id))
@@ -161,7 +161,7 @@ class BND4(BaseBND):
         self.bit_big_endian = not reader.unpack_value("?")  # note reversal
         reader.assert_pad(1)
 
-        reader.byte_order = ">" if self.big_endian else "<"  # no need to check flags for an override in BND4
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)  # no need to check flags for an override in BND4
 
         entry_count = reader.unpack_value("i")
         reader.unpack_value("q", asserted=0x40)  # header size
@@ -229,10 +229,10 @@ class BND4(BaseBND):
             writer.pad(8)
 
     def pack(self) -> bytes:
-        writer = BinaryWriter(big_endian=self.big_endian)
+        writer = BinaryWriter(byte_order=ByteOrder.big_endian_bool(self.big_endian))
         self.pack_header(writer)
 
-        path_encoding = ("utf-16-be" if self.big_endian else "utf-16-le") if self.unicode else "shift-jis"
+        path_encoding = writer.get_utf_16_encoding() if self.unicode else "shift-jis"
         rebuild_hash_table = not self._most_recent_hash_table
 
         if not self._most_recent_hash_table or len(self._entries) != self._most_recent_entry_count:

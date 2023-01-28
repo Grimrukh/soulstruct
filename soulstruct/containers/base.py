@@ -127,6 +127,8 @@ class BaseBinder(GameFile, abc.ABC):
         self._entries = []  # type: list[BinderEntry]
         super().__init__(file_source, dcx_type=dcx_type, **kwargs)
 
+        self.post_unpack()
+
     def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
         """A Binder can also be loaded from a `binder_manifest.json` file or a directory containing such a file, or
         a dictionary containing header information to initialize a Binder with no entries."""
@@ -159,6 +161,14 @@ class BaseBinder(GameFile, abc.ABC):
         raise InvalidGameFileTypeError(
             "`file_source` is not a `binder_manifest.json` file or directory containing one, or a manifest dict."
         )
+
+    def post_unpack(self):
+        """Optional callback for subclasses that layer other functionality on top of a Binder (e.g. `parambnd`).
+
+        These may generally want to check if `self.entries` is empty, in case of a null source (e.g. for class
+        method constructors).
+        """
+        pass
 
     def add_entry(self, entry: BinderEntry):
         if entry in self._entries:

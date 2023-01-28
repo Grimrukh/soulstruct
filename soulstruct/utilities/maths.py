@@ -18,57 +18,25 @@ __all__ = [
 import abc
 import math
 import typing as tp
+from dataclasses import dataclass
 
 
+@dataclass(slots=True)
 class Vector(abc.ABC):
     """Simple float container."""
 
-    # TODO: Sort out.
-    # __slots__ = ("_data",)
-
-    LENGTH = 1
     REPR_PRECISION = 3
 
     _data: list[float, ...]
 
-    def __init__(self, x=None):
-        """Initializes `_data` attribute."""
-        if x is None:
-            self._data = [0.0] * self.LENGTH
-        else:
-            try:
-                if len(x) < self.LENGTH:
-                    raise ValueError
-            except ValueError:
-                cls = self.__class__.__name__
-                raise ValueError(
-                    f"`{cls}` must be initialized with a sequence of at least {self.LENGTH} "
-                    f"elements (optionally unpacked)."
-                )
-            self._data = [float(x_) if x_ is not None else 0 for x_ in x[:self.LENGTH]]
-
     def __len__(self):
-        """Number of elements in `Vector`, which also reveals which child class it is."""
-        return self.LENGTH
+        return len(self._data)
 
     def __getitem__(self, index):
-        if isinstance(index, slice):
-            if index.stop > self.LENGTH:
-                raise IndexError(f"Index of `{self.__class__.__name__}` must be between 0 and {self.LENGTH - 1}.")
-        elif index >= self.LENGTH:
-            raise IndexError(f"Index of `{self.__class__.__name__}` must be between 0 and {self.LENGTH - 1}.")
         return self._data[index]
 
     def __setitem__(self, index, value: float):
-        if index >= self.LENGTH:
-            raise IndexError(f"Index of `{self.__class__.__name__}` must be between 0 and {self.LENGTH - 1}.")
         self._data[index] = value
-
-    def to_radians(self):
-        return self.__class__([math.radians(x) for x in self._data])
-
-    def to_degrees(self):
-        return self.__class__([math.degrees(x) for x in self._data])
 
     def to_mat_column(self):
         return [[x] for x in self._data]
@@ -76,20 +44,16 @@ class Vector(abc.ABC):
     def to_mat_row(self):
         return [list(self._data)]
 
-    def __eq__(self, other_vector):
-        return len(other_vector) == self.LENGTH and all(x == other_vector[i] for i, x in enumerate(self._data))
+    def __eq__(self, other_vector: Vector):
+        return self._data == other_vector._data
 
-    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
-        cls = self.__class__
-        if isinstance(other, cls):
-            return cls([op_func(self._data[i], other._data[i]) for i in range(self.LENGTH)])
-        elif isinstance(other, (list, tuple)):
-            if len(other) != self.LENGTH:
-                raise ValueError(f"List or tuple to {op_name} `{cls.__name__}` must have {self.LENGTH} elements.")
-            return cls([op_func(self._data[i], other[i]) for i in range(self.LENGTH)])
-        elif isinstance(other, (int, float)):
-            return cls([op_func(x, other) for x in self._data])
-        raise TypeError(f"`{cls}` arithmetic not defined for type {type(other)}.")
+    @abc.abstractmethod
+    def __neg__(self):
+        pass
+
+    @abc.abstractmethod
+    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str) -> Vector:
+        pass
 
     def __add__(self, other):
         return self._arithmetic(other, float.__add__, "add to")
@@ -111,9 +75,6 @@ class Vector(abc.ABC):
 
     def __rtruediv__(self, other):
         return self._arithmetic(other, float.__rtruediv__, "divide")
-
-    def __neg__(self):
-        return self.__class__([-self[i] for i in range(self.LENGTH)])
 
     def __iter__(self):
         return iter(self._data)
@@ -147,23 +108,23 @@ class Vector(abc.ABC):
         """Return a copy of this `Vector` with unit magnitude."""
         return self.copy() / abs(self)
 
+    @abc.abstractmethod
     def dot(self, other_vector) -> float:
-        if len(other_vector) != self.LENGTH:
-            raise TypeError(f"Cannot only use `dot` with another Vector/sequence of the same length: {self.LENGTH}")
-        return sum(self[i] * other_vector[i] for i in range(self.LENGTH))
+        pass
 
+    @abc.abstractmethod
     def copy(self):
-        return self.__class__(self)
+        pass
 
     @classmethod
+    @abc.abstractmethod
     def zero(cls):
-        return cls([0] * cls.LENGTH)
-
-    default = zero
+        pass
 
     @classmethod
+    @abc.abstractmethod
     def ones(cls):
-        return cls([1] * cls.LENGTH)
+        pass
 
     @property
     def x(self) -> float:
@@ -177,14 +138,8 @@ class Vector(abc.ABC):
 class Vector2(Vector):
     """Simple [x, y] container."""
 
-    LENGTH = 2
-
-    def __init__(self, x=None, y=None):
-        if x is not None and y is not None:
-            x = (x, y)
-        elif y is not None:
-            raise ValueError("Both `x` and `y` must be given, or just `x` (if it's a sequence or `None`).")
-        super().__init__(x)
+    def __init__(self, x, y):
+        self._data = [float(x), float(y)]
 
     @property
     def y(self):
@@ -194,18 +149,44 @@ class Vector2(Vector):
     def y(self, value: float):
         self._data[1] = value
 
+    def __neg__(self):
+        return Vector2(-self._data[0], -self._data[1])
+
+    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
+        if isinstance(other, Vector2):
+            x, y = [op_func(self._data[i], other._data[i]) for i in range(2)]
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 2:
+                raise ValueError(f"List or tuple to {op_name} `Vector2` must have 2 elements.")
+            x, y = [op_func(self._data[i], other[i]) for i in range(2)]
+        elif isinstance(other, (int, float)):
+            x, y = [op_func(x, other) for x in self._data]
+        else:
+            raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
+        return Vector2(x, y)
+
+    def dot(self, other_vector) -> float:
+        if len(other_vector) != 2:
+            raise TypeError(f"Cannot only use `dot` with another Vector/sequence of length 2.")
+        return sum(self[i] * other_vector[i] for i in range(2))
+
+    def copy(self):
+        return Vector2(*self._data)
+
+    @classmethod
+    def zero(cls):
+        return Vector2(0.0, 0.0)
+
+    @classmethod
+    def ones(cls):
+        return Vector2(1.0, 1.0)
+
 
 class Vector3(Vector):
     """Simple [x, y, z] container."""
 
-    LENGTH = 3
-
-    def __init__(self, x=None, y=None, z=None):
-        if x is not None and y is not None and z is not None:
-            x = (x, y, z)
-        elif y is not None or z is not None:
-            raise ValueError("All of `x`, `y`, and `z` must be given, or just `x` (if it's a sequence or `None`).")
-        super().__init__(x)
+    def __init__(self, x, y, z):
+        self._data = [float(x), float(y), float(z)]
 
     @property
     def y(self):
@@ -241,7 +222,7 @@ class Vector3(Vector):
         )
 
     def transform(self, matrix3: Matrix3):
-        return Vector3(list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
+        return Vector3(*list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
 
     def get_as_axes(self, axes: str) -> Vector2 | Vector3:
         """Reorder and/or negate axes, e.g. `get_as_axes("-x-zy")`."""
@@ -260,27 +241,53 @@ class Vector3(Vector):
             else:
                 raise ValueError(f"Invalid `axes` character: '{c}'. Should be '-' or in 'xyz'.")
         if len(new_data) == 2:
-            return Vector2(new_data)
+            return Vector2(*new_data)
         elif len(new_data) == 3:
-            return Vector3(new_data)
+            return Vector3(*new_data)
         else:
             raise ValueError(f"Not enough axes given in `axes`: '{axes}'. Must be at least 2.")
 
     def to_xzy(self) -> Vector3:
         return Vector3(self.x, self.z, self.y)
 
+    def __neg__(self):
+        return Vector3(-self._data[0], -self._data[1], -self._data[2])
+
+    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
+        if isinstance(other, Vector3):
+            x, y, z = [op_func(self._data[i], other._data[i]) for i in range(3)]
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 3:
+                raise ValueError(f"List or tuple to {op_name} `Vector3` must have 3 elements.")
+            x, y, z = [op_func(self._data[i], other[i]) for i in range(3)]
+        elif isinstance(other, (int, float)):
+            x, y, z = [op_func(x, other) for x in self._data]
+        else:
+            raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
+        return Vector3(x, y, z)
+
+    def dot(self, other_vector) -> float:
+        if len(other_vector) != 3:
+            raise TypeError(f"Cannot only use `dot` with another Vector/sequence of length 3.")
+        return sum(self[i] * other_vector[i] for i in range(3))
+
+    def copy(self):
+        return Vector3(*self._data)
+
+    @classmethod
+    def zero(cls):
+        return Vector3(0.0, 0.0, 0.0)
+
+    @classmethod
+    def ones(cls):
+        return Vector3(1.0, 1.0, 1.0)
+
 
 class Vector4(Vector):
     """Simple [x, y, z, w] container."""
 
-    LENGTH = 4
-
-    def __init__(self, x=None, y=None, z=None, w=None):
-        if x is not None and y is not None and z is not None and w is not None:
-            x = (x, y, z, w)
-        elif y is not None or z is not None or w is not None:
-            raise ValueError("All of `x`, `y`, `z`, and `w` must be given, or just `x` (if it's a sequence or `None`).")
-        super().__init__(x)
+    def __init__(self, x, y, z, w):
+        self._data = [float(x), float(y), float(z), float(w)]
 
     @property
     def y(self):
@@ -308,18 +315,50 @@ class Vector4(Vector):
 
     @classmethod
     def from_row_mat(cls, row_mat):
-        return cls(row_mat[0][0], row_mat[0][1], row_mat[0][2], row_mat[0][3])
+        return Vector4(row_mat[0][0], row_mat[0][1], row_mat[0][2], row_mat[0][3])
 
     @classmethod
     def from_column_mat(cls, column_mat):
         return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0], column_mat[3][0])
+
+    def __neg__(self):
+        return Vector4(-self._data[0], -self._data[1], -self._data[2], -self._data[3])
+
+    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
+        if isinstance(other, Vector4):
+            x, y, z, w = [op_func(self._data[i], other._data[i]) for i in range(4)]
+        elif isinstance(other, (list, tuple)):
+            if len(other) != 4:
+                raise ValueError(f"List or tuple to {op_name} `Vector4` must have 4 elements.")
+            x, y, z, w = [op_func(self._data[i], other[i]) for i in range(4)]
+        elif isinstance(other, (int, float)):
+            x, y, z, w = [op_func(x, other) for x in self._data]
+        else:
+            raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
+        return Vector4(x, y, z, w)
+
+    def dot(self, other_vector) -> float:
+        if len(other_vector) != 4:
+            raise TypeError(f"Cannot only use `dot` with another Vector/sequence of length 4.")
+        return sum(self[i] * other_vector[i] for i in range(4))
+
+    def copy(self):
+        return Vector4(*self._data)
+
+    @classmethod
+    def zero(cls):
+        return Vector4(0.0, 0.0, 0.0, 0.0)
+
+    @classmethod
+    def ones(cls):
+        return Vector4(1.0, 1.0, 1.0, 1.0)
 
 
 class Matrix(abc.ABC):
     SIZE = None
     PRECISION = 3
     EPSILON = 0.0001  # for printing only
-    data: list[list[int] | list[float]]
+    data: list[list[float]]
 
     @abc.abstractmethod
     def __init__(self):
@@ -527,7 +566,7 @@ class Matrix4(Matrix):
     def set_scale(self, scale_vector: Vector3 | list | tuple | int | float):
         """Set the scale part of the matrix (diagonal of top-left 3x3 sub-matrix)."""
         if isinstance(scale_vector, (list, tuple)):
-            scale_vector = Vector3(scale_vector)
+            scale_vector = Vector3(*scale_vector)
         elif isinstance(scale_vector, (int, float)):
             scale_vector = Vector3(scale_vector, scale_vector, scale_vector)
 
@@ -577,7 +616,7 @@ class Matrix4(Matrix):
     def set_translate(self, translate_vector: Vector3 | list | tuple | int | float):
         """Set the translate part of the matrix (first three elements of last column)."""
         if isinstance(translate_vector, (list, tuple)):
-            translate_vector = Vector3(translate_vector)
+            translate_vector = Vector3(*translate_vector)
         elif isinstance(translate_vector, (int, float)):
             translate_vector = Vector3(translate_vector, translate_vector, translate_vector)
         elif not isinstance(translate_vector, Vector3):
@@ -627,9 +666,9 @@ def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float, r
 
 def get_distance(x1: Vector3, x2: Vector3, squared=False):
     if not isinstance(x1, Vector3):
-        x1 = Vector3(x1)
+        x1 = Vector3(*x1)
     if not isinstance(x2, Vector3):
-        x2 = Vector3(x2)
+        x2 = Vector3(*x2)
     squared_distance = (x2.x - x1.x) ** 2 + (x2.y - x1.y) ** 2 + (x2.z - x1.z) ** 2
     if squared:
         return squared_distance

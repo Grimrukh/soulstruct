@@ -9,7 +9,7 @@ from pathlib import Path
 
 from soulstruct.base.binder_entry import BinderEntryHeader, BinderEntry
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash
+from soulstruct.utilities.binary import BinaryReader, BinaryWriter, get_blake2b_hash, ByteOrder
 
 from .base import BaseBinder, BinderHashTable, BinderFlags
 from .dcx import DCXType, compress
@@ -183,12 +183,12 @@ class BXF3(BaseBXF):
 
     def unpack_header(self, reader: BinaryReader) -> list[BinderEntryHeader]:
         self.big_endian = reader.unpack_value("?", offset=0xD)
-        reader.byte_order = ">" if self.big_endian else "<"
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)
         self.bit_big_endian = reader.unpack_value("?", offset=0xE)
         reader.unpack_value("4s", asserted=b"BHF3")
         self.signature = reader.unpack_value("8s").decode("ascii").rstrip("\0")
         self.flags = BinderFlags.read(reader, self.bit_big_endian)
-        reader.byte_order = ">" if self.big_endian or self.flags.is_big_endian else "<"
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian or self.flags.is_big_endian)
         reader.seek(2, 1)  # skip peeked endian bytes
         reader.assert_pad(1)
         entry_count = reader.unpack_value("i")
@@ -216,8 +216,9 @@ class BXF3(BaseBXF):
         writer.pad(12)
 
     def pack(self) -> tuple[bytes, bytes]:
-        header_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
-        data_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
+        byte_order = ByteOrder.big_endian_bool(self.big_endian or self.flags.is_big_endian)
+        header_writer = BinaryWriter(byte_order)
+        data_writer = BinaryWriter(byte_order)
         self.pack_header(header_writer)
 
         entries = list(sorted(self._entries, key=lambda e: e.id))
@@ -284,7 +285,7 @@ class BXF4(BaseBXF):
         self.bit_big_endian = not reader.unpack_value("?")  # note reversal
         reader.assert_pad(1)
 
-        reader.byte_order = ">" if self.big_endian else "<"  # no need to check flags for an override in BND4
+        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)  # no need to check flags for an override in BND4
 
         entry_count = reader.unpack_value("i")
         reader.unpack_value("q", asserted=0x40)  # header size
@@ -352,8 +353,9 @@ class BXF4(BaseBXF):
             writer.pad(8)
 
     def pack(self) -> tuple[bytes, bytes]:
-        header_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
-        data_writer = BinaryWriter(big_endian=self.big_endian or self.flags.is_big_endian)
+        byte_order = ByteOrder.big_endian_bool(self.big_endian or self.flags.is_big_endian)
+        header_writer = BinaryWriter(byte_order)
+        data_writer = BinaryWriter(byte_order)
         self.pack_header(header_writer)
 
         path_encoding = ("utf-16-be" if self.big_endian else "utf-16-le") if self.unicode else "shift-jis"

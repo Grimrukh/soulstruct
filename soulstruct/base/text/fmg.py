@@ -7,7 +7,7 @@ import logging
 from textwrap import wrap
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ByteOrder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -305,17 +305,17 @@ class FMG0(BaseFMG):
         ("string_count", "i"),
         ("string_offsets_offset", "i"),
         ("zero", "i", 0),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     )
     RANGE_STRUCT = BinaryStruct(
         ("first_index", "i"),
         ("first_id", "i"),
         ("last_id", "i"),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     )
     STRING_OFFSET_STRUCT = BinaryStruct(
         ("offset", "i"),
-        byte_order=">",
+        byte_order=ByteOrder.BigEndian,
     )
     BIG_ENDIAN = True
     VERSION = 0

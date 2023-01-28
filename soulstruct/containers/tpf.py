@@ -15,7 +15,7 @@ from pathlib import Path
 from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryReader, BinaryWriter, ByteOrder
 from .dcx import decompress
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,6 +27,11 @@ class TPFPlatform(IntEnum):
     PS3 = 2
     PS4 = 4
     XboxOne = 5
+
+    def get_byte_order(self):
+        if self in {TPFPlatform.Xbox360, TPFPlatform.PS3}:
+            return ByteOrder.BigEndian
+        return ByteOrder.LittleEndian
 
 
 class TextureType(IntEnum):
@@ -192,7 +197,7 @@ class TPFTexture:
     def pack_name(self, writer: BinaryWriter, index: int, encoding: int):
         writer.fill(f"file_name_{index}", writer.position)
         if encoding == 1:
-            name = self.name.encode(encoding="utf-16-be" if writer.big_endian else "utf-16-le") + b"\0\0"
+            name = self.name.encode(encoding=writer.default_byte_order.get_utf_16_encoding()) + b"\0\0"
         elif encoding in {0, 2}:
             name = self.name.encode(encoding="shift-jis") + b"\0"
         else:
@@ -293,7 +298,7 @@ class TPF(GameFile):
     def unpack(self, reader: BinaryReader, **kwargs):
         reader.unpack_value("4s", asserted=b"TPF\0")
         self.platform = TPFPlatform(reader.unpack_value("B", offset=0xC))
-        reader.byte_order = ">" if self.platform in {TPFPlatform.Xbox360, TPFPlatform.PS3} else "<"
+        reader.default_byte_order = ">" if self.platform in {TPFPlatform.Xbox360, TPFPlatform.PS3} else "<"
 
         reader.unpack_value("i")  # data length
         file_count = reader.unpack_value("i")
@@ -313,7 +318,7 @@ class TPF(GameFile):
 
     def pack(self) -> bytes:
         """Pack TPF file to bytes."""
-        writer = BinaryWriter(big_endian=self.platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
+        writer = BinaryWriter(byte_order=self.platform.get_byte_order())
         writer.append(b"TPF\0")
         writer.reserve("data_size", "i")
         writer.pack("i", len(self.textures))

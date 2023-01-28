@@ -29,7 +29,7 @@ from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import get_startupinfo
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter, ByteOrder
 
 from .exceptions import LuaError, LuaCompileError, LuaDecompileError
 
@@ -689,7 +689,7 @@ class LuaInfo(GameFile):
 
     def unpack(self, reader: BinaryReader, big_endian=False):
         self.big_endian = self._check_big_endian(reader)
-        header = reader.unpack_struct(self.HEADER_STRUCT, byte_order=">" if self.big_endian else "<")
+        header = reader.unpack_struct(self.HEADER_STRUCT, byte_order=ByteOrder.big_endian_bool(self.big_endian))
         if self._check_use_struct_64(reader, header["goal_count"]):
             goal_struct = self.GOAL_STRUCT_64
         else:
@@ -707,7 +707,7 @@ class LuaInfo(GameFile):
                 self.goals.append(goal)
 
     def pack(self):
-        writer = BinaryWriter(big_endian=self.big_endian)
+        writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
         writer.pack_struct(self.HEADER_STRUCT, goal_count=len(self.goals))
         goal_struct = self.GOAL_STRUCT_64 if self.use_struct_64 else self.GOAL_STRUCT_32
         packed_strings_offset = writer.position + len(self.goals) * goal_struct.size
@@ -739,7 +739,7 @@ class LuaInfo(GameFile):
         return writer.finish()
 
     def unpack_goal(self, reader: BinaryReader, goal_struct: BinaryStruct) -> LuaGoal:
-        goal = reader.unpack_struct(goal_struct, byte_order=">" if self.big_endian else "<")
+        goal = reader.unpack_struct(goal_struct, byte_order=ByteOrder.big_endian_bool(self.big_endian))
         name = reader.unpack_string(offset=goal["name_offset"], encoding=self.encoding)
         if goal["logic_interrupt_name_offset"] > 0:
             logic_interrupt_name = reader.unpack_string(

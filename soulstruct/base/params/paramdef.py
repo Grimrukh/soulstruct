@@ -15,7 +15,7 @@ from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.containers import Binder
 from soulstruct.exceptions import SoulstructError
 from soulstruct.games import *
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ByteOrder
 from soulstruct.utilities.files import PACKAGE_PATH
 
 from . import field_types
@@ -49,7 +49,7 @@ class ParamDefField(abc.ABC):
             return self & 0b0000_0100  # 4
 
     @staticmethod
-    def GET_FIELD_STRUCT(format_version, unicode, byte_order="<"):
+    def GET_FIELD_STRUCT(format_version, unicode, byte_order=ByteOrder.LittleEndian):
         """Different `Param` entries in a `GameParamBND` can have different headers, so this detection method is
         better than fixed game-specific structs."""
         fields = [
@@ -146,7 +146,7 @@ class ParamDefField(abc.ABC):
         field_count: int,
         format_version: int,
         unicode: bool,
-        byte_order: str,
+        byte_order: ByteOrder,
     ) -> dict[str, ParamDefField]:
         """Buffer should be at the start of the packed fields (which are followed by the packed descriptions)."""
         field_structs = paramdef_reader.unpack_structs(
@@ -298,7 +298,7 @@ class ParamDef(GameFile, abc.ABC):
 
     EXT = ".paramdef"
     HEADER_STRUCT: BinaryStruct = None
-    BYTE_ORDER: str = None
+    BYTE_ORDER: ByteOrder = None
     FIELD_CLASS: tp.Type[ParamDefField] = None
 
     def __init__(self, paramdef_source, dcx_type=None, param_type=None):
