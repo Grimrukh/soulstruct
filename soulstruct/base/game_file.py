@@ -1,124 +1,134 @@
 from __future__ import annotations
 
-__all__ = ["GameFile", "GameFolder", "InvalidGameFileTypeError"]
+__all__ = ["GameFile", "GameDirectory", "InvalidGameFileTypeError", "BinarySourceTyping", "BinarySourceTypes"]
 
 import abc
 import copy
 import io
 import logging
+import re
 import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.exceptions import InvalidGameFileTypeError, GameFileDictSupportError
-from soulstruct.containers.dcx import DCXType, compress, decompress
-from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash
+from soulstruct.containers.dcx import DCXType, compress, decompress, is_dcx
+from soulstruct.games import Game, get_game
+from soulstruct.utilities.binary import BinaryReader, get_blake2b_hash, BinaryWriter
 from soulstruct.utilities.files import create_bak, read_json, write_json
 from .binder_entry import BinderEntry
 
-if tp.TYPE_CHECKING:
-    from soulstruct.games import Game
+try:
+    from typing import Self
+except ImportError:  # Python 3.10
+    Self = "GameFile"
 
 _LOGGER = logging.getLogger(__name__)
 
 
-T = tp.TypeVar("T", bound="GameFile")
+"""
+TODO:
+    - Support dataclasses.
+    - Combine BXF3 and BXF4 into a single class with a version switch. Same for BXF.
+    - More of an ECS system for MSB entries.    
+"""
 
 
+# TODO: may no longer need these
+BinarySourceTyping = tp.Union[str, Path, bytes, bytearray, BinderEntry, io.BufferedIOBase, BinaryReader]
+BinarySourceTypes = (str, Path, bytes, bytearray, BinderEntry, io.BufferedIOBase, BinaryReader)
+
+
+@dataclass(slots=True)
 class GameFile(abc.ABC):
     """Python structure for a file in a FromSoftware game installation."""
 
-    GAME: Game = None  # mixed in by game-specific classes
-    EXT = ""  # if given, this file extension will be enforced (before DCX is checked) when calling `.write()`
-    Typing = tp.Union[str, Path, bytes, BinderEntry, io.BufferedIOBase, BinaryReader]  # all globally valid source types
-    Types = (str, Path, bytes, io.BufferedIOBase, BinaryReader)
+    EXT: tp.ClassVar[str] = ""  # if given, extension will be enforced (before DCX is checked) when calling `.write()`
 
-    dcx_type: DCXType
+    path: None | Path = field(init=False, repr=False, default=None)  # only set by some class method constructors
+    _dcx_type: DCXType = field(init=False, repr=False, default=DCXType.Null)  # accessed through `dcx_type` property
 
-    def __init__(
-        self,
-        file_source: Typing = None,
-        dcx_type: DCXType | None = DCXType.Null,
-        **kwargs,
-    ):
-        """Base class for a game file, with key methods and automatic DCX detection.
+    # `__init__` is constructed automatically (and should be for all `dataclass` subclasses).
 
-        Args:
-            file_source (None, str, Path, bytes, BufferedIOBase): a file path, `bytes` object, or binary stream to load
-                the file from. It will be checked for DCX first. Set to None (default) to create a default instance.
-            dcx_type (DCXType): optional DCX compression type enum to manually specify the DCX. Only permitted for
-                `file_source` values that are not already DCX-compressed. (If you want to change the DCX for some
-                reason, set `.dcx_type` directly after the instance is created.)
-            kwargs: keyword arguments to pass on to `unpack` for buffered sources.
+    @classmethod
+    @abc.abstractmethod
+    def _from_reader(cls, reader: BinaryReader) -> Self:
+        pass
+
+    @abc.abstractmethod
+    def _to_writer(self) -> BinaryWriter:
+        pass
+
+    def __bytes__(self) -> bytes:
+        """Applies `dcx_type` DCX automatically."""
+        packed = self._to_writer().finish()
+        if self._dcx_type != DCXType.Null:
+            return compress(packed, self._dcx_type)
+        return packed
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """Load game file from given `data` dictionary (which is a copy of the source).
+
+        Where implemented, if `clear_old_data=True` (default), the `GameFile` instance will have all relevant data
+        cleared first. Otherwise, existing data will not be cleared, and newer data with the same ID, key, etc. will
+        override old data. In this case, any conflicting header data will raise a `ValueError`.
+
+        Not supported by default.
         """
-        self._dcx_type = DCXType.Null
-        self.dcx_type = dcx_type  # run through setter
+        # TODO: Make sure to copy dictionary.
+        raise GameFileDictSupportError(f"`{cls.__name__}` class does not support JSON/dictionary input.")
 
-        self.path = None  # type: tp.Optional[Path]
+    def to_dict(self) -> dict:
+        """Create a dictionary from `GameFile` instance. Not supported by default."""
+        raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
 
-        if file_source is None:
-            return
+    @classmethod
+    def from_json(cls, json_path: str | Path) -> Self:
+        json_dict = read_json(json_path)
+        return cls.from_dict(json_dict)
 
+    @classmethod
+    def from_path(cls, path: str | Path) -> Self:
+        path = Path(path)
         try:
-            reader = self._handle_other_source_types(file_source, **kwargs)
-            if reader is None:
-                return
-        except InvalidGameFileTypeError:
-            if isinstance(file_source, dict):
-                self.load_dict(file_source.copy())
-                return
-            if isinstance(file_source, (str, Path)):
-                self.path = Path(file_source)
-                if self.path.suffix == ".json":
-                    json_dict = read_json(self.path, encoding="utf-8")
-                    try:
-                        self.load_dict(json_dict)
-                    except Exception as ex:
-                        _LOGGER.error(f"Error while loading as JSON dict: {self.path}.\n  {ex}")
-                        raise
-                    return
-            if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):
-                reader = BinaryReader(file_source)
-            elif isinstance(file_source, BinaryReader):
-                reader = file_source
-            else:
-                raise InvalidGameFileTypeError(f"Invalid `GameFile` source type: {type(file_source)}")
+            game_file = cls.from_bytes(path.read_bytes())
+        except Exception:
+            _LOGGER.error(f"Error occurred while reading `{cls.__name__}` with path '{path}. See traceback.")
+            raise
+        game_file.path = path
+        return game_file
 
-        if self._is_dcx(reader):
-            if self.dcx_type != DCXType.Null:
-                reader.close()
-                raise ValueError("Cannot manually set `dcx_type` before reading a DCX file source.")
+    @classmethod
+    def from_bytes(cls, data: bytes | bytearray | io.BufferedIOBase | BinaryReader | BinderEntry) -> Self:
+        """Load instance from binary data or binary stream (or `BinderEntry.data`)."""
+        reader = BinaryReader(data) if not isinstance(data, BinaryReader) else data  # type: BinaryReader
+
+        if is_dcx(reader):
             try:
-                data, self.dcx_type = decompress(reader)
+                data, dcx_type = decompress(reader)
             finally:
                 reader.close()
             reader = BinaryReader(data)
+        else:
+            dcx_type = DCXType.Null
 
         try:
-            self.unpack(reader, **kwargs)
+            instance = cls._from_reader(reader)
+            instance.dcx_type = dcx_type
+            return instance
         except Exception:
-            _LOGGER.error(f"Error occurred while parsing game file: {self.path}. See traceback.")
+            _LOGGER.error(f"Error occurred while reading `{cls.__name__}` from binary data. See traceback.")
             raise
         finally:
             reader.close()
 
-    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
-        """Override this to initialize `GameFile` subclass from other types of `file_source`. This function will be
-        called before the standard `GameFile.Types` are checked.
-
-        If a `BinaryReader` object is returned, the constructor will continue with unpacking from that reader.
-        Otherwise, it will return without calling `.unpack()`.
-
-        If no valid source types are found, raise `InvalidGameFileTypeError` (like below) to have the constructor
-        continue checking the standard source types.
-        """
-        raise InvalidGameFileTypeError(f"No special handler for `GameFile` source type: {type(file_source)}")
-
     @classmethod
-    def from_binder(cls, binder_source: Typing, entry_id_or_name: int | str, from_bak=False):
+    def from_binder(cls, binder_source: BinarySourceTyping, entry_id_or_name: int | str, from_bak=False):
         """Open a file of this type from the given `entry_id_or_name` (`str` or `int`) of the given `Binder` source."""
         from soulstruct.containers import Binder
         binder = Binder(binder_source, from_bak=from_bak)
-        return cls(binder[entry_id_or_name])
+        return cls.from_bytes(binder[entry_id_or_name].data)
 
     @classmethod
     def multiple_from_binder(cls, binder_source, entry_ids_or_names: tp.Sequence[int | str], from_bak=False):
@@ -126,38 +136,9 @@ class GameFile(abc.ABC):
         `Binder` source."""
         from soulstruct.containers import Binder
         binder = Binder(binder_source, from_bak=from_bak)
-        return [cls(binder[entry_id_or_name]) for entry_id_or_name in entry_ids_or_names]
+        return [cls.from_bytes(binder[entry_id_or_name].data) for entry_id_or_name in entry_ids_or_names]
 
-    @abc.abstractmethod
-    def unpack(self, reader: BinaryReader, **kwargs):
-        """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
-
-    def load_dict(self, data: dict, clear_old_data=True):
-        """Load game file from given `data` dictionary (which is a copy of the source).
-
-        Where implemented, if `clear_old_data=True` (default), the `GameFile` instance will have all relevant data
-        cleared  first. Otherwise, existing data will not be cleared, and newer data with the same ID, key, etc. will
-        override old data. In this case, any conflicting header data will raise a `ValueError`.
-
-        Not supported by default.
-        """
-        raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary input.")
-
-    @abc.abstractmethod
-    def pack(self, **kwargs) -> bytes:
-        """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
-
-    def pack_dcx(self, **kwargs) -> bytes:
-        """Call `pack()` and apply DCX compression to binary data, if appropriate, based on `self.dcx_type`."""
-        if self._dcx_type != DCXType.Null:
-            return compress(self.pack(**kwargs), self._dcx_type)
-        return self.pack(**kwargs)
-
-    def to_dict(self, **kwargs) -> dict:
-        """Create a dictionary from `GameFile` instance. Not supported by default."""
-        raise GameFileDictSupportError(f"`{self.__class__.__name__}` class does not support JSON/dictionary output.")
-
-    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False):
         """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
 
         Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
@@ -171,27 +152,24 @@ class GameFile(abc.ABC):
                 instance creation if a file path is used as a source.
             make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
             check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
-            pack_kwargs: extra keyword arguments to pass to `.pack()`.
         """
         file_path = self._get_file_path(file_path)
         if make_dirs:
             file_path.parent.mkdir(parents=True, exist_ok=True)
-        packed = self.pack_dcx(**pack_kwargs)
+        packed_dcx = bytes(self)
         if check_hash and file_path.is_file():
-            # TODO: This may always report that DCX files have changed, but decompressing the existing file to check its
-            #  real hash seems excessive?
-            if get_blake2b_hash(file_path) == get_blake2b_hash(packed):
+            if get_blake2b_hash(file_path) == get_blake2b_hash(packed_dcx):
                 return  # don't write file
         create_bak(file_path)
         with file_path.open("wb") as f:
-            f.write(packed)
+            f.write(packed_dcx)
 
-    def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4, **kwargs):
+    def write_json(self, file_path: None | str | Path, encoding="utf-8", indent=4):
         """Create a dictionary from `GameFile` instance. Requires `.to_dict()` to be implemented by `GameFile` subclass.
 
         The file path will have the `.json` suffix added automatically.
         """
-        json_dict = self.to_dict(**kwargs)
+        json_dict = self.to_dict()
         if file_path is None:
             if self.path is None:
                 raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
@@ -232,11 +210,6 @@ class GameFile(abc.ABC):
 
         return file_path
 
-    @staticmethod
-    def _is_dcx(reader: BinaryReader) -> bool:
-        """Checks if file data starts with DCX (or DCP) magic."""
-        return reader.unpack_value("4s", offset=0) in {b"DCP\0", b"DCX\0"}
-
     @property
     def dcx_type(self):
         return self._dcx_type
@@ -252,20 +225,27 @@ class GameFile(abc.ABC):
             raise ValueError(f"`dcx_type` must be `DCXType` or None, not {value}.")
 
     @classmethod
-    def from_bak(cls: tp.Type[T], game_file_path: tp.Union[Path, str], dcx_type=None, create_bak_if_missing=True) -> T:
+    def from_bak(cls, game_file_path: Path | str, create_bak_if_missing=True) -> Self:
         """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
         game_file_path = Path(game_file_path)
         bak_path = game_file_path.with_name(game_file_path.name + ".bak")
         if bak_path.is_file():
-            game_file = cls(bak_path, dcx_type=dcx_type)
+            game_file = cls.from_path(bak_path)
             game_file.path = game_file.path.with_suffix("")  # remove ".bak" extension
             return game_file
         else:
-            game_file = cls(game_file_path, dcx_type=dcx_type)
+            game_file = cls.from_path(game_file_path)
             if create_bak_if_missing:
                 create_bak(game_file_path)
             return game_file
 
+    @classmethod
+    def get_game(cls) -> Game:
+        if match := re.match(r"^soulstruct\.(\w+)\..*$", cls.__module__):
+            return get_game(match.group(1))
+        raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
-class GameFolder(abc.ABC):
+
+class GameDirectory(abc.ABC):
     """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible."""
+    # TODO: use this...

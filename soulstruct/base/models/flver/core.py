@@ -4,13 +4,15 @@ __all__ = ["FLVER"]
 
 import logging
 import re
+import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.containers import Binder
+from soulstruct.containers import Binder, BND
 from soulstruct.containers.tpf import TPF
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter, ByteOrder
+from soulstruct.utilities.binary import *
 
 from .bone import Bone
 from .dummy import Dummy
@@ -22,40 +24,11 @@ from .vertex import BufferLayout, VertexBuffer, VertexBufferSizeError
 _LOGGER = logging.getLogger(__name__)
 
 
-class FLVERHeader(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("file_type", "6s", "FLVER\0"),
-        ("endian", "2s"),  # TODO: b"L\0" or b"B\0"
-        ("version", "i"),  # `Version`
-        ("vertex_data_offset", "i"),
-        ("vertex_data_size", "i"),
-        ("dummy_count", "i"),
-        ("material_count", "i"),
-        ("bone_count", "i"),
-        ("mesh_count", "i"),
-        ("vertex_buffer_count", "i"),
-        ("bounding_box_min", "3f"),  # `Vector3`
-        ("bounding_box_max", "3f"),  # `Vector3`
-        ("true_face_count", "i"),  # does not include motion blur meshes or degenerate faces
-        ("total_face_count", "i"),  # all faces
-        ("vertex_indices_size", "B"),  # 0, 8, 16, 32
-        ("unicode", "?"),
-        ("unk_x4a", "?"),
-        "x",
-        ("unk_x4c", "i"),
-        ("face_set_count", "i"),
-        ("buffer_layout_count", "i"),
-        ("texture_count", "i"),
-        ("unk_x5c", "B"),
-        ("unk_x5d", "B"),
-        "10x",
-        ("unk_x68", "i"),
-        "20x",
-    )
-
-    endian: bytes
-    version: Version
+@dataclass(slots=True)
+class FLVERHeader(BinaryStruct):
+    _file_type: bytes = field(init=False, metadata=fixed_bytes(asserted_value=b"FLVER\0"))
+    endian: bytes = field(metadata=fixed_bytes(asserted_value=[b"L\0", b"R\0"]))
+    version: Version = field(metadata=int_enum(int))
     vertex_data_offset: int
     vertex_data_size: int
     dummy_count: int
@@ -63,56 +36,28 @@ class FLVERHeader(BinaryObject):
     bone_count: int
     mesh_count: int
     vertex_buffer_count: int
-    bounding_box_min: Vector3
-    bounding_box_max: Vector3
+    bounding_box_min: Vector3 = field(metadata=vector(3))
+    bounding_box_max: Vector3 = field(metadata=vector(3))
     true_face_count: int
     total_face_count: int
-    vertex_indices_size: int
+    vertex_indices_size: byte = field(metadata=asserted([0, 8, 16, 32]))
     unicode: bool
     unk_x4a: bool
+    _pad1: bytes = field(init=False, metadata=pad(1))
     unk_x4c: int
     face_set_count: int
     buffer_layout_count: int
     texture_count: int
-    unk_x5c: int
-    unk_x5d: int
+    unk_x5c: byte
+    unk_x5d: byte
+    _pad2: bytes = field(init=False, metadata=pad(10))
     unk_x68: int
+    _pad3: bytes = field(init=False, metadata=pad(20))
 
-    def pack(
-        self,
-        writer: BinaryWriter,
-        dummy_count: int,
-        material_count: int,
-        bone_count: int,
-        mesh_count: int,
-        vertex_buffer_count: int,
-        face_set_count: int,
-        buffer_layout_count: int,
-        texture_count: int,
-        true_face_count: int,
-        total_face_count: int,
-        vertex_indices_size: int,
-    ):
-        """All fields are static or can be immediately updated, except the few reserved below."""
-        self.dummy_count = dummy_count
-        self.material_count = material_count
-        self.bone_count = bone_count
-        self.mesh_count = mesh_count
-        self.vertex_buffer_count = vertex_buffer_count
-        self.face_set_count = face_set_count
-        self.buffer_layout_count = buffer_layout_count
-        self.texture_count = texture_count
-        self.true_face_count = true_face_count
-        self.total_face_count = total_face_count
-        self.vertex_indices_size = vertex_indices_size
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            vertex_data_offset=writer.AUTO_RESERVE,
-            vertex_data_size=writer.AUTO_RESERVE,
-        )
+    # TODO: caller wants to reserve `vertex_data_offset` and `vertex_data_size`
 
 
+@dataclass(slots=True)
 class FLVER(GameFile):
     """Model format used since Dark Souls PTDE.
 
@@ -120,17 +65,15 @@ class FLVER(GameFile):
     """
 
     # Convenience access to classes.
-    Bone = Bone
-    Dummy = Dummy
-    GXList = GXList
-    Material = Material
-    Mesh = Mesh
-    BufferLayout = BufferLayout
-    VertexBuffer = VertexBuffer
+    Bone: tp.ClassVar = Bone
+    Dummy: tp.ClassVar = Dummy
+    GXList: tp.ClassVar = GXList
+    Material: tp.ClassVar = Material
+    Mesh: tp.ClassVar = Mesh
+    BufferLayout: tp.ClassVar = BufferLayout
+    VertexBuffer: tp.ClassVar = VertexBuffer
 
-    EXT = ".flver"
-
-    header: FLVERHeader
+    EXT: tp.ClassVar = ".flver"
 
     dummies: list[Dummy]
     gx_lists: list[GXList]
@@ -139,87 +82,85 @@ class FLVER(GameFile):
     meshes: list[Mesh]
     buffer_layouts: list[BufferLayout]
 
-    def __init__(
-        self,
-        file_source: GameFile.Typing = None,
-        dcx_type=None,
-        **kwargs,
-    ):
-        self.header = FLVERHeader()
-        self.dummies = []
-        self.gx_lists = []
-        self.materials = []
-        self.bones = []
-        self.meshes = []
-        self.buffer_layouts = []
+    # Header information that can't be automated.
+    big_endian: bool
+    version: Version
+    bounding_box_min: Vector3
+    bounding_box_max: Vector3
+    vertex_indices_size: byte
+    unicode: bool
+    unk_x4a: bool
+    unk_x4c: int
+    unk_x5c: byte
+    unk_x5d: byte
+    unk_x68: int
 
-        super().__init__(file_source, dcx_type, **kwargs)
+    @classmethod
+    def _from_reader(cls, reader: BinaryReader):
+        byte_order = BinaryCondition((6, 2), [(ByteOrder.LittleEndian, b"L\0"), (ByteOrder.BigEndian, b"R\0")])
+        header = FLVERHeader.from_bytes(reader, byte_order=byte_order)
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        self.header = FLVERHeader(reader)
+        encoding = "utf-16-le" if header.unicode else "shift_jis_2004"
 
-        encoding = "utf-16-le" if self.header.unicode else "shift_jis_2004"
-
-        self.dummies = [
-            Dummy(reader, color_is_argb=self.header.version == Version.DarkSouls2)
-            for _ in range(self.header.dummy_count)
+        dummies = [
+            Dummy(reader, color_is_argb=header.version == Version.DarkSouls2)
+            for _ in range(header.dummy_count)
         ]
 
         gx_list_indices = {}  # type: dict[int, int]  # maps `_gx_offset` in `Material` to `self.gx_lists` index
-        self.gx_lists = []
-        self.materials = [
+        gx_lists = []
+        materials = [
             Material(
                 reader,
                 encoding=encoding,
-                version=self.header.version,
-                gx_lists=self.gx_lists,
+                version=header.version,
+                gx_lists=gx_lists,
                 gx_list_indices=gx_list_indices,
             )
-            for _ in range(self.header.material_count)
+            for _ in range(header.material_count)
         ]
 
-        self.bones = [Bone(reader, encoding=encoding) for _ in range(self.header.bone_count)]
+        bones = [Bone(reader, encoding=encoding) for _ in range(header.bone_count)]
 
-        self.meshes = [
-            Mesh(reader, bounding_box_has_unknown=self.header.version == Version.Sekiro)
-            for _ in range(self.header.mesh_count)
+        meshes = [
+            Mesh(reader, bounding_box_has_unknown=header.version == Version.Sekiro)
+            for _ in range(header.mesh_count)
         ]
 
         face_sets = {
             i: FaceSet(
                 reader,
-                header_vertex_index_size=self.header.vertex_indices_size,
-                vertex_data_offset=self.header.vertex_data_offset,
+                header_vertex_index_size=header.vertex_indices_size,
+                vertex_data_offset=header.vertex_data_offset,
             )
-            for i in range(self.header.face_set_count)
+            for i in range(header.face_set_count)
         }
 
-        vertex_buffers = {i: VertexBuffer(reader) for i in range(self.header.vertex_buffer_count)}
+        vertex_buffers = {i: VertexBuffer(reader) for i in range(header.vertex_buffer_count)}
 
-        self.buffer_layouts = [BufferLayout(reader) for _ in range(self.header.buffer_layout_count)]
+        buffer_layouts = [BufferLayout(reader) for _ in range(header.buffer_layout_count)]
 
-        textures = {i: Texture(reader, encoding=encoding) for i in range(self.header.texture_count)}
+        textures = {i: Texture(reader, encoding=encoding) for i in range(header.texture_count)}
 
         # TODO: Sekiro has an additional unknown structure here.
 
-        for material in self.materials:
+        for material in materials:
             # Each texture is only assigned to ONE material. Texture is popped from `textures` after first assignment.
             material.assign_textures(textures)
         if textures:
             raise ValueError(f"{len(textures)} textures were left over after assignment to materials.")
 
-        for i, mesh in enumerate(self.meshes):
+        for i, mesh in enumerate(meshes):
             mesh.assign_face_sets(face_sets)
-            mesh.assign_vertex_buffers(vertex_buffers, self.buffer_layouts)
-            uv_factor = 2048 if self.header.version >= Version.DarkSouls2_NT else 1024
+            mesh.assign_vertex_buffers(vertex_buffers, buffer_layouts)
+            uv_factor = 2048 if header.version >= Version.DarkSouls2_NT else 1024
 
             try:
-                mesh.read_vertices(reader, self.header.vertex_data_offset, self.buffer_layouts, uv_factor)
+                mesh.read_vertices(reader, header.vertex_data_offset, buffer_layouts, uv_factor)
             except VertexBufferSizeError as ex:
                 _LOGGER.warning(
-                    f"Mesh {i} in FLVER {self.path.name if self.path else '<unknown>'} has an invalid vertex buffer "
-                    f"size ({ex.vertex_size} rather than layout size {ex.layout_size}). Mesh marked with "
-                    f"`invalid_vertex_size=True`; handle this as needed."
+                    f"Mesh {i} in FLVER has an invalid vertex buffer size ({ex.vertex_size} rather than layout size "
+                    f"{ex.layout_size}). Mesh marked with `invalid_vertex_size=True`; handle this as needed."
                 )
                 mesh.invalid_vertex_size = True
         if face_sets:
@@ -227,20 +168,39 @@ class FLVER(GameFile):
         if vertex_buffers:
             raise ValueError(f"{len(vertex_buffers)} vertex buffers were left over after assignment to meshes.")
 
+        return cls(
+            dummies,
+            gx_lists,
+            materials,
+            bones,
+            meshes,
+            buffer_layouts,
+            header.endian == b"B\0",
+            header.version,
+            header.bounding_box_min,
+            header.bounding_box_max,
+            header.vertex_indices_size,
+            header.unicode,
+            header.unk_x4a,
+            header.unk_x4c,
+            header.unk_x5c,
+            header.unk_x5d,
+            header.unk_x68,
+        )
+
     @classmethod
-    def from_chrbnd(cls, chrbnd_source: GameFile.Typing) -> FLVER:
+    def from_chrbnd(cls, chrbnd: BND) -> FLVER:
         """Open CHRBND from given `chrbnd_source` and load its `.flver` file (with or without DCX extension).
 
         Will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
         """
-        chrbnd = Binder(chrbnd_source)
         flver_entry = chrbnd.find_entry_matching_name(r".*\.flver(\.dcx)?")
-        return cls(flver_entry)
+        return cls.from_bytes(flver_entry)
 
-    def pack(self):
+    def _to_writer(self) -> BinaryWriter:
 
-        writer = BinaryWriter(ByteOrder.BigEndian if self.header.endian == b"B\0" else ByteOrder.LittleEndian)
-        encoding = writer.get_utf_16_encoding() if self.header.unicode else "shift_jis_2004"
+        byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
+        encoding = byte_order.get_utf_16_encoding() if self.unicode else "shift_jis_2004"
 
         true_face_count = 0
         total_face_count = 0
@@ -251,7 +211,7 @@ class FLVER(GameFile):
                 true_face_count += face_set_true_count
                 total_face_count += face_set_total_count
 
-        if self.header.version < Version.Bloodborne_DS3_A:
+        if self.version < Version.Bloodborne_DS3_A:
             # Set header's `vertex_index_size` to the largest size detected across all `FaceSet`s (16 or 32).
             header_vertex_indices_size = 16
             for mesh in self.meshes:
@@ -262,23 +222,34 @@ class FLVER(GameFile):
             # Vertex size is stored per `VertexBuffer`.
             header_vertex_indices_size = 0
 
-        self.header.pack(
-            writer,
+        header_writer = FLVERHeader(
+            endian=b"B\0" if self.big_endian else b"L\0",
+            version=self.version,
+            vertex_data_offset=RESERVED(int),
+            vertex_data_size=RESERVED(int),
             dummy_count=len(self.dummies),
             material_count=len(self.materials),
             bone_count=len(self.bones),
             mesh_count=len(self.meshes),
             vertex_buffer_count=sum(len(mesh.vertex_buffers) for mesh in self.meshes),
-            face_set_count=sum(len(mesh.face_sets) for mesh in self.meshes),
-            buffer_layout_count=len(self.buffer_layouts),
-            texture_count=sum(len(material.textures) for material in self.materials),
+            bounding_box_min=self.bounding_box_min,
+            bounding_box_max=self.bounding_box_max,
             true_face_count=true_face_count,
             total_face_count=total_face_count,
             vertex_indices_size=header_vertex_indices_size,
-        )
+            unicode=self.unicode,
+            unk_x4a=self.unk_x4a,
+            unk_x4c=self.unk_x4c,
+            face_set_count=sum(len(mesh.face_sets) for mesh in self.meshes),
+            buffer_layout_count=len(self.buffer_layouts),
+            texture_count=sum(len(material.textures) for material in self.materials),
+            unk_x5c=self.unk_x5c,
+            unk_x5d=self.unk_x5d,
+            unk_x68=self.unk_x68,
+        ).to_writer()
 
         for dummy in self.dummies:
-            dummy.pack(writer, color_is_argb=self.header.version == Version.DarkSouls2)
+            dummy.pack(writer, color_is_argb=self.version == Version.DarkSouls2)
 
         for material in self.materials:
             material.pack(writer)

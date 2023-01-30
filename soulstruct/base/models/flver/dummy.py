@@ -1,10 +1,16 @@
 __all__ = ["Dummy"]
 
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from dataclasses import dataclass, field
+
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
 
-class Dummy(BinaryObject):
+@dataclass(slots=True)
+class Dummy(BinaryStruct):
+
+    position: Vector3 = field(metadata=custom_type((float, float, float)))
+    color: Color = field(metadata=custom_type((float, float, float, float)))
 
     STRUCT = BinaryStruct(
         ("position", "3f"),

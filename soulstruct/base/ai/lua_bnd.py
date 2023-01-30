@@ -26,7 +26,7 @@ from pathlib import Path
 
 from soulstruct.containers import Binder
 from soulstruct.base.binder_entry import BinderEntry
-from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
+from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError, BinarySourceTyping
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.misc import get_startupinfo
 from soulstruct.utilities.binary import BinaryStruct, BinaryReader, BinaryWriter, ByteOrder

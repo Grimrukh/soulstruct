@@ -8,6 +8,7 @@ __all__ = [
     "DCXType",
     "compress",
     "decompress",
+    "is_dcx",
 ]
 
 import logging
@@ -231,3 +232,8 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
         compressed_size=len(compressed),
     )
     return header + compressed
+
+
+def is_dcx(reader: BinaryReader) -> bool:
+    """Checks if file data starts with DCX (or DCP) magic."""
+    return reader.unpack_value("4s", offset=0) in {b"DCP\0", b"DCX\0"}

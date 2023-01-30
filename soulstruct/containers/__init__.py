@@ -3,9 +3,7 @@ from __future__ import annotations
 __all__ = [
     "BaseBinder",
     "Binder",
-    "BaseBND",
-    "BND3",
-    "BND4",
+    "BND",
     "BaseBXF",
     "BXF3",
     "BXF4",
@@ -19,7 +17,7 @@ __all__ = [
 from pathlib import Path
 
 from .base import BaseBinder
-from .bnd import BaseBND, BND3, BND4
+from .bnd import BND
 from .bxf import BaseBXF, BXF3, BXF4
 from .dcx import DCXType, decompress, compress
 from .tpf import TPF, TPFTexture
@@ -27,7 +25,7 @@ from .tpf import TPF, TPFTexture
 
 def Binder(
     binder_source=None, dcx_type=None, from_bak=False, create_bak_if_missing=True, bdt_source=None
-) -> BND3 | BND4 | BXF3 | BXF4:
+) -> BND | BXF3 | BXF4:
     """Auto-detects binder format (BND/BXF) and version (3/4) to use when opening the source.
 
     Args:
@@ -50,7 +48,7 @@ def Binder(
                 detect_source, _ = decompress(binder_path)
             else:
                 detect_source = binder_path
-    for cls in (BND3, BND4, BXF3, BXF4):
+    for cls in (BND, BXF3, BXF4):
         if cls.detect(detect_source):
             if from_bak:
                 return cls.from_bak(binder_source, dcx_type=dcx_type, create_bak_if_missing=create_bak_if_missing)

@@ -1,28 +1,23 @@
 from __future__ import annotations
 
-__all__ = ["BinderFlags", "BinderError", "BaseBinder", "BinderHashTable"]
+__all__ = ["BinderFlags", "BinderError", "BinderEntryNotFoundError", "BaseBinder", "BinderHashTable"]
 
 import abc
+import copy
 import io
 import logging
 import re
 import typing as tp
 from pathlib import Path
+from dataclasses import dataclass, field
 
-from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.base.binder_entry import BinderEntry
-from soulstruct.containers.dcx import DCXType
-from soulstruct.utilities.binary import BinaryReader, BinaryStruct, BinaryWriter
-from soulstruct.utilities.files import read_json, write_json
+from soulstruct.containers.dcx import DCXType, decompress, compress, is_dcx
+from soulstruct.games import Game, get_game
+from soulstruct.utilities.binary import *
+from soulstruct.utilities.files import read_json, write_json, create_bak
 
 _LOGGER = logging.getLogger(__name__)
-
-
-class BinderEntryMissing(KeyError):
-    """Raised when a `BinderEntry` is not found.
-
-    Subclass of `KeyError` for legacy compatibility.
-    """
 
 
 class BinderFlags(int):
@@ -69,18 +64,19 @@ class BinderFlags(int):
         return self & 0b1000_0000  # 0x01
 
     @classmethod
-    def read(cls, reader: BinaryReader, bit_big_endian: bool) -> BinderFlags:
+    def from_byte(cls, byte_value: int, bit_big_endian: bool) -> BinderFlags:
         """Read a byte, reverse it if necessary, and return flags integer."""
-        flags = cls(reader.unpack_value("B"))
+        flags = BinderFlags(byte_value)
         if not bit_big_endian and not (flags.is_big_endian and not flags.has_flag_7):
+            # Reverse bit order.
             flags = cls(int(f"{flags:08b}"[::-1], 2))
         return flags
 
-    def pack(self, writer: BinaryWriter, bit_big_endian: bool):
+    def to_byte(self, bit_big_endian: bool) -> int:
         if not bit_big_endian and not (self.is_big_endian and not self.has_flag_7):
-            writer.pack("B", int(f"{self:08b}"[::-1], 2))
+            return int(f"{self:08b}"[::-1], 2)
         else:
-            writer.pack("B", self)
+            return int(self)
 
     def get_bnd_entry_header_size(self) -> int:
         """Calculate binder entry header size."""
@@ -99,46 +95,72 @@ class BinderError(Exception):
     pass
 
 
-class BaseBinder(GameFile, abc.ABC):
+class BinderEntryNotFoundError(BinderError, KeyError):
+    """Raised when a `BinderEntry` is not found.
+
+    Subclass of `KeyError` for legacy compatibility.
+    """
+
+
+BinderSourceTyping = tp.Union[str, Path, bytes, bytearray, BinderEntry, io.BufferedIOBase, BinaryReader]
+T = tp.TypeVar("T", bound="BaseBinder")
+
+
+@dataclass(slots=True)
+class BaseBinder(abc.ABC):
     """Base class for both BND and BXF (BHD/BDT) binder files."""
 
-    BinderEntryMissing = BinderEntryMissing
+    EXT: tp.ClassVar[str] = ""  # if given, extension will be enforced (before DCX is checked) when calling `.write()`
+    BinderEntry: tp.ClassVar[tp.Type[BinderEntry]] = BinderEntry  # for convenience
 
-    # `EXT` depends on files contained in binder.
-    MANIFEST_FIELDS = (
-        "signature",
-        "flags",
-        "big_endian",
-        "bit_big_endian",
-        "dcx_type",
-    )
-    BinderEntry = BinderEntry  # for convenience
+    _dcx_type: DCXType = DCXType.Null
+    path: None | Path = None
 
-    signature: str
-    flags: BinderFlags
-    big_endian: bool
-    bit_big_endian: bool
+    signature: str = ""
+    flags: BinderFlags = BinderFlags(0)
+    big_endian: bool = False
+    bit_big_endian: bool = False
+    _entries: list[BinderEntry] = field(default_factory=lambda: [])
 
-    def __init__(self, file_source: GameFile.Typing = None, dcx_type=None, **kwargs):
+    @classmethod
+    @abc.abstractmethod
+    def _get_manifest_fields(cls):
+        pass
+
+    def __init__(self, file_source: BinderSourceTyping = None, dcx_type: DCXType = None):
         self.signature = ""
         self.flags = BinderFlags(0)  # no other sensible default
         self.big_endian = False
         self.bit_big_endian = False
-        self._entries = []  # type: list[BinderEntry]
-        super().__init__(file_source, dcx_type=dcx_type, **kwargs)
+        self._entries = []
 
-        self.post_unpack()
+        self._dcx_type = DCXType.Null
+        self.dcx_type = dcx_type  # run through setter
 
-    def _handle_other_source_types(self, file_source, **kwargs) -> tp.Optional[BinaryReader]:
-        """A Binder can also be loaded from a `binder_manifest.json` file or a directory containing such a file, or
-        a dictionary containing header information to initialize a Binder with no entries."""
+        self.path = None  # type: tp.Optional[Path]
+
+        if file_source is None:
+            return
+
+        if isinstance(file_source, dict):
+            # Manifest dictionary. All `MANIFEST_FIELDS` must be present. Other fields will be ignored.
+            manifest = self.get_manifest_header(file_source)
+            for mainfest_field in self._get_manifest_fields():
+                try:
+                    setattr(self, mainfest_field, manifest[mainfest_field])
+                except KeyError:
+                    raise KeyError(
+                        f"Manifest dictionary source for `{self.__class__.__name__}` "
+                        f"is missing field '{mainfest_field}'."
+                    )
+            return
 
         if isinstance(file_source, (str, Path)):
-            file_source = Path(file_source)
-            if file_source.is_dir() and (file_source / "binder_manifest.json").exists():
+            self.path = Path(file_source)
+            if self.path.is_dir() and (self.path / "binder_manifest.json").exists():
                 file_source = file_source / "binder_manifest.json"  # go to below
-            if file_source.is_file() and file_source.name == "binder_manifest.json":
-                directory = file_source.parent
+            if self.path.is_file() and self.path.name == "binder_manifest.json":
+                directory = self.path.parent
                 if directory.suffix == ".unpacked":  # only this suffix is automatically removed
                     self.path = directory.with_name(directory.name[:-9])
                 else:
@@ -146,29 +168,104 @@ class BaseBinder(GameFile, abc.ABC):
                 self.load_unpacked_dir(directory)
                 return
 
-        if isinstance(file_source, dict):
-            # Manifest dictionary. All `MANIFEST_FIELDS` must be present. Other fields will be ignored.
-            manifest = self.get_manifest_header(file_source)
-            for field in self.MANIFEST_FIELDS:
-                try:
-                    setattr(self, field, manifest[field])
-                except KeyError:
-                    raise KeyError(
-                        f"Manifest dictionary source for `{self.__class__.__name__}` is missing field '{field}'."
-                    )
-            return
+        if isinstance(file_source, (str, Path, bytes, io.BufferedIOBase, BinderEntry)):
+            reader = BinaryReader(file_source)
+        elif isinstance(file_source, BinaryReader):
+            reader = file_source
+        else:
+            raise BinderError(f"Invalid `{self.__class__.__name__}` source type: {type(file_source)}")
 
-        raise InvalidGameFileTypeError(
-            "`file_source` is not a `binder_manifest.json` file or directory containing one, or a manifest dict."
-        )
+        if is_dcx(reader):
+            if self.dcx_type != DCXType.Null:
+                reader.close()
+                raise ValueError("Cannot manually set `dcx_type` while passing in a DCX file source.")
+            try:
+                data, self.dcx_type = decompress(reader)
+            finally:
+                reader.close()
+            reader = BinaryReader(data)
 
-    def post_unpack(self):
-        """Optional callback for subclasses that layer other functionality on top of a Binder (e.g. `parambnd`).
+        try:
+            self.unpack(reader)
+        except Exception:
+            _LOGGER.error(f"Error occurred while unpacking game file: {self.path}. See traceback.")
+            raise
+        finally:
+            reader.close()
 
-        These may generally want to check if `self.entries` is empty, in case of a null source (e.g. for class
-        method constructors).
+    @abc.abstractmethod
+    def unpack(self, reader: BinaryReader):
+        """Unpack game file from given buffer, using various `BinaryStruct`s defined in the class."""
+
+    @abc.abstractmethod
+    def pack(self, **kwargs) -> bytes:
+        """Pack game file into `bytes`, using various `BinaryStruct`s defined in the class."""
+
+    def pack_dcx(self, **kwargs) -> bytes:
+        """Call `pack()` and apply DCX compression to the packed data, if appropriate, based on `self.dcx_type`."""
+        if self._dcx_type != DCXType.Null:
+            return compress(self.pack(**kwargs), self._dcx_type)
+        return self.pack(**kwargs)
+
+    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
+        """Pack game file into `bytes`, then write to given `file_path` (or `self.path` if not given).
+
+        Missing directories in given path will be created automatically if `make_dirs` is True. Otherwise, they must
+        already exist.
+
+        Will compress with DCX automatically and add `.dcx` file extension if `.dcx_type` is not None. Will also
+        automatically create a `.bak` version of the `file_path`, if a backup does not already exist.
+
+        Args:
+            file_path (None, str, Path): file path to write to. Defaults to `self.path`, which is automatically set at
+                instance creation if a file path is used as a source.
+            make_dirs (bool): if True, any directories in `file_path` that are missing will be created. (Default: True)
+            check_hash (bool): if True, file will not be written if file with same hash already exists. (Default: False)
+            pack_kwargs: extra keyword arguments to pass to `.pack()`.
         """
-        pass
+        file_path = self._get_file_path(file_path)
+        if make_dirs:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+        packed = self.pack_dcx(**pack_kwargs)
+        if check_hash and file_path.is_file():
+            # TODO: This may always report that DCX files have changed, but decompressing the existing file to check its
+            #  real hash seems excessive?
+            if get_blake2b_hash(file_path) == get_blake2b_hash(packed):
+                return  # don't write file
+        create_bak(file_path)
+        with file_path.open("wb") as f:
+            f.write(packed)
+
+    def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
+        file_path = self._get_file_path(file_path)
+        if make_dirs:
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+        create_bak(file_path)
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def _get_file_path(self, file_path: None | str | Path) -> Path:
+        """Get default path of binary file, based on `EXT` and `dcx_type`."""
+        if file_path is None:
+            if self.path is None:
+                raise ValueError("You must specify `file_path` because `GameFile` default path has not been set.")
+            file_path = self.path
+        file_path = Path(file_path)
+
+        # 1. Remove any existing ".dcx" extension.
+        while file_path.suffix == ".dcx":
+            file_path = file_path.with_name(file_path.stem)  # remove '.dcx' (may add back below)
+
+        # 2. If `EXT` is defined, add that extension to the path.
+        if self.EXT and file_path.suffix != self.EXT:
+            file_path = file_path.with_suffix(file_path.suffix + self.EXT)
+
+        # 3. If `dcx_type` is not `Null`, add ".dcx" extension to the path.
+        if self.dcx_type != DCXType.Null and not file_path.suffix == ".dcx":
+            file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
+
+        return file_path
 
     def add_entry(self, entry: BinderEntry):
         if entry in self._entries:
@@ -204,8 +301,8 @@ class BaseBinder(GameFile, abc.ABC):
         if not directory.is_dir():
             raise ValueError(f"Could not find unpacked binder directory {repr(directory)}.")
         manifest = read_json(directory / "binder_manifest.json", encoding="shift-jis")
-        for field, value in self.get_manifest_header(manifest).items():
-            setattr(self, field, value)
+        for manifest_field, value in self.get_manifest_header(manifest).items():
+            setattr(self, manifest_field, value)
         self.add_entries_from_manifest(manifest["entries"], directory, manifest["use_id_prefix"])
 
     @classmethod
@@ -223,14 +320,14 @@ class BaseBinder(GameFile, abc.ABC):
                 f"`BaseBinder` child class name ({cls.__name__})."
             )
         loaded_manifest = {}
-        for field in cls.MANIFEST_FIELDS:
-            if field == "flags":
-                value = BinderFlags(manifest[field])
-            elif field == "dcx_type":
+        for manifest_field in cls._get_manifest_fields():
+            if manifest_field == "flags":
+                value = BinderFlags(manifest[manifest_field])
+            elif manifest_field == "dcx_type":
                 value = DCXType(manifest["dcx_type"])
             else:
-                value = manifest[field]
-            loaded_manifest[field] = value
+                value = manifest[manifest_field]
+            loaded_manifest[manifest_field] = value
         return loaded_manifest
 
     def add_entries_from_manifest(self, entries: dict, directory: str | Path, use_id_prefix: bool):
@@ -277,7 +374,7 @@ class BaseBinder(GameFile, abc.ABC):
         write_json(directory / "binder_manifest.json", json_dict, encoding="shift-jis")
 
     @classmethod
-    def detect(cls, binder_source: tp.Union[GameFile.Typing, dict]) -> bool:
+    def detect(cls, binder_source: tp.Union[BinderSourceTyping, dict]) -> bool:
         """Returns True if `binder_source` appears to be this subclass of `BaseBinder`. Does not support DCX sources."""
         if isinstance(binder_source, dict):
             # Manifest dictionary. Simply check version.
@@ -392,7 +489,7 @@ class BaseBinder(GameFile, abc.ABC):
         if len(matches) > 1:
             raise ValueError(f"Found multiple Binder entries with name matching '{regex}'.")
         if not matches:
-            raise BinderEntryMissing(f"No Binder entries found with name matching '{regex}'.")
+            raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{regex}'.")
         return matches[0]
 
     def __getitem__(self, id_or_path_or_basename) -> BinderEntry:
@@ -410,7 +507,7 @@ class BaseBinder(GameFile, abc.ABC):
                 try:
                     return self.entries_by_basename[id_or_path_or_basename]
                 except KeyError:
-                    raise BinderEntryMissing(f"No entry with this ID/path/name: {id_or_path_or_basename}")
+                    raise BinderEntryNotFoundError(f"No entry with this ID/path/name: {id_or_path_or_basename}")
         raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BinderEntry]:
@@ -427,23 +524,64 @@ class BaseBinder(GameFile, abc.ABC):
             entries = f"\n    {entries},\n"
         return f"{self.__class__.__name__}({entries})"
 
+    @property
+    def dcx_type(self):
+        return self._dcx_type
+
+    @dcx_type.setter
+    def dcx_type(self, value: DCXType | None):
+        """Set `dcx_type to `value`, which must be a `DCXType` or `None`."""
+        if value is None or value == DCXType.Null:
+            self._dcx_type = DCXType.Null
+        elif isinstance(value, DCXType):
+            self._dcx_type = value
+        else:
+            raise ValueError(f"`dcx_type` must be `DCXType` or None, not {value}.")
+
+    @classmethod
+    def from_bak(
+        cls: tp.Type[T], binder_file_path: Path | str, dcx_type: DCXType = None, create_bak_if_missing=True
+    ) -> T:
+        """Looks for a `.bak` version of the given path to open preferentially, or optionally creates it if missing."""
+        binder_file_path = Path(binder_file_path)
+        bak_path = binder_file_path.with_name(binder_file_path.name + ".bak")
+        if bak_path.is_file():
+            binder_file = cls(bak_path, dcx_type=dcx_type)
+            binder_file.path = binder_file.path.with_suffix("")  # remove ".bak" extension
+            return binder_file
+        else:
+            binder_file = cls(binder_file_path, dcx_type=dcx_type)
+            if create_bak_if_missing:
+                create_bak(binder_file_path)
+            return binder_file
+
+    @classmethod
+    def get_game(cls) -> Game:
+        if match := re.match(r"^soulstruct\.(\w+)\..*$", cls.__module__):
+            return get_game(match.group(1))
+
+
+@dataclass(slots=True)
+class HashTableHeader(BinaryStruct):
+    _pad1: bytes = field(init=False, metadata=pad(8))
+    path_hashes_offset: long
+    hash_group_count: uint
+    unknown3: int = field(init=False, metadata=asserted(0x00080810))
+
+
+@dataclass(slots=True)
+class PathHash(BinaryStruct):
+    hashed_value: uint
+    entry_index: int
+
+
+@dataclass(slots=True)
+class HashGroup(BinaryStruct):
+    length: int
+    index: int
+
 
 class BinderHashTable:
-
-    HASH_TABLE_HEADER = BinaryStruct(
-        "8x",
-        ("path_hashes_offset", "q"),
-        ("hash_group_count", "I"),
-        ("unknown3", "i", 0x00080810),
-    )
-    PATH_HASH_STRUCT = BinaryStruct(
-        ("hashed_value", "I"),
-        ("entry_index", "i"),
-    )
-    HASH_GROUP_STRUCT = BinaryStruct(
-        ("length", "i"),
-        ("index", "i"),
-    )
 
     @classmethod
     def build_hash_table(cls, entries):
@@ -476,15 +614,16 @@ class BinderHashTable:
         for hash_list in hash_lists:
             first_hash_index = total_hash_count
             for path_hash in hash_list:
-                path_hashes.append({"hashed_value": path_hash[0], "entry_index": path_hash[1]})
+                path_hashes.append(PathHash(hashed_value=uint(path_hash[0]), entry_index=path_hash[1]))
                 total_hash_count += 1
-            hash_groups.append({"index": first_hash_index, "length": total_hash_count - first_hash_index})
+            hash_groups.append(HashGroup(index=first_hash_index, length=total_hash_count - first_hash_index))
 
-        packed_hash_groups = cls.HASH_GROUP_STRUCT.pack_multiple(hash_groups)
-        packed_hash_table_header = cls.HASH_TABLE_HEADER.pack(
-            path_hashes_offset=cls.HASH_TABLE_HEADER.size + len(packed_hash_groups), hash_group_count=group_count,
-        )
-        packed_path_hashes = cls.PATH_HASH_STRUCT.pack_multiple(path_hashes)
+        packed_hash_groups = HashGroup.join_bytes(hash_groups)
+        packed_hash_table_header = bytes(HashTableHeader(
+            path_hashes_offset=long(HashTableHeader.get_size() + len(packed_hash_groups)),
+            hash_group_count=uint(group_count),
+        ))
+        packed_path_hashes = PathHash.join_bytes(path_hashes)
 
         return packed_hash_table_header + packed_hash_groups + packed_path_hashes
 

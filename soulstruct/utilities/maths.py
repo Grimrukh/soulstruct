@@ -47,14 +47,6 @@ class Vector(abc.ABC):
     def __eq__(self, other_vector: Vector):
         return self._data == other_vector._data
 
-    @abc.abstractmethod
-    def __neg__(self):
-        pass
-
-    @abc.abstractmethod
-    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str) -> Vector:
-        pass
-
     def __add__(self, other):
         return self._arithmetic(other, float.__add__, "add to")
 
@@ -109,7 +101,15 @@ class Vector(abc.ABC):
         return self.copy() / abs(self)
 
     @abc.abstractmethod
-    def dot(self, other_vector) -> float:
+    def __neg__(self):
+        pass
+
+    @abc.abstractmethod
+    def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str) -> Vector:
+        pass
+
+    @abc.abstractmethod
+    def dot(self, other_vector: Vector) -> float:
         pass
 
     @abc.abstractmethod
@@ -134,13 +134,6 @@ class Vector(abc.ABC):
     def x(self, value: float):
         self._data[0] = value
 
-
-class Vector2(Vector):
-    """Simple [x, y] container."""
-
-    def __init__(self, x, y):
-        self._data = [float(x), float(y)]
-
     @property
     def y(self):
         return self._data[1]
@@ -148,6 +141,13 @@ class Vector2(Vector):
     @y.setter
     def y(self, value: float):
         self._data[1] = value
+
+
+class Vector2(Vector):
+    """Simple [x, y] container."""
+
+    def __init__(self, x, y):
+        self._data = [float(x), float(y)]
 
     def __neg__(self):
         return Vector2(-self._data[0], -self._data[1])

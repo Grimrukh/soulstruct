@@ -5,31 +5,20 @@ from __future__ import annotations
 
 __all__ = [
     "Game",
-    "GameSpecificType",
     "GAMES",
     "get_game",
     "DEMONS_SOULS",
-    "DemonsSoulsType",
     "DEMONS_SOULS_REMAKE",
-    "DemonsSoulsRemakeType",
     "DARK_SOULS_PTDE",
-    "DarkSoulsPTDEType",
     "DARK_SOULS_DSR",
-    "DarkSoulsDSRType",
     "DARK_SOULS_2",
-    "DarkSouls2Type",
     "DARK_SOULS_2_SOTFS",
-    "DarkSouls2SOTFSType",
     "BLOODBORNE",
-    "BloodborneType",
     "DARK_SOULS_3",
-    "DarkSouls3Type",
     "SEKIRO",
     "ELDEN_RING",
-    "EldenRingType",
 ]
 
-import abc
 import importlib
 import typing as tp
 from pathlib import Path
@@ -95,12 +84,6 @@ class Game:
         return f"Game(\"{self.name}\")"
 
 
-class GameSpecificType(abc.ABC):
-    """Base class for classes that define `GAME`, which can be mixed in to classes for those games."""
-
-    GAME: Game = None
-
-
 DEMONS_SOULS = Game(
     "DEMONS_SOULS",
     "Demon's Souls",
@@ -111,10 +94,6 @@ DEMONS_SOULS = Game(
 )
 
 
-class DemonsSoulsType(GameSpecificType):
-    GAME = DEMONS_SOULS
-
-
 DEMONS_SOULS_REMAKE = Game(
     "DEMONS_SOULS_REMAKE",
     "Demon's Souls Remake",
@@ -122,10 +101,6 @@ DEMONS_SOULS_REMAKE = Game(
     default_dcx=None,  # TODO: Unknown.
     default_game_path=DESR_PATH,
 )
-
-
-class DemonsSoulsRemakeType(GameSpecificType):
-    GAME = DEMONS_SOULS_REMAKE
 
 
 DARK_SOULS_PTDE = Game(
@@ -154,10 +129,6 @@ DARK_SOULS_PTDE = Game(
 )
 
 
-class DarkSoulsPTDEType(GameSpecificType):
-    GAME = DARK_SOULS_PTDE
-
-
 DARK_SOULS_DSR = Game(
     "DARK_SOULS_DSR",
     "Dark Souls Remastered",
@@ -184,10 +155,6 @@ DARK_SOULS_DSR = Game(
 )
 
 
-class DarkSoulsDSRType(GameSpecificType):
-    GAME = DARK_SOULS_DSR
-
-
 DARK_SOULS_2 = Game(
     "DARK_SOULS_2",
     "Dark Souls II",
@@ -198,10 +165,6 @@ DARK_SOULS_2 = Game(
 )
 
 
-class DarkSouls2Type(GameSpecificType):
-    GAME = DARK_SOULS_2
-
-
 DARK_SOULS_2_SOTFS = Game(
     "DARK_SOULS_2_SOTFS",
     "Dark Souls II Scholar of the First Sin",
@@ -210,10 +173,6 @@ DARK_SOULS_2_SOTFS = Game(
     default_dcx=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_SOTFS_PATH,
 )
-
-
-class DarkSouls2SOTFSType(GameSpecificType):
-    GAME = DARK_SOULS_2_SOTFS
 
 
 BLOODBORNE = Game(
@@ -239,10 +198,6 @@ BLOODBORNE = Game(
 )
 
 
-class BloodborneType(GameSpecificType):
-    GAME = BLOODBORNE
-
-
 DARK_SOULS_3 = Game(
     "DARK_SOULS_3",
     "Dark Souls III",
@@ -254,10 +209,6 @@ DARK_SOULS_3 = Game(
 )
 
 
-class DarkSouls3Type(GameSpecificType):
-    GAME = DARK_SOULS_3
-
-
 SEKIRO = Game(
     "SEKIRO",
     "Sekiro",
@@ -266,10 +217,6 @@ SEKIRO = Game(
     default_dcx=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
 )
-
-
-class SekiroType(GameSpecificType):
-    GAME = SEKIRO
 
 
 ELDEN_RING = Game(
@@ -285,10 +232,6 @@ ELDEN_RING = Game(
         "MSGDirectory": "msg/engus",
     },
 )
-
-
-class EldenRingType(GameSpecificType):
-    GAME = ELDEN_RING
 
 
 GAMES = (
