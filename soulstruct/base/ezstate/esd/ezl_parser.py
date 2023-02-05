@@ -80,7 +80,7 @@ def SET_INTERNAL_SYMBOLS(value: bool):
 
 
 def nice_hex_bytes(byte_sequence):
-    return b" ".join(hexlify(byte_sequence[i : i + 1]) for i in range(len(byte_sequence)))
+    return b" ".join(hexlify(byte_sequence[i:i + 1]) for i in range(len(byte_sequence)))
 
 
 def pop_multiple(sequence: list, count: int):
@@ -124,7 +124,7 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
     i = 0
     while i < len(byte_sequence):
 
-        b = byte_sequence[i : i + 1]
+        b = byte_sequence[i:i + 1]
 
         if b"\x00" <= b <= b"\x7f":
             output.append(struct.unpack("<b", b)[0] - 64)
@@ -132,17 +132,17 @@ def decompile(byte_sequence, esd_type: ESDType, func_prefix=""):
 
         elif b == b"\x80":
             # Start of a 32-bit float (single).
-            output.append(struct.unpack("<f", byte_sequence[i + 1 : i + 5])[0])
+            output.append(struct.unpack("<f", byte_sequence[i + 1:i + 5])[0])
             i += 5
 
         elif b == b"\x81":
             # Start of a 64-bit float (double).
-            output.append(struct.unpack("<d", byte_sequence[i + 1 : i + 9])[0])
+            output.append(struct.unpack("<d", byte_sequence[i + 1:i + 9])[0])
             i += 9
 
         elif b == b"\x82":
             # Start of a 32-bit signed integer.
-            output.append(struct.unpack("<i", byte_sequence[i + 1 : i + 5])[0])
+            output.append(struct.unpack("<i", byte_sequence[i + 1:i + 5])[0])
             i += 5
 
         # b'\x83' is unknown. Possibly a 64-bit signed integer.

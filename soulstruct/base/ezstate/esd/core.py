@@ -31,11 +31,6 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-# TODO: (signature, version, internal_header_size, state_machine_header_size, state_size, condition_size, command_size,
-#  command_arg_size)
-#  Assign to each subclass and use to assert.
-EXTERNAL_HEADER_INFO = ()
-
 
 @dataclass(slots=True)
 class ESDExternalHeaderStruct(NewBinaryStruct):

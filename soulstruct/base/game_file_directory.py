@@ -120,7 +120,7 @@ class GameFileMapDirectory(GameFileDirectory, abc.ABC):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_map_stems:
-                    files[file_path.name] = cls.FILE_CLASS.from_path(file_path)
+                    files[file_stem] = cls.FILE_CLASS.from_path(file_path)
                     all_map_stems.remove(file_stem)
                 else:
                     _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")

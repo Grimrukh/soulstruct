@@ -4,86 +4,73 @@ __all__ = ["TalkDirectory"]
 
 import abc
 import logging
+import re
 import typing as tp
+from dataclasses import dataclass
 from pathlib import Path
 
+from soulstruct.base.game_file_directory import GameFileMapDirectory
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "TalkDirectory"
+
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_types.map_types import Map
-    from soulstruct.base.maps.utilities import GET_MAP_TYPING
-    from .talk_esd_bnd import TalkESDBND
+    from .talkesdbnd import TalkESDBND
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class TalkDirectory(abc.ABC):
+@dataclass(slots=True)
+class TalkDirectory(GameFileMapDirectory, abc.ABC):
     """Directory containing `TalkESDBND` files."""
 
-    ALL_MAPS: tuple[Map] = None
-    GET_MAP: GET_MAP_TYPING = None
-    IS_DCX: bool = None
-    TALKESDBND_CLASS: tp.Type[TalkESDBND] = None
+    FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.talkesdbnd"  # also manually checks for directories
+    FILE_CLASS: tp.ClassVar[tp.Type[TalkESDBND]] = None  # only attribute that subclass must define
+    FILE_EXTENSION = ".talkesdbnd"
+    MAP_STEM_ATTRIBUTE = "esd_file_stem"
 
-    def __init__(self, talk_directory=None):
-        """Unpack all talk ESD state machines into one single modifiable structure.
+    @classmethod
+    def from_path(cls, directory_path: Path | str):
+        """Loads files as appropriate type (ESD/ESP folder/ESP file)."""
+        if cls.FILE_NAME_PATTERN is None or cls.FILE_CLASS is None:
+            raise TypeError(
+                f"`GameFileDirectory` subclass `{cls.__name__}` must define `FILE_NAME_PATTERN` and `FILE_CLASS` class "
+                f"variables, or override `from_path()` with its own different logic."
+            )
 
-        Args:
-            talk_directory: Directory where all the `.talkesbnd[.dcx]` files are stored. This will be inside
-                'script/talk' in your game directory.
-        """
-        self._directory = None
-        self.bnds = {}  # type: dict[str, TalkESDBND]
+        directory_path = Path(directory_path)
+        if not directory_path.is_dir():
+            raise NotADirectoryError(f"Missing directory: {directory_path}")
+        all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
+        files = {}
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        for file_path in directory_path.glob("*"):
 
-        if talk_directory is None:
-            return
-        self._directory = Path(talk_directory)
-        if not self._directory.is_dir():
-            raise ValueError("`TalkDirectory` should be initialized with the directory containing '.talkesdbnd' files.")
-        self.load()
+            if file_path.is_dir() and file_path.stem in all_map_stems:
+                # Try to load `TalkESDBND` from directory of ESP files matching the map stem.
+                files[file_path.stem] = cls.FILE_CLASS.from_esp_directory(file_path)
+                all_map_stems.remove(file_path.stem)
+                continue
+            elif file_name_re.match(file_path.name):
+                file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
+                if file_stem in all_map_stems:  # `.talkesdbnd` file
+                    files[file_path.name] = cls.FILE_CLASS.from_path(file_path)
+                    all_map_stems.remove(file_stem)
+                    continue
+            _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
 
-    def __getitem__(self, map_name):
-        return self.bnds[map_name]
+        if all_map_stems:
+            _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
-    def __repr__(self):
-        return f"TalkDirectory({repr(str(self._directory))})"
+        return cls(directory_path, files)
 
-    def write(self, talk_directory=None):
-        if talk_directory is None:
-            talk_directory = self._directory
-        talk_directory = Path(talk_directory)
-        for talkesdbnd in self.bnds.values():
-            talkesdbnd.write(talk_directory / talkesdbnd.path.name)
-        _LOGGER.info("All TalkESDBND files (TalkESDBND) written successfully.")
-
-    def write_esp(self, talk_directory=None):
-        if talk_directory is None:
-            talk_directory = self._directory
-        talk_directory = Path(talk_directory)
+    def write_esp(self, esp_directory=None):
+        """Write ESP for all maps. Defaults to loaded directory."""
+        if esp_directory is None:
+            esp_directory = self.directory
+        esp_directory = Path(esp_directory)
         for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
-            talkesdbnd = self.bnds[game_map.name]
-            talkesdbnd.write_esp(talk_directory=talk_directory / f"{game_map.esd_file_stem}")
-
-    def load(self, talk_directory=None):
-        if talk_directory is None:
-            talk_directory = self._directory
-        talk_directory = Path(talk_directory)
-        if self._directory is None:
-            self._directory = talk_directory
-        for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
-            talkesdbnd_path = talk_directory / game_map.esd_file_stem
-            file_suffix = ".talkesdbnd"
-            if self.IS_DCX:
-                file_suffix += ".dcx"
-            if (file_path := talkesdbnd_path.with_suffix(file_suffix)).is_file():
-                if talkesdbnd_path.exists():
-                    _LOGGER.warning(
-                        f"Both a TalkESBND file and folder with stem {game_map.esd_file_stem} were found. "
-                        f"Using the file."
-                    )
-                talkesdbnd_path = file_path
-            try:
-                self.bnds[game_map.name] = self.TALKESDBND_CLASS(talkesdbnd_path)
-                setattr(self, game_map.name, self.bnds[game_map.name])
-            except FileNotFoundError:
-                raise FileNotFoundError(
-                    f"Could not find TalkESDBND file {talkesdbnd_path} ({game_map.name}) in given directory."
-                )
+            talkesdbnd = self.files[game_map.esd_file_stem]
+            talkesdbnd.write_esp(talk_directory=esp_directory / f"{game_map.esd_file_stem}")

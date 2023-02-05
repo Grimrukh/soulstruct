@@ -240,7 +240,7 @@ class Binder(BaseBinaryFile):
     bit_big_endian: bool = False
     version: BinderVersion = BinderVersion.V3
     v4_info: BinderVersion4Info | None = None  # only used by `BinderVersion.V4`
-    is_split_bxf: bool = False  # TODO: include in manifest
+    is_split_bxf: bool = False  # NOTE: not included in manifest (inferred from `version` in there)
 
     # Entry list marked 'private' to encourage use of `add_entry` and `remove_entry` methods.
     _entries: list[BinderEntry] = field(default_factory=list)
@@ -492,23 +492,34 @@ class Binder(BaseBinaryFile):
 
     @classmethod
     def process_manifest_header(cls, manifest: dict) -> dict[str, tp.Any]:
-        """Pop entry pathmanifest header data from given `manifest` dictionary and parse them into appropriate types.
+        """Parse manifest dictionary and return a dictionary that can be passed to `Binder.from_dict()`.
 
-        Other keys may be present in `manifest`, and will be ignored.
+        Does not modify input `manifest`. Other keys may be present in `manifest`, and will be ignored.
         """
-        for required_key in ("version", "use_id_prefix", "entries", "flags", "dcx_type"):
-            if required_key not in manifest:
+        binder_kwargs = manifest.copy()
+        for required_key in ("version", "signature", "flags", "big_endian", "bit_big_endian"):
+            if required_key not in binder_kwargs:
                 raise BinderError(f"Binder manifest JSON file does not contain '{required_key}' key.")
 
-        all_class_names = [base.__name__ for base in cls.__mro__]
-        if manifest["version"] not in all_class_names:
-            raise BinderError(
-                f"Version of file ({manifest['version']}) does not match "
-                f"`BaseBinder` child class name ({cls.__name__})."
+        manifest_version = binder_kwargs.pop("version")
+        if manifest_version.startswith("BXF"):
+            is_split_bxf = True
+        elif manifest_version.startswith("BND"):
+            is_split_bxf = False
+        else:
+            raise ValueError(
+                f"Invalid Binder manifest `version`: {manifest_version}. Must be of format '{{BND|BXF}}{{3|4}}'."
             )
-        manifest["flags"] = BinderFlags(manifest["flags"])
-        manifest["dcx_type"] = DCXType(manifest["dcx_type"])
-        return manifest
+        version = int(manifest_version[3])
+        if version not in {3, 4}:
+            raise ValueError(
+                f"Invalid Binder manifest `version`: {manifest_version}. Must be of format '{{BND|BXF}}{{3|4}}'."
+            )
+        binder_kwargs["is_split_bxf"] = is_split_bxf
+        binder_kwargs["version"] = version
+        binder_kwargs["flags"] = BinderFlags(manifest["flags"])
+        binder_kwargs["dcx_type"] = DCXType(manifest["dcx_type"])
+        return binder_kwargs
 
     # endregion
 
@@ -979,6 +990,16 @@ class Binder(BaseBinaryFile):
         if not matches:
             raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{regex}'.")
         return matches[0]
+
+    @classmethod
+    def get_default_binder(cls) -> Self:
+        """Optional method that can be overridden (usually by a game subclass) to generate a default `Binder`."""
+        raise BinderError("`get_default_binder()` not defined on this `Binder` class/subclass.")
+
+    @classmethod
+    def get_default_entry_path(cls, entry_name: str):
+        """Optional method that can be overridden to determine the default entry path for `entry_name`."""
+        raise BinderError("`get_default_entry_path()` not defined on this `Binder` class/subclass.")
 
     def __getitem__(self, id_or_path_or_basename) -> BinderEntry:
         """Shortcut for access by ID (int) or path (str) or basename (str).

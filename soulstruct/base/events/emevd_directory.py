@@ -20,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 class EMEVDDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
     """Load a directory full of any valid `EMEVD` sources, one per map."""
 
-    FILE_NAME_PATTERN: tp.ClassVar[str] = r".*(\.evs\.py|\.evs|\.py|\.emevd|\.txt)"
+    FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.(evs\.py|evs|py|emevd|txt)"
     FILE_CLASS: tp.ClassVar[tp.Type[EMEVD]] = None
     FILE_EXTENSION = ".emevd"
     MAP_STEM_ATTRIBUTE = "emevd_file_stem"
