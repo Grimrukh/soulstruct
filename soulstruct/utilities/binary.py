@@ -13,22 +13,24 @@ __all__ = [
     "varuint",
     "PRIMITIVE_FIELD_TYPING",
     "PRIMITIVE_FIELD_TYPES",
-    "RESERVED",
     "BinaryCondition",
-    "asserted",
-    "custom_type",
-    "fixed_bytes",
-    "fixed_str",
-    "z_bytes",
-    "z_string",
-    "int_enum",
-    "computed",
-    "pad",
-    "BinaryStruct",
+    "RESERVED",
+    "FieldValue",
+    "Binary",
+    "BinaryAutoCompute",
+    "BinaryAutoOffset",
+    "BinaryPad",
+    "NewBinaryStruct",
     "ByteOrder",
     "BinaryReader",
     "BinaryWriter",
-    # "BinaryObject",
+    "slots_equality",
+
+    # DEPRECATED
+    "BinaryObject",
+    "BinaryStruct",
+
+    # UTILITY
     "read_chars_from_bytes",
     "get_blake2b_hash",
     "ReadableTyping",
@@ -45,13 +47,19 @@ import re
 import struct
 import typing as tp
 from contextlib import contextmanager
-from functools import partial
 from pathlib import Path
-from types import GenericAlias
+from types import GenericAlias, MappingProxyType
 
-from soulstruct.base.binder_entry import BinderEntry
 from soulstruct.utilities.misc import Flags8
-from soulstruct.utilities.maths import Vector2, Vector3, Vector4
+from soulstruct.utilities.maths import Vector, Vector2, Vector3, Vector4
+
+if tp.TYPE_CHECKING:
+    from soulstruct.containers.entry import BinderEntry
+
+try:
+    from typing import Self
+except ImportError:  # < Python 3.11
+    Self = "NewBinaryStruct"
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -135,7 +143,7 @@ class BinaryField:
 
 
 # TODO: Deprecated.
-class __BinaryStruct:
+class BinaryStruct:
 
     # Optional function that indicates if the given `BinaryReader` should be set to `BigEndian` byte order, usually by
     # inspecting a particular byte or int at some early offset. Make sure it restores the reader's initial offset!
@@ -526,7 +534,7 @@ class __BinaryStruct:
 
 
 # TODO: deprecated.
-class __BinaryObject(abc.ABC):
+class BinaryObject(abc.ABC):
     """Class whose fields are all specified in a `BinaryStruct` class attribute, `STRUCT`, with `set()` method.
 
     `DEFAULTS` can be used to specify defaults for specific field names. Otherwise, defaults will be based on the format
@@ -673,15 +681,6 @@ class __BinaryObject(abc.ABC):
         for field_name, value in kwargs.items():
             writer.fill(field_name, value, obj=self)
 
-    def pack_zstring(self, writer: BinaryWriter, field: str, encoding=""):
-        """Fill `"__{field}__z"` with current offset, then write `field` attribute with given `encoding`."""
-        field_zstring = f"__{field}__z"
-        if field_zstring not in self.STRUCT.field_names:
-            raise ValueError(f"Invalid z-string field: {repr(field)}")
-        writer.fill(field_zstring, writer.position, obj=self)
-        z = b"\0\0" if encoding.startswith("utf-16") else b"\0"
-        writer.append(getattr(self, field).encode(encoding) + z)
-
     def __repr__(self) -> str:
         output = f"{self.__class__.__name__}(\n"
         for field_name in self._get_type_hints():
@@ -732,24 +731,24 @@ class BinaryBase:
     VAR_INT = "v"
     VAR_UINT = "V"
     default_byte_order: ByteOrder
-    var_int_size: int  # 4 or 8 (determines size of 'v' and 'V' format characters)
+    varint_size: int  # 4 or 8 (determines size of 'v' and 'V' format characters)
 
     def __init__(self, byte_order=ByteOrder.LittleEndian, var_int_size=4):
         self.default_byte_order = ByteOrder(byte_order)
         if var_int_size not in {4, 8}:
             raise ValueError(f"{self.__class__.__name__} `var_int_size` must be 4 or 8, not {var_int_size}.")
-        self.var_int_size = var_int_size
+        self.varint_size = var_int_size
 
     def parse_fmt(self, fmt: str) -> str:
         """Insert default byte order and replace 'vV' var int characters."""
         if fmt[0] not in "@=><!":
             fmt = self.default_byte_order.value + fmt
-        if self.var_int_size == 4:
+        if self.varint_size == 4:
             fmt = fmt.replace("v", "i").replace("V", "I")
-        elif self.var_int_size == 8:
+        elif self.varint_size == 8:
             fmt = fmt.replace("v", "q").replace("V", "Q")
         else:
-            raise ValueError(f"`BinaryWriter.var_int_size` must be 4 or 8, not {self.var_int_size}.")
+            raise ValueError(f"`BinaryWriter.var_int_size` must be 4 or 8, not {self.varint_size}.")
         return fmt
 
     def get_utf_16_encoding(self) -> str:
@@ -769,9 +768,9 @@ class BinaryReader(BinaryBase):
         self,
         buffer: str | Path | bytes | bytearray | io.BufferedIOBase | BinderEntry | BinaryReader,
         default_byte_order=ByteOrder.LittleEndian,
-        var_int_size=8,
+        varint_size=8,
     ):
-        super().__init__(default_byte_order, var_int_size)
+        super().__init__(default_byte_order, varint_size)
 
         if isinstance(buffer, str):
             buffer = Path(buffer)
@@ -781,14 +780,16 @@ class BinaryReader(BinaryBase):
             self.buffer = io.BytesIO(buffer)
         elif isinstance(buffer, io.BufferedIOBase):
             self.buffer = buffer
-        elif isinstance(buffer, BinderEntry):
-            self.buffer = io.BytesIO(buffer.get_uncompressed_data())
         elif isinstance(buffer, BinaryReader):
             self.buffer = buffer.buffer
         else:
-            raise TypeError(
-                f"Invalid `buffer`: {buffer}. Should be a binary IO stream, `bytes, or `Path` of a file to open."
-            )
+            try:
+                data = bytes(buffer)
+            except TypeError:
+                raise TypeError(
+                    f"Invalid `buffer`: {buffer}. Should be a binary IO stream, `bytes, or `Path` of a file to open."
+                )
+            self.buffer = io.BytesIO(data)
 
     def unpack(self, fmt, offset=None, relative_offset=False, asserted=None) -> tuple:
         """Unpack appropriate number of bytes from `buffer` using `fmt` string from the given (or current) `offset`.
@@ -990,9 +991,23 @@ class BinaryWriter(BinaryBase):
         packed = struct.pack(self.parse_fmt(fmt), *values)
         self._array[offset:offset + len(packed)] = packed
 
+    def pack_z_string(self, value: str, encoding="utf-8"):
+        """Pack null-terminated string `value` with `encoding` at current position.
+
+        Two-char null terminator will be used for UTF-16 encodings.
+        """
+        terminator = b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0"
+        self._array += value.encode(encoding) + terminator
+
     def append(self, other: bytearray | bytes):
         """Manually add existing binary data (e.g. a packed `BinaryStruct`) all at once."""
         self._array += other
+
+    def pack_new_struct(self, new_binary_struct: NewBinaryStruct, allow_reserved=True):
+        if allow_reserved:
+            new_binary_struct.to_writer(self)
+        else:
+            self._array += bytes(new_binary_struct)
 
     def pack_struct(
         self,
@@ -1077,7 +1092,7 @@ class BinaryWriter(BinaryBase):
         if obj is not None:
             name = f"{id(obj)}({name})"
             if name not in self.reserved:
-                raise ValueError(f"Field {repr(name)} auto-reserved by {type(obj)} {id(obj)} not found.")
+                raise ValueError(f"Field {repr(name)} reserved by `{type(obj).__name__}` object not found.")
         elif name not in self.reserved:
             raise ValueError(f"Name {repr(name)} is not reserved in `BytesWriter`.")
         offset, fmt = self.reserved[name]  # fmt endianness already specified
@@ -1092,10 +1107,11 @@ class BinaryWriter(BinaryBase):
         """Fill `name` (optionally also identified by `id(obj)` with current `writer.position`."""
         self.fill(name, self.position, obj=obj)
 
-    def finish(self) -> bytes:
+    def __bytes__(self) -> bytes:
         """Just checks that no reserved offsets remain, then converts stored `bytearray` to immutable `bytes`."""
         if self.reserved:
-            raise ValueError(f"Reserved `BytesWriter` offsets not filled: {list(self.reserved)}")
+            reserved_values = "\n    ".join(self.reserved)
+            raise ValueError(f"Reserved `BytesWriter` offsets not filled:\n    {reserved_values}")
         return bytes(self.array)
 
     def __repr__(self):
@@ -1226,24 +1242,24 @@ def get_blake2b_hash(data: bytes | str | Path) -> bytes:
     raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
 
 
-ReadableTyping = tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinderEntry, BinaryReader]
+ReadableTyping = tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinaryReader]
 
 
 # BASIC FIELD TYPES
 # bool = bool
-byte = tp.NewType("byte", int)
-sbyte = tp.NewType("sbyte", int)
-ushort = tp.NewType("ushort", int)
-short = tp.NewType("short", int)
-uint = tp.NewType("uint", int)
+byte = type("byte", (int,), {})
+sbyte = type("sbyte", (int,), {})
+ushort = type("ushort", (int,), {})
+short = type("short", (int,), {})
+uint = type("uint", (int,), {})
 # int = int
-ulong = tp.NewType("ulong", int)
-long = tp.NewType("long", int)  # actually `int`
+ulong = type("ulong", (int,), {})
+long = type("long", (int,), {})  # actually `int`
 # float = float
-double = tp.NewType("double", float)  # actually `float`
+double = type("double", (float,), {})  # actually `float`
 # bytes = bytes
-varint = tp.NewType("varint", int)  # either `int` or `long`
-varuint = tp.NewType("varuint", int)  # either `uint` or `ulong`
+varint = type("varint", (int,), {})  # either `int` or `long`
+varuint = type("varuint", (int,), {})  # either `uint` or `ulong`
 
 PRIMITIVE_FIELD_TYPING = tp.Union[
     bool, byte, sbyte, ushort, short, uint, int, ulong, long, float, double, bytes, varint, varuint
@@ -1257,7 +1273,7 @@ ASSERTED_TYPING = tp.Union[
 ]
 
 
-_BASIC_FIELD_INFO = {
+_PRIMITIVE_FIELD_INFO = {
     bool: ("?", 1, None),
     byte: ("B", 1, (0, 2 ** 8 - 1)),
     sbyte: ("b", 1, (-(2 ** 7), (2 ** 7) - 1)),
@@ -1269,44 +1285,18 @@ _BASIC_FIELD_INFO = {
     long: ("q", 8, (-(2 ** 63), (2 ** 63) - 1)),
     float: ("f", 4, None),
     double: ("d", 8, None),
+    varint: ("v", None, None),  # `size` and `min_max` must be computed
+    varuint: ("V", None, None),  # `size` and `min_max` must be computed
 }
 
 
-# These are actual subclasses to check at runtime for reserved values.
-_RESERVED_FIELD_TYPES = {
-    bool: tp.NewType("reserved_bool", bool),
-    byte: tp.NewType("reserved_byte", byte),
-    sbyte: tp.NewType("reserved_sbyte", sbyte),
-    ushort: tp.NewType("reserved_ushort", ushort),
-    short: tp.NewType("reserved_short", short),
-    uint: tp.NewType("reserved_uint", uint),
-    int: tp.NewType("reserved_int", int),
-    ulong: tp.NewType("reserved_ulong", ulong),
-    long: tp.NewType("reserved_long", long),
-    float: tp.NewType("reserved_float", float),
-    double: tp.NewType("reserved_double", double),
-    varint: tp.NewType("reserved_varint", varint),
-    varuint: tp.NewType("reserved_varuint", varuint),
-}
-
-
-FIELD_T = tp.TypeVar(
-    "FIELD_T", None, bool, byte, sbyte, ushort, short, uint, int, ulong, long, float, double, varint, varuint
+# Valid field types for `auto_offset`.
+_OFFSET_FIELD_TYPES = (
+    byte, sbyte, ushort, short, uint, int, ulong, long, varint, varuint
 )
 
 
-def RESERVED(field_type: tp.Type[FIELD_T]) -> FIELD_T:
-    """Allows `RESERVED(type)`, e.g. `RESERVED(long)`, to be assigned to a `BinaryStruct` field, which tells
-    `BinaryStruct` to reserve that field name in `to_writer()`.
-
-    Type-checking will be satisfied only by the proper `field_type` argument here, but at runtime, `None` will simply
-    be assigned.
-    """
-    if tp.TYPE_CHECKING:
-        return _RESERVED_FIELD_TYPES[field_type](0)
-    return None
-
-
+FIELD_T = tp.TypeVar("FIELD_T")
 CONDITION_T = tp.TypeVar("CONDITION_T", bool, int, str, ByteOrder)
 
 
@@ -1322,53 +1312,707 @@ class BinaryCondition(tp.Generic[CONDITION_T]):
     determine which endianness should be used.
     """
     offset_and_size: tuple[int, int]
-    conditions: tp.Sequence[tuple[CONDITION_T, bytes]]
+    callback_or_conditions: tp.Callable[[tp.Any], CONDITION_T] | tp.Sequence[tuple[CONDITION_T, bytes]] = None
     relative_offset: bool = False
 
-    def __call__(self, stream: tp.BinaryIO) -> CONDITION_T:
+    def __call__(self, stream: tp.BinaryIO | BinaryReader) -> CONDITION_T | bytes:
+        if isinstance(self.offset_and_size, tuple):
+            initial_offset = stream.tell()
+            offset, size = self.offset_and_size
+            stream.seek(offset, (1 if self.relative_offset else 0))
+            value = stream.read(size)
+            stream.seek(initial_offset)
+        else:
+            raise TypeError("First argument of `BinaryCondition` must be a field name string or (offset, size) pair.")
+
+        if callable(self.callback_or_conditions):
+            return self.callback_or_conditions(value)
+        elif self.callback_or_conditions:
+            for result, test_value in self.callback_or_conditions:
+                if value == test_value:
+                    return result
+            raise ValueError(f"Bytes found did not match any given conditional result: {value}")
+        else:
+            return value
+
+
+@dataclasses.dataclass(slots=True)
+class FieldValue(tp.Generic[FIELD_T]):
+    """Pass to some `binary` arguments to use a prior field's unpacked value for that argument.
+
+    If `callback` is given, the field's value will be passed through it.
+    """
+    field_name: str
+    callback: tp.Callable[[tp.Any], FIELD_T] | None = None
+    consume_prior_field: bool = True
+
+    def __call__(self, field_values: dict[str, tp.Any]) -> FIELD_T:
+        try:
+            value = field_values[self.field_name]
+        except KeyError:
+            raise KeyError(f"Cannot get `FieldValue` from field name: {self.field_name}")
+        if self.consume_prior_field:
+            field_values[self.field_name] = None
+        return value if self.callback is None else self.callback(value)
+
+
+def read_null_terminated_bytes(stream: tp.BinaryIO | BinaryReader, encoding: str = None) -> bytes | str:
+
+    # TODO: Currently just checking for UTF-16 encodings to enforce double null characters.
+    bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16") else 1
+    terminator = b"\0" * bytes_per_char
+
+    chars = []
+    while 1:
+        c = stream.read(bytes_per_char)
+        if not c:
+            raise ValueError("Ran out of bytes to read before null termination was found.")
+        if c == terminator:
+            # Null termination.
+            array = b"".join(chars)
+            if encoding is not None:
+                return array.decode(encoding)
+            return array
+        else:
+            chars.append(c)
+
+
+class BinaryFieldTypeError(Exception):
+
+    def __init__(self, field: dataclasses.Field, cls_name: str, error_msg: str):
+        name = f"`{cls_name}.{field.name}`" if cls_name else f"`{field.name}`"
+        super().__init__(f"Field {name}: {error_msg}")
+
+
+class BinaryFieldValueError(Exception):
+    pass
+
+
+@dataclasses.dataclass(slots=True)
+class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
+    """Base class for objects attached to dataclass fields with `field(metadata={"binary": BinaryFieldMetadata()})`.
+
+    Contains all attributes used, in different situations, by `BinaryStruct` unpacking and packing. Not all combinations
+    of attributes are valid (e.g. `encoding` must be set for `str` fields only).
+
+    NOTE: Use the `binary` utility function with `**` to generate the metadata dictionary as effortlessly as possible:
+        `number: int = field(**binary(asserted=[1, 2], alignment=4))`
+    This function also takes the normal `field` keyword arguments, like `init` and `default`, and can generate them. It
+    allows for the most abbreviated usage while still using `field` explicitly (which type checkers like to see...).
+    """
+
+    # Format for `struct.pack` and `struct.unpack`. Absent only for variable-length fields (notably null-terminated
+    # strings) and nested `BinaryStruct` classes.
+    fmt: str | None = None
+
+    # If field type is unhandled, it will be constructed from the `tuple` output of `struct.unpack()` using this factory
+    # function. If not given, the default factory `field_type(*tuple)` will be used for unhandled field types.
+    type_factory: tp.Callable[[tuple], FIELD_T] | None = None
+
+    # If field type is unhandled, it will be converted to a `tuple` input for `struct.pack(*tuple)` using this factory
+    # function. If not given, `tuple()` itself will simply be used.
+    pack_factory: tp.Callable[[FIELD_T], tuple] | None = None
+
+    # If given, field value must be in this list at unpack and pack time. Other changes to its value in between are not
+    # checked and will not have any negative effect until you try to pack the struct.
+    asserted: list[tp.Any] = dataclasses.field(default_factory=list)
+
+    # If given, reader/writer will seek/pad to this offset before reading/writing this field.
+    offset: int | str | FieldValue[int] | None = None
+
+    # Alignment of binary stream will be padded up to this (modulo) position BEFORE reading/writing the field value.
+    # Default of 1 has no effect. Must be 1 if `offset` is not `None`.
+    alignment: int = 1
+
+    # Can be supplied instead of `fmt` to use variables, such as a field name string, to determine the format.
+    length: int | str | FieldValue[int] | None = None
+
+    # String encoding to use for decoding read `bytes` to `str` types. Invalid for non-`str` fields.
+    encoding: str | None = None
+
+    # If `True` (NOT default), null bytes will be stripped from the end of a read fixed-length `bytes` or `str` field.
+    # Does not affect null-terminated strings, which will always have the terminator stripped/added. When packing, the
+    # fixed-length field will always be padded out to the required size, regardless of this value.
+    # NOTE: If asserting fixed-length values, make sure they take this argument into consideration.
+    rstrip_null: bool = False
+
+    # If `True` (NOT default), this field will NOT be unpacked in `from_bytes()` and CANNOT be packed in `to_writer()`.
+    # This is usually because additional information is required to unpack/pack the field, or it occurs much later in
+    # a larger file (but still has a link to this struct, e.g. via header offsets). If ANY field uses this, the struct
+    # cannot be cast directly to `bytes`; you must use `to_writer()` and resolve this field externally before finishing.
+    deferred: bool = False
+
+    # If given, this callback (called with `varint_size` and the `field_values` obtained thus far) will be used to
+    # determine if this field should be skipped entirely. This is ideal for simple cases only, like pads that only
+    # appear for a certain `varint_size`, etc. If skipped, the field value will be `None`.
+    skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None
+
+    # Assigned during validation for convenience.
+    name: str = dataclasses.field(init=False, default="")
+    type: tp.Type = dataclasses.field(init=False, default=None)
+
+    def check_asserted(self, value: FIELD_T) -> tp.Optional[FIELD_T]:
+        """Checks that `value` is in `self.asserted`, if not empty.
+
+        If it is, and `len(self.asserted) == 1`, `None` is returned instead to be clear that this is not a field to be
+        modified (as the lone asserted value will be used at packing anyway).
+        """
+        if not self.asserted:
+            return value  # nothing to check
+        elif value not in self.asserted:
+            raise BinaryFieldValueError(f"Field `{self.name}` has value {value} not in `asserted`: {self.asserted}")
+        elif len(self.asserted) == 1:
+            return None
+        return value  # valid among multiple asserted values
+
+    def validate(self, field: dataclasses.Field, field_type: tp.Type, cls_name: str):
+        """Called by `NewBinaryStruct` metaclass on child class creation."""
+
+        self.name = field.name
+        self.type = field_type
+
+        if self.deferred:
+            if self.alignment > 1 or self.offset is not None:
+                raise BinaryFieldTypeError(
+                    field, cls_name,
+                    "`deferred` binary fields cannot have `offset` or `alignment > 1`.",
+                )
+
+        # Field type cannot be `list` or `tuple` with no element types given.
+        if field_type is list:
+            raise BinaryFieldTypeError(
+                field, cls_name,
+                "`list` binary fields must specify exactly one element type (e.g. `list[int]`) and `length` metadata.",
+            )
+        if field_type is tuple:
+            raise BinaryFieldTypeError(
+                field, cls_name,
+                "`tuple` binary fields must specify at least one element type (e.g. `tuple[int, float, int]`)."
+            )
+
+        # TODO: Doesn't work with real int-derived types like `short`.
+        # for asserted_value in self.asserted:
+        #     if not isinstance(asserted_value, field_type):
+        #         raise BinaryFieldTypeError(field, cls_name, f"Invalid asserted value type: {asserted_value}")
+
+        if self.alignment > 1 and self.offset is not None:
+            raise BinaryFieldTypeError(field, cls_name, "Cannot combine `offset` with `alignment > 1`.")
+
+        if isinstance(field_type, GenericAlias):
+            # Recur on tuple of primitive field types (MUST be primitive, i.e. handled in this very block).
+            # Container MUST be a tuple so its exact length/contents can be defined in the type hint.
+            # List types must have metadata with at least a `length` argument (tuples are also welcome to).
+            if field_type.__origin__ is list:
+                if self.length is None:
+                    raise BinaryFieldTypeError(
+                        field, cls_name, "`list` binary fields must have at least `binary(length)` metadata."
+                    )
+                if len(field_type.__args__) != 1:
+                    raise BinaryFieldTypeError(
+                        field, cls_name,
+                        "`list` binary fields must specify exactly one element type (e.g. `list[int]`)."
+                    )
+
+            if field_type.__origin__ is tuple:
+                if not field_type.__args__:
+                    raise BinaryFieldTypeError(
+                        field, cls_name,
+                        "`tuple` binary fields must specify at least one element type (e.g. `tuple[int, float, int]`)."
+                    )
+                if self.length is not None and self.length != len(field_type.__args__):
+                    raise BinaryFieldTypeError(
+                        field, cls_name,
+                        "`tuple` binary field element types must match `length` metadata, if given.",
+                    )
+            else:
+                raise BinaryFieldTypeError(
+                    field, cls_name,
+                    f"Invalid generic type: `{field_type.__origin__}`. Must be `tuple` or (if `length` given) `list`."
+                )
+
+        if self.length is not None:
+            if self.fmt is not None:
+                raise BinaryFieldTypeError(field, cls_name, "Cannot specify both `fmt` and `length`.")
+
+        if field_type is str:
+            if self.encoding is None:
+                raise BinaryFieldTypeError(field, cls_name, "String field must have `encoding`.")
+        elif self.encoding is not None:
+            raise BinaryFieldTypeError(
+                field, cls_name,
+                "Only `str` field can use `encoding`. (Custom types initialized from strings are not yet supported.)",
+            )
+
+        if field_type in _PRIMITIVE_FIELD_INFO:
+            if self.fmt is not None:
+                raise BinaryFieldTypeError(
+                    field, cls_name, f"Cannot specify `fmt` for primitive field type `{field_type}`."
+                )
+        elif field_type is not bytes and field_type is not str:
+            # All non-primitive types must have `fmt`.
+            if self.fmt is None:
+                raise BinaryFieldTypeError(field, cls_name, "Non-primitive field type requires `fmt` metadata.")
+
+    @staticmethod
+    def resolve_condition(condition: tp.Any, stream: tp.BinaryIO | None, field_values: dict[str, tp.Any]) -> tp.Any:
+        if isinstance(condition, BinaryCondition):
+            return condition(stream)
+        if isinstance(condition, str):  # consume field name
+            return field_values.pop(condition)
+        if isinstance(condition, FieldValue):
+            return condition(field_values)
+        return condition
+
+
+def _validate_binary_field_without_metadata(field: dataclasses.Field, field_type: tp.Type, cls_name: str):
+    """Called by `NewBinaryStruct` metaclass on child class creation.
+
+    Does basic validation only, for fields with no `BinaryFieldMetadata` given to "binary" key of metadata.
+    """
+
+    # Field type cannot be `list` or `tuple` with no element types given.
+    if field_type is list:
+        raise BinaryFieldTypeError(
+            field, cls_name,
+            "`list` binary fields must specify exactly one element type (e.g. `list[int]`) and `length` metadata.",
+        )
+    if field_type is tuple:
+        raise BinaryFieldTypeError(
+            field, cls_name,
+            "`tuple` binary fields must specify at least one element type (e.g. `tuple[int, float, int]`).",
+        )
+
+    if isinstance(field_type, GenericAlias):
+        # Recur on tuple of primitive field types (MUST be primitive, i.e. handled in this very block).
+        # Container MUST be a tuple so its exact length/contents can be defined in the type hint.
+        # List types must have metadata with at least a `length` argument (tuples are also welcome to).
+        if field_type.__origin__ is list:
+            raise BinaryFieldTypeError(
+                field, cls_name, "`list` binary fields must have at least `binary(length)` metadata.",
+            )
+        if field_type.__origin__ is not tuple:
+            raise BinaryFieldTypeError(
+                field, cls_name,
+                f"Invalid binary field container type : `{field_type.__origin__}`. "
+                f"Must be tuple or (if `length` given) list."
+            )
+        return
+
+    if field_type not in _PRIMITIVE_FIELD_INFO and field_type not in (Vector2, Vector3, Vector4):
+        raise BinaryFieldTypeError(field, cls_name, "Cannot handle this field type without `binary()` metadata.")
+
+
+def _unpack_binary_field(
+    metadata: BinaryFieldMetadata | None,
+    stream: tp.BinaryIO,
+    field_type: tp.Type,
+    byte_order: ByteOrder,
+    varint_size: int,
+    field_values: dict[str, tp.Any],
+    **overrides,
+) -> tp.Any:
+    """Process metadata and field type to get the final value that will actually be assigned to the dataclass field.
+
+    `overrides` can have 'offset' and 'encoding' keys that will replace field metadata for this call (e.g. when it is
+    not possible to compute them purely from their containing struct class).
+    """
+    if metadata is None:
+        # Primitive field with no extra metadata.
+        if issubclass(field_type, NewBinaryStruct):
+            # NOTE: Nested struct will inherit `byte_order` and `varint_size` from caller struct.
+            return field_type.from_bytes(stream, byte_order, varint_size)
+
+        if isinstance(field_type, GenericAlias):
+            values = [
+                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                for element_type in field_type.__args__
+            ]
+            return tuple(values)
+
+        if field_type is Vector2:
+            return Vector2(*struct.unpack(byte_order.value + "2f", stream.read(8)))
+        elif field_type is Vector3:
+            return Vector3(*struct.unpack(byte_order.value + "3f", stream.read(12)))
+        elif field_type is Vector4:
+            return Vector4(*struct.unpack(byte_order.value + "4f", stream.read(16)))
+
+        fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]
+        fmt = _process_fmt_varint(fmt, varint_size)
+        size = struct.calcsize(fmt)
+        return struct.unpack(byte_order.value + fmt, stream.read(size))[0]  # type: PRIMITIVE_FIELD_TYPING
+
+    # Prepare stream position.
+    initial_offset = None
+    if "offset" in overrides:
+        if metadata.offset is not None:
+            raise ValueError("Cannot manually specify `offset` for unpacking this field.")
         initial_offset = stream.tell()
-        offset, size = self.offset_and_size
-        stream.seek(offset, (1 if self.relative_offset else 0))
-        value = stream.read(size)
-        stream.seek(initial_offset)
-        for result, test_value in self.conditions:
-            if value == test_value:
-                return result
-        raise ValueError(f"Bytes found did not match any given conditional result: {value}")
+        stream.seek(overrides["offset"])
+    else:
+        if metadata.alignment > 1:
+            mod_current_position = stream.tell() % metadata.alignment
+            if mod_current_position > 0:  # move forward by difference (to reach mod 0)
+                stream.seek(metadata.alignment - mod_current_position, 1)
+        elif metadata.offset is not None:
+            initial_offset = stream.tell()
+            offset = metadata.resolve_condition(metadata.offset, stream, field_values)
+            stream.seek(offset)
+
+    def reset_stream():
+        if initial_offset is not None:
+            stream.seek(initial_offset)
+
+    if issubclass(field_type, NewBinaryStruct):
+        # NOTE: Nested struct will inherit `byte_order` and `varint_size` from caller struct.
+        unpacked_struct = field_type.from_bytes(stream, byte_order, varint_size)
+        reset_stream()
+        return unpacked_struct
+
+    if isinstance(field_type, GenericAlias):
+        # Recur on tuple of primitive field types (MUST be primitive, i.e. handled in this very block).
+        # Container MUST be a tuple so its exact length/contents can be defined in the type hint.
+        # List types must have metadata with at least a `length` argument (tuples are also welcome to).
+        if field_type.__origin__ is list:
+            element_type = field_type.__args__[0]
+            length = metadata.resolve_condition(metadata.length, stream, field_values)
+            values = [
+                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                for _ in range(length)
+            ]
+            reset_stream()
+            return metadata.check_asserted(values)
+
+        if field_type.__origin__ is tuple:
+            values = [
+                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                for element_type in field_type.__args__
+            ]
+            reset_stream()
+            return metadata.check_asserted(tuple(values))
+
+        # Shouldn't be reachable due to initial class validation, but shouldn't let corner cases fall through to
+        # code below (and some kind of unhandled nested list type could reach this).
+        raise BinaryFieldValueError(
+            f"Field `{metadata.name}` has invalid generic type: {field_type.__origin__}. "
+            f"Must be `tuple` or (if `length` given) `list`."
+        )
+
+    if field_type in _PRIMITIVE_FIELD_INFO:
+        # Primitive type.
+        fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]  # no need to check `min_max` when unpacking
+        fmt = _process_fmt_varint(fmt, varint_size)
+        buffer = stream.read(struct.calcsize(fmt))
+        value = struct.unpack(byte_order.value + fmt, buffer)[0]  # type: PRIMITIVE_FIELD_TYPING
+        reset_stream()
+        return metadata.check_asserted(value)
+
+    # Get format or length, or otherwise resolve null-terminated string immediately.
+    if metadata.length is not None:
+        length = metadata.resolve_condition(metadata.length, stream, field_values)
+        fmt = f"{length}s"
+    elif metadata.fmt is not None:
+        fmt = _process_fmt_varint(metadata.fmt, varint_size)
+    elif field_type in (bytes, str):
+        # Null-terminated.
+        if "encoding" in overrides:
+            encoding = overrides["encoding"]
+        elif isinstance(metadata.encoding, BinaryCondition):
+            encoding = metadata.encoding(stream)
+        else:
+            encoding = metadata.encoding
+        value = read_null_terminated_bytes(stream, encoding)
+        reset_stream()
+        return metadata.check_asserted(value)
+    else:
+        # Shouldn't be reachable, but don't want to fall through.
+        raise BinaryFieldValueError(f"Non-primitive field `{metadata.name}` must have `fmt` or `length`.")
+
+    # TODO: Should I just assert that `stream` is a `BinaryReader`?
+    raw_tuple = struct.unpack(byte_order.value + fmt, stream.read(struct.calcsize(fmt)))  # type: tuple
+
+    if field_type is str:
+        if "encoding" in overrides:
+            encoding = overrides["encoding"]
+        elif isinstance(metadata.encoding, BinaryCondition):
+            encoding = metadata.encoding(stream)
+        else:
+            encoding = metadata.encoding
+        raw_value = raw_tuple[0]
+        if metadata.rstrip_null:
+            raw_value = raw_value.rstrip(b"\0")
+        value = raw_value.decode(encoding)
+        reset_stream()
+        return metadata.check_asserted(value)
+
+    if field_type is bytes:
+        value = raw_tuple[0]
+        if metadata.rstrip_null:
+            value = value.rstrip(b"\0")
+        reset_stream()
+        return metadata.check_asserted(value)
+
+    # Otherwise, load tuple into custom field type.
+    if metadata.type_factory is not None:
+        value = metadata.type_factory(*raw_tuple)
+    else:  # default is to just call field type
+        value = field_type(*raw_tuple)
+    reset_stream()
+    return metadata.check_asserted(value)
 
 
-class _CustomTypeField(tp.NamedTuple):
-    """Will read `fmt` and cast the resulting `value` with `callback`."""
-    fmt: str
-    unpacked_to_type_func: tp.Callable[[tuple], tp.Any] | None = None  # default is `lambda unpacked: type(*unpacked)`
-    type_to_unpacked_func: tp.Callable[[tp.Any], tuple] | None = None  # default is `lambda instance: tuple(instance)`
+def _process_fmt_varint(fmt: str, varint_size: int | None) -> str:
+    if "v" in fmt or "V" in fmt:
+        if varint_size is None:
+            raise BinaryFieldValueError("`varint_size` required to handle binary field.")
+        return fmt.replace("v", "i" if varint_size == 4 else "q").replace("V", "I" if varint_size == 4 else "Q")
+    return fmt
 
 
-@dataclasses.dataclass(slots=True)
-class _FixedStringField:
-    length: int
-    encoding: str | BinaryCondition[str] | None
-    rstrip_null: bool
+def _pack_binary_field(
+    metadata: BinaryFieldMetadata | None,
+    writer: BinaryWriter,
+    field_type: tp.Type,
+    field_value: tp.Any,
+    byte_order: ByteOrder,
+    varint_size: int,
+    field_values: dict[str, tp.Any],
+    stored_encoding: str | None = None,
+    **overrides,
+):
+    """Pack `field_value` to binary data using field type, optional metadata, and other contextual information.
+
+    `overrides` kwargs support 'encoding' only.
+    """
+    if isinstance(field_value, NewBinaryStruct):
+        # Nested struct will use its own `byte_order` and `varint_size` (probably inherited from this struct when
+        # unpacked from bytes).
+        field_value.to_writer(writer)
+        return
+
+    if metadata is None:
+        # Primitive field with no extra metadata.
+        if isinstance(field_type, GenericAlias):
+            # Recur on tuple of primitive field types (MUST be primitive, i.e. handled in this very block).
+            # Container MUST be a tuple so its exact length/contents can be defined in the type hint.
+            # List types must have metadata with at least a `length` argument (tuples are also welcome to).
+            if len(field_value) != len(field_type.__args__):
+                # NOTE: No way to get field name here (no metadata).
+                raise BinaryFieldValueError("`tuple` field value has wrong number of arguments.")
+            for element_type, element_value in zip(field_type.__args__, field_value):
+                _pack_binary_field(
+                    None, writer, element_type, element_value, byte_order, varint_size, field_values, stored_encoding
+                )
+            return
+
+        if field_type is Vector2:
+            writer.pack("2f", *field_value)
+            return
+        elif field_type is Vector3:
+            writer.pack("3f", *field_value)
+            return
+        elif field_type is Vector4:
+            writer.pack("4f", *field_value)
+            return
+
+        fmt, _, min_max = _PRIMITIVE_FIELD_INFO[field_type]
+        fmt = _process_fmt_varint(fmt, varint_size)
+        if min_max is not None and (field_value < min_max[0] or min_max[1] < field_value):
+            raise BinaryFieldValueError(f"Value {field_value} is out of range {min_max} for field type `{field_type}`.")
+        writer.pack(fmt, field_value)
+        return
+
+    if metadata.alignment > 1:
+        writer.pad_align(metadata.alignment)
+    elif metadata.offset is not None:
+        writer.pad_to_offset(metadata.offset)
+
+    if isinstance(field_type, GenericAlias):
+        # Recur on tuple of primitive field types (MUST be primitive, i.e. handled in this very block).
+        # Container MUST be a tuple so its exact length/contents can be defined in the type hint.
+        # List types must have metadata with at least a `length` argument (tuples are also welcome to).
+        if field_type.__origin__ is list:
+            element_type = field_type.__args__[0]
+            for element_value in field_value:
+                _pack_binary_field(
+                    None, writer, element_type, element_value, byte_order, varint_size, field_values, stored_encoding
+                )
+            return
+
+        if field_type.__origin__ is tuple:
+            if len(field_value) != len(field_type.__args__):
+                raise BinaryFieldValueError(f"Field `{metadata.name}` `tuple` value has wrong number of arguments.")
+            for element_type, element_value in zip(field_type.__args__, field_value):
+                _pack_binary_field(
+                    None, writer, element_type, element_value, byte_order, varint_size, field_values, stored_encoding
+                )
+            return
+
+        # Shouldn't be reachable due to initial class validation, but shouldn't let corner cases fall through to
+        # code below (and some kind of unhandled nested list type could reach this).
+        raise BinaryFieldValueError(
+            f"Field `{metadata.name}` has invalid generic type: {field_type.__origin__}. "
+            f"Must be `tuple` or (if `length` given) `list`."
+        )
+
+    if "encoding" in overrides:
+        encoding = overrides["encoding"]
+    elif isinstance(metadata.encoding, BinaryCondition):
+        if stored_encoding is None:
+            raise BinaryFieldValueError(
+                f"`stored_encoding` required to pack string field `{metadata.name}` with conditional encoding."
+            )
+        encoding = stored_encoding
+    else:
+        if stored_encoding is not None:
+            enc_msg = "no encoding" if metadata.encoding is None else f"fixed encoding '{metadata.encoding}'"
+            raise BinaryFieldValueError(
+                f"`stored_encoding` cannot be used to pack string field `{metadata.name}` with {enc_msg}."
+            )
+        encoding = metadata.encoding  # could be None
+
+    # Get format or length, or otherwise resolve null-terminated string immediately.
+    if metadata.length is not None:  # NOTE: `list` also uses `length`, but that was handled above already
+        # TODO: `BinaryCondition` cannot be used for `length` unless it is stored.
+        length = metadata.resolve_condition(metadata.length, None, field_values)
+        bytes_value = field_value.encode(encoding) if encoding else field_value
+        bytes_value += b"\0" * (length - len(bytes_value))  # pad out to `length`
+        writer.pack(f"{byte_order.value}{length}s", bytes_value)
+        return
+    elif metadata.fmt is None and field_type in (bytes, str):
+        # Null-terminated.
+        if isinstance(metadata.encoding, BinaryCondition):
+            if stored_encoding is None:
+                raise BinaryFieldValueError(
+                    f"`stored_encoding` required to pack null-terminated string field `{metadata.name}` with "
+                    f"conditional encoding."
+                )
+            encoding = stored_encoding
+        else:
+            if stored_encoding is not None:
+                enc_msg = "no encoding" if metadata.encoding is None else f"fixed encoding '{metadata.encoding}'"
+                raise BinaryFieldValueError(
+                    f"`stored_encoding` cannot be used to pack null-terminated string field `{metadata.name}` with "
+                    f"{enc_msg}."
+                )
+            encoding = metadata.encoding
+        if encoding is None:
+            writer.append(field_value.rstrip(b"\0") + b"\0")
+        else:
+            bytes_per_char = 2 if encoding.replace("-", "").startswith("utf16le") else 1
+            terminator = b"\0" * bytes_per_char
+            writer.append(field_value.rstrip("\0").encode(encoding) + terminator)
+        return
+
+    if field_type in _PRIMITIVE_FIELD_INFO:
+        # Primitive type.
+        fmt, _, min_max = _PRIMITIVE_FIELD_INFO[field_type]
+        fmt = _process_fmt_varint(fmt, varint_size)
+        if min_max is not None and (field_value < min_max[0] or min_max[1] < field_value):
+            raise BinaryFieldValueError(
+                f"Value {field_value} of field `{metadata.name}` is out of range {min_max} for type `{field_type}`."
+            )
+        writer.pack(fmt, field_value)
+        return
+
+    if metadata.fmt is None:
+        # Shouldn't be reachable, but don't want to fall through.
+        raise BinaryFieldValueError(f"Field `{metadata.name}` must have `fmt` or `length`.")
+
+    # Otherwise, get tuple from custom field type.
+    fmt = _process_fmt_varint(metadata.fmt, varint_size)
+    if metadata.pack_factory is not None:
+        values = metadata.pack_factory(field_value)
+    else:
+        try:  # try to convert value to iterable
+            values = tuple(field_value)
+        except TypeError:  # try to use value as-is (e.g. `IntEnum`)
+            values = [field_value]
+    writer.pack(fmt, *values)
 
 
-@dataclasses.dataclass(slots=True)
-class _NullTerminatedStringField:
-    encoding: str | BinaryCondition[str] | None
+def _get_field_fmt(
+    metadata: BinaryFieldMetadata | None,
+    field_name: str,
+    field_type: tp.Type | GenericAlias,
+    varint_size: int | None,
+) -> str:
+    # TODO: simplify with new metadata class
+
+    if isinstance(field_type, GenericAlias):
+        fmt = ""
+        for i, element_type in enumerate(field_type.__args__):
+            fmt += _get_field_fmt(metadata, f"{field_name}[{i}]", element_type, varint_size)
+        return fmt
+
+    if metadata is not None:
+        if metadata.fmt is not None:
+            return metadata.fmt
+        if metadata.length is not None:
+            return f"{metadata.length}s"
+        elif field_type in (bytes, str):
+            raise ValueError(f"Cannot get format of null-terminated binary field `{field_name}`.")
+
+    if field_type in _PRIMITIVE_FIELD_INFO:
+        fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]
+        return _process_fmt_varint(fmt, varint_size)
+
+    raise ValueError(f"Cannot get format of unhandled binary field `{field_name}`.")
 
 
-@dataclasses.dataclass(slots=True)
-class _IntEnumField:
-    enum_data_type: tp.Type[int]
+# Alias that can be used to clearly indicate when a field is being reserved.
+RESERVED = None  # type: tp.Any
 
 
-@dataclasses.dataclass(slots=True)
-class _ComputedField:
-    compute_callback: tp.Callable[[BinaryStruct], tp.Any]
+# TODO: rename to `BinaryField` after deprecated `BinaryField` is removed/renamed.
+def Binary(
+    fmt: str | tp.Type[PRIMITIVE_FIELD_TYPING] | list[tp.Type[PRIMITIVE_FIELD_TYPING]] | None = None,
+    type_factory: tp.Callable[[tuple], FIELD_T] | None = None,
+    pack_factory: tp.Callable[[FIELD_T], tuple] | None = None,
+    asserted: tp.Any = None,
+    offset: int | str | FieldValue[int] | None = None,
+    alignment: int | BinaryCondition[int] = 1,
+    length: int | str | FieldValue[int] | None = None,
+    encoding: str | BinaryCondition[str] | None = None,
+    rstrip_null: bool = False,
+    deferred: bool = False,
+    skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
+    **field_kwargs,
+):
+    asserted = _process_asserted_value(asserted)
+
+    if fmt in _PRIMITIVE_FIELD_INFO:
+        fmt = [fmt]  # fall through to next line
+    if isinstance(fmt, (list, tuple)):
+        try:
+            fmt = "".join(_PRIMITIVE_FIELD_INFO[numeric_type][0] for numeric_type in fmt)
+        except KeyError:
+            raise KeyError(f"Invalid sequence of primitive types given to `binary()`: {fmt}")
+    elif isinstance(fmt, str):
+        fmt = fmt
+    elif fmt is not None:  # can be safely omitted alongside primitive field type hints
+        raise TypeError(f"Invalid `binary(fmt)`: {fmt}")
+
+    metadata = BinaryFieldMetadata(
+        fmt,
+        type_factory,
+        pack_factory,
+        asserted,
+        offset,
+        alignment,
+        length,
+        encoding,
+        rstrip_null,
+        deferred,
+        skip_callback,
+    )
+
+    return {"metadata": {"binary": metadata}, **field_kwargs}
 
 
 def _process_asserted_value(asserted_value) -> None | list:
+    """Put standalone asserted values into a list for consistency."""
     if asserted_value is None:
-        return None
+        return []
     if isinstance(asserted_value, tuple):
         return list(asserted_value)
     elif not isinstance(asserted_value, list):
@@ -1376,179 +2020,185 @@ def _process_asserted_value(asserted_value) -> None | list:
     return asserted_value
 
 
-def asserted(asserted_value: ASSERTED_TYPING) -> dict[str, ASSERTED_TYPING]:
-    """Simple wrapper so user does not have to nest 'asserted' into metadata.
-
-    Other metadata can still be given in `metadata` kwargs (though that would be unusual).
-    """
-    if asserted_value is None:
-        raise ValueError("Asserted value of `asserted()` metadata cannot be None.")
-    return {"asserted": _process_asserted_value(asserted_value)}
-
-
-CUSTOM_T = tp.TypeVar("CUSTOM_T")
-
-
-def custom_type(
-    numeric_types: tp.Sequence[tp.Type, ...],
-    unpacked_to_type_func: tp.Callable[[tuple], CUSTOM_T] = None,
-    type_to_unpacked_func: tp.Callable[[CUSTOM_T], tuple] = None,
-) -> dict[str, tp.Any]:
-    try:
-        fmt = "".join(_BASIC_FIELD_INFO[numeric_type] for numeric_type in numeric_types)
-    except KeyError:
-        raise KeyError(f"Invalid numeric type sequence for `custom_type` field: {numeric_types}")
-    return {"binary_info": _CustomTypeField(fmt, unpacked_to_type_func, type_to_unpacked_func)}
+def BinaryAutoOffset(
+    field_name: str,
+    offset_shift: int = 0,
+    offset: int | FieldValue[int] | None = None,
+    alignment: int | BinaryCondition[int] = 1,
+    skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
+    **field_kwargs,
+) -> MappingProxyType[str, tp.Any]:
+    """Will compute field value from offset of `field_name`, optionally passed through `offset_func` first."""
+    return MappingProxyType({
+        "metadata": {
+            "binary": BinaryFieldMetadata(offset=offset, alignment=alignment, skip_callback=skip_callback),
+            "auto_offset": (field_name, offset_shift),
+        },
+        **field_kwargs,
+    })
 
 
-def fixed_bytes(
-    length: int = None,
-    rstrip_null=True,
-    asserted_value: list[bytes] | bytes = None,
-) -> dict[str, tp.Any]:
-    """Fixed-length `bytes` that will not be decoded.
-
-    If `rstrip_null=True`, nulls will be stripped (and added back) to the end of the `bytes`.
-    """
-    asserted_value = _process_asserted_value(asserted_value)
-    if asserted_value:
-        if len(set(len(v) for v in asserted_value)) != 1:
-            raise ValueError("All asserted values given in `fixed_bytes` field must have the same length.")
-    if length is None:
-        if asserted_value:
-            length = len(asserted_value[0])  # all have the same length as per check above
-        else:
-            raise ValueError("`length` can only be omitted if asserted value(s) are given to `fixed_bytes()`.")
-    return {
-        "binary_info": _FixedStringField(length, None, rstrip_null),
-        "asserted": asserted_value,
-    }
-
-
-def fixed_str(
-    length: int,
-    encoding: str | BinaryCondition[str] = "utf-8",
-    rstrip_null=True,
-    asserted_value: list[str] | str = None,
-) -> dict[str, tp.Any]:
-    """Fixed-length `str``with `encoding`.
-
-    If `rstrip_null=True`, nulls will be stripped (and added back) to the end of the `str`.
-
-    NOTE: `length` is the number of bytes required to decode the string, so may be larger than the expected number of
-    string characters (e.g. for UTF-16). It also cannot be omitted for this reason, unlike in `fixed_bytes()`.
-    """
-    return {
-        "binary_info": _FixedStringField(length, encoding, rstrip_null),
-        "asserted": _process_asserted_value(asserted_value),
-    }
-
-
-def z_bytes(
-    asserted_value: list[bytes] | bytes = None,
-) -> dict[str, tp.Any]:
-    """Null-terminated `bytes`."""
-    return {"binary_info": _NullTerminatedStringField(None), "asserted": _process_asserted_value(asserted_value)}
-
-
-def z_string(
-    encoding: str | BinaryCondition[str] = "utf-8",
-    asserted_value: list[str] | str = None,
-) -> dict[str, tp.Any]:
-    """Null-terminated string with `encoding`."""
-    return {"binary_info": _NullTerminatedStringField(encoding), "asserted": _process_asserted_value(asserted_value)}
-
-
-def int_enum(
-    data_type: tp.Type[int],
-) -> dict[str, tp.Any]:
-    """Will convert `data_type` value to/from `IntEnum` child class in field type annotation.
-
-    NOTE: `varint` and `varuint` not supported, and cannot assert a value (pointless and confusing).
-    """
-    if data_type not in _BASIC_FIELD_INFO and data_type not in {varint, varuint}:
-        raise TypeError(f"Invalid data type for `enum_field`: {data_type}")
-    return {"binary_info": _IntEnumField(data_type), "asserted": None}
-
-
-def computed(
-    compute_callback: tp.Callable[[BinaryStruct], tp.Any],
-) -> dict[str, tp.Any]:
-    """Will compute field value from zero-argument callback (usually some bound instance method that uses other fields).
+def BinaryAutoCompute(
+    compute_func: tp.Callable[[NewBinaryStruct], tp.Any] | str,
+    asserted: tp.Any = None,
+    offset: int | FieldValue[int] | None = None,
+    alignment: int | BinaryCondition[int] = 1,
+    skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
+    **field_kwargs,
+) -> MappingProxyType[str, tp.Any]:
+    """Will compute field value from a function that takes the `BinaryStruct` instance (usually some bound instance
+    method that uses other fields).
 
     When unpacking, callback will be run after other fields have been unpacked, and their results asserted against the
     actual unpacked values for this field.
 
-    NOTE: Callbacks are computed in REVERSE field order (because early offsets often depend on the lengths of other
-    later fields, etc.).
+    NOTE: On pack, callbacks are computed in REVERSE field order (because early offsets often depend on the lengths of
+    other later fields, etc.).
     """
-    return {"binary_info": _ComputedField(compute_callback)}
+    asserted = _process_asserted_value(asserted)
+    return MappingProxyType({
+        "metadata": {
+            "binary": BinaryFieldMetadata(
+                asserted=asserted, offset=offset, alignment=alignment, skip_callback=skip_callback
+            ),
+            "auto_compute": compute_func,
+        },
+        **field_kwargs,
+    })
 
 
-def pad(length: int, char=b"\0") -> dict[str, tp.Any]:
+def BinaryPad(
+    length: int,
+    char=b"\0",
+    offset: int | FieldValue[int] | None = None,
+    alignment: int | BinaryCondition[int] = 1,
+    skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
+) -> MappingProxyType[str, tp.Any]:
     """Will assert `length` bytes of character `char`.
 
-    Does not appear in `__init__` constructor.
-
-    TODO: Assign `default` to field automatically, somehow? And `init=False`?
+    Also automatically sets `init=False`, and `repr=False`. `default` does not need to be set as the asserted value will
+    be packed every time anyway.
     """
     if not isinstance(char, bytes):
         raise TypeError("Padding `char` must be `bytes`.")
-    asserted_value = char * length
-    return {"binary_info": _FixedStringField(length, None, False), "asserted": [asserted_value]}
+    pad = char * length
+    return MappingProxyType({
+        "metadata": {
+            "binary": BinaryFieldMetadata(
+                offset=offset, alignment=alignment, length=length, asserted=[pad], skip_callback=skip_callback
+            ),
+        },
+        # "init": False,  # TODO: will frazzle type checker when instance is directly created
+        "repr": False,
+    })
 
 
-# TODO lp_strings (though seemingly not used in any From formats).
-# TODO: fields that read bytes/strings at an `offset`. How to repack, though...?
+# TODO: lp_strings (though seemingly not used in any From formats).
 
 
-class _FieldUnpacker(tp.NamedTuple):
-    """Used only during processing."""
-    name: str
-    min_max: tuple[int, int] | None = None
-    callback: partial | tp.Callable[[PRIMITIVE_FIELD_TYPING], tp.Any] | None = None
-    asserted: None | list[bool] | list[int] | list[float] | list[bytes] | list[str] = None
+OBJ_T = tp.TypeVar("OBJ_T")
 
-    def get_value(self, raw_value : bool | int | float | bytes):
-        value = self.callback(raw_value) if self.callback else raw_value
-        if self.asserted is not None and value not in self.asserted:
-            raise AssertionError(f"Field {self.name} value {value} is not an asserted value: {self.asserted}")
-        if self.min_max is not None and (value < self.min_max[0] or value > self.min_max[1]):
-            raise ValueError(f"Field {self.name} found value {value} is out of type range: {self.min_max}")
-        return value
+
+def slots_equality(obj1: OBJ_T, obj2: OBJ_T) -> bool:
+    """NOTE: Not needed for dataclasses with `eq=True` (default)."""
+    if obj1.__slots__ != obj2.__slots__:
+        raise TypeError("Cannot compare equality of slots on objects with different slot names.")
+    obj1_slots = [getattr(obj1, name) for name in obj1.__slots__]
+    obj2_slots = [getattr(obj2, name) for name in obj2.__slots__]
+    return obj1_slots == obj2_slots
 
 
 @dataclasses.dataclass(slots=True)
-class BinaryStruct(abc.ABC):
+class NewBinaryStruct:
     """Dataclass that supports automatic reading/writing from packed binary data."""
 
-    # TODO: Support 'array of other struct' fields that defer to another struct and get a list of them.
-    # TODO: Support fields that contain offsets to other fields. (The offset fields are written as the pointed ones are
-    #  encountered.)
+    _VALIDATED: tp.ClassVar[bool] = False
+    _FIELDS: tp.ClassVar[tuple[dataclasses.Field] | None] = None
+    _FIELD_TYPES: tp.ClassVar[tuple[tp.Any] | None] = ()
 
     # Set by `from_bytes()` class method, or can be manually set.
     # Will be auto-detected from values with `get_byte_order()` (defaulting to `LittleEndian`) if not defined, e.g.
     # by a manually-constructed instance.
     byte_order: None | ByteOrder = dataclasses.field(init=False, default=None)
-    varint_size: None | tp.Literal[4, 8] = dataclasses.field(init=False, default=None)
+    varint_size: None | int = dataclasses.field(init=False, default=None)
     # Remembers variable encodings for string fields with `encoding=BinaryCondition()`. Not used for fixed encodings.
-    field_encodings: dict[str, str] = dataclasses.field(init=False, repr=False, default_factory=lambda: {})
+    stored_encodings: dict[str, str] = dataclasses.field(init=False, repr=False, default_factory=dict)
+
+    # Maps deferred field names to the names of unpacked `auto_offset` fields, and their optional `offset_shift` values,
+    # waiting to be consumed (i.e. used and set to None). If multiple `auto_offset` fields are given in the dictionary
+    # value, all must have the same offset.
+    deferred_unpacking_offset_fields: dict[str, list[tuple[str, int]]] = dataclasses.field(
+        init=False, repr=False, default_factory=dict
+    )
+
+    # Maps deferred field names to the names of `auto_offset` fields, and their optional `offset_shift` values,
+    # waiting for them to be packed manually so the offset fields can be set.
+    deferred_packing_offset_fields: dict[str, list[tuple[str, int]]] = dataclasses.field(
+        init=False, repr=False, default_factory=dict
+    )
+
+    @classmethod
+    def _validate_struct(cls):
+        cls_name = cls.__name__
+        deferred_found = False
+        cls._FIELDS = cls.get_binary_fields()
+        all_type_hints = tp.get_type_hints(cls)
+        cls._FIELD_TYPES = tuple(all_type_hints[field.name] for field in cls._FIELDS)
+
+        # Replace `__repr__` so subclasses don't have to specify `repr=False` every time.
+        cls.__repr__ = NewBinaryStruct.__repr__
+
+        if not cls._FIELDS:
+            raise TypeError(f"`BinaryStruct` subclass `{cls_name}` has no fields.")
+
+        for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
+
+            metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+
+            # TODO: Also some `metadata` fields that aren't valid with these, I'm sure.
+            if "auto_offset" in field.metadata:
+                if "auto_compute" in field.metadata:
+                    raise BinaryFieldTypeError(
+                        field, cls_name, "Field cannot use both 'auto_compute' and 'auto_offset'."
+                    )
+                if field_type not in _OFFSET_FIELD_TYPES:
+                    raise BinaryFieldTypeError(
+                        field, cls_name, "Cannot use `auto_offset` with this non-integral field type."
+                    )
+
+            if metadata is not None:
+                if metadata.deferred:
+                    deferred_found = True
+                elif deferred_found:
+                    raise BinaryFieldTypeError(
+                        field, cls_name, "Non-deferred fields cannot appear after any deferred fields."
+                    )
+                metadata.validate(field, field_type, cls_name)
+            else:
+                _validate_binary_field_without_metadata(field, field_type, cls_name)
+
+            if field.name.startswith("_"):
+                # Underscore-prefix fields automatically have `repr=False`.
+                # field.init = False  # TODO: will frazzle type checker when directly creating instances
+                # field.repr = False
+                pass
+                # TODO: If field name starts with "__", could it represent something else?
+
+        cls._VALIDATED = True
 
     @classmethod
     def from_bytes(
         cls,
-        data: bytes | bytearray | io.BufferedIOBase | BinaryReader,
-        byte_order: ByteOrder | BinaryCondition[ByteOrder] | str = ByteOrder.LittleEndian,
-        varint_size: tp.Literal[4, 8] | BinaryCondition[int] = 8,
-    ):
+        data: bytes | bytearray | BinaryReader | tp.BinaryIO,
+        byte_order: ByteOrder | BinaryCondition[ByteOrder] | str = None,
+        varint_size: int | BinaryCondition[int] = None,
+    ) -> Self:
         """Create an instance of this class from binary `data`, by parsing its fields.
 
         Note that field defaults do not matter here, as ALL fields must be unpacked.
         """
-        fields = [f for f in dataclasses.fields(cls) if f.name not in {"byte_order", "varint_size", "field_encodings"}]
-
-        if not fields:
-            raise TypeError(f"`BinaryStruct` subclass `{cls.__name__}` has no fields.")
+        if not cls._VALIDATED:
+            cls._validate_struct()
 
         if isinstance(data, (bytes, bytearray)):
             stream = io.BytesIO(data)
@@ -1557,289 +2207,495 @@ class BinaryStruct(abc.ABC):
         else:
             raise TypeError("`data` must be `bytes`, `bytearray`, or opened `io.BufferedIOBase`.")
 
-        if isinstance(byte_order, BinaryCondition):
+        if byte_order is None:
+            if isinstance(data, BinaryReader):
+                byte_order = data.default_byte_order
+            else:  # default
+                byte_order = ByteOrder.LittleEndian
+        elif isinstance(byte_order, BinaryCondition):
             byte_order = byte_order(stream)
         elif isinstance(byte_order, str):
             byte_order = ByteOrder(byte_order)
         elif not isinstance(byte_order, ByteOrder):
             raise ValueError(f"Invalid `byte_order`: {byte_order}")
 
-        if isinstance(varint_size, BinaryCondition):
+        if varint_size is None:
+            if isinstance(data, BinaryReader):
+                varint_size = data.varint_size
+            else:  # default
+                varint_size = 8
+        elif isinstance(varint_size, BinaryCondition):
             varint_size = varint_size(stream)
+
         if varint_size not in {4, 8}:
             raise ValueError(f"Invalid `varint_size`: {varint_size}")
 
-        fmt_to_unpack = f"{byte_order.value}"
-        unpacked_values = []
-        unpackers = []
-        compute_callbacks = []  # type: list[tuple[str, tp.Callable[[BinaryStruct], tp.Any]]]  # length NOT synced
+        cls_name = cls.__name__
+        field_values = {}  # type: dict[str, tp.Any]  # maps field names to final values
+        auto_compute_funcs = []  # type: list[tuple[str, tp.Callable[[NewBinaryStruct], tp.Any]]]  # only some fields
+        auto_unpacking_offset_checks = {}  # type: dict[str, list[tuple[str, int, int]]]
+        deferred_unpacking_offset_fields = {}  # type: dict[str, list[tuple[str, int]]]
 
-        def _flush_unpack_buffer():
-            """Unpack and clear current `full_fmt` into `raw`. Required before variable fields (e.g. z-strings) read."""
-            nonlocal fmt_to_unpack, unpacked_values
-            if not fmt_to_unpack:
-                return
-            new_values = struct.unpack(fmt_to_unpack, stream.read(struct.calcsize(fmt_to_unpack)))
-            unpacked_values.extend(new_values)
-            fmt_to_unpack = f"{byte_order.value}"
+        for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
 
-        for field in fields:
-            asserted_value = field.metadata.get("asserted", None)
+            metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
 
-            if "binary_info" in field.metadata:
-                binary_info = field.metadata["binary_info"]
-                match binary_info:
-                    case _CustomTypeField(fmt=fmt, unpacked_to_type_func=unpacked_to_type_func):
-                        _flush_unpack_buffer()
-                        unpacked_values.append(struct.unpack(fmt, stream))  # tuple
-                        if unpacked_to_type_func is None:
-                            callback = partial(cls._default_unpacked_to_type, _type=field.type)
-                        else:
-                            callback = unpacked_to_type_func
-                        unpackers.append(_FieldUnpacker(field.name, None, callback, asserted_value))
-                    case _FixedStringField(length=length, encoding=encoding, rstrip_null=rstrip_null):
-                        # Fixed-length bytes or str.
-                        fmt_to_unpack += f"{length}s"
-                        if isinstance(encoding, BinaryCondition):
-                            encoding = encoding(stream)
-                        if encoding is None and not rstrip_null:
-                            callback = None  # keep raw bytes
-                        else:
-                            callback = partial(cls._process_bytes, encoding=encoding, rstrip_null=rstrip_null)
-                        unpackers.append(_FieldUnpacker(field.name, None, callback, asserted_value))
-                    case _NullTerminatedStringField(encoding=encoding):
-                        # Null-terminated bytes or str.
-                        _flush_unpack_buffer()
-                        unpacked_values.append(cls._read_z_bytes(stream, encoding=encoding))
-                        if encoding is None:
-                            callback = None
-                        else:
-                            callback = partial(cls._process_bytes, encoding=encoding, rstrip_null=False)
-                        unpackers.append(_FieldUnpacker(field.name, None, callback, asserted_value))
-                    case _IntEnumField(enum_data_type=enum_data_type):
-                        if enum_data_type is varint:
-                            enum_data_type = int if varint_size == 4 else long
-                        elif enum_data_type is varuint:
-                            enum_data_type = uint if varint_size == 4 else ulong
-                        fmt, _, min_max = _BASIC_FIELD_INFO[enum_data_type]
-                        fmt_to_unpack += fmt
-                        callback = partial(cls._to_enum, enum_data_type=enum_data_type)
-                        unpackers.append(_FieldUnpacker(field.name, min_max, callback, asserted_value))
-                    case _ComputedField(compute_callback=compute_callback):
-                        fmt, _, min_max = cls.get_field_info(field, varint_size)
-                        fmt_to_unpack += fmt
-                        unpackers.append(_FieldUnpacker(field.name, min_max, None, asserted_value))
-                        compute_callbacks.append((field.name, compute_callback))
-                    case _:
-                        raise TypeError(f"Invalid binary field '{field.name}' of type {field.type} in {cls.__name__}.")
-            else:
-                # Simple numeric field type with optional 'asserted_value'.
-                fmt, _, min_max = cls.get_field_info(field, varint_size)
-                fmt_to_unpack += fmt
-                unpackers.append(_FieldUnpacker(field.name, min_max, None, asserted_value))
+            if metadata and metadata.skip_callback is not None:
+                if metadata.skip_callback(varint_size, field_values):
+                    field_values[field.name] = None
+                    continue
 
-        _flush_unpack_buffer()  # unpack final `raw` values
+            if metadata and metadata.deferred:
+                field_values[field.name] = None
+                continue
 
-        if len(unpacked_values) != len(fields):
-            raise ValueError(
-                f"Number of raw values read ({len(unpacked_values)}) != number of fields ({len(unpackers)}) in "
-                f"{cls.__name__} object."
-            )
+            if field.name in auto_unpacking_offset_checks:
+                # Validate target field's offset (here) against offset read from earlier field.
+                offset_field_name, offset_shift = auto_unpacking_offset_checks.pop(field.name)
+
+                expected_offset_field_value = stream.tell() + offset_shift
+                if expected_offset_field_value != field_values[offset_field_name]:
+                    raise ValueError(
+                        f"Field `{cls_name}.{offset_field_name}` was expected to have offset of field "
+                        f"`{cls_name}.{field.name}` ({expected_offset_field_value}) but instead has value "
+                        f"{field_values[offset_field_name]}."
+                    )
+
+            try:
+                # print(f"Unpacking field {cls_name}.{field.name} at {stream.tell()}")
+                field_value = _unpack_binary_field(
+                    metadata,
+                    stream,
+                    field_type,
+                    byte_order,
+                    varint_size,
+                    field_values,  # for `FieldValue` arguments to inspect
+                )
+            except Exception as ex:
+                _LOGGER.error(f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}")
+                raise
+
+            field_values[field.name] = field_value
+
+            if "auto_compute" in field.metadata:
+                if "auto_offset" in field.metadata:
+                    raise ValueError(
+                        f"Field `{cls_name}.{field.name}` has both `auto_compute` and `auto_offset` metadata."
+                    )
+                auto_compute_funcs.append((field.name, field.metadata["auto_compute"]))
+            elif "auto_offset" in field.metadata:
+
+                target_field_name, offset_func = field.metadata["auto_offset"]
+                target_field, _ = cls.get_binary_field_and_type(target_field_name)
+                target_field_metadata = target_field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+                if target_field_metadata and target_field_metadata.deferred:
+                    # Offset should be used later in `unpack_deferred_field()`.
+                    offset_dict = deferred_unpacking_offset_fields
+                else:
+                    # Will assert that offset is correct for specified field name. Should always be true if the targeted
+                    # field also has `offset=BinaryCondition("offset_field")`.
+                    offset_dict = auto_unpacking_offset_checks
+                offset_dict.setdefault(target_field_name, []).append((field.name, offset_func))
 
         # Process callbacks and min/max values.
         init_values = {}
         non_init_values = {}
-        for field, field_info, raw_value in zip(fields, unpackers, unpacked_values, strict=True):
-            value = field_info.get_value(raw_value)
+        for field, field_value in zip(cls._FIELDS, field_values.values()):
             if not field.init:  # assigned directly after initialization
-                non_init_values[field.name] = value
+                non_init_values[field.name] = field_value
             else:
-                init_values[field_info.name] = value
+                init_values[field.name] = field_value
 
         # noinspection PyArgumentList
         instance = cls(**init_values)
         instance.byte_order = byte_order
         instance.varint_size = varint_size
+        instance.deferred_unpacking_offset_fields = deferred_unpacking_offset_fields
         for field_name, value in non_init_values.items():
             setattr(instance, field_name, value)
 
         # Assert computed callbacks.
-        for field_name, compute_callback in compute_callbacks:
-            computed_value = compute_callback(instance)
-            value = getattr(instance, field_name)
-            if computed_value != value:
-                raise AssertionError(
-                    f"Value unpacked in computed field `{cls.__name__}.{field_name}` ({value}) does not match "
-                    f"computed value {computed_value}."
-                )
+        for field_name, auto_compute_func in auto_compute_funcs:
+            # TODO: Not doing this, because it's annoying for fields computed from non-binary fields (which is common)
+            #  as those fields have not been built from the binary data yet.
+            # computed_value = auto_compute_func(instance)
+            # value = getattr(instance, field_name)
+            # if computed_value != value:
+            #     raise ValueError(
+            #         f"Value unpacked in auto-computed field `{cls.__name__}.{field_name}` ({value}) does not match "
+            #         f"computed value: {computed_value}"
+            #     )
+            # Now that computed value has been confirmed, we set the actual field value to `None`, as it will be
+            # computed properly on pack.
+            setattr(instance, field_name, None)
 
         return instance
+
+    @classmethod
+    def from_object(
+        cls,
+        obj: OBJ_T,
+        byte_order: ByteOrder = None,
+        varint_size: int = None,
+        **field_values,
+    ):
+        """Create an instance by reading getting field values directly from the attributes of `obj`, with additional
+        fields NOT on the object given in `**fields`. Will raise an error if the `init` signature does not match. Fields
+        with `init=False` are ignored (all such fields should be asserted or auto-computed).
+
+        Absent fields will be initialized with `None`, which will lead them to being reserved in `to_writer()`.
+
+        Also has the advantage of bypassing type checker for the `int` size subtypes like `byte`, `short`, etc.
+        """
+        if not cls._VALIDATED:
+            cls._validate_struct()
+
+        for field in cls._FIELDS:
+            if not field.init:
+                if field.name in field_values:
+                    raise ValueError(f"Cannot specify non-init binary field `{cls.__name__}.{field.name}`.")
+                continue
+            if field.name not in field_values:
+                value = getattr(obj, field.name, None)
+                field_values[field.name] = value
+
+        # noinspection PyArgumentList
+        binary_struct = cls(**field_values)
+        binary_struct.byte_order = byte_order
+        binary_struct.varint_size = varint_size
+        return binary_struct
+
+    @classmethod
+    def object_to_writer(
+        cls,
+        obj: OBJ_T,
+        writer: BinaryWriter | None = None,
+        byte_order: ByteOrder = None,
+        varint_size: int = None,
+        **field_values,
+    ) -> BinaryWriter:
+        """Convenience shortcut for creating a struct instance from `obj` and `field_values`, then immediately calling
+        `to_writer(writer, reserve_obj=obj)` with that struct.
+        """
+        binary_struct = cls.from_object(obj, byte_order=byte_order, varint_size=varint_size, **field_values)
+        return binary_struct.to_writer(writer, reserve_obj=obj)
+
+    def to_object(self, obj_type: tp.Type[OBJ_T], **init_kwargs) -> OBJ_T:
+        """Initialize `obj_type` instance by automatically adding field names to `init_kwargs`.
+
+        If `obj_type` is a dataclass, any of this struct's fields that match the name of one of `obj_type`'s fields
+        will be used. Otherwise, only fields that do not start with an underscore will be used.
+        """
+        obj_fields = {f.name for f in dataclasses.fields(obj_type)} if dataclasses.is_dataclass(obj_type) else None
+        for field in self._FIELDS:
+            if obj_fields is not None:
+                if field.name not in obj_fields or field.name in init_kwargs:
+                    continue  # skip
+            elif field.name.startswith("_") or field.name in init_kwargs:
+                continue
+            value = getattr(self, field.name, field.name)
+            if value is None:
+                raise ValueError(f"Field `{self.__class__.__name__}.{field.name}` is None. Cannot set to object.")
+            init_kwargs[field.name] = value
+
+        return obj_type(**init_kwargs)
+
+    @classmethod
+    def reader_to_object(cls, reader: BinaryReader, obj_type: tp.Type[OBJ_T], **init_kwargs) -> OBJ_T:
+        """Convenience method for creating a struct instance with `from_bytes(reader)`, then immediately calling
+        `to_object(obj_type, **init_kwargs)` with that struct.
+        """
+        struct_instance = cls.from_bytes(reader)
+        obj = struct_instance.to_object(obj_type, **init_kwargs)
+        return obj
 
     def __bytes__(self) -> bytes:
         writer = self.to_writer()
         if writer.reserved:
             raise ValueError(
-                f"`{self.__class__.__name__}` BinaryStruct cannot fill all fields itself.\n"
+                f"`{self.__class__.__name__}` BinaryStruct cannot fill all fields on its own. Use `to_writer()`.\n"
                 f"    Remaining: {writer.reserved}"
             )
-        return writer.finish()
+        return bytes(writer)
 
-    def to_writer(self) -> BinaryWriter:
-        """Use fields to pack this instance into binary `bytes`, ready to write to disk."""
-        fields = [f for f in dataclasses.fields(self) if f.name not in {"byte_order", "varint_size", "field_encodings"}]
-        if not fields:
-            raise TypeError(f"`BinaryStruct` subclass `{self.__class__.__name__}` has no fields.")
+    def to_writer(self, writer: BinaryWriter = None, reserve_obj: OBJ_T = None) -> BinaryWriter:
+        """Use fields to pack this instance into a `BinaryWriter`, which may be given or started automatically.
 
-        cls_name = self.__class__.__name__
+        Any non-auto-computed fields whose values are `None` will be left as reserved keys in the writer of format:
+            '{reserve_prefix}.{field_name}'
+        and must be filled with `writer.fill()` by the caller before the writer can be converted to bytes. If
+        `reserve_prefix = None` (default), it will default to the name of this class. The main use of setting it
+        manually is for nested structs and lists of structs, which will keep chaining their names together and include
+        list/tuple indices where relevant (handled automatically.
+        """
+        if reserve_obj is None:
+            reserve_obj = self
 
         if self.byte_order is None:
-            self.byte_order = self.get_default_byte_order()
+            byte_order = self.get_default_byte_order() if writer is None else writer.default_byte_order
+        else:
+            byte_order = self.byte_order
 
         # `self.varint_size` may be left as None (e.g. for formats that do not care about it) but an error will be
         # raised if any `varint` or `varuint` fields are encountered.
 
-        writer = BinaryWriter(self.byte_order)  # NOTE: `BinaryWriter.varint_size` not used here
+        if writer is not None:
+            if writer.default_byte_order != byte_order:
+                _LOGGER.warning(
+                    f"Existing writer passed to `{self.__class__.__name__}.to_writer()` has default byte order "
+                    f"{writer.default_byte_order}, but this class wants to use {byte_order}. Using this class's byte "
+                    f"order.")
+                writer.default_byte_order = byte_order
+        else:
+            writer = BinaryWriter(byte_order)  # NOTE: `BinaryWriter.varint_size` not used here
 
-        fmt_to_pack = f"{self.byte_order.value}"
-        values_to_pack = []
-        compute_callbacks = {}  # type: dict[str, tp.Callable[[BinaryStruct], tp.Any]]
+        auto_packing_offset_fields = {}  # type: dict[str, list[tuple[str, int]]]
 
-        def _flush_pack_buffer():
-            """Unpack and clear current `full_fmt` into `raw`. Required before variable fields (e.g. z-strings) read."""
-            nonlocal fmt_to_pack, values_to_pack
-            if not fmt_to_pack:
-                return
-            writer.append(struct.pack(fmt_to_pack, *values_to_pack))
-            fmt_to_pack = f"{self.byte_order.value}"
-            values_to_pack = []
+        cls_name = self.__class__.__name__
 
-        for field in fields:
-            value = getattr(self, field.name, None)
-            asserted_values = field.metadata.get("asserted", None)
+        # Get all field values.
+        field_values = {field.name: getattr(self, field.name, None) for field in self._FIELDS}
+        # Auto-compute applicable fields in reverse order.
+        for i in reversed(range(len(field_values))):
+            field = self._FIELDS[i]
+            auto_compute_func = field.metadata.get("auto_compute", None)
+            if auto_compute_func is not None:
+                if field_values[i] is not None:
+                    raise ValueError(f"You cannot set a value to auto-computed field `{cls_name}.{field.name}`.")
+                field_values[i] = auto_compute_func(self)
 
-            if value is None and asserted_values is None:
-                # Reserved for external filling.
-                fmt, _, _ = self.get_field_info(field, self.varint_size)
-                _flush_pack_buffer()  # writer must catch up to reserved offset
-                writer.reserve(field.name, fmt)
+        for field, field_type, field_value in zip(self._FIELDS, self._FIELD_TYPES, field_values.values()):
+
+            metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata
+
+            if metadata.skip_callback is not None:
+                if metadata.skip_callback(self.varint_size, field_values):
+                    # Write nothing for this field.
+                    continue
+
+            if "auto_offset" in field.metadata:
+                if field_value is not None:
+                    raise BinaryFieldValueError(
+                        f"Cannot set value of field `{cls_name}.{field.name}` with `auto_offset`."
+                    )
+                fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]  # no need to check `min_max`
+                fmt = _process_fmt_varint(fmt, self.varint_size)
+                target_field_name, offset_shift = field.metadata["auto_offset"]
+                target_field, _ = self.get_binary_field_and_type(target_field_name)
+                target_metadata = target_field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+                if target_metadata and target_metadata.deferred:
+                    offset_dict = self.deferred_packing_offset_fields
+                else:
+                    offset_dict = auto_packing_offset_fields
+                offset_dict.setdefault(target_field_name, []).append((field.name, offset_shift))
+                writer.reserve(field.name, byte_order.value + fmt, obj=reserve_obj)
                 continue
 
-            if value is not None and asserted_values is not None:
-                # Check that field value is a valid asserted value.
-                if value not in asserted_values:
-                    _LOGGER.warning(
-                        f"Field `{field.name}` in `{cls_name}` does not have an asserted value: {asserted_values}."
-                    )
-            elif value is None and asserted_values is not None:
-                if len(asserted_values) == 1:
-                    # Use lone asserted value.
-                    value = asserted_values[0]
+            if field.name in auto_packing_offset_fields:
+                # Fill this offset back to any offset fields waiting for it.
+                offset = writer.position
+                for offset_field_name, offset_shift in auto_packing_offset_fields.pop(field.name):
+                    writer.fill(offset_field_name, offset + offset_shift, obj=reserve_obj)
+
+            # Needed to inspect `asserted` here to get a default field value for packing function call.
+            single_asserted = metadata is not None and metadata.asserted and len(metadata.asserted) == 1
+
+            if metadata and metadata.deferred:
+                # We are done packing fields (all remaining fields must be deferred).
+                # Deferred fields will be packed later, and any reserved offsets filled.
+                break
+
+            if field_value is None and not single_asserted:
+                # Reserved for custom external filling, as it requires data beyond this struct's scope (even just to
+                # choose one of multiple provided asserted values). Must be a field with fixed size (already validated).
+
+                if isinstance(field_type, GenericAlias):
+                    # List or tuple.
+                    try:
+                        fmt = _get_field_fmt(metadata, field.name, field_type, self.varint_size)
+                    except ValueError as ex:
+                        raise BinaryFieldValueError(
+                            f"Could not detect format of field `{cls_name}.{field.name}` to reserve it. "
+                            f"Error: {ex}"
+                        )
+                elif field_type is Vector2:
+                    fmt = "2f"
+                elif field_type is Vector3:
+                    fmt = "3f"
+                elif field_type is Vector4:
+                    fmt = "4f"
+                elif field_type in _PRIMITIVE_FIELD_INFO:
+                    fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]
+                    fmt = _process_fmt_varint(fmt, self.varint_size)
+                elif metadata is not None:
+                    if metadata.length is not None:
+                        length = metadata.resolve_condition(metadata.length, None, field_values)
+                        fmt = f"{length}s"
+                    elif metadata.fmt is not None:
+                        fmt = metadata.fmt
+                    else:
+                        raise BinaryFieldValueError(
+                            f"Cannot reserve binary field `{cls_name}.{field.name}` of type `{field_type.__name__}`."
+                        )
                 else:
-                    # Cannot guess which asserted value to use.
-                    raise ValueError(
-                        f"Field `{cls_name}.{field.name}` has multiple possible asserted values: {asserted_values}. "
-                        f"One of them must be set."
+                    raise BinaryFieldValueError(
+                        f"Cannot reserve binary field `{cls_name}.{field.name}` of type `{field_type.__name__}`."
                     )
 
-            if "binary_info" in field.metadata:
-                binary_info = field.metadata["binary_info"]
-                match binary_info:
-                    case _CustomTypeField(fmt=fmt, type_to_unpacked_func=type_to_unpacked_func):
-                        _flush_pack_buffer()
-                        if type_to_unpacked_func is None:
-                            type_to_unpacked_func = tuple
-                        value_to_pack = struct.pack(fmt, *type_to_unpacked_func(value))
-                        writer.append(value_to_pack)
-                    case _FixedStringField(length=length, encoding=encoding, rstrip_null=_):
-                        # Fixed-length bytes or str.
-                        if isinstance(encoding, BinaryCondition):
-                            encoding = self._get_stored_encoding(field.name)
-                        if encoding is None:
-                            value: bytes
-                            if len(value) > length:
-                                raise ValueError(
-                                    f"Value '{value}' is too long for field {field.name} with binary length {length}."
-                                )
-                            value_to_pack = value + b"\0" * (length - len(value))
-                            fmt_to_pack += f"{length}s"
-                            values_to_pack.append(value_to_pack)
-                        else:
-                            value: str
-                            value_to_pack = value.encode(encoding)
-                            if len(value_to_pack) > length:
-                                raise ValueError(
-                                    f"Value '{value}' is too long for field {field.name} with encoding '{encoding}' "
-                                    f"and binary length {length}."
-                                )
-                            value_to_pack += b"\0" * (length - len(value_to_pack))  # pad to `length`
-                            fmt_to_pack += f"{length}s"
-                            values_to_pack.append(value_to_pack)
-                    case _NullTerminatedStringField(encoding=encoding):
-                        # Null-terminated bytes or str.
-                        _flush_pack_buffer()
-                        if isinstance(encoding, BinaryCondition):
-                            encoding = self._get_stored_encoding(field.name)
-                        if encoding is None:
-                            value: bytes
-                            value_to_pack = value.rstrip(b"\0") + b"\0"
-                            writer.append(value_to_pack)
-                        else:
-                            value: str
-                            bytes_per_char = 2 if encoding.replace("-", "").startswith("utf16le") else 1
-                            terminator = b"\0" * bytes_per_char
-                            value_to_pack = value.rstrip("\0").encode(encoding) + terminator
-                            writer.append(value_to_pack)
-                    case _IntEnumField(enum_data_type=enum_data_type):
-                        fmt, _, min_max = _BASIC_FIELD_INFO[enum_data_type]
-                        value_to_pack = int(value)
-                        if min_max is not None and (value_to_pack < min_max[0] or value_to_pack > min_max[1]):
-                            raise ValueError(
-                                f"Value {value} ({value_to_pack}) of field {field.name} with `IntEnum` type "
-                                f"`{field.type}` and data type {enum_data_type.__name__} on {cls_name} is out of "
-                                f"range: {min_max}"
-                            )
-                        fmt_to_pack += fmt
-                        values_to_pack.append(value)
-                    case _ComputedField(compute_callback=compute_callback):
-                        fmt, size, min_max = _BASIC_FIELD_INFO[field.type]
-                        writer.reserve(field.name, fmt)
-                        # TODO: Not checking min/max for computed values.
-                        compute_callbacks[field.name] = compute_callback
-                    case _:
-                        raise TypeError(f"Invalid binary field '{field.name}' of type {field.type} in {cls_name}.")
+                writer.reserve(field.name, byte_order.value + fmt, obj=reserve_obj)
+                continue
 
-            else:
-                # Simple numeric field type.
-                fmt, _, min_max = self.get_field_info(field, self.varint_size)
+            if metadata and metadata.asserted:
+                if field_value is not None:
+                    # Check that field value is a valid asserted value.
+                    if field_value not in metadata.asserted:
+                        raise BinaryFieldValueError(
+                            f"Field `{cls_name}.{field.name}` value {repr(field_value)} is not an asserted value: "
+                            f"{metadata.asserted}"
+                        )
+                elif field_value is None:
+                    if single_asserted:
+                        # Use lone asserted value.
+                        field_value = metadata.asserted[0]
+                    else:
+                        # Cannot guess which asserted value to use.
+                        raise ValueError(
+                            f"Field `{cls_name}.{field.name}` has no value but multiple possible asserted values: "
+                            f"{metadata.asserted}. Cannot guess which one to pack; one of them must be set."
+                        )
 
-                value: int | float
-                if min_max is not None and (value < min_max[0] or value > min_max[1]):
-                    raise ValueError(
-                        f"Value {value} of field {field.name} with type `{field.type}` on {cls_name} is out of range: "
-                        f"{min_max})"
+            _pack_binary_field(
+                metadata,
+                writer,
+                field_type,
+                field_value,
+                byte_order,
+                self.varint_size,
+                field_values,
+                self.stored_encodings.get(field.name, None),
+            )
+
+        if auto_packing_offset_fields:
+            raise ValueError(f"Reserved auto-offset fields were not filled: {auto_packing_offset_fields}")
+
+        return writer  # may have remaining unfilled fields (any non-auto-computed field with value `None`)
+
+    def fill(self, writer: BinaryWriter, field_name: str, *values: tp.Any):
+        """Fill reserved `field_name` in `writer` as reserved with the ID of this instance."""
+        writer.fill(field_name, *values, obj=self)
+
+    def assert_field_values(self, **field_values):
+        for field_name, field_value in field_values.items():
+            try:
+                value = getattr(self, field_name)
+            except AttributeError:
+                raise AssertionError(f"Field '{field_name}' does not exist on `{self.__class__.__name__}`.")
+            if value != field_value:
+                raise AssertionError(f"Field value assertion error: {repr(value)} != asserted {repr(field_value)}")
+
+    def unpack_deferred_field(
+        self,
+        stream: tp.BinaryIO | BinaryReader,
+        deferred_field_name: str,
+        **overrides,
+    ):
+        """Use current `stream offset, or a deferred unpacking offset if it exists, to unpack and set the value of
+        field `deferred_field_name` excluded from initial unpack. The deferred field's value must currently be `None`.
+
+        Any consumed offset field will be set to `None` afterward in preparation for its value to be automatically
+        reserved and/or determined later from the same target field when packed.
+        """
+        deferred_field, deferred_field_type = self.get_binary_field_and_type(deferred_field_name)
+        metadata = deferred_field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+        if metadata is None or not deferred_field.metadata["binary"].deferred:
+            raise ValueError(f"Cannot manually pack to non-deferred field `{deferred_field_name}`.")
+        existing_value = getattr(self, deferred_field_name, None)
+        if existing_value is not None:
+            raise BinaryFieldValueError(
+                f"Deferred field `{self.__class__.__name__}.{deferred_field_name}` already has value {existing_value}."
+            )
+
+        if deferred_field_name in self.deferred_unpacking_offset_fields:
+            offset = None  # type: int | None
+            for offset_field_name, offset_shift in self.deferred_unpacking_offset_fields.pop(deferred_field_name):
+                offset_field_value = getattr(self, offset_field_name)
+                if offset is None:
+                    offset = offset_field_value - offset_shift
+                    stream.seek(offset)
+                elif offset_field_value - offset_shift != offset:
+                    raise BinaryFieldValueError(
+                        f"Conflicting auto-offsets to deferred field `{self.__class__.__name__}.{deferred_field_name}`."
                     )
-                fmt_to_pack += fmt
-                values_to_pack.append(value)
+                setattr(self, offset_field_name, None)
+            # Otherwise, use current `stream` position.
 
-        _flush_pack_buffer()  # pack final values to writer
+        deferred_field_value = _unpack_binary_field(
+            metadata,
+            stream,
+            deferred_field_type,
+            self.byte_order,
+            self.varint_size,
+            field_values=self.get_binary_field_values(),
+            **overrides,
+        )
+        setattr(self, deferred_field_name, deferred_field_value)
 
-        # Fill computed fields.
-        for field_name, (compute_callback, fmt, min_max) in compute_callbacks:
-            computed_value = compute_callback(self)
-            if min_max is not None and (computed_value < min_max[0] or computed_value > min_max[1]):
-                raise ValueError(
-                    f"Computed value {computed_value} of field `{cls_name}.{field_name}` is out of range: {min_max}"
-                )
-            writer.fill(field_name, computed_value)
+    def pack_deferred_field(self, writer: BinaryWriter, field_name: str, temp_field_value: tp.Any = None, **overrides):
+        """Pack a deferred field manually at current `writer` position. Cannot be used on non-deferred fields.
 
-        return writer  # may have remaining unfilled fields
+        If any offset fields are waiting for this deferred field to be packed, their values will be filled too.
+        (Obviously, this must be the same `writer` and same struct instance for this to work.)
 
-    def _get_stored_encoding(self, field_name: str):
-        try:
-            return self.field_encodings[field_name]
-        except KeyError:
-            _LOGGER.warning(f"String encoding defaulting to 'utf-8' for `{self.__class__.__name__}.{field_name}`.")
-            return "utf-8"
+        `overrides` kwargs support 'encoding' only.
+        """
+        deferred_field, deferred_field_type = self.get_binary_field_and_type(field_name)
+        field_value = temp_field_value if temp_field_value is not None else getattr(self, field_name, None)
+        if field_value is None:
+            raise ValueError(
+                f"Cannot pack deferred field `{self.__class__.__name__}.{field_name}` when its value is None."
+            )
+        metadata = deferred_field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+        if metadata is None or not deferred_field.metadata["binary"].deferred:
+            raise ValueError(f"Cannot manually pack non-deferred field: `{self.__class__.__name__}.{field_name}`")
+
+        if field_name in self.deferred_packing_offset_fields:
+            offset = writer.position
+            for offset_field_name, offset_shift in self.deferred_packing_offset_fields.pop(field_name):
+                self.fill(writer, offset_field_name, offset + offset_shift)
+
+        _pack_binary_field(
+            metadata,
+            writer,
+            deferred_field_type,
+            field_value,
+            self.byte_order,
+            self.varint_size,
+            self.get_binary_field_values(),
+            stored_encoding=None,
+            **overrides,
+        )
+
+        if temp_field_value is not None:
+            # Clear deferred field value.
+            setattr(self, field_name, None)
+
+    def pop(self, field_name: str) -> tp.Any:
+        """Simply sets `field_name` to None, marking it as 'consumed', without triggering type checkers.
+
+        This has the same general usage pattern as `unpack_deferred_field()` but supports external field processing of
+        arbitrary complexity. The main outcome is to ensure that `field_name` is externally reserved when packing.
+        """
+        value = getattr(self, field_name, None)
+        if value is None:
+            raise BinaryFieldValueError(f"Field `{self.__class__.__name__}.{field_name}` has no set value to consume.")
+        setattr(self, field_name, None)
+        return value
+
+    @staticmethod
+    def pack_z_string(writer: BinaryWriter, value: str, encoding=""):
+        """Fill `"__{field}__z"` with current offset, then write `field` attribute with given `encoding`."""
+        z = b"\0\0" if encoding.startswith("utf-16") else b"\0"
+        writer.append(value.encode(encoding) + z)
 
     def get_default_byte_order(self) -> ByteOrder:
         """Utility for subclasses to indicate their own default `byte_order`.
@@ -1849,101 +2705,78 @@ class BinaryStruct(abc.ABC):
         _LOGGER.warning(f"Byte order defaulting to `LittleEndian` for `{self.__class__.__name__}`.")
         return ByteOrder.LittleEndian
 
-    @classmethod
-    def get_binary_fields(cls) -> list[dataclasses.Field]:
-        return [f for f in dataclasses.fields(cls) if f.name not in {"byte_order", "varint_size", "field_encodings"}]
+    def __repr__(self) -> str:
+        """Only includes binary fields with non-default values."""
+        lines = [
+            f"{self.__class__.__name__}(",
+        ]
+        for field in self._FIELDS:
+            if not field.repr:
+                continue  # explicitly excluded
+            value = getattr(self, field.name, None)
+            if value is None:
+                continue
+            if field.default not in (None, dataclasses.MISSING) and value == field.default:
+                continue
+            lines.append(f"  {field.name} = {repr(value)},")
+        lines.append(")")
+        return "\n".join(lines)
+
+    def get_binary_field_values(self) -> dict[str, tp.Any]:
+        """Get all current binary field values."""
+        field_values = {}
+        for field in self._FIELDS:
+            field_values[field.name] = getattr(self, field.name, None)
+        return field_values
 
     @classmethod
-    def get_field_info(
-        cls, field: dataclasses.Field, varint_size: None | tp.Literal[4, 8]
-    ) -> tuple[str, int | None, tuple[int, int] | None]:
-        if field.type is varint:
-            if varint_size is None:
-                raise ValueError(f"`{cls.__name__}.varint_size` not assigned. Cannot tell size of `varint`.")
-            return _BASIC_FIELD_INFO[int if varint_size == 4 else long]
-        elif field.type is varuint:
-            if varint_size is None:
-                raise ValueError(f"`{cls.__name__}.varint_size` not assigned. Cannot tell size of `varuint`.")
-            return _BASIC_FIELD_INFO[uint if varint_size == 4 else ulong]
-        elif field.type in _BASIC_FIELD_INFO:
-            return _BASIC_FIELD_INFO[field.type]
-        else:
-            raise TypeError(f"Invalid binary field '{field.name}' of type {field.type} in {cls.__name__}.")
+    def get_binary_fields(cls) -> tuple[dataclasses.Field, ...]:
+        return tuple(
+            field for field in dataclasses.fields(cls)
+            if field.name not in {
+                "byte_order",
+                "varint_size",
+                "stored_encodings",
+                "deferred_unpacking_offset_fields",
+                "deferred_packing_offset_fields",
+            }
+        )
 
     @classmethod
-    def get_size(cls, byte_order=ByteOrder.LittleEndian, varint_size=None) -> int:
-        """Adds together field formats and calculates total size in bytes.
+    def get_binary_field_and_type(cls, field_name: str) -> tuple[dataclasses.Field, tp.Type]:
+        for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
+            if field.name == field_name:
+                return field, field_type
+        raise KeyError(f"Invalid field for `{cls.__name__}`: {field_name}")
+
+    @classmethod
+    def get_full_fmt(cls, byte_order: ByteOrder, varint_size: int) -> str:
+        """Combines all field formats.
 
         Cannot be called if the field includes null-terminated strings (which have undefined size).
         """
+        if not cls._VALIDATED:
+            cls._validate_struct()
         fmt = f"{byte_order.value}"
-        for field in cls.get_binary_fields():
-            if "binary_info" in field.metadata:
-                binary_info = field.metadata["binary_info"]
-                match binary_info:
-                    case _CustomTypeField(fmt=field_fmt):
-                        fmt += field_fmt
-                    case _FixedStringField(length=length):
-                        fmt += f"{length}s"
-                    case _NullTerminatedStringField():
-                        raise ValueError(f"Cannot get size of `{cls.__name__}` as it has null-terminated fields.")
-                    case _IntEnumField(enum_data_type=enum_data_type):
-                        try:
-                            fmt += cls.get_field_info(enum_data_type, varint_size)[0]
-                        except KeyError:
-                            raise ValueError(f"Cannot get size of `{cls.__name__}` due to field `{field.name}`.")
-                    case _ComputedField():
-                        try:
-                            fmt += cls.get_field_info(field, varint_size)[0]
-                        except KeyError:
-                            raise ValueError(f"Cannot get size of `{cls.__name__}` due to field `{field.name}`.")
-            else:
-                try:
-                    fmt += cls.get_field_info(field, varint_size)[0]
-                except KeyError:
-                    raise ValueError(f"Cannot get size of `{cls.__name__}` due to field `{field.name}`.")
-        return struct.calcsize(fmt)
+        for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
+            metadata = field.metadata.get("binary", None)
+            fmt += _get_field_fmt(metadata, f"{cls.__name__}.{field.name}", field_type, varint_size)
+        return fmt
+
+    def get_size(self) -> int:
+        """Get full format of this struct, then calculate its size using its set `byte_order` and `varint_size`."""
+        return struct.calcsize(self.get_full_fmt(self.byte_order, self.varint_size))
+
+    @classmethod
+    def get_cls_size(cls, byte_order: ByteOrder = ByteOrder.LittleEndian, varint_size: int = None) -> int:
+        """Get full format of this struct, then calculate its size using the given `byte_order` and `varint_size`.
+
+        `byte_order` will default to `LittleEndian`; only a change to `NativeAutoAligned` would potentially change the
+        size of the struct, which is unlikely for game formats. `varint_size` may be omitted, but an error will be
+        raised if any `varint` or `varuint` fields are used in the struct.
+        """
+        return struct.calcsize(cls.get_full_fmt(byte_order, varint_size))
 
     @staticmethod
-    def _default_unpacked_to_type(type_: tp.Type, unpacked: tuple[PRIMITIVE_FIELD_TYPING]):
-        return type_(*unpacked)
-
-    @staticmethod
-    def _process_bytes(b: bytes, encoding: str, rstrip_null: bool) -> bytes | str:
-        """Used in partials that may optionally want to strip nulls and/or decode to strings."""
-        if rstrip_null:
-            b = b.rstrip(b"\0")
-        return b.decode(encoding) if encoding else b
-
-    @staticmethod
-    def _read_z_bytes(stream: io.BytesIO, encoding: str = None) -> bytes | str:
-
-        # TODO: Currently just checking for UTF-16 encodings to enforce double null characters.
-        bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16le") else 1
-        terminator = b"\0" * bytes_per_char
-
-        chars = []
-        while 1:
-            c = stream.read(bytes_per_char)
-            if not c:
-                raise ValueError("Ran out of bytes to read before null termination was found.")
-            if c == terminator:
-                # Null termination.
-                array = b"".join(chars)
-                if encoding is not None:
-                    return array.decode(encoding)
-                return array
-            else:
-                chars.append(c)
-
-    @staticmethod
-    def _to_enum(value: int | str, enum_data_type: tp.Type[enum.IntEnum]) -> enum.IntEnum:
-        if isinstance(value, str):
-            return enum_data_type[value]
-        elif isinstance(value, int):
-            return enum_data_type(value)
-        raise TypeError(f"Value to convert to enum {enum_data_type} must be a string (name) or int (value).")
-
-    @staticmethod
-    def join_bytes(struct_iterable: tp.Iterable[BinaryStruct]) -> bytes:
+    def join_bytes(struct_iterable: tp.Iterable[NewBinaryStruct]) -> bytes:
         return b"".join(bytes(s) for s in struct_iterable)

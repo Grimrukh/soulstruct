@@ -1,6 +1,6 @@
 __all__ = [
     # Basic enums/types
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -28,7 +28,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",

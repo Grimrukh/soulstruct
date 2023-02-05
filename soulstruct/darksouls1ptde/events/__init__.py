@@ -29,7 +29,7 @@ __all__ = [
     "KILN_OF_THE_FIRST_FLAME",
     "UNDEAD_ASYLUM",
     # Basic enums
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -56,7 +56,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",

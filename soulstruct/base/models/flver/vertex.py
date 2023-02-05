@@ -17,7 +17,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.exceptions import SoulstructError
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
 from .version import Version
@@ -72,53 +72,33 @@ class MemberFormat(IntEnum):
         raise ValueError(f"Could not compute size of unknown `LayoutType`: {self.name}")
 
 
-class LayoutMember(BinaryObject):
+@dataclass(slots=True)
+class LayoutMemberStruct(NewBinaryStruct):
 
-    STRUCT = BinaryStruct(
-        ("unk_x00", "i"),  # always zero in DS1 at least
-        ("__struct_offset", "i"),  # validated, but not needed
-        ("member_format", "i"),
-        ("member_type", "i"),
-        ("index", "i"),  # instance index of this `type` in this `BufferLayout`
-    )
-    DEFAULTS = {
-        "unk_x00": 0,
-        "index": 0,
-    }
+    unk_x00: int
+    _struct_offset: int  # just the offset of this `LayoutMember` struct instance
+    member_format: MemberFormat = field(**Binary(int))
+    member_type: MemberType = field(**Binary(int))
+    index: int  # instance index of this member in its `BufferLayout`
+
+
+@dataclass(slots=True)
+class LayoutMember:
 
     unk_x00: int
     member_format: MemberFormat
     member_type: MemberType
-    index: int
+    index: int  # instance index of this member in its `BufferLayout`
 
-    def __init__(
-        self, reader: BinaryReader = None, **kwargs
-    ):
-        if reader is None:
-            if "member_type" not in kwargs or "member_format" not in kwargs:
-                raise ValueError(
-                    "`member_type` and `member_format` must be given to `MemberLayout()` if `reader` not given."
-                )
-            self.member_type = kwargs.pop("member_type")
-            self.member_format = kwargs.pop("member_format")
-        super().__init__(reader, **kwargs)
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, asserted_struct_offset: int):
+        layout_member_struct = LayoutMemberStruct.from_bytes(reader)
+        if asserted_struct_offset != layout_member_struct.pop("_struct_offset"):
+            raise ValueError("`LayoutMember` recorded binary struct offset does not match its actual struct offset.")
+        return layout_member_struct.to_object(cls)
 
-    def unpack(self, reader: BinaryReader, struct_offset: int):
-        layout_member = reader.unpack_struct(self.STRUCT)
-        binary_struct_offset = layout_member.pop("__struct_offset")
-        if struct_offset != binary_struct_offset:
-            raise ValueError(
-                f"`LayoutMember` binary struct offset ({binary_struct_offset}) does not match passed struct offset "
-                f"({struct_offset})."
-            )
-        self.set(**layout_member)
-
-    def pack(self, writer: BinaryWriter, struct_offset: int):
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            __struct_offset=struct_offset,
-        )
+    def to_flver_writer(self, writer: BinaryWriter, struct_offset: int):
+        LayoutMemberStruct.object_to_writer(self, writer, _struct_offset=struct_offset)
 
     def __eq__(self, other: LayoutMember):
         return (
@@ -306,50 +286,43 @@ USES_UV_FACTOR = {
 }
 
 
+@dataclass(slots=True)
+class BufferLayoutStruct(NewBinaryStruct):
+
+    _members_count: int
+    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _members_offset: int
+
+
+@dataclass(slots=True)
 class BufferLayout:
 
-    STRUCT = BinaryStruct(
-        ("__member_count", "i"),
-        "8x",
-        ("__member_offset", "i"),
-    )
+    members: list[LayoutMember] = field(default_factory=list)
 
-    members: list[LayoutMember]
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader):
+        buffer_layout_struct = BufferLayoutStruct.from_bytes(reader)
 
-    def __init__(self, source: BinaryReader | list[LayoutMember]):
-        self.members = []
+        _members_count = buffer_layout_struct.pop("_members_count")
+        _members_offset = buffer_layout_struct.pop("_members_offset")
 
-        if isinstance(source, BinaryReader):
-            self.unpack(source)
-        elif isinstance(source, (list, tuple)) and all(isinstance(e, LayoutMember) for e in source):
-            self.members = source
-        else:
-            raise TypeError(f"`BufferLayout` source must be a binary reader or list of `LayoutMember`s, not {source}.")
-
-    def unpack(self, reader: BinaryReader):
-        buffer_layout = reader.unpack_struct(self.STRUCT)
-
-        with reader.temp_offset(buffer_layout.pop("__member_offset")):
+        with reader.temp_offset(_members_offset):
             struct_offset = 0
-            self.members = []
-            for _ in range(buffer_layout.pop("__member_count")):
-                member = LayoutMember(reader, struct_offset=struct_offset)
-                self.members.append(member)
+            members = []
+            for _ in range(_members_count):
+                member = LayoutMember.from_flver_reader(reader, asserted_struct_offset=struct_offset)
+                members.append(member)
                 struct_offset += member.member_format.size()
+        return buffer_layout_struct.to_object(cls, members=members)
 
-    def pack(self, writer: BinaryWriter):
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            __member_count=len(self.members),
-            __member_offset=writer.AUTO_RESERVE,
-        )
+    def to_flver_writer(self, writer: BinaryWriter):
+        BufferLayoutStruct.object_to_writer(self, writer, _members_count=len(self.members))
 
     def pack_members(self, writer: BinaryWriter):
-        writer.fill("__member_offset", writer.position, obj=self)
+        writer.fill_with_position("_members_offset", obj=self)
         struct_offset = 0
         for member in self.members:
-            member.pack(writer, struct_offset)
+            member.to_flver_writer(writer, struct_offset)
             struct_offset += member.size
 
     def has_member_type(self, member_type: MemberType) -> bool:
@@ -533,7 +506,7 @@ class Vertex:
 
     This class used to store its data in `Vector` and `Color` classes, but in Python, all that instantiation gets real
     expensive real quick for large meshes. All data is now stored as lists of floats (ints for `bone_indices`). If you
-    assign a `Vector` to them, it will work fine, as long as it supports sequence iteration and has the right length.
+    assign a `Vector` to them, it will work fine, as will any class that is iterable and has the right length.
 
     Note that multiple values (lists of floats) are supported for `uvs`, `tangents`, and `colors`, though most buffer
     layouts will only have one of each.
@@ -638,31 +611,34 @@ class VertexBufferSizeError(SoulstructError):
         )
 
 
-class VertexBuffer(BinaryObject):
+@dataclass(slots=True)
+class VertexBufferStruct(NewBinaryStruct):
+
+    _buffer_index: int
+    layout_index: int
+    _vertex_size: int
+    _vertex_count: int
+    _pad1: bytes = field(init=False, **BinaryPad(8))
+    _buffer_length: int
+    _buffer_offset: int
+
+
+@dataclass(slots=True)
+class VertexBuffer:
     """Header for a block of vertex data for one mesh.
 
     The structure of each vertex's data is defined by the indexed `BufferLayout`.
     """
 
-    STRUCT = BinaryStruct(
-        ("_buffer_index", "i"),
-        ("layout_index", "i"),
-        ("_vertex_size", "i"),
-        ("vertex_count", "i"),
-        "8x",
-        ("_buffer_length", "i"),
-        ("_buffer_offset", "i"),
-    )
-
     layout_index: int
-    vertex_count: int
 
-    _buffer_index: int
-    _vertex_size: int
-    _buffer_length: int
-    _buffer_offset: int
+    # Held temporarily.
+    _struct: VertexBufferStruct | None = None
 
-    unpack = BinaryObject.default_unpack
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader):
+        vertex_buffer_struct = VertexBufferStruct.from_bytes(reader)
+        return vertex_buffer_struct.to_object(cls, _struct=vertex_buffer_struct)
 
     def read_buffer(
         self,
@@ -674,25 +650,27 @@ class VertexBuffer(BinaryObject):
     ):
         layout = layouts[self.layout_index]
         layout_size = layout.get_total_size()
-        expected_vertex_size = self._buffer_length / self.vertex_count
-        if self._vertex_size != expected_vertex_size:
+        expected_size = self._struct._buffer_length / self._struct._vertex_count
+        if self._struct._vertex_size != expected_size:
             raise ValueError(
-                f"Vertex buffer size ({self._vertex_size}) != buffer length / vertex count ({expected_vertex_size})."
+                f"Vertex buffer size ({self._struct._vertex_size}) != buffer length / vertex count ({expected_size})."
             )
-        if self._vertex_size != layout_size:
+        if self._struct._vertex_size != layout_size:
             # This happens for a few vanilla meshes; we ignore such meshes.
             # TODO: I've looked at the buffer data for mesh 0 of m8000B2A10, and it appears very abnormal. In fact,
             #  some of the 28-byte data clusters appear to just be counting upward as integers; there definitely does
             #  not seem to be any position float data in there. Later on, they appear to change into random shorts.
-            raise VertexBufferSizeError(self._vertex_size, layout_size)
+            raise VertexBufferSizeError(self._struct._vertex_size, layout_size)
 
         read_func = layout.get_vertex_read_function(uv_factor)
 
-        with reader.temp_offset(vertex_data_offset + self._buffer_offset):
+        with reader.temp_offset(vertex_data_offset + self._struct._buffer_offset):
             for vertex in vertices:
                 read_func(reader, vertex)
 
-    def pack(
+        self._struct = None
+
+    def to_flver_writer(
         self,
         writer: BinaryWriter,
         version: Version,
@@ -701,14 +679,14 @@ class VertexBuffer(BinaryObject):
         mesh_vertex_count: int,
     ):
         layout_size = buffer_layouts[self.layout_index].get_total_size()
-        writer.pack_struct(
-            self.STRUCT,
+        VertexBufferStruct.object_to_writer(
             self,
+            writer,
             _buffer_index=mesh_vertex_buffer_index,
             _vertex_size=layout_size,
-            vertex_count=mesh_vertex_count,
+            _vertex_count=mesh_vertex_count,
             _buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
-            _buffer_offset=writer.AUTO_RESERVE,
+            _buffer_offset=None,  # reserved
         )
 
     def pack_buffer(
@@ -720,7 +698,7 @@ class VertexBuffer(BinaryObject):
         uv_factor: int,
     ):
         layout = buffer_layouts[self.layout_index]
-        self.fill(writer, _buffer_offset=buffer_offset)
+        writer.fill("_buffer_offset", buffer_offset, obj=self)
 
         write_func = layout.get_vertex_write_function(uv_factor)
 
@@ -728,11 +706,4 @@ class VertexBuffer(BinaryObject):
             write_func(writer, vertex)
 
     def __repr__(self):
-        return (
-            f"VertexBuffer(\n"
-            f"    layout_index = {self.layout_index}\n"
-            f"    vertex_count = {self.vertex_count}\n"
-            f"    buffer_length = {self._buffer_length}\n"
-            f"    vertex_size = {self._vertex_size}\n"
-            ")"
-        )
+        return f"VertexBuffer(layout_index={self.layout_index})"

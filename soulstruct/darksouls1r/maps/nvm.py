@@ -259,7 +259,7 @@ class NVM(GameFile, DarkSoulsDSRType):
         else:
             writer.fill("entities_offset", 0)
 
-        return writer.finish()
+        return bytes(writer)
 
     def get_all_boxes(self) -> list[tuple[NVMBox, tuple[int]]]:
         """Returns a list of tuples, each containing a box and an index sequence that shows its nesting, such as

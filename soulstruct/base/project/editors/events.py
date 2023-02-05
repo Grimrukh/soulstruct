@@ -25,25 +25,25 @@ _LOGGER = logging.getLogger(__name__)
 class EvsTextEditor(TextEditor):
 
     TAGS = {
-        "restart_type": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
+        "on_rest_behavior": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
             "#FF7F50", r"(^| )(class|def|if|and|or|not|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
         ),
         "true_false": TagData("#FF7F50", r"[ =](True|False)(,|\n| |:|\))", (1, 1)),
-        "event_def": TagData("#FF6980", r"^def [\w\d_]+", (4, 0)),
-        "import": TagData("#FFAAAA", r"^(from|import) [\w\d_ .*]+", (0, 0)),
-        "instruction_or_high_level_test": TagData("#E6C975", r"[ \(][\w\d_]+(?=\()", (1, 0)),
-        "low_level_test": TagData("#AAAAFF", r"^ +(If|Skip|Goto)[\w\d_]+", (0, 0)),
-        "if_main_condition": TagData("#FF3355", r"^ +If[\w\d_]+(?=[(]0 *,)", (0, 0)),
+        "event_def": TagData("#FF6980", r"^def [\w_]+", (4, 0)),
+        "import": TagData("#FFAAAA", r"^(from|import) [\w_ .*]+", (0, 0)),
+        "instruction_or_high_level_test": TagData("#E6C975", r"[ \(][\w_]+(?=\()", (1, 0)),
+        "low_level_test": TagData("#AAAAFF", r"^ +(If|Skip|Goto)[\w_]+", (0, 0)),
+        "if_main_condition": TagData("#FF3355", r"^ +If[\w_]+(?=[(]0 *,)", (0, 0)),
         "main_condition": TagData("#FF3355", r"^ +MAIN\.Await\(", (0, 1)),
         "await_statement": TagData("#FF3355", r" await ", (0, 0)),
-        "named_arg": TagData("#AAFFFF", r"[(,=\|][ \n]*(?!False)(?!True)\w[\w\d.]* *[,)\|]", (1, 1)),
-        "func_arg_name": TagData("#FFCCAA", r"[\w\d_]+ *(?=\=)", (0, 0)),
-        "event_arg_name": TagData("#FFAAFF", r"^def [\w\d_]+\(([\w\d_:, \n]+)\)", None),
+        "named_arg": TagData("#AAFFFF", r"[(,=\|][ \n]*(?!False)(?!True)\w[\w.]* *[,)\|]", (1, 1)),
+        "func_arg_name": TagData("#FFCCAA", r"[\w_]+ *(?=\=)", (0, 0)),
+        "event_arg_name": TagData("#FFAAFF", r"^def [\w_]+\(([\w_:, \n]+)\)", None),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
         "and_or_condition": TagData("#AAAAFF", r"[ \(] *(AND|OR)_[\d]+(\.Add)?", (1, 0)),
         "comment": TagData("#777777", r"#.*$", (0, 0)),
-        "docstring": TagData("#00ABA9", r"^ +\"\"\"[\w\d\n :.]+\"\"\"", (0, 0)),
+        "docstring": TagData("#00ABA9", r"^ +\"\"\"[\w\n :.]+\"\"\"", (0, 0)),
         "module_docstring": TagData("#00ABA9", r'^"""(.|\n)*"""', (0, 0)),
     }
 
@@ -56,10 +56,10 @@ class EvsTextEditor(TextEditor):
         self.tag_remove("event_arg_name", "1.0", "end")
         start_index = "1.0"
         while True:
-            def_index = self.search(r"^def [\w\d_]+\(", start_index, regexp=True)
+            def_index = self.search(r"^def [\w_]+\(", start_index, regexp=True)
             if not def_index:
                 break
-            next_def_index = self.search(r"^def [\w\d_]+\(", f"{def_index} lineend", regexp=True)
+            next_def_index = self.search(r"^def [\w_]+\(", f"{def_index} lineend", regexp=True)
             if int(next_def_index.split(".")[0]) <= int(def_index.split(".")[0]):
                 break  # finished searching
             event_text = self.get(def_index, next_def_index)

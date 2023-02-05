@@ -211,9 +211,9 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
                 undecodable_row_names=undecodable_row_names,
             )
             entry = self.BinderEntry(p.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
-            if entry.id in entry_ids:
+            if entry.entry_id in entry_ids:
                 _LOGGER.warning(
-                    f"Binder entry ID {entry.id} appears more than once in this `DrawParamBND`. Fix this ASAP."
+                    f"Binder entry ID {entry.entry_id} appears more than once in this `DrawParamBND`. Fix this ASAP."
                 )
             self._entries.append(entry)
 
@@ -241,7 +241,7 @@ class DrawParamBND(GameSpecificType, BND3, abc.ABC):
                     continue
                 entry = self.entries_by_path[self._slot_entry_paths[param_name, slot]]
                 param_dict = {
-                    "entry_id": entry.id,
+                    "entry_id": entry.entry_id,
                     "path": entry.path,
                     "flags": entry.flags,
                     "data": p.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults),

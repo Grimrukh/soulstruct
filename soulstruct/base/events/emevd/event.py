@@ -1,20 +1,28 @@
 from __future__ import annotations
 
-__all__ = ["Event"]
+__all__ = ["Event", "EventSignature"]
 
 import abc
 import logging
 import re
 import struct
 import typing as tp
+from dataclasses import dataclass, field
+from types import GenericAlias
 
-from soulstruct.base.game_types.basic_types import Flag
-from .enums import RestartType
-from .instruction import Instruction, EventArg
+from soulstruct.base.game_types.basic_types import Flag, BaseGameObject
+from soulstruct.utilities.binary import *
+
+from .enums import OnRestBehavior
+from .instruction import Instruction as BaseInstruction, EventArg
+from .event_layers import EventLayers
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "Event"
 
 if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
-    from .core import EMEVD
     from .entity_enums_manager import EntityEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,98 +88,254 @@ _COMPARISON_OPERATORS = {
 }
 
 
-class Event(abc.ABC):
+@dataclass(slots=True)
+class SingleEventArg:
+    """Unlike `EventArgReplacement`, this represents an actual single event argument as it appears in the decompiled
+    `RunEvent` instruction, and its signature information for the EVS event function.
 
-    instructions: list[Instruction]
+    It holds all the formats, names, and Python types that appear where it is used in instructions.
+    """
+    DEFAULT_ARG_SIZE_TYPE: tp.ClassVar[dict[int, str]] = {1: "B", 2: "H", 4: "I"}
 
-    HEADER_STRUCT: BinaryStruct
-    Instruction: tp.Type[Instruction]
-    EventArg: tp.Type[EventArg]
-    EMEDF_TESTS: dict[str, dict[str, str]]
-    EMEDF_COMPARISON_TESTS: dict[str, dict[str, str]]
-    WRAP_LIMIT = 120  # PyCharm default line length
-    USE_HIGH_LEVEL_LANGUAGE = True
+    arg_range: tuple[int, int]  # start and (exclusive) end offsets; corresponds to `(i, j)` in default argument names
+    fmts: set[str] = field(default_factory=set)
+    names: set[str] = field(default_factory=set)
+    py_types: set[tp.Type | GenericAlias] = field(default_factory=set)  # each could be from a `typing.Union`
 
-    def __init__(self, event_id=0, restart_type=0, instructions=None):
-        self.event_id = event_id
-        self.restart_type = restart_type
-        self.instructions = instructions if instructions else []
+    # Computed from above sets.
+    combined_name: str = field(default="")
+    combined_fmt: str = field(default="")
+    combined_py_types: tuple[tp.Type, ...] = field(default=())
 
-    @classmethod
-    def unpack_event_dict(
-        cls,
-        reader: BinaryReader,
-        instruction_table_offset,
-        base_arg_data_offset,
-        event_arg_table_offset,
-        event_layers_table_offset,
-        count=1,
-    ) -> dict[int, Event]:
-        event_dict = {}
-        struct_dicts = reader.unpack_structs(cls.HEADER_STRUCT, count=count)
+    def add_info(self, event_arg: EventArg):
+        """Merge in information from a single replacement usage."""
+        self.names.add(event_arg.name)
+        self.fmts.add(event_arg.fmt)
+        self.py_types.add(event_arg.py_type_hint)
 
-        for d in struct_dicts:
-            reader.seek(instruction_table_offset + d["first_instruction_offset"])
-            instruction_list = cls.Instruction.unpack(
-                reader, base_arg_data_offset, event_layers_table_offset, count=d["instruction_count"]
-            )
+    def remove_generic_names(self):
+        # Remove non-preferred arg names.
+        # TODO: Should check 'classes' of names, so 'character__flag' doesn't just become 'character', etc.
+        for vague_arg_name in (
+            "entity", "other_entity", "target_entity", "owner_entity", "anchor_entity", "attacked_entity",
+            "destination", "source_entity", "copy_draw_parent", "line_intersects", "flag", "left", "right",
+            "model_point",
+        ):
+            if len(self.names) >= 2 and vague_arg_name in self.names:
+                self.names.remove(vague_arg_name)
 
-            reader.seek(event_arg_table_offset + d["first_event_arg_offset"])
-            event_args = cls.EventArg.unpack(reader, count=d["event_arg_count"])
+    def compute_combined_info(self, existing_arg_names: set[str], event_id: int = -1):
+        """Parse the sets of formats, names, and Python types and decide what to use for EVS function signatures."""
 
-            for arg_r in event_args:
-                # Attach event arg replacements to their instruction line.
-                instruction_list[arg_r.line].event_args.append(arg_r)
+        try_arg_name = "__".join(sorted(self.names))
 
-            if event_id := d["event_id"] in event_dict:
+        # Add suffix to distinguish duplicate event arg names.
+        if try_arg_name in existing_arg_names:
+            arg_duplicate_index = 1
+            arg_name = try_arg_name + f"_{arg_duplicate_index}"
+            while arg_name in existing_arg_names:
+                arg_duplicate_index += 1
+                arg_name = try_arg_name + f"_{arg_duplicate_index}"
+        else:
+            arg_name = try_arg_name
+        self.combined_name = arg_name
+
+        if len(self.fmts) > 1:
+            # Multiple detected types. Acceptable (using default integer type) only if they all the same size.
+            sizes = {struct.calcsize(fmt) for fmt in self.fmts}
+            if len(sizes) == 1:
+                arg_size = next(iter(sizes))
+                self.combined_fmt = self.DEFAULT_ARG_SIZE_TYPE[arg_size]
                 _LOGGER.warning(
-                    f"Event ID {event_id} appears multiple times in EMEVD file. Only the first one will be kept."
+                    f"Detected multiple types for event arg '{arg_name}' in event {event_id}: {self.fmts}. "
+                    f"Using default type '{self.combined_fmt}' for this arg size ({arg_size})."
                 )
             else:
-                event_dict[d["event_id"]] = cls(d["event_id"], d["restart_type"], instruction_list)
+                raise ValueError(
+                    f"Detected multiple types for event arg '{arg_name}' in event {event_id}: {self.fmts}. "
+                    f"They have incompatible sizes, which is not permitted."
+                )
+        else:
+            self.combined_fmt = next(iter(self.fmts))
 
-        return event_dict
+        all_py_types = []
+        for py_type in self.py_types:
+            try:  # convert `typing.Union` to `tuple`
+                origin = tp.get_origin(py_type)
+            except AttributeError:  # implies `py_type` is a real Python type (no `__origin__`)
+                all_py_types.append(py_type)
+            else:
+                union_types = tp.get_args(py_type) if origin is tp.Union else ()
+                for union_type in union_types:
+                    if union_type not in all_py_types:
+                        all_py_types.append(union_type)
+        self.combined_py_types = tuple(all_py_types)
 
-    def update_run_event_instructions(self, all_event_arg_fmts: dict[int, str], common_func_emevd: EMEVD = None):
-        """Iterates over instructions and updates any `RunEvent` or `RunCommonEvent` instructions with event arguments
-        with their proper `args` and `arg_types` values.
 
-        Called after all events have been loaded and `update_evs_function_args()` has been called (to scan events and
-        detect their arguments).
+@dataclass(slots=True)
+class EventSignature:
+    """Holds information about a single `Event`'s variable arguments inferred from their usage in its instructions."""
+    event_args: list[SingleEventArg]
+
+    def get_full_fmt(self) -> str:
+        return "".join(arg.combined_fmt for arg in self.event_args)
+
+    def get_evs_arg_string(self, prepend_slot=True) -> str:
+        """Combine `names` and `py_types` into an EVS event function argument signature."""
+        arg_strings = []
+        for event_arg in self.event_args:
+            game_object_types = {
+                py_type for py_type in event_arg.combined_py_types if isinstance(py_type, BaseGameObject)
+            }
+            if len(game_object_types) == 1:
+                py_type = next(iter(game_object_types))
+            else:
+                py_type = EVS_ARG_TYPES[event_arg.combined_fmt]
+            arg_strings.append(f"{event_arg.combined_name}: {py_type}")
+        if prepend_slot:
+            # Prepend blank argument for slot intellisense.
+            arg_strings = ["_"] + arg_strings
+        return ", ".join(arg_strings)
+
+
+@dataclass(slots=True)
+class EventStruct(NewBinaryStruct):
+    event_id: varuint
+    instructions_count: varuint
+    instructions_offset: varuint
+    event_arg_replacements_count: varuint
+    event_arg_replacements_offset: varuint
+    on_rest_behavior: uint  # always 32-bit
+    _pad1: bytes = field(init=False, **BinaryPad(4))
+
+
+@dataclass(slots=True)
+class Event(abc.ABC):
+    """A single contained event function that appears in an event script.
+    
+    Event functions run in parallel when called with `RunEvent` (or `RunCommonEvent`) and frequently pause themselves
+    until certain conditions are met. Their `on_rest_behavior` type indicates what happens when the player rests at a
+    checkpoint (by default, they continue unaffected, but they can also restart or simply end).
+
+    Each map runs events 50 (the 'preconstructor') and 0 (the 'constructor') automatically when loaded, which are mostly
+    responsible for starting every other event. The same event can be called multiple times with different `slot`
+    arguments passed to `Run{Common}Event`, and will function independently.
+
+    When an event ends (even if it restarts), the event flag that has the same ID as the event (plus the called `slot`
+    of the event instance) will be enabled.
+
+    Events also have `EventArg` instances attached to them, which represent where any packed event data passed to the
+    `Run{Common}Event` instruction is used inside the event. Soulstruct will attach each `EventArg` to the `Instruction`
+    it affects, rather than keeping them in the `Event` instance.
+    """
+    
+    # Game-specific class attributes.
+    Instruction: tp.ClassVar[tp.Type[BaseInstruction]]
+    EMEDF_TESTS: tp.ClassVar[dict[str, dict[str, str]]]
+    EMEDF_COMPARISON_TESTS: tp.ClassVar[dict[str, dict[str, str]]]
+    WRAP_LIMIT: tp.ClassVar[int] = 120  # PyCharm default line length
+    USE_HIGH_LEVEL_LANGUAGE: tp.ClassVar[bool] = True
+
+    event_id: int = 0
+    on_rest_behavior: OnRestBehavior = OnRestBehavior.ContinueOnRest
+    instructions: list[BaseInstruction] = field(default_factory=list)
+
+    # Generated by inspecting all `EventArgReplacement` occurrences in all instructions.
+    # Refreshed by all 'decompiled' packing/writing methods just before usage, in case instructions are directly
+    # modified and the event arg replacements are changed.
+    signature: EventSignature = field(init=False)
+
+    def __post_init__(self):
+        self.process_all_event_arg_replacements()
+        self.update_signature()
+        # Caller should call `event.update_run_event_instructions(event_signatures)` with dict of all event signatures.
+
+    @classmethod
+    def from_emevd_reader(
+        cls,
+        reader: BinaryReader,
+        instruction_table_offset: int,
+        base_arg_data_offset: int,
+        event_arg_table_offset: int,
+        event_layers_table_offset: int,
+    ) -> Self:
+        event_struct = EventStruct.from_bytes(reader)
+
+        reader.seek(instruction_table_offset + event_struct.instructions_offset)
+        
+        instructions = [
+            cls.Instruction.from_emevd_reader(reader, base_arg_data_offset, event_layers_table_offset)
+            for _ in range(event_struct.instructions_count)
+        ]
+
+        reader.seek(event_arg_table_offset + event_struct.event_arg_replacements_offset)
+
+        # Read `EventArg`s but attach each one to its `Instruction` rather than here.
+        event_arg_replacements = [EventArg.from_emevd_reader(reader) for _ in event_struct.event_arg_replacements_count]
+        for replacement in event_arg_replacements:
+            instructions[replacement.instruction_line].event_arg_replacements.append(replacement)
+
+        return cls(event_struct.event_id, OnRestBehavior(event_struct.on_rest_behavior), instructions)
+
+    def process_all_event_arg_replacements(self):
+        """NOTE: `update_signature()` should always be called after this, as this function will (re-)assign default
+        EVS argument names to instructions for event arguments."""
+        for i, instruction in enumerate(self.instructions):
+            try:
+                instruction.process_event_arg_replacements()
+            except ValueError as ex:
+                raise ValueError(
+                    f"Error occurred while processing event args in instruction {i}, {instruction.instruction_id}], "
+                    f"of event {self.event_id}.\n    Error: {ex}"
+                )
+
+    def update_run_event_instructions(
+        self,
+        event_signatures: dict[int, EventSignature] = None,
+        common_signatures: dict[int, EventSignature] = None,
+    ):
+        """Iterates over instructions and updates any `Run{Common}Event` instructions with event arguments with their
+        proper `args` and `arg_types` values.
 
         If a `RunEvent` instruction contains more arguments than the event can actually use (which is fine by the game -
         the extra packed argument data will simply never be index), this will log a warning, and you should see error
         highlighting in your decompiled EVS script (wrong number of arguments).
+
+        Can be called with 'local' `event_signatures` and/or `common_signatures`. Only events run with `RunCommonEvent`
+        will be searched for in `common_signatures`, if given. (`RunCommonEvent` will also search for events in
+        `event_signatures` first, even though this is rare.)
         """
-        all_common_arg_fmts = common_func_emevd.all_event_arg_fmts if common_func_emevd else {}
+        if not event_signatures and not common_signatures:
+            return  # nothing to do...
 
         for instruction in self.instructions:
             if (event_id := instruction.get_called_event()) is not None:
-                if event_id in all_event_arg_fmts:
-                    var_format = all_event_arg_fmts[event_id]
+                if event_signatures and event_id in event_signatures:
+                    var_format = event_signatures[event_id].get_full_fmt()
                 else:
-                    # Event is not defined locally. Check common events, if provided.
+                    # Event is not defined locally. Check common (func) events, if provided.
                     # TODO: These special indices (0, 6) should be defined more centrally.
-                    if instruction.index == 6 and event_id in all_common_arg_fmts:
-                        var_format = all_common_arg_fmts[event_id]
+                    if instruction.index == 6 and common_signatures and event_id in common_signatures:
+                        var_format = common_signatures[event_id].get_full_fmt()
                     else:
-                        if instruction.index == 0:
-                            _LOGGER.warning(f"Map event {event_id} was run, but is not defined in map.")
+                        if event_signatures and instruction.index == 0:  # `RunEvent`
+                            _LOGGER.warning(f"Map event {event_id} was run, but is not defined in map EMEVD.")
+                        # No information to use to modify this instruction.
                         continue
                 if not var_format:
                     # No arguments (zero). Leave "I" in arg types.
                     continue
 
-                var_ind = instruction.display_arg_types.find("|")
+                var_ind = instruction.display_args_fmt.find("|")
                 if var_ind == -1:
                     # Only one argument (maybe zero).
-                    new_display_types = f"{instruction.struct_arg_types[:-1]}{var_format[0]}"
+                    new_display_types = f"{instruction.struct_args_fmt[:-1]}{var_format[0]}"
                 else:
-                    new_display_types = f"{instruction.struct_arg_types[:var_ind - 1]}{var_format[0]}|{var_format[1:]}"
+                    new_display_types = f"{instruction.struct_args_fmt[:var_ind - 1]}{var_format[0]}|{var_format[1:]}"
 
-                old_format = "@" + instruction.struct_arg_types  # property processes old display types
-                instruction.display_arg_types = new_display_types
-                new_format = instruction.struct_arg_types  # property processes new display types set above
+                old_format = "@" + instruction.struct_args_fmt  # property processes old display types
+                instruction.display_args_fmt = new_display_types
+                new_format = instruction.struct_args_fmt  # property processes new display types set above
 
                 # TODO: calcsize different is not the correct way to check this. It should be more about the length of
                 #  'args_list', or the size of the packed data.
@@ -223,113 +387,78 @@ class Event(abc.ABC):
 
     @property
     def total_args_size(self):
-        return sum([i.args_size for i in self.instructions])
+        return sum([i.base_args_size for i in self.instructions])
 
     @property
-    def event_arg_count(self):
-        return sum([i.event_arg_count for i in self.instructions])
+    def event_arg_replacements_count(self):
+        return sum([len(i.event_arg_replacements) for i in self.instructions])
 
-    def to_numeric(self):
-        event_string = f"{self.event_id}, {self.restart_type}"
+    def to_numeric(self) -> str:
+        numeric_string = f"{self.event_id}, {self.on_rest_behavior}"
         for instruction in self.instructions:
-            event_string += "\n" + "\n".join(instruction.to_numeric())
-        return event_string
+            numeric_string += "\n" + "\n".join(instruction.to_numeric())
+        return numeric_string
 
-    def process_all_event_args(self) -> dict[tuple[int, int], EventArg]:
+    def update_signature(self):
         """Process event arg information for ALL instructions at once.
 
         Returns a dictionary that maps each (i, j) arg read range to a single generic `EventArg` storing combined
         information about all individual uses (replacements) with that event arg.
+
+        Has NO side effects.
         """
-        all_event_args = {}
+        single_event_args = {}  # type: dict[tuple[int, int], SingleEventArg]
         for instruction in self.instructions:
-            try:
-                instruction.process_event_args()
-            except ValueError as ex:
-                raise ValueError(
-                    f"Error occurred while processing event args in instruction "
-                    f"{self.instructions.index(instruction)}, {instruction.instruction_id}], of "
-                    f"event {self.event_id}.\n    Error: {ex}"
-                )
-            for event_arg in instruction.event_args:
-                if event_arg.arg_range not in all_event_args:
-                    all_event_args[event_arg.arg_range] = self.EventArg.generic(event_arg.arg_range)
-                all_event_args[event_arg.arg_range].add_info(event_arg)
+            for event_arg in instruction.event_arg_replacements:
+                if event_arg.arg_range not in single_event_args:
+                    # First occurrence of this event arg being used as a replacement.
+                    single_event_args[event_arg.arg_range] = SingleEventArg(event_arg.arg_range)
+                single_event_args[event_arg.arg_range].add_info(event_arg)
 
-        # Sort by arg range before returning.
-        return {arg_range: all_event_args[arg_range] for arg_range in sorted(all_event_args)}
+        # Sort into list by arg range and compute combined attributes.
+        event_args = sorted(single_event_args.values(), key=lambda arg: arg.arg_range)
+        event_arg_names = set()
+        for event_arg in event_args:
+            event_arg.remove_generic_names()
+            event_arg.compute_combined_info(event_arg_names, self.event_id)
 
-    def update_evs_function_args(
-        self,
-        all_event_arg_names: dict,
-        all_event_arg_fmts: dict,
-        all_event_arg_types: dict,
-    ):
-        all_event_args = self.process_all_event_args()
-        all_arg_names = []
-        all_arg_fmts = []
-        all_arg_py_types = []
+        self.signature = EventSignature(event_args)
 
-        for (i, j), generic_event_arg in all_event_args.items():
-            generic_event_arg.remove_generic_names()
-            arg_name, arg_fmt, arg_py_types = generic_event_arg.get_combined_info(all_arg_names, self.event_id)
-
-            default_arg_name = f"arg_{i}_{j}"
+        # Use new event argument names from signature in instructions.
+        for event_arg in self.signature.event_args:
+            if not event_arg.combined_name:
+                continue  # unusual
             for instruction in self.instructions:
-                # Replace default arg name with detected EVS arg name.
-                for arg_index, old_arg_name in enumerate(instruction.evs_args_list):
-                    if old_arg_name == default_arg_name:
-                        instruction.evs_args_list[arg_index] = arg_name
-
-            all_arg_names.append(arg_name)
-            all_arg_fmts.append(arg_fmt)
-            all_arg_py_types.append(arg_py_types)
-
-        # TODO: Event argument type hint should be able to be a single game type, if possible.
-        evs_function_arg_strings = [
-            f"{arg_name}: {EVS_ARG_TYPES[arg_type]}" for arg_name, arg_type in zip(all_arg_names, all_arg_fmts)
-        ]
-        if evs_function_arg_strings:
-            evs_function_arg_strings = ["_"] + evs_function_arg_strings  # prepend blank argument for slot intellisense
-
-        # TODO: warn/raise if key already exists.
-        all_event_arg_names[self.event_id] = all_arg_names
-        all_event_arg_fmts[self.event_id] = "".join(all_arg_fmts)
-        all_event_arg_types[self.event_id] = all_arg_py_types
-
-        return ", ".join(evs_function_arg_strings)
+                for replacement in instruction.event_arg_replacements:
+                    if replacement.arg_range == event_arg.arg_range and replacement.arg_index != -1:
+                        instruction.evs_args_list[replacement.arg_index] = event_arg.combined_name
 
     def to_evs(
         self,
         enums_manager: EntityEnumsManager,
-        all_event_arg_names: dict,
-        all_event_arg_fmts: dict,
-        all_event_arg_types: dict,
-        is_common_func=False,
+        event_signatures: dict[int, EventSignature],
+        function_prefix="Event",
     ) -> str:
         """Convert single event script to EVS."""
-        function_name = _SPECIAL_EVENT_NAMES.get(
-            self.event_id, f"CommonFunc_{self.event_id}" if is_common_func else f"Event_{self.event_id}"
-        )
-        function_docstring = f'"""{"CommonFunc" if is_common_func else "Event"} {self.event_id}"""'
+        function_name = _SPECIAL_EVENT_NAMES.get(self.event_id, f"{function_prefix}_{self.event_id}")
+        function_docstring = f'"""{function_prefix} {self.event_id}"""'
         # starts with an empty '_' slot arg, if any other args exist
-        function_args = self.update_evs_function_args(
-            all_event_arg_names,
-            all_event_arg_fmts,
-            all_event_arg_types,
-        )
+        self.process_all_event_arg_replacements()
+        self.update_signature()
 
         try:
             event_flag_enum = enums_manager.check_out_enum(self.event_id, Flag)
-            restart_type_decorator = f"@{RestartType(self.restart_type).name}({event_flag_enum})\n"
+            on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({event_flag_enum})\n"
         except enums_manager.MissingEntityError:
-            restart_type_decorator = f"@{RestartType(self.restart_type).name}({self.event_id})\n"
+            on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({self.event_id})\n"
 
-        function_def = self.indent_and_wrap_function_def(function_name, function_args, wrap_limit=self.WRAP_LIMIT)
+        function_def = self.indent_and_wrap_function_def(
+            function_name, self.signature.get_evs_arg_string(), wrap_limit=self.WRAP_LIMIT
+        )
         function_def += f"\n    {function_docstring}"
-        evs_event_string = restart_type_decorator + function_def
+        evs_event_string = on_rest_behavior_decorator + function_def
 
-        instruction_lines = [instr.to_evs(enums_manager, all_event_arg_fmts) for instr in self.instructions]
+        instruction_lines = [instr.to_evs(enums_manager, event_signatures) for instr in self.instructions]
 
         if self.USE_HIGH_LEVEL_LANGUAGE:
             try:
@@ -541,40 +670,33 @@ class Event(abc.ABC):
             output_lines = output_lines[:-1]
         return output_lines
 
-    def to_binary(self, instruction_offset, first_base_arg_offset, first_event_arg_offset):
-        if self.event_arg_count == 0:
-            first_event_arg_offset = -1
+    def to_emevd_writer(self, writer: BinaryWriter):
+        EventStruct.object_to_writer(self, writer)
 
-        event_binary = self.HEADER_STRUCT.pack(
-            event_id=self.event_id,
-            instruction_count=self.instruction_count,
-            first_instruction_offset=instruction_offset,
-            event_arg_count=self.event_arg_count,
-            first_event_arg_offset=first_event_arg_offset,
-            restart_type=self.restart_type,
-        )
+    def pack_instructions(self, writer: BinaryWriter):
+        for instruction in self.instructions:
+            instruction.to_emevd_writer(writer)
 
-        base_arg_offset = first_base_arg_offset
+    def pack_instruction_base_args(self, writer: BinaryWriter):
+        for instruction in self.instructions:
+            instruction.pack_base_args(writer)
 
-        instructions_binary = b""
-        args_binary = b""
-        event_args_list = []
-        for i, instruction in enumerate(self.instructions):
-            # print(f"    Instruction {i} ({instruction.category}, {instruction.index})")
-            instructions_binary += instruction.to_binary(base_arg_offset)
+    def pack_event_arg_replacements(self, writer: BinaryWriter) -> int:
+        """Returns the number of event arg replacements written (for summing in EMEVD header)."""
+        writer.fill_with_position("event_arg_replacements_offset", obj=self)
+        event_arg_replacements = []  # type: list[EventArg]
+        for instruction in self.instructions:
+            event_arg_replacements += instruction.event_arg_replacements
 
-            arg_binary = instruction.args_list_to_binary()
-            # print(f"        Offset {hex(0x33600 + base_arg_offset)}: {arg_binary}")
-            args_binary += arg_binary
-            base_arg_offset += len(arg_binary)
+        # Sort arg replacements to better match original EMEVD resources. (Should be purely cosmetic.)
+        for replacement in sorted(event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.line)):
+            replacement.to_emevd_writer(writer)
+        return len(event_arg_replacements)
 
-            event_args_list += instruction.event_args
-
-        # Collect and sort arg replacements to better match actual EMEVD resources. (Should be purely cosmetic.)
-        sorted_event_args = sorted(event_args_list, key=lambda arg_r: (arg_r.read_from_byte, arg_r.line))
-        event_args_binary = b"".join([arg_r.to_binary() for arg_r in sorted_event_args])
-
-        return event_binary, instructions_binary, args_binary, event_args_binary
+    def pack_instruction_event_layers(self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int]):
+        """Checks `existing_event_layers` (which maps packed `event_layers_uint` to offsets for reuse)."""
+        for instruction in self.instructions:
+            instruction.pack_event_layers(writer, existing_event_layers)
 
     @staticmethod
     def _indent_and_wrap_instruction(instr: str, wrap_limit=121, indent=4):

@@ -29,7 +29,7 @@ __all__ = [
     "RESEARCH_HALL",
     "FISHING_HAMLET",
     # Basic enums
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -57,7 +57,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",

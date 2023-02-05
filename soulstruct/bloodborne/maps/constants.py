@@ -1,5 +1,6 @@
 __all__ = [
     "COMMON",
+    "EVENT_COMMON",
     "HUNTERS_DREAM",
     "ABANDONED_OLD_WORKSHOP",
     "HEMWICK_CHARNEL_LANE",
@@ -20,6 +21,7 @@ __all__ = [
     "FISHING_HAMLET",
     "ALL_MAPS",
     "ALL_MAPS_NO_CHALICE",
+    "ALL_MAPS_NO_CHALICE_WITH_EVENT_COMMON",
     "ALL_MSB_FILE_NAMES",
     "get_map",
     "get_map_variable_name",
@@ -38,6 +40,17 @@ COMMON = Map(
     esd_file_stem=None,
     variable_name="COMMON",
     verbose_name="Common",
+)
+EVENT_COMMON = Map(
+    None,
+    None,
+    name="EventCommon",
+    emevd_file_stem=None,
+    msb_file_stem=None,
+    ai_file_stem="eventcommon",
+    esd_file_stem=None,
+    variable_name="EVENT_COMMON",
+    verbose_name="EventCommon",
 )
 HUNTERS_DREAM = Map(
     21,
@@ -199,6 +212,28 @@ ALL_MAPS = (
 
 ALL_MAPS_NO_CHALICE = (
     COMMON,
+    HUNTERS_DREAM,
+    ABANDONED_OLD_WORKSHOP,
+    HEMWICK_CHARNEL_LANE,
+    OLD_YHARNAM,
+    CATHEDRAL_WARD,
+    CENTRAL_YHARNAM,
+    UPPER_CATHEDRAL_WARD,
+    CASTLE_CAINHURST,
+    NIGHTMARE_OF_MENSIS,
+    FORBIDDEN_WOODS,
+    YAHARGUL,
+    BYRGENWERTH,
+    NIGHTMARE_FRONTIER,
+    HUNTERS_NIGHTMARE,
+    RESEARCH_HALL,
+    FISHING_HAMLET,
+)
+
+# For AI.
+ALL_MAPS_NO_CHALICE_WITH_EVENT_COMMON = (
+    COMMON,
+    EVENT_COMMON,
     HUNTERS_DREAM,
     ABANDONED_OLD_WORKSHOP,
     HEMWICK_CHARNEL_LANE,

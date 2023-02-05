@@ -90,6 +90,9 @@ class Vector(abc.ABC):
         """Simply hashed by data."""
         return hash(tuple(self._data))
 
+    def is_identity(self) -> bool:
+        return all(v == 1.0 for v in self._data)
+
     def get_magnitude(self) -> float:
         return abs(self)
 

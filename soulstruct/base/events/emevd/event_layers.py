@@ -1,52 +1,76 @@
 from __future__ import annotations
 
-__all__ = ["EventLayers"]
+__all__ = ["EventLayersStruct", "EventLayers"]
 
-import typing as tp
+from dataclasses import dataclass, field
 
-if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import *
 
 
+@dataclass(slots=True)
+class EventLayersStruct(NewBinaryStruct):
+    _two: uint = field(init=False, **Binary(asserted=2))
+    event_layers_uint: uint  # bit flag field (only real variable field)
+    _zero: varuint = field(init=False, **Binary(asserted=0))
+    _minus_one: varint = field(init=False, **Binary(asserted=-1))
+    _one: varint = field(init=False, **Binary(asserted=1))
+
+
+@dataclass(slots=True)
 class EventLayers:
-    """Only DS3 uses this (and rarely at that), though the infrastructure *may* be there for other games.
+    """Only later games use this (and rarely at that). Elden Ring may not even support it any more.
 
-    Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in
-    the bit field (or by default, all are enabled).
+    Each instruction will only run if the map's current event layer (e.g. set by a ceremony) is enabled in the bit field
+    (or by default, all are enabled).
+
+    The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags in little-endian
+    order). The bit field is packed as a 32-bit uint surrounded by a few constants.
+
+    When packed, the instruction will contain an offset into a packed table of event layer values, which can be shared
+    across multiple instructions.
     """
-    HEADER_STRUCT: BinaryStruct = None
 
-    def __init__(self, event_layers: list):
-        """The event layer is simply a 32-bit bit field (represented here as a list of enabled bit flags
-        in little-endian order). The bit field is packed as a 32-bit uint surrounded by a few constants.
-
-        When packed, the instruction will contain an offset into a packed table of event layer values, which
-        can be base across multiple instructions.
-        """
-        self.event_layers = event_layers
+    event_layers_uint: int
 
     @classmethod
-    def unpack(cls, reader: BinaryReader, event_layers_offset):
+    def from_emevd_reader(cls, reader: BinaryReader, event_layers_offset: int):
         """Unpack event layer bit field as <a, b, c, ...> where a, b, c, ... are the little-endian bit
         zero-based indices of the event layer bit field. 
 
         e.g. field 01001...110 would be {1, 4, 29, 30}.
+
+        NOTE: The same `event_layers_offset` may be used by multiple instructions, rather than packing the same event
+        layer over and over. This is handled when writing as well.
         """
         reader.seek(event_layers_offset)
-        d = reader.unpack_struct(cls.HEADER_STRUCT)
+        event_layers_struct = EventLayersStruct.from_bytes(reader)
+        return cls(event_layers_struct.event_layers_uint)
+
+    def get_enabled_event_layers(self) -> list[int]:
+        """Parses bits of `uint` to return the list of enabled bits (0 to 31)."""
         enabled_event_layers_list = []
         for i in range(32):
-            if (2 ** i) & d["event_layers"]:
+            if (2 ** i) & self.event_layers_uint:
                 enabled_event_layers_list.append(i)
-        return cls(enabled_event_layers_list)
+        return enabled_event_layers_list
 
-    def pack(self):
-        """Opposite of `unpack`. Converts list of enabled flags into a single 32-bit uint."""
-        packed_field = sum(2 ** i for i in self.event_layers)
-        return self.HEADER_STRUCT.pack(event_layers=packed_field)
+    def to_emevd_writer(self, writer: BinaryWriter):
+        EventLayersStruct.object_to_writer(self, writer)
 
     def to_numeric(self):
-        return f" <{', '.join(str(e) for e in self.event_layers)}>"
+        return f" <{', '.join(str(e) for e in self.get_enabled_event_layers())}>"
 
     def to_evs(self):
-        return f"event_layers={self.event_layers}"
+        return f"event_layers={self.get_enabled_event_layers()}"
+
+    def __hash__(self) -> int:
+        """Only the `event_layers_uint` determines object uniqueness.
+
+        Probably automated by `dataclass` but being explicit, since it's actually used.
+        """
+        return hash(self.event_layers_uint)
+
+    @staticmethod
+    def flags_to_uint(flags_list: list[int]):
+        """NOTE: Just for my memory. Not needed."""
+        return sum(2 ** i for i in flags_list)

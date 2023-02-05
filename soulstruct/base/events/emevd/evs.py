@@ -58,7 +58,7 @@ class EventInfo(tp.NamedTuple):
     args: dict[str, tuple[int, int]]
     arg_types: str
     arg_classes: dict[str, tp.Type[BaseGameObject]]
-    restart_type: int
+    on_rest_behavior: int
     nodes: list[ast.stmt]
     description: str
 
@@ -218,7 +218,7 @@ class EVSParser(abc.ABC):
             ...
         """
         event_name = self._validate_event_name(node)
-        restart_type, event_id = self._parse_decorator(node)
+        on_rest_behavior, event_id = self._parse_decorator(node)
 
         docstring = ast.get_docstring(node)
         if docstring is None:
@@ -269,7 +269,7 @@ class EVSParser(abc.ABC):
             args=arg_dict,
             arg_types=arg_types,
             arg_classes=arg_classes,
-            restart_type=restart_type,
+            on_rest_behavior=on_rest_behavior,
             nodes=node.body if docstring is None else node.body[1:],  # skip docstring, if present
             description=description.lstrip(":"),
         )
@@ -352,7 +352,7 @@ class EVSParser(abc.ABC):
     def _compile_event_function(self, event_info: EventInfo):
         """ Writes header, then iterates over all nodes in function body. """
 
-        event_emevd = _header(event_info.id, event_info.restart_type)
+        event_emevd = _header(event_info.id, event_info.on_rest_behavior)
 
         for node in event_info.nodes:
             if not isinstance(node, EventStatementTypes):
@@ -1553,7 +1553,7 @@ class EVSParser(abc.ABC):
         return node.left, node.ops[0].__class__, comparator
 
     def _parse_decorator(self, event_node: ast.FunctionDef) -> tuple[int, int]:
-        """Extract `RestartType` enum value (default is 0) and event ID (default is -1) from function decorator."""
+        """Extract `OnRestBehavior` enum value (default is 0) and event ID (default is -1) from function decorator."""
         decorators = event_node.decorator_list
         if not decorators:
             return _RESTART_TYPES["ContinueOnRest"], -1
@@ -1594,7 +1594,7 @@ class EVSParser(abc.ABC):
             )
 
         try:
-            restart_type = _RESTART_TYPES[name]
+            on_rest_behavior = _RESTART_TYPES[name]
         except KeyError:
             raise EVSSyntaxError(
                 event_node,
@@ -1602,7 +1602,7 @@ class EVSParser(abc.ABC):
                 f"Must be one of: {', '.join(_RESTART_TYPES)}",
             )
 
-        return restart_type, event_id
+        return on_rest_behavior, event_id
 
     # ~~~~~~~~~~~~~~~~~~
     #  CONDITION METHODS: These provide and manage conditions that are in use by the current event.
@@ -1865,8 +1865,8 @@ def _import_from_common_func(
     del module
 
 
-def _header(event_id, restart_type=0):
-    return [f"{event_id}, {restart_type}"]
+def _header(event_id, on_rest_behavior=0):
+    return [f"{event_id}, {on_rest_behavior}"]
 
 
 def _define_args(arg_types: str) -> list[tuple[int, int]]:

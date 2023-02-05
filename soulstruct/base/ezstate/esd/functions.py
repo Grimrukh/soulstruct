@@ -18,7 +18,7 @@ TEST_FUNCTIONS = {ESDType.CHR: {}, ESDType.TALK: {}}
 
 _COMMAND_RE = re.compile(r"^# command (chr|talk)\[(\d*)]\[(\d*)]")
 _TEST_RE = re.compile(r"^# test (chr|talk)\[(\d*)]")
-_FUNCTION_DEF_RE = re.compile(r"^def ([\w\d_]*)\(([\w\d :_,*]*)\)")
+_FUNCTION_DEF_RE = re.compile(r"^def ([\w_]*)\(([\w :_,*]*)\)")
 
 
 def _parse_function_def(i_: int, line: str):

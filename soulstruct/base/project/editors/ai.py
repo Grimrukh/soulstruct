@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class AIScriptTextEditor(TextEditor):
     TAGS = {
-        "function_def": TagData("#AABBFF", r"function [\w\d_]+", (0, 0)),
+        "function_def": TagData("#AABBFF", r"function [\w_]+", (0, 0)),
         "lua_word": TagData(
             "#FFBB99",
             r"(^| )(function|local|if|then|elseif|else|for|while|end|return|and|or|"
@@ -25,7 +25,7 @@ class AIScriptTextEditor(TextEditor):
         ),
         "lua_bool": TagData("#FFBB99", r"[ ,=({\[](true|false)(?=($|[ ,)}\]]))", (1, 0)),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,)}\]]))", (1, 0)),
-        "function_call": TagData("#C0E665", r"(^|[ ,=({\[:])[\w\d_]+(?=[(])", (0, 0)),
+        "function_call": TagData("#C0E665", r"(^|[ ,=({\[:])[\w_]+(?=[(])", (0, 0)),
         "comment": TagData("#777777", r"--.*$", (0, 0)),
     }
 
@@ -50,12 +50,12 @@ class AIScriptTextEditor(TextEditor):
         """Find and color local and global variables."""
         # Global
         self.highlight_pattern(
-            r"[ ,=({\[]\w[\w\d_]+(?=($|[ ,)}\[\]]))", tag="suspected_global", start_offset=1, regexp=True
+            r"[ ,=({\[]\w[\w_]+(?=($|[ ,)}\[\]]))", tag="suspected_global", start_offset=1, regexp=True
         )
 
         # Outer scope (up-values)
         self.tag_remove("outer_scope_name", "1.0", "end")
-        outer_scope_matches = re.findall(r"^local ([\w\d_]+)[ ]*=", self.get("1.0", "end"), flags=re.MULTILINE)
+        outer_scope_matches = re.findall(r"^local ([\w_]+)[ ]*=", self.get("1.0", "end"), flags=re.MULTILINE)
         for match in outer_scope_matches:
             self.highlight_pattern(
                 rf"[ ,=(\[]{match}(?=($|[ ,)\]]))", tag="outer_scope_name", clear=False, start_offset=1, regexp=True
@@ -66,15 +66,15 @@ class AIScriptTextEditor(TextEditor):
         self.tag_remove("local_name", "1.0", "end")
         start_index = "1.0"
         while 1:
-            function_index = self.search(r"^function [\w\d_]+\(", start_index, regexp=True)
+            function_index = self.search(r"^function [\w_]+\(", start_index, regexp=True)
             if not function_index:
                 break
-            next_function_index = self.search(r"^function [\w\d_]+\(", f"{function_index} lineend", regexp=True)
+            next_function_index = self.search(r"^function [\w_]+\(", f"{function_index} lineend", regexp=True)
             if int(next_function_index.split(".")[0]) <= int(function_index.split(".")[0]):
                 next_function_index = "end"  # finished searching
             function_text = self.get(function_index, next_function_index)
 
-            function_args_match = re.match(r"^function [\w\d_]+\(([\w\d_, \n]+)\)", function_text, flags=re.MULTILINE)
+            function_args_match = re.match(r"^function [\w_]+\(([\w_, \n]+)\)", function_text, flags=re.MULTILINE)
             if function_args_match:
                 function_args = function_args_match.group(1).replace("\n", "").replace(" ", "")
                 for function_arg in function_args.split(","):
@@ -88,7 +88,7 @@ class AIScriptTextEditor(TextEditor):
                         regexp=True,
                     )
 
-            local_matches = re.findall(r"[ \t]local ([\w\d_]+)[ ]*=", function_text, flags=re.MULTILINE)
+            local_matches = re.findall(r"[ \t]local ([\w_]+)[ ]*=", function_text, flags=re.MULTILINE)
             for match in local_matches:
                 self.highlight_pattern(
                     rf"[\t ,=({{\[]{match}(?=($|[ ,)}}\[\]]))",
@@ -686,7 +686,7 @@ class AIEditor(BaseEditor):
             if not goal.script:
                 continue
             try:
-                goal.write_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
+                goal.write_script(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
             except LuaError as e:
                 if (
                     self.CustomDialog(
@@ -732,7 +732,7 @@ class AIEditor(BaseEditor):
             if not lua_path.is_file():
                 continue
             try:
-                goal.load_decompiled(lua_path)
+                goal.load_script(lua_path)
             except Exception as e:
                 failed_goals.append(goal)
                 if (
@@ -836,7 +836,7 @@ class AIEditor(BaseEditor):
                 self.mimic_click(self.write_button)
             goal = self.get_goal()
             try:
-                goal.write_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
+                goal.write_script(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
             except LuaError as e:
                 self.CustomDialog(
                     title="Lua Write Error", message=f"Error encountered while writing script:\n\n{str(e)}"
@@ -851,7 +851,7 @@ class AIEditor(BaseEditor):
                 return
             goal = self.get_goal()
             try:
-                goal.load_decompiled(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
+                goal.load_script(self.script_directory / f"{self.selected_map_id}/{goal.script_name}")
                 self.update_script_text(goal)
             except FileNotFoundError:
                 self.CustomDialog(

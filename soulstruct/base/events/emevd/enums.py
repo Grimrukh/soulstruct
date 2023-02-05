@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     # Basic
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -17,7 +17,7 @@ __all__ = [
 from enum import IntEnum
 
 
-class RestartType(IntEnum):
+class OnRestBehavior(IntEnum):
     """Defines what happens to the event script when you rest at a checkpoint."""
     ContinueOnRest = 0
     RestartOnRest = 1

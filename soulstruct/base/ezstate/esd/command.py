@@ -1,56 +1,94 @@
+from __future__ import annotations
+
 __all__ = ["Command"]
 
-import abc
+import typing as tp
+from dataclasses import dataclass, field
 
 from soulstruct.base.ezstate.esd.esd_type import ESDType
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import *
 
 from .functions import COMMANDS
 from .ezl_parser import decompile
 
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "Command"
 
-class Command(abc.ABC):
-    STRUCT: BinaryStruct = None
-    ARG_STRUCT: BinaryStruct = None
-    ESD_TYPE: ESDType = None
 
-    def __init__(self, bank, index, command_args=(), indent=0):
-        self.bank = bank
-        self.index = index
-        self.args = command_args
-        self.__indent = indent
+@dataclass(slots=True)
+class CommandStruct(NewBinaryStruct):
+    bank: int
+    index: int
+    args_offset: varint
+    args_count: varint
+
+
+@dataclass(slots=True)
+class CommandArgsStruct(NewBinaryStruct):
+    arg_ezl_offset: varint
+    arg_ezl_size: varint
+
+
+# TODO: can be used by ALL games
+@dataclass(slots=True)
+class Command:
+
+    ESD_TYPE: tp.ClassVar[ESDType] = None
+
+    bank: int
+    index: int
+    args: list[bytes] = field(default_factory=list)
+    _indent: int = 0
 
     @classmethod
-    def unpack(cls, esd_reader: BinaryReader, commands_offset, count=1):
+    def from_esd_reader(cls, reader: BinaryReader) -> Self:
         """ Returns a list of Command instances. """
-        commands = []
-        if commands_offset == -1:
-            return commands
-        struct_dicts = esd_reader.unpack_structs(cls.STRUCT, count=count, offset=commands_offset)
+        command_struct = CommandStruct.from_bytes(reader)
 
-        for d in struct_dicts:
-            if d["args_offset"] > 0:
-                esd_reader.seek(d["args_offset"])
-                arg_structs = cls.ARG_STRUCT.unpack_count(esd_reader, count=d["args_count"])
-                args = [
-                    esd_reader.unpack_bytes(offset=a["arg_ezl_offset"], length=a["arg_ezl_size"])
-                    for a in arg_structs
-                ]
-            else:
-                args = []
-            commands.append(cls(d["bank"], d["index"], args))
+        args = []
+        if command_struct.args_offset > 0:
+            reader.seek(command_struct.args_offset)
+            for _ in command_struct.args_count:
+                arg_struct = CommandArgsStruct.from_bytes(reader)
+                args.append(reader.unpack_bytes(offset=arg_struct.arg_ezl_offset, length=arg_struct.arg_ezl_size))
 
-        return commands
+        return cls(command_struct.bank, command_struct.index, args)
 
-    def __eq__(self, other_command):
+    def to_esd_writer(self, writer: BinaryWriter):
+        CommandStruct.object_to_writer(self, writer, args_count=len(self.args))
+
+    def pack_args_offsets(self, writer: BinaryWriter) -> int:
+        """Pack offsets to packed EZL arg data. Returns number of args."""
+        if not self.args:
+            writer.fill("args_offset", -1, self)
+            return 0
+
+        writer.fill_with_position("args_offset", self)
+        for arg_bytes in self.args:
+            # Offsets are reserved using the bytes object IDs, so we don't use `CommandArgsStruct`.
+            writer.reserve("arg_ezl_offset", "v", obj=arg_bytes)
+            writer.pack("v", len(arg_bytes))
+        return len(self.args)
+
+    def pack_args_data(self, writer: BinaryWriter):
+        """Pack EZL bytes."""
+        # TODO: Conditions and commands are currently intermingled (ordered by state), which is not true for the
+        #  original resources (where all condition data comes before all command data), but it shouldn't matter at all.
+        for arg_bytes in self.args:
+            writer.fill("arg_ezl_offset", obj=arg_bytes)
+            writer.append(arg_bytes)
+
+    def __hash__(self):
+        return hash((self.bank, self.index, tuple(self.args)))
+
+    def __eq__(self, other_command: Command):
         return (
             self.bank == other_command.bank
             and self.index == other_command.index
             and self.args == other_command.args
         )
-
-    def __hash__(self):
-        return hash((self.bank, self.index, tuple(self.args)))
 
     def to_esp(self, indent=2, comment=False):
         ind = "    " * indent
@@ -80,7 +118,7 @@ class Command(abc.ABC):
             arg_names = ()
         fmt = '<br><div style="color:black;line-height:1;margin-left:{}px;">{}({})</div>'
         return fmt.format(
-            20 * (2 + self.__indent),
+            20 * (2 + self._indent),
             command_name,
             ", ".join(
                 [f"{arg_name}={decompile(arg, self.ESD_TYPE)}" for arg_name, arg in zip(arg_names, self.args)]

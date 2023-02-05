@@ -20,22 +20,22 @@ _TALK_ESP_MATCH = re.compile(r"^t(\d+)\.esp\.py$")
 
 class ESPTextEditor(TextEditor):
     TAGS = {
-        "import": TagData("#FFAAAA", r"^(from|import) [\w\d_ .*]+", (0, 0)),
+        "import": TagData("#FFAAAA", r"^(from|import) [\w_ .*]+", (0, 0)),
         "python_word": TagData(
             "#FF7F50", r"(^| )(class|def|if|and|or|elif|else|return|import|from|for|True|False)(\n| |:)", (0, 1)
         ),
-        "test_func": TagData("#B2D8B2", r"[ (][\w\d_]+(?=\()", (1, 0)),
+        "test_func": TagData("#B2D8B2", r"[ (][\w_]+(?=\()", (1, 0)),
         "basic_arg": TagData("#888888", r"\((State|self)(?=\))", (1, 0)),
-        "state_def": TagData("#FF6980", r"^class [\w\d_]+", (6, 0)),
+        "state_def": TagData("#FF6980", r"^class [\w_]+", (6, 0)),
         "state_name": TagData("#CCCCDD", r"[ ,\[]State_\d+[ ,\]]", (1, 1)),
         "state_name_endline": TagData("#CCCCDD", r"[ ,\[]State_\d+$", (1, 0)),
         "method_def": TagData("#F6D985", r" def (previous_states|enter|test|exit)(?=\()", (5, 0)),
-        "command": TagData("#82B882", r"^ +[\w\d_]+(?=\()", (0, 0)),
-        "keyword": TagData("#FF7878", r"(, |\w\()[\w\d_]+(?=\=)", (2, 0)),
+        "command": TagData("#82B882", r"^ +[\w_]+(?=\()", (0, 0)),
+        "keyword": TagData("#FF7878", r"(, |\w\()[\w_]+(?=\=)", (2, 0)),
         "number_literal": TagData("#AADDFF", r"[ ,=({\[-][\d.]+(?=($|[ ,:)}\]]))", (1, 0)),
-        "string_arg": TagData("#B2D8B2", r"='[\w\d_ ]+'", (1, 0)),
+        "string_arg": TagData("#B2D8B2", r"='[\w_ ]+'", (1, 0)),
         "comment": TagData("#00ABA9", r"#.*$", (0, 0)),
-        "docstring": TagData("#00ABA9", r'^[ ]+"""[\w\d\n :.]+"""', (0, 0)),
+        "docstring": TagData("#00ABA9", r'^[ ]+"""[\w\n :.]+"""', (0, 0)),
         "module_docstring": TagData("#00ABA9", r'^"""(.|\n)*"""', (0, 0)),
     }
 

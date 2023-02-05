@@ -132,9 +132,12 @@ def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]
 
 
 def get_instruction_args(
-    reader: BinaryReader, category, index, first_arg_offset, event_args_size, emedf: dict
+    reader: BinaryReader, category: int, index: int, first_arg_offset: int, event_args_size: int, emedf: dict
 ):
-    """Process instruction arguments (required and optional) from EMEVD binary."""
+    """Process instruction arguments (required and optional) from EMEVD reader.
+
+    Uses the `EMEDF` class variable attached to the caller `Instruction`.
+    """
 
     try:
         emedf_args_info = emedf[category, index]["args"]

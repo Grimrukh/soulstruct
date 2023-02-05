@@ -487,7 +487,7 @@ __all__ = [
     "NORTHEAST_ALTUS_PLATEAU_ASHEN_SW",
     "NORTHEAST_ALTUS_PLATEAU_ASHEN_SW_SE",
     # Basic enums
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -515,7 +515,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",

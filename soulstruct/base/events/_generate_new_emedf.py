@@ -12,7 +12,7 @@ from soulstruct.utilities.files import read_json, PACKAGE_PATH
 def _generate(old_instr_module, emedf_json_path):
 
     def_re = re.compile(r"^def (.*)\((.*)\):", re.DOTALL)
-    arg_re = re.compile(r"(\w[\w\d_]*)(: \w[\w\d_]*)?( *= *.*)?")
+    arg_re = re.compile(r"(\w[\w_]*)(: \w[\w_]*)?( *= *.*)?")
     doc_re = re.compile(r"^[ \"\n]*(.*?)[ \"\n]*$", re.DOTALL)  # strips all quotes and spaces
 
     # base_module = PACKAGE_PATH("base/events/emevd/instructions.py").read_text().split("\n")

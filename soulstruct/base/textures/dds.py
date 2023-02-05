@@ -303,7 +303,7 @@ class DDS(GameFile):
         self.header.pack(writer)
         if self.dxt10_header:
             self.dxt10_header.pack(writer)
-        return writer.finish()
+        return bytes(writer)
 
     @property
     def fourcc(self) -> str:

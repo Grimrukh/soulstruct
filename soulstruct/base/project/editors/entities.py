@@ -48,7 +48,7 @@ ENTITY_GAME_TYPES = (
 )
 
 _RE_ENTITIES_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")
-_RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w\d_]+) *= *(\d+) *#(.*)$")
+_RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w_]+) *= *(\d+) *#(.*)$")
 
 
 class EntityEntryRow(EntryRow):

@@ -20,6 +20,9 @@ EVENT_EXTENSIONS = {
     "emevd.dcx": {".emevd.dcx"},
     "numeric": {".numeric", ".txt", ".numeric.txt"},
 }
+ALL_EXTENSIONS = (
+    EVENT_EXTENSIONS["evs"] | EVENT_EXTENSIONS["emevd"] | EVENT_EXTENSIONS["emevd.dcx"] | EVENT_EXTENSIONS["numeric"]
+)
 
 
 def convert_events(
@@ -57,43 +60,47 @@ def convert_events(
         raise ValueError(f"Invalid EMEVD output extension: {repr(output_ext)}.")
     if output_type in {"evs", "numeric"} and check_hash:
         raise ValueError(f"Cannot use `check_hash=True` for EMEVD output type '{output_type}'.")
+
     output_directory = Path(output_directory)
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
-    emevd_sources = {m.emevd_file_stem: None for m in maps}
-    all_exts = EVENT_EXTENSIONS["evs"].union(
-        EVENT_EXTENSIONS["emevd"].union(EVENT_EXTENSIONS["emevd.dcx"].union(EVENT_EXTENSIONS["numeric"]))
-    )
+    emevd_source_paths = {m.emevd_file_stem: None for m in maps}
     merge_emevd_sources = [Path(merge_source) for merge_source in merge_emevd_sources]
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
         name, ext = parts[0], "." + ".".join(parts[1:])
-        if name in emevd_sources and (ext == input_ext or (input_ext is None and ext in all_exts)):
-            if emevd_sources[name] is not None:
+        if name in emevd_source_paths and (ext == input_ext or (input_ext is None and ext in ALL_EXTENSIONS)):
+            if emevd_source_paths[name] is not None:
                 raise FileExistsError(f"Found multiple files named {repr(name)} with different extensions.")
-            emevd_sources[name] = available
-    missing = [name for name, source in emevd_sources.items() if source is None]
+            emevd_source_paths[name] = available
+    missing = [name for name, source in emevd_source_paths.items() if source is None]
     if missing:
         raise FileNotFoundError(f"Could not find EMEVD sources for: {missing}.")
-    for name, source in emevd_sources.items():
-        dcx_type = emevd_class.DCX_TYPE if output_type == "emevd.dcx" else None
+
+    for name, source_path in emevd_source_paths.items():
         output_path = output_directory / (name + output_ext)
         name_stem = name.split(".")[0]
         try:
-            emevd = emevd_class(source, dcx_type=dcx_type, script_directory=input_directory)
+            # NOTE: EMEVD default `DCX_TYPE` applied automatically for EVS/numeric sources.
+            if input_type == "evs":
+                emevd = emevd_class.from_evs_path(source_path, script_directory=input_directory)
+            elif input_type == "numeric":
+                emevd = emevd_class.from_numeric_path(source_path, map_name=name_stem)
+            else:
+                emevd = emevd_class.from_path(source_path)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}:\n  {str(ex)}")
+
         for merge_source in tuple(merge_emevd_sources):
             if merge_source.stem.startswith(name_stem):
-                emevd = emevd.merge(merge_source)
+                merge_emevd, source_type = emevd_class.from_auto_detect_source_type(merge_source)
+                if source_type != "evs":
+                    dump_name = "__" + merge_source.name.split(".")[0] + ".evs.py"
+                    _LOGGER.info(f"EVS version of merge source file written for inspection: {dump_name}")
+                    merge_emevd.write_evs(merge_source.with_name(dump_name))
+                emevd = emevd.merge(merge_emevd)
                 merge_emevd_sources.remove(merge_source)
-                parts = merge_source.name.split(".")
-                if "." + ".".join(parts[1:]) not in EVENT_EXTENSIONS["evs"]:
-                    print(f"# Merged '{merge_source.name}' into {name} EMEVD. (EVS version dumped.)")
-                    dump_name = "__" + parts[0] + ".evs.py"
-                    emevd_class(merge_source).write_evs(merge_source.with_name(dump_name))
-                else:
-                    print(f"# Merged '{merge_source.name}' into {name} EMEVD.")
+                _LOGGER.info(f"Merged '{merge_source.name}' into {name} EMEVD.")
         try:
             if output_type == "evs":
                 emevd.write_evs(output_path)
@@ -117,21 +124,28 @@ def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True
 
     Prints only the first line that differs before returning (as subsequent lines may just be offset and this isn't a
     fancy diff tool).
+
+    TODO: dataclass equality comparison should be possible now...?
     """
+    emevd_1 = emevd_class.from_auto_detect_source_type(source_1)[0]
+    emevd_2 = emevd_class.from_auto_detect_source_type(source_2)[0]
+
     if use_evs:
-        string_1 = emevd_class(source_1).to_evs()
-        string_2 = emevd_class(source_2).to_evs()
+        string_1 = emevd_1.to_evs()
+        string_2 = emevd_2.to_evs()
     else:
-        string_1 = emevd_class(source_1).to_numeric()
-        string_2 = emevd_class(source_2).to_numeric()
+        string_1 = emevd_1.to_numeric()
+        string_2 = emevd_2.to_numeric()
+
     for i, (line_1, line_2) in enumerate(zip(string_1.split("\n"), string_2.split("\n"))):
         if line_1 != line_2:
             print(
-                f"Sources disagree on line {i + 1}.\n"
+                f"Sources disagree on (at earliest) line {i + 1}.\n"
                 f"  Source 1: {line_1}\n"
                 f"  Source 2: {line_2}"
             )
             return
+
     if use_evs:
         print("EMEVD sources have identical EVS representations.")
     else:

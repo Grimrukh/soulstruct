@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = ["TPFTexture", "TPF", "batch_get_tpf_texture_png_data"]
 
+import abc
 import logging
 import multiprocessing
 import json
@@ -9,14 +10,19 @@ import re
 import tempfile
 import typing as tp
 import zlib
+from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 
-from soulstruct.base.binder_entry import BinderEntry
-from soulstruct.base.game_file import GameFile
+from soulstruct.base.base_binary_file import BaseBinaryFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, ByteOrder
+from soulstruct.utilities.binary import *
+
 from .dcx import decompress
+
+
+if tp.TYPE_CHECKING:
+    from .entry import BinderEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,137 +46,129 @@ class TextureType(IntEnum):
     Volume = 2  # one 3D texture
 
 
+@dataclass(slots=True)
 class TextureHeader:
     """Extra metadata for headerless textures used in console versions."""
     width: int
     height: int
-    texture_count: int
-    unk1: int  # unknown, PS3 only
-    unk2: int  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in DS3 (console)
-    dxgi_format: int  # Microsoft DXGI_FORMAT
+    texture_count: int = 0
+    unk1: int = 0  # unknown, PS3 only
+    unk2: int = 0  # unknown, 0x0 or 0xAAE4 in DeS, 0xD in DS3 (console)
+    dxgi_format: int = 0  # Microsoft DXGI_FORMAT
 
 
-class FloatStruct:
+@dataclass(slots=True)
+class TextureFloatStruct(NewBinaryStruct):
     """Unknown optional data for some textures."""
     unk0: int
-    values: list[float]
-
-    @classmethod
-    def unpack_from(cls, reader: BinaryReader):
-        float_struct = cls()
-        float_struct.unk0 = reader.unpack_value("i")
-        length = reader.unpack_value("i")
-        if length < 0 or length % 4:
-            raise ValueError(f"Unexpected `FloatStruct` length: {length}. Expected a multiple of 4 (or 0).")
-        float_struct.values = list(reader.unpack(f"{length // 4}f"))
-
-    def pack(self, writer: BinaryWriter):
-        writer.pack("i", self.unk0)
-        writer.pack("i", len(self.values) * 4)
-        writer.pack(f"{len(self.values)}f", *self.values)
+    size: int = field(**BinaryAutoCompute(lambda self: 4 * len(self.values)))
+    values: list[float] = field(**Binary(length=FieldValue("size", lambda size: size // 4)))
 
 
+@dataclass(slots=True)
+class TPFTextureStruct(NewBinaryStruct, abc.ABC):
+    data_offset: uint
+    data_size: int
+    format: byte
+    texture_type: TextureType = field(**Binary(byte))
+    mipmap_count: byte
+    texture_flags: byte = field(**Binary(asserted=[0, 1, 2, 3]))
+
+
+@dataclass(slots=True)
 class TPFTexture:
 
-    name: str
-    format: int
-    texture_type: TextureType
-    mipmaps: int
-    texture_flags: int  # {2, 3} -> DCX-compressed; unknown otherwise
-    data: bytes
-    header: tp.Optional[TextureHeader]
-    float_struct: tp.Optional[FloatStruct]
-
-    def __init__(self):
-        self.name = ""
-        self.format = 1
-        self.texture_type = TextureType.Texture
-        self.mipmaps = 0
-        self.texture_flags = 0
-        self.data = b""
-        self.header = None
-        self.float_struct = None
+    name: str = ""
+    format: int = 1
+    texture_type: TextureType = TextureType.Texture
+    mipmap_count: int = 0
+    texture_flags: int = 0  # {2, 3} -> DCX-compressed; unknown otherwise
+    data: bytes = b""
+    header: TextureHeader | None = None
+    float_struct: TextureFloatStruct | None = None
 
     @classmethod
-    def unpack_from(
+    def from_tpf_reader(
         cls,
         reader: BinaryReader,
         platform: TPFPlatform,
         tpf_flags: int,
         encoding: str,
     ):
-        self = cls()
-
-        file_offset = reader.unpack_value("I")
-        file_size = reader.unpack_value("i")
-
-        self.format = reader.unpack_value("B")
-        self.texture_type = TextureType(reader.unpack_value("B"))
-        self.mipmaps = reader.unpack_value("B")
-        self.texture_flags = reader.unpack_value("B")
-        if self.texture_flags not in {0, 1, 2, 3}:
-            raise ValueError(f"`TPFTexture.flags1` was {self.texture_flags}, but expected 0, 1, 2, or 3.")
+        texture_struct = TPFTextureStruct.from_bytes(reader)
 
         if platform != TPFPlatform.PC:
-            self.header = TextureHeader
-            self.header.width = reader.unpack_value("h")
-            self.header.height = reader.unpack_value("h")
+            width = reader.unpack_value("h")
+            height = reader.unpack_value("h")
+            header = TextureHeader(width, height)
             if platform == TPFPlatform.Xbox360:
                 reader.assert_pad(4)
             elif platform == TPFPlatform.PS3:
-                self.header.unk1 = reader.unpack_value("i")
+                header.unk1 = reader.unpack_value("i")
                 if tpf_flags != 0:
-                    self.header.unk2 = reader.unpack_value("i")
-                    if self.header.unk2 not in {0, 0x68E0, 0xAAE4}:
+                    header.unk2 = reader.unpack_value("i")
+                    if header.unk2 not in {0, 0x68E0, 0xAAE4}:
                         raise ValueError(
-                            f"`TextureHeader.unk2` was {self.header.unk2}, but expected 0, 0x68E0, or 0xAAE4."
+                            f"`TextureHeader.unk2` was {header.unk2}, but expected 0, 0x68E0, or 0xAAE4."
                         )
             elif platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-                self.header.texture_count = reader.unpack_value("i")
-                if self.header.texture_count not in {1, 6}:
-                    f"`TextureHeader.texture_count` was {self.header.texture_count}, but expected 1 or 6."
-                self.header.unk2 = reader.unpack_value("i")
-                if self.header.unk2 != 0xD:
-                    f"`TextureHeader.unk2` was {self.header.unk2}, but expected 0xD."
+                header.texture_count = reader.unpack_value("i")
+                if header.texture_count not in {1, 6}:
+                    f"`TextureHeader.texture_count` was {header.texture_count}, but expected 1 or 6."
+                header.unk2 = reader.unpack_value("i")
+                if header.unk2 != 0xD:
+                    f"`TextureHeader.unk2` was {header.unk2}, but expected 0xD."
+            # `dxgi_format` unpacked below.
+        else:
+            header = None
 
         name_offset = reader.unpack_value("I")
         has_float_struct = reader.unpack_value("i") == 1
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-            self.header.dxgi_format = reader.unpack_value("i")
-        if has_float_struct:
-            self.float_struct = FloatStruct.unpack_from(reader)
+            header.dxgi_format = reader.unpack_value("i")
+        float_struct = TextureFloatStruct.from_bytes(reader) if has_float_struct else None
 
-        with reader.temp_offset(file_offset):
-            self.data = reader.read(file_size)
-        if self.texture_flags in {2, 3}:
+        with reader.temp_offset(texture_struct.pop("data_offset")):
+            data = reader.read(texture_struct.pop("data_size"))
+        if texture_struct.texture_flags in {2, 3}:
             # Data is DCX-compressed.
             # TODO: should enforce DCX type as 'DCP_EDGE'?
-            self.data = decompress(self.data)
+            data = decompress(data)
 
-        self.name = reader.unpack_string(offset=name_offset, encoding=encoding)
+        name = reader.unpack_string(offset=name_offset, encoding=encoding)
 
-        return self
+        texture = texture_struct.to_object(
+            cls,
+            name=name,
+            data=data,
+            header=header,
+            float_struct=float_struct,
+        )
 
-    def pack_header(self, writer: BinaryWriter, index: int, platform: TPFPlatform, tpf_flags: int):
+        return texture
+
+    def to_tpf_writer(self, writer: BinaryWriter, platform: TPFPlatform, tpf_flags: int):
         if platform == TPFPlatform.PC:
             dds = self.get_dds()
             if dds.header.caps_2 & DDSCAPS2.CUBEMAP:
-                tex_type = TextureType.Cubemap
+                texture_type = TextureType.Cubemap
             elif dds.header.caps_2 & DDSCAPS2.VOLUME:
-                tex_type = TextureType.Volume
+                texture_type = TextureType.Volume
             else:
-                tex_type = TextureType.Texture
+                texture_type = TextureType.Texture
             mipmap_count = dds.header.mipmap_count
         else:
-            tex_type = self.texture_type
-            mipmap_count = self.mipmaps
+            texture_type = self.texture_type
+            mipmap_count = self.mipmap_count
 
-        writer.reserve(f"file_data_{index}", "I")
-        writer.reserve(f"file_size_{index}", "i")
-        writer.pack("b", self.format)
-        writer.pack("b", tex_type)
-        writer.pack("b", mipmap_count)
-        writer.pack("b", self.texture_flags)
+        TPFTextureStruct.object_to_writer(
+            self,
+            writer,
+            file_offset=RESERVED,
+            file_size=RESERVED,
+            texture_type=texture_type,
+            mipmap_count=mipmap_count,
+        )
 
         if platform != TPFPlatform.PC:
             writer.pack("h", self.header.width)
@@ -185,33 +183,33 @@ class TPFTexture:
                 writer.pack("i", self.header.texture_count)
                 writer.pack("i", self.header.unk2)
 
-        writer.reserve(f"file_name_{index}", "I")
+        writer.reserve("name_offset", "I", obj=self)
         writer.pack("i", 0 if self.float_struct is None else 1)
 
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
             writer.pack("i", self.header.dxgi_format)
 
         if self.float_struct:
-            self.float_struct.pack(writer)
+            self.float_struct.to_writer(writer)
 
-    def pack_name(self, writer: BinaryWriter, index: int, encoding: int):
-        writer.fill(f"file_name_{index}", writer.position)
-        if encoding == 1:
+    def pack_name(self, writer: BinaryWriter, encoding_type: int):
+        writer.fill_with_position("name_offset", obj=self)
+        if encoding_type == 1:  # UTF-16
             name = self.name.encode(encoding=writer.default_byte_order.get_utf_16_encoding()) + b"\0\0"
-        elif encoding in {0, 2}:
+        elif encoding_type in {0, 2}:  # shift-jis
             name = self.name.encode(encoding="shift-jis") + b"\0"
         else:
-            raise ValueError(f"Invalid TPF texture encoding: {encoding}. Must be 0, 1, or 2.")
+            raise ValueError(f"Invalid TPF texture encoding: {encoding_type}. Must be 0, 1, or 2.")
         writer.append(name)
 
-    def pack_data(self, writer: BinaryWriter, index: int):
-        writer.fill(f"file_data_{index}", writer.position)
+    def pack_data(self, writer: BinaryWriter):
+        writer.fill_with_position("data_offset", obj=self)
         if self.texture_flags in {2, 3}:
             data = zlib.compress(self.data, level=7)
         else:
             data = self.data
 
-        writer.fill(f"file_size_{index}", len(data))
+        writer.fill("data_size", len(data), obj=self)
         writer.append(data)
 
     @property
@@ -219,10 +217,10 @@ class TPFTexture:
         return Path(self.name).stem
 
     def get_dds(self) -> DDS:
-        return DDS(self.data)
+        return DDS.from_bytes(self.data)
 
     def get_dds_format(self) -> str:
-        return DDS(self.data).header.fourcc.decode()
+        return DDS.from_bytes(self.data).header.fourcc.decode()
 
     def write_dds(self, dds_path: str | Path):
         Path(dds_path).write_bytes(self.data)
@@ -279,7 +277,7 @@ class TPFTexture:
             f"    name = '{self.name}'\n"
             f"    format = {self.format}\n"
             f"    texture_type = {self.texture_type.name}\n"
-            f"    mipmaps = {self.mipmaps}\n"
+            f"    mipmaps = {self.mipmap_count}\n"
             f"    texture_flags = {self.texture_flags}\n"
             f"    data = <{len(self.data)} bytes>\n"
             f"    has_header = {self.header is not None}\n"
@@ -288,58 +286,56 @@ class TPFTexture:
         )
 
 
-class TPF(GameFile):
+@dataclass(slots=True)
+class TPFStruct(NewBinaryStruct):
+    signature: bytes = field(**Binary(length=4, asserted=b"TPF\0"))
+    _data_size: int
+    file_count: int
+    platform: TPFPlatform = field(**Binary(byte))
+    tpf_flags: byte = field(**(Binary(asserted=[0, 1, 2, 3])))
+    encoding_type: byte = field(**Binary(asserted=[0, 1, 2]))  # 2 == UTF_16, 0/1 == shift_jis_2004
+    _pad1: bytes = field(**BinaryPad(1))
 
-    textures: list[TPFTexture]
-    platform: TPFPlatform
-    encoding: int
-    tpf_flags: int  # non-zero value on PS3 means textures have `unk2`; unknown otherwise
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        reader.unpack_value("4s", asserted=b"TPF\0")
-        self.platform = TPFPlatform(reader.unpack_value("B", offset=0xC))
-        reader.default_byte_order = ">" if self.platform in {TPFPlatform.Xbox360, TPFPlatform.PS3} else "<"
+@dataclass(slots=True)
+class TPF(BaseBinaryFile):
 
-        reader.unpack_value("i")  # data length
-        file_count = reader.unpack_value("i")
-        reader.unpack_value("B")  # platform
-        self.tpf_flags = reader.unpack_value("B")
-        if self.tpf_flags not in {0, 1, 2, 3}:
-            raise ValueError(f"`TPF.tpf_flags` was {self.tpf_flags}, but expected 0, 1, 2, or 3.")
-        self.encoding = reader.unpack_value("B")
-        if self.encoding not in {0, 1, 2}:
-            raise ValueError(f"`TPF.encoding` was {self.encoding}, but expected 0, 1, or 2.")
-        reader.assert_pad(1)
+    textures: list[TPFTexture] = field(default_factory=list)
+    platform: TPFPlatform = TPFPlatform.PC
+    encoding_type: int = 0
+    tpf_flags: int = 0  # non-zero value on PS3 means textures have `unk2`; unknown otherwise
 
-        encoding = reader.get_utf_16_encoding() if self.encoding == 1 else "shift_jis_2004"
-        self.textures = [
-            TPFTexture.unpack_from(reader, self.platform, self.tpf_flags, encoding) for _ in range(file_count)
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> TPF:
+        platform = TPFPlatform(reader.unpack_value("B", offset=0xC))
+        reader.default_byte_order = ">" if platform in {TPFPlatform.Xbox360, TPFPlatform.PS3} else "<"
+        tpf_struct = TPFStruct.from_bytes(reader)
+
+        encoding = reader.get_utf_16_encoding() if tpf_struct.encoding_type == 1 else "shift_jis_2004"
+        textures = [
+            TPFTexture.from_tpf_reader(reader, platform, tpf_struct.tpf_flags, encoding)
+            for _ in range(tpf_struct.file_count)
         ]
+        return cls(textures, platform, tpf_struct.encoding, )
 
-    def pack(self) -> bytes:
+    def to_writer(self) -> BinaryWriter:
         """Pack TPF file to bytes."""
-        writer = BinaryWriter(byte_order=self.platform.get_byte_order())
-        writer.append(b"TPF\0")
-        writer.reserve("data_size", "i")
-        writer.pack("i", len(self.textures))
-        writer.pack("b", self.platform)
-        writer.pack("b", self.tpf_flags)
-        writer.pack("b", self.encoding)
-        writer.pad(1)
+        byte_order = self.platform.get_byte_order()
+        writer = TPFStruct.object_to_writer(self, byte_order=byte_order)
 
-        for i, texture in enumerate(self.textures):
-            texture.pack_header(writer, i, self.platform, self.tpf_flags)
-        for i, texture in enumerate(self.textures):
-            texture.pack_name(writer, i, self.encoding)
+        for texture in self.textures:
+            texture.to_tpf_writer(writer, self.platform, self.tpf_flags)
+        for texture in self.textures:
+            texture.pack_name(writer, self.encoding_type)
 
         data_start = writer.position
-        for i, texture in enumerate(self.textures):
+        for texture in self.textures:
             # TKGP notes: padding varies wildly across games, so don't worry about it too much.
             if len(texture.data) > 0:
                 writer.pad_align(4)
-            texture.pack_data(writer, i)
-        writer.fill("data_size", writer.position - data_start)
-        return writer.finish()
+            texture.pack_data(writer)
+        writer.fill("data_size", writer.position - data_start, obj=self)
+        return writer
 
     def write_unpacked_dir(self, directory=None):
         if directory is None:
@@ -352,27 +348,27 @@ class TPF(GameFile):
         directory.mkdir(parents=True, exist_ok=True)
 
         texture_entries = []
-        for i, texture in enumerate(self.textures):
+        for texture in self.textures:
             texture_dict = {
                 "name": texture.name,
                 "format": texture.format,
                 "texture_type": texture.texture_type.name,
-                "mipmaps": texture.mipmaps,
+                "mipmaps": texture.mipmap_count,
                 "texture_flags": texture.texture_flags,
             }
             texture_entries.append(texture_dict)
             texture.write_dds(directory / f"{texture.stem}.dds")  # TODO: should already be '.dds', no?
-        json_dict = self.get_json_header()
-        json_dict["entries"] = texture_entries
+        tpf_manifest = self.get_json_header()
+        tpf_manifest["entries"] = texture_entries
 
         # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
         with (directory / "tpf_manifest.json").open("w", encoding="shift-jis") as f:
-            json.dump(json_dict, f, indent=4)
+            json.dump(tpf_manifest, f, indent=4)
 
     def get_json_header(self):
         return {
             "platform": self.platform.name,
-            "encoding": self.encoding,
+            "encoding_type": self.encoding_type,
             "tpf_flags": self.tpf_flags,
         }
 
@@ -418,7 +414,7 @@ class TPF(GameFile):
             f"TPF(\n"
             f"    textures = <{len(self.textures)} textures>\n"
             f"    platform = {self.platform.name}\n"
-            f"    encoding = {self.encoding}\n"
+            f"    encoding_type = {self.encoding_type}\n"
             f"    tpf_flags = {self.tpf_flags}\n"
             f")"
         )
@@ -432,8 +428,8 @@ class TPF(GameFile):
         tpfbhd_directory = Path(tpfbhd_directory)
         tpf_entries = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
-            bxf = Binder(bhd_path, create_bak_if_missing=False)
-            for entry in bxf.entries:
+            bxf = Binder.from_path(bhd_path)
+            for entry in bxf._entries:
                 match = tpf_re.match(entry.name)
                 if match:
                     tpf_entries[entry.minimal_stem] = entry
@@ -455,11 +451,11 @@ class TPF(GameFile):
         tpfbhd_directory = Path(tpfbhd_directory)
         textures = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
-            bxf = Binder(bhd_path, create_bak_if_missing=False)
-            for entry in bxf.entries:
+            bxf = Binder.from_path(bhd_path)
+            for entry in bxf._entries:
                 match = tpf_re.match(entry.name)
                 if match:
-                    tpf = cls(entry.data)
+                    tpf = cls.from_bytes(entry.data)
                     if convert_formats is not None:
                         input_format, output_format = convert_formats
                         tpf.convert_dds_formats(input_format, output_format)

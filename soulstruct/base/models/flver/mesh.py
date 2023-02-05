@@ -5,10 +5,11 @@ __all__ = ["FaceSetFlags", "FaceSet", "Mesh"]
 import logging
 import random
 import typing as tp
+from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.utilities.text import indent_lines
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import *
 
 from .bounding_box import BoundingBox, BoundingBoxWithUnknown
 from .vertex import BufferLayout, Vertex, VertexBuffer
@@ -27,61 +28,64 @@ class FaceSetFlags(IntEnum):
         return flag_int & self.value
 
 
-class FaceSet(BinaryObject):
+@dataclass(slots=True)
+class FaceSetStruct(NewBinaryStruct):
 
-    STRUCT = BinaryStruct(
-        "3x",
-        ("flags", "B"),
-        ("triangle_strip", "?"),
-        ("cull_back_faces", "?"),
-        ("unk_x06", "h"),
-        ("__vertex_indices_count", "i"),
-        ("__vertex_indices_offset", "i"),
-        # Header stops here for versions < 0x20005, which are not supported by Soulstruct.
-        ("__vertex_indices_length", "i"),  # not needed
-        "4x",
-        ("__vertex_index_size", "i"),  # 0 (from header), 16, or 32
-        "4x",
-    )
+    _pad1: bytes = field(init=False, **BinaryPad(3))
+    flags: byte
+    triangle_strip: bool
+    cull_back_faces: bool
+    unk_x06: short
+    _vertex_indices_count: int
+    _vertex_indices_offset: int
+    # NOTE: Fields stop here for FLVER versions < 0x20005, which are not supported by Soulstruct.
+    _vertex_indices_length: int  # len(self.vertex_indices) * vertex_index_size // 8
+    _pad2: bytes = field(init=False, **BinaryPad(4))
+    _vertex_index_size: int = field(**Binary(asserted=[0, 16, 32]))  # 0 means size is set by FLVER header
+    _pad3: bytes = field(init=False, **BinaryPad(4))
+
+
+@dataclass(slots=True)
+class FaceSet:
 
     flags: int
     triangle_strip: bool
     cull_back_faces: bool
     unk_x06: int
-    vertex_indices: list[int]
+    vertex_indices: list[int] = field(default_factory=list)
 
-    def unpack(self, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int):
-        face_set = reader.unpack_struct(self.STRUCT)
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, header_vertex_index_size: int, vertex_data_offset: int) -> FaceSet:
+        face_set_struct = FaceSetStruct.from_bytes(reader)
 
-        vertex_index_size = face_set.pop("__vertex_index_size")
+        vertex_index_size = face_set_struct.pop("_vertex_index_size")
         if vertex_index_size == 0:
             vertex_index_size = header_vertex_index_size
 
         if vertex_index_size == 8:
             raise NotImplementedError("Soulstruct cannot support edge-compressed FLVER face sets.")
         elif vertex_index_size in {16, 32}:
-            vertex_indices_count = face_set.pop("__vertex_indices_count")
-            vertex_indices_offset = face_set.pop("__vertex_indices_offset")
+            vertex_indices_count = face_set_struct.pop("_vertex_indices_count")
+            vertex_indices_offset = face_set_struct.pop("_vertex_indices_offset")
             with reader.temp_offset(vertex_data_offset + vertex_indices_offset):
                 fmt = f"<{vertex_indices_count}{'H' if vertex_index_size == 16 else 'I'}"
-                self.vertex_indices = list(reader.unpack(fmt))
+                vertex_indices = list(reader.unpack(fmt))
         else:
             raise ValueError(f"Unsupported face set index size: {vertex_index_size}")
+        return face_set_struct.to_object(cls, vertex_indices=vertex_indices)
 
-        self.set(**face_set)
-
-    def pack(self, writer: BinaryWriter, vertex_index_size: int):
-        writer.pack_struct(
-            self.STRUCT,
+    def to_flver_writer(self, writer: BinaryWriter, vertex_index_size: int):
+        face_set_struct = FaceSetStruct.from_object(
             self,
-            __vertex_indices_count=len(self.vertex_indices),
-            __vertex_indices_offset=writer.AUTO_RESERVE,
-            __vertex_indices_length=len(self.vertex_indices) * vertex_index_size // 8,
-            __vertex_index_size=vertex_index_size,
+            _vertex_indices_count=len(self.vertex_indices),
+            _vertex_indices_offset=None,  # reserved
+            _vertex_indices_length=len(self.vertex_indices) * vertex_index_size // 8,
+            _vertex_index_size=vertex_index_size,
         )
+        face_set_struct.to_writer(writer, reserve_obj=self)
 
     def pack_vertex_indices(self, writer: BinaryWriter, vertex_index_size: int, vertex_indices_offset: int):
-        self.fill(writer, __vertex_indices_offset=vertex_indices_offset)
+        writer.fill("_vertex_indices_offset", vertex_indices_offset, obj=self)
         if vertex_index_size == 16:
             fmt = f"{len(self.vertex_indices)}H"
         elif vertex_index_size == 32:
@@ -184,82 +188,76 @@ class FaceSet(BinaryObject):
         )
 
 
-class Mesh(BinaryObject):
+@dataclass(slots=True)
+class MeshStruct(NewBinaryStruct):
 
-    Vertex = Vertex
-    FaceSet = FaceSet
+    is_bind_pose: bool
+    _pad1: bytes = field(init=False, **BinaryPad(3))
+    material_index: int
+    _pad2: bytes = field(init=False, **BinaryPad(8))
+    default_bone_index: int
+    _bone_count: int
+    _bounding_box_offset: int
+    _bone_offset: int
+    _face_set_count: int
+    _face_set_offset: int
+    _vertex_buffer_count: int = field(**Binary(asserted=[1, 2, 3]))
+    _vertex_buffer_offset: int
 
-    STRUCT = BinaryStruct(
-        ("is_bind_pose", "?"),
-        "3x",
-        ("material_index", "i"),
-        "8x",
-        ("default_bone_index", "i"),
-        ("__bone_count", "i"),
-        ("__bounding_box_offset", "i"),
-        ("__bone_offset", "i"),
-        ("__face_set_count", "i"),
-        ("__face_set_offset", "i"),
-        ("__vertex_buffer_count", "i"),  # 1, 2, or 3
-        ("__vertex_buffer_offset", "i"),
-    )
+
+@dataclass(slots=True)
+class Mesh:
+
+    Vertex: tp.ClassVar[tp.Type[Vertex]] = Vertex
+    FaceSet: tp.ClassVar[tp.Type[FaceSet]] = FaceSet
 
     is_bind_pose: bool
     material_index: int
-    default_bone_index: int
-    bounding_box: tp.Optional[BoundingBox]
+    default_bone_index: int = -1
+    bone_indices: list[int] = field(default_factory=list)
+    bounding_box: tp.Optional[BoundingBox] = None
+    face_sets: list[FaceSet] = field(default_factory=list)
+    vertex_buffers: list[VertexBuffer] = field(default_factory=list)
+    vertices: list[Vertex] = field(default_factory=list)
 
-    bone_indices: list[int]
-    face_sets: list[FaceSet]
-    vertex_buffers: list[VertexBuffer]
-    vertices: list[Vertex]
+    invalid_vertex_size: bool = False
 
-    _face_set_indices: tp.Optional[list[int]]
-    _vertex_buffer_indices: tp.Optional[list[int]]
+    # Held temporarily while unpacking.
+    _face_set_indices: list[int] | None = None
+    _vertex_buffer_indices: list[int] | None = None
 
-    invalid_vertex_size: bool
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
+        mesh_struct = MeshStruct.from_bytes(reader)
 
-    DEFAULTS = {
-        "default_bone_index": -1,
-    }
+        _bone_count = mesh_struct.pop("_bone_count")
+        _bounding_box_offset = mesh_struct.pop("_bounding_box_offset")
+        _bone_offset = mesh_struct.pop("_bone_offset")
+        _face_set_count = mesh_struct.pop("_face_set_count")
+        _face_set_offset = mesh_struct.pop("_face_set_offset")
+        _vertex_buffer_count = mesh_struct.pop("_vertex_buffer_count")
+        _vertex_buffer_offset = mesh_struct.pop("_vertex_buffer_offset")
 
-    def __init__(self, reader: BinaryReader = None, **kwargs):
-        self.bone_indices = []
-        self.face_sets = []
-        self.vertex_buffers = []
-        self.vertices = []
-        self.invalid_vertex_size = False
-        self.bounding_box = None
-        super().__init__(reader, **kwargs)
+        bone_indices = list(reader.unpack(f"{_bone_count}i", offset=_bone_offset))
+        _face_set_indices = list(reader.unpack(f"{_face_set_count}i", offset=_face_set_offset))
+        _vertex_buffer_indices = list(reader.unpack(f"{_vertex_buffer_count}i", offset=_vertex_buffer_offset))
 
-    def unpack(self, reader: BinaryReader, bounding_box_has_unknown: bool = None):
-        mesh = reader.unpack_struct(self.STRUCT)
-
-        bounding_box_offset = mesh.pop("__bounding_box_offset")
-        if bounding_box_offset == 0:
-            self.bounding_box = None
+        if _bounding_box_offset != 0:
+            with reader.temp_offset(_bounding_box_offset):
+                box_class = BoundingBoxWithUnknown if bounding_box_has_unknown else BoundingBox
+                bounding_box = box_class.from_bytes(reader)
         else:
-            with reader.temp_offset(bounding_box_offset):
-                self.bounding_box = BoundingBoxWithUnknown(reader) if bounding_box_has_unknown else BoundingBox(reader)
-
-        bone_count = mesh.pop("__bone_count")
-        with reader.temp_offset(mesh.pop("__bone_offset")):
-            self.bone_indices = list(reader.unpack(f"<{bone_count}i"))
-
-        face_set_count = mesh.pop("__face_set_count")
-        with reader.temp_offset(mesh.pop("__face_set_offset")):
-            self._face_set_indices = list(reader.unpack(f"<{face_set_count}i"))
-
-        vertex_count = mesh.pop("__vertex_buffer_count")
-        with reader.temp_offset(mesh.pop("__vertex_buffer_offset")):
-            self._vertex_buffer_indices = list(reader.unpack(f"<{vertex_count}i"))
-
-        self.set(**mesh)
+            bounding_box = None
+        return mesh_struct.to_object(
+            cls,
+            bone_indices=bone_indices,
+            _face_set_indices=_face_set_indices,
+            _vertex_buffer_indices=_vertex_buffer_indices,
+            bounding_box=bounding_box,
+        )
 
     def assign_face_sets(self, face_sets: dict[int, FaceSet]):
         self.face_sets = []
-        if self._face_set_indices is None:
-            raise ValueError("Tried to call `assign_face_sets()` on a `Mesh` more than once.")
         for i in self._face_set_indices:
             if i not in face_sets:
                 raise KeyError(
@@ -271,8 +269,6 @@ class Mesh(BinaryObject):
 
     def assign_vertex_buffers(self, vertex_buffers: dict[int, VertexBuffer], layouts: list[BufferLayout]):
         self.vertex_buffers = []
-        if self._vertex_buffer_indices is None:
-            raise ValueError("Tried to call `assign_vertex_buffers()` on a `Mesh` more than once.")
         for i in self._vertex_buffer_indices:
             if i not in vertex_buffers:
                 raise KeyError(
@@ -284,7 +280,7 @@ class Mesh(BinaryObject):
 
         # Check that all vertex buffers for this Mesh have the same length.
         if self.vertex_buffers:
-            if len({buffer.vertex_count for buffer in self.vertex_buffers}) != 1:
+            if len({buffer._struct._vertex_count for buffer in self.vertex_buffers}) != 1:
                 raise ValueError("Vertex buffers for Mesh do not all have the same size.")
         else:
             _LOGGER.warning("Mesh has no vertex buffers.")
@@ -311,50 +307,44 @@ class Mesh(BinaryObject):
         uv_factor: int,
     ):
         # Start with empty vertices.
-        self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].vertex_count)]
+        self.vertices = [Vertex() for _ in range(self.vertex_buffers[0]._struct._vertex_count)]
         # Load data into them from all buffers (usually just one) attached to this Mesh.
         for vertex_buffer in self.vertex_buffers:
             vertex_buffer.read_buffer(reader, layouts, self.vertices, vertex_data_offset, uv_factor)
 
-    def pack(self, writer: BinaryWriter):
-        writer.pack_struct(
-            self.STRUCT,
+    def to_flver_writer(self, writer: BinaryWriter):
+        MeshStruct.object_to_writer(
             self,
-            __bounding_box_offset=writer.AUTO_RESERVE,
-            __bone_count=len(self.bone_indices),
-            __bone_offset=writer.AUTO_RESERVE,
-            __face_set_count=len(self.face_sets),
-            __face_set_offset=writer.AUTO_RESERVE,
-            __vertex_buffer_count=len(self.vertex_buffers),
-            __vertex_buffer_offset=writer.AUTO_RESERVE,
+            writer,
+            _bone_count=len(self.bone_indices),
+            _face_set_count=len(self.face_sets),
+            _vertex_buffer_count=len(self.vertex_buffers),
         )
 
     def pack_bounding_box(self, writer: BinaryWriter):
         if self.bounding_box is None:
-            writer.fill("__bounding_box_offset", 0, obj=self)
+            writer.fill("_bounding_box_offset", 0, obj=self)
         else:
-            writer.fill("__bounding_box_offset", writer.position, obj=self)
-            self.bounding_box.pack(writer)
+            writer.fill_with_position("_bounding_box_offset", obj=self)
+            self.bounding_box.to_writer(writer)
 
     def pack_bone_indices(self, writer: BinaryWriter, bone_indices_start: int):
         if not self.bone_indices:
             # Weird case for byte-perfect writing.
-            writer.fill("__bone_offset", bone_indices_start, obj=self)
+            writer.fill("_bone_offset", bone_indices_start, obj=self)
         else:
-            writer.fill("__bone_offset", writer.position, obj=self)
+            writer.fill_with_position("_bone_offset", obj=self)
             writer.pack(f"{len(self.bone_indices)}i", *self.bone_indices)
 
     def pack_face_set_indices(self, writer: BinaryWriter, first_face_set_index: int):
-        writer.fill("__face_set_offset", writer.position, obj=self)
-        mesh_face_set_indices = range(first_face_set_index, first_face_set_index + len(self.face_sets))
-        writer.pack(f"{len(self.face_sets)}i", *mesh_face_set_indices)
+        face_set_indices = [first_face_set_index + i for i in range(len(self.face_sets))]
+        writer.fill_with_position("_face_set_offset", obj=self)
+        writer.pack(f"{len(face_set_indices)}i", *face_set_indices)
 
     def pack_vertex_buffer_indices(self, writer: BinaryWriter, first_vertex_buffer_index: int):
-        writer.fill("__vertex_buffer_offset", writer.position, obj=self)
-        mesh_vertex_buffer_indices = range(
-            first_vertex_buffer_index, first_vertex_buffer_index + len(self.vertex_buffers)
-        )
-        writer.pack(f"{len(self.vertex_buffers)}i", *mesh_vertex_buffer_indices)
+        vertex_buffer_indices = [first_vertex_buffer_index + i for i in range(len(self.vertex_buffers))]
+        writer.fill_with_position("_vertex_buffer_offset", obj=self)
+        writer.pack(f"{len(vertex_buffer_indices)}i", *vertex_buffer_indices)
 
     def to_obj(self, name="Mesh", vertex_offset=0) -> str:
         """Convert mesh vertices, normals, UVs, and faces to an OBJ string.
@@ -402,10 +392,10 @@ class Mesh(BinaryObject):
         import matplotlib.pyplot as plt
         if axes is None:
             axes = plt.figure().add_subplot(111, projection="3d")
-        positions = [v.position.to_xzy() for v in self.vertices]
+        positions = [[v.position[0], v.position[2], v.position[1]] for v in self.vertices]
         axes.scatter(*zip(*positions), c=vertex_color, s=1, alpha=0.1)  # note y/z swapped
         if show_normals:
-            normals = [v.normal.to_xzy() for v in self.vertices]
+            normals = [[v.position[0], v.position[2], v.position[1]] for v in self.vertices]
             for position, normal in zip(positions, normals):
                 axes.plot(*zip(position, position + normal), c="black", alpha=0.1)
         if show_origin:
@@ -415,7 +405,7 @@ class Mesh(BinaryObject):
         if show_face_sets:
             import numpy as np
             from mpl_toolkits.mplot3d import art3d
-            vertices = np.array([list(v.position.to_xzy()) for v in self.vertices])
+            vertices = np.array([[v.position[0], v.position[2], v.position[1]] for v in self.vertices])
             faces = []
             for i, face_set in enumerate(self.face_sets):
                 if i in show_face_sets:

@@ -99,12 +99,12 @@ class GameParamBND(BaseBND, abc.ABC):
                     raise KeyError(f"Field `{field}` not specified in 'params[{i}]' in `GameParamBND` dict.")
             param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
             entry = self.BinderEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
-            if entry.id in entry_ids:
+            if entry.entry_id in entry_ids:
                 _LOGGER.warning(
-                    f"Binder entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP."
+                    f"Binder entry ID {entry.entry_id} appears more than once in this `GameParamBND`. Fix this ASAP."
                 )
             self._entries.append(entry)
-            entry_ids.add(entry.id)
+            entry_ids.add(entry.entry_id)
             p = self.params[entry.path] = param
             # Preferential nickname source order:
             #     `self.PARAM_NICKNAMES[BinderEntry.stem]`, `p.nickname`, `BinderEntry.stem`
@@ -120,7 +120,7 @@ class GameParamBND(BaseBND, abc.ABC):
             entry = self.entries_by_path[path]
             param_dict = param.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             data["params"].append({
-                "entry_id": entry.id,
+                "entry_id": entry.entry_id,
                 "path": path,
                 "flags": entry.flags,
                 "data": param_dict,
@@ -164,9 +164,9 @@ class GameParamBND(BaseBND, abc.ABC):
                     )
             param = self.Param(param_dict["data"], paramdef_bnd=self.paramdef_bnd)
             entry = self.BinderEntry(param.pack(), param_dict["entry_id"], param_dict["path"], param_dict["flags"])
-            if entry.id in entry_ids:
+            if entry.entry_id in entry_ids:
                 _LOGGER.warning(
-                    f"Binder entry ID {entry.id} appears more than once in this `GameParamBND`. Fix this ASAP."
+                    f"Binder entry ID {entry.entry_id} appears more than once in this `GameParamBND`. Fix this ASAP."
                 )
             self._entries.append(entry)
             p = self.params[entry.path] = param
@@ -190,7 +190,7 @@ class GameParamBND(BaseBND, abc.ABC):
         for path, param in self.params.items():
             entry = self.entries_by_path[path]
             param_dict = {
-                "entry_id": entry.id,
+                "entry_id": entry.entry_id,
                 "path": path,
                 "flags": entry.flags,
                 "data": param.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults),

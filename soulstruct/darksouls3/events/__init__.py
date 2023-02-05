@@ -32,7 +32,7 @@ __all__ = [
     "ARENA_DRAGON_RUINS",
     "ARENA_ROUND_PLAZA",
     # Basic enums
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -60,7 +60,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",

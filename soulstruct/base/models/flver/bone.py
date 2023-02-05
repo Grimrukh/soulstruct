@@ -1,60 +1,68 @@
 from __future__ import annotations
 
-__all__ = ["Bone"]
+__all__ = ["FLVERBone"]
 
+from dataclasses import dataclass, field
 import typing as tp
 
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3
 
 
-# TODO: Decent candidate for a `dataclass slots` refactor test.
-class Bone(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("translate", "3f"),
-        ("__name__z", "i"),
-        ("rotate", "3f"),  # Euler angles (radians)
-        ("parent_index", "h"),
-        ("child_index", "h"),
-        ("scale", "3f"),
-        ("next_sibling_index", "h"),
-        ("previous_sibling_index", "h"),
-        ("bounding_box_min", "3f"),
-        ("unk_x3c", "i"),
-        ("bounding_box_max", "3f"),
-        "52x",
-    )
-
-    DEFAULTS = {
-        "parent_index": -1,
-        "child_index": -1,
-        "next_sibling_index": -1,
-        "previous_sibling_index": -1,
-    }
+@dataclass(slots=True)
+class FLVERBoneStruct(NewBinaryStruct):
 
     translate: Vector3
-    name: str
-    rotate: Vector3
-    parent_index: int
-    child_index: int
+    _name_offset: int
+    rotate: Vector3  # Euler angles (radians)
+    parent_index: short
+    child_index: short
     scale: Vector3
-    next_sibling_index: int
-    previous_sibling_index: int
+    next_sibling_index: short
+    previous_sibling_index: short
     bounding_box_min: Vector3
     unk_x3c: int
     bounding_box_max: Vector3
+    _pad1: bytes = field(init=False, **BinaryPad(52))
 
-    unpack = BinaryObject.default_unpack
-    pack = BinaryObject.default_pack
 
-    def get_parent(self, bones: list[Bone]) -> tp.Optional[Bone]:
+@dataclass(slots=True)
+class FLVERBone:
+    """Bone in a FLVER model. Named to distinguish it from Havok bones in my `soulstruct-havok` package."""
+
+    name: str
+    translate: Vector3
+    rotate: Vector3  # Euler angles (radians)
+    scale: Vector3
+    bounding_box_min: Vector3
+    bounding_box_max: Vector3
+    unk_x3c: int
+    parent_index: int = -1
+    child_index: int = -1
+    next_sibling_index: int = -1
+    previous_sibling_index: int = -1
+
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, encoding: str) -> FLVERBone:
+        bone_struct = FLVERBoneStruct.from_bytes(reader)
+        name = reader.unpack_string(offset=bone_struct.pop("_name_offset"), encoding=encoding)
+        flver_bone = bone_struct.to_object(cls, name=name)
+        return flver_bone
+
+    def to_flver_writer(self, writer: BinaryWriter):
+        FLVERBoneStruct.object_to_writer(self, writer, _name_offset=None)
+
+    def pack_name(self, writer: BinaryWriter, encoding: str):
+        writer.fill_with_position("_name_offset", obj=self)
+        writer.pack_z_string(self.name, encoding)
+
+    def get_parent(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.parent_index != -1:
             return bones[self.parent_index]
         return None
 
-    def get_all_parents(self, bones: list[Bone], include_self=True) -> list[Bone]:
-        """Get all parents, from the highest to this Bone."""
+    def get_all_parents(self, bones: list[FLVERBone], include_self=True) -> list[FLVERBone]:
+        """Get all parents, from the highest to this FLVERBone."""
         parents = [self] if include_self else []
         bone = self
         while bone.parent_index != -1:
@@ -62,22 +70,22 @@ class Bone(BinaryObject):
             parents.append(bone)
         return list(reversed(parents))
 
-    def get_child(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_child(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.child_index != -1:
             return bones[self.child_index]
         return None
 
-    def get_next_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_next_sibling(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.next_sibling_index != -1:
             return bones[self.next_sibling_index]
         return None
 
-    def get_previous_sibling(self, bones: list[Bone]) -> tp.Optional[Bone]:
+    def get_previous_sibling(self, bones: list[FLVERBone]) -> tp.Optional[FLVERBone]:
         if self.previous_sibling_index != -1:
             return bones[self.previous_sibling_index]
         return None
 
-    def get_absolute_translate_rotate(self, bones: list[Bone]) -> tuple[Vector3, Matrix3]:
+    def get_absolute_translate_rotate(self, bones: list[FLVERBone]) -> tuple[Vector3, Matrix3]:
         """Accumulates parents' translates and rotates."""
         absolute_translate = Vector3.zero()
         rotate = Matrix3.identity()
@@ -86,17 +94,17 @@ class Bone(BinaryObject):
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
         return absolute_translate, rotate
 
-    def __eq__(self, other_bone: Bone):
-        return self.__dict__ == other_bone.__dict__
+    def __eq__(self, other_bone: FLVERBone):
+        return slots_equality(self, other_bone)
 
     def __repr__(self):
         lines = [
-            f"Bone(\n"
+            f"FLVERBone(\n"
             f"  name = {repr(self.name)}",
             f"  translate = {self.translate}",
             f"  rotate = {self.rotate}",
         ]
-        if self.scale != (1.0, 1.0, 1.0):
+        if not self.scale.is_identity():
             lines.append(f"  scale = {self.scale}")
         lines.append(f"  parent_index = {self.parent_index}")
         if self.next_sibling_index != -1:

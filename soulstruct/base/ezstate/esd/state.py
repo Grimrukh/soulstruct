@@ -2,78 +2,184 @@ from __future__ import annotations
 
 __all__ = ["State"]
 
-import abc
 import typing as tp
+from dataclasses import dataclass, field
 
 from soulstruct.base.ezstate.esd.esd_type import ESDType
+from soulstruct.utilities.binary import *
 
 from .command import Command
 from .condition import Condition
 from .ezl_parser import CLEAR_REGISTERS
 
-if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "State"
 
 
-class State(abc.ABC):
+@dataclass(slots=True)
+class StateStruct(NewBinaryStruct):
+    index: varint
+    condition_pointers_offset: varint
+    condition_pointers_count: varint
+    enter_commands_offset: varint
+    enter_commands_count: varint
+    exit_commands_offset: varint
+    exit_commands_count: varint
+    ongoing_commands_offset: varint
+    ongoing_commands_count: varint
+
+
+@dataclass(slots=True)
+class State:
     """A single state that the EzState machine (ESD file) can occupy at a moment in time.
 
     Lists of enter, ongoing (per frame), and exit `Command`s may be executed.
 
     A list of `Condition`s is checked each frame to see if the state machine should change to a new state.
     """
+    ESD_TYPE: tp.ClassVar[ESDType]
 
-    STRUCT: BinaryStruct = None
-    ESD_TYPE: ESDType = None
-
-    Condition: tp.Type[Condition] = None
-    Command: tp.Type[Command] = None
-
-    def __init__(self, index, conditions, enter_commands, exit_commands, ongoing_commands):
-        self.index = index
-        self.conditions = conditions  # type: list[Condition]
-        self.enter_commands = enter_commands  # type: list[Command]
-        self.exit_commands = exit_commands  # type: list[Command]
-        self.ongoing_commands = ongoing_commands  # type: list[Command]
+    index: int
+    conditions: list[Condition] = field(default_factory=list)
+    enter_commands: list[Command] = field(default_factory=list)
+    exit_commands: list[Command] = field(default_factory=list)
+    ongoing_commands: list[Command] = field(default_factory=list)
 
     @classmethod
-    def unpack(cls, esd_reader: BinaryReader, state_machine_offset, count) -> dict[int, State]:
-        """Unpack multiple states from the same state table.
+    def from_esd_reader(cls, reader: BinaryReader) -> Self:
+        """Unpack a `State` from ESD file binary."""
 
-        Returns a dictionary of states, because it's always possible (if yet unseen) that state indices are not
-        contiguous. State 0 is not repeated, as it generally is in the packed table.
+        state_struct = StateStruct.from_bytes(reader)
+
+        conditions = []
+        if state_struct.condition_pointers_offset != -1:  # otherwise, state has no conditions
+            reader.seek(state_struct.condition_pointers_offset)
+            condition_offsets = reader.unpack(f"{len(state_struct.condition_pointers_count)}v")
+            for offset in condition_offsets:
+                reader.seek(offset)
+                conditions.append(Condition.from_esd_reader(reader))
+
+        if state_struct.enter_commands_offset != -1:
+            reader.seek(state_struct.enter_commands_offset)
+            enter_commands = [Command.from_esd_reader(reader) for _ in range(state_struct.enter_commands_count)]
+        else:
+            enter_commands = []
+
+        if state_struct.exit_commands_offset != -1:
+            reader.seek(state_struct.exit_commands_offset)
+            exit_commands = [Command.from_esd_reader(reader) for _ in range(state_struct.exit_commands_count)]
+        else:
+            exit_commands = []
+
+        if state_struct.ongoing_commands_offset != -1:
+            reader.seek(state_struct.ongoing_commands_offset)
+            ongoing_commands = [Command.from_esd_reader(reader) for _ in range(state_struct.ongoing_commands_count)]
+        else:
+            ongoing_commands = []
+
+        return cls(state_struct.index, conditions, enter_commands, exit_commands, ongoing_commands)
+
+    def to_esd_writer(self, writer: BinaryWriter):
+        StateStruct.object_to_writer(
+            self,
+            writer,
+            condition_pointers_count=len(self.conditions),
+            enter_commands_count=len(self.enter_commands),
+            exit_commands_count=len(self.exit_commands),
+            ongoing_commands_count=len(self.ongoing_commands),
+        )
+
+    def pack_conditions(
+        self, writer: BinaryWriter, state_index_offsets: dict[int, int], all_condition_offsets: dict[Condition, int]
+    ):
+        """Pack all conditions and (recursively) subconditions in this State.
+
+        Checks and updates a dictionary mapping `Condition` instances to the offsets at which they were written. This is
+        required later to write the `condition_pointers`, which are near the very end of the ESD file.
         """
+        # Pack condition headers first, then recur on subconditions.
+        for condition in self.conditions:
+            if condition not in all_condition_offsets:  # `Condition` and `Command` have hash/eq methods to enable this
+                all_condition_offsets[condition] = writer.position
+                condition.to_esd_writer(writer, state_index_offsets)
+        for condition in self.conditions:
+            condition.pack_subconditions(writer, state_index_offsets, all_condition_offsets)
 
-        state_dict = {}
-        esd_reader.seek(state_machine_offset)
-        struct_dicts = esd_reader.unpack_structs(cls.STRUCT, count=count)
+    def pack_commands(self, writer: BinaryWriter) -> int:
+        """Returns the total number of `Command`s found in this `State`."""
+        # Condition pass commands are first.
+        count = 0
+        for condition in self.conditions:
+            count += condition.pack_pass_commands(writer)
+        for condition in self.conditions:
+            count += condition.pack_subconditions_pass_commands(writer)
+        # Then State commands.
+        for command in self.enter_commands:
+            command.to_esd_writer(writer)
+        for command in self.exit_commands:
+            command.to_esd_writer(writer)
+        for command in self.ongoing_commands:
+            command.to_esd_writer(writer)
+        count += len(self.enter_commands) + len(self.exit_commands) + len(self.ongoing_commands)
+        return count
 
-        for d in struct_dicts:
-            conditions = cls.Condition.unpack(
-                esd_reader, d["condition_pointers_offset"], count=d["condition_pointers_count"],
-            )
+    def pack_command_args(self, writer: BinaryWriter) -> int:
+        """Returns the total number of `Command` arguments found in this `State`."""
+        # Condition pass commands are first.
+        count = 0
+        for condition in self.conditions:
+            count += condition.pack_pass_command_args(writer)
+        for condition in self.conditions:
+            count += condition.pack_subconditions_pass_command_args(writer)
+        # Then State commands.
+        for command in self.enter_commands:
+            count += command.pack_args_offsets(writer)
+        for command in self.exit_commands:
+            count += command.pack_args_offsets(writer)
+        for command in self.ongoing_commands:
+            count += command.pack_args_offsets(writer)
+        return count
 
-            enter_commands = cls.Command.unpack(
-                esd_reader, d["enter_commands_offset"], count=d["enter_commands_count"],
-            )
+    def pack_condition_test_data(self, writer: BinaryWriter):
+        for condition in self.conditions:
+            condition.pack_test_data(writer)
+        for condition in self.conditions:
+            condition.pack_subconditions_test_data(writer)
 
-            exit_commands = cls.Command.unpack(
-                esd_reader, d["exit_commands_offset"], count=d["exit_commands_count"],
-            )
+    def pack_command_arg_data(self, writer: BinaryWriter):
+        # Condition pass commands are first.
+        for condition in self.conditions:
+            condition.pack_pass_command_arg_data(writer)
+        for condition in self.conditions:
+            condition.pack_subconditions_pass_command_arg_data(writer)
+        # Then State commands.
+        for command in self.enter_commands:
+            command.pack_args_data(writer)
+        for command in self.exit_commands:
+            command.pack_args_data(writer)
+        for command in self.ongoing_commands:
+            command.pack_args_data(writer)
 
-            ongoing_commands = cls.Command.unpack(
-                esd_reader, d["ongoing_commands_offset"], count=d["ongoing_commands_count"],
-            )
+    def pack_condition_pointers(self, writer: BinaryWriter, all_condition_offsets: dict[Condition, int]) -> int:
+        """Returns total number of `Condition` pointers used in this `State`."""
+        if not self.conditions:
+            writer.fill("condition_pointers_offset", -1, self)
+            return 0
 
-            # State 0 will be overwritten when repeated at the end of the table, rather than added.
-            state_dict[d["index"]] = cls(
-                d["index"], conditions, enter_commands, exit_commands, ongoing_commands,
-            )
-
-        return state_dict
-
-    def __eq__(self, other_state):
-        return self.__dict__ == other_state.__dict__
+        writer.fill_with_position("condition_pointers_offset", self)
+        count = 0
+        for condition in self.conditions:
+            try:
+                condition_offset = all_condition_offsets[condition]
+            except KeyError:
+                raise ValueError(f"Could not find condition of state {self.index} in packed conditions dictionary.")
+            writer.pack("v", condition_offset)
+            count += 1
+        for condition in self.conditions:
+            count += condition.pack_subconditions_pointers(writer, all_condition_offsets)
+        return count
 
     @property
     def html_title_bar(self):

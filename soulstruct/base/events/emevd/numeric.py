@@ -62,7 +62,7 @@ def build_numeric(numeric_string: str, event_class):
             _LOGGER.error(f"Error parsing event header line: {header_line}")
             raise NumericEmevdError(lineno, f"Error parsing header line: '{header_line}'.")
         event_id = int(m.group(1))
-        restart_type = int(m.group(2))
+        on_rest_behavior = int(m.group(2))
 
         instruction_list = []
         for instruction_or_event_arg in event_lines[1:]:
@@ -152,7 +152,7 @@ def build_numeric(numeric_string: str, event_class):
                     event_arg = event_class.EventArg(
                         len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write
                     )
-                    instruction_list[-1].event_args.append(event_arg)
+                    instruction_list[-1].event_arg_replacements.append(event_arg)
                 else:
                     raise NumericEmevdError(
                         lineno,
@@ -165,6 +165,6 @@ def build_numeric(numeric_string: str, event_class):
                     f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or event arg "
                     f"replacement.",
                 )
-        events[event_id] = event_class(event_id, restart_type, instruction_list)
+        events[event_id] = event_class(event_id, on_rest_behavior, instruction_list)
 
     return events, linked_offsets, strings

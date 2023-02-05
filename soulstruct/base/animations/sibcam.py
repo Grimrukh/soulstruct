@@ -115,7 +115,7 @@ class SIBCAM(GameFile):
 
         # TODO
 
-        return writer.finish()
+        return bytes(writer)
 
     @property
     def frame_count(self):

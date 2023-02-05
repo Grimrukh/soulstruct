@@ -3,17 +3,18 @@ from __future__ import annotations
 __all__ = ["MTDInfo", "GXItem", "GXList", "Material", "Texture"]
 
 import re
-from dataclasses import dataclass
+import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.utilities.text import indent_lines
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader, BinaryWriter
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2
 
 from .version import Version
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True)
 class MTDInfo:
     """Various booleans that indicate required textures for a specific MTD shader."""
 
@@ -23,78 +24,48 @@ class MTDInfo:
     MTD_FOLIAGE_PREFIXES = {"M_2Foliage", "M_3Ivy"}  # MTD name prefixes that indicate two extra UV slots
 
     mtd_name: str
-    diffuse: bool
-    specular: bool
-    bumpmap: bool
-    height: bool
-    multiple: bool
-    lightmap: bool
-    alpha: bool
-    edge: bool
-    water: bool
-    foliage: bool  # extra two UV slots for foliage animation (in DS1)
+    diffuse: bool = field(init=False, default=False)
+    specular: bool = field(init=False, default=False)
+    bumpmap: bool = field(init=False, default=False)
+    height: bool = field(init=False, default=False)
+    multiple: bool = field(init=False, default=False)
+    lightmap: bool = field(init=False, default=False)
+    alpha: bool = field(init=False, default=False)
+    edge: bool = field(init=False, default=False)
+    water: bool = field(init=False, default=False)
+    foliage: bool = field(init=False, default=False)  # extra two UV slots for foliage animation (in DS1)
 
-    def __init__(self, mtd_name: str):
-        self.mtd_name = mtd_name
-        self.diffuse = False
-        self.specular = False
-        self.bumpmap = False
-        self.height = False
-        self.multiple = False
-        self.lightmap = False
-        self.alpha = False
-        self.edge = False
-        self.water = False
-        self.foliage = False
-        if dsbh_match := self.MTD_DSB_RE.match(mtd_name):
+    def __post_init__(self):
+        if dsbh_match := self.MTD_DSB_RE.match(self.mtd_name):
             self.diffuse = bool(dsbh_match.group(1))
             self.specular = bool(dsbh_match.group(2))
             self.bumpmap = bool(dsbh_match.group(3))
             self.height = bool(dsbh_match.group(4))
-        if ml_match := self.MTD_ML_RE.match(mtd_name):
+        if ml_match := self.MTD_ML_RE.match(self.mtd_name):
             self.multiple = bool(ml_match.group(1))
             self.lightmap = bool(ml_match.group(2))
-        if "[Dn]" in mtd_name:
+        if "[Dn]" in self.mtd_name:
             self.diffuse = True
-        if "[We]" in mtd_name:
+        if "[We]" in self.mtd_name:
             self.water = True
             self.bumpmap = True
-        if any(mtd_name.startswith(prefix) for prefix in self.MTD_FOLIAGE_PREFIXES):
+        if any(self.mtd_name.startswith(prefix) for prefix in self.MTD_FOLIAGE_PREFIXES):
             self.foliage = True
-        self.alpha = "_Alp" in mtd_name
-        self.edge = "_Edge" in mtd_name
+        self.alpha = "_Alp" in self.mtd_name
+        self.edge = "_Edge" in self.mtd_name
 
 
-class GXItem(BinaryObject):
+@dataclass(slots=True)
+class GXItem(NewBinaryStruct):
     """Item that sets various material rendering properties."""
 
-    STRUCT = BinaryStruct(
-        ("gx_id", "4s"),  # actually "i" prior to Dark Souls 2 (0x20010) but always stored as bytes here for consistency
-        ("unk_x04", "i"),
-        ("__size", "i"),  # includes header
-    )
-
-    gx_id: bytes
+    gx_id: bytes = field(**Binary(length=4))
     unk_x04: int
-    data: bytes
-
-    def unpack(self, reader: BinaryReader):
-        gx_item = reader.unpack_struct(self.STRUCT)
-        self.data = reader.read(gx_item.pop("__size") - self.STRUCT.size)
-        self.set(**gx_item)
-
-    def pack(self, writer: BinaryWriter):
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            __size=len(self.data) + self.STRUCT.size,
-        )
-        writer.append(self.data)
-
-    def __repr__(self):
-        return f"GXItem(gx_id = {self.gx_id}, unk_x04 = {self.unk_x04}, data = {self.data})"
+    size: int = field(**BinaryAutoCompute(lambda self: len(self.data) + 12))
+    data: bytes = field(**Binary(length=FieldValue("size", lambda x: x - 12)))
 
 
+@dataclass(slots=True)
 class GXList:
     """List of `GXItem` instances, which set various material rendering properties.
 
@@ -103,94 +74,77 @@ class GXList:
 
     Prior to Dark Souls 2 (version 0x20010), these lists only ever contained exactly one `GXItem`.
     """
-
     gx_items: list[GXItem]
+    terminator_id: int = 2 ** 31 - 1
+    terminator_null_count: int = 0
 
-    def __init__(self, source: BinaryReader | list[GXItem] | None, version: Version = None):
-        self.gx_items = []
-        self.terminator_id = 2 ** 31 - 1  # max value of signed int; sometimes also -1
-        self.terminator_null_count = 0
-
-        if isinstance(source, BinaryReader):
-            if version is None:
-                raise ValueError("`version` must be given to unpack `GXList` from binary reader.")
-            if version <= Version.DarkSouls2:
-                self.gx_items = [GXItem(source)]
-            else:
-                self.unpack(source)
-        elif isinstance(source, list) and all(isinstance(item, GXItem) for item in source):
-            self.gx_items = source
-        elif source is None:
-            self.gx_items = []
-        else:
-            raise TypeError(f"Invalid `source` for `GXList`: {type(source)}")
-
-    def unpack(self, reader: BinaryReader):
-        self.gx_items = []
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, flver_version: Version):
+        if flver_version <= Version.DarkSouls2:
+            return cls([GXItem.from_bytes(reader)])
+        gx_items = []
         while reader.unpack_value("<i", offset=reader.position) not in {2 ** 31 - 1, -1}:
-            self.gx_items.append(GXItem(reader))
-        self.terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
+            gx_items.append(GXItem.from_bytes(reader))
+        terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
         reader.unpack_value("<i", asserted=100)
-        self.terminator_null_count = reader.unpack_value("<i") - 12
-        terminator_nulls = reader.read(self.terminator_null_count)
+        terminator_null_count = reader.unpack_value("<i") - 12
+        terminator_nulls = reader.read(terminator_null_count)
         if terminator_nulls.strip(b"\0"):
-            raise ValueError(f"Found non-null data in terminator: {terminator_nulls}")
+            raise ValueError(f"Found non-null reader in `GXList` terminator: {terminator_nulls}")
+        return cls(gx_items, terminator_id, terminator_null_count)
 
-    def pack(self, writer: BinaryWriter):
+    def to_flver_writer(self, writer: BinaryWriter):
         for gx_item in self.gx_items:
-            gx_item.pack(writer)
+            writer.pack_new_struct(gx_item)
         writer.pack("iii", self.terminator_id, 100, self.terminator_null_count + 12)
         writer.pad(self.terminator_null_count)
 
-    def get_terminator_struct(self, terminator_id: int = None) -> BinaryStruct:
-        if terminator_id is None:
-            if self.terminator_id is None:
-                raise ValueError("`GXItem` terminator ID has not yet been determined from `unpack()`.")
-            terminator_id = self.terminator_id
-        return BinaryStruct(
-            ("terminator_id", "i", terminator_id),
-            ("one_hundred", "i", 100),
-            ("terminator_size", "i"),
-        )
-
     def __repr__(self):
-        return repr(self.gx_items)
+        return f"GXList{repr(self.gx_items)}"
 
 
-class Texture(BinaryObject):
+@dataclass(slots=True)
+class TextureStruct(NewBinaryStruct):
 
-    STRUCT = BinaryStruct(
-        ("__path__z", "i"),
-        ("__texture_type__z", "i"),
-        ("scale", "2f"),
-        ("unk_x10", "B"),  # 0, 1, or 2
-        ("unk_x11", "?"),
-        "2x",
-        ("unk_x14", "f"),
-        ("unk_x18", "f"),
-        ("unk_x1C", "f"),
-    )
-
-    path: str
-    texture_type: str
+    _path_offset: int
+    _texture_type_offset: int
     scale: Vector2
-    unk_x10: int
+    unk_x10: byte = field(**Binary(asserted=[0, 1, 2]))
     unk_x11: bool
+    _pad1: bytes = field(init=False, **BinaryPad(2))
     unk_x14: float
     unk_x18: float
     unk_x1C: float
 
-    DEFAULTS = {
-        "scale": Vector2.ones(),
-        "unk_x10": 1,
-        "unk_x11": True,
-        "unk_x14": 0.0,
-        "unk_x18": 0.0,
-        "unk_x1C": 0.0,
-    }
 
-    unpack = BinaryObject.default_unpack
-    pack = BinaryObject.default_pack
+@dataclass(slots=True)
+class Texture:
+
+    path: str
+    texture_type: str
+    scale: Vector2 = Vector2.ones()
+    unk_x10: int = 1
+    unk_x11: bool = True
+    unk_x14: float = 0.0
+    unk_x18: float = 0.0
+    unk_x1C: float = 0.0
+
+    @classmethod
+    def from_flver_reader(cls, reader: BinaryReader, encoding: str):
+        texture_struct = TextureStruct.from_bytes(reader)
+        path = reader.unpack_string(offset=texture_struct.pop("_path_offset"), encoding=encoding)
+        texture_type = reader.unpack_string(offset=texture_struct.pop("_texture_type_offset"), encoding=encoding)
+        texture = texture_struct.to_object(cls, path=path, texture_type=texture_type)
+        return texture
+
+    def to_flver_writer(self, writer: BinaryWriter):
+        TextureStruct.object_to_writer(self, writer, _path_offset=None, _texture_type_offset=None)
+
+    def pack_strings(self, writer: BinaryWriter, encoding: str):
+        writer.fill_with_position("_path_offset", self)
+        writer.pack_z_string(self.path, encoding=encoding)
+        writer.fill_with_position("_texture_type_offset", self)
+        writer.pack_z_string(self.texture_type, encoding=encoding)
 
     def set_name(self, name: str):
         """Set '.tga' name of `path`."""
@@ -202,81 +156,70 @@ class Texture(BinaryObject):
         """Typically just removes '.tga' extension from FLVER texture path."""
         return Path(self.path).stem
 
-    def __repr__(self):
-        lines = [
-            f"Texture(",
-            f"  path = {repr(self.path)}",
-            f"  texture_type = {repr(self.texture_type)}",
-        ]
-        if self.scale != (1.0, 1.0):
-            lines.append(f"  scale = {self.scale}")
-        if self.unk_x10 != 1:
-            lines.append(f"  unk_x10 = {self.unk_x10}")
-        if not self.unk_x11:
-            lines.append(f"  unk_x11 = {self.unk_x11}")
-        if self.unk_x14 != 0.0:
-            lines.append(f"  unk_x14 = {self.unk_x14}")
-        if self.unk_x18 != 0.0:
-            lines.append(f"  unk_x18 = {self.unk_x18}")
-        if self.unk_x1C != 0.0:
-            lines.append(f"  unk_x1C = {self.unk_x1C}")
-        lines.append(")")
-        return "\n".join(lines)
+
+@dataclass(slots=True)
+class MaterialStruct(NewBinaryStruct):
+
+    _name_offset: int
+    _mtd_path_offset: int
+    _texture_count: int
+    _first_texture_index: int
+    flags: int
+    _gx_offset: int
+    unk_x18: int
+    _pad1: bytes = field(init=False, **BinaryPad(4))
 
 
-class Material(BinaryObject):
+@dataclass(slots=True)
+class Material:
 
-    Texture = Texture
-
-    STRUCT = BinaryStruct(
-        ("__name__z", "i"),
-        ("__mtd_path__z", "i"),
-        ("_texture_count", "i"),
-        ("_first_texture_index", "i"),
-        ("flags", "i"),
-        ("__gx_offset", "i"),
-        ("unk_x18", "i"),
-        "4x",
-    )
+    Texture: tp.ClassVar[tp.Type[Texture]] = Texture
 
     name: str
     mtd_path: str
     flags: int
-    gx_index: int
     unk_x18: int
+    gx_index: int = -1
+    textures: list[Texture] = field(default_factory=list)
 
-    textures: list[Texture]
+    # Held temporarily before FLVER textures are assigned.
+    _texture_count: int | None = None
+    _first_texture_index: int | None = None
 
-    _texture_count: int
-    _first_texture_index: int
-
-    def __init__(self, reader: BinaryReader = None, **kwargs):
-        self.textures = []
-        super().__init__(reader, **kwargs)
-
-    def unpack(
-        self,
+    @classmethod
+    def from_flver_reader(
+        cls,
         reader: BinaryReader,
         encoding: str,
         version: Version,
         gx_lists: list[GXList],
         gx_list_indices: dict[int, int],
     ):
-        material = reader.unpack_struct(self.STRUCT)
-        self.name = reader.unpack_string(offset=material.pop("__name__z"), encoding=encoding)
-        self.mtd_path = reader.unpack_string(offset=material.pop("__mtd_path__z"), encoding=encoding)
-        gx_offset = material.pop("__gx_offset")
+        material_struct = MaterialStruct.from_bytes(reader)
+        name = reader.unpack_string(offset=material_struct.pop("_name_offset"), encoding=encoding)
+        mtd_path = reader.unpack_string(offset=material_struct.pop("_mtd_path_offset"), encoding=encoding)
+        gx_offset = material_struct.pop("_gx_offset")
         if gx_offset == 0:
-            self.gx_index = -1
+            gx_index = -1
         elif gx_offset in gx_list_indices:
-            self.gx_index = gx_list_indices[gx_offset]
+            # Reuses a `GXList` first used by a prior `Material`.
+            gx_index = gx_list_indices[gx_offset]
         else:
-            self.gx_index = gx_list_indices[gx_offset] = len(gx_lists)
+            gx_index = gx_list_indices[gx_offset] = len(gx_lists)
             with reader.temp_offset(gx_offset):
-                gx_lists.append(GXList(reader, version))
-        self.set(**material)
+                gx_lists.append(GXList.from_flver_reader(reader, version))
+        material = material_struct.to_object(
+            cls,
+            name=name,
+            mtd_path=mtd_path,
+            gx_index=gx_index,
+            _texture_count=material_struct.pop("_texture_count"),
+            _first_texture_index=material_struct.pop("_first_texture_index"),
+        )
+        return material
 
     def assign_textures(self, textures: dict[int, Texture]):
+        """Pop and assign textures from dictionary by index."""
         if self._texture_count == -1 or self._first_texture_index == -1:
             raise ValueError(f"Tried to call `assign_textures()` on `Material` {self.name} more than once.")
         for i in range(self._first_texture_index, self._first_texture_index + self._texture_count):
@@ -286,36 +229,32 @@ class Material(BinaryObject):
                     "already been assigned to another `Material` (or does not exist)."
                 )
             self.textures.append(textures.pop(i))
-        self._texture_count = -1
-        self._first_texture_index = -1
+        self._texture_count = None
+        self._first_texture_index = None
 
-    def pack(self, writer: BinaryWriter):
-        writer.pack_struct(
-            self.STRUCT,
-            self,
-            __name__z=writer.AUTO_RESERVE,
-            __mtd_path__z=writer.AUTO_RESERVE,
-            _first_texture_index=writer.AUTO_RESERVE,
-            __gx_offset=writer.AUTO_RESERVE,
-            _texture_count=len(self.textures),
-        )
+    def to_flver_writer(self, writer: BinaryWriter):
+        MaterialStruct.object_to_writer(self, writer, _texture_count=len(self.textures))
 
-    def pack_textures(self, writer: BinaryWriter, first_texture_index: int):
-        writer.fill("_first_texture_index", first_texture_index, obj=self)
+    def pack_textures(self, flver_writer: BinaryWriter, first_texture_index: int):
+        """Pack material's textures at this position."""
+        flver_writer.fill("_first_texture_index", first_texture_index, obj=self)
         for texture in self.textures:
-            texture.pack(writer)
+            texture.to_flver_writer(flver_writer)
 
-    def fill_gx_offset(self, writer: BinaryWriter, gx_offsets: list[int]):
-        writer.fill("__gx_offset", 0 if self.gx_index == -1 else gx_offsets[self.gx_index], obj=self)
+    def fill_gx_offset(self, flver_writer: BinaryWriter, gx_offsets: list[int]):
+        gx_offset = 0 if self.gx_index == -1 else gx_offsets[self.gx_index]
+        flver_writer.fill("_gx_offset", gx_offset, obj=self)
 
-    def pack_strings(self, writer: BinaryWriter, encoding: str):
-        self.pack_zstring(writer, "name", encoding=encoding)
-        self.pack_zstring(writer, "mtd_path", encoding=encoding)
+    def pack_strings(self, flver_writer: BinaryWriter, encoding: str):
+        flver_writer.fill_with_position("_name_offset", obj=self)
+        flver_writer.pack_z_string(self.name, encoding=encoding)
+        flver_writer.fill_with_position("_mtd_path_offset", obj=self)
+        flver_writer.pack_z_string(self.mtd_path, encoding=encoding)
 
     def get_texture_dict(self) -> dict[str, Texture]:
         """Get a dictionary mapping texture types to `Texture` instances.
 
-        Will raise a KeyError if any texture type is repeated.
+        Will raise a `KeyError` if any texture type is repeated.
         """
         textures = {}
         for texture in self.textures:

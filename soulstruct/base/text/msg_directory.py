@@ -12,7 +12,7 @@ from soulstruct.utilities.files import read_json, write_json
 from .fmg import BaseFMG
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.binder_entry import BinderEntry
+    from soulstruct.containers.entry import BinderEntry
     from soulstruct.containers.bnd import BaseBND
     from soulstruct.utilities.misc import BiDict
 
@@ -99,9 +99,9 @@ class MSGDirectory(abc.ABC):
         """Loads FMGs from given `msgbnd` into `categories` dictionary."""
         for entry in msgbnd:
             try:
-                attr_name = self._MSGBND_INDEX_NAMES[entry.id]
+                attr_name = self._MSGBND_INDEX_NAMES[entry.entry_id]
             except KeyError:
-                raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.id} in its msgbnd.")
+                raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.entry_id} in its msgbnd.")
             self._original_names[attr_name] = entry.name
             self._is_menu[attr_name] = is_menu
             try:
@@ -390,7 +390,7 @@ class MSGDirectory(abc.ABC):
                 bnd.path = Path(f"{bnd_name}.msgbnd.dcx" if self.IS_DCX else f"{bnd_name}.msgbnd")
                 setattr(self, f"{bnd_name}_msgbnd", bnd)
             else:
-                for field, value in bnd.get_manifest_header(manifest).items():
+                for field, value in bnd.process_manifest_header(manifest).items():
                     if not clear_old_data:
                         if (old_value := getattr(bnd, field)) != value:
                             raise ValueError(
@@ -430,9 +430,9 @@ class MSGDirectory(abc.ABC):
                     bnd.add_entry(non_patch_entry)
 
                 entry = bnd.BinderEntry(fmg.pack(), fmg_dict["entry_id"], fmg_dict["path"], fmg_dict["flags"])
-                if entry.id in entry_ids:
+                if entry.entry_id in entry_ids:
                     _LOGGER.warning(
-                        f"Binder entry ID {entry.id} appears more than once in `MSGDirectory` '{bnd_name}' MSGBND. "
+                        f"Binder entry ID {entry.entry_id} appears more than once in `MSGDirectory` '{bnd_name}' MSGBND. "
                         f"Fix this ASAP."
                     )
                 bnd.add_entry(entry)
@@ -458,8 +458,8 @@ class MSGDirectory(abc.ABC):
         """
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
-        item_manifest = self.item_msgbnd.get_json_header()
-        menu_manifest = self.menu_msgbnd.get_json_header()
+        item_manifest = self.item_msgbnd.get_manifest_header()
+        menu_manifest = self.menu_msgbnd.get_manifest_header()
         item_manifest.pop("use_id_prefix")
         item_manifest["entries"] = []
         menu_manifest.pop("use_id_prefix")
@@ -485,7 +485,7 @@ class MSGDirectory(abc.ABC):
             bnd_entry = fmg_msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
             # Don't need to actually update BND data. We just want the entry information.
             fmg_dict = {
-                "entry_id": bnd_entry.id,
+                "entry_id": bnd_entry.entry_id,
                 "path": bnd_entry.path,  # will still be original unless already modified
                 "flags": bnd_entry.flags,
                 "data": fmg_entries,

@@ -6,11 +6,10 @@ import abc
 import logging
 import re
 import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.containers.bnd import BaseBND
-from soulstruct.base.binder_entry import BinderEntry
-from soulstruct.base.game_file import InvalidGameFileTypeError
+from soulstruct.containers import Binder, BinderEntry
 
 if tp.TYPE_CHECKING:
     from soulstruct.utilities.binary import BinaryReader
@@ -22,19 +21,17 @@ _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
 
-class TalkESDBND(BaseBND, abc.ABC):
+@dataclass(slots=True)
+class TalkESDBND(Binder, abc.ABC):
     """Automatically loads all talk ESDs contained inside given path, or constructs BND from scratch using dictionary
     mapping talk IDs to valid ESD instance sources."""
 
-    EXT = ".talkesdbnd"
-    TALK_ESD_CLASS: tp.Type[ESD] = None
-    BND_ROOT: str = None  # used for creating a new BND if instance is loaded from individual ESD/ESP file
+    EXT: tp.ClassVar[str] = ".talkesdbnd"
 
-    talk: dict[int, ESD]
+    TALK_ESD_CLASS: tp.ClassVar[tp.Type[ESD]] = None
+    BND_ROOT: tp.ClassVar[str] = None  # used for creating a new BND if instance is loaded from individual ESD/ESP file
 
-    def __init__(self, talkesdbnd_source, dcx_type=None):
-        self.talk = {}
-        super().__init__(talkesdbnd_source, dcx_type=dcx_type)
+    talk: dict[int, ESD] = field(default_factory=dict)
 
     def _handle_other_source_types(self, file_source, **kwargs):
         if isinstance(file_source, Path) and file_source.is_dir() and not (file_source / "bnd_manifest.json").exists():
@@ -56,6 +53,7 @@ class TalkESDBND(BaseBND, abc.ABC):
     def set_default_bnd(self):
         """Set BND attributes for loading `TalkESDBND` from a single ESP file or folder containing them."""
 
+    # TODO: to __post_init__
     def unpack(self, reader: BinaryReader, **kwargs):
         self.talk = {}
 
@@ -121,7 +119,7 @@ class TalkESDBND(BaseBND, abc.ABC):
             if entry_path in self.entries_by_path:
                 self.entries_by_path[entry_path].set_uncompressed_data(talk_entry.pack())
             else:
-                new_id = max([entry.id for entry in self.entries]) + 1 if self.entries else 1
+                new_id = max([entry.entry_id for entry in self.entries]) + 1 if self.entries else 1
                 new_entry = BinderEntry(data=talk_entry.pack(), entry_id=new_id, path=entry_path)
                 self.add_entry(new_entry)
                 _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): t{talk_id}.esd")

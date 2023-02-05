@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     # Basic enums
-    "RestartType",
+    "OnRestBehavior",
     "uint",
     "short",
     "ushort",
@@ -30,7 +30,7 @@ __all__ = [
     "NavmeshType",
     "NumberButtons",
     "OnOffChange",
-    "RestartType",
+    "OnRestBehavior",
     "SoundType",
     "StatueType",
     "SummonSignType",
@@ -304,7 +304,7 @@ class OnOffChange(BaseNegatableEMEVDEnum):
         return super().negate()
 
 
-class RestartType(BaseEMEVDEnum):
+class OnRestBehavior(BaseEMEVDEnum):
     ContinueOnRest = 0
     RestartOnRest = 1
     EndOnRest = 2

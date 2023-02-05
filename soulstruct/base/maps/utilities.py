@@ -96,5 +96,5 @@ def get_map(source, block_id=None, game_maps: tp.Sequence[Map] = ()) -> Map:
 
 class GET_MAP_TYPING(tp.Protocol):
     """Type hint for `get_map` function that can be used for base classes."""
-    def __call__(self, source: tp.Union[str, tuple], block_id: int = ...):
+    def __call__(self, source: str | tuple, block_id: int = ...):
         ...

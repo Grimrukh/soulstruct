@@ -5,40 +5,47 @@ __all__ = ["ESPCompiler"]
 import ast
 import re
 import struct
-import typing as tp
+from dataclasses import dataclass, field
+from pathlib import Path
 from queue import Queue
 
+from .esd_type import ESDType
 from .exceptions import ESDError, ESDSyntaxError, ESDValueError
 from .ezl_parser import FUNCTION_ARG_BYTES_BY_COUNT, OPERATORS_BY_NODE
 from .functions import COMMANDS_BANK_ID_BY_TYPE_NAME, TEST_FUNCTIONS_ID_BY_TYPE_NAME
+from .command import Command
+from .condition import Condition
+from .state import State
 
-if tp.TYPE_CHECKING:
-    from .core import ESD
+
+_STATE_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?")
+_COMMAND_DEFAULT_RE = re.compile(r"Command_(?:talk|chr)_(\d*)_(\d*)")
+_TEST_DEFAULT_RE = re.compile(r"Test_(?:talk|chr)_(\d*)")
 
 
+@dataclass(slots=True)
 class ESPCompiler:
-    """Builds a single state machine. """
+    """Builds a single ESD state machine. """
 
-    _STATE_DOCSTRING_RE = re.compile(r"([0-9]+)(:\s*.*)?")
-    _COMMAND_DEFAULT_RE = re.compile(r"Command_(?:talk|chr)_(\d*)_(\d*)")
-    _TEST_DEFAULT_RE = re.compile(r"Test_(?:talk|chr)_(\d*)")
+    esp_path: Path
+    esd_type: ESDType
+    docstring: str = ""
+    state_info: dict = field(default_factory=dict)
+    states: dict[int, State] = field(default_factory=dict)
 
-    def __init__(self, esp_path, esd: ESD):
-        self.esd = esd  # type: ESD
-        self.docstring = ""
-        self.state_machine_index = None
-        self.state_info = {}
-        self.states = {}
+    registers: list[tuple] = field(default_factory=lambda: [()] * 8)
+    state_call_set: set = field(default_factory=set)
+    to_write_count: int = 0
+    # List of first-time function calls to save for every (sub)condition in order.
+    to_write: Queue = field(default_factory=Queue)
+    # Maps function calls to register index 0-8.
+    written: dict = field(default_factory=dict)
+    current_to_write: list = field(default_factory=list)
 
-        # Condition state.
-        self.registers = [()] * 8  # type: list[tuple]
-        self.state_call_set = set()
-        self.to_write_count = 0
-        self.to_write = Queue()  # list of first-time function calls to save for every (sub)condition in order
-        self.written = {}  # maps function calls to register index 0-8
-        self.current_to_write = []
+    tree: ast.Module = field(init=False)
 
-        with open(esp_path, encoding="utf-8") as script:
+    def __post_init__(self):
+        with open(self.esp_path, encoding="utf-8") as script:
             self.tree = ast.parse(script.read())
 
         self.compile_script()
@@ -117,7 +124,7 @@ class ESPCompiler:
         if docstring is None:
             raise ESDSyntaxError(node.lineno, f"No docstring given for state {state_name}.")
         try:
-            state_index, description = self._STATE_DOCSTRING_RE.match(docstring).group(1, 2)
+            state_index, description = _STATE_DOCSTRING_RE.match(docstring).group(1, 2)
         except AttributeError:
             raise ESDSyntaxError(node.lineno, f"Invalid docstring for event {state_name}.")
         self.state_info[state_name] = {
@@ -135,9 +142,9 @@ class ESPCompiler:
                 raise ESDValueError(node.lineno, "State machine call must have an integer index.")
         elif self.is_call(node):
             try:
-                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd.ESD_TYPE, node.value.func.id]
+                bank, f_id = COMMANDS_BANK_ID_BY_TYPE_NAME[self.esd_type, node.value.func.id]
             except KeyError:
-                command_match = self._COMMAND_DEFAULT_RE.match(node.value.func.id)
+                command_match = _COMMAND_DEFAULT_RE.match(node.value.func.id)
                 if not command_match:
                     raise ESDError(node.lineno, f"Invalid enter/exit/ongoing command: {node.value.func.id}")
                 bank, f_id = command_match.group(1, 2)
@@ -150,7 +157,7 @@ class ESPCompiler:
         # TODO: Check arg count against canonical function, once available, and order keyword args.
         args = node.value.args + [keyword.value for keyword in node.value.keywords]
         command_args = [self.compile_ezl(arg) + b"\xa1" for arg in args]
-        return self.Command(bank, f_id, command_args)
+        return Command(bank, f_id, command_args)
 
     def reset_condition_registers(self):
         self.registers = [()] * 8
@@ -180,7 +187,7 @@ class ESPCompiler:
                     and if_nodes[0].value.operand.value == 1
                 ):
                     # Last state of callable state machine.
-                    return [self.Condition(-1, b"\x41\xa1", [], [])]
+                    return [Condition(-1, b"\x41\xa1", [], [])]
                 print(if_nodes[0].value.op, if_nodes[0].value.operand)
                 raise ESDSyntaxError(if_nodes[0].lineno, f"Next state must be a valid State class or -1.")
             if not isinstance(if_nodes[0].value, ast.Name):
@@ -189,7 +196,7 @@ class ESPCompiler:
             if if_nodes[0].value.id not in self.state_info:
                 raise ESDError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
             next_state_index = self.state_info[if_nodes[0].value.id]["index"]
-            return [self.Condition(next_state_index, b"\x41\xa1", [], [])]
+            return [Condition(next_state_index, b"\x41\xa1", [], [])]
 
         for i, node in enumerate(if_nodes):
             if not isinstance(node, ast.If):
@@ -247,7 +254,7 @@ class ESPCompiler:
             subconditions = self.build_conditions(subcondition_nodes) if subcondition_nodes else ()
 
             conditions.append(
-                self.Condition(next_state_index, test_ezl, pass_commands, subconditions)
+                Condition(next_state_index, test_ezl, pass_commands, subconditions)
             )
 
         return conditions
@@ -316,10 +323,10 @@ class ESPCompiler:
         if call_node.keywords:
             raise ESDSyntaxError(call_node.lineno, "You cannot use keyword arguments in test functions (yet).")
         try:
-            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.esd.ESD_TYPE, call_node.func.id]
+            f_id = TEST_FUNCTIONS_ID_BY_TYPE_NAME[self.esd_type, call_node.func.id]
         except KeyError:
             try:
-                f_id = int(self._TEST_DEFAULT_RE.match(call_node.func.id).group(1))
+                f_id = int(_TEST_DEFAULT_RE.match(call_node.func.id).group(1))
             except AttributeError:
                 raise ESDValueError(call_node.lineno, f"Invalid ESD function name: '{call_node.func.id}'.")
         args = self.parse_args(call_node.args)
@@ -425,18 +432,6 @@ class ESPCompiler:
             f"Invalid node type appeared in condition test: {type(node)}.\n"
             f"Conditions must be bools, boolean ops, comparisons, function calls, or a permitted name."
         )
-
-    @property
-    def State(self):
-        return self.esd.State
-
-    @property
-    def Condition(self):
-        return self.esd.State.Condition
-
-    @property
-    def Command(self):
-        return self.esd.State.Command
 
     @staticmethod
     def compile_number(n):

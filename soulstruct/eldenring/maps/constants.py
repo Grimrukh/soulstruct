@@ -1612,3 +1612,8 @@ def get_map_variable_name(area_id: int, block_id: int, cc_id: int, dd_id: int):
         return get_map((area_id, block_id, cc_id, dd_id)).variable_name
     except (KeyError, ValueError):
         return f"({area_id}, {block_id}, {cc_id}, {dd_id})"
+
+
+if __name__ == '__main__':
+    for m in ALL_MAPS:
+        print(f"    {m.name} = map_property({m.variable_name})  # type: EMEVD")

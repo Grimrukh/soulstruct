@@ -10,7 +10,7 @@ import typing as tp
 from pathlib import Path
 from xml.etree import ElementTree
 
-from soulstruct.base.binder_entry import BinderEntry
+from soulstruct.containers.entry import BinderEntry
 from soulstruct.base.game_file import GameFile, InvalidGameFileTypeError
 from soulstruct.containers import Binder
 from soulstruct.exceptions import SoulstructError
@@ -467,7 +467,7 @@ class ParamDefBND(abc.ABC):
         self._bnd = Binder(paramdef_bnd_source)
 
         self.paramdefs = {}  # type: dict[str, ParamDef]
-        for entry in self.bnd.entries:
+        for entry in self.bnd._entries:
             try:
                 paramdef = self.PARAMDEF_CLASS(entry)
             except Exception:
