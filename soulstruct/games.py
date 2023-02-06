@@ -36,7 +36,7 @@ class Game:
         name: str,
         submodule_name=None,
         aliases=(),
-        default_dcx: DCXType = None,
+        default_dcx_type=DCXType.Null,
         bundled_paramdef_path=Path(),
         steam_appid=None,
         default_game_path="",
@@ -50,7 +50,7 @@ class Game:
         self.name = name
         self.submodule_name = submodule_name
         self.aliases = aliases
-        self.default_dcx = default_dcx
+        self.default_dcx_type = default_dcx_type
         self.bundled_paramdef_path = bundled_paramdef_path
         self.steam_appid = steam_appid
         self.default_game_path = default_game_path
@@ -65,9 +65,9 @@ class Game:
     def dcxify(self, path: str | Path) -> Path:
         """Append or remove ".dcx" to/from given path according to `.default_dcx`."""
         path = Path(path)
-        if not self.default_dcx and path.suffix == ".dcx":
+        if not self.default_dcx_type and path.suffix == ".dcx":
             return path.with_name(path.stem)
-        elif self.default_dcx and not path.suffix == ".dcx":
+        elif self.default_dcx_type and not path.suffix == ".dcx":
             return path.with_name(path.name + ".dcx")
         return path
 
@@ -88,7 +88,7 @@ DEMONS_SOULS = Game(
     "DEMONS_SOULS",
     "Demon's Souls",
     aliases=("demonssouls", "des"),
-    default_dcx=DCXType.DCX_EDGE,
+    default_dcx_type=DCXType.DCX_EDGE,
     default_game_path=DES_PATH,
     executable_name="EBOOT.BIN",
 )
@@ -98,7 +98,7 @@ DEMONS_SOULS_REMAKE = Game(
     "DEMONS_SOULS_REMAKE",
     "Demon's Souls Remake",
     aliases=("demonssoulsremake", "desr"),
-    default_dcx=None,  # TODO: Unknown.
+    default_dcx_type=DCXType.Unknown,  # TODO: Unknown.
     default_game_path=DESR_PATH,
 )
 
@@ -108,7 +108,7 @@ DARK_SOULS_PTDE = Game(
     "Dark Souls Prepare to Die Edition",
     submodule_name="darksouls1ptde",
     aliases=("darksoulspreparetodieedition", "darksoulsptde", "ptde", "darksouls1ptde"),
-    default_dcx=None,
+    default_dcx_type=DCXType.Null,  # DCX not used anywhere
     bundled_paramdef_path=PACKAGE_PATH("darksouls1ptde/params/resources/darksouls1ptde.paramdefbnd"),
     steam_appid=211420,
     default_game_path=PTDE_PATH,
@@ -134,7 +134,7 @@ DARK_SOULS_DSR = Game(
     "Dark Souls Remastered",
     submodule_name="darksouls1r",
     aliases=("darksoulsremastered", "darksoulsdsr", "dsr", "ds1r", "darksouls1r"),
-    default_dcx=DCXType.DCX_DFLT_10000_24_9,
+    default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     bundled_paramdef_path=PACKAGE_PATH("darksouls1r/params/resources/darksouls1r.paramdefbnd.dcx"),
     steam_appid=570940,
     default_game_path=DSR_PATH,
@@ -160,7 +160,7 @@ DARK_SOULS_2 = Game(
     "Dark Souls II",
     submodule_name="darksouls2",
     aliases=("darksouls2", "ds2", "dks2"),
-    default_dcx=DCXType.DCX_DFLT_10000_24_9,
+    default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_PATH,
 )
 
@@ -170,7 +170,7 @@ DARK_SOULS_2_SOTFS = Game(
     "Dark Souls II Scholar of the First Sin",
     submodule_name="darksouls2",  # TODO: Currently identical to DS2.
     aliases=("darksouls2sotfs", "ds2sotfs", "dks2sotfs", "sotfs"),
-    default_dcx=DCXType.DCX_DFLT_10000_24_9,
+    default_dcx_type=DCXType.DCX_DFLT_10000_24_9,
     default_game_path=DS2_SOTFS_PATH,
 )
 
@@ -180,7 +180,7 @@ BLOODBORNE = Game(
     "Bloodborne",
     submodule_name="bloodborne",
     aliases=("bloodborne", "bb"),
-    default_dcx=DCXType.DCX_DFLT_10000_44_9,
+    default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     bundled_paramdef_path=PACKAGE_PATH("bloodborne/params/resources/bloodborne.paramdefbnd.dcx"),
     steam_appid=None,
     default_game_path=BB_PATH,
@@ -203,7 +203,7 @@ DARK_SOULS_3 = Game(
     "Dark Souls III",
     submodule_name="darksouls3",
     aliases=("darksouls3", "ds3", "dks3"),
-    default_dcx=DCXType.DCX_DFLT_10000_44_9,
+    default_dcx_type=DCXType.DCX_DFLT_10000_44_9,
     default_game_path=DS3_PATH,
     executable_name="DarkSoulsIII.exe",
 )
@@ -214,7 +214,7 @@ SEKIRO = Game(
     "Sekiro",
     submodule_name="sekiro",
     aliases=("sekiro", "sekiroshadowsdietwice", "sdt"),
-    default_dcx=DCXType.DCX_KRAK,
+    default_dcx_type=DCXType.DCX_KRAK,
     default_game_path=SEKIRO_PATH,
 )
 
@@ -224,7 +224,7 @@ ELDEN_RING = Game(
     "Elden Ring",
     submodule_name="eldenring",
     aliases=("eldenring", "er"),
-    default_dcx=DCXType.DCX_KRAK,
+    default_dcx_type=DCXType.DCX_KRAK,
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
     default_file_paths={

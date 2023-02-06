@@ -2679,6 +2679,14 @@ class NewBinaryStruct:
             # Clear deferred field value.
             setattr(self, field_name, None)
 
+    def to_dict(self, ignore_underscore_prefix=True) -> dict[str, tp.Any]:
+        """Get all current binary fields, but ignore fields with value `None` and (by default) underscore names."""
+        return {
+            name: value
+            for name, value in self.get_binary_field_values().items()
+            if value is not None and (not ignore_underscore_prefix or not name.startswith("_"))
+        }
+
     def pop(self, field_name: str) -> tp.Any:
         """Simply sets `field_name` to None, marking it as 'consumed', without triggering type checkers.
 

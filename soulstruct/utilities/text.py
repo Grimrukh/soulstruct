@@ -50,16 +50,16 @@ def string_to_identifier(spaces_string: str, remove_prefixes=(), preserve_models
     return id_string
 
 
-def pad_chars(text, encoding=None, null_terminate=True, pad_to_multiple_of=4):
+def pad_chars(text, encoding=None, null_terminate=True, alignment=4):
     """Pad text out to given multiple of byte length with null bytes. Optionally, encode it first."""
-    if pad_to_multiple_of < 0 or not isinstance(pad_to_multiple_of, int):
+    if alignment < 0 or not isinstance(alignment, int):
         raise ValueError("pad must be an integer greater than zero.")
     if encoding is not None:
         encoded = text.encode(encoding) + (b"\0" if null_terminate else b"")
     else:
         encoded = text + ("\0" if null_terminate else "")
     pad = b"\0" if encoding is not None else "\0"
-    while len(encoded) % pad_to_multiple_of != 0:
+    while len(encoded) % alignment != 0:
         encoded += pad
     return encoded
 

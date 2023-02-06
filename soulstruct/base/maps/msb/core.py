@@ -1,30 +1,34 @@
 from __future__ import annotations
 
+__all__ = ["MSB"]
+
 import abc
-import io
 import logging
 import re
+import struct
 import typing as tp
+from dataclasses import dataclass, fields
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.game_types.map_types import MapEntity
-from soulstruct.containers.dcx import DCXType
-from soulstruct.games import GameSpecificType
-from soulstruct.utilities.binary import BinaryReader
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .msb_entry import MSBEntry
+from .events import BaseMSBEvent
+from .models import BaseMSBModel
+from .parts import BaseMSBPart
+from .regions import BaseMSBRegion
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "MSB"
 
 if tp.TYPE_CHECKING:
-    from .models import BaseMSBModelList
-    from .events import BaseMSBEventList
-    from .regions import BaseMSBRegionList
-    from .parts import BaseMSBPartList
     from .enums import BaseMSBSubtype
-    from .msb_entry import MSBEntryEntity
     from .msb_entry_list import *
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +37,45 @@ MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
 PY_NAME_RE = re.compile(r"^[A-z_][\w_]*$")  # valid Python variable name
 
 
-class MSB(GameFile, GameSpecificType, abc.ABC):
+# NOTE: Completely absent in DS1 and earlier.
+MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
+MSB_ENTRY_SUPERTYPES = {
+    "MODEL_PARAM_ST": BaseMSBModel,
+    "EVENT_PARAM_ST": BaseMSBEvent,
+    "POINT_PARAM_ST": BaseMSBRegion,
+    "PARTS_PARAM_ST": BaseMSBPart,
+}
+
+
+class MSBSubtypeInfo(tp.NamedTuple):
+    index: int
+    entry_class: tp.Type[MSBEntry]
+    msb_list_attr_name: str
+    plural_name: str
+
+
+# Utility tuples that hold combined information mapping inter-entry indices to `MSBEntry` instances, and vice versa.
+# Only used transiently when unpacking/packing to prevent hideous function signatures.
+class PartObjectsToIndices(tp.NamedTuple):
+    part_type_index: int  # TODO: I used this as an 'easy' way to set part subtype indices ('_part_type_index'). Dump.
+    models: dict[MSBEntry, int]
+    environments: dict[MSBEntry, int]  # subtype indices
+    regions: dict[MSBEntry, int]
+    parts: dict[MSBEntry, int]
+    collisions: dict[MSBEntry, int]  # subtype indices
+
+
+class IndexedEntryLists(tp.NamedTuple):
+    models: list[MSBEntry]
+    events: list[MSBEntry]
+    regions: list[MSBEntry]
+    parts: list[MSBEntry]
+    environments: list[MSBEntry]  # event subtype
+    collisions: list[MSBEntry]  # part subtype
+
+
+@dataclass(slots=True)
+class MSB(GameFile, abc.ABC):
     """Handles MSB ('MapStudio') data. Subclassed by each game.
 
     The MSB contains four types of data entries:
@@ -58,103 +100,145 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             when they are actually visible in the game. Some MSB Events reference Parts by index, so their order needs
             to be carefully managed internally.
     """
-    EXT = ".msb"
+    EXT: tp.ClassVar[str] = ".msb"
 
-    HEADER = b""
+    # TODO: Lots of info needed here.
+    #  - Each superlist needs to know the offset to check for subtype int.
+    #  - Need to map subtype int to subtype class.
+    #   - Don't need a subtype enum anymore, really? Just dictionaries that map int <> class for reading/writing?
 
-    MODEL_LIST_CLASS = None  # type: tp.Type[BaseMSBModelList]
-    EVENT_LIST_CLASS = None  # type: tp.Type[BaseMSBEventList]
-    REGION_LIST_CLASS = None  # type: tp.Type[BaseMSBRegionList]
-    PART_LIST_CLASS = None  # type: tp.Type[BaseMSBPartList]
+    # TODO: Other stuff:
+    #  - Dictionary that contains common field info ('entity_id', etc.) that can be indexed.
 
-    ENTITY_GAME_TYPES: dict[str, tuple[MapEntity, ...]]
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]]
+    # Maps MSB entry superlist names (parts, etc.) to dicts that map subtype enum ints to game-specific subtype info.
+    MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[int, MSBSubtypeInfo]]]
+    # Maps MSB entry superlist names (parts, etc.) to the relative offsets of their subtype enums.
+    MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]]
+    # Maps entry supertypes ('parts', 'events', etc.) to lists of `BaseGameType` types that appear in them.
+    ENTITY_GAME_TYPES: tp.ClassVar[dict[str, tuple[MapEntity, ...]]]
 
-    def __init__(
-        self,
-        msb_source: tp.Union[None, str, Path, bytes, io.BufferedIOBase, BinaryReader] = None,
-        dcx_type: DCXType = None,
-    ):
-        self.models = self.MODEL_LIST_CLASS()
-        self.events = self.EVENT_LIST_CLASS()
-        self.regions = self.REGION_LIST_CLASS()
-        self.parts = self.PART_LIST_CLASS()
-        super().__init__(msb_source, dcx_type=dcx_type)
+    # Version info.
+    HAS_HEADER: tp.ClassVar[bool]
+    LONG_VARINTS: tp.ClassVar[bool]
+    NAME_ENCODING: tp.ClassVar[str]
 
-    @property
-    def environment_event_enum(self):
-        try:
-            return getattr(self.EVENT_LIST_CLASS.ENTRY_SUBTYPE_ENUM, "Environment")
-        except AttributeError:
-            raise AttributeError("Cannot unpack MSB when `MSBEventSubtype.Environment` does not exist.")
+    # Subclasses define lists of entry subtypes here (`characters`, `sound_events`, `object_models`, etc.).
 
-    @property
-    def collision_part_enum(self):
-        try:
-            return getattr(self.PART_LIST_CLASS.ENTRY_SUBTYPE_ENUM, "Collision")
-        except AttributeError:
-            raise AttributeError("Cannot unpack MSB when `MSBPartSubtype.Collision` does not exist.")
-
-    def unpack(self, msb_reader: BinaryReader, **kwargs):
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> Self:
         """Unpack an MSB from the given reader."""
 
-        # Read (and ignore) constant header, if applicable.
-        if self.HEADER:
-            msb_reader.seek(msb_reader.position + len(self.HEADER))
+        if cls.HAS_HEADER:
+            header = reader.read(len(MSB_HEADER_BYTES))
+            if header != MSB_HEADER_BYTES:
+                raise AssertionError("Header of this MSB class did not match asserted header.")
 
-        self.models = self.MODEL_LIST_CLASS(msb_reader)
-        self.events = self.EVENT_LIST_CLASS(msb_reader)
-        self.regions = self.REGION_LIST_CLASS(msb_reader)
-        self.parts = self.PART_LIST_CLASS(msb_reader)
+        offset_fmt = "q" if cls.LONG_VARINTS else "i"
+        entry_lists = {}  # type: dict[str, list[MSBEntry]]  # both super (e.g. "parts") and sub-lists (e.g. "objects")
+        for supertype_name in MSB_ENTRY_SUPERTYPES:
+            superlist_header = cls.SUPERTYPE_LIST_HEADER.from_bytes(reader)
+            entry_offset_count = superlist_header.pop("entry_offset_count")  # includes final offset to next list
+            name_offset = superlist_header.pop("name_offset")
+            entry_offsets = list(reader.unpack(f"{entry_offset_count}{offset_fmt}"))
+            superlist_name = reader.unpack_string(offset=name_offset, encoding=cls.NAME_ENCODING)
+            if superlist_name != (expected_name := supertype_name):
+                raise ValueError(f"MSB entry list name '{superlist_name}' does not match name '{expected_name}'.")
+            for entry_offset in entry_offsets[:-1]:  # exclude last offset
+                reader.seek(entry_offset)
+                cls._unpack_entry(reader, superlist_name, entry_lists)
+            reader.seek(entry_offsets[-1])
 
-        model_names = self.models.set_and_get_unique_names()
-        environment_names = self.events.get_entry_names(self.environment_event_enum)
-        region_names = self.regions.set_and_get_unique_names()
-        part_names = self.parts.set_and_get_unique_names()
-        collision_names = self.parts.get_entry_names(self.collision_part_enum)
+        # Resolve entry indices to actual object references.
+        for event in entry_lists["EVENT_PARAM_ST"]:
+            event: BaseMSBEvent
+            event.indices_to_objects(entry_lists)
 
-        self.events.set_names(region_names=region_names, part_names=part_names)
-        self.parts.set_names(
-            model_names=model_names,
-            environment_names=environment_names,
-            region_names=region_names,
-            part_names=part_names,
-            collision_names=collision_names,
-        )
+        for part in entry_lists["PARTS_PARAM_ST"]:
+            part: BaseMSBPart
+            part.indices_to_objects(entry_lists)
 
-    def pack(self):
-        """Constructs {name: id} dictionaries, then passes them to pack() methods as required by each."""
-        model_indices = self.models.get_indices()
-        local_environment_indices = {
-            name: i for i, name in enumerate(self.events.get_entry_names(self.environment_event_enum))
-        }
-        region_indices = self.regions.get_indices()
-        part_indices = self.parts.get_indices()
-        local_collision_indices = {
-            name: i for i, name in enumerate(self.parts.get_entry_names(self.collision_part_enum))
-        }
+        for superlist_name in MSB_ENTRY_SUPERTYPES:
+            entry_lists.pop(superlist_name)  # only pass subtype lists to constructor
 
-        # Set entry indices (both self and linked) and other auto-detected fields.
-        self.models.set_indices(part_instance_counts=self.parts.get_instance_counts())
-        self.events.set_indices(region_indices=region_indices, part_indices=part_indices)
-        self.regions.set_indices()
-        self.parts.set_indices(
-            model_indices=model_indices,
-            local_environment_indices=local_environment_indices,
-            region_indices=region_indices,
-            part_indices=part_indices,
-            local_collision_indices=local_collision_indices,
-        )
+        # noinspection PyArgumentList
+        return cls(**entry_lists)
 
-        offset = len(self.HEADER)
-        packed_models = self.models.pack(start_offset=offset)
-        offset += len(packed_models)
-        packed_events = self.events.pack(start_offset=offset)
-        offset += len(packed_events)
-        packed_regions = self.regions.pack(start_offset=offset)
-        offset += len(packed_regions)
-        packed_parts = self.parts.pack(start_offset=offset, is_last_table=True)
+    @classmethod
+    def _unpack_entry(cls, reader: BinaryReader, superlist_name: str, entry_lists: dict[str, list[MSBEntry]]):
+        subtype_int = reader.unpack_value("i", offset=cls.MSB_ENTRY_SUBTYPE_OFFSETS[superlist_name])
+        subtype_info = cls.MSB_ENTRY_SUBTYPES[superlist_name][subtype_int]
+        subtype_class = subtype_info.entry_class
+        entry = subtype_class.from_msb_reader(reader)
+        # Put entry into appropriate supertype and subtype lists (creating if necessary).
+        entry_lists.setdefault(superlist_name, []).append(entry)
+        entry_lists.setdefault(subtype_info.msb_list_attr_name, []).append(entry)
 
-        return self.HEADER + packed_models + packed_events + packed_regions + packed_parts
+    def _add_supertype_lists(self, entry_lists: dict[str, list[MSBEntry]]):
+        """Checks base class of first instance of each subtype list (if not empty) to determine supertype.
+
+        NOTE: Supertype lists contain `(subtype_name, entry)` tuples instead of just the entries. Supertype lists will
+        also be correctly ordered by subtype enum.
+        """
+        supertype_lists = {supertype_name: [] for supertype_name in MSB_ENTRY_SUPERTYPES}
+        for subtype_name, subtype_list in entry_lists:
+            for supertype_name, supertype_base_class in MSB_ENTRY_SUPERTYPES.items():
+                if subtype_list and isinstance(subtype_list[0], supertype_base_class):
+                    named_subtypes = [(subtype_name, entry) for entry in subtype_list]
+                    supertype_lists[supertype_name].extend(named_subtypes)
+
+    def to_writer(self) -> BinaryWriter:
+        entry_lists = {field.name: getattr(self, field.name) for field in fields(self)}
+        self._add_supertype_lists(entry_lists)
+
+        # Get model instance counts.
+        model_instance_counts = {}
+        for part in entry_lists["parts"]:
+            part: BaseMSBPart
+            if part.model.name in model_instance_counts:
+                model_instance_counts[part.model.name] += 1
+            else:
+                model_instance_counts[part.model.name] = 1
+
+        # TODO: use writer.varint_size to communicate encoding?
+        writer = BinaryWriter(byte_order=ByteOrder.LittleEndian, varint_size=8 if self.LONG_VARINTS else 4)
+        if self.HAS_HEADER:
+            writer.append(MSB_HEADER_BYTES)
+
+        for supertype_name in MSB_ENTRY_SUPERTYPES:
+            supertype_list = entry_lists[supertype_name]
+            self.SUPERTYPE_LIST_HEADER.object_to_writer(
+                self,
+                writer,
+                name_offset=RESERVED,
+                entry_offset_count=len(supertype_list) + 1,  # includes final offset to next supertype list
+            )
+            for _, entry in supertype_list:
+                writer.reserve("v", "entry_offset", obj=entry)
+            writer.reserve("v", "next_list_offset", obj=supertype_list)
+
+            writer.fill_with_position("name_offset", obj=self)
+            packed_name = supertype_name.encode("utf-8")
+            packed_name += b"\0" * (16 - len(packed_name))  # pad to 16 characters (NOTE: 32 in older Soulstruct)
+            writer.append(packed_name)
+
+            for supertype_index, (subtype_name, entry) in enumerate(supertype_list):
+                entry: MSBEntry
+                writer.fill_with_position("entry_offset", obj=entry)
+                subtype_index = entry_lists[subtype_name].index(entry)
+                if supertype_name == "MODEL_PARAM_ST":
+                    entry: BaseMSBModel
+                    instance_count = model_instance_counts[entry.name]
+                    entry.to_msb_writer(writer, supertype_index, subtype_index, entry_lists, instance_count)
+                else:
+                    entry.to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
+
+            if supertype_name == MSB_ENTRY_SUPERTYPES[-1]:
+                writer.fill("next_list_offset", 0, obj=supertype_list)  # zero offset
+            else:
+                writer.fill_with_position("next_list_offset", obj=supertype_list)
+
+        return writer
 
     def get_entry_by_name(self, name: str, entry_types=()) -> tp.Optional[MSBEntry]:
         """Get `MSBEntry` with name `name` that is one of the given `entry_types`, or any type if `entry_types=()`.
@@ -558,5 +642,19 @@ class MSB(GameFile, GameSpecificType, abc.ABC):
             raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
         return getattr(self, entry_list_name)
 
-    def __iter__(self):
-        return iter((self.models, self.events, self.regions, self.parts))
+    @staticmethod
+    def set_and_get_unique_names(entry_superlist: list[MSBEntry]) -> dict[int, str]:
+        """Goes through all entries and assigns <repeat> suffixes to any repeated names, so that every entry has
+        a unique name for name linking purposes. These suffixes will be removed when the MSB is packed.
+
+        Returns a dictionary mapping entry indices to those new unique names.
+        """
+        unique_names = {}
+        repeat_count = {}
+        for i, entry in enumerate(entry_superlist):
+            if entry.name in unique_names.values():
+                repeat_count.setdefault(entry.name, 0)
+                repeat_count[entry.name] += 1
+                entry.name += f" <{repeat_count[entry.name]}>"
+            unique_names[i] = entry.name
+        return unique_names

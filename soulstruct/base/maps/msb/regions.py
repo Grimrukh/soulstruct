@@ -13,115 +13,104 @@ __all__ = [
 
 import abc
 import logging
-import struct
+import typing as tp
+from dataclasses import dataclass, field
 
-from soulstruct.utilities.text import pad_chars
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.text import pad_chars
 
-from .enums import BaseMSBRegionSubtype
-from .msb_entry import MSBEntryEntityCoordinates
+from .msb_entry import MSBEntry
 from .msb_entry_list import BaseMSBEntryList
 from .utils import MapFieldInfo
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "BaseMSBRegion"
 
 _LOGGER = logging.getLogger(__name__)
 
 
-# TODO: Migrate Regions and Models subtypes into games.
-#  Regions can probably keep detailed base classes and just leave the enum assignment to game subclasses.
+@dataclass(slots=True)
+class BaseMSBRegion(MSBEntry, abc.ABC):
 
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar = None
+    UNKNOWN_DATA_SIZE: tp.ClassVar[int] = -1
 
-class BaseMSBRegion(MSBEntryEntityCoordinates, abc.ABC):
-
-    ENTRY_SUBTYPE: BaseMSBRegionSubtype = None
-    REGION_STRUCT: BinaryStruct = None
-    REGION_TYPE_DATA_STRUCT: BinaryStruct = None
-    NAME_ENCODING = ""
-    UNKNOWN_DATA_SIZE = -1
-
-    FIELD_INFO = MSBEntryEntityCoordinates.FIELD_INFO | {
-        "translate": MapFieldInfo(
-            "Translate",
-            Vector3,
-            Vector3.zero(),
-            "3D coordinates of the region's position. Note that this is the middle of the bottom face for box "
-            "regions.",
-        ),
-        "rotate": MapFieldInfo(
-            "Rotate",
-            Vector3,
-            Vector3.zero(),
-            "Euler angles for region rotation around its local X, Y, and Z axes.",
-        ),
-    }
-
-    translate: Vector3
-    rotate: Vector3
+    entity_id: int = -1
+    translate: Vector3 = field(default_factory=lambda: Vector3.zero())
+    rotate: Vector3 = field(default_factory=lambda: Vector3.zero())
 
     def __init__(self, source=None, **kwargs):
         self._region_index = None  # Final automatic assignment done on `MSB.pack()`.
         super().__init__(source=source, **kwargs)
 
-    def unpack(self, msb_reader: BinaryReader):
-        region_offset = msb_reader.position
-        base_data = msb_reader.unpack_struct(self.REGION_STRUCT)
-        self.name = msb_reader.unpack_string(
-            offset=region_offset + base_data["name_offset"], encoding=self.NAME_ENCODING,
-        )
-        self._region_index = base_data["__region_index"]
-        self.translate = Vector3(base_data["translate"])
-        self.rotate = Vector3(base_data["rotate"])
-        self.check_null_field(msb_reader, region_offset + base_data["unknown_offset_1"])
-        self.check_null_field(msb_reader, region_offset + base_data["unknown_offset_2"])
-
-        if base_data["type_data_offset"] != 0:
-            msb_reader.seek(region_offset + base_data["type_data_offset"])
-            self.unpack_type_data(msb_reader)
-
-        msb_reader.seek(region_offset + base_data["entity_id_offset"])
-        self.entity_id = msb_reader.unpack_value("i")
-
-        return region_offset + base_data["entity_id_offset"]
-
-    def pack(self, region_index=0):
-        name_offset = self.REGION_STRUCT.size
-        packed_name = pad_chars(self.get_name_to_pack(), encoding=self.NAME_ENCODING, pad_to_multiple_of=4)
-        unknown_offset_1 = name_offset + len(packed_name)
-        unknown_offset_2 = unknown_offset_1 + 4
-        packed_type_data = self.pack_type_data()
-        if packed_type_data:
-            type_data_offset = unknown_offset_2 + 4
-            entity_id_offset = type_data_offset + len(packed_type_data)
-        else:
-            type_data_offset = 0
-            entity_id_offset = unknown_offset_2 + 4
-        packed_base_data = self.REGION_STRUCT.pack(
-            name_offset=name_offset,
-            __region_index=region_index,
-            region_type=self.ENTRY_SUBTYPE,
-            translate=list(self.translate),
-            rotate=list(self.rotate),
-            unknown_offset_1=unknown_offset_1,
-            unknown_offset_2=unknown_offset_2,
-            type_data_offset=type_data_offset,
-            entity_id_offset=entity_id_offset,
-        )
-        packed_entity_id = struct.pack("i", self.entity_id)
-        return packed_base_data + packed_name + b"\0\0\0\0" * 2 + packed_type_data + packed_entity_id
-
-    def unpack_type_data(self, msb_reader: BinaryReader):
-        self.set(**msb_reader.unpack_struct(self.REGION_TYPE_DATA_STRUCT))
-
-    def pack_type_data(self):
-        return self.REGION_TYPE_DATA_STRUCT.pack(self)
-
-    def set_indices(self, region_index):
-        self._region_index = region_index
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+        """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""
+        entry_offset = reader.position
+        kwargs = cls.unpack_header(reader, entry_offset)
+        relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
+        if relative_subtype_data_offset > 0:
+            reader.seek(entry_offset + relative_subtype_data_offset)
+            kwargs |= cls.unpack_subtype_data(reader)
+        return cls(**kwargs)
 
     @classmethod
-    def check_null_field(cls, msb_reader: BinaryReader, offset_to_null):
-        msb_reader.seek(offset_to_null)
-        zero = msb_reader.read(cls.UNKNOWN_DATA_SIZE)
+    def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
+        header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
+
+        cls.check_null_field(reader, header.pop("unknown_offset_1"))
+        cls.check_null_field(reader, header.pop("unknown_offset_2"))
+
+        header_subtype_int = header.pop("subtype_int")
+        if header_subtype_int != cls.SUBTYPE_INT:
+            raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
+
+        name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
+        entity_id = reader.unpack_value("i", offset=entry_offset + header.pop("entity_id_offset"))
+
+        return header.to_dict(ignore_underscore_prefix=True) | {"name": name, "entity_id": entity_id}
+
+    @classmethod
+    def unpack_supertype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
+        raise TypeError("MSB regions contain no supertype data.")
+
+    def to_msb_writer(
+        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
+    ):
+        """Default: pack header (with name), base data, and type data in that order."""
+        self.pack_header(writer, supertype_index, subtype_index)
+        self.pack_subtype_data(writer, entry_lists)
+        writer.fill_with_position("entity_id_offset", self)
+        writer.pack("i", self.entity_id)
+
+    def pack_header(self, writer: BinaryWriter, supertype_index: int, subtype_index: int):
+        self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
+            self,
+            writer,
+            name_offset=RESERVED,
+            _supertype_index=supertype_index,
+            subtype_int=self.SUBTYPE_INT,
+            _subtype_index=subtype_index,
+            unknown_offset_1=RESERVED,
+            unknown_offset_2=RESERVED,
+            subtype_data_offset=RESERVED,
+            entity_id_offset=RESERVED,
+        )
+        writer.fill_with_position("name_offset", self)
+        writer.append(pad_chars(self.name, encoding=self.NAME_ENCODING, alignment=4))
+        writer.fill_with_position("unknown_offset_1", self)
+        writer.pad(4)
+        writer.fill_with_position("unknown_offset_2", self)
+        writer.pad(4)
+
+    @classmethod
+    def check_null_field(cls, reader: BinaryReader, offset_to_null: int):
+        """Region headers have two unknown offsets to unused data, which should be null."""
+        reader.seek(offset_to_null)
+        zero = reader.read(cls.UNKNOWN_DATA_SIZE)
         if zero != b"\0" * cls.UNKNOWN_DATA_SIZE:
             _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
 

@@ -25,7 +25,7 @@ class EMEVDDirectory(_BaseEMEVDDirectory):
     NightmareOfMensis = map_property(NIGHTMARE_OF_MENSIS)  # type: EMEVD
     ForbiddenWoods = map_property(FORBIDDEN_WOODS)  # type: EMEVD
     Yahargul = map_property(YAHARGUL)  # type: EMEVD
-    # ChaliceDungeon: EMEVD
+    # ChaliceDungeon: map_property(CHALICE_DUNGEON)  # type: EMEVD
     Byrgenwerth = map_property(BYRGENWERTH)  # type: EMEVD  # and Lecture Building
     NightmareFrontier = map_property(NIGHTMARE_FRONTIER)  # type: EMEVD
     HuntersNightmare = map_property(HUNTERS_NIGHTMARE)  # type: EMEVD

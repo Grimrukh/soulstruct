@@ -113,7 +113,7 @@ class WindowLinker(_BaseWindowLinker):
         """
         model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
 
-        dcx = ".dcx" if self.project.GAME.default_dcx else ""
+        dcx = ".dcx" if self.project.GAME.default_dcx_type else ""
 
         if model_subtype == MSBModelSubtype.Character:
             if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():

@@ -42,11 +42,13 @@ class BaseBinaryFile(abc.ABC):
 
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
+    # `bytes()` and `write()` methods will use this if `dcx_type = None` (default).
+    DEFAULT_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
 
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
     path: None | Path = field(init=False, repr=False, default=None)
-    # Descriptor enforces assignment type and provides default.
-    dcx_type: DCXType = field(init=False, default=DCXType.Null)
+    # Optional override for `DEFAULT_DCX_TYPE`.
+    dcx_type: DCXType | None = field(init=False, default=None)
 
     # region Read Methods
 
@@ -62,8 +64,9 @@ class BaseBinaryFile(abc.ABC):
     def __bytes__(self) -> bytes:
         """Applies `dcx_type` DCX automatically."""
         packed = bytes(self.to_writer())
-        if self.dcx_type != DCXType.Null:
-            return compress(packed, self.dcx_type)
+        dcx_type = self._get_dcx_type()
+        if dcx_type != DCXType.Null:
+            return compress(packed, dcx_type)
         return packed
 
     @classmethod
@@ -185,10 +188,17 @@ class BaseBinaryFile(abc.ABC):
             file_path = file_path.with_suffix(file_path.suffix + self.EXT)
 
         # 3. If `dcx_type` is not `Null`, add ".dcx" extension to the path.
-        if self.dcx_type != DCXType.Null and not file_path.suffix == ".dcx":
+        if self._get_dcx_type() != DCXType.Null and not file_path.suffix == ".dcx":
             file_path = file_path.with_suffix(file_path.suffix + ".dcx")  # add ".dcx"
 
         return file_path
+
+    def _get_dcx_type(self) -> DCXType:
+        if self.dcx_type is None:
+            if self.DEFAULT_DCX_TYPE is not None:
+                return self.DEFAULT_DCX_TYPE
+            return DCXType.Null
+        return self.dcx_type
 
     @classmethod
     def from_bak(cls, file_path: Path | str, create_bak_if_missing=True) -> Self:

@@ -7,6 +7,7 @@ import io
 import logging
 import re
 import typing as tp
+from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import wraps
 
@@ -27,54 +28,15 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 EntrySpecType = tp.Union[MSBEntry, int, IntEnum, str]
 
 
-def _entry_lookup(func):
-    @wraps(func)
-    def wrapped(self: BaseMSBEntryList, entry: EntrySpecType, entry_subtype: BaseMSBSubtype = None, *args, **kwargs):
-        if isinstance(entry, IntEnum):
-            entry = self.get_entry_by_name(entry_name=entry.name, entry_subtype=entry_subtype)
-        elif isinstance(entry, int):
-            entry = self.get_entries(entry_subtype)[entry]
-        elif isinstance(entry, str):
-            entry = self.get_entry_by_name(entry_name=entry, entry_subtype=entry_subtype)
-        elif isinstance(entry, MSBEntry):
-            if entry_subtype is not None and entry_subtype != entry.ENTRY_SUBTYPE:
-                raise TypeError(f"Specified entry {entry} is not of specified subtype {entry_subtype.name}.")
-        else:
-            raise TypeError(f"`entry` must be an `MSBEntry`, local/global entry index, or unique entry name.")
-        return func(self, entry, *args, **kwargs)
+@dataclass(slots=True)
+class MSBEntrySubtypeList(list[MSBEntryType]):
+    # TODO: convenience finder methods, etc.
 
-    return wrapped
+    def find_entry_intenum(self, entry_intenum: IntEnum) -> MSBEntryType:
+        return self.find_entry_name(entry_intenum.name)
 
-
-class GenericMSBEntryList(list, tp.Generic[MSBEntryType]):
-    """Used for subtype lists, like `msb.parts.Characters`, and allows indexing via names, enums, or indices."""
-
-    def __init__(self, entries: tp.Iterable[MSBEntryType]):
-        super().__init__(entries)
-
-    def __getitem__(self, entry: tp.Union[int, IntEnum, str]) -> MSBEntryType:
-        """You can access entries using their global index or (if unique) name."""
-        if isinstance(entry, IntEnum):
-            return self.__get_entry_by_name(entry_name=entry.name)
-        elif isinstance(entry, int):
-            return super().__getitem__(entry)  # standard indexing
-        elif isinstance(entry, str):
-            return self.__get_entry_by_name(entry_name=entry)
-        raise TypeError(f"`MSBEntryList` key must be a global entry index or unique entry name, not {entry}.")
-
-    def __setitem__(self, index, value):
-        raise AttributeError("You cannot set items with a MSBEntry subtype list.")
-
-    def __get_entry_by_name(self, entry_name: str) -> MSBEntryType:
-        """Try to retrieve entry with given name.
-
-        You can optionally specify the subtype. Names shouldn't be base across subtypes, but if they are (or as an
-        assertion) this can be useful.
-
-        Note that you can simply index the MSB entry list with a string (e.g. `msb.parts["h0000B0"]` as a shortcut to
-        calling this method. It will raise a KeyError if the given name is not found OR if multiple entries with the
-        given name (and subtype) are found.
-        """
+    def find_entry_name(self, entry_name: str) -> MSBEntryType:
+        """Try to retrieve entry with given name."""
         entries = [entry for entry in self if entry.name == entry_name]
         if not entries:
             raise KeyError(f"Entry name '{entry_name}' does not appear in {self.__class__.__name__}.")
@@ -85,99 +47,25 @@ class GenericMSBEntryList(list, tp.Generic[MSBEntryType]):
             )
         return entries[0]
 
+    def find_entry_names(self, entry_names: tp.Container[str]) -> list[MSBEntryType]:
+        return [entry for entry in self if entry.name in entry_names]
 
+    # TODO: absorb most methods from below for creating/duplicating/etc.
+
+
+@dataclass(slots=True)
 class BaseMSBEntryList(abc.ABC):
 
     INTERNAL_NAME = ""
-    MAP_ENTITY_LIST_HEADER: BinaryStruct = None
-    MAP_ENTITY_ENTRY_OFFSET: BinaryStruct = None
-    MAP_ENTITY_LIST_TAIL: BinaryStruct = None
-    NAME_ENCODING = ""
     PLURALIZED_NAME = ""
     ENTRY_SUBTYPE_ENUM: tp.Union[type, tp.Iterable] = None
     SUBTYPE_CLASSES: dict[BaseMSBSubtype, tp.Type[MSBEntry]] = None
     SUBTYPE_OFFSET: int = None  # binary `MSBEntry` offset where subtype integer can be read from
 
-    def __init__(self, msb_entry_list_source=None):
-        self._entries = []
-
-        if msb_entry_list_source is None:
-            return
-
-        if isinstance(msb_entry_list_source, (list, tuple, dict)):
-            if isinstance(msb_entry_list_source, dict):
-                msb_entry_list_source = [msb_entry_list_source[k] for k in sorted(msb_entry_list_source)]
-            if isinstance(msb_entry_list_source, (list, tuple)):
-                for entry in msb_entry_list_source:
-                    if isinstance(entry, MSBEntry):
-                        self._entries.append(entry)
-                    else:
-                        raise TypeError("Non-MSBEntry found in source sequence for MSB.")
-            return
-        if isinstance(msb_entry_list_source, (bytes, io.BufferedIOBase)):
-            msb_entry_list_source = BinaryReader(msb_entry_list_source)
-        if isinstance(msb_entry_list_source, BinaryReader):
-            self.unpack(msb_entry_list_source)
-        else:
-            raise TypeError(f"Invalid MSB entry list source: {msb_entry_list_source}")
-
-    def unpack(self, msb_reader: BinaryReader):
-        header = msb_reader.unpack_struct(self.MAP_ENTITY_LIST_HEADER)
-        entry_offsets = [
-            msb_reader.unpack_struct(self.MAP_ENTITY_ENTRY_OFFSET)["entry_offset"]
-            for _ in range(header["entry_offset_count"] - 1)  # 'entry_offset_count' includes tail offset
-        ]
-        next_entry_list_offset = msb_reader.unpack_struct(self.MAP_ENTITY_LIST_TAIL)["next_entry_list_offset"]
-        name = msb_reader.unpack_string(offset=header["name_offset"], encoding=self.NAME_ENCODING)
-        if name != self.INTERNAL_NAME:
-            raise ValueError(f"MSB entry list internal name '{name}' does not match known name '{self.INTERNAL_NAME}'.")
-        self._entries = []
-
-        for entry_offset in entry_offsets:
-            msb_reader.seek(entry_offset)
-            entry = self.ENTRY_CLASS(msb_reader)
-            self._entries.append(entry)
-
-        msb_reader.seek(next_entry_list_offset)
-
     def pack(self, start_offset=0, is_last_table=False):
+        # TODO: Move to MSB and MSBEntry.
         entries = self.get_entries()
-        entry_offsets = []
-        packed_entries = b""
-        offset = start_offset + (
-            self.MAP_ENTITY_LIST_HEADER.size
-            + self.MAP_ENTITY_ENTRY_OFFSET.size * len(entries)
-            + self.MAP_ENTITY_LIST_TAIL.size
-        )
-        packed_name = self.INTERNAL_NAME.encode("utf-8")
-        name_offset = offset
-        while len(packed_name) < 16:  # TODO: used to be 32
-            packed_name += b"\0"
-        offset += len(packed_name)
-        for i, entry in enumerate(entries):
-            entry_offsets.append(offset)
-            packed_entry = self.pack_entry(i, entry)
-            packed_entries += packed_entry
-            offset += len(packed_entry)
 
-        next_entry_list_offset = offset if not is_last_table else 0
-
-        packed_header = self.MAP_ENTITY_LIST_HEADER.pack(name_offset=name_offset, entry_offset_count=len(entries) + 1,)
-        packed_header += self.MAP_ENTITY_ENTRY_OFFSET.pack_multiple([{"entry_offset": o} for o in entry_offsets])
-        packed_header += self.MAP_ENTITY_LIST_TAIL.pack(next_entry_list_offset=next_entry_list_offset)
-
-        return packed_header + packed_name + packed_entries
-
-    @classmethod
-    def ENTRY_CLASS(cls, msb_reader: BinaryReader):
-        """Detects the appropriate subclass of `MSBEntry` to instantiate, and does so."""
-        entry_subtype_int = msb_reader.unpack("i", offset=cls.SUBTYPE_OFFSET, relative_offset=True)[0]
-        try:
-            entry_subtype = cls.ENTRY_SUBTYPE_ENUM(entry_subtype_int)
-        except ValueError:
-            raise MapError(f"Entry of type {cls.ENTRY_SUBTYPE_ENUM} has invalid subtype enum: {entry_subtype_int}")
-        entry_subtype_class = cls.SUBTYPE_CLASSES[entry_subtype]
-        return entry_subtype_class(msb_reader)
 
     @abc.abstractmethod
     def pack_entry(self, index: int, entry: MSBEntryType):
@@ -259,21 +147,6 @@ class BaseMSBEntryList(abc.ABC):
                 f"global index or local subtype-specific index."
             )
         return entries[0]
-
-    @_entry_lookup
-    def get_entry_subtype(self, entry: EntrySpecType):
-        """Returns subtype enum of given `entry`."""
-        return entry.ENTRY_SUBTYPE
-
-    @_entry_lookup
-    def get_entry_subtype_index(self, entry: EntrySpecType):
-        """Get local index of specified `entry` among entries with the same subtype."""
-        return self.get_entries(entry.ENTRY_SUBTYPE).index(entry)
-
-    @_entry_lookup
-    def get_entry_global_index(self, entry: EntrySpecType):
-        """Get global index of specified `entry` among all entries with this list type."""
-        return self._entries.index(entry)
 
     def new(
         self,
@@ -423,21 +296,6 @@ class BaseMSBEntryList(abc.ABC):
             entry_indices[entry.name] = i
         return entry_indices
 
-    def set_and_get_unique_names(self):
-        """Goes through all entries and assigns <repeat> suffixes to any repeated names, so that every entry has
-        a unique name for name linking purposes. These suffixes will be removed when the MSB is packed.
-
-        Returns a dictionary mapping entry indices to those new unique names.
-        """
-        unique_names = {}
-        repeat_count = {}
-        for i, entry in enumerate(self._entries):
-            if entry.name in unique_names.values():
-                repeat_count.setdefault(entry.name, 0)
-                repeat_count[entry.name] += 1
-                entry.name += f" <{repeat_count[entry.name]}>"
-            unique_names[i] = entry.name
-        return unique_names
 
     def to_dict(self, ignore_defaults=True) -> [dict[str, list[dict[str, tp.Any]]]]:
         """Get the entry list as a dictionary mapping entry subtype names to lists of entry dictionaries."""

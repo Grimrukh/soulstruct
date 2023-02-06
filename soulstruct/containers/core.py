@@ -38,6 +38,9 @@ _LOGGER = logging.getLogger(__name__)
 class BinderFlags(int):
     """Bit flags for binder file. Note that the bit order is 'big endian' here.
 
+    NOTE: 46 (00101110) appears to be the most common value by far (in PTDE, DSR, and BB at least). This:
+        has_ids | has_names_1 | has_names_2 | has_compression
+
     TODO: Determine which file types in which games use which magic values, so they can be initialized to defaults.
     """
 
@@ -189,10 +192,11 @@ class BDTHeaderV4(NewBinaryStruct):
 
 @dataclass(slots=True)
 class BinderVersion4Info:
-    unknown1: bool
-    unknown2: bool
-    unicode: False
-    hash_table_type: int
+    """Defaults are simply the most common observed values."""
+    unknown1: bool = False
+    unknown2: bool = False
+    unicode: bool = True
+    hash_table_type: int = 0
 
     most_recent_hash_table: bytes = field(init=False, default=b"")
     most_recent_entry_count: int = field(init=False, default=0)
@@ -235,12 +239,12 @@ class Binder(BaseBinaryFile):
     BinderEntry: tp.ClassVar[tp.Type[BinderEntry]] = BinderEntry  # for convenience
 
     signature: str = ""
-    flags: BinderFlags = BinderFlags(0)
+    flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
     big_endian: bool = False
     bit_big_endian: bool = False
-    version: BinderVersion = BinderVersion.V3
-    v4_info: BinderVersion4Info | None = None  # only used by `BinderVersion.V4`
-    is_split_bxf: bool = False  # NOTE: not included in manifest (inferred from `version` in there)
+    version: BinderVersion = BinderVersion.V4  # default geared for newer games
+    v4_info: BinderVersion4Info | None = field(default_factory=BinderVersion4Info)  # only used by `BinderVersion.V4`
+    is_split_bxf: bool = False  # NOTE: not included in manifest (inferred from combined `binder_type` string in there)
 
     # Entry list marked 'private' to encourage use of `add_entry` and `remove_entry` methods.
     _entries: list[BinderEntry] = field(default_factory=list)
@@ -497,23 +501,23 @@ class Binder(BaseBinaryFile):
         Does not modify input `manifest`. Other keys may be present in `manifest`, and will be ignored.
         """
         binder_kwargs = manifest.copy()
-        for required_key in ("version", "signature", "flags", "big_endian", "bit_big_endian"):
+        for required_key in ("binder_type", "signature", "flags", "big_endian", "bit_big_endian"):
             if required_key not in binder_kwargs:
                 raise BinderError(f"Binder manifest JSON file does not contain '{required_key}' key.")
 
-        manifest_version = binder_kwargs.pop("version")
-        if manifest_version.startswith("BXF"):
+        binder_type = binder_kwargs.pop("binder_type")
+        if binder_type[:3] == "BXF":
             is_split_bxf = True
-        elif manifest_version.startswith("BND"):
+        elif binder_type[:3] == "BND":
             is_split_bxf = False
         else:
             raise ValueError(
-                f"Invalid Binder manifest `version`: {manifest_version}. Must be of format '{{BND|BXF}}{{3|4}}'."
+                f"Invalid Binder manifest `binder_type`: {binder_type}. Must be of format '{{BND|BXF}}{{3|4}}'."
             )
-        version = int(manifest_version[3])
+        version = int(binder_type[3])
         if version not in {3, 4}:
             raise ValueError(
-                f"Invalid Binder manifest `version`: {manifest_version}. Must be of format '{{BND|BXF}}{{3|4}}'."
+                f"Invalid Binder manifest `binder_type`: {binder_type}. Must be of format '{{BND|BXF}}{{3|4}}'."
             )
         binder_kwargs["is_split_bxf"] = is_split_bxf
         binder_kwargs["version"] = version
@@ -793,9 +797,9 @@ class Binder(BaseBinaryFile):
 
     def get_manifest_header(self) -> dict[str, tp.Any]:
         """Construct manifest header dictionary depending on file type."""
-        version = f"BXF{self.version.value}" if self.is_split_bxf else f"BND{self.version.value}"
+        binder_type = f"BXF{self.version.value}" if self.is_split_bxf else f"BND{self.version.value}"
         manifest = {
-            "version": version,
+            "binder_type": binder_type,
             "signature": self.signature,
             "flags": self.flags,
             "big_endian": self.big_endian,
@@ -805,10 +809,10 @@ class Binder(BaseBinaryFile):
             if self.v4_info is None:
                 raise AttributeError("`Binder` with version `V4` must have a `v4_info`.")
             manifest |= {
-                "unicode": self.v4_info.unicode,
-                "hash_table_type": self.v4_info.hash_table_type,
                 "unknown1": self.v4_info.unknown1,
                 "unknown2": self.v4_info.unknown2,
+                "unicode": self.v4_info.unicode,
+                "hash_table_type": self.v4_info.hash_table_type,
             }
 
         # Final keys (more metadata than real binder data).

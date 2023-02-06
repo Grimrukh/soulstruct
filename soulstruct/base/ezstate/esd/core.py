@@ -26,9 +26,6 @@ try:
 except AttributeError:
     Self = "ESD"
 
-if tp.TYPE_CHECKING:
-    from soulstruct.containers.dcx import DCXType
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -121,15 +118,14 @@ class StateMachineHeaderStruct(NewBinaryStruct):
 class ESD(GameFile, abc.ABC):
     """An EzState state machine that controls character/bonfire interactions (TALK) or character animations (CHR)."""
 
-    EXT = ".esd"
-    DCX_TYPE: tp.ClassVar[DCXType]
+    EXT: tp.ClassVar[str] = ".esd"
     ESD_TYPE: tp.ClassVar[ESDType]
+    VERSION: tp.ClassVar[int]
+    VARINT_SIZE: tp.ClassVar[int]
 
     magic: tuple[int, int, int, int] = ()
     file_tail: bytes = b"\0"  # default for files loaded from ESP, etc.
     esd_name: str = ""
-    varint_size: int = 8
-
     # Maps state machine IDs to dictionaries mapping state IDs to `State` instances.
     # NOTE: Called `StateGroups` in SoulsFormats.
     state_machines: dict[int, dict[int, State]] = field(default_factory=dict)
@@ -181,21 +177,12 @@ class ESD(GameFile, abc.ABC):
         # probably a safe test for it.
         reader.default_byte_order = ByteOrder.LittleEndian
 
-        # NOTE: We don't need to set `varint_size` for the brief existence of `reader` as the external header is 32-bit.
-        signature = reader.peek(4)
-        if signature == b"fSSL":
-            varint_size = 4
-        elif signature == b"fsSL":
-            varint_size = 8
-        else:
-            raise ValueError(f"Invalid ESD file first four bytes: {signature}")
-
         header = ESDExternalHeaderStruct.from_bytes(reader)
-        header.assert_field_values(**EXTERNAL_HEADER_VARINT_ASSERTED[varint_size])
+        header.assert_field_values(**EXTERNAL_HEADER_VARINT_ASSERTED[cls.VARINT_SIZE])
         # Internal offsets start here, so we reset the reader to make these offsets naturally correct.
-        reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, varint_size=varint_size)
+        reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, varint_size=cls.VARINT_SIZE)
         internal_header = ESDInternalHeaderStruct.from_bytes(reader)
-        internal_header.assert_field_values(**INTERNAL_HEADER_VARINT_ASSERTED[varint_size])
+        internal_header.assert_field_values(**INTERNAL_HEADER_VARINT_ASSERTED[cls.VARINT_SIZE])
 
         state_machine_header_structs = [
             StateMachineHeaderStruct.from_bytes(reader)
@@ -235,7 +222,7 @@ class ESD(GameFile, abc.ABC):
             reader.seek(header.unk_offset_1)  # after packed EZL
             file_tail = reader.read()  # remainder of file
 
-        return cls(internal_header.magic, file_tail, esd_name, varint_size, state_machines)
+        return cls(internal_header.magic, file_tail, esd_name, state_machines)
 
     @classmethod
     def compile_from_esp_directory(cls, esp_directory: Path | str) -> Self:
@@ -334,17 +321,17 @@ class ESD(GameFile, abc.ABC):
             esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
             state_machine_count=len(self.state_machines),  # also appears in internal header
             # Other counts reserved.
-            **EXTERNAL_HEADER_VARINT_ASSERTED[self.varint_size],
+            **EXTERNAL_HEADER_VARINT_ASSERTED[self.VARINT_SIZE],
         )
 
         # Pack internal header. This is the writer we use throughout, except when filling external header offsets.
         writer = ESDInternalHeaderStruct.object_to_writer(
             self,
             byte_order=ByteOrder.LittleEndian,
-            varint_size=self.varint_size,
+            varint_size=self.VARINT_SIZE,
             state_machine_count=len(self.state_machines),  # also appears in external header
             esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
-            **INTERNAL_HEADER_VARINT_ASSERTED[self.varint_size],
+            **INTERNAL_HEADER_VARINT_ASSERTED[self.VARINT_SIZE],
         )
 
         for state_machine_index, states in self.state_machines.items():
@@ -555,10 +542,9 @@ class ESD(GameFile, abc.ABC):
             output_file.write(self.to_html())
 
 
+# TODO: Delete once new system tested.
 class _ESDPacker:
     """Utility one-shot class for packing an `ESD` instance into binary, which is a complicated process."""
-
-    # TODO: Probably delay rework of this. Can calculate the size of the various structs for now.
 
     def __init__(self, esd: ESD):
         self.__updated = False

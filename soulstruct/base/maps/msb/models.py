@@ -1,89 +1,88 @@
 from __future__ import annotations
 
-__all__ = ["BaseMSBModel", "BaseMSBGeometryModel", "BaseMSBModelList"]
+__all__ = ["BaseMSBModel"]
 
 import abc
 import typing as tp
+from dataclasses import dataclass
 
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import *
 
-from .enums import BaseMSBModelSubtype
 from .msb_entry import MSBEntry
-from .msb_entry_list import BaseMSBEntryList
-from .utils import MapFieldInfo
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "BaseMSBModel"
 
 
+@dataclass(slots=True)
 class BaseMSBModel(MSBEntry, abc.ABC):
-    """Class used by all MSB models."""
+    """Base class used by all MSB models. (They used to not even subclass this per subtype, but now do.)"""
 
-    ENTRY_SUBTYPE: BaseMSBModelSubtype
-    MODEL_STRUCT: BinaryStruct = None
-    NAME_ENCODING = ""
-    NULL = b"\0"
-    EMPTY_SIB_PATH = b"\0"
-    SIB_PATH_STEM = ""
+    NAME_ENCODING: tp.ClassVar[str] = ""
+    NULL: tp.ClassVar[bytes] = b"\0"
+    EMPTY_SIB_PATH: tp.ClassVar[bytes] = b"\0"
+    SIB_PATH_STEM: tp.ClassVar[str] = ""
 
-    FIELD_INFO = {
-        "sib_path": MapFieldInfo(
-            "Placeholder Path",
-            str,
-            None,
-            "Internal path to model placeholder SIB file. The path's base name should match the model name.",
-        ),
-    }
+    sib_path: str = ""
 
-    sib_path: str
+    @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+        """Models have no supertype or subtype data, just a header."""
+        entry_offset = reader.position
+        kwargs = cls.unpack_header(reader, entry_offset)
+        return cls(**kwargs)
 
-    def __init__(self, source=None, map_id=(), **kwargs):
-        """Create an instance of an MSB model entry using packed data (`source`) or keyword arguments.
+    @classmethod
+    def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
+        header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
+        header_subtype_int = header.pop("subtype_int")
+        if header_subtype_int != cls.SUBTYPE_INT:
+            raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
+        name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
+        sib_path = reader.unpack_string(offset=entry_offset + header.pop("sib_path"), encoding=cls.NAME_ENCODING)
+        return header.to_dict(ignore_underscore_prefix=True) | {"name": name, "sib_path": sib_path}
 
-        If `source` is not given, then at least `sib_path` or both `name` (in kwargs) and `map_id` must be.
-        """
-        self._model_type_index = None  # not sure if this matters
-        self._instance_count = None
-        if source is None:
-            if "sib_path" not in kwargs:
-                if "name" not in kwargs:
-                    raise ValueError(f"`name` must be given to `{self.__class__.__name__}` if `sib_path` is not given.")
-                kwargs["sib_path"] = self.ENTRY_SUBTYPE.get_default_sib_path(kwargs["name"], map_id)
+    @classmethod
+    def unpack_supertype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
+        raise TypeError("MSB models contain no supertype data.")
 
-        super().__init__(source=source, **kwargs)
+    @classmethod
+    def unpack_sunrtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
+        raise TypeError("MSB models contain no subtype data.")
 
-    def unpack(self, msb_reader: BinaryReader):
-        model_offset = msb_reader.position
-        header = msb_reader.unpack_struct(self.MODEL_STRUCT)
-        self.name = msb_reader.unpack_string(
-            offset=model_offset + header["__name_offset"], encoding=self.NAME_ENCODING
+    def to_msb_writer(
+        self,
+        writer: BinaryWriter,
+        supertype_index: int,
+        subtype_index: int,
+        entry_lists: dict[str, list[MSBEntry]],
+        instance_count: int = 0,
+    ):
+        self.pack_header(writer, supertype_index, subtype_index, instance_count)
+
+    def pack_header(self, writer: BinaryWriter, supertype_index: int, subtype_index: int, instance_count: int = 0):
+        self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
+            self,
+            writer,
+            name_offset=RESERVED,
+            subtype_int=self.SUBTYPE_INT,
+            _subtype_index=subtype_index,
+            sib_path_offset=RESERVED,
+            _instance_count=instance_count,
         )
-        self.sib_path = msb_reader.unpack_string(
-            offset=model_offset + header["__sib_path_offset"], encoding=self.NAME_ENCODING,
-        )
-        if header["__model_type"] != self.ENTRY_SUBTYPE.value:
-            raise ValueError(
-                f"Unexpected MSB model type value {header['__model_type']} for {self.__class__.__name__}. "
-                f"Expected {self.ENTRY_SUBTYPE.value}."
-            )
-        self.set(**header)
-
-    def pack(self):
-        name_offset = self.MODEL_STRUCT.size
-        packed_name = self.get_name_to_pack().encode(self.NAME_ENCODING) + self.NULL
-        sib_path_offset = name_offset + len(packed_name)
-        packed_sib_path = self.sib_path.encode(self.NAME_ENCODING) + self.NULL if self.sib_path else self.EMPTY_SIB_PATH
+        writer.fill_with_position("name_offset", self)
+        packed_name = self.name.encode(self.NAME_ENCODING) + self.NULL
+        writer.append(packed_name)
+        writer.fill_with_position("sib_path_offset", self)
+        if self.sib_path:
+            packed_sib_path = self.sib_path.encode(self.NAME_ENCODING) + self.NULL
+        else:
+            packed_sib_path = self.EMPTY_SIB_PATH
         while len(packed_name + packed_sib_path) % 4 != 0:
             packed_sib_path += b"\0"
-        packed_model_data = self.MODEL_STRUCT.pack(
-            __name_offset=name_offset,
-            __model_type=self.ENTRY_SUBTYPE.value,
-            _model_type_index=self._model_type_index,
-            __sib_path_offset=sib_path_offset,
-            _instance_count=self._instance_count,
-        )
-        return packed_model_data + packed_name + packed_sib_path
-
-    def set_indices(self, model_type_index, instance_count):
-        self._model_type_index = model_type_index
-        self._instance_count = instance_count
+        writer.append(packed_sib_path)
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         # TODO: Do some models use generic sib paths?
@@ -102,7 +101,8 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         return f"{self.__class__.__name__}(name={repr(self.name)})"
 
 
-class BaseMSBGeometryModel(BaseMSBModel):
+# TODO: Put in read methods of appropriate classes. Or __post_init__.
+class __BaseMSBGeometryModel(BaseMSBModel):
 
     def __init__(self, source=None, **kwargs):
         """Additionally Requires `map_id` if `source` is None."""
@@ -111,10 +111,3 @@ class BaseMSBGeometryModel(BaseMSBModel):
                 f"`name` and `map_id` must be given to `{self.__class__.__name__}` if `sib_path` is not given."
             )
         super().__init__(source, **kwargs)
-
-
-class BaseMSBModelList(BaseMSBEntryList, abc.ABC):
-
-    @abc.abstractmethod
-    def set_indices(self, part_instance_counts):
-        pass

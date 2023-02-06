@@ -1,3 +1,3 @@
 from .esd import ChrESD, TalkESD
+from .talkesdbnd import TalkESDBND
 from .talk_directory import TalkDirectory
-from .talk_esd_bnd import TalkESDBND
