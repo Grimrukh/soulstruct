@@ -123,8 +123,13 @@ class GameFileMapDirectory(GameFileDirectory, abc.ABC):
                     files[file_stem] = cls.FILE_CLASS.from_path(file_path)
                     all_map_stems.remove(file_stem)
                 else:
-                    _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
+                    _LOGGER.warning(
+                        f"Ignoring file with unrecognized map stem in `{cls.__name__}` directory: {file_path.name}"
+                    )
                     continue
+            else:
+                _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
+                continue
 
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")

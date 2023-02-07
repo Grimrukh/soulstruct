@@ -1,15 +1,6 @@
 from __future__ import annotations
 
-__all__ = [
-    "BaseMSBRegion",
-    "BaseMSBRegionPoint",
-    "BaseMSBRegionCircle",
-    "BaseMSBRegionCylinder",
-    "BaseMSBRegionSphere",
-    "BaseMSBRegionRect",
-    "BaseMSBRegionBox",
-    "BaseMSBRegionList",
-]
+__all__ = ["BaseMSBRegion"]
 
 import abc
 import logging
@@ -21,7 +12,6 @@ from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.text import pad_chars
 
 from .msb_entry import MSBEntry
-from .msb_entry_list import BaseMSBEntryList
 from .utils import MapFieldInfo
 
 try:
@@ -36,7 +26,7 @@ _LOGGER = logging.getLogger(__name__)
 class BaseMSBRegion(MSBEntry, abc.ABC):
 
     SUPERTYPE_DATA_STRUCT: tp.ClassVar = None
-    UNKNOWN_DATA_SIZE: tp.ClassVar[int] = -1
+    UNKNOWN_DATA_SIZE: tp.ClassVar[int]
 
     entity_id: int = -1
     translate: Vector3 = field(default_factory=lambda: Vector3.zero())
@@ -65,7 +55,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         cls.check_null_field(reader, header.pop("unknown_offset_2"))
 
         header_subtype_int = header.pop("subtype_int")
-        if header_subtype_int != cls.SUBTYPE_INT:
+        if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
 
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
@@ -81,18 +71,20 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
     ):
         """Default: pack header (with name), base data, and type data in that order."""
-        self.pack_header(writer, supertype_index, subtype_index)
+        self.pack_header(writer, supertype_index, subtype_index, entry_lists)
         self.pack_subtype_data(writer, entry_lists)
         writer.fill_with_position("entity_id_offset", self)
         writer.pack("i", self.entity_id)
 
-    def pack_header(self, writer: BinaryWriter, supertype_index: int, subtype_index: int):
+    def pack_header(
+        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: [dict[str, list[MSBEntry]]]
+    ):
         self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
             self,
             writer,
             name_offset=RESERVED,
             _supertype_index=supertype_index,
-            subtype_int=self.SUBTYPE_INT,
+            subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
             unknown_offset_1=RESERVED,
             unknown_offset_2=RESERVED,
@@ -113,188 +105,3 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         zero = reader.read(cls.UNKNOWN_DATA_SIZE)
         if zero != b"\0" * cls.UNKNOWN_DATA_SIZE:
             _LOGGER.warning(f"Null data entry in `{cls.__name__}` was not zero: {zero}.")
-
-
-class BaseMSBRegionPoint(BaseMSBRegion, abc.ABC):
-    """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way will the
-    player be facing when they spawn?)."""
-
-    REGION_TYPE_DATA_STRUCT = None
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-    )
-
-    def unpack_type_data(self, msb_reader: BinaryReader):
-        pass
-
-    def pack_type_data(self):
-        return b""
-
-
-class BaseMSBRegionCircle(BaseMSBRegion, abc.ABC):
-    """Almost never used (no volume)."""
-
-    REGION_TYPE_DATA_STRUCT = BinaryStruct(
-        ("radius", "f"),
-    )
-
-    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
-        "radius": MapFieldInfo(
-            "Radius",
-            float,
-            1.0,
-            "Radius (in xy-plane) of circular region.",
-        ),
-    }
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-        "radius",
-    )
-
-    radius: float
-
-
-class BaseMSBRegionSphere(BaseMSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = BinaryStruct(
-        ("radius", "f"),
-    )
-
-    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
-        "radius": MapFieldInfo(
-            "Radius",
-            float,
-            1.0,
-            "Radius of sphere-shaped region.",
-        ),
-    }
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-        "radius",
-    )
-
-    radius: float
-
-
-class BaseMSBRegionCylinder(BaseMSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = BinaryStruct(
-        ("radius", "f"),
-        ("height", "f"),
-    )
-
-    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
-        "radius": MapFieldInfo(
-            "Radius",
-            float,
-            1.0,
-            "Radius (in xz-plane) of cylinder-shaped region.",
-        ),
-        "height": MapFieldInfo(
-            "Height",
-            float,
-            1.0,
-            "Height (along y-axis) of cylinder-shaped region.",
-        ),
-    }
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-        "radius",
-        "height",
-    )
-
-    radius: float
-    height: float
-
-
-class BaseMSBRegionRect(BaseMSBRegion, abc.ABC):
-    """Almost never used (no volume)."""
-    REGION_TYPE_DATA_STRUCT = BinaryStruct(
-        ("width", "f"),
-        ("depth", "f"),
-    )
-
-    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
-        "width": MapFieldInfo(
-            "Width",
-            float,
-            1.0,
-            "Width (along x-axis) of rectangle-shaped region.",
-        ),
-        "height": MapFieldInfo(
-            "Height",
-            float,
-            1.0,
-            "Height (along y-axis) of rectangle-shaped region.",
-        ),
-    }
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-        "width",
-        "height",
-    )
-
-    width: float
-    height: float
-
-
-class BaseMSBRegionBox(BaseMSBRegion, abc.ABC):
-    REGION_TYPE_DATA_STRUCT = BinaryStruct(
-        ("width", "f"),
-        ("depth", "f"),
-        ("height", "f"),
-    )
-
-    FIELD_INFO = BaseMSBRegion.FIELD_INFO | {
-        "width": MapFieldInfo(
-            "Width",
-            float,
-            1.0,
-            "Width (along x-axis) of box-shaped region.",
-        ),
-        "depth": MapFieldInfo(
-            "Depth",
-            float,
-            1.0,
-            "Depth (along z-axis) of box-shaped region.",
-        ),
-        "height": MapFieldInfo(
-            "Height",
-            float,
-            1.0,
-            "Height (along y-axis) of box-shaped region.",
-        ),
-    }
-
-    FIELD_ORDER = (
-        "entity_id",
-        "translate",
-        "rotate",
-        "width",
-        "depth",
-        "height",
-    )
-
-    width: float
-    depth: float
-    height: float
-
-
-class BaseMSBRegionList(BaseMSBEntryList, abc.ABC):
-
-    @abc.abstractmethod
-    def set_indices(self):
-        pass

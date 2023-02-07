@@ -14,6 +14,9 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector
 from soulstruct.utilities.text import pad_chars
 
+from .enums import BaseMSBSubtype
+from .utils import BrokenReference
+
 try:
     Self = tp.Self
 except AttributeError:
@@ -29,9 +32,9 @@ class MSBEntry(abc.ABC):
     # Shared between all game MSB entries. TODO: Infer from `reader.varint_size`?
     NAME_ENCODING: tp.ClassVar[str]
     # Generally only used to check against unpacked indices (which should have already been 'peeked' by the MSB).
-    SUBTYPE_INT: tp.ClassVar[int]
-    # Optional custom ordering for field display in GUI.
-    FIELD_ORDER: tp.ClassVar[tuple[str, ...]] = ()
+    SUBTYPE_ENUM: tp.ClassVar[tp.Type[BaseMSBSubtype]]
+    # These fields will be marked as hidden in the GUI.
+    HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
 
     # Structs for header, supertype data, and (optional but common) subtype data.
     SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]]
@@ -59,7 +62,7 @@ class MSBEntry(abc.ABC):
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
         header_subtype_int = header.pop("subtype_int")
-        if header_subtype_int != cls.SUBTYPE_INT:
+        if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
         return header.to_dict(ignore_underscore_prefix=True) | {"name": name}
@@ -78,17 +81,19 @@ class MSBEntry(abc.ABC):
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
     ):
         """Default: pack header (with name), base data, and type data in that order."""
-        self.pack_header(writer, supertype_index, subtype_index)
+        self.pack_header(writer, supertype_index, subtype_index, entry_lists)
         self.pack_supertype_data(writer, entry_lists)
         self.pack_subtype_data(writer, entry_lists)
 
-    def pack_header(self, writer: BinaryWriter, supertype_index: int, subtype_index: int):
+    def pack_header(
+        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: [dict[str, list[MSBEntry]]]
+    ):
         self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
             self,
             writer,
             name_offset=RESERVED,
             _supertype_index=supertype_index,
-            subtype_int=self.SUBTYPE_INT,
+            subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
             supertype_data_offset=RESERVED,
             subtype_data_offset=RESERVED,
@@ -122,14 +127,37 @@ class MSBEntry(abc.ABC):
         except AttributeError:
             raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
 
+    def get_entity_id(self) -> int | None:
+        """`entity_id` is a critical field for most MSB entries, but not quite all of them (and not models).
+
+        This method simply returns the `entity_id` field if it exists, or `None` otherwise.
+        """
+        return getattr(self, "entity_id", None)
+
+    @property
+    def entity_enum(self):
+        raise AttributeError(
+            "You can set `MSBEntry.entity_enum` as a way to set both `name` and `entity_id`, but cannot access it."
+        )
+
+    @entity_enum.setter
+    def entity_enum(self, value: IntEnum):
+        """Set both entry `name` and `entity_id` (if valid) for this entry."""
+        if not hasattr(self, "entity_id"):
+            raise AttributeError(f"MSB entry type `{self.__class__.__name__}` does not have an `entity_id`.")
+        setattr(self, "name", value.name)
+        setattr(self, "entity_id", value.value)
+
     def copy(self):
         return deepcopy(self)
 
     def get_field_names(self, visible_only=True) -> tuple[str]:
         """Get all field names in `FIELD_ORDER`, or all names excluding basic 'name' and 'description'."""
-        if visible_only and self.FIELD_ORDER:
-            return self.FIELD_ORDER
-        return tuple(f.name for f in fields(self) if f.name not in {"name", "description"})
+        return tuple(
+            f.name for f in fields(self)
+            if f.name not in {"name", "description"}
+            and (not visible_only or f.name not in self.HIDE_FIELDS)
+        )
 
     def set_entity_enum(self, entity_enum: IntEnum):
         """Only works for subclasses with `entity_id` field."""
@@ -140,6 +168,10 @@ class MSBEntry(abc.ABC):
             self.name = entity_enum.name
         else:
             raise TypeError(f"MSB entry class `{self.__class__.__name__}` has no `entity_id` field.")
+
+    @classmethod
+    def from_dict(cls, data: dict[str, tp.Any]) -> Self:
+        return cls(**data)
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         default_values = self.get_default_values()
@@ -169,8 +201,28 @@ class MSBEntry(abc.ABC):
     def _consume_index(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
         index_field_name = f"_{field_name}_index"
         index = getattr(self, index_field_name)
-        entry = entry_lists[list_name][index] if index != -1 else None
+        try:
+            entry = entry_lists[list_name][index] if index != -1 else None
+        except IndexError:
+            entry = BrokenReference(list_name, index)
         setattr(self, field_name, entry)
         setattr(self, index_field_name, None)
+
+    def _consume_indices(self, entry_lists: dict[str, list[MSBEntry]], list_name: str, field_name: str):
+        indices_field_name = f"_{field_name}_indices"
+        indices = getattr(self, indices_field_name)
+        entry_list = entry_lists[list_name]
+        entries = []
+        for index in indices:
+            if index == -1:
+                entry = None
+            else:
+                try:
+                    entry = entry_list[index]
+                except IndexError:
+                    entry = BrokenReference(list_name, index)
+            entries.append(entry)
+        setattr(self, field_name, entries)
+        setattr(self, indices_field_name, None)
 
     # NOTE: No `_set_index` method needed, as indices for packing can be constructed temporarily.

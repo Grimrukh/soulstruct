@@ -22,6 +22,7 @@ class BaseMSBEvent(MSBEntry, abc.ABC):
 
     NAME_ENCODING: tp.ClassVar[str] = ""
 
+    entity_id: int = -1
     attached_part: MSBEntry = None
     attached_region: MSBEntry = None
     

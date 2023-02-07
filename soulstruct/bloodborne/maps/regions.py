@@ -6,109 +6,117 @@ __all__ = [
     "MSBRegionCylinder",
     "MSBRegionRect",
     "MSBRegionBox",
-    "MSBRegionList",
 ]
 
 import abc
 import typing as tp
+from dataclasses import dataclass, field
 
 from soulstruct.base.maps.msb.regions import *
-from soulstruct.utilities.binary import BinaryStruct
-from soulstruct.utilities.misc import partialmethod
+from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector3
 
 from .enums import MSBRegionSubtype
-from .msb_entry import MSBEntryList
 
 
+@dataclass(slots=True)
+class RegionHeader(NewBinaryStruct):
+    name_offset: long
+    _pad1: bytes = field(init=False, **BinaryPad(4))
+    _region_index: int
+    region_type: int
+    translate: Vector3
+    rotate: Vector3  # Euler angles in radians
+    _pad2: bytes = field(init=False, **BinaryPad(4))
+    unknown_offset_1: long
+    unknown_offset_2: long
+    subtype_data_offset: long
+    entity_id_offset: long
+
+
+@dataclass(slots=True)
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
-    REGION_STRUCT = BinaryStruct(
-        ("name_offset", "q"),
-        "4x",
-        ("__region_index", "i"),
-        ("region_type", "i"),
-        ("translate", "3f"),
-        ("rotate", "3f"),  # These are Euler angle rotations (and can therefore be gimbal-locked).
-        "4x",
-        ("unknown_offset_1", "q"),
-        ("unknown_offset_2", "q"),
-        ("type_data_offset", "q"),
-        ("entity_id_offset", "q"),
-    )
-
-    NAME_ENCODING = "utf-16-le"
-    UNKNOWN_DATA_SIZE = 2
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]] = RegionHeader
+    NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
+    UNKNOWN_DATA_SIZE: tp.ClassVar[int] = 2
 
 
-class MSBRegionPoint(BaseMSBRegionPoint, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Point
+@dataclass(slots=True)
+class MSBRegionPoint(BaseMSBRegion):
+    """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way the player
+    will be facing when they spawn at or teleport to this point)."""
+
+    SUBTYPE_ENUM = MSBRegionSubtype.Point
+
+    SUBTYPE_DATA_STRUCT: tp.ClassVar = None
 
 
-class MSBRegionCircle(BaseMSBRegionCircle, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Circle
+@dataclass(slots=True)
+class MSBRegionCircle(BaseMSBRegion):
+    """Almost never used (no volume)."""
+
+    SUBTYPE_ENUM = MSBRegionSubtype.Circle
+
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        radius: float
+
+    radius: float = 1.0
 
 
-class MSBRegionSphere(BaseMSBRegionSphere, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Sphere
+@dataclass(slots=True)
+class MSBRegionSphere(BaseMSBRegion):
+
+    SUBTYPE_ENUM = MSBRegionSubtype.Sphere
+
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        radius: float
+
+    radius: float = 1.0
 
 
-class MSBRegionCylinder(BaseMSBRegionCylinder, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Cylinder
+@dataclass(slots=True)
+class MSBRegionCylinder(BaseMSBRegion):
+
+    SUBTYPE_ENUM = MSBRegionSubtype.Cylinder
+
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        radius: float
+        height: float
+
+    radius: float = 1.0
+    height: float = 1.0
 
 
-class MSBRegionRect(BaseMSBRegionRect, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Rect
+@dataclass(slots=True)
+class MSBRegionRect(BaseMSBRegion):
+    """Almost never used (no volume)."""
+
+    SUBTYPE_ENUM = MSBRegionSubtype.Rect
+
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        width: float
+        height: float
+
+    width: float = 1.0
+    height: float = 1.0
 
 
-class MSBRegionBox(BaseMSBRegionBox, MSBRegion):
-    ENTRY_SUBTYPE = MSBRegionSubtype.Box
+@dataclass(slots=True)
+class MSBRegionBox(BaseMSBRegion):
 
+    SUBTYPE_ENUM = MSBRegionSubtype.Box
 
-class MSBRegionList(MSBEntryList[MSBRegion]):
-    INTERNAL_NAME = "POINT_PARAM_ST"
-    ENTRY_LIST_NAME = "Regions"
-    ENTRY_SUBTYPE_ENUM = MSBRegionSubtype
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        width: float
+        depth: float
+        height: float
 
-    SUBTYPE_CLASSES = {
-        MSBRegionSubtype.Point: MSBRegionPoint,
-        MSBRegionSubtype.Circle: MSBRegionCircle,
-        MSBRegionSubtype.Sphere: MSBRegionSphere,
-        MSBRegionSubtype.Cylinder: MSBRegionCylinder,
-        MSBRegionSubtype.Rect: MSBRegionRect,
-        MSBRegionSubtype.Box: MSBRegionBox,
-    }
-    SUBTYPE_OFFSET = 16
-
-    _entries: list[MSBRegion]
-
-    Points: tp.Sequence[MSBRegionPoint]
-    Circles: tp.Sequence[MSBRegionCircle]
-    Spheres: tp.Sequence[MSBRegionSphere]
-    Cylinders: tp.Sequence[MSBRegionCylinder]
-    Rectangles: tp.Sequence[MSBRegionRect]
-    Boxes: tp.Sequence[MSBRegionBox]
-
-    new_point: tp.Callable[..., MSBRegionPoint] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Point)
-    new_circle: tp.Callable[..., MSBRegionCircle] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Circle)
-    new_sphere: tp.Callable[..., MSBRegionSphere] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Sphere)
-    new_cylinder: tp.Callable[..., MSBRegionCylinder] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Cylinder)
-    new_rect: tp.Callable[..., MSBRegionRect] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Rect)
-    new_box: tp.Callable[..., MSBRegionBox] = partialmethod(MSBEntryList.new, MSBRegionSubtype.Box)
-
-    def pack_entry(self, index: int, entry: MSBRegion):
-        return entry.pack(index)
-
-    def set_indices(self):
-        """Global region index only."""
-        for i, entry in enumerate(self._entries):
-            entry.set_indices(region_index=i)
-
-    _entries: list[MSBRegion]
-
-
-for _entry_subtype in MSBRegionList.ENTRY_SUBTYPE_ENUM:
-    setattr(
-        MSBRegionList,
-        _entry_subtype.pluralized_name,
-        property(lambda self, _e=_entry_subtype: [e for e in self._entries if e.ENTRY_SUBTYPE == _e]),
-    )
+    width: float = 1.0
+    depth: float = 1.0
+    height: float = 1.0

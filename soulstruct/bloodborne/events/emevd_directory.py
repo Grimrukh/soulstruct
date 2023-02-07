@@ -2,6 +2,8 @@ from __future__ import annotations
 
 __all__ = ["EMEVDDirectory"]
 
+import typing as tp
+
 from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.bloodborne.events.emevd.core import EMEVD
@@ -9,9 +11,9 @@ from soulstruct.bloodborne.maps.constants import *
 
 
 class EMEVDDirectory(_BaseEMEVDDirectory):
-    FILE_CLASS = EMEVD
-    ALL_MAPS = ALL_MAPS_NO_CHALICE
-    GET_MAP = staticmethod(get_map)
+    FILE_CLASS: tp.ClassVar = EMEVD
+    ALL_MAPS: tp.ClassVar = ALL_MAPS_NO_CHALICE
+    GET_MAP: tp.ClassVar = staticmethod(get_map)
 
     Common = map_property(COMMON)  # type: EMEVD
     HuntersDream = map_property(HUNTERS_DREAM)  # type: EMEVD

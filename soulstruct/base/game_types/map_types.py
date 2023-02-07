@@ -80,8 +80,13 @@ class Map(BaseGameObject):
         self.msb_file_stem = base_id if msb_file_stem is None else msb_file_stem
         self.ai_file_stem = base_id if ai_file_stem is None else ai_file_stem
         self.esd_file_stem = base_id if esd_file_stem is None else esd_file_stem
-        self.map_load_tuple = (area_id, block_id, -1, -1)  # for `MSBMapConnection`
         self.ffxbnd_file_name = ffxbnd_file_name
+        self.map_load_tuple = (
+            area_id,
+            block_id,
+            -1 if self.cc_id <= 0 else self.cc_id,
+            -1 if self.dd_id <= 0 else self.dd_id,
+        )  # for `MSBMapConnection`
 
         self.variable_name = variable_name
         self.verbose_name = self.name if verbose_name is None else verbose_name

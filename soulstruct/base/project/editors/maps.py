@@ -593,7 +593,7 @@ class MapsEditor(BaseFieldEditor):
             raise ValueError(f"Category name was not in '[type]: [subtype]' format: {self.active_category}")
         entry_list = self.get_selected_msb()[entry_type]
         entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
-        msb_entry = entry_list.duplicate_entry(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
+        msb_entry = entry_list.duplicate(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
         return self._add_entry(entry_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
 
     def add_relative_entry_and_copy_player_transform(
@@ -813,7 +813,7 @@ class MapsEditor(BaseFieldEditor):
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
         categories = []
-        for msb_type, subtypes in self.maps.MSB_CLASS.get_subtype_dict().items():
+        for msb_type, subtypes in self.maps.MSB_CLASS.get_display_type_dict().items():
             for msb_subtype in subtypes:
                 if isinstance(msb_subtype, BaseMSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
                     continue  # These useless 2D region types are hidden.

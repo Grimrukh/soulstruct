@@ -38,7 +38,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
         header_subtype_int = header.pop("subtype_int")
-        if header_subtype_int != cls.SUBTYPE_INT:
+        if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
         sib_path = reader.unpack_string(offset=entry_offset + header.pop("sib_path"), encoding=cls.NAME_ENCODING)
@@ -60,14 +60,21 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         entry_lists: dict[str, list[MSBEntry]],
         instance_count: int = 0,
     ):
-        self.pack_header(writer, supertype_index, subtype_index, instance_count)
+        self.pack_header(writer, supertype_index, subtype_index, entry_lists, instance_count)
 
-    def pack_header(self, writer: BinaryWriter, supertype_index: int, subtype_index: int, instance_count: int = 0):
+    def pack_header(
+        self,
+        writer: BinaryWriter,
+        supertype_index: int,
+        subtype_index: int,
+        entry_lists: [dict[str, list[MSBEntry]]],
+        instance_count: int = 0,
+    ):
         self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
             self,
             writer,
             name_offset=RESERVED,
-            subtype_int=self.SUBTYPE_INT,
+            subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
             sib_path_offset=RESERVED,
             _instance_count=instance_count,

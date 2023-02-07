@@ -41,7 +41,7 @@ class AIDirectory(GameFileMapDirectory, abc.ABC):
     the map) to see changes in these files while playing the game. You do NOT need to fully restart the game, unlike
     with text and parameter/lighting changes, *UNLESS* you need to reload a script in Common.
     """
-    FILE_NAME_PATTERN: tp.ClassVar[re.Pattern] = re.compile(r".*\.luabnd")
+    FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.luabnd"
     FILE_CLASS: tp.ClassVar[tp.Type[LuaBND]] = LuaBND
     FILE_EXTENSION = ".luabnd"
     MAP_STEM_ATTRIBUTE = "ai_file_stem"

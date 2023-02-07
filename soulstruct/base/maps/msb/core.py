@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB"]
+__all__ = ["MSB", "MSBSubtypeInfo"]
 
 import abc
 import logging
@@ -13,9 +13,9 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .msb_entry import MSBEntry
+from .msb_entry_list import MSBEntryList
 from .events import BaseMSBEvent
 from .models import BaseMSBModel
 from .parts import BaseMSBPart
@@ -28,7 +28,6 @@ except AttributeError:
 
 if tp.TYPE_CHECKING:
     from .enums import BaseMSBSubtype
-    from .msb_entry_list import *
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,33 +44,19 @@ MSB_ENTRY_SUPERTYPES = {
     "POINT_PARAM_ST": BaseMSBRegion,
     "PARTS_PARAM_ST": BaseMSBPart,
 }
+# Keys are lower-cased and 's' is removed from the end before they are checked in here.
+MSB_ENTRY_SUPERTYPE_ALIASES = {
+    "model": "MODEL_PARAM_ST",
+    "event": "EVENT_PARAM_ST",
+    "region": "POINT_PARAM_ST",
+    "part": "PARTS_PARAM_ST",
+}
 
 
 class MSBSubtypeInfo(tp.NamedTuple):
-    index: int
+    subtype_enum: BaseMSBSubtype
     entry_class: tp.Type[MSBEntry]
     msb_list_attr_name: str
-    plural_name: str
-
-
-# Utility tuples that hold combined information mapping inter-entry indices to `MSBEntry` instances, and vice versa.
-# Only used transiently when unpacking/packing to prevent hideous function signatures.
-class PartObjectsToIndices(tp.NamedTuple):
-    part_type_index: int  # TODO: I used this as an 'easy' way to set part subtype indices ('_part_type_index'). Dump.
-    models: dict[MSBEntry, int]
-    environments: dict[MSBEntry, int]  # subtype indices
-    regions: dict[MSBEntry, int]
-    parts: dict[MSBEntry, int]
-    collisions: dict[MSBEntry, int]  # subtype indices
-
-
-class IndexedEntryLists(tp.NamedTuple):
-    models: list[MSBEntry]
-    events: list[MSBEntry]
-    regions: list[MSBEntry]
-    parts: list[MSBEntry]
-    environments: list[MSBEntry]  # event subtype
-    collisions: list[MSBEntry]  # part subtype
 
 
 @dataclass(slots=True)
@@ -111,12 +96,12 @@ class MSB(GameFile, abc.ABC):
     #  - Dictionary that contains common field info ('entity_id', etc.) that can be indexed.
 
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]]
-    # Maps MSB entry superlist names (parts, etc.) to dicts that map subtype enum ints to game-specific subtype info.
+    # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype ints to subtype info.
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[int, MSBSubtypeInfo]]]
     # Maps MSB entry superlist names (parts, etc.) to the relative offsets of their subtype enums.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]]
-    # Maps entry supertypes ('parts', 'events', etc.) to lists of `BaseGameType` types that appear in them.
-    ENTITY_GAME_TYPES: tp.ClassVar[dict[str, tuple[MapEntity, ...]]]
+    # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
+    ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]]
 
     # Version info.
     HAS_HEADER: tp.ClassVar[bool]
@@ -135,18 +120,21 @@ class MSB(GameFile, abc.ABC):
                 raise AssertionError("Header of this MSB class did not match asserted header.")
 
         offset_fmt = "q" if cls.LONG_VARINTS else "i"
-        entry_lists = {}  # type: dict[str, list[MSBEntry]]  # both super (e.g. "parts") and sub-lists (e.g. "objects")
+
+        # This will contain both supertype lists (e.g. "parts") and `MSBEntryList`s (e.g. "objects").
+        entry_lists = {}  # type: dict[str, MSBEntryList[MSBEntry] | list[MSBEntry]]
+
         for supertype_name in MSB_ENTRY_SUPERTYPES:
-            superlist_header = cls.SUPERTYPE_LIST_HEADER.from_bytes(reader)
-            entry_offset_count = superlist_header.pop("entry_offset_count")  # includes final offset to next list
-            name_offset = superlist_header.pop("name_offset")
+            supertype_list_header = cls.SUPERTYPE_LIST_HEADER.from_bytes(reader)
+            entry_offset_count = supertype_list_header.pop("entry_offset_count")  # includes final offset to next list
+            name_offset = supertype_list_header.pop("name_offset")
             entry_offsets = list(reader.unpack(f"{entry_offset_count}{offset_fmt}"))
-            superlist_name = reader.unpack_string(offset=name_offset, encoding=cls.NAME_ENCODING)
-            if superlist_name != (expected_name := supertype_name):
-                raise ValueError(f"MSB entry list name '{superlist_name}' does not match name '{expected_name}'.")
+            found_name = reader.unpack_string(offset=name_offset, encoding=cls.NAME_ENCODING)
+            if found_name != supertype_name:
+                raise ValueError(f"MSB internal list name '{found_name}' != expected name '{supertype_name}'.")
             for entry_offset in entry_offsets[:-1]:  # exclude last offset
                 reader.seek(entry_offset)
-                cls._unpack_entry(reader, superlist_name, entry_lists)
+                cls._unpack_entry(reader, found_name, entry_lists)
             reader.seek(entry_offsets[-1])
 
         # Resolve entry indices to actual object references.
@@ -158,38 +146,80 @@ class MSB(GameFile, abc.ABC):
             part: BaseMSBPart
             part.indices_to_objects(entry_lists)
 
-        for superlist_name in MSB_ENTRY_SUPERTYPES:
-            entry_lists.pop(superlist_name)  # only pass subtype lists to constructor
+        for supertype_name in MSB_ENTRY_SUPERTYPES:
+            entry_lists.pop(supertype_name)  # only pass subtype lists to constructor
 
         # noinspection PyArgumentList
         return cls(**entry_lists)
 
     @classmethod
-    def _unpack_entry(cls, reader: BinaryReader, superlist_name: str, entry_lists: dict[str, list[MSBEntry]]):
-        subtype_int = reader.unpack_value("i", offset=cls.MSB_ENTRY_SUBTYPE_OFFSETS[superlist_name])
-        subtype_info = cls.MSB_ENTRY_SUBTYPES[superlist_name][subtype_int]
+    def _unpack_entry(cls, reader: BinaryReader, supertype_name: str, entry_lists: dict[str, list[MSBEntry]]):
+        subtype_int = reader.unpack_value("i", offset=cls.MSB_ENTRY_SUBTYPE_OFFSETS[supertype_name])
+        subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_int]
         subtype_class = subtype_info.entry_class
         entry = subtype_class.from_msb_reader(reader)
         # Put entry into appropriate supertype and subtype lists (creating if necessary).
-        entry_lists.setdefault(superlist_name, []).append(entry)
-        entry_lists.setdefault(subtype_info.msb_list_attr_name, []).append(entry)
+        entry_lists.setdefault(supertype_name, []).append(entry)
+        if subtype_info.msb_list_attr_name not in entry_lists:
+            entry_lists[subtype_info.msb_list_attr_name] = MSBEntryList(
+                supertype_name, subtype_info.subtype_enum, subtype_info.entry_class
+            )
+        entry_lists[subtype_info.msb_list_attr_name].append(entry)
 
-    def _add_supertype_lists(self, entry_lists: dict[str, list[MSBEntry]]):
-        """Checks base class of first instance of each subtype list (if not empty) to determine supertype.
+    @staticmethod
+    def resolve_supertype_name(supertype_name: str):
+        if (alias := supertype_name.lower().rstrip()) in MSB_ENTRY_SUPERTYPE_ALIASES:
+            return MSB_ENTRY_SUPERTYPE_ALIASES[alias]
+        if supertype_name not in MSB_ENTRY_SUPERTYPES:
+            raise ValueError(f"Invalid MSB supertype name: {supertype_name}")
+        return supertype_name
 
-        NOTE: Supertype lists contain `(subtype_name, entry)` tuples instead of just the entries. Supertype lists will
-        also be correctly ordered by subtype enum.
-        """
-        supertype_lists = {supertype_name: [] for supertype_name in MSB_ENTRY_SUPERTYPES}
-        for subtype_name, subtype_list in entry_lists:
-            for supertype_name, supertype_base_class in MSB_ENTRY_SUPERTYPES.items():
-                if subtype_list and isinstance(subtype_list[0], supertype_base_class):
-                    named_subtypes = [(subtype_name, entry) for entry in subtype_list]
-                    supertype_lists[supertype_name].extend(named_subtypes)
+    def get_supertype_list(self, supertype_name: str) -> list[MSBEntry]:
+        """Construct a list of all MSB entries with the given supertype (e.g. "PARTS_PARAM_ST")."""
+        supertype_name = self.resolve_supertype_name(supertype_name)
+        entry_lists = [getattr(self, field.name) for field in fields(self)]  # type: list[MSBEntryList]
+        supertype_list = []
+        for subtype_list in entry_lists:
+            if subtype_list.supertype_name == supertype_name:
+                supertype_list.extend(subtype_list)
+        return supertype_list
+
+    def get_models(self) -> list[BaseMSBModel]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_list("MODEL_PARAM_ST")
+
+    def get_events(self) -> list[BaseMSBEvent]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_list("EVENT_PARAM_ST")
+
+    def get_regions(self) -> list[BaseMSBRegion]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_list("POINT_PARAM_ST")
+
+    def get_parts(self) -> list[BaseMSBPart]:
+        # noinspection PyTypeChecker
+        return self.get_supertype_list("PARTS_PARAM_ST")
+
+    def get_list_of_entry(self, entry: MSBEntry) -> MSBEntryList:
+        """Find subtype list that contains `entry` (e.g. for an event's attached region/part)."""
+        for entry_list in self:
+            if entry in entry_list:
+                return entry_list
+        raise ValueError(f"Entry '{entry.name}' does not appear anywhere in this MSB.")
 
     def to_writer(self) -> BinaryWriter:
         entry_lists = {field.name: getattr(self, field.name) for field in fields(self)}
-        self._add_supertype_lists(entry_lists)
+        for supertype_name in MSB_ENTRY_SUPERTYPES:
+            entry_lists[supertype_name] = self.get_supertype_list(supertype_name)
+
+        # Check for duplicate names within supertypes (except events, where duplicates are permitted and common).
+        for supertype_name in ("models", "regions", "parts"):
+            names = set()
+            for entry in entry_lists[supertype_name]:
+                if entry.name in names:
+                    _LOGGER.warning(f"Duplicate '{supertype_name}' name in MSB: {entry.name}")
+                else:
+                    names.add(entry.name)
 
         # Get model instance counts.
         model_instance_counts = {}
@@ -240,25 +270,42 @@ class MSB(GameFile, abc.ABC):
 
         return writer
 
-    def get_entry_by_name(self, name: str, entry_types=()) -> tp.Optional[MSBEntry]:
-        """Get `MSBEntry` with name `name` that is one of the given `entry_types`, or any type if `entry_types=()`.
+    def find_entry_by_name(
+        self, name: str, supertypes: tp.Iterable[str] = (), subtypes: tp.Iterable[str] = ()
+    ) -> MSBEntry:
+        """Get `MSBEntry` with name `name` that is one of the given `entry_subtypes` or any type by default.
 
         Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
         """
-        if not entry_types:
-            entry_types = ("parts", "regions", "events", "models")
-        results = {}
-        for entry_type in entry_types:
+        if subtypes:  # lower case
+            entry_lists = [getattr(self, f.lower()) for f in subtypes]  # type: list[MSBEntryList]
+        else:
+            entry_lists = [getattr(self, f.name) for f in fields(self)]  # type: list[MSBEntryList]
+
+        if supertypes:
+            supertype_names = [self.resolve_supertype_name(name) for name in supertypes]
+            entry_lists = [entry_list for entry_list in entry_lists if entry_list.supertype_name in supertype_names]
+
+        results = []
+        for subtype_list in entry_lists:
             try:
                 # This will raise a `ValueError` if the name appears more than once in a single entry type list.
-                results[entry_type.lower()] = self[entry_type].get_entry_by_name(name)
+                results.append(subtype_list.find_entry_name(name))
             except KeyError:
-                pass
+                pass  # name does not appear in this list
         if not results:
-            raise KeyError(f"Could not find an entry named '{name}' with type {entry_types} in MSB.")
+            if supertypes and subtypes:
+                type_msg = f"supertype in {supertypes} and subtype in {subtypes}"
+            elif supertypes:
+                type_msg = f"supertype in {supertypes}"
+            elif subtypes:
+                type_msg = f"subtype in {subtypes}"
+            else:
+                type_msg = "any type"
+            raise KeyError(f"Could not find an entry named '{name}' with {type_msg} in MSB.")
         if len(results) > 1:
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
-        return next(iter(results.values()))
+        return results[0]
 
     def to_dict(self, ignore_defaults=True) -> dict:
         """Return a dictionary form of the MSB.
@@ -266,252 +313,156 @@ class MSB(GameFile, abc.ABC):
         If `ignore_defaults=True` (default), entry fields that have the default values for that entry subclass will not
         be included in the entry's dictionary.
 
-        TODO: Later MSB versions may have header data.
+        NOTE: No MSB header information needs to be recorded. Just the version info.
         """
+        entry_lists = [getattr(self, field.name) for field in fields(self)]  # type: list[MSBEntryList]
+        msb_dict = {"version": self.get_version_dict()}  # type: dict[str, dict[str, tp.Any]]
+        for subtype_list in entry_lists:
+            for supertype_name in MSB_ENTRY_SUPERTYPES:
+                if subtype_list.supertype_name == supertype_name:
+                    msb_dict.setdefault(supertype_name, {}).update(subtype_list.to_dict(ignore_defaults))
+        return msb_dict
+
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        """Load MSB from dictionary of version info and entries (sorted by supertype and nested subtype keys)."""
+
+        if "version" not in data:
+            raise ValueError("MSB dictionary is missing 'version' key.")
+        if data["version"] != cls.get_version_dict():
+            raise TypeError(f"Invalid MSB 'version' info in dict for this MSB class: {data['version']}")
+
+        subtype_list_names = cls.get_subtype_list_names()
+        subtype_lists = {}
+        for supertype_name in MSB_ENTRY_SUPERTYPES:
+            if supertype_name not in data:
+                _LOGGER.warning(f"No '{supertype_name}' key found in MSB dictionary, which is unusual.")
+                continue
+            subtype_dict = data[supertype_name]
+            for subtype_name, subtype_list in subtype_dict.items():
+                if subtype_name not in subtype_list_names:
+                    raise TypeError(f"Invalid MSB subtype name '{subtype_name}' (supertype '{supertype_name}').")
+                subtype_info = [
+                    info for _, info in cls.MSB_ENTRY_SUBTYPES[supertype_name].items()
+                    if info.msb_list_attr_name == subtype_name
+                ][0]
+                entries = [subtype_info.entry_class.from_dict(entry_dict) for entry_dict in subtype_list]
+                subtype_lists[subtype_name] = MSBEntryList(
+                    supertype_name, subtype_info.subtype_enum, subtype_info.entry_class, *entries
+                )
+
+        # noinspection PyArgumentList
+        return cls(**subtype_lists)
+
+    @classmethod
+    def get_version_dict(cls) -> dict[str, bool | str]:
         return {
-            "parts": self.parts.to_dict(ignore_defaults=ignore_defaults),
-            "events": self.events.to_dict(ignore_defaults=ignore_defaults),
-            "regions": self.regions.to_dict(ignore_defaults=ignore_defaults),
-            "models": self.models.to_dict(ignore_defaults=ignore_defaults),
+            "has_header": cls.HAS_HEADER,
+            "long_varints": cls.LONG_VARINTS,
+            "name_encoding": cls.NAME_ENCODING,
         }
 
-    def load_dict(self, data: dict, clear_old_data=True):
-        if clear_old_data:
-            self.parts.clear()
-            self.events.clear()
-            self.regions.clear()
-            self.models.clear()
-        for entry_type in ("parts", "events", "regions", "models"):
-            entry_list = getattr(self, entry_type)  # type: BaseMSBEntryList
-            for entry_subtype_name, entries in data.get(entry_type, []).items():
-                entry_subtype_enum = getattr(entry_list.ENTRY_SUBTYPE_ENUM, entry_subtype_name)
-                subtype_class = entry_list.SUBTYPE_CLASSES[entry_subtype_enum]
-                for entry_dict in entries:
-                    entry = subtype_class(**entry_dict)
-                    entry_list.add_entry(entry)
+    @classmethod
+    def get_subtype_list_names(cls) -> list[str]:
+        return [field.name for field in fields(cls)]
 
-    def rename_references(self, old_name: str, new_name: str, entry_types: tp.Sequence[str] = ()):
-        """Looks for all linked references to `old_name` in parts and events, and renames any to `new_name`.
-
-        If `entry_types` is given, only references to those entry types will be checked.
-        """
-        if entry_types:
-            parsed_entry_types = []
-            for entry_type_name in entry_types:
-                entry_type_name = entry_type_name.lower()
-                if entry_type_name in {"model", "event", "region", "part"}:
-                    entry_type_name += "s"
-                elif entry_type_name not in {"models", "events", "regions", "parts"}:
-                    raise ValueError(f"{entry_type_name} is not a valid MSB entry type.")
-                parsed_entry_types.append(entry_type_name)
-            entry_types = tuple(parsed_entry_types)
-
-        for entry in self.parts:
-            entry.rename_names(old_name, new_name, entry_types=entry_types)
-        for entry in self.events:
-            entry.rename_names(old_name, new_name, entry_types=entry_types)
-
-    def resolve_entries_list(self, entries, entry_types=()):
+    def resolve_entries_list(
+        self,
+        entries: tp.Sequence[str | MSBEntry],
+        supertypes: tp.Iterable[str] = (),
+        subtypes: tp.Iterable[str] = (),
+    ) -> list[MSBEntry]:
         """Lists of entries can include names of entries, if unique, or the actual `MSBEntry` instances."""
         if not entries:
             return []
         resolved = []
         for entry in entries:
             if isinstance(entry, str):
-                resolved.append(self.get_entry_by_name(entry, entry_types))
+                resolved.append(self.find_entry_by_name(entry, supertypes, subtypes))
             elif isinstance(entry, MSBEntry):
                 resolved.append(entry)
             else:
-                raise TypeError(f"Invalid entry specifier: {entry}. Must be a (unique) entry name or instance.")
+                raise TypeError(f"Invalid MSB entry specifier: {entry}. Must be a (unique) entry name or `MSBEntry`.")
         return resolved
 
-    def get_repeated_entity_ids(self) -> dict[str, list[MSBEntryEntity]]:
+    def get_repeated_entity_ids(self) -> dict[str, list[MSBEntry]]:
+        """Scans all entries for repeated `entity_id` fields *per supertype*.
+
+        Repeated IDs across different supertypes will be ignored.
+        """
         repeats = {}
-        for entry_type in ("Parts", "Regions", "Events"):
-            entries = getattr(self, entry_type.lower())
+        for supertype_name in MSB_ENTRY_SUPERTYPES[1:]:  # not 'MODEL_PARAM_ST'
+            supertype_list = self.get_supertype_list(supertype_name)
             entity_ids = set()
-            repeated_entries = []  # type: list[MSBEntryEntity]
-            for entry in [e for e in entries if e.entity_id > 0]:
-                if entry.entity_id in entity_ids:
+            repeated_entries = []  # type: list[MSBEntry]
+            for entry in supertype_list:
+                entity_id = entry.get_entity_id()
+                if entity_id is None or entity_id <= 0:  # some subtypes have 'null' ID zero (e.g. environment events)
+                    continue
+                if entity_id in entity_ids:
                     repeated_entries.append(entry)
                 else:
-                    entity_ids.add(entry.entity_id)
-            repeats[entry_type] = repeated_entries
+                    entity_ids.add(entity_id)
+            repeats[supertype_name] = repeated_entries
         return repeats
 
-    def get_entity_id_dict(self, entry_type, entry_subtype, names_only=False):
-        """Get a dictionary mapping entity IDs to `MSBEntry` instances for the given type and subtype.
-
-        Optionally returns dictionary mapping ID to `MSBEntry.name` only.
+    def get_supertype_entity_id_dict(self, supertype_name: str) -> dict[int, MSBEntry]:
+        """Get a dictionary mapping entity IDs to `MSBEntry` instances for the given supertype.
 
         If multiple `MSBEntry` instances are found for a given ID, a warning is logged, and only the *first* one found
         is used (which matches game engine behavior).
+
+        Analogous to the subtype-only method in `MSBEntryList`.
         """
-        entry_type = entry_type.lower()
-        if entry_type in {"parts", "events", "regions"}:
-            entries = self[entry_type].get_entries(entry_subtype)
-        else:
-            raise ValueError("Can only get entity IDs for parts, events, and regions.")
+        supertype_list = self.get_supertype_list(supertype_name)
         entries_by_id = {}
-        for entry in [e for e in entries if e.entity_id > 0]:
-            if entry.entity_id in entries_by_id:
-                _LOGGER.warning(f"Found multiple entries for entity ID {entry.entity_id}. Only using first.")
+        for entry in supertype_list:
+            entity_id = entry.get_entity_id()
+            if entity_id is None or entity_id <= 0:
+                continue  # ignore unavailable or null ID
+            if entity_id in entries_by_id:
+                _LOGGER.warning(f"Found multiple entries for entity ID {entity_id}. Only using first.")
             else:
-                entries_by_id[entry.entity_id] = entry.name if names_only else entry
+                entries_by_id[entity_id] = entry
         return entries_by_id
 
-    def get_entry_by_entity_id(self, entity_id: int, allow_multiple=True) -> tp.Optional[MSBEntryEntity]:
-        """Search all entry types for the given ID and return that `MSBEntry` (or `None` if not found).
+    def get_supertype_entity_id_name_dict(self, supertype_name: str) -> dict[int, str]:
+        """As above, but values are just entry names instead of the entries themselves."""
+        entries_by_id = self.get_supertype_entity_id_dict(supertype_name)
+        return {entity_id: entry.name for entity_id, entry in entries_by_id.items()}
 
-        If multiple entries with the same (non-default) ID are found, an error will be raised.
+    def find_entry_by_entity_id(self, entity_id: int, allow_multiple=True) -> MSBEntry | None:
+        """Search ALL entries for the given entity ID and return that `MSBEntry` (or `None` if not found).
+
+        If multiple entries with the same (non-default) ID are found, an error will be raised unless
+        `allow_multiple=True`.
         """
         if entity_id <= 0:
-            raise ValueError(f"MSB entity ID cannot be less than zero ({entity_id}).")
-        results = [e for e in self.parts.get_entries() if e.entity_id == entity_id]
-        results += [e for e in self.events.get_entries() if e.entity_id == entity_id]
-        results += [e for e in self.regions.get_entries() if e.entity_id == entity_id]
+            raise ValueError(f"Cannot find MSB entry using default entity ID value {entity_id}.")
+        results = []
+        for supertype_name in MSB_ENTRY_SUPERTYPES[1:]:
+            supertype_list = self.get_supertype_list(supertype_name)
+            results.extend([entry for entry in supertype_list if entry.get_entity_id() == entity_id])
         if not results:
             raise KeyError(f"Could not find an entry with entity ID {entity_id} in MSB.")
         elif len(results) > 1:
             if allow_multiple:
                 _LOGGER.warning(
-                    f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen. "
+                    f"Found multiple entries with entity ID {entity_id} in MSB. This should be fixed. "
                     f"Returning first one only."
                 )
             else:
-                raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This should not happen.")
+                raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This must be fixed.")
         return results[0]
 
     def clear_all(self):
-        """Clear all four entry lists."""
-        self.models.clear()
-        self.events.clear()
-        self.regions.clear()
-        self.parts.clear()
+        """Clear all entry subtype lists."""
+        for entry_list in (getattr(self, f.name) for f in fields(self)):
+            entry_list.clear()
 
-    def merge(self, other_msb_source: tp.Union[GameFile.Typing, MSB], filter_func: tp.Callable = None):
-        """Merge `other_msb_source` into this one by simply appending each of the other MSB's four entry lists to this.
-
-        If `filter_func` is given, only entries (of all four types) for which `filter_func(entry) == True` will be
-        merged in. Make sure the function can handle all four entry types, if appropriate.
-
-        If any (non-filtered-out) entry in `other_msb_source` has the same name as an existing entry in this MSB, a
-        `ValueError` will be raised.
-
-        Returns a copy of the MSB.
-        """
-        if filter_func is not None and not callable(filter_func):
-            raise ValueError("`filter_func` must be callable, take an MSB entry as an argument, and return a bool.")
-        other_msb_path = other_msb_source if isinstance(other_msb_source, (str, Path)) else "<MSB>"
-        if not isinstance(other_msb_source, self.__class__):
-            other_msb_source = self.__class__(other_msb_source)
-        merged_msb = self.copy()
-        for entry_type in ("Model", "Event", "Region", "Part"):  # capitalized for nice error message below
-            existing_entries = merged_msb[entry_type]
-            existing_entry_list = set(existing_entries.get_entry_names())
-            other_entry_list = other_msb_source[entry_type]
-            skipped_repeated_entries = []
-            for other_entry in other_entry_list:
-                if filter_func is not None and not filter_func(other_entry):
-                    continue  # skip entry
-                if other_entry.name in existing_entry_list:
-                    skipped_repeated_entries.append(other_entry)
-                    continue
-                existing_entries.add_entry(other_entry)
-                existing_entry_list.add(other_entry.name)
-            if skipped_repeated_entries:
-                _LOGGER.warning(
-                    f"{len(skipped_repeated_entries)} MSB {entry_type} entries already exist in MSB and "
-                    f"were not merged in from '{other_msb_path.name}'."
-                )
-        return merged_msb
-
-    def move_map(
-        self,
-        start_translate: tp.Union[Vector3, list, tuple] = None,
-        end_translate: tp.Union[Vector3, list, tuple] = None,
-        start_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-        end_rotate: tp.Union[Vector3, list, tuple, int, float, None] = None,
-        selected_entries=(),
-    ):
-        """Move everything with a transform in this `MSB` relative to an initial and a final reference point.
-
-        Args:
-            start_translate: initial `(x, y, z)` translate of initial reference point.
-            end_translate: final `(x, y, z)` translate of final reference point.
-            start_rotate: initial `(x, y, z)` rotate of initial reference point, or simply `y` if a number is given.
-            end_rotate: final `(x, y, z)` rotate of final reference point, or simply `y` if a number is given.
-            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
-                an `MSBEntry` instance or the name (if unique) of a Part or Region.
-
-        Optionally, move only a subset of entry names given in `selected_entry_names`.
-        """
-        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
-
-        start_translate = Vector3(start_translate)
-        end_translate = Vector3(end_translate)
-        start_rotate = Vector3(0, start_rotate, 0) if isinstance(start_rotate, (int, float)) else Vector3(start_rotate)
-        end_rotate = Vector3(0, end_rotate, 0) if isinstance(end_rotate, (int, float)) else Vector3(end_rotate)
-
-        # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
-        m_start_rotate = Matrix3.from_euler_angles(start_rotate)
-        m_end_rotate = Matrix3.from_euler_angles(end_rotate)
-        m_world_rotation = m_end_rotate @ m_start_rotate.T
-        # Apply global rotation to start point to determine required global translation.
-        translation = end_translate - (m_world_rotation @ start_translate)  # type: Vector3
-
-        self.rotate_all_in_world(m_world_rotation, selected_entries=selected_entries)
-        self.translate_all(translation, selected_entries=selected_entries)
-
-    def rotate_all_in_world(
-        self,
-        rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float],
-        pivot_point=(0, 0, 0),
-        radians=False,
-        selected_entries=(),
-    ):
-        """Rotate every Part and Region in the map around the given `pivot_point` by the Euler angles specified by
-        `rotation`, modifying both `.rotate` and (unless equal to `pivot_point`) `.translate` for each entry.
-
-        Args:
-            rotation: Euler angles, as specified by `(x, y, z)`, an Euler rotation matrix, or a single value to apply
-                simple `y` rotation only.
-            pivot_point: point around with `rotation` will be applied. Defaults to world origin, `(0, 0, 0)`.
-            radians: if True, given `rotation` is in radians; degrees otherwise. Defaults to `False` (degrees).
-            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
-                an `MSBEntry` instance or the name (if unique) of a Part or Region.
-        """
-        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
-
-        rotation = resolve_rotation(rotation)
-        pivot_point = Vector3(pivot_point)
-        for part in self.parts:
-            if not selected_entries or part in selected_entries:
-                part.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
-        for region in self.regions:
-            if not selected_entries or region in selected_entries:
-                region.apply_rotation(rotation, pivot_point=pivot_point, radians=radians)
-
-    def translate_all(self, translate: tp.Union[Vector3, list, tuple], selected_entries=()):
-        """Add given `translate` vector to `.translate` vector attributes of all Regions and Parts.
-
-        Also automatically applies vertical component (`translate.y`) to `reflect_plane_height` for Collisions.
-
-        Args:
-            translate: `(x, y, z)` vector to shift entries by.
-            selected_entries: if not empty, move only these given entries. Each element in this sequence can be
-                an `MSBEntry` instance or the name (if unique) of a Part or Region.
-        """
-        selected_entries = self.resolve_entries_list(selected_entries, entry_types=("parts", "regions"))
-
-        for part in self.parts:
-            if not selected_entries or part in selected_entries:
-                part.translate += translate
-                if hasattr(part, "reflect_plane_height"):
-                    part.reflect_plane_height += translate.y
-        for region in self.regions:
-            if not selected_entries or region in selected_entries:
-                region.translate += translate
+    def __iter__(self):
+        """Iterate over all subtype lists."""
+        return iter(getattr(self, name) for name in self.get_subtype_list_names())
 
     def write_entities_module(
         self,
@@ -566,7 +517,7 @@ class MSB(GameFile, abc.ABC):
 
         module_path = Path(module_path)
 
-        game_types_import = f"from soulstruct.{self.GAME.submodule_name}.game_types import *\n"
+        game_types_import = f"from soulstruct.{self.get_game().submodule_name}.game_types import *\n"
         if append_to_module:
             if game_types_import not in append_to_module:
                 # Add game type start import to module. (Very rare that it wouldn't already be there.)
@@ -579,43 +530,43 @@ class MSB(GameFile, abc.ABC):
         else:
             module_text = game_types_import
 
-        for entry_type_name, entry_subtypes in self.ENTITY_GAME_TYPES.items():
-            for entry_subtype in entry_subtypes:
-                class_name = entry_subtype.get_msb_entry_type_subtype(pluralized_subtype=True)[1]
-                class_text = ""
-                entity_id_dict = self.get_entity_id_dict(entry_type_name, entry_subtype)
-                sorted_entity_id_dict = {
-                    k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
-                }
-                for entity_id, entry in sorted_entity_id_dict.items():
-                    # name = entry.name.replace(" ", "_")
-                    try:
-                        name = entry.name.encode("utf-8").decode("ascii")
-                    except UnicodeDecodeError:
-                        class_text += f"    # TODO: Non-ASCII name characters.\n    # {entry.name} = {entity_id}"
+        for subtype_name, subtype_game_type in self.ENTITY_GAME_TYPES.items():
+            class_name = subtype_game_type.get_msb_entry_type_subtype(pluralized_subtype=True)[1]
+            class_text = ""
+            subtype_list = getattr(self, subtype_name)
+            entity_id_dict = subtype_list.get_entity_id_dict()
+            sorted_entity_id_dict = {
+                k: v for k, v in sorted(entity_id_dict.items(), key=sort_key)
+            }
+            for entity_id, entry in sorted_entity_id_dict.items():
+                # name = entry.name.replace(" ", "_")
+                try:
+                    name = entry.name.encode("utf-8").decode("ascii")
+                except UnicodeDecodeError:
+                    class_text += f"    # TODO: Non-ASCII name characters.\n    # {entry.name} = {entity_id}"
+                else:
+                    if not PY_NAME_RE.match(name):
+                        class_text += f"    # TODO: Invalid variable name.\n    # {entry.name} = {entity_id}"
                     else:
-                        if not PY_NAME_RE.match(name):
-                            class_text += f"    # TODO: Invalid variable name.\n    # {entry.name} = {entity_id}"
-                        else:
-                            class_text += f"    {name} = {entity_id}"
-                    if entry.description:
-                        class_text += f"  # {entry.description}"
-                    class_text += "\n"
-                if class_text:
-                    class_def = f"\n\nclass {class_name}({entry_subtype.__name__}):\n"
-                    class_def += f"    \"\"\"`{entry_subtype.__name__}` entity IDs for MSB and EVS use.\"\"\"\n\n"
-                    auto_lines = [
-                        "    # noinspection PyMethodParameters",
-                        "    def _generate_next_value_(name, _, count, __):",
-                        f"        return {entry_subtype.__name__}.auto_generate(count, {{MAP_RANGE_START}})",
-                    ]
-                    if auto_map_range_start is None:
-                        auto_lines = ["    # " + line[4:] for line in auto_lines]
-                    else:
-                        auto_lines[-1] = auto_lines[-1].format(MAP_RANGE_START=auto_map_range_start)
-                    class_def += "\n".join(auto_lines) + "\n\n"
-                    class_text = class_def + class_text
-                    module_text += class_text
+                        class_text += f"    {name} = {entity_id}"
+                if entry.description:
+                    class_text += f"  # {entry.description}"
+                class_text += "\n"
+            if class_text:
+                class_def = f"\n\nclass {class_name}({subtype_game_type.__name__}):\n"
+                class_def += f"    \"\"\"`{subtype_game_type.__name__}` entity IDs for MSB and EVS use.\"\"\"\n\n"
+                auto_lines = [
+                    "    # noinspection PyMethodParameters",
+                    "    def _generate_next_value_(name, _, count, __):",
+                    f"        return {subtype_game_type.__name__}.auto_generate(count, {{MAP_RANGE_START}})",
+                ]
+                if auto_map_range_start is None:
+                    auto_lines = ["    # " + line[4:] for line in auto_lines]
+                else:
+                    auto_lines[-1] = auto_lines[-1].format(MAP_RANGE_START=auto_map_range_start)
+                class_def += "\n".join(auto_lines) + "\n\n"
+                class_text = class_def + class_text
+                module_text += class_text
 
         with module_path.open("w", encoding="utf-8") as f:
             f.write(module_text)
@@ -624,26 +575,26 @@ class MSB(GameFile, abc.ABC):
     #  IDs (e.g. once you fix exported Japanese names).
 
     @classmethod
-    def get_subtype_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
+    def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""
+        display_dict = {}  # type: dict[str, tuple[BaseMSBSubtype]]
+        for supertype_name, subtypes_info in cls.MSB_ENTRY_SUBTYPES.items():
+            display_dict[supertype_name] = tuple(info.subtype_enum for info in subtypes_info.values())
         return {
-            "Parts": tuple(cls.PART_LIST_CLASS.SUBTYPE_CLASSES.keys()),
-            "Regions": tuple(cls.REGION_LIST_CLASS.SUBTYPE_CLASSES.keys()),
-            "Events": tuple(cls.EVENT_LIST_CLASS.SUBTYPE_CLASSES.keys()),
-            "Models": tuple(cls.MODEL_LIST_CLASS.SUBTYPE_CLASSES.keys()),
+            "Parts": display_dict["PARTS_PARAM_ST"],
+            "Regions": display_dict["POINT_PARAM_ST"],
+            "Events": display_dict["EVENT_PARAM_ST"],
+            "Models": display_dict["MODELS_PARAM_ST"],
         }
 
-    def __getitem__(self, entry_list_name) -> BaseMSBEntryList:
-        """Retrieve entry list by name. Can be plural, like "parts", or singular, like "part"."""
-        entry_list_name = entry_list_name.lower()
-        if entry_list_name in {"model", "event", "region", "part"}:
-            entry_list_name += "s"
-        elif entry_list_name not in {"models", "events", "regions", "parts"}:
-            raise ValueError(f"{entry_list_name} is not a valid MSB entry list.")
-        return getattr(self, entry_list_name)
+    def __getitem__(self, subtype_attr_name: str) -> MSBEntryList:
+        """Retrieve entry subtype list by name, e.g. "characters" or "map_piece_models"."""
+        subtype_attr_name = subtype_attr_name.lower()
+        return getattr(self, subtype_attr_name)
 
+    # TODO: Remove once new stuff works. Or keep as an optional bound method to make all names unique...
     @staticmethod
-    def set_and_get_unique_names(entry_superlist: list[MSBEntry]) -> dict[int, str]:
+    def set_and_get_unique_names(supertype_list: list[MSBEntry]) -> dict[int, str]:
         """Goes through all entries and assigns <repeat> suffixes to any repeated names, so that every entry has
         a unique name for name linking purposes. These suffixes will be removed when the MSB is packed.
 
@@ -651,7 +602,7 @@ class MSB(GameFile, abc.ABC):
         """
         unique_names = {}
         repeat_count = {}
-        for i, entry in enumerate(entry_superlist):
+        for i, entry in enumerate(supertype_list):
             if entry.name in unique_names.values():
                 repeat_count.setdefault(entry.name, 0)
                 repeat_count[entry.name] += 1
