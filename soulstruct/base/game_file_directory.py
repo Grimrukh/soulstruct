@@ -29,8 +29,8 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
     Typical usage is to specify subclass `FILE_RE` and `FILE_CLASS` to indicate which file names should be loaded into
     which Python class, then use `__post_init__` to compute other fields.
     """
-    FILE_NAME_PATTERN: tp.ClassVar[str] = None
-    FILE_CLASS: tp.ClassVar[tp.Type[BaseBinaryFile]] = None
+    FILE_NAME_PATTERN: tp.ClassVar[str]
+    FILE_CLASS: tp.ClassVar[tp.Type[BaseBinaryFile]]
     FILE_EXTENSION: tp.ClassVar[str] = ""  # NOTE: `.dcx` extension will be applied by `BinaryBaseFile.write()`
 
     directory: Path = Path()

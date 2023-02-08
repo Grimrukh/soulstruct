@@ -112,7 +112,7 @@ class WindowLinker(_BaseWindowLinker):
             nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
             if nvmbnd_path.is_file():
                 navmesh_bnd = Binder(nvmbnd_path)
-                if name + "A10.nvm" in navmesh_bnd.entries_by_basename.keys():
+                if name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():
                     return True
 
         return False

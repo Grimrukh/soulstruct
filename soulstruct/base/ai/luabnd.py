@@ -180,7 +180,7 @@ class LuaBND(Binder):
     def add_bytecode_lua_file(self, lua_file: LuaScriptBase):
         """Add or replace compiled bytecode script in the `Binder`."""
         try:
-            existing_entry = self.entries_by_basename[lua_file.script_name]
+            existing_entry = self.entries_by_name[lua_file.script_name]
             existing_entry.set_uncompressed_data(lua_file.bytecode)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:
@@ -229,7 +229,7 @@ class LuaBND(Binder):
         encoded_script = lua_file.script.encode("shift_jis_2004")
 
         try:
-            existing_entry = self.entries_by_basename[lua_file.script_name]
+            existing_entry = self.entries_by_name[lua_file.script_name]
             existing_entry.set_uncompressed_data(encoded_script)
             existing_entry.path = lua_file.script_name  # no nesting necessary
         except KeyError:

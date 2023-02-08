@@ -1,258 +1,248 @@
 from __future__ import annotations
 
-__all__ = ["FMG", "BaseFMG", "FMG0", "FMG1", "FMG2"]
+__all__ = ["FMG"]
 
-import abc
 import logging
+import typing as tp
+from dataclasses import dataclass, field
+from enum import IntEnum
 from textwrap import wrap
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ByteOrder
+from soulstruct.utilities.binary import *
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "FMG"
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def FMG(fmg_source, dcx_type=None, remove_empty_entries=True) -> BaseFMG:
-    if fmg_source is None:
-        raise ValueError(f"Cannot auto-detect FMG class from source `None`.")
-    if isinstance(fmg_source, dict):
-        try:
-            version = fmg_source["version"]
-        except KeyError:
-            raise ValueError(f"No `version` key in FMG dictionary to read.")
-    elif isinstance(fmg_source, GameFile.Types):
-        version = BinaryReader(fmg_source).unpack_value("b", offset=6, relative_offset=True)
-    else:
-        raise ValueError(f"Cannot auto-detect FMG class from source type {type(fmg_source)}.")
-
-    if version == 0:
-        return FMG0(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
-    elif version == 1:
-        return FMG1(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
-    elif version == 2:
-        return FMG2(fmg_source, dcx_type=dcx_type, remove_empty_entries=remove_empty_entries)
-    else:
-        raise ValueError(f"Unrecognized FMG version: {version}")
+class FMGVersion(IntEnum):
+    V0 = 0  # Demon's Souls
+    V1 = 1  # Dark Souls, Dark Souls 2
+    V2 = 2  # Bloodborne, Dark Souls 3, Sekiro, Elden Ring
 
 
-class BaseFMG(GameFile, abc.ABC):
+GAME_MAX_LINES = {
+    "darksouls1ptde": 11,
+    "darksouls1r": 11,
+}
+
+
+@dataclass(slots=True)
+class FMGHeader(NewBinaryStruct):
+    _pad1: bytes = field(**BinaryPad(1))
+    big_endian: bool
+    version: FMGVersion = field(**Binary(byte))
+    _pad2: bytes = field(**BinaryPad(1))
+    file_size: int
+    _one: byte = field(**Binary(asserted=1))
+    unknown1: byte  # -1 for version 0, 0 for version 1/2
+    _pad3: bytes = field(**BinaryPad(2))
+    range_count: int
+    string_count: int
+    unknown2: int = field(**Binary(asserted=255, skip_callback=lambda _, values: values["version"] < 2))
+    string_offsets_offset: varint
+    _pad4: bytes = field(**BinaryPad(4))
+    _pad5: bytes = field(**BinaryPad(4, skip_callback=lambda _, values: values["version"] < 2))
+
+
+@dataclass(slots=True)
+class FMG(GameFile):
     """Simple text dictionary.
 
     Since Demon's Souls, only the `version` field differs between games, with slight header structure changes.
     """
 
-    EXT = ".fmg"
-    HEADER_STRUCT: BinaryStruct = None
-    RANGE_STRUCT: BinaryStruct = None
-    STRING_OFFSET_STRUCT: BinaryStruct = None
-    BIG_ENDIAN = False
-    VERSION = None  # type: int
+    EXT: tp.ClassVar[str] = ".fmg"
 
-    MAX_LINES = None  # type: int
+    entries: dict[int, str] = field(default_factory=dict)
+    version: int = 2  # default to newest version (Bloodborne onwards)
 
-    entries: dict[int, str]
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> Self:
 
-    def __init__(self, fmg_source, dcx_type=None, remove_empty_entries=True):
-        self.entries = {}
-        if isinstance(fmg_source, dict) and "version" not in fmg_source:
-            fmg_source["version"] = self.VERSION
-        super().__init__(fmg_source, dcx_type)
-        if remove_empty_entries:
-            self.entries = {i: entry for i, entry in self.entries.items() if entry}
-
-    def load_dict(self, data: dict, clear_old_data=True):
-        if data["version"] != self.VERSION:
-            raise ValueError(f"FMG dictionary has version {data['version']}, but requires version {self.VERSION}.")
-        if clear_old_data:
-            self.entries = data["entries"]
-        else:
-            self.entries.update(data["entries"])
-
-    def unpack(self, reader: BinaryReader, remove_empty_entries=True):
-        header = reader.unpack_struct(self.HEADER_STRUCT)
+        version = FMGVersion(reader.unpack_value("b", offset=2))
+        reader.default_byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
+        reader.varint_size = 8 if version >= 2 else 4
+        header = FMGHeader.from_bytes(reader)
 
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
-        ranges = reader.unpack_structs(self.RANGE_STRUCT, count=header["range_count"])
-        if reader.position != header["string_offsets_offset"]:
-            _LOGGER.warning("Range data did not end at string data offset given in FMG header.")
-        string_offsets = reader.unpack_structs(self.STRING_OFFSET_STRUCT, count=header["string_count"])
+        ranges = []
+        for _ in range(header.range_count):
+            first_index, first_id, last_id = reader.unpack("3i")
+            if version == 2:
+                reader.assert_pad(4)
+            ranges.append((first_index, first_id, last_id))
+
+        if reader.position != header.string_offsets_offset:
+            _LOGGER.warning("Range data did not end at string data offset given in unpacked FMG header.")
+
+        string_offsets = reader.unpack(f"{header.string_count}v")
 
         # Text pointer table corresponds to all the IDs (joined together) of the above ranges, in order.
-        for string_range in ranges:
-            i = string_range["first_index"]
-            for string_id in range(string_range["first_id"], string_range["last_id"] + 1):
-                if string_id in self.entries:
-                    raise ValueError(f"Malformed FMG: Entry index {string_id} appeared more than once.")
-                string_offset = string_offsets[i]["offset"]
+        entries = {}
+        for first_index, first_id, last_id in ranges:
+            for string_id in range(first_id, last_id + 1):
+                if string_id in entries:
+                    raise ValueError(f"Malformed FMG: Text entry ID {string_id} appeared more than once.")
+                string_offset = string_offsets[first_index]
                 if string_offset == 0:
-                    if not remove_empty_entries:
-                        # Empty text string. These will trigger in-game error messages, like ?PlaceName?.
-                        # Distinct from ' ', which is intentionally blank text data (e.g. the unused area subtitles).
-                        self.entries[string_id] = ""
+                    entries[string_id] = ""  # empty string (will trigger in-game error placeholder text)
                 else:
-                    string = reader.unpack_string(offset=string_offset, encoding="utf-16le")
-                    if string or not remove_empty_entries:
-                        self.entries[string_id] = string
-                i += 1
+                    entries[string_id] = reader.unpack_string(offset=string_offset, encoding="utf-16-le")
+                first_index += 1
 
-    def to_dict(self):
-        return {
-            "dcx_type": self.dcx_type.value,
-            "version": self.VERSION,
-            "entries": self.entries.copy(),
-        }
+        return cls(entries, version)
 
-    def pack(self, remove_empty_entries=True, pipe_to_newline=True, word_wrap_limit=None, max_lines=None):
-        """Pack text dictionary to binary FMG file.
+    def sort(self):
+        """Sort strings by ID in-place."""
+        self.entries = {string_id: self.entries[string_id] for string_id in sorted(self.entries.keys())}
 
-        Args:
-            remove_empty_entries: Ignore empty entries ('') when writing. This will remove many entries from the vanilla
-                FMG files, and likely make some of them larger (as the ranges used to define them will be more broken
-                up), but will make the dictionary much easier to read through. (Default: True)
-            pipe_to_newline: Convert pipes ('|') to newlines ('\n'), which allows for nicer strings. Newline characters
-                will still be treated normally. (Default: True)
-            word_wrap_limit: Specify a horizontal character limit for automatic word wrapping. If None, no wrapping will
-                be applied. (Default: None)
-            max_lines: Maximum number of lines that should appear in each text entry. An error will be raised if any
-                text exceeds this (and no file will be written). This is most useful for item descriptions when auto
-                wrapping is used. It defaults to a class value, `.MAX_LINES`.
+    def remove_empty_strings(self) -> FMG:
+        """Remove all empty strings from entry dictionary and returns a copy.
 
-        Note that none of these arguments will modify the entries in this FMG instance, only the packed output.
+        This will remove many entries from vanilla files, which (in older games at least) prefer defining entire ranges
+        of strings even if only a few of them are used (which leads to smaller file sizes but makes dictionary versions
+        of the data awkward).
+
+        Returns a copy, e.g. if you only want to do it before packing.
+        """
+        new_entries = {string_id: string for string_id, string in self.entries.items() if string}
+        return FMG(new_entries, self.version)
+
+    def apply_line_limits(self, max_chars_per_line: int = None, max_lines: int = None) -> FMG:
+        """Reformat strings to apply a word wrap limit and log a warning if line count exceeds `max_lines`. Returns a
+        modified copy of the FMG.
+
+        `max_lines` will be auto-detected by game by default. Set it to something stupidly high to disable it.
         """
         if max_lines is None:
-            max_lines = self.MAX_LINES
+            game = self.get_game()
+            max_lines = GAME_MAX_LINES.get(game.submodule_name, None)
 
-        # Convert to sorted list (sorted by ID).
-        if remove_empty_entries:
-            fmg_entries = sorted([(k, v) for k, v in self.entries.items() if v != ""], key=lambda x: x[0])
-        else:
-            fmg_entries = sorted([(k, v) for k, v in self.entries.items()], key=lambda x: x[0])
+        new_entries = {}
+        for string_id, string in self.entries.items():
+            lines = string.split("\n\n")
+            if lines in ["", " "]:
+                new_entries[string_id] = string
+                continue  # empty string or one-space string
+            # Wrap lines, and re-add manual newlines.
+            wrapped_lines = []
+            for line in lines:
+                if max_chars_per_line is None or "\n" in line:
+                    # Don't touch lines with newlines already in them.
+                    wrapped_lines.append(line)
+                else:
+                    wrapped_lines.append("\n".join(wrap(line, max_chars_per_line)))
+            wrapped_string = "\n\n".join(wrapped_lines).rstrip("\n")
+            line_count = wrapped_string.count("\n") + 1
+            if max_lines is not None and line_count > max_lines - 1:
+                _LOGGER.warning(
+                    f"FMG string ID {string_id} has {line_count} lines (max is {max_lines}):\n"
+                    f"{wrapped_string}"
+                )
+            new_entries[string_id] = wrapped_string
+        return FMG(new_entries, self.version)
 
-        for i in range(len(fmg_entries)):
-            # Optional: convert double spaces to double new lines.
-            index, string = fmg_entries[i]
-            if pipe_to_newline:
-                string = string.replace("|", "\n")
-                fmg_entries[i] = (index, string)
-            # Optional: insert new lines to wrap automatically.
-            if word_wrap_limit is not None:
-                lines = string.split("\n\n")
-                if lines != [" "]:
-                    # Wrap lines, and re-add manual newlines.
-                    wrapped_lines = []
-                    for line in lines:
-                        if "\n" in line:
-                            # Don't touch lines with newlines already in them.
-                            wrapped_lines.append(line)
-                        else:
-                            wrapped_lines.append("\n".join(wrap(line, word_wrap_limit)))
-                    wrapped_string = "\n\n".join(wrapped_lines).rstrip("\n")
-                    line_count = wrapped_string.count("\n") + 1
-                    if max_lines is not None and line_count > max_lines - 1:
-                        _LOGGER.warning(
-                            f"FMG index {index} has {line_count} lines (max is {max_lines}):\n" f"{wrapped_string}"
-                        )
-                    fmg_entries[i] = (index, wrapped_string)
+    def to_writer(self, sort=True) -> BinaryWriter:
+        """Pack text dictionary to binary FMG file."""
+        if sort:
+            self.sort()
 
-        # Encode all text entries and pack them, and record the offsets (will be globally offset later).
-        relative_string_offset = 0
-        packed_strings = b""
-        string_offset_list = []
+        writer = BinaryWriter(
+            byte_order=ByteOrder.BigEndian if self.version == 0 else ByteOrder.LittleEndian,
+            varint_size=8 if self.version >= 2 else 4,
+        )
 
-        for string_id, string in fmg_entries:
-            if string == "":
-                string_offset_list.append(-1)  # changed to zero when offsets become absolute
-            null_terminated_text = string.encode("utf-16le") + b"\0\0"
-            packed_strings += null_terminated_text
-            string_offset_list.append(relative_string_offset)
-            relative_string_offset += len(null_terminated_text)
+        FMGHeader.object_to_writer(
+            self,
+            writer,
+            big_endian=self.version == 0,
+            file_size=RESERVED,
+            unknown1=-1 if self.version == 0 else 1,
+            range_count=RESERVED,
+            string_count=len(self.entries),
+            string_offsets_offset=RESERVED,
+        )
 
-        # Next, the ranges. We just make these as efficient as possible, but unlike FROM, we value the lack of clutter
-        # from empty entries more highly than defining a handful less ranges.
-        ranges = []
-        range_start_index = None
-        range_start = None
-        range_stop = None
-        for string_index, (string_id, _) in enumerate(fmg_entries):
+        # Construct ranges. A single missing ID will interrupt a range. (If empty strings from vanilla files have not
+        # been removed, and no other IDs added/removed, these ranges should be identical to the vanilla ones.)
+
+        range_count = 0
+        range_start_index = first_id = last_id = None
+        for string_index, string_id in enumerate(self.entries.keys()):
             if range_start_index is None:
+                # Start new range at this string.
                 range_start_index = string_index
-                range_start = range_stop = string_id
-            elif string_id == range_stop + 1:
+                first_id = last_id = string_id
+            elif string_id == last_id + 1:
                 # Expand current range to include this string.
-                range_stop += 1
+                last_id += 1
             else:
                 # Terminate last range...
-                ranges.append(
-                    self.RANGE_STRUCT.pack(first_index=range_start_index, first_id=range_start, last_id=range_stop)
-                )
+                writer.pack("3i", range_start_index, first_id, last_id)
+                if self.version == 2:
+                    writer.pad(4)
+                range_count += 1
                 # ... then start new one at this string.
                 range_start_index = string_index
-                range_start = range_stop = string_id
+                first_id = last_id = string_id
 
-        if range_start is not None:
-            # Terminate last range.
-            ranges.append(
-                self.RANGE_STRUCT.pack(first_index=range_start_index, first_id=range_start, last_id=range_stop)
-            )
+        if first_id is not None:
+            # Terminate final range.
+            writer.pack("3i", range_start_index, first_id, last_id)
+            if self.version == 2:
+                writer.pad(4)
+            range_count += 1
+        writer.fill("range_count", range_count, self)
 
-        packed_ranges = b"".join(ranges)
-
-        # Compute table offsets.
-        ranges_offset = self.HEADER_STRUCT.size
-        string_offsets_offset = ranges_offset + len(packed_ranges)
-        packed_strings_offset = string_offsets_offset + self.STRING_OFFSET_STRUCT.size * len(string_offset_list)
-        file_size = packed_strings_offset + len(packed_strings)
-        packed_string_offsets = b""
-        for string_offset in string_offset_list:
-            if string_offset == -1:
-                packed_string_offsets += self.STRING_OFFSET_STRUCT.pack(offset=0)
+        writer.fill_with_position("string_offsets_offset", self)
+        packed_strings = b""  # saving ourselves an additional iteration
+        packed_strings_offset = writer.position + writer.varint_size * len(self.entries)
+        for string_id, string in self.entries.items():
+            if string == "":
+                writer.pack("v", 0)  # no offset
             else:
-                packed_string_offsets += self.STRING_OFFSET_STRUCT.pack(offset=packed_strings_offset + string_offset)
+                writer.pack("v", packed_strings_offset + len(packed_strings))
+            packed_strings += string.encode("utf-16-le") + b"\0\0"
 
-        packed_header = self.HEADER_STRUCT.pack(
-            file_size=file_size,
-            range_count=len(ranges),
-            string_count=len(fmg_entries),
-            string_offsets_offset=string_offsets_offset,
-        )
+        writer.fill_with_position("file_size", self)
 
-        return packed_header + packed_ranges + packed_string_offsets + packed_strings
-
-    def write(
-        self,
-        file_path=None,
-        make_dirs=True,
-        check_hash=False,
-        remove_empty_entries=True,
-        pipe_to_newline=True,
-        word_wrap_limit=None,
-        max_lines=None,
-    ):
-        """Write binary FMG to given path. See `pack` for descriptions of the other arguments."""
-        super().write(
-            file_path=file_path,
-            make_dirs=make_dirs,
-            check_hash=check_hash,
-            remove_empty_entries=remove_empty_entries,
-            pipe_to_newline=pipe_to_newline,
-            word_wrap_limit=word_wrap_limit,
-            max_lines=max_lines,
-        )
+        return writer
 
     def __getitem__(self, index: int):
         return self.entries[index]
 
+    def get(self, string_id: int, default: str = None):
+        """Return `string_id` value or `default` if missing."""
+        return self.entries.get(string_id, default)
+
     def __setitem__(self, index: int, text: str):
         self.entries[index] = text
 
-    def update(self, entries):
-        if isinstance(entries, dict):
-            return self.entries.update(entries)
-        elif isinstance(entries, BaseFMG):
-            return self.entries.update(entries.entries)
-        raise TypeError(f"Can only call `FMG.update()` with a dictionary or another FMG, not {type(entries)}.")
+    def setdefault(self, string_id: int, default: str):
+        """Return `string_id` value or set it to `default` and return that."""
+        return self.entries.setdefault(string_id, default)
 
-    def find(self, search_string, replace_with=None):
+    def pop(self, string_id: int, default: str = None):
+        """Remove `string_id` value and return it, or return `default`.
+
+        Will never raise a `KeyError`. Use `FMG.entries.pop()` if you want to assert the key exists.
+        """
+        return self.entries.pop(string_id, default)
+
+    def update(self, fmg_or_entries: FMG | dict):
+        """Update this FMG in place with `FMG` or `entries` dict."""
+        if isinstance(fmg_or_entries, dict):
+            return self.entries.update(fmg_or_entries)
+        elif isinstance(fmg_or_entries, FMG):
+            return self.entries.update(fmg_or_entries.entries)
+        raise TypeError(f"Can only call `FMG.update()` with a dictionary or another `FMG`, not {type(fmg_or_entries)}.")
+
+    def find(self, search_string: str, replace_with=None):
         """Search for the given text in this FMG.
 
         Args:
@@ -272,116 +262,22 @@ class BaseFMG(GameFile, abc.ABC):
         if not found_something:
             print(f"Could not find any occurrences of string {repr(search_string)}.")
 
+    def replace_substring_in_all(self, old_substring: str, new_substring: str) -> FMG:
+        """Returns a copy off the FMG with all given substring replacements done.
+
+        NOTE: Just a quieter, simpler version of calling `find` with `replace_with`.
+        """
+        new_entries = {
+            string_id: string.replace(old_substring, new_substring)
+            for string_id, string in self.entries
+        }
+        return FMG(new_entries, self.version)
+
     def __iter__(self):
         return iter(self.entries.items())
-
-    def __eq__(self, other):
-        if isinstance(other, dict):
-            return self.entries == other
-        elif isinstance(other, BaseFMG):
-            return self.entries == other.entries
-        raise TypeError("Can only test FMG equality with a dictionary or other `BaseFMG`.")
 
     def __repr__(self):
         s = f"FMG Path: {str(self.path) if self.path is not None else '<None>'}"
         for index, text in self.entries.items():
             s += f"\n    {index}: {text}"
         return s
-
-
-class FMG0(BaseFMG):
-    """Used only in Demon's Souls. Big-endian."""
-
-    HEADER_STRUCT = BinaryStruct(
-        "x",
-        ("big_endian", "?", True),
-        ("version", "b", 0),
-        "x",
-        ("file_size", "i"),
-        ("one", "b", 1),
-        ("unknown1", "b", -1),
-        "2x",
-        ("range_count", "i"),
-        ("string_count", "i"),
-        ("string_offsets_offset", "i"),
-        ("zero", "i", 0),
-        byte_order=ByteOrder.BigEndian,
-    )
-    RANGE_STRUCT = BinaryStruct(
-        ("first_index", "i"),
-        ("first_id", "i"),
-        ("last_id", "i"),
-        byte_order=ByteOrder.BigEndian,
-    )
-    STRING_OFFSET_STRUCT = BinaryStruct(
-        ("offset", "i"),
-        byte_order=ByteOrder.BigEndian,
-    )
-    BIG_ENDIAN = True
-    VERSION = 0
-
-    MAX_LINES = None  # TODO: Don't know for Demon's Souls.
-
-
-class FMG1(BaseFMG):
-    """Used in Dark Souls (both versions) and Dark Souls 2."""
-
-    HEADER_STRUCT = BinaryStruct(
-        "x",
-        ("big_endian", "?", False),
-        ("version", "b", 1),
-        "x",
-        ("file_size", "i"),
-        ("one", "b", 1),
-        ("unknown1", "b", 0),
-        "2x",
-        ("range_count", "i"),
-        ("string_count", "i"),
-        ("string_offsets_offset", "i"),
-        ("zero", "i", 0),
-    )
-    RANGE_STRUCT = BinaryStruct(
-        ("first_index", "i"),
-        ("first_id", "i"),
-        ("last_id", "i"),
-    )
-    STRING_OFFSET_STRUCT = BinaryStruct(
-        ("offset", "i"),
-    )
-    BIG_ENDIAN = False
-    VERSION = 1
-
-    MAX_LINES = 11  # TODO: Correct for DS1, not sure about DS2.
-
-
-class FMG2(BaseFMG):
-    """Used in Bloodborne, Dark Souls 3, Sekiro, and Elden Ring."""
-
-    HEADER_STRUCT = BinaryStruct(
-        "x",
-        ("big_endian", "?", False),
-        ("version", "b", 2),
-        "x",
-        ("file_size", "i"),
-        ("one", "b", 1),
-        ("unknown1", "b", 0),
-        "2x",
-        ("range_count", "i"),
-        ("string_count", "i"),
-        ("unknown2", "i", 255),
-        ("string_offsets_offset", "q"),
-        ("zero", "q", 0),
-    )
-    RANGE_STRUCT = BinaryStruct(
-        ("first_index", "i"),
-        ("first_id", "i"),
-        ("last_id", "i"),
-        "4x",
-    )
-    STRING_OFFSET_STRUCT = BinaryStruct(
-        ("offset", "q"),
-    )
-    BIG_ENDIAN = False
-    VERSION = 2
-
-    MAX_LINES = None  # TODO: Don't know for Bloodborne or DS3.

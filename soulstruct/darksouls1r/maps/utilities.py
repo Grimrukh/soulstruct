@@ -176,7 +176,7 @@ def build_ffxbnd(
             source_bnd = open_ffxbnd_sources.setdefault(extra_source_file_name, BND3(source_path))
             try:
                 # No need to make a copy of the source file.
-                source_entry = source_bnd.entries_by_basename[file_name]
+                source_entry = source_bnd.entries_by_name[file_name]
             except KeyError:
                 _LOGGER.error(
                     f"Could not find extra {file_type} file '{file_name}' in given source FFXBND '{source_path}'."
@@ -286,7 +286,7 @@ def build_ffxbnd(
                 continue
             source_bnd = open_ffxbnd_sources.setdefault(source_file_name, BND3(source_path))
             try:
-                source_entry = source_bnd.entries_by_basename[ffx_file_name]
+                source_entry = source_bnd.entries_by_name[ffx_file_name]
             except KeyError:
                 _LOGGER.error(
                     f"Could not find FFX file '{ffx_file_name}' in source BND '{source_path}' (character model "

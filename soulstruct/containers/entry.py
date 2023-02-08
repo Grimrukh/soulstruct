@@ -56,7 +56,7 @@ class BinderEntryFlags(int):
 
     @classmethod
     def from_byte(cls, byte_value: int, bit_big_endian: bool) -> BinderEntryFlags:
-        """Read a byte, reverse it if necessary, and return flags integer."""
+        """Read a byte, reverse it if necessary, and return combined integer."""
         flags = cls(byte_value)
         if not bit_big_endian:
             # Reverse bit order.

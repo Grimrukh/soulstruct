@@ -1,284 +1,280 @@
 from __future__ import annotations
 
+__all__ = ["MSGDirectory"]
+
 import abc
 import csv
 import logging
+import re
 import typing as tp
 from copy import deepcopy
+from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.containers import Binder
+from soulstruct.containers import Binder, BinderEntry
+from soulstruct.base.game_file_directory import GameFileDirectory
 from soulstruct.utilities.files import read_json, write_json
-from .fmg import BaseFMG
 
-if tp.TYPE_CHECKING:
-    from soulstruct.containers.entry import BinderEntry
-    from soulstruct.containers.bnd import BaseBND
-    from soulstruct.utilities.misc import BiDict
+from .fmg import FMG
+from .msgbnd import MSGBND
 
-__all__ = ["MSGDirectory"]
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "MSGDirectory"
+
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSGDirectory(abc.ABC):
+@dataclass(slots=True)
+class MSGDirectory(GameFileDirectory, abc.ABC):
+    """Loads `item.msgbnd` and `menu.msgbnd` simultaneously and manages their text categories (FMGs).
 
-    IS_DCX: bool = None
+    Used in lieu of a `MSGBND` class, which would just be half of this class and make it difficult to manage 'patch'
+    entries.
+    """
+    FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.msgbnd"
+    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
+    FILE_EXTENSION: tp.ClassVar[str] = ".msgbnd"
 
-    # These are text categories you are likely to want to change in mod projects.
-    MAIN_CATEGORIES = ()
+    # These are text categories you are likely to want to change in mod projects (in display order).
+    MAIN_CATEGORIES: tp.ClassVar[tuple[str, ...]]
 
-    # These are text categories you are unlikely to change, whether it's for pragmatic
-    # reasons or because they contain low-level menu/system text. Generally, new IDs
-    # cannot be added to these categories without modifying the game engine.
-    INTERNAL_CATEGORIES = ()
+    # These are text categories you are unlikely to change, whether it's for pragmatic reasons or because they contain
+    # low-level menu/system text. Generally, new IDs cannot be added to these categories in a functional way.
+    INTERNAL_CATEGORIES: tp.ClassVar[tuple[str, ...]]
 
-    ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
+    # Maps "item/menu" string and entry IDs to default entry names (without paths) to use when generating new FMG binder
+    # entries from scratch.
+    DEFAULT_ENTRY_NAMES: tp.ClassVar[dict[(str, int), str]]
 
-    _MSGBND_INDEX_NAMES = None  # type: BiDict[int, str]
-    _ORIGINAL_PATCH_SUFFIX = ""
+    # Maps any non-patch ('base') FMG entry sources/IDs to patch FMG entry sources/IDs.
+    # When `merge_base_and_patch()` is called, all base and patch FMGs will be merged (with 'patch' taking precedence in
+    # case of conflicts) and the results written to BOTH base and patch.
+    BASE_PATCH_FMGS: tp.ClassVar[dict[(str, int), (str, int)]] = {}
 
-    FMG_CLASS = None  # type: tp.Type[BaseFMG]
-    MSGBND_CLASS = None  # type: tp.Type[BaseBND]
+    # Override file type.
+    files: dict[str, Binder] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
 
-    def __init__(self, msg_directory=None, use_json=False):
-        """Unpack all text data in given folder (from both 'item' and 'menu' MSGBND files) into one unified structure.
-
-        You can access and modify the `entries` attributes of each loaded `FMG` instance using the names of the FMGs,
-        which I have translated into a standard list (see game-specific attribute hints). The source (item/menu) of the
-        FMG and its type (standard/Patch) are handled internally.
-        , though the latter does not matter in either version of DS1
-        (and neither do the names of the FMG files in the MSGBND archives)
-
-        Args:
-            msg_directory: Directory containing 'item.msgbnd[.dcx]' and 'menu.msgbnd[.dcx]', in any of the language
-                folders (such as 'ENGLISH' or 'engus') within the 'msg' directory in your game installation.
-            use_json: if `True`, will assume the source is a path to a folder containing `item_manifest.json`,
-                `menu_manifest.json`, and JSON file for each text category in those manifests' `entries`.
-        """
-        self.directory = None
-        self._is_menu = {}  # Records whether each FMG belongs in 'item' or 'menu' MSGBND.
-        self._original_names = {}  # Records original names of FMG files in BNDs.
-        self.categories = {}  # type: dict[str, dict[int, str]]
-
-        if msg_directory is None:
-            self.item_msgbnd = None
-            self.menu_msgbnd = None
-            return
-
-        self.directory = Path(msg_directory)
-
-        if use_json:
-            # BNDs will be generated from information in manifests.
-            self.item_msgbnd = None
-            self.menu_msgbnd = None
-            self.load_json_dir(msg_directory, clear_old_data=False)
-            return
-
-        ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
-        self.item_msgbnd = Binder(self.directory / f"item.{ext}")
-        self.menu_msgbnd = Binder(self.directory / f"menu.{ext}")
-
-        self.load_fmg_entries_from_bnd(self.item_msgbnd, is_menu=False)
-        self.load_fmg_entries_from_bnd(self.menu_msgbnd, is_menu=True)
-
-        for key, fmg_dict in self.categories.items():
-            setattr(self, key, fmg_dict)
+    # Maps "item/menu" string and entry IDs to FMGs (unusual for IDs to matter, but they do in MSGBNDs).
+    fmgs: dict[(str, int), FMG] = field(default_factory=dict)
 
     @classmethod
-    def from_bnds(cls, item_msgbnd: BaseBND, menu_msgbnd: BaseBND):
-        instance = cls()
-        instance.item_msgbnd = item_msgbnd
-        instance.menu_msgbnd = menu_msgbnd
-        instance.load_fmg_entries_from_bnd(instance.item_msgbnd, is_menu=False)
-        instance.load_fmg_entries_from_bnd(instance.menu_msgbnd, is_menu=True)
-        for key, fmg_dict in instance.categories.items():
-            setattr(instance, key, fmg_dict)
-        return instance
+    def GET_ALL_CATEGORIES(cls):
+        return cls.MAIN_CATEGORIES + cls.INTERNAL_CATEGORIES
 
-    def load_fmg_entries_from_bnd(self, msgbnd: BaseBND, is_menu: bool):
+    @classmethod
+    def from_path(cls, directory_path: Path | str):
+        """Specifically loads `item` and `menu` MSGBND files only, and all their FMGs."""
+        directory_path = Path(directory_path)
+        if not directory_path.is_dir():
+            raise NotADirectoryError(f"Missing directory: {directory_path}")
+        files = {}
+        file_name_re = re.compile(r"(item|menu)\.msgbnd(\.dcx)?")
+        for file_path in directory_path.glob("*"):
+            if match := file_name_re.match(file_path.name):
+                if match.group(1) == "item":
+                    files["item"] = cls.FILE_CLASS.from_path(file_path)
+                elif match.group(2) == "menu":
+                    files["menu"] = cls.FILE_CLASS.from_path(file_path)
+
+        if not files["item"]:
+            raise FileNotFoundError("Could not find `item.msgbnd[.dcx]` in directory.")
+        if not files["menu"]:
+            raise FileNotFoundError("Could not find `menu.msgbnd[.dcx]` in directory.")
+
+        # Open FMGs.
+        fmgs = cls.get_fmgs(files["item"], files["menu"])
+
+        return cls(directory_path, files, fmgs)
+
+    @classmethod
+    def from_json_directory(cls, directory_path: Path | str):
+        directory_path = Path(directory_path)
+        self.load_json_dir(msg_directory, clear_old_data=False)
+        return
+
+    @classmethod
+    def from_item_menu_binders(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> Self:
+
+        files = {"item": item_msgbnd, "menu": menu_msgbnd}
+        fmgs = cls.get_fmgs(item_msgbnd, menu_msgbnd)
+        return cls(directory=Path(), files=files, fmgs=fmgs)
+
+    @classmethod
+    def get_fmgs(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> dict[(str, int), FMG]:
         """Loads FMGs from given `msgbnd` into `categories` dictionary."""
-        for entry in msgbnd:
+        fmgs = {}
+        for entry in item_msgbnd.entries:
             try:
-                attr_name = self._MSGBND_INDEX_NAMES[entry.entry_id]
-            except KeyError:
-                raise ValueError(f"MSGBND entry '{entry.path}' has unexpected index {entry.entry_id} in its msgbnd.")
-            self._original_names[attr_name] = entry.name
-            self._is_menu[attr_name] = is_menu
-            try:
-                fmg = self.FMG_CLASS(entry.get_uncompressed_data())
+                fmgs["item", entry.entry_id] = entry.to_game_file(FMG)
             except Exception as ex:
-                _LOGGER.error(f"Error encountered while loading FMG '{entry.name}': {ex}")
+                _LOGGER.error(f"Error encountered while loading FMG '{entry.name}' in `item`: {ex}")
                 raise
-            if attr_name.endswith("Patch"):
-                # Patch FMGs are used to update the base FMGs here.
-                # Original source (patch or no) is not tracked; all entries will be written to patch FMG by `pack()`.
-                attr_name = attr_name[:-5]
-            self.categories.setdefault(attr_name, {}).update(fmg.entries)
+        for entry in menu_msgbnd.entries:
+            try:
+                fmgs["menu", entry.entry_id] = entry.to_game_file(FMG)
+            except Exception as ex:
+                _LOGGER.error(f"Error encountered while loading FMG '{entry.name}' in `menu`: {ex}")
+                raise
+        return fmgs
 
-    def update_msgbnd_entry(
-        self, msgbnd, fmg_name, fmg_entries: dict, word_wrap_limit=None, pipe_to_newline=False, use_original_names=True
-    ):
-        fmg_data = self.FMG_CLASS({"entries": fmg_entries}).pack(
-            word_wrap_limit=word_wrap_limit, pipe_to_newline=pipe_to_newline
-        )
-        try:
-            bnd_entry_id = self._MSGBND_INDEX_NAMES[fmg_name]
-        except IndexError:
-            raise ValueError(f"Could not recover BND entry ID for FMG named {fmg_name}.")
-        try:
-            bnd_entry = msgbnd.entries_by_id[bnd_entry_id]  # type: BinderEntry
-        except KeyError:
-            # BND entry does not exist. If it's "Patch", we can try to create it by duplicating the path (and flags)
-            # from the non-Patch version.
-            if fmg_name.endswith("Patch"):
-                bnd_entry = self.create_patch_msgbnd_entry(msgbnd, fmg_name, fmg_data)
-            else:
+    def regenerate_binders(self):
+        """Regenerate `item` and `menu` MSGBNDs from all FMGs."""
+        # First, remove any binder entries that are not present in `fmgs`.
+        fmg_keys = self.fmgs.keys()
+        for msgbnd_name in ("item", "menu"):
+            msgbnd = self.files[msgbnd_name]
+            for entry in msgbnd.entries:
+                if (msgbnd_name, entry.entry_id) not in fmg_keys:
+                    msgbnd.remove_entry(entry)
+
+        # Add or update entries from new packed FMGs.
+        for (msgbnd_name, entry_id), fmg in self.fmgs.items():
+            msgbnd = self.files[msgbnd_name]
+            if (msgbnd_name, entry_id) not in self.DEFAULT_ENTRY_NAMES:
                 raise KeyError(
-                    f"Text (FMG) category '{fmg_name}' does not exist in this `MSGDirectory` instance, and it is not a "
-                    f"'Patch' FMG that could be created automatically."
+                    f"Class `{self.__class__.__name__}` does not have a default entry name for ID {entry_id} "
+                    f"in '{msgbnd_name}' MSGBND."
                 )
-        else:
-            bnd_entry.set_uncompressed_data(fmg_data)
-        if not use_original_names:
-            bnd_entry.path = bnd_entry.path.replace(self._original_names[fmg_name], fmg_name + ".fmg")
+            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_NAMES[entry_id])
 
-    def create_patch_msgbnd_entry(self, msgbnd: BaseBND, patch_fmg_name: str, data: bytes):
-        non_patch_fmg_name = patch_fmg_name.removesuffix("Patch")
-        if non_patch_fmg_name not in self._MSGBND_INDEX_NAMES:
-            raise KeyError(f"Patch text (FMG) category '{patch_fmg_name}' is not a known Patch category for this game.")
-        non_patch_entry_id = self._MSGBND_INDEX_NAMES[non_patch_fmg_name]
-        non_patch_bnd_entry = msgbnd.entries_by_id[non_patch_entry_id]
-        non_patch_entry_stem = Path(non_patch_bnd_entry.path).stem
-        patch_entry_path = non_patch_bnd_entry.path.replace(
-            non_patch_entry_stem, non_patch_entry_stem + self._ORIGINAL_PATCH_SUFFIX
+    def merge_base_and_patch(self, use_patch_if_conflict=True):
+        """Merge all base and patch FMGs together (as per class `BASE_PATCH_FMGS`) and write merged FMG to both.
+
+        The way that base and patch (e.g. DLC) entries interact can be confusing, so my shotgun-like solution is to just
+        merge them and write identical data to each, to guarantee desired results. The FMG files are so small that this
+        has little downside.
+
+        Does nothing (and logs nothing) if `BASE_PATCH_FMGS` is empty.
+
+        If string IDs conflict, `use_patch_if_conflict` determines whether patch (True) or base (False) string is used.
+        """
+        for base_fmg_key, patch_fmg_key in self.BASE_PATCH_FMGS.items():
+            base_fmg = self.fmgs[base_fmg_key]
+            patch_fmg = self.fmgs[patch_fmg_key]
+            if use_patch_if_conflict:
+                base_fmg.update(patch_fmg)  # override base with patch
+                self.fmgs[patch_fmg_key] = base_fmg.copy()  # copy merged to patch
+            else:
+                patch_fmg.update(base_fmg)  # override patch with base
+                self.fmgs[base_fmg_key] = patch_fmg.copy()  # copy merged to base
+
+    def get_matching_fmgs(self, category_name_regex: re.Pattern | str) -> dict[str, FMG]:
+        if isinstance(category_name_regex, str):
+            category_name_regex = re.compile(category_name_regex)
+        fmgs = {}
+        for attr_name in dir(self.__class__):
+            if isinstance(getattr(self.__class__, attr_name), property) and re.match(category_name_regex, attr_name):
+                fmgs[attr_name] = getattr(self, attr_name)
+        return fmgs
+
+    def remove_empty_strings(self, category_name_regex: str):
+        """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and remove empty strings from all
+        FMGs in properties that match `category_name_regex` pattern (e.g. r".*Descriptions").
+
+        Use match-all regex like `r".*"` to affect all FMGs.
+        """
+        for fmg in self.get_matching_fmgs(category_name_regex).values():
+            fmg.remove_empty_strings()
+
+    def apply_line_limits(self, category_name_regex: str, max_chars_per_line: int = None, max_lines: int = None):
+        """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and apply given word wrap and line
+        count limits to all FMGs in properties that match `category_name_regex` pattern (e.g. r".*Descriptions").
+
+        Use match-all regex like `r".*"` to affect all FMGs.
+        """
+        for fmg in self.get_matching_fmgs(category_name_regex).values():
+            fmg.apply_line_limits(max_chars_per_line, max_lines)
+
+    def replace_substring_in_all(self, category_name_regex: str, old_substring: str, new_substring: str) -> FMG:
+        """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and replace the given substring
+        with the given new substring in all FMGs in properties that match `category_name_regex` pattern.
+
+        Use match-all regex like `r".*"` to affect all FMGs.
+        """
+        for fmg in self.get_matching_fmgs(category_name_regex).values():
+            fmg.entries = {
+                string_id: string.replace(old_substring, new_substring)
+                for string_id, string in fmg.entries
+            }
+
+    def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
+        """Regenerate and write `item` and `menu` MSGBNDs."""
+        if directory_path is None:
+            if self.directory is None:
+                raise ValueError("Cannot autodetect directory name (`directory` not set).")
+            directory_path = self.directory
+        directory_path = Path(directory_path)
+        directory_path.mkdir(parents=True, exist_ok=True)
+
+        self.regenerate_binders()
+        self.files["item"].write(directory_path / f"item.{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+        self.files["menu"].write(directory_path / f"item.{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+        _LOGGER.info(
+            f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
         )
-        bnd_entry = msgbnd.BinderEntry(
-            data=data,
-            entry_id=self._MSGBND_INDEX_NAMES[patch_fmg_name],
-            path=patch_entry_path,
-            flags=non_patch_bnd_entry.flags,
-        )
-        msgbnd.add_entry(bnd_entry)
-        return bnd_entry
 
-    def pack(
-        self,
-        description_word_wrap_limit=None,
-        use_original_names=True,
-        pipe_to_newline=True,
-    ) -> tuple[BaseBND, BaseBND]:
-        """Pack up and return new "item" and "menu" MSGBNDs. Does not modify any instance state."""
-        new_item_msgbnd = deepcopy(self.item_msgbnd)  # type: BaseBND
-        new_menu_msgbnd = deepcopy(self.menu_msgbnd)  # type: BaseBND
+    # region Utility Methods: Items
 
-        for fmg_name, fmg_entries in self.categories.items():
-            word_wrap = description_word_wrap_limit if "Descriptions" in fmg_name else None
+    def get_item_fmgs(self, item_type: str) -> dict[str, FMG]:
+        """Return a dictionary with keys 'Names', 'Summaries', and 'Descriptions' mapping to the FMGs of `item_type`
+        and that key text type (e.g. 'WeaponDescriptions').
 
-            fmg_msgbnd = new_menu_msgbnd if self._is_menu[fmg_name] else new_item_msgbnd
-            self.update_msgbnd_entry(
-                fmg_msgbnd,
-                fmg_name,
-                fmg_entries,
-                word_wrap_limit=word_wrap,
-                pipe_to_newline=pipe_to_newline,
-                use_original_names=use_original_names,
+        Will raise a `KeyError` if any of the three text categories are missing.
+        """
+        item_type = self.resolve_item_type(item_type)
+        item_fmgs = self.get_matching_fmgs(re.compile(rf"{item_type}(Names|Summaries|Descriptions)"))
+        if len(item_fmgs) != 3:
+            raise KeyError(
+                f"Could not find all of '{item_type}Names', '{item_type}Summaries', and '{item_type}Descriptions' "
+                f"in `MSGDirectory`."
             )
-
-            if fmg_name + "Patch" in self._MSGBND_INDEX_NAMES.values():
-                # Updates patch version as well (with identical content), if it exists for this game and category.
-                self.update_msgbnd_entry(
-                    fmg_msgbnd,
-                    fmg_name + "Patch",
-                    fmg_entries,
-                    word_wrap_limit=word_wrap,
-                    pipe_to_newline=pipe_to_newline,
-                    use_original_names=use_original_names,
-                )
-
-        return new_item_msgbnd, new_menu_msgbnd
-
-    def write(
-        self,
-        msg_directory=None,
-        description_word_wrap_limit=None,
-        use_original_names=True,
-        pipe_to_newline=True,
-        update_instance=True,
-    ):
-        """Pack up and write new "item" and "menu" MSGBNDs. See `pack()` for more."""
-        msg_directory = self.directory if msg_directory is None else Path(msg_directory)
-
-        new_item_msgbnd, new_menu_msgbnd = self.pack(
-            description_word_wrap_limit=description_word_wrap_limit,
-            use_original_names=use_original_names,
-            pipe_to_newline=pipe_to_newline,
-        )
-
-        # Write BNDs (to original directory by default).
-        ext = "msgbnd.dcx" if self.IS_DCX else "msgbnd"
-        new_item_msgbnd.write(msg_directory / f"item.{ext}")
-        new_menu_msgbnd.write(msg_directory / f"menu.{ext}")
-
-        _LOGGER.info("MSGDirectory files (`item` and `menu` MSGBND files) written successfully.")
-
-        if update_instance:
-            # Update BNDs only after successful write.
-            self.item_msgbnd = new_item_msgbnd
-            self.menu_msgbnd = new_menu_msgbnd
-
-    def get_all_item_text(self, index, item_type="good"):
-        """Get name, summary, and description of goods, weapons, armor, or rings."""
-        item_fmg = self.resolve_item_type(item_type)
-        if index not in self.categories[item_fmg + "Names"]:
-            return None
         return {
-            "name": self.categories[item_fmg + "Names"][index],
-            "summary": self.categories[item_fmg + "Summaries"][index],
-            "description": self.categories[item_fmg + "Descriptions"][index],
+            "Names": item_fmgs[f"{item_type}Names"],
+            "Summaries": item_fmgs[f"{item_type}Summaries"],
+            "Descriptions": item_fmgs[f"{item_type}Descriptions"],
         }
 
-    def add_item_text(self, index, item_type, name, summary, description):
-        item_fmg = self.resolve_item_type(item_type)
-        if index in self.categories[item_fmg + "Names"]:
-            raise ValueError(
-                f"Item with index {index} already exists in {item_fmg}Names: "
-                f"{self.categories[item_fmg + 'Names'][index]}"
-            )
-        self.categories[item_fmg + "Names"][index] = name
-        self.categories[item_fmg + "Summaries"][index] = summary
-        self.categories[item_fmg + "Descriptions"][index] = description
+    def get_all_item_text(self, item_id: int, item_type: str) -> dict[str, str]:
+        """Get name, summary, and description of the given item ID with given type.
 
-    def delete_item_text(self, index, item_fmg="good"):
-        """Remove entries for item name, summary, and description."""
-        item_fmg = self.resolve_item_type(item_fmg)
-        if index not in self.categories[item_fmg + "Names"]:
-            raise ValueError(f"There is no {item_fmg} with index {index} to delete.")
-        self.categories[item_fmg + "Names"][index] = ""
-        self.categories[item_fmg + "Summaries"][index] = ""
-        self.categories[item_fmg + "Descriptions"][index] = ""
+        Returns empty dictionary if ID is not present in '*Names' category. Other strings (Summaries/Descriptions) may
+        be `None` in returned dictionary if absent.
+        """
+        item_fmgs = self.get_item_fmgs(item_type)
+        if item_id not in item_fmgs["Names"]:
+            return {}  # ID absent
+        return {
+            "name": item_fmgs["Names"][item_id],
+            "summary": item_fmgs["Summaries"].get(item_id, None),
+            "description": item_fmgs["Descriptions"].get(item_id, None),
+        }
 
-    def change_item_text(self, text_dict, index=None, item_type=None, patch=False):
-        if index is None:
-            index = text_dict["index"]
-        if not isinstance(index, (list, tuple)):
-            index = (index,)
-        if item_type is None:
-            item_type = text_dict["item_type"]
-        item_fmg = self.resolve_item_type(item_type)
-        patch = "Patch" if patch else ""
-        for i in index:
-            if i not in self[item_fmg + "Names"]:
-                _LOGGER.info(
-                    f"NEW ENTRY: {item_fmg} with index {i} has been added ({text_dict.get('name', 'unknown name')})"
-                )
-            if "name" in text_dict:
-                self[item_fmg + "Names" + patch][i] = text_dict["name"]
-            if "summary" in text_dict:
-                self[item_fmg + "Summaries" + patch][i] = text_dict["summary"]
-            if "description" in text_dict:
-                self[item_fmg + "Descriptions" + patch][i] = text_dict["description"]
+    def set_item_text(
+        self, item_id: int, item_type: str, name: str, summary: str, description: str, allow_override=True
+    ):
+        """Set `name`, `summary`, and `description` text to `item_id` of `item_type`.
 
-    def find(self, search_string, replace_with=None, text_category=None, exclude_conversations=True):
+        Will create the IDs if they don't exist or happily replace any that exist if `allow_override=True` (default).
+        Otherwise, existing keys will raise a `ValueError`.
+        """
+        item_fmgs = self.get_item_fmgs(item_type)
+        for (fmg_name, fmg), string in zip(item_fmgs.items(), (name, summary, description)):
+            if not allow_override and item_id in fmg.entries:
+                raise ValueError(f"Item with index {item_id} already exists in `{item_type}{fmg_name}`: {fmg[item_id]}")
+            fmg[item_id] = string
+
+    def delete_item_text(self, item_id: int, item_type="good"):
+        """Remove entries for item name, summary, and description.
+
+        Will remove whichever entries are present and not complain if any are missing.
+        """
+        item_fmgs = self.get_item_fmgs(item_type)
+        for fmg in item_fmgs.values():
+            fmg.pop(item_id, default=None)
+
+    def find(self, search_string: str, replace_with=None, text_category=None, exclude_conversations=True):
         """Search for the given text in the entire game.
 
         Args:
@@ -312,7 +308,7 @@ class MSGDirectory(abc.ABC):
             print(f"Could not find any occurrences of string {repr(search_string)}.")
 
     def __iter__(self):
-        return iter(self.categories.items())
+        return iter(self.fmgs.keys())
 
     def __getitem__(self, text_category):
         try:

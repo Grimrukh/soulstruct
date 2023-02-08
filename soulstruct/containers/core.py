@@ -25,12 +25,15 @@ from soulstruct.utilities.files import read_json, write_json
 
 from .binder_hash import BinderHashTable
 from .dcx import DCXType, compress, decompress, is_dcx
-from .entry import BinderEntry, BinderEntryHeader
+from .entry import BinderEntry, BinderEntryFlags, BinderEntryHeader
 
-# try:
-from typing import Self
-# except ImportError:  # < Python 3.11
-#     Self = "Binder"
+try:
+    from typing import Self
+except ImportError:  # < Python 3.11
+    Self = "Binder"
+
+if tp.TYPE_CHECKING:
+    from soulstruct.base.game_file import GameFile
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -235,8 +238,9 @@ class Binder(BaseBinaryFile):
     # `shift_jis_2004`, which we do not want in these files.
     ENTRY_PATH_ENCODING: tp.ClassVar[str] = "shift-jis"
 
-    # Utility class shortcut.
-    BinderEntry: tp.ClassVar[tp.Type[BinderEntry]] = BinderEntry  # for convenience
+    # Default `BinderEntry.flags` to use when creating new entries with `Binder` utility methods.
+    # Default is the most common observed value by far.
+    DEFAULT_ENTRY_FLAGS: tp.ClassVar[BinderEntryFlags] = BinderEntryFlags(0x2)
 
     signature: str = ""
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
@@ -892,7 +896,7 @@ class Binder(BaseBinaryFile):
         return entry
 
     def remove_entry_name(self, entry_name: str):
-        entry = self.entries_by_basename[entry_name]
+        entry = self.entries_by_name[entry_name]
         self._entries.remove(entry)
         return entry
 
@@ -935,7 +939,7 @@ class Binder(BaseBinaryFile):
         return entries
 
     @property
-    def entries_by_basename(self) -> dict[str, BinderEntry]:
+    def entries_by_name(self) -> dict[str, BinderEntry]:
         """Dictionary mapping entry basenames to (classed) entries.
 
         The same path and/or basename may appear in multiple paths in a BND (e.g. vanilla 'item.msgbnd' in Dark Souls
@@ -954,7 +958,7 @@ class Binder(BaseBinaryFile):
 
     @property
     def highest_entry_id(self) -> int | None:
-        """Returns largest `id` of all current entries. Useful for calculating a new ID in most cases.
+        """Returns largest `entry_id` of all current entries. Useful for calculating a new ID in most cases.
 
         Returns `None` if there are no entries.
         """
@@ -1001,26 +1005,88 @@ class Binder(BaseBinaryFile):
         raise BinderError("`get_default_binder()` not defined on this `Binder` class/subclass.")
 
     @classmethod
-    def get_default_entry_path(cls, entry_name: str):
-        """Optional method that can be overridden to determine the default entry path for `entry_name`."""
+    def get_default_entry_path(cls, entry_name: str) -> str:
+        """Optional method that can be overridden (usually by a game subclass) to generate a full entry path."""
         raise BinderError("`get_default_entry_path()` not defined on this `Binder` class/subclass.")
 
-    def __getitem__(self, id_or_path_or_basename) -> BinderEntry:
+    def get_default_entry_id(self, entry_name: str) -> int:
+        """Method that can be overridden (usually by a game subclass) to generate a full entry path.
+        
+        Default method simply returns the ID after the highest currently ID (which may leave gaps in earlier ranges).
+        """
+        return self.highest_entry_id + 1
+
+    def add_or_replace_entry_name(
+        self, entry_name: str, game_file: GameFile, new_entry_id: int = None, new_entry_flags: BinderFlags = None
+    ):
+        """Create or replace `BinderEntry` with name `entry_name` using data from packed `game_file`.
+        
+        If `entry_name` is already in the Binder (with any parent path), that entry's data will simply be replaced;
+        `new_entry_id` will not be used/generated and the existing entry's full path and flags will be kept.
+        
+        Otherwise, a new `BinderEntry` will be created. If `new_entry_id` is not given, `get_default_entry_id()` will
+        be called; `entry_name` will be passed through `get_default_entry_path()` unless it already contains a double
+        backslash (NOTE: subclass must define this method); and `flags` will be copied from `DEFAULT_ENTRY_FLAGS` on
+        this class (default `0x2`).
+        """
+        try:
+            existing_entry = self.entries_by_name[entry_name]
+        except (ValueError, KeyError):
+            # Create new entry.
+            entry_path = self.get_default_entry_path(entry_name) if r"\\" not in entry_name else entry_name
+            if new_entry_id is None:
+                new_entry_id = self.get_default_entry_id(entry_name)
+            if new_entry_flags is None:
+                new_entry_flags = self.DEFAULT_ENTRY_FLAGS
+            entry = BinderEntry(bytes(game_file), new_entry_id, entry_path, new_entry_flags)
+            self.add_entry(entry)
+        else:
+            # Just modify existing entry's data.
+            existing_entry.set_from_game_file(game_file)
+
+    def add_or_replace_entry_id(
+        self, entry_id: int, game_file: GameFile, new_entry_name: str = None, new_entry_flags: BinderFlags = None
+    ):
+        """Create or replace `BinderEntry` with ID `entry_id` using data from packed `game_file`.
+
+        If `entry_id` is already in the Binder, that entry's data will simply be replaced; `new_entry_name` will not be
+        used and the existing entry's full path and flags will be kept.
+
+        Otherwise, a new `BinderEntry` will be created. `new_entry_name` must be given in this case, and will be passed
+        through `get_default_entry_path()` if it does not contain a double backslash; `flags` will be copied from
+        `DEFAULT_ENTRY_FLAGS` on this class (default `0x2`).
+        """
+        try:
+            existing_entry = self.entries_by_id[entry_id]
+        except (ValueError, KeyError):
+            # Create new entry.
+            if new_entry_name is None:
+                raise ValueError(f"`new_entry_name` must be given for new entry ID {entry_id} to be created.")
+            entry_path = self.get_default_entry_path(new_entry_name) if r"\\" not in new_entry_name else new_entry_name
+            if new_entry_flags is None:
+                new_entry_flags = self.DEFAULT_ENTRY_FLAGS
+            entry = BinderEntry(bytes(game_file), entry_id, entry_path, new_entry_flags)
+            self.add_entry(entry)
+        else:
+            # Just modify existing entry's data.
+            existing_entry.set_from_game_file(game_file)
+
+    def __getitem__(self, id_or_path_or_name) -> BinderEntry:
         """Shortcut for access by ID (int) or path (str) or basename (str).
 
         If the path of one entry is the basename of another entry, the former will be given precedence here, but this
         should never happen.
         """
-        if isinstance(id_or_path_or_basename, int):
-            return self.entries_by_id[id_or_path_or_basename]
-        elif isinstance(id_or_path_or_basename, str):
+        if isinstance(id_or_path_or_name, int):
+            return self.entries_by_id[id_or_path_or_name]
+        elif isinstance(id_or_path_or_name, str):
             try:
-                return self.entries_by_path[id_or_path_or_basename]
+                return self.entries_by_path[id_or_path_or_name]
             except KeyError:
                 try:
-                    return self.entries_by_basename[id_or_path_or_basename]
+                    return self.entries_by_name[id_or_path_or_name]
                 except KeyError:
-                    raise BinderEntryNotFoundError(f"No entry with this ID/path/name: {id_or_path_or_basename}")
+                    raise BinderEntryNotFoundError(f"No entry with this ID/path/name: {id_or_path_or_name}")
         raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BinderEntry]:
