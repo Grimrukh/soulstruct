@@ -83,7 +83,7 @@ def build_ffxbnd(
     except FileNotFoundError:
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
     open_ffxbnd_sources = {}  # type: dict[str, BND3]
-    existing_file_names = {entry.name for entry in ffxbnd._entries}
+    existing_file_names = {entry.name for entry in ffxbnd.entries}
     existing_ffx_ids = [i for i in ffxbnd.entries_by_id if i < 100000]
     existing_tpf_ids = [i for i in ffxbnd.entries_by_id if 100000 <= i < 200000]
     existing_flver_ids = [i for i in ffxbnd.entries_by_id if 200000 <= i < 300000]
@@ -101,7 +101,7 @@ def build_ffxbnd(
                 f"Could not find area-level FFXBND file {area_ffxbnd_path}. It will not be checked for existing files."
             )
         else:
-            existing_file_names |= {entry.name for entry in area_ffxbnd._entries if entry.name}
+            existing_file_names |= {entry.name for entry in area_ffxbnd.entries if entry.name}
             # The next available IDs, of course, are still the same in the block file.
 
     # Add extra FFX sources. These will take precedence over any vanilla files or extra character files that are found
@@ -355,7 +355,7 @@ def import_map_piece_flver(
     bhd = None
     for bhd_path in dest_texture_dir.glob("m*tpfbhd"):  # does not search `GI_EnvM_mXX.tpfbhd`
         bhd = BXF3(bhd_path)
-        for entry in bhd._entries:
+        for entry in bhd.entries:
             existing_tpf_paths.add(entry.path)
     if bhd is None:
         raise FileNotFoundError(f"No texture TPFBHD archives found in destination map area: {dest_texture_dir}")
@@ -385,7 +385,7 @@ def find_flver_textures(flver_path: str | Path) -> list[BinderEntry]:
     for bhd_path in texture_dir.glob("m*tpfbhd"):  # does not search `GI_EnvM_mXX.tpfbhd`
         bhd = BXF3(bhd_path)
         print(f"Searching BHD: {bhd_path}")
-        for entry in bhd._entries:
+        for entry in bhd.entries:
             if entry.path in tpf_paths:
                 tpf_entries.append(entry)
                 tpf_paths.remove(entry.path)
@@ -426,7 +426,7 @@ def dump_all_map_textures(dump_directory: str | Path, map_directory: str | Path 
         area_dir = map_directory / f"m{area}"
         for bhd_path in area_dir.glob("*.tpfbhd"):
             bxf = BXF3.from_bak(bhd_path, create_bak_if_missing=False)
-            for entry in bxf._entries:
+            for entry in bxf.entries:
                 tpf_path = dump_directory / entry.name
                 if not tpf_path.exists():  # may have been unpacked elsewhere already
                     with tpf_path.open("wb") as f:

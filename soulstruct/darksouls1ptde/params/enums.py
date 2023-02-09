@@ -104,7 +104,7 @@ __all__ = [
 ]
 
 
-from soulstruct.base.params.field_types import *
+from soulstruct.base.params.paramdef.field_types import *
 
 
 class ACCESSORY_CATEGORY(u8):

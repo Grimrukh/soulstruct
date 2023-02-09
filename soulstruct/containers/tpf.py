@@ -429,7 +429,7 @@ class TPF(BaseBinaryFile):
         tpf_entries = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
             bxf = Binder.from_path(bhd_path)
-            for entry in bxf._entries:
+            for entry in bxf.entries:
                 match = tpf_re.match(entry.name)
                 if match:
                     tpf_entries[entry.minimal_stem] = entry
@@ -452,7 +452,7 @@ class TPF(BaseBinaryFile):
         textures = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
             bxf = Binder.from_path(bhd_path)
-            for entry in bxf._entries:
+            for entry in bxf.entries:
                 match = tpf_re.match(entry.name)
                 if match:
                     tpf = cls.from_bytes(entry.data)

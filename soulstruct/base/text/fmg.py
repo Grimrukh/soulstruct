@@ -273,6 +273,15 @@ class FMG(GameFile):
         }
         return FMG(new_entries, self.version)
 
+    def keys(self):
+        return self.entries.keys()
+
+    def values(self):
+        return self.entries.values()
+
+    def items(self):
+        return self.entries.items()
+
     def __iter__(self):
         return iter(self.entries.items())
 

@@ -35,10 +35,29 @@ class TalkESDBND(Binder, abc.ABC):
 
     talk: dict[int, ESD] = field(default_factory=dict)
 
+    def __post_init__(self):
+        if not self.talk and self.entries:
+            return
+
+        # Load from binary Binder source.
+        for entry in self.entries:
+            if not (match := _TALK_ESD_RE.match(entry.name)):
+                _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in TalkESDBND Binder.")
+                continue
+            talk_id = match.group(1)
+            try:
+                self.talk[talk_id] = entry.to_game_file(self.TALK_ESD_CLASS)
+            except Exception as ex:
+                _LOGGER.error(f"Could not load talk ESD 't{talk_id}' from TalkESDBND entry '{entry.name}'. Error: {ex}")
+                raise
+
+    def get_default_entry_id(self, entry_name: str) -> int:
+        return self.get_first_new_entry_id_in_range(0, 1000000)
+
     @classmethod
     def from_esp_directory(cls, esp_directory: str | Path) -> Self:
         """Load from directory of individual ESP files/folders."""
-        talkesdbnd = cls.get_default_binder()  # type: Self
+        talkesdbnd = cls()  # type: Self
         talkesdbnd.path = esp_directory.with_suffix(cls.EXT)
         talkesdbnd.reload_all_esp(esp_directory, allow_new=True)
         talkesdbnd.regenerate_entries()
@@ -46,7 +65,7 @@ class TalkESDBND(Binder, abc.ABC):
 
     @classmethod
     def from_talk_dict(cls, talk_dict: dict[int, ESD]) -> Self:
-        talkesdbnd = cls.get_default_binder()  # type: Self
+        talkesdbnd = cls()  # type: Self
         talkesdbnd.talk = talk_dict.copy()
         talkesdbnd.regenerate_entries()
         return talkesdbnd
@@ -85,8 +104,7 @@ class TalkESDBND(Binder, abc.ABC):
                         self.entries_by_path[entry_path].set_from_game_file(esd)
                     else:
                         # Add new entry.
-                        new_id = self.get_first_new_entry_id_in_range(0, 1000000)
-                        # TODO: default entry flags?
+                        new_id = self.get_default_entry_id(entry_path)
                         new_entry = BinderEntry(data=bytes(esd), entry_id=new_id, path=entry_path)
                         self.add_entry(new_entry)
                         _LOGGER.debug(f"New ESD entry from ESP file {esp_path.name} added to TalkESDBND (ID {new_id}).")
@@ -96,7 +114,7 @@ class TalkESDBND(Binder, abc.ABC):
 
         # Remove BND talk entries that aren't still present in this `TalkESDBND` instance.
         current_entry_names = [f"{talk_id}.esd" for talk_id in self.talk]
-        for entry_name in [entry.name for entry in self._entries]:
+        for entry_name in [entry.name for entry in self.entries]:
             if entry_name not in current_entry_names:
                 self.remove_entry_name(entry_name)
 
@@ -107,8 +125,7 @@ class TalkESDBND(Binder, abc.ABC):
                 self.entries_by_path[entry_path].set_from_game_file(talk_esd)
             else:
                 # Add new entry.
-                new_id = self.get_first_new_entry_id_in_range(0, 1000000)
-                # TODO: default entry flags?
+                new_id = self.get_default_entry_id(talk_entry_name)
                 new_entry = BinderEntry(data=bytes(talk_esd), entry_id=new_id, path=entry_path)
                 self.add_entry(new_entry)
                 _LOGGER.debug(f"New ESD entry added to TalkESDBND (ID {new_id}): {talk_entry_name}")

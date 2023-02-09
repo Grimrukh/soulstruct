@@ -165,7 +165,38 @@ class s32(signed):
         return "<i"
 
 
-class f32:
+class f32(base_type):
+    @staticmethod
+    def size():
+        return 4
+
+    @classmethod
+    def bit_size(cls):
+        return 8 * cls.size()
+
+    @staticmethod
+    def format():
+        return "<f"
+
+    @staticmethod
+    def python_type():
+        return float
+
+    @staticmethod
+    def minimum():
+        return -float("inf")
+
+    @staticmethod
+    def maximum():
+        return float("inf")
+
+    @staticmethod
+    def default():
+        return 0.0
+
+
+class angle32(base_type):
+    """TODO: Haven't personally encountered this but I assume it's just a float."""
     @staticmethod
     def size():
         return 4

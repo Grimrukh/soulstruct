@@ -792,7 +792,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 title="Invalid BND/BHD/BDT File",
                 message=f"A BND/BHD/BDT file (with or without DCX) must be selected.",
             )
-        Binder(target).write_unpacked_dir()
+        Binder(target).write_unpacked_directory()
 
     def _repack_binder(self):
         target = self.FileDialog.askdirectory(

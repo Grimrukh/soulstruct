@@ -40,6 +40,7 @@ DRAW_PARAMS = (
 )
 
 
+# TODO: Up to here.
 class DrawParamBND(GameSpecificType, BND3, abc.ABC):
 
     EXT = ".parambnd"
@@ -344,11 +345,11 @@ class DrawParamDirectory(GameSpecificType, abc.ABC):
                 setattr(self, map_name, self.bnds[file_map_name])
             else:
                 # Modify existing `DrawParamBND`.
-                draw_param_bnd.load_json_dir(directory / map_name, clear_old_data=clear_old_data)
+                draw_param_bnd.load_json_directory(directory / map_name, clear_old_data=clear_old_data)
 
     def write_json_dir(self, directory: tp.Union[Path, str], ignore_pads=True, ignore_defaults=True):
         directory = Path(directory)
         for map_name in self.DRAW_PARAM_MAPS:
-            getattr(self, map_name).write_json_dir(
+            getattr(self, map_name).write_json_directory(
                 directory / map_name, ignore_pads=ignore_pads, ignore_defaults=ignore_defaults
             )

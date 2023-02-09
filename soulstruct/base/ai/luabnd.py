@@ -58,7 +58,7 @@ class LuaBND(Binder):
             # Load initial goals from `LuaInfo`. We will still scan below for other 'loose' goals and files.
             luabnd.goals = info_entry.to_game_file(LuaInfo).goals
 
-        for entry in luabnd._entries:
+        for entry in luabnd.entries:
             goal_match = _GOAL_SCRIPT_RE.match(entry.name)
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
@@ -323,7 +323,7 @@ class LuaBND(Binder):
 
         # Remove BND script entries that aren't still present in this `LuaBND` instance.
         current_script_names = self.get_all_script_names(include_unknown_scripts=True)
-        for entry_script_name in [entry.name for entry in self._entries if entry.entry_id < 1000000]:
+        for entry_script_name in [entry.name for entry in self.entries if entry.entry_id < 1000000]:
             if entry_script_name not in current_script_names:
                 self.remove_entry_name(entry_script_name)
 

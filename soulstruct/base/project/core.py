@@ -310,7 +310,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                 data: tp.Union[MapStudioDirectory, GameParamBND, DrawParamDirectory, MSGDirectory]
                 data_dir_path = self.project_root / data_type
                 first_time = not data_dir_path.exists()
-                data.write_json_dir(data_dir_path)
+                data.write_json_directory(data_dir_path)
                 if first_time:
                     _LOGGER.info(
                         f"Created new '{data_type}' project folder with separate JSON files inside. As long as "

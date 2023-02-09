@@ -834,6 +834,12 @@ class BinaryReader(BinaryBase):
             raise AssertionError(f"Unpacked value {repr(value)} does not equal asserted value {repr(asserted)}.")
         return data[0]
 
+    def __getitem__(self, fmt: str | tuple[str, int]) -> bool | int | float | bytes:
+        """Shortcut for `unpack_value` at current offset or `(fmt, offset)` tuple."""
+        if isinstance(fmt, str):
+            return self.unpack_value(fmt)
+        return self.unpack_value(fmt[0], offset=fmt[1])
+
     def peek(self, fmt_or_size: str | int) -> bool | int | float | bytes | tuple:
         """Unpack `fmt_or_size` (or just read bytes) and return the unpacked values without changing the offset."""
         if isinstance(fmt_or_size, int):

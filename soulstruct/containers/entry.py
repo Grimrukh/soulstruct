@@ -225,7 +225,9 @@ class BinderEntry:
         self.path = str(Path(self.path).parent) + f"\\{new_name}"
 
     def to_game_file(self, game_file_cls: tp.Type[GAME_FILE_T]) -> GAME_FILE_T:
-        return game_file_cls.from_bytes(self.get_uncompressed_data())
+        game_file = game_file_cls.from_bytes(self.get_uncompressed_data())
+        game_file.path = self.path
+        return game_file
 
     @property
     def data_size(self) -> int:

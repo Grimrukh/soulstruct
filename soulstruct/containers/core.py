@@ -242,7 +242,7 @@ class Binder(BaseBinaryFile):
     # Default is the most common observed value by far.
     DEFAULT_ENTRY_FLAGS: tp.ClassVar[BinderEntryFlags] = BinderEntryFlags(0x2)
 
-    signature: str = ""
+    signature: str = "07D7R6"
     flags: BinderFlags = BinderFlags(0b00101110)  # most common flags by far (IDs, names1, names2, compression)
     big_endian: bool = False
     bit_big_endian: bool = False
@@ -250,8 +250,7 @@ class Binder(BaseBinaryFile):
     v4_info: BinderVersion4Info | None = field(default_factory=BinderVersion4Info)  # only used by `BinderVersion.V4`
     is_split_bxf: bool = False  # NOTE: not included in manifest (inferred from combined `binder_type` string in there)
 
-    # Entry list marked 'private' to encourage use of `add_entry` and `remove_entry` methods.
-    _entries: list[BinderEntry] = field(default_factory=list)
+    entries: list[BinderEntry] = field(default_factory=list)
 
     # NOTE: Standard `from_dict()` class method will attempt to interpret actual entry content from the dictionary, i.e.
     # a bonafide full JSON version of the entire binder. Use `from_unpacked_path()` to load an unpacked directory or
@@ -385,11 +384,11 @@ class Binder(BaseBinaryFile):
         else:
             raise ValueError(f"Could not detect BND version from first four bytes: {version_bytes}:")
 
-        binder._entries = [BinderEntry.from_header(entry_reader, entry_header) for entry_header in entry_headers]
+        binder.entries = [BinderEntry.from_header(entry_reader, entry_header) for entry_header in entry_headers]
         if binder.v4_info:
             # Set existing V4 hash properties.
-            binder.v4_info.most_recent_entry_count = len(binder._entries)
-            binder.v4_info.most_recent_paths = [entry.path for entry in binder._entries]
+            binder.v4_info.most_recent_entry_count = len(binder.entries)
+            binder.v4_info.most_recent_paths = [entry.path for entry in binder.entries]
 
         return binder
 
@@ -412,7 +411,7 @@ class Binder(BaseBinaryFile):
             signature=header_struct.signature,
             big_endian=big_endian,
             bit_big_endian=bit_big_endian,
-            _entries=[],  # assigned later
+            entries=[],  # assigned later
             version=BinderVersion.V3,
             v4_info=None,
         )
@@ -462,7 +461,7 @@ class Binder(BaseBinaryFile):
             flags=flags,
             big_endian=header_struct.big_endian,
             bit_big_endian=not header_struct.bit_little_endian,  # REVERSED
-            _entries=[],  # assigned later
+            entries=[],  # assigned later
             version=BinderVersion.V4,
             v4_info=v4_info,
         )
@@ -701,7 +700,7 @@ class Binder(BaseBinaryFile):
             flags=byte(self.flags.to_byte(self.bit_big_endian)),
             big_endian=self.big_endian,
             bit_big_endian=self.bit_big_endian,
-            entry_count=len(self._entries),
+            entry_count=len(self.entries),
             file_size=RESERVED,
         ).to_writer(reserve_obj=self)
 
@@ -711,7 +710,7 @@ class Binder(BaseBinaryFile):
         NOTE: Both writers should be the same for BND files.
         """
 
-        sorted_entries = list(sorted(self._entries, key=lambda e: e.id))
+        sorted_entries = list(sorted(self.entries, key=lambda e: e.id))
         sorted_entry_headers = [entry.get_header(self.flags) for entry in sorted_entries]
         for entry_header in sorted_entry_headers:
             entry_header.into_bnd3_writer(entry_writer, self.flags, self.bit_big_endian)
@@ -736,7 +735,7 @@ class Binder(BaseBinaryFile):
             unknown2=self.v4_info.unknown2,
             big_endian=self.big_endian,
             bit_little_endian=not self.bit_big_endian,  # REVERSED
-            _entry_count=len(self._entries),
+            _entry_count=len(self.entries),
             signature=self.signature,
             _entry_header_size=long(self.flags.get_bnd_entry_header_size()),
             _data_offset=RESERVED,
@@ -752,17 +751,17 @@ class Binder(BaseBinaryFile):
 
         rebuild_hash_table = not self.v4_info.most_recent_hash_table
 
-        if not self.v4_info.most_recent_hash_table or len(self._entries) != self.v4_info.most_recent_entry_count:
+        if not self.v4_info.most_recent_hash_table or len(self.entries) != self.v4_info.most_recent_entry_count:
             rebuild_hash_table = True
         else:
             # Check if any entry paths have changed.
-            for i, entry in enumerate(self._entries):
+            for i, entry in enumerate(self.entries):
                 if entry.path != self.v4_info.most_recent_paths[i]:
                     rebuild_hash_table = True
                     break
 
-        self.v4_info.most_recent_entry_count = len(self._entries)
-        self.v4_info.most_recent_paths = [entry.path for entry in self._entries]
+        self.v4_info.most_recent_entry_count = len(self.entries)
+        self.v4_info.most_recent_paths = [entry.path for entry in self.entries]
 
         return rebuild_hash_table
 
@@ -774,7 +773,7 @@ class Binder(BaseBinaryFile):
         NOTE: Both writers should be the same for BND files.
         """
 
-        sorted_entries = list(sorted(self._entries, key=lambda e: e.id))
+        sorted_entries = list(sorted(self.entries, key=lambda e: e.id))
         sorted_entry_headers = [entry.get_header(self.flags) for entry in sorted_entries]
         for entry_header in sorted_entry_headers:
             entry_header.into_bnd4_writer(entry_writer, self.flags, self.bit_big_endian)
@@ -787,7 +786,7 @@ class Binder(BaseBinaryFile):
         if self.v4_info.hash_table_type == 4:
             header_writer.fill_with_position("_hash_table_offset", obj=self)
             if rebuild_hash_table:
-                header_writer.append(BinderHashTable.build_hash_table(self._entries))
+                header_writer.append(BinderHashTable.build_hash_table(self.entries))
             else:
                 header_writer.append(self.v4_info.most_recent_hash_table)
         else:
@@ -826,7 +825,7 @@ class Binder(BaseBinaryFile):
         }
         return manifest
 
-    def write_unpacked_dir(self, directory: str | Path | None = None):
+    def write_unpacked_directory(self, directory: str | Path | None = None):
         if not self.flags.has_names:
             raise NotImplementedError(
                 "Writing unpacked binder directories is only supported for binder formats with path strings."
@@ -843,7 +842,7 @@ class Binder(BaseBinaryFile):
         entry_tree_dict = {}
         use_index_prefix = self.has_repeated_entry_names
 
-        for i, entry in enumerate(self._entries):
+        for i, entry in enumerate(self.entries):
             entry_directory = str(Path(entry.path).parent)  # no trailing backslash
             entry_dict = {"flags": entry.flags, "id": entry.entry_id if self.flags.has_ids else i, "name": entry.name}
             entry_tree_dict.setdefault(entry_directory, []).append(entry_dict)
@@ -856,6 +855,9 @@ class Binder(BaseBinaryFile):
 
         # NOTE: Binder manifest is always encoded in shift-JIS, not `shift_jis_2004`.
         write_json(directory / "binder_manifest.json", json_dict, encoding="shift-jis")
+
+    def to_dict(self) -> dict:
+        raise TypeError("Base `Binder` cannot be written to dictionary. Use `write_unpacked_directory()` instead.")
 
     # endregion
 
@@ -874,41 +876,37 @@ class Binder(BaseBinaryFile):
             self.add_entry(BinderEntry(entry_id=entry_id, path=path, data=data, flags=flags))
 
     def add_entry(self, entry: BinderEntry):
-        if entry in self._entries:
+        if entry in self.entries:
             raise BinderError(f"Given `BinderEntry` instance with ID {entry.entry_id} is already in this binder.")
         if entry.entry_id in self.entries_by_id:
             _LOGGER.warning(f"Entry ID {entry.entry_id} appears more than once in this binder. You should fix this!")
-        self._entries.append(entry)
+        self.entries.append(entry)
 
     def remove_entry(self, entry: BinderEntry):
-        if entry not in self._entries:
+        if entry not in self.entries:
             raise KeyError(f"Entry `{entry}` is not in this Binder. Cannot remove it.")
-        self._entries.remove(entry)
+        self.entries.remove(entry)
 
     def remove_entry_id(self, entry_id: int) -> BinderEntry:
         entry = self.entries_by_id[entry_id]
-        self._entries.remove(entry)
+        self.entries.remove(entry)
         return entry
 
     def remove_entry_path(self, entry_path: Path | str):
         entry = self.entries_by_path[str(entry_path)]
-        self._entries.remove(entry)
+        self.entries.remove(entry)
         return entry
 
     def remove_entry_name(self, entry_name: str):
         entry = self.entries_by_name[entry_name]
-        self._entries.remove(entry)
+        self.entries.remove(entry)
         return entry
 
     def clear_entries(self):
         """Remove all entries from the BND."""
-        self._entries.clear()
+        self.entries.clear()
 
     # endregion
-
-    @property
-    def entries(self) -> list[BinderEntry]:
-        return list(self._entries)
 
     @property
     def entries_by_id(self) -> dict[int, BinderEntry]:
@@ -918,7 +916,7 @@ class Binder(BaseBinaryFile):
         happen; if it does, fix it by accessing the culprit entries with `.entries` and changing one or more IDs.
         """
         entries = {}
-        for entry in self._entries:
+        for entry in self.entries:
             if entry.entry_id in entries:
                 raise BinderError(f"There are multiple entries with ID {entry.entry_id}.")
             entries[entry.entry_id] = entry
@@ -932,7 +930,7 @@ class Binder(BaseBinaryFile):
         Remastered). If it does, this property will raise a `BinderError`.
         """
         entries = {}
-        for entry in self._entries:
+        for entry in self.entries:
             if entry.path in entries:
                 raise BinderError(f"Path '{entry.path}' appears in multiple `BNDEntry` paths.")
             entries[entry.path] = entry
@@ -946,7 +944,7 @@ class Binder(BaseBinaryFile):
         Remastered). If it does, this property will raise an exception.
         """
         entries = {}
-        for entry in self._entries:
+        for entry in self.entries:
             if entry.name in entries:
                 raise ValueError(f"Basename '{entry.name}' appears in multiple BND entry paths.")
             entries[entry.name] = entry
@@ -954,7 +952,7 @@ class Binder(BaseBinaryFile):
 
     @property
     def entry_count(self) -> int:
-        return len(self._entries)
+        return len(self.entries)
 
     @property
     def highest_entry_id(self) -> int | None:
@@ -962,18 +960,18 @@ class Binder(BaseBinaryFile):
 
         Returns `None` if there are no entries.
         """
-        if not self._entries:
+        if not self.entries:
             return None
-        return max(entry.entry_id for entry in self._entries)
+        return max(entry.entry_id for entry in self.entries)
 
     @property
     def has_repeated_entry_names(self):
-        entry_names = [e.name for e in self._entries]
+        entry_names = [e.name for e in self.entries]
         return len(set(entry_names)) < len(entry_names)
 
     def get_first_new_entry_id_in_range(self, min_id_inclusive: int, max_id_exclusive: int) -> int:
         """Get the first new entry ID available in the given half-open range."""
-        if not self._entries:
+        if not self.entries:
             return min_id_inclusive
         entries_by_id = self.entries_by_id
         for entry_id in range(min_id_inclusive, max_id_exclusive):
@@ -985,24 +983,19 @@ class Binder(BaseBinaryFile):
 
     def find_entries_matching_name(self, regex: str | re.Pattern) -> list[BinderEntry]:
         """Returns a list of entries whose names match the given `regex` pattern."""
-        return [entry for entry in self._entries if re.match(regex, entry.name)]
+        return [entry for entry in self.entries if re.match(regex, entry.name)]
 
     def find_entry_matching_name(self, regex: str | re.Pattern) -> BinderEntry:
         """Returns a single entry whose name matches the given `regex` pattern.
 
         Only one match must exist.
         """
-        matches = [entry for entry in self._entries if re.match(regex, entry.name)]
+        matches = [entry for entry in self.entries if re.match(regex, entry.name)]
         if len(matches) > 1:
             raise ValueError(f"Found multiple Binder entries with name matching '{regex}'.")
         if not matches:
             raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{regex}'.")
         return matches[0]
-
-    @classmethod
-    def get_default_binder(cls) -> Self:
-        """Optional method that can be overridden (usually by a game subclass) to generate a default `Binder`."""
-        raise BinderError("`get_default_binder()` not defined on this `Binder` class/subclass.")
 
     @classmethod
     def get_default_entry_path(cls, entry_name: str) -> str:
@@ -1090,15 +1083,15 @@ class Binder(BaseBinaryFile):
         raise TypeError("`BND` key should be an entry ID (int) or path/basename (str).")
 
     def __iter__(self) -> tp.Iterator[BinderEntry]:
-        return iter(self._entries)
+        return iter(self.entries)
 
     def __len__(self):
-        return len(self._entries)
+        return len(self.entries)
 
     def __repr__(self):
-        if not self._entries:
+        if not self.entries:
             return
-        entries = f",\n    ".join(repr(entry) for entry in self._entries)
+        entries = f",\n    ".join(repr(entry) for entry in self.entries)
         if entries:
             entries = f"\n    {entries},\n"
         return f"{self.__class__.__name__}({entries})"

@@ -46,9 +46,9 @@ class BaseBinaryFile(abc.ABC):
     DEFAULT_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
 
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
-    path: None | Path = field(init=False, repr=False, default=None)
+    path: Path | None = field(init=False)
     # Optional override for `DEFAULT_DCX_TYPE`.
-    dcx_type: DCXType | None = field(init=False, default=None)
+    dcx_type: DCXType | None = field(init=False)
 
     # region Read Methods
 

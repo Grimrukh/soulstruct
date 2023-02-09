@@ -35,7 +35,7 @@ class ParamDefField(_BaseParamDefField):
             raise ValueError(f"No display information given for field '{self.name}'.")
         return field_info(row)
 
-    def get_default_value(self):
+    def get_better_default_value(self):
         v = DEFAULTS.get(self.param_name, {}).get(self.name, self.default)
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(v)

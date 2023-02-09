@@ -145,6 +145,8 @@ class Flags8(abc.ABC):
     def pack(self) -> int:
         return sum(2 ** i if enabled else 0 for i, enabled in enumerate(self.flags))
 
+    __int__ = pack
+
     def __repr__(self):
         return f"{self.__class__.__name__}({', '.join(str(int(f)) for f in self.flags)})"
 

@@ -8,9 +8,6 @@ from soulstruct.base.params.paramdef import (
 from soulstruct.utilities.binary import BinaryStruct
 
 
-# TODO: Dark Souls 3 doesn't even use GameParam, right?
-
-
 class ParamDefField(_BaseParamDefField):
 
     STRUCT = BinaryStruct(

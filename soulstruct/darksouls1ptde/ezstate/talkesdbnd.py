@@ -2,30 +2,25 @@ from __future__ import annotations
 
 __all__ = ["TalkESDBND"]
 
+import typing as tp
+from dataclasses import dataclass
+
 from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
-from soulstruct.containers import BinderVersion, BinderFlags, DCXType
+from soulstruct.containers import BinderVersion
+from soulstruct.games import DARK_SOULS_PTDE
 from .esd import TalkESD
 
 
+@dataclass(slots=True)
 class TalkESDBND(_BaseTalkESDBND):
-    TALK_ESD_CLASS = TalkESD
+    TALK_ESD_CLASS: tp.ClassVar = TalkESD
 
-    @classmethod
-    def get_default_binder(cls) -> TalkESDBND:
-        binder = cls(
-            signature="07D7R6",
-            flags=BinderFlags(0b00101110),
-            big_endian=False,
-            bit_big_endian=False,
-            version=BinderVersion.V3,
-            v4_info=None,
-            is_split_bxf=False,
-        )
-        binder.dcx_type = DCXType.Null
-        return binder
+    dcx_type = DARK_SOULS_PTDE.default_dcx_type
+    version: BinderVersion = BinderVersion.V3
+    v4_info = None
 
     @classmethod
     def get_default_entry_path(cls, entry_name: str) -> str:
         if not entry_name.endswith(".talkesd"):
             raise ValueError(f"Expected `TalkESDBND` entry name to end with '.talkesd': {entry_name}")
-        return f"N:\\FRPG\\data\\INTERROOT_x32\\script\\talk\\{entry_name}"
+        return f"N:\\FRPG\\data\\INTERROOT_win32\\script\\talk\\{entry_name}"

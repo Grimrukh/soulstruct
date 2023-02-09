@@ -1,98 +1,76 @@
 from __future__ import annotations
 
+__all__ = ["ParamRow", "Param"]
+
 import abc
 import copy
-import io
 import logging
 import struct
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader
+from soulstruct.utilities.binary import *
+from soulstruct.utilities.text import pad_chars
+from soulstruct.utilities.files import write_json
 
-from . import field_types as ft
 from .utils import BitFieldReader, BitFieldWriter, FieldDisplayInfo
 from .flags import ParamFlags1, ParamFlags2
-from .paramdef import ParamDef, ParamDefField, ParamDefBND
+from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
 _LOGGER = logging.getLogger(__name__)
 
 
-@dataclass(slots=True, init=False, repr=False)
+@dataclass(slots=True)
 class ParamRow:
+    """A single entry in a `Param` table. Layout is defined by the `ParamDef` for this `Param` type.
 
-    name: str | bytes  # may be 'undecodable' bytes
+    Supports all (known) games.
+    """
+
     fields: dict[str, bool | int | float | str | bytes]
-    paramdef: ParamDef
+    paramdef: ParamDef  # required
+    raw_name: bytes = b""
+    name: str = ""  # may not be set if `raw_name` cannot be decoded
 
-    def __init__(
-        self,
-        fields: dict[str, bool | int | float | str | bytes],
-        paramdef: ParamDef,
-        name: str | bytes = None,
-        validate_fields=True,
-    ):
-        if not isinstance(fields, dict):
-            raise TypeError("ParamRow `fields` must be a dict.")
-        if name is None:
-            try:
-                name = fields.pop("name")
-            except KeyError:
-                raise ValueError("ParamRow name must be specified with `name` argument or in `fields` dict.")
-        elif "name" in fields:
-            _LOGGER.warning(
-                f"Name '{fields['name']}' in `fields` of ParamRow will be overridden with `name` arg: '{name}'."
-            )
-            fields.pop("name")
-
-        self.name = name
-        self.paramdef = paramdef
-        if validate_fields:
-            self.fields = self.validate_fields(fields, paramdef)
-        else:  # assert that `fields` is correct (eg from `unpack()` class method).
-            self.fields = fields
+    @classmethod
+    def with_field_validation(cls, fields: dict, paramdef: ParamDef, raw_name=b"", name=""):
+        """Checks `fields` keys against `paramdef` before initializing."""
+        fields = cls.validate_fields(fields, paramdef)
+        return cls(fields, paramdef, raw_name, name)
 
     def __iter__(self):
         return iter(self.fields.items())
 
-    def __getitem__(self, field):
-        if isinstance(field, int):
-            try:
-                field = list(self.fields.keys())[field]
-            except IndexError:
-                raise KeyError(f"No field with index {field}.")
-        if isinstance(field, str):
-            try:
-                return self.fields[field]
-            except KeyError:
-                raise KeyError(f"No field with name '{field}' in row {self.name}.")
+    def __getitem__(self, field_name: str):
+        try:
+            return self.fields[field_name]
+        except KeyError:
+            raise KeyError(f"No field with name '{field_name}' in row {self.name}.")
 
-    def __setitem__(self, field, value):
-        if isinstance(field, int):
-            try:
-                field = list(self.fields.keys())[field]
-            except IndexError:
-                raise KeyError(f"No field with index {field}. (You cannot create new fields.)")
-        if field not in self.fields:
-            raise KeyError(f"Field '{field}' does not exist in params.")
-        # TODO: Check value type is valid (or that it can be cast).
-        self.fields[field] = value
+    def __setitem__(self, field_name: str, value):
+        if field_name not in self.fields:
+            raise KeyError(f"Field '{field_name}' does not exist in params. (You cannot create new fields.)")
+        # TODO: Check value type is valid (or that it can be cast). (Already done at write time, though.)
+        self.fields[field_name] = value
 
-    def update(self, **kwargs):
-        for field in kwargs:
-            if field not in self.fields and field != "name":
-                raise KeyError(f"Field '{field}' does not exist in params.")
-        if "name" in kwargs:
-            self.name = kwargs.pop("name")
+    def update(self, name: str = None, **kwargs):
+        """Set multiple field values at once."""
+        for field_name in kwargs:  # check that all field names are valid
+            if field_name not in self.fields and field_name != "name":
+                raise KeyError(f"Field '{field_name}' does not exist in params.")
+        if name is not None:
+            self.name = name
         self.fields |= kwargs
 
     @property
     def field_names(self) -> tuple[str, ...]:
-        if self.paramdef.param_info:
-            return tuple(field.name for field in self.paramdef.param_info["fields"])
-        else:
-            return tuple(self.fields.keys())
+        """TODO: Why the two options here? Will my param info not always be the same as `fields` keys?"""
+        param_info = self.paramdef.param_info
+        if param_info:
+            return tuple(f.name for f in param_info["fields"])
+        return tuple(self.fields.keys())
 
     def get_paramdef_field(self, field_name: str) -> ParamDefField:
         return self.paramdef[field_name]
@@ -107,98 +85,97 @@ class ParamRow:
         return copy.deepcopy(self)
 
     @classmethod
-    def unpack(cls, row_source: bytes | io.BufferedIOBase | BinaryReader, paramdef: ParamDef, name: str) -> ParamRow:
+    def from_reader(cls, reader: BinaryReader, paramdef: ParamDef, raw_name: bytes, name="") -> ParamRow:
         """Unpack `ParamRow` from binary game data using `paramdef`."""
         bit_reader = BitFieldReader()
-        if not isinstance(row_source, BinaryReader):
-            row_source = BinaryReader(row_source)
 
         fields = {}
-        for field in paramdef.fields.values():
+        for paramdef_field in paramdef.fields.values():
 
-            if field.bit_count != -1:
-                field_value = bit_reader.read(row_source, field.bit_count, field.fmt)
+            display_type = paramdef_field.display_type
+
+            if paramdef_field.bit_count != -1:
+                field_value = bit_reader.read(reader, paramdef_field.bit_count, paramdef_field.py_fmt)
             else:
                 bit_reader.clear()
-                if issubclass(field.type_class, ft.basestring):
-                    field_value = field.type_class.read(row_source, field.size)
-                elif field.type_class is ft.dummy8:
+                if issubclass(display_type, ft.basestring):
+                    field_value = display_type.read(reader, paramdef_field.size)
+                elif display_type is ft.dummy8:
                     # These are often 'array' fields, but we don't even bother unpacking them.
-                    field_value = row_source.read(field.size)
+                    field_value = reader.read(paramdef_field.size)
                 else:
-                    data = row_source.read(field.type_class.size())
+                    data = reader.read(display_type.size())
                     try:
-                        field_value = struct.unpack(field.fmt, data)[0]
+                        field_value = struct.unpack(paramdef_field.py_fmt, data)[0]
                     except struct.error as e:
-                        if field.display_name in {"inverseToneMapMul", "sfxMultiplier"}:
+                        if paramdef_field.display_name in {"inverseToneMapMul", "sfxMultiplier"}:
                             # These fields are malformed in m99 and default ToneMapBank in Dark Souls Remastered.
                             field_value = 1.0
                         else:
                             raise ValueError(
-                                f"Could not unpack data for field {field.name} in ParamRow {name}.\n"
-                                f"Field type: {field.display_type}\n"
+                                f"Could not unpack data for field {paramdef_field.name} in ParamRow {name}.\n"
+                                f"Field type: {display_type}\n"
                                 f"Raw bytes: {data}\n"
                                 f"Error:\n{str(e)}"
                             )
-            fields[field.name] = bool(field_value) if field.bit_count == 1 else field_value
+            fields[paramdef_field.name] = bool(field_value) if paramdef_field.bit_count == 1 else field_value
 
-        return cls(fields, paramdef, name, validate_fields=False)
+        # No field validation needed (all fields present and valid).
+        return cls(fields, paramdef, raw_name, name)
 
     @staticmethod
     def validate_fields(fields: dict, paramdef: ParamDef) -> dict[str, bool | int | float | str | bytes]:
         """Ensures that all ParamDef fields are present in dictionary, or assigns defaults."""
         fields = fields.copy()
         parsed_fields = {}
-        for field in paramdef.fields.values():
-            if field.type_class is ft.dummy8 and field.bit_count == -1:  # padding bytes
+        for paramdef_field in paramdef.fields.values():
+            if paramdef_field.display_type is ft.dummy8 and paramdef_field.bit_count == -1:  # padding bytes
                 # TODO: The exceptions identified in `unpack()` will be overridden with nulls. Probably fine.
-                fields.pop(field.name, None)  # ignore given value
-                parsed_fields[field.name] = b"\0" * field.size
+                fields.pop(paramdef_field.name, None)  # ignore given value
+                parsed_fields[paramdef_field.name] = b"\0" * paramdef_field.size
             else:
-                parsed_fields[field.name] = fields.pop(field.name, field.new_default)
+                parsed_fields[paramdef_field.name] = fields.pop(paramdef_field.name, paramdef_field.better_default)
 
         if fields:
             leftover = ", ".join(fields.keys())
-            _LOGGER.warning(f"Ignoring unknown fields in ParamRow of type {paramdef.param_type}: {leftover}")
+            _LOGGER.warning(f"Ignoring unknown fields in `ParamRow` of type {paramdef.param_type}: {leftover}")
 
         return parsed_fields
 
-    def pack(self) -> bytes:
-
+    def to_param_writer(self, writer: BinaryWriter):
         bit_writer = BitFieldWriter()
 
-        packed_row = b""
         for field_name, value in self.fields.items():  # These are ordered correctly already.
-            field = self.paramdef[field_name]
-            field.check_python_type(value)
-            field.check_range(value)
-            if field.bit_count != -1:
-                packed_row += bit_writer.write(value, field.bit_count, field.fmt)
+            paramdef_field = self.paramdef[field_name]
+            paramdef_field.check_python_type(value)
+            paramdef_field.check_range(value)
+            if paramdef_field.bit_count != -1:
+                field_bytes = bit_writer.write(value, paramdef_field.bit_count, paramdef_field.py_fmt)
             else:
-                packed_row += bit_writer.finish_field()
-                if issubclass(field.type_class, ft.basestring):
-                    packed_row += field.type_class.write(value, field.size)
-                elif field.type_class is ft.dummy8:
-                    packed_row += value  # already null bytes
+                field_bytes = bit_writer.finish_field()
+                if issubclass(paramdef_field.display_type, ft.basestring):
+                    field_bytes += paramdef_field.display_type.write(value, paramdef_field.size)
+                elif paramdef_field.display_type is ft.dummy8:
+                    field_bytes += value  # already null bytes
                 else:
-                    packed_row += struct.pack(field.fmt, value)
-        packed_row += bit_writer.finish_field()
-        return packed_row
+                    field_bytes += struct.pack(paramdef_field.py_fmt, value)
+            writer.append(field_bytes)
+        writer.append(bit_writer.finish_field())
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True, ignore_sizes=False) -> dict[str, tp.Any]:
-        data = {"name": self.name}
-        for field in self.paramdef.fields.values():
-            if ignore_pads and field.display_type == "dummy8":
+        data = {"raw_name": self.raw_name, "name": self.name, "fields": {}}
+        for paramdef_field in self.paramdef.fields.values():
+            if ignore_pads and paramdef_field.display_type == "dummy8":
                 continue  # pad bytes not written
-            if ignore_defaults and self.fields[field.name] == field.new_default:
+            if ignore_defaults and self.fields[paramdef_field.name] == paramdef_field.better_default:
                 continue  # default values not written
-            field_name = field.name.split(":")[0] if ignore_sizes else field.name
-            data[field_name] = self.fields[field.name]
+            field_name = paramdef_field.name.split(":")[0] if ignore_sizes else paramdef_field.name
+            data["fields"][field_name] = self.fields[paramdef_field.name]
         return data
 
     def compare(self, other_row: ParamRow):
         """Prints each field that differs between the given `ParamRow` and this one."""
-        for field_name, field in self.paramdef.fields.items():
+        for field_name, paramdef_field in self.paramdef.fields.items():
             other = other_row[field_name]
             this = self[field_name]
             if other != this:
@@ -206,109 +183,60 @@ class ParamRow:
 
     def __eq__(self, other_row: ParamRow):
         """Returns `True` if all fields have the same value, and `False` if not."""
-        for field_name, field in self.paramdef.fields.items():
+        for field_name, paramdef_field in self.paramdef.fields.items():
             other = other_row[field_name]
             this = self[field_name]
             if other != this:
-                if field.display_type == "dummy8":
+                if paramdef_field.display_type is ft.dummy8:
                     continue  # padding differences have no effect and do not count against equality
                 return False
         return True
 
 
+@dataclass(slots=True)
 class Param(GameFile, abc.ABC):
     """This base class supports all binary versions, but lacks information about game-specific enums, etc."""
 
-    GET_BUNDLED_PARAMDEF: tp.Callable = None
+    GET_BUNDLED_PARAMDEF: tp.ClassVar[tp.Callable] = None
 
-    @staticmethod
-    def GET_HEADER_STRUCT(flags1: ParamFlags1, byte_order) -> BinaryStruct:
-        fields = [
-            ("name_data_offset", "I"),
-            "2x" if (flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset else ("row_data_offset", "H"),
-            ("unknown", "H"),  # 0 or 1
-            ("paramdef_data_version", "H"),
-            ("row_count", "H"),
-        ]
-        if flags1.OffsetParam:
-            fields += [
-                "4x",
-                ("param_type_offset", "q"),
-                "20x",
-            ]
-        else:
-            fields.append(
-                ("param_type", "32j")
-            )
-        fields += [
-            ("big_endian", "b", 255 if byte_order == ">" else 0),
-            ("flags1", "b"),
-            ("flags2", "b"),
-            ("paramdef_format_version", "b"),
-        ]
-        if flags1[0] and flags1.IntDataOffset:
-            fields += [
-                ("row_data_offset", "i"),
-                "12x",
-            ]
-        elif flags1.LongDataOffset:
-            fields += [
-                ("row_data_offset", "q"),
-                "8x",
-            ]
-        return BinaryStruct(*fields, byte_order=byte_order)
+    @dataclass(slots=True)
+    class RowPointerStruct32(NewBinaryStruct):
+        row_id: int
+        data_offset: uint
+        name_offset: uint
 
-    ROW_STRUCT_32 = BinaryStruct(
-        # These are packed together, and contain offsets into packed row data and packed names.
-        ("id", "i"),
-        ("data_offset", "I"),
-        ("name_offset", "I"),
-    )
+    @dataclass(slots=True)
+    class RowPointerStruct64(NewBinaryStruct):
+        row_id: int
+        unknown: int  # not zero in DS2:SOFTS "generatordbglocation" params according to TKGP
+        data_offset: long
+        name_offset: long
 
-    ROW_STRUCT_64 = BinaryStruct(
-        # Same as above, but with 64-bit offsets.
-        ("id", "i"),
-        ("unknown", "i", 0),  # not zero in DS2:SOFTS "generatordbglocation" params according to TKGP
-        ("data_offset", "q"),
-        ("name_offset", "q"),
-    )
+    param_type: str
+    big_endian: bool = False
+    unknown: int = 0
+    flags1: ParamFlags1 = ParamFlags1(0)
+    flags2: ParamFlags2 = ParamFlags2(0)
+    paramdef_data_version: int = 0
+    paramdef_format_version: int = 0
 
-    rows: dict[int, ParamRow]
+    # Initially, rows are kept as just `(raw_name, name, row_bytes)` tuple, until `ParamDef` is applied.
+    row_bytes: dict[int, tuple[bytes, str, bytes]] | None = None
 
-    def __init__(self, param_source, dcx_type=None, paramdef_bnd=None, undecodable_row_names: tuple[bytes, ...] = ()):
-        if paramdef_bnd is None:
-            self._paramdef_bnd = self.GET_BUNDLED_PARAMDEF()
-        elif isinstance(paramdef_bnd, ParamDefBND):
-            self._paramdef_bnd = paramdef_bnd
-        else:
-            raise TypeError(
-                f"`paramdef_bnd` must be None or an existing `ParamDefBND` instance, not {type(paramdef_bnd)}."
-            )
-        self.param_type = ""  # internal name (shift_jis_2004) with capitals and underscores
-        self.byte_order = "<"
-        self.unknown = 0
-        self.flags1 = ParamFlags1(0)
-        self.flags2 = ParamFlags2(0)
-        self.paramdef_data_version = 0
-        self.paramdef_format_version = 0
-        self.undecodable_row_names = undecodable_row_names
-
-        self.rows = {}  # type: dict[int, ParamRow]
-
-        super().__init__(param_source, dcx_type=dcx_type)
+    # Generated by manual `unpack_rows()` call with `paramdef`.
+    rows: dict[int, ParamRow] = field(default_factory=dict)
+    paramdef: ParamDef = None
 
     def __getitem__(self, row_id):
         if row_id in self.rows:
             return self.rows[row_id]
         raise KeyError(f"No row with ID {row_id} in {self.param_type}.")
 
-    def __setitem__(self, row_index, row):
+    def __setitem__(self, row_id: int, row):
         if isinstance(row, dict):
-            if "name" not in row:
-                raise ValueError("New row must have a 'name' field.")
-            row = ParamRow(row, self._paramdef_bnd[self.param_type])
+            row = ParamRow(**row)
         if isinstance(row, ParamRow):
-            self.rows[row_index] = row
+            self.rows[row_id] = row
         else:
             raise TypeError("New row must be a `ParamRow` or a dictionary that contains all required fields.")
 
@@ -327,12 +255,8 @@ class Param(GameFile, abc.ABC):
     def __len__(self):
         return len(self.rows)
 
-    def pop(self, row_id):
+    def pop(self, row_id: int):
         return self.rows.pop(row_id)
-
-    @property
-    def paramdef(self):
-        return self._paramdef_bnd[self.param_type]
 
     @property
     def param_info(self):
@@ -341,12 +265,11 @@ class Param(GameFile, abc.ABC):
     @property
     def field_names(self):
         if self.paramdef.param_info:
-            return [field.name for field in self.paramdef.param_info["fields"]]
-        else:
-            return list(self.rows[0].fields.keys())
+            return [paramdef_field.name for paramdef_field in self.paramdef.param_info["fields"]]
+        return list(self.paramdef.fields.keys())
 
     @property
-    def nickname(self) -> tp.Optional[str]:
+    def nickname(self) -> str | None:
         """Could return None for ambiguous Params like 'PlayerBehaviors'. Handled externally."""
         if self.paramdef.param_info:
             return self.paramdef.param_info["nickname"]
@@ -354,231 +277,268 @@ class Param(GameFile, abc.ABC):
 
     # TODO: __repr__ method returns basic information about Param (but not entire row list).
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        self.byte_order = reader.default_byte_order = ">" if reader.unpack_value("B", offset=44) == 255 else "<"
-        version_info = reader.unpack("bbb", offset=45)
-        self.flags1 = ParamFlags1(version_info[0])
-        self.flags2 = ParamFlags2(version_info[1])
-        self.paramdef_format_version = version_info[2]
-        header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
-        header = reader.unpack_struct(header_struct)
-        try:
-            self.param_type = header["param_type"]
-        except KeyError:
-            self.param_type = reader.unpack_string(offset=header["param_type_offset"], encoding="utf-8")
-        self.paramdef_data_version = header["paramdef_data_version"]
-        self.unknown = header["unknown"]
-        # Row data offset in header not used. (It's an unsigned short, yet doesn't limit row count to 5461.)
-        name_data_offset = header["name_data_offset"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
+    def unpack_rows(self, paramdef_or_paramdefbnd: ParamDef | ParamDefBND | None = None):
+        if self.row_bytes is None:
+            _LOGGER.warning(f"Rows in `Param` with type '{self.param_type}' have already been unpacked from bytes.")
+            return
+
+        if paramdef_or_paramdefbnd is None:
+            paramdef_or_paramdefbnd = self.GET_BUNDLED_PARAMDEF()
+        if isinstance(paramdef_or_paramdefbnd, ParamDefBND):
+            try:
+                paramdef = paramdef_or_paramdefbnd[self.param_type]
+            except KeyError:
+                raise ValueError(f"Cannot find param type `{self.param_type}` in given `paramdefbnd`.")
+        elif not isinstance(paramdef_or_paramdefbnd, ParamDef):
+            raise TypeError("`unpack_rows()` must be called with a `ParamDefBND` (easier) or correct `ParamDef`.")
+        else:
+            paramdef = paramdef_or_paramdefbnd
+
+        if paramdef.param_type != self.param_type:
+            raise ValueError(
+                f"`Param.param_type` {self.param_type} does not match paramdef.param_type` {paramdef.param_type}."
+            )
+        if paramdef.data_version != self.paramdef_data_version:
+            raise ValueError(
+                f"`Param.paramdef_data_version` {self.paramdef_data_version} does not match "
+                f"`paramdef.data_version` {paramdef.data_version}."
+            )
+        # NOTE: `format_version` in Param is not correct/used.
+
+        # Note that we no longer need to track reader offset.
+        self.rows = {}
+        for row_id, (raw_name, name, data) in self.row_bytes.items():
+            self.rows[row_id] = ParamRow.from_reader(BinaryReader(data), paramdef, raw_name, name)
+
+        # Remove row bytes.
+        self.row_bytes = None
+
+    @classmethod
+    def from_reader(cls, reader: BinaryReader):
+        # Peek at struct-affecting info:
+        byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
+        version_info = reader.unpack("bbb", offset=0x2d)
+        flags1 = ParamFlags1(version_info[0])
+        flags2 = ParamFlags2(version_info[1])
+        paramdef_format_version = version_info[2]
+
+        name_data_offset = reader["I"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
+        _row_data_offset = reader["H"]  # NOT USED! It's an unsigned short, but can be larger.
+        if ((flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset) and _row_data_offset != 0:
+            raise ValueError(f"Expected `_row_data_offset` of zero in this `Param`, not: {_row_data_offset}")
+        unknown = reader["H"]
+        if unknown not in {0, 1}:
+            raise ValueError(f"Expected `unknown` of 0 or 1 in this `Param`, not: {unknown}")
+        paramdef_data_version = reader["H"]
+        row_count = reader["H"]
+
+        if flags1.OffsetParam:
+            reader.assert_pad(4)
+            param_type_offset = reader["q"]
+            param_type = reader.unpack_string(offset=param_type_offset, encoding="ASCII")  # e.g. 'NPC_PARAM_ST'
+            reader.assert_pad(20)
+        else:
+            param_type = reader.unpack_string(length=32, encoding="ASCII")
+
+        reader.read(4)  # big endian, flags1, flags2, paramdef_format_version
+
+        if flags1[0] and flags1.IntDataOffset:
+            _row_data_offset = reader["i"]  # not needed while unpacking
+            reader.assert_pad(12)
+        elif flags1.LongDataOffset:
+            _row_data_offset = reader["q"]  # not needed while unpacking
+            reader.assert_pad(8)
+        # End of header.
 
         # Load row pointer data.
-        row_struct = self.ROW_STRUCT_64 if self.flags1.LongDataOffset else self.ROW_STRUCT_32
-        row_pointers = reader.unpack_structs(row_struct, count=header["row_count"])
+        row_pointer_struct_type = cls.RowPointerStruct64 if flags1.LongDataOffset else cls.RowPointerStruct32
+        row_pointer_structs = [row_pointer_struct_type.from_bytes(reader) for _ in range(row_count)]
+
+        # Reliable row data offset (unlike header one).
         row_data_offset = reader.position  # Reliable row data offset.
 
-        # Row size is lazily determined. TODO: Unpack row data in sequence and associate with names separately.
-        if len(row_pointers) == 0:
+        # Row size is lazily determined.
+        if len(row_pointer_structs) == 0:
             return
-        elif len(row_pointers) == 1:
+        elif len(row_pointer_structs) == 1:
             # NOTE: The only vanilla param in Dark Souls with one row is LEVELSYNC_PARAM_ST (Remastered only),
             # for which the row size is hard-coded here. Otherwise, we can trust the repacked offset from Soulstruct
             # (and SoulsFormats, etc.).
-            if self.param_type == "LEVELSYNC_PARAM_ST":
+            if param_type == "LEVELSYNC_PARAM_ST":
                 row_size = 220
-            else:
+            else:  # best guess
                 row_size = name_data_offset - row_data_offset
-        else:
-            row_size = row_pointers[1]["data_offset"] - row_pointers[0]["data_offset"]
+        else:  # most reliable: just use difference between first two row pointer data offsets
+            row_size = row_pointer_structs[1].data_offset - row_pointer_structs[0].data_offset
 
         # Note that we no longer need to track reader offset.
-        name_encoding = self.get_name_encoding()
-        for row_struct in row_pointers:
-            reader.seek(row_struct["data_offset"])
+        row_bytes = {}
+        name_encoding = cls.get_name_encoding(byte_order == ByteOrder.BigEndian, flags2)
+        # TODO: Would be more efficient to unpack row data in sequence and assign row names afterwards.
+        for row_struct in row_pointer_structs:
+            reader.seek(row_struct.data_offset)
             row_data = reader.read(row_size)
-            if row_struct["name_offset"] != 0:
+            raw_name = b""
+            name = ""
+            if row_struct.name_offset != 0:
+                reader.seek(row_struct.name_offset)
+                raw_name = reader.unpack_bytes()  # null-terminated raw name
                 try:
-                    name = reader.unpack_string(
-                        offset=row_struct["name_offset"],
-                        encoding=name_encoding,
-                        reset_old_offset=False,  # no need to reset
-                    )
-                except UnicodeDecodeError as ex:
-                    if ex.object in self.undecodable_row_names:
-                        name = reader.unpack_bytes(
-                            offset=row_struct["name_offset"],
-                            reset_old_offset=False,  # no need to reset
-                        )
-                    else:
-                        raise ValueError(
-                            f"Could not use '{name_encoding}' to decode {self.param_type} row name bytes: {ex.object}"
-                        )
-                except ValueError:
-                    reader.seek(row_struct["name_offset"])
-                    _LOGGER.error(
-                        f"Error encountered while parsing row name string in {self.param_type}.\n"
-                        f"    Header: {header}\n"
-                        f"    Row Struct: {row_struct}\n"
-                        f"    30 chrs of name data: {' '.join(f'{{:02x}}'.format(x) for x in reader.read(30))}"
-                    )
-                    raise
+                    name = raw_name.decode(name_encoding)
+                except UnicodeDecodeError:
+                    # For whatever reason, some vanilla row names are junk (notably in DS1 DrawParam).
+                    pass
+            if row_struct.row_id in row_bytes:
+                _LOGGER.warning(f"Repeated param row ID in {param_type}: {row_struct.row_id}. Only first will be kept.")
             else:
-                name = ""
-            self.rows[row_struct["id"]] = ParamRow.unpack(row_data, self.paramdef, name=name)
+                row_bytes[row_struct.row_id] = (raw_name, name, row_data)
 
-    def pack(self, sort=True):
+        return cls(
+            param_type,
+            big_endian=ByteOrder == ByteOrder.BigEndian,
+            unknown=unknown,
+            flags1=flags1,
+            flags2=flags2,
+            paramdef_data_version=paramdef_data_version,
+            paramdef_format_version=paramdef_format_version,
+            row_bytes=row_bytes,
+        )
+
+    def sort(self):
+        """Sort rows by ID."""
+        self.rows = {row_id: self.rows[row_id] for row_id in sorted(self.rows)}
+
+    def to_writer(self, sort=True) -> BinaryWriter:
         # if len(self.entries) > 5461:
         #     raise SoulstructError(
         #         f"Param {self.param_type} has {len(self.entries)} entries, which is more than a "
         #         f"DS1 Param can store (5461). Remove some entries before packing it.")
 
-        row_ids = sorted(self.rows) if sort else self.rows
-
-        current_name_offset = 0
-        name_offset_list = []
-        data_offset = 0
-        data_offset_list = []
-        packed_names = b""
-        packed_data = b""
-        name_encoding = self.get_name_encoding()
-
-        for row_id in row_ids:
-            row = self.rows[row_id]
-
-            # Pack names with relative offsets (to be globally offset later).
-            if row.name in self.undecodable_row_names:
-                name_z_str = row.name + (b"\0\0" if self.flags2.UnicodeRowNames else b"\0")  # name was never decoded
-            else:
-                name_z_str = row.name.encode(name_encoding) + (b"\0\0" if self.flags2.UnicodeRowNames else b"\0")
-            packed_names += name_z_str
-            name_offset_list.append(current_name_offset)
-            current_name_offset += len(name_z_str)
-
-            # Pack row data.
-            packed_row = row.pack()
-            packed_data += packed_row
-            data_offset_list.append(data_offset)
-            data_offset += len(packed_row)
-
-        header_struct = self.GET_HEADER_STRUCT(self.flags1, self.byte_order)
-        if "param_type_offset" in header_struct.field_names:
-            raise NotImplementedError("Soulstruct cannot yet pack/write this 2016+ version of `Param`.")
-        row_pointer_struct = self.ROW_STRUCT_64 if self.flags1.LongDataOffset else self.ROW_STRUCT_32
-        row_pointers_offset = header_struct.size
-        row_data_offset = row_pointers_offset + row_pointer_struct.size * len(self.rows)
-        name_data_offset = row_data_offset + len(packed_data)
-
-        # Entries.
-        row_pointer_data = b""
-        for i, row_id in enumerate(row_ids):
-            row_pointer_data += row_pointer_struct.pack(
-                id=row_id,
-                data_offset=row_data_offset + data_offset_list[i],
-                name_offset=name_data_offset + name_offset_list[i],
+        if self.row_bytes is not None and self.rows:
+            raise ValueError(
+                "Param has both raw `row_bytes` and unpacked `rows`. Cannot pack. "
+                "Only use `unpack_rows()` to unpack the raw data."
             )
+        row_count = len(self.row_bytes) if self.row_bytes is not None else len(self.rows)
 
-        # Header.
-        header_fields = dict(
-            name_data_offset=name_data_offset,
-            unknown=self.unknown,
-            paramdef_data_version=self.paramdef_data_version,
-            row_count=len(self.rows),
-            param_type=self.param_type,
-            flags1=self.flags1.pack(),
-            flags2=self.flags2.pack(),
-            paramdef_format_version=self.paramdef_format_version,
+        self.sort()
+
+        byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
+        writer = BinaryWriter(byte_order=byte_order)  # no varints
+
+        writer.reserve("I", "name_data_offset", self)
+        writer.reserve("H", "_row_data_offset", self)  # unsigned short, but can be larger
+        writer.pack("HHH", self.unknown, self.paramdef_data_version, row_count)
+
+        if self.flags1.OffsetParam:
+            writer.pad(4)
+            writer.reserve("q", "param_type_offset", self)
+            writer.pad(20)
+        else:
+            writer.append(pad_chars(self.param_type, encoding="ASCII", null_terminate=False, alignment=32))
+
+        writer.pack(
+            "4b", -1 if self.big_endian else 0, self.flags1.pack(), self.flags2.pack(), self.paramdef_format_version
         )
-        if (self.flags1[0] and self.flags1.IntDataOffset) or self.flags1.LongDataOffset:
-            header_fields["row_data_offset"] = row_data_offset
-        else:
-            # Clamp to maximum ushort value. (Not used anyway.)
-            header_fields["row_data_offset"] = min(row_data_offset, 2 ** 16 - 1)  # not actually used anyway
-        header = header_struct.pack(header_fields)
-        return header + row_pointer_data + packed_data + packed_names
 
-    def load_dict(self, data: dict, clear_old_data=True):
-        if "rows" not in data:
-            raise KeyError("Field `rows` not specified in `Param` dict.")
-        try:
-            byte_order = ">" if data.pop("big_endian") else "<"
-        except KeyError:
-            raise KeyError("Field `big_endian` not specified in `Param` dict.")
-        if not clear_old_data:
-            if byte_order != self.byte_order:
-                raise ValueError(f"New byte order '{byte_order}' does not match old byte order '{self.byte_order}'.")
-        else:
-            self.byte_order = byte_order
-        for field in (
-            "param_type",
-            "unknown",
-            "paramdef_data_version",
-            "paramdef_format_version",
-            "undecodable_row_names",
-        ):
-            try:
-                value = data.pop(field)
-            except KeyError:
-                raise KeyError(f"Field `{field}` not specified in `Param` dict.")
-            if not clear_old_data:
-                if value != getattr(self, field):
-                    raise ValueError(
-                        f"New `{field}` value {repr(value)} does not match old value {repr(getattr(self, field))}."
-                    )
+        if self.flags1[0] and self.flags1.IntDataOffset:
+            writer.reserve("i", "row_data_offset", self)
+            writer.pad(12)
+        elif self.flags1.LongDataOffset:
+            writer.reserve("q", "row_data_offset", self)
+            writer.pad(8)
+        # End of header.
+
+        # Pack row pointers.
+        for row_id in (self.row_bytes if self.row_bytes is not None else self.rows):
+            writer.pack("i", row_id)
+            if self.flags1.LongDataOffset:
+                writer.pad(4)
+                writer.reserve("q", f"row_data_offset{row_id}")
+                writer.reserve("q", f"name_data_offset{row_id}")
             else:
-                setattr(self, field, value)
+                writer.reserve("i", f"row_data_offset{row_id}",)
+                writer.reserve("i", f"name_data_offset{row_id}")
 
-        try:
-            flags1 = ParamFlags1(data.pop("flags1"))
-        except KeyError:
-            raise KeyError("Field `flags1` not specified in `Param` dict.")
-        try:
-            flags2 = ParamFlags2(data.pop("flags2"))
-        except KeyError:
-            raise KeyError("Field `flags2` not specified in `Param` dict.")
-        if not clear_old_data:
-            if flags1 != self.flags1:
-                raise ValueError(f"New `flags1` value {flags1} does not match old value {self.flags1}.")
-            if flags2 != self.flags2:
-                raise ValueError(f"New `flags2` value {flags2} does not match old value {self.flags2}.")
+        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1), self)
+        writer.fill_with_position("row_data_offset", self)
+
+        if self.row_bytes is not None:  # rows have not been unpacked
+            for row_id, (_, _, data) in self.row_bytes.items():
+                writer.fill_with_position(f"row_data_offset{row_id}")
+                writer.append(data)
         else:
-            self.flags1 = flags1
-            self.flags2 = flags2
+            # Pack row data.
+            for row_id, row in self.rows.items():
+                writer.fill_with_position(f"row_data_offset{row_id}")
+                row.to_param_writer(writer)
 
-        if clear_old_data:
-            self.rows = {}
-        for i, row in data["rows"].items():
-            try:
-                i = int(i)
-            except (ValueError, TypeError):
-                raise KeyError(f"All keys of 'rows' dict in `Param` dict must be integers, not {i}.")
-            if isinstance(row, ParamRow):
-                self.rows[i] = row
-            else:
-                try:
-                    self.rows[i] = ParamRow(row, paramdef=self._paramdef_bnd[self.param_type])
-                except Exception as ex:
-                    raise ValueError(f"Could not load value of `rows[{i}]` into a `ParamRow`. Error: {ex}")
+        if self.flags1.OffsetParam:
+            writer.fill_with_position("param_type_offset", self)
+            writer.append(self.param_type.encode("ASCII") + b"\0")
+
+        # Pack row names.
+        name_encoding = self.get_name_encoding(self.big_endian, self.flags2)
+        if self.row_bytes is not None:
+            for row_id, (raw_name, name, _) in self.row_bytes.items():
+                writer.fill_with_position(f"row_name_offset{row_id}")
+                raw_name = name.encode(name_encoding) if name else raw_name
+                raw_name = raw_name.rstrip(b"\0") + (b"\0\0" if self.flags2.UnicodeRowNames else b"\0")
+                writer.append(raw_name)
+        else:
+            for row_id, row in self.rows.items():
+                writer.fill_with_position(f"row_name_offset{row_id}")
+                raw_name = row.name.encode(name_encoding) if row.name else row.raw_name
+                raw_name = raw_name.rstrip(b"\0") + (b"\0\0" if self.flags2.UnicodeRowNames else b"\0")
+                writer.append(raw_name)
+
+        return writer
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """Convert flags integers to `ParamFlagsX`."""
+        data["flags1"] = ParamFlags1(int(data.pop("flags1", 0)))
+        data["flags2"] = ParamFlags1(int(data.pop("flags2", 0)))
+        return super().from_dict(data)
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True):
+        """Provides options to ignore pad fields and/or fields with default values."""
+        if self.row_bytes is not None:
+            raise ValueError(f"Param '{self.param_type}' has not had its rows unpacked yet. Cannot convert to dict.")
         data = {
             "param_type": self.param_type,
-            "big_endian": True if self.byte_order == ">" else False,
+            # `paramdef` not added.
+            "big_endian": self.big_endian,
             "unknown": self.unknown,
             "paramdef_data_version": self.paramdef_data_version,
             "flags1": self.flags1.pack(),
             "flags2": self.flags2.pack(),
             "paramdef_format_version": self.paramdef_format_version,
-            "undecodable_row_names": self.undecodable_row_names,
             "rows": {},
         }
         for i in sorted(self.rows):
             data["rows"][i] = self.rows[i].to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
         return data
 
-    def get_range(self, start, count):
-        return [(param_id, self[param_id]) for param_id in sorted(self.rows)[start: start + count]]
+    def write_json(
+        self, file_path: Path | str = None, encoding="utf-8", indent=4, ignore_pads=True, ignore_defaults=True
+    ):
+        """Extra arguments passed through to `Param.to_dict()`."""
+        json_dict = self.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
+        if file_path is None:
+            if self.path is None:
+                raise ValueError("You must specify `file_path` because file default `path` has not been set.")
+            file_path = self.path
+        file_path = Path(file_path)
+        if file_path.suffix != ".json":
+            file_path = file_path.with_suffix(file_path.suffix + ".json")
+        write_json(file_path, json_dict, indent=indent, encoding=encoding)
 
-    def get_name_encoding(self):
-        if self.flags2.UnicodeRowNames:
-            return "utf-16-be" if self.byte_order == ">" else "utf-16-le"
-        else:
-            return "shift_jis_2004"
+    def get_range(self, start, count):
+        return [(row_id, self[row_id]) for row_id in sorted(self.rows)[start:start + count]]
+
+    @staticmethod
+    def get_name_encoding(big_endian: bool, flags2: ParamFlags2):
+        if flags2.UnicodeRowNames:
+            return "utf-16-be" if big_endian else "utf-16-le"
+        return "shift_jis_2004"

@@ -8,7 +8,6 @@ from soulstruct.base.params.draw_param import (
     DrawParamBND as _BaseDrawParamBND,
     DrawParamDirectory as _BaseDrawParamDirectory,
 )
-from soulstruct.games import DarkSoulsDSRType
 
 from .core import Param
 from .paramdef import GET_BUNDLED_PARAMDEF

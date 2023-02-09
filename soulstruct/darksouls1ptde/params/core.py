@@ -3,69 +3,76 @@ from __future__ import annotations
 __all__ = ["Param", "GameParamBND"]
 
 import typing as tp
+from dataclasses import dataclass
 
-from soulstruct.containers.bnd import BND3
-from soulstruct.games import DarkSoulsPTDEType
-from soulstruct.darksouls1ptde.game_types.param_types import *
-from soulstruct.darksouls1ptde.constants import BEHAVIOR_SUB_ID, PLAYER_WEAPON_BEHAVIOR_VARIATIONS
+from soulstruct.games import DARK_SOULS_PTDE
+from soulstruct.bloodborne.game_types import *
+from soulstruct.containers import BinderVersion
+from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND, param_property
 from soulstruct.base.params.param import Param as _BaseParam
-from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND
+from soulstruct.utilities.misc import BiDict
+from soulstruct.darksouls1ptde.constants import PLAYER_WEAPON_BEHAVIOR_VARIATIONS, BEHAVIOR_SUB_ID
 
-from .paramdef import ParamDefBND, GET_BUNDLED_PARAMDEF
+from .paramdef import GET_BUNDLED_PARAMDEF
 
 if tp.TYPE_CHECKING:
-    from soulstruct.darksouls1ptde.text.msg_directory import MSGDirectory
+    from ..text.msg_directory import MSGDirectory
 
 
+@dataclass(slots=True)
 class Param(_BaseParam):
     GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
 
 
-class GameParamBND(_BaseGameParamBND, DarkSoulsPTDEType, BND3):
-    Param = Param
-    ParamDefBND = ParamDefBND
+@dataclass(slots=True)
+class GameParamBND(_BaseGameParamBND):
+    Param: tp.ClassVar = Param
 
-    PARAM_NICKNAMES = {
-        "AtkParam_Npc": "NonPlayerAttacks",
-        "AtkParam_Pc": "PlayerAttacks",
-        "BehaviorParam": "NonPlayerBehaviors",
-        "BehaviorParam_PC": "PlayerBehaviors",
-    }
+    PARAM_NICKNAMES: tp.ClassVar = BiDict(
+        ("AtkParam_Npc", "NonPlayerAttacks"),
+        ("AtkParam_Pc", "PlayerAttacks"),
+        ("BehaviorParam", "NonPlayerBehaviors"),
+        ("BehaviorParam_PC", "PlayerBehaviors"),
+    )
 
-    AI: Param
-    Armor: Param
-    ArmorUpgrades: Param
-    Bosses: Param
-    Bullets: Param
-    Cameras: Param
-    Characters: Param
-    Dialogue: Param
-    Faces: Param
-    Goods: Param
-    GrowthCurves: Param
-    ItemLots: Param
-    NonPlayerAttacks: Param
-    NonPlayerBehaviors: Param
-    MenuColors: Param
-    Movement: Param
-    Objects: Param
-    ObjectActivations: Param
-    Players: Param
-    PlayerAttacks: Param
-    PlayerBehaviors: Param
-    Rings: Param
-    Shops: Param
-    SpecialEffects: Param
-    SpecialEffectVisuals: Param
-    Spells: Param
-    Terrains: Param
-    Throws: Param
-    UpgradeMaterials: Param
-    Weapons: Param
-    WeaponUpgrades: Param
+    dcx_type = DARK_SOULS_PTDE.default_dcx_type
+    version: BinderVersion = BinderVersion.V3
+    v4_info = None
+
+    AI = param_property("AI")  # type: Param
+    Armor = param_property("Armor")  # type: Param
+    ArmorUpgrades = param_property("ArmorUpgrades")  # type: Param
+    Bosses = param_property("Bosses")  # type: Param
+    Bullets = param_property("Bullets")  # type: Param
+    Cameras = param_property("Cameras")  # type: Param
+    Characters = param_property("Characters")  # type: Param
+    Dialogue = param_property("Dialogue")  # type: Param
+    Faces = param_property("Faces")  # type: Param
+    Goods = param_property("Goods")  # type: Param
+    GrowthCurves = param_property("GrowthCurves")  # type: Param
+    ItemLots = param_property("ItemLots")  # type: Param
+    NonPlayerAttacks = param_property("NonPlayerAttacks")  # type: Param
+    NonPlayerBehaviors = param_property("NonPlayerBehaviors")  # type: Param
+    MenuColors = param_property("MenuColors")  # type: Param
+    Movement = param_property("Movement")  # type: Param
+    Objects = param_property("Objects")  # type: Param
+    ObjectActivations = param_property("ObjectActivations")  # type: Param
+    Players = param_property("Players")  # type: Param
+    PlayerAttacks = param_property("PlayerAttacks")  # type: Param
+    PlayerBehaviors = param_property("PlayerBehaviors")  # type: Param
+    Rings = param_property("Rings")  # type: Param
+    Shops = param_property("Shops")  # type: Param
+    SpecialEffects = param_property("SpecialEffects")  # type: Param
+    SpecialEffectVisuals = param_property("SpecialEffectVisuals")  # type: Param
+    Spells = param_property("Spells")  # type: Param
+    Terrains = param_property("Terrains")  # type: Param
+    Throws = param_property("Throws")  # type: Param
+    UpgradeMaterials = param_property("UpgradeMaterials")  # type: Param
+    Weapons = param_property("Weapons")  # type: Param
+    WeaponUpgrades = param_property("WeaponUpgrades")  # type: Param
 
     # Also defines display order.
-    PARAM_TYPES = {
+    PARAM_TYPES: tp.ClassVar = {
         "Players": PlayerParam,
         "Characters": CharacterParam,
         "PlayerBehaviors": BehaviorParam,
@@ -117,7 +124,7 @@ class GameParamBND(_BaseGameParamBND, DarkSoulsPTDEType, BND3):
         for item_type_check, param_table, text_dict in zip(
             ("weapon", "armor", "ring", "good", "spell"),
             (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
-            (text.WeaponNames, text.ArmorNames, text.AccessoryNames, text.GoodNames, text.SpellNames),
+            (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
         ):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_entry in param_table.items():

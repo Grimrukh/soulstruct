@@ -4,14 +4,13 @@ __all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
 
 import logging
 import typing as tp
+from dataclasses import dataclass
 
-from soulstruct.games import BloodborneType
 from soulstruct.base.params.paramdef import (
     ParamDefField as _BaseParamDefField,
     ParamDef as _BaseParamDef,
     ParamDefBND as _BaseParamDefBND,
 )
-from soulstruct.utilities.binary import BinaryStruct
 
 from .display_info import get_param_info, get_param_info_field
 
@@ -22,31 +21,24 @@ _LOGGER = logging.getLogger(__name__)
 _BUNDLED = None
 
 
+@dataclass(slots=True)
 class ParamDefField(_BaseParamDefField):
 
     def get_display_info(self, row: ParamRow):
         try:
-            field_info = get_param_info_field(self.param_name, self.name)
+            field_info = get_param_info_field(self.param_type, self.name)
         except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
         return field_info(row)
 
 
+@dataclass(slots=True)
 class ParamDef(_BaseParamDef):
-    BYTE_ORDER = "<"
-    HEADER_STRUCT = BinaryStruct(
-        ("size", "i"),
-        ("header_size", "H", 255),
-        ("data_version", "H"),
-        ("field_count", "H"),
-        ("field_size", "H", 208),
-        ("param_name", "32j"),
-        ("big_endian", "B", 0),
-        ("unicode", "?"),
-        ("format_version", "h", 201),
-        ("unk1", "q", 56),
-    )
-    FIELD_CLASS = ParamDefField
+
+    FIELD_CLASS: tp.ClassVar = ParamDefField
+
+    unicode: bool = True
+    format_version = 201
 
     @property
     def param_info(self):
@@ -57,13 +49,14 @@ class ParamDef(_BaseParamDef):
             return None
 
 
-class ParamDefBND(_BaseParamDefBND, BloodborneType):
-    PARAMDEF_CLASS = ParamDef
+@dataclass(slots=True)
+class ParamDefBND(_BaseParamDefBND):
+    PARAMDEF_CLASS: tp.ClassVar = ParamDef
 
 
 def GET_BUNDLED_PARAMDEF() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
-        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.GAME.name}.")
+        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.get_game().name}.")
         _BUNDLED = ParamDefBND()
     return _BUNDLED

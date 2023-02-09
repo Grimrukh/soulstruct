@@ -1,20 +1,23 @@
 from __future__ import annotations
 
-__all__ = ["TalkESDBND"]
+__all__ = ["MSGBND"]
 
 import typing as tp
 from dataclasses import dataclass
 
-from soulstruct.base.ezstate.talkesdbnd import TalkESDBND as _BaseTalkESDBND
+from soulstruct.base.text.msgbnd import MSGBND as _BaseMSGBND
 from soulstruct.containers import BinderVersion, BinderFlags
 from soulstruct.games import DARK_SOULS_DSR
 
-from .esd import TalkESD
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "MSGBND"
 
 
 @dataclass(slots=True)
-class TalkESDBND(_BaseTalkESDBND):
-    TALK_ESD_CLASS: tp.ClassVar = TalkESD
+class MSGBND(_BaseMSGBND):
+    """Subclassed by games to set default binder/entry path."""
 
     dcx_type = DARK_SOULS_DSR.default_dcx_type
     signature = "07D7R6"
@@ -27,4 +30,4 @@ class TalkESDBND(_BaseTalkESDBND):
 
     @classmethod
     def get_default_entry_path(cls, entry_name: str):
-        return f"N:\\FRPG\\data\\INTERROOT_x64\\script\\talk\\{entry_name}"
+        return f"N:\\FRPG\\data\\Msg\\Data_ENGLISH\\{entry_name}"

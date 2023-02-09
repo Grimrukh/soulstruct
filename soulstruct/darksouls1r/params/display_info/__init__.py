@@ -9,16 +9,16 @@ from soulstruct.darksouls1ptde.params.display_info import *
 from .items import EQUIP_PARAM_WEAPON_ST
 
 
-def get_param_info(param_name: str) -> dict:
+def get_param_info(param_type: str) -> dict:
     try:
-        return globals()[param_name]
+        return globals()[param_type]
     except KeyError:
-        raise KeyError(f"Could not find Param info for {param_name}.")
+        raise KeyError(f"Could not find Param info for {param_type}.")
 
 
-def get_param_info_field(param_name: str, field_name: str) -> FieldDisplayInfo:
-    param_info = get_param_info(param_name)
+def get_param_info_field(param_type: str, field_name: str) -> FieldDisplayInfo:
+    param_info = get_param_info(param_type)
     field_hits = [field for field in param_info["fields"] if field.name == field_name]
     if not field_hits:
-        raise ValueError(f"Could not find field {field_name} in param {param_name}.")
+        raise ValueError(f"Could not find field {field_name} in param {param_type}.")
     return field_hits[0]

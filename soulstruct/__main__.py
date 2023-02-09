@@ -189,7 +189,7 @@ def soulstruct_main(ss_args) -> bool:
     if ss_args.binderunpack is not None:
         from soulstruct.containers import Binder
         binder = Binder(ss_args.binderunpack)
-        binder.write_unpacked_dir()
+        binder.write_unpacked_directory()
         return False
 
     if ss_args.tpfunpack is not None:
