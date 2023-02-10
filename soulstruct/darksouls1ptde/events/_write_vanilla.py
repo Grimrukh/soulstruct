@@ -1,9 +1,9 @@
-from soulstruct.darksouls1ptde.events.emevd_directory import EMEVDDirectory
+from soulstruct.darksouls1ptde.events.emevd_directory import EventDirectory
 from soulstruct.config import PTDE_PATH
 
 
 def main():
-    ed = EMEVDDirectory(PTDE_PATH + "/event")
+    ed = EventDirectory(PTDE_PATH + "/event")
     ed.write_evs("vanilla")
 
     # For fun.
@@ -13,7 +13,7 @@ def main():
         lines += len(evs_file.read_text().splitlines())
 
     # Test EVS read.
-    EMEVDDirectory("vanilla")
+    EventDirectory("vanilla")
     print("PTDE `vanilla` events successfully written and re-read.")
     print(f"Total EVS line count: {lines}")
 

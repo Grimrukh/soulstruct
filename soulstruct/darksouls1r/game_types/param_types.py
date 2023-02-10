@@ -38,7 +38,7 @@ __all__ = [
     "WeaponUpgradeParam",
 
     "FogParam",
-    "AmbientLightParam",
+    "BakedLightParam",
     "ScatteredLightParam",
     "PointLightParam",
     "LensFlareParam",

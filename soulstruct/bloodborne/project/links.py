@@ -4,11 +4,9 @@ __all__ = ["WindowLinker"]
 
 import typing as tp
 
-from soulstruct.base.project.links import WindowLinker as _BaseWindowLinker, BaseLink, ParamsLink
+from soulstruct.base.project.links import WindowLinker as _BaseWindowLinker, BaseLink, ParamsLink, BrokenLink
 from soulstruct.containers import Binder
 from soulstruct.bloodborne.game_types.param_types import *
-from soulstruct.bloodborne.maps.models import MSBModelList
-from soulstruct.bloodborne.maps.enums import MSBModelSubtype
 
 if tp.TYPE_CHECKING:
     from .window import ProjectWindow
@@ -83,32 +81,31 @@ class WindowLinker(_BaseWindowLinker):
         else:
             return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-    def validate_model_subtype(self, model_subtype: MSBModelSubtype, name: str, map_id: str):
+    def validate_model_subtype(self, model_subtype_name: str, name: str, map_id: str):
         """Check appropriate game model files to confirm the given model name is valid.
 
         Note that Character and Object models don't actually need `map_id` to validate them.
         """
-        model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
 
         dcx = ".dcx" if self.project.GAME.default_dcx_type else ""
 
-        if model_subtype == MSBModelSubtype.Character:
+        if model_subtype_name == "Characters":
             if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.Object:
+        elif model_subtype_name == "Objects":
             if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.MapPiece:
+        elif model_subtype_name == "MapPieces":
             if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.Collision:
+        elif model_subtype_name == "Collisions":
             # TODO: Rough BHD string scan until I have that file format.
             hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
             if hkxbhd_path.is_file():
                 with hkxbhd_path.open("r") as f:
                     if name + "A10.hkx" in f.read():
                         return True
-        elif model_subtype == MSBModelSubtype.Navmesh:
+        elif model_subtype_name == "Navmeshes":
             nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
             if nvmbnd_path.is_file():
                 navmesh_bnd = Binder(nvmbnd_path)

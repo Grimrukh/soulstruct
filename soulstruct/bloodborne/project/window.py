@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+__all__ = ["ProjectWindow"]
+
 # from soulstruct.models.bloodborne import CHARACTER_MODELS
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 

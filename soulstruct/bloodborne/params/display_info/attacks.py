@@ -1,21 +1,21 @@
 __all__ = ["ATK_PARAM_ST", "THROW_INFO_BANK"]
 
-from soulstruct.base.params.utils import FieldDisplayInfo, pad_field, bit_pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.bloodborne.game_types import *
 
 
 ATK_PARAM_ST = {
-    "paramdef_name": "ATK_PARAM_ST",
+    "param_type": "ATK_PARAM_ST",
     "file_name": "AtkParam_Pc",  # also AtkParam_Npc
     "nickname": None,
     "fields": [
-        FieldDisplayInfo("hit0_Radius", "Hitbox0Radius", True, float, "Radius of sphere/capsule hitbox (slot 0)."),
-        FieldDisplayInfo("hit1_Radius", "Hitbox1Radius", True, float, "Radius of sphere/capsule hitbox (slot 1)."),
-        FieldDisplayInfo("hit2_Radius", "Hitbox2Radius", True, float, "Radius of sphere/capsule hitbox (slot 2)."),
-        FieldDisplayInfo("hit3_Radius", "Hitbox3Radius", True, float, "Radius of sphere/capsule hitbox (slot 3)."),
-        FieldDisplayInfo("knockbackDist", "KnockbackDistance", True, float, "Knockback distance of attack."),
-        FieldDisplayInfo(
+        ParamFieldInfo("hit0_Radius", "Hitbox0Radius", True, float, "Radius of sphere/capsule hitbox (slot 0)."),
+        ParamFieldInfo("hit1_Radius", "Hitbox1Radius", True, float, "Radius of sphere/capsule hitbox (slot 1)."),
+        ParamFieldInfo("hit2_Radius", "Hitbox2Radius", True, float, "Radius of sphere/capsule hitbox (slot 2)."),
+        ParamFieldInfo("hit3_Radius", "Hitbox3Radius", True, float, "Radius of sphere/capsule hitbox (slot 3)."),
+        ParamFieldInfo("knockbackDist", "KnockbackDistance", True, float, "Knockback distance of attack."),
+        ParamFieldInfo(
             "hitStopTime",
             "HitStopTime",
             True,
@@ -23,42 +23,42 @@ ATK_PARAM_ST = {
             "Unclear. This isn't hitbox duration, which is determined by the duration of the triggering TAE "
             "event. It may be the duration of the 'hit' flag on the target. Always set to 0, 0.08. or 0.11.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectId0",
             "SpecialEffectOnHit0",
             True,
             SpecialEffectParam,
             "Special effect applied to target on hit (slot 0).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectId1",
             "SpecialEffectOnHit1",
             True,
             SpecialEffectParam,
             "Special effect applied to target on hit (slot 1).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectId2",
             "SpecialEffectOnHit2",
             True,
             SpecialEffectParam,
             "Special effect applied to target on hit (slot 2).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectId3",
             "SpecialEffectOnHit3",
             True,
             SpecialEffectParam,
             "Special effect applied to target on hit (slot 3).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectId4",
             "SpecialEffectOnHit4",
             True,
             SpecialEffectParam,
             "Special effect applied to target on hit (slot 4).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit0_DmyPoly1",
             "Hitbox0StartModelPoint",
             True,
@@ -66,7 +66,7 @@ ATK_PARAM_ST = {
             "Model point at origin of hitbox (slot 0). If Hitbox0EndModelPoint is not -1, the hitbox will be a "
             "capsule with hemispherical caps positioned at these origins (with a joining cylinder).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit1_DmyPoly1",
             "Hitbox1StartModelPoint",
             True,
@@ -74,7 +74,7 @@ ATK_PARAM_ST = {
             "Model point at origin of hitbox (slot 1). If Hitbox1EndModelPoint is not -1, the hitbox will be a "
             "capsule with hemispherical caps positioned at these origins (with a joining cylinder).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit2_DmyPoly1",
             "Hitbox2StartModelPoint",
             True,
@@ -82,7 +82,7 @@ ATK_PARAM_ST = {
             "Model point at origin of hitbox (slot 2). If Hitbox2EndModelPoint is not -1, the hitbox will be a "
             "capsule with hemispherical caps positioned at these origins (with a joining cylinder).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit3_DmyPoly1",
             "Hitbox3StartModelPoint",
             True,
@@ -90,7 +90,7 @@ ATK_PARAM_ST = {
             "Model point at origin of hitbox (slot 3). If Hitbox3EndModelPoint is not -1, the hitbox will be a "
             "capsule with hemispherical caps positioned at these origins (with a joining cylinder).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit0_DmyPoly2",
             "Hitbox0EndModelPoint",
             True,
@@ -98,7 +98,7 @@ ATK_PARAM_ST = {
             "Model point at end of capsule hitbox (slot 0). If this is -1, the hitbox will be a sphere placed at "
             "Hitbox0StartModelPoint.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit1_DmyPoly2",
             "Hitbox1EndModelPoint",
             True,
@@ -106,7 +106,7 @@ ATK_PARAM_ST = {
             "Model point at end of capsule hitbox (slot 1). If this is -1, the hitbox will be a sphere placed at "
             "Hitbox1StartModelPoint.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit2_DmyPoly2",
             "Hitbox2EndModelPoint",
             True,
@@ -114,7 +114,7 @@ ATK_PARAM_ST = {
             "Model point at end of capsule hitbox (slot 2). If this is -1, the hitbox will be a sphere placed at "
             "Hitbox2StartModelPoint.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit3_DmyPoly2",
             "Hitbox3EndModelPoint",
             True,
@@ -122,8 +122,8 @@ ATK_PARAM_ST = {
             "Model point at end of capsule hitbox (slot 3). If this is -1, the hitbox will be a sphere placed at "
             "Hitbox3StartModelPoint.", 
         ),
-        FieldDisplayInfo("blowingCorrection", "BlowOffCorrection", False, int, "Unknown. Never used."),
-        FieldDisplayInfo(
+        ParamFieldInfo("blowingCorrection", "BlowOffCorrection", False, int, "Unknown. Never used."),
+        ParamFieldInfo(
             "atkPhysCorrection",
             "PhysicalAttackPowerPercentage",
             True,
@@ -131,7 +131,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to calculate physical "
             "attack damage.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkMagCorrection",
             "MagicAttackPowerPercentage",
             True,
@@ -139,7 +139,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to calculate magic "
             "attack damage.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkFireCorrection",
             "FireAttackPowerPercentage",
             True,
@@ -147,7 +147,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to calculate fire attack "
             "damage.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkThunCorrection",
             "LightningAttackPowerPercentage",
             True,
@@ -155,7 +155,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to calculate lightning "
             "attack damage.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkStamCorrection",
             "StaminaAttackPowerPercentage",
             True,
@@ -163,7 +163,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character attack power to calculate stamina "
             "damage.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardAtkRateCorrection",
             "GuardAttackPercentage",
             True,
@@ -171,7 +171,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character guard attack power. Throw attacks "
             "have a value of 9900, which must essentially ignore blocking completely.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardBreakCorrection",
             "GuardBreakPercentage",
             True,
@@ -179,7 +179,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to character guard breaking power. Not sure what "
             "that is, exactly, but this is set to 0 for parries and 100 for all other attacks.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkThrowEscapeCorrection",
             "AttackDuringThrowPercentage",
             True,
@@ -187,7 +187,7 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to weapon attacks during throws. Generally set to "
             "100, except for throw attacks themselves.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkSuperArmorCorrection",
             "PoiseAttackPercentage",
             True,
@@ -195,26 +195,26 @@ ATK_PARAM_ST = {
             "Multiplier (as percentage from 0 upwards) applied to damage to target poise. Generally set to 100, "
             "except for throw attacks themselves.", 
         ),
-        FieldDisplayInfo("atkPhys", "PhysicalAttackPower", True, int, "Absolute physical attack power of attack."),
-        FieldDisplayInfo("atkMag", "MagicAttackPower", True, int, "Absolute magic attack power of attack."),
-        FieldDisplayInfo("atkFire", "FireAttackPower", True, int, "Absolute fire attack power of attack."),
-        FieldDisplayInfo("atkThun", "LightningAttackPower", True, int, "Absolute lightning attack power of attack."),
-        FieldDisplayInfo("atkStam", "StaminaAttackPower", True, int, "Absolute stamina attack power of attack."),
-        FieldDisplayInfo("guardAtkRate", "GuardAttackPower", True, int, "Absolute guard attack power of attack."),
-        FieldDisplayInfo("guardBreakRate", "GuardBreakPower", True, int, "Absolute guard breaking power of attack."),
-        FieldDisplayInfo("atkSuperArmor", "PoiseAttackPower", True, int, "Absolute poise attack power of attack."),
-        FieldDisplayInfo(
+        ParamFieldInfo("atkPhys", "PhysicalAttackPower", True, int, "Absolute physical attack power of attack."),
+        ParamFieldInfo("atkMag", "MagicAttackPower", True, int, "Absolute magic attack power of attack."),
+        ParamFieldInfo("atkFire", "FireAttackPower", True, int, "Absolute fire attack power of attack."),
+        ParamFieldInfo("atkThun", "LightningAttackPower", True, int, "Absolute lightning attack power of attack."),
+        ParamFieldInfo("atkStam", "StaminaAttackPower", True, int, "Absolute stamina attack power of attack."),
+        ParamFieldInfo("guardAtkRate", "GuardAttackPower", True, int, "Absolute guard attack power of attack."),
+        ParamFieldInfo("guardBreakRate", "GuardBreakPower", True, int, "Absolute guard breaking power of attack."),
+        ParamFieldInfo("atkSuperArmor", "PoiseAttackPower", True, int, "Absolute poise attack power of attack."),
+        ParamFieldInfo(
             "atkThrowEscape", "AttackPowerDuringThrows", False, int, "Absolute attack power of attack. Never used."
         ),
-        FieldDisplayInfo("atkObj", "ObjectDamage", True, int, "Amount of damage dealt to objects by this attack."),
-        FieldDisplayInfo(
+        ParamFieldInfo("atkObj", "ObjectDamage", True, int, "Amount of damage dealt to objects by this attack."),
+        ParamFieldInfo(
             "guardStaminaCutRate",
             "GuardStaminaPercentage",
             False,
             int,
             "Correction applied to the stamina required to block this attack (I presume). Never used.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardRate",
             "GuardPercentage",
             True,
@@ -222,7 +222,7 @@ ATK_PARAM_ST = {
             "Percentage correction made to the guarding ability of the attack, as set in weapon parameters or NPC "
             "parameters. Only used to halve the guarding ability of parries (-50).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "throwTypeId",
             "ThrowID",  # TODO: Link to Throws by searching in the target's ThrowID field rather than its entry ID.
             True,
@@ -230,35 +230,35 @@ ATK_PARAM_ST = {
             "Throw to trigger when attack hits. For some reason, throws are triggered using this ID, which is a "
             "field within each Throw table entry rather than the ID of the Throw table entry itself.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit0_hitType",
             "Hitbox0HitType",
             True,
             ATK_PARAM_HIT_TYPE,
             "Type of hit applied by hitbox (slot 0). Always zero, except for some whip attacks.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit1_hitType",
             "Hitbox1HitType",
             True,
             ATK_PARAM_HIT_TYPE,
             "Type of hit applied by hitbox (slot 1). Always zero, except for some whip attacks.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit2_hitType",
             "Hitbox2HitType",
             True,
             ATK_PARAM_HIT_TYPE,
             "Type of hit applied by hitbox (slot 2). Always zero, except for some whip attacks.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hit3_hitType",
             "Hitbox3HitType",
             True,
             ATK_PARAM_HIT_TYPE,
             "Type of hit applied by hitbox (slot 3). Always zero, except for some whip attacks.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hti0_Priority",
             "Hitbox0Priority",
             False,
@@ -266,7 +266,7 @@ ATK_PARAM_ST = {
             "Priority of hitbox (slot 0). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hti1_Priority",
             "Hitbox1Priority",
             False,
@@ -274,7 +274,7 @@ ATK_PARAM_ST = {
             "Priority of hitbox (slot 1). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hti2_Priority",
             "Hitbox2Priority",
             False,
@@ -282,7 +282,7 @@ ATK_PARAM_ST = {
             "Priority of hitbox (slot 2). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hti3_Priority",
             "Hitbox3Priority",
             False,
@@ -290,7 +290,7 @@ ATK_PARAM_ST = {
             "Priority of hitbox (slot 3). If two hits occur simultaneously, only the highest priority hit occurs. "
             "Never used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "dmgLevel",
             "ImpactLevel",
             True,
@@ -299,14 +299,14 @@ ATK_PARAM_ST = {
             "launched into the air, etc.). Certain special effects on the target (e.g. Iron Flesh) may re-map "
             "this impact level to a different one.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "mapHitType",
             "MapHitType",
             True,
             ATK_PARAM_MAP_HIT,
             "Determines how this attack interacts with the map.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardCutCancelRate",
             "IgnoreGuardPercentage",
             False,
@@ -315,14 +315,14 @@ ATK_PARAM_ST = {
             "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, "
             "in favor of the simple 'IgnoreGuard' boolean field.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkAttribute",
             "AttackAttribute",
             True,
             ATKPARAM_ATKATTR_TYPE,
             "Type of physical damage done by attack.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spAttribute",
             "ElementAttribute",
             True,
@@ -330,14 +330,14 @@ ATK_PARAM_ST = {
             "Type of elemental damage done by attack. (Attacks can apply any combination of damage types, "
             "but this value will determine what visual effects the attack generates, etc.)", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkType",
             "VisualSoundEffectsOnAttack",
             True,
             ATK_TYPE,
             "Determines the sounds and visual effects generated by the attack itself (before hit).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkMaterial",
             "VisualSoundEffectsOnHit",
             True,
@@ -345,7 +345,7 @@ ATK_PARAM_ST = {
             "Determines the sounds and visual effects generated when the attack hits. A value of 255 uses the "
             "weapon default.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkSize",
             "AttackSize",
             False,
@@ -353,7 +353,7 @@ ATK_PARAM_ST = {
             "Internal description says this determines the size of sounds and visual effects, but it is never "
             "used.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defMaterial",
             "SoundEffectsWhileBlocking",
             True,
@@ -361,7 +361,7 @@ ATK_PARAM_ST = {
             "Determines the sound effects used when guarding. Usually 255 for Player Attacks and 0 (if not a "
             "block) or 50 (if blocking) for Non-Player Attacks.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defSfxMaterial",
             "VisualEffectsWhileBlocking",
             True,
@@ -369,7 +369,7 @@ ATK_PARAM_ST = {
             "Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a "
             "block) or 50 (if blocking) for Non-Player Attacks.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "hitSourceType",
             "ModelPointSource",
             True,
@@ -377,7 +377,7 @@ ATK_PARAM_ST = {
             "Internal description says 'specify where you get the model point for attack'. Set to 1 for parries, "
             "ripostes, and basic body attacks (falling, rolling, etc.), and zero otherwise. Use that pattern.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "throwFlag",
             "ThrowFlag",
             True,
@@ -385,17 +385,17 @@ ATK_PARAM_ST = {
             "Determines how this attack relates to throws: not at all, a throw trigger, or a throw damage "
             "parameter.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disableGuard:1", "IgnoreGuard", True, bool, "If True, this attack cannot be blocked (e.g. throws)."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disableStaminaAttack:1",
             "NoStaminaDamage",
             True,
             bool,
             "If True, this attack will deal no stamina damage, regardless of its stamina attack power.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disableHitSpEffect:1",
             "NoSpecialEffects",
             True,
@@ -403,7 +403,7 @@ ATK_PARAM_ST = {
             "If True, this attack will trigger no special effects on the target. Internal description mentions "
             "this is an 'SCE bug countermeasure' (referring to the original Dark Souls demo).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "IgnoreNotifyMissSwingForAI:1",
             "NoMissNotificationForAI",
             True,
@@ -412,7 +412,7 @@ ATK_PARAM_ST = {
             "attacks (falling, rolling, ladder punches, etc.) that are generally not considered to be serious "
             "attacks.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "repeatHitSfx:1",
             "RepeatHitSoundEffects",
             False,
@@ -420,7 +420,7 @@ ATK_PARAM_ST = {
             "If True, sound effects will supposedly be repeated as long as the attack continuously hits a wall. "
             "Never enabled, which is probably a good thing.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isArrowAtk:1",
             "IsPhysicalProjectile",
             True,
@@ -428,14 +428,14 @@ ATK_PARAM_ST = {
             "Flags if this is the attack damage parameter of a physical projectile (arrow, bolt, or throwing "
             "knife).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isGhostAtk:1",
             "IsAttackByGhost",
             True,
             bool,
             "Flags if this is an attack of a ghost, which presumably disables wall collision, etc.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isDisableNoDamage:1",
             "IgnoreInvincibilityFrames",
             True,
@@ -443,83 +443,83 @@ ATK_PARAM_ST = {
             "If True, this attack will ignore invincibility frames from rolling or backstepping (but not other "
             "sources of invincibility such as TAE or events).", 
         ),
-        FieldDisplayInfo("atkPow_forSfxSe", "AttackPowerForEffects", True, int, ""),
-        FieldDisplayInfo("atkDir_forSfxSe", "AttackDirectionForEffects", True, int, "Name might be wrong."),
-        FieldDisplayInfo("opposeTarget:1", "AffectsEnemies", True, bool, ""),
-        FieldDisplayInfo("friendlyTarget:1", "AffectsAllies", True, bool, ""),
-        FieldDisplayInfo("selfTarget:1", "AffectsSelf", True, bool, ""),
-        FieldDisplayInfo("isChargeAtk:1", "IsChargeAttack", True, bool, ""),
-        FieldDisplayInfo("isShareHitList:1", "SharesHitList", True, bool, ""),
-        FieldDisplayInfo("isCheckObjPenetration:1", "CollidesWithObjects", True, bool, "Value might be inverted."),
-        FieldDisplayInfo("pad:2", "Pad", False, bit_pad_field(2), "Null padding."),
-        FieldDisplayInfo("pad2", "Pad", False, pad_field(2), "Null padding."),
-        FieldDisplayInfo("regainableSlotId", "RegainableSlotID", True, int, ""),
-        FieldDisplayInfo("deathcauseId", "DeathCauseID", True, int, ""),
-        FieldDisplayInfo("decalId1", "DecalID1", True, int, ""),
-        FieldDisplayInfo("decalId2", "DecalID2", True, int, ""),
-        FieldDisplayInfo("appearAiSoundId", "AppearAISoundID", True, int, ""),
-        FieldDisplayInfo("hitAiSoundId", "HitAISoundID", True, int, ""),
-        FieldDisplayInfo("wepRegainHpScale", "WeaponRegainHPScale", True, int, ""),
-        FieldDisplayInfo("atkRegainHp", "AttackRegainHP", True, int, ""),
-        FieldDisplayInfo("regainableTimeScale", "RegainTimeScale", True, int, ""),
-        FieldDisplayInfo("regainableHpRateScale", "RegainHPRateScale", True, int, ""),
+        ParamFieldInfo("atkPow_forSfxSe", "AttackPowerForEffects", True, int, ""),
+        ParamFieldInfo("atkDir_forSfxSe", "AttackDirectionForEffects", True, int, "Name might be wrong."),
+        ParamFieldInfo("opposeTarget:1", "AffectsEnemies", True, bool, ""),
+        ParamFieldInfo("friendlyTarget:1", "AffectsAllies", True, bool, ""),
+        ParamFieldInfo("selfTarget:1", "AffectsSelf", True, bool, ""),
+        ParamFieldInfo("isChargeAtk:1", "IsChargeAttack", True, bool, ""),
+        ParamFieldInfo("isShareHitList:1", "SharesHitList", True, bool, ""),
+        ParamFieldInfo("isCheckObjPenetration:1", "CollidesWithObjects", True, bool, "Value might be inverted."),
+        ParamFieldInfo("pad:2", "Pad", False, bit_pad_field(2), "Null padding."),
+        ParamFieldInfo("pad2", "Pad", False, pad_field(2), "Null padding."),
+        ParamFieldInfo("regainableSlotId", "RegainableSlotID", True, int, ""),
+        ParamFieldInfo("deathcauseId", "DeathCauseID", True, int, ""),
+        ParamFieldInfo("decalId1", "DecalID1", True, int, ""),
+        ParamFieldInfo("decalId2", "DecalID2", True, int, ""),
+        ParamFieldInfo("appearAiSoundId", "AppearAISoundID", True, int, ""),
+        ParamFieldInfo("hitAiSoundId", "HitAISoundID", True, int, ""),
+        ParamFieldInfo("wepRegainHpScale", "WeaponRegainHPScale", True, int, ""),
+        ParamFieldInfo("atkRegainHp", "AttackRegainHP", True, int, ""),
+        ParamFieldInfo("regainableTimeScale", "RegainTimeScale", True, int, ""),
+        ParamFieldInfo("regainableHpRateScale", "RegainHPRateScale", True, int, ""),
     ],
 }
 
 
 THROW_INFO_BANK = {
-    "paramdef_name": "THROW_INFO_BANK",
+    "param_type": "THROW_INFO_BANK",
     "file_name": "ThrowParam",
     "nickname": "Throws",
     "fields": [
-        FieldDisplayInfo("AtkChrId", "AttackingCharacterModel", True, int, "Model ID of attacking character."),
-        FieldDisplayInfo("DefChrId", "DefendingCharacterModel", True, int, "Model ID of defending character."),
-        FieldDisplayInfo("Dist", "MaxDistance", True, float, "Maximum distance at which throw can be triggered."),
-        FieldDisplayInfo(
+        ParamFieldInfo("AtkChrId", "AttackingCharacterModel", True, int, "Model ID of attacking character."),
+        ParamFieldInfo("DefChrId", "DefendingCharacterModel", True, int, "Model ID of defending character."),
+        ParamFieldInfo("Dist", "MaxDistance", True, float, "Maximum distance at which throw can be triggered."),
+        ParamFieldInfo(
             "DiffAngMin",
             "MinDifferenceInFacingAngle",
             True,
             float,
             "Minimum angular difference between attacker's facing direction and defender's facing direction.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "DiffAngMax",
             "MaxDifferenceInFacingAngle",
             True,
             float,
             "Maximum angular difference between attacker's facing direction and defender's facing direction.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "upperYRange", "MaxDistanceAbove", True, float, "Maximum distance that defender can be above attacker."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "lowerYRange", "MaxDistanceBelow", True, float, "Maximum distance that defender can be below attacker."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "diffAngMyToDef",
             "MaxAngleToDefender",
             True,
             float,
             "Maximum angular difference between attacker's direction and the direction of the defender.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "throwTypeId", "ThrowID", True, int, "Throw ID that should be specified in Attacks to use this throw."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkAnimId",
             "AttackerAnimation",
             True,
             int,  # TODO: Animation
             "Animation played by attacker during throw.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defAnimId",
             "DefenderAnimation",
             True,
             int,  # TODO: Animation
             "Animation played by defender during throw.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "escHp",
             "MinHPPercentageForEscape",
             True,
@@ -527,7 +527,7 @@ THROW_INFO_BANK = {
             "Minimum HP percentage required to escape the throw early by mashing buttons. (Not sure if 0 prevents "
             "any escape, or if escapes are disabled by another parameter like ",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "selfEscCycleTime",
             "EscapeCycleTime",
             True,
@@ -535,7 +535,7 @@ THROW_INFO_BANK = {
             "Time of escape cycle, in milliseconds. Not sure exactly what it does. Set to 100 milliseconds for "
             "throws that can be escaped, and zero otherwise.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "sphereCastRadiusRateTop",
             "SphereCastUpperRadiusRatio",
             True,
@@ -544,7 +544,7 @@ THROW_INFO_BANK = {
             "model size, so a value of 80 will send out a sphere with a radius that is 0.8 times the attacker's "
             "model size.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "sphereCastRadiusRateLow",
             "SphereCastLowerRadiusRatio",
             True,
@@ -553,7 +553,7 @@ THROW_INFO_BANK = {
             "model size, so a value of 80 will send out a sphere with a radius that is 0.8 times the attacker's "
             "model size.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "PadType",
             "ButtonMashType",
             True,
@@ -561,7 +561,7 @@ THROW_INFO_BANK = {
             "Determines buttons that can be mashed to escape. Enumeration is unknown, but it is set to 3 for the "
             "Centipede Demon grab, Male Ghost grab, and Dark Hand grab, and 1 for every other throw.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "AtkEnableState",
             "AttackEnabled",
             False,
@@ -569,7 +569,7 @@ THROW_INFO_BANK = {
             "Internal description says 'Set the throwable throwable state type' (?). Set to 1 for all player "
             "backstabs and ripostes, and 0 otherwise (including player plunging attacks and all enemy throws).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkSorbDmyId",
             "SnapToAttackerModelPoint",
             True,
@@ -577,7 +577,7 @@ THROW_INFO_BANK = {
             "Model point ID on attacker that defender will be snapped to. If this is zero, 'Snap To Defender "
             "Model Point' should be non-zero, and vice versa.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defSorbDmyId",
             "SnapToDefenderModelPoint",
             True,
@@ -585,14 +585,14 @@ THROW_INFO_BANK = {
             "Model point ID on defender that attacker will be snapped to. If this is zero, 'Snap To Attacker "
             "Model Point' should be non-zero, and vice versa.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "throwType",
             "ThrowType",
             True,
             THROW_TYPE,
             "Type of throw. Not sure what uses this, but it could affect various things.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "selfEscCycleCnt",
             "EscapeCycleCount",
             True,
@@ -601,7 +601,7 @@ THROW_INFO_BANK = {
             "set to 100 (and MinHPPercentageForEscape is almost always 25). Not sure how it determines *when* you "
             "can escape the throw.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "dmyHasChrDirType",
             "ModelPointCharacterDirectionType",
             False,
@@ -609,14 +609,14 @@ THROW_INFO_BANK = {
             "'Direction of model point possessed character when thrown'. Set to 1 for the Armored Tusk backstab, "
             "255 for the Iron Golem and Gaping Dragon grabs, and 0 otherwise.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isTurnAtker:1",
             "AttackerTurns",
             True,
             bool,
             "Attacker will turn when throw begins (presumably before model point snapping occurs).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isSkipWepCate:1",
             "SkipAttackerWeaponCategoryCheck",
             True,
@@ -624,7 +624,7 @@ THROW_INFO_BANK = {
             "If True, the weapon category check for the attacker will be skipped. Enabled only for Dark Hand "
             "drain.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isSkipSphereCast:1",
             "SkipSphereCast",
             True,
@@ -633,7 +633,7 @@ THROW_INFO_BANK = {
             "Armored Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies "
             "on distance and character angles only and is generally easier to trigger.)",
         ),
-        FieldDisplayInfo("pad0:5", "Pad1", False, bit_pad_field(5), "Null padding."),
-        FieldDisplayInfo("pad1[4]", "Pad2", False, pad_field(4), "Null padding."),
+        ParamFieldInfo("pad0:5", "Pad1", False, bit_pad_field(5), "Null padding."),
+        ParamFieldInfo("pad1[4]", "Pad2", False, pad_field(4), "Null padding."),
     ],
 }

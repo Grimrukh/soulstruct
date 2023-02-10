@@ -7,14 +7,13 @@ import shutil
 import typing as tp
 
 from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryProject
-from soulstruct.darksouls1r.ai import AIDirectory
+from soulstruct.darksouls1r.ai import ScriptDirectory
 from soulstruct.darksouls1r.ezstate import TalkDirectory
-from soulstruct.darksouls1r.events import EMEVDDirectory
+from soulstruct.darksouls1r.events import EventDirectory
 from soulstruct.darksouls1r.maps import MapStudioDirectory
 from soulstruct.darksouls1r.params import GameParamBND
 from soulstruct.darksouls1r.params import DrawParamDirectory
 from soulstruct.darksouls1r.text import MSGDirectory
-from soulstruct.games import DarkSoulsDSRType
 from soulstruct.utilities.files import PACKAGE_PATH
 
 if tp.TYPE_CHECKING:
@@ -23,11 +22,11 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
+class GameDirectoryProject(_BaseGameDirectoryProject):
 
     DATA_TYPES = {
-        "ai": AIDirectory,
-        "events": EMEVDDirectory,  # modified via EVS event script files
+        "ai": ScriptDirectory,
+        "events": EventDirectory,  # modified via EVS event script files
         "lighting": DrawParamDirectory,
         "maps": MapStudioDirectory,
         "params": GameParamBND,
@@ -35,8 +34,8 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
         "text": MSGDirectory,
     }
 
-    ai: AIDirectory
-    events: EMEVDDirectory
+    ai: ScriptDirectory
+    events: EventDirectory
     lighting: DrawParamDirectory
     maps: MapStudioDirectory
     params: GameParamBND
@@ -187,7 +186,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsDSRType):
                     common_entities_path = self.project_root / f"entities/common_entities.py"
                     common_entities_path.parent.mkdir(parents=True, exist_ok=True)
                     common_entities_path.write_text(vanilla_common_entities)
-                    # `EMEVDDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
+                    # `EventDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
 
             for map_name, msb in self.maps.msbs.items():
                 game_map = self.maps.GET_MAP(map_name)

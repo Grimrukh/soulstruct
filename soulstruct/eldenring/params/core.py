@@ -8,18 +8,18 @@ from soulstruct.containers.bnd import BND4
 from soulstruct.containers.dcx import decompress
 from soulstruct.games import ELDEN_RING
 from soulstruct.game_types import *
-from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND
+from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND
 from soulstruct.base.params.param import Param as _BaseParam
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 
-from .paramdef import ParamDefBND, GET_BUNDLED_PARAMDEF
+from .paramdef import ParamDefBND, GET_BUNDLED_PARAMDEFBND
 
 # if tp.TYPE_CHECKING:
 #     from ..text.msg_directory import MSGDirectory
 
 
 class Param(_BaseParam):
-    GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
+    GET_BUNDLED_PARAMDEFBND = staticmethod(GET_BUNDLED_PARAMDEFBND)
 
 
 class GameParamBND(_BaseGameParamBND, BND4):
@@ -190,16 +190,16 @@ class GameParamBND(_BaseGameParamBND, BND4):
         b"\xC4\x28\x92\xA0\x1C\x20\x7F\xB0\x24\xD3\xAF\x4E\x49\x3F\xEF\x99"
     )
 
-    def __init__(self, game_param_bnd_source=None, paramdef_bnd=None):
+    def __init__(self, gameparambnd_source=None, paramdef_bnd=None):
         # TODO: Detect and decrypt `regulation.bin`.
-        if isinstance(game_param_bnd_source, (str, Path)):
-            if Path(game_param_bnd_source).name == "regulation.bin":
-                game_param_bnd_source = self.decrypt_regulation_bin(Path(game_param_bnd_source).read_bytes())
-        elif isinstance(game_param_bnd_source, bytes) and game_param_bnd_source[:4] != b"BND4":
+        if isinstance(gameparambnd_source, (str, Path)):
+            if Path(gameparambnd_source).name == "regulation.bin":
+                gameparambnd_source = self.decrypt_regulation_bin(Path(gameparambnd_source).read_bytes())
+        elif isinstance(gameparambnd_source, bytes) and gameparambnd_source[:4] != b"BND4":
             # Assume source is `regulation.bin` bytes.
-            game_param_bnd_source = self.decrypt_regulation_bin(game_param_bnd_source)
+            gameparambnd_source = self.decrypt_regulation_bin(gameparambnd_source)
 
-        super().__init__(game_param_bnd_source, paramdef_bnd=ELDEN_RING if paramdef_bnd is None else paramdef_bnd)
+        super().__init__(gameparambnd_source, paramdef_bnd=ELDEN_RING if paramdef_bnd is None else paramdef_bnd)
 
     def decrypt_regulation_bin(self, data: bytes) -> bytes:
         try:

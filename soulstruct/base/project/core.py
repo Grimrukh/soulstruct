@@ -7,6 +7,7 @@ import datetime
 import json
 import logging
 import os
+import re
 import pickle
 import shutil
 import subprocess
@@ -18,8 +19,7 @@ from pathlib import Path
 
 from soulstruct import __version__
 from soulstruct.config import DEFAULT_TEXT_EDITOR_FONT_SIZE
-from soulstruct.games import GameSpecificType
-from soulstruct.exceptions import GameFileDictSupportError
+from soulstruct.games import get_game
 from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
@@ -27,14 +27,16 @@ from soulstruct.utilities.window import CustomDialog
 from .exceptions import SoulstructProjectError, RestoreBackupError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_file import GameFile
+    from soulstruct.base.base_binary_file import BaseBinaryFile
+    from soulstruct.base.game_file_directory import GameFileDirectory
     from soulstruct.games import Game
-    from ..ai.ai_directory import AIDirectory
-    from ..events.emevd_directory import EMEVDDirectory
+    # Relative imports for easier copy-pasting into game submodules.
+    from ..ai.ai_directory import ScriptDirectory
+    from ..events.emevd_directory import EventDirectory
     from ..ezstate.talk_directory import TalkDirectory
     from ..maps.map_studio_directory import MapStudioDirectory
-    from ..params.game_param_bnd import GameParamBND
-    from ..params.draw_param import DrawParamDirectory
+    from ..params.gameparambnd import GameParamBND
+    from soulstruct.darksouls1ptde.params.draw_param import DrawParamDirectory
     from ..text.msg_directory import MSGDirectory
     from .window import ProjectWindow
 
@@ -45,10 +47,14 @@ except ImportError:
 
 _LOGGER = logging.getLogger(__name__)
 
+_GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
+
 
 def _with_config_write(func):
+    """Automatically write project config whenever this function/method is called."""
     @wraps(func)
-    def project_method(self: GameDirectoryProject, *args, **kwargs):
+    def project_method(*args, **kwargs):
+        self = args[0]  # TODO: PyCharm decorator signature bug getaround
         func(self, *args, **kwargs)
         self._write_config()
 
@@ -58,7 +64,8 @@ def _with_config_write(func):
 def _data_type_action(func):
     """Validate `data_type` argument and recur on all project types if it is `None`."""
     @wraps(func)
-    def data_type_action(self: GameDirectoryProject, data_type, *args, **kwargs):
+    def data_type_action(*args, **kwargs):
+        self, data_type = args[0], args[1]  # TODO: PyCharm decorator signature bug getaround
         if data_type is None:
             for data_type in self.DATA_TYPES:
                 func(self, data_type, *args, **kwargs)  # recur on every type
@@ -72,7 +79,8 @@ def _data_type_action(func):
     return data_type_action
 
 
-class GameDirectoryProject(GameSpecificType, abc.ABC):
+# NOT a dataclass.
+class GameDirectoryProject(abc.ABC):
     """Manages an entire editable instance of a game installation (or rather, all the file types Soulstruct can handle).
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
@@ -87,6 +95,8 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
     DATA_TYPES = {}  # type: dict[str, type]
 
+    project_root: Path
+
     def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: str | Path = None):
 
         self.game_root = Path()
@@ -96,19 +106,18 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         self.custom_script_directory = Path()
         self.entities_in_events_directory = False
-        self.prefer_json = False
         # TODO: Record last edit time for each file/structure.
 
         # Initialize with empty structures.
-        self.ai_directory = self._get_default_data("ai")  # type: AIDirectory
+        self.ai_directory = self._get_default_data("ai")  # type: ScriptDirectory
         self.draw_param_directory = self._get_default_data("lighting")  # type: DrawParamDirectory
-        self.emevd_directory = self._get_default_data("events")  # type: EMEVDDirectory
-        self.game_param_bnd = self._get_default_data("params")  # type: GameParamBND
+        self.emevd_directory = self._get_default_data("events")  # type: EventDirectory
+        self.gameparambnd = self._get_default_data("params")  # type: GameParamBND
         self.map_studio_directory = self._get_default_data("maps")  # type: MapStudioDirectory
         self.msg_directory = self._get_default_data("text")  # type: MSGDirectory
         self.talk_directory = self._get_default_data("talk")  # type: TalkDirectory
 
-        self.project_root = self._validate_project_directory(project_path, self._DEFAULT_PROJECT_ROOT)
+        self.project_root = self._validate_project_directory(Path(project_path), self._DEFAULT_PROJECT_ROOT)
         first_time, force_import_from_game = self.load_config(with_window=with_window, game_root=game_root)
         self.initialize_project(force_import_from_game, with_window=with_window, first_time=first_time)
 
@@ -119,19 +128,19 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             return self.DATA_TYPES[data_type]()
 
     @property
-    def ai(self) -> AIDirectory:
+    def ai(self) -> ScriptDirectory:
         return self.ai_directory
 
     @ai.setter
-    def ai(self, value: AIDirectory):
+    def ai(self, value: ScriptDirectory):
         self.ai_directory = value
 
     @property
-    def events(self) -> EMEVDDirectory:
+    def events(self) -> EventDirectory:
         return self.emevd_directory
 
     @events.setter
-    def events(self, value: EMEVDDirectory):
+    def events(self, value: EventDirectory):
         self.emevd_directory = value
 
     @property
@@ -152,11 +161,11 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
 
     @property
     def params(self) -> GameParamBND:
-        return self.game_param_bnd
+        return self.gameparambnd
 
     @params.setter
     def params(self, value: GameParamBND):
-        self.game_param_bnd = value
+        self.gameparambnd = value
 
     @property
     def talk(self):
@@ -298,81 +307,71 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         if data_type not in {"events", "talk"}:
             setattr(self, data_type, self._load_project_data(data_type))
 
-    def _save_project_data(self, data: GameFile, data_type: str):
-        """Pickle given project data structure `obj` to path `{data_path}.ssp`.
+    def _save_project_data(self, data: BaseBinaryFile | GameFileDirectory, data_type: str):
+        """Write given project data structure `data` to project JSON file or directory."""
+        if hasattr(data, "write_json_directory"):
+            # JSON directory.
+            json_directory_path = self.project_root / data_type
+            first_time = not json_directory_path.exists()
+            # TODO: Configurable `Param` pad/default write options?
+            data.write_json_directory(json_directory_path)
+            if first_time:
+                _LOGGER.info(f"Created new '{data_type}' project folder with JSON files/subdirectories.")
+            return
 
-        If `self.prefer_json=True`, and `obj.write_json()` is supported, that will be used instead. The extension of
-        `data_path` will be set to `{data_path}.json` in this case.
-        """
-        if self.prefer_json:
-            if data_type in {"maps", "params", "lighting", "text"}:
-                # Save separate JSONs to `{project}/{data_type}/` directory with `write_json_dir()`.
-                data: tp.Union[MapStudioDirectory, GameParamBND, DrawParamDirectory, MSGDirectory]
-                data_dir_path = self.project_root / data_type
-                first_time = not data_dir_path.exists()
-                data.write_json_directory(data_dir_path)
-                if first_time:
-                    _LOGGER.info(
-                        f"Created new '{data_type}' project folder with separate JSON files inside. As long as "
-                        f"`PreferJSON` is enabled for this project, that directory will be loaded instead of "
-                        f"'{data_type}.ssp'."
-                    )
-                return
-            else:
-                # JSON not implemented for other data types.
-                data_file_path = (self.project_root / data_type).with_suffix(".json")
-                try:
-                    first_time = not data_file_path.exists()
-                    data.write_json(data_file_path)
-                except (AttributeError, GameFileDictSupportError):
-                    pass  # continue to pickle backup
-                else:
-                    if first_time:
-                        _LOGGER.info(
-                            f"Created new '{data_type}.json' project file. As long as `PreferJSON` is enabled for this "
-                            f"project, that file will be loaded instead of '{data_type}.ssp'."
-                        )
-                    return
-        data_file_path = (self.project_root / data_type).with_suffix(".ssp")
-        with data_file_path.open("wb") as f:
+        if hasattr(data, "write_json"):
+            # Single JSON file.
+            json_file_path = (self.project_root / data_type).with_suffix(".json")
+            first_time = not json_file_path.exists()
+            data.write_json(json_file_path)
+            if first_time:
+                _LOGGER.info(f"Created new '{data_type}.json' project file.")
+            return
+
+        # FALLBACK: Pickled file (`.ssp`, or 'SoulStructPickle').
+        ssp_file_path = (self.project_root / data_type).with_suffix(".ssp")
+        first_time = not ssp_file_path.exists()
+        with ssp_file_path.open("wb") as f:
             pickle.dump(data, f)
+        if first_time:
+            _LOGGER.info(f"Created new '{data_type}.ssp' project file. (Data type does not yet support JSON.)")
 
-    def _load_project_data(self, data_type: str):
-        if self.prefer_json:
-            try:
-                if (
-                    data_type in {"maps", "params", "text", "lighting"}
-                    and (data_dir_path := self.project_root / data_type).is_dir()
-                ):
-                    # Load JSONs from directory.
-                    return self.DATA_TYPES[data_type](data_dir_path, use_json=True)
-                elif (data_file_path := (self.project_root / data_type).with_suffix(".json")).exists():
-                    # Try to load from `{game_type}.json` file.
-                    data_class = self.DATA_TYPES[data_type]
-                    try:
-                        return data_class(data_file_path)
-                    except GameFileDictSupportError:
-                        raise SoulstructProjectError(
-                            f"Found a '{data_type}.json' file in this project, but the Soulstruct class used to load "
-                            f"this data type does not support loading from JSON files. Was this file generated with a "
-                            f"newer version?"
-                        )
-            except FileNotFoundError:
-                pass  # continue to load SSP files below
+    def _load_project_data(self, data_type: str) -> BaseBinaryFile | GameFileDirectory:
+        data_type_class = self.DATA_TYPES[data_type]
 
-        data_file_path = (self.project_root / data_type).with_suffix(".ssp")
-        with data_file_path.open("rb") as f:
-            try:
-                return pickle.load(f)
-            except Exception as ex:
-                raise SoulstructProjectError(
-                    f"Could not open project file: '{data_file_path}'.\n\n"
-                    f"If you are seeing this after downloading a new version of Soulstruct, there may have been a "
-                    f"non-backwards-compatible change in the internal structure of the program. Please export your "
-                    f"project files from the last working version, delete the problematic file(s) after backing them "
-                    f"up somewhere else, then re-import them into this new version.\n\n"
-                    f"Specific error:\n{ex}"
-                )
+        data_directory_path = self.project_root / data_type
+        if data_directory_path.is_dir():
+            if hasattr(data_type_class, "from_json_directory"):
+                # Read JSON directory.
+                return data_type_class.from_json_directory(data_directory_path)
+            raise TypeError(f"Cannot read project data type '{data_type}' from directory: {data_directory_path}")
+
+        data_json_path = self.project_root / f"{data_type}.json"
+        if data_json_path.is_file():
+            if hasattr(data_type_class, "from_json"):
+                # Read single JSON file.
+                return data_type_class.from_json(data_json_path)
+            raise TypeError(f"Cannot read project data type '{data_type}' from JSON file: {data_json_path}")
+
+        data_ssp_path = self.project_root / f"{data_type}.ssp"
+        if data_ssp_path.is_file():
+            with data_ssp_path.open("rb") as f:
+                try:
+                    return pickle.load(f)
+                except Exception as ex:
+                    raise SoulstructProjectError(
+                        f"Could not open pickled SSP project file: '{data_ssp_path}'.\n\n"
+                        f"If you are seeing this after downloading a new version of Soulstruct, there may have been a "
+                        f"non-backwards-compatible change in the internal structure of the program. Please export your "
+                        f"project files from the last working version, delete the problematic file(s) after backing "
+                        f"them up somewhere else, then re-import them into this new version.\n\n"
+                        f"Note that this data type may now support JSON project files instead, which you may see when "
+                        f"creating a new project."
+                        f""
+                        f"Specific error:\n{ex}"
+                    )
+
+        raise FileNotFoundError(f"Could not find any project files for data type '{data_type}'.")
 
     @_with_config_write
     @_data_type_action
@@ -386,7 +385,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
         data_instance = self.DATA_TYPES[data_type](data_import_path)
         setattr(self, data_type, data_instance)
-        if data_type == "events":  # data in `EMEVDDirectory` is only read upon import and modified upon export
+        if data_type == "events":  # data in `EventDirectory` is only read upon import and modified upon export
             self.events.write_evs(
                 self.project_root / "events",
                 entities_directory=self.entities_directory,
@@ -459,16 +458,19 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             raise ModuleNotFoundError(
                 "Python package `psutil` required for this method. Install it with `python -m pip install psutil`."
             )
+        
+        game = self.get_game()
 
         if try_force_quit_first:
             self.force_quit_game()
         if not self._check_steam_appid_file(self.game_root):
-            raise SoulstructProjectError(f"Soulstruct cannot create the 'steam_appid.txt' file for {self.GAME.name}")
-        game_exe_path = self.game_root / self.GAME.executable_name
+            raise SoulstructProjectError(f"Soulstruct cannot create the 'steam_appid.txt' file for {game.name}")
+        game_exe_path = self.game_root / game.executable_name
 
         if not game_exe_path.is_file():
             raise SoulstructProjectError(f"Could not find game executable: {str(game_exe_path)}")
 
+        # noinspection PyUnresolvedReferences
         if game_exe_path.name in (p.name() for p in psutil.process_iter()):
             _LOGGER.warning(f"Cannot launch game: {game_exe_path.name} is already running.")
             return
@@ -481,16 +483,24 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             subprocess.run(str(game_exe_path))
 
     def force_quit_game(self):
-        if not self.GAME.executable_name:
-            raise SoulstructProjectError(f"Cannot force-quit {self.GAME.name} (don't know executable name).")
-        os.system(f"TASKKILL /F /IM {self.GAME.executable_name}")
+        game = self.get_game()
+        if not game.executable_name:
+            raise SoulstructProjectError(f"Cannot force-quit {game.name} (don't know executable name).")
+        os.system(f"TASKKILL /F /IM {game.executable_name}")
 
     def launch_gadget(self, threaded=True):
-        if not self.GAME.gadget_name:
-            raise SoulstructProjectError(f"No Gadget executable known for {self.GAME.name}.")
-        gadget_path = self.game_root / self.GAME.gadget_name
+        if not psutil:
+            raise ModuleNotFoundError(
+                "Python package `psutil` required for this method. Install it with `python -m pip install psutil`."
+            )
+
+        game = self.get_game()
+        if not game.gadget_name:
+            raise SoulstructProjectError(f"No Gadget executable known for {game.name}.")
+        gadget_path = self.game_root / game.gadget_name
         if not gadget_path.is_file():
             raise SoulstructProjectError(f"Could not find Gadget executable: {str(gadget_path)}")
+        # noinspection PyUnresolvedReferences
         if gadget_path.name in (p.name() for p in psutil.process_iter()):
             _LOGGER.warning(f"Cannot launch Gadget: {gadget_path.name} is already running.")
             return
@@ -506,24 +516,25 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         return [save_file.stem for save_file in save_folder.glob("*.sl2") if save_file.stem != "DRAKS0005"]
 
     def _get_save_folder(self):
-        if not self.GAME.save_file_path:
-            raise SoulstructProjectError(f"No save file directory known for {self.GAME.name}.")
-        if not self.GAME.save_file_path.is_dir():
-            raise SoulstructProjectError(f"Could not find save file directory root: {self.GAME.save_file_path}")
-        if self.GAME.name == "Dark Souls Remastered":
+        game = self.get_game()
+        if not game.save_file_path:
+            raise SoulstructProjectError(f"No save file directory known for {game.name}.")
+        if not game.save_file_path.is_dir():
+            raise SoulstructProjectError(f"Could not find save file directory root: {game.save_file_path}")
+        if game.name == "Dark Souls Remastered":
             # DSR save files are saved under a Steam ID subfolder.
-            steam_id_folders = list(self.GAME.save_file_path.glob("*"))
+            steam_id_folders = list(game.save_file_path.glob("*"))
             if len(steam_id_folders) > 1:
                 raise SoulstructProjectError(
-                    f"Multiple Dark Souls Remastered save folders found in {str(self.GAME.save_file_path)}. Please "
+                    f"Multiple Dark Souls Remastered save folders found in {str(game.save_file_path)}. Please "
                     f"remove all of them except the real one that matches your Steam ID."
                 )
             elif not steam_id_folders:
                 raise SoulstructProjectError(
-                    f"No Dark Souls Remastered save folders found in {str(self.GAME.save_file_path)}."
+                    f"No Dark Souls Remastered save folders found in {str(game.save_file_path)}."
                 )
             return steam_id_folders[0]
-        return self.GAME.save_file_path
+        return game.save_file_path
 
     def load_game_save(self, save_name):
         if not save_name:
@@ -563,11 +574,12 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def create_game_backup(self, backup_path=None):
         """Copy existing game files (that can be edited with Soulstruct) to a backup directory, which defaults to
         'soulstruct-backup' in your game directory. Use `restore_game_backup(backup_dir)` to restore those files."""
+        game = self.get_game()
         if backup_path is None:
             backup_path = self.game_root / "soulstruct-backup"
         else:
             backup_path = Path(backup_path)
-        game_files = read_json(PACKAGE_PATH("project/files.json"))[self.GAME.name]
+        game_files = read_json(PACKAGE_PATH("project/files.json"))[game.name]
         for file_path_parts in traverse_path_tree(game_files):
             game_file_path = self.game_root / Path(*file_path_parts)
             if not game_file_path.is_file():
@@ -579,9 +591,10 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def restore_game_backup(self, backup_path=None):
         """Restore game files from the given folder, which defaults to 'soulstruct-backup' in your game directory.
         Create these backup files with `create_game_backup(backup_dir)`."""
+        game = self.get_game()
         if backup_path is None:
             backup_path = self.game_root / "soulstruct-backup"
-        game_files = read_json(PACKAGE_PATH("project/files.json"))[self.GAME.name]
+        game_files = read_json(PACKAGE_PATH("project/files.json"))[game.name]
         for file_path_parts in traverse_path_tree(game_files):
             backup_file_path = backup_path / Path(*file_path_parts)
             if not backup_file_path.is_file():
@@ -596,6 +609,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         Returns two bools: `first_time` (if project JSON was created) and `force_import_from_game` (if the user
         accepted the offer to import all game data immediately).
         """
+        game = self.get_game()
         config_path = self.project_root / "project_config.json"
 
         if config_path.is_file():
@@ -607,10 +621,10 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     "delete it to have Soulstruct create a fresh copy on next load."
                 )
             try:
-                if self.GAME.name != config["GameName"]:
+                if game.name != config["GameName"]:
                     raise SoulstructProjectError(
                         f"Project config 'GameName' is {config['GameName']}, but `GameDirectoryProject` "
-                        f"instance belongs to {self.GAME.name}."
+                        f"instance belongs to {game.name}."
                     )
                 last_save_version = config.get("LastSaveVersion", "'unknown'")
                 self.game_root = Path(config["GameDirectory"])
@@ -628,7 +642,6 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                     self._vanilla_game_root = Path(vanilla_game_root)
                 self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
                 self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
-                self.prefer_json = config.get("PreferJSON", False)
             except KeyError:
                 raise SoulstructProjectError(
                     "Project config file does not contain necessary settings. "
@@ -679,12 +692,13 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         return False, False
 
     def get_game_path_of_data_type(self, data_type, root=None) -> Path:
+        game = self.get_game()
         root = self.game_root if root is None else Path(root)
         data_class_name = self.DATA_TYPES[data_type.lower()].__name__
         try:
-            return root / self.GAME.default_file_paths[data_class_name]
+            return root / game.default_file_paths[data_class_name]
         except KeyError:
-            raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {self.GAME.name}")
+            raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {game.name}")
 
     def offer_events_submodule_copy(self, with_window: ProjectWindow = None):
         """Offer to copy `soulstruct.events.{game}` into project `events` folder for IDE purposes."""
@@ -709,7 +723,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             self.copy_events_submodule()
 
     def copy_events_submodule(self):
-        name = self.GAME.submodule_name
+        name = self.get_game().submodule_name
         events_submodule = PACKAGE_PATH(f"{name}/events")
         (self.project_root / f"events/soulstruct/{name}").mkdir(parents=True, exist_ok=True)
         shutil.copytree(events_submodule, self.project_root / f"events/soulstruct/{name}/events")
@@ -745,14 +759,13 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def _build_config_dict(self):
         return {
             "LastSaveVersion": __version__,
-            "GameName": self.GAME.name,
+            "GameName": self.get_game().name,
             "GameDirectory": str(self.game_root),
             "LastImportTime": self.last_import_time,
             "LastExportTime": self.last_export_time,
             "VanillaGameDirectory": str(self._vanilla_game_root),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
             "EntitiesInEventsDirectory": self.entities_in_events_directory,
-            "PreferJSON": self.prefer_json,
         }
 
     def _write_config(self):
@@ -762,8 +775,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
             raise SoulstructProjectError("No write access to 'project_config.json' in project directory.")
 
     @staticmethod
-    def _validate_project_directory(project_path, default_root) -> Path:
-        project_path = Path(project_path)
+    def _validate_project_directory(project_path: Path, default_root: Path) -> Path:
         if not project_path.is_absolute():
             project_path = (default_root / project_path).expanduser().absolute()
         if project_path.is_file():
@@ -779,7 +791,8 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
         return project_path
 
     def _get_game_root(self, with_window: ProjectWindow = None):
-        initial_dir = self.GAME.default_game_path if Path(self.GAME.default_game_path).is_dir() else None
+        game = self.get_game()
+        initial_dir = game.default_game_path if Path(game.default_game_path).is_dir() else None
 
         if with_window:
             with_window.CustomDialog(
@@ -787,7 +800,7 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
                 message=None,
                 font_size=10,
                 custom_dialog_subclass=GameRootDialog,
-                game=self.GAME,
+                game=game,
             )
             game_root = with_window.FileDialog.askdirectory(title="Choose your game directory", initialdir=initial_dir)
             if not game_root:
@@ -817,12 +830,19 @@ class GameDirectoryProject(GameSpecificType, abc.ABC):
     def _check_steam_appid_file(self, game_root):
         steam_appid_path = Path(game_root) / "steam_appid.txt"
         if not steam_appid_path.is_file():
-            if self.GAME.steam_appid:
+            steam_appid = self.get_game().steam_appid
+            if steam_appid:
                 with steam_appid_path.open("w") as f:
-                    f.write(str(self.GAME.steam_appid))
+                    f.write(str(steam_appid))
                 return True
             return False
         return True
+    
+    @classmethod
+    def get_game(cls) -> Game:
+        if match := re.match(_GAME_MODULE_RE, cls.__module__):
+            return get_game(match.group(1))
+        raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
 
 class GameRootDialog(CustomDialog):

@@ -1,4 +1,4 @@
-from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
+from soulstruct.base.events.emevd_directory import EventDirectory as _BaseEventDirectory
 from .emevd import EMEVD
 from soulstruct.eldenring.maps.constants import ALL_MAPS, get_map
 
@@ -6,7 +6,7 @@ from soulstruct.eldenring.maps.constants import ALL_MAPS, get_map
 # TODO: See http://soulsmodding.wikidot.com/reference:elden-ring-map-list
 
 
-class EMEVDDirectory(_BaseEMEVDDirectory):
+class EventDirectory(_BaseEventDirectory):
     ALL_MAPS = ALL_MAPS
     GET_MAP = staticmethod(get_map)
     IS_DCX = True

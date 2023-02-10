@@ -1,1 +1,1 @@
-from .ai_directory import AIDirectory
+from .ai_directory import ScriptDirectory

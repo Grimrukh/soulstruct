@@ -1,10 +1,11 @@
 """Elden Ring Paramdefs can only be loaded from Paramdex XML files."""
 from __future__ import annotations
 
-__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
+__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEFBND"]
 
 import logging
 import typing as tp
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.params.paramdef import (
@@ -13,7 +14,6 @@ from soulstruct.base.params.paramdef import (
     ParamDefBND as _BaseParamDefBND,
 )
 from soulstruct.config import PARAMDEX_PATH
-from soulstruct.games import EldenRingType
 from soulstruct.utilities.files import PACKAGE_PATH
 
 from .defaults import DEFAULTS
@@ -25,24 +25,24 @@ _LOGGER = logging.getLogger(__name__)
 _BUNDLED = None
 
 
+@dataclass(slots=True)
 class ParamDefField(_BaseParamDefField):
-    STRUCT = None
 
     def get_display_info(self, row: ParamRow):
         try:
-            field_info = get_param_info_field(self.param_name, self.name)
+            field_info = get_param_info_field(self.param_type, self.name)
         except ValueError:
             raise ValueError(f"No display information given for field '{self.name}'.")
         return field_info(row)
 
-    def get_better_default_value(self):
-        v = DEFAULTS.get(self.param_name, {}).get(self.name, self.default)
+    def get_py_default(self):
+        v = DEFAULTS.get(self.param_type, {}).get(self.name, self.default)
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(v)
         elif self.internal_type == "":
             if self.display_name == "sfxMultiplier":  # malformed in ParamDef
                 return v  # float
-            raise ValueError(f"No internal type for {self.param_name} field {self.display_name}")
+            raise ValueError(f"No internal type for {self.param_type} field {self.display_name}")
         elif self.internal_type in {"fixstr", "fixstrW"}:
             return v  # string
         elif self.internal_type not in {"f32", "f64"}:
@@ -50,9 +50,10 @@ class ParamDefField(_BaseParamDefField):
         return v
 
 
+@dataclass(slots=True)
 class ParamDef(_BaseParamDef):
-    HEADER_STRUCT = None  # Paramdex only
-    FIELD_CLASS = ParamDefField
+
+    FIELD_CLASS: tp.ClassVar = ParamDefField
 
     @property
     def param_info(self):
@@ -63,7 +64,7 @@ class ParamDef(_BaseParamDef):
             return None
 
 
-class ParamDefBND(_BaseParamDefBND, EldenRingType):
+class ParamDefBND(_BaseParamDefBND):
     PARAMDEF_CLASS = ParamDef
 
     def __init__(self, paramdef_bnd_source=None):
@@ -108,9 +109,9 @@ class ParamDefBND(_BaseParamDefBND, EldenRingType):
             self.paramdefs[paramdef.param_type] = paramdef
 
 
-def GET_BUNDLED_PARAMDEF() -> ParamDefBND:
+def GET_BUNDLED_PARAMDEFBND() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
         _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.GAME.name}.")
-        _BUNDLED = ParamDefBND()
+        _BUNDLED = ParamDefBND.from_bundled()()
     return _BUNDLED

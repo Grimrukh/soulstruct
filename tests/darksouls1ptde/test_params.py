@@ -2,7 +2,7 @@ import os
 import unittest
 
 from soulstruct.darksouls1ptde.params import GameParamBND
-from soulstruct.darksouls1ptde.params.paramdef import GET_BUNDLED_PARAMDEF
+from soulstruct.darksouls1ptde.params.paramdef import GET_BUNDLED_PARAMDEFBND
 from soulstruct.utilities.misc import Timer
 
 
@@ -10,7 +10,7 @@ class ParamsTest(unittest.TestCase):
 
     def test(self):
         with Timer("ParamDef read"):
-            paramdef_bnd = GET_BUNDLED_PARAMDEF()
+            paramdef_bnd = GET_BUNDLED_PARAMDEFBND()
         with Timer("GameParamBND read"):
             game_param = GameParamBND("gameparam.parambnd", paramdef_bnd=paramdef_bnd)
         with Timer("GameParamBND write"):

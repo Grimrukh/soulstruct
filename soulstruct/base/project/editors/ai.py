@@ -11,7 +11,7 @@ from soulstruct.base.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
     from soulstruct.base.ai.lua_bnd import LuaBND, LuaGoal
-    from soulstruct.base.ai.ai_directory import AIDirectory
+    from soulstruct.base.ai.ai_directory import ScriptDirectory
 
 
 class AIScriptTextEditor(TextEditor):
@@ -311,7 +311,7 @@ class AIEditor(BaseEditor):
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
 
     @property
-    def ai(self) -> AIDirectory:
+    def ai(self) -> ScriptDirectory:
         return self._project.ai
 
     def refresh_categories(self):

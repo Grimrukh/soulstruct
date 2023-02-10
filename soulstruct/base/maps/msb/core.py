@@ -574,6 +574,19 @@ class MSB(GameFile, abc.ABC):
     # TODO: Methods to import entity IDs from module by matching names, and import names from module by matching entity
     #  IDs (e.g. once you fix exported Japanese names).
 
+    def has_c0000_model(self) -> bool:
+        """Common check for character/player model c0000, which should be in every MSB (in every game)."""
+        character_models = getattr(self, "character_models")  # type: MSBEntryList
+        try:
+            character_models.find_entry_name("c0000")
+        except KeyError:
+            player_models = getattr(self, "player_models")
+            try:
+                player_models.find_entry_name("c0000")
+            except KeyError:
+                return False
+        return True
+
     @classmethod
     def get_display_type_dict(cls) -> dict[str, tuple[BaseMSBSubtype]]:
         """Return a nested dictionary mapping MSB type names (in typical display order) to tuples of subtype enums."""

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-__all__ = ["EMEVDDirectory"]
+__all__ = ["EventDirectory"]
 
-from soulstruct.base.events.emevd_directory import EMEVDDirectory as _BaseEMEVDDirectory
+from soulstruct.base.events.emevd_directory import EventDirectory as _BaseEventDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.eldenring.events.emevd.core import EMEVD
 from soulstruct.eldenring.maps.constants import *
 
 
-class EMEVDDirectory(_BaseEMEVDDirectory):
+class EventDirectory(_BaseEventDirectory):
     FILE_CLASS = EMEVD
     ALL_MAPS = ALL_MAPS
     GET_MAP = staticmethod(get_map)

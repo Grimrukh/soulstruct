@@ -10,14 +10,14 @@ import binascii
 import copy
 import logging
 import subprocess as sp
-import struct
 import typing as tp
 import uuid
+from dataclasses import dataclass, field
 from enum import IntEnum, unique
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.files import PACKAGE_PATH
 
 __all__ = ["FSB", "FSBSample", "FSBSampleHeader", "FSBHeaderVersion", "FSBHeaderMode", "FSBSampleMode", "fsbext"]
@@ -79,63 +79,29 @@ class FSBSampleMode(IntEnum):
     FSOUND_SYNCPOINTS = 0x80000000
 
 
-class FSBSampleHeader(BinaryObject):
+@dataclass(slots=True)
+class FSBSampleHeader(NewBinaryStruct):
     """Wavetable data that is written to the FSB file.
 
     Most of this information is not represented in the FDP, but comes directly from the sound sample file (WAV).
     """
-
-    STRUCT = BinaryStruct(
-        ("total_size", "H"),
-        ("_name", "30s"),
-        ("length", "I"),
-        ("compressed_length", "I"),
-        ("loop_start", "I"),
-        ("loop_end", "I"),
-        ("mode_flags", "I"),
-        ("deffreq", "i"),
-        ("defvol", "H"),
-        ("defpan", "h"),
-        ("defpri", "H"),
-        ("channel_count", "H"),
-        ("mindistance", "f"),
-        ("maxdistance", "f"),
-        ("size_32bits", "I"),
-        ("varvol", "H"),
-        ("varpan", "h"),
-    )
-
-    total_size: int
-    _name: bytes
-    name: str
-    length: int
-    compressed_length: int
-    loop_start: int
-    loop_end: int
-    mode_flags: int
+    total_size: ushort
+    name: str = field(**Binary(length=30, encoding="utf-8"))
+    length: uint
+    compressed_length: uint
+    loop_start: uint
+    loop_end: uint
+    mode_flags: uint
     deffreq: int
-    defvol: int
-    defpan: int
-    defpri: int
-    channel_count: int
+    defvol: ushort
+    defpan: short
+    defpri: ushort
+    channel_count: ushort
     mindistance: float
     maxdistance: float
-    size_32bits: int
-    varvol: int
-    varpan: int
-
-    @property
-    def name(self) -> str:
-        return self._name.rstrip(b"\0").decode()
-
-    @name.setter
-    def name(self, value: str):
-        if len(value) > 29:
-            raise ValueError(f"`FSBSampleHeader.name` must be 29 characters or less: {value}")
-        self._name = value.rstrip("\0").encode() + b"\0"
-
-    unpack = BinaryObject.default_unpack
-    pack = BinaryObject.default_pack
+    size_32bits: uint
+    varvol: ushort
+    varpan: short
 
     def to_xml_lines(self, sample_path: Path = None) -> list[str]:
         """Convert FSB sample header to XML string for use in an FMOD Designer Project file (FDP).
@@ -191,25 +157,21 @@ class FSBSampleHeader(BinaryObject):
         return 0
 
 
+@dataclass(slots=True)
 class FSBSample:
 
     header: FSBSampleHeader
     metadata: bytes
     data: bytes
 
-    def __init__(self, header: FSBSampleHeader, metadata: bytes, data: bytes):
-        self.header = header
-        self.metadata = metadata
-        self.data = data
-
     @classmethod
-    def unpack_from(cls, reader: BinaryReader, data_offset: int):
-        header = FSBSampleHeader(reader)
-        metadata_size = header.total_size - FSBSampleHeader.STRUCT.size
+    def from_fsb_reader(cls, reader: BinaryReader, data_offset: int):
+        header = FSBSampleHeader.from_bytes(reader)
+        metadata_size = header.total_size - FSBSampleHeader.get_cls_size(reader.default_byte_order, reader.varint_size)
         metadata = reader.read(metadata_size)
         with reader.temp_offset(data_offset):
             data = reader.read(header.compressed_length)
-        return FSBSample(header, metadata, data)
+        return cls(header, metadata, data)
 
     def __repr__(self):
         return (
@@ -253,65 +215,66 @@ class FSBHeaderVersion(IntEnum):
     VERSION_4_0 = 0x0004_0000
 
 
+@dataclass(slots=True)
+class FSBHeaderStruct(NewBinaryStruct):
+    _signature: bytes = field(init=False, **Binary(length=4, asserted=b"FSB4"))
+    sample_count: int
+    sample_headers_size: uint
+    sample_data_size: uint
+    version: int
+    mode_flags: uint
+    # bank_hash (big-endian byte)
+    # guid (16 bytes)
+
+
+@dataclass(slots=True)
 class FSB(GameFile):
     """FMOD Sound Bank file, which holds the actual sound sample data."""
 
-    version: int
-    mode_flags: int
-    bank_hash: int
-    guid: str
-    samples: list[FSBSample]
+    version: int = 0
+    mode_flags: int = 0
+    bank_hash: int = 0
+    guid: str = ""
+    samples: list[FSBSample] = field(default_factory=list)
 
-    STRUCT = BinaryStruct(
-        ("signature", "4s", b"FSB4"),
-        ("sample_count", "i"),
-        ("sample_headers_size", "I"),
-        ("sample_data_size", "I"),
-        ("version", "I"),
-        ("mode_flags", "I"),
-        ("bank_hash", "8s"),  # unpacked as big-endian 8-bit integer manually
-        ("_guid", "16s"),
-    )
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> FSB:
 
-    BASIC_SAMPLE_STRUCT = BinaryStruct(
-        ("length", "I"),
-        ("compressed_length", "I"),
-    )
+        header = FSBHeaderStruct.from_bytes(reader)
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        data = reader.unpack_struct(self.STRUCT)
-        self.version = FSBHeaderVersion(data["version"])
-        self.mode_flags = data["mode_flags"]
-        self.bank_hash = struct.unpack(">Q", data["bank_hash"])[0]
-        self.guid = "-".join((
-            data["_guid"][3::-1].hex(),  # first three chunks need to be reversed
-            data["_guid"][5:3:-1].hex(),
-            data["_guid"][7:5:-1].hex(),
-            data["_guid"][8:10].hex(),
-            data["_guid"][10:].hex(),
+        bank_hash = reader.unpack_value(">Q")  # big-endian field
+        guid_bytes = reader.read(16)
+        guid = "-".join((
+            guid_bytes[3::-1].hex(),  # first three chunks need to be reversed
+            guid_bytes[5:3:-1].hex(),
+            guid_bytes[7:5:-1].hex(),
+            guid_bytes[8:10].hex(),
+            guid_bytes[10:].hex(),
         ))
 
-        data_offset = reader.position + data["sample_headers_size"]
-        file_size = data_offset + data["sample_data_size"]
+        data_offset = reader.position + header.sample_headers_size
+        file_size = data_offset + header.sample_data_size
 
-        self.samples = []
-        for i in range(data["sample_count"]):
-            if self.mode_flags & FSBHeaderMode.BASICHEADERS and i > 0:
+        samples = []
+        for i in range(header.sample_count):
+            if header.mode_flags & FSBHeaderMode.BASICHEADERS and i > 0:
                 # Clone of first sample, with new length/compressed length information.
-                sample = copy.deepcopy(self.samples[0])
-                basic_sample_header = reader.unpack_struct(self.BASIC_SAMPLE_STRUCT)
-                sample.header.length = basic_sample_header["length"]
-                sample.header.compressed_length = basic_sample_header["length"]
+                sample = copy.deepcopy(samples[0])
+                length, uncompressed_length = reader.unpack("2I")
+                sample.header.length = length
+                sample.header.compressed_length = length
             else:
                 # New sample.
-                sample = FSBSample.unpack_from(reader, data_offset=data_offset)
+                sample = FSBSample.from_fsb_reader(reader, data_offset=data_offset)
                 data_offset += sample.header.compressed_length
-            self.samples.append(sample)
+            samples.append(sample)
         if data_offset != file_size:
             raise ValueError(f"Sample data end offset ({data_offset}) does not equal expected file size ({file_size}).")
 
-    def pack(self, **kwargs) -> bytes:
-        raise ValueError("FSB pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
+        return header.to_object(cls, bank_hase=bank_hash, guid=guid, samples=samples)
+
+    def to_writer(self) -> BinaryWriter:
+        raise TypeError("FSB cannot be written in Python. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
     def __repr__(self):
         return (
@@ -320,6 +283,6 @@ class FSB(GameFile):
             f"    bank_hash={self.bank_hash},\n"
             f"    guid={self.guid},\n"
             f"    mode_flags={self.mode_flags},\n"
-            f"    samples=<{len(self.samples)}>,\n"
+            f"    samples=<{len(self.samples)} samples>,\n"
             f")\n"
         )

@@ -17,7 +17,7 @@ from soulstruct.base.project.utilities import TagData, TextEditor
 from soulstruct.utilities.window import SmartFrame
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.events.emevd_directory import EMEVDDirectory
+    from soulstruct.base.events.emevd_directory import EventDirectory
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,7 +86,7 @@ class EventEditor(SmartFrame):
     TEXT_BG = "#232323"
     TEXT_BOX_WIDTH = 300
 
-    events: EMEVDDirectory
+    events: EventDirectory
 
     def __init__(
         self,
@@ -128,7 +128,7 @@ class EventEditor(SmartFrame):
         self.refresh()
 
     @property
-    def events(self) -> EMEVDDirectory:
+    def events(self) -> EventDirectory:
         return self._project.events
 
     def build(self):

@@ -1,34 +1,34 @@
 """Weapon Param in DSR has additional fields."""
-from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, pad_field
 from soulstruct.darksouls1r.game_types import *
 from ..enums import *
 
 
 EQUIP_PARAM_WEAPON_ST = {
-    "paramdef_name": "EQUIP_PARAM_WEAPON_ST",
+    "param_type": "EQUIP_PARAM_WEAPON_ST",
     "file_name": "EquipParamWeapon",
     "nickname": "Weapons",
     "fields": [
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "behaviorVariationId",
             "BehaviorVariationID",
             True,
             int,
             "Multiplied by 1000 and added to player behavior lookups (hitboxes, bullets) triggered by TAE.",
         ),
-        FieldDisplayInfo("sortId", "SortIndex", True, int, "Index for automatic inventory sorting."),
-        FieldDisplayInfo(
+        ParamFieldInfo("sortId", "SortIndex", True, int, "Index for automatic inventory sorting."),
+        ParamFieldInfo(
             "wanderingEquipId", "GhostWeaponReplacement", True, WeaponParam, "Weapon replacement for ghosts."
         ),
-        FieldDisplayInfo("weight", "Weight", True, float, "Weight of weapon."),
-        FieldDisplayInfo(
+        ParamFieldInfo("weight", "Weight", True, float, "Weight of weapon."),
+        ParamFieldInfo(
             "weaponWeightRate",
             "WeightRatio",
             True,
             float,
             "Unknown effect. Value is about evenly split between 0 and 1 across weapons, with no obvious pattern.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "fixPrice",
             "RepairCost",
             True,
@@ -36,15 +36,15 @@ EQUIP_PARAM_WEAPON_ST = {
             "Amount of souls required to repair weapon fully. Actual repair cost is this multiplied by current "
             "durability over max durability.",
         ),
-        FieldDisplayInfo("basicPrice", "BasicCost", False, int, "Unknown purpose, and unused."),
-        FieldDisplayInfo(
+        ParamFieldInfo("basicPrice", "BasicCost", False, int, "Unknown purpose, and unused."),
+        ParamFieldInfo(
             "sellValue",
             "FramptSellValue",
             True,
             int,
             "Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "correctStrength",
             "StrengthScaling",
             True,
@@ -52,7 +52,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Amount of attack power gained from strength. (I believe this is the percentage of the player's "
             "strength to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "correctAgility",
             "DexterityScaling",
             True,
@@ -60,7 +60,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Amount of attack power gained from dexterity. (I believe this is the percentage of the player's "
             "dexterity to add to the weapon's attack power, but it also depends on ScalingFormulaType below.).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "correctMagic",
             "IntelligenceScaling",
             True,
@@ -68,7 +68,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Amount of attack power gained from intelligence. (I believe this is the percentage of the player's "
             "intelligence to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "correctFaith",
             "FaithScaling",
             True,
@@ -76,84 +76,84 @@ EQUIP_PARAM_WEAPON_ST = {
             "Amount of attack power gained from faith. (I believe this is the percentage of the player's faith to "
             "add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "physGuardCutRate",
             "PhysicalGuardPercentage",
             True,
             float,
             "Percentage of physical damage prevented when guarding with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "magGuardCutRate",
             "MagicGuardPercentage",
             True,
             float,
             "Percentage of magic damage prevented when guarding with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "fireGuardCutRate",
             "FireGuardPercentage",
             True,
             float,
             "Percentage of fire damage prevented when guarding with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "thunGuardCutRate",
             "LightningGuardPercentage",
             True,
             float,
             "Percentage of lightning damage prevented when guarding with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectBehaviorId0",
             "SpecialEffectOnHit0",
             True,
             SpecialEffectParam,
             "Special effect applied to struck target (slot 0).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectBehaviorId1",
             "SpecialEffectOnHit1",
             True,
             SpecialEffectParam,
             "Special effect applied to struck target (slot 1).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectBehaviorId2",
             "SpecialEffectOnHit2",
             True,
             SpecialEffectParam,
             "Special effect applied to struck target (slot 2).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "residentSpEffectId",
             "EquippedSpecialEffect0",
             True,
             SpecialEffectParam,
             "Special effect granted to character with weapon equipped (slot 0).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "residentSpEffectId1",
             "EquippedSpecialEffect1",
             True,
             SpecialEffectParam,
             "Special effect granted to character with weapon equipped (slot 1).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "residentSpEffectId2",
             "EquippedSpecialEffect2",
             True,
             SpecialEffectParam,
             "Special effect granted to character with weapon equipped (slot 2).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "materialSetId",
             "UpgradeMaterialID",
             True,
             UpgradeMaterialParam,
             "Upgrade Material parameter that sets costs for weapon reinforcement.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep",
             "UpgradeOrigin0",
             True,
@@ -162,7 +162,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep1",
             "UpgradeOrigin1",
             True,
@@ -171,7 +171,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep2",
             "UpgradeOrigin2",
             True,
@@ -180,7 +180,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep3",
             "UpgradeOrigin3",
             True,
@@ -189,7 +189,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep4",
             "UpgradeOrigin4",
             True,
@@ -198,7 +198,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep5",
             "UpgradeOrigin5",
             True,
@@ -207,7 +207,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep6",
             "UpgradeOrigin6",
             True,
@@ -216,7 +216,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep7",
             "UpgradeOrigin7",
             True,
@@ -225,7 +225,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep8",
             "UpgradeOrigin8",
             True,
@@ -234,7 +234,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep9",
             "UpgradeOrigin9",
             True,
@@ -243,7 +243,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep10",
             "UpgradeOrigin10",
             True,
@@ -252,7 +252,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep11",
             "UpgradeOrigin11",
             True,
@@ -261,7 +261,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep12",
             "UpgradeOrigin12",
             True,
@@ -270,7 +270,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep13",
             "UpgradeOrigin13",
             True,
@@ -279,7 +279,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep14",
             "UpgradeOrigin14",
             True,
@@ -288,7 +288,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "originEquipWep15",
             "UpgradeOrigin15",
             True,
@@ -297,50 +297,50 @@ EQUIP_PARAM_WEAPON_ST = {
             "upgrades). If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's "
             "reversion menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "antiDemonDamageRate",
             "DamageAgainstDemonsMultiplier",
             True,
             float,
             "Multiplier applied to damage dealt against demons with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "antSaintDamageRate",
             "WeakToDivineDamageMultiplier",
             True,
             float,
             "Multiplier applied to damage dealt against enemies weak to divine (e.g. skeletons) with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "antWeakA_DamageRate",
             "GodDamageMultiplier",
             True,
             float,
             "Multiplier applied to damage dealt against Gods and Goddesses with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "antWeakB_DamageRate",
             "AbyssDamageMultiplier",
             True,
             float,
             "Multiplier applied to damage dealt against enemies from the Abyss with this weapon.",
         ),
-        FieldDisplayInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("vagrantItemLotId", "VagrantItemLot", False, ItemLotParam, ""),
+        ParamFieldInfo(
             "vagrantBonusEneDropItemLotId", "VagrantBonusEnemyDropItemLot", False, ItemLotParam, ""
         ),
-        FieldDisplayInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
-        FieldDisplayInfo("equipModelId", "WeaponModel", True, int, "Weapon model ID."),
-        FieldDisplayInfo("iconId", "WeaponIcon", True, Texture, "Weapon icon texture ID."),
-        FieldDisplayInfo(
+        ParamFieldInfo("vagrantItemEneDropItemLotId", "VagrantItemEnemyDropItemLot", False, ItemLotParam, ""),
+        ParamFieldInfo("equipModelId", "WeaponModel", True, int, "Weapon model ID."),
+        ParamFieldInfo("iconId", "WeaponIcon", True, Texture, "Weapon icon texture ID."),
+        ParamFieldInfo(
             "durability",
             "InitialDurability",
             True,
             int,
             "Durability of weapon when it is obtained. Always equal to max durability in vanilla game.",
         ),
-        FieldDisplayInfo("durabilityMax", "MaxDurability", True, int, "Maximum durability of weapon."),
-        FieldDisplayInfo(
+        ParamFieldInfo("durabilityMax", "MaxDurability", True, int, "Maximum durability of weapon."),
+        ParamFieldInfo(
             "attackThrowEscape",
             "ThrowEscapePower",
             False,
@@ -348,64 +348,64 @@ EQUIP_PARAM_WEAPON_ST = {
             "Power for escaping throws. Always 1, except for a few (and only a few) of the ghost replacement "
             "weapons.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "parryDamageLife",
             "MaxParryWindowDuration",
             False,
             int,
             "Maximum parry window duration (cannot exceed TAE duration). Always set to 10.",
         ),
-        FieldDisplayInfo("attackBasePhysics", "BasePhysicalDamage", True, int, "Base physical damage of weapon attacks."),
-        FieldDisplayInfo("attackBaseMagic", "BaseMagicDamage", True, int, "Base magic damage of weapon attacks."),
-        FieldDisplayInfo("attackBaseFire", "BaseFireDamage", True, int, "Base fire damage of weapon attacks."),
-        FieldDisplayInfo(
+        ParamFieldInfo("attackBasePhysics", "BasePhysicalDamage", True, int, "Base physical damage of weapon attacks."),
+        ParamFieldInfo("attackBaseMagic", "BaseMagicDamage", True, int, "Base magic damage of weapon attacks."),
+        ParamFieldInfo("attackBaseFire", "BaseFireDamage", True, int, "Base fire damage of weapon attacks."),
+        ParamFieldInfo(
             "attackBaseThunder", "BaseLightningDamage", True, int, "Base lightning damage of weapon attacks."
         ),
-        FieldDisplayInfo("attackBaseStamina", "BaseStaminaDamage", True, int, "Base stamina damage of weapon attacks."),
-        FieldDisplayInfo("saWeaponDamage", "BasePoiseDamage", True, int, "Base poise damage of weapon attacks."),
-        FieldDisplayInfo(
+        ParamFieldInfo("attackBaseStamina", "BaseStaminaDamage", True, int, "Base stamina damage of weapon attacks."),
+        ParamFieldInfo("saWeaponDamage", "BasePoiseDamage", True, int, "Base poise damage of weapon attacks."),
+        ParamFieldInfo(
             "saDurability",
             "AttackPoiseBonus",
             False,
             int,
             "Poise gained during attack animations with this weapon. Never used (probably done in TAE).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardAngle",
             "EffectiveGuardAngle",
             False,
             int,
             "Angle that can be guarded with this weapon. Never used.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "staminaGuardDef",
             "GuardStaminaDefense",
             True,
             int,
             "Defense against (i.e. value subtracted from) stamina attack damage while guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "reinforceTypeId",
             "WeaponUpgradeID",
             True,
             WeaponUpgradeParam,
             "Weapon Upgrade parameter that specifies upgrade benefits.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "trophySGradeId",
             "AllWeaponsAchievementIndex",
             False,
             int,
             "Index of weapon as it contributes to the Knight's Honor achievement.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "trophySeqId",
             "MaxUpgradeAchievementID",
             False,
             int,
             "Achievement unlocked when weapon is upgraded to maximum level (one per upgrade path).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "throwAtkRate",
             "ThrowDamageChangePercentage",
             True,
@@ -413,28 +413,28 @@ EQUIP_PARAM_WEAPON_ST = {
             "Percentage damage increase (if positive) or decrease (if negative) during backstabs and ripostes "
             "with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "bowDistRate",
             "BowRangeChangePercentage",
             True,
             int,
             "Percentage range increase (if positive) or decrease (if negative) with this bow.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equipModelCategory",
             "WeaponModelCategory",
             False,
             EQUIP_MODEL_CATEGORY,
             "Model category for equipment. Only one option for weapons.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equipModelGender",
             "WeaponModelGender",
             False,
             EQUIP_MODEL_GENDER,
             "Model gender variant. All weapons are genderless.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "weaponCategory",
             "WeaponCategory",
             True,
@@ -442,7 +442,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Basic category of weapon. Many 'weapon types' you may be familiar with are merged here (e.g. whips "
             "are straight swords).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "wepmotionCategory",
             "AttackAnimationCategory",
             True,
@@ -450,49 +450,49 @@ EQUIP_PARAM_WEAPON_ST = {
             "Basic weapon attack animation type. More diverse than WeaponCategory. This number is multiplied by "
             "10000 and used as an animation offset for all attacks, I believe.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardmotionCategory",
             "GuardAnimationCategory",
             True,
             GUARDMOTION_CATEGORY,
             "Basic weapon/shield block animation type.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "atkMaterial",
             "VisualSoundEffectsOnHit",
             True,
             WEP_MATERIAL_ATK,
             "Determines the sounds and visual effects generated when this weapon hits.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defMaterial",
             "VisualEffectsOnBlock",
             True,
             WEP_MATERIAL_DEF,
             "Determines the visual effects generated when this weapon blocks an attack.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defSfxMaterial",
             "SoundEffectsOnBlock",
             True,
             WEP_MATERIAL_DEF_SFX,
             "Determines the sound effects generated when this weapon blocks an attack.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "correctType",
             "ScalingFormulaType",
             True,
             WEP_CORRECT_TYPE,
             "Determines how scaling changes with attribute level.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spAttribute",
             "ElementAttribute",
             True,
             ATKPARAM_SPATTR_TYPE,
             "Element attached to hits with this weapon.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spAtkcategory",
             "SpecialAttackCategory",
             True,
@@ -500,38 +500,38 @@ EQUIP_PARAM_WEAPON_ST = {
             "Overrides AttackAnimationCategory for some attacks. Ranges from 50 to 199 (or 0 for none). Often "
             "used to give weapons unique strong (R2) attacks, for example, but can override any attack animation.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "wepmotionOneHandId",
             "OneHandedAnimationCategory",
             True,
             WEPMOTION_CATEGORY,
             "Animation category for one-handed non-attack animations (like walking).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "wepmotionBothHandId",
             "TwoHandedAnimationCategory",
             True,
             WEPMOTION_CATEGORY,
             "Animation category for two-handed non-attack animations (like walking).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "properStrength",
             "RequiredStrength",
             True,
             int,
             "Required strength to wield weapon properly. (Reduced by one third if held two-handed.)",
         ),
-        FieldDisplayInfo("properAgility", "RequiredDexterity", True, int, "Required dexterity to wield weapon properly."),
-        FieldDisplayInfo(
+        ParamFieldInfo("properAgility", "RequiredDexterity", True, int, "Required dexterity to wield weapon properly."),
+        ParamFieldInfo(
             "properMagic", "RequiredIntelligence", True, int, "Required intelligence to wield weapon properly."
         ),
-        FieldDisplayInfo("properFaith", "RequiredFaith", True, int, "Required faith to wield weapon properly."),
-        FieldDisplayInfo(
+        ParamFieldInfo("properFaith", "RequiredFaith", True, int, "Required faith to wield weapon properly."),
+        ParamFieldInfo(
             "overStrength", "OverStrength", False, int, "Unknown. Always set to 99, except for arrows and bolts."
         ),
-        FieldDisplayInfo("attackBaseParry", "AttackBaseParry", False, int, "Unknown. Never used."),
-        FieldDisplayInfo("defenseBaseParry", "DefenseBaseParry", False, int, "Unknown. Never used."),
-        FieldDisplayInfo(
+        ParamFieldInfo("attackBaseParry", "AttackBaseParry", False, int, "Unknown. Never used."),
+        ParamFieldInfo("defenseBaseParry", "DefenseBaseParry", False, int, "Unknown. Never used."),
+        ParamFieldInfo(
             "guardBaseRepel",
             "DeflectOnBlock",
             True,
@@ -539,7 +539,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Determines if an enemy will be deflected when you block them with this weapon (by comparing it to "
             "their DeflectOnAttack).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "attackBaseRepel",
             "DeflectOnAttack",
             True,
@@ -547,7 +547,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "Determines if this weapon will be deflected when attacking a blocking enemy (by comparing it to "
             "their DeflectOnBlock).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardCutCancelRate",
             "IgnoreGuardPercentage",
             False,
@@ -556,7 +556,7 @@ EQUIP_PARAM_WEAPON_ST = {
             "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, "
             "in favor of the simple 'IgnoreGuard' boolean field.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardLevel",
             "GuardLevel",
             True,
@@ -565,38 +565,38 @@ EQUIP_PARAM_WEAPON_ST = {
             "unclear, but this ranges from 0 to 4 in effectiveness of blocking in a predictable way (daggers are "
             "worse than swords, which are worse than greatswords, which are worse than all shields).",
         ),
-        FieldDisplayInfo("slashGuardCutRate", "SlashDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo("blowGuardCutRate", "StrikeDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo("thrustGuardCutRate", "ThrustDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo(
+        ParamFieldInfo("slashGuardCutRate", "SlashDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo("blowGuardCutRate", "StrikeDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo("thrustGuardCutRate", "ThrustDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo(
             "poisonGuardResist",
             "PoisonDamageReductionWhenGuarding",
             True,
             int,
             "Percentage of incoming poison damage ignored when guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "diseaseGuardResist",
             "ToxicDamageReductionWhenGuarding",
             True,
             int,
             "Percentage of incoming toxic damage ignored when guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "bloodGuardResist",
             "BleedDamageReductionWhenGuarding",
             True,
             int,
             "Percentage of incoming bleed damage ignored when guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "curseGuardResist",
             "CurseDamageReductionWhenGuarding",
             True,
             int,
             "Percentage of incoming curse damage ignored when guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "isDurabilityDivergence",
             "DurabilityDivergenceCategory",
             True,
@@ -605,107 +605,107 @@ EQUIP_PARAM_WEAPON_ST = {
             "without having enough durability to use it. Exact enumeration is unknown, but existing usages are "
             "documented.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "rightHandEquipable:1",
             "RightHandAllowed",
             True,
             bool,
             "If True, this weapon can be equipped in the right hand.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "leftHandEquipable:1",
             "LeftHandAllowed",
             True,
             bool,
             "If True, this weapon can be equipped in the left hand.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "bothHandEquipable:1",
             "BothHandsAllowed",
             True,
             bool,
             "If True, this weapon can be held in two-handed mode.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "arrowSlotEquipable:1",
             "UsesEquippedArrows",
             True,
             bool,
             "If True, this weapon will use equipped arrow slot.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "boltSlotEquipable:1",
             "UsesEquippedBolts",
             True,
             bool,
             "If True, this weapon will use equipped bolt slot.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableGuard:1",
             "GuardEnabled",
             True,
             bool,
             "If True, the player can guard with this weapon by holding L1.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableParry:1",
             "ParryEnabled",
             True,
             bool,
             "If True, the player can parry with this weapon by pressing L2.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableMagic:1", "CanCastSorceries", True, bool, "If True, this weapon can be used to cast sorceries."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableSorcery:1", "CanCastPyromancy", True, bool, "If True, this weapon can be used to cast pyromancy."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableMiracle:1", "CanCastMiracles", True, bool, "If True, this weapon can be used to cast miracles."
         ),
-        FieldDisplayInfo("enableVowMagic:1", "CanCastCovenantMagic", True, bool, ""),
-        FieldDisplayInfo("isNormalAttackType:1", "DealsNeutralDamage", True, bool, ""),
-        FieldDisplayInfo("isBlowAttackType:1", "DealsStrikeDamage", True, bool, ""),
-        FieldDisplayInfo("isSlashAttackType:1", "DealsSlashDamage", True, bool, ""),
-        FieldDisplayInfo("isThrustAttackType:1", "DealsThrustDamage", True, bool, ""),
-        FieldDisplayInfo("isEnhance:1", "IsUpgraded", True, bool, ""),
-        FieldDisplayInfo("isLuckCorrect:1", "IsAffectedByLuck", True, bool, ""),
-        FieldDisplayInfo("isCustom:1", "IsCustom?", True, bool, ""),
-        FieldDisplayInfo("disableBaseChangeReset:1", "DisableBaseChangeReset", True, bool, ""),
-        FieldDisplayInfo("disableRepair:1", "DisableRepairs", True, bool, "If True, this weapon cannot be repaired."),
-        FieldDisplayInfo("isDarkHand:1", "IsDarkHand", False, bool, "Enabled only for the Dark Hand."),
-        FieldDisplayInfo("simpleModelForDlc:1", "SimpleDLCModelExists", False, bool, "Unknown; always set to False."),
-        FieldDisplayInfo("lanternWep:1", "IsLantern?", True, bool, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("enableVowMagic:1", "CanCastCovenantMagic", True, bool, ""),
+        ParamFieldInfo("isNormalAttackType:1", "DealsNeutralDamage", True, bool, ""),
+        ParamFieldInfo("isBlowAttackType:1", "DealsStrikeDamage", True, bool, ""),
+        ParamFieldInfo("isSlashAttackType:1", "DealsSlashDamage", True, bool, ""),
+        ParamFieldInfo("isThrustAttackType:1", "DealsThrustDamage", True, bool, ""),
+        ParamFieldInfo("isEnhance:1", "IsUpgraded", True, bool, ""),
+        ParamFieldInfo("isLuckCorrect:1", "IsAffectedByLuck", True, bool, ""),
+        ParamFieldInfo("isCustom:1", "IsCustom?", True, bool, ""),
+        ParamFieldInfo("disableBaseChangeReset:1", "DisableBaseChangeReset", True, bool, ""),
+        ParamFieldInfo("disableRepair:1", "DisableRepairs", True, bool, "If True, this weapon cannot be repaired."),
+        ParamFieldInfo("isDarkHand:1", "IsDarkHand", False, bool, "Enabled only for the Dark Hand."),
+        ParamFieldInfo("simpleModelForDlc:1", "SimpleDLCModelExists", False, bool, "Unknown; always set to False."),
+        ParamFieldInfo("lanternWep:1", "IsLantern?", True, bool, ""),
+        ParamFieldInfo(
             "isVersusGhostWep:1",
             "CanHitGhosts",
             True,
             bool,
             "If True, this weapon can hit ghosts without a Transient Curse active.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "baseChangeCategory:6", "BaseChangeCategory", False, int, "Never used. Likely Demon's Souls junk."
         ),
-        FieldDisplayInfo("isDragonSlayer:1", "IsDragonSlayer", True, bool, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("isDragonSlayer:1", "IsDragonSlayer", True, bool, ""),
+        ParamFieldInfo(
             "isDeposit:1",
             "CanBeStored",
             True,
             bool,
             "If True, this weapon can be stored in the Bottomless Box. Always True for rings.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disableMultiDropShare:1",
             "DisableMultiplayerShare",
             False,
             bool,
             "If True, this weapon cannot be given to other players by dropping it. Always False in vanilla.",
         ),
-        FieldDisplayInfo("pad_0[1]", "Pad2", False, pad_field(1), "Null padding."),
-        FieldDisplayInfo(
+        ParamFieldInfo("pad_0[1]", "Pad2", False, pad_field(1), "Null padding."),
+        ParamFieldInfo(
             "oldSortId", "OldSortIndex", False, int, "Sorting index for an obsolete build of the game. No effect."
         ),
-        FieldDisplayInfo("levelSyncCorrectID", "LevelSyncCorrectID", False, int, "Level sync ID for DSR."),
-        FieldDisplayInfo("pad_1[6]", "Pad3", False, pad_field(6), "Null padding."),
+        ParamFieldInfo("levelSyncCorrectID", "LevelSyncCorrectID", False, int, "Level sync ID for DSR."),
+        ParamFieldInfo("pad_1[6]", "Pad3", False, pad_field(6), "Null padding."),
     ],
 }

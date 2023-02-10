@@ -62,9 +62,11 @@ class ParamDefBND(Binder, abc.ABC):
                 self.paramdefs[paramdef.param_type] = paramdef
 
     @classmethod
-    def from_bundled(cls, game: Game | str) -> Self:
+    def from_bundled(cls, game: Game | str = None) -> Self:
         """Load vanilla ParamDefBND bundled with Soulstruct (easiest)."""
-        if isinstance(game, str):
+        if game is None:
+            game = cls.get_game()
+        elif isinstance(game, str):
             game = get_game(game)
 
         if not game.bundled_paramdef_path:

@@ -89,7 +89,7 @@ class WindowLinker(_BaseWindowLinker):
             # Looks up map from Maps tab, since nothing else links there right now.
             param_nickname = field_type.get_param_nickname()
             map_area_name = map_override[:3] if map_override else f"{self.window.maps_tab.map_choice_id.split('_')[0]}"
-            param_table = self.project.lighting.get_draw_param_bnd(map_area_name).get_param(param_nickname)[0]
+            param_table = self.project.lighting.get_drawparambnd(map_area_name).get_param(param_nickname)[0]
             try:
                 name = param_table[field_value].name
             except KeyError:

@@ -1,100 +1,30 @@
 from __future__ import annotations
 
 __all__ = [
-    "BitFieldReader",
-    "BitFieldWriter",
-    "FieldDisplayInfo",
-    "DynamicFieldDisplayInfo",
+    "ParamFieldInfo",
+    "DynamicParamFieldInfo",
     "pad_field",
     "bit_pad_field",
+    "ParamRowData",
+    "MAP_PARAM_TYPES",
+    "ParamField",
+    "ParamPad",
+    "ParamBitPad",
 ]
 
 import abc
 import logging
-import struct
 import typing as tp
+from dataclasses import dataclass, field, Field
+from types import MappingProxyType
 
-if tp.TYPE_CHECKING:
-    from soulstruct.utilities.binary import BinaryReader
+from soulstruct.base.game_types import BaseGameObject
+from soulstruct.utilities.binary import *
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class _BitFieldBase:
-
-    def __init__(self):
-        self._field = ""
-        self._fmt = ""
-        self._offset = 0
-
-    def clear(self):
-        self._field = ""
-        self._fmt = ""
-        self._offset = 0
-
-
-class BitFieldReader(_BitFieldBase):
-
-    def read(self, reader: BinaryReader, bit_count: int, fmt: str):
-        max_bit_count = 8 * struct.calcsize(fmt)
-        if self._field == "" or fmt != self._fmt or self._offset + bit_count > max_bit_count:
-            # Consume (and reverse) new bit field. Any previous bit field is discarded.
-            integer = reader.unpack_value(fmt)
-            self._field = format(integer, f"0{max_bit_count}b")[::-1]
-            self._fmt = fmt
-        binary_str = self._field[self._offset:self._offset + bit_count][::-1]
-        self._offset += bit_count
-        if self._offset % max_bit_count == 0:  # read new field next time
-            self._field = ""
-            self._offset = 0
-        return int(binary_str, 2)
-
-
-class BitFieldWriter(_BitFieldBase):
-
-    def write(self, value, bit_count, fmt: str) -> bytes:
-        """Appends `value` to bit field and returns packed data whenever a field is completed.
-
-        Note that a field is completed if the given `fmt` is different to the type of the current bit field.
-        """
-        if value >= 2 ** bit_count:
-            raise ValueError(
-                f"Value {value} of new bit field value is too large for given bit count ({bit_count})."
-            )
-        packed = b""
-        if fmt != self._fmt:
-            if self._fmt:
-                # Pad and return last bit field (of different type to new one) while starting new bit field.
-                packed = self.finish_field()
-            self._fmt = fmt
-        max_bit_count = 8 * struct.calcsize(fmt)
-        self._field += format(value, f"0{bit_count}b")[::-1]
-        if len(self._field) >= max_bit_count:
-            if packed:
-                # This shouldn't happen for new `fmt` because `bit_count < max_size`, but just in case.
-                raise ValueError(f"New bit field was exceeded before previous bit field could be written.")
-            # Leftover bytes go into next lot (though this should never happen due to pad fields).
-            completed_bit_field = self._field[:max_bit_count]
-            integer = int(completed_bit_field[::-1], 2)  # reversed
-            packed = struct.pack(self._fmt, integer)
-            self._field = self._field[max_bit_count:] if len(self._field) > max_bit_count else ""
-        return packed
-
-    def finish_field(self) -> bytes:
-        """Pad existing bit field to its maximum size, clear it, and return packed data.
-
-        Returns empty bytes if field is empty.
-        """
-        if not self._field:
-            return b""
-        size = struct.calcsize(self._fmt)
-        self._field = format(self._field, f"0<{size}")
-        packed = struct.pack(self._fmt, int(self._field[::-1], 2))  # note string reversal
-        self.clear()
-        return packed
-
-
-class FieldDisplayInfo:
+class ParamFieldInfo:
     def __init__(self, name, nickname, is_enabled, field_type, description="TODO", default_value=None):
         self.name = name
         self.nickname = nickname
@@ -112,7 +42,7 @@ class FieldDisplayInfo:
         return f"[{self.name}] {self.description}"
 
 
-class DynamicFieldDisplayInfo(abc.ABC):
+class DynamicParamFieldInfo(abc.ABC):
     """Called with a `ParamEntry` instance, in which `type_field_name` is checked before returning `FieldInfo`."""
 
     POSSIBLE_TYPES = set()
@@ -122,7 +52,7 @@ class DynamicFieldDisplayInfo(abc.ABC):
         self.type_field_name = type_field_name
 
     @abc.abstractmethod
-    def __call__(self, entry) -> FieldDisplayInfo:
+    def __call__(self, entry) -> ParamFieldInfo:
         ...
 
 
@@ -132,3 +62,107 @@ def pad_field(n):
 
 def bit_pad_field(n):
     return f"<BitPad:{n}>"
+
+
+# TODO: Param types should just use these new binary types.
+MAP_PARAM_TYPES = {
+    "dummy8": byte,  # pad field
+    "u8": byte,
+    "u16": ushort,
+    "u32": uint,
+    "s8": sbyte,
+    "s16": short,
+    "s32": int,
+    "f32": float,
+    "f64": double,
+    "fixstr": bytes,  # not decoded
+    "fixstrW": bytes,  # not decoded
+}
+
+
+@dataclass(slots=True)
+class ParamRowData(NewBinaryStruct):
+    """Base class for `ParamDef`-spawned classes, instantiated to `ParamRow.data`."""
+
+
+@dataclass(slots=True)
+class ParamFieldMetadata(NewBinaryStruct):
+    internal_name: str
+    hide: bool = False
+    dynamic_callback: tp.Callable[[ParamRowData], tuple[tp.Type[BaseGameObject], str, str]] | None = None
+    tooltip: str = "TOOLTIP-TODO"
+    default: tp.Any = None
+
+
+def ParamField(
+    fmt: tp.Type[PRIMITIVE_FIELD_TYPING],
+    internal_name: str,
+    length: int | None = None,
+    bit_count: int = -1,
+    hide: bool = False,
+    default: tp.Any = None,
+    dynamic_callback: tp.Callable[[ParamRowData], tuple[tp.Type[PRIMITIVE_FIELD_TYPING], str, str]] = None,
+    tooltip: str = "TOOLTIP-TODO",
+):
+    """For use with double asterisk in `BinaryStruct` `field()` definition.
+
+    `dynamic_callback`, if given, should be a function that takes the `ParamRowData` instance (usually to check the
+    value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
+    appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
+    """
+    # TODO: Scan internal name to auto-detect and asserted for 'pad[size]', and detect bit fields.
+    return field(
+        default=default,
+        metadata={
+            "binary": BinaryFieldMetadata(
+                fmt=fmt,
+                length=length,
+                bit_count=bit_count,
+            ),
+            "param": ParamFieldMetadata(
+                internal_name=internal_name,
+                hide=hide,
+                dynamic_callback=dynamic_callback,
+                tooltip=tooltip,
+            ),
+        },
+    )
+
+
+def ParamPad(size: int, internal_name: str):
+    """Shortcut for a Param normal 'array' padding field (a field with type `dummy8` and [] in name)."""
+    return field(
+        default=b"\0" * size,
+        metadata={
+            "binary": BinaryFieldMetadata(
+                fmt=f"{size}s",
+                asserted=[b"\0" * size],
+            ),
+            "param": ParamFieldMetadata(
+                internal_name=internal_name,
+                hide=True,
+                dynamic_callback=None,
+                tooltip=f"Null padding ({size} bytes).",
+            ),
+        },
+    )
+
+
+def ParamBitPad(fmt: tp.Type[PRIMITIVE_FIELD_TYPING], internal_name: str, bit_count: int):
+    """Shortcut for a Param bit-padding field (a field with type `dummy8` and `bit_count != -1` from colon in name)."""
+    return field(
+        default=0,
+        metadata={
+            "binary": BinaryFieldMetadata(
+                fmt=fmt,
+                bit_count=bit_count,
+                asserted=[0],
+            ),
+            "param": ParamFieldMetadata(
+                internal_name=internal_name,
+                hide=True,
+                dynamic_callback=None,
+                tooltip=f"Null padding ({bit_count} bits).",
+            ),
+        },
+    )

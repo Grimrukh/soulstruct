@@ -16,6 +16,7 @@ __all__ = [
     "BinaryCondition",
     "RESERVED",
     "FieldValue",
+    "BinaryFieldMetadata",
     "Binary",
     "BinaryAutoCompute",
     "BinaryAutoOffset",
@@ -34,6 +35,8 @@ __all__ = [
     "read_chars_from_bytes",
     "get_blake2b_hash",
     "ReadableTyping",
+    "BitFieldReader",
+    "BitFieldWriter",
 ]
 
 import abc
@@ -97,6 +100,9 @@ class ByteOrder(enum.Enum):
         return True
 
 
+# region DEPRECATED
+
+
 class BinaryField:
     """Stores information about a field passed to `BinaryStruct`."""
 
@@ -142,7 +148,7 @@ class BinaryField:
         return f"{self.name} :: {self.fmt}" + (f" (== {self.asserted})" if self.asserted is not None else "")
 
 
-# TODO: Deprecated.
+# TODO: Deprecated. Replacing all uses with `NewBinaryStruct`, then deleting this and renaming that to `BinaryStruct`.
 class BinaryStruct:
 
     # Optional function that indicates if the given `BinaryReader` should be set to `BigEndian` byte order, usually by
@@ -724,6 +730,8 @@ class BinaryObject(abc.ABC):
             return 0
         raise TypeError(f"Unrecognized field type for `BinaryObject`: {repr(field_type)}")
 
+# endregion
+
 
 class BinaryBase:
 
@@ -1202,6 +1210,7 @@ def read_chars_from_buffer(
     chars = []
     old_offset = None
     bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16le") else 1
+    terminator = b"\0" * bytes_per_char
 
     if offset is not None:
         old_offset = buffer.tell()
@@ -1211,7 +1220,7 @@ def read_chars_from_buffer(
         c = buffer.read(bytes_per_char)
         if not c and length is None:
             raise ValueError("Ran out of bytes to read before null termination was found.")
-        if length is None and c == b"\x00" * bytes_per_char:
+        if length is None and c == terminator:
             # Null termination.
             array = b"".join(chars)
             if reset_old_offset and old_offset is not None:
@@ -1226,9 +1235,9 @@ def read_chars_from_buffer(
                     buffer.seek(old_offset)
                 stripped_array = b"".join(chars)  # used to strip spaces as well, but not anymore
                 if strip:
-                    stripped_array.rstrip()  # remove spaces
-                    while stripped_array.endswith(b"\0\0" if bytes_per_char == 2 else b"\0"):
-                        stripped_array = stripped_array[:-bytes_per_char]  # remove (pairs of) null characters
+                    stripped_array = stripped_array.rstrip()  # strip spaces
+                    while stripped_array.endswith(terminator):
+                        stripped_array = stripped_array[:-bytes_per_char]  # remove terminators
                 if encoding is not None:
                     return stripped_array.decode(encoding)
                 return stripped_array
@@ -1266,6 +1275,7 @@ double = type("double", (float,), {})  # actually `float`
 # bytes = bytes
 varint = type("varint", (int,), {})  # either `int` or `long`
 varuint = type("varuint", (int,), {})  # either `uint` or `ulong`
+
 
 PRIMITIVE_FIELD_TYPING = tp.Union[
     bool, byte, sbyte, ushort, short, uint, int, ulong, long, float, double, bytes, varint, varuint
@@ -1408,7 +1418,8 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
     """
 
     # Format for `struct.pack` and `struct.unpack`. Absent only for variable-length fields (notably null-terminated
-    # strings) and nested `BinaryStruct` classes.
+    # strings) and nested `BinaryStruct` classes. Will override the annotation type if present (so that structs can
+    # double as useful dataclasses without using dummy type hints like `short`).
     fmt: str | None = None
 
     # If field type is unhandled, it will be constructed from the `tuple` output of `struct.unpack()` using this factory
@@ -1441,6 +1452,11 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
     # fixed-length field will always be padded out to the required size, regardless of this value.
     # NOTE: If asserting fixed-length values, make sure they take this argument into consideration.
     rstrip_null: bool = False
+
+    # If not -1, data will be read from partial bits of data sized by `fmt`. Sequential bit fields with the same `fmt`
+    # can be unpacked from the same single byte (or more). When a non-bit-field is encountered, the rest of `fmt` will
+    # be consumed.
+    bit_count: int = -1
 
     # If `True` (NOT default), this field will NOT be unpacked in `from_bytes()` and CANNOT be packed in `to_writer()`.
     # This is usually because additional information is required to unpack/pack the field, or it occurs much later in
@@ -1549,20 +1565,24 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
                 "Only `str` field can use `encoding`. (Custom types initialized from strings are not yet supported.)",
             )
 
-        if field_type in _PRIMITIVE_FIELD_INFO:
-            if self.fmt is not None:
+        if self.bit_count != -1:
+            if self.fmt is None:
+                raise BinaryFieldTypeError(field, cls_name, "Bit field type requires `fmt` metadata.")
+            max_size = struct.calcsize(self.fmt) * 8
+            if self.bit_count > max_size:
                 raise BinaryFieldTypeError(
-                    field, cls_name, f"Cannot specify `fmt` for primitive field type `{field_type}`."
+                    field, cls_name, f"Bit field with bit count {self.bit_count} is too high for `fmt` {self.fmt}."
                 )
-        elif field_type is not bytes and field_type is not str:
+
+        if field_type is not bytes and field_type is not str:
             # All non-primitive types must have `fmt`.
             if self.fmt is None:
                 raise BinaryFieldTypeError(field, cls_name, "Non-primitive field type requires `fmt` metadata.")
 
     @staticmethod
-    def resolve_condition(condition: tp.Any, stream: tp.BinaryIO | None, field_values: dict[str, tp.Any]) -> tp.Any:
+    def resolve_condition(condition: tp.Any, reader: BinaryReader | None, field_values: dict[str, tp.Any]) -> tp.Any:
         if isinstance(condition, BinaryCondition):
-            return condition(stream)
+            return condition(reader)
         if isinstance(condition, str):  # consume field name
             return field_values.pop(condition)
         if isinstance(condition, FieldValue):
@@ -1610,7 +1630,7 @@ def _validate_binary_field_without_metadata(field: dataclasses.Field, field_type
 
 def _unpack_binary_field(
     metadata: BinaryFieldMetadata | None,
-    stream: tp.BinaryIO,
+    reader: BinaryReader,
     field_type: tp.Type,
     byte_order: ByteOrder,
     varint_size: int,
@@ -1626,51 +1646,51 @@ def _unpack_binary_field(
         # Primitive field with no extra metadata.
         if issubclass(field_type, NewBinaryStruct):
             # NOTE: Nested struct will inherit `byte_order` and `varint_size` from caller struct.
-            return field_type.from_bytes(stream, byte_order, varint_size)
+            return field_type.from_bytes(reader, byte_order, varint_size)
 
         if isinstance(field_type, GenericAlias):
             values = [
-                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                _unpack_binary_field(None, reader, element_type, byte_order, varint_size, field_values)
                 for element_type in field_type.__args__
             ]
             return tuple(values)
 
         if field_type is Vector2:
-            return Vector2(*struct.unpack(byte_order.value + "2f", stream.read(8)))
+            return Vector2(*struct.unpack(byte_order.value + "2f", reader.read(8)))
         elif field_type is Vector3:
-            return Vector3(*struct.unpack(byte_order.value + "3f", stream.read(12)))
+            return Vector3(*struct.unpack(byte_order.value + "3f", reader.read(12)))
         elif field_type is Vector4:
-            return Vector4(*struct.unpack(byte_order.value + "4f", stream.read(16)))
+            return Vector4(*struct.unpack(byte_order.value + "4f", reader.read(16)))
 
         fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]
         fmt = _process_fmt_varint(fmt, varint_size)
         size = struct.calcsize(fmt)
-        return struct.unpack(byte_order.value + fmt, stream.read(size))[0]  # type: PRIMITIVE_FIELD_TYPING
+        return struct.unpack(byte_order.value + fmt, reader.read(size))[0]  # type: PRIMITIVE_FIELD_TYPING
 
     # Prepare stream position.
     initial_offset = None
     if "offset" in overrides:
         if metadata.offset is not None:
             raise ValueError("Cannot manually specify `offset` for unpacking this field.")
-        initial_offset = stream.tell()
-        stream.seek(overrides["offset"])
+        initial_offset = reader.tell()
+        reader.seek(overrides["offset"])
     else:
         if metadata.alignment > 1:
-            mod_current_position = stream.tell() % metadata.alignment
+            mod_current_position = reader.tell() % metadata.alignment
             if mod_current_position > 0:  # move forward by difference (to reach mod 0)
-                stream.seek(metadata.alignment - mod_current_position, 1)
+                reader.seek(metadata.alignment - mod_current_position, 1)
         elif metadata.offset is not None:
-            initial_offset = stream.tell()
-            offset = metadata.resolve_condition(metadata.offset, stream, field_values)
-            stream.seek(offset)
+            initial_offset = reader.tell()
+            offset = metadata.resolve_condition(metadata.offset, reader, field_values)
+            reader.seek(offset)
 
     def reset_stream():
         if initial_offset is not None:
-            stream.seek(initial_offset)
+            reader.seek(initial_offset)
 
     if issubclass(field_type, NewBinaryStruct):
         # NOTE: Nested struct will inherit `byte_order` and `varint_size` from caller struct.
-        unpacked_struct = field_type.from_bytes(stream, byte_order, varint_size)
+        unpacked_struct = field_type.from_bytes(reader, byte_order, varint_size)
         reset_stream()
         return unpacked_struct
 
@@ -1680,9 +1700,9 @@ def _unpack_binary_field(
         # List types must have metadata with at least a `length` argument (tuples are also welcome to).
         if field_type.__origin__ is list:
             element_type = field_type.__args__[0]
-            length = metadata.resolve_condition(metadata.length, stream, field_values)
+            length = metadata.resolve_condition(metadata.length, reader, field_values)
             values = [
-                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                _unpack_binary_field(None, reader, element_type, byte_order, varint_size, field_values)
                 for _ in range(length)
             ]
             reset_stream()
@@ -1690,7 +1710,7 @@ def _unpack_binary_field(
 
         if field_type.__origin__ is tuple:
             values = [
-                _unpack_binary_field(None, stream, element_type, byte_order, varint_size, field_values)
+                _unpack_binary_field(None, reader, element_type, byte_order, varint_size, field_values)
                 for element_type in field_type.__args__
             ]
             reset_stream()
@@ -1707,14 +1727,14 @@ def _unpack_binary_field(
         # Primitive type.
         fmt, _, _ = _PRIMITIVE_FIELD_INFO[field_type]  # no need to check `min_max` when unpacking
         fmt = _process_fmt_varint(fmt, varint_size)
-        buffer = stream.read(struct.calcsize(fmt))
+        buffer = reader.read(struct.calcsize(fmt))
         value = struct.unpack(byte_order.value + fmt, buffer)[0]  # type: PRIMITIVE_FIELD_TYPING
         reset_stream()
         return metadata.check_asserted(value)
 
     # Get format or length, or otherwise resolve null-terminated string immediately.
     if metadata.length is not None:
-        length = metadata.resolve_condition(metadata.length, stream, field_values)
+        length = metadata.resolve_condition(metadata.length, reader, field_values)
         fmt = f"{length}s"
     elif metadata.fmt is not None:
         fmt = _process_fmt_varint(metadata.fmt, varint_size)
@@ -1723,10 +1743,10 @@ def _unpack_binary_field(
         if "encoding" in overrides:
             encoding = overrides["encoding"]
         elif isinstance(metadata.encoding, BinaryCondition):
-            encoding = metadata.encoding(stream)
+            encoding = metadata.encoding(reader)
         else:
             encoding = metadata.encoding
-        value = read_null_terminated_bytes(stream, encoding)
+        value = read_null_terminated_bytes(reader, encoding)
         reset_stream()
         return metadata.check_asserted(value)
     else:
@@ -1734,13 +1754,13 @@ def _unpack_binary_field(
         raise BinaryFieldValueError(f"Non-primitive field `{metadata.name}` must have `fmt` or `length`.")
 
     # TODO: Should I just assert that `stream` is a `BinaryReader`?
-    raw_tuple = struct.unpack(byte_order.value + fmt, stream.read(struct.calcsize(fmt)))  # type: tuple
+    raw_tuple = struct.unpack(byte_order.value + fmt, reader.read(struct.calcsize(fmt)))  # type: tuple
 
     if field_type is str:
         if "encoding" in overrides:
             encoding = overrides["encoding"]
         elif isinstance(metadata.encoding, BinaryCondition):
-            encoding = metadata.encoding(stream)
+            encoding = metadata.encoding(reader)
         else:
             encoding = metadata.encoding
         raw_value = raw_tuple[0]
@@ -1980,6 +2000,7 @@ def Binary(
     length: int | str | FieldValue[int] | None = None,
     encoding: str | BinaryCondition[str] | None = None,
     rstrip_null: bool = False,
+    bit_count: int = -1,
     deferred: bool = False,
     skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
     **field_kwargs,
@@ -2008,6 +2029,7 @@ def Binary(
         length,
         encoding,
         rstrip_null,
+        bit_count,
         deferred,
         skip_callback,
     )
@@ -2078,6 +2100,7 @@ def BinaryPad(
     char=b"\0",
     offset: int | FieldValue[int] | None = None,
     alignment: int | BinaryCondition[int] = 1,
+    bit_count: int = -1,
     skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
 ) -> MappingProxyType[str, tp.Any]:
     """Will assert `length` bytes of character `char`.
@@ -2091,7 +2114,12 @@ def BinaryPad(
     return MappingProxyType({
         "metadata": {
             "binary": BinaryFieldMetadata(
-                offset=offset, alignment=alignment, length=length, asserted=[pad], skip_callback=skip_callback
+                offset=offset,
+                alignment=alignment,
+                length=length,
+                asserted=[pad],
+                bit_count=bit_count,
+                skip_callback=skip_callback,
             ),
         },
         # "init": False,  # TODO: will frazzle type checker when instance is directly created
@@ -2207,9 +2235,9 @@ class NewBinaryStruct:
             cls._validate_struct()
 
         if isinstance(data, (bytes, bytearray)):
-            stream = io.BytesIO(data)
+            reader = BinaryReader(data)
         elif isinstance(data, (io.BufferedIOBase, BinaryReader)):
-            stream = data  # assumes it is at the correct offset already
+            reader = data  # assumes it is at the correct offset already
         else:
             raise TypeError("`data` must be `bytes`, `bytearray`, or opened `io.BufferedIOBase`.")
 
@@ -2219,7 +2247,7 @@ class NewBinaryStruct:
             else:  # default
                 byte_order = ByteOrder.LittleEndian
         elif isinstance(byte_order, BinaryCondition):
-            byte_order = byte_order(stream)
+            byte_order = byte_order(reader)
         elif isinstance(byte_order, str):
             byte_order = ByteOrder(byte_order)
         elif not isinstance(byte_order, ByteOrder):
@@ -2231,7 +2259,7 @@ class NewBinaryStruct:
             else:  # default
                 varint_size = 8
         elif isinstance(varint_size, BinaryCondition):
-            varint_size = varint_size(stream)
+            varint_size = varint_size(reader)
 
         if varint_size not in {4, 8}:
             raise ValueError(f"Invalid `varint_size`: {varint_size}")
@@ -2241,10 +2269,15 @@ class NewBinaryStruct:
         auto_compute_funcs = []  # type: list[tuple[str, tp.Callable[[NewBinaryStruct], tp.Any]]]  # only some fields
         auto_unpacking_offset_checks = {}  # type: dict[str, list[tuple[str, int, int]]]
         deferred_unpacking_offset_fields = {}  # type: dict[str, list[tuple[str, int]]]
+        bit_reader = BitFieldReader()
 
         for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
 
             metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
+
+            if (not metadata or metadata.bit_count == -1) and not bit_reader.empty:
+                # Last bit field was not finished. Discard bits.
+                bit_reader.clear()
 
             if metadata and metadata.skip_callback is not None:
                 if metadata.skip_callback(varint_size, field_values):
@@ -2259,7 +2292,7 @@ class NewBinaryStruct:
                 # Validate target field's offset (here) against offset read from earlier field.
                 offset_field_name, offset_shift = auto_unpacking_offset_checks.pop(field.name)
 
-                expected_offset_field_value = stream.tell() + offset_shift
+                expected_offset_field_value = reader.tell() + offset_shift
                 if expected_offset_field_value != field_values[offset_field_name]:
                     raise ValueError(
                         f"Field `{cls_name}.{offset_field_name}` was expected to have offset of field "
@@ -2267,19 +2300,33 @@ class NewBinaryStruct:
                         f"{field_values[offset_field_name]}."
                     )
 
-            try:
-                # print(f"Unpacking field {cls_name}.{field.name} at {stream.tell()}")
-                field_value = _unpack_binary_field(
-                    metadata,
-                    stream,
-                    field_type,
-                    byte_order,
-                    varint_size,
-                    field_values,  # for `FieldValue` arguments to inspect
-                )
-            except Exception as ex:
-                _LOGGER.error(f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}")
-                raise
+            if metadata and metadata.bit_count != -1:
+                # Read bit field and cast to field type (e.g. `bool` for 1-bit fields).
+                try:
+                    field_value = field_type(bit_reader.read(reader, metadata.bit_count, metadata.fmt))
+                except Exception as ex:
+                    _LOGGER.error(f"Error occurred while trying to unpack bit field `{cls_name}.{field.name}`: {ex}")
+                    raise
+                if metadata.asserted and field_value not in metadata.asserted:
+                    raise BinaryFieldValueError(
+                        f"Bit field `{cls_name}.{field.name}` (bit count {metadata.bit_count}) value "
+                        f"{repr(field_value)} is not an asserted value: {metadata.asserted}"
+                    )
+            else:
+                # Read normal field.
+                try:
+                    # print(f"Unpacking field {cls_name}.{field.name} at {reader.position}")
+                    field_value = _unpack_binary_field(
+                        metadata,
+                        reader,
+                        field_type,
+                        byte_order,
+                        varint_size,
+                        field_values,  # for `FieldValue` arguments to inspect
+                    )
+                except Exception as ex:
+                    _LOGGER.error(f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}")
+                    raise
 
             field_values[field.name] = field_value
 
@@ -2290,7 +2337,6 @@ class NewBinaryStruct:
                     )
                 auto_compute_funcs.append((field.name, field.metadata["auto_compute"]))
             elif "auto_offset" in field.metadata:
-
                 target_field_name, offset_func = field.metadata["auto_offset"]
                 target_field, _ = cls.get_binary_field_and_type(target_field_name)
                 target_field_metadata = target_field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
@@ -2456,6 +2502,7 @@ class NewBinaryStruct:
             writer = BinaryWriter(byte_order)  # NOTE: `BinaryWriter.varint_size` not used here
 
         auto_packing_offset_fields = {}  # type: dict[str, list[tuple[str, int]]]
+        bit_writer = BitFieldWriter()
 
         cls_name = self.__class__.__name__
 
@@ -2474,10 +2521,20 @@ class NewBinaryStruct:
 
             metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata
 
-            if metadata.skip_callback is not None:
+            if metadata and metadata.skip_callback is not None:
                 if metadata.skip_callback(self.varint_size, field_values):
                     # Write nothing for this field.
                     continue
+
+            if not bit_writer.empty and (not metadata or metadata.bit_count == -1):
+                # Pad out bit writer.
+                bit_writer.finish_field(writer)
+
+            if metadata and metadata.bit_count != -1:
+                # NOTE: No `auto_offset` or `auto_compute` is compatible with bit fields.
+                metadata.check_asserted(field_value)  # usually zero, if asserted
+                bit_writer.write(writer, field_value, metadata.bit_count, metadata.fmt)
+                continue
 
             if "auto_offset" in field.metadata:
                 if field_value is not None:
@@ -2794,3 +2851,123 @@ class NewBinaryStruct:
     @staticmethod
     def join_bytes(struct_iterable: tp.Iterable[NewBinaryStruct]) -> bytes:
         return b"".join(bytes(s) for s in struct_iterable)
+
+
+class _BitFieldBase:
+
+    _field: str
+    _fmt: str
+    _offset: int
+
+    def __init__(self):
+        self._field = ""
+        self._fmt = ""
+        self._offset = 0
+
+    def clear(self):
+        self._field = ""
+        self._fmt = ""
+        self._offset = 0
+
+    @property
+    def empty(self) -> bool:
+        return not self._field
+
+
+class BitFieldReader(_BitFieldBase):
+    """Manages partial reading of one or more bytes, by keeping unused bits from previous reads and only consuming new
+    bytes from `reader` when needed."""
+
+    def read(self, reader: BinaryReader, bit_count: int, fmt: str = "B"):
+        max_bit_count = 8 * struct.calcsize(fmt)
+        if self._field == "" or fmt != self._fmt or self._offset + bit_count > max_bit_count:
+            # Consume (and reverse) new bit field. Any previous bit field is discarded.
+            integer = reader.unpack_value(fmt)
+            self._field = format(integer, f"0{max_bit_count}b")[::-1]
+            self._fmt = fmt
+        binary_str = self._field[self._offset:self._offset + bit_count][::-1]
+        self._offset += bit_count
+        if self._offset % max_bit_count == 0:  # read new field next time
+            self._field = ""
+            self._offset = 0
+        return int(binary_str, 2)
+
+
+class BitFieldWriter(_BitFieldBase):
+    """Manages partial writing of one or more bytes, by keeping incomplete bits from previous writes and flushing
+    them when the full `fmt` is complete."""
+
+    def write(self, writer: BinaryWriter, value: int, bit_count: int, fmt: str = "B"):
+        """Appends `value` to bit field and returns packed data whenever a field is completed.
+
+        `fmt` specifies the size of the field that bits are being written into (almost always `byte`). When the field is
+        finished,
+
+        Note that a field is completed if the given `fmt` is different to the type of the current bit field.
+        """
+        if value >= 2 ** bit_count:
+            raise ValueError(
+                f"Value {value} of new bit field value is too large for given bit count ({bit_count})."
+            )
+
+        new_fmt = False
+        if fmt != self._fmt:
+            if self._fmt:
+                # Pad and append last bit field (of different type to new one) while starting new bit field.
+                self.finish_field(writer)
+            self._fmt = fmt
+            new_fmt = True
+
+        # Append value bits to partial field.
+        self._field += format(value, f"0{bit_count}b")[::-1]
+
+        max_bit_count = 8 * struct.calcsize(self._fmt)
+        if len(self._field) >= max_bit_count:
+            # Bits are ready to flush to `writer`.
+            if new_fmt:
+                # This shouldn't happen for new `fmt` because `bit_count < max_size`, but just in case.
+                raise ValueError(f"New bit field was exceeded before previous bit field could be written.")
+
+            # Complete and write finished field.
+            completed_bit_field = self._field[:max_bit_count]
+            integer = int(completed_bit_field[::-1], 2)  # reversed
+            writer.pack(self._fmt, integer)
+
+            # Leftover bits (if any) go into new field (though this should never happen in `Param`s due to pad fields).
+            self._field = self._field[max_bit_count:]  # will be empty if `max_bit_count` exactly reached
+
+    def finish_field(self, writer: BinaryWriter):
+        """Pad existing bit field to its maximum size from `self._fmt`, clear it, and return packed data.
+
+        Returns empty bytes if field is empty.
+        """
+        if not self._field:
+            return
+        size = struct.calcsize(self._fmt)
+        padded_field = format(self._field, f"0<{size}")  # pad field out with zeroes
+        writer.pack(self._fmt, int(padded_field[::-1], 2))  # note string reversal
+        self.clear()
+
+
+def test_bit_field():
+
+    @dataclasses.dataclass(slots=True)
+    class TestStruct(NewBinaryStruct):
+        start: short
+        bit_1: int = dataclasses.field(**Binary("B", bit_count=1))
+        bit_2: bool = dataclasses.field(**Binary("B", bit_count=1))
+        _bit_pad_6: int = dataclasses.field(**Binary("B", bit_count=6, asserted=0))
+        end: float
+
+    packed = struct.pack("<hBf", 1234, 0b0000_0001, 10.0)
+    print(packed)
+    test_struct = TestStruct.from_bytes(packed)
+    print(test_struct)
+    test_struct.bit_2 = True
+    repacked = bytes(test_struct)
+    print(repacked)
+    print(TestStruct.from_bytes(repacked))
+
+
+if __name__ == '__main__':
+    test_bit_field()

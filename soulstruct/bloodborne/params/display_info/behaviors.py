@@ -1,17 +1,17 @@
 __all__ = ["BEHAVIOR_PARAM_ST"]
 
-from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, DynamicParamFieldInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.darksouls1ptde.game_types.param_types import AttackParam, BulletParam, SpecialEffectParam
 
 
-class DynamicBehaviorRef(DynamicFieldDisplayInfo):
+class DynamicBehaviorRef(DynamicParamFieldInfo):
 
     POSSIBLE_TYPES = {AttackParam, BulletParam, SpecialEffectParam}
 
-    def __call__(self, entry) -> FieldDisplayInfo:
+    def __call__(self, entry) -> ParamFieldInfo:
         if entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Default:
-            return FieldDisplayInfo(
+            return ParamFieldInfo(
                 self.name,
                 "Attack",
                 True,
@@ -19,7 +19,7 @@ class DynamicBehaviorRef(DynamicFieldDisplayInfo):
                 "Attack ID triggered by behavior.",
             )
         elif entry[self.type_field_name] == BEHAVIOR_REF_TYPE.Bullet:
-            return FieldDisplayInfo(
+            return ParamFieldInfo(
                 self.name,
                 "Bullet",
                 True,
@@ -27,7 +27,7 @@ class DynamicBehaviorRef(DynamicFieldDisplayInfo):
                 "Bullet ID triggered by behavior.",
             )
         elif entry[self.type_field_name] == BEHAVIOR_REF_TYPE.SpecialEffect:
-            return FieldDisplayInfo(
+            return ParamFieldInfo(
                 self.name,
                 "SpecialEffect",
                 True,
@@ -35,7 +35,7 @@ class DynamicBehaviorRef(DynamicFieldDisplayInfo):
                 "Special Effect ID triggered by behavior. (Never used; may not work.)",
             )
         else:
-            return FieldDisplayInfo(
+            return ParamFieldInfo(
                 self.name,
                 "UnknownRef",
                 True,
@@ -45,30 +45,30 @@ class DynamicBehaviorRef(DynamicFieldDisplayInfo):
 
 
 BEHAVIOR_PARAM_ST = {
-    "paramdef_name": "BEHAVIOR_PARAM_ST",
+    "param_type": "BEHAVIOR_PARAM_ST",
     "file_name": "BehaviorParam",  # also BehaviorParam_PC
     "nickname": None,
     "fields": [
-        FieldDisplayInfo("variationId", "VariationID", True, int, ""),  # TODO: connect to model/TAE somehow.
-        FieldDisplayInfo(
+        ParamFieldInfo("variationId", "VariationID", True, int, ""),  # TODO: connect to model/TAE somehow.
+        ParamFieldInfo(
             "behaviorJudgeId",
             "BehaviorJudgeID",
             True,
             int,
             "This is the ID specified by TAE events that trigger behaviors.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "ezStateBehaviorType_old", "EzstateBehaviorType", False, int, "Unused remnant from Demon's Souls."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "refType", "ReferenceType", True, BEHAVIOR_REF_TYPE, "Is the reference ID below an Attack or Bullet ID?"
         ),
-        FieldDisplayInfo("pad0[2]", "Pad1", False, pad_field(2), "Null padding."),
+        ParamFieldInfo("pad0[2]", "Pad1", False, pad_field(2), "Null padding."),
         DynamicBehaviorRef("refId", "refType"),
-        FieldDisplayInfo("sfxVariationId", "VFXVariationID", True, int, "Visual effect ID."),
-        FieldDisplayInfo("stamina", "StaminaCost", True, int, "Stamina cost of behavior."),
-        FieldDisplayInfo("mp", "DurabilityCost", True, int, "Weapon/shield durability cost of behavior."),
-        FieldDisplayInfo(
+        ParamFieldInfo("sfxVariationId", "VFXVariationID", True, int, "Visual effect ID."),
+        ParamFieldInfo("stamina", "StaminaCost", True, int, "Stamina cost of behavior."),
+        ParamFieldInfo("mp", "DurabilityCost", True, int, "Weapon/shield durability cost of behavior."),
+        ParamFieldInfo(
             "category",
             "Category",
             True,
@@ -76,7 +76,7 @@ BEHAVIOR_PARAM_ST = {
             "Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' "
             "for thrown goods and 'No Category' otherwise.",
         ),
-        FieldDisplayInfo("heroPoint", "HumanityCost", False, int, "Humanity cost of behavior. Never used."),
-        FieldDisplayInfo("pad1[2]", "Pad2", False, pad_field(2), "Null padding."),
+        ParamFieldInfo("heroPoint", "HumanityCost", False, int, "Humanity cost of behavior. Never used."),
+        ParamFieldInfo("pad1[2]", "Pad2", False, pad_field(2), "Null padding."),
     ],
 }

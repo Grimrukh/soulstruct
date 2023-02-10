@@ -189,8 +189,8 @@ class DSRMemoryHook(MemoryHook):
         if slot not in {0, 1}:
             raise ValueError(f"Slot must be 0 or 1, not {slot}.")
         param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
-        paramdef_name = draw_param.param_info["paramdef_name"]
-        self._write_param(draw_param.pack(sort=False), param_file_name, paramdef_name)
+        param_type = draw_param.param_info["param_type"]
+        self._write_param(draw_param.pack(sort=False), param_file_name, param_type)
 
     @memory_hook_validate
     def write_game_param_to_memory(self, game_param: Param):
@@ -204,23 +204,23 @@ class DSRMemoryHook(MemoryHook):
             raise ValueError(f"Cannot write to game memory for Param type '{game_param.param_type}'.")
         param_file_name = game_param.param_info["file_name"]
         try:
-            paramdef_name = game_param.param_info["paramdef_name"]
+            param_type = game_param.param_info["param_type"]
         except KeyError:
             print(game_param.param_info)
             raise
-        self._write_param(game_param.pack(sort=False), param_file_name, paramdef_name)
+        self._write_param(game_param.pack(sort=False), param_file_name, param_type)
 
     @memory_hook_validate
-    def write_game_param_bnd_to_memory(self, game_param_bnd: GameParamBND):
+    def write_gameparambnd_to_memory(self, gameparambnd: GameParamBND):
         """Write all `GameParam` params with `param_info` defined to game memory."""
-        for game_param in game_param_bnd.params.values():
+        for game_param in gameparambnd.params.values():
             if game_param.param_info:
                 self.write_game_param_to_memory(game_param)
 
     @memory_hook_validate
-    def _write_param(self, packed_param: bytes, param_file_name: str, paramdef_name: str):
+    def _write_param(self, packed_param: bytes, param_file_name: str, param_type: str):
         """Internal method shared by GameParam and DrawParam writes. Use public methods above."""
-        data_address = self.get_param_address(param_file_name, paramdef_name)
+        data_address = self.get_param_address(param_file_name, param_type)
         existing_header = self.read(data_address, 44)  # up to end of param name (32j)
         if existing_header != packed_param[:44]:
             raise ValueError(
@@ -240,11 +240,11 @@ class DSRMemoryHook(MemoryHook):
         if not force_recache and param_file_name in self._address_cache.get("ds1r", {}):
             return
         try:
-            paramdef_name = param.param_info["paramdef_name"]
+            param_type = param.param_info["param_type"]
         except KeyError:
             print(param.param_info)
             raise
-        self.get_param_address(param_file_name, paramdef_name)
+        self.get_param_address(param_file_name, param_type)
 
     @memory_hook_validate
     def pre_cache_drawparam(self, draw_param: DrawParam, area_id: int, slot: int, force_recache=False):
@@ -254,37 +254,37 @@ class DSRMemoryHook(MemoryHook):
         if slot not in {0, 1}:
             raise ValueError(f"Slot must be 0 or 1, not {slot}.")
         param_file_name = f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}"
-        paramdef_name = draw_param.param_info["paramdef_name"]
-        self.get_param_address(param_file_name, paramdef_name, force_recache)
+        param_type = draw_param.param_info["param_type"]
+        self.get_param_address(param_file_name, param_type, force_recache)
 
     @memory_hook_validate
     def pre_cache_drawparams(self, draw_params: list[DrawParam], area_id: int, slot: int, force_recache=False):
         """Find and cache addresses of all given `DrawParams` to avoid doing it one-by-one later."""
         param_file_names = []
-        paramdef_names = []
+        param_types = []
         for draw_param in draw_params:
             if not draw_param.param_info:
                 raise ValueError(f"Cannot write to game memory for Param type '{draw_param.param_type}'.")
             if slot not in {0, 1}:
                 raise ValueError(f"Slot must be 0 or 1, not {slot}.")
             param_file_names.append(f"m{area_id}_{'1_' if slot == 1 else ''}{draw_param.param_info['file_name']}")
-            paramdef_names.append(draw_param.param_info["paramdef_name"])
-        self.get_param_addresses(param_file_names, paramdef_names, force_recache)
+            param_types.append(draw_param.param_info["param_type"])
+        self.get_param_addresses(param_file_names, param_types, force_recache)
 
     @memory_hook_validate
     @memory_hook_cache
-    def get_param_address(self, param_file_name: str, paramdef_name: str, force_recache=False):
+    def get_param_address(self, param_file_name: str, param_type: str, force_recache=False):
         """Find memory address of given `param_file_name` (e.g. "NpcThinkParam" or "m15_1_LightScatteringBank").
 
-        If an address is already cached, it is validated using `paramdef_name` (e.g. "NPC_THINK_PARAM_ST" or
+        If an address is already cached, it is validated using `param_type` (e.g. "NPC_THINK_PARAM_ST" or
         "LIGHT_SCATTERING_BANK") first.
         """
         cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
         if cached_address is not None:
             if not force_recache:
                 # Try cached address first.
-                paramdef_name_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string (32j)
-                if paramdef_name_at_cached == paramdef_name.encode():
+                param_type_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string (32j)
+                if param_type_at_cached == param_type.encode():
                     return cached_address  # address is still valid
             extra_memory_region_start = cached_address // 0x1000000 * 0x1000000
             extra_memory_regions = ((extra_memory_region_start, extra_memory_region_start + 0x1000000),)
@@ -312,13 +312,13 @@ class DSRMemoryHook(MemoryHook):
         return data_address
 
     @memory_hook_validate
-    def get_param_addresses(self, param_file_names: list[str], paramdef_names: list[str], force_recache=False):
+    def get_param_addresses(self, param_file_names: list[str], param_types: list[str], force_recache=False):
         """Find memory address of all given `param_file_names` at once, which leads to more efficient scanning.
 
-        If an address is already cached, it is validated using `paramdef_name` (e.g. "NPC_THINK_PARAM_ST" or
+        If an address is already cached, it is validated using `param_type` (e.g. "NPC_THINK_PARAM_ST" or
         "LIGHT_SCATTERING_BANK") first.
         """
-        if len(param_file_names) != len(paramdef_names):
+        if len(param_file_names) != len(param_types):
             raise ValueError("Number of param file names and paramdef names to scan for must match.")
 
         try:
@@ -331,12 +331,12 @@ class DSRMemoryHook(MemoryHook):
         param_addresses = {param_file_name: None for param_file_name in param_file_names}
 
         if not force_recache:
-            for param_file_name, paramdef_name in zip(param_addresses.keys(), paramdef_names):
+            for param_file_name, param_type in zip(param_addresses.keys(), param_types):
                 cached_address = self._address_cache.get("ds1r", {}).get(param_file_name, None)
                 if cached_address is not None:
                     # Try cached address first.
-                    paramdef_name_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string
-                    if paramdef_name_at_cached == paramdef_name.encode():
+                    param_type_at_cached = self.read(cached_address + 12, 32).rstrip(b"\0")  # paramdef name string
+                    if param_type_at_cached == param_type.encode():
                         param_addresses[param_file_name] = cached_address  # address is still valid
                         params_to_find.remove(param_file_name)
 

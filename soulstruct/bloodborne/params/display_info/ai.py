@@ -1,44 +1,44 @@
 __all__ = ["NPC_THINK_PARAM_ST", "AI_SOUND_PARAM_ST"]
 
-from soulstruct.base.params.utils import FieldDisplayInfo, pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.bloodborne.game_types import *
 
 
 NPC_THINK_PARAM_ST = {
-    "paramdef_name": "NPC_THINK_PARAM_ST",
+    "param_type": "NPC_THINK_PARAM_ST",
     "file_name": "NpcThinkParam",
     "nickname": "AI",
     "fields": [
-        FieldDisplayInfo("logicId", "LogicID", True, LogicAIScript, "ID of logic (non-battle) Lua script."),
-        FieldDisplayInfo(
+        ParamFieldInfo("logicId", "LogicID", True, LogicAIScript, "ID of logic (non-battle) Lua script."),
+        ParamFieldInfo(
             "battleGoalID",
             "BattleID",
             True,
             BattleAIScript,
             "Battle goal ID used to look up battle Lua script.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "nearDist",
             "NearDistance",
             True,
             float,
             "Distance considered to be close range by this NPC (for scripts).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "midDist",
             "MidDistance",
             True,
             float,
             "Distance considered to be medium range by this NPC (for scripts).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "farDist", "FarDistance", True, float, "Distance considered to be long range by this NPC (for scripts)."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "outDist", "OutOfRangeDistance", True, float, "Distance beyond which the NPC will not attempt to fight."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "BackHomeLife_OnHitEneWal",
             "RetreatTimeAfterHittingEnemyWall",
             False,
@@ -46,7 +46,7 @@ NPC_THINK_PARAM_ST = {
             "Retreat goal time when touching an 'enemy wall' that blocks the NPC's path. (Not clear what an "
             "'enemy wall' means. Almost always set to 5 (rarely 6).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "goalID_ToCaution",
             "CautionGoalID",
             True,
@@ -54,14 +54,14 @@ NPC_THINK_PARAM_ST = {
             "Lua script to use when NPC's AI enters the 'Caution' state (I think). Requires a CautionGoalAction "
             "value of 4. Used only by Hawkeye Gough (411000); zero otherwise.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "idAttackCannotMove",
             "StuckAnimationID",
             True,
             int,  # TODO: Animation
             "Animation to use if the NPC gets stuck on a destructible object. Usually 3000 (basic attack).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "goalID_ToFind",
             "SearchGoalID",
             True,
@@ -69,7 +69,7 @@ NPC_THINK_PARAM_ST = {
             "Lua script to use when NPC's AI enters the 'Search' state (I think). Requires a SearchGoalAction "
             "value of 4. Not used by any vanilla NPC (all zero).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_ActionAnimId",
             "HelpCallResponseAnimation",
             True,
@@ -78,7 +78,7 @@ NPC_THINK_PARAM_ST = {
             "calls for help, which I assume means no animation is played. Set to 0 for NPCs who ignore calls for "
             "help.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_CallActionId",
             "HelpCallSendAnimation",
             True,
@@ -86,9 +86,9 @@ NPC_THINK_PARAM_ST = {
             "Animation to play when calling for help. Only used by Female Ghost (7300) and Male Ghost and summons "
             "(-1). I assume -1 means no animation is played. Set to 0 for all other NPCs.", 
         ),
-        FieldDisplayInfo("eye_dist", "SightDistance", True, int, "Distance of NPC eyesight (in meters)."),
-        FieldDisplayInfo("ear_dist", "HearingDistance", True, int, "Distance of NPC hearing (in meters)."),
-        FieldDisplayInfo(
+        ParamFieldInfo("eye_dist", "SightDistance", True, int, "Distance of NPC eyesight (in meters)."),
+        ParamFieldInfo("ear_dist", "HearingDistance", True, int, "Distance of NPC hearing (in meters)."),
+        ParamFieldInfo(
             "ear_soundcut_dist",
             "HearingCutDistance",
             False,
@@ -97,8 +97,8 @@ NPC_THINK_PARAM_ST = {
             "distance will not be heard.' Set to 1 for Bloatheads and Bloathead Sorcerers and 0 for everyone "
             "else.", 
         ),
-        FieldDisplayInfo("nose_dist", "SmellDistance", True, int, "Distance of NPC smell (auto-detect)."),
-        FieldDisplayInfo(
+        ParamFieldInfo("nose_dist", "SmellDistance", True, int, "Distance of NPC smell (auto-detect)."),
+        ParamFieldInfo(
             "maxBackhomeDist",
             "MaxRetreatDistance",
             True,
@@ -107,7 +107,7 @@ NPC_THINK_PARAM_ST = {
             "Argument of internal GOAL function 'COMMON_SetBattleActLogic()'.) Usually set to about 50% more than "
             "BattleRetreatDistance.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "backhomeDist",
             "BattleRetreatDistance",
             True,
@@ -115,7 +115,7 @@ NPC_THINK_PARAM_ST = {
             "Furthest distance the NPC can travel from their nest before retreating in battle. (Argument of "
             "internal GOAL function 'COMMON_SetBattleActLogic()'.)",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "backhomeBattleDist",
             "RetreatBattleStartDistance",
             True,
@@ -123,7 +123,7 @@ NPC_THINK_PARAM_ST = {
             "Target distance at which battle mode is triggered while the enemy is retreating. (Argument of "
             "internal GOAL function 'COMMON_SetBattleActLogic()'.)",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "nonBattleActLife",
             "NonBattleActLife",
             False,
@@ -132,7 +132,7 @@ NPC_THINK_PARAM_ST = {
             "0 for Priscilla's Tail and the Bed of Chaos bug, and 5 for everyone else. (Argument of internal GOAL "
             "function 'COMMON_SetBattleActLogic()'.)", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "BackHome_LookTargetTime",
             "SearchTimeBeforeRetreat",
             True,
@@ -140,7 +140,7 @@ NPC_THINK_PARAM_ST = {
             "Time that NPC will search for a lost target before retreating (I think). Set to 20 for everyone "
             "except the Bounding Demons of Izalith, who have a value of 0.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "BackHome_LookTargetDist",
             "SearchDistanceBeforeRetreat",
             True,
@@ -148,28 +148,28 @@ NPC_THINK_PARAM_ST = {
             "Distance that NPC will search for a lost target before retreating (I think). Set to 20 for everyone "
             "except the Bounding Demons of Izalith, who have a value of 0.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "SightTargetForgetTime",
             "SightForgetTime",
             True,
             int,
             "Time to forget about sighted targets. Usually set to 600.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "SoundTargetForgetTime",
             "HearingForgetTime",
             True,
             int,
             "Time to forget about heard targets. Usually set to 300.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "BattleStartDist",
             "BattleStartDistance",
             True,
             int,
             "Target distance at which battle mode is triggered.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_MyPeerId",
             "HelpGroupID",
             True,
@@ -177,7 +177,7 @@ NPC_THINK_PARAM_ST = {
             "Determines which calls for help this NPC will respond to (must match caller's HelpCallGroupID). Only "
             "0 (no ID) and 1 are used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_CallPeerId",
             "HelpCallGroupID",
             True,
@@ -185,7 +185,7 @@ NPC_THINK_PARAM_ST = {
             "HelpGroupID value of NPCs who should respond to calls for help by this NPC. Only 0 (no ID) and 1 are "
             "used.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "targetSys_DmgEffectRate",
             "TargetSysDamageRate",
             False,
@@ -193,7 +193,7 @@ NPC_THINK_PARAM_ST = {
             "Internal description: 'Get damage rate (%) for target system evaluation information.' Set to 0 for "
             "summons, phantoms, and the Parasitic Wall Hugger, and 100 for everyone else.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "TeamAttackEffectivity",
             "TeamAttackEffectivity",
             True,
@@ -203,18 +203,18 @@ NPC_THINK_PARAM_ST = {
             "presume that the total score of attacking team members cannot exceed 100.) Usually set to 25 or 100.", 
         ),
         # TODO: Apparently X is height and Y is width here. The internal descriptions or names may be incorrect.
-        FieldDisplayInfo("eye_angX", "SightRangeHeight", True, int, "Angular width of sight field in degrees."),
-        FieldDisplayInfo("eye_angY", "SightRangeWidth", True, int, "Angular height of sight field in degrees."),
-        FieldDisplayInfo("ear_angX", "HearingRangeHeight", True, int, "Angular width of hearing field in degrees."),
-        FieldDisplayInfo("ear_angY", "HearingRangeWidth", True, int, "Angular height of hearing field in degrees."),
-        FieldDisplayInfo(
+        ParamFieldInfo("eye_angX", "SightRangeHeight", True, int, "Angular width of sight field in degrees."),
+        ParamFieldInfo("eye_angY", "SightRangeWidth", True, int, "Angular height of sight field in degrees."),
+        ParamFieldInfo("ear_angX", "HearingRangeHeight", True, int, "Angular width of hearing field in degrees."),
+        ParamFieldInfo("ear_angY", "HearingRangeWidth", True, int, "Angular height of hearing field in degrees."),
+        ParamFieldInfo(
             "callHelp_CallValidMinDistTarget",
             "HelpCallTargetMinDistance",
             False,
             int,
             "Minimum distance from AI target for help call to be made. Always zero.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_CallValidRange",
             "HelpCallFriendMaxDistance",
             True,
@@ -222,14 +222,14 @@ NPC_THINK_PARAM_ST = {
             "Maximum distance of friend to receive help call from this NPC. Set to 50 for both Male and Female "
             "Ghosts, and 0 for everyone else.", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_ForgetTimeByArrival",
             "HelpCallForgetTime",
             True,
             int,
             "Time until call for help is forgotten by responder.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_MinWaitTime",
             "HelpCallMinWaitTime",
             True,
@@ -237,7 +237,7 @@ NPC_THINK_PARAM_ST = {
             "Internal description: 'Minimum time for response goal at first waiting goal'. Units are in tenths of "
             "a second. Only used for Male Ghosts (20).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_MaxWaitTime",
             "HelpCallMaxWaitTime",
             True,
@@ -245,21 +245,21 @@ NPC_THINK_PARAM_ST = {
             "Internal description: 'Maximum time for response goal at first waiting goal'. Units are in tenths of "
             "a second. Only used for Female Ghosts (40).", 
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "goalAction_ToCaution",
             "CautionGoalAction",
             True,
             NPC_THINK_GOAL_ACTION,
             "Type of action taken when AI enters the 'Caution' state.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "goalAction_ToFind",
             "SearchGoalAction",
             True,
             NPC_THINK_GOAL_ACTION,
             "Type of action taken when AI enters the 'Search' state.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "callHelp_ReplyBehaviorType",
             "HelpCallReplyType",
             True,
@@ -267,14 +267,14 @@ NPC_THINK_PARAM_ST = {
             "Set to 0 for NPCs who do not reply to calls for help and 1 for NPCs who do.",
         ),
         # NOTE: Not a boolean field, but used like one.
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disablePathMove",
             "IgnoreNavmesh",
             True,
             bool,
             "If 1, this NPC will ignore navmesh when moving. True for Ghosts and enemies that don't move at all.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "skipArrivalVisibleCheck",
             "SkipArrivalVisibleCheck",
             False,
@@ -282,7 +282,7 @@ NPC_THINK_PARAM_ST = {
             "Internal description: 'If enabled, arrival determination is performed even if the line of sight"
             "is not passed.' True only for Hawkeye Gough.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "thinkAttr_doAdmirer",
             "AdmirerAttribute",
             True,
@@ -292,99 +292,99 @@ NPC_THINK_PARAM_ST = {
             "and Pursuers, non-giant Rats, Infested Ghouls, Mushrooms, most Hollows (not archers), Male"
             "Ghosts, normal Skeletons and Skeleton Beasts, and Pisaca.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_Edge:1",
             "CanFallOffEdges",
             True,
             bool,
             "If True, this NPC will pursue targets off navmesh edges (survivable falls).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_LargeSpace:1",
             "CanNavigateWideSpaces",
             True,
             bool,
             "If True, this NPC can enter navmesh regions flagged as 'large spaces'.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_Ladder:1", "CanNavigateLadders", True, bool, "If True, this NPC will use ladders."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_Hole:1", "CanNavigateHoles", True, bool, "If True, this NPC can fall into navmesh holes."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_Door:1",
             "CanNavigateDoors",
             True,
             bool,
             "If True, this NPC can go through doors (but not necessarily open closed doors).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_InSideWall:1",
             "CanNavigateInsideWalls",
             True,
             bool,
             "If True, this NPC can go through walls (i.e. ignores navmesh walls).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_Edge_Ordinary:1",
             "CanNavigateOrdinaryEdges",
             True,
             bool,
             "",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_reserve0:1",
             "UnusedNavmeshCheckX1",
             False,
             bool,
             "",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "enableNaviFlg_reserve1[3]",
             "UnusedNavmeshCheckX3",
             False,
             bool,
             "Three unused bytes reserved for other navmesh checks. No effect.",
         ),
-        FieldDisplayInfo("eyeDist_forDark", "DarkSightDistance", True, int, ""),
-        FieldDisplayInfo("battleStartDist_forDark", "DarkBattleStartDistance", True, int, ""),
-        FieldDisplayInfo("eyeDist_forPitchDark", "VeryDarkSightDistance", True, int, ""),
-        FieldDisplayInfo("battleStartDist_forPitchDark", "VeryDarkStartDistance", True, int, ""),
-        FieldDisplayInfo("platoonReplyTime", "PlatoonReplyTime", True, int, ""),
-        FieldDisplayInfo("platoonReplyAddRandomTime", "PlatoonReplyRandomExtraTime", True, int, ""),
-        FieldDisplayInfo("eye_BackOffsetDist", "SightBackOffsetDistance", True, int, ""),
-        FieldDisplayInfo("eye_BeginDist", "SightBeginDistance", True, int, ""),
-        FieldDisplayInfo("target_ArriveDist", "TargetArriveDistance", True, int, ""),
-        FieldDisplayInfo("point_ArriveDist", "PointArriveDistance", True, int, ""),
-        FieldDisplayInfo("changeStateAction_ToFind", "ChangeStateActionToFind", True, int, ""),
-        FieldDisplayInfo("changeStateAction_ToCaution", "ChangeStateActionToCaution", True, int, ""),
-        FieldDisplayInfo("changeStateAction_ToBattle", "ChangeStateActionToBattle", True, int, ""),
-        FieldDisplayInfo("goalAction_ToDisappear", "DisappearGoalAction", True, int, ""),
-        FieldDisplayInfo("disableLocalSteering", "DisableLocalSteering", True, int, ""),
-        FieldDisplayInfo("actTypeOnFailedPath", "ActTypeOnFailedPath", True, int, ""),
-        FieldDisplayInfo("interestCategory", "InterestCategory", True, int, ""),
-        FieldDisplayInfo("goalAction_ToInterest", "InterestGoalAction", True, int, ""),
-        FieldDisplayInfo("goalID_ToInterest", "InterestGoalID", True, int, ""),
-        FieldDisplayInfo("changeStateAction_ToInterest", "ChangeStateActionToInterest", True, int, ""),
-        FieldDisplayInfo("changeStateAction_ToNormal", "ChangeStateActionToNormal", True, int, ""),
-        FieldDisplayInfo("pad[6]", "Pad0", False, pad_field(12), "Null padding."),
+        ParamFieldInfo("eyeDist_forDark", "DarkSightDistance", True, int, ""),
+        ParamFieldInfo("battleStartDist_forDark", "DarkBattleStartDistance", True, int, ""),
+        ParamFieldInfo("eyeDist_forPitchDark", "VeryDarkSightDistance", True, int, ""),
+        ParamFieldInfo("battleStartDist_forPitchDark", "VeryDarkStartDistance", True, int, ""),
+        ParamFieldInfo("platoonReplyTime", "PlatoonReplyTime", True, int, ""),
+        ParamFieldInfo("platoonReplyAddRandomTime", "PlatoonReplyRandomExtraTime", True, int, ""),
+        ParamFieldInfo("eye_BackOffsetDist", "SightBackOffsetDistance", True, int, ""),
+        ParamFieldInfo("eye_BeginDist", "SightBeginDistance", True, int, ""),
+        ParamFieldInfo("target_ArriveDist", "TargetArriveDistance", True, int, ""),
+        ParamFieldInfo("point_ArriveDist", "PointArriveDistance", True, int, ""),
+        ParamFieldInfo("changeStateAction_ToFind", "ChangeStateActionToFind", True, int, ""),
+        ParamFieldInfo("changeStateAction_ToCaution", "ChangeStateActionToCaution", True, int, ""),
+        ParamFieldInfo("changeStateAction_ToBattle", "ChangeStateActionToBattle", True, int, ""),
+        ParamFieldInfo("goalAction_ToDisappear", "DisappearGoalAction", True, int, ""),
+        ParamFieldInfo("disableLocalSteering", "DisableLocalSteering", True, int, ""),
+        ParamFieldInfo("actTypeOnFailedPath", "ActTypeOnFailedPath", True, int, ""),
+        ParamFieldInfo("interestCategory", "InterestCategory", True, int, ""),
+        ParamFieldInfo("goalAction_ToInterest", "InterestGoalAction", True, int, ""),
+        ParamFieldInfo("goalID_ToInterest", "InterestGoalID", True, int, ""),
+        ParamFieldInfo("changeStateAction_ToInterest", "ChangeStateActionToInterest", True, int, ""),
+        ParamFieldInfo("changeStateAction_ToNormal", "ChangeStateActionToNormal", True, int, ""),
+        ParamFieldInfo("pad[6]", "Pad0", False, pad_field(12), "Null padding."),
     ],
 }
 
 
 AI_SOUND_PARAM_ST = {
-    "paramdef_name": "AI_SOUND_PARAM_ST",
+    "param_type": "AI_SOUND_PARAM_ST",
     "file_name": "AiSoundParam",
     "nickname": "AISounds",
     "fields": [
-        FieldDisplayInfo("radius", "", True, float, ""),
-        FieldDisplayInfo("lifeFrame", "", True, float, ""),
-        FieldDisplayInfo("bSpEffectEnable", "", True, int, ""),
-        FieldDisplayInfo("type", "", True, int, ""),
-        FieldDisplayInfo("fakeTargetType", "", True, int, ""),
-        FieldDisplayInfo("interestCategory", "", True, int, ""),
-        FieldDisplayInfo("useHitDamageTeam", "", True, int, ""),
-        FieldDisplayInfo("pad1[19]", "", False, pad_field(19), ""),
+        ParamFieldInfo("radius", "", True, float, ""),
+        ParamFieldInfo("lifeFrame", "", True, float, ""),
+        ParamFieldInfo("bSpEffectEnable", "", True, int, ""),
+        ParamFieldInfo("type", "", True, int, ""),
+        ParamFieldInfo("fakeTargetType", "", True, int, ""),
+        ParamFieldInfo("interestCategory", "", True, int, ""),
+        ParamFieldInfo("useHitDamageTeam", "", True, int, ""),
+        ParamFieldInfo("pad1[19]", "", False, pad_field(19), ""),
     ],
 }

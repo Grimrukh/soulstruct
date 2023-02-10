@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["AIDirectory"]
+__all__ = ["ScriptDirectory"]
 
 import abc
 import logging
@@ -15,7 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class AIDirectory(GameFileMapDirectory, abc.ABC):
+class ScriptDirectory(GameFileMapDirectory, abc.ABC):
     """Unpack LuaBND scripts in a directory (usually `script`) into one single modifiable structure.
 
     Note that the vanilla game uses pre-compiled Lua bytecode for a minor efficiency upgrade, but uncompiled Lua
@@ -30,7 +30,7 @@ class AIDirectory(GameFileMapDirectory, abc.ABC):
 
     `aiCommon.luabnd` ('Common') contains scripts that are loaded in all maps, which includes internal scripts
     with global functions that are accessed in every script. If you want to decompile these internal scripts, you
-    must call `AIDirectory.Common.decompile(battle_or_logic_only=False)`, and similar to recompile them
+    must call `ScriptDirectory.Common.decompile(battle_or_logic_only=False)`, and similar to recompile them
     (for testing) or save the decompiled scripts into the LuaBND.
 
     `eventCommon.luabnd` contains scripts that are solely internal. This BND is unpacked in `.event_common_bnd`

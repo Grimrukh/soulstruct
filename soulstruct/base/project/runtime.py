@@ -77,7 +77,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
                         bg="#222",
                         **button_kwargs,
                     )
-                    gadget = self.project.GAME.gadget_name
+                    gadget = self.project.get_game().gadget_name
                     self.Button(
                         text=f"Run {gadget[:-4]}" if gadget else "No Gadget",
                         bg="#222",
@@ -297,7 +297,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
         self.CustomDialog(
             title="Hook Successful",
-            message=f"Hooked into {self.project.GAME.name} successfully.\n\n"
+            message=f"Hooked into {self.project.get_game().name} successfully.\n\n"
             "You may now use features such as assigning current player coordinates to map entities.\n\n"
             "For more useful runtime features, use DS/DSR Gadget by TKGP.",
         )
@@ -318,7 +318,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
         loading = self.LoadingDialog(
             title="Hooking game...",
-            message=f"Hooking into {self.project.GAME.name}...",
+            message=f"Hooking into {self.project.get_game().name}...",
             maximum=20,
         )
         hook_thread = threading.Thread(target=_threaded_hook)

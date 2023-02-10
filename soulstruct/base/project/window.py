@@ -81,7 +81,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             master=master,
             toplevel=True,
             icon_data=SOULSTRUCT_ICON,
-            window_title=f"{self.PROJECT_CLASS.GAME.name} Project Editor",
+            window_title=f"{self.PROJECT_CLASS.get_game().name} Project Editor",
         )
         self.withdraw()
 
@@ -102,7 +102,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 self.CustomDialog(title="Project Error", message="No directory chosen. Quitting Soulstruct.")
                 raise SoulstructProjectError("No directory chosen. Quitting Soulstruct.")
 
-        self.toplevel.title(f"{self.PROJECT_CLASS.GAME.name} Project Editor: {Path(project_path)}")
+        self.toplevel.title(f"{self.PROJECT_CLASS.get_game().name} Project Editor: {Path(project_path)}")
 
         try:
             self.project = self.PROJECT_CLASS(project_path, with_window=self, game_root=game_root)
@@ -277,7 +277,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 project=self.project,
                 script_directory=self.project.project_root / "ai_scripts",
                 export_directory=self.project.get_game_path_of_data_type("ai"),
-                allow_decompile=self.project.GAME.name == "Dark Souls Remastered",
+                allow_decompile=self.project.get_game().name == "Dark Souls Remastered",
                 global_map_choice_func=self.set_global_map_choice,
                 text_font_size=self.project.text_editor_font_size,
                 linker=self.linker,
@@ -690,7 +690,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         if data_type == "runtime":
             return  # nothing to reload
         elif data_type == "events":
-            # No need to reload `EMEVDDirectory` instance.
+            # No need to reload `EventDirectory` instance.
             self.events_tab.scan_evs_files()
             self.events_tab.refresh()
             return

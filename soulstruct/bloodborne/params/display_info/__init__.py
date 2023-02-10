@@ -20,7 +20,7 @@ from .shops import *
 from .spells import *
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params.utils import FieldDisplayInfo
+    from soulstruct.base.params.utils import ParamFieldInfo
 
 
 def get_param_info(param_name: str) -> dict:
@@ -30,7 +30,7 @@ def get_param_info(param_name: str) -> dict:
         raise KeyError(f"Could not find Param info for {param_name}.")
 
 
-def get_param_info_field(param_name: str, field_name: str) -> FieldDisplayInfo:
+def get_param_info_field(param_name: str, field_name: str) -> ParamFieldInfo:
     param_info = globals()[param_name]
     field_hits = [field for field in param_info["fields"] if field.name == field_name]
     if not field_hits:

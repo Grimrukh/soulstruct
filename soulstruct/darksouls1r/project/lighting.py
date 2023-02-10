@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 import logging
-import math
 import typing as tp
 
 from soulstruct.base.project.editors.lighting import LightingEditor as _BaseLightingEditor
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.darksouls1r.maps import MSB
-from soulstruct.darksouls1r.maps.parts import MSBPlayerStart
-from soulstruct.utilities.maths import Vector3
 
 if tp.TYPE_CHECKING:
     from soulstruct.darksouls1r.params.draw_param import DrawParam
@@ -32,7 +28,7 @@ class LightingEditor(_BaseLightingEditor):
             with self.set_master(
                 pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1, 1, 1], auto_columns=0
             ):
-                map_display_names = [f"{k} [{v}]" for k, v in self.lighting.DRAW_PARAM_MAPS.items()]
+                map_display_names = [f"{k} [{v}]" for k, v in self.lighting.DRAW_PARAM_AREAS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names,
                     on_select_function=self._on_map_area_choice,
@@ -77,7 +73,7 @@ class LightingEditor(_BaseLightingEditor):
                 return {}
         map_area_choice = self.get_map_area_name()
         slot_choice = int(self.slot_choice.var.get())
-        return self.lighting.get_draw_param_bnd(map_area_choice).get_param(category)[slot_choice]
+        return self.lighting.get_drawparambnd(map_area_choice).get_draw_param_slot(category, slot_choice)
 
     def inject_current_param(self):
         """Hook into game memory and update the current param."""

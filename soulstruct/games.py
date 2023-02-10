@@ -117,9 +117,9 @@ DARK_SOULS_PTDE = Game(
     executable_name="DARKSOULS.exe",
     gadget_name="DS Gadget.exe",
     default_file_paths={
-        "AIDirectory": "script",
+        "ScriptDirectory": "script",
         "DrawParamDirectory": "param/DrawParam",
-        "EMEVDDirectory": "event",
+        "EventDirectory": "event",
         "GameParamBND": "param/GameParam/GameParam.parambnd",
         "MapStudioDirectory": "map/MapStudio",
         "MSGDirectory": "msg/ENGLISH",
@@ -143,9 +143,9 @@ DARK_SOULS_DSR = Game(
     executable_name="DarkSoulsRemastered.exe",
     gadget_name="DSR-Gadget.exe",
     default_file_paths={
-        "AIDirectory": "script",
+        "ScriptDirectory": "script",
         "DrawParamDirectory": "param/DrawParam",
-        "EMEVDDirectory": "event",
+        "EventDirectory": "event",
         "GameParamBND": "param/GameParam/GameParam.parambnd.dcx",
         "MapStudioDirectory": "map/MapStudio",
         "MSGDirectory": "msg/ENGLISH",
@@ -187,8 +187,8 @@ BLOODBORNE = Game(
     generic_game_path="{DISC}/Image0/dvdroot_ps4",
     executable_name="../eboot.bin",
     default_file_paths={
-        "AIDirectory": "script",
-        "EMEVDDirectory": "event",
+        "ScriptDirectory": "script",
+        "EventDirectory": "event",
         "GameParamBND": "param/gameparam/gameparam.parambnd.dcx",
         "MapStudioDirectory": "map/mapstudio",
         "MSGDirectory": "msg/engus",
@@ -228,7 +228,7 @@ ELDEN_RING = Game(
     default_game_path=ELDEN_RING_PATH,
     executable_name="ELDENRING.exe",
     default_file_paths={
-        "EMEVDDirectory": "event",
+        "EventDirectory": "event",
         "MSGDirectory": "msg/engus",
     },
 )

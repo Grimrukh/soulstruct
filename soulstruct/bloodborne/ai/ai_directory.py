@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-__all__ = ["AIDirectory"]
+__all__ = ["ScriptDirectory"]
 
 import logging
 import typing as tp
 
-from soulstruct.base.ai.ai_directory import AIDirectory as _BaseAIDirectory
+from soulstruct.base.ai.ai_directory import ScriptDirectory as _BaseScriptDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.bloodborne.maps.constants import *
 
@@ -15,7 +15,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class AIDirectory(_BaseAIDirectory):
+class ScriptDirectory(_BaseScriptDirectory):
     """TODO: Chalice Dungeons (m29) are currently not supported."""
     ALL_MAPS = ALL_MAPS_NO_CHALICE_WITH_EVENT_COMMON
     GET_MAP = staticmethod(get_map)

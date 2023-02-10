@@ -1,290 +1,290 @@
 __all__ = ["CHARACTER_INIT_PARAM", "NPC_PARAM_ST", "CACL_CORRECT_GRAPH_ST"]
 
-from soulstruct.base.params.utils import FieldDisplayInfo, pad_field, bit_pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, pad_field, bit_pad_field
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.bloodborne.game_types import *
 
 
 CHARACTER_INIT_PARAM = {
-    "paramdef_name": "CHARACTER_INIT_PARAM",
+    "param_type": "CHARACTER_INIT_PARAM",
     "file_name": "CharaInitParam",
     "nickname": "Players",
     "fields": [
-        FieldDisplayInfo("baseRec_mp", "BaseRecMP", False, float, "Unknown."),
-        FieldDisplayInfo("baseRec_sp", "BaseRecSP", False, float, "Unknown."),
-        FieldDisplayInfo("red_Falldam", "RedFallDamage", False, float, "Unknown."),
-        FieldDisplayInfo("soul", "SoulCount", True, int, "Starting soul count of character."),
-        FieldDisplayInfo(
+        ParamFieldInfo("baseRec_mp", "BaseRecMP", False, float, "Unknown."),
+        ParamFieldInfo("baseRec_sp", "BaseRecSP", False, float, "Unknown."),
+        ParamFieldInfo("red_Falldam", "RedFallDamage", False, float, "Unknown."),
+        ParamFieldInfo("soul", "SoulCount", True, int, "Starting soul count of character."),
+        ParamFieldInfo(
             "equip_Wep_Right",
             "RightHandWeapon1",
             True,
             WeaponParam,
             "First (default) weapon/shield equipped in right hand.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Subwep_Right",
             "RightHandWeapon2",
             True,
             WeaponParam,
             "Second weapon/shield equipped in right hand.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Wep_Left",
             "LeftHandWeapon1",
             True,
             WeaponParam,
             "First (default) weapon/shield equipped in left hand.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Subwep_Left",
             "LeftHandWeapon2",
             True,
             WeaponParam,
             "Second weapon/shield equipped in left hand.",
         ),
-        FieldDisplayInfo("equip_Helm", "HeadArmor", True, ArmorParam, "Armor equipped to head."),
-        FieldDisplayInfo("equip_Armer", "BodyArmor", True, ArmorParam, "Armor equipped to body."),
-        FieldDisplayInfo("equip_Gaunt", "HandsArmor", True, ArmorParam, "Armor equipped to hands."),
-        FieldDisplayInfo("equip_Leg", "LegsArmor", True, ArmorParam, "Armor equipped to legs."),
-        FieldDisplayInfo("equip_Arrow", "ArrowSlot1", True, WeaponParam, "Arrows equipped in slot 1."),
-        FieldDisplayInfo("equip_Bolt", "BoltSlot1", True, WeaponParam, "Bolts equipped in slot 1."),
-        FieldDisplayInfo("equip_SubArrow", "ArrowSlot2", True, WeaponParam, "Arrows equipped in slot 2."),
-        FieldDisplayInfo("equip_SubBolt", "BoltSlot2", True, WeaponParam, "Bolts equipped in slot 2."),
-        FieldDisplayInfo(
+        ParamFieldInfo("equip_Helm", "HeadArmor", True, ArmorParam, "Armor equipped to head."),
+        ParamFieldInfo("equip_Armer", "BodyArmor", True, ArmorParam, "Armor equipped to body."),
+        ParamFieldInfo("equip_Gaunt", "HandsArmor", True, ArmorParam, "Armor equipped to hands."),
+        ParamFieldInfo("equip_Leg", "LegsArmor", True, ArmorParam, "Armor equipped to legs."),
+        ParamFieldInfo("equip_Arrow", "ArrowSlot1", True, WeaponParam, "Arrows equipped in slot 1."),
+        ParamFieldInfo("equip_Bolt", "BoltSlot1", True, WeaponParam, "Bolts equipped in slot 1."),
+        ParamFieldInfo("equip_SubArrow", "ArrowSlot2", True, WeaponParam, "Arrows equipped in slot 2."),
+        ParamFieldInfo("equip_SubBolt", "BoltSlot2", True, WeaponParam, "Bolts equipped in slot 2."),
+        ParamFieldInfo(
             "equip_Accessory01",
             "RingSlot1",
             True,
             AccessoryParam,
             "First ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Accessory02",
             "RingSlot2",
             True,
             AccessoryParam,
             "Second ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Accessory03",
             "RingSlot3",
             True,
             AccessoryParam,
             "Third ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Accessory04",
             "RingSlot4",
             True,
             AccessoryParam,
             "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "equip_Accessory05",
             "RingSlot5",
             True,
             AccessoryParam,
             "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs.",
         ),
-        FieldDisplayInfo("equip_Skill_01", "SkillSlot1", False, int, ""),
-        FieldDisplayInfo("equip_Skill_02", "SkillSlot2", False, int, ""),
-        FieldDisplayInfo("equip_Skill_03", "SkillSlot3", False, int, ""),
-        FieldDisplayInfo("equip_Spell_01", "SpellSlot1", True, SpellParam, "First spell equipped."),
-        FieldDisplayInfo("equip_Spell_02", "SpellSlot2", True, SpellParam, "Second spell equipped."),
-        FieldDisplayInfo("equip_Spell_03", "SpellSlot3", True, SpellParam, "Third spell equipped."),
-        FieldDisplayInfo("equip_Spell_04", "SpellSlot4", True, SpellParam, "Fourth spell equipped."),
-        FieldDisplayInfo("equip_Spell_05", "SpellSlot5", True, SpellParam, "Fifth spell equipped."),
-        FieldDisplayInfo("equip_Spell_06", "SpellSlot6", True, SpellParam, "Sixth spell equipped."),
-        FieldDisplayInfo("equip_Spell_07", "SpellSlot7", True, SpellParam, "Seventh spell equipped."),
-        FieldDisplayInfo("item_01", "GoodSlot1", True, GoodParam, "Good (item) equipped in slot 1."),
-        FieldDisplayInfo("item_02", "GoodSlot2", True, GoodParam, "Good (item) equipped in slot 2."),
-        FieldDisplayInfo("item_03", "GoodSlot3", True, GoodParam, "Good (item) equipped in slot 3."),
-        FieldDisplayInfo("item_04", "GoodSlot4", True, GoodParam, "Good (item) equipped in slot 4."),
-        FieldDisplayInfo("item_05", "GoodSlot5", True, GoodParam, "Good (item) equipped in slot 5."),
-        FieldDisplayInfo("item_06", "GoodSlot6", True, GoodParam, "Good (item) equipped in slot 6."),
-        FieldDisplayInfo("item_07", "GoodSlot7", True, GoodParam, "Good (item) equipped in slot 7."),
-        FieldDisplayInfo("item_08", "GoodSlot8", True, GoodParam, "Good (item) equipped in slot 8."),
-        FieldDisplayInfo("item_09", "GoodSlot9", True, GoodParam, "Good (item) equipped in slot 9."),
-        FieldDisplayInfo("item_10", "GoodSlot10", True, GoodParam, "Good (item) equipped in slot 10."),
-        FieldDisplayInfo("npcPlayerFaceGenId", "FaceID", True, FaceParam, "Face parameter ID (NPCs only)."),
-        FieldDisplayInfo("npcPlayerThinkId", "DefaultAI", True, AIParam, "Default AI (NPCs only)."),
-        FieldDisplayInfo("baseHp", "BaseMaxHP", True, int, "Base amount of maximum HP (excluding effects of vitality)."),
-        FieldDisplayInfo("baseMp", "BaseMaxMP", False, int, "Base amount of maximum MP (unused in Dark Souls)."),
-        FieldDisplayInfo("baseSp", "BaseMaxStamina", True, int, "Base maximum stamina (excluding effects of endurance)."),
-        FieldDisplayInfo("arrowNum", "ArrowSlot1Count", True, int, "Count of arrows equipped in slot 1."),
-        FieldDisplayInfo("boltNum", "BoltSlot1Count", True, int, "Count of arrows equipped in slot 2."),
-        FieldDisplayInfo("subArrowNum", "ArrowSlot2Count", True, int, "Count of bolts equipped in slot 1."),
-        FieldDisplayInfo("subBoltNum", "BoltSlot2Count", True, int, "Count of bolts equipped in slot 2."),
-        FieldDisplayInfo("QWC_sb", "QWC_SB", False, int, "Unknown. Likely to be unused world tendency effect."),
-        FieldDisplayInfo("QWC_mw", "QWC_MW", False, int, "Unknown. Likely to be unused world tendency effect."),
-        FieldDisplayInfo("QWC_cd", "QWC_CD", False, int, "Unknown. Likely to be unused world tendency effect."),
-        FieldDisplayInfo(
+        ParamFieldInfo("equip_Skill_01", "SkillSlot1", False, int, ""),
+        ParamFieldInfo("equip_Skill_02", "SkillSlot2", False, int, ""),
+        ParamFieldInfo("equip_Skill_03", "SkillSlot3", False, int, ""),
+        ParamFieldInfo("equip_Spell_01", "SpellSlot1", True, SpellParam, "First spell equipped."),
+        ParamFieldInfo("equip_Spell_02", "SpellSlot2", True, SpellParam, "Second spell equipped."),
+        ParamFieldInfo("equip_Spell_03", "SpellSlot3", True, SpellParam, "Third spell equipped."),
+        ParamFieldInfo("equip_Spell_04", "SpellSlot4", True, SpellParam, "Fourth spell equipped."),
+        ParamFieldInfo("equip_Spell_05", "SpellSlot5", True, SpellParam, "Fifth spell equipped."),
+        ParamFieldInfo("equip_Spell_06", "SpellSlot6", True, SpellParam, "Sixth spell equipped."),
+        ParamFieldInfo("equip_Spell_07", "SpellSlot7", True, SpellParam, "Seventh spell equipped."),
+        ParamFieldInfo("item_01", "GoodSlot1", True, GoodParam, "Good (item) equipped in slot 1."),
+        ParamFieldInfo("item_02", "GoodSlot2", True, GoodParam, "Good (item) equipped in slot 2."),
+        ParamFieldInfo("item_03", "GoodSlot3", True, GoodParam, "Good (item) equipped in slot 3."),
+        ParamFieldInfo("item_04", "GoodSlot4", True, GoodParam, "Good (item) equipped in slot 4."),
+        ParamFieldInfo("item_05", "GoodSlot5", True, GoodParam, "Good (item) equipped in slot 5."),
+        ParamFieldInfo("item_06", "GoodSlot6", True, GoodParam, "Good (item) equipped in slot 6."),
+        ParamFieldInfo("item_07", "GoodSlot7", True, GoodParam, "Good (item) equipped in slot 7."),
+        ParamFieldInfo("item_08", "GoodSlot8", True, GoodParam, "Good (item) equipped in slot 8."),
+        ParamFieldInfo("item_09", "GoodSlot9", True, GoodParam, "Good (item) equipped in slot 9."),
+        ParamFieldInfo("item_10", "GoodSlot10", True, GoodParam, "Good (item) equipped in slot 10."),
+        ParamFieldInfo("npcPlayerFaceGenId", "FaceID", True, FaceParam, "Face parameter ID (NPCs only)."),
+        ParamFieldInfo("npcPlayerThinkId", "DefaultAI", True, AIParam, "Default AI (NPCs only)."),
+        ParamFieldInfo("baseHp", "BaseMaxHP", True, int, "Base amount of maximum HP (excluding effects of vitality)."),
+        ParamFieldInfo("baseMp", "BaseMaxMP", False, int, "Base amount of maximum MP (unused in Dark Souls)."),
+        ParamFieldInfo("baseSp", "BaseMaxStamina", True, int, "Base maximum stamina (excluding effects of endurance)."),
+        ParamFieldInfo("arrowNum", "ArrowSlot1Count", True, int, "Count of arrows equipped in slot 1."),
+        ParamFieldInfo("boltNum", "BoltSlot1Count", True, int, "Count of arrows equipped in slot 2."),
+        ParamFieldInfo("subArrowNum", "ArrowSlot2Count", True, int, "Count of bolts equipped in slot 1."),
+        ParamFieldInfo("subBoltNum", "BoltSlot2Count", True, int, "Count of bolts equipped in slot 2."),
+        ParamFieldInfo("QWC_sb", "QWC_SB", False, int, "Unknown. Likely to be unused world tendency effect."),
+        ParamFieldInfo("QWC_mw", "QWC_MW", False, int, "Unknown. Likely to be unused world tendency effect."),
+        ParamFieldInfo("QWC_cd", "QWC_CD", False, int, "Unknown. Likely to be unused world tendency effect."),
+        ParamFieldInfo(
             "soulLv",
             "Level",
             True,
             int,
             "Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs.",
         ),
-        FieldDisplayInfo("baseVit", "Vitality", True, int, "Base vitality level. Determines maximum health."),
-        FieldDisplayInfo(
+        ParamFieldInfo("baseVit", "Vitality", True, int, "Base vitality level. Determines maximum health."),
+        ParamFieldInfo(
             "baseWil", "Attunement", True, int, "Base attunement level. Determines spell slots and casting speed."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "baseEnd", "Endurance", True, int, "Base endurance level. Determines maximum stamina and equip load."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "baseStr", "Strength", True, int, "Base strength level. Affects strength-based weapons and damage."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "baseDex", "Dexterity", True, int, "Base dexterity level. Affects skill-based weapons and damage."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "baseMag",
             "Intelligence",
             True,
             int,
             "Base intelligence level. Affects magic usability and effectiveness.",
         ),
-        FieldDisplayInfo("baseFai", "Faith", True, int, "Base faith level. Affects miracle usability and effectiveness."),
-        FieldDisplayInfo("baseLuc", "Luck", True, int, "Base luck level. Improves chances of rare item drops."),
-        FieldDisplayInfo("baseHeroPoint", "Humanity", True, int, "Base 'soft' humanity."),
-        FieldDisplayInfo(
+        ParamFieldInfo("baseFai", "Faith", True, int, "Base faith level. Affects miracle usability and effectiveness."),
+        ParamFieldInfo("baseLuc", "Luck", True, int, "Base luck level. Improves chances of rare item drops."),
+        ParamFieldInfo("baseHeroPoint", "Humanity", True, int, "Base 'soft' humanity."),
+        ParamFieldInfo(
             "baseDurability",
             "Resistance",
             True,
             int,
             "Base resistance level. Improves resistances to status ailments.",
         ),
-        FieldDisplayInfo("itemNum_01", "GoodSlot1Count", True, int, "Count of good equipped in slot 1."),
-        FieldDisplayInfo("itemNum_02", "GoodSlot2Count", True, int, "Count of good equipped in slot 2."),
-        FieldDisplayInfo("itemNum_03", "GoodSlot3Count", True, int, "Count of good equipped in slot 3."),
-        FieldDisplayInfo("itemNum_04", "GoodSlot4Count", True, int, "Count of good equipped in slot 4."),
-        FieldDisplayInfo("itemNum_05", "GoodSlot5Count", True, int, "Count of good equipped in slot 5."),
-        FieldDisplayInfo("itemNum_06", "GoodSlot6Count", True, int, "Count of good equipped in slot 6."),
-        FieldDisplayInfo("itemNum_07", "GoodSlot7Count", True, int, "Count of good equipped in slot 7."),
-        FieldDisplayInfo("itemNum_08", "GoodSlot8Count", True, int, "Count of good equipped in slot 8."),
-        FieldDisplayInfo("itemNum_09", "GoodSlot9Count", True, int, "Count of good equipped in slot 9."),
-        FieldDisplayInfo("itemNum_10", "GoodSlot10Count", True, int, "Count of good equipped in slot 10."),
-        FieldDisplayInfo("bodyScaleHead", "HeadScale", True, int, "Multiplier applied to head size."),
-        FieldDisplayInfo("bodyScaleBreast", "ChestScale", True, int, "Multiplier applied to chest size."),
-        FieldDisplayInfo("bodyScaleAbdomen", "AbdomenScale", True, int, "Multiplier applied to abdomen size."),
-        FieldDisplayInfo("bodyScaleArm", "ArmScale", True, int, "Multiplier applied to arm size."),
-        FieldDisplayInfo("bodyScaleLeg", "LegScale", True, int, "Multiplier applied to leg size."),
-        FieldDisplayInfo("gestureId0", "Gesture1", True, int, "First equipped gesture."),
-        FieldDisplayInfo("gestureId1", "Gesture2", True, int, "Second equipped gesture."),
-        FieldDisplayInfo("gestureId2", "Gesture3", True, int, "Third equipped gesture."),
-        FieldDisplayInfo("gestureId3", "Gesture4", True, int, "Fourth equipped gesture."),
-        FieldDisplayInfo("gestureId4", "Gesture5", True, int, "Fifth equipped gesture."),
-        FieldDisplayInfo("gestureId5", "Gesture6", True, int, "Sixth equipped gesture."),
-        FieldDisplayInfo("gestureId6", "Gesture7", True, int, "Seventh equipped gesture."),
-        FieldDisplayInfo("npcPlayerType", "CharacterType", True, NPC_TYPE, "Type of human NPC."),
-        FieldDisplayInfo("npcPlayerDrawType", "DrawType", True, NPC_DRAW_TYPE, "Draw type of human NPC."),
-        FieldDisplayInfo("npcPlayerSex", "Gender", True, CHARACTER_INIT_SEX, "Character gender."),
-        FieldDisplayInfo("vowType:4", "Covenant", True, CHRINIT_VOW_TYPE, "Character covenant."),
-        FieldDisplayInfo("pad:4", "Pad0", False, bit_pad_field(4), "Null padding."),
-        FieldDisplayInfo("voiceType", "VoiceType", True, int, "Voice type."),
-        FieldDisplayInfo("pad0[1]", "Pad0.", True, pad_field(1), "Null padding."),
-        FieldDisplayInfo("equip_Wep_Right_GenId", "RightHandWeapon1GenID", True, int, ""),
-        FieldDisplayInfo("equip_Subwep_Right_GenId", "RightHandWeapon2GenID", True, int, ""),
-        FieldDisplayInfo("equip_Wep_Left_GenId", "LeftHandWeapon1GenID", True, int, ""),
-        FieldDisplayInfo("equip_Subwep_Left_GenId", "LeftHandWeapon2GenID", True, int, ""),
-        FieldDisplayInfo("equip_Helm_GenId", "HeadArmorGenID", True, int, ""),
-        FieldDisplayInfo("equip_Armer_GenId", "BodyArmorGenID", True, int, ""),
-        FieldDisplayInfo("equip_Gaunt_GenId", "HandsArmorGenID", True, int, ""),
-        FieldDisplayInfo("equip_Leg_GenId", "LegsArmorGenID", True, int, ""),
-        FieldDisplayInfo("equip_Wep_Body_GenId", "BodyWeaponGenID", True, int, ""),
-        FieldDisplayInfo("secondaryItem_01", "SecondaryGoodSlot1", True, int, ""),
-        FieldDisplayInfo("secondaryItem_02", "SecondaryGoodSlot2", True, int, ""),
-        FieldDisplayInfo("secondaryItem_03", "SecondaryGoodSlot3", True, int, ""),
-        FieldDisplayInfo("secondaryItem_04", "SecondaryGoodSlot4", True, int, ""),
-        FieldDisplayInfo("secondaryItem_05", "SecondaryGoodSlot5", True, int, ""),
-        FieldDisplayInfo("secondaryItem_06", "SecondaryGoodSlot6", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_01", "SecondaryGoodSlot1Count1", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_02", "SecondaryGoodSlot1Count2", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_03", "SecondaryGoodSlot1Count3", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_04", "SecondaryGoodSlot1Count4", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_05", "SecondaryGoodSlot1Count5", True, int, ""),
-        FieldDisplayInfo("secondaryItemNum_06", "SecondaryGoodSlot1Count6", True, int, ""),
-        FieldDisplayInfo("pad1[2]", "Pad", True, pad_field(2), "Null padding."),
+        ParamFieldInfo("itemNum_01", "GoodSlot1Count", True, int, "Count of good equipped in slot 1."),
+        ParamFieldInfo("itemNum_02", "GoodSlot2Count", True, int, "Count of good equipped in slot 2."),
+        ParamFieldInfo("itemNum_03", "GoodSlot3Count", True, int, "Count of good equipped in slot 3."),
+        ParamFieldInfo("itemNum_04", "GoodSlot4Count", True, int, "Count of good equipped in slot 4."),
+        ParamFieldInfo("itemNum_05", "GoodSlot5Count", True, int, "Count of good equipped in slot 5."),
+        ParamFieldInfo("itemNum_06", "GoodSlot6Count", True, int, "Count of good equipped in slot 6."),
+        ParamFieldInfo("itemNum_07", "GoodSlot7Count", True, int, "Count of good equipped in slot 7."),
+        ParamFieldInfo("itemNum_08", "GoodSlot8Count", True, int, "Count of good equipped in slot 8."),
+        ParamFieldInfo("itemNum_09", "GoodSlot9Count", True, int, "Count of good equipped in slot 9."),
+        ParamFieldInfo("itemNum_10", "GoodSlot10Count", True, int, "Count of good equipped in slot 10."),
+        ParamFieldInfo("bodyScaleHead", "HeadScale", True, int, "Multiplier applied to head size."),
+        ParamFieldInfo("bodyScaleBreast", "ChestScale", True, int, "Multiplier applied to chest size."),
+        ParamFieldInfo("bodyScaleAbdomen", "AbdomenScale", True, int, "Multiplier applied to abdomen size."),
+        ParamFieldInfo("bodyScaleArm", "ArmScale", True, int, "Multiplier applied to arm size."),
+        ParamFieldInfo("bodyScaleLeg", "LegScale", True, int, "Multiplier applied to leg size."),
+        ParamFieldInfo("gestureId0", "Gesture1", True, int, "First equipped gesture."),
+        ParamFieldInfo("gestureId1", "Gesture2", True, int, "Second equipped gesture."),
+        ParamFieldInfo("gestureId2", "Gesture3", True, int, "Third equipped gesture."),
+        ParamFieldInfo("gestureId3", "Gesture4", True, int, "Fourth equipped gesture."),
+        ParamFieldInfo("gestureId4", "Gesture5", True, int, "Fifth equipped gesture."),
+        ParamFieldInfo("gestureId5", "Gesture6", True, int, "Sixth equipped gesture."),
+        ParamFieldInfo("gestureId6", "Gesture7", True, int, "Seventh equipped gesture."),
+        ParamFieldInfo("npcPlayerType", "CharacterType", True, NPC_TYPE, "Type of human NPC."),
+        ParamFieldInfo("npcPlayerDrawType", "DrawType", True, NPC_DRAW_TYPE, "Draw type of human NPC."),
+        ParamFieldInfo("npcPlayerSex", "Gender", True, CHARACTER_INIT_SEX, "Character gender."),
+        ParamFieldInfo("vowType:4", "Covenant", True, CHRINIT_VOW_TYPE, "Character covenant."),
+        ParamFieldInfo("pad:4", "Pad0", False, bit_pad_field(4), "Null padding."),
+        ParamFieldInfo("voiceType", "VoiceType", True, int, "Voice type."),
+        ParamFieldInfo("pad0[1]", "Pad0.", True, pad_field(1), "Null padding."),
+        ParamFieldInfo("equip_Wep_Right_GenId", "RightHandWeapon1GenID", True, int, ""),
+        ParamFieldInfo("equip_Subwep_Right_GenId", "RightHandWeapon2GenID", True, int, ""),
+        ParamFieldInfo("equip_Wep_Left_GenId", "LeftHandWeapon1GenID", True, int, ""),
+        ParamFieldInfo("equip_Subwep_Left_GenId", "LeftHandWeapon2GenID", True, int, ""),
+        ParamFieldInfo("equip_Helm_GenId", "HeadArmorGenID", True, int, ""),
+        ParamFieldInfo("equip_Armer_GenId", "BodyArmorGenID", True, int, ""),
+        ParamFieldInfo("equip_Gaunt_GenId", "HandsArmorGenID", True, int, ""),
+        ParamFieldInfo("equip_Leg_GenId", "LegsArmorGenID", True, int, ""),
+        ParamFieldInfo("equip_Wep_Body_GenId", "BodyWeaponGenID", True, int, ""),
+        ParamFieldInfo("secondaryItem_01", "SecondaryGoodSlot1", True, int, ""),
+        ParamFieldInfo("secondaryItem_02", "SecondaryGoodSlot2", True, int, ""),
+        ParamFieldInfo("secondaryItem_03", "SecondaryGoodSlot3", True, int, ""),
+        ParamFieldInfo("secondaryItem_04", "SecondaryGoodSlot4", True, int, ""),
+        ParamFieldInfo("secondaryItem_05", "SecondaryGoodSlot5", True, int, ""),
+        ParamFieldInfo("secondaryItem_06", "SecondaryGoodSlot6", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_01", "SecondaryGoodSlot1Count1", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_02", "SecondaryGoodSlot1Count2", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_03", "SecondaryGoodSlot1Count3", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_04", "SecondaryGoodSlot1Count4", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_05", "SecondaryGoodSlot1Count5", True, int, ""),
+        ParamFieldInfo("secondaryItemNum_06", "SecondaryGoodSlot1Count6", True, int, ""),
+        ParamFieldInfo("pad1[2]", "Pad", True, pad_field(2), "Null padding."),
     ],
 }
 
 NPC_PARAM_ST = {
-    "paramdef_name": "NPC_PARAM_ST",
+    "param_type": "NPC_PARAM_ST",
     "file_name": "NpcParam",
     "nickname": "Characters",
     "fields": [
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "behaviorVariationId",
             "BehaviorVariationID",
             True,
             int,
             "Multiplied by 1000 and added to non-player behavior lookups (hitboxes, bullets) triggered by TAE.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "aiThinkId", "DefaultAI", True, AIParam, "Default AI ID. Overridden by AI ID field in Maps entry."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "nameId",
             "NameID",
             True,
             NPCName,
             "Text ID for NPC name that appears attached to NPCs. Only works for invaders and summons.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "turnVellocity", "TurnVelocity", True, float, "Turning velocity of NPC. (Exact effect needs testing.)"
         ),
-        FieldDisplayInfo("hitHeight", "HitHeight", True, float, "Height of NPC hitbox for collision."),
-        FieldDisplayInfo("hitRadius", "HitRadius", True, float, "Radius of NPC hitbox for collision."),
-        FieldDisplayInfo("weight", "Weight", False, int, "Weight of NPC. Probably has no effect (generall 100)."),
-        FieldDisplayInfo("hitYOffset", "HitYOffset", False, float, "Vertical offset of NPC hitbox for collision."),
-        FieldDisplayInfo("hp", "MaximumHP", True, int, "Maximum HP of NPC."),
-        FieldDisplayInfo("mp", "MaximumMP", False, int, "Maximum MP of NPC. Not used in Dark Souls (generally zero)."),
-        FieldDisplayInfo(
+        ParamFieldInfo("hitHeight", "HitHeight", True, float, "Height of NPC hitbox for collision."),
+        ParamFieldInfo("hitRadius", "HitRadius", True, float, "Radius of NPC hitbox for collision."),
+        ParamFieldInfo("weight", "Weight", False, int, "Weight of NPC. Probably has no effect (generall 100)."),
+        ParamFieldInfo("hitYOffset", "HitYOffset", False, float, "Vertical offset of NPC hitbox for collision."),
+        ParamFieldInfo("hp", "MaximumHP", True, int, "Maximum HP of NPC."),
+        ParamFieldInfo("mp", "MaximumMP", False, int, "Maximum MP of NPC. Not used in Dark Souls (generally zero)."),
+        ParamFieldInfo(
             "getSoul", "SoulReward", True, int, "Amount of souls (before NG+ scaling) rewarded when NPC is killed."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_1",
             "ItemLotID1",
             True,
             ItemLotParam,
             "First item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_2",
             "ItemLotID2",
             True,
             ItemLotParam,
             "Second item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_3",
             "ItemLotID3",
             True,
             ItemLotParam,
             "Third item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_4",
             "ItemLotID4",
             True,
             ItemLotParam,
             "Fourth item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_5",
             "ItemLotID5",
             True,
             ItemLotParam,
             "Fifth item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "itemLotId_6",
             "ItemLotID6",
             True,
             ItemLotParam,
             "Sixth item lot triggered when NPC dies (set to -1 for no item lot).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "humanityLotId",
             "HumanityLotID",
             True,
@@ -292,7 +292,7 @@ NPC_PARAM_ST = {
             "Starting flag of counter for awarding random humanity (I think). Only used by a few enemies, "
             "such as Hollows and Mass of Souls.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID0",
             "SpecialEffectID0",
             True,
@@ -300,7 +300,7 @@ NPC_PARAM_ST = {
             "First passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects "
             "in the 5300-5337 range, which modify enemy damage animations (e.g. so bosses stagger less).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID1",
             "SpecialEffectID1",
             True,
@@ -308,7 +308,7 @@ NPC_PARAM_ST = {
             "Second passive special effect that is active on NPC.\n\nThis slot is generally reserved for effects "
             "in the 5360-5364 range, which further modify enemy damage animations based on poise.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID2",
             "SpecialEffectID2",
             True,
@@ -318,7 +318,7 @@ NPC_PARAM_ST = {
             "the four binary digits represent poison, toxic, bleed, and curse. 0 means the NPC is immune to that "
             "status, and 1 means they are not immune (though their resistance could be any value).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID3",
             "SpecialEffectID3",
             True,
@@ -327,7 +327,7 @@ NPC_PARAM_ST = {
             "in the 80000-81111 range, which determine immunities to effects that apparently never made it into "
             "the game ('remnant', 'absorption', 'fascination', and 'ineffective').",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID4",
             "SpecialEffectID4",
             True,
@@ -336,7 +336,7 @@ NPC_PARAM_ST = {
             "'levelling' effects in the 7000-7015 range, which scale enemy stats according to the map they are "
             "found in.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID5",
             "SpecialEffectID5",
             True,
@@ -345,7 +345,7 @@ NPC_PARAM_ST = {
             "such as elemental resistance or immunity, animation offset effects, the black phantom effect (7100), "
             "etc.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID6",
             "SpecialEffectID6",
             True,
@@ -354,7 +354,7 @@ NPC_PARAM_ST = {
             "such as elemental resistance or immunity, animation offset effects, the black phantom effect (7100), "
             "etc.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "spEffectID7",
             "SpecialEffectID7",
             True,
@@ -364,7 +364,7 @@ NPC_PARAM_ST = {
             "the third binary digit is unknown. Darkwraiths, Hollows, Humanity Phantoms, and Armored Tusks are "
             "some examples of the few NPCs that use 71111; most others use 71110, except bosses.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "GameClearSpEffectID",
             "NewGamePlusSpecialEffect",
             True,
@@ -372,35 +372,35 @@ NPC_PARAM_ST = {
             "Passive special effect that is only applied to the NPC in NG+ and beyond, which are taken from the "
             "range 7401-7415.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "physGuardCutRate",
             "PhysicalGuardCutRate",
             True,
             float,
             "Percentage reduction in physical damage taken while NPC is guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "magGuardCutRate",
             "MagicGuardCutRate",
             True,
             float,
             "Percentage reduction in magic damage taken while NPC is guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "fireGuardCutRate",
             "FireGuardCutRate",
             True,
             float,
             "Percentage reduction in fire damage taken while NPC is guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "thunGuardCutRate",
             "LightningGuardCutRate",
             True,
             float,
             "Percentage reduction in lightning damage taken while NPC is guarding.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "animIdOffset",
             "AnimationIDOffset",
             True,
@@ -409,114 +409,114 @@ NPC_PARAM_ST = {
             "missing, the original will be used.",
         ),
         # TODO: Animation types.
-        FieldDisplayInfo("moveAnimId", "MoveAnimationID", False, int, ""),
-        FieldDisplayInfo("spMoveAnimId1", "SpecialMoveAnimationID1", False, int, ""),
-        FieldDisplayInfo("spMoveAnimId2", "SpecialMoveAnimationID2", False, int, ""),
-        FieldDisplayInfo("networkWarpDist", "NetworkWarpDistance", False, float, ""),
-        FieldDisplayInfo("dbgBehaviorR1", "DebugBehaviorR1", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorL1", "DebugBehaviorL1", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorR2", "DebugBehaviorR2", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorL2", "DebugBehaviorL2", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorRL", "DebugBehaviorRL", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorRR", "DebugBehaviorRR", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorRD", "DebugBehaviorRD", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorRU", "DebugBehaviorRU", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorLL", "DebugBehaviorLL", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorLR", "DebugBehaviorLR", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorLD", "DebugBehaviorLD", False, int, ""),
-        FieldDisplayInfo("dbgBehaviorLU", "DebugBehaviorLU", False, int, ""),
-        FieldDisplayInfo("animIdOffset2", "AnimationIDOffset2", False, int, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("moveAnimId", "MoveAnimationID", False, int, ""),
+        ParamFieldInfo("spMoveAnimId1", "SpecialMoveAnimationID1", False, int, ""),
+        ParamFieldInfo("spMoveAnimId2", "SpecialMoveAnimationID2", False, int, ""),
+        ParamFieldInfo("networkWarpDist", "NetworkWarpDistance", False, float, ""),
+        ParamFieldInfo("dbgBehaviorR1", "DebugBehaviorR1", False, int, ""),
+        ParamFieldInfo("dbgBehaviorL1", "DebugBehaviorL1", False, int, ""),
+        ParamFieldInfo("dbgBehaviorR2", "DebugBehaviorR2", False, int, ""),
+        ParamFieldInfo("dbgBehaviorL2", "DebugBehaviorL2", False, int, ""),
+        ParamFieldInfo("dbgBehaviorRL", "DebugBehaviorRL", False, int, ""),
+        ParamFieldInfo("dbgBehaviorRR", "DebugBehaviorRR", False, int, ""),
+        ParamFieldInfo("dbgBehaviorRD", "DebugBehaviorRD", False, int, ""),
+        ParamFieldInfo("dbgBehaviorRU", "DebugBehaviorRU", False, int, ""),
+        ParamFieldInfo("dbgBehaviorLL", "DebugBehaviorLL", False, int, ""),
+        ParamFieldInfo("dbgBehaviorLR", "DebugBehaviorLR", False, int, ""),
+        ParamFieldInfo("dbgBehaviorLD", "DebugBehaviorLD", False, int, ""),
+        ParamFieldInfo("dbgBehaviorLU", "DebugBehaviorLU", False, int, ""),
+        ParamFieldInfo("animIdOffset2", "AnimationIDOffset2", False, int, ""),
+        ParamFieldInfo(
             "partsDamageRate1",
             "Part1DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 1 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate2",
             "Part2DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 2 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate3",
             "Part3DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 3 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate4",
             "Part4DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 4 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate5",
             "Part5DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 5 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate6",
             "Part6DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 6 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate7",
             "Part7DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 7 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "partsDamageRate8",
             "Part8DamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by part 8 of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "weakPartsDamageRate",
             "WeakPartsDamageMultiplier",
             True,
             float,
             "Multiplier for damage taken by weak parts of NPC model.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "superArmorRecoverCorrection",
             "PoiseRecoveryCorrection",
             True,
             float,
             "Change to poise recovery rate. Only the Chained Prisoner uses a non-zero value in vanilla(-0.2).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "superArmorBrakeKnockbackDist",
             "StaggerKnockbackDistance",
             True,
             float,
             "Stagger knockback distance when NPC's poise is broken.",
         ),
-        FieldDisplayInfo("stamina", "MaxStamina", True, int, "Maximum stamina of NPC."),
-        FieldDisplayInfo(
+        ParamFieldInfo("stamina", "MaxStamina", True, int, "Maximum stamina of NPC."),
+        ParamFieldInfo(
             "staminaRecoverBaseVel", "StaminaRecoveryBaseSpeed", True, int, "Base speed of NPC's stamina recovery."
         ),
-        FieldDisplayInfo("def_phys", "PhysicalDefense", True, int, "Base defense applied to all physical attacks."),
-        FieldDisplayInfo("def_slash", "SlashDefense", True, int, "Base defense added against slashing physical attacks."),
-        FieldDisplayInfo("def_blow", "StrikeDefense", True, int, "Base defense added against striking physical attacks."),
-        FieldDisplayInfo(
+        ParamFieldInfo("def_phys", "PhysicalDefense", True, int, "Base defense applied to all physical attacks."),
+        ParamFieldInfo("def_slash", "SlashDefense", True, int, "Base defense added against slashing physical attacks."),
+        ParamFieldInfo("def_blow", "StrikeDefense", True, int, "Base defense added against striking physical attacks."),
+        ParamFieldInfo(
             "def_thrust", "ThrustDefense", True, int, "Base defense added against thrusting physical attacks."
         ),
-        FieldDisplayInfo("def_mag", "MagicDefense", True, int, "Base defense added against magic attacks."),
-        FieldDisplayInfo("def_fire", "FireDefense", True, int, "Base defense added against fire attacks."),
-        FieldDisplayInfo("def_thunder", "LightningDefense", True, int, "Base defense added against lightning attacks."),
-        FieldDisplayInfo(
+        ParamFieldInfo("def_mag", "MagicDefense", True, int, "Base defense added against magic attacks."),
+        ParamFieldInfo("def_fire", "FireDefense", True, int, "Base defense added against fire attacks."),
+        ParamFieldInfo("def_thunder", "LightningDefense", True, int, "Base defense added against lightning attacks."),
+        ParamFieldInfo(
             "defFlickPower",
             "DefenseRepelPower",
             False,
@@ -524,11 +524,11 @@ NPC_PARAM_ST = {
             "Determines how severely an attacker is repelled when they fail to break this NPC's poise. The "
             "Armored Tusk and Chained Prisoner have very high values (50-60), but most NPCs have 0.",
         ),
-        FieldDisplayInfo("resist_poison", "PoisonResistance", True, int, "Base poison resistance."),
-        FieldDisplayInfo("resist_desease", "ToxicResistance", True, int, "Base toxic resistance."),
-        FieldDisplayInfo("resist_blood", "BleedResistance", True, int, "Base bleed resistance."),
-        FieldDisplayInfo("resist_curse", "CurseResistance", True, int, "Base curse resistance."),
-        FieldDisplayInfo(
+        ParamFieldInfo("resist_poison", "PoisonResistance", True, int, "Base poison resistance."),
+        ParamFieldInfo("resist_desease", "ToxicResistance", True, int, "Base toxic resistance."),
+        ParamFieldInfo("resist_blood", "BleedResistance", True, int, "Base bleed resistance."),
+        ParamFieldInfo("resist_curse", "CurseResistance", True, int, "Base curse resistance."),
+        ParamFieldInfo(
             "ghostModelId",
             "GhostModelID",
             False,
@@ -536,12 +536,12 @@ NPC_PARAM_ST = {
             "Model to be used when this quest-related NPC appears as a ghost to other players. Defaults to -1 for "
             "almost all standard enemies, which means they do not appear as a ghost to others.",
         ),
-        FieldDisplayInfo("normalChangeResouceId", "NormalChangeResourceID", False, int, "Unknown. Always -1."),
-        FieldDisplayInfo("guardAngle", "GuardAngle", False, int, "Zero for every NPC except the Phalanx Hollow (20)."),
-        FieldDisplayInfo("slashGuardCutRate", "SlashDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo("blowGuardCutRate", "StrikeDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo("thrustGuardCutRate", "ThrustDamageReductionWhenGuarding", False, int, "Always zero."),
-        FieldDisplayInfo(
+        ParamFieldInfo("normalChangeResouceId", "NormalChangeResourceID", False, int, "Unknown. Always -1."),
+        ParamFieldInfo("guardAngle", "GuardAngle", False, int, "Zero for every NPC except the Phalanx Hollow (20)."),
+        ParamFieldInfo("slashGuardCutRate", "SlashDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo("blowGuardCutRate", "StrikeDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo("thrustGuardCutRate", "ThrustDamageReductionWhenGuarding", False, int, "Always zero."),
+        ParamFieldInfo(
             "superArmorDurability",
             "MaxPoise",
             True,
@@ -549,7 +549,7 @@ NPC_PARAM_ST = {
             "Maximum poise of character. Poise is reduced when attacked, but quickly refills. If reduced to zero, "
             "the character will be staggered.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "normalChangeTexChrId",
             "NormalChangeTextureChrID",
             False,
@@ -557,7 +557,7 @@ NPC_PARAM_ST = {
             "Unknown. Used for only some NPCs, where it is generally set to a number close to the NPC's character "
             "model ID.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "dropType",
             "ItemDropAppearance",
             True,
@@ -566,8 +566,8 @@ NPC_PARAM_ST = {
             "NPC's body (e.g. Rat, Mushroom Child/Parent, Ent) and 1 means the item is a clear white orb just "
             "like regular treasure on corpses (most NPCs).",
         ),
-        FieldDisplayInfo("knockbackRate", "KnockbackRate", True, int, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("knockbackRate", "KnockbackRate", True, int, ""),
+        ParamFieldInfo(
             "knockbackParamId",
             "KnockbackID",
             True,
@@ -575,8 +575,8 @@ NPC_PARAM_ST = {
             "Knockback parameters were abandoned after Demons' Souls. A param table for Knockback is still present "
             "but is not accessible in the GUI.",
         ),
-        FieldDisplayInfo("fallDamageDump", "FallDamageReduction", True, int, "Percentage of fall damage to ignore."),
-        FieldDisplayInfo(
+        ParamFieldInfo("fallDamageDump", "FallDamageReduction", True, int, "Percentage of fall damage to ignore."),
+        ParamFieldInfo(
             "staminaGuardDef",
             "StaminaGuardDefense",
             True,
@@ -584,15 +584,15 @@ NPC_PARAM_ST = {
             "Always set to zero in the game, but presumably, increasing it will reduce the amount of stamina lost "
             "when this NPC blocks an attack.",
         ),
-        FieldDisplayInfo("pcAttrB", "PCAttrB", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("pcAttrW", "PCAttrW", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("pcAttrL", "PCAttrL", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("pcAttrR", "PCAttrR", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("areaAttrB", "AreaAttrB", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("areaAttrW", "AreaAttrW", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("areaAttrL", "AreaAttrL", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo("areaAttrR", "AreaAttrR", False, int, "Like a remnant of World Tendency. Always set to zero."),
-        FieldDisplayInfo(
+        ParamFieldInfo("pcAttrB", "PCAttrB", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("pcAttrW", "PCAttrW", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("pcAttrL", "PCAttrL", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("pcAttrR", "PCAttrR", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("areaAttrB", "AreaAttrB", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("areaAttrW", "AreaAttrW", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("areaAttrL", "AreaAttrL", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo("areaAttrR", "AreaAttrR", False, int, "Like a remnant of World Tendency. Always set to zero."),
+        ParamFieldInfo(
             "mpRecoverBaseVel",
             "MPRecoveryBaseSpeed",
             False,
@@ -600,7 +600,7 @@ NPC_PARAM_ST = {
             "Unknown effect, likely none. Set to zero for NPC parts (tails and Hydra heads) and 10 for everyone "
             "else.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "flickDamageCutRate",
             "RepelDamageCutRate",
             False,
@@ -608,21 +608,21 @@ NPC_PARAM_ST = {
             "Unknown effect, but it is set to zero for most enemies, 50 for very heavy enemies like Great Stone "
             "Knights and Titanite Demons, and 100 for Mimics.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "defaultLodParamId", "DefaultLightingParamID", False, int, "Default lighting (Lod) parameter entry ID."
         ),
-        FieldDisplayInfo("drawType", "DrawType", True, NPC_DRAW_TYPE, ""),
-        FieldDisplayInfo("npcType", "CharacterType", True, NPC_TYPE, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("drawType", "DrawType", True, NPC_DRAW_TYPE, ""),
+        ParamFieldInfo("npcType", "CharacterType", True, NPC_TYPE, ""),
+        ParamFieldInfo(
             "teamType", "TeamType", True, NPC_TEAM_TYPE, "0: enemy, 1: boss, 2: ally, 6: unused, 7: white phantom"
         ),
-        FieldDisplayInfo("moveType", "MoveType", True, NPC_MOVE_TYPE, ""),
-        FieldDisplayInfo("lockDist", "LockOnDistance", True, int, ""),
-        FieldDisplayInfo("material", "Material", False, int, ""),
-        FieldDisplayInfo("materialSfx", "MaterialSFX", False, int, ""),
-        FieldDisplayInfo("material_Weak", "MaterialWeak", False, int, ""),
-        FieldDisplayInfo("materialSfx_Weak", "MaterialWeakSFX", False, int, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("moveType", "MoveType", True, NPC_MOVE_TYPE, ""),
+        ParamFieldInfo("lockDist", "LockOnDistance", True, int, ""),
+        ParamFieldInfo("material", "Material", False, int, ""),
+        ParamFieldInfo("materialSfx", "MaterialSFX", False, int, ""),
+        ParamFieldInfo("material_Weak", "MaterialWeak", False, int, ""),
+        ParamFieldInfo("materialSfx_Weak", "MaterialWeakSFX", False, int, ""),
+        ParamFieldInfo(
             "partsDamageType",
             "PartsDamageType",
             False,
@@ -630,14 +630,14 @@ NPC_PARAM_ST = {
             "Unknown. Seems to be set to 1 for most enemies with multiple parts (Sentinels, Quelaag, Seath, "
             "Gaping Dragon), but not all of them (Bell Gargoyles), and 0 otherwise.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "maxUndurationAng",
             "MaxUndurationAngle",
             False,
             int,
             "Unknown effect, but it is generally set to 30 for all four-legged enemies, and 0 for all others.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "guardLevel",
             "GuardLevel",
             False,
@@ -645,74 +645,74 @@ NPC_PARAM_ST = {
             "Set to 4 for enemies who can guard (including Manus), except Giant Skeletons, who have a value of 3. "
             "All other NPCs have zero.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "burnSfxType",
             "BurnSFXType",
             False,
             NPC_BURN_TYPE,
             "Set to 1 for Slimes and Undead Dragons, and 0 for everyone else.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "poisonGuardResist", "PoisonGuardResistance", True, int, "Added poison resistance while guarding."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "diseaseGuardResist", "ToxicGuardResistance", True, int, "Added toxic resistance while guarding."
         ),
-        FieldDisplayInfo("bloodGuardResist", "BleedGuardResistance", True, int, "Added bleed resistance while guarding."),
-        FieldDisplayInfo("curseGuardResist", "CurseGuardResistance", True, int, "Added curse resistance while guarding."),
-        FieldDisplayInfo("parryAttack", "ParryAttack", False, int, "Always zero."),
-        FieldDisplayInfo("parryDefence", "ParryDefense", False, int, "Always zero."),
-        FieldDisplayInfo(
+        ParamFieldInfo("bloodGuardResist", "BleedGuardResistance", True, int, "Added bleed resistance while guarding."),
+        ParamFieldInfo("curseGuardResist", "CurseGuardResistance", True, int, "Added curse resistance while guarding."),
+        ParamFieldInfo("parryAttack", "ParryAttack", False, int, "Always zero."),
+        ParamFieldInfo("parryDefence", "ParryDefense", False, int, "Always zero."),
+        ParamFieldInfo(
             "sfxSize",
             "SFXSize",
             False,
             NPC_SFX_SIZE,
             "Set to 2 for very large enemies, 1 for large enemies, and 0 otherwise.",
         ),
-        FieldDisplayInfo("pushOutCamRegionRadius", "PushOutCameraRegionRadius", False, int, "Always zero."),
-        FieldDisplayInfo(
+        ParamFieldInfo("pushOutCamRegionRadius", "PushOutCameraRegionRadius", False, int, "Always zero."),
+        ParamFieldInfo(
             "hitStopType",
             "HitStopType",
             False,
             NPC_HITSTOP_TYPE,
             "Set to 1 or 2 for most bosses/tough enemies, and 0 otherwise. Likely related to AI triggers.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "ladderEndChkOffsetTop", "LadderEndCheckOffsetTop", False, int, "Not something you want to mess with."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "ladderEndChkOffsetLow",
             "LadderEndCheckOffsetBottom",
             False,
             int,
             "Not something you want to mess with.",
         ),
-        FieldDisplayInfo("useRagdollCamHit:1", "UseRagdollCameraHit", False, bool, ""),
-        FieldDisplayInfo("disableClothRigidHit:1", "DisableClothRigidHit", False, bool, ""),
-        FieldDisplayInfo("useRagdoll:1", "UseRagdoll", False, bool, ""),
-        FieldDisplayInfo("isDemon:1", "IsDemon", True, bool, ""),
-        FieldDisplayInfo("isGhost:1", "IsGhost", True, bool, ""),
-        FieldDisplayInfo("isNoDamageMotion:1", "IsNoDamageMotion", True, bool, ""),
-        FieldDisplayInfo("isUnduration:1", "IsUnduration", False, bool, ""),
-        FieldDisplayInfo("isChangeWanderGhost:1", "IsChangeWanderGhost", False, bool, "Always false."),
-        FieldDisplayInfo("modelDispMask0:1", "ModelDisplayMask0", False, bool, ""),
-        FieldDisplayInfo("modelDispMask1:1", "ModelDisplayMask1", False, bool, ""),
-        FieldDisplayInfo("modelDispMask2:1", "ModelDisplayMask2", False, bool, ""),
-        FieldDisplayInfo("modelDispMask3:1", "ModelDisplayMask3", False, bool, ""),
-        FieldDisplayInfo("modelDispMask4:1", "ModelDisplayMask4", False, bool, ""),
-        FieldDisplayInfo("modelDispMask5:1", "ModelDisplayMask5", False, bool, ""),
-        FieldDisplayInfo("modelDispMask6:1", "ModelDisplayMask6", False, bool, ""),
-        FieldDisplayInfo("modelDispMask7:1", "ModelDisplayMask7", False, bool, ""),
-        FieldDisplayInfo("modelDispMask8:1", "ModelDisplayMask8", False, bool, ""),
-        FieldDisplayInfo("modelDispMask9:1", "ModelDisplayMask9", False, bool, ""),
-        FieldDisplayInfo("modelDispMask10:1", "ModelDisplayMask10", False, bool, ""),
-        FieldDisplayInfo("modelDispMask11:1", "ModelDisplayMask11", False, bool, ""),
-        FieldDisplayInfo("modelDispMask12:1", "ModelDisplayMask12", False, bool, ""),
-        FieldDisplayInfo("modelDispMask13:1", "ModelDisplayMask13", False, bool, ""),
-        FieldDisplayInfo("modelDispMask14:1", "ModelDisplayMask14", False, bool, ""),
-        FieldDisplayInfo("modelDispMask15:1", "ModelDisplayMask15", False, bool, ""),
-        FieldDisplayInfo("isEnableNeckTurn:1", "EnableNeckTurn", True, bool, "Character can turn their neck."),
-        FieldDisplayInfo(
+        ParamFieldInfo("useRagdollCamHit:1", "UseRagdollCameraHit", False, bool, ""),
+        ParamFieldInfo("disableClothRigidHit:1", "DisableClothRigidHit", False, bool, ""),
+        ParamFieldInfo("useRagdoll:1", "UseRagdoll", False, bool, ""),
+        ParamFieldInfo("isDemon:1", "IsDemon", True, bool, ""),
+        ParamFieldInfo("isGhost:1", "IsGhost", True, bool, ""),
+        ParamFieldInfo("isNoDamageMotion:1", "IsNoDamageMotion", True, bool, ""),
+        ParamFieldInfo("isUnduration:1", "IsUnduration", False, bool, ""),
+        ParamFieldInfo("isChangeWanderGhost:1", "IsChangeWanderGhost", False, bool, "Always false."),
+        ParamFieldInfo("modelDispMask0:1", "ModelDisplayMask0", False, bool, ""),
+        ParamFieldInfo("modelDispMask1:1", "ModelDisplayMask1", False, bool, ""),
+        ParamFieldInfo("modelDispMask2:1", "ModelDisplayMask2", False, bool, ""),
+        ParamFieldInfo("modelDispMask3:1", "ModelDisplayMask3", False, bool, ""),
+        ParamFieldInfo("modelDispMask4:1", "ModelDisplayMask4", False, bool, ""),
+        ParamFieldInfo("modelDispMask5:1", "ModelDisplayMask5", False, bool, ""),
+        ParamFieldInfo("modelDispMask6:1", "ModelDisplayMask6", False, bool, ""),
+        ParamFieldInfo("modelDispMask7:1", "ModelDisplayMask7", False, bool, ""),
+        ParamFieldInfo("modelDispMask8:1", "ModelDisplayMask8", False, bool, ""),
+        ParamFieldInfo("modelDispMask9:1", "ModelDisplayMask9", False, bool, ""),
+        ParamFieldInfo("modelDispMask10:1", "ModelDisplayMask10", False, bool, ""),
+        ParamFieldInfo("modelDispMask11:1", "ModelDisplayMask11", False, bool, ""),
+        ParamFieldInfo("modelDispMask12:1", "ModelDisplayMask12", False, bool, ""),
+        ParamFieldInfo("modelDispMask13:1", "ModelDisplayMask13", False, bool, ""),
+        ParamFieldInfo("modelDispMask14:1", "ModelDisplayMask14", False, bool, ""),
+        ParamFieldInfo("modelDispMask15:1", "ModelDisplayMask15", False, bool, ""),
+        ParamFieldInfo("isEnableNeckTurn:1", "EnableNeckTurn", True, bool, "Character can turn their neck."),
+        ParamFieldInfo(
             "disableRespawn:1",
             "DisableRespawnOnRest",
             True,
@@ -720,9 +720,9 @@ NPC_PARAM_ST = {
             "Prevents character from respawning when you rest at a bonfire, though they will still respawn when you "
             "die or the map is de-loaded unless they are disabled by an event script.",
         ),
-        FieldDisplayInfo("isMoveAnimWait:1", "IsMoveAnimationWait", False, bool, ""),
-        FieldDisplayInfo("isCrowd:1", "IsCrowd", False, bool, "Always false."),
-        FieldDisplayInfo(
+        ParamFieldInfo("isMoveAnimWait:1", "IsMoveAnimationWait", False, bool, ""),
+        ParamFieldInfo("isCrowd:1", "IsCrowd", False, bool, "Always false."),
+        ParamFieldInfo(
             "isWeakSaint:1",
             "IsWeakToDivine",
             True,
@@ -730,23 +730,23 @@ NPC_PARAM_ST = {
             "True for skeletons and friends, but not sure how it is actually used to disable their reanimation by "
             "Necromancers.",
         ),
-        FieldDisplayInfo("isWeakA:1", "IsWeakToOccult", True, bool, "True for all Gods and most NPCs in Anor Londo."),
-        FieldDisplayInfo(
+        ParamFieldInfo("isWeakA:1", "IsWeakToOccult", True, bool, "True for all Gods and most NPCs in Anor Londo."),
+        ParamFieldInfo(
             "isWeakB:1",
             "IsAbyssal",
             True,
             bool,
             "True for Darkwraiths, Primordial Serpents, and the Four Kings, but not Manus.",
         ),
-        FieldDisplayInfo("isEnableDropSoulCapture:1", "CanStealBloodEchoes", True, bool, ""),
-        FieldDisplayInfo(
+        ParamFieldInfo("isEnableDropSoulCapture:1", "CanStealBloodEchoes", True, bool, ""),
+        ParamFieldInfo(
             "vowType:3",
             "VowType",
             False,
             int,
             "Effects unknown. Set to 1 (Way of White) for Andre and 0 for everyone else.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "disableInitializeDead:1",
             "DisableInitializeDead",
             False,
@@ -754,133 +754,133 @@ NPC_PARAM_ST = {
             "True for bosses and non-respawning enemies that are disabled in event scripts, but its effects are "
             "unknown.",
         ),
-        FieldDisplayInfo("isSoulGetByBoss:1", "IsSoulsGetByBoss", True, bool, ""),
-        FieldDisplayInfo("isMultilingual:1", "IsMultilingual", True, bool, ""),
-        FieldDisplayInfo("pad3:2", "Pad", False, bit_pad_field(2), ""),
-        FieldDisplayInfo("modelDispMask16:1", "ModelDisplayMask16", True, bool, ""),
-        FieldDisplayInfo("modelDispMask17:1", "ModelDisplayMask17", True, bool, ""),
-        FieldDisplayInfo("modelDispMask18:1", "ModelDisplayMask18", True, bool, ""),
-        FieldDisplayInfo("modelDispMask19:1", "ModelDisplayMask19", True, bool, ""),
-        FieldDisplayInfo("modelDispMask20:1", "ModelDisplayMask20", True, bool, ""),
-        FieldDisplayInfo("modelDispMask21:1", "ModelDisplayMask21", True, bool, ""),
-        FieldDisplayInfo("modelDispMask22:1", "ModelDisplayMask22", True, bool, ""),
-        FieldDisplayInfo("modelDispMask23:1", "ModelDisplayMask23", True, bool, ""),
-        FieldDisplayInfo("modelDispMask24:1", "ModelDisplayMask24", True, bool, ""),
-        FieldDisplayInfo("modelDispMask25:1", "ModelDisplayMask25", True, bool, ""),
-        FieldDisplayInfo("modelDispMask26:1", "ModelDisplayMask26", True, bool, ""),
-        FieldDisplayInfo("modelDispMask27:1", "ModelDisplayMask27", True, bool, ""),
-        FieldDisplayInfo("modelDispMask28:1", "ModelDisplayMask28", True, bool, ""),
-        FieldDisplayInfo("modelDispMask29:1", "ModelDisplayMask29", True, bool, ""),
-        FieldDisplayInfo("modelDispMask30:1", "ModelDisplayMask30", True, bool, ""),
-        FieldDisplayInfo("modelDispMask31:1", "ModelDisplayMask31", True, bool, ""),
-        FieldDisplayInfo("itemSearchRadius", "ItemSearchRadius", True, float, ""),
-        FieldDisplayInfo("normalChangeModelId", "NormalChangeModelID", True, int, ""),
-        FieldDisplayInfo("clothUpdateOffset", "ClothUpdateOffset", True, int, ""),
-        FieldDisplayInfo("pad4", "Pad", False, pad_field(1), ""),
-        FieldDisplayInfo("subHitOffset", "SubHitOffset", True, float, ""),
-        FieldDisplayInfo("subHitHeight", "SubHitHeight", True, float, ""),
-        FieldDisplayInfo("subHitRadius", "SubHitRadius", True, float, ""),
-        FieldDisplayInfo("paintRenderTargetSize", "PaintRenderTargetSize", True, int, ""),
-        FieldDisplayInfo("normalChangeAnimChrId", "NormalChangeAnimChrID", True, int, ""),
-        FieldDisplayInfo("regainRate_PhysNeutral", "NeutralPhysicalRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_PhysSlash", "SlashPhysicalRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_PhysBlow", "BlowPhysicalRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_PhysThrust", "ThrustPhysicalRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_Magic", "MagicRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_Fire", "FireRegainRate", True, float, ""),
-        FieldDisplayInfo("regainRate_Thunder", "LightingRegainRate", True, float, ""),
-        FieldDisplayInfo("maxAnkleAngle", "MaxAnkleAngle", True, float, ""),
+        ParamFieldInfo("isSoulGetByBoss:1", "IsSoulsGetByBoss", True, bool, ""),
+        ParamFieldInfo("isMultilingual:1", "IsMultilingual", True, bool, ""),
+        ParamFieldInfo("pad3:2", "Pad", False, bit_pad_field(2), ""),
+        ParamFieldInfo("modelDispMask16:1", "ModelDisplayMask16", True, bool, ""),
+        ParamFieldInfo("modelDispMask17:1", "ModelDisplayMask17", True, bool, ""),
+        ParamFieldInfo("modelDispMask18:1", "ModelDisplayMask18", True, bool, ""),
+        ParamFieldInfo("modelDispMask19:1", "ModelDisplayMask19", True, bool, ""),
+        ParamFieldInfo("modelDispMask20:1", "ModelDisplayMask20", True, bool, ""),
+        ParamFieldInfo("modelDispMask21:1", "ModelDisplayMask21", True, bool, ""),
+        ParamFieldInfo("modelDispMask22:1", "ModelDisplayMask22", True, bool, ""),
+        ParamFieldInfo("modelDispMask23:1", "ModelDisplayMask23", True, bool, ""),
+        ParamFieldInfo("modelDispMask24:1", "ModelDisplayMask24", True, bool, ""),
+        ParamFieldInfo("modelDispMask25:1", "ModelDisplayMask25", True, bool, ""),
+        ParamFieldInfo("modelDispMask26:1", "ModelDisplayMask26", True, bool, ""),
+        ParamFieldInfo("modelDispMask27:1", "ModelDisplayMask27", True, bool, ""),
+        ParamFieldInfo("modelDispMask28:1", "ModelDisplayMask28", True, bool, ""),
+        ParamFieldInfo("modelDispMask29:1", "ModelDisplayMask29", True, bool, ""),
+        ParamFieldInfo("modelDispMask30:1", "ModelDisplayMask30", True, bool, ""),
+        ParamFieldInfo("modelDispMask31:1", "ModelDisplayMask31", True, bool, ""),
+        ParamFieldInfo("itemSearchRadius", "ItemSearchRadius", True, float, ""),
+        ParamFieldInfo("normalChangeModelId", "NormalChangeModelID", True, int, ""),
+        ParamFieldInfo("clothUpdateOffset", "ClothUpdateOffset", True, int, ""),
+        ParamFieldInfo("pad4", "Pad", False, pad_field(1), ""),
+        ParamFieldInfo("subHitOffset", "SubHitOffset", True, float, ""),
+        ParamFieldInfo("subHitHeight", "SubHitHeight", True, float, ""),
+        ParamFieldInfo("subHitRadius", "SubHitRadius", True, float, ""),
+        ParamFieldInfo("paintRenderTargetSize", "PaintRenderTargetSize", True, int, ""),
+        ParamFieldInfo("normalChangeAnimChrId", "NormalChangeAnimChrID", True, int, ""),
+        ParamFieldInfo("regainRate_PhysNeutral", "NeutralPhysicalRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_PhysSlash", "SlashPhysicalRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_PhysBlow", "BlowPhysicalRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_PhysThrust", "ThrustPhysicalRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_Magic", "MagicRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_Fire", "FireRegainRate", True, float, ""),
+        ParamFieldInfo("regainRate_Thunder", "LightingRegainRate", True, float, ""),
+        ParamFieldInfo("maxAnkleAngle", "MaxAnkleAngle", True, float, ""),
     ],
 }
 
 CACL_CORRECT_GRAPH_ST = {
-    "paramdef_name": "CACL_CORRECT_GRAPH_ST",  # note typo in name
+    "param_type": "CACL_CORRECT_GRAPH_ST",  # note typo in name
     "file_name": "CalcCorrectGraph",
     "nickname": "GrowthCurves",
     "fields": [
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "stageMaxVal0", "StageMaxIntercept0", True, float, "Y-intercept in equation of 'stage max' line 0."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "stageMaxVal1", "StageMaxIntercept1", True, float, "Y-intercept in equation of 'stage max' line 1."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "stageMaxVal2", "StageMaxIntercept2", True, float, "Y-intercept in equation of 'stage max' line 2."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "stageMaxVal3", "StageMaxIntercept3", True, float, "Y-intercept in equation of 'stage max' line 3."
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "stageMaxVal4", "StageMaxIntercept4", True, float, "Y-intercept in equation of 'stage max' line 4."
         ),
-        FieldDisplayInfo("stageMaxGrowVal0", "StageMaxSlope0", True, float, "Slope in equation of 'stage max' line 0."),
-        FieldDisplayInfo("stageMaxGrowVal1", "StageMaxSlope1", True, float, "Slope in equation of 'stage max' line 1."),
-        FieldDisplayInfo("stageMaxGrowVal2", "StageMaxSlope2", True, float, "Slope in equation of 'stage max' line 2."),
-        FieldDisplayInfo("stageMaxGrowVal3", "StageMaxSlope3", True, float, "Slope in equation of 'stage max' line 3."),
-        FieldDisplayInfo("stageMaxGrowVal4", "StageMaxSlope4", True, float, "Slope in equation of 'stage max' line 4."),
-        FieldDisplayInfo(
+        ParamFieldInfo("stageMaxGrowVal0", "StageMaxSlope0", True, float, "Slope in equation of 'stage max' line 0."),
+        ParamFieldInfo("stageMaxGrowVal1", "StageMaxSlope1", True, float, "Slope in equation of 'stage max' line 1."),
+        ParamFieldInfo("stageMaxGrowVal2", "StageMaxSlope2", True, float, "Slope in equation of 'stage max' line 2."),
+        ParamFieldInfo("stageMaxGrowVal3", "StageMaxSlope3", True, float, "Slope in equation of 'stage max' line 3."),
+        ParamFieldInfo("stageMaxGrowVal4", "StageMaxSlope4", True, float, "Slope in equation of 'stage max' line 4."),
+        ParamFieldInfo(
             "adjPt_maxGrowVal0",
             "AdjustmentMaxSlope0",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 0.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "adjPt_maxGrowVal1",
             "AdjustmentMaxSlope1",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 1.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "adjPt_maxGrowVal2",
             "AdjustmentMaxSlope2",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 2.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "adjPt_maxGrowVal3",
             "AdjustmentMaxSlope3",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 3.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "adjPt_maxGrowVal4",
             "AdjustmentMaxSlope4",
             True,
             float,
             "Adjustment factor for slope in equation of 'stage max' line 4.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "init_inclination_soul",
             "InitialLevellingCostSlope",
             True,
             float,
             "Initial slope of equation determining levelling costs (α1).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "adjustment_value",
             "LevellingCostEarlyAdjustment",
             True,
             float,
             "'Early' adjustment value of equation determining levelling costs (α2).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "boundry_inclination_soul",  # (sic)
             "LateLevellingCostSlope",
             True,
             float,
             "Slope of equation determining required levelling souls after 'LateLevellingCostThreshold' value (α3).",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "boundry_value",  # (sic)
             "LateLevellingCostThreshold",
             True,
             float,
             "Threshold at which 'LateLevellingCostSlope' takes over for levelling (t).",
         ),
-        FieldDisplayInfo("pad[4]", "Pad0", False, pad_field(4), "Null padding."),
+        ParamFieldInfo("pad[4]", "Pad0", False, pad_field(4), "Null padding."),
     ],
 }

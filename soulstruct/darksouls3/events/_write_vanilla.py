@@ -1,9 +1,9 @@
-from soulstruct.darksouls3.events import EMEVDDirectory
+from soulstruct.darksouls3.events import EventDirectory
 from soulstruct.config import DS3_PATH
 
 
 def main():
-    ed = EMEVDDirectory(DS3_PATH + "/event")
+    ed = EventDirectory(DS3_PATH + "/event")
     ed.write_evs("vanilla")
 
     # For fun.
@@ -13,7 +13,7 @@ def main():
         lines += len(evs_file.read_text().splitlines())
 
     # Test EVS read.
-    EMEVDDirectory("vanilla")
+    EventDirectory("vanilla")
     print("DS3 `vanilla` events successfully written and re-read.")
     print(f"Total EVS line count: {lines}")
 

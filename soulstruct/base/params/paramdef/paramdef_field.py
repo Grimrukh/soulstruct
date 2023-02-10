@@ -73,9 +73,9 @@ class ParamDefField(abc.ABC):
     sort_id: int
 
     # Unknown strings that appear in newer games.
-    unk_b8: str
-    unk_c0: str
-    unk_c8: str
+    unk_xb8: str
+    unk_xc0: str
+    unk_xc8: str
 
     # Number of values (>1 for padding only; indicated by square brackets in name). Auto-computed.
     length: int = 1
@@ -85,6 +85,7 @@ class ParamDefField(abc.ABC):
     py_type: tp.Type[bool] | tp.Type[int] | tp.Type[float] | tp.Type[str] | tp.Type[bytes] = None
     py_type_min: int | float = 0
     py_type_max: int | float = 0
+    py_default: bool | int | float | str = 0
 
     def __post_init__(self):
         self.py_fmt = self.display_type.format()
@@ -101,7 +102,7 @@ class ParamDefField(abc.ABC):
                     f"({self.length}) does not match length implied by name: [{match.group(1)}]."
                 )
 
-        self.better_default = self.get_better_default_value()
+        self.py_default = self.get_py_default()
 
     @classmethod
     def from_paramdef_reader(
@@ -129,6 +130,7 @@ class ParamDefField(abc.ABC):
             kwargs["display_name"] = reader.unpack_string(length=64, encoding=encoding)
 
         display_type_str = reader.unpack_string(length=8, encoding="shift_jis_2004")
+        # print(display_type_str.rstrip().encode())
         try:
             kwargs["display_type"] = getattr(field_types, display_type_str)  # type: tp.Type[field_types.base_type]
         except AttributeError:
@@ -159,10 +161,10 @@ class ParamDefField(abc.ABC):
         kwargs["bit_count"] = -1  # default (does not use bit field)
         if format_version >= 102:
             if uses_string_offsets:
-                internal_name_offset = reader.unpack_value("v")
-                name = kwargs["internal_name"] = reader.unpack_string(offset=internal_name_offset, encoding="ASCII")
+                name_offset = reader.unpack_value("v")
+                name = kwargs["name"] = reader.unpack_string(offset=name_offset, encoding="ASCII")
             else:
-                name = kwargs["internal_name"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
+                name = kwargs["name"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
 
             if match := cls._BIT_SIZE_RE.match(name):
                 kwargs["bit_count"] = int(match.group(1))
@@ -181,7 +183,7 @@ class ParamDefField(abc.ABC):
                 kwargs["unk_xc0"] = reader.unpack_string(offset=unk_xc0_offset, encoding="ASCII")
             if unk_xc8_offset != 0:
                 kwargs["unk_xc8"] = reader.unpack_string(offset=unk_xc8_offset, encoding="ASCII")
-        else:
+        elif format_version >= 106:
             reader.assert_pad(12)
 
         if format_version >= 203:
@@ -339,7 +341,7 @@ class ParamDefField(abc.ABC):
         raise TypeError("Cannot get display info for this `ParamDefField` class.")
         # TODO: Use a 'get_game()' module lookup (from `ParamDef`).
 
-    def get_better_default_value(self) -> bool | int | float | str:
+    def get_py_default(self) -> bool | int | float | str:
         """Get default value from game-specific `defaults` module, if specified.
 
         Base class version here just parses the existing ParamDef default.

@@ -1,0 +1,143 @@
+from soulstruct.base.params.utils import ParamFieldInfo, pad_field, bit_pad_field
+
+
+REINFORCE_PARAM_PROTECTOR_ST = {
+    "param_type": "REINFORCE_PARAM_PROTECTOR_ST",
+    "file_name": "",  # TODO
+    "nickname": "",  # TODO
+    "fields": [
+        ParamFieldInfo(
+            "physicsDefRate",
+            "Defence %: Physical",
+            True,
+            float,
+            'Physical defense correction value',
+        ),
+        ParamFieldInfo(
+            "magicDefRate",
+            "Defence %: Magic",
+            True,
+            float,
+            'Magic defense correction value',
+        ),
+        ParamFieldInfo(
+            "fireDefRate",
+            "Defence %: Fire",
+            True,
+            float,
+            'Fire defense correction value',
+        ),
+        ParamFieldInfo(
+            "thunderDefRate",
+            "Defence %: Lightning",
+            True,
+            float,
+            'Electric shock defense correction value',
+        ),
+        ParamFieldInfo(
+            "slashDefRate",
+            "Defence %: Slash",
+            True,
+            float,
+            'Slash defense correction value',
+        ),
+        ParamFieldInfo(
+            "blowDefRate",
+            "Defence %: Strike",
+            True,
+            float,
+            'Impact defense correction value',
+        ),
+        ParamFieldInfo(
+            "thrustDefRate",
+            "Defence %: Thrust",
+            True,
+            float,
+            'Correction value of piercing defense power',
+        ),
+        ParamFieldInfo(
+            "resistPoisonRate",
+            "Aux Resist %: Poison",
+            True,
+            float,
+            'Poison resistance correction value',
+        ),
+        ParamFieldInfo(
+            "resistDiseaseRate",
+            "Aux Resist %: Scarlet Rot",
+            True,
+            float,
+            'Epidemic resistance correction value',
+        ),
+        ParamFieldInfo(
+            "resistBloodRate",
+            "Aux Resist %: Hemorrhage",
+            True,
+            float,
+            'Bleeding resistance correction value',
+        ),
+        ParamFieldInfo(
+            "resistCurseRate",
+            "Aux Resist %: Blight",
+            True,
+            float,
+            'Curse resistance correction value',
+        ),
+        ParamFieldInfo(
+            "residentSpEffectId1",
+            "Passive SpEffect ID [1] Offset",
+            True,
+            int,
+            'Addition correction value for resident special effect ID1',
+        ),
+        ParamFieldInfo(
+            "residentSpEffectId2",
+            "Passive SpEffect ID [2] Offset",
+            True,
+            int,
+            'Addition correction value for resident special effect ID2',
+        ),
+        ParamFieldInfo(
+            "residentSpEffectId3",
+            "Passive SpEffect ID [3] Offset",
+            True,
+            int,
+            'Addition correction value for resident special effect ID3',
+        ),
+        ParamFieldInfo(
+            "materialSetId",
+            "Reinforcement Material Set ID",
+            True,
+            int,
+            'Addition correction value of material parameter ID',
+        ),
+        ParamFieldInfo(
+            "darkDefRate",
+            "Absorption %: Holy",
+            True,
+            float,
+            'Dark defense correction value',
+        ),
+        ParamFieldInfo(
+            "resistFreezeRate",
+            "Aux Resist %: Frost",
+            True,
+            float,
+            'Cold resistance correction value',
+        ),
+        ParamFieldInfo(
+            "resistSleepRate",
+            "Aux Resist %: Sleep",
+            True,
+            float,
+            'Correction value for sleep tolerance',
+        ),
+        ParamFieldInfo(
+            "resistMadnessRate",
+            "Aux Resist %: Madness",
+            True,
+            float,
+            'Madness resistance correction value',
+        ),
+    ],
+}

@@ -7,7 +7,7 @@ import typing as tp
 from soulstruct.base.project.core import GameDirectoryProject as _BaseGameDirectoryProject
 from soulstruct.games import EldenRingType
 
-from soulstruct.eldenring.events import EMEVDDirectory
+from soulstruct.eldenring.events import EventDirectory
 from soulstruct.eldenring.events.create_vanilla_entities import copy_vanilla_entities
 from soulstruct.eldenring.text import MSGDirectory
 
@@ -17,8 +17,8 @@ if tp.TYPE_CHECKING:
 
 class GameDirectoryProject(_BaseGameDirectoryProject, EldenRingType):
     DATA_TYPES = {
-        # "ai": AIDirectory,
-        "events": EMEVDDirectory,
+        # "ai": ScriptDirectory,
+        "events": EventDirectory,
         # "lighting": DrawParamDirectory,
         # "maps": MapStudioDirectory,
         # "params": GameParamBND,
@@ -26,7 +26,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject, EldenRingType):
         "text": MSGDirectory,
     }
 
-    events: EMEVDDirectory
+    events: EventDirectory
     text: MSGDirectory
 
     def warn_long_event_import(self, with_window: ProjectWindow = None):

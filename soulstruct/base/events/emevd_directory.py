@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["EMEVDDirectory"]
+__all__ = ["EventDirectory"]
 
 import abc
 import logging
@@ -17,7 +17,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class EMEVDDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
+class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
     """Load a directory full of any valid `EMEVD` sources, one per map."""
 
     FILE_NAME_PATTERN: tp.ClassVar[str] = r".*\.(evs\.py|evs|py|emevd|txt)"

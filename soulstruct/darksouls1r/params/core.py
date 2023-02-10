@@ -8,12 +8,12 @@ from dataclasses import dataclass
 from soulstruct.games import DARK_SOULS_DSR
 from soulstruct.bloodborne.game_types import *
 from soulstruct.containers import BinderVersion
-from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND, param_property
+from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND, param_property
 from soulstruct.base.params.param import Param as _BaseParam
 from soulstruct.utilities.misc import BiDict
 from soulstruct.darksouls1ptde.constants import PLAYER_WEAPON_BEHAVIOR_VARIATIONS, BEHAVIOR_SUB_ID
 
-from .paramdef import GET_BUNDLED_PARAMDEF
+from .paramdef import GET_BUNDLED_PARAMDEFBND
 
 if tp.TYPE_CHECKING:
     from ..text.msg_directory import MSGDirectory
@@ -21,7 +21,7 @@ if tp.TYPE_CHECKING:
 
 @dataclass(slots=True)
 class Param(_BaseParam):
-    GET_BUNDLED_PARAMDEF = staticmethod(GET_BUNDLED_PARAMDEF)
+    GET_BUNDLED_PARAMDEFBND = staticmethod(GET_BUNDLED_PARAMDEFBND)
 
 
 @dataclass(slots=True)

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 # noinspection PyUnresolvedReferences
 from soulstruct.darksouls1ptde.params.display_info import *
+from soulstruct.base.params.utils import ParamFieldInfo
 from .items import EQUIP_PARAM_WEAPON_ST
 
 
@@ -16,7 +17,7 @@ def get_param_info(param_type: str) -> dict:
         raise KeyError(f"Could not find Param info for {param_type}.")
 
 
-def get_param_info_field(param_type: str, field_name: str) -> FieldDisplayInfo:
+def get_param_info_field(param_type: str, field_name: str) -> ParamFieldInfo:
     param_info = get_param_info(param_type)
     field_hits = [field for field in param_info["fields"] if field.name == field_name]
     if not field_hits:

@@ -7,7 +7,7 @@ import copy
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, asdict, field
 from pathlib import Path
 
 from soulstruct.games import Game, get_game
@@ -42,13 +42,11 @@ class BaseBinaryFile(abc.ABC):
 
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
-    # `bytes()` and `write()` methods will use this if `dcx_type = None` (default).
-    DEFAULT_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
 
     # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
-    path: Path | None = field(init=False)
-    # Optional override for `DEFAULT_DCX_TYPE`.
-    dcx_type: DCXType | None = field(init=False)
+    path: Path | None = field(default=None, kw_only=True)
+    # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
+    dcx_type: DCXType | None = field(default=None, kw_only=True)
 
     # region Read Methods
 
@@ -113,6 +111,8 @@ class BaseBinaryFile(abc.ABC):
     @classmethod
     def from_json(cls, json_path: str | Path) -> Self:
         json_dict = read_json(json_path)
+        # TODO: Some kind of fancy recursive JSON reader that checks field types and converts dictionaries to
+        #  `BaseBinaryFile` subclasses.
         return cls.from_dict(json_dict)
 
     # endregion
@@ -195,9 +195,14 @@ class BaseBinaryFile(abc.ABC):
 
     def _get_dcx_type(self) -> DCXType:
         if self.dcx_type is None:
-            if self.DEFAULT_DCX_TYPE is not None:
-                return self.DEFAULT_DCX_TYPE
-            return DCXType.Null
+            try:
+                return self.get_game().default_dcx_type
+            except ValueError:
+                _LOGGER.warning(
+                    f"Could not detect default DCX type for game-independent file class {self.cls_name}. "
+                    f"Not using any compression."
+                )
+                return DCXType.Null
         return self.dcx_type
 
     @classmethod
@@ -220,6 +225,10 @@ class BaseBinaryFile(abc.ABC):
         if match := re.match(_GAME_MODULE_RE, cls.__module__):
             return get_game(match.group(1))
         raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
+
+    @property
+    def cls_name(self) -> str:
+        return self.__class__.__name__
 
 
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")

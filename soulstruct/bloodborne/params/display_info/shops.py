@@ -1,28 +1,28 @@
 __all__ = ["SHOP_LINEUP_PARAM"]
 
-from soulstruct.base.params.utils import FieldDisplayInfo, DynamicFieldDisplayInfo, pad_field
+from soulstruct.base.params.utils import ParamFieldInfo, DynamicParamFieldInfo, pad_field
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.bloodborne.game_types import *
 
 
-class DynamicShopRef(DynamicFieldDisplayInfo):
+class DynamicShopRef(DynamicParamFieldInfo):
 
     POSSIBLE_TYPES = {WeaponParam, ArmorParam, AccessoryParam, GoodParam, SpellParam}
 
-    def __call__(self, entry) -> FieldDisplayInfo:
+    def __call__(self, entry) -> ParamFieldInfo:
         item_type = entry[self.type_field_name]
         if item_type == SHOP_LINEUP_EQUIPTYPE.Weapon:
-            return FieldDisplayInfo(self.name, f"Weapon", True, WeaponParam, f"Weapon to be listed in shop menu.")
+            return ParamFieldInfo(self.name, f"Weapon", True, WeaponParam, f"Weapon to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Armor:
-            return FieldDisplayInfo(self.name, f"Armor", True, ArmorParam, f"Armor to be listed in shop menu.")
+            return ParamFieldInfo(self.name, f"Armor", True, ArmorParam, f"Armor to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Ring:
-            return FieldDisplayInfo(self.name, f"Ring", True, AccessoryParam, f"Ring to be listed in shop menu.")
+            return ParamFieldInfo(self.name, f"Ring", True, AccessoryParam, f"Ring to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Good:
-            return FieldDisplayInfo(self.name, f"Good", True, GoodParam, f"Good to be listed in shop menu.")
+            return ParamFieldInfo(self.name, f"Good", True, GoodParam, f"Good to be listed in shop menu.")
         if item_type == SHOP_LINEUP_EQUIPTYPE.Spell:
-            return FieldDisplayInfo(self.name, f"Spell", True, SpellParam, f"Spell to be listed in attunement menu.")
+            return ParamFieldInfo(self.name, f"Spell", True, SpellParam, f"Spell to be listed in attunement menu.")
         else:
-            return FieldDisplayInfo(
+            return ParamFieldInfo(
                 self.name,
                 f"ItemID",
                 True,
@@ -32,13 +32,13 @@ class DynamicShopRef(DynamicFieldDisplayInfo):
 
 
 SHOP_LINEUP_PARAM = {
-    "paramdef_name": "SHOP_LINEUP_PARAM",
+    "param_type": "SHOP_LINEUP_PARAM",
     "file_name": "ShopLineupParam",
     "nickname": "Shops",
     "fields": [
         DynamicShopRef("equipId", "equipType"),
-        FieldDisplayInfo("value", "SoulCost", True, int, "Cost of item, in souls."),
-        FieldDisplayInfo(
+        ParamFieldInfo("value", "SoulCost", True, int, "Cost of item, in souls."),
+        ParamFieldInfo(
             "mtrlId",
             "RequiredGood",
             True,
@@ -46,30 +46,30 @@ SHOP_LINEUP_PARAM = {
             "Good that must be possessed for item to be listed. Used to control appearance of spells in "
             "attunement menu.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "eventFlag",
             "QuantityFlag",
             True,
             Flag,
             "Flag value that holds the count of this item that have been sold already.",
         ),
-        FieldDisplayInfo("qwcId", "QWCID", False, int, "Unused world tendency condition."),
-        FieldDisplayInfo(
+        ParamFieldInfo("qwcId", "QWCID", False, int, "Unused world tendency condition."),
+        ParamFieldInfo(
             "sellQuantity",
             "InitialQuantity",
             True,
             int,
             "Quantity of this item initially available to be sold. Set to -1 for infinite quantity.",
         ),
-        FieldDisplayInfo(
+        ParamFieldInfo(
             "shopType",
             "ShopMenuType",
             True,
             SHOP_LINEUP_SHOPTYPE,
             "Determines if this is a standard shop menu or the spell attunement menu.",
         ),
-        FieldDisplayInfo("equipType", "ItemType", True, SHOP_LINEUP_EQUIPTYPE, "Type of item listed in menu."),
-        FieldDisplayInfo("value_SAN", "ValueSAN", True, int, ""),
-        FieldDisplayInfo("pad_0[6]", "Pad", False, pad_field(6), ""),
+        ParamFieldInfo("equipType", "ItemType", True, SHOP_LINEUP_EQUIPTYPE, "Type of item listed in menu."),
+        ParamFieldInfo("value_SAN", "ValueSAN", True, int, ""),
+        ParamFieldInfo("pad_0[6]", "Pad", False, pad_field(6), ""),
     ],
 }

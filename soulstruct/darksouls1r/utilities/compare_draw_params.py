@@ -15,7 +15,7 @@ def compare_draw_params(
     if names is None:
         names = ("DrawParams1", "DrawParams2")
 
-    for map_name in DrawParamDirectory.DRAW_PARAM_MAPS.keys():
+    for map_name in DrawParamDirectory.DRAW_PARAM_AREAS.keys():
         draw_blocks = [draw_params_one[map_name], draw_params_two[map_name]]
         map_printed = False
         for param_name in DrawParamDirectory.PARAM_NAMES:

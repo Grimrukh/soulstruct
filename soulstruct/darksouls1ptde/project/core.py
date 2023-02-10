@@ -8,9 +8,9 @@ from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryPr
 from soulstruct.base.project.exceptions import SoulstructProjectError
 from soulstruct.games import DarkSoulsPTDEType
 
-from soulstruct.darksouls1ptde.ai import AIDirectory
+from soulstruct.darksouls1ptde.ai import ScriptDirectory
 from soulstruct.darksouls1ptde.ezstate import TalkDirectory
-from soulstruct.darksouls1ptde.events import EMEVDDirectory
+from soulstruct.darksouls1ptde.events import EventDirectory
 from soulstruct.darksouls1ptde.maps import MapStudioDirectory
 from soulstruct.darksouls1ptde.params import GameParamBND
 from soulstruct.darksouls1ptde.params import DrawParamDirectory
@@ -22,8 +22,8 @@ if tp.TYPE_CHECKING:
 
 class GameDirectoryProject(_BaseGameDirectoryProject, DarkSoulsPTDEType):
     DATA_TYPES = {
-        "ai": AIDirectory,
-        "events": EMEVDDirectory,
+        "ai": ScriptDirectory,
+        "events": EventDirectory,
         "lighting": DrawParamDirectory,
         "maps": MapStudioDirectory,
         "params": GameParamBND,

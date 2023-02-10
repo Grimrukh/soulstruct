@@ -171,7 +171,7 @@ class ProjectWindow(_BaseProjectWindow):
         request_warp_flag_id = 10000000 + map_id[0] * 100000 + map_id[1] * 10000 + self.RELOAD_WARP_FLAG_SUFFIX
         current_map = self.project.maps.GET_MAP(map_id)
         current_msb_path = self.project.get_game_path_of_data_type("maps") / f"{current_map.msb_file_stem}.msb"
-        current_msb = MSB(current_msb_path)
+        current_msb = MSB.from_path(current_msb_path)
         try:
             player_start = current_msb.get_entry_by_entity_id(player_start_id)
         except KeyError:

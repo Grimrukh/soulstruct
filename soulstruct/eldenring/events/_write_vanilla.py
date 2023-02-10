@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from soulstruct.eldenring.events import EMEVDDirectory
+from soulstruct.eldenring.events import EventDirectory
 from soulstruct.config import ELDEN_RING_PATH
 
 VANILLA_EVENT_PATH = Path(ELDEN_RING_PATH) / "../../ELDEN RING (Vanilla Unpacked)/Game/event"
@@ -9,7 +9,7 @@ ENTITIES_DIR = Path(__file__).parent / "vanilla/entities"
 
 def main():
     print("Loading vanilla events...")
-    ed = EMEVDDirectory(VANILLA_EVENT_PATH)
+    ed = EventDirectory(VANILLA_EVENT_PATH)
     print("Writing vanilla EVS scripts...")
     ed.write_evs(
         "vanilla",
@@ -24,7 +24,7 @@ def main():
         lines += len(evs_file.read_text().splitlines())
 
     # Test EVS read.
-    EMEVDDirectory("vanilla")
+    EventDirectory("vanilla")
     print("ER `vanilla` events successfully written and re-read.")
     print(f"Total EVS line count: {lines}")
 

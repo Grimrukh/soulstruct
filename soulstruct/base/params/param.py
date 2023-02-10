@@ -15,7 +15,7 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.files import write_json
 
-from .utils import BitFieldReader, BitFieldWriter, FieldDisplayInfo
+from .utils import ParamFieldInfo
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
@@ -75,7 +75,7 @@ class ParamRow:
     def get_paramdef_field(self, field_name: str) -> ParamDefField:
         return self.paramdef[field_name]
 
-    def get_paramdef_field_display_info(self, field_name: str) -> FieldDisplayInfo:
+    def get_paramdef_field_display_info(self, field_name: str) -> ParamFieldInfo:
         return self.paramdef[field_name].get_display_info(self)
 
     def __repr__(self):
@@ -150,7 +150,7 @@ class ParamRow:
             paramdef_field.check_python_type(value)
             paramdef_field.check_range(value)
             if paramdef_field.bit_count != -1:
-                field_bytes = bit_writer.write(value, paramdef_field.bit_count, paramdef_field.py_fmt)
+                bit_writer.write(writer, value, paramdef_field.bit_count, paramdef_field.py_fmt)
             else:
                 field_bytes = bit_writer.finish_field()
                 if issubclass(paramdef_field.display_type, ft.basestring):
@@ -159,7 +159,7 @@ class ParamRow:
                     field_bytes += value  # already null bytes
                 else:
                     field_bytes += struct.pack(paramdef_field.py_fmt, value)
-            writer.append(field_bytes)
+                writer.append(field_bytes)
         writer.append(bit_writer.finish_field())
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True, ignore_sizes=False) -> dict[str, tp.Any]:
@@ -197,7 +197,7 @@ class ParamRow:
 class Param(GameFile, abc.ABC):
     """This base class supports all binary versions, but lacks information about game-specific enums, etc."""
 
-    GET_BUNDLED_PARAMDEF: tp.ClassVar[tp.Callable] = None
+    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
     @dataclass(slots=True)
     class RowPointerStruct32(NewBinaryStruct):
@@ -212,7 +212,7 @@ class Param(GameFile, abc.ABC):
         data_offset: long
         name_offset: long
 
-    param_type: str
+    param_type: str = ""
     big_endian: bool = False
     unknown: int = 0
     flags1: ParamFlags1 = ParamFlags1(0)
@@ -283,7 +283,7 @@ class Param(GameFile, abc.ABC):
             return
 
         if paramdef_or_paramdefbnd is None:
-            paramdef_or_paramdefbnd = self.GET_BUNDLED_PARAMDEF()
+            paramdef_or_paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
         if isinstance(paramdef_or_paramdefbnd, ParamDefBND):
             try:
                 paramdef = paramdef_or_paramdefbnd[self.param_type]

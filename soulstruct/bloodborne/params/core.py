@@ -8,11 +8,11 @@ from dataclasses import dataclass, field
 from soulstruct.games import BLOODBORNE
 from soulstruct.bloodborne.game_types import *
 from soulstruct.containers import BinderVersion, BinderVersion4Info
-from soulstruct.base.params.game_param_bnd import GameParamBND as _BaseGameParamBND, param_property
+from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND, param_property
 from soulstruct.base.params.param import Param as _BaseParam
 from soulstruct.utilities.misc import BiDict
 
-from .paramdef import GET_BUNDLED_PARAMDEF
+from .paramdef import GET_BUNDLED_PARAMDEFBND
 
 if tp.TYPE_CHECKING:
     from ..text.msg_directory import MSGDirectory
@@ -20,7 +20,7 @@ if tp.TYPE_CHECKING:
 
 @dataclass(slots=True)
 class Param(_BaseParam):
-    GET_BUNDLED_PARAMDEF: tp.ClassVar = staticmethod(GET_BUNDLED_PARAMDEF)
+    GET_BUNDLED_PARAMDEFBND: tp.ClassVar = staticmethod(GET_BUNDLED_PARAMDEFBND)
 
 
 @dataclass(slots=True)

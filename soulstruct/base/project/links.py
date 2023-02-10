@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-__all__ = ["WindowLinker", "LinkError"]
+__all__ = [
+    "WindowLinker",
+    "LinkError",
+    "BaseLink",
+    "BrokenLink",
+    "NullLink",
+    "MapsLink",
+    "ParamsLink",
+    "TextLink",
+    "LightingLink",
+]
 
 import abc
 import typing as tp
@@ -73,15 +83,15 @@ class WindowLinker:
 
         return self.check_other_link_types(field_type, field_value, valid_null_values, map_override)
 
-    def map_entry_link(self, field_type, field_value):
+    def map_entry_link(self, field_type: tp.Type[MapEntry], field_value: str):
         entry_name = field_value
         if not entry_name:  # no link expected (None or empty string)
             return [NullLink(self, name="None")]
-        entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
+        entry_supertype_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
         active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-        entry_list = active_msb[entry_type_name]
+        entry_subtype_list = active_msb[entry_subtype_name]
         try:
-            entry = entry_list[entry_name]
+            entry = entry_subtype_list.find_entry_name(entry_name)
         except KeyError:
             # Entry name is missing.
             return [BrokenLink()]
@@ -104,21 +114,19 @@ class WindowLinker:
                     f"does not match enforced type of field ({entry_subtype_name})."
                 )
         try:
-            entry_local_index = entry_list.get_entry_subtype_index(entry_name)
-            entry_subtype = entry.ENTRY_SUBTYPE
-            pluralized_name = entry_subtype.pluralized_name
-            if pluralized_name == "Characters" and field_value == "c0000":
-                if not [model for model in getattr(entry_list, "Characters") if model.name == "c0000"]:
-                    if not [model for model in getattr(entry_list, "Players") if model.name == "c0000"]:
-                        raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
-                    pluralized_name = "Players"  # redirect c0000 to 'Player' models
+            entry_subtype_index = entry_subtype_list.index(entry)
+            pluralized_name = entry.SUBTYPE_ENUM.pluralized_name
+            if pluralized_name in {"Characters", "Players"} and field_value == "c0000":
+                if not active_msb.has_c0000_model():
+                    raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
+                pluralized_name = "Players"  # redirect c0000 to 'Player' models
             return [
                 MapsLink(
                     self,
                     name=field_value,
-                    entry_type_name=entry_type_name,
+                    entry_supertype_name=entry_supertype_name,
                     entry_subtype_name=pluralized_name,
-                    entry_local_index=entry_local_index,
+                    entry_subtype_index=entry_subtype_index,
                 )
             ]
         except (KeyError, ValueError):
@@ -153,14 +161,14 @@ class WindowLinker:
         Currently only supports `MapEntry` fields.
         """
         if issubclass(field_type, MapEntry):
-            entry_type_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
+            entry_supertype_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
             active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-            entry_list = active_msb[entry_type_name]
+            entry_list = active_msb[entry_subtype_name]
             if entry_subtype_name is not None:
                 # Technically, map links only care about entry list type (except for the collision field of Map
                 # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-                names = entry_list.get_entry_names(entry_subtype=entry_subtype_name)
-                if entry_type_name == "Models" and entry_subtype_name in {"Character", "Player"}:
+                names = entry_list.get_entry_names()
+                if entry_supertype_name == "Models" and entry_subtype_name in {"Character", "Player"}:
                     # Add model names as suffixes.
                     for i, name in enumerate(names):
                         model_id = int(name.lstrip("c"))
@@ -258,13 +266,13 @@ class WindowLinker:
         self.window.text_tab.select_entry_id(text_id, edit_if_already_selected=False)
         self.window.text_tab.update_idletasks()
 
-    def execute_maps_link(self, entry_list_name, entry_type_name, entry_local_index):
+    def execute_maps_link(self, entry_supertype_name, entry_subtype_name, entry_subtype_index):
         self.window.maps_tab.select_displayed_field_row(None)
         self.window.page_tabs.select(self.get_tab_index("maps"))
         self.window.maps_tab.refresh_categories()  # TODO: why do I need to call this?
-        category = f"{entry_list_name}: {entry_type_name}"
+        category = f"{entry_supertype_name}: {entry_subtype_name}"
         self.window.maps_tab.select_category(category, auto_scroll=True)
-        self.window.maps_tab.select_entry_id(entry_local_index, edit_if_already_selected=False)
+        self.window.maps_tab.select_entry_id(entry_subtype_index, edit_if_already_selected=False)
         self.window.maps_tab.update_idletasks()
 
     def execute_params_link(self, param_name, param_entry_id, field_name=None):
@@ -380,20 +388,21 @@ class NullLink(BaseLink):
 
 
 class MapsLink(BaseLink):
-    def __init__(self, linker, entry_type_name, entry_local_index, entry_subtype_name, name=None):
+    # TODO: Supertype name may no longer be needed. (I think it's used to get the dropdown category name.)
+    def __init__(self, linker, entry_supertype_name, entry_subtype_index, entry_subtype_name, name=None):
         super().__init__(
             linker,
             name=name,
-            menu_text=f"Go to Maps.{entry_type_name}"
-            f"{'.' + entry_subtype_name if entry_subtype_name is not None else ''}[{entry_local_index}]"
+            menu_text=f"Go to Maps.{entry_supertype_name}"
+            f"{'.' + entry_subtype_name if entry_subtype_name is not None else ''}[{entry_subtype_index}]"
             f" {{{name}}}",
         )
-        self.entry_list_name = entry_type_name
-        self.entry_type_name = entry_subtype_name
-        self.entry_local_index = entry_local_index
+        self.entry_supertype_name = entry_supertype_name
+        self.entry_subtype_name = entry_subtype_name
+        self.entry_subtype_index = entry_subtype_index
 
     def __call__(self):
-        self.linker.execute_maps_link(self.entry_list_name, self.entry_type_name, self.entry_local_index)
+        self.linker.execute_maps_link(self.entry_supertype_name, self.entry_subtype_name, self.entry_subtype_index)
 
 
 class ParamsLink(BaseLink):

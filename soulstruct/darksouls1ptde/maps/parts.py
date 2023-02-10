@@ -96,7 +96,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     sib_path: str = ""
     draw_groups: set[int] = field(default_factory=set)
     display_groups: set[int] = field(default_factory=set)
-    ambient_light_id: int = field(default=-1, **MapFieldInfo(linked_type=AmbientLightParam))
+    ambient_light_id: int = field(default=-1, **MapFieldInfo(linked_type=BakedLightParam))
     fog_id: int = field(default=-1, **MapFieldInfo(linked_type=FogParam))
     scattered_light_id: int = field(default=-1, **MapFieldInfo(linked_type=ScatteredLightParam))
     lens_flare_id: int = field(default=-1, **MapFieldInfo(linked_type=LensFlareSourceParam))

@@ -7,7 +7,7 @@ from soulstruct.base.project.editors.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param import Param, ParamRow
-    from soulstruct.base.params.draw_param import DrawParamBND, DrawParamDirectory
+    from soulstruct.darksouls1ptde.params.draw_param import DrawParamBND, DrawParamDirectory
 
 
 class LightingEntryRow(EntryRow):
@@ -60,7 +60,7 @@ class LightingEditor(BaseFieldEditor):
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
     FIELD_BOX_HEIGHT = 400
-    FIELD_ROW_COUNT = 45  # highest count (AmbientLight)
+    FIELD_ROW_COUNT = 45  # highest count (BakedLight)
 
     ENTRY_ROW_CLASS = LightingEntryRow
     entries: list[LightingEntryRow]
@@ -80,7 +80,7 @@ class LightingEditor(BaseFieldEditor):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 0, 0, 1], auto_columns=0):
-                map_display_names = [f"{k} [{v}]" for k, v in self.lighting.DRAW_PARAM_MAPS.items()]
+                map_display_names = [f"{k} [{v}]" for k, v in self.lighting.DRAW_PARAM_AREAS.items()]
                 self.map_area_choice = self.Combobox(
                     values=map_display_names,
                     on_select_function=self._on_map_area_choice,
@@ -117,7 +117,7 @@ class LightingEditor(BaseFieldEditor):
         self.refresh_entries(reset_field_display=True)
 
     def _set_valid_slot_values(self, map_area):
-        if getattr(self.lighting, map_area).AmbientLight[1] is None:  # random table to check slots
+        if getattr(self.lighting, map_area).BakedLight[1] is None:  # random Param to check slots
             self.slot_choice.config(values=["0"])
             if self.slot_choice.var.get() == "1":
                 self.flash_bg(self.slot_choice_label)
@@ -126,9 +126,9 @@ class LightingEditor(BaseFieldEditor):
             self.slot_choice.config(values=["0", "1"])
 
     def go_to_area_and_slot(self, area_name, slot):
-        if area_name not in self.lighting.DRAW_PARAM_MAPS:
+        if area_name not in self.lighting.DRAW_PARAM_AREAS:
             raise KeyError(f"Invalid area name linked: {area_name}")
-        full_area_name = f"{area_name} [{self.lighting.DRAW_PARAM_MAPS[area_name]}]"
+        full_area_name = f"{area_name} [{self.lighting.DRAW_PARAM_AREAS[area_name]}]"
         self.map_area_choice.set(full_area_name)
         self._set_valid_slot_values(area_name)
         self.slot_choice.var.set(str(slot))
@@ -137,7 +137,7 @@ class LightingEditor(BaseFieldEditor):
     def regenerate_slot_1(self):
         map_area = self.get_map_area_name()
         map_draw_param = getattr(self.lighting, map_area)  # type: DrawParamBND
-        if map_draw_param.params["LightBank.param"][1] is not None:  # picking a random category to check slots
+        if map_draw_param.BakedLight[1] is not None:  # random Param to check slots
             if (
                 self.CustomDialog(
                     title="Overwrite Slot 1?",
@@ -157,8 +157,8 @@ class LightingEditor(BaseFieldEditor):
     def get_map_area_name(self):
         return self.map_area_choice.get().split(" [")[0]
 
-    def _get_display_categories(self):
-        return self.lighting.PARAM_NAMES
+    def _get_display_categories(self) -> list[str]:
+        return list(self.lighting.DRAW_PARAM_AREAS.keys())
 
     def get_category_data(self, category=None) -> tp.Union[Param, dict]:
         if category is None:
@@ -167,7 +167,7 @@ class LightingEditor(BaseFieldEditor):
                 return {}
         map_area_choice = self.get_map_area_name()
         slot_choice = int(self.slot_choice.var.get())
-        return self.lighting.get_draw_param_bnd(map_area_choice).get_param(category)[slot_choice]
+        return self.lighting.get_drawparambnd(map_area_choice).get_draw_param_slot(category, slot_choice)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:

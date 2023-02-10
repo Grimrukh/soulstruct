@@ -1,3 +1,3 @@
-__all__ = ["AIDirectory"]
+__all__ = ["ScriptDirectory"]
 
-from soulstruct.darksouls1ptde.ai.ai_directory import AIDirectory
+from soulstruct.darksouls1ptde.ai.ai_directory import ScriptDirectory

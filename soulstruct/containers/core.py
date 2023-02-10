@@ -201,9 +201,9 @@ class BinderVersion4Info:
     unicode: bool = True
     hash_table_type: int = 0
 
-    most_recent_hash_table: bytes = field(init=False, default=b"")
-    most_recent_entry_count: int = field(init=False, default=0)
-    most_recent_paths: list[str] = field(init=False, default_factory=list)
+    most_recent_hash_table: bytes = field(init=False, repr=False, default=b"")
+    most_recent_entry_count: int = field(init=False, repr=False, default=0)
+    most_recent_paths: list[str] = field(init=False, repr=False, default_factory=list)
 
 
 @dataclass(slots=True)

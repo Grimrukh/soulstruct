@@ -9,8 +9,9 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
+
 if tp.TYPE_CHECKING:
-    from .base_binary_file import BaseBinaryFile, BASE_BINARY_FILE_T
     from .game_types.map_types import Map
     from .maps.utilities import GET_MAP_TYPING
 
@@ -26,14 +27,14 @@ _LOGGER = logging.getLogger(__name__)
 class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
     """Python structure for a folder of files in a FromSoftware installation. Implementation is much more flexible.
 
-    Typical usage is to specify subclass `FILE_RE` and `FILE_CLASS` to indicate which file names should be loaded into
-    which Python class, then use `__post_init__` to compute other fields.
+    Typical usage is to specify subclass `FILE_NAME_PATTERN`, `FILE_CLASS`, and `FILE_EXTENSION` to indicate which file
+    names should be loaded into which Python class, then use `__post_init__` to compute any other fields if needed.
     """
     FILE_NAME_PATTERN: tp.ClassVar[str]
     FILE_CLASS: tp.ClassVar[tp.Type[BaseBinaryFile]]
     FILE_EXTENSION: tp.ClassVar[str] = ""  # NOTE: `.dcx` extension will be applied by `BinaryBaseFile.write()`
 
-    directory: Path = Path()
+    directory: Path | None = None
     files: dict[str, BASE_BINARY_FILE_T] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
 
     @classmethod
@@ -145,13 +146,12 @@ class GameFileMapDirectory(GameFileDirectory, abc.ABC):
         directory_path = Path(directory_path)
         all_map_stems = [getattr(game_map, self.MAP_STEM_ATTRIBUTE) for game_map in self.ALL_MAPS]
         directory_path.mkdir(parents=True, exist_ok=True)
-        for file_name, instance in self.files.items():
-            file_stem = file_name.split(".")[0]
+        for file_stem, instance in self.files.items():
             if file_stem in all_map_stems:
                 all_map_stems.remove(file_stem)
             else:
-                _LOGGER.warning(f"Writing unknown map file found in `{self.__class__.__name__}`: {file_name}")
-            instance.write(directory_path / file_name, check_hash=check_file_hashes)
+                _LOGGER.warning(f"Writing unknown map file found in `{self.__class__.__name__}`: {file_stem}")
+            instance.write(directory_path / f"{file_stem}{self.FILE_EXTENSION}", check_hash=check_file_hashes)
         if all_map_stems:
             _LOGGER.warning(
                 f"Could not find some files while writing `{self.__class__.__name__}` directory: "

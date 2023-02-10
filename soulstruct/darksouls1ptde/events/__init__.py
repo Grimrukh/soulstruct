@@ -1,7 +1,7 @@
 __all__ = [
-    # EMEVD and EMEVDDirectory classes
+    # EMEVD and EventDirectory classes
     "EMEVD",
-    "EMEVDDirectory",
+    "EventDirectory",
     # Sub-packages / package attributes (contents of constants, instructions, and tests are also in this namespace)
     "constants",
     "enums",
@@ -77,5 +77,5 @@ from ..maps import constants
 from ..maps.constants import *
 from .emevd import EMEVD, decompiler, enums
 from .emevd.enums import *
-from .emevd_directory import EMEVDDirectory
+from .emevd_directory import EventDirectory
 from .utilities import convert_events, compare_events

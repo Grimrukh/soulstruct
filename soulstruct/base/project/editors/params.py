@@ -4,14 +4,14 @@ import logging
 import typing as tp
 
 from soulstruct.base.game_types import BaseParam
-from soulstruct.base.params.utils import DynamicFieldDisplayInfo
+from soulstruct.base.params.utils import DynamicParamFieldInfo
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
 from soulstruct.base.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.params.param import ParamRow
-    from soulstruct.base.params.game_param_bnd import GameParamBND
+    from soulstruct.base.params.gameparambnd import GameParamBND
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -154,7 +154,7 @@ class ParamsEditor(BaseFieldEditor):
         for param_name in self.params.PARAM_TYPES:
             param = self.params.get_param(param_name)
             for field_info in param.param_info["fields"]:
-                if isinstance(field_info, DynamicFieldDisplayInfo):
+                if isinstance(field_info, DynamicParamFieldInfo):
                     # Field type will be checked below (per entry).
                     if param_type in field_info.POSSIBLE_TYPES:
                         linking_fields.append((param_name, field_info))

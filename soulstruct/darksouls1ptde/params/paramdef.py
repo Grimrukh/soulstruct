@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEF"]
+__all__ = ["ParamDefField", "ParamDef", "ParamDefBND", "GET_BUNDLED_PARAMDEFBND"]
 
 import logging
 import typing as tp
@@ -32,7 +32,7 @@ class ParamDefField(_BaseParamDefField):
             raise ValueError(f"No display information given for field '{self.name}'.")
         return field_info(row)
 
-    def get_better_default_value(self):
+    def get_py_default(self):
         v = DEFAULTS[self.param_type].get(self.name, self.default)
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(v)
@@ -64,9 +64,9 @@ class ParamDefBND(_BaseParamDefBND):
     PARAMDEF_CLASS: tp.ClassVar = ParamDef
 
 
-def GET_BUNDLED_PARAMDEF() -> ParamDefBND:
+def GET_BUNDLED_PARAMDEFBND() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
         _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.get_game().name}.")
-        _BUNDLED = ParamDefBND()
+        _BUNDLED = ParamDefBND.from_bundled()
     return _BUNDLED
