@@ -1,3 +1,5 @@
-from .core import *
-from .draw_param import DrawParamDirectory
+__all__ = ["GameParamBND", "paramdef", "enums"]
+
+from .gameparambnd import GameParamBND
+from . import paramdef
 from . import enums

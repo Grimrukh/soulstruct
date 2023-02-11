@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = ["ParamDef"]
 
-import abc
 import logging
 import typing as tp
 from dataclasses import dataclass, field
@@ -23,7 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class ParamDef(GameFile, abc.ABC):
+class ParamDef(GameFile):
 
     # NOTE: TK notes that this value is wrong for `format_version` 103 (DeS, presumably).
     _EXPECTED_FIELD_SIZES: tp.ClassVar[dict[int, int]] = {
@@ -38,10 +37,8 @@ class ParamDef(GameFile, abc.ABC):
     }
 
     EXT: tp.ClassVar[str] = ".paramdef"
-    FIELD_CLASS: tp.ClassVar[tp.Type[ParamDefField]]
 
-    # Required.
-    param_type: str  # e.g. 'NPC_PARAM_ST'
+    param_type: str = ""  # e.g. 'NPC_PARAM_ST'
 
     fields: dict[str, ParamDefField] = field(default_factory=dict)
 
@@ -94,7 +91,7 @@ class ParamDef(GameFile, abc.ABC):
                 raise ValueError(f"Asserted value 0x38 did not appear in`ParamDef` header ({format_version=}).")
 
         fields_list = [
-            cls.FIELD_CLASS.from_paramdef_reader(reader, i, param_type, format_version, unicode)
+            ParamDefField.from_paramdef_reader(reader, i, param_type, format_version, unicode)
             for i in range(field_count)
         ]
         fields = {f.name: f for f in fields_list}
@@ -131,7 +128,7 @@ class ParamDef(GameFile, abc.ABC):
             elif child.tag == "FormatVersion":
                 kwargs["format_version"] = int(child.text)
             elif child.tag == "Fields":
-                fields = [cls.FIELD_CLASS.from_paramdex_xml(i, node, param_type) for i, node in enumerate(child)]
+                fields = [ParamDefField.from_paramdex_xml(i, node, param_type) for i, node in enumerate(child)]
                 kwargs["fields"] = {f.name: f for f in fields}
             else:
                 raise ValueError(f"Unknown Paramdex XML tag: {child.tag}")
@@ -173,7 +170,7 @@ class ParamDef(GameFile, abc.ABC):
              f"      display_name = {f.display_name}\n"
              f"      display_type = {f.display_type}\n"
              f"      display_format = {f.display_format}\n"
-             f"      default = {f.better_default}\n"
+             f"      default = {f.py_default}\n"
              f"      minimum = {f.minimum}\n"
              f"      maximum = {f.maximum}\n"
              f"      increment = {f.increment}\n"
@@ -182,8 +179,3 @@ class ParamDef(GameFile, abc.ABC):
              f"      bit_count = {f.bit_count}\n"
              for f in self.fields.values()]
         )
-
-    @property
-    @abc.abstractmethod
-    def param_info(self) -> dict | None:
-        """Get param info from game-specific `params.display_info` subpackage."""

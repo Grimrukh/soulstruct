@@ -4,7 +4,7 @@ __all__ = ["DrawParam"]
 
 from dataclasses import dataclass
 
-from ..core import Param
+from soulstruct.base.params.param import Param
 
 
 @dataclass(slots=True)
@@ -16,10 +16,10 @@ class DrawParam(Param):
         by default, 'PolyG', which I assume is cutscene-specific lighting). """
         if ignore_polyg:
             return {
-                index: row for index, row in self.rows.items() if row.name and not row.name.startswith("0")
+                index: row for index, row in self.rows.items() if row.Name and not row.Name.startswith("0")
             }
         return {
             index: row
             for index, row in self.rows.items()
-            if row.name and not row.name.startswith("0") and not row.name.lower().startswith("polyg")
+            if row.Name and not row.Name.startswith("0") and not row.Name.lower().startswith("polyg")
         }

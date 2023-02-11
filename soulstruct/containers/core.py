@@ -420,7 +420,9 @@ class Binder(BaseBinaryFile):
     @classmethod
     def _read_header_v4(cls, reader: BinaryReader) -> tuple[Self, list[BinderEntryHeader]]:
         """Less endian complexity than V3."""
-        byte_order = BinaryCondition((0x9, 1), [(ByteOrder.BigEndian, b"\01"), (ByteOrder.LittleEndian, b"\00")])
+        byte_order = BinaryCondition(
+            (0x9, 1), [(ByteOrder.BigEndian, b"\01"), (ByteOrder.LittleEndian, b"\00")]
+        )(reader)
         reader.default_byte_order = byte_order
         header_struct = BinderHeaderV4.from_bytes(reader, byte_order=byte_order)  # type: BinderHeaderV4
 

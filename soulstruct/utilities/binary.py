@@ -1574,7 +1574,7 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
                     field, cls_name, f"Bit field with bit count {self.bit_count} is too high for `fmt` {self.fmt}."
                 )
 
-        if field_type is not bytes and field_type is not str:
+        if field_type is not bytes and field_type is not str and field_type not in PRIMITIVE_FIELD_TYPES:
             # All non-primitive types must have `fmt`.
             if self.fmt is None:
                 raise BinaryFieldTypeError(field, cls_name, "Non-primitive field type requires `fmt` metadata.")
@@ -2273,6 +2273,9 @@ class NewBinaryStruct:
 
         for field, field_type in zip(cls._FIELDS, cls._FIELD_TYPES):
 
+            if field.metadata.get("NOT_BINARY", False):
+                continue  # field excluded
+
             metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata | None
 
             if (not metadata or metadata.bit_count == -1) and not bit_reader.empty:
@@ -2518,6 +2521,9 @@ class NewBinaryStruct:
                 field_values[i] = auto_compute_func(self)
 
         for field, field_type, field_value in zip(self._FIELDS, self._FIELD_TYPES, field_values.values()):
+
+            if field.metadata.get("NOT_BINARY", False):
+                continue  # field excluded
 
             metadata = field.metadata.get("binary", None)  # type: BinaryFieldMetadata
 
@@ -2811,7 +2817,12 @@ class NewBinaryStruct:
                 "deferred_unpacking_offset_fields",
                 "deferred_packing_offset_fields",
             }
+            and not field.metadata.get("NOT_BINARY", False)
         )
+
+    @classmethod
+    def get_binary_field_names(cls) -> tuple[str, ...]:
+        return tuple(f.name for f in cls.get_binary_fields())
 
     @classmethod
     def get_binary_field_and_type(cls, field_name: str) -> tuple[dataclasses.Field, tp.Type]:

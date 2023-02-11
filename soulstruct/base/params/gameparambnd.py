@@ -7,36 +7,43 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
 
-from soulstruct.containers import Binder, BinderEntry
 from soulstruct.base.game_types import BaseGameParam
+from soulstruct.containers import Binder, BinderEntry
+from soulstruct.exceptions import SoulstructError
 from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
+
+from .param import Param, TypedParam, ParamDict
+from .paramdef.paramdefbnd import ParamDefBND
 
 try:
     Self = tp.Self
 except AttributeError:
     Self = "GameParamBND"
 
-if tp.TYPE_CHECKING:
-    from .param import Param
-    from .paramdef import ParamDefBND
-
 _LOGGER = logging.getLogger(__name__)
+
+
+class TypedParamError(SoulstructError):
+    pass
 
 
 @dataclass(slots=True)
 class GameParamBND(Binder, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".parambnd"
-    PARAM_CLASS: tp.ClassVar[tp.Type[Param]]
+    PARAMDEF_MODULE: tp.ClassVar[ModuleType]
+    GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable[[], ParamDefBND]]
 
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = {}
     PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
 
-    params: dict[str, Param] = field(default_factory=dict)
+    # Maps internal param stems, e.g. `NpcParam`, to `Param` or generic `ParamDict` instance.
+    params: dict[str, Param | ParamDict] = field(default_factory=dict)
     _reload_warning_given: bool = field(init=False)
 
     def __post_init__(self):
@@ -50,17 +57,50 @@ class GameParamBND(Binder, abc.ABC):
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in `GameParamBND` binder.")
                 continue
             try:
-                self.params[entry.stem] = entry.to_game_file(self.PARAM_CLASS)  # rows not unpacked yet
-            except Exception as ex:
-                _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'. Error: {ex}")
-                raise
+                self.params[entry.stem] = self.unpack_typed_param(entry)
+            except TypedParamError:
+                _LOGGER.warning(
+                    f"Loaded `GameParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
+                    f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
+                    f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
+                    f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
+                )
+                self.params[entry.stem] = entry.to_game_file(ParamDict)
+
+    def unpack_typed_param(self, entry: BinderEntry):
+        try:
+            param_type = Param.detect_param_type(entry.data)
+        except Exception as ex:
+            raise TypedParamError(
+                f"Could not detect `param_type` of `GameParamBND` entry: {entry.name}.\n"
+                f"  Error: {ex}"
+            )
+        try:
+            data_type = getattr(self.PARAMDEF_MODULE, param_type)
+        except AttributeError:
+            raise TypedParamError(
+                f"Soulstruct does not yet know how to unpack Param type `{param_type}` of entry: {entry.name}."
+            )
+        param_class = TypedParam(data_type)
+        try:
+            self.params[entry.stem] = entry.to_game_file(param_class)
+        except Exception as ex:
+            _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
+            raise
 
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
         if paramdefbnd is None:
-            paramdefbnd = self.PARAM_CLASS.GET_BUNDLED_PARAMDEFBND()
-        for param in self.params.values():
-            param.unpack_rows(paramdefbnd)
+            paramdefbnd = self.GET_BUNDLED_PARAMDEFBND()
+        unpacked = []
+        for param_stem, param in self.params.values():
+            if isinstance(param, ParamDict):
+                param.unpack_rows(paramdefbnd)
+                unpacked.append(param_stem)
+        if not unpacked:
+            _LOGGER.info("No `ParamDict`s in this `GameParamBND` whose row data needs unpacking.")
+        else:
+            _LOGGER.info(f"Unpacked data for `ParamDict`s: {', '.join(unpacked)}")
 
     def regenerate_entries(self):
         """Regenerate Binder entries from `params` dictionary."""
@@ -103,7 +143,22 @@ class GameParamBND(Binder, abc.ABC):
 
         binder_kwargs = cls.process_manifest_header(data) | {"params": {}}
         for param_stem, param_dict in data["params"].items():
-            param = cls.PARAM_CLASS.from_dict(param_dict)
+            try:
+                param_type = param_dict["param_type"]
+            except KeyError:
+                raise KeyError(f"Field `param_type` not in `params[{param_stem}]` dictionary.")
+            try:
+                data_type = getattr(cls.PARAMDEF_MODULE, param_type)
+            except AttributeError:
+                _LOGGER.warning(
+                    f"Soulstruct does not yet know how to unpack Param type `{param_type}` of '{param_stem}'. "
+                    f"Using generic `ParamDict`."
+                )
+                param = ParamDict.from_dict(param_dict)
+            else:
+                param_class = TypedParam(data_type)
+                param = param_class.from_dict(param_dict)
+
             binder_kwargs["params"][param_stem] = param
 
         gameparambnd = super().from_dict(**binder_kwargs)
@@ -143,7 +198,7 @@ class GameParamBND(Binder, abc.ABC):
 
         manifest["params"] = {}
         for json_stem in manifest.pop("entries"):
-            param_stem = cls.PARAM_NICKNAMES[json_stem]
+            param_stem = cls.PARAM_NICKNAMES[json_stem]  # JSON nickname stem -> internal stem
             manifest["params"][param_stem] = Param.from_json(f"{json_stem}.json")
 
         gameparambnd = cls.from_dict(manifest)
@@ -154,7 +209,7 @@ class GameParamBND(Binder, abc.ABC):
         """Write a folder containing a `GameParamBND_manifest.json` file with standard `Binder` header information and
         a list of Param JSON file stems to load from the same folder.
 
-        The resulting folder can be loaded with `load_json_directory(directory)`.
+        The resulting folder can be loaded with `from_json_directory(directory)`.
         """
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
@@ -163,19 +218,19 @@ class GameParamBND(Binder, abc.ABC):
         manifest["entries"] = []
 
         for param_stem, param in self.params.items():
-            json_stem = self.PARAM_NICKNAMES.get(param_stem, param_stem if param.nickname is None else param.nickname)
+            json_stem = self.PARAM_NICKNAMES.get(param_stem)
             param.write_json(directory / f"{json_stem}.json", ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             manifest["entries"].append(json_stem)
 
         write_json(directory / "GameParamBND_manifest.json", manifest)
 
     def get_param(self, param_name: str) -> Param:
-        param_name = param_name.removesuffix(".param")
-        if param_name in self.params:  # easy case
-            return self.params[param_name]
-        if param_name in self.PARAM_NICKNAMES.values():  # values are Soulstruct nicknames
-            return self.params[self.PARAM_NICKNAMES[param_name]]
-        raise KeyError(f"Cannot find `Param` named '{param_name}'.")
+        param_stem = param_name.removesuffix(".param")
+        if param_stem in self.params:  # easy case
+            return self.params[param_stem]
+        if param_stem in self.PARAM_NICKNAMES.values():  # values are Soulstruct nicknames
+            return self.params[self.PARAM_NICKNAMES[param_stem]]
+        raise KeyError(f"Cannot find `Param` named '{param_stem}' (from '{param_name}').")
 
     # TODO: Inherit from some abstract `ProjectData` class that provides this interface.
     def get_range(self, param_name: str, start: int, count: int):
@@ -183,10 +238,8 @@ class GameParamBND(Binder, abc.ABC):
         return self.get_param(param_name).get_range(start, count)
 
 
-def param_property(param_nickname: str):
+def param_property(param_stem: str):
     """Assists in assigning properties to `Param` nickname attribtues, e.g.:
-        `ActionButtons = param_property("ActionButtons")`
-
-    Nicknames will be looked up in `GameParamBND.PARAM_NICKNAMES` two-way dictionary.
+        `ActionButtons = param_property("ActionButtonParam")`
     """
-    return property(lambda self: self.params.PARAM_NICKNAMES[param_nickname])
+    return property(lambda self: self.params[param_stem])

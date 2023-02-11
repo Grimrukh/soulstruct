@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 __all__ = [
-    "ParamFieldInfo",
     "DynamicParamFieldInfo",
+    "ParamFieldInfo",
+    "DynamicParamField",
     "pad_field",
     "bit_pad_field",
     "ParamRowData",
     "MAP_PARAM_TYPES",
+    "PARAM_VALUE_TYPING",
     "ParamField",
     "ParamPad",
     "ParamBitPad",
@@ -15,8 +17,7 @@ __all__ = [
 import abc
 import logging
 import typing as tp
-from dataclasses import dataclass, field, Field
-from types import MappingProxyType
+from dataclasses import dataclass, field
 
 from soulstruct.base.game_types import BaseGameObject
 from soulstruct.utilities.binary import *
@@ -24,7 +25,16 @@ from soulstruct.utilities.binary import *
 _LOGGER = logging.getLogger(__name__)
 
 
+class DynamicParamFieldInfo:
+    """TODO: Deprecated."""
+
+    def __init__(self, name, other_field):
+        self.name = name
+        self.other_field = other_field
+
+
 class ParamFieldInfo:
+    """TODO: Deprecated."""
     def __init__(self, name, nickname, is_enabled, field_type, description="TODO", default_value=None):
         self.name = name
         self.nickname = nickname
@@ -42,17 +52,17 @@ class ParamFieldInfo:
         return f"[{self.name}] {self.description}"
 
 
-class DynamicParamFieldInfo(abc.ABC):
-    """Called with a `ParamEntry` instance, in which `type_field_name` is checked before returning `FieldInfo`."""
+class DynamicParamField(abc.ABC):
+    """Called with a `ParamRowData` instance.
 
+    Returns a dynamic field type, suffix for the display field name, and tooltip.
+    """
+
+    # All types that could be returned by `__call__` for general validity checks.
     POSSIBLE_TYPES = set()
 
-    def __init__(self, name, type_field_name):
-        self.name = name
-        self.type_field_name = type_field_name
-
     @abc.abstractmethod
-    def __call__(self, entry) -> ParamFieldInfo:
+    def __call__(self, data: ParamRowData) -> tuple[tp.Type[BaseGameObject, str, str]]:
         ...
 
 
@@ -80,9 +90,107 @@ MAP_PARAM_TYPES = {
 }
 
 
+PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]
+
+
 @dataclass(slots=True)
 class ParamRowData(NewBinaryStruct):
     """Base class for `ParamDef`-spawned classes, instantiated to `ParamRow.data`."""
+
+    RawName: bytes = field(default=b"", metadata={"NOT_BINARY": True})
+    Name: str = field(default="", metadata={"NOT_BINARY": True})
+
+    def __iter__(self):
+        field_names = self.get_binary_field_names()
+        print(field_names)
+        exit()
+        return
+        # return (field_name, getattr(self, field_name) for field_name in self.get_binary_field_names())
+
+    def __getitem__(self, field_name_or_nickname: str) -> PARAM_VALUE_TYPING:
+        if field_name_or_nickname.lower() == "name":
+            return self.Name
+        elif field_name_or_nickname.lower() == "rawname":
+            return self.RawName
+
+        for binary_field in self.get_binary_fields():
+            if binary_field.name == field_name_or_nickname:
+                return getattr(self, binary_field.name)
+            elif binary_field.metadata["param"].internal_name == field_name_or_nickname:
+                return getattr(self, binary_field.name)
+        raise KeyError(f"No field with internal name or nickname '{field_name_or_nickname}'.")
+
+    def __setitem__(self, field_name_or_nickname: str, value: PARAM_VALUE_TYPING):
+        if field_name_or_nickname.lower() == "name":
+            self.Name = value
+            return
+        elif field_name_or_nickname.lower() == "rawname":
+            self.RawName = value
+            return
+
+        for binary_field in self.get_binary_fields():
+            if binary_field.name == field_name_or_nickname:
+                setattr(self, binary_field.name, value)
+                return
+            elif binary_field.metadata["param"].internal_name == field_name_or_nickname:
+                setattr(self, binary_field.name, value)
+                return
+        raise KeyError(f"No field with internal name or nickname '{field_name_or_nickname}'.")
+
+    def to_dict(
+        self, ignore_pads=True, ignore_defaults=True, use_internal_names=False
+    ) -> dict[str, PARAM_VALUE_TYPING]:
+        """Allows options for not including pads, defaults, or sizes, and whether keys are internal names."""
+        data = {"RawName": self.RawName, "Name": self.Name}
+        for binary_field in self.get_binary_fields():
+            binary = binary_field.metadata["binary"]  # type: BinaryFieldMetadata
+            if ignore_pads and binary_field.type == bytes and binary.asserted:
+                continue  # ignore pad
+            info = binary_field.metadata["param"]  # type: ParamFieldMetadata
+            value = getattr(self, binary_field.name)
+            if ignore_defaults and value == info.default:
+                continue  # ignore default value
+            key = info.internal_name if use_internal_names else binary_field.name
+            data[key] = value
+        return data
+
+    def update(self, **kwargs):
+        for field_name, field_value in kwargs.items():
+            self.__setitem__(field_name, field_value)
+
+    @property
+    def try_name(self) -> str:
+        return self.Name if self.Name else repr(self.RawName)
+
+    @property
+    def field_nicknames(self) -> tuple[str, ...]:
+        return self.get_binary_field_names()
+
+    def __repr__(self):
+        names = [f"\n    {key} = {value}" for key, value in self.to_dict(ignore_pads=True)]
+        return f"\nName: {self.try_name}" + "".join(names)
+
+    @classmethod
+    def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRowData:
+        row = cls.from_bytes(reader)
+        row.RawName = raw_name
+        row.Name = name
+        return row
+
+    # `to_writer()` does not need overriding, as name is packed later.
+
+    def pack_name(self, writer: BinaryWriter, encoding: str):
+        raw_name = self.Name.encode(encoding) if self.Name else self.RawName
+        terminator = b"\0\0" if encoding.replace("-", "").startswith("utf16") else b"\0"
+        raw_name = raw_name.rstrip(b"\0") + terminator
+        writer.append(raw_name)
+
+    def compare(self, other_row: ParamRowData):
+        """Prints each field that differs between the given `ParamRow` and this one (ignoring names)."""
+        for field_name, field_value in iter(self):
+            other_value = other_row[field_name]
+            if other_value != field_value:
+                print(f"  {field_name}: this = {field_value}, other = {other_value}")
 
 
 @dataclass(slots=True)
@@ -101,7 +209,7 @@ def ParamField(
     bit_count: int = -1,
     hide: bool = False,
     default: tp.Any = None,
-    dynamic_callback: tp.Callable[[ParamRowData], tuple[tp.Type[PRIMITIVE_FIELD_TYPING], str, str]] = None,
+    dynamic_callback: DynamicParamField | None = None,
     tooltip: str = "TOOLTIP-TODO",
 ):
     """For use with double asterisk in `BinaryStruct` `field()` definition.

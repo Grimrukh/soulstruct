@@ -112,6 +112,6 @@ class ParamDefBND(_BaseParamDefBND):
 def GET_BUNDLED_PARAMDEFBND() -> ParamDefBND:
     global _BUNDLED
     if _BUNDLED is None:
-        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.GAME.name}.")
-        _BUNDLED = ParamDefBND.from_bundled()()
+        _LOGGER.info(f"Loading bundled `ParamDefBND` for {ParamDefBND.get_game().name}.")
+        _BUNDLED = ParamDefBND.from_bundled()
     return _BUNDLED

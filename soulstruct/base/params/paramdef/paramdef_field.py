@@ -2,7 +2,6 @@ from __future__ import annotations
 
 __all__ = ["ParamDefField"]
 
-import abc
 import logging
 import math
 import re
@@ -39,7 +38,7 @@ class ParamDefEditFlags(int):
 
 
 @dataclass(slots=True)
-class ParamDefField(abc.ABC):
+class ParamDefField:
     """Information about a single field in a `Param`. Stored in `ParamDef`.
 
     NOTE: This class supports all (known) game file formats. It only needs to be subclassed to define game module
@@ -118,7 +117,6 @@ class ParamDefField(abc.ABC):
         Does NOT use a `BinaryStruct`, as the header details vary too wildly with `format_version` and can even vary
         within the same game across different `ParamDef`s.
         """
-
         encoding = "utf-16-le" if unicode else "shift_jis_2004"
         uses_string_offsets = format_version >= 202 or (106 <= format_version < 200)
         kwargs = {"index": field_index, "param_type": param_type}
@@ -127,7 +125,8 @@ class ParamDefField(abc.ABC):
             display_name_offset = reader.unpack_value("v")
             kwargs["display_name"] = reader.unpack_string(display_name_offset, encoding="utf-16-le")
         else:
-            kwargs["display_name"] = reader.unpack_string(length=64, encoding=encoding)
+            raw_display_name = reader.read(64)
+            kwargs["display_name"] = raw_display_name.decode(encoding).rstrip("\0")
 
         display_type_str = reader.unpack_string(length=8, encoding="shift_jis_2004")
         # print(display_type_str.rstrip().encode())
