@@ -11,8 +11,8 @@ __all__ = [
 
 import typing as tp
 
-from soulstruct.bloodborne.params.enums import *
-from soulstruct.bloodborne.game_types.param_types import *
+from soulstruct.eldenring.params.enums import *
+from soulstruct.eldenring.game_types.param_types import *
 from soulstruct.base.params.utils import DynamicParamField
 
 
@@ -35,10 +35,12 @@ class ShopReference(DynamicParamField):
             return WeaponParam, "Weapon", "Weapon to be listed in shop menu."
         if item_type == SHOP_LINEUP_EQUIPTYPE.Armor:
             return ArmorParam, "Armor", "Armor to be listed in shop menu."
-        if item_type == SHOP_LINEUP_EQUIPTYPE.Ring:
-            return AccessoryParam, "Ring", "Ring to be listed in shop menu."
+        if item_type == SHOP_LINEUP_EQUIPTYPE.Talisman:
+            return AccessoryParam, "Talisman", "Talisman to be listed in shop menu."
         if item_type == SHOP_LINEUP_EQUIPTYPE.Good:
             return GoodParam, "Good", "Good to be listed in shop menu."
+        if item_type == SHOP_LINEUP_EQUIPTYPE.AshOfWar:
+            return GemParam, "Ash of War", "Ash of War to be listed in shop menu."
         if item_type == SHOP_LINEUP_EQUIPTYPE.Spell:
             return SpellParam, "Spell", "Spell to be listed in shop menu."
         else:
@@ -53,20 +55,27 @@ class MagicReference(DynamicParamField):
 
     POSSIBLE_TYPES = {BulletParam, SpecialEffectParam}
 
+    index: int
+
+    def __init__(self, index: int):
+        self.index = index
+
     def __call__(self, data: MAGIC_PARAM_ST):
-        if data.ReferenceType == BEHAVIOR_REF_TYPE.Default:
+        ref_type = getattr(data, f"RefCategory{self.index}")
+
+        if ref_type == BEHAVIOR_REF_TYPE.Default:
             return (
                 int,
                 "Null",
                 "This value should be -1 when 'Default' reference type is selected.",
             )
-        elif data.ReferenceType == BEHAVIOR_REF_TYPE.Bullet:
+        elif ref_type == BEHAVIOR_REF_TYPE.Bullet:
             return (
                 BulletParam,
                 "Bullet",
                 "Bullet triggered by casting spell (which may simply be targeted at self).",
             )
-        elif data.ReferenceType == BEHAVIOR_REF_TYPE.SpecialEffect:
+        elif ref_type == BEHAVIOR_REF_TYPE.SpecialEffect:
             return (
                 SpecialEffectParam,
                 "SpecialEffect",
@@ -114,11 +123,17 @@ class ItemLotReference(DynamicParamField):
                 "Good",
                 f"Item slot {index_str} (Good).",
             )
-        elif item_type == ITEMLOT_ITEMCATEGORY.GemOrRune:
+        elif item_type == ITEMLOT_ITEMCATEGORY.Talisman:
             return (
                 AccessoryParam,
-                "Gem/Rune",
-                f"Item slot {index_str} (Gem/Rune).",
+                "Talisman",
+                f"Item slot {index_str} (Talisman).",
+            )
+        elif item_type == ITEMLOT_ITEMCATEGORY.AshOfWar:
+            return (
+                GemParam,
+                "Ash of War",
+                f"Item slot {index_str} (Ash of War).",
             )
         else:
             return (

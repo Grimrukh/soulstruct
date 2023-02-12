@@ -59,11 +59,19 @@ __all__ = [
     "COOL_TIME_PARAM_ST",
     "LEVELSYNC_PARAM_ST",
     "WHITE_COOL_TIME_PARAM_ST",
+
 ]
 
 from soulstruct.darksouls1ptde.params.paramdef import *
 from .core import *  # override PTDE imports
+
+# NEW
 from .COOL_TIME_PARAM_ST import COOL_TIME_PARAM_ST
 from .LEVELSYNC_PARAM_ST import LEVELSYNC_PARAM_ST
 from .WHITE_COOL_TIME_PARAM_ST import WHITE_COOL_TIME_PARAM_ST
+
+# UPDATED
+from .EQUIP_PARAM_GOODS_ST import EQUIP_PARAM_GOODS_ST
 from .EQUIP_PARAM_WEAPON_ST import EQUIP_PARAM_WEAPON_ST
+from .TONE_CORRECT_BANK import TONE_CORRECT_BANK
+from .TONE_MAP_BANK import TONE_MAP_BANK

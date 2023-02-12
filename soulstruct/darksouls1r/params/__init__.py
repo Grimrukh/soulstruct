@@ -1,5 +1,5 @@
-__all__ = ["GameParamBND", "paramdef", "enums"]
+__all__ = ["GameParamBND", "DrawParam", "DrawParamBND", "DrawParamDirectory", "ParamDef", "ParamDefBND"]
 
 from .gameparambnd import GameParamBND
-from . import paramdef
-from . import enums
+from .draw_param import DrawParam, DrawParamBND, DrawParamDirectory
+from .paramdef import ParamDef, ParamDefBND

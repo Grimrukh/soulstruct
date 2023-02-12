@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 __all__ = [
-    "DynamicParamFieldInfo",
-    "ParamFieldInfo",
     "DynamicParamField",
     "pad_field",
     "bit_pad_field",
     "ParamRow",
     "MAP_PARAM_TYPES",
     "PARAM_VALUE_TYPING",
+    "ParamFieldMetadata",
     "ParamField",
     "ParamPad",
     "ParamBitPad",
@@ -18,6 +17,7 @@ import abc
 import logging
 import typing as tp
 from dataclasses import dataclass, field
+from enum import IntEnum
 
 from soulstruct.base.game_types import BaseGameObject
 from soulstruct.utilities.binary import *
@@ -25,31 +25,9 @@ from soulstruct.utilities.binary import *
 _LOGGER = logging.getLogger(__name__)
 
 
-class DynamicParamFieldInfo:
-    """TODO: Deprecated."""
-
-    def __init__(self, name, other_field):
-        self.name = name
-        self.other_field = other_field
-
-
-class ParamFieldInfo:
-    """TODO: Deprecated."""
-    def __init__(self, name, nickname, is_enabled, field_type, description="TODO", default_value=None):
-        self.name = name
-        self.nickname = nickname
-        self.is_enabled = is_enabled
-        self.field_type = field_type
-        self.description = description
-        self.default_value = default_value
-
-    def __call__(self, entry):
-        """No harm done if you treat this as a `DynamicFieldInfo`."""
-        return self
-
-    @property
-    def docstring(self):
-        return f"[{self.name}] {self.description}"
+class ParamEnum(IntEnum):
+    """Base class for all internal enums used by Param fields, e.g. `ITEMLOT_ITEMCATEGORY`."""
+    pass
 
 
 class DynamicParamField(abc.ABC):
@@ -145,7 +123,7 @@ class ParamRow(NewBinaryStruct):
                 continue  # ignore pad
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
             value = getattr(self, binary_field.name)
-            if ignore_defaults and value == info.default:
+            if ignore_defaults and value == binary_field.default:
                 continue  # ignore default value
             key = info.internal_name if use_internal_names else binary_field.name
             data[key] = value
@@ -190,19 +168,20 @@ class ParamRow(NewBinaryStruct):
                 print(f"  {field_name}: this = {field_value}, other = {other_value}")
 
 
-@dataclass(slots=True)
-class ParamFieldMetadata(NewBinaryStruct):
+class ParamFieldMetadata(tp.NamedTuple):
     internal_name: str
+    param_enum: tp.Type[ParamEnum] = None
     hide: bool = False
     dynamic_callback: tp.Callable[[ParamRow], tuple[tp.Type[BaseGameObject], str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
-    default: tp.Any = None
 
 
 def ParamField(
     fmt: tp.Type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
+    param_enum: tp.Type[ParamEnum] = None,
     length: int | None = None,
+    encoding: str = None,
     bit_count: int = -1,
     hide: bool = False,
     default: tp.Any = None,
@@ -215,17 +194,18 @@ def ParamField(
     value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
     appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
     """
-    # TODO: Scan internal name to auto-detect and asserted for 'pad[size]', and detect bit fields.
     return field(
         default=default,
         metadata={
             "binary": BinaryFieldMetadata(
                 fmt=fmt,
                 length=length,
+                encoding=encoding,
                 bit_count=bit_count,
             ),
             "param": ParamFieldMetadata(
                 internal_name=internal_name,
+                param_enum=param_enum,
                 hide=hide,
                 dynamic_callback=dynamic_callback,
                 tooltip=tooltip,

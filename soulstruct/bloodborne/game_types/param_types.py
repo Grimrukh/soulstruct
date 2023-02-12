@@ -272,11 +272,11 @@ class AccessoryParam(BaseItemParam):
     @classmethod
     def get_item_enum(cls):
         from ..events.emevd.enums import ItemType
-        return ItemType.Rune
+        return ItemType.GemOrRune
 
     @classmethod
     def get_param_nickname(cls):
-        return "Rings"
+        return "GemsAndRunes"
 
 
 class ShopParam(BaseGameParam):

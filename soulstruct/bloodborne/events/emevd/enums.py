@@ -222,7 +222,7 @@ class InterpolationState(BaseNegatableEMEVDEnum):
 class ItemType(BaseEMEVDEnum):
     Weapon = 0
     Armor = 1
-    Rune = 2
+    GemOrRune = 2
     Good = 3
 
 

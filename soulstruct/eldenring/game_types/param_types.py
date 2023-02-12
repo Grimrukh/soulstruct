@@ -26,6 +26,7 @@ __all__ = [
     "ObjectParam",
     "PlayerParam",
     "AccessoryParam",
+    "GemParam",
     "ShopParam",
     "SpecialEffectParam",
     "SpecialEffectVisualParam",
@@ -248,16 +249,29 @@ class PlayerParam(BaseGameParam):
 
 
 class AccessoryParam(BaseItemParam):
-    """Ring entry."""
+    """Talisman entry."""
 
     @classmethod
     def get_item_enum(cls):
         from ..events.emevd.enums import ItemType
-        return ItemType.Ring
+        return ItemType.Talisman
 
     @classmethod
     def get_param_nickname(cls):
-        return "Rings"
+        return "Talismans"
+
+
+class GemParam(BaseItemParam):
+    """Ash of War entry."""
+
+    @classmethod
+    def get_item_enum(cls):
+        from ..events.emevd.enums import ItemType
+        return ItemType.AshOfWar
+
+    @classmethod
+    def get_param_nickname(cls):
+        return "AshesOfWar"
 
 
 class ShopParam(BaseGameParam):

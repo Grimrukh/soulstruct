@@ -32,7 +32,7 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         tooltip="Is the reference ID below an Attack or Bullet ID?",
     )
     _Pad0: bytes = ParamPad(2, "pad0[2]")
-    refId: int = ParamField(
+    ReferenceID: int = ParamField(
         int, "refId", default=-1, dynamic_callback=BehaviorReference(),
         tooltip="TODO",
     )

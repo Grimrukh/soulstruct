@@ -34,7 +34,6 @@ __all__ = [
     # UTILITY
     "read_chars_from_bytes",
     "get_blake2b_hash",
-    "ReadableTyping",
     "BitFieldReader",
     "BitFieldWriter",
 ]
@@ -83,7 +82,6 @@ class ByteOrder(enum.Enum):
     def get_utf_16_encoding(self):
         if self in {ByteOrder.BigEndian, ByteOrder.Network}:
             return "utf-16-be"
-        # TODO: Technically should check `sys.byteorder` for native orders.
         return "utf-16-le"
 
     @classmethod
@@ -1257,9 +1255,6 @@ def get_blake2b_hash(data: bytes | str | Path) -> bytes:
     raise TypeError(f"Can only get hash of `bytes` or `str`/`Path` of file, not {type(data)}.")
 
 
-ReadableTyping = tp.Union[str, Path, bytes, bytearray, io.BufferedIOBase, BinaryReader]
-
-
 # BASIC FIELD TYPES
 # bool = bool
 byte = type("byte", (int,), {})
@@ -1289,6 +1284,7 @@ ASSERTED_TYPING = tp.Union[
 ]
 
 
+# TODO: Use this for `ParamDef` fields as well (u8, s16, f32, angle32, etc.).
 _PRIMITIVE_FIELD_INFO = {
     bool: ("?", 1, None),
     byte: ("B", 1, (0, 2 ** 8 - 1)),
@@ -1372,7 +1368,7 @@ class FieldValue(tp.Generic[FIELD_T]):
         return value if self.callback is None else self.callback(value)
 
 
-def read_null_terminated_bytes(stream: tp.BinaryIO | BinaryReader, encoding: str = None) -> bytes | str:
+def read_null_terminated_bytes(reader: BinaryReader, encoding: str = None) -> bytes | str:
 
     # TODO: Currently just checking for UTF-16 encodings to enforce double null characters.
     bytes_per_char = 2 if encoding is not None and encoding.replace("-", "").startswith("utf16") else 1
@@ -1380,7 +1376,7 @@ def read_null_terminated_bytes(stream: tp.BinaryIO | BinaryReader, encoding: str
 
     chars = []
     while 1:
-        c = stream.read(bytes_per_char)
+        c = reader.read(bytes_per_char)
         if not c:
             raise ValueError("Ran out of bytes to read before null termination was found.")
         if c == terminator:
@@ -1405,7 +1401,7 @@ class BinaryFieldValueError(Exception):
 
 
 @dataclasses.dataclass(slots=True)
-class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
+class BinaryFieldMetadata(tp.Generic[FIELD_T]):
     """Base class for objects attached to dataclass fields with `field(metadata={"binary": BinaryFieldMetadata()})`.
 
     Contains all attributes used, in different situations, by `BinaryStruct` unpacking and packing. Not all combinations
@@ -1445,6 +1441,7 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T], abc.ABC):
     length: int | str | FieldValue[int] | None = None
 
     # String encoding to use for decoding read `bytes` to `str` types. Invalid for non-`str` fields.
+    # If set to `utf-16` or `utf16`, endianness will be auto-detected from `ByteOrder`.
     encoding: str | None = None
 
     # If `True` (NOT default), null bytes will be stripped from the end of a read fixed-length `bytes` or `str` field.
@@ -1763,6 +1760,8 @@ def _unpack_binary_field(
             encoding = metadata.encoding(reader)
         else:
             encoding = metadata.encoding
+        if encoding.replace("-", "").lower() == "utf16":
+            encoding = byte_order.get_utf_16_encoding()
         raw_value = raw_tuple[0]
         if metadata.rstrip_null:
             raw_value = raw_value.rstrip(b"\0")
@@ -1895,6 +1894,9 @@ def _pack_binary_field(
                 f"`stored_encoding` cannot be used to pack string field `{metadata.name}` with {enc_msg}."
             )
         encoding = metadata.encoding  # could be None
+
+    if encoding.replace("-", "").lower() == "utf16":
+        encoding = byte_order.get_utf_16_encoding()
 
     # Get format or length, or otherwise resolve null-terminated string immediately.
     if metadata.length is not None:  # NOTE: `list` also uses `length`, but that was handled above already
@@ -2770,7 +2772,7 @@ class NewBinaryStruct:
 
     @staticmethod
     def pack_z_string(writer: BinaryWriter, value: str, encoding=""):
-        """Fill `"__{field}__z"` with current offset, then write `field` attribute with given `encoding`."""
+        """Convenience function for packing an encoded, null-terminated string."""
         z = b"\0\0" if encoding.startswith("utf-16") else b"\0"
         writer.append(value.encode(encoding) + z)
 

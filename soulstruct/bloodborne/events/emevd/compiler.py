@@ -353,7 +353,7 @@ def IfPlayerHasArmor(condition: int, armor: ArmorTyping, including_storage: bool
 
 @_compile
 def IfPlayerHasRune(condition: int, rune: AccessoryTyping, including_storage: bool = False):
-    return IfPlayerItemState(condition, True, rune, ItemType.Rune, including_storage)
+    return IfPlayerItemState(condition, True, rune, ItemType.GemOrRune, including_storage)
 
 
 @_compile
@@ -380,7 +380,7 @@ def IfPlayerDoesNotHaveArmor(condition: int, armor: ArmorTyping, including_stora
 
 @_compile
 def IfPlayerDoesNotHaveRune(condition: int, ring: AccessoryTyping, including_storage: bool = False):
-    return IfPlayerItemState(condition, False, ring, ItemType.Rune, including_storage)
+    return IfPlayerItemState(condition, False, ring, ItemType.GemOrRune, including_storage)
 
 
 @_compile

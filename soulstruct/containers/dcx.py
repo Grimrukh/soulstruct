@@ -12,11 +12,13 @@ __all__ = [
 ]
 
 import logging
+import typing as tp
 import zlib
 from enum import Enum
+from pathlib import Path
 
 from soulstruct.containers import oodle
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ReadableTyping, ByteOrder
+from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ByteOrder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -180,19 +182,7 @@ DCX_HEADER_STRUCTS = {
 }
 
 
-# TODO: Add default DCX types to `Game` class instances.
-"""
-DemonsSouls = Type.DCX_EDGE
-DarkSouls1 = Type.DCX_DFLT_10000_24_9
-DarkSouls2 = Type.DCX_DFLT_10000_24_9
-Bloodborne = Type.DCX_DFLT_10000_44_9
-DarkSouls3 = Type.DCX_DFLT_10000_44_9
-Sekiro = Type.DCX_KRAK
-EldenRing = Type.DCX_KRAK
-"""
-
-
-def decompress(dcx_source: ReadableTyping) -> tuple[bytes, DCXType]:
+def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> tuple[bytes, DCXType]:
     """Decompress the given file path, raw bytes, or buffer/reader.
 
     Returns a tuple containing the decompressed `bytes` and a `DCXInfo` instance that can be used to compress later

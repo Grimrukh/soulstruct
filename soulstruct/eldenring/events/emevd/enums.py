@@ -228,8 +228,9 @@ class InterpolationState(BaseNegatableEMEVDEnum):
 class ItemType(BaseEMEVDEnum):
     Weapon = 0
     Armor = 1
-    Ring = 2
+    Talisman = 2  # 'Accessory'
     Good = 3
+    AshOfWar = 4  # 'Gem'
 
 
 class RangeState(BaseNegatableEMEVDEnum):

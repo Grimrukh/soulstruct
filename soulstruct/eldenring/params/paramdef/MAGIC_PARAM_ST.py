@@ -9,6 +9,8 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
+from .dynamics import MagicReference
+
 
 # noinspection PyDataclass
 @dataclass(slots=True)
@@ -361,15 +363,15 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefId1: int = ParamField(
-        int, "refId1", default=-1,
+        int, "refId1", default=-1, dynamic_callback=MagicReference(1),
         tooltip="TOOLTIP-TODO",
     )
     RefId2: int = ParamField(
-        int, "refId2", default=-1,
+        int, "refId2", default=-1, dynamic_callback=MagicReference(2),
         tooltip="TOOLTIP-TODO",
     )
     RefId3: int = ParamField(
-        int, "refId3", default=-1,
+        int, "refId3", default=-1, dynamic_callback=MagicReference(3),
         tooltip="TOOLTIP-TODO",
     )
     AiUseJudgeId: int = ParamField(
@@ -377,31 +379,31 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefId4: int = ParamField(
-        int, "refId4", default=-1,
+        int, "refId4", default=-1, dynamic_callback=MagicReference(4),
         tooltip="TOOLTIP-TODO",
     )
     RefId5: int = ParamField(
-        int, "refId5", default=-1,
+        int, "refId5", default=-1, dynamic_callback=MagicReference(5),
         tooltip="TOOLTIP-TODO",
     )
     RefId6: int = ParamField(
-        int, "refId6", default=-1,
+        int, "refId6", default=-1, dynamic_callback=MagicReference(6),
         tooltip="TOOLTIP-TODO",
     )
     RefId7: int = ParamField(
-        int, "refId7", default=-1,
+        int, "refId7", default=-1, dynamic_callback=MagicReference(7),
         tooltip="TOOLTIP-TODO",
     )
     RefId8: int = ParamField(
-        int, "refId8", default=-1,
+        int, "refId8", default=-1, dynamic_callback=MagicReference(8),
         tooltip="TOOLTIP-TODO",
     )
     RefId9: int = ParamField(
-        int, "refId9", default=-1,
+        int, "refId9", default=-1, dynamic_callback=MagicReference(9),
         tooltip="TOOLTIP-TODO",
     )
     RefId10: int = ParamField(
-        int, "refId10", default=-1,
+        int, "refId10", default=-1, dynamic_callback=MagicReference(10),
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType1: int = ParamField(

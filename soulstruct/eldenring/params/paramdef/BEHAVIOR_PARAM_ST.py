@@ -30,7 +30,7 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "pad2[2]")
-    refId: int = ParamField(
+    ReferenceID: int = ParamField(
         int, "refId", default=-1,
         tooltip="TOOLTIP-TODO",
     )

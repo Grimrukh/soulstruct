@@ -2009,7 +2009,7 @@ EMEDF = PTDE_EMEDF | {
         "partials": {
             "RemoveWeaponFromPlayer": dict(item_type=ItemType.Weapon),
             "RemoveArmorFromPlayer": dict(item_type=ItemType.Armor),
-            "RemoveRuneFromPlayer": dict(item_type=ItemType.Rune),
+            "RemoveRuneFromPlayer": dict(item_type=ItemType.GemOrRune),
             "RemoveGoodFromPlayer": dict(item_type=ItemType.Good),
         },
         "evs_args": {
