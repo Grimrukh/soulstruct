@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class FE_TEXT_EFFECT_PARAM_ST(ParamRowData):
+class FE_TEXT_EFFECT_PARAM_ST(ParamRow):
     ResId: int = ParamField(
         short, "resId", default=0,
         tooltip="TOOLTIP-TODO",

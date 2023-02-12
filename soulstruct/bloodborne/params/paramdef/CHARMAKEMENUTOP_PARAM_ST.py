@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CHARMAKEMENUTOP_PARAM_ST(ParamRowData):
+class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
     CommandID: CHARMAKEMENU_CMD_TYPE = ParamField(
         int, "CommandID", default=0,
         tooltip="TODO",

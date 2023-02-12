@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class COMMON_SYSTEM_PARAM_ST(ParamRowData):
+class COMMON_SYSTEM_PARAM_ST(ParamRow):
     MapSaveMapNameIdOnGameStart: int = ParamField(
         uint, "mapSaveMapNameIdOnGameStart", default=0,
         tooltip="TOOLTIP-TODO",

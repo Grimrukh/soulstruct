@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CHR_ACTIVATE_CONDITION_PARAM_ST(ParamRowData):
+class CHR_ACTIVATE_CONDITION_PARAM_ST(ParamRow):
     WeatherSunny: int = ParamField(
         byte, "weatherSunny:1", default=1,
         tooltip="TOOLTIP-TODO",

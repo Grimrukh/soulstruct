@@ -14,14 +14,14 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.files import write_json
 
-from .utils import ParamRowData
+from .utils import ParamRow
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
 _LOGGER = logging.getLogger(__name__)
 
 
-PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRowData)
+PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)
 
 
 @dataclass(slots=True)
@@ -31,7 +31,7 @@ class ParamRowDict:
     Supports all (known) games.
 
     NOTE: This class is basically deprecated, and is only used to read/write `Param` rows using actual `ParamDefs`
-    rather than the Soulstruct `ParamRowData` struct classes.
+    rather than the Soulstruct `ParamRow` struct classes.
     """
 
     fields: dict[str, bool | int | float | str | bytes]
@@ -195,7 +195,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
     """Table of `ParamRows` (spreadsheet entries full of numbers used all over the place).
 
     This class supports all (known) games, but should be retrieved dynamically with `TypeParam(data_type)` to specify
-    the `ParamDef`-generated Soulstruct `ParamRowData` subclass it uses (e.g. `NPC_PARAM_ST`). That class will be used
+    the `ParamDef`-generated Soulstruct `ParamRow` subclass it uses (e.g. `NPC_PARAM_ST`). That class will be used
     to unpack the row data.
 
     NOTE: Technically, the `ParamRow`s should be stored as a list, with `row_id` being a field of each individual row
@@ -204,7 +204,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
     the game engine ITSELF basically treats it as such -- that I am using the dictionary structure and not even
     bothering loading duplicate IDs.
     """
-    ROW_TYPE: tp.ClassVar[tp.Type[ParamRowData]]
+    ROW_TYPE: tp.ClassVar[tp.Type[ParamRow]]
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
     @dataclass(slots=True)
@@ -228,7 +228,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
     paramdef_data_version: int = 0
     paramdef_format_version: int = 0
 
-    rows: dict[int, ParamRowData] = field(default_factory=dict)
+    rows: dict[int, ParamRow] = field(default_factory=dict)
 
     def __getitem__(self, row_id) -> PARAM_ROW_DATA_T:
         if row_id in self.rows:
@@ -237,8 +237,8 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
 
     def __setitem__(self, row_id: int, row: dict | PARAM_ROW_DATA_T):
         if isinstance(row, dict):
-            row = ParamRowData(**row)
-        if isinstance(row, ParamRowData):
+            row = ParamRow(**row)
+        if isinstance(row, ParamRow):
             self.rows[row_id] = row
         else:
             raise TypeError("New row must be a `ParamRow` or a dictionary that contains all required fields.")
@@ -737,7 +737,7 @@ class ParamDict(Param):
         return writer
 
 
-def TypedParam(data_type: tp.Type[ParamRowData]):
+def TypedParam(data_type: tp.Type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
     for param_subclass in Param.__subclasses__():
         if param_subclass.ROW_TYPE is data_type:

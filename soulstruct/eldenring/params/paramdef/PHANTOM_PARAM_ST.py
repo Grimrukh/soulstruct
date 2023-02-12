@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class PHANTOM_PARAM_ST(ParamRowData):
+class PHANTOM_PARAM_ST(ParamRow):
     EdgeColorA: float = ParamField(
         float, "edgeColorA", default=1,
         tooltip="TOOLTIP-TODO",

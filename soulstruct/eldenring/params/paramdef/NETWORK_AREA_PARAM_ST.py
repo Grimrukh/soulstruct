@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class NETWORK_AREA_PARAM_ST(ParamRowData):
+class NETWORK_AREA_PARAM_ST(ParamRow):
     CellSizeX: float = ParamField(
         float, "cellSizeX", default=30,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SP_EFFECT_VFX_PARAM_ST(ParamRowData):
+class SP_EFFECT_VFX_PARAM_ST(ParamRow):
     OngoingVisualEffect: int = ParamField(
         int, "midstSfxId", default=-1,
         tooltip="TOOLTIP-TODO",

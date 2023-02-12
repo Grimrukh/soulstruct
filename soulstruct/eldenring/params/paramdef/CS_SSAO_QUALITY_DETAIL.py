@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_SSAO_QUALITY_DETAIL(ParamRowData):
+class CS_SSAO_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
         byte, "enabled", default=1,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GAME_AREA_PARAM_ST(ParamRowData):
+class GAME_AREA_PARAM_ST(ParamRow):
     SingleplayerSoulReward: int = ParamField(
         uint, "bonusSoul_single", default=0,
         tooltip="Souls awarded (after delay) when boss is defeated with no summons.",

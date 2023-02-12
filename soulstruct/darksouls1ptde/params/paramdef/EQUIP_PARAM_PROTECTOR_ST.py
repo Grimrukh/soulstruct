@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class EQUIP_PARAM_PROTECTOR_ST(ParamRowData):
+class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
     SortIndex: int = ParamField(
         int, "sortId", default=0,
         tooltip="Index for automatic inventory sorting.",

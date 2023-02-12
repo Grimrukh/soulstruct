@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class REINFORCE_PARAM_WEAPON_ST(ParamRowData):
+class REINFORCE_PARAM_WEAPON_ST(ParamRow):
     PhysicalDamageMultiplier: float = ParamField(
         float, "physicsAtkRate", default=1.0,
         tooltip="Multiplier applied to outgoing physical damage (of any type).",

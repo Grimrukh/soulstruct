@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class EQUIP_PARAM_WEAPON_ST(ParamRowData):
+class EQUIP_PARAM_WEAPON_ST(ParamRow):
     BehaviorVariationID: int = ParamField(
         int, "behaviorVariationId", default=0,
         tooltip="Multiplied by 1000 and added to player behavior lookups (hitboxes, bullets) triggered by TAE.",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class BEHAVIOR_PARAM_ST(ParamRowData):
+class BEHAVIOR_PARAM_ST(ParamRow):
     VariationID: int = ParamField(
         int, "variationId", default=0,
         tooltip="TOOLTIP-TODO",

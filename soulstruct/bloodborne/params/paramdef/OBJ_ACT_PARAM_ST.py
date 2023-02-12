@@ -14,7 +14,7 @@ from .dynamics import ObjActSuccessCondition
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class OBJ_ACT_PARAM_ST(ParamRowData):
+class OBJ_ACT_PARAM_ST(ParamRow):
     PromptMessage: EventText = ParamField(
         int, "actionEnableMsgId", default=-1,
         tooltip="Message displayed in dialog box that prompts action (e.g. 'Open').",

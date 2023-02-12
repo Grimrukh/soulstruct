@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class AUTO_CREATE_ENV_SOUND_PARAM_ST(ParamRowData):
+class AUTO_CREATE_ENV_SOUND_PARAM_ST(ParamRow):
     RangeMin: float = ParamField(
         float, "RangeMin", default=10,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST(ParamRowData):
+class SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST(ParamRow):
     NoHitDist: float = ParamField(
         float, "NoHitDist", default=-1,
         tooltip="TOOLTIP-TODO",

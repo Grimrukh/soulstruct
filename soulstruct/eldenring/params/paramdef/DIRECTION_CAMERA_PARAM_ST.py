@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class DIRECTION_CAMERA_PARAM_ST(ParamRowData):
+class DIRECTION_CAMERA_PARAM_ST(ParamRow):
     IsUseOption: int = ParamField(
         byte, "isUseOption:1", default=0,
         tooltip="TOOLTIP-TODO",

@@ -14,7 +14,7 @@ from .dynamics import ShopReference
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SHOP_LINEUP_PARAM(ParamRowData):
+class SHOP_LINEUP_PARAM(ParamRow):
     equipId: int = ParamField(
         int, "equipId", default=0, dynamic_callback=ShopReference(),
         tooltip="TODO",

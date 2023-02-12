@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class AI_SOUND_PARAM_ST(ParamRowData):
+class AI_SOUND_PARAM_ST(ParamRow):
     Radius: float = ParamField(
         float, "radius", default=0.0,
         tooltip="TODO",

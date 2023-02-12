@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class POSTURE_CONTROL_PARAM_WEP_LEFT_ST(ParamRowData):
+class POSTURE_CONTROL_PARAM_WEP_LEFT_ST(ParamRow):
     A000leftArmFB: int = ParamField(
         short, "a000_leftArmFB", default=0,
         tooltip="TOOLTIP-TODO",

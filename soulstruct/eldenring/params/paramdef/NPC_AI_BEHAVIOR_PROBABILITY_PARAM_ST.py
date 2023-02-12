@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST(ParamRowData):
+class NPC_AI_BEHAVIOR_PROBABILITY_PARAM_ST(ParamRow):
     Param000: int = ParamField(
         short, "param000", default=0,
         tooltip="TOOLTIP-TODO",

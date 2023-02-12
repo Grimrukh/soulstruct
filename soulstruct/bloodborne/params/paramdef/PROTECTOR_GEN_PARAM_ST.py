@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class PROTECTOR_GEN_PARAM_ST(ParamRowData):
+class PROTECTOR_GEN_PARAM_ST(ParamRow):
     ArmorParamID: ArmorParam = ParamField(
         int, "proParamId", default=0,
         tooltip="TODO",

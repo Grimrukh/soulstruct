@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class KEY_ASSIGN_PARAM_ST(ParamRowData):
+class KEY_ASSIGN_PARAM_ST(ParamRow):
     PadKeyId: int = ParamField(
         int, "padKeyId", default=-1,
         tooltip="TOOLTIP-TODO",

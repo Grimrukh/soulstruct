@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GAME_MAP_PARAM_ST(ParamRowData):
+class GAME_MAP_PARAM_ST(ParamRow):
     TimeSlotA: int = ParamField(
         byte, "settingNo_timeSlotA", default=0,
         tooltip="TODO",

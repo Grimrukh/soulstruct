@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LOCK_CAM_PARAM_ST(ParamRowData):
+class LOCK_CAM_PARAM_ST(ParamRow):
     CameraDistanceFromTarget: float = ParamField(
         float, "camDistTarget", default=4.0,
         tooltip="Distance maintained from target by camera in meters. (Default value is 4.)",

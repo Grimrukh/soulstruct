@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GRASS_TYPE_PARAM_ST(ParamRowData):
+class GRASS_TYPE_PARAM_ST(ParamRow):
     LodRange: int = ParamField(
         ushort, "lodRange", default=0,
         tooltip="TOOLTIP-TODO",

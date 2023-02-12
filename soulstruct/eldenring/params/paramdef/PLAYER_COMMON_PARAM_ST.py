@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class PLAYER_COMMON_PARAM_ST(ParamRowData):
+class PLAYER_COMMON_PARAM_ST(ParamRow):
     PlayerFootEffectbySFX: int = ParamField(
         int, "playerFootEffect_bySFX", default=0,
         tooltip="TOOLTIP-TODO",

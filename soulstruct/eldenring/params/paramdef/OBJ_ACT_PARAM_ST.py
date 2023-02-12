@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class OBJ_ACT_PARAM_ST(ParamRowData):
+class OBJ_ACT_PARAM_ST(ParamRow):
     PromptMessage: int = ParamField(
         int, "actionEnableMsgId", default=-1,
         tooltip="TOOLTIP-TODO",

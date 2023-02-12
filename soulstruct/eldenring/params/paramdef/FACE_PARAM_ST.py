@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class FACE_PARAM_ST(ParamRowData):
+class FACE_PARAM_ST(ParamRow):
     FacepartsId: int = ParamField(
         byte, "face_partsId", default=0,
         tooltip="TOOLTIP-TODO",

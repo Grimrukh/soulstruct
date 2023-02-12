@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class THROW_PARAM_ST(ParamRowData):
+class THROW_PARAM_ST(ParamRow):
     AtkChrId: int = ParamField(
         int, "AtkChrId", default=0,
         tooltip="TOOLTIP-TODO",

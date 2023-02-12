@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class QWC_JUDGE_PARAM_ST(ParamRowData):
+class QWC_JUDGE_PARAM_ST(ParamRow):
     pcJudgeUnderWB: int = ParamField(
         short, "pcJudgeUnderWB", default=-200,
         tooltip="TOOLTIP-TODO",

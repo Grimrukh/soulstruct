@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class RETURN_POINT_PARAM_ST(ParamRowData):
+class RETURN_POINT_PARAM_ST(ParamRow):
     Area: int = ParamField(
         short, "areaNo", default=0,
         tooltip="TODO",

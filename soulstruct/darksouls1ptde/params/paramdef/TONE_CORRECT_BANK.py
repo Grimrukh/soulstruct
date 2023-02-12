@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class TONE_CORRECT_BANK(ParamRowData):
+class TONE_CORRECT_BANK(ParamRow):
     BrightnessRed: float = ParamField(
         float, "brightnessR", default=1.0,
         tooltip="Red channel (relative to 1) of tone correct brightness.",

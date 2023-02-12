@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LIGHT_BANK(ParamRowData):
+class LIGHT_BANK(ParamRow):
     BakedLight0RotationX: int = ParamField(
         short, "degRotX_0", default=0,
         tooltip="Rotation (X-axis) of ambient (parallel) light source 0.",

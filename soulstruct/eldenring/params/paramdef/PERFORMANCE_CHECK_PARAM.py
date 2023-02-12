@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class PERFORMANCE_CHECK_PARAM(ParamRowData):
+class PERFORMANCE_CHECK_PARAM(ParamRow):
     WorkTag: int = ParamField(
         byte, "workTag", default=0,
         tooltip="TOOLTIP-TODO",

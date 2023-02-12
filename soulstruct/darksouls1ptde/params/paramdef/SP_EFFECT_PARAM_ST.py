@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SP_EFFECT_PARAM_ST(ParamRowData):
+class SP_EFFECT_PARAM_ST(ParamRow):
     StatusIcon: Texture = ParamField(
         int, "iconId", default=-1,
         tooltip="Icon that appears in HUD under stamina bar while special effect is active. Set to -1 for no icon.",

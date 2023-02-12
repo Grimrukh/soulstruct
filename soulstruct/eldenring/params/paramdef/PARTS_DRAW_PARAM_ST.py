@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class PARTS_DRAW_PARAM_ST(ParamRowData):
+class PARTS_DRAW_PARAM_ST(ParamRow):
     Lv01BorderDist: float = ParamField(
         float, "lv01_BorderDist", default=5,
         tooltip="TOOLTIP-TODO",

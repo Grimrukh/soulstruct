@@ -6,7 +6,7 @@ __all__ = [
     "DynamicParamField",
     "pad_field",
     "bit_pad_field",
-    "ParamRowData",
+    "ParamRow",
     "MAP_PARAM_TYPES",
     "PARAM_VALUE_TYPING",
     "ParamField",
@@ -53,7 +53,7 @@ class ParamFieldInfo:
 
 
 class DynamicParamField(abc.ABC):
-    """Called with a `ParamRowData` instance.
+    """Called with a `ParamRow` instance.
 
     Returns a dynamic field type, suffix for the display field name, and tooltip.
     """
@@ -62,7 +62,7 @@ class DynamicParamField(abc.ABC):
     POSSIBLE_TYPES = set()
 
     @abc.abstractmethod
-    def __call__(self, data: ParamRowData) -> tuple[tp.Type[BaseGameObject, str, str]]:
+    def __call__(self, data: ParamRow) -> tuple[tp.Type[BaseGameObject, str, str]]:
         ...
 
 
@@ -94,18 +94,15 @@ PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]
 
 
 @dataclass(slots=True)
-class ParamRowData(NewBinaryStruct):
-    """Base class for `ParamDef`-spawned classes, instantiated to `ParamRow.data`."""
+class ParamRow(NewBinaryStruct):
+    """Base class for `ParamDef`-spawned classes. Instances appear directly in `Param.rows`."""
 
     RawName: bytes = field(default=b"", metadata={"NOT_BINARY": True})
     Name: str = field(default="", metadata={"NOT_BINARY": True})
 
-    def __iter__(self):
-        field_names = self.get_binary_field_names()
-        print(field_names)
-        exit()
-        return
-        # return (field_name, getattr(self, field_name) for field_name in self.get_binary_field_names())
+    def __iter__(self) -> tp.Iterator[tuple[str, PARAM_VALUE_TYPING]]:
+        """Similar to `.items()`. Returns a tuple of `(name, value)` pairs."""
+        return iter((field_name, getattr(self, field_name)) for field_name in self.get_binary_field_names())
 
     def __getitem__(self, field_name_or_nickname: str) -> PARAM_VALUE_TYPING:
         if field_name_or_nickname.lower() == "name":
@@ -171,7 +168,7 @@ class ParamRowData(NewBinaryStruct):
         return f"\nName: {self.try_name}" + "".join(names)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRowData:
+    def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRow:
         row = cls.from_bytes(reader)
         row.RawName = raw_name
         row.Name = name
@@ -185,7 +182,7 @@ class ParamRowData(NewBinaryStruct):
         raw_name = raw_name.rstrip(b"\0") + terminator
         writer.append(raw_name)
 
-    def compare(self, other_row: ParamRowData):
+    def compare(self, other_row: ParamRow):
         """Prints each field that differs between the given `ParamRow` and this one (ignoring names)."""
         for field_name, field_value in iter(self):
             other_value = other_row[field_name]
@@ -197,7 +194,7 @@ class ParamRowData(NewBinaryStruct):
 class ParamFieldMetadata(NewBinaryStruct):
     internal_name: str
     hide: bool = False
-    dynamic_callback: tp.Callable[[ParamRowData], tuple[tp.Type[BaseGameObject], str, str]] | None = None
+    dynamic_callback: tp.Callable[[ParamRow], tuple[tp.Type[BaseGameObject], str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
     default: tp.Any = None
 
@@ -214,7 +211,7 @@ def ParamField(
 ):
     """For use with double asterisk in `BinaryStruct` `field()` definition.
 
-    `dynamic_callback`, if given, should be a function that takes the `ParamRowData` instance (usually to check the
+    `dynamic_callback`, if given, should be a function that takes the `ParamRow` instance (usually to check the
     value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
     appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
     """

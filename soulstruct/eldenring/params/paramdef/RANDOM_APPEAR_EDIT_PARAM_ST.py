@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class RANDOM_APPEAR_EDIT_PARAM_ST(ParamRowData):
+class RANDOM_APPEAR_EDIT_PARAM_ST(ParamRow):
     AppearNum: int = ParamField(
         uint, "appearNum", default=0,
         tooltip="TOOLTIP-TODO",

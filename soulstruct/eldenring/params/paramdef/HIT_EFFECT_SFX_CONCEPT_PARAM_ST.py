@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class HIT_EFFECT_SFX_CONCEPT_PARAM_ST(ParamRowData):
+class HIT_EFFECT_SFX_CONCEPT_PARAM_ST(ParamRow):
     AtkIron1: int = ParamField(
         short, "atkIron_1", default=0,
         tooltip="TOOLTIP-TODO",

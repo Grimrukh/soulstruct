@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class EQUIP_PARAM_ACCESSORY_ST(ParamRowData):
+class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     SpecialEffect: SpecialEffectParam = ParamField(
         int, "refId", default=-1,
         tooltip="Special effect applied when ring is equipped.",

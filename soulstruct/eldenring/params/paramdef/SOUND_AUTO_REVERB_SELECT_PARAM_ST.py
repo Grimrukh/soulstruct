@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SOUND_AUTO_REVERB_SELECT_PARAM_ST(ParamRowData):
+class SOUND_AUTO_REVERB_SELECT_PARAM_ST(ParamRow):
     ReverbType: int = ParamField(
         uint, "reverbType", default=0,
         tooltip="TOOLTIP-TODO",

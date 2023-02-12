@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ATTACK_ELEMENT_CORRECT_PARAM_ST(ParamRowData):
+class ATTACK_ELEMENT_CORRECT_PARAM_ST(ParamRow):
     IsStrengthCorrectbyPhysics: int = ParamField(
         byte, "isStrengthCorrect_byPhysics:1", default=0,
         tooltip="TOOLTIP-TODO",

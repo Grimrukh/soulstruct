@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SOUND_COMMON_SYSTEM_PARAM_ST(ParamRowData):
+class SOUND_COMMON_SYSTEM_PARAM_ST(ParamRow):
     ParamKeyStr: bytes = ParamField(
         bytes, "ParamKeyStr[32]", length=32, default='',
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class QWC_CHANGE_PARAM_ST(ParamRowData):
+class QWC_CHANGE_PARAM_ST(ParamRow):
     pcAttrB: int = ParamField(
         short, "pcAttrB", default=0,
         tooltip="TOOLTIP-TODO",

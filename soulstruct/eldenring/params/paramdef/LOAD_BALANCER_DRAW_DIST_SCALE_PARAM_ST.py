@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST(ParamRowData):
+class LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST(ParamRow):
     Lv00: float = ParamField(
         float, "Lv00", default=1,
         tooltip="TOOLTIP-TODO",

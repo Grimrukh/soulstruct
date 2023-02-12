@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class WEATHER_ASSET_REPLACE_PARAM_ST(ParamRowData):
+class WEATHER_ASSET_REPLACE_PARAM_ST(ParamRow):
     MapId: int = ParamField(
         uint, "mapId", default=0,
         tooltip="TOOLTIP-TODO",

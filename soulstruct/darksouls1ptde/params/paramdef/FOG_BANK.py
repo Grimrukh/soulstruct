@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class FOG_BANK(ParamRowData):
+class FOG_BANK(ParamRow):
     FogStartDistance: int = ParamField(
         short, "fogBeginZ", default=0,
         tooltip="Distance (m) at which fog begins.",

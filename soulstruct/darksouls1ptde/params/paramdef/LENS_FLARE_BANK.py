@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LENS_FLARE_BANK(ParamRowData):
+class LENS_FLARE_BANK(ParamRow):
     LensFlareTextureID: int = ParamField(
         sbyte, "texId", default=-1,
         tooltip="Texture ID of lens flare (texture name format is 'lensflare_XX'). -1 means disabled.",

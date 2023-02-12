@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM(ParamRowData):
+class LEGACY_DISTANT_VIEW_PARTS_REPLACE_PARAM(ParamRow):
     TargetMapId: int = ParamField(
         int, "TargetMapId", default=-1,
         tooltip="TOOLTIP-TODO",

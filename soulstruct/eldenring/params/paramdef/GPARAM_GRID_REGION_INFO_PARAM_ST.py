@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GPARAM_GRID_REGION_INFO_PARAM_ST(ParamRowData):
+class GPARAM_GRID_REGION_INFO_PARAM_ST(ParamRow):
     GparamGridRegionId: int = ParamField(
         uint, "GparamGridRegionId", default=0,
         tooltip="TOOLTIP-TODO",

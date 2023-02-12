@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class THROW_INFO_BANK(ParamRowData):
+class THROW_INFO_BANK(ParamRow):
     AttackingCharacterModel: int = ParamField(
         int, "AtkChrId", default=0,
         tooltip="Model ID of attacking character.",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class WWISE_VALUE_TO_STR_CONVERT_PARAM_ST(ParamRowData):
+class WWISE_VALUE_TO_STR_CONVERT_PARAM_ST(ParamRow):
     DisableParamNT: int = ParamField(
         byte, "disableParam_NT:1", default=0,
         tooltip="TOOLTIP-TODO",

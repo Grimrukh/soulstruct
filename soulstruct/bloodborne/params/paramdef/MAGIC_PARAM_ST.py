@@ -14,7 +14,7 @@ from .dynamics import MagicReference
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MAGIC_PARAM_ST(ParamRowData):
+class MAGIC_PARAM_ST(ParamRow):
     ConfirmationMessage: EventText = ParamField(
         int, "yesNoDialogMessageId", default=0,
         tooltip="Message displayed in yes/no dialog box to confirm use of spell. Requires the Yes/No menu type.",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CAMERA_FADE_PARAM_ST(ParamRowData):
+class CAMERA_FADE_PARAM_ST(ParamRow):
     NearMinDist: float = ParamField(
         float, "NearMinDist", default=0.0,
         tooltip="TOOLTIP-TODO",

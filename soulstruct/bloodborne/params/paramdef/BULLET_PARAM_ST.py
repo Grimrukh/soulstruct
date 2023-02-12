@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class BULLET_PARAM_ST(ParamRowData):
+class BULLET_PARAM_ST(ParamRow):
     BulletAttack: AttackParam = ParamField(
         int, "atkId_Bullet", default=-1,
         tooltip="Attack parameters for bullet impact. Only certain fields in the attack parameter are used. Could be "

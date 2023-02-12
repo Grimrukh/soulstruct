@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_TEXTURE_FILTER_QUALITY_DETAIL(ParamRowData):
+class CS_TEXTURE_FILTER_QUALITY_DETAIL(ParamRow):
     Filter: int = ParamField(
         byte, "filter", default=3,
         tooltip="TOOLTIP-TODO",

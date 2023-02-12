@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class AI_ODDS_PARAM(ParamRowData):
+class AI_ODDS_PARAM(ParamRow):
     Act0: int = ParamField(
         byte, "act0", default=0,
         tooltip="TOOLTIP-TODO",

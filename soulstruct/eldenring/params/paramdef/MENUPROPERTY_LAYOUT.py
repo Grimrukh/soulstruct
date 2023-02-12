@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MENUPROPERTY_LAYOUT(ParamRowData):
+class MENUPROPERTY_LAYOUT(ParamRow):
     LayoutPath: bytes = ParamField(
         bytes, "LayoutPath[16]", length=16, default='',
         tooltip="TOOLTIP-TODO",

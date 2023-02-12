@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GEM_DROP_DOPING_PARAM_ST(ParamRowData):
+class GEM_DROP_DOPING_PARAM_ST(ParamRow):
     MinimumRank: int = ParamField(
         int, "rankMin", default=0,
         tooltip="TODO",

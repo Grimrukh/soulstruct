@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MATERIAL_EX_PARAM_ST(ParamRowData):
+class MATERIAL_EX_PARAM_ST(ParamRow):
     ParamName: bytes = ParamField(
         bytes, "paramName[32]", length=64, default='',
         tooltip="TOOLTIP-TODO",

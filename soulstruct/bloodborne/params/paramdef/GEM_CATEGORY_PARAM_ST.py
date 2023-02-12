@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GEM_CATEGORY_PARAM_ST(ParamRowData):
+class GEM_CATEGORY_PARAM_ST(ParamRow):
     SortID: int = ParamField(
         int, "sortNo", default=0,
         tooltip="TODO",

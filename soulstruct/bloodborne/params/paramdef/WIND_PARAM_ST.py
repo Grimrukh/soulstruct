@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class WIND_PARAM_ST(ParamRowData):
+class WIND_PARAM_ST(ParamRow):
     CommonCapsuleBeginModelPoint: int = ParamField(
         short, "commonCapsuleBeginDmyId", default=0,
         tooltip="TODO",

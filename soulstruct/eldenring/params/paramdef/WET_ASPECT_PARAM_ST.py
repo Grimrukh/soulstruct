@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class WET_ASPECT_PARAM_ST(ParamRowData):
+class WET_ASPECT_PARAM_ST(ParamRow):
     BaseColorR: int = ParamField(
         byte, "baseColorR", default=0,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class POSTURE_CONTROL_PARAM_GENDER_ST(ParamRowData):
+class POSTURE_CONTROL_PARAM_GENDER_ST(ParamRow):
     A000rightElbowIO: int = ParamField(
         short, "a000_rightElbowIO", default=0,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CACL_CORRECT_GRAPH_ST(ParamRowData):
+class CACL_CORRECT_GRAPH_ST(ParamRow):
     StageMaxIntercept0: float = ParamField(
         float, "stageMaxVal0", default=0.0,
         tooltip="Y-intercept in equation of 'stage max' line 0.",

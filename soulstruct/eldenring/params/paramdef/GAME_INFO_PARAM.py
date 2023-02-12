@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GAME_INFO_PARAM(ParamRowData):
+class GAME_INFO_PARAM(ParamRow):
     TitleMsgId: int = ParamField(
         int, "titleMsgId", default=0,
         tooltip="TOOLTIP-TODO",

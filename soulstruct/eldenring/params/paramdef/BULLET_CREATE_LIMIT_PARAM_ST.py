@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class BULLET_CREATE_LIMIT_PARAM_ST(ParamRowData):
+class BULLET_CREATE_LIMIT_PARAM_ST(ParamRow):
     LimitNumbyGroup: int = ParamField(
         byte, "limitNum_byGroup", default=0,
         tooltip="TOOLTIP-TODO",

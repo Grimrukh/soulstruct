@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MENUPROPERTY_SPEC(ParamRowData):
+class MENUPROPERTY_SPEC(ParamRow):
     CaptionTextID: int = ParamField(
         int, "CaptionTextID", default=0,
         tooltip="TOOLTIP-TODO",

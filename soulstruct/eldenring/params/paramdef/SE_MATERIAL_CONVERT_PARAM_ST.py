@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SE_MATERIAL_CONVERT_PARAM_ST(ParamRowData):
+class SE_MATERIAL_CONVERT_PARAM_ST(ParamRow):
     SeMaterialId: int = ParamField(
         byte, "seMaterialId", default=0,
         tooltip="TOOLTIP-TODO",

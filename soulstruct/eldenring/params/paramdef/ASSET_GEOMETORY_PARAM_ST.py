@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ASSET_GEOMETORY_PARAM_ST(ParamRowData):
+class ASSET_GEOMETORY_PARAM_ST(ParamRow):
     SoundBankId: int = ParamField(
         int, "soundBankId", default=-1,
         tooltip="TOOLTIP-TODO",

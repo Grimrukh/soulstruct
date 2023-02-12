@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class HOLYGRAIL_EX_PARAM_ST(ParamRowData):
+class HOLYGRAIL_EX_PARAM_ST(ParamRow):
     RitualLevel: int = ParamField(
         byte, "ritualLv", default=0,
         tooltip="TODO",

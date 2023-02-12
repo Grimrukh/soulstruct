@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GEMEFFECT_PARAM_ST(ParamRowData):
+class GEMEFFECT_PARAM_ST(ParamRow):
     SpecialEffectID: SpecialEffectParam = ParamField(
         int, "speffectId", default=-1,
         tooltip="TODO",

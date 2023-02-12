@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class FOOT_SFX_PARAM_ST(ParamRowData):
+class FOOT_SFX_PARAM_ST(ParamRow):
     SfxId00: int = ParamField(
         uint, "sfxId_00", default=0,
         tooltip="TOOLTIP-TODO",

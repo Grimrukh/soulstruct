@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_WATER_QUALITY_DETAIL(ParamRowData):
+class CS_WATER_QUALITY_DETAIL(ParamRow):
     InteractionEnabled: int = ParamField(
         byte, "interactionEnabled", default=1,
         tooltip="TOOLTIP-TODO",

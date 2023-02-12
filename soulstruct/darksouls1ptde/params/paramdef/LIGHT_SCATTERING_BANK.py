@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LIGHT_SCATTERING_BANK(ParamRowData):
+class LIGHT_SCATTERING_BANK(ParamRow):
     LightRotationX: int = ParamField(
         short, "sunRotX", default=0,
         tooltip="Rotation (X-axis) of scattering light source.",

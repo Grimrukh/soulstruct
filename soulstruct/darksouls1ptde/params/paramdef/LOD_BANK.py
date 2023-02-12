@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LOD_BANK(ParamRowData):
+class LOD_BANK(ParamRow):
     lv01_BorderDist: float = ParamField(
         float, "lv01_BorderDist", default=5.0,
         tooltip="TOOLTIP-TODO",

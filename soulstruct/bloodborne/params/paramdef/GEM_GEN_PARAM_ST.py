@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class GEM_GEN_PARAM_ST(ParamRowData):
+class GEM_GEN_PARAM_ST(ParamRow):
     IsUnique: bool = ParamField(
         uint, "isUnique:1", bit_count=1, default=False,
         tooltip="TODO",

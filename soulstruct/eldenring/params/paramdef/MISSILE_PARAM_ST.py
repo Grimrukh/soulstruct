@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MISSILE_PARAM_ST(ParamRowData):
+class MISSILE_PARAM_ST(ParamRow):
     FFXID: int = ParamField(
         int, "FFXID", default=0,
         tooltip="TOOLTIP-TODO",

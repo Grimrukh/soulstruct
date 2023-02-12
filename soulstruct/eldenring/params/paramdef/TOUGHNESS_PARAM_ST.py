@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class TOUGHNESS_PARAM_ST(ParamRowData):
+class TOUGHNESS_PARAM_ST(ParamRow):
     CorrectionRate: float = ParamField(
         float, "correctionRate", default=1,
         tooltip="TOOLTIP-TODO",

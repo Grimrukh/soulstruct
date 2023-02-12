@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MENU_PARAM_COLOR_TABLE_ST(ParamRowData):
+class MENU_PARAM_COLOR_TABLE_ST(ParamRow):
     LerpMode: int = ParamField(
         byte, "lerpMode", default=0,
         tooltip="TOOLTIP-TODO",

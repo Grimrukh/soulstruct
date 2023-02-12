@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MAP_GD_REGION_ID_PARAM_ST(ParamRowData):
+class MAP_GD_REGION_ID_PARAM_ST(ParamRow):
     DisableParamNT: int = ParamField(
         byte, "disableParam_NT:1", default=0,
         tooltip="TOOLTIP-TODO",

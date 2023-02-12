@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class POINT_LIGHT_BANK(ParamRowData):
+class POINT_LIGHT_BANK(ParamRow):
     FadeStartDistance: float = ParamField(
         float, "dwindleBegin", default=0.5,
         tooltip="Distance at which player's point light begins to fade.",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LOAD_BALANCER_PARAM_ST(ParamRowData):
+class LOAD_BALANCER_PARAM_ST(ParamRow):
     LowerFpsThreshold: float = ParamField(
         float, "lowerFpsThreshold", default=23,
         tooltip="TOOLTIP-TODO",

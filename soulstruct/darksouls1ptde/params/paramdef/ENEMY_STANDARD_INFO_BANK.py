@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ENEMY_STANDARD_INFO_BANK(ParamRowData):
+class ENEMY_STANDARD_INFO_BANK(ParamRow):
     EnemyBehaviorID: int = ParamField(
         int, "EnemyBehaviorID", default=0,
         tooltip="TOOLTIP-TODO",

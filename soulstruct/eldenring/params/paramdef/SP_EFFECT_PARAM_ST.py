@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SP_EFFECT_PARAM_ST(ParamRowData):
+class SP_EFFECT_PARAM_ST(ParamRow):
     StatusIcon: int = ParamField(
         int, "iconId", default=-1,
         tooltip="TOOLTIP-TODO",

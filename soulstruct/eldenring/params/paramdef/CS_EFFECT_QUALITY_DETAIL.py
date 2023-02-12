@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_EFFECT_QUALITY_DETAIL(ParamRowData):
+class CS_EFFECT_QUALITY_DETAIL(ParamRow):
     SoftParticleEnabled: int = ParamField(
         byte, "softParticleEnabled", default=1,
         tooltip="TOOLTIP-TODO",

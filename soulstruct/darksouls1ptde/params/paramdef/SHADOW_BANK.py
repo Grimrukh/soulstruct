@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class SHADOW_BANK(ParamRowData):
+class SHADOW_BANK(ParamRow):
     ShadowSourceRotationX: int = ParamField(
         short, "lightDegRotX", default=0,
         tooltip="Rotation (X-axis) of shadow-casting light source.",

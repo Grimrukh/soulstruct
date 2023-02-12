@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class RITUAL_REQUIRED_MAT_PARAM(ParamRowData):
+class RITUAL_REQUIRED_MAT_PARAM(ParamRow):
     UseSoul: int = ParamField(
         uint, "useSoul", default=0,
         tooltip="TODO",

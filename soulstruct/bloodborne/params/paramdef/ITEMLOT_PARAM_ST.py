@@ -14,7 +14,7 @@ from .dynamics import ItemLotReference
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ITEMLOT_PARAM_ST(ParamRowData):
+class ITEMLOT_PARAM_ST(ParamRow):
     Item1: int = ParamField(
         int, "lotItemId01", default=0, dynamic_callback=ItemLotReference(1),
         tooltip="TODO",

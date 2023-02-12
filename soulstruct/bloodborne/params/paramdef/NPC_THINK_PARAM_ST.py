@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class NPC_THINK_PARAM_ST(ParamRowData):
+class NPC_THINK_PARAM_ST(ParamRow):
     LogicID: LogicAIScript = ParamField(
         int, "logicId", default=-1,
         tooltip="ID of logic (non-battle) Lua script.",

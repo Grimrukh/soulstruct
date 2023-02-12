@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class TONE_MAP_BANK(ParamRowData):
+class TONE_MAP_BANK(ParamRow):
     NearBloomThreshold: int = ParamField(
         sbyte, "bloomBegin", default=0,
         tooltip="Near light blooming begins when brightness exceeds this threshold.",

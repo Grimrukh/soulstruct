@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class LENS_FLARE_EX_BANK(ParamRowData):
+class LENS_FLARE_EX_BANK(ParamRow):
     LensFlareSourceRotationX: int = ParamField(
         short, "lightDegRotX", default=0,
         tooltip="Rotation (X-axis) of visible light source (e.g. sun) that causes lens flares.",

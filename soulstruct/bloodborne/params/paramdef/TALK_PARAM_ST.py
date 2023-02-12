@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class TALK_PARAM_ST(ParamRowData):
+class TALK_PARAM_ST(ParamRow):
     SubtitleText: Subtitle = ParamField(
         int, "msgId", default=-1,
         tooltip="Text ID for dialogue subtitle.",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class WAYPOINT_PARAM_ST(ParamRowData):
+class WAYPOINT_PARAM_ST(ParamRow):
     Attribute1: int = ParamField(
         short, "attribute1", default=-1,
         tooltip="TOOLTIP-TODO",

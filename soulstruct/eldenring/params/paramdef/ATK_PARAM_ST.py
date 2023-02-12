@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ATK_PARAM_ST(ParamRowData):
+class ATK_PARAM_ST(ParamRow):
     Hitbox0Radius: float = ParamField(
         float, "hit0_Radius", default=0.0,
         tooltip="TOOLTIP-TODO",

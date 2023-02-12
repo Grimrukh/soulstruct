@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CHARMAKEMENU_LISTITEM_PARAM_ST(ParamRowData):
+class CHARMAKEMENU_LISTITEM_PARAM_ST(ParamRow):
     Value: int = ParamField(
         int, "value", default=0,
         tooltip="TOOLTIP-TODO",

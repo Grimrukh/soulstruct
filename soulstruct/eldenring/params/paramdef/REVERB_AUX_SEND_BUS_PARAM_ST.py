@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class REVERB_AUX_SEND_BUS_PARAM_ST(ParamRowData):
+class REVERB_AUX_SEND_BUS_PARAM_ST(ParamRow):
     ReverbAuxSendBusName: bytes = ParamField(
         bytes, "ReverbAuxSendBusName[32]", length=32, default='',
         tooltip="TOOLTIP-TODO",

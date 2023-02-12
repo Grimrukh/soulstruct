@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class AI_ANIM_TBL_PARAM(ParamRowData):
+class AI_ANIM_TBL_PARAM(ParamRow):
     Atk0EzStateId: int = ParamField(
         ushort, "atk0_EzStateId", default=0,
         tooltip="TOOLTIP-TODO",

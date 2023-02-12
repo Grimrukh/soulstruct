@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class DECAL_PARAM_ST(ParamRowData):
+class DECAL_PARAM_ST(ParamRow):
     TextureID: int = ParamField(
         int, "textureId", default=-1,
         tooltip="TODO",

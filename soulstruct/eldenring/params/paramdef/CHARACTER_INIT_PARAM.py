@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CHARACTER_INIT_PARAM(ParamRowData):
+class CHARACTER_INIT_PARAM(ParamRow):
     BaseRecMP: float = ParamField(
         float, "baseRec_mp", default=0.0,
         tooltip="TOOLTIP-TODO",

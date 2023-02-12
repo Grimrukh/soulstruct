@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_SHADER_QUALITY_DETAIL(ParamRowData):
+class CS_SHADER_QUALITY_DETAIL(ParamRow):
     SssEnabled: int = ParamField(
         byte, "sssEnabled", default=1,
         tooltip="TOOLTIP-TODO",

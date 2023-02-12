@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ENEMY_COMMON_PARAM_ST(ParamRowData):
+class ENEMY_COMMON_PARAM_ST(ParamRow):
     _Pad0: bytes = ParamPad(8, "reserved0[8]")
     SoundTargetTryApproachTime: int = ParamField(
         int, "soundTargetTryApproachTime", default=0,

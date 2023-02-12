@@ -12,7 +12,7 @@ from .dynamics import ItemLotReference
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ITEMLOT_LVDEP_PARAM_ST(ParamRowData):
+class ITEMLOT_LVDEP_PARAM_ST(ParamRow):
     ItemCategory: ITEMLOT_LVDEP_ITEMCATEGORY = ParamField(
         int, "itemCategory", default=0,
         tooltip="TODO",

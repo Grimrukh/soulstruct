@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class ACTIONBUTTON_PARAM_ST(ParamRowData):
+class ACTIONBUTTON_PARAM_ST(ParamRow):
     RegionType: int = ParamField(
         byte, "regionType", default=0,
         tooltip="TOOLTIP-TODO",

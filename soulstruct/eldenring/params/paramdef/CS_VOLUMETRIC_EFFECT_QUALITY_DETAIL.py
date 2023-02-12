@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRowData):
+class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRow):
     FogEnabled: int = ParamField(
         byte, "fogEnabled", default=1,
         tooltip="TOOLTIP-TODO",

@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class EQUIP_PARAM_CUSTOM_WEAPON_ST(ParamRowData):
+class EQUIP_PARAM_CUSTOM_WEAPON_ST(ParamRow):
     BaseWepId: int = ParamField(
         int, "baseWepId", default=0,
         tooltip="TOOLTIP-TODO",

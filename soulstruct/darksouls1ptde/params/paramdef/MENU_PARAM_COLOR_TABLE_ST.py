@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MENU_PARAM_COLOR_TABLE_ST(ParamRowData):
+class MENU_PARAM_COLOR_TABLE_ST(ParamRow):
     RedChannel: int = ParamField(
         byte, "r", default=255,
         tooltip="Red value of RGBA color (0-255).",

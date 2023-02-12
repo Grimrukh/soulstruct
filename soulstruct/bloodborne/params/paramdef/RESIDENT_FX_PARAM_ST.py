@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class RESIDENT_FX_PARAM_ST(ParamRowData):
+class RESIDENT_FX_PARAM_ST(ParamRow):
     VisualEffectID: int = ParamField(
         int, "sfxId", default=-1,
         tooltip="TODO",

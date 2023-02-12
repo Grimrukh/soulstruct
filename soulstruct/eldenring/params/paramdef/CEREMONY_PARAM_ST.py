@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class CEREMONY_PARAM_ST(ParamRowData):
+class CEREMONY_PARAM_ST(ParamRow):
     EventLayerId: int = ParamField(
         int, "eventLayerId", default=0,
         tooltip="TOOLTIP-TODO",

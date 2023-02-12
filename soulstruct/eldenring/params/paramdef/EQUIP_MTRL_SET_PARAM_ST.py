@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class EQUIP_MTRL_SET_PARAM_ST(ParamRowData):
+class EQUIP_MTRL_SET_PARAM_ST(ParamRow):
     UpgradeGood: int = ParamField(
         int, "materialId01", default=-1,
         tooltip="TOOLTIP-TODO",

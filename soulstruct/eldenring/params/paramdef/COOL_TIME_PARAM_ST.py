@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class COOL_TIME_PARAM_ST(ParamRowData):
+class COOL_TIME_PARAM_ST(ParamRow):
     LimitationTime: float = ParamField(
         float, "limitationTime", default=0.0,
         tooltip="TOOLTIP-TODO",

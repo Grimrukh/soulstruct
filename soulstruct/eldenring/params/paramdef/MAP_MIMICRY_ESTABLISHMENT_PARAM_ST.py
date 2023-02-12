@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MAP_MIMICRY_ESTABLISHMENT_PARAM_ST(ParamRowData):
+class MAP_MIMICRY_ESTABLISHMENT_PARAM_ST(ParamRow):
     MimicryEstablishment0: float = ParamField(
         float, "mimicryEstablishment0", default=-1,
         tooltip="TOOLTIP-TODO",

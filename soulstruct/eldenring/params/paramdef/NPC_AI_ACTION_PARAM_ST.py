@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class NPC_AI_ACTION_PARAM_ST(ParamRowData):
+class NPC_AI_ACTION_PARAM_ST(ParamRow):
     MoveDir: int = ParamField(
         byte, "moveDir", default=0,
         tooltip="TOOLTIP-TODO",

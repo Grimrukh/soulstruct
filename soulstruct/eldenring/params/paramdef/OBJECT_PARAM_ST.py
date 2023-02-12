@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class OBJECT_PARAM_ST(ParamRowData):
+class OBJECT_PARAM_ST(ParamRow):
     ObjectHP: int = ParamField(
         short, "hp", default=-1,
         tooltip="TOOLTIP-TODO",

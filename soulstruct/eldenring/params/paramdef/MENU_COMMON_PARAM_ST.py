@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class MENU_COMMON_PARAM_ST(ParamRowData):
+class MENU_COMMON_PARAM_ST(ParamRow):
     SoloPlayDeathToFadeOutTime: float = ParamField(
         float, "soloPlayDeath_ToFadeOutTime", default=0.0,
         tooltip="TOOLTIP-TODO",

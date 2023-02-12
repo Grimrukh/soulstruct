@@ -12,7 +12,7 @@ from soulstruct.utilities.binary import *
 
 # noinspection PyDataclass
 @dataclass(slots=True)
-class DEFAULT_KEY_ASSIGN(ParamRowData):
+class DEFAULT_KEY_ASSIGN(ParamRow):
     Priority0: int = ParamField(
         byte, "priority0:1", default=0,
         tooltip="TOOLTIP-TODO",
