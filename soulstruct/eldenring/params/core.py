@@ -4,22 +4,16 @@ __all__ = ["Param", "GameParamBND"]
 
 from pathlib import Path
 
-from soulstruct.containers.bnd import BND4
 from soulstruct.containers.dcx import decompress
 from soulstruct.games import ELDEN_RING
-from soulstruct.game_types import *
+from soulstruct.base.game_types import *
 from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBND
-from soulstruct.base.params.param import Param as _BaseParam
 from soulstruct.utilities.binary import BinaryReader, BinaryWriter
 
 from .paramdef import ParamDefBND, GET_BUNDLED_PARAMDEFBND
 
 # if tp.TYPE_CHECKING:
 #     from ..text.msg_directory import MSGDirectory
-
-
-class Param(_BaseParam):
-    GET_BUNDLED_PARAMDEFBND = staticmethod(GET_BUNDLED_PARAMDEFBND)
 
 
 class GameParamBND(_BaseGameParamBND, BND4):
@@ -234,31 +228,4 @@ class GameParamBND(_BaseGameParamBND, BND4):
 
         return decrypted
 
-    def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
-        """Rename item param entries according to their (presumably more desirable) names in Bloodborne text data.
-
-        Many Bloodborne names (mainly for cut stuff) use a single asterisk as a placeholder. Such names are ignored by
-        this method.
-
-        TODO: 'GemsAndRunes' uses some kind of text ID offset param field.
-
-        Args:
-            text (MSGDirectory): text data structure to pull names from.
-            param_nickname (str or None): specific ParamTable name to rename, or None to rename all (default).
-                Valid names are "Weapons", "Armor", "Goods", and "GemsAndRunes" (or None to do all).
-        """
-        if param_nickname:
-            param_nickname = param_nickname.lower().rstrip("s")
-            if param_nickname not in {"weapon", "armor", "good", "gemsandrune"}:
-                raise ValueError(
-                    f"Invalid item type: {param_nickname}. Must be 'Weapons', 'Armor', 'Goods', or 'GemsAndRunes'."
-                )
-        for item_type_check, param_table, text_dict in zip(
-            ("weapon", "armor", "good", "gemsandrune"),
-            (self.Weapons, self.Armor, self.Goods, self.GemsAndRunes),
-            (text.WeaponNames, text.ArmorNames, text.GoodNames, text.BloodGemNames),
-        ):
-            if not param_nickname or param_nickname == item_type_check:
-                for param_id, param_entry in param_table.items():
-                    if param_id in text_dict and text_dict[param_id].strip(" *"):
-                        param_entry.name = text_dict[param_id]
+    # TODO: `rename_entries_from_text` and other utilities

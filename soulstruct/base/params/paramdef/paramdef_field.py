@@ -222,6 +222,11 @@ class ParamDefField:
             "increment": 1.0,
             "sort_id": -1,
             "description": "",
+            "bit_count": -1,
+            "unk_xb8": "",
+            "unk_xc0": "",
+            "unk_xc8": "",
+
         }
         def_string = xml_node.attrib["Def"]  # e.g., "s32 spEffectId0 = -1"
 
@@ -286,16 +291,18 @@ class ParamDefField:
             elif child.tag == "SortID":
                 kwargs["sort_id"] = int(child.text)
             elif child.tag == "UnkB8":
-                kwargs["unk_b8"] = child.text
+                kwargs["unk_xb8"] = child.text
             elif child.tag == "UnkC0":
-                kwargs["unk_c0"] = child.text
+                kwargs["unk_xc0"] = child.text
             elif child.tag == "UnkC8":
-                kwargs["unk_c8"] = child.text
+                kwargs["unk_xc8"] = child.text
             elif child.tag.startswith("ParamRef"):
                 # TODO: Could make use of these links from Yapped. Ignoring for now.
                 pass
             else:
                 raise ValueError(f"Unrecognized field tag name in Paramdex: {child.tag}")
+
+        kwargs.setdefault("display_name", "_" + name.split(":")[0].split("[")[0].capitalize())
 
         return cls(**kwargs)
 
@@ -346,6 +353,8 @@ class ParamDefField:
         Base class version here just parses the existing ParamDef default.
         """
         # TODO: Use a 'get_game()' module lookup (from `ParamDef`) and fall back to this.
+        if not self.default:
+            return self.default
         if self.bit_count == 1 and self.internal_type != "dummy8":
             return bool(self.default)
         elif self.internal_type not in {"f32", "f64"}:

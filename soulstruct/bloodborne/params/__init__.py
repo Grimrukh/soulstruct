@@ -1,1 +1,1 @@
-from .core import GameParamBND
+from .gameparambnd import GameParamBND

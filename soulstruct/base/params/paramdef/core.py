@@ -119,6 +119,8 @@ class ParamDef(GameFile):
 
         kwargs = {}
         for child in root:
+            if child.tag == "ParamType":
+                continue  # already read
             if child.tag == "DataVersion":
                 kwargs["data_version"] = int(child.text)
             elif child.tag == "BigEndian":
