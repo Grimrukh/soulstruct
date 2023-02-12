@@ -14,175 +14,175 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CHARACTER_INIT_PARAM(ParamRow):
     BaseRecMP: float = ParamField(
-        float, "baseRec_mp", default=0.0, hide=True,
+        float, "baseRec_mp", default=0.0,
         tooltip="Unknown.",
     )
     BaseRecSP: float = ParamField(
-        float, "baseRec_sp", default=0.0, hide=True,
+        float, "baseRec_sp", default=0.0,
         tooltip="Unknown.",
     )
     RedFallDamage: float = ParamField(
-        float, "red_Falldam", default=0.0, hide=True,
+        float, "red_Falldam", default=0.0,
         tooltip="Unknown.",
     )
     SoulCount: int = ParamField(
         int, "soul", default=0,
         tooltip="Starting soul count of character.",
     )
-    RightHandWeapon1: WeaponParam = ParamField(
+    RightHandWeapon1: int = ParamField(
         int, "equip_Wep_Right", default=-1,
         tooltip="First (default) weapon/shield equipped in right hand.",
     )
-    RightHandWeapon2: WeaponParam = ParamField(
+    RightHandWeapon2: int = ParamField(
         int, "equip_Subwep_Right", default=-1,
         tooltip="Second weapon/shield equipped in right hand.",
     )
-    LeftHandWeapon1: WeaponParam = ParamField(
+    LeftHandWeapon1: int = ParamField(
         int, "equip_Wep_Left", default=-1,
         tooltip="First (default) weapon/shield equipped in left hand.",
     )
-    LeftHandWeapon2: WeaponParam = ParamField(
+    LeftHandWeapon2: int = ParamField(
         int, "equip_Subwep_Left", default=-1,
         tooltip="Second weapon/shield equipped in left hand.",
     )
-    HeadArmor: ArmorParam = ParamField(
+    HeadArmor: int = ParamField(
         int, "equip_Helm", default=-1,
         tooltip="Armor equipped to head.",
     )
-    BodyArmor: ArmorParam = ParamField(
+    BodyArmor: int = ParamField(
         int, "equip_Armer", default=-1,
         tooltip="Armor equipped to body.",
     )
-    HandsArmor: ArmorParam = ParamField(
+    HandsArmor: int = ParamField(
         int, "equip_Gaunt", default=-1,
         tooltip="Armor equipped to hands.",
     )
-    LegsArmor: ArmorParam = ParamField(
+    LegsArmor: int = ParamField(
         int, "equip_Leg", default=-1,
         tooltip="Armor equipped to legs.",
     )
-    ArrowSlot1: WeaponParam = ParamField(
+    ArrowSlot1: int = ParamField(
         int, "equip_Arrow", default=-1,
         tooltip="Arrows equipped in slot 1.",
     )
-    BoltSlot1: WeaponParam = ParamField(
+    BoltSlot1: int = ParamField(
         int, "equip_Bolt", default=-1,
         tooltip="Bolts equipped in slot 1.",
     )
-    ArrowSlot2: WeaponParam = ParamField(
+    ArrowSlot2: int = ParamField(
         int, "equip_SubArrow", default=-1,
         tooltip="Arrows equipped in slot 2.",
     )
-    BoltSlot2: WeaponParam = ParamField(
+    BoltSlot2: int = ParamField(
         int, "equip_SubBolt", default=-1,
         tooltip="Bolts equipped in slot 2.",
     )
-    RingSlot1: AccessoryParam = ParamField(
+    RingSlot1: int = ParamField(
         int, "equip_Accessory01", default=-1,
         tooltip="First ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
-    RingSlot2: AccessoryParam = ParamField(
+    RingSlot2: int = ParamField(
         int, "equip_Accessory02", default=-1,
         tooltip="Second ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
-    RingSlot3: AccessoryParam = ParamField(
+    RingSlot3: int = ParamField(
         int, "equip_Accessory03", default=-1,
         tooltip="Third ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
-    RingSlot4: AccessoryParam = ParamField(
+    RingSlot4: int = ParamField(
         int, "equip_Accessory04", default=-1,
         tooltip="Fourth ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
-    RingSlot5: AccessoryParam = ParamField(
+    RingSlot5: int = ParamField(
         int, "equip_Accessory05", default=-1,
         tooltip="Fifth ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     SkillSlot1: int = ParamField(
-        int, "equip_Skill_01", default=-1, hide=True,
+        int, "equip_Skill_01", default=-1,
         tooltip="TODO",
     )
     SkillSlot2: int = ParamField(
-        int, "equip_Skill_02", default=-1, hide=True,
+        int, "equip_Skill_02", default=-1,
         tooltip="TODO",
     )
     SkillSlot3: int = ParamField(
-        int, "equip_Skill_03", default=-1, hide=True,
+        int, "equip_Skill_03", default=-1,
         tooltip="TODO",
     )
-    SpellSlot1: SpellParam = ParamField(
+    SpellSlot1: int = ParamField(
         int, "equip_Spell_01", default=-1,
         tooltip="First spell equipped.",
     )
-    SpellSlot2: SpellParam = ParamField(
+    SpellSlot2: int = ParamField(
         int, "equip_Spell_02", default=-1,
         tooltip="Second spell equipped.",
     )
-    SpellSlot3: SpellParam = ParamField(
+    SpellSlot3: int = ParamField(
         int, "equip_Spell_03", default=-1,
         tooltip="Third spell equipped.",
     )
-    SpellSlot4: SpellParam = ParamField(
+    SpellSlot4: int = ParamField(
         int, "equip_Spell_04", default=-1,
         tooltip="Fourth spell equipped.",
     )
-    SpellSlot5: SpellParam = ParamField(
+    SpellSlot5: int = ParamField(
         int, "equip_Spell_05", default=-1,
         tooltip="Fifth spell equipped.",
     )
-    SpellSlot6: SpellParam = ParamField(
+    SpellSlot6: int = ParamField(
         int, "equip_Spell_06", default=-1,
         tooltip="Sixth spell equipped.",
     )
-    SpellSlot7: SpellParam = ParamField(
+    SpellSlot7: int = ParamField(
         int, "equip_Spell_07", default=-1,
         tooltip="Seventh spell equipped.",
     )
-    GoodSlot1: GoodParam = ParamField(
+    GoodSlot1: int = ParamField(
         int, "item_01", default=-1,
         tooltip="Good (item) equipped in slot 1.",
     )
-    GoodSlot2: GoodParam = ParamField(
+    GoodSlot2: int = ParamField(
         int, "item_02", default=-1,
         tooltip="Good (item) equipped in slot 2.",
     )
-    GoodSlot3: GoodParam = ParamField(
+    GoodSlot3: int = ParamField(
         int, "item_03", default=-1,
         tooltip="Good (item) equipped in slot 3.",
     )
-    GoodSlot4: GoodParam = ParamField(
+    GoodSlot4: int = ParamField(
         int, "item_04", default=-1,
         tooltip="Good (item) equipped in slot 4.",
     )
-    GoodSlot5: GoodParam = ParamField(
+    GoodSlot5: int = ParamField(
         int, "item_05", default=-1,
         tooltip="Good (item) equipped in slot 5.",
     )
-    GoodSlot6: GoodParam = ParamField(
+    GoodSlot6: int = ParamField(
         int, "item_06", default=-1,
         tooltip="Good (item) equipped in slot 6.",
     )
-    GoodSlot7: GoodParam = ParamField(
+    GoodSlot7: int = ParamField(
         int, "item_07", default=-1,
         tooltip="Good (item) equipped in slot 7.",
     )
-    GoodSlot8: GoodParam = ParamField(
+    GoodSlot8: int = ParamField(
         int, "item_08", default=-1,
         tooltip="Good (item) equipped in slot 8.",
     )
-    GoodSlot9: GoodParam = ParamField(
+    GoodSlot9: int = ParamField(
         int, "item_09", default=-1,
         tooltip="Good (item) equipped in slot 9.",
     )
-    GoodSlot10: GoodParam = ParamField(
+    GoodSlot10: int = ParamField(
         int, "item_10", default=-1,
         tooltip="Good (item) equipped in slot 10.",
     )
-    FaceID: FaceParam = ParamField(
-        int, "npcPlayerFaceGenId", default=0,
+    FaceID: int = ParamField(
+        int, "npcPlayerFaceGenId", game_type=FaceGenParam, default=0,
         tooltip="Face parameter ID (NPCs only).",
     )
-    DefaultAI: AIParam = ParamField(
-        int, "npcPlayerThinkId", default=0,
+    DefaultAI: int = ParamField(
+        int, "npcPlayerThinkId", game_type=AIParam, default=0,
         tooltip="Default AI (NPCs only).",
     )
     BaseMaxHP: int = ParamField(
@@ -190,7 +190,7 @@ class CHARACTER_INIT_PARAM(ParamRow):
         tooltip="Base amount of maximum HP (excluding effects of vitality).",
     )
     BaseMaxMP: int = ParamField(
-        ushort, "baseMp", default=0, hide=True,
+        ushort, "baseMp", default=0,
         tooltip="Base amount of maximum MP (unused in Dark Souls).",
     )
     BaseMaxStamina: int = ParamField(
@@ -214,15 +214,15 @@ class CHARACTER_INIT_PARAM(ParamRow):
         tooltip="Count of bolts equipped in slot 2.",
     )
     QWC_SB: int = ParamField(
-        short, "QWC_sb", default=0, hide=True,
+        short, "QWC_sb", default=0,
         tooltip="Unknown. Likely to be unused world tendency effect.",
     )
     QWC_MW: int = ParamField(
-        short, "QWC_mw", default=0, hide=True,
+        short, "QWC_mw", default=0,
         tooltip="Unknown. Likely to be unused world tendency effect.",
     )
     QWC_CD: int = ParamField(
-        short, "QWC_cd", default=0, hide=True,
+        short, "QWC_cd", default=0,
         tooltip="Unknown. Likely to be unused world tendency effect.",
     )
     Level: int = ParamField(
@@ -357,20 +357,20 @@ class CHARACTER_INIT_PARAM(ParamRow):
         sbyte, "gestureId6", default=-1,
         tooltip="Seventh equipped gesture.",
     )
-    CharacterType: NPC_TYPE = ParamField(
-        byte, "npcPlayerType", default=0,
+    CharacterType: int = ParamField(
+        byte, "npcPlayerType", NPC_TYPE, default=0,
         tooltip="Type of human NPC.",
     )
-    DrawType: NPC_DRAW_TYPE = ParamField(
-        byte, "npcPlayerDrawType", default=0,
+    DrawType: int = ParamField(
+        byte, "npcPlayerDrawType", NPC_DRAW_TYPE, default=0,
         tooltip="Draw type of human NPC.",
     )
-    Gender: CHARACTER_INIT_SEX = ParamField(
-        byte, "npcPlayerSex", default=0,
+    Gender: int = ParamField(
+        byte, "npcPlayerSex", CHARACTER_INIT_SEX, default=0,
         tooltip="Character gender.",
     )
-    Covenant: CHRINIT_VOW_TYPE = ParamField(
-        byte, "vowType:4", bit_count=4, default=0,
+    Covenant: int = ParamField(
+        byte, "vowType:4", CHRINIT_VOW_TYPE, bit_count=4, default=0,
         tooltip="Character covenant.",
     )
     _BitPad0: int = ParamBitPad(byte, "pad:4", bit_count=4)

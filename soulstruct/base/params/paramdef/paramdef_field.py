@@ -59,7 +59,7 @@ class ParamDefField:
 
     internal_type: str  # format string, e.g. 'f32' or 'dummy8'
     display_name: str
-    display_type: tp.Type[field_types.base_type]
+    display_type: tp.Type[field_types.base_type]  # e.g. `ITEMLOT_ITEMCATEGORY` or just same as `internal_type`
     display_format: str  # C++ string format template, e.g. '%d'
 
     # These are always floats, even for integer fields, except `default` is "" for string fields.
@@ -337,7 +337,7 @@ class ParamDefField:
 
     def __repr__(self):
         return (
-            f"{self.name} ({self.display_name}) | {self.internal_type} ({self.display_type}) | "
+            f"{self.name} ({self.display_name}) | {self.internal_type} ({self.display_type.__name__}) | "
             f"size = {self.size} | min/max/increment = {self.minimum}, {self.maximum}, {self.increment} | "
             f"default = {self.default} | {self.description}"
         )

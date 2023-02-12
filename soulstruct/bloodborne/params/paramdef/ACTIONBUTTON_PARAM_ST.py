@@ -13,79 +13,79 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ACTIONBUTTON_PARAM_ST(ParamRow):
-    RegionType: ACTION_BUTTON_REGION_TYPE = ParamField(
-        byte, "regionType", default=0,
-        tooltip="TODO",
+    RegionType: int = ParamField(
+        byte, "regionType", ACTION_BUTTON_REGION_TYPE, default=0,
+        tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding1[3]")
     DummyPoly1: int = ParamField(
         int, "dummyPoly1", default=-1,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     DummyPoly2: int = ParamField(
         int, "dummyPoly2", default=-1,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Radius: float = ParamField(
         float, "radius", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Angle: int = ParamField(
         int, "angle", default=180,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Depth: float = ParamField(
         float, "depth", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Width: float = ParamField(
         float, "width", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Height: float = ParamField(
         float, "height", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
-    BottomHeightOffset: float = ParamField(
+    BaseHeightOffset: float = ParamField(
         float, "baseHeightOffset", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
-    AngleDifferenceCheckType: int = ParamField(
-        byte, "angleCheckType", default=0,
-        tooltip="TODO",
+    AngleCheckType: int = ParamField(
+        byte, "angleCheckType", ACTION_BUTTON_ANGLE_CHECK_TYPE, default=0,
+        tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(3, "padding2[3]")
-    AllowableAngleDifference: int = ParamField(
+    AllowAngle: int = ParamField(
         int, "allowAngle", default=180,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
-    TextboxType: int = ParamField(
-        byte, "textBoxType", default=0,
-        tooltip="TODO",
+    TextBoxType: int = ParamField(
+        byte, "textBoxType", ACTION_BUTTON_TEXT_BOX_TYPE, default=0,
+        tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(3, "padding3[3]")
-    TextID: int = ParamField(
+    TextId: int = ParamField(
         int, "textId", default=-1,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     InvalidFlag: int = ParamField(
         int, "invalidFlag", default=-1,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     GrayoutFlag: int = ParamField(
         int, "grayoutFlag", default=-1,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
     Priority: int = ParamField(
         int, "priority", default=0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
-    ExecutionInvalidTime: float = ParamField(
+    ExecInvalidTime: float = ParamField(
         float, "execInvalidTime", default=0.0,
-        tooltip="TODO",
+        tooltip="TOOLTIP-TODO",
     )
-    ExecutionButtonCircle: int = ParamField(
-        byte, "execButtonCircle", default=0,
-        tooltip="TODO",
+    ExecButtonCircle: int = ParamField(
+        byte, "execButtonCircle", ACTION_BUTTON_EXEC_CIRCLE, default=0,
+        tooltip="TOOLTIP-TODO",
     )
     _Pad3: bytes = ParamPad(3, "padding4[3]")

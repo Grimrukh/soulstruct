@@ -1,3 +1,9 @@
+"""Bloodborne `GameParamBND`.
+
+IMPORTANT: Param type `FACE_PARAM_ST` from older games has been renamed `FACE_GEN_PARAM_ST`, and there is a brand new
+`FACE_PARAM_ST` type with different fields.
+"""
+
 from __future__ import annotations
 
 __all__ = ["GameParamBND"]
@@ -41,7 +47,7 @@ class GameParamBND(_BaseGameParamBND):
         ("EquipParamAccessory", "Rings"),
         ("EquipParamGoods", "Goods"),
         ("EquipParamWeapon", "Weapons"),
-        ("FaceGenParam", "FaceGenerators"),  # NOTE: In older games, this had nickname `Faces`.
+        ("FaceGenParam", "FaceGenerators"),
         ("FaceParam", "Faces"),
         ("FaceRangeParam", "FaceRanges"),
         ("GameAreaParam", "Bosses"),
@@ -111,39 +117,39 @@ class GameParamBND(_BaseGameParamBND):
         "Movement": MovementParam,
         "Cameras": CameraParam,
         "Terrains": TerrainParam,
-        "Faces": FaceParam,  # TODO: different for BB? FaceGenerators?
+        "FaceGenerators": FaceGenParam,
         "Dialogue": DialogueParam,
         "MenuColors": MenuColorsParam,
         "SpecialEffectVisuals": SpecialEffectVisualParam,
         "GrowthCurves": GrowthCurveParam,
 
-        # TODO: Create param types for these new BB params. Some are currently disabled.
-        "ActionButtons": None,
-        "AISounds": None,
-        "CharacterCreationMenuItems": None,
-        "CharacterCreationMenuTop": None,
-        "Decals": None,
-        "DungeonFeatures": None,
-        "DungeonSubFeatureLots": None,
-        "FaceGenerators": None,
-        "FaceRanges": None,
-        "GameMaps": None,
-        "GemCategories": None,
-        "GemDropDoping": None,
-        "GemDropModifications": None,
-        "GemEffects": None,
-        "GemsAndRunes": None,
-        "RitualChalices": None,
-        "ItemLotsWithScaling": None,
-        "MenuPropertyLayouts": None,
-        "MenuPropertySpecs": None,
-        "MenuValueTableSpecs": None,
-        "ArmorGenerators": None,
-        "ResidentVFX": None,
-        "ReturnPoints": None,
-        "RitualMaterials": None,
-        "WeaponGenerators": None,
-        "Wind": None,
+        # NEW IN BLOODBORNE
+        "AISounds": AISoundParam,
+        "ActionButtonPrompts": ActionButtonParam,
+        "Decals": DecalParam,
+        "Faces": FaceParam,
+        "CharacterCreationMenuItems": CharacterCreationMenuItemParam,
+        "CharacterCreationMenuTop": CharacterCreationMenuTopParam,
+        "DungeonFeatures": DungeonFeatureParam,
+        "DungeonSubFeatureLots": DungeonSubFeatureLotParam,
+        "FaceRanges": FaceRangeParam,
+        "GameMaps": GameMapParam,
+        "GemCategories": GemCategoryParam,
+        "GemDropDoping": GemDropDopingParam,
+        "GemDropModifications": GemDropModificationParam,
+        "GemEffects": GemEffectParam,
+        "GemsAndRunes": GemsAndRunesParam,
+        "RitualChalices": RitualChaliceParam,
+        "ItemLotsWithScaling": ItemLotWithScalingParam,
+        "MenuPropertyLayouts": MenuPropertyLayoutParam,
+        "MenuPropertySpecs": MenuPropertySpecParam,
+        "MenuValueTableSpecs": MenuValueTableSpecParam,
+        "ArmorGenerators": ArmorGeneratorParam,
+        "ResidentVFX": ResidentVFXParam,
+        "ReturnPoints": ReturnPointParam,
+        "RitualMaterials": RitualMaterialsParam,
+        "WeaponGenerators": WeaponGeneratorParam,
+        "Wind": WindParam,
     }
 
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = GET_BUNDLED_PARAMDEFBND
@@ -154,11 +160,11 @@ class GameParamBND(_BaseGameParamBND):
 
     # TODO: Some of these may be Dark Souls junk (like Rings).
 
-    ActionButtons = param_property("ActionButtonParam")  # type: Param
+    ActionButtons = param_property("ActionButtonParam")  # type: Param[ACTIONBUTTON_PARAM_ST]
     AI = param_property("NpcThinkParam")  # type: Param[NPC_THINK_PARAM_ST]
-    AISounds = param_property("AISounds")  # type: Param
+    AISounds = param_property("AISounds")  # type: Param[AI_SOUND_PARAM_ST]
     Armor = param_property("EquipParamProtector")  # type: Param[EQUIP_PARAM_PROTECTOR_ST]
-    ArmorGenerators = param_property("ArmorGenerators")  # type: Param
+    ArmorGenerators = param_property("ArmorGenerators")  # type: Param[PROTECTOR_GEN_PARAM_ST]
     ArmorUpgrades = param_property("ReinforceParamProtector")  # type: Param[REINFORCE_PARAM_PROTECTOR_ST]
     Bosses = param_property("GameAreaParam")  # type: Param[GAME_AREA_PARAM_ST]
     Bullets = param_property("Bullet")  # type: Param[BULLET_PARAM_ST]
@@ -184,7 +190,7 @@ class GameParamBND(_BaseGameParamBND):
     GrowthCurves = param_property("CalcCorrectGraph")  # type: Param[CACL_CORRECT_GRAPH_ST]
     ItemLots = param_property("ItemLotParam")  # type: Param[ITEMLOT_PARAM_ST]
     ItemLotsWithScaling = param_property("ItemLotsWithScaling")  # type: Param[ITEMLOT_LVDEP_PARAM_ST]
-    Knockbacks = param_property("KnockBackParam")  # type: Param  # TODO: type
+    Knockbacks = param_property("KnockBackParam")  # type: Param[KNOCKBACK_PARAM_ST]
     MenuColors = param_property("MenuColorTableParam")  # type: Param[MENU_PARAM_COLOR_TABLE_ST]
     MenuPropertyLayouts = param_property("MenuPropertyLayouts")  # type: Param[MENUPROPERTY_LAYOUT]
     MenuPropertySpecs = param_property("MenuPropertySpecs")  # type: Param[MENUPROPERTY_SPEC]
@@ -197,7 +203,7 @@ class GameParamBND(_BaseGameParamBND):
     Players = param_property("CharaInitParam")  # type: Param[CHARACTER_INIT_PARAM]
     PlayerAttacks = param_property("AtkParam_Pc")  # type: Param[ATK_PARAM_ST]
     PlayerBehaviors = param_property("BehaviorParam_PC")  # type: Param[BEHAVIOR_PARAM_ST]
-    Ragdolls = param_property("RagdollParam")  # type: Param  # TODO: type
+    Ragdolls = param_property("RagdollParam")  # type: Param[RAGDOLL_PARAM_ST]
     ResidentVFX = param_property("ResidentVFX")  # type: Param[RESIDENT_FX_PARAM_ST]  # TODO: possibly `PlayerVFX`
     ReturnPoints = param_property("ReturnPoints")  # type: Param[RETURN_POINT_PARAM_ST]  # TODO: ?
     Rings = param_property("EquipParamAccessory")  # type: Param[EQUIP_PARAM_ACCESSORY_ST]

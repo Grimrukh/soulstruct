@@ -35,7 +35,7 @@ class GameParamBND(_BaseGameParamBND):
         ("EquipParamAccessory", "Rings"),
         ("EquipParamGoods", "Goods"),
         ("EquipParamWeapon", "Weapons"),
-        ("FaceGenParam", "Faces"),
+        ("FaceGenParam", "FaceGenerators"),
         ("GameAreaParam", "Bosses"),
         ("HitMtrlParam", "Terrains"),
         ("ItemLotParam", "ItemLots"),
@@ -70,11 +70,11 @@ class GameParamBND(_BaseGameParamBND):
     Cameras = param_property("LockCamParam")  # type: Param[LOCK_CAM_PARAM_ST]
     Characters = param_property("NpcParam")  # type: Param[NPC_PARAM_ST]
     Dialogue = param_property("TalkParam")  # type: Param[TALK_PARAM_ST]
-    Faces = param_property("FaceGenParam")  # type: Param[FACE_PARAM_ST]
+    FaceGenerators = param_property("FaceGenParam")  # type: Param[FACE_PARAM_ST]
     Goods = param_property("EquipParamGoods")  # type: Param[EQUIP_PARAM_GOODS_ST]
     GrowthCurves = param_property("CalcCorrectGraph")  # type: Param[CACL_CORRECT_GRAPH_ST]
     ItemLots = param_property("ItemLotParam")  # type: Param[ITEMLOT_PARAM_ST]
-    Knockbacks = param_property("KnockBackParam")  # type: Param  # TODO: type
+    Knockbacks = param_property("KnockBackParam")  # type: Param[KNOCKBACK_PARAM_ST]
     NonPlayerAttacks = param_property("AtkParam_Npc")  # type: Param[ATK_PARAM_ST]
     NonPlayerBehaviors = param_property("BehaviorParam")  # type: Param[BEHAVIOR_PARAM_ST]
     MenuColors = param_property("MenuColorTableParam")  # type: Param[MENU_PARAM_COLOR_TABLE_ST]
@@ -84,7 +84,7 @@ class GameParamBND(_BaseGameParamBND):
     Players = param_property("CharaInitParam")  # type: Param[CHARACTER_INIT_PARAM]
     PlayerAttacks = param_property("AtkParam_Pc")  # type: Param[ATK_PARAM_ST]
     PlayerBehaviors = param_property("BehaviorParam_PC")  # type: Param[BEHAVIOR_PARAM_ST]
-    Ragdolls = param_property("RagdollParam")  # type: Param  # TODO: type
+    Ragdolls = param_property("RagdollParam")  # type: Param[RAGDOLL_PARAM_ST]
     Rings = param_property("EquipParamAccessory")  # type: Param[EQUIP_PARAM_ACCESSORY_ST]
     Shops = param_property("ShopLineupParam")  # type: Param[SHOP_LINEUP_PARAM]
     SpecialEffects = param_property("SpEffectParam")  # type: Param[SP_EFFECT_PARAM_ST]
@@ -124,7 +124,7 @@ class GameParamBND(_BaseGameParamBND):
         "Movement": MovementParam,
         "Cameras": CameraParam,
         "Terrains": TerrainParam,
-        "Faces": FaceParam,
+        "Faces": FaceGenParam,
         "Dialogue": DialogueParam,
         "MenuColors": MenuColorsParam,
         "SpecialEffectVisuals": SpecialEffectVisualParam,

@@ -5,8 +5,8 @@ __all__ = ["TONE_CORRECT_BANK"]
 from dataclasses import dataclass
 
 from soulstruct.base.params.utils import *
-from soulstruct.darksouls1ptde.game_types import *
-from soulstruct.darksouls1ptde.params.enums import *
+from soulstruct.darksouls1r.game_types import *
+from soulstruct.darksouls1r.params.enums import *
 from soulstruct.utilities.binary import *
 
 
@@ -47,5 +47,5 @@ class TONE_CORRECT_BANK(ParamRow):
     )
     SFXMultiplier: float = ParamField(
         float, "sfxMultiplier", default=1.0,
-        tooltip="Visual effect multiplier (added in DSR).",
+        tooltip="Visual effect multiplier. (Added in DSR)",
     )

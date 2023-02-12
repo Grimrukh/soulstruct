@@ -190,23 +190,23 @@ class LIGHT_BANK(ParamRow):
         tooltip="Alpha channel (0-255) of specular ambient light of surfaces.",
     )
     DiffuseLightTextureID: int = ParamField(
-        short, "envDif", default=0, hide=True,
+        short, "envDif", default=0,
         tooltip="Changing this has drastic effects on the diffuse ambient light.",
     )
     SpecularLightTextureID0: int = ParamField(
-        short, "envSpc_0", default=0, hide=True,
+        short, "envSpc_0", default=0,
         tooltip="Changing this has drastic effects on the specular ambient light.",
     )
     SpecularLightTextureID1: int = ParamField(
-        short, "envSpc_1", default=0, hide=True,
+        short, "envSpc_1", default=0,
         tooltip="Changing this has drastic effects on the specular ambient light.",
     )
     SpecularLightTextureID2: int = ParamField(
-        short, "envSpc_2", default=0, hide=True,
+        short, "envSpc_2", default=0,
         tooltip="Changing this has drastic effects on the specular ambient light.",
     )
     SpecularLightTextureID3: int = ParamField(
-        short, "envSpc_3", default=0, hide=True,
+        short, "envSpc_3", default=0,
         tooltip="Changing this has drastic effects on the specular ambient light.",
     )
     _Pad0: bytes = ParamPad(2, "pad[2]")

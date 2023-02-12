@@ -4,8 +4,8 @@ __all__ = [
     "BaseParam",
     "BaseGameParam",
     "BaseItemParam",
-    "BaseDrawParam",
 
+    # OLD TYPES
     "AIParam",
     "ArmorParam",
     "ArmorUpgradeParam",
@@ -16,7 +16,7 @@ __all__ = [
     "CameraParam",
     "CharacterParam",
     "DialogueParam",
-    "FaceParam",
+    "FaceGenParam",
     "GoodParam",
     "GrowthCurveParam",
     "ItemLotParam",
@@ -37,16 +37,33 @@ __all__ = [
     "WeaponParam",
     "WeaponUpgradeParam",
 
-    "FogParam",
-    "BakedLightParam",
-    "ScatteredLightParam",
-    "PointLightParam",
-    "LensFlareParam",
-    "LensFlareSourceParam",
-    "DepthOfFieldParam",
-    "ToneMappingParam",
-    "ToneCorrectionParam",
-    "ShadowParam",
+    # NEW IN BLOODBORNE
+    "ActionButtonParam",
+    "AISoundParam",
+    "CharacterCreationMenuItemParam",
+    "CharacterCreationMenuTopParam",
+    "DecalParam",
+    "DungeonFeatureParam",
+    "DungeonSubFeatureLotParam",
+    "FaceParam",
+    "FaceRangeParam",
+    "GameMapParam",
+    "GemCategoryParam",
+    "GemDropDopingParam",
+    "GemDropModificationParam",
+    "GemEffectParam",
+    "GemsAndRunesParam",
+    "RitualChaliceParam",
+    "ItemLotWithScalingParam",
+    "MenuPropertyLayoutParam",
+    "MenuPropertySpecParam",
+    "MenuValueTableSpecParam",
+    "ArmorGeneratorParam",
+    "ResidentVFXParam",
+    "ReturnPointParam",
+    "RitualMaterialsParam",
+    "WeaponGeneratorParam",
+    "WindParam",
 
     "AITyping",
     "ArmorTyping",
@@ -56,7 +73,7 @@ __all__ = [
     "BulletTyping",
     "CameraTyping",
     "DialogueTyping",
-    "FaceTyping",
+    "FaceGenTyping",
     "GoodTyping",
     "ItemTyping",
     "ItemLotTyping",
@@ -68,6 +85,33 @@ __all__ = [
     "UpgradeMaterialTyping",
     "WeaponTyping",
     "WeaponUpgradeTyping",
+
+    "ActionButtonTyping",
+    "AISoundTyping",
+    "CharacterCreationMenuItemTyping",
+    "CharacterCreationMenuTopTyping",
+    "DecalTyping",
+    "DungeonFeatureTyping",
+    "DungeonSubFeatureLotTyping",
+    "FaceTyping",
+    "FaceRangeTyping",
+    "GameMapTyping",
+    "GemCategoryTyping",
+    "GemDropDopingTyping",
+    "GemDropModificationTyping",
+    "GemEffectTyping",
+    "GemsAndRunesTyping",
+    "RitualChaliceTyping",
+    "ItemLotWithScalingTyping",
+    "MenuPropertyLayoutTyping",
+    "MenuPropertySpecTyping",
+    "MenuValueTableSpecTyping",
+    "ArmorGeneratorTyping",
+    "ResidentVFXTyping",
+    "ReturnPointTyping",
+    "RitualMaterialsTyping",
+    "WeaponGeneratorTyping",
+    "WindTyping",
 ]
 
 import typing as tp
@@ -106,19 +150,28 @@ class BaseItemParam(BaseGameParam):
         raise NotImplementedError
 
 
-class BaseDrawParam(BaseParam):
-    """Base class for DrawParam types."""
+# region Game Params
+
+
+class ActionButtonParam(BaseGameParam):
+    """Entry collecting information about a button prompt."""
     @classmethod
     def get_param_nickname(cls):
-        raise NotImplementedError
+        return "ActionButtonPrompts"
 
 
-# region Game Params
 class AIParam(BaseGameParam):
     """AI entry."""
     @classmethod
     def get_param_nickname(cls):
         return "AI"
+
+
+class AISoundParam(BaseGameParam):
+    """AI 'sound' entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "AISounds"
 
 
 class ArmorParam(BaseItemParam):
@@ -183,6 +236,13 @@ class CharacterParam(BaseGameParam):
         return "Characters"
 
 
+class DecalParam(BaseGameParam):
+    """Decal (e.g. blood spatter on player) entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Decals"
+
+
 class DialogueParam(BaseGameParam):
     """Dialogue entry."""
     @classmethod
@@ -195,6 +255,13 @@ class FaceParam(BaseGameParam):
     @classmethod
     def get_param_nickname(cls):
         return "Faces"
+
+
+class FaceGenParam(BaseGameParam):
+    """Face generator entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "FaceGenerators"
 
 
 class GoodParam(BaseItemParam):
@@ -346,71 +413,167 @@ class WeaponUpgradeParam(BaseGameParam):
     @classmethod
     def get_param_nickname(cls):
         return "WeaponUpgrades"
+
+
+# TODO: Sort these new BB params. alphabetically into the above.
+
+
+class CharacterCreationMenuItemParam(BaseGameParam):
+    """CharacterCreationMenuItems entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "CharacterCreationMenuItems"
+
+
+class CharacterCreationMenuTopParam(BaseGameParam):
+    """CharacterCreationMenuTop entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "CharacterCreationMenuTop"
+
+
+class DungeonFeatureParam(BaseGameParam):
+    """DungeonFeatures entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "DungeonFeatures"
+
+
+class DungeonSubFeatureLotParam(BaseGameParam):
+    """DungeonSubFeatureLots entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "DungeonSubFeatureLots"
+
+
+class FaceRangeParam(BaseGameParam):
+    """FaceRanges entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "FaceRanges"
+
+
+class GameMapParam(BaseGameParam):
+    """GameMaps entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GameMaps"
+
+
+class GemCategoryParam(BaseGameParam):
+    """GemCategories entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GemCategories"
+
+
+class GemDropDopingParam(BaseGameParam):
+    """GemDropDoping entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GemDropDoping",
+
+
+class GemDropModificationParam(BaseGameParam):
+    """GemDropModifications entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GemDropModifications"
+
+
+class GemEffectParam(BaseGameParam):
+    """GemEffects entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GemEffects"
+
+
+class GemsAndRunesParam(BaseGameParam):
+    """GemsAndRunes entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "GemsAndRunes"
+
+
+class RitualChaliceParam(BaseGameParam):
+    """RitualChalices entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "RitualChalices"
+
+
+class ItemLotWithScalingParam(BaseGameParam):
+    """ItemLotsWithScaling entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "ItemLotsWithScaling"
+
+
+class MenuPropertyLayoutParam(BaseGameParam):
+    """MenuPropertyLayouts entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "MenuPropertyLayouts"
+
+
+class MenuPropertySpecParam(BaseGameParam):
+    """MenuPropertySpecs entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "MenuPropertySpecs"
+
+
+class MenuValueTableSpecParam(BaseGameParam):
+    """MenuValueTableSpecs entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "MenuValueTableSpecs"
+
+
+class ArmorGeneratorParam(BaseGameParam):
+    """ArmorGenerators entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "ArmorGenerators"
+
+
+class ResidentVFXParam(BaseGameParam):
+    """ResidentVFX entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "ResidentVFX"
+
+
+class ReturnPointParam(BaseGameParam):
+    """ReturnPoints entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "ReturnPoints"
+
+
+class RitualMaterialsParam(BaseGameParam):
+    """RitualMaterials entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "RitualMaterials"
+
+
+class WeaponGeneratorParam(BaseGameParam):
+    """WeaponGenerators entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "WeaponGenerators"
+
+
+class WindParam(BaseGameParam):
+    """Wind entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Wind",
 # endregion
 
 
-# region Draw Params
-class FogParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "Fog"
-
-
-class BakedLightParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "BakedLight"
-
-
-class ScatteredLightParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "ScatteredLight"
-
-
-class PointLightParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "PointLights"
-
-
-class LensFlareParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "LensFlares"
-
-
-class LensFlareSourceParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "LensFlareSources"
-
-
-class DepthOfFieldParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "DepthOfField"
-
-
-class ToneMappingParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "ToneMapping"
-
-
-class ShadowParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "Shadows"
-
-
-class ToneCorrectionParam(BaseDrawParam):
-    @classmethod
-    def get_param_nickname(cls):
-        return "ToneCorrection"
-# endregion
-
-
+# OLD TYPES
 AITyping = tp.Union[AIParam, int]
 AttackTyping = tp.Union[AttackParam, int]
 BehaviorTyping = tp.Union[BehaviorParam, int]
@@ -422,7 +585,7 @@ ArmorTyping = tp.Union[ArmorParam, int]
 AccessoryTyping = tp.Union[AccessoryParam, int]
 GoodTyping = tp.Union[GoodParam, int]
 CameraTyping = tp.Union[CameraParam, int]
-FaceTyping = tp.Union[FaceParam, int]
+FaceGenTyping = tp.Union[FaceParam, int]
 ItemLotTyping = tp.Union[ItemLotParam, int]
 KnockbackTyping = tp.Union[KnockbackParam, int]
 SpecialEffectTyping = tp.Union[SpecialEffectParam, int]
@@ -431,3 +594,31 @@ TerrainTyping = tp.Union[TerrainParam, int]
 UpgradeMaterialTyping = tp.Union[UpgradeMaterialParam, int]
 WeaponUpgradeTyping = tp.Union[WeaponUpgradeParam, int]
 ArmorUpgradeTyping = tp.Union[ArmorUpgradeParam, int]
+
+# NEW IN BLOODBORNE
+ActionButtonTyping = tp.Union[ActionButtonParam, int]
+AISoundTyping = tp.Union[AISoundParam, int]
+CharacterCreationMenuItemTyping = tp.Union[CharacterCreationMenuItemParam, int]
+CharacterCreationMenuTopTyping = tp.Union[CharacterCreationMenuTopParam, int]
+DecalTyping = tp.Union[DecalParam, int]
+DungeonFeatureTyping = tp.Union[DungeonFeatureParam, int]
+DungeonSubFeatureLotTyping = tp.Union[DungeonSubFeatureLotParam, int]
+FaceTyping = tp.Union[FaceParam, int]
+FaceRangeTyping = tp.Union[FaceRangeParam, int]
+GameMapTyping = tp.Union[GameMapParam, int]
+GemCategoryTyping = tp.Union[GemCategoryParam, int]
+GemDropDopingTyping = tp.Union[GemDropDopingParam, int]
+GemDropModificationTyping = tp.Union[GemDropModificationParam, int]
+GemEffectTyping = tp.Union[GemEffectParam, int]
+GemsAndRunesTyping = tp.Union[GemsAndRunesParam, int]
+RitualChaliceTyping = tp.Union[RitualChaliceParam, int]
+ItemLotWithScalingTyping = tp.Union[ItemLotWithScalingParam, int]
+MenuPropertyLayoutTyping = tp.Union[MenuPropertyLayoutParam, int]
+MenuPropertySpecTyping = tp.Union[MenuPropertySpecParam, int]
+MenuValueTableSpecTyping = tp.Union[MenuValueTableSpecParam, int]
+ArmorGeneratorTyping = tp.Union[ArmorGeneratorParam, int]
+ResidentVFXTyping = tp.Union[ResidentVFXParam, int]
+ReturnPointTyping = tp.Union[ReturnPointParam, int]
+RitualMaterialsTyping = tp.Union[RitualMaterialsParam, int]
+WeaponGeneratorTyping = tp.Union[WeaponGeneratorParam, int]
+WindTyping = tp.Union[WindParam, int]

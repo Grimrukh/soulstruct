@@ -23,15 +23,15 @@ class OBJECT_PARAM_ST(ParamRow):
                 "damage.",
     )
     ExternalTextureID: int = ParamField(
-        short, "extRefTexId", default=-1, hide=True,
+        short, "extRefTexId", default=-1,
         tooltip="Internal description: 'mAA / mAA_????.tpf (-1: None) (AA: Area number)'.",
     )
-    MaterialID: TerrainParam = ParamField(
+    MaterialID: int = ParamField(
         short, "materialId", default=-1,
         tooltip="Treated the same as floor material. (Set to -1 to use default.)",
     )
     MaxDestructionAnimationID: int = ParamField(
-        byte, "animBreakIdMax", default=0, hide=True,
+        byte, "animBreakIdMax", default=0,
         tooltip="Upper limit of range of destruction animations, which seem to always start at 0.",
     )
     CollidesWithCamera: bool = ParamField(
@@ -85,12 +85,12 @@ class OBJECT_PARAM_ST(ParamRow):
         sbyte, "defaultLodParamId", default=-1,
         tooltip="Default LOD (level of default) parameter.",
     )
-    DestructionSoundEffect: SFXSound = ParamField(
-        int, "breakSfxId", default=-1,
+    DestructionSoundEffect: int = ParamField(
+        int, "breakSfxId", game_type=VisualEffect, default=-1,
         tooltip="Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)",
     )
-    NavmeshFlag: OBJECT_NAVIMESH_FLAG = ParamField(
-        byte, "navimeshFlag", default=0,
+    NavmeshFlag: int = ParamField(
+        byte, "navimeshFlag", OBJECT_NAVIMESH_FLAG, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad_2[1]")
@@ -99,7 +99,7 @@ class OBJECT_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     BreakAISoundID: int = ParamField(
-        int, "breakAiSoundId", default=0,
+        int, "breakAiSoundId", game_type=AISoundParam, default=0,
         tooltip="TODO",
     )
     _Pad1: bytes = ParamPad(8, "pad_3[8]")

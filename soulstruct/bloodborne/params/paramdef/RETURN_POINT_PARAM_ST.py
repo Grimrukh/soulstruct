@@ -26,11 +26,11 @@ class RETURN_POINT_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     ReturnAnimationID: int = ParamField(
-        int, "returnAnimId", default=-1,
+        int, "returnAnimId", game_type=Animation, default=-1,
         tooltip="TODO",
     )
-    IsRegistDeadReturn: RETURN_POINT_TYPE_YES_NO = ParamField(
-        byte, "isRegistDeadReturn", default=0,
+    IsRegistDeadReturn: int = ParamField(
+        byte, "isRegistDeadReturn", RETURN_POINT_TYPE_YES_NO, default=0,
         tooltip="TODO",
     )
     WarpChair: int = ParamField(

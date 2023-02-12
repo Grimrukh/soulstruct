@@ -38,24 +38,24 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="Unclear. This isn't hitbox duration, which is determined by the duration of the triggering TAE "
                 "event. It may be the duration of the 'hit' flag on the target. Always set to 0, 0.08. or 0.11.",
     )
-    SpecialEffectOnHit0: SpecialEffectParam = ParamField(
-        int, "spEffectId0", default=0,
+    SpecialEffectOnHit0: int = ParamField(
+        int, "spEffectId0", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target on hit (slot 0).",
     )
-    SpecialEffectOnHit1: SpecialEffectParam = ParamField(
-        int, "spEffectId1", default=0,
+    SpecialEffectOnHit1: int = ParamField(
+        int, "spEffectId1", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target on hit (slot 1).",
     )
-    SpecialEffectOnHit2: SpecialEffectParam = ParamField(
-        int, "spEffectId2", default=0,
+    SpecialEffectOnHit2: int = ParamField(
+        int, "spEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target on hit (slot 2).",
     )
-    SpecialEffectOnHit3: SpecialEffectParam = ParamField(
-        int, "spEffectId3", default=0,
+    SpecialEffectOnHit3: int = ParamField(
+        int, "spEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target on hit (slot 3).",
     )
-    SpecialEffectOnHit4: SpecialEffectParam = ParamField(
-        int, "spEffectId4", default=0,
+    SpecialEffectOnHit4: int = ParamField(
+        int, "spEffectId4", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target on hit (slot 4).",
     )
     Hitbox0StartModelPoint: int = ParamField(
@@ -99,7 +99,7 @@ class ATK_PARAM_ST(ParamRow):
                 "Hitbox3StartModelPoint.",
     )
     BlowOffCorrection: int = ParamField(
-        ushort, "blowingCorrection", default=0, hide=True,
+        ushort, "blowingCorrection", default=0,
         tooltip="Unknown. Never used.",
     )
     PhysicalAttackPowerPercentage: int = ParamField(
@@ -180,7 +180,7 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="Absolute poise attack power of attack.",
     )
     AttackPowerDuringThrows: int = ParamField(
-        ushort, "atkThrowEscape", default=0, hide=True,
+        ushort, "atkThrowEscape", default=0,
         tooltip="Absolute attack power of attack. Never used.",
     )
     ObjectDamage: int = ParamField(
@@ -188,7 +188,7 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="Amount of damage dealt to objects by this attack.",
     )
     GuardStaminaPercentage: int = ParamField(
-        short, "guardStaminaCutRate", default=0, hide=True,
+        short, "guardStaminaCutRate", default=0,
         tooltip="Correction applied to the stamina required to block this attack (I presume). Never used.",
     )
     GuardPercentage: int = ParamField(
@@ -201,136 +201,136 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="Throw to trigger when attack hits. For some reason, throws are triggered using this ID, which is a "
                 "field within each Throw table entry rather than the ID of the Throw table entry itself.",
     )
-    Hitbox0HitType: ATK_PARAM_HIT_TYPE = ParamField(
-        byte, "hit0_hitType", default=0,
+    Hitbox0HitType: int = ParamField(
+        byte, "hit0_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="Type of hit applied by hitbox (slot 0). Always zero, except for some whip attacks.",
     )
-    Hitbox1HitType: ATK_PARAM_HIT_TYPE = ParamField(
-        byte, "hit1_hitType", default=0,
+    Hitbox1HitType: int = ParamField(
+        byte, "hit1_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="Type of hit applied by hitbox (slot 1). Always zero, except for some whip attacks.",
     )
-    Hitbox2HitType: ATK_PARAM_HIT_TYPE = ParamField(
-        byte, "hit2_hitType", default=0,
+    Hitbox2HitType: int = ParamField(
+        byte, "hit2_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="Type of hit applied by hitbox (slot 2). Always zero, except for some whip attacks.",
     )
-    Hitbox3HitType: ATK_PARAM_HIT_TYPE = ParamField(
-        byte, "hit3_hitType", default=0,
+    Hitbox3HitType: int = ParamField(
+        byte, "hit3_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="Type of hit applied by hitbox (slot 3). Always zero, except for some whip attacks.",
     )
     Hitbox0Priority: int = ParamField(
-        byte, "hti0_Priority", default=0, hide=True,
+        byte, "hti0_Priority", default=0,
         tooltip="Priority of hitbox (slot 0). If two hits occur simultaneously, only the highest priority hit occurs. "
                 "Never used.",
     )
     Hitbox1Priority: int = ParamField(
-        byte, "hti1_Priority", default=0, hide=True,
+        byte, "hti1_Priority", default=0,
         tooltip="Priority of hitbox (slot 1). If two hits occur simultaneously, only the highest priority hit occurs. "
                 "Never used.",
     )
     Hitbox2Priority: int = ParamField(
-        byte, "hti2_Priority", default=0, hide=True,
+        byte, "hti2_Priority", default=0,
         tooltip="Priority of hitbox (slot 2). If two hits occur simultaneously, only the highest priority hit occurs. "
                 "Never used.",
     )
     Hitbox3Priority: int = ParamField(
-        byte, "hti3_Priority", default=0, hide=True,
+        byte, "hti3_Priority", default=0,
         tooltip="Priority of hitbox (slot 3). If two hits occur simultaneously, only the highest priority hit occurs. "
                 "Never used.",
     )
-    ImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
+    ImpactLevel: int = ParamField(
         byte, "dmgLevel", default=0,
         tooltip="Impact level of attack, which determines how the target reacts to it (e.g. knocked backward, "
                 "launched into the air, etc.). Certain special effects on the target (e.g. Iron Flesh) may re-map "
                 "this impact level to a different one.",
     )
-    MapHitType: ATK_PARAM_MAP_HIT = ParamField(
-        byte, "mapHitType", default=0,
+    MapHitType: int = ParamField(
+        byte, "mapHitType", ATK_PARAM_MAP_HIT, default=0,
         tooltip="Determines how this attack interacts with the map.",
     )
     IgnoreGuardPercentage: int = ParamField(
-        sbyte, "guardCutCancelRate", default=0, hide=True,
+        sbyte, "guardCutCancelRate", default=0,
         tooltip="Percentage (from -100 to 100) of target's current guard rate to ignore. A value of 100 will ignore "
                 "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, in "
                 "favor of the simple 'IgnoreGuard' boolean field.",
     )
-    AttackAttribute: ATKPARAM_ATKATTR_TYPE = ParamField(
-        byte, "atkAttribute", default=0,
+    AttackAttribute: int = ParamField(
+        byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=0,
         tooltip="Type of physical damage done by attack.",
     )
-    ElementAttribute: ATKPARAM_SPATTR_TYPE = ParamField(
-        byte, "spAttribute", default=0,
+    ElementAttribute: int = ParamField(
+        byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=0,
         tooltip="Type of elemental damage done by attack. (Attacks can apply any combination of damage types, but "
                 "this value will determine what visual effects the attack generates, etc.)",
     )
-    VisualSoundEffectsOnAttack: ATK_TYPE = ParamField(
-        byte, "atkType", default=0,
+    VisualSoundEffectsOnAttack: int = ParamField(
+        byte, "atkType", BEHAVIOR_ATK_TYPE, default=0,
         tooltip="Determines the sounds and visual effects generated by the attack itself (before hit).",
     )
-    VisualSoundEffectsOnHit: WEP_MATERIAL_ATK = ParamField(
-        byte, "atkMaterial", default=0,
+    VisualSoundEffectsOnHit: int = ParamField(
+        byte, "atkMaterial", WEP_MATERIAL_ATK, default=0,
         tooltip="Determines the sounds and visual effects generated when the attack hits. A value of 255 uses the "
                 "weapon default.",
     )
-    AttackSize: BEHAVIOR_ATK_SIZE = ParamField(
-        byte, "atkSize", default=0, hide=True,
+    AttackSize: int = ParamField(
+        byte, "atkSize", BEHAVIOR_ATK_SIZE, default=0,
         tooltip="Internal description says this determines the size of sounds and visual effects, but it is never "
                 "used.",
     )
-    SoundEffectsWhileBlocking: WEP_MATERIAL_DEF = ParamField(
-        byte, "defMaterial", default=0,
+    SoundEffectsWhileBlocking: int = ParamField(
+        byte, "defMaterial", WEP_MATERIAL_DEF, default=0,
         tooltip="Determines the sound effects used when guarding. Usually 255 for Player Attacks and 0 (if not a "
                 "block) or 50 (if blocking) for Non-Player Attacks.",
     )
-    VisualEffectsWhileBlocking: WEP_MATERIAL_DEF_SFX = ParamField(
-        byte, "defSfxMaterial", default=0,
+    VisualEffectsWhileBlocking: int = ParamField(
+        byte, "defSfxMaterial", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="Determines the visual effects used when guarding. Usually 255 for Player Attacks and 0 (if not a "
                 "block) or 50 (if blocking) for Non-Player Attacks.",
     )
-    ModelPointSource: ATK_PARAM_HIT_SOURCE = ParamField(
-        byte, "hitSourceType", default=0,
+    ModelPointSource: int = ParamField(
+        byte, "hitSourceType", ATK_PARAM_HIT_SOURCE, default=0,
         tooltip="Internal description says 'specify where you get the model point for attack'. Set to 1 for parries, "
                 "ripostes, and basic body attacks (falling, rolling, etc.), and zero otherwise. Use that pattern.",
     )
-    ThrowFlag: ATK_PATAM_THROWFLAG_TYPE = ParamField(
-        byte, "throwFlag", default=0,
+    ThrowFlag: int = ParamField(
+        byte, "throwFlag", ATK_PATAM_THROWFLAG_TYPE, default=0,
         tooltip="Determines how this attack relates to throws: not at all, a throw trigger, or a throw damage "
                 "parameter.",
     )
     IgnoreGuard: bool = ParamField(
-        byte, "disableGuard:1", bit_count=1, default=False,
+        byte, "disableGuard:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, this attack cannot be blocked (e.g. throws).",
     )
     NoStaminaDamage: bool = ParamField(
-        byte, "disableStaminaAttack:1", bit_count=1, default=False,
+        byte, "disableStaminaAttack:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, this attack will deal no stamina damage, regardless of its stamina attack power.",
     )
     NoSpecialEffects: bool = ParamField(
-        byte, "disableHitSpEffect:1", bit_count=1, default=False,
+        byte, "disableHitSpEffect:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, this attack will trigger no special effects on the target. Internal description mentions "
                 "this is an 'SCE bug countermeasure' (referring to the original Dark Souls demo).",
     )
     NoMissNotificationForAI: bool = ParamField(
-        byte, "IgnoreNotifyMissSwingForAI:1", bit_count=1, default=False,
+        byte, "IgnoreNotifyMissSwingForAI:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, the character's AI will not be informed when this attack misses. Enabled for basic body "
                 "attacks (falling, rolling, ladder punches, etc.) that are generally not considered to be serious "
                 "attacks.",
     )
     RepeatHitSoundEffects: bool = ParamField(
-        byte, "repeatHitSfx:1", bit_count=1, default=False, hide=True,
+        byte, "repeatHitSfx:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, sound effects will supposedly be repeated as long as the attack continuously hits a wall. "
                 "Never enabled, which is probably a good thing.",
     )
     IsPhysicalProjectile: bool = ParamField(
-        byte, "isArrowAtk:1", bit_count=1, default=False,
+        byte, "isArrowAtk:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="Flags if this is the attack damage parameter of a physical projectile (arrow, bolt, or throwing "
                 "knife).",
     )
     IsAttackByGhost: bool = ParamField(
-        byte, "isGhostAtk:1", bit_count=1, default=False,
+        byte, "isGhostAtk:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="Flags if this is an attack of a ghost, which presumably disables wall collision, etc.",
     )
     IgnoreInvincibilityFrames: bool = ParamField(
-        byte, "isDisableNoDamage:1", bit_count=1, default=False,
+        byte, "isDisableNoDamage:1", ATK_PARAM_BOOL, bit_count=1, default=0,
         tooltip="If True, this attack will ignore invincibility frames from rolling or backstepping (but not other "
                 "sources of invincibility such as TAE or events).",
     )

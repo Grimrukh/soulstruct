@@ -27,27 +27,32 @@
         "spEffectId0": {
             "nickname": "SpecialEffectOnHit0",
             "tooltip": "Special effect applied to target on hit (slot 0).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId1": {
             "nickname": "SpecialEffectOnHit1",
             "tooltip": "Special effect applied to target on hit (slot 1).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId2": {
             "nickname": "SpecialEffectOnHit2",
             "tooltip": "Special effect applied to target on hit (slot 2).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId3": {
             "nickname": "SpecialEffectOnHit3",
             "tooltip": "Special effect applied to target on hit (slot 3).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId4": {
             "nickname": "SpecialEffectOnHit4",
             "tooltip": "Special effect applied to target on hit (slot 4).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "hit0_DmyPoly1": {
             "nickname": "Hitbox0StartModelPoint",
@@ -319,7 +324,8 @@
         },
         "refId": {
             "nickname": "ReferenceID",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "BehaviorReference()"
         },
         "sfxVariationId": {
             "nickname": "VFXVariationID",
@@ -351,19 +357,23 @@
         "atkId_Bullet": {
             "nickname": "BulletAttack",
             "tooltip": "Attack parameters for bullet impact. Only certain fields in the attack parameter are used. Could be directed to either PlayerAttacks table or NonPlayerAttacks table, depending on the bullet's owner. Set to 0 if bullet has no attack data (no damage).",
-            "default": 0
+            "default": 0,
+            "game_type": "AttackParam"
         },
         "sfxId_Bullet": {
             "nickname": "ProjectileVFX",
-            "tooltip": "Visual effect ID for bullet projectile."
+            "tooltip": "Visual effect ID for bullet projectile.",
+            "game_type": "VisualEffect"
         },
         "sfxId_Hit": {
             "nickname": "ImpactVFX",
-            "tooltip": "Visual effect ID for bullet impact."
+            "tooltip": "Visual effect ID for bullet impact.",
+            "game_type": "VisualEffect"
         },
         "sfxId_Flick": {
             "nickname": "FlickVFX",
-            "tooltip": "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and throwing knives."
+            "tooltip": "Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and throwing knives.",
+            "game_type": "VisualEffect"
         },
         "life": {
             "nickname": "LifeTime",
@@ -448,40 +458,48 @@
         "spEffectIDForShooter": {
             "nickname": "OwnerSpecialEffect",
             "tooltip": "Special effect applied to owner when bullet is created. (Unclear if it is applied repeatedly by repeating bullets.)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "autoSearchNPCThinkID": {
             "nickname": "BulletAI",
-            "tooltip": "AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] Soulmass (10000) and Pursuers (10001) in the vanilla game."
+            "tooltip": "AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] Soulmass (10000) and Pursuers (10001) in the vanilla game.",
+            "game_type": "AIParam"
         },
         "HitBulletID": {
             "nickname": "BulletOnHit",
-            "tooltip": "Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). These can be chained together indefinitely (see White Dragon Breath, bullet 11500)."
+            "tooltip": "Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). These can be chained together indefinitely (see White Dragon Breath, bullet 11500).",
+            "game_type": "BulletParam"
         },
         "spEffectId0": {
             "nickname": "HitSpecialEffect0",
             "tooltip": "Special effect applied to target hit by bullet. (Slot 0)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId1": {
             "nickname": "HitSpecialEffect1",
             "tooltip": "Special effect applied to target hit by bullet. (Slot 1)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId2": {
             "nickname": "HitSpecialEffect2",
             "tooltip": "Special effect applied to target hit by bullet. (Slot 2)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId3": {
             "nickname": "HitSpecialEffect3",
             "tooltip": "Special effect applied to target hit by bullet. (Slot 3)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId4": {
             "nickname": "HitSpecialEffect4",
             "tooltip": "Special effect applied to target hit by bullet. (Slot 4)",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "numShoot": {
             "nickname": "BulletCount",
@@ -874,11 +892,13 @@
         },
         "npcPlayerFaceGenId": {
             "nickname": "FaceID",
-            "tooltip": "Face parameter ID (NPCs only)."
+            "tooltip": "Face parameter ID (NPCs only).",
+            "game_type": "FaceGenParam"
         },
         "npcPlayerThinkId": {
             "nickname": "DefaultAI",
-            "tooltip": "Default AI (NPCs only)."
+            "tooltip": "Default AI (NPCs only).",
+            "game_type": "AIParam"
         },
         "baseHp": {
             "nickname": "BaseMaxHP",
@@ -1496,23 +1516,28 @@
     "EQUIP_MTRL_SET_PARAM_ST": {
         "materialId01": {
             "nickname": "UpgradeGood",
-            "tooltip": "Good required to upgrade weapon."
+            "tooltip": "Good required to upgrade weapon.",
+            "game_type": "GoodParam"
         },
         "materialId02": {
             "nickname": "UpgradeGood2",
-            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement)."
+            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement).",
+            "game_type": "GoodParam"
         },
         "materialId03": {
             "nickname": "UpgradeGood3",
-            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement)."
+            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement).",
+            "game_type": "GoodParam"
         },
         "materialId04": {
             "nickname": "UpgradeGood4",
-            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement)."
+            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement).",
+            "game_type": "GoodParam"
         },
         "materialId05": {
             "nickname": "UpgradeGood5",
-            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement)."
+            "tooltip": "Second good required to upgrade weapon. Never used, and the upgrade menu can't display it (though it may still work as a requirement).",
+            "game_type": "GoodParam"
         },
         "itemNum01": {
             "nickname": "UpgradeQuantity",
@@ -1575,7 +1600,8 @@
         },
         "behaviorId": {
             "nickname": "Behavior",
-            "tooltip": "Behavior of ring 'skill'. Always zero in the vanilla game."
+            "tooltip": "Behavior of ring 'skill'. Always zero in the vanilla game.",
+            "game_type": "BehaviorParam"
         },
         "basicPrice": {
             "nickname": "BasicCost",
@@ -1596,11 +1622,13 @@
         },
         "equipModelId": {
             "nickname": "EquipmentModel",
-            "tooltip": "Always zero. (Rings have no model, presumably.)"
+            "tooltip": "Always zero. (Rings have no model, presumably.)",
+            "game_type": "EquipmentModel"
         },
         "iconId": {
             "nickname": "MenuIcon",
-            "tooltip": "Icon ID of ring in menu."
+            "tooltip": "Icon ID of ring in menu.",
+            "game_type": "Icon"
         },
         "shopLv": {
             "nickname": "ShopLevel",
@@ -1642,15 +1670,18 @@
         },
         "vagrantItemLotId": {
             "nickname": "VagrantItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantBonusEneDropItemLotId": {
             "nickname": "VagrantBonusEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantItemEneDropItemLotId": {
             "nickname": "VagrantItemEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "isDeposit:1": {
             "nickname": "CanBeStored",
@@ -1671,8 +1702,9 @@
     },
     "EQUIP_PARAM_GOODS_ST": {
         "refId": {
-            "nickname": "refId",
-            "tooltip": "TODO"
+            "nickname": "ReferenceID",
+            "tooltip": "TODO",
+            "dynamic_callback": "GoodReference()"
         },
         "sfxVariationId": {
             "nickname": "AnimationVariationID",
@@ -1693,7 +1725,8 @@
         },
         "behaviorId": {
             "nickname": "Behavior",
-            "tooltip": "Behavior triggered by good use. Never used."
+            "tooltip": "Behavior triggered by good use. Never used.",
+            "game_type": "BehaviorParam"
         },
         "replaceItemId": {
             "nickname": "GoodToReplace",
@@ -1713,15 +1746,18 @@
         },
         "magicId": {
             "nickname": "Spell",
-            "tooltip": "Spell unlocked in attunement menu by possession of this good. (Usually matches the good ID.)"
+            "tooltip": "Spell unlocked in attunement menu by possession of this good. (Usually matches the good ID.)",
+            "game_type": "SpellParam"
         },
         "iconId": {
             "nickname": "GoodIcon",
-            "tooltip": "Good icon texture ID."
+            "tooltip": "Good icon texture ID.",
+            "game_type": "Icon"
         },
         "modelId": {
             "nickname": "ModelID",
-            "tooltip": "Model of good. Never used."
+            "tooltip": "Model of good. Never used.",
+            "game_type": "EquipmentModel"
         },
         "shopLv": {
             "nickname": "ShopLevel",
@@ -1957,17 +1993,20 @@
         "vagrantItemLotId": {
             "nickname": "VagrantItemLot",
             "tooltip": "TODO",
-            "default": -1
+            "default": -1,
+            "game_type": "ItemLotParam"
         },
         "vagrantBonusEneDropItemLotId": {
             "nickname": "VagrantBonusEnemyDropItemLot",
             "tooltip": "TODO",
-            "default": -1
+            "default": -1,
+            "game_type": "ItemLotParam"
         },
         "vagrantItemEneDropItemLotId": {
             "nickname": "VagrantItemEnemyDropItemLot",
             "tooltip": "TODO",
-            "default": -1
+            "default": -1,
+            "game_type": "ItemLotParam"
         }
     },
     "EQUIP_PARAM_PROTECTOR_ST": {
@@ -1981,15 +2020,18 @@
         },
         "vagrantItemLotId": {
             "nickname": "VagrantItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantBonusEneDropItemLotId": {
             "nickname": "VagrantBonusEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantItemEneDropItemLotId": {
             "nickname": "VagrantItemEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "fixPrice": {
             "nickname": "RepairCost",
@@ -2009,19 +2051,23 @@
         },
         "residentSpEffectId": {
             "nickname": "WearerSpecialEffect1",
-            "tooltip": "Special effect granted to wearer (first of three)."
+            "tooltip": "Special effect granted to wearer (first of three).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId2": {
             "nickname": "WearerSpecialEffect2",
-            "tooltip": "Special effect granted to wearer (second of three)."
+            "tooltip": "Special effect granted to wearer (second of three).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId3": {
             "nickname": "WearerSpecialEffect3",
-            "tooltip": "Special effect granted to wearer (third of three)."
+            "tooltip": "Special effect granted to wearer (third of three).",
+            "game_type": "SpecialEffectParam"
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialID",
-            "tooltip": "Upgrade material set for reinforcement."
+            "tooltip": "Upgrade material set for reinforcement.",
+            "game_type": "UpgradeMaterialParam"
         },
         "partsDamageRate": {
             "nickname": "SiteDamageMultiplier",
@@ -2133,15 +2179,18 @@
         },
         "equipModelId": {
             "nickname": "EquipmentModel",
-            "tooltip": "Model ID of armor."
+            "tooltip": "Model ID of armor.",
+            "game_type": "EquipmentModel"
         },
         "iconIdM": {
             "nickname": "MaleIcon",
-            "tooltip": "Icon of male variant of armor in inventory."
+            "tooltip": "Icon of male variant of armor in inventory.",
+            "game_type": "Icon"
         },
         "iconIdF": {
             "nickname": "FemaleIcon",
-            "tooltip": "Icon of female variant of armor in inventory."
+            "tooltip": "Icon of female variant of armor in inventory.",
+            "game_type": "Icon"
         },
         "knockBack": {
             "nickname": "KnockbackPercentageReduction",
@@ -2221,7 +2270,8 @@
         },
         "reinforceTypeId": {
             "nickname": "ArmorUpgradeID",
-            "tooltip": "Effects applied at consecutive upgrade reinforcement levels."
+            "tooltip": "Effects applied at consecutive upgrade reinforcement levels.",
+            "game_type": "ArmorUpgradeParam"
         },
         "trophySGradeId": {
             "nickname": "AchievementContributionID",
@@ -2235,7 +2285,8 @@
         "knockbackParamId": {
             "nickname": "KnockbackID",
             "tooltip": "Knockback entry. Always 1.",
-            "default": 1
+            "default": 1,
+            "game_type": "KnockbackParam"
         },
         "flickDamageCutRate": {
             "nickname": "RepelDamagePercentageReduction",
@@ -2579,31 +2630,38 @@
         },
         "spEffectBehaviorId0": {
             "nickname": "SpecialEffectOnHit0",
-            "tooltip": "Special effect applied to struck target (slot 0)."
+            "tooltip": "Special effect applied to struck target (slot 0).",
+            "game_type": "BehaviorParam"
         },
         "spEffectBehaviorId1": {
             "nickname": "SpecialEffectOnHit1",
-            "tooltip": "Special effect applied to struck target (slot 1)."
+            "tooltip": "Special effect applied to struck target (slot 1).",
+            "game_type": "BehaviorParam"
         },
         "spEffectBehaviorId2": {
             "nickname": "SpecialEffectOnHit2",
-            "tooltip": "Special effect applied to struck target (slot 2)."
+            "tooltip": "Special effect applied to struck target (slot 2).",
+            "game_type": "BehaviorParam"
         },
         "residentSpEffectId": {
             "nickname": "EquippedSpecialEffect0",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 0)."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 0).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId1": {
             "nickname": "EquippedSpecialEffect1",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 1)."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 1).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId2": {
             "nickname": "EquippedSpecialEffect2",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 2)."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 2).",
+            "game_type": "SpecialEffectParam"
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialID",
-            "tooltip": "Upgrade Material parameter that sets costs for weapon reinforcement."
+            "tooltip": "Upgrade Material parameter that sets costs for weapon reinforcement.",
+            "game_type": "UpgradeMaterialParam"
         },
         "originEquipWep": {
             "nickname": "UpgradeOrigin0",
@@ -2687,23 +2745,28 @@
         },
         "vagrantItemLotId": {
             "nickname": "VagrantItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantBonusEneDropItemLotId": {
             "nickname": "VagrantBonusEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "vagrantItemEneDropItemLotId": {
             "nickname": "VagrantItemEnemyDropItemLot",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "ItemLotParam"
         },
         "equipModelId": {
             "nickname": "WeaponModel",
-            "tooltip": "Weapon model ID."
+            "tooltip": "Weapon model ID.",
+            "game_type": "EquipmentModel"
         },
         "iconId": {
             "nickname": "WeaponIcon",
-            "tooltip": "Weapon icon texture ID."
+            "tooltip": "Weapon icon texture ID.",
+            "game_type": "Icon"
         },
         "durability": {
             "nickname": "InitialDurability",
@@ -2768,7 +2831,8 @@
         },
         "reinforceTypeId": {
             "nickname": "WeaponUpgradeID",
-            "tooltip": "Weapon Upgrade parameter that specifies upgrade benefits."
+            "tooltip": "Weapon Upgrade parameter that specifies upgrade benefits.",
+            "game_type": "WeaponUpgradeParam"
         },
         "trophySGradeId": {
             "nickname": "AllWeaponsAchievementIndex",
@@ -3524,7 +3588,8 @@
         },
         "humanityPointCountFlagIdTop": {
             "nickname": "FirstHumanityFlag",
-            "tooltip": "First flag for recording number of humanity drops awarded in boss's area."
+            "tooltip": "First flag for recording number of humanity drops awarded in boss's area.",
+            "game_type": "Flag"
         },
         "humanityDropPoint1": {
             "nickname": "HumanityDropPoint1",
@@ -3584,11 +3649,13 @@
         },
         "spEffectIdOnHit0": {
             "nickname": "SpecialEffect1",
-            "tooltip": "Special effect applied to character walking on terrain (first of two)."
+            "tooltip": "Special effect applied to character walking on terrain (first of two).",
+            "game_type": "SpecialEffectParam"
         },
         "spEffectIdOnHit1": {
             "nickname": "SpecialEffect2",
-            "tooltip": "Special effect applied to character walking on terrain (second of two)."
+            "tooltip": "Special effect applied to character walking on terrain (second of two).",
+            "game_type": "SpecialEffectParam"
         },
         "footEffectHeightType:2": {
             "nickname": "FootEffectHeightType",
@@ -3610,35 +3677,43 @@
     "ITEMLOT_PARAM_ST": {
         "lotItemId01": {
             "nickname": "lotItemId01",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(1)"
         },
         "lotItemId02": {
             "nickname": "lotItemId02",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(2)"
         },
         "lotItemId03": {
             "nickname": "lotItemId03",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(3)"
         },
         "lotItemId04": {
             "nickname": "lotItemId04",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(4)"
         },
         "lotItemId05": {
             "nickname": "lotItemId05",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(5)"
         },
         "lotItemId06": {
             "nickname": "lotItemId06",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(6)"
         },
         "lotItemId07": {
             "nickname": "lotItemId07",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(7)"
         },
         "lotItemId08": {
             "nickname": "lotItemId08",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ItemLotReference(8)"
         },
         "lotItemCategory01": {
             "nickname": "Item1Category",
@@ -3738,43 +3813,53 @@
         },
         "getItemFlagId01": {
             "nickname": "Item1Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId02": {
             "nickname": "Item2Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId03": {
             "nickname": "Item3Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId04": {
             "nickname": "Item4Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId05": {
             "nickname": "Item5Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId06": {
             "nickname": "Item6Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId07": {
             "nickname": "Item7Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId08": {
             "nickname": "Item8Flag",
-            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used."
+            "tooltip": "Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never used.",
+            "game_type": "Flag"
         },
         "getItemFlagId": {
             "nickname": "ItemFlag",
-            "tooltip": "Flag enabled when any item from this item lot is picked up."
+            "tooltip": "Flag enabled when any item from this item lot is picked up.",
+            "game_type": "Flag"
         },
         "cumulateNumFlagId": {
             "nickname": "FirstCumulativeFlag",
-            "tooltip": "First of eight consecutive flags used to store the cumulative points for this item lot."
+            "tooltip": "First of eight consecutive flags used to store the cumulative points for this item lot.",
+            "game_type": "Flag"
         },
         "cumulateNumMax": {
             "nickname": "MaxCumulativeAdditions",
@@ -4264,15 +4349,17 @@
         },
         "limitCancelSpEffectId": {
             "nickname": "LimitRemoveSpecialEffect",
-            "tooltip": "Unknown. Never used."
+            "tooltip": "Unknown. Never used.",
+            "game_type": "SpecialEffectParam"
         },
         "sortId": {
             "nickname": "SortIndex",
             "tooltip": "Index for automatic inventory sorting."
         },
         "refId": {
-            "nickname": "refId",
-            "tooltip": "TODO"
+            "nickname": "ReferenceID",
+            "tooltip": "TODO",
+            "dynamic_callback": "MagicReference()"
         },
         "mp": {
             "nickname": "MPCost",
@@ -4285,19 +4372,23 @@
         },
         "iconId": {
             "nickname": "SpellIcon",
-            "tooltip": "Spell icon texture for inventory and equipped slot."
+            "tooltip": "Spell icon texture for inventory and equipped slot.",
+            "game_type": "Icon"
         },
         "behaviorId": {
             "nickname": "Behavior",
-            "tooltip": "Behavior triggered by spell. Never used."
+            "tooltip": "Behavior triggered by spell. Never used.",
+            "game_type": "BehaviorParam"
         },
         "mtrlItemId": {
             "nickname": "RequiredGood",
-            "tooltip": "Good required for use. Never used (usability is handled in Shops parameters)."
+            "tooltip": "Good required for use. Never used (usability is handled in Shops parameters).",
+            "game_type": "GoodParam"
         },
         "replaceMagicId": {
             "nickname": "ReplaceSpell",
-            "tooltip": "Spell to replace 'when the state change matches'. Never used."
+            "tooltip": "Spell to replace 'when the state change matches'. Never used.",
+            "game_type": "SpellParam"
         },
         "maxQuantity": {
             "nickname": "BaseCastCount",
@@ -4673,7 +4764,8 @@
         },
         "aiThinkId": {
             "nickname": "DefaultAI",
-            "tooltip": "Default AI ID. Overridden by AI ID field in Maps entry."
+            "tooltip": "Default AI ID. Overridden by AI ID field in Maps entry.",
+            "game_type": "AIParam"
         },
         "nameId": {
             "nickname": "NameID",
@@ -4714,27 +4806,33 @@
         },
         "itemLotId_1": {
             "nickname": "ItemLotID1",
-            "tooltip": "First item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "First item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "itemLotId_2": {
             "nickname": "ItemLotID2",
-            "tooltip": "Second item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "Second item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "itemLotId_3": {
             "nickname": "ItemLotID3",
-            "tooltip": "Third item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "Third item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "itemLotId_4": {
             "nickname": "ItemLotID4",
-            "tooltip": "Fourth item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "Fourth item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "itemLotId_5": {
             "nickname": "ItemLotID5",
-            "tooltip": "Fifth item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "Fifth item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "itemLotId_6": {
             "nickname": "ItemLotID6",
-            "tooltip": "Sixth item lot triggered when NPC dies (set to -1 for no item lot)."
+            "tooltip": "Sixth item lot triggered when NPC dies (set to -1 for no item lot).",
+            "game_type": "ItemLotParam"
         },
         "humanityLotId": {
             "nickname": "HumanityLotID",
@@ -4743,46 +4841,55 @@
         "spEffectID0": {
             "nickname": "SpecialEffectID0",
             "tooltip": "First passive special effect that is active on NPC.  This slot is generally reserved for effects in the 5300-5337 range, which modify enemy damage animations (e.g. so bosses stagger less).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID1": {
             "nickname": "SpecialEffectID1",
             "tooltip": "Second passive special effect that is active on NPC.  This slot is generally reserved for effects in the 5360-5364 range, which further modify enemy damage animations based on poise.",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID2": {
             "nickname": "SpecialEffectID2",
             "tooltip": "Third passive special effect that is active on NPC.  This slot is generally reserved for effects in the 90000-91111 range, which determine status effect immunities. From left to right, the four binary digits represent poison, toxic, bleed, and curse. 0 means the NPC is immune to that status, and 1 means they are not immune (though their resistance could be any value).",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID3": {
             "nickname": "SpecialEffectID3",
             "tooltip": "Fourth passive special effect that is active on NPC.  This slot is generally reserved for effects in the 80000-81111 range, which determine immunities to effects that apparently never made it into the game ('remnant', 'absorption', 'fascination', and 'ineffective').",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID4": {
             "nickname": "SpecialEffectID4",
             "tooltip": "Fifth passive special effect that is active on NPC.  This slot is generally reserved for 'levelling' effects in the 7000-7015 range, which scale enemy stats according to the map they are found in.",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID5": {
             "nickname": "SpecialEffectID5",
             "tooltip": "Sixth passive special effect that is active on NPC.  Used for miscellaneous effects, such as elemental resistance or immunity, animation offset effects, the black phantom effect (7100), etc.",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID6": {
             "nickname": "SpecialEffectID6",
             "tooltip": "Seventh passive special effect that is active on NPC.  Used for miscellaneous effects, such as elemental resistance or immunity, animation offset effects, the black phantom effect (7100), etc.",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "spEffectID7": {
             "nickname": "SpecialEffectID7",
             "tooltip": "Eighth passive special effect that is active on NPC.  This slot is generally reserved for effect 71100, 71110, or 71111. The fourth binary digit determines if the NPC uses the 'immortal system'; the third binary digit is unknown. Darkwraiths, Hollows, Humanity Phantoms, and Armored Tusks are some examples of the few NPCs that use 71111; most others use 71110, except bosses.",
-            "default": 0
+            "default": 0,
+            "game_type": "SpecialEffectParam"
         },
         "GameClearSpEffectID": {
             "nickname": "NewGamePlusSpecialEffect",
-            "tooltip": "Passive special effect that is only applied to the NPC in NG+ and beyond, which are taken from the range 7401-7415."
+            "tooltip": "Passive special effect that is only applied to the NPC in NG+ and beyond, which are taken from the range 7401-7415.",
+            "game_type": "SpecialEffectParam"
         },
         "physGuardCutRate": {
             "nickname": "PhysicalGuardCutRate",
@@ -4806,15 +4913,18 @@
         },
         "moveAnimId": {
             "nickname": "MoveAnimationID",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "Animation"
         },
         "spMoveAnimId1": {
             "nickname": "SpecialMoveAnimationID1",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "Animation"
         },
         "spMoveAnimId2": {
             "nickname": "SpecialMoveAnimationID2",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "Animation"
         },
         "networkWarpDist": {
             "nickname": "NetworkWarpDistance",
@@ -4882,7 +4992,8 @@
         },
         "animIdOffset2": {
             "nickname": "AnimationIDOffset2",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "game_type": "Animation"
         },
         "partsDamageRate1": {
             "nickname": "Part1DamageMultiplier",
@@ -4986,7 +5097,8 @@
         },
         "ghostModelId": {
             "nickname": "GhostModelID",
-            "tooltip": "Model to be used when this quest-related NPC appears as a ghost to other players. Defaults to -1 for almost all standard enemies, which means they do not appear as a ghost to others."
+            "tooltip": "Model to be used when this quest-related NPC appears as a ghost to other players. Defaults to -1 for almost all standard enemies, which means they do not appear as a ghost to others.",
+            "game_type": "EquipmentModel"
         },
         "normalChangeResouceId": {
             "nickname": "NormalChangeResourceID",
@@ -5026,7 +5138,8 @@
         },
         "knockbackParamId": {
             "nickname": "KnockbackID",
-            "tooltip": "Knockback parameters were abandoned after Demons' Souls. A param table for Knockback is still present but is not accessible in the GUI."
+            "tooltip": "Knockback parameters were abandoned after Demons' Souls. A param table for Knockback is still present but is not accessible in the GUI.",
+            "game_type": "KnockbackParam"
         },
         "fallDamageDump": {
             "nickname": "FallDamageReduction",
@@ -5324,11 +5437,13 @@
     "NPC_THINK_PARAM_ST": {
         "logicId": {
             "nickname": "LogicID",
-            "tooltip": "ID of logic (non-battle) Lua script."
+            "tooltip": "ID of logic (non-battle) Lua script.",
+            "game_type": "LogicAIScript"
         },
         "battleGoalID": {
             "nickname": "BattleID",
-            "tooltip": "Battle goal ID used to look up battle Lua script."
+            "tooltip": "Battle goal ID used to look up battle Lua script.",
+            "game_type": "BattleAIScript"
         },
         "nearDist": {
             "nickname": "NearDistance",
@@ -5364,7 +5479,8 @@
         },
         "callHelp_ActionAnimId": {
             "nickname": "HelpCallResponseAnimation",
-            "tooltip": "Animation to play when responding to a call for help. Usually set to -1 for NPCs who can reply to calls for help, which I assume means no animation is played. Set to 0 for NPCs who ignore calls for help."
+            "tooltip": "Animation to play when responding to a call for help. Usually set to -1 for NPCs who can reply to calls for help, which I assume means no animation is played. Set to 0 for NPCs who ignore calls for help.",
+            "game_type": "Animation"
         },
         "callHelp_CallActionId": {
             "nickname": "HelpCallSendAnimation",
@@ -5615,7 +5731,8 @@
         },
         "breakSfxId": {
             "nickname": "DestructionSoundEffect",
-            "tooltip": "Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)"
+            "tooltip": "Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)",
+            "game_type": "VisualEffect"
         }
     },
     "OBJ_ACT_PARAM_ST": {
@@ -5637,27 +5754,33 @@
         },
         "playerAnimId": {
             "nickname": "PlayerActionAnimation",
-            "tooltip": "Animation played by a player character when they successfully activate the object."
+            "tooltip": "Animation played by a player character when they successfully activate the object.",
+            "game_type": "Animation"
         },
         "chrAnimId": {
             "nickname": "NonPlayerActionAnimation",
-            "tooltip": "Animation played by a non-player character when they successfully activate the object."
+            "tooltip": "Animation played by a non-player character when they successfully activate the object.",
+            "game_type": "Animation"
         },
         "spQualifiedId": {
             "nickname": "spQualifiedId",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ObjActSuccessCondition(1)"
         },
         "spQualifiedId2": {
             "nickname": "spQualifiedId2",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ObjActSuccessCondition(2)"
         },
         "objDummyId": {
             "nickname": "ObjectActionModelPoint",
-            "tooltip": "Model point that specifies where the action occurs on the object (for snapping the player and distance check)."
+            "tooltip": "Model point that specifies where the action occurs on the object (for snapping the player and distance check).",
+            "game_type": "ModelDummy"
         },
         "objAnimId": {
             "nickname": "ObjectActionAnimation",
-            "tooltip": "Animation played by the object when it is successfully activated."
+            "tooltip": "Animation played by the object when it is successfully activated.",
+            "game_type": "Animation"
         },
         "validPlayerAngle": {
             "nickname": "MaxPlayerAngle",
@@ -5761,19 +5884,23 @@
         },
         "residentSpEffectId1": {
             "nickname": "WearerSpecialEffect1",
-            "tooltip": "Special effect granted to wearer (first of three)."
+            "tooltip": "Special effect granted to wearer (first of three).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId2": {
             "nickname": "WearerSpecialEffect2",
-            "tooltip": "Special effect granted to wearer (second of three)."
+            "tooltip": "Special effect granted to wearer (second of three).",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId3": {
             "nickname": "WearerSpecialEffect3",
-            "tooltip": "Special effect granted to wearer (third of three)."
+            "tooltip": "Special effect granted to wearer (third of three).",
+            "game_type": "SpecialEffectParam"
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialID",
-            "tooltip": "Upgrade material set for reinforcement."
+            "tooltip": "Upgrade material set for reinforcement.",
+            "game_type": "UpgradeMaterialParam"
         }
     },
     "REINFORCE_PARAM_WEAPON_ST": {
@@ -5859,31 +5986,38 @@
         },
         "spEffectId1": {
             "nickname": "SpecialEffectOnHit0",
-            "tooltip": "Special effect applied to struck target (slot 0). Overrides slot 0 of base weapon parameters."
+            "tooltip": "Special effect applied to struck target (slot 0). Overrides slot 0 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId2": {
             "nickname": "SpecialEffectOnHit1",
-            "tooltip": "Special effect applied to struck target (slot 1). Overrides slot 1 of base weapon parameters."
+            "tooltip": "Special effect applied to struck target (slot 1). Overrides slot 1 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "spEffectId3": {
             "nickname": "SpecialEffectOnHit2",
-            "tooltip": "Special effect applied to struck target (slot 2). Overrides slot 2 of base weapon parameters."
+            "tooltip": "Special effect applied to struck target (slot 2). Overrides slot 2 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId1": {
             "nickname": "EquippedSpecialEffect0",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 0). Overrides slot 0 of base weapon parameters."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 0). Overrides slot 0 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId2": {
             "nickname": "EquippedSpecialEffect1",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 1). Overrides slot 1 of base weapon parameters."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 1). Overrides slot 1 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId3": {
             "nickname": "EquippedSpecialEffect2",
-            "tooltip": "Special effect granted to character with weapon equipped (slot 2). Overrides slot 2 of base weapon parameters."
+            "tooltip": "Special effect granted to character with weapon equipped (slot 2). Overrides slot 2 of base weapon parameters.",
+            "game_type": "SpecialEffectParam"
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialOffset",
-            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters."
+            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters.",
+            "game_type": "UpgradeMaterialParam"
         },
         "pad[9]": {
             "nickname": "_Pad0",
@@ -5951,7 +6085,8 @@
     "SHOP_LINEUP_PARAM": {
         "equipId": {
             "nickname": "equipId",
-            "tooltip": "TODO"
+            "tooltip": "TODO",
+            "dynamic_callback": "ShopReference()"
         },
         "value": {
             "nickname": "SoulCost",
@@ -5989,7 +6124,8 @@
     "SP_EFFECT_PARAM_ST": {
         "iconId": {
             "nickname": "StatusIcon",
-            "tooltip": "Icon that appears in HUD under stamina bar while special effect is active. Set to -1 for no icon."
+            "tooltip": "Icon that appears in HUD under stamina bar while special effect is active. Set to -1 for no icon.",
+            "game_type": "Icon"
         },
         "conditionHp": {
             "nickname": "MaxHPPercentageForEffect",
@@ -6142,7 +6278,8 @@
         },
         "behaviorId": {
             "nickname": "BehaviorToTrigger",
-            "tooltip": "Behavior ID to trigger (which can in turn trigger an Attack or Bullet) whenever special effect is applied. Set to -1 to use no behavior."
+            "tooltip": "Behavior ID to trigger (which can in turn trigger an Attack or Bullet) whenever special effect is applied. Set to -1 to use no behavior.",
+            "game_type": "BehaviorParam"
         },
         "changeHpRate": {
             "nickname": "HPReductionPercentage",
@@ -6293,15 +6430,18 @@
         },
         "replaceSpEffectId": {
             "nickname": "NextSpecialEffect",
-            "tooltip": "Special effect to apply to character automatically when this special effect ends (if not terminated manually by an event)."
+            "tooltip": "Special effect to apply to character automatically when this special effect ends (if not terminated manually by an event).",
+            "game_type": "SpecialEffectParam"
         },
         "cycleOccurrenceSpEffectId": {
             "nickname": "SpecialEffectPerUpdate",
-            "tooltip": "Special effect to apply to character every time this special effect updates (e.g. Symbol of Avarice HP reduction)."
+            "tooltip": "Special effect to apply to character every time this special effect updates (e.g. Symbol of Avarice HP reduction).",
+            "game_type": "SpecialEffectParam"
         },
         "atkOccurrenceSpEffectId": {
             "nickname": "SpecialEffectOnAttack",
-            "tooltip": "Special effect to apply to any target hit by an attack.  WARNING: This will not trigger unless SpecialStateIndex is set to 152 (Rotten Pine Resin effect), which will in turn cause your weapon to glow purple unless the visual effect is disabled."
+            "tooltip": "Special effect to apply to any target hit by an attack.  WARNING: This will not trigger unless SpecialStateIndex is set to 152 (Rotten Pine Resin effect), which will in turn cause your weapon to glow purple unless the visual effect is disabled.",
+            "game_type": "SpecialEffectParam"
         },
         "guardDefFlickPowerRate": {
             "nickname": "GuardDefenseFlickPowerRate",
@@ -6721,7 +6861,8 @@
     "SP_EFFECT_VFX_PARAM_ST": {
         "midstSfxId": {
             "nickname": "OngoingVisualEffect",
-            "tooltip": "Ongoing visual effect for special effect. -1 is no effect."
+            "tooltip": "Ongoing visual effect for special effect. -1 is no effect.",
+            "game_type": "VisualEffect"
         },
         "midstSeId": {
             "nickname": "OngoingSoundEffect",
@@ -6729,7 +6870,8 @@
         },
         "initSfxId": {
             "nickname": "InitialVisualEffect",
-            "tooltip": "One-off visual effect when special effect begins. -1 is no effect."
+            "tooltip": "One-off visual effect when special effect begins. -1 is no effect.",
+            "game_type": "VisualEffect"
         },
         "initSeId": {
             "nickname": "InitialSoundEffect",
@@ -6737,7 +6879,8 @@
         },
         "finishSfxId": {
             "nickname": "FinishVisualEffect",
-            "tooltip": "One-off visual effect when special effect ends. -1 is no effect."
+            "tooltip": "One-off visual effect when special effect ends. -1 is no effect.",
+            "game_type": "VisualEffect"
         },
         "finishSeId": {
             "nickname": "FinishSoundEffect",
@@ -6753,19 +6896,23 @@
         },
         "transformProtectorId": {
             "nickname": "TransformationArmorID",
-            "tooltip": "Transformation armor ID. Unknown effect. -1 is no armor."
+            "tooltip": "Transformation armor ID. Unknown effect. -1 is no armor.",
+            "game_type": "ArmorParam"
         },
         "midstDmyId": {
             "nickname": "OngoingModelPoint",
-            "tooltip": "Model point where ongoing effects are centered. -1 is model root."
+            "tooltip": "Model point where ongoing effects are centered. -1 is model root.",
+            "game_type": "ModelDummy"
         },
         "initDmyId": {
             "nickname": "InitialModelPoint",
-            "tooltip": "Model point where initial effect is centered. -1 is model root."
+            "tooltip": "Model point where initial effect is centered. -1 is model root.",
+            "game_type": "ModelDummy"
         },
         "finishDmyId": {
             "nickname": "FinishModelPoint",
-            "tooltip": "Model point where finish effect is centered. -1 is model root."
+            "tooltip": "Model point where finish effect is centered. -1 is model root.",
+            "game_type": "ModelDummy"
         },
         "effectType": {
             "nickname": "EffectType",
@@ -6813,7 +6960,8 @@
         },
         "isFullBodyTransformProtectorId:1": {
             "nickname": "ArmorTransformationIsFullBody",
-            "tooltip": "Indicates whether the armor transformation should be applied to the whole body."
+            "tooltip": "Indicates whether the armor transformation should be applied to the whole body.",
+            "game_type": "ArmorParam"
         },
         "isInvisibleWeapon:1": {
             "nickname": "HideWeapon",
@@ -6906,11 +7054,13 @@
         },
         "atkAnimId": {
             "nickname": "AttackerAnimation",
-            "tooltip": "Animation played by attacker during throw."
+            "tooltip": "Animation played by attacker during throw.",
+            "game_type": "Animation"
         },
         "defAnimId": {
             "nickname": "DefenderAnimation",
-            "tooltip": "Animation played by defender during throw."
+            "tooltip": "Animation played by defender during throw.",
+            "game_type": "Animation"
         },
         "escHp": {
             "nickname": "MinHPPercentageForEscape",
@@ -6938,11 +7088,13 @@
         },
         "atkSorbDmyId": {
             "nickname": "SnapToAttackerModelPoint",
-            "tooltip": "Model point ID on attacker that defender will be snapped to. If this is zero, 'Snap To Defender Model Point' should be non-zero, and vice versa."
+            "tooltip": "Model point ID on attacker that defender will be snapped to. If this is zero, 'Snap To Defender Model Point' should be non-zero, and vice versa.",
+            "game_type": "ModelDummy"
         },
         "defSorbDmyId": {
             "nickname": "SnapToDefenderModelPoint",
-            "tooltip": "Model point ID on defender that attacker will be snapped to. If this is zero, 'Snap To Attacker Model Point' should be non-zero, and vice versa."
+            "tooltip": "Model point ID on defender that attacker will be snapped to. If this is zero, 'Snap To Attacker Model Point' should be non-zero, and vice versa.",
+            "game_type": "ModelDummy"
         },
         "throwType": {
             "nickname": "ThrowType",

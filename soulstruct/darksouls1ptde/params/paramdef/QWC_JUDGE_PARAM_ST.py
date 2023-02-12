@@ -13,35 +13,35 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class QWC_JUDGE_PARAM_ST(ParamRow):
-    pcJudgeUnderWB: int = ParamField(
+    PcJudgeUnderWB: int = ParamField(
         short, "pcJudgeUnderWB", default=-200,
         tooltip="TOOLTIP-TODO",
     )
-    pcJudgeTopWB: int = ParamField(
+    PcJudgeTopWB: int = ParamField(
         short, "pcJudgeTopWB", default=200,
         tooltip="TOOLTIP-TODO",
     )
-    pcJudgeUnderLR: int = ParamField(
+    PcJudgeUnderLR: int = ParamField(
         short, "pcJudgeUnderLR", default=-200,
         tooltip="TOOLTIP-TODO",
     )
-    pcJudgeTopLR: int = ParamField(
+    PcJudgeTopLR: int = ParamField(
         short, "pcJudgeTopLR", default=200,
         tooltip="TOOLTIP-TODO",
     )
-    areaJudgeUnderWB: int = ParamField(
+    AreaJudgeUnderWB: int = ParamField(
         short, "areaJudgeUnderWB", default=-200,
         tooltip="TOOLTIP-TODO",
     )
-    areaJudgeTopWB: int = ParamField(
+    AreaJudgeTopWB: int = ParamField(
         short, "areaJudgeTopWB", default=200,
         tooltip="TOOLTIP-TODO",
     )
-    areaJudgeUnderLR: int = ParamField(
+    AreaJudgeUnderLR: int = ParamField(
         short, "areaJudgeUnderLR", default=-200,
         tooltip="TOOLTIP-TODO",
     )
-    areaJudgeTopLR: int = ParamField(
+    AreaJudgeTopLR: int = ParamField(
         short, "areaJudgeTopLR", default=200,
         tooltip="TOOLTIP-TODO",
     )

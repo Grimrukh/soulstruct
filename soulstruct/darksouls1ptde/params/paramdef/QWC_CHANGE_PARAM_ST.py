@@ -13,35 +13,35 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class QWC_CHANGE_PARAM_ST(ParamRow):
-    pcAttrB: int = ParamField(
+    PcAttrB: int = ParamField(
         short, "pcAttrB", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    pcAttrW: int = ParamField(
+    PcAttrW: int = ParamField(
         short, "pcAttrW", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    pcAttrL: int = ParamField(
+    PcAttrL: int = ParamField(
         short, "pcAttrL", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    pcAttrR: int = ParamField(
+    PcAttrR: int = ParamField(
         short, "pcAttrR", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    areaAttrB: int = ParamField(
+    AreaAttrB: int = ParamField(
         short, "areaAttrB", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    areaAttrW: int = ParamField(
+    AreaAttrW: int = ParamField(
         short, "areaAttrW", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    areaAttrL: int = ParamField(
+    AreaAttrL: int = ParamField(
         short, "areaAttrL", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    areaAttrR: int = ParamField(
+    AreaAttrR: int = ParamField(
         short, "areaAttrR", default=0,
         tooltip="TOOLTIP-TODO",
     )

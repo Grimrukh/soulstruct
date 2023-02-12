@@ -13,123 +13,123 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class KNOCKBACK_PARAM_ST(ParamRow):
-    damage_Min_ContTime: float = ParamField(
+    DamageMinContTime: float = ParamField(
         float, "damage_Min_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_S_ContTime: float = ParamField(
+    DamageSContTime: float = ParamField(
         float, "damage_S_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_M_ContTime: float = ParamField(
+    DamageMContTime: float = ParamField(
         float, "damage_M_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_L_ContTime: float = ParamField(
+    DamageLContTime: float = ParamField(
         float, "damage_L_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_BlowS_ContTime: float = ParamField(
+    DamageBlowSContTime: float = ParamField(
         float, "damage_BlowS_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_BlowM_ContTime: float = ParamField(
+    DamageBlowMContTime: float = ParamField(
         float, "damage_BlowM_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Strike_ContTime: float = ParamField(
+    DamageStrikeContTime: float = ParamField(
         float, "damage_Strike_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Uppercut_ContTime: float = ParamField(
+    DamageUppercutContTime: float = ParamField(
         float, "damage_Uppercut_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Push_ContTime: float = ParamField(
+    DamagePushContTime: float = ParamField(
         float, "damage_Push_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Breath_ContTime: float = ParamField(
+    DamageBreathContTime: float = ParamField(
         float, "damage_Breath_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_HeadShot_ContTime: float = ParamField(
+    DamageHeadShotContTime: float = ParamField(
         float, "damage_HeadShot_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_S_ContTime: float = ParamField(
+    GuardSContTime: float = ParamField(
         float, "guard_S_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_L_ContTime: float = ParamField(
+    GuardLContTime: float = ParamField(
         float, "guard_L_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_LL_ContTime: float = ParamField(
+    GuardLLContTime: float = ParamField(
         float, "guard_LL_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guardBrake_ContTime: float = ParamField(
+    GuardBrakeContTime: float = ParamField(
         float, "guardBrake_ContTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Min_DecTime: float = ParamField(
+    DamageMinDecTime: float = ParamField(
         float, "damage_Min_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_S_DecTime: float = ParamField(
+    DamageSDecTime: float = ParamField(
         float, "damage_S_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_M_DecTime: float = ParamField(
+    DamageMDecTime: float = ParamField(
         float, "damage_M_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_L_DecTime: float = ParamField(
+    DamageLDecTime: float = ParamField(
         float, "damage_L_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_BlowS_DecTime: float = ParamField(
+    DamageBlowSDecTime: float = ParamField(
         float, "damage_BlowS_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_BlowM_DecTime: float = ParamField(
+    DamageBlowMDecTime: float = ParamField(
         float, "damage_BlowM_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Strike_DecTime: float = ParamField(
+    DamageStrikeDecTime: float = ParamField(
         float, "damage_Strike_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Uppercut_DecTime: float = ParamField(
+    DamageUppercutDecTime: float = ParamField(
         float, "damage_Uppercut_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Push_DecTime: float = ParamField(
+    DamagePushDecTime: float = ParamField(
         float, "damage_Push_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_Breath_DecTime: float = ParamField(
+    DamageBreathDecTime: float = ParamField(
         float, "damage_Breath_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    damage_HeadShot_DecTime: float = ParamField(
+    DamageHeadShotDecTime: float = ParamField(
         float, "damage_HeadShot_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_S_DecTime: float = ParamField(
+    GuardSDecTime: float = ParamField(
         float, "guard_S_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_L_DecTime: float = ParamField(
+    GuardLDecTime: float = ParamField(
         float, "guard_L_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guard_LL_DecTime: float = ParamField(
+    GuardLLDecTime: float = ParamField(
         float, "guard_LL_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    guardBrake_DecTime: float = ParamField(
+    GuardBrakeDecTime: float = ParamField(
         float, "guardBrake_DecTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )

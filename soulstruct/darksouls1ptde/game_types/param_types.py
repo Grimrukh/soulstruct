@@ -16,7 +16,7 @@ __all__ = [
     "CameraParam",
     "CharacterParam",
     "DialogueParam",
-    "FaceParam",
+    "FaceGenParam",
     "GoodParam",
     "GrowthCurveParam",
     "ItemLotParam",
@@ -190,11 +190,11 @@ class DialogueParam(BaseGameParam):
         return "Dialogue"
 
 
-class FaceParam(BaseGameParam):
+class FaceGenParam(BaseGameParam):
     """Face entry."""
     @classmethod
     def get_param_nickname(cls):
-        return "Faces"
+        return "FaceGenerators"
 
 
 class GoodParam(BaseItemParam):
@@ -422,7 +422,7 @@ ArmorTyping = tp.Union[ArmorParam, int]
 AccessoryTyping = tp.Union[AccessoryParam, int]
 GoodTyping = tp.Union[GoodParam, int]
 CameraTyping = tp.Union[CameraParam, int]
-FaceTyping = tp.Union[FaceParam, int]
+FaceTyping = tp.Union[FaceGenParam, int]
 ItemLotTyping = tp.Union[ItemLotParam, int]
 KnockbackTyping = tp.Union[KnockbackParam, int]
 SpecialEffectTyping = tp.Union[SpecialEffectParam, int]

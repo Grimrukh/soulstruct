@@ -93,35 +93,35 @@ class REINFORCE_PARAM_WEAPON_ST(ParamRow):
         float, "staminaGuardDefRate", default=1.0,
         tooltip="Multiplier applied to the percentage of stamina damage blocked by this weapon/shield.",
     )
-    SpecialEffectOnHit0: SpecialEffectParam = ParamField(
-        byte, "spEffectId1", default=0,
+    SpecialEffectOnHit0: int = ParamField(
+        byte, "spEffectId1", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to struck target (slot 0). Overrides slot 0 of base weapon parameters.",
     )
-    SpecialEffectOnHit1: SpecialEffectParam = ParamField(
-        byte, "spEffectId2", default=0,
+    SpecialEffectOnHit1: int = ParamField(
+        byte, "spEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to struck target (slot 1). Overrides slot 1 of base weapon parameters.",
     )
-    SpecialEffectOnHit2: SpecialEffectParam = ParamField(
-        byte, "spEffectId3", default=0,
+    SpecialEffectOnHit2: int = ParamField(
+        byte, "spEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to struck target (slot 2). Overrides slot 2 of base weapon parameters.",
     )
-    EquippedSpecialEffect0: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId1", default=0,
+    EquippedSpecialEffect0: int = ParamField(
+        byte, "residentSpEffectId1", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to character with weapon equipped (slot 0). Overrides slot 0 of base weapon "
                 "parameters.",
     )
-    EquippedSpecialEffect1: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId2", default=0,
+    EquippedSpecialEffect1: int = ParamField(
+        byte, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to character with weapon equipped (slot 1). Overrides slot 1 of base weapon "
                 "parameters.",
     )
-    EquippedSpecialEffect2: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId3", default=0,
+    EquippedSpecialEffect2: int = ParamField(
+        byte, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to character with weapon equipped (slot 2). Overrides slot 2 of base weapon "
                 "parameters.",
     )
     UpgradeMaterialOffset: int = ParamField(
-        byte, "materialSetId", default=0,
+        byte, "materialSetId", game_type=UpgradeMaterialParam, default=0,
         tooltip="Value to be added to Upgrade Materials field in base weapon parameters.",
     )
     _Pad0: bytes = ParamPad(9, "pad[9]")

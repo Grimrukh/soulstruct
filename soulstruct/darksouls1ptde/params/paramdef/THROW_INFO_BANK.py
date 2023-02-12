@@ -50,11 +50,11 @@ class THROW_INFO_BANK(ParamRow):
         tooltip="Throw ID that should be specified in Attacks to use this throw.",
     )
     AttackerAnimation: int = ParamField(
-        int, "atkAnimId", default=0,
+        int, "atkAnimId", game_type=Animation, default=0,
         tooltip="Animation played by attacker during throw.",
     )
     DefenderAnimation: int = ParamField(
-        int, "defAnimId", default=0,
+        int, "defAnimId", game_type=Animation, default=0,
         tooltip="Animation played by defender during throw.",
     )
     MinHPPercentageForEscape: int = ParamField(
@@ -79,28 +79,28 @@ class THROW_INFO_BANK(ParamRow):
                 "model size, so a value of 80 will send out a sphere with a radius that is 0.8 times the attacker's "
                 "model size.",
     )
-    ButtonMashType: THROW_PAD_TYPE = ParamField(
-        byte, "PadType", default=1,
+    ButtonMashType: int = ParamField(
+        byte, "PadType", THROW_PAD_TYPE, default=1,
         tooltip="Determines buttons that can be mashed to escape. Enumeration is unknown, but it is set to 3 for the "
                 "Centipede Demon grab, Male Ghost grab, and Dark Hand grab, and 1 for every other throw.",
     )
-    AttackEnabled: THROW_ENABLE_STATE = ParamField(
-        byte, "AtkEnableState", default=0, hide=True,
+    AttackEnabled: int = ParamField(
+        byte, "AtkEnableState", THROW_ENABLE_STATE, default=0,
         tooltip="Internal description says 'Set the throwable throwable state type' (?). Set to 1 for all player "
                 "backstabs and ripostes, and 0 otherwise (including player plunging attacks and all enemy throws).",
     )
     SnapToAttackerModelPoint: int = ParamField(
-        byte, "atkSorbDmyId", default=0,
+        byte, "atkSorbDmyId", game_type=ModelDummy, default=0,
         tooltip="Model point ID on attacker that defender will be snapped to. If this is zero, 'Snap To Defender "
                 "Model Point' should be non-zero, and vice versa.",
     )
     SnapToDefenderModelPoint: int = ParamField(
-        byte, "defSorbDmyId", default=0,
+        byte, "defSorbDmyId", game_type=ModelDummy, default=0,
         tooltip="Model point ID on defender that attacker will be snapped to. If this is zero, 'Snap To Attacker "
                 "Model Point' should be non-zero, and vice versa.",
     )
-    ThrowType: THROW_TYPE = ParamField(
-        byte, "throwType", default=0,
+    ThrowType: int = ParamField(
+        byte, "throwType", THROW_TYPE, default=0,
         tooltip="Type of throw. Not sure what uses this, but it could affect various things.",
     )
     EscapeCycleCount: int = ParamField(
@@ -109,22 +109,22 @@ class THROW_INFO_BANK(ParamRow):
                 "set to 100 (and MinHPPercentageForEscape is almost always 25). Not sure how it determines *when* you "
                 "can escape the throw.",
     )
-    ModelPointCharacterDirectionType: THROW_DMY_CHR_DIR_TYPE = ParamField(
-        byte, "dmyHasChrDirType", default=0, hide=True,
+    ModelPointCharacterDirectionType: int = ParamField(
+        byte, "dmyHasChrDirType", THROW_DMY_CHR_DIR_TYPE, default=0,
         tooltip="'Direction of model point possessed character when thrown'. Set to 1 for the Armored Tusk backstab, "
                 "255 for the Iron Golem and Gaping Dragon grabs, and 0 otherwise.",
     )
     AttackerTurns: bool = ParamField(
-        byte, "isTurnAtker:1", bit_count=1, default=False,
+        byte, "isTurnAtker:1", bit_count=1, default=0,
         tooltip="Attacker will turn when throw begins (presumably before model point snapping occurs).",
     )
     SkipAttackerWeaponCategoryCheck: bool = ParamField(
-        byte, "isSkipWepCate:1", bit_count=1, default=False,
+        byte, "isSkipWepCate:1", bit_count=1, default=0,
         tooltip="If True, the weapon category check for the attacker will be skipped. Enabled only for Dark Hand "
                 "drain.",
     )
     SkipSphereCast: bool = ParamField(
-        byte, "isSkipSphereCast:1", bit_count=1, default=False,
+        byte, "isSkipSphereCast:1", bit_count=1, default=0,
         tooltip="If True, the sphere cast check will be skipped. Usually False, but True for the coffin stab, Armored "
                 "Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies on "
                 "distance and character angles only and is generally easier to trigger.)",

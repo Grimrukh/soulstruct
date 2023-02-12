@@ -10,7 +10,10 @@ __all__ = [
     "MapFlagSuffix",
     "FlagRange",
     "FlagRangeTyping",
+    "ModelDummy",
     "Texture",
+    "Icon",
+    "EquipmentModel",
     "VisualEffect",
     "TalkScript",
     "Text",
@@ -113,8 +116,20 @@ class FlagRange(BaseGameObject):
         return f"({self.first}, {self.last})"
 
 
+class ModelDummy(BaseGameObject, IntEnum):
+    """`Dummy`, `dmy`, `damipoly`, etc. of a FLVER model."""
+
+
 class Texture(BaseGameObject, IntEnum):
     """2D texture ID of something."""
+
+
+class Icon(BaseGameObject, IntEnum):
+    """Icon in some type-specific spritesheet."""
+
+
+class EquipmentModel(BaseGameObject, IntEnum):
+    """FLVER model for c0000 appearance in the game `parts` folder."""
 
 
 class VisualEffect(BaseGameObject, IntEnum):

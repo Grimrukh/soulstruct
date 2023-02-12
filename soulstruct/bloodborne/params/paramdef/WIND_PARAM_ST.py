@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class WIND_PARAM_ST(ParamRow):
     CommonCapsuleBeginModelPoint: int = ParamField(
-        short, "commonCapsuleBeginDmyId", default=0,
+        short, "commonCapsuleBeginDmyId", game_type=ModelDummy, default=0,
         tooltip="TODO",
     )
     CommonCapsuleEndModelPoint: int = ParamField(
-        short, "commonCapsuleEndDmyId", default=0,
+        short, "commonCapsuleEndDmyId", game_type=ModelDummy, default=0,
         tooltip="TODO",
     )
     CommonCapsuleRadius: float = ParamField(

@@ -17,24 +17,24 @@ class RITUAL_REQUIRED_MAT_PARAM(ParamRow):
         uint, "useSoul", default=0,
         tooltip="TODO",
     )
-    MaterialItemID1: GoodParam = ParamField(
-        uint, "materialItemId_1", default=0,
+    MaterialItemID1: int = ParamField(
+        uint, "materialItemId_1", game_type=GoodParam, default=0,
         tooltip="TODO",
     )
-    MaterialItemID2: GoodParam = ParamField(
-        uint, "materialItemId_2", default=0,
+    MaterialItemID2: int = ParamField(
+        uint, "materialItemId_2", game_type=GoodParam, default=0,
         tooltip="TODO",
     )
-    MaterialItemID3: GoodParam = ParamField(
-        uint, "materialItemId_3", default=0,
+    MaterialItemID3: int = ParamField(
+        uint, "materialItemId_3", game_type=GoodParam, default=0,
         tooltip="TODO",
     )
-    MaterialItemID4: GoodParam = ParamField(
-        uint, "materialItemId_4", default=0,
+    MaterialItemID4: int = ParamField(
+        uint, "materialItemId_4", game_type=GoodParam, default=0,
         tooltip="TODO",
     )
-    MaterialItemID5: GoodParam = ParamField(
-        uint, "materialItemId_5", default=0,
+    MaterialItemID5: int = ParamField(
+        uint, "materialItemId_5", game_type=GoodParam, default=0,
         tooltip="TODO",
     )
     MaterialCount1: int = ParamField(

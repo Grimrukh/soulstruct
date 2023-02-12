@@ -17,20 +17,20 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         int, "sortId", default=0,
         tooltip="Index for automatic inventory sorting.",
     )
-    GhostArmorReplacement: ArmorParam = ParamField(
+    GhostArmorReplacement: int = ParamField(
         uint, "wanderingEquipId", default=0,
         tooltip="Replacement equipment for network ghosts.",
     )
-    VagrantItemLot: ItemLotParam = ParamField(
-        int, "vagrantItemLotId", default=0,
+    VagrantItemLot: int = ParamField(
+        int, "vagrantItemLotId", game_type=ItemLotParam, default=0,
         tooltip="TODO",
     )
-    VagrantBonusEnemyDropItemLot: ItemLotParam = ParamField(
-        int, "vagrantBonusEneDropItemLotId", default=0,
+    VagrantBonusEnemyDropItemLot: int = ParamField(
+        int, "vagrantBonusEneDropItemLotId", game_type=ItemLotParam, default=0,
         tooltip="TODO",
     )
-    VagrantItemEnemyDropItemLot: ItemLotParam = ParamField(
-        int, "vagrantItemEneDropItemLotId", default=0,
+    VagrantItemEnemyDropItemLot: int = ParamField(
+        int, "vagrantItemEneDropItemLotId", game_type=ItemLotParam, default=0,
         tooltip="TODO",
     )
     RepairCost: int = ParamField(
@@ -39,7 +39,7 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
                 "durability over max durability.",
     )
     BasicCost: int = ParamField(
-        int, "basicPrice", default=0, hide=True,
+        int, "basicPrice", default=0,
         tooltip="Unsure when this is used. Possibly sets the default if the cost is not specified in Shop parameters. "
                 "Always set to 200.",
     )
@@ -51,20 +51,20 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         float, "weight", default=1.0,
         tooltip="Weight of armor.",
     )
-    WearerSpecialEffect1: SpecialEffectParam = ParamField(
-        int, "residentSpEffectId", default=0,
+    WearerSpecialEffect1: int = ParamField(
+        int, "residentSpEffectId", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (first of three).",
     )
-    WearerSpecialEffect2: SpecialEffectParam = ParamField(
-        int, "residentSpEffectId2", default=0,
+    WearerSpecialEffect2: int = ParamField(
+        int, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (second of three).",
     )
-    WearerSpecialEffect3: SpecialEffectParam = ParamField(
-        int, "residentSpEffectId3", default=0,
+    WearerSpecialEffect3: int = ParamField(
+        int, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (third of three).",
     )
-    UpgradeMaterialID: UpgradeMaterialParam = ParamField(
-        int, "materialSetId", default=-1,
+    UpgradeMaterialID: int = ParamField(
+        int, "materialSetId", game_type=UpgradeMaterialParam, default=-1,
         tooltip="Upgrade material set for reinforcement.",
     )
     SiteDamageMultiplier: float = ParamField(
@@ -78,82 +78,82 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="Value added to poise recovery time (so negative values are better). -0.1 for heavy armor and 0 "
                 "otherwise.",
     )
-    UpgradeOrigin0: ArmorParam = ParamField(
+    UpgradeOrigin0: int = ParamField(
         int, "originEquipPro", default=-1,
         tooltip="Origin armor for level 0 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin1: ArmorParam = ParamField(
+    UpgradeOrigin1: int = ParamField(
         int, "originEquipPro1", default=-1,
         tooltip="Origin armor for level 1 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin2: ArmorParam = ParamField(
+    UpgradeOrigin2: int = ParamField(
         int, "originEquipPro2", default=-1,
         tooltip="Origin armor for level 2 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin3: ArmorParam = ParamField(
+    UpgradeOrigin3: int = ParamField(
         int, "originEquipPro3", default=-1,
         tooltip="Origin armor for level 3 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin4: ArmorParam = ParamField(
+    UpgradeOrigin4: int = ParamField(
         int, "originEquipPro4", default=-1,
         tooltip="Origin armor for level 4 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin5: ArmorParam = ParamField(
+    UpgradeOrigin5: int = ParamField(
         int, "originEquipPro5", default=-1,
         tooltip="Origin armor for level 5 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin6: ArmorParam = ParamField(
+    UpgradeOrigin6: int = ParamField(
         int, "originEquipPro6", default=-1,
         tooltip="Origin armor for level 6 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin7: ArmorParam = ParamField(
+    UpgradeOrigin7: int = ParamField(
         int, "originEquipPro7", default=-1,
         tooltip="Origin armor for level 7 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin8: ArmorParam = ParamField(
+    UpgradeOrigin8: int = ParamField(
         int, "originEquipPro8", default=-1,
         tooltip="Origin armor for level 8 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin9: ArmorParam = ParamField(
+    UpgradeOrigin9: int = ParamField(
         int, "originEquipPro9", default=-1,
         tooltip="Origin armor for level 9 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin10: ArmorParam = ParamField(
+    UpgradeOrigin10: int = ParamField(
         int, "originEquipPro10", default=-1,
         tooltip="Origin armor for level 10 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin11: ArmorParam = ParamField(
+    UpgradeOrigin11: int = ParamField(
         int, "originEquipPro11", default=-1,
         tooltip="Origin armor for level 11 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin12: ArmorParam = ParamField(
+    UpgradeOrigin12: int = ParamField(
         int, "originEquipPro12", default=-1,
         tooltip="Origin armor for level 12 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin13: ArmorParam = ParamField(
+    UpgradeOrigin13: int = ParamField(
         int, "originEquipPro13", default=-1,
         tooltip="Origin armor for level 13 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin14: ArmorParam = ParamField(
+    UpgradeOrigin14: int = ParamField(
         int, "originEquipPro14", default=-1,
         tooltip="Origin armor for level 14 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    UpgradeOrigin15: ArmorParam = ParamField(
+    UpgradeOrigin15: int = ParamField(
         int, "originEquipPro15", default=-1,
         tooltip="Origin armor for level 15 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
                 "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
@@ -191,27 +191,27 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="Maximum scale permitted for Z dimension of female faces when worn.",
     )
     QWCID: int = ParamField(
-        int, "qwcId", default=-1, hide=True,
+        int, "qwcId", default=-1,
         tooltip="Unused world tendency remnant.",
     )
     EquipmentModel: int = ParamField(
-        ushort, "equipModelId", default=0,
+        ushort, "equipModelId", game_type=EquipmentModel, default=0,
         tooltip="Model ID of armor.",
     )
-    MaleIcon: Texture = ParamField(
-        ushort, "iconIdM", default=0,
+    MaleIcon: int = ParamField(
+        ushort, "iconIdM", game_type=Icon, default=0,
         tooltip="Icon of male variant of armor in inventory.",
     )
-    FemaleIcon: Texture = ParamField(
-        ushort, "iconIdF", default=0,
+    FemaleIcon: int = ParamField(
+        ushort, "iconIdF", game_type=Icon, default=0,
         tooltip="Icon of female variant of armor in inventory.",
     )
     KnockbackPercentageReduction: int = ParamField(
-        ushort, "knockBack", default=0, hide=True,
+        ushort, "knockBack", default=0,
         tooltip="Never used. Probably the percentage of knockback reduced (from 0 to 100) when wearing armor.",
     )
     KnockbackBouncePercentage: int = ParamField(
-        ushort, "knockbackBounceRate", default=0, hide=True,
+        ushort, "knockbackBounceRate", default=0,
         tooltip="Never used. Possibly affects knockback of incoming attacks.",
     )
     InitialDurability: int = ParamField(
@@ -274,20 +274,20 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         ushort, "resistCurse", default=0,
         tooltip="Curse resistance added by armor.",
     )
-    ArmorUpgradeID: ArmorUpgradeParam = ParamField(
-        short, "reinforceTypeId", default=0,
+    ArmorUpgradeID: int = ParamField(
+        short, "reinforceTypeId", game_type=ArmorUpgradeParam, default=0,
         tooltip="Effects applied at consecutive upgrade reinforcement levels.",
     )
     AchievementContributionID: int = ParamField(
-        short, "trophySGradeId", default=-1, hide=True,
+        short, "trophySGradeId", default=-1,
         tooltip="Index of armor as it contributes to certain multi-item achievements.",
     )
     ShopLevel: int = ParamField(
-        short, "shopLv", default=-1, hide=True,
+        short, "shopLv", default=-1,
         tooltip="Level of armor that can be sold in 'the shop'. Always -1 or 0. Probably unused.",
     )
     KnockbackID: int = ParamField(
-        byte, "knockbackParamId", default=1, hide=True,
+        byte, "knockbackParamId", game_type=KnockbackParam, default=1,
         tooltip="Knockback entry. Always 1.",
     )
     RepelDamagePercentageReduction: int = ParamField(
@@ -295,265 +295,265 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="Determines some aspect of attack deflection. Always set to 0 (for light armor) or 255 (for heavy "
                 "armor).",
     )
-    EquipmentModelCategory: EQUIP_MODEL_CATEGORY = ParamField(
-        byte, "equipModelCategory", default=1,
+    EquipmentModelCategory: int = ParamField(
+        byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=1,
         tooltip="Body part covered by armor model.",
     )
-    EquipmentModelGender: EQUIP_MODEL_GENDER = ParamField(
-        byte, "equipModelGender", default=0,
+    EquipmentModelGender: int = ParamField(
+        byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
         tooltip="Gender variant of armor.",
     )
-    ArmorType: PROTECTOR_CATEGORY = ParamField(
-        byte, "protectorCategory", default=0,
+    ArmorType: int = ParamField(
+        byte, "protectorCategory", PROTECTOR_CATEGORY, default=0,
         tooltip="Type of armor (equip slot).",
     )
-    SoundEffectOnHit: WEP_MATERIAL_DEF = ParamField(
-        byte, "defenseMaterial", default=50,
+    SoundEffectOnHit: int = ParamField(
+        byte, "defenseMaterial", WEP_MATERIAL_DEF, default=50,
         tooltip="Type of sound effect generated when this armor is hit.",
     )
-    VisualEffectOnHit: WEP_MATERIAL_DEF_SFX = ParamField(
-        byte, "defenseMaterialSfx", default=50,
+    VisualEffectOnHit: int = ParamField(
+        byte, "defenseMaterialSfx", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="Type of visual effect generated when this armor is hit.",
     )
-    PartsDamageType: ATK_PARAM_PARTSDMGTYPE = ParamField(
-        byte, "partsDmgType", default=0, hide=True,
+    PartsDamageType: int = ParamField(
+        byte, "partsDmgType", ATK_PARAM_PARTSDMGTYPE, default=0,
         tooltip="Always zero.",
     )
-    SoundEffectOnWeakSpotHit: WEP_MATERIAL_DEF = ParamField(
-        byte, "defenseMaterial_Weak", default=50,
+    SoundEffectOnWeakSpotHit: int = ParamField(
+        byte, "defenseMaterial_Weak", WEP_MATERIAL_DEF, default=50,
         tooltip="Sound effect for when damage is taken to weak spot (used for head armor).",
     )
-    VisualEffectOnWeakSpotHit: WEP_MATERIAL_DEF_SFX = ParamField(
-        byte, "defenseMaterialSfx_Weak", default=50,
+    VisualEffectOnWeakSpotHit: int = ParamField(
+        byte, "defenseMaterialSfx_Weak", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="Visual effect for when damage is taken to weak spot (used for head armor).",
     )
     CanBeStored: bool = ParamField(
-        byte, "isDeposit:1", bit_count=1, default=True,
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=1,
         tooltip="If True, this armor can be stored in the Bottomless Box.",
     )
     EquippedToHead: bool = ParamField(
-        byte, "headEquip:1", bit_count=1, default=False,
+        byte, "headEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="This armor is equipped to the head.",
     )
     EquippedToBody: bool = ParamField(
-        byte, "bodyEquip:1", bit_count=1, default=False,
+        byte, "bodyEquip:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="This armor is equipped to the body.",
     )
     EquippedToHands: bool = ParamField(
-        byte, "armEquip:1", bit_count=1, default=False,
+        byte, "armEquip:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="This armor is equipped to the hands.",
     )
     EquippedToLegs: bool = ParamField(
-        byte, "legEquip:1", bit_count=1, default=False,
+        byte, "legEquip:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="This armor is equipped to the legs.",
     )
     UseFaceScale: bool = ParamField(
-        byte, "useFaceScale:1", bit_count=1, default=False, hide=True,
+        byte, "useFaceScale:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="If True, the face-scaling parameters of this armor will be applied.",
     )
     HideFlag0: bool = ParamField(
-        byte, "invisibleFlag00:1", bit_count=1, default=False,
+        byte, "invisibleFlag00:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag1HairFringe: bool = ParamField(
-        byte, "invisibleFlag01:1", bit_count=1, default=False,
+        byte, "invisibleFlag01:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (hair fringe)",
     )
     HideFlag2Sideburns: bool = ParamField(
-        byte, "invisibleFlag02:1", bit_count=1, default=False,
+        byte, "invisibleFlag02:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (sideburns)",
     )
     HideFlag3TopOfHead: bool = ParamField(
-        byte, "invisibleFlag03:1", bit_count=1, default=False,
+        byte, "invisibleFlag03:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (top of head)",
     )
     HideFlag4TopOfHead: bool = ParamField(
-        byte, "invisibleFlag04:1", bit_count=1, default=False,
+        byte, "invisibleFlag04:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (top of head)",
     )
     HideFlag5BackHair: bool = ParamField(
-        byte, "invisibleFlag05:1", bit_count=1, default=False,
+        byte, "invisibleFlag05:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (back hair)",
     )
     HideFlag6BackHairTip: bool = ParamField(
-        byte, "invisibleFlag06:1", bit_count=1, default=False,
+        byte, "invisibleFlag06:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (back hair tip)",
     )
     HideFlag7: bool = ParamField(
-        byte, "invisibleFlag07:1", bit_count=1, default=False,
+        byte, "invisibleFlag07:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag8: bool = ParamField(
-        byte, "invisibleFlag08:1", bit_count=1, default=False,
+        byte, "invisibleFlag08:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag9: bool = ParamField(
-        byte, "invisibleFlag09:1", bit_count=1, default=False,
+        byte, "invisibleFlag09:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag10Collar: bool = ParamField(
-        byte, "invisibleFlag10:1", bit_count=1, default=False,
+        byte, "invisibleFlag10:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (collar)",
     )
     HideFlag11AroundCollar: bool = ParamField(
-        byte, "invisibleFlag11:1", bit_count=1, default=False,
+        byte, "invisibleFlag11:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (around collar)",
     )
     HideFlag12: bool = ParamField(
-        byte, "invisibleFlag12:1", bit_count=1, default=False,
+        byte, "invisibleFlag12:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag13: bool = ParamField(
-        byte, "invisibleFlag13:1", bit_count=1, default=False,
+        byte, "invisibleFlag13:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag14: bool = ParamField(
-        byte, "invisibleFlag14:1", bit_count=1, default=False,
+        byte, "invisibleFlag14:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag15HoodHem: bool = ParamField(
-        byte, "invisibleFlag15:1", bit_count=1, default=False,
+        byte, "invisibleFlag15:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (hood hem)",
     )
     HideFlag16: bool = ParamField(
-        byte, "invisibleFlag16:1", bit_count=1, default=False,
+        byte, "invisibleFlag16:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag17: bool = ParamField(
-        byte, "invisibleFlag17:1", bit_count=1, default=False,
+        byte, "invisibleFlag17:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag18: bool = ParamField(
-        byte, "invisibleFlag18:1", bit_count=1, default=False,
+        byte, "invisibleFlag18:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag19: bool = ParamField(
-        byte, "invisibleFlag19:1", bit_count=1, default=False,
+        byte, "invisibleFlag19:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag20SleeveA: bool = ParamField(
-        byte, "invisibleFlag20:1", bit_count=1, default=False,
+        byte, "invisibleFlag20:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (sleeve A)",
     )
     HideFlag21SleeveB: bool = ParamField(
-        byte, "invisibleFlag21:1", bit_count=1, default=False,
+        byte, "invisibleFlag21:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (sleeve B)",
     )
     HideFlag22: bool = ParamField(
-        byte, "invisibleFlag22:1", bit_count=1, default=False,
+        byte, "invisibleFlag22:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag23: bool = ParamField(
-        byte, "invisibleFlag23:1", bit_count=1, default=False,
+        byte, "invisibleFlag23:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag24: bool = ParamField(
-        byte, "invisibleFlag24:1", bit_count=1, default=False,
+        byte, "invisibleFlag24:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag25Arm: bool = ParamField(
-        byte, "invisibleFlag25:1", bit_count=1, default=False,
+        byte, "invisibleFlag25:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (arm)",
     )
     HideFlag26: bool = ParamField(
-        byte, "invisibleFlag26:1", bit_count=1, default=False,
+        byte, "invisibleFlag26:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag27: bool = ParamField(
-        byte, "invisibleFlag27:1", bit_count=1, default=False,
+        byte, "invisibleFlag27:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag28: bool = ParamField(
-        byte, "invisibleFlag28:1", bit_count=1, default=False,
+        byte, "invisibleFlag28:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag29: bool = ParamField(
-        byte, "invisibleFlag29:1", bit_count=1, default=False,
+        byte, "invisibleFlag29:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag30Belt: bool = ParamField(
-        byte, "invisibleFlag30:1", bit_count=1, default=False,
+        byte, "invisibleFlag30:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (belt)",
     )
     HideFlag31: bool = ParamField(
-        byte, "invisibleFlag31:1", bit_count=1, default=False,
+        byte, "invisibleFlag31:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag32: bool = ParamField(
-        byte, "invisibleFlag32:1", bit_count=1, default=False,
+        byte, "invisibleFlag32:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag33: bool = ParamField(
-        byte, "invisibleFlag33:1", bit_count=1, default=False,
+        byte, "invisibleFlag33:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag34: bool = ParamField(
-        byte, "invisibleFlag34:1", bit_count=1, default=False,
+        byte, "invisibleFlag34:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag35: bool = ParamField(
-        byte, "invisibleFlag35:1", bit_count=1, default=False,
+        byte, "invisibleFlag35:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag36: bool = ParamField(
-        byte, "invisibleFlag36:1", bit_count=1, default=False,
+        byte, "invisibleFlag36:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag37: bool = ParamField(
-        byte, "invisibleFlag37:1", bit_count=1, default=False,
+        byte, "invisibleFlag37:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag38: bool = ParamField(
-        byte, "invisibleFlag38:1", bit_count=1, default=False,
+        byte, "invisibleFlag38:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag39: bool = ParamField(
-        byte, "invisibleFlag39:1", bit_count=1, default=False,
+        byte, "invisibleFlag39:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag40: bool = ParamField(
-        byte, "invisibleFlag40:1", bit_count=1, default=False,
+        byte, "invisibleFlag40:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag41: bool = ParamField(
-        byte, "invisibleFlag41:1", bit_count=1, default=False,
+        byte, "invisibleFlag41:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag42: bool = ParamField(
-        byte, "invisibleFlag42:1", bit_count=1, default=False,
+        byte, "invisibleFlag42:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag43: bool = ParamField(
-        byte, "invisibleFlag43:1", bit_count=1, default=False,
+        byte, "invisibleFlag43:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag44: bool = ParamField(
-        byte, "invisibleFlag44:1", bit_count=1, default=False,
+        byte, "invisibleFlag44:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag45: bool = ParamField(
-        byte, "invisibleFlag45:1", bit_count=1, default=False,
+        byte, "invisibleFlag45:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag46: bool = ParamField(
-        byte, "invisibleFlag46:1", bit_count=1, default=False,
+        byte, "invisibleFlag46:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag47: bool = ParamField(
-        byte, "invisibleFlag47:1", bit_count=1, default=False,
+        byte, "invisibleFlag47:1", bit_count=1, default=0,
         tooltip="Hide part of the character model: (unknown)",
     )
     DisableMultiplayerShare: bool = ParamField(
-        byte, "disableMultiDropShare:1", bit_count=1, default=False, hide=True,
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="If True, this armor cannot be given to other players by dropping it. Always False in vanilla.",
     )
     SimpleDLCModelExists: bool = ParamField(
-        byte, "simpleModelForDlc:1", bit_count=1, default=False, hide=True,
+        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=0,
         tooltip="Unknown; always set to False.",
     )
     _Pad0: bytes = ParamPad(1, "pad_0[1]")
     OldSortIndex: int = ParamField(
-        short, "oldSortId", default=0, hide=True,
+        short, "oldSortId", default=0,
         tooltip="Sorting index for an obsolete build of the game. No effect.",
     )
     _Pad1: bytes = ParamPad(6, "pad_1[6]")

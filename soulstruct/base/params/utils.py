@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.base.game_types import BaseGameObject
+from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
 
 _LOGGER = logging.getLogger(__name__)
@@ -170,7 +171,8 @@ class ParamRow(NewBinaryStruct):
 
 class ParamFieldMetadata(tp.NamedTuple):
     internal_name: str
-    param_enum: tp.Type[ParamEnum] = None
+    param_enum: tp.Type[base_type] = None
+    game_type: tp.Type[BaseGameObject] = None
     hide: bool = False
     dynamic_callback: tp.Callable[[ParamRow], tuple[tp.Type[BaseGameObject], str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
@@ -179,7 +181,8 @@ class ParamFieldMetadata(tp.NamedTuple):
 def ParamField(
     fmt: tp.Type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
-    param_enum: tp.Type[ParamEnum] = None,
+    param_enum: tp.Type[base_type] = None,
+    game_type: tp.Type[BaseGameObject] = None,
     length: int | None = None,
     encoding: str = None,
     bit_count: int = -1,
@@ -206,6 +209,7 @@ def ParamField(
             "param": ParamFieldMetadata(
                 internal_name=internal_name,
                 param_enum=param_enum,
+                game_type=game_type,
                 hide=hide,
                 dynamic_callback=dynamic_callback,
                 tooltip=tooltip,

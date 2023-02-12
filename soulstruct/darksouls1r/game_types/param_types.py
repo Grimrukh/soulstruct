@@ -16,7 +16,7 @@ __all__ = [
     "CameraParam",
     "CharacterParam",
     "DialogueParam",
-    "FaceParam",
+    "FaceGenParam",
     "GoodParam",
     "GrowthCurveParam",
     "ItemLotParam",

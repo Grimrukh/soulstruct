@@ -413,12 +413,12 @@ class FACE_PARAM_ST(ParamRow):
         byte, "faceTexData49", default=0,
         tooltip="Texture data point 49.",
     )
-    HairStyle: FACE_PARAM_HAIRSTYLE_TYPE = ParamField(
-        byte, "hairStyle", default=0,
+    HairStyle: int = ParamField(
+        byte, "hairStyle", FACE_PARAM_HAIRSTYLE_TYPE, default=0,
         tooltip="Hairstyle of face.",
     )
-    BaseHairColor: FACE_PARAM_HAIRCOLOR_TYPE = ParamField(
-        byte, "hairColor_Base ", default=0,
+    BaseHairColor: int = ParamField(
+        byte, "hairColor_Base ", FACE_PARAM_HAIRCOLOR_TYPE, default=0,
         tooltip="Base hair color of face.",
     )
     HairColorRed: int = ParamField(

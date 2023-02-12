@@ -5,8 +5,8 @@ __all__ = ["TONE_MAP_BANK"]
 from dataclasses import dataclass
 
 from soulstruct.base.params.utils import *
-from soulstruct.darksouls1ptde.game_types import *
-from soulstruct.darksouls1ptde.params.enums import *
+from soulstruct.darksouls1r.game_types import *
+from soulstruct.darksouls1r.params.enums import *
 from soulstruct.utilities.binary import *
 
 
@@ -14,19 +14,19 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class TONE_MAP_BANK(ParamRow):
     NearBloomThreshold: int = ParamField(
-        sbyte, "bloomBegin", default=0,
+        short, "bloomBegin", default=0,
         tooltip="Near light blooming begins when brightness exceeds this threshold.",
     )
     NearBloomMultiplier: int = ParamField(
-        sbyte, "bloomMul", default=0,
+        short, "bloomMul", default=0,
         tooltip="Near light blooming multiplier.",
     )
     FarBloomThreshold: int = ParamField(
-        sbyte, "bloomBeginFar", default=0,
+        short, "bloomBeginFar", default=0,
         tooltip="Far light blooming begins when brightness exceeds this threshold.",
     )
     FarBloomMultiplier: int = ParamField(
-        sbyte, "bloomMulFar", default=0,
+        short, "bloomMulFar", default=0,
         tooltip="Far light blooming multiplier.",
     )
     NearBloomEndDistance: float = ParamField(
@@ -68,5 +68,5 @@ class TONE_MAP_BANK(ParamRow):
     )
     InverseToneMapMultiplier: float = ParamField(
         float, "inverseToneMapMul", default=3.0,
-        tooltip="New tone mapping field added in DSR.",
+        tooltip="New tone mapping field. (Added in DSR)",
     )

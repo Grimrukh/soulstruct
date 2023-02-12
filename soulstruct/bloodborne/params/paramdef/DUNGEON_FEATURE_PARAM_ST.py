@@ -22,7 +22,7 @@ class DUNGEON_FEATURE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     EventFlagID: int = ParamField(
-        byte, "eventflagId", default=0,
+        byte, "eventflagId", game_type=Flag, default=0,
         tooltip="TODO",
     )
     DungeonNamePriority: int = ParamField(
@@ -42,7 +42,7 @@ class DUNGEON_FEATURE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     EnemySpecialEffectID: int = ParamField(
-        int, "eneSpeffectId", default=-1,
+        int, "eneSpeffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="TODO",
     )
     GemDropCorrectionParamID: int = ParamField(

@@ -13,8 +13,8 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SP_EFFECT_PARAM_ST(ParamRow):
-    StatusIcon: Texture = ParamField(
-        int, "iconId", default=-1,
+    StatusIcon: int = ParamField(
+        int, "iconId", game_type=Icon, default=-1,
         tooltip="Icon that appears in HUD under stamina bar while special effect is active. Set to -1 for no icon.",
     )
     MaxHPPercentageForEffect: float = ParamField(
@@ -38,7 +38,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Multiplier applied to maximum HP.",
     )
     MaxMPMultiplier: float = ParamField(
-        float, "maxMpRate", default=1.0, hide=True,
+        float, "maxMpRate", default=1.0,
         tooltip="Multiplier applied to maximum MP. (Unused in Dark Souls; does NOT refer to spell usages.)",
     )
     MaxStaminaMultiplier: float = ParamField(
@@ -154,28 +154,28 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Value to add to or subtract from character's lightning defense.",
     )
     NoGuardIncomingDamageMultiplier: float = ParamField(
-        float, "NoGuardDamageRate", default=1.0, hide=True,
+        float, "NoGuardDamageRate", default=1.0,
         tooltip="Multiplier to use instead of usual multiplier if character is not guarding. (Always set to 0 in "
                 "vanilla game, which must deactivate it. Only an educated guess that it refers to incoming damage, "
                 "not outgoing.)",
     )
     CriticalHitIncomingDamageMultiplier: float = ParamField(
-        float, "vitalSpotChangeRate", default=-1.0, hide=True,
+        float, "vitalSpotChangeRate", default=-1.0,
         tooltip="Multiplier to use instead of usual multiplier if character is hit in a weak spot. (Always set to -1 "
                 "in vanilla game, which deactivates it. Only an educated guess that it affects incoming damage.)",
     )
     NonCriticalHitIncomingDamageMultiplier: float = ParamField(
-        float, "normalSpotChangeRate", default=-1.0, hide=True,
+        float, "normalSpotChangeRate", default=-1.0,
         tooltip="Multiplier to use instead of usual multiplier if character is *not* hit in a weak spot. (Always set "
                 "to -1 in vanilla game, which deactivates it. Only an educated guess that it affects incoming "
                 "damage.)",
     )
     MaxHPChangeRatio: float = ParamField(
-        float, "maxHpChangeRate", default=0.0, hide=True,
+        float, "maxHpChangeRate", default=0.0,
         tooltip="Appears to be an unused variant of MaxHPMultiplier. Always set to 0.",
     )
-    BehaviorToTrigger: BehaviorParam = ParamField(
-        int, "behaviorId", default=-1,
+    BehaviorToTrigger: int = ParamField(
+        int, "behaviorId", game_type=BehaviorParam, default=-1,
         tooltip="Behavior ID to trigger (which can in turn trigger an Attack or Bullet) whenever special effect is "
                 "applied. Set to -1 to use no behavior.",
     )
@@ -190,17 +190,17 @@ class SP_EFFECT_PARAM_ST(ParamRow):
                 "the special effect.",
     )
     MPReductionPercentage: float = ParamField(
-        float, "changeMpRate", default=0.0, hide=True,
+        float, "changeMpRate", default=0.0,
         tooltip="Percentage reduction of maximum MP (from 0 to 100). Negative values (to -100) will restore that "
                 "percentage instead. Applied every time the special effect updates. (Unused in Dark Souls 1.)",
     )
     MPPointsLost: int = ParamField(
-        int, "changeMpPoint", default=0, hide=True,
+        int, "changeMpPoint", default=0,
         tooltip="MP value to subtract (if positive) or add (if negative) to character's current MP on every update of "
                 "the special effect. (Unused in Dark Souls 1.)",
     )
     MPRecoverySpeedChange: int = ParamField(
-        int, "mpRecoverChangeSpeed", default=0, hide=True,
+        int, "mpRecoverChangeSpeed", default=0,
         tooltip="Points added to or subtracted from MP recovery formula. (Unused in Dark Souls 1.)",
     )
     StaminaReductionPercentage: float = ParamField(
@@ -219,7 +219,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
                 "stamina restored every second. (For reference, a Green Blossom adds 40 points.)",
     )
     MagicEffectTimeChange: float = ParamField(
-        float, "magicEffectTimeChange", default=0.0, hide=True,
+        float, "magicEffectTimeChange", default=0.0,
         tooltip="Name suggests this changes the duration of magic effects, but it is never used (always zero).",
     )
     CurrentDurabilityAddition: int = ParamField(
@@ -273,7 +273,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Multiplier applied to the character's maximum equip load.",
     )
     MaxItemLoadMultiplier: float = ParamField(
-        float, "allItemWeightChangeRate", default=1.0, hide=True,
+        float, "allItemWeightChangeRate", default=1.0,
         tooltip="Multiplier applied to how much the character can carry, equipped or not. Seems to have no effect in "
                 "Dark Souls 1.",
     )
@@ -301,7 +301,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Percentage reduction in enemy sight (from 0 to 100) when looking for this character. Not sure if "
                 "negative values can be used to make this character *more* visible.",
     )
-    EnemyHearingMultiplier: int = ParamField(
+    EnemyHearingMultiplier: float = ParamField(
         float, "hearingSearchEnemyRate", default=1.0,
         tooltip="Percentage multiplier in enemy hearing range when looking for this character.",
     )
@@ -327,11 +327,11 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Multiplier applied to character's maximum curse resistance.",
     )
     SoulStealMultiplier: float = ParamField(
-        float, "soulStealRate", default=1.0, hide=True,
+        float, "soulStealRate", default=1.0,
         tooltip="Internal description says 'defense against HP when NPCs are robbed by soul steal'. Probably unused.",
     )
     EffectDurationMultiplier: float = ParamField(
-        float, "lifeReductionRate", default=1.0, hide=True,
+        float, "lifeReductionRate", default=1.0,
         tooltip="Multiplier applied to the duration of the effect specified in EffectDurationMultiplierType. Used "
                 "only by Hawkeye Gough to reduce poison and toxic duration in vanilla game.",
     )
@@ -339,24 +339,24 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         float, "hpRecoverRate", default=1.0,
         tooltip="Multiplier applied to any increase in character's current HP.",
     )
-    NextSpecialEffect: SpecialEffectParam = ParamField(
-        int, "replaceSpEffectId", default=-1,
+    NextSpecialEffect: int = ParamField(
+        int, "replaceSpEffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect to apply to character automatically when this special effect ends (if not terminated "
                 "manually by an event).",
     )
-    SpecialEffectPerUpdate: SpecialEffectParam = ParamField(
-        int, "cycleOccurrenceSpEffectId", default=-1,
+    SpecialEffectPerUpdate: int = ParamField(
+        int, "cycleOccurrenceSpEffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect to apply to character every time this special effect updates (e.g. Symbol of Avarice "
                 "HP reduction).",
     )
-    SpecialEffectOnAttack: SpecialEffectParam = ParamField(
-        int, "atkOccurrenceSpEffectId", default=-1,
+    SpecialEffectOnAttack: int = ParamField(
+        int, "atkOccurrenceSpEffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect to apply to any target hit by an attack.  WARNING: This will not trigger unless "
                 "SpecialStateIndex is set to 152 (Rotten Pine Resin effect), which will in turn cause your weapon to "
                 "glow purple unless the visual effect is disabled.",
     )
     GuardDefenseFlickPowerRate: float = ParamField(
-        float, "guardDefFlickPowerRate", default=1.0, hide=True,
+        float, "guardDefFlickPowerRate", default=1.0,
         tooltip="Unknown; never used.",
     )
     GuardStaminaMultiplier: float = ParamField(
@@ -364,7 +364,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Values larger than 1 mean *less* stamina is used when blocking.",
     )
     RayCastPassingTime: int = ParamField(
-        short, "rayCastPassedTime", default=-1, hide=True,
+        short, "rayCastPassedTime", default=-1,
         tooltip="Internal description says 'Gaze passing: activation time (milliseconds).' Likely unused.",
     )
     PoiseAddition: int = ParamField(
@@ -376,8 +376,8 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Percentage change (from 0 to 100) in bow range. Requires SpecialStateIndex BowBoostRange (168) to "
                 "work.",
     )
-    SpecialEffectCategory: SP_EFFECT_SPCATEGORY = ParamField(
-        ushort, "spCategory", default=0,
+    SpecialEffectCategory: int = ParamField(
+        ushort, "spCategory", SP_EFFECT_SPCATEGORY, default=0,
         tooltip="Category of special effect. This effect will override (i.e. cancel out) all other active effects "
                 "with the same category when it is added.",
     )
@@ -385,8 +385,8 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         byte, "categoryPriority", default=0,
         tooltip="Priority ordering for special effect to be applied on each update (lower values are updated first).",
     )
-    SaveCategory: SP_EFFECT_SAVE_CATEGORY = ParamField(
-        sbyte, "saveCategory", default=-1,
+    SaveCategory: int = ParamField(
+        sbyte, "saveCategory", SP_EFFECT_SAVE_CATEGORY, default=-1,
         tooltip="Determines automatic game saving behavior (used for status ailments only). Set to -1 for no saving.",
     )
     AttunementSlotCountChange: int = ParamField(
@@ -394,7 +394,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Increase (positive) or decrease (negative) number of attunement slots available.",
     )
     AttunementMiracleSlotCountChange: int = ParamField(
-        byte, "changeMiracleSlot", default=0, hide=True,
+        byte, "changeMiracleSlot", default=0,
         tooltip="Miracle slots are not even separate from other magic slots, so this is likely an abandoned field.",
     )
     HumanityDamage: int = ParamField(
@@ -413,365 +413,365 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         byte, "bloodDamageRate", default=100,
         tooltip="Percentage of incoming bleed damage received (usually 100).",
     )
-    ReplaceNoImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_None", default=0,
+    ReplaceNoImpactLevel: int = ParamField(
+        sbyte, "dmgLv_None", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of NoImpact level.",
     )
-    ReplaceSmallImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_S", default=0,
+    ReplaceSmallImpactLevel: int = ParamField(
+        sbyte, "dmgLv_S", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Small impact level.",
     )
-    ReplaceMediumImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_M", default=0,
+    ReplaceMediumImpactLevel: int = ParamField(
+        sbyte, "dmgLv_M", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Medium impact level.",
     )
-    ReplaceLargeImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_L", default=0,
+    ReplaceLargeImpactLevel: int = ParamField(
+        sbyte, "dmgLv_L", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Large impact level.",
     )
-    ReplaceBlowoffImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_BlowM", default=0,
+    ReplaceBlowoffImpactLevel: int = ParamField(
+        sbyte, "dmgLv_BlowM", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Blowoff impact level.",
     )
-    ReplacePushImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_Push", default=0,
+    ReplacePushImpactLevel: int = ParamField(
+        sbyte, "dmgLv_Push", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Push impact level.",
     )
-    ReplaceStrikeImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_Strike", default=0,
+    ReplaceStrikeImpactLevel: int = ParamField(
+        sbyte, "dmgLv_Strike", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Strike impact level.",
     )
-    ReplaceSmallBlowImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_BlowS", default=0,
+    ReplaceSmallBlowImpactLevel: int = ParamField(
+        sbyte, "dmgLv_BlowS", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Blow impact level.",
     )
-    ReplaceMinimalImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_Min", default=0,
+    ReplaceMinimalImpactLevel: int = ParamField(
+        sbyte, "dmgLv_Min", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Minimal impact level.",
     )
-    ReplaceLaunchImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_Uppercut", default=0,
+    ReplaceLaunchImpactLevel: int = ParamField(
+        sbyte, "dmgLv_Uppercut", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of Launch impact level.",
     )
-    ReplaceBlowBackwardImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_BlowLL", default=0,
+    ReplaceBlowBackwardImpactLevel: int = ParamField(
+        sbyte, "dmgLv_BlowLL", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of BlowBackward impact level.",
     )
-    ReplaceBreathBurnImpactLevel: ATKPARAM_REP_DMGTYPE = ParamField(
-        sbyte, "dmgLv_Breath", default=0,
+    ReplaceBreathBurnImpactLevel: int = ParamField(
+        sbyte, "dmgLv_Breath", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="Impact level that will occur instead of BreathBurn impact level.",
     )
-    AttackAttribute: ATKPARAM_ATKATTR_TYPE = ParamField(
-        byte, "atkAttribute", default=0,
+    AttackAttribute: int = ParamField(
+        byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=0,
         tooltip="Attack type attached to hits while special effect is active.",
     )
-    ElementAttribute: ATKPARAM_SPATTR_TYPE = ParamField(
-        byte, "spAttribute", default=0,
+    ElementAttribute: int = ParamField(
+        byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=0,
         tooltip="Element attached to hits while special effect is active.",
     )
-    SpecialState: SpecialStateInfo = ParamField(
-        ushort, "stateInfo", default=0,
+    SpecialState: int = ParamField(
+        ushort, "stateInfo", SP_EFFECT_TYPE, default=0,
         tooltip="Hard-coded special state to use. Also determines visual effect from Special Effect Visuals table.",
     )
-    AffectedWeaponType: SP_EFE_WEP_CHANGE_PARAM = ParamField(
-        byte, "wepParamChange", default=0,
+    AffectedWeaponType: int = ParamField(
+        byte, "wepParamChange", SP_EFE_WEP_CHANGE_PARAM, default=0,
         tooltip="Weapon category that is affected by special effect. ",
     )
-    MovementType: SP_EFFECT_MOVE_TYPE = ParamField(
-        byte, "moveType", default=0,
+    MovementType: int = ParamField(
+        byte, "moveType", SP_EFFECT_MOVE_TYPE, default=0,
         tooltip="Determines how movement is affected. (Does not correspond to Movement param entries.)",
     )
     EffectDurationMultiplierType: int = ParamField(
-        ushort, "lifeReductionType", default=0, hide=True,
+        ushort, "lifeReductionType", SP_EFFECT_TYPE, default=0,
         tooltip="Type of effect whose duration is affected by EffectDurationMultiplier. Known values: 2 = poison, 5 = "
                 "toxic.",
     )
-    ThrowCondition: SP_EFFECT_THROW_CONDITION_TYPE = ParamField(
-        byte, "throwCondition", default=0,
+    ThrowCondition: int = ParamField(
+        byte, "throwCondition", SP_EFFECT_THROW_CONDITION_TYPE, default=0,
         tooltip="Determines how throws are affected while special effect is active. Values still unknown (rarely "
                 "used).",
     )
     AddBehaviorJudgeIDCondition: int = ParamField(
-        sbyte, "addBehaviorJudgeId_condition", default=-1, hide=True,
+        sbyte, "addBehaviorJudgeId_condition", default=-1,
         tooltip="Unclear; used only to manage the Hydra as more heads are cut off. All other values are -1.",
     )
     AddBehaviorJudgeIDAdd: int = ParamField(
-        byte, "addBehaviorJudgeId_add", default=0, hide=True,
+        byte, "addBehaviorJudgeId_add", default=0,
         tooltip="Always zero. Unknown effect. Internal description suggests that this is a constant added to all "
                 "behavior judge IDs (from TAE) issued by character.",
     )
     CanAffectSelf: bool = ParamField(
-        byte, "effectTargetSelf:1", bit_count=1, default=False,
+        byte, "effectTargetSelf:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target self.",
     )
     CanAffectAlly: bool = ParamField(
-        byte, "effectTargetFriend:1", bit_count=1, default=False,
+        byte, "effectTargetFriend:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target self.",
     )
     CanAffectEnemy: bool = ParamField(
-        byte, "effectTargetEnemy:1", bit_count=1, default=False,
+        byte, "effectTargetEnemy:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target enemies.",
     )
     CanAffectPlayer: bool = ParamField(
-        byte, "effectTargetPlayer:1", bit_count=1, default=False,
+        byte, "effectTargetPlayer:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target player characters.",
     )
     CanAffectAI: bool = ParamField(
-        byte, "effectTargetAI:1", bit_count=1, default=False,
+        byte, "effectTargetAI:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target non-player characters.",
     )
     CanAffectPlayers: bool = ParamField(
-        byte, "effectTargetLive:1", bit_count=1, default=False,
+        byte, "effectTargetLive:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target humans.",
     )
     CanAffectPhantoms: bool = ParamField(
-        byte, "effectTargetGhost:1", bit_count=1, default=False,
+        byte, "effectTargetGhost:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target phantoms (white or black).",
     )
     CanAffectWhitePhantoms: bool = ParamField(
-        byte, "effectTargetWhiteGhost:1", bit_count=1, default=False,
+        byte, "effectTargetWhiteGhost:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target white phantoms.",
     )
     CanAffectBlackPhantoms: bool = ParamField(
-        byte, "effectTargetBlackGhost:1", bit_count=1, default=False,
+        byte, "effectTargetBlackGhost:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target white phantoms.",
     )
     CanAffectAttacker: bool = ParamField(
-        byte, "effectTargetAttacker:1", bit_count=1, default=False,
+        byte, "effectTargetAttacker:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Effect will target character when they attack (e.g. HP drain).",
     )
     DisplayIconWhenInactive: bool = ParamField(
-        byte, "dispIconNonactive:1", bit_count=1, default=False, hide=True,
+        byte, "dispIconNonactive:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Display icon even when special effect is inactive (not sure what that means). Never enabled.",
     )
     UseVisualEffect: bool = ParamField(
-        byte, "useSpEffectEffect:1", bit_count=1, default=False,
+        byte, "useSpEffectEffect:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Use visual effect from Special Effect Visuals table (indexed by Special State field).",
     )
     UseIntelligenceScaling: bool = ParamField(
-        byte, "bAdjustMagicAblity:1", bit_count=1, default=False,
+        byte, "bAdjustMagicAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, special effect damage will be scaled by character intelligence (I believe).",
     )
     UseFaithScaling: bool = ParamField(
-        byte, "bAdjustFaithAblity:1", bit_count=1, default=False,
+        byte, "bAdjustFaithAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, special effect damage will be scaled by character faith (I believe).",
     )
     ForNewGamePlus: bool = ParamField(
-        byte, "bGameClearBonus:1", bit_count=1, default=False,
+        byte, "bGameClearBonus:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, this effect will be applied multiple times depending on the NG+ cycle (I think).",
     )
     AffectsMagic: bool = ParamField(
-        byte, "magParamChange:1", bit_count=1, default=False,
+        byte, "magParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, multipliers will be applied to magic attacks.",
     )
     AffectsMiracles: bool = ParamField(
-        byte, "miracleParamChange:1", bit_count=1, default=False,
+        byte, "miracleParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, multipliers will be applied to miracle attacks.",
     )
     ClearSoul: bool = ParamField(
-        byte, "clearSoul:1", bit_count=1, default=False, hide=True,
+        byte, "clearSoul:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unused Demon's Souls remnant.",
     )
     RequestWhitePhantomSummon: bool = ParamField(
-        byte, "requestSOS:1", bit_count=1, default=False, hide=True,
+        byte, "requestSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by White Sign Soapstone.",
     )
     RequestBlackPhantomSummon: bool = ParamField(
-        byte, "requestBlackSOS:1", bit_count=1, default=False, hide=True,
+        byte, "requestBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Red Sign Soapstone.",
     )
     RequestInvasion: bool = ParamField(
-        byte, "requestForceJoinBlackSOS:1", bit_count=1, default=False, hide=True,
+        byte, "requestForceJoinBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only be (Cracked) Red Eye Orb.",
     )
     RequestKick: bool = ParamField(
-        byte, "requestKickSession:1", bit_count=1, default=False, hide=True,
+        byte, "requestKickSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Not used by any item. Likely kicks all clients out of your world.",
     )
     RequestReturnToOwnWorld: bool = ParamField(
-        byte, "requestLeaveSession:1", bit_count=1, default=False, hide=True,
+        byte, "requestLeaveSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Black Separation Crystal.",
     )
     RequestNPCInvasion: bool = ParamField(
-        byte, "requestNpcInveda:1", bit_count=1, default=False, hide=True,
+        byte, "requestNpcInveda:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Black Eye Orb (Lautrec quest and cut Shiva quest).",
     )
     Immortal: bool = ParamField(
-        byte, "noDead:1", bit_count=1, default=False,
+        byte, "noDead:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character cannot die. Never used in vanilla game.",
     )
     CurrentHPIgnoresMaxHPChange: bool = ParamField(
-        byte, "bCurrHPIndependeMaxHP:1", bit_count=1, default=False,
+        byte, "bCurrHPIndependeMaxHP:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, changes to maximum HP will not affect current HP (unless it must be reduced to new "
                 "maximum).",
     )
     IgnoreCorrosion: bool = ParamField(
-        byte, "corrosionIgnore:1", bit_count=1, default=False, hide=True,
+        byte, "corrosionIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore corrosion damage to durability. Used only by Demon's Souls junk.",
     )
     IgnoreSightReduction: bool = ParamField(
-        byte, "sightSearchCutIgnore:1", bit_count=1, default=False, hide=True,
+        byte, "sightSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any changes to their sight range from other special effects. Used "
                 "only by Demon's Souls junk.",
     )
     IgnoreHearingReduction: bool = ParamField(
-        byte, "hearingSearchCutIgnore:1", bit_count=1, default=False, hide=True,
+        byte, "hearingSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any changes to their hearing range from other special effects. Used "
                 "only by Demon's Souls junk.",
     )
     IgnoreMagicDisabling: bool = ParamField(
-        byte, "antiMagicIgnore:1", bit_count=1, default=False, hide=True,
+        byte, "antiMagicIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any special effect that attempts to disable their magic. Used only by "
                 "Demon's Souls junk.",
     )
     IgnoreFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnore:1", bit_count=1, default=False, hide=True,
+        byte, "fakeTargetIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreUndeadFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnoreUndead:1", bit_count=1, default=False, hide=True,
+        byte, "fakeTargetIgnoreUndead:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreBeastFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnoreAnimal:1", bit_count=1, default=False, hide=True,
+        byte, "fakeTargetIgnoreAnimal:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreGravity: bool = ParamField(
-        byte, "grabityIgnore:1", bit_count=1, default=False,
+        byte, "grabityIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Ignore gravity. (Not sure if this actually works.)",
     )
     PoisonImmunity: bool = ParamField(
-        byte, "disablePoison:1", bit_count=1, default=False,
+        byte, "disablePoison:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to poison.",
     )
     ToxicImmunity: bool = ParamField(
-        byte, "disableDisease:1", bit_count=1, default=False,
+        byte, "disableDisease:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to toxic.",
     )
     BleedImmunity: bool = ParamField(
-        byte, "disableBlood:1", bit_count=1, default=False,
+        byte, "disableBlood:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to curse.",
     )
     CurseImmunity: bool = ParamField(
-        byte, "disableCurse:1", bit_count=1, default=False,
+        byte, "disableCurse:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to poison.",
     )
     EnableCharming: bool = ParamField(
-        byte, "enableCharm:1", bit_count=1, default=False, hide=True,
+        byte, "enableCharm:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Not sure if this refers to the Alluring Skull. May not work at all.",
     )
     EnableLifeTime: bool = ParamField(
-        byte, "enableLifeTime:1", bit_count=1, default=False, hide=True,
+        byte, "enableLifeTime:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Internal description: 'Is the life extended when setting a flag by TAE?'. Effect unknown. Used by "
                 "Dragon Head and Torso Stones and some internal summon-related effects.",
     )
     HasTarget: bool = ParamField(
-        byte, "hasTarget : 1", bit_count=1, default=False, hide=True,
+        byte, "hasTarget : 1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="For unused 'evil eye' mechanics, probably a Demon's Souls remnant.",
     )
     FireImmunity: bool = ParamField(
-        byte, "isFireDamageCancel:1", bit_count=1, default=False,
+        byte, "isFireDamageCancel:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to fire damage. Never enabled, and may not actually work. Needs testing.",
     )
     AffectedByEffectExtension: bool = ParamField(
-        byte, "isExtendSpEffectLife:1", bit_count=1, default=False,
+        byte, "isExtendSpEffectLife:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, this special effect will be affected by special state (193), i.e. the effect used by the "
                 "vanilla Lingering Dragoncrest Ring, that extends effect durations.",
     )
     RequestColiseumExit: bool = ParamField(
-        byte, "requestLeaveColiseumSession:1", bit_count=1, default=False, hide=True,
+        byte, "requestLeaveColiseumSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Purple Coward's Crystal.",
     )
     DisableBeast: bool = ParamField(
-        byte, "disableTherianthrope:1", bit_count=1, default=False,
+        byte, "disableTherianthrope:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     ChargeAttackParamChange: bool = ParamField(
-        byte, "chargeAttackParamChange:1", bit_count=1, default=False,
+        byte, "chargeAttackParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     GrabAttackParamChange: bool = ParamField(
-        byte, "throwAttackParamChange:1", bit_count=1, default=False,
+        byte, "throwAttackParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableEquipSlotCheck: bool = ParamField(
-        byte, "enableEquipSlotCheck:1", bit_count=1, default=False,
+        byte, "enableEquipSlotCheck:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     AffectsCharactersWithNoCovenant: bool = ParamField(
-        byte, "vowType0:1", bit_count=1, default=False,
+        byte, "vowType0:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters with no covenant.",
     )
     AffectsWayOfWhite: bool = ParamField(
-        byte, "vowType1:1", bit_count=1, default=False,
+        byte, "vowType1:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Way of White covenant.",
     )
     AffectsPrincessGuard: bool = ParamField(
-        byte, "vowType2:1", bit_count=1, default=False,
+        byte, "vowType2:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Princess's Guard covenant.",
     )
     AffectsWarriorOfSunlight: bool = ParamField(
-        byte, "vowType3:1", bit_count=1, default=False,
+        byte, "vowType3:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Warriors of Sunlight covenant.",
     )
     AffectsDarkwraith: bool = ParamField(
-        byte, "vowType4:1", bit_count=1, default=False,
+        byte, "vowType4:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Darkwraith covenant.",
     )
     AffectsPathOfTheDragon: bool = ParamField(
-        byte, "vowType5:1", bit_count=1, default=False,
+        byte, "vowType5:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Path of the Dragon covenant.",
     )
     AffectsGravelordServant: bool = ParamField(
-        byte, "vowType6:1", bit_count=1, default=False,
+        byte, "vowType6:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Gravelord Servant covenant.",
     )
     AffectsForestHunter: bool = ParamField(
-        byte, "vowType7:1", bit_count=1, default=False,
+        byte, "vowType7:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Forest Hunters covenant.",
     )
     AffectsDarkmoonBlade: bool = ParamField(
-        byte, "vowType8:1", bit_count=1, default=False,
+        byte, "vowType8:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Blades of the Darkmoon covenant.",
     )
     AffectsChaosServant: bool = ParamField(
-        byte, "vowType9:1", bit_count=1, default=False,
+        byte, "vowType9:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in the Chaos Servants covenant.",
     )
     AffectsCovenant10: bool = ParamField(
-        byte, "vowType10:1", bit_count=1, default=False, hide=True,
+        byte, "vowType10:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     AffectsCovenant11: bool = ParamField(
-        byte, "vowType11:1", bit_count=1, default=False, hide=True,
+        byte, "vowType11:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     AffectsCovenant12: bool = ParamField(
-        byte, "vowType12:1", bit_count=1, default=False, hide=True,
+        byte, "vowType12:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     AffectsCovenant13: bool = ParamField(
-        byte, "vowType13:1", bit_count=1, default=False, hide=True,
+        byte, "vowType13:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     AffectsCovenant14: bool = ParamField(
-        byte, "vowType14:1", bit_count=1, default=False, hide=True,
+        byte, "vowType14:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     AffectsCovenant15: bool = ParamField(
-        byte, "vowType15:1", bit_count=1, default=False, hide=True,
+        byte, "vowType15:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Determines if this special effect will affect characters in unused covenant.",
     )
     EffectTargetsEnemyTarget: bool = ParamField(
-        byte, "effectTargetOpposeTarget:1", bit_count=1, default=False,
+        byte, "effectTargetOpposeTarget:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     EffectTargetsAllyTarget: bool = ParamField(
-        byte, "effectTargetFriendlyTarget:1", bit_count=1, default=False,
+        byte, "effectTargetFriendlyTarget:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     EffectTargetsSelfTarget: bool = ParamField(
-        byte, "effectTargetSelfTarget:1", bit_count=1, default=False,
+        byte, "effectTargetSelfTarget:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DeathCauseID: int = ParamField(
@@ -783,7 +783,7 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     AntiDarkSightModelPoint: int = ParamField(
-        int, "antiDarkSightDmypolyId", default=-1,
+        int, "antiDarkSightDmypolyId", game_type=ModelDummy, default=-1,
         tooltip="TODO",
     )
     SightSearchRate: float = ParamField(
@@ -802,20 +802,20 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         float, "registTherianthropeChangeRate", default=1.0,
         tooltip="TODO",
     )
-    ChangeTeamType: SP_EFFECT_CHANGE_TEAM_TYPE = ParamField(
-        sbyte, "changeTeamType", default=-1,
+    ChangeTeamType: int = ParamField(
+        sbyte, "changeTeamType", SP_EFFECT_CHANGE_TEAM_TYPE, default=-1,
         tooltip="TODO",
     )
     UseStrengthScaling: bool = ParamField(
-        byte, "bAdjustStrengthAblity:1", bit_count=1, default=False,
+        byte, "bAdjustStrengthAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     UseDexterityScaling: bool = ParamField(
-        byte, "bAdjustAgilityAblity:1", bit_count=1, default=False,
+        byte, "bAdjustAgilityAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
-    WeaponConvertAttribute: SP_EFFECT_CONVERT_ATTRIBUTE = ParamField(
-        byte, "weaponConvertAttribute", default=0,
+    WeaponConvertAttribute: int = ParamField(
+        byte, "weaponConvertAttribute", SP_EFFECT_CONVERT_ATTRIBUTE, default=0,
         tooltip="TODO",
     )
     ChangeMaxQuantity: int = ParamField(
@@ -878,16 +878,16 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         sbyte, "addBulletNum", default=0,
         tooltip="TODO",
     )
-    ValidConditionPlayerWeaponState: SP_EFE_PC_WEAPON_STATE = ParamField(
-        byte, "validCond_PCWeponState", default=0,
+    ValidConditionPlayerWeaponState: int = ParamField(
+        byte, "validCond_PCWeponState", SP_EFE_PC_WEAPON_STATE, default=0,
         tooltip="TODO",
     )
     AddBloodBullets: int = ParamField(
         sbyte, "addTempBulletNum", default=0,
         tooltip="TODO",
     )
-    RegainGaugeDamage: bool = ParamField(
-        byte, "regainGaugeDamage", default=0,
+    RegainGaugeDamage: int = ParamField(
+        byte, "regainGaugeDamage", SP_EFFECT_BOOL, default=0,
         tooltip="TODO",
     )
     ChangeStrength: int = ParamField(
@@ -966,8 +966,8 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         float, "transfusionHpRecoverRate", default=1.0,
         tooltip="TODO",
     )
-    ValidConditionStateInfo: SP_EFFECT_TYPE = ParamField(
-        ushort, "validCond_StateInfo", default=0,
+    ValidConditionStateInfo: int = ParamField(
+        ushort, "validCond_StateInfo", SP_EFFECT_TYPE, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(2, "pad3[2]")

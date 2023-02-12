@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class NPC_THINK_PARAM_ST(ParamRow):
-    LogicID: LogicAIScript = ParamField(
-        int, "logicId", default=-1,
+    LogicID: int = ParamField(
+        int, "logicId", game_type=LogicAIScript, default=-1,
         tooltip="ID of logic (non-battle) Lua script.",
     )
-    BattleID: BattleAIScript = ParamField(
-        int, "battleGoalID", default=-1,
+    BattleID: int = ParamField(
+        int, "battleGoalID", game_type=BattleAIScript, default=-1,
         tooltip="Battle goal ID used to look up battle Lua script.",
     )
     NearDistance: float = ParamField(
@@ -38,11 +38,11 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="Distance beyond which the NPC will not attempt to fight.",
     )
     RetreatTimeAfterHittingEnemyWall: float = ParamField(
-        float, "BackHomeLife_OnHitEneWal", default=5.0, hide=True,
+        float, "BackHomeLife_OnHitEneWal", default=5.0,
         tooltip="Retreat goal time when touching an 'enemy wall' that blocks the NPC's path. (Not clear what an "
                 "'enemy wall' means. Almost always set to 5 (rarely 6).",
     )
-    CautionGoalID: LogicAIScript = ParamField(
+    CautionGoalID: int = ParamField(
         int, "goalID_ToCaution", default=0,
         tooltip="Lua script to use when NPC's AI enters the 'Caution' state (I think). Requires a CautionGoalAction "
                 "value of 4. Used only by Hawkeye Gough (411000); zero otherwise.",
@@ -51,13 +51,13 @@ class NPC_THINK_PARAM_ST(ParamRow):
         int, "idAttackCannotMove", default=0,
         tooltip="Animation to use if the NPC gets stuck on a destructible object. Usually 3000 (basic attack).",
     )
-    SearchGoalID: LogicAIScript = ParamField(
+    SearchGoalID: int = ParamField(
         int, "goalID_ToFind", default=0,
         tooltip="Lua script to use when NPC's AI enters the 'Search' state (I think). Requires a SearchGoalAction "
                 "value of 4. Not used by any vanilla NPC (all zero).",
     )
     HelpCallResponseAnimation: int = ParamField(
-        int, "callHelp_ActionAnimId", default=-1,
+        int, "callHelp_ActionAnimId", game_type=Animation, default=-1,
         tooltip="Animation to play when responding to a call for help. Usually set to -1 for NPCs who can reply to "
                 "calls for help, which I assume means no animation is played. Set to 0 for NPCs who ignore calls for "
                 "help.",
@@ -76,7 +76,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="Distance of NPC hearing (in meters).",
     )
     HearingCutDistance: int = ParamField(
-        ushort, "ear_soundcut_dist", default=0, hide=True,
+        ushort, "ear_soundcut_dist", default=0,
         tooltip="Internal description: 'Distance to reduce the size of the sound source. Sounds less than this "
                 "distance will not be heard.' Set to 1 for Bloatheads and Bloathead Sorcerers and 0 for everyone "
                 "else.",
@@ -102,7 +102,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
                 "internal GOAL function 'COMMON_SetBattleActLogic()'.)",
     )
     NonBattleActLife: int = ParamField(
-        ushort, "nonBattleActLife", default=0, hide=True,
+        ushort, "nonBattleActLife", default=0,
         tooltip="Lifespan of Acts outside of battle. Set to 10 for Bloatheads and Bloathead Sorcerers, 0 for "
                 "Priscilla's Tail and the Bed of Chaos bug, and 5 for everyone else. (Argument of internal GOAL "
                 "function 'COMMON_SetBattleActLogic()'.)",
@@ -140,7 +140,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
                 "used.",
     )
     TargetSysDamageRate: int = ParamField(
-        ushort, "targetSys_DmgEffectRate", default=100, hide=True,
+        ushort, "targetSys_DmgEffectRate", default=100,
         tooltip="Internal description: 'Get damage rate (%) for target system evaluation information.' Set to 0 for "
                 "summons, phantoms, and the Parasitic Wall Hugger, and 100 for everyone else.",
     )
@@ -167,7 +167,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="Angular height of hearing field in degrees.",
     )
     HelpCallTargetMinDistance: int = ParamField(
-        byte, "callHelp_CallValidMinDistTarget", default=0, hide=True,
+        byte, "callHelp_CallValidMinDistTarget", default=0,
         tooltip="Minimum distance from AI target for help call to be made. Always zero.",
     )
     HelpCallFriendMaxDistance: int = ParamField(
@@ -189,56 +189,56 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="Internal description: 'Maximum time for response goal at first waiting goal'. Units are in tenths of "
                 "a second. Only used for Female Ghosts (40).",
     )
-    CautionGoalAction: NPC_THINK_GOAL_ACTION = ParamField(
-        byte, "goalAction_ToCaution", default=0,
+    CautionGoalAction: int = ParamField(
+        byte, "goalAction_ToCaution", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="Type of action taken when AI enters the 'Caution' state.",
     )
-    SearchGoalAction: NPC_THINK_GOAL_ACTION = ParamField(
-        byte, "goalAction_ToFind", default=0,
+    SearchGoalAction: int = ParamField(
+        byte, "goalAction_ToFind", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="Type of action taken when AI enters the 'Search' state.",
     )
-    HelpCallReplyType: NPC_THINK_REPLY_BEHAVIOR_TYPE = ParamField(
-        byte, "callHelp_ReplyBehaviorType", default=0,
+    HelpCallReplyType: int = ParamField(
+        byte, "callHelp_ReplyBehaviorType", NPC_THINK_REPLY_BEHAVIOR_TYPE, default=0,
         tooltip="Set to 0 for NPCs who do not reply to calls for help and 1 for NPCs who do.",
     )
-    IgnoreNavmesh: bool = ParamField(
+    IgnoreNavmesh: int = ParamField(
         byte, "disablePathMove", default=0,
         tooltip="If 1, this NPC will ignore navmesh when moving. True for Ghosts and enemies that don't move at all.",
     )
-    SkipArrivalVisibleCheck: bool = ParamField(
-        byte, "skipArrivalVisibleCheck", default=0, hide=True,
+    SkipArrivalVisibleCheck: int = ParamField(
+        byte, "skipArrivalVisibleCheck", ON_OFF, default=0,
         tooltip="Internal description: 'If enabled, arrival determination is performed even if the line of sightis "
                 "not passed.' True only for Hawkeye Gough.",
     )
-    AdmirerAttribute: bool = ParamField(
-        byte, "thinkAttr_doAdmirer", default=0,
+    AdmirerAttribute: int = ParamField(
+        byte, "thinkAttr_doAdmirer", ON_OFF, default=0,
         tooltip="Internal description: 'Thought attribute: when enabled, it plays the role of a wrap.' I don'tknow "
                 "exactly what that means, but this is likely important for something. Enabled for Soulmassand "
                 "Pursuers, non-giant Rats, Infested Ghouls, Mushrooms, most Hollows (not archers), MaleGhosts, normal "
                 "Skeletons and Skeleton Beasts, and Pisaca.",
     )
     CanFallOffEdges: bool = ParamField(
-        byte, "enableNaviFlg_Edge:1", bit_count=1, default=True,
+        byte, "enableNaviFlg_Edge:1", bit_count=1, default=1,
         tooltip="If True, this NPC will pursue targets off navmesh edges (survivable falls).",
     )
     CanNavigateWideSpaces: bool = ParamField(
-        byte, "enableNaviFlg_LargeSpace:1", bit_count=1, default=True,
+        byte, "enableNaviFlg_LargeSpace:1", bit_count=1, default=1,
         tooltip="If True, this NPC can enter navmesh regions flagged as 'large spaces'.",
     )
     CanNavigateLadders: bool = ParamField(
-        byte, "enableNaviFlg_Ladder:1", bit_count=1, default=False,
+        byte, "enableNaviFlg_Ladder:1", bit_count=1, default=0,
         tooltip="If True, this NPC will use ladders.",
     )
     CanNavigateHoles: bool = ParamField(
-        byte, "enableNaviFlg_Hole:1", bit_count=1, default=False,
+        byte, "enableNaviFlg_Hole:1", bit_count=1, default=0,
         tooltip="If True, this NPC can fall into navmesh holes.",
     )
     CanNavigateDoors: bool = ParamField(
-        byte, "enableNaviFlg_Door:1", bit_count=1, default=False,
+        byte, "enableNaviFlg_Door:1", bit_count=1, default=0,
         tooltip="If True, this NPC can go through doors (but not necessarily open closed doors).",
     )
     CanNavigateInsideWalls: bool = ParamField(
-        byte, "enableNaviFlg_InSideWall:1", bit_count=1, default=False,
+        byte, "enableNaviFlg_InSideWall:1", bit_count=1, default=0,
         tooltip="If True, this NPC can go through walls (i.e. ignores navmesh walls).",
     )
     _BitPad0: int = ParamBitPad(byte, "enableNaviFlg_reserve0:2", bit_count=2)

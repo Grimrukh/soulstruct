@@ -34,31 +34,31 @@ class GEM_CATEGORY_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     IsNegative: bool = ParamField(
-        uint, "isNegative:1", bit_count=1, default=False,
+        uint, "isNegative:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeA: bool = ParamField(
-        uint, "enableSlotTypeA:1", bit_count=1, default=False,
+        uint, "enableSlotTypeA:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeB: bool = ParamField(
-        uint, "enableSlotTypeB:1", bit_count=1, default=False,
+        uint, "enableSlotTypeB:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeC: bool = ParamField(
-        uint, "enableSlotTypeC:1", bit_count=1, default=False,
+        uint, "enableSlotTypeC:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeD: bool = ParamField(
-        uint, "enableSlotTypeD:1", bit_count=1, default=False,
+        uint, "enableSlotTypeD:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeE: bool = ParamField(
-        uint, "enableSlotTypeE:1", bit_count=1, default=False,
+        uint, "enableSlotTypeE:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableSlotTypeF: bool = ParamField(
-        uint, "enableSlotTypeF:1", bit_count=1, default=False,
+        uint, "enableSlotTypeF:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     ChaliceTypeGroup: int = ParamField(

@@ -20,6 +20,7 @@ __all__ = [
     "ACTION_PATTERN",
     "AI_SOUND_RATE_TYPE",
     "AI_SOUND_FAKE_TARGET_TYPE",
+    "ATK_PARAM_BOOL",
     "ATK_PARAM_HIT_SOURCE",
     "ATK_PARAM_HIT_TYPE",
     "ATK_PARAM_MAP_HIT",
@@ -66,14 +67,18 @@ __all__ = [
     "HMP_FOOT_EFFECT_HEIGHT_TYPE",
     "HMP_FOOT_EFFECT_DIR_TYPE",
     "HMP_FLOOR_HEIGHT_TYPE",
+    "ITEMLOT_CUMULATE_RESET",
+    "ITEMLOT_ENABLE_LUCK",
     "ITEMLOT_ITEMCATEGORY",
     "ITEMLOT_LVDEP_ITEMCATEGORY",
+    "MAGIC_BOOL",
     "MAGIC_CATEGORY",
     "MAGIC_MOTION_TYPE",
     "MENU_PROPERTY_CMP_TYPE",
     "MENU_PROPERTY_FORMAT_TYPE",
     "MENU_PROPERTY_ID",
     "MENU_VALUE_TABLE_CMP_TYPE",
+    "NPC_BOOL",
     "NPC_BURN_TYPE",
     "NPC_DRAW_TYPE",
     "NPC_HITSTOP_TYPE",
@@ -122,6 +127,7 @@ __all__ = [
     "WEP_MATERIAL_ATK",
     "WEP_MATERIAL_DEF",
     "WEP_MATERIAL_DEF_SFX",
+    "WEP_BASE_CHANGE_CATEGORY",
     "WEP_CORRECT_TYPE",
     "WEPMOTION_CATEGORY",
 ]
@@ -164,6 +170,11 @@ class AI_SOUND_RATE_TYPE(u8):
 
 class AI_SOUND_FAKE_TARGET_TYPE(u8):
     """TODO"""
+
+
+class ATK_PARAM_BOOL(u8):
+    Off = 0
+    On = 1
 
 
 class ATK_PARAM_HIT_SOURCE(u8):
@@ -515,6 +526,16 @@ class HMP_FLOOR_HEIGHT_TYPE(u8):
     Raised = 1  # all liquids except 'mucus'
 
 
+class ITEMLOT_CUMULATE_RESET(u16):
+    Off = 0
+    On = 1
+
+
+class ITEMLOT_ENABLE_LUCK(u16):
+    Off = 0
+    On = 1
+
+
 class ITEMLOT_ITEMCATEGORY(s32):
     """More sensible bit field than Dark Souls."""
 
@@ -527,6 +548,11 @@ class ITEMLOT_ITEMCATEGORY(s32):
 
 class ITEMLOT_LVDEP_ITEMCATEGORY(s32):
     """TODO: Probably the same as ITEMLOT_ITEMCATEGORY."""
+
+
+class MAGIC_BOOL(u8):
+    Off = 0
+    On = 1
 
 
 class MAGIC_CATEGORY(u8):
@@ -580,6 +606,11 @@ class MENU_PROPERTY_ID(s32):
 
 class MENU_VALUE_TABLE_CMP_TYPE(s8):
     """TODO"""
+
+
+class NPC_BOOL(u8):
+    Off = 0
+    On = 1
 
 
 class NPC_BURN_TYPE(u8):
@@ -1035,6 +1066,10 @@ class WEP_MATERIAL_DEF_SFX(u8):
     HandsOrFabricArmor = 59
     HeadshotFabric = 60
     HeadshotMetal = 63
+
+
+class WEP_BASE_CHANGE_CATEGORY(u8):
+    pass
 
 
 class WEP_CORRECT_TYPE(u8):

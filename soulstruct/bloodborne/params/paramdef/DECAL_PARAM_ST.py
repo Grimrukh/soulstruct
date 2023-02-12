@@ -18,7 +18,7 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     ModelPoint: int = ParamField(
-        int, "dmypolyId", default=-1,
+        int, "dmypolyId", game_type=ModelDummy, default=-1,
         tooltip="TODO",
     )
     PitchAngle: float = ParamField(
@@ -46,7 +46,7 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     MaskSpecialEffectID: int = ParamField(
-        int, "maskSpeffectId", default=-1,
+        int, "maskSpeffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="TODO",
     )
     RandomVariationCount: int = ParamField(

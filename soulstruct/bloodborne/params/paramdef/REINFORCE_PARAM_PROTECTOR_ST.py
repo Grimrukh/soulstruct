@@ -57,19 +57,19 @@ class REINFORCE_PARAM_PROTECTOR_ST(ParamRow):
         float, "resistCurseRate", default=1.0,
         tooltip="Multiplier for curse resistance at this upgrade level.",
     )
-    WearerSpecialEffect1: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId1", default=0,
+    WearerSpecialEffect1: int = ParamField(
+        byte, "residentSpEffectId1", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (first of three).",
     )
-    WearerSpecialEffect2: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId2", default=0,
+    WearerSpecialEffect2: int = ParamField(
+        byte, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (second of three).",
     )
-    WearerSpecialEffect3: SpecialEffectParam = ParamField(
-        byte, "residentSpEffectId3", default=0,
+    WearerSpecialEffect3: int = ParamField(
+        byte, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect granted to wearer (third of three).",
     )
-    UpgradeMaterialID: UpgradeMaterialParam = ParamField(
-        byte, "materialSetId", default=0,
+    UpgradeMaterialID: int = ParamField(
+        byte, "materialSetId", game_type=UpgradeMaterialParam, default=0,
         tooltip="Upgrade material set for reinforcement.",
     )

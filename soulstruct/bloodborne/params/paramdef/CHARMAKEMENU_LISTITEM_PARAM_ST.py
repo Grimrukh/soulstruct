@@ -22,7 +22,7 @@ class CHARMAKEMENU_LISTITEM_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     IconID: int = ParamField(
-        byte, "IconID", default=0,
+        byte, "IconID", game_type=Icon, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(7, "reserved[7]")

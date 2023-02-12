@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class FACE_PARAM_ST(ParamRow):
     FacePartsID: int = ParamField(
-        byte, "facePartsId", default=0,
+        byte, "facePartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     SkinColorRed: int = ParamField(
@@ -30,7 +30,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     HairPartsID: int = ParamField(
-        byte, "hairPartsId", default=0,
+        byte, "hairPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     HairColorRed: int = ParamField(
@@ -46,7 +46,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     LeftEyePartsID: int = ParamField(
-        byte, "eyeLPartsId", default=0,
+        byte, "eyeLPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     LeftEyeColorRed: int = ParamField(
@@ -62,7 +62,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     RightEyePartsID: int = ParamField(
-        byte, "eyeRPartsId", default=0,
+        byte, "eyeRPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     RightEyeColorRed: int = ParamField(
@@ -78,7 +78,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     EyebrowsPartsID: int = ParamField(
-        byte, "eyebrowPartsId", default=0,
+        byte, "eyebrowPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     EyebrowsColorRed: int = ParamField(
@@ -94,7 +94,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     EyelashesPartsID: int = ParamField(
-        byte, "eyelashPartsId", default=0,
+        byte, "eyelashPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     EyelashesColorRed: int = ParamField(
@@ -110,7 +110,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     BeardPartsID: int = ParamField(
-        byte, "beardPartsId", default=0,
+        byte, "beardPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     BeardColorRed: int = ParamField(
@@ -126,7 +126,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     AccessoriesPartsID: int = ParamField(
-        byte, "accessoriesPartsId", default=0,
+        byte, "accessoriesPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     AccessoriesColorRed: int = ParamField(
@@ -142,7 +142,7 @@ class FACE_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     DecalPartsID: int = ParamField(
-        byte, "decalPartsId", default=0,
+        byte, "decalPartsId", game_type=EquipmentModel, default=0,
         tooltip="TODO",
     )
     DecalColorRed: int = ParamField(

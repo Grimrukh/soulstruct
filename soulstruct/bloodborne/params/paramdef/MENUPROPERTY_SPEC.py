@@ -18,22 +18,22 @@ class MENUPROPERTY_SPEC(ParamRow):
         tooltip="TODO",
     )
     IconID: int = ParamField(
-        int, "IconID", default=0,
+        int, "IconID", game_type=Icon, default=0,
         tooltip="TODO",
     )
-    RequiredPropertyID: MENU_PROPERTY_ID = ParamField(
-        int, "RequiredPropertyID", default=0,
+    RequiredPropertyID: int = ParamField(
+        int, "RequiredPropertyID", MENU_PROPERTY_ID, default=0,
         tooltip="TODO",
     )
-    CompareType: MENU_PROPERTY_CMP_TYPE = ParamField(
-        sbyte, "CompareType", default=0,
+    CompareType: int = ParamField(
+        sbyte, "CompareType", MENU_PROPERTY_CMP_TYPE, default=0,
         tooltip="TODO",
     )
-    FormatType: MENU_PROPERTY_FORMAT_TYPE = ParamField(
-        byte, "FormatType", default=0,
+    FormatType: int = ParamField(
+        byte, "FormatType", MENU_PROPERTY_FORMAT_TYPE, default=0,
         tooltip="TODO",
     )
-    AdhocCaption: bytes = ParamField(
-        bytes, "AdhocCaption[9]", length=18, default=0,
+    AdhocCaption: str = ParamField(
+        bytes, "AdhocCaption[9]", encoding="utf-16", length=18, default=0.0,
         tooltip="TODO",
     )

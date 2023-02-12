@@ -24,11 +24,11 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         tooltip="This is the ID specified by TAE events that trigger behaviors.",
     )
     EzstateBehaviorType: int = ParamField(
-        byte, "ezStateBehaviorType_old", default=0, hide=True,
+        byte, "ezStateBehaviorType_old", default=0,
         tooltip="Unused remnant from Demon's Souls.",
     )
-    ReferenceType: BEHAVIOR_REF_TYPE = ParamField(
-        byte, "refType", default=0,
+    ReferenceType: int = ParamField(
+        byte, "refType", BEHAVIOR_REF_TYPE, default=0,
         tooltip="Is the reference ID below an Attack or Bullet ID?",
     )
     _Pad0: bytes = ParamPad(2, "pad0[2]")
@@ -48,13 +48,13 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         int, "mp", default=0,
         tooltip="Weapon/shield durability cost of behavior.",
     )
-    Category: BEHAVIOR_CATEGORY = ParamField(
-        byte, "category", default=0,
+    Category: int = ParamField(
+        byte, "category", BEHAVIOR_CATEGORY, default=0,
         tooltip="Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' "
                 "for thrown goods and 'No Category' otherwise.",
     )
     HumanityCost: int = ParamField(
-        byte, "heroPoint", default=0, hide=True,
+        byte, "heroPoint", default=0,
         tooltip="Humanity cost of behavior. Never used.",
     )
     _Pad1: bytes = ParamPad(2, "pad1[2]")

@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class GEM_GEN_PARAM_ST(ParamRow):
     IsUnique: bool = ParamField(
-        uint, "isUnique:1", bit_count=1, default=False,
+        uint, "isUnique:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(4, "pad_0[4]")
@@ -23,7 +23,7 @@ class GEM_GEN_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     DisableSlotModifyRate: bool = ParamField(
-        uint, "disableSlotRateModify:1", bit_count=1, default=False,
+        uint, "disableSlotRateModify:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     SlotTypeRateA: float = ParamField(
@@ -55,8 +55,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     _Pad1: bytes = ParamPad(3, "pad_1[3]")
-    GemEffectGenParamType0: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_0", default=0,
+    GemEffectGenParamType0: int = ParamField(
+        uint, "gemeffectGenParamType_0", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam0: int = ParamField(
@@ -71,8 +71,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         float, "negativizeRate_0", default=0.0,
         tooltip="TODO",
     )
-    GemEffectGenParamType1: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_1", default=0,
+    GemEffectGenParamType1: int = ParamField(
+        uint, "gemeffectGenParamType_1", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam1: int = ParamField(
@@ -87,8 +87,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         float, "negativizeRate_1", default=0.0,
         tooltip="TODO",
     )
-    GemEffectGenParamType2: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_2", default=0,
+    GemEffectGenParamType2: int = ParamField(
+        uint, "gemeffectGenParamType_2", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam2: int = ParamField(
@@ -103,8 +103,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         float, "negativizeRate_2", default=0.0,
         tooltip="TODO",
     )
-    GemEffectGenParamType3: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_3", default=0,
+    GemEffectGenParamType3: int = ParamField(
+        uint, "gemeffectGenParamType_3", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam3: int = ParamField(
@@ -119,8 +119,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         float, "negativizeRate_3", default=0.0,
         tooltip="TODO",
     )
-    GemEffectGenParamType4: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_4", default=0,
+    GemEffectGenParamType4: int = ParamField(
+        uint, "gemeffectGenParamType_4", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam4: int = ParamField(
@@ -135,8 +135,8 @@ class GEM_GEN_PARAM_ST(ParamRow):
         float, "negativizeRate_4", default=0.0,
         tooltip="TODO",
     )
-    GemEffectGenParamType5: GEMEFFECT_GEN_PT = ParamField(
-        uint, "gemeffectGenParamType_5", default=0,
+    GemEffectGenParamType5: int = ParamField(
+        uint, "gemeffectGenParamType_5", GEMEFFECT_GEN_PT, default=0,
         tooltip="TODO",
     )
     GemEffectGenParam5: int = ParamField(
@@ -152,18 +152,18 @@ class GEM_GEN_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     IsRune: bool = ParamField(
-        uint, "equipableSegmentBody:1", bit_count=1, default=False,
+        uint, "equipableSegmentBody:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsBloodGem: bool = ParamField(
-        uint, "equipableSegmentWeapon:1", bit_count=1, default=False,
+        uint, "equipableSegmentWeapon:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     CannotRemove: bool = ParamField(
-        uint, "unremovable:1", bit_count=1, default=False,
+        uint, "unremovable:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )
     CanDropToSummons: bool = ParamField(
-        uint, "isGuestDrop:1", bit_count=1, default=False,
+        uint, "isGuestDrop:1", EQUIP_GEN_PARAM_BOOL32, bit_count=1, default=False,
         tooltip="TODO",
     )

@@ -470,7 +470,8 @@ class ITEMLOT_CUMULATE_RESET(u16):
 
 
 class ITEMLOT_ENABLE_LUCK(u16):
-    pass
+    Off = 0
+    On = 1
 
 
 class ITEMLOT_ITEMCATEGORY(s32):

@@ -13,8 +13,8 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class GEMEFFECT_PARAM_ST(ParamRow):
-    SpecialEffectID: SpecialEffectParam = ParamField(
-        int, "speffectId", default=-1,
+    SpecialEffectID: int = ParamField(
+        int, "speffectId", game_type=SpecialEffectParam, default=-1,
         tooltip="TODO",
     )
     CategoryID: int = ParamField(
@@ -53,7 +53,7 @@ class GEMEFFECT_PARAM_ST(ParamRow):
         uint, "gemNameIdOffset", default=0,
         tooltip="TODO",
     )
-    AttackSpecialEffectID: SpecialEffectParam = ParamField(
-        int, "speffectId_forAtk", default=-1,
+    AttackSpecialEffectID: int = ParamField(
+        int, "speffectId_forAtk", game_type=SpecialEffectParam, default=-1,
         tooltip="TODO",
     )

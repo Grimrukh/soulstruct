@@ -13,28 +13,28 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
-    CommandID: CHARMAKEMENU_CMD_TYPE = ParamField(
-        int, "CommandID", default=0,
+    CommandID: int = ParamField(
+        int, "CommandID", CHARMAKEMENU_CMD_TYPE, default=0,
         tooltip="TODO",
     )
     CaptionID: int = ParamField(
         int, "CaptionID", default=0,
         tooltip="TODO",
     )
-    FaceParamID: FACE_PARAM = ParamField(
-        int, "FaceParamID", default=0,
+    FaceParamID: int = ParamField(
+        int, "FaceParamID", FACE_PARAM, default=0,
         tooltip="TODO",
     )
     TableID: int = ParamField(
         int, "TableID", default=0,
         tooltip="TODO",
     )
-    ViewCondition: CHARMAKEMENU_VIEW_CONDITION = ParamField(
-        int, "ViewCondition", default=0,
+    ViewCondition: int = ParamField(
+        int, "ViewCondition", CHARMAKEMENU_VIEW_CONDITION, default=0,
         tooltip="TODO",
     )
-    PreviewMode: CHARMAKEMENU_PREVIEW_MODE = ParamField(
-        sbyte, "PreviewMode", default=0,
+    PreviewMode: int = ParamField(
+        sbyte, "PreviewMode", CHARMAKEMENU_PREVIEW_MODE, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(11, "reserved[11]")

@@ -13,7 +13,7 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class TALK_PARAM_ST(ParamRow):
-    SubtitleText: Subtitle = ParamField(
+    SubtitleText: int = ParamField(
         int, "msgId", default=-1,
         tooltip="Text ID for dialogue subtitle.",
     )
@@ -26,21 +26,21 @@ class TALK_PARAM_ST(ParamRow):
         tooltip="Animation used for talking (-1 for default, or no animation). Usually 7000 (e.g. Fair Lady) or 7001 "
                 "(e.g. Andre) when used.",
     )
-    ReturnConversation: DialogueParam = ParamField(
-        int, "returnPos", default=0, hide=True,
+    ReturnConversation: int = ParamField(
+        int, "returnPos", default=0,
         tooltip="Conversation ID to use instead if the player has 'returned' to this conversation. Used exactly once "
                 "for one line by the Crestfallen Warrior, so presumably works, but probably not useful.",
     )
-    ReactionConversation: DialogueParam = ParamField(
-        int, "reactionId", default=-1, hide=True,
+    ReactionConversation: int = ParamField(
+        int, "reactionId", default=-1,
         tooltip="Conversation ID to use as 'reaction'. Always -1.",
     )
-    EventFlag: Flag = ParamField(
-        int, "eventId", default=-1, hide=True,
+    EventFlag: int = ParamField(
+        int, "eventId", default=-1,
         tooltip="Flag that is enabled when conversation plays (I assume). Used exactly once, for the same Crestfallen "
                 "Warrior line that uses the ReturnConversation field.",
     )
-    IsMotionLoop: bool = ParamField(
+    IsMotionLoop: int = ParamField(
         byte, "isMotionLoop", default=0,
         tooltip="If True, specified TalkingAnimation will loop while dialogue is being spoken. Always True for any "
                 "entry that has a non-default TalkingAnimation (e.g. Andre).",

@@ -63,7 +63,7 @@ class SHADOW_BANK(ParamRow):
         tooltip="Depth offset for shadows. With negative values, self-shadows are less likely to occur.",
     )
     ShadowMapStrength: float = ParamField(
-        float, "gradFactor", default=0.0,  # NOTE: original name uses non-unicode characters
+        float, "gradFactor", default=0.0,
         tooltip="Negative values weaken the shadow map, positive values strengthen it.",
     )
     ShadowVolumeDepth: float = ParamField(

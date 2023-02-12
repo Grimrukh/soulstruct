@@ -80,6 +80,14 @@ def _get_drives():
 
 
 def import_arbitrary_file(path: str | Path) -> types.ModuleType:
+    """
+    TODO: This does not seem to work with `dataclass(slots=True)`. I think I need to assign `__module__` to each
+     imported class manually, or something:
+        File "C:\\Program Files\\Python311\\Lib\\dataclasses.py", line 712, in _is_type
+          ns = sys.modules.get(cls.__module__).__dict__
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        AttributeError: 'NoneType' object has no attribute '__dict__'. Did you mean: '__dir__'?
+    """
     path = Path(path)
     spec = importlib.util.spec_from_file_location(path.stem, str(path))
     module = importlib.util.module_from_spec(spec)

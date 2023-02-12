@@ -43,7 +43,7 @@ class HOLYGRAIL_EX_PARAM_ST(ParamRow):
         tooltip="TODO",
     )
     UniqueBaseFlagID: int = ParamField(
-        uint, "uniqueBaseFlagId", default=0,
+        uint, "uniqueBaseFlagId", game_type=Flag, default=0,
         tooltip="TODO",
     )
     UniqueItem0Head: int = ParamField(

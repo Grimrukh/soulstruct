@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MENUPROPERTY_LAYOUT(ParamRow):
-    LayoutPath: bytes = ParamField(
-        bytes, "LayoutPath[16]", length=16, default=0,
+    LayoutPath: str = ParamField(
+        bytes, "LayoutPath[16]", encoding="shift_jis_2004", length=16, default=0.0,
         tooltip="TODO",
     )
-    MenuPropertyID: MENU_PROPERTY_ID = ParamField(
-        int, "PropertyID", default=0,
+    MenuPropertyID: int = ParamField(
+        int, "PropertyID", MENU_PROPERTY_ID, default=0,
         tooltip="TODO",
     )
     CaptionTextID: int = ParamField(

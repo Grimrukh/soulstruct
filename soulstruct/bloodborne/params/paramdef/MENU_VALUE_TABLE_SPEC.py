@@ -21,8 +21,8 @@ class MENU_VALUE_TABLE_SPEC(ParamRow):
         int, "textId", default=0,
         tooltip="TODO",
     )
-    CompareType: MENU_VALUE_TABLE_CMP_TYPE = ParamField(
-        sbyte, "compareType", default=0,
+    CompareType: int = ParamField(
+        sbyte, "compareType", MENU_VALUE_TABLE_CMP_TYPE, default=0,
         tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding[3]")

@@ -21,8 +21,8 @@ class GAME_AREA_PARAM_ST(ParamRow):
         uint, "bonusSoul_multi", default=0,
         tooltip="Souls awarded to each player (after delay) when boss is defeated with summons.",
     )
-    FirstHumanityFlag: Flag = ParamField(
-        int, "humanityPointCountFlagIdTop", default=-1,
+    FirstHumanityFlag: int = ParamField(
+        int, "humanityPointCountFlagIdTop", game_type=Flag, default=-1,
         tooltip="First flag for recording number of humanity drops awarded in boss's area.",
     )
     HumanityDropPoint1: int = ParamField(

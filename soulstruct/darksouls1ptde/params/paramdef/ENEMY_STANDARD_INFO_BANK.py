@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class ENEMY_STANDARD_INFO_BANK(ParamRow):
     EnemyBehaviorID: int = ParamField(
-        int, "EnemyBehaviorID", default=0,
+        int, "EnemyBehaviorID", ENEMY_BEHAVIOR_ID, default=0,
         tooltip="TOOLTIP-TODO",
     )
     HP: int = ParamField(
@@ -26,7 +26,7 @@ class ENEMY_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ChrType: int = ParamField(
-        int, "ChrType", default=5,
+        int, "ChrType", ChrType, default=5,
         tooltip="TOOLTIP-TODO",
     )
     HitHeight: float = ParamField(
@@ -57,12 +57,12 @@ class ENEMY_STANDARD_INFO_BANK(ParamRow):
         int, "ActionDefState", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RotY_per_Second: float = ParamField(
+    RotYperSecond: float = ParamField(
         float, "RotY_per_Second", default=10.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(20, "reserve0[20]")
-    RotY_per_Second_old: int = ParamField(
+    RotYperSecondold: int = ParamField(
         byte, "RotY_per_Second_old", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -75,19 +75,19 @@ class ENEMY_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(5, "reserve_last[5]")
-    stamina: int = ParamField(
+    Stamina: int = ParamField(
         ushort, "stamina", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    staminaRecover: int = ParamField(
+    StaminaRecover: int = ParamField(
         ushort, "staminaRecover", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    staminaConsumption: int = ParamField(
+    StaminaConsumption: int = ParamField(
         ushort, "staminaConsumption", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    deffenct_Phys: int = ParamField(
+    DeffenctPhys: int = ParamField(
         ushort, "deffenct_Phys", default=0,
         tooltip="TOOLTIP-TODO",
     )

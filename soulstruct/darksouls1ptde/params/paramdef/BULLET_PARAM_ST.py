@@ -13,22 +13,22 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BULLET_PARAM_ST(ParamRow):
-    BulletAttack: AttackParam = ParamField(
-        int, "atkId_Bullet", default=0,
+    BulletAttack: int = ParamField(
+        int, "atkId_Bullet", game_type=AttackParam, default=0,
         tooltip="Attack parameters for bullet impact. Only certain fields in the attack parameter are used. Could be "
                 "directed to either PlayerAttacks table or NonPlayerAttacks table, depending on the bullet's owner. "
                 "Set to 0 if bullet has no attack data (no damage).",
     )
     ProjectileVFX: int = ParamField(
-        int, "sfxId_Bullet", default=-1,
+        int, "sfxId_Bullet", game_type=VisualEffect, default=-1,
         tooltip="Visual effect ID for bullet projectile.",
     )
     ImpactVFX: int = ParamField(
-        int, "sfxId_Hit", default=-1,
+        int, "sfxId_Hit", game_type=VisualEffect, default=-1,
         tooltip="Visual effect ID for bullet impact.",
     )
     FlickVFX: int = ParamField(
-        int, "sfxId_Flick", default=-1,
+        int, "sfxId_Flick", game_type=VisualEffect, default=-1,
         tooltip="Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and throwing "
                 "knives.",
     )
@@ -104,7 +104,7 @@ class BULLET_PARAM_ST(ParamRow):
                 "radius if the final value is less than the initial value.",
     )
     ExpDelay: float = ParamField(
-        float, "expDelay", default=0.0, hide=True,
+        float, "expDelay", default=0.0,
         tooltip="Delay between impact and 'explosion' (not sure if that refers to the visual effect and/or hitbox). "
                 "Never used (always zero).",
     )
@@ -122,40 +122,40 @@ class BULLET_PARAM_ST(ParamRow):
         float, "externalForce", default=0.0,
         tooltip="Unknown. Used only for Gargoyle fire breath and Undead Dragon poison breath.",
     )
-    OwnerSpecialEffect: SpecialEffectParam = ParamField(
-        int, "spEffectIDForShooter", default=0,
+    OwnerSpecialEffect: int = ParamField(
+        int, "spEffectIDForShooter", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to owner when bullet is created. (Unclear if it is applied repeatedly by "
                 "repeating bullets.)",
     )
-    BulletAI: AIParam = ParamField(
-        int, "autoSearchNPCThinkID", default=0,
+    BulletAI: int = ParamField(
+        int, "autoSearchNPCThinkID", game_type=AIParam, default=0,
         tooltip="AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] Soulmass (10000) and "
                 "Pursuers (10001) in the vanilla game.",
     )
-    BulletOnHit: BulletParam = ParamField(
-        int, "HitBulletID", default=-1,
+    BulletOnHit: int = ParamField(
+        int, "HitBulletID", game_type=BulletParam, default=-1,
         tooltip="Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' "
                 "combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). These "
                 "can be chained together indefinitely (see White Dragon Breath, bullet 11500).",
     )
-    HitSpecialEffect0: SpecialEffectParam = ParamField(
-        int, "spEffectId0", default=0,
+    HitSpecialEffect0: int = ParamField(
+        int, "spEffectId0", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target hit by bullet. (Slot 0)",
     )
-    HitSpecialEffect1: SpecialEffectParam = ParamField(
-        int, "spEffectId1", default=0,
+    HitSpecialEffect1: int = ParamField(
+        int, "spEffectId1", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target hit by bullet. (Slot 1)",
     )
-    HitSpecialEffect2: SpecialEffectParam = ParamField(
-        int, "spEffectId2", default=0,
+    HitSpecialEffect2: int = ParamField(
+        int, "spEffectId2", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target hit by bullet. (Slot 2)",
     )
-    HitSpecialEffect3: SpecialEffectParam = ParamField(
-        int, "spEffectId3", default=0,
+    HitSpecialEffect3: int = ParamField(
+        int, "spEffectId3", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target hit by bullet. (Slot 3)",
     )
-    HitSpecialEffect4: SpecialEffectParam = ParamField(
-        int, "spEffectId4", default=0,
+    HitSpecialEffect4: int = ParamField(
+        int, "spEffectId4", game_type=SpecialEffectParam, default=0,
         tooltip="Special effect applied to target hit by bullet. (Slot 4)",
     )
     BulletCount: int = ParamField(
@@ -195,11 +195,11 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="Percentage reduction in lightning damage per second.",
     )
     StaminaDamp: int = ParamField(
-        sbyte, "staminaDamp", default=0, hide=True,
+        sbyte, "staminaDamp", default=0,
         tooltip="Percentage reduction in stamina damage per second.",
     )
     KnockbackDamp: int = ParamField(
-        sbyte, "knockbackDamp", default=0, hide=True,
+        sbyte, "knockbackDamp", default=0,
         tooltip="Percentage reduction in knockback power per second.",
     )
     FirstBulletElevationAngle: int = ParamField(
@@ -211,91 +211,91 @@ class BULLET_PARAM_ST(ParamRow):
         byte, "lockShootLimitAng", default=0,
         tooltip="Unknown, but likely important. Set to 30 for most basic projectile magic.",
     )
-    PiercesTargets: bool = ParamField(
+    PiercesTargets: int = ParamField(
         byte, "isPenetrate", default=0,
         tooltip="Bullet will go through objects, players, and NPCs.",
     )
     PreviousDirectionRatio: int = ParamField(
-        byte, "prevVelocityDirRate", default=0, hide=True,
+        byte, "prevVelocityDirRate", default=0,
         tooltip="Internal description: 'Ratio of adding the previous moving direction to the current direction when a "
                 "sliding bullet hits the wall.' Like ExternalForce, this is used only for Gargoyle and Undead Dragon "
                 "breath (100) and is zero for everything else.",
     )
-    AttackAttribute: ATKPARAM_ATKATTR_TYPE = ParamField(
-        byte, "atkAttribute", default=0,
+    AttackAttribute: int = ParamField(
+        byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=0,
         tooltip="Attack type. Almost always 4 ('other'), but sometimes 3 (knives/arrows/bolts).",
     )
-    ElementAttribute: ATKPARAM_SPATTR_TYPE = ParamField(
-        byte, "spAttribute", default=0,
+    ElementAttribute: int = ParamField(
+        byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=0,
         tooltip="Element attached to bullet hit.",
     )
-    MaterialAttackType: ATK_TYPE = ParamField(
-        byte, "Material_AttackType", default=0,
+    MaterialAttackType: int = ParamField(
+        byte, "Material_AttackType", ATK_TYPE, default=0,
         tooltip="Determines visual effects of bullet hit.",
     )
-    EffectsOnHit: WEP_MATERIAL_ATK = ParamField(
-        byte, "Material_AttackMaterial", default=0,
+    EffectsOnHit: int = ParamField(
+        byte, "Material_AttackMaterial", WEP_MATERIAL_ATK, default=0,
         tooltip="Sound and visual effects on hit.",
     )
-    MaterialSize: ATK_SIZE = ParamField(
-        byte, "Material_Size", default=0, hide=True,
+    MaterialSize: int = ParamField(
+        byte, "Material_Size", ATK_SIZE, default=0,
         tooltip="'Size' of attack. Never used.'",
     )
-    LaunchConditionType: BULLET_LAUNCH_CONDITION_TYPE = ParamField(
-        byte, "launchConditionType", default=0,
+    LaunchConditionType: int = ParamField(
+        byte, "launchConditionType", BULLET_LAUNCH_CONDITION_TYPE, default=0,
         tooltip="Condition for determing if a new bullet will be generated when this bullet lands or expires.",
     )
-    FollowType: BULLET_FOLLOW_TYPE = ParamField(
-        byte, "FollowType:3", bit_count=3, default=0,
+    FollowType: int = ParamField(
+        byte, "FollowType:3", BULLET_FOLLOW_TYPE, bit_count=3, default=0,
         tooltip="Follow type.",
     )
-    OriginType: BULLET_EMITTE_POS_TYPE = ParamField(
-        byte, "EmittePosType:3", bit_count=3, default=0,
+    OriginType: int = ParamField(
+        byte, "EmittePosType:3", BULLET_EMITTE_POS_TYPE, bit_count=3, default=0,
         tooltip="Origin type of bullet. Usually comes from model points ('damipoly').",
     )
     RemainAttachedToTarget: bool = ParamField(
-        byte, "isAttackSFX:1", bit_count=1, default=False,
+        byte, "isAttackSFX:1", ON_OFF, bit_count=1, default=0,
         tooltip="Set whether bullets (e.g. arrows) stay stuck upon impact.",
     )
     IsEndlessHit: bool = ParamField(
-        byte, "isEndlessHit:1", bit_count=1, default=False,
+        byte, "isEndlessHit:1", ON_OFF, bit_count=1, default=0,
         tooltip="Bullet hitbox is continuous (I think). Only used for corrosion cloud in vanilla.",
     )
     IsMapPiercing: bool = ParamField(
-        byte, "isPenetrateMap:1", bit_count=1, default=False,
+        byte, "isPenetrateMap:1", ON_OFF, bit_count=1, default=0,
         tooltip="Bullet will pierce the map (e.g. Stray Demon blast).",
     )
     HitsBothTeams: bool = ParamField(
-        byte, "isHitBothTeam:1", bit_count=1, default=False,
+        byte, "isHitBothTeam:1", ON_OFF, bit_count=1, default=0,
         tooltip="Bullet can hit any character.",
     )
     SharedHitCheck: bool = ParamField(
-        byte, "isUseSharedHitList:1", bit_count=1, default=False,
+        byte, "isUseSharedHitList:1", ON_OFF, bit_count=1, default=0,
         tooltip="Repeating bullets share the amount of times they have hit a target (usually so the target is only "
                 "hit once by any of those repeating bullets).",
     )
     UsesMultipleModelPoints: bool = ParamField(
-        byte, "isUseMultiDmyPolyIfPlace:1", bit_count=1, default=False,
+        byte, "isUseMultiDmyPolyIfPlace:1", ON_OFF, bit_count=1, default=0,
         tooltip="Set to True if the same model point ('damipoly') is used multiple times when spawning the bullet.",
     )
-    AttachEffectType: BULLET_ATTACH_EFFECT_TYPE = ParamField(
-        byte, "attachEffectType:2", bit_count=2, default=0, hide=True,
+    AttachEffectType: int = ParamField(
+        byte, "attachEffectType:2", BULLET_ATTACH_EFFECT_TYPE, bit_count=2, default=0,
         tooltip="Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles).",
     )
     CanBeDeflectedByMagic: bool = ParamField(
-        byte, "isHitForceMagic:1", bit_count=1, default=False,
+        byte, "isHitForceMagic:1", bit_count=1, default=0,
         tooltip="If True, this bullet will impact appropriate Force-type magic (e.g. arrows, bolts, knives).",
     )
     IgnoreVFXOnWaterHit: bool = ParamField(
-        byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=False,
+        byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=0,
         tooltip="If True, hit VFX are not produced if the bullet impacts water.",
     )
     IgnoreStateTransitionOnWaterHit: bool = ParamField(
-        byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=False,
+        byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=0,
         tooltip="Unclear effect, but True for knives/arrows/bolts and False otherwise.",
     )
     CanBeDeflectedBySilverPendant: bool = ParamField(
-        byte, "isHitDarkForceMagic:1", bit_count=1, default=False,
+        byte, "isHitDarkForceMagic:1", bit_count=1, default=0,
         tooltip="If True, this bullet will impact the Silver Pendant shield effect. True only for dark sorceries.",
     )
     _Pad0: bytes = ParamPad(3, "pad[3]")

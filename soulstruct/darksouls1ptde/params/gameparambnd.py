@@ -35,7 +35,7 @@ class GameParamBND(_BaseGameParamBND):
         ("EquipParamAccessory", "Rings"),
         ("EquipParamGoods", "Goods"),
         ("EquipParamWeapon", "Weapons"),
-        ("FaceGenParam", "Faces"),
+        ("FaceGenParam", "FaceGenerators"),
         ("GameAreaParam", "Bosses"),
         ("HitMtrlParam", "Terrains"),
         ("ItemLotParam", "ItemLots"),
@@ -70,7 +70,7 @@ class GameParamBND(_BaseGameParamBND):
     Cameras = param_property("LockCamParam")  # type: Param[LOCK_CAM_PARAM_ST]
     Characters = param_property("NpcParam")  # type: Param[NPC_PARAM_ST]
     Dialogue = param_property("TalkParam")  # type: Param[TALK_PARAM_ST]
-    Faces = param_property("FaceGenParam")  # type: Param[FACE_PARAM_ST]
+    FaceGenerators = param_property("FaceGenParam")  # type: Param[FACE_PARAM_ST]
     Goods = param_property("EquipParamGoods")  # type: Param[EQUIP_PARAM_GOODS_ST]
     GrowthCurves = param_property("CalcCorrectGraph")  # type: Param[CACL_CORRECT_GRAPH_ST]
     ItemLots = param_property("ItemLotParam")  # type: Param[ITEMLOT_PARAM_ST]
@@ -124,7 +124,7 @@ class GameParamBND(_BaseGameParamBND):
         "Movement": MovementParam,
         "Cameras": CameraParam,
         "Terrains": TerrainParam,
-        "Faces": FaceParam,
+        "Faces": FaceGenParam,
         "Dialogue": DialogueParam,
         "MenuColors": MenuColorsParam,
         "SpecialEffectVisuals": SpecialEffectVisualParam,

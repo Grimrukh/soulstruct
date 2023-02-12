@@ -17,15 +17,15 @@ class LENS_FLARE_BANK(ParamRow):
         sbyte, "texId", default=-1,
         tooltip="Texture ID of lens flare (texture name format is 'lensflare_XX'). -1 means disabled.",
     )
-    IsLensFlare: bool = ParamField(
+    IsLensFlare: int = ParamField(
         byte, "isFlare", default=0,
         tooltip="Flare if enabled, or 'ghost' if disabled.",
     )
-    EnableRotation: bool = ParamField(
+    EnableRotation: int = ParamField(
         byte, "enableRoll", default=0,
         tooltip="Allows lens flare texture to rotate with camera.",
     )
-    EnableScaling: bool = ParamField(
+    EnableScaling: int = ParamField(
         byte, "enableScale", default=0,
         tooltip="Allows lens flare texture to change scale with camera.",
     )

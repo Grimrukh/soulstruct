@@ -13,139 +13,139 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MOVE_PARAM_ST(ParamRow):
-    StillAnimation: Animation = ParamField(
+    StillAnimation: int = ParamField(
         int, "stayId", default=-1,
         tooltip="Animation ID.",
     )
-    WalkForwardAnimatiom: Animation = ParamField(
+    WalkForwardAnimatiom: int = ParamField(
         int, "walkF", default=-1,
         tooltip="Animation ID.",
     )
-    WalkBackwardAnimation: Animation = ParamField(
+    WalkBackwardAnimation: int = ParamField(
         int, "walkB", default=-1,
         tooltip="Animation ID.",
     )
-    StrafeLeftAnimation: Animation = ParamField(
+    StrafeLeftAnimation: int = ParamField(
         int, "walkL", default=-1,
         tooltip="Animation ID.",
     )
-    StrafeRightAnimation: Animation = ParamField(
+    StrafeRightAnimation: int = ParamField(
         int, "walkR", default=-1,
         tooltip="Animation ID.",
     )
-    RunForwardAnimation: Animation = ParamField(
+    RunForwardAnimation: int = ParamField(
         int, "dashF", default=-1,
         tooltip="Animation ID.",
     )
-    RunBackwardAnimation: Animation = ParamField(
+    RunBackwardAnimation: int = ParamField(
         int, "dashB", default=-1,
         tooltip="Animation ID.",
     )
-    StrafeRunLeftAnimation: Animation = ParamField(
+    StrafeRunLeftAnimation: int = ParamField(
         int, "dashL", default=-1,
         tooltip="Animation ID.",
     )
-    StrafeRunRightAnimation: Animation = ParamField(
+    StrafeRunRightAnimation: int = ParamField(
         int, "dashR", default=-1,
         tooltip="Animation ID.",
     )
-    SprintForwardAnimation: Animation = ParamField(
+    SprintForwardAnimation: int = ParamField(
         int, "superDash", default=-1,
         tooltip="Animation ID.",
     )
-    RollForwardAnimation: Animation = ParamField(
+    RollForwardAnimation: int = ParamField(
         int, "escapeF", default=-1,
         tooltip="Animation ID.",
     )
-    RollBackwardAnimation: Animation = ParamField(
+    RollBackwardAnimation: int = ParamField(
         int, "escapeB", default=-1,
         tooltip="Animation ID.",
     )
-    RollLeftAnimation: Animation = ParamField(
+    RollLeftAnimation: int = ParamField(
         int, "escapeL", default=-1,
         tooltip="Animation ID.",
     )
-    RollRightAnimation: Animation = ParamField(
+    RollRightAnimation: int = ParamField(
         int, "escapeR", default=-1,
         tooltip="Animation ID.",
     )
-    TurnLeftAnimation: Animation = ParamField(
+    TurnLeftAnimation: int = ParamField(
         int, "turnL", default=-1,
         tooltip="Animation ID.",
     )
-    TurnRightAnimation: Animation = ParamField(
+    TurnRightAnimation: int = ParamField(
         int, "trunR", default=-1,
         tooltip="Animation ID.",
     )
-    LargeTurnLeftAnimation: Animation = ParamField(
+    LargeTurnLeftAnimation: int = ParamField(
         int, "largeTurnL", default=-1,
         tooltip="Animation ID.",
     )
-    LargeTurnRightAnimation: Animation = ParamField(
+    LargeTurnRightAnimation: int = ParamField(
         int, "largeTurnR", default=-1,
         tooltip="Animation ID.",
     )
-    BackstepAnimation: Animation = ParamField(
+    BackstepAnimation: int = ParamField(
         int, "stepMove", default=-1,
         tooltip="Animation ID.",
     )
-    HoverAnimation: Animation = ParamField(
+    HoverAnimation: int = ParamField(
         int, "flyStay", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardAnimation: Animation = ParamField(
+    FlyForwardAnimation: int = ParamField(
         int, "flyWalkF", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardLeftAnimation: Animation = ParamField(
+    FlyForwardLeftAnimation: int = ParamField(
         int, "flyWalkFL", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardRightAnimation: Animation = ParamField(
+    FlyForwardRightAnimation: int = ParamField(
         int, "flyWalkFR", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardLeft2Animation: Animation = ParamField(
+    FlyForwardLeft2Animation: int = ParamField(
         int, "flyWalkFL2", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardRight2Animation: Animation = ParamField(
+    FlyForwardRight2Animation: int = ParamField(
         int, "flyWalkFR2", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardFastAnimation: Animation = ParamField(
+    FlyForwardFastAnimation: int = ParamField(
         int, "flyDashF", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardLeftFastAnimation: Animation = ParamField(
+    FlyForwardLeftFastAnimation: int = ParamField(
         int, "flyDashFL", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardRightFastAnimation: Animation = ParamField(
+    FlyForwardRightFastAnimation: int = ParamField(
         int, "flyDashFR", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardLeftFast2Animation: Animation = ParamField(
+    FlyForwardLeftFast2Animation: int = ParamField(
         int, "flyDashFL2", default=-1,
         tooltip="Animation ID.",
     )
-    FlyForwardRightFast2Animation: Animation = ParamField(
+    FlyForwardRightFast2Animation: int = ParamField(
         int, "flyDashFR2", default=-1,
         tooltip="Animation ID.",
     )
-    RunningRollForwardAnimation: Animation = ParamField(
+    RunningRollForwardAnimation: int = ParamField(
         int, "dashEscapeF", default=-1,
         tooltip="Animation ID.",
     )
-    RunningRollBackwardAnimation: Animation = ParamField(
+    RunningRollBackwardAnimation: int = ParamField(
         int, "dashEscapeB", default=-1,
         tooltip="Animation ID. (Never used.)",
     )
-    RunningRollLeftAnimation: Animation = ParamField(
+    RunningRollLeftAnimation: int = ParamField(
         int, "dashEscapeL", default=-1,
         tooltip="Animation ID. (Never used.)",
     )
-    RunningRollRightAnimation: Animation = ParamField(
+    RunningRollRightAnimation: int = ParamField(
         int, "dashEscapeR", default=-1,
         tooltip="Animation ID. (Never used.)",
     )
