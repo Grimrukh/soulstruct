@@ -214,7 +214,7 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RetryPointAreaRadius: float = ParamField(
-        float, "retryPointAreaRadius", default=-1,
+        float, "retryPointAreaRadius", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     SleepCollectorSpEffectId: int = ParamField(
@@ -286,7 +286,7 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SaAttackRateforVsRideAtk: float = ParamField(
-        float, "saAttackRate_forVsRideAtk", default=1,
+        float, "saAttackRate_forVsRideAtk", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     EnemySpEffectIdAfterSleepCollectorItemLot: int = ParamField(
@@ -630,31 +630,31 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateNotInStealthRigidNotSightHideStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_NotInStealthRigid_NotSightHide_StealthMode", default=1,
+        float, "stealthSystemSightRate_NotInStealthRigid_NotSightHide_StealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateNotInStealthRigidSightHideNotStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_NotInStealthRigid_SightHide_NotStealthMode", default=1,
+        float, "stealthSystemSightRate_NotInStealthRigid_SightHide_NotStealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateNotInStealthRigidSightHideStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_NotInStealthRigid_SightHide_StealthMode", default=1,
+        float, "stealthSystemSightRate_NotInStealthRigid_SightHide_StealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateInStealthRigidNotSightHideNotStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_InStealthRigid_NotSightHide_NotStealthMode", default=1,
+        float, "stealthSystemSightRate_InStealthRigid_NotSightHide_NotStealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateInStealthRigidNotSightHideStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_InStealthRigid_NotSightHide_StealthMode", default=1,
+        float, "stealthSystemSightRate_InStealthRigid_NotSightHide_StealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateInStealthRigidSightHideNotStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_InStealthRigid_SightHide_NotStealthMode", default=1,
+        float, "stealthSystemSightRate_InStealthRigid_SightHide_NotStealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightRateInStealthRigidSightHideStealthMode: float = ParamField(
-        float, "stealthSystemSightRate_InStealthRigid_SightHide_StealthMode", default=1,
+        float, "stealthSystemSightRate_InStealthRigid_SightHide_StealthMode", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     MsbEventGeomTreasureInfoactionButtonParamIdcorpse: int = ParamField(
@@ -702,11 +702,11 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FallDamageRateforRidePC: float = ParamField(
-        float, "fallDamageRate_forRidePC", default=1,
+        float, "fallDamageRate_forRidePC", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     FallDamageRateforRideNPC: float = ParamField(
-        float, "fallDamageRate_forRideNPC", default=1,
+        float, "fallDamageRate_forRideNPC", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     OldMonkOfYellowCreateSignSpEffectId: int = ParamField(
@@ -734,56 +734,56 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BuddyWarpTriggerTimeRayBlocked: float = ParamField(
-        float, "buddyWarp_TriggerTimeRayBlocked", default=10,
+        float, "buddyWarp_TriggerTimeRayBlocked", default=10.0,
         tooltip="TOOLTIP-TODO",
     )
     BuddyWarpTriggerDistToPlayer: float = ParamField(
-        float, "buddyWarp_TriggerDistToPlayer", default=25,
+        float, "buddyWarp_TriggerDistToPlayer", default=25.0,
         tooltip="TOOLTIP-TODO",
     )
     BuddyWarpThresholdTimePathStacked: float = ParamField(
-        float, "buddyWarp_ThresholdTimePathStacked", default=5,
+        float, "buddyWarp_ThresholdTimePathStacked", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     BuddyWarpThresholdRangePathStacked: float = ParamField(
-        float, "buddyWarp_ThresholdRangePathStacked", default=1,
+        float, "buddyWarp_ThresholdRangePathStacked", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatemorning: float = ParamField(
-        float, "aiSightRate_morning", default=1,
+        float, "aiSightRate_morning", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatenoonA: float = ParamField(
-        float, "aiSightRate_noonA", default=1,
+        float, "aiSightRate_noonA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BuddyPassThroughTriggerTime: float = ParamField(
-        float, "buddyPassThroughTriggerTime", default=0,
+        float, "buddyPassThroughTriggerTime", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRateevening: float = ParamField(
-        float, "aiSightRate_evening", default=1,
+        float, "aiSightRate_evening", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatenight: float = ParamField(
-        float, "aiSightRate_night", default=1,
+        float, "aiSightRate_night", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatemidnightA: float = ParamField(
-        float, "aiSightRate_midnightA", default=1,
+        float, "aiSightRate_midnightA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(4, "reserve4_2[4]")
     AiSightRatesunlosslight: float = ParamField(
-        float, "aiSightRate_sunloss_light", default=1,
+        float, "aiSightRate_sunloss_light", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatesunlossdark: float = ParamField(
-        float, "aiSightRate_sunloss_dark", default=1,
+        float, "aiSightRate_sunloss_dark", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AiSightRatesunlossveryDark: float = ParamField(
-        float, "aiSightRate_sunloss_veryDark", default=1,
+        float, "aiSightRate_sunloss_veryDark", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     StealthSystemSightAngleReduceRateNotInStealthRigidNotSightHideStealthMode: float = ParamField(
@@ -872,7 +872,7 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     PclightScaleByTimezone: float = ParamField(
-        float, "pclightScaleByTimezone", default=1,
+        float, "pclightScaleByTimezone", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BigRuneGreaterDemonSummonBuddySpecialEffectIdBuddy: int = ParamField(
@@ -1128,15 +1128,15 @@ class GAME_SYSTEM_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ActionButtonInputCancelTime: float = ParamField(
-        float, "actionButtonInputCancelTime", default=-1,
+        float, "actionButtonInputCancelTime", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     BlockClearBonusDelayTime: float = ParamField(
-        float, "blockClearBonusDelayTime", default=7,
+        float, "blockClearBonusDelayTime", default=7.0,
         tooltip="TOOLTIP-TODO",
     )
     BonfireCheckEnemyRange: float = ParamField(
-        float, "bonfireCheckEnemyRange", default=-1,
+        float, "bonfireCheckEnemyRange", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(48, "reserved_124[48]")
+    _Pad2: bytes = ParamPad(128, "reserved_124[128]")

@@ -26,6 +26,8 @@ __all__ = [
     "BinaryReader",
     "BinaryWriter",
     "slots_equality",
+    "BinaryFieldTypeError",
+    "BinaryFieldValueError",
 
     # DEPRECATED
     "BinaryObject",
@@ -1412,6 +1414,10 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T]):
     This function also takes the normal `field` keyword arguments, like `init` and `default`, and can generate them. It
     allows for the most abbreviated usage while still using `field` explicitly (which type checkers like to see...).
     """
+    # If given, this will be used instead of standard `dataclasses.Field.type` when unpacking the field (e.g. if it
+    # is more useful for the field type hints to be standard Python types). Otherwise, it will be set from the `Field`
+    # upon validation.
+    type: tp.Type[PRIMITIVE_FIELD_TYPING] | None = None
 
     # Format for `struct.pack` and `struct.unpack`. Absent only for variable-length fields (notably null-terminated
     # strings) and nested `BinaryStruct` classes. Will override the annotation type if present (so that structs can
@@ -1468,7 +1474,12 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T]):
 
     # Assigned during validation for convenience.
     name: str = dataclasses.field(init=False, default="")
-    type: tp.Type = dataclasses.field(init=False, default=None)
+
+    @staticmethod
+    def resolve_fmt_type(fmt_type: str | tp.Type[PRIMITIVE_FIELD_TYPING]) -> str:
+        if isinstance(fmt_type, str):
+            return fmt_type
+        return _PRIMITIVE_FIELD_INFO[fmt_type][0]
 
     def check_asserted(self, value: FIELD_T) -> tp.Optional[FIELD_T]:
         """Checks that `value` is in `self.asserted`, if not empty.
@@ -1488,7 +1499,8 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T]):
         """Called by `NewBinaryStruct` metaclass on child class creation."""
 
         self.name = field.name
-        self.type = field_type
+        if self.type is None:
+            self.type = field_type
 
         if self.deferred:
             if self.alignment > 1 or self.offset is not None:
@@ -1760,7 +1772,7 @@ def _unpack_binary_field(
             encoding = metadata.encoding(reader)
         else:
             encoding = metadata.encoding
-        if encoding.replace("-", "").lower() == "utf16":
+        if encoding is not None and encoding.replace("-", "").lower() == "utf16":
             encoding = byte_order.get_utf_16_encoding()
         raw_value = raw_tuple[0]
         if metadata.rstrip_null:
@@ -1895,7 +1907,7 @@ def _pack_binary_field(
             )
         encoding = metadata.encoding  # could be None
 
-    if encoding.replace("-", "").lower() == "utf16":
+    if encoding is not None and encoding.replace("-", "").lower() == "utf16":
         encoding = byte_order.get_utf_16_encoding()
 
     # Get format or length, or otherwise resolve null-terminated string immediately.
@@ -2005,10 +2017,13 @@ def Binary(
     bit_count: int = -1,
     deferred: bool = False,
     skip_callback: tp.Callable[[int, dict[str, tp.Any]], bool] | None = None,
+    type_override: tp.Type[PRIMITIVE_FIELD_TYPING] | None = None,
     **field_kwargs,
 ):
     asserted = _process_asserted_value(asserted)
 
+    if fmt is str or fmt is bytes:
+        fmt = None  # redundant
     if fmt in _PRIMITIVE_FIELD_INFO:
         fmt = [fmt]  # fall through to next line
     if isinstance(fmt, (list, tuple)):
@@ -2022,6 +2037,7 @@ def Binary(
         raise TypeError(f"Invalid `binary(fmt)`: {fmt}")
 
     metadata = BinaryFieldMetadata(
+        type_override,
         fmt,
         type_factory,
         pack_factory,
@@ -2179,7 +2195,13 @@ class NewBinaryStruct:
         deferred_found = False
         cls._FIELDS = cls.get_binary_fields()
         all_type_hints = tp.get_type_hints(cls)
-        cls._FIELD_TYPES = tuple(all_type_hints[field.name] for field in cls._FIELDS)
+        field_types = []
+        for field in cls._FIELDS:
+            if "binary" in field.metadata and field.metadata["binary"].type is not None:
+                field_types.append(field.metadata["binary"].type)
+            else:
+                field_types.append(all_type_hints[field.name])
+        cls._FIELD_TYPES = tuple(field_types)
 
         # Replace `__repr__` so subclasses don't have to specify `repr=False` every time.
         cls.__repr__ = NewBinaryStruct.__repr__
@@ -2209,7 +2231,10 @@ class NewBinaryStruct:
                     raise BinaryFieldTypeError(
                         field, cls_name, "Non-deferred fields cannot appear after any deferred fields."
                     )
-                metadata.validate(field, field_type, cls_name)
+                try:
+                    metadata.validate(field, field_type, cls_name)
+                except Exception as ex:
+                    raise BinaryFieldTypeError(field, cls_name, f"Error occurred while trying to validate field: {ex}")
             else:
                 _validate_binary_field_without_metadata(field, field_type, cls_name)
 
@@ -2330,6 +2355,7 @@ class NewBinaryStruct:
                         field_values,  # for `FieldValue` arguments to inspect
                     )
                 except Exception as ex:
+                    print(field_values)
                     _LOGGER.error(f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}")
                     raise
 
@@ -2485,6 +2511,9 @@ class NewBinaryStruct:
         manually is for nested structs and lists of structs, which will keep chaining their names together and include
         list/tuple indices where relevant (handled automatically.
         """
+        if not self._VALIDATED:
+            self._validate_struct()
+
         if reserve_obj is None:
             reserve_obj = self
 

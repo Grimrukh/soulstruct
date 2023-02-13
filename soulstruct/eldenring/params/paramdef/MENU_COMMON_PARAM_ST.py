@@ -46,7 +46,7 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorSelectRadius: float = ParamField(
-        float, "worldMapCursorSelectRadius", default=0,
+        float, "worldMapCursorSelectRadius", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(4, "reserved8[4]")
@@ -67,15 +67,15 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorSpeed: float = ParamField(
-        float, "worldMapCursorSpeed", default=1,
+        float, "worldMapCursorSpeed", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorFirstDistance: float = ParamField(
-        float, "worldMapCursorFirstDistance", default=1,
+        float, "worldMapCursorFirstDistance", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorFirstDelay: float = ParamField(
-        float, "worldMapCursorFirstDelay", default=0,
+        float, "worldMapCursorFirstDelay", default=0.01,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorWaitTime: float = ParamField(
@@ -83,15 +83,15 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorSnapRadius: float = ParamField(
-        float, "worldMapCursorSnapRadius", default=0,
+        float, "worldMapCursorSnapRadius", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapCursorSnapTime: float = ParamField(
-        float, "worldMapCursorSnapTime", default=0,
+        float, "worldMapCursorSnapTime", default=0.01,
         tooltip="TOOLTIP-TODO",
     )
     ItemGetLogAliveTime: float = ParamField(
-        float, "itemGetLogAliveTime", default=0,
+        float, "itemGetLogAliveTime", default=0.01,
         tooltip="TOOLTIP-TODO",
     )
     PlayerMaxSaLimit: int = ParamField(
@@ -124,11 +124,11 @@ class MENU_COMMON_PARAM_ST(ParamRow):
     )
     _Pad1: bytes = ParamPad(3, "reserved17[3]")
     CompassMemoDispDistance: float = ParamField(
-        float, "compassMemoDispDistance", default=50,
+        float, "compassMemoDispDistance", default=50.0,
         tooltip="TOOLTIP-TODO",
     )
     CompassBonfireDispDistance: float = ParamField(
-        float, "compassBonfireDispDistance", default=50,
+        float, "compassBonfireDispDistance", default=50.0,
         tooltip="TOOLTIP-TODO",
     )
     MarkerGoalThreshold: float = ParamField(
@@ -136,7 +136,7 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SvSliderStep: float = ParamField(
-        float, "svSliderStep", default=10,
+        float, "svSliderStep", default=10.0,
         tooltip="TOOLTIP-TODO",
     )
     PreOpeningMovieWaitSec: float = ParamField(
@@ -144,11 +144,11 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     KgIconScale: float = ParamField(
-        float, "kgIconScale", default=100,
+        float, "kgIconScale", default=100.0,
         tooltip="TOOLTIP-TODO",
     )
     KgIconScaleforTable: float = ParamField(
-        float, "kgIconScale_forTable", default=100,
+        float, "kgIconScale_forTable", default=100.0,
         tooltip="TOOLTIP-TODO",
     )
     KgIconVspaceforTable: int = ParamField(
@@ -156,7 +156,7 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     KgIconScaleforConfig: float = ParamField(
-        float, "kgIconScale_forConfig", default=100,
+        float, "kgIconScale_forConfig", default=100.0,
         tooltip="TOOLTIP-TODO",
     )
     KgIconVspaceforConfig: int = ParamField(
@@ -164,11 +164,11 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WorldMapSearchRadius: float = ParamField(
-        float, "worldMap_SearchRadius", default=256,
+        float, "worldMap_SearchRadius", default=256.0,
         tooltip="TOOLTIP-TODO",
     )
     TutorialDisplayTime: float = ParamField(
-        float, "tutorialDisplayTime", default=3,
+        float, "tutorialDisplayTime", default=3.0,
         tooltip="TOOLTIP-TODO",
     )
     CompassFriendHostInnerDistance: float = ParamField(
@@ -184,11 +184,11 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CutsceneKeyGuideAliveTime: float = ParamField(
-        float, "cutsceneKeyGuideAliveTime", default=5,
+        float, "cutsceneKeyGuideAliveTime", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     AutoHideHpThresholdRatio: float = ParamField(
-        float, "autoHideHpThresholdRatio", default=-1,
+        float, "autoHideHpThresholdRatio", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     AutoHideHpThresholdValue: int = ParamField(
@@ -196,7 +196,7 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AutoHideMpThresholdRatio: float = ParamField(
-        float, "autoHideMpThresholdRatio", default=-1,
+        float, "autoHideMpThresholdRatio", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     AutoHideMpThresholdValue: int = ParamField(
@@ -204,7 +204,7 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AutoHideSpThresholdRatio: float = ParamField(
-        float, "autoHideSpThresholdRatio", default=-1,
+        float, "autoHideSpThresholdRatio", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     AutoHideSpThresholdValue: int = ParamField(
@@ -212,11 +212,11 @@ class MENU_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WorldMapZoomAnimationTime: float = ParamField(
-        float, "worldMapZoomAnimationTime", default=0,
+        float, "worldMapZoomAnimationTime", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapIconScaleMin: float = ParamField(
-        float, "worldMapIconScaleMin", default=1,
+        float, "worldMapIconScaleMin", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     WorldMapTravelMarginPoint: float = ParamField(

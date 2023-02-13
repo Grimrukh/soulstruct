@@ -9,27 +9,25 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
-from .dynamics import MagicReference
-
 
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MAGIC_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    ConfirmationMessage: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    YesNoDialogMessageId: int = ParamField(
         int, "yesNoDialogMessageId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LimitRemoveSpecialEffect: int = ParamField(
+    LimitCancelSpEffectId: int = ParamField(
         int, "limitCancelSpEffectId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SortIndex: int = ParamField(
+    SortId: int = ParamField(
         short, "sortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -38,39 +36,39 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AiNotifyType: int = ParamField(
-        byte, "aiNotifyType", default=0,
+        byte, "aiNotifyType", MAGIC_AI_NOTIFY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MPCost: int = ParamField(
+    Mp: int = ParamField(
         short, "mp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaCost: int = ParamField(
+    Stamina: int = ParamField(
         short, "stamina", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpellIcon: int = ParamField(
+    IconId: int = ParamField(
         short, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Behavior: int = ParamField(
+    BehaviorId: int = ParamField(
         short, "behaviorId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RequiredGood: int = ParamField(
+    MtrlItemId: int = ParamField(
         short, "mtrlItemId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ReplaceSpell: int = ParamField(
+    ReplaceMagicId: int = ParamField(
         short, "replaceMagicId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    BaseCastCount: int = ParamField(
+    MaxQuantity: int = ParamField(
         short, "maxQuantity", default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory1: int = ParamField(
-        byte, "refCategory1", default=0,
+        byte, "refCategory1", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     OverDexterity: int = ParamField(
@@ -78,18 +76,18 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefCategory2: int = ParamField(
-        byte, "refCategory2", default=0,
+        byte, "refCategory2", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AttunementSlotsUsed: int = ParamField(
+    SlotLength: int = ParamField(
         byte, "slotLength", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RequiredIntelligence: int = ParamField(
+    RequirementIntellect: int = ParamField(
         byte, "requirementIntellect", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RequiredFaith: int = ParamField(
+    RequirementFaith: int = ParamField(
         byte, "requirementFaith", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -101,165 +99,165 @@ class MAGIC_PARAM_ST(ParamRow):
         byte, "analogDexterityMax", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpellCategory: int = ParamField(
-        byte, "ezStateBehaviorType", default=0,
+    EzStateBehaviorType: int = ParamField(
+        byte, "ezStateBehaviorType", MAGIC_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory3: int = ParamField(
-        byte, "refCategory3", default=0,
+        byte, "refCategory3", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectCategory: int = ParamField(
-        byte, "spEffectCategory", default=0,
+    SpEffectCategory: int = ParamField(
+        byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationType: int = ParamField(
-        byte, "refType", default=0,
+    RefType: int = ParamField(
+        byte, "refType", MAGIC_MOTION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MenuActivated: int = ParamField(
-        byte, "opmeMenuType", default=0,
+    OpmeMenuType: int = ParamField(
+        byte, "opmeMenuType", GOODS_OPEN_MENU, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory4: int = ParamField(
-        byte, "refCategory4", default=0,
+        byte, "refCategory4", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HasSpecialEffectType: int = ParamField(
-        ushort, "hasSpEffectType", default=0,
+    HasSpEffectType: int = ParamField(
+        ushort, "hasSpEffectType", SP_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ReplaceCategory: int = ParamField(
-        byte, "replaceCategory", default=0,
+        byte, "replaceCategory", REPLACE_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LimitCategory: int = ParamField(
-        byte, "useLimitCategory", default=0,
+    UseLimitCategory: int = ParamField(
+        byte, "useLimitCategory", SP_EFFECT_USELIMIT_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByNoCovenant: int = ParamField(
-        byte, "vowType0:1", default=0,
+    VowType0: bool = ParamField(
+        byte, "vowType0:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByWayOfWhite: int = ParamField(
-        byte, "vowType1:1", default=0,
+    VowType1: bool = ParamField(
+        byte, "vowType1:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByPrincessGuard: int = ParamField(
-        byte, "vowType2:1", default=0,
+    VowType2: bool = ParamField(
+        byte, "vowType2:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByWarriorsOfSunlight: int = ParamField(
-        byte, "vowType3:1", default=0,
+    VowType3: bool = ParamField(
+        byte, "vowType3:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByDarkwraith: int = ParamField(
-        byte, "vowType4:1", default=0,
+    VowType4: bool = ParamField(
+        byte, "vowType4:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByPathOfTheDragon: int = ParamField(
-        byte, "vowType5:1", default=0,
+    VowType5: bool = ParamField(
+        byte, "vowType5:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByGravelordServant: int = ParamField(
-        byte, "vowType6:1", default=0,
+    VowType6: bool = ParamField(
+        byte, "vowType6:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByForestHunter: int = ParamField(
-        byte, "vowType7:1", default=0,
+    VowType7: bool = ParamField(
+        byte, "vowType7:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableInMultiplayer: int = ParamField(
-        byte, "enable_multi:1", default=0,
+    Enablemulti: bool = ParamField(
+        byte, "enable_multi:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisabledOutsideMultiplayer: int = ParamField(
-        byte, "enable_multi_only:1", default=0,
+    Enablemultionly: bool = ParamField(
+        byte, "enable_multi_only:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeaponBuff: int = ParamField(
-        byte, "isEnchant:1", default=0,
+    IsEnchant: bool = ParamField(
+        byte, "isEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsShieldBuff: int = ParamField(
-        byte, "isShieldEnchant:1", default=0,
+    IsShieldEnchant: bool = ParamField(
+        byte, "isShieldEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByHumans: int = ParamField(
-        byte, "enable_live:1", default=0,
+    Enablelive: bool = ParamField(
+        byte, "enable_live:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByHollows: int = ParamField(
-        byte, "enable_gray:1", default=0,
+    Enablegray: bool = ParamField(
+        byte, "enable_gray:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByWhitePhantoms: int = ParamField(
-        byte, "enable_white:1", default=0,
+    Enablewhite: bool = ParamField(
+        byte, "enable_white:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByBlackPhantoms: int = ParamField(
-        byte, "enable_black:1", default=0,
+    Enableblack: bool = ParamField(
+        byte, "enable_black:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisabledOffline: int = ParamField(
-        byte, "disableOffline:1", default=0,
+    DisableOffline: bool = ParamField(
+        byte, "disableOffline:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CreateResonanceRing: int = ParamField(
-        byte, "castResonanceMagic:1", default=0,
+    CastResonanceMagic: bool = ParamField(
+        byte, "castResonanceMagic:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsValidToughProtSADmg: int = ParamField(
-        byte, "isValidTough_ProtSADmg:1", default=0,
+    IsValidToughProtSADmg: bool = ParamField(
+        byte, "isValidTough_ProtSADmg:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWarpMagic: int = ParamField(
-        byte, "isWarpMagic:1", default=0,
+    IsWarpMagic: bool = ParamField(
+        byte, "isWarpMagic:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableRiding: int = ParamField(
-        byte, "enableRiding:1", default=0,
+    EnableRiding: bool = ParamField(
+        byte, "enableRiding:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableRiding: int = ParamField(
-        byte, "disableRiding:1", default=0,
+    DisableRiding: bool = ParamField(
+        byte, "disableRiding:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseNoAttackRegion: int = ParamField(
-        byte, "isUseNoAttackRegion:1", default=0,
+    IsUseNoAttackRegion: bool = ParamField(
+        byte, "isUseNoAttackRegion:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad_1:1")
-    UseableByDarkmoonBlade: int = ParamField(
-        byte, "vowType8:1", default=0,
+    _BitPad1: int = ParamBitPad(byte, "pad_1:1", bit_count=1)
+    VowType8: bool = ParamField(
+        byte, "vowType8:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByChaosServant: int = ParamField(
-        byte, "vowType9:1", default=0,
+    VowType9: bool = ParamField(
+        byte, "vowType9:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant10: int = ParamField(
-        byte, "vowType10:1", default=0,
+    VowType10: bool = ParamField(
+        byte, "vowType10:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant11: int = ParamField(
-        byte, "vowType11:1", default=0,
+    VowType11: bool = ParamField(
+        byte, "vowType11:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant12: int = ParamField(
-        byte, "vowType12:1", default=0,
+    VowType12: bool = ParamField(
+        byte, "vowType12:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant13: int = ParamField(
-        byte, "vowType13:1", default=0,
+    VowType13: bool = ParamField(
+        byte, "vowType13:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant14: int = ParamField(
-        byte, "vowType14:1", default=0,
+    VowType14: bool = ParamField(
+        byte, "vowType14:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByCovenant15: int = ParamField(
-        byte, "vowType15:1", default=0,
+    VowType15: bool = ParamField(
+        byte, "vowType15:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     CastSfxId: int = ParamField(
@@ -279,7 +277,7 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ReplacementStatusType: int = ParamField(
-        byte, "ReplacementStatusType", default=0,
+        byte, "ReplacementStatusType", MAGIC_STATUS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ReplacementStatus1: int = ParamField(
@@ -299,7 +297,7 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefCategory5: int = ParamField(
-        byte, "refCategory5", default=0,
+        byte, "refCategory5", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeSA: int = ParamField(
@@ -335,43 +333,43 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefCategory6: int = ParamField(
-        byte, "refCategory6", default=0,
+        byte, "refCategory6", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SubCategory1: int = ParamField(
-        byte, "subCategory1", default=0,
+        byte, "subCategory1", ATK_SUB_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SubCategory2: int = ParamField(
-        byte, "subCategory2", default=0,
+        byte, "subCategory2", ATK_SUB_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory7: int = ParamField(
-        byte, "refCategory7", default=0,
+        byte, "refCategory7", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory8: int = ParamField(
-        byte, "refCategory8", default=0,
+        byte, "refCategory8", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory9: int = ParamField(
-        byte, "refCategory9", default=0,
+        byte, "refCategory9", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefCategory10: int = ParamField(
-        byte, "refCategory10", default=0,
+        byte, "refCategory10", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RefId1: int = ParamField(
-        int, "refId1", default=-1, dynamic_callback=MagicReference(1),
+        int, "refId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId2: int = ParamField(
-        int, "refId2", default=-1, dynamic_callback=MagicReference(2),
+        int, "refId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId3: int = ParamField(
-        int, "refId3", default=-1, dynamic_callback=MagicReference(3),
+        int, "refId3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     AiUseJudgeId: int = ParamField(
@@ -379,75 +377,75 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefId4: int = ParamField(
-        int, "refId4", default=-1, dynamic_callback=MagicReference(4),
+        int, "refId4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId5: int = ParamField(
-        int, "refId5", default=-1, dynamic_callback=MagicReference(5),
+        int, "refId5", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId6: int = ParamField(
-        int, "refId6", default=-1, dynamic_callback=MagicReference(6),
+        int, "refId6", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId7: int = ParamField(
-        int, "refId7", default=-1, dynamic_callback=MagicReference(7),
+        int, "refId7", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId8: int = ParamField(
-        int, "refId8", default=-1, dynamic_callback=MagicReference(8),
+        int, "refId8", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId9: int = ParamField(
-        int, "refId9", default=-1, dynamic_callback=MagicReference(9),
+        int, "refId9", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefId10: int = ParamField(
-        int, "refId10", default=-1, dynamic_callback=MagicReference(10),
+        int, "refId10", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType1: int = ParamField(
-        byte, "consumeType1", default=0,
+        byte, "consumeType1", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType2: int = ParamField(
-        byte, "consumeType2", default=0,
+        byte, "consumeType2", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType3: int = ParamField(
-        byte, "consumeType3", default=0,
+        byte, "consumeType3", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType4: int = ParamField(
-        byte, "consumeType4", default=0,
+        byte, "consumeType4", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType5: int = ParamField(
-        byte, "consumeType5", default=0,
+        byte, "consumeType5", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType6: int = ParamField(
-        byte, "consumeType6", default=0,
+        byte, "consumeType6", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType7: int = ParamField(
-        byte, "consumeType7", default=0,
+        byte, "consumeType7", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType8: int = ParamField(
-        byte, "consumeType8", default=0,
+        byte, "consumeType8", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType9: int = ParamField(
-        byte, "consumeType9", default=0,
+        byte, "consumeType9", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeType10: int = ParamField(
-        byte, "consumeType10", default=0,
+        byte, "consumeType10", MAGIC_CONSUME_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ConsumeLoopMPforMenu: int = ParamField(
         short, "consumeLoopMP_forMenu", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(8, "pad[8]")
+    _Pad1: bytes = ParamPad(8, "pad[8]")

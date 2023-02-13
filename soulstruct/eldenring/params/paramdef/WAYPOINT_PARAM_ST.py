@@ -14,19 +14,19 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class WAYPOINT_PARAM_ST(ParamRow):
     Attribute1: int = ParamField(
-        short, "attribute1", default=-1,
+        short, "attribute1", WAYPOINT_ATTRIBUTE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Attribute2: int = ParamField(
-        short, "attribute2", default=-1,
+        short, "attribute2", WAYPOINT_ATTRIBUTE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Attribute3: int = ParamField(
-        short, "attribute3", default=-1,
+        short, "attribute3", WAYPOINT_ATTRIBUTE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Attribute4: int = ParamField(
-        short, "attribute4", default=-1,
+        short, "attribute4", WAYPOINT_ATTRIBUTE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(8, "padding4[8]")

@@ -14,23 +14,23 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class KEY_ASSIGN_PARAM_ST(ParamRow):
     PadKeyId: int = ParamField(
-        int, "padKeyId", default=-1,
+        int, "padKeyId", CS_PAD_KEY, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     KeyboardModifyKey: int = ParamField(
-        int, "keyboardModifyKey", default=0,
+        int, "keyboardModifyKey", CS_MODIFIER_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     KeyboardKeyId: int = ParamField(
-        int, "keyboardKeyId", default=-1,
+        int, "keyboardKeyId", CS_KEYBOARD_KEY, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     MouseModifyKey: int = ParamField(
-        int, "mouseModifyKey", default=0,
+        int, "mouseModifyKey", CS_MODIFIER_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MouseKeyId: int = ParamField(
-        int, "mouseKeyId", default=0,
+        int, "mouseKeyId", CS_MOUSE_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(12, "reserved[12]")

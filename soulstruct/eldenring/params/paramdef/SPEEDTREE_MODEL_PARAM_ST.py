@@ -30,7 +30,7 @@ class SPEEDTREE_MODEL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxTranslucencyLeaf: float = ParamField(
-        float, "MaxTranslucencyLeaf", default=5,
+        float, "MaxTranslucencyLeaf", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     MinTranslucencyFrond: float = ParamField(
@@ -38,7 +38,7 @@ class SPEEDTREE_MODEL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxTranslucencyFrond: float = ParamField(
-        float, "MaxTranslucencyFrond", default=5,
+        float, "MaxTranslucencyFrond", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     MinTranslucencyBranch: float = ParamField(
@@ -46,10 +46,10 @@ class SPEEDTREE_MODEL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxTranslucencyBranch: float = ParamField(
-        float, "MaxTranslucencyBranch", default=5,
+        float, "MaxTranslucencyBranch", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     BillboardBackSpecularWeakenParam: float = ParamField(
-        float, "BillboardBackSpecularWeakenParam", default=1,
+        float, "BillboardBackSpecularWeakenParam", default=1.0,
         tooltip="TOOLTIP-TODO",
     )

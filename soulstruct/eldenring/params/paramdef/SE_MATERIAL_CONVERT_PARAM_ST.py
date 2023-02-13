@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class SE_MATERIAL_CONVERT_PARAM_ST(ParamRow):
     SeMaterialId: int = ParamField(
-        byte, "seMaterialId", default=0,
+        byte, "seMaterialId", MATERIAL_SE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "pad[3]")

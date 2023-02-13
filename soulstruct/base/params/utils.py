@@ -64,8 +64,8 @@ MAP_PARAM_TYPES = {
     "s32": int,
     "f32": float,
     "f64": double,
-    "fixstr": bytes,  # not decoded
-    "fixstrW": bytes,  # not decoded
+    "fixstr": str,  # decoded
+    "fixstrW": str,  # decoded
 }
 
 
@@ -148,7 +148,10 @@ class ParamRow(NewBinaryStruct):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRow:
-        row = cls.from_bytes(reader)
+        try:
+            row = cls.from_bytes(reader)
+        except Exception as ex:
+            raise ValueError(f"Could not read ParamRow of data type `{cls.__name__}`: {ex}")
         row.RawName = raw_name
         row.Name = name
         return row
@@ -179,7 +182,7 @@ class ParamFieldMetadata(tp.NamedTuple):
 
 
 def ParamField(
-    fmt: tp.Type[PRIMITIVE_FIELD_TYPING],
+    field_type: tp.Type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
     param_enum: tp.Type[base_type] = None,
     game_type: tp.Type[BaseGameObject] = None,
@@ -197,61 +200,51 @@ def ParamField(
     value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
     appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
     """
-    return field(
-        default=default,
-        metadata={
-            "binary": BinaryFieldMetadata(
-                fmt=fmt,
-                length=length,
-                encoding=encoding,
-                bit_count=bit_count,
-            ),
-            "param": ParamFieldMetadata(
-                internal_name=internal_name,
-                param_enum=param_enum,
-                game_type=game_type,
-                hide=hide,
-                dynamic_callback=dynamic_callback,
-                tooltip=tooltip,
-            ),
-        },
-    )
+    metadata = Binary(fmt=field_type, length=length, encoding=encoding, bit_count=bit_count, type_override=field_type)
+    metadata["metadata"] |= {
+        "param": ParamFieldMetadata(
+            internal_name=internal_name,
+            param_enum=param_enum,
+            game_type=game_type,
+            hide=hide,
+            dynamic_callback=dynamic_callback,
+            tooltip=tooltip,
+        ),
+    }
+
+    return field(default=default, **metadata)
 
 
 def ParamPad(size: int, internal_name: str):
     """Shortcut for a Param normal 'array' padding field (a field with type `dummy8` and [] in name)."""
-    return field(
-        default=b"\0" * size,
-        metadata={
-            "binary": BinaryFieldMetadata(
-                fmt=f"{size}s",
-                asserted=[b"\0" * size],
-            ),
-            "param": ParamFieldMetadata(
-                internal_name=internal_name,
-                hide=True,
-                dynamic_callback=None,
-                tooltip=f"Null padding ({size} bytes).",
-            ),
-        },
+    metadata = Binary(
+        fmt=f"{size}s",
+        # asserted=[b"\0" * size],  # TODO: Finding non-null pad values...
     )
+    metadata["metadata"] |= {
+        "param": ParamFieldMetadata(
+            internal_name=internal_name,
+            hide=True,
+            dynamic_callback=None,
+            tooltip=f"Null padding ({size} bytes).",
+        ),
+    }
+    return field(default=b"\0" * size, **metadata)
 
 
-def ParamBitPad(fmt: tp.Type[PRIMITIVE_FIELD_TYPING], internal_name: str, bit_count: int):
+def ParamBitPad(field_type: tp.Type[PRIMITIVE_FIELD_TYPING], internal_name: str, bit_count: int):
     """Shortcut for a Param bit-padding field (a field with type `dummy8` and `bit_count != -1` from colon in name)."""
-    return field(
-        default=0,
-        metadata={
-            "binary": BinaryFieldMetadata(
-                fmt=fmt,
-                bit_count=bit_count,
-                asserted=[0],
-            ),
-            "param": ParamFieldMetadata(
-                internal_name=internal_name,
-                hide=True,
-                dynamic_callback=None,
-                tooltip=f"Null padding ({bit_count} bits).",
-            ),
-        },
+    metadata = Binary(
+        fmt=field_type,
+        bit_count=bit_count,
+        # asserted=[0],  # TODO: Finding non-null pad values...
     )
+    metadata["metadata"] |= {
+        "param": ParamFieldMetadata(
+            internal_name=internal_name,
+            hide=True,
+            dynamic_callback=None,
+            tooltip=f"Null padding ({bit_count} bits).",
+        ),
+    }
+    return field(default=0, **metadata)

@@ -13,13 +13,13 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class NPC_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    BehaviorVariationID: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    BehaviorVariationId: int = ParamField(
         int, "behaviorVariationId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -27,11 +27,11 @@ class NPC_PARAM_ST(ParamRow):
         int, "resistCorrectId_poison", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NameID: int = ParamField(
+    NameId: int = ParamField(
         int, "nameId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    TurnVelocity: float = ParamField(
+    TurnVellocity: float = ParamField(
         float, "turnVellocity", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -51,15 +51,15 @@ class NPC_PARAM_ST(ParamRow):
         float, "hitYOffset", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaximumHP: int = ParamField(
+    Hp: int = ParamField(
         uint, "hp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaximumMP: int = ParamField(
+    Mp: int = ParamField(
         uint, "mp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SoulReward: int = ParamField(
+    GetSoul: int = ParamField(
         uint, "getSoul", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -72,11 +72,11 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxAnkleRollAngle: float = ParamField(
-        float, "maxAnkleRollAngle", default=-1,
+        float, "maxAnkleRollAngle", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     ChrHitGroupAndNavimesh: int = ParamField(
-        byte, "chrHitGroupAndNavimesh", default=0,
+        byte, "chrHitGroupAndNavimesh", CHR_HIT_GROUP, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FaceIconId: int = ParamField(
@@ -88,58 +88,58 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ChrActivateConditionParamId: int = ParamField(
-        uint, "chrActivateConditionParamId", default=0,
+        uint, "chrActivateConditionParamId", CHR_ACTIVATE_CONDITION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FootIkErrorHeightLimit: float = ParamField(
         float, "footIkErrorHeightLimit", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    HumanityLotID: int = ParamField(
+    HumanityLotId: int = ParamField(
         int, "humanityLotId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID0: int = ParamField(
+    SpEffectID0: int = ParamField(
         int, "spEffectID0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID1: int = ParamField(
+    SpEffectID1: int = ParamField(
         int, "spEffectID1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID2: int = ParamField(
+    SpEffectID2: int = ParamField(
         int, "spEffectID2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID3: int = ParamField(
+    SpEffectID3: int = ParamField(
         int, "spEffectID3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID4: int = ParamField(
+    SpEffectID4: int = ParamField(
         int, "spEffectID4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID5: int = ParamField(
+    SpEffectID5: int = ParamField(
         int, "spEffectID5", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID6: int = ParamField(
+    SpEffectID6: int = ParamField(
         int, "spEffectID6", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID7: int = ParamField(
+    SpEffectID7: int = ParamField(
         int, "spEffectID7", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NewGamePlusSpecialEffect: int = ParamField(
+    GameClearSpEffectID: int = ParamField(
         int, "GameClearSpEffectID", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalGuardCutRate: float = ParamField(
+    PhysGuardCutRate: float = ParamField(
         float, "physGuardCutRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicGuardCutRate: float = ParamField(
+    MagGuardCutRate: float = ParamField(
         float, "magGuardCutRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -147,11 +147,11 @@ class NPC_PARAM_ST(ParamRow):
         float, "fireGuardCutRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningGuardCutRate: float = ParamField(
+    ThunGuardCutRate: float = ParamField(
         float, "thunGuardCutRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationIDOffset: int = ParamField(
+    AnimIdOffset: int = ParamField(
         int, "animIdOffset", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -179,167 +179,167 @@ class NPC_PARAM_ST(ParamRow):
         short, "lockGazePoint5", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NetworkWarpDistance: float = ParamField(
+    NetworkWarpDist: float = ParamField(
         float, "networkWarpDist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorR1: int = ParamField(
+    DbgBehaviorR1: int = ParamField(
         int, "dbgBehaviorR1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorL1: int = ParamField(
+    DbgBehaviorL1: int = ParamField(
         int, "dbgBehaviorL1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorR2: int = ParamField(
+    DbgBehaviorR2: int = ParamField(
         int, "dbgBehaviorR2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorL2: int = ParamField(
+    DbgBehaviorL2: int = ParamField(
         int, "dbgBehaviorL2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorRL: int = ParamField(
+    DbgBehaviorRL: int = ParamField(
         int, "dbgBehaviorRL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorRR: int = ParamField(
+    DbgBehaviorRR: int = ParamField(
         int, "dbgBehaviorRR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorRD: int = ParamField(
+    DbgBehaviorRD: int = ParamField(
         int, "dbgBehaviorRD", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorRU: int = ParamField(
+    DbgBehaviorRU: int = ParamField(
         int, "dbgBehaviorRU", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorLL: int = ParamField(
+    DbgBehaviorLL: int = ParamField(
         int, "dbgBehaviorLL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorLR: int = ParamField(
+    DbgBehaviorLR: int = ParamField(
         int, "dbgBehaviorLR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorLD: int = ParamField(
+    DbgBehaviorLD: int = ParamField(
         int, "dbgBehaviorLD", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DebugBehaviorLU: int = ParamField(
+    DbgBehaviorLU: int = ParamField(
         int, "dbgBehaviorLU", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationIDOffset2: int = ParamField(
+    AnimIdOffset2: int = ParamField(
         int, "animIdOffset2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Part1DamageMultiplier: float = ParamField(
-        float, "partsDamageRate1", default=1,
+    PartsDamageRate1: float = ParamField(
+        float, "partsDamageRate1", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part2DamageMultiplier: float = ParamField(
-        float, "partsDamageRate2", default=1,
+    PartsDamageRate2: float = ParamField(
+        float, "partsDamageRate2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part3DamageMultiplier: float = ParamField(
-        float, "partsDamageRate3", default=1,
+    PartsDamageRate3: float = ParamField(
+        float, "partsDamageRate3", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part4DamageMultiplier: float = ParamField(
-        float, "partsDamageRate4", default=1,
+    PartsDamageRate4: float = ParamField(
+        float, "partsDamageRate4", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part5DamageMultiplier: float = ParamField(
-        float, "partsDamageRate5", default=1,
+    PartsDamageRate5: float = ParamField(
+        float, "partsDamageRate5", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part6DamageMultiplier: float = ParamField(
-        float, "partsDamageRate6", default=1,
+    PartsDamageRate6: float = ParamField(
+        float, "partsDamageRate6", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part7DamageMultiplier: float = ParamField(
-        float, "partsDamageRate7", default=1,
+    PartsDamageRate7: float = ParamField(
+        float, "partsDamageRate7", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Part8DamageMultiplier: float = ParamField(
-        float, "partsDamageRate8", default=1,
+    PartsDamageRate8: float = ParamField(
+        float, "partsDamageRate8", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    WeakPartsDamageMultiplier: float = ParamField(
-        float, "weakPartsDamageRate", default=1,
+    WeakPartsDamageRate: float = ParamField(
+        float, "weakPartsDamageRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseRecoveryCorrection: float = ParamField(
+    SuperArmorRecoverCorrection: float = ParamField(
         float, "superArmorRecoverCorrection", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    StaggerKnockbackDistance: float = ParamField(
+    SuperArmorBrakeKnockbackDist: float = ParamField(
         float, "superArmorBrakeKnockbackDist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxStamina: int = ParamField(
+    Stamina: int = ParamField(
         ushort, "stamina", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaRecoveryBaseSpeed: int = ParamField(
+    StaminaRecoverBaseVel: int = ParamField(
         ushort, "staminaRecoverBaseVel", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalDefense: int = ParamField(
+    Defphys: int = ParamField(
         ushort, "def_phys", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SlashDefense: int = ParamField(
+    Defslash: int = ParamField(
         short, "def_slash", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StrikeDefense: int = ParamField(
+    Defblow: int = ParamField(
         short, "def_blow", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ThrustDefense: int = ParamField(
+    Defthrust: int = ParamField(
         short, "def_thrust", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicDefense: int = ParamField(
+    Defmag: int = ParamField(
         ushort, "def_mag", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FireDefense: int = ParamField(
+    Deffire: int = ParamField(
         ushort, "def_fire", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningDefense: int = ParamField(
+    Defthunder: int = ParamField(
         ushort, "def_thunder", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DefenseRepelPower: int = ParamField(
+    DefFlickPower: int = ParamField(
         ushort, "defFlickPower", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PoisonResistance: int = ParamField(
+    Resistpoison: int = ParamField(
         ushort, "resist_poison", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ToxicResistance: int = ParamField(
+    Resistdesease: int = ParamField(
         ushort, "resist_desease", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BleedResistance: int = ParamField(
+    Resistblood: int = ParamField(
         ushort, "resist_blood", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CurseResistance: int = ParamField(
+    Resistcurse: int = ParamField(
         ushort, "resist_curse", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GhostModelID: int = ParamField(
+    GhostModelId: int = ParamField(
         short, "ghostModelId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NormalChangeResourceID: int = ParamField(
+    NormalChangeResouceId: int = ParamField(
         short, "normalChangeResouceId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -347,15 +347,15 @@ class NPC_PARAM_ST(ParamRow):
         short, "guardAngle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SlashDamageReductionWhenGuarding: int = ParamField(
+    SlashGuardCutRate: int = ParamField(
         short, "slashGuardCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StrikeDamageReductionWhenGuarding: int = ParamField(
+    BlowGuardCutRate: int = ParamField(
         short, "blowGuardCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ThrustDamageReductionWhenGuarding: int = ParamField(
+    ThrustGuardCutRate: int = ParamField(
         short, "thrustGuardCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -363,27 +363,27 @@ class NPC_PARAM_ST(ParamRow):
         short, "lockGazePoint6", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NormalChangeTextureChrID: int = ParamField(
+    NormalChangeTexChrId: int = ParamField(
         short, "normalChangeTexChrId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ItemDropAppearance: int = ParamField(
-        ushort, "dropType", default=0,
+    DropType: int = ParamField(
+        ushort, "dropType", NPC_ITEMDROP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     KnockbackRate: int = ParamField(
         byte, "knockbackRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    KnockbackID: int = ParamField(
+    KnockbackParamId: int = ParamField(
         byte, "knockbackParamId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FallDamageReduction: int = ParamField(
+    FallDamageDump: int = ParamField(
         byte, "fallDamageDump", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaGuardDefense: int = ParamField(
+    StaminaGuardDef: int = ParamField(
         byte, "staminaGuardDef", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -407,75 +407,75 @@ class NPC_PARAM_ST(ParamRow):
         short, "lockGazePoint7", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MPRecoveryBaseSpeed: int = ParamField(
+    MpRecoverBaseVel: int = ParamField(
         byte, "mpRecoverBaseVel", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RepelDamageCutRate: int = ParamField(
+    FlickDamageCutRate: int = ParamField(
         byte, "flickDamageCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DefaultLightingParamID: int = ParamField(
+    DefaultLodParamId: int = ParamField(
         sbyte, "defaultLodParamId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DrawType: int = ParamField(
-        sbyte, "drawType", default=0,
+        sbyte, "drawType", NPC_DRAW_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterType: int = ParamField(
-        byte, "npcType", default=0,
+    NpcType: int = ParamField(
+        byte, "npcType", NPC_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TeamType: int = ParamField(
-        byte, "teamType", default=0,
+        byte, "teamType", TEAM_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MoveType: int = ParamField(
-        byte, "moveType", default=0,
+        byte, "moveType", NPC_MOVE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LockOnDistance: int = ParamField(
+    LockDist: int = ParamField(
         byte, "lockDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSeWeak1: int = ParamField(
-        ushort, "materialSe_Weak1", default=0,
+        ushort, "materialSe_Weak1", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSfxWeak1: int = ParamField(
-        ushort, "materialSfx_Weak1", default=0,
+        ushort, "materialSfx_Weak1", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PartsDamageType: int = ParamField(
-        byte, "partsDamageType", default=0,
+        byte, "partsDamageType", ATK_PARAM_PARTSDMGTYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     VowType: int = ParamField(
-        byte, "vowType", default=0,
+        byte, "vowType", VOW_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GuardLevel: int = ParamField(
         sbyte, "guardLevel", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BurnSFXType: int = ParamField(
-        byte, "burnSfxType", default=0,
+    BurnSfxType: int = ParamField(
+        byte, "burnSfxType", NPC_BURN_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PoisonGuardResistance: int = ParamField(
+    PoisonGuardResist: int = ParamField(
         sbyte, "poisonGuardResist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ToxicGuardResistance: int = ParamField(
+    DiseaseGuardResist: int = ParamField(
         sbyte, "diseaseGuardResist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BleedGuardResistance: int = ParamField(
+    BloodGuardResist: int = ParamField(
         sbyte, "bloodGuardResist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CurseGuardResistance: int = ParamField(
+    CurseGuardResist: int = ParamField(
         sbyte, "curseGuardResist", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -483,252 +483,252 @@ class NPC_PARAM_ST(ParamRow):
         byte, "parryAttack", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ParryDefense: int = ParamField(
+    ParryDefence: int = ParamField(
         byte, "parryDefence", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SFXSize: int = ParamField(
-        byte, "sfxSize", default=0,
+    SfxSize: int = ParamField(
+        byte, "sfxSize", NPC_SFX_SIZE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PushOutCameraRegionRadius: int = ParamField(
+    PushOutCamRegionRadius: int = ParamField(
         byte, "pushOutCamRegionRadius", default=12,
         tooltip="TOOLTIP-TODO",
     )
     HitStopType: int = ParamField(
-        byte, "hitStopType", default=0,
+        byte, "hitStopType", NPC_HITSTOP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LadderEndCheckOffsetTop: int = ParamField(
+    LadderEndChkOffsetTop: int = ParamField(
         byte, "ladderEndChkOffsetTop", default=15,
         tooltip="TOOLTIP-TODO",
     )
-    LadderEndCheckOffsetBottom: int = ParamField(
+    LadderEndChkOffsetLow: int = ParamField(
         byte, "ladderEndChkOffsetLow", default=8,
         tooltip="TOOLTIP-TODO",
     )
-    UseRagdollCameraHit: int = ParamField(
-        byte, "useRagdollCamHit:1", default=0,
+    UseRagdollCamHit: bool = ParamField(
+        byte, "useRagdollCamHit:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableClothRigidHit: int = ParamField(
-        byte, "disableClothRigidHit:1", default=0,
+    DisableClothRigidHit: bool = ParamField(
+        byte, "disableClothRigidHit:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseUndulationAddAnimFB: int = ParamField(
-        byte, "useUndulationAddAnimFB:1", default=0,
+    UseUndulationAddAnimFB: bool = ParamField(
+        byte, "useUndulationAddAnimFB:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeakToOccult: int = ParamField(
-        byte, "isWeakA:1", default=0,
+    IsWeakA: bool = ParamField(
+        byte, "isWeakA:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGhost: int = ParamField(
-        byte, "isGhost:1", default=0,
+    IsGhost: bool = ParamField(
+        byte, "isGhost:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsNoDamageMotion: int = ParamField(
-        byte, "isNoDamageMotion:1", default=0,
+    IsNoDamageMotion: bool = ParamField(
+        byte, "isNoDamageMotion:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUnduration: int = ParamField(
-        byte, "isUnduration:1", default=0,
+    IsUnduration: bool = ParamField(
+        byte, "isUnduration:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsChangeWanderGhost: int = ParamField(
-        byte, "isChangeWanderGhost:1", default=0,
+    IsChangeWanderGhost: bool = ParamField(
+        byte, "isChangeWanderGhost:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask0: int = ParamField(
-        byte, "modelDispMask0:1", default=0,
+    ModelDispMask0: bool = ParamField(
+        byte, "modelDispMask0:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask1: int = ParamField(
-        byte, "modelDispMask1:1", default=0,
+    ModelDispMask1: bool = ParamField(
+        byte, "modelDispMask1:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask2: int = ParamField(
-        byte, "modelDispMask2:1", default=0,
+    ModelDispMask2: bool = ParamField(
+        byte, "modelDispMask2:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask3: int = ParamField(
-        byte, "modelDispMask3:1", default=0,
+    ModelDispMask3: bool = ParamField(
+        byte, "modelDispMask3:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask4: int = ParamField(
-        byte, "modelDispMask4:1", default=0,
+    ModelDispMask4: bool = ParamField(
+        byte, "modelDispMask4:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask5: int = ParamField(
-        byte, "modelDispMask5:1", default=0,
+    ModelDispMask5: bool = ParamField(
+        byte, "modelDispMask5:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask6: int = ParamField(
-        byte, "modelDispMask6:1", default=0,
+    ModelDispMask6: bool = ParamField(
+        byte, "modelDispMask6:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask7: int = ParamField(
-        byte, "modelDispMask7:1", default=0,
+    ModelDispMask7: bool = ParamField(
+        byte, "modelDispMask7:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask8: int = ParamField(
-        byte, "modelDispMask8:1", default=0,
+    ModelDispMask8: bool = ParamField(
+        byte, "modelDispMask8:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask9: int = ParamField(
-        byte, "modelDispMask9:1", default=0,
+    ModelDispMask9: bool = ParamField(
+        byte, "modelDispMask9:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask10: int = ParamField(
-        byte, "modelDispMask10:1", default=0,
+    ModelDispMask10: bool = ParamField(
+        byte, "modelDispMask10:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask11: int = ParamField(
-        byte, "modelDispMask11:1", default=0,
+    ModelDispMask11: bool = ParamField(
+        byte, "modelDispMask11:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask12: int = ParamField(
-        byte, "modelDispMask12:1", default=0,
+    ModelDispMask12: bool = ParamField(
+        byte, "modelDispMask12:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask13: int = ParamField(
-        byte, "modelDispMask13:1", default=0,
+    ModelDispMask13: bool = ParamField(
+        byte, "modelDispMask13:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask14: int = ParamField(
-        byte, "modelDispMask14:1", default=0,
+    ModelDispMask14: bool = ParamField(
+        byte, "modelDispMask14:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask15: int = ParamField(
-        byte, "modelDispMask15:1", default=0,
+    ModelDispMask15: bool = ParamField(
+        byte, "modelDispMask15:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableNeckTurn: int = ParamField(
-        byte, "isEnableNeckTurn:1", default=0,
+    IsEnableNeckTurn: bool = ParamField(
+        byte, "isEnableNeckTurn:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableRespawnOnRest: int = ParamField(
-        byte, "disableRespawn:1", default=0,
+    DisableRespawn: bool = ParamField(
+        byte, "disableRespawn:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMoveAnimationWait: int = ParamField(
-        byte, "isMoveAnimWait:1", default=0,
+    IsMoveAnimWait: bool = ParamField(
+        byte, "isMoveAnimWait:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsCrowd: int = ParamField(
-        byte, "isCrowd:1", default=0,
+    IsCrowd: bool = ParamField(
+        byte, "isCrowd:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAbyssal: int = ParamField(
-        byte, "isWeakB:1", default=0,
+    IsWeakB: bool = ParamField(
+        byte, "isWeakB:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeakC: int = ParamField(
-        byte, "isWeakC:1", default=0,
+    IsWeakC: bool = ParamField(
+        byte, "isWeakC:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeakD: int = ParamField(
-        byte, "isWeakD:1", default=0,
+    IsWeakD: bool = ParamField(
+        byte, "isWeakD:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DoesAlwaysUseSpecialTurn: int = ParamField(
-        byte, "doesAlwaysUseSpecialTurn:1", default=0,
+    DoesAlwaysUseSpecialTurn: bool = ParamField(
+        byte, "doesAlwaysUseSpecialTurn:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsRideAtkTarget: int = ParamField(
-        byte, "isRideAtkTarget:1", default=0,
+    IsRideAtkTarget: bool = ParamField(
+        byte, "isRideAtkTarget:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableStepDispInterpolate: int = ParamField(
-        byte, "isEnableStepDispInterpolate:1", default=0,
+    IsEnableStepDispInterpolate: bool = ParamField(
+        byte, "isEnableStepDispInterpolate:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStealthTarget: int = ParamField(
-        byte, "isStealthTarget:1", default=1,
+    IsStealthTarget: bool = ParamField(
+        byte, "isStealthTarget:1", NPC_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    DisableInitializeDead: int = ParamField(
-        byte, "disableInitializeDead:1", default=0,
+    DisableInitializeDead: bool = ParamField(
+        byte, "disableInitializeDead:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHitRumble: int = ParamField(
-        byte, "isHitRumble:1", default=0,
+    IsHitRumble: bool = ParamField(
+        byte, "isHitRumble:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSmoothTurn: int = ParamField(
-        byte, "isSmoothTurn:1", default=1,
+    IsSmoothTurn: bool = ParamField(
+        byte, "isSmoothTurn:1", NPC_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeakE: int = ParamField(
-        byte, "isWeakE:1", default=0,
+    IsWeakE: bool = ParamField(
+        byte, "isWeakE:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWeakF: int = ParamField(
-        byte, "isWeakF:1", default=0,
+    IsWeakF: bool = ParamField(
+        byte, "isWeakF:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask16: int = ParamField(
-        byte, "modelDispMask16:1", default=0,
+    ModelDispMask16: bool = ParamField(
+        byte, "modelDispMask16:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask17: int = ParamField(
-        byte, "modelDispMask17:1", default=0,
+    ModelDispMask17: bool = ParamField(
+        byte, "modelDispMask17:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask18: int = ParamField(
-        byte, "modelDispMask18:1", default=0,
+    ModelDispMask18: bool = ParamField(
+        byte, "modelDispMask18:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask19: int = ParamField(
-        byte, "modelDispMask19:1", default=0,
+    ModelDispMask19: bool = ParamField(
+        byte, "modelDispMask19:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask20: int = ParamField(
-        byte, "modelDispMask20:1", default=0,
+    ModelDispMask20: bool = ParamField(
+        byte, "modelDispMask20:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask21: int = ParamField(
-        byte, "modelDispMask21:1", default=0,
+    ModelDispMask21: bool = ParamField(
+        byte, "modelDispMask21:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask22: int = ParamField(
-        byte, "modelDispMask22:1", default=0,
+    ModelDispMask22: bool = ParamField(
+        byte, "modelDispMask22:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask23: int = ParamField(
-        byte, "modelDispMask23:1", default=0,
+    ModelDispMask23: bool = ParamField(
+        byte, "modelDispMask23:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask24: int = ParamField(
-        byte, "modelDispMask24:1", default=0,
+    ModelDispMask24: bool = ParamField(
+        byte, "modelDispMask24:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask25: int = ParamField(
-        byte, "modelDispMask25:1", default=0,
+    ModelDispMask25: bool = ParamField(
+        byte, "modelDispMask25:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask26: int = ParamField(
-        byte, "modelDispMask26:1", default=0,
+    ModelDispMask26: bool = ParamField(
+        byte, "modelDispMask26:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask27: int = ParamField(
-        byte, "modelDispMask27:1", default=0,
+    ModelDispMask27: bool = ParamField(
+        byte, "modelDispMask27:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask28: int = ParamField(
-        byte, "modelDispMask28:1", default=0,
+    ModelDispMask28: bool = ParamField(
+        byte, "modelDispMask28:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask29: int = ParamField(
-        byte, "modelDispMask29:1", default=0,
+    ModelDispMask29: bool = ParamField(
+        byte, "modelDispMask29:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask30: int = ParamField(
-        byte, "modelDispMask30:1", default=0,
+    ModelDispMask30: bool = ParamField(
+        byte, "modelDispMask30:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelDisplayMask31: int = ParamField(
-        byte, "modelDispMask31:1", default=0,
+    ModelDispMask31: bool = ParamField(
+        byte, "modelDispMask31:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     ItemSearchRadius: float = ParamField(
@@ -744,39 +744,39 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SpecialTurnType: int = ParamField(
-        byte, "specialTurnType", default=0,
+        byte, "specialTurnType", NPC_SPECIAL_TURN_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsSoulsGetByBoss: int = ParamField(
-        byte, "isSoulGetByBoss:1", default=0,
+    IsSoulGetByBoss: bool = ParamField(
+        byte, "isSoulGetByBoss:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBulletOwnerbyObject: int = ParamField(
-        byte, "isBulletOwner_byObject:1", default=0,
+    IsBulletOwnerbyObject: bool = ParamField(
+        byte, "isBulletOwner_byObject:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseLowHitFootIk: int = ParamField(
-        byte, "isUseLowHitFootIk:1", default=0,
+    IsUseLowHitFootIk: bool = ParamField(
+        byte, "isUseLowHitFootIk:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsCalculatePvPDamage: int = ParamField(
-        byte, "isCalculatePvPDamage:1", default=0,
+    IsCalculatePvPDamage: bool = ParamField(
+        byte, "isCalculatePvPDamage:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHostSyncChr: int = ParamField(
-        byte, "isHostSyncChr:1", default=0,
+    IsHostSyncChr: bool = ParamField(
+        byte, "isHostSyncChr:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSkipWeakDamageAnim: int = ParamField(
-        byte, "isSkipWeakDamageAnim:1", default=0,
+    IsSkipWeakDamageAnim: bool = ParamField(
+        byte, "isSkipWeakDamageAnim:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsKeepHitOnRide: int = ParamField(
-        byte, "isKeepHitOnRide:1", default=0,
+    IsKeepHitOnRide: bool = ParamField(
+        byte, "isKeepHitOnRide:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSpCollide: int = ParamField(
-        byte, "isSpCollide:1", default=0,
+    IsSpCollide: bool = ParamField(
+        byte, "isSpCollide:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     Defdark: int = ParamField(
@@ -788,7 +788,7 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SpecialTurnDistanceThreshold: float = ParamField(
-        float, "specialTurnDistanceThreshold", default=4,
+        float, "specialTurnDistanceThreshold", default=4.0,
         tooltip="TOOLTIP-TODO",
     )
     AutoFootEffectSfxId: int = ParamField(
@@ -796,27 +796,27 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaterialSe1: int = ParamField(
-        ushort, "materialSe1", default=0,
+        ushort, "materialSe1", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSfx1: int = ParamField(
-        ushort, "materialSfx1", default=0,
+        ushort, "materialSfx1", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSeWeak2: int = ParamField(
-        ushort, "materialSe_Weak2", default=0,
+        ushort, "materialSe_Weak2", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSfxWeak2: int = ParamField(
-        ushort, "materialSfx_Weak2", default=0,
+        ushort, "materialSfx_Weak2", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSe2: int = ParamField(
-        ushort, "materialSe2", default=0,
+        ushort, "materialSe2", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MaterialSfx2: int = ParamField(
-        ushort, "materialSfx2", default=0,
+        ushort, "materialSfx2", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SpEffectID8: int = ParamField(
@@ -864,35 +864,35 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     NeutralDamageCutRate: float = ParamField(
-        float, "neutralDamageCutRate", default=1,
+        float, "neutralDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SlashDamageCutRate: float = ParamField(
-        float, "slashDamageCutRate", default=1,
+        float, "slashDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BlowDamageCutRate: float = ParamField(
-        float, "blowDamageCutRate", default=1,
+        float, "blowDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ThrustDamageCutRate: float = ParamField(
-        float, "thrustDamageCutRate", default=1,
+        float, "thrustDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     MagicDamageCutRate: float = ParamField(
-        float, "magicDamageCutRate", default=1,
+        float, "magicDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     FireDamageCutRate: float = ParamField(
-        float, "fireDamageCutRate", default=1,
+        float, "fireDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ThunderDamageCutRate: float = ParamField(
-        float, "thunderDamageCutRate", default=1,
+        float, "thunderDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DarkDamageCutRate: float = ParamField(
-        float, "darkDamageCutRate", default=1,
+        float, "darkDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DarkGuardCutRate: float = ParamField(
@@ -904,14 +904,14 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     NpcPlayerWeightType: int = ParamField(
-        byte, "npcPlayerWeightType", default=0,
+        byte, "npcPlayerWeightType", NPC_WEIGHT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    NormalChangeModelID: int = ParamField(
+    NormalChangeModelId: int = ParamField(
         short, "normalChangeModelId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    NormalChangeAnimChrID: int = ParamField(
+    NormalChangeAnimChrId: int = ParamField(
         short, "normalChangeAnimChrId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -932,7 +932,7 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxAnklePitchAngle: float = ParamField(
-        float, "maxAnklePitchAngle", default=-1,
+        float, "maxAnklePitchAngle", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     Resistfreeze: int = ParamField(
@@ -943,7 +943,7 @@ class NPC_PARAM_ST(ParamRow):
         sbyte, "freezeGuardResist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad1[1]")
+    _Pad1: bytes = ParamPad(1, "pad1[1]")
     LockCameraParamId: int = ParamField(
         int, "lockCameraParamId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -1020,36 +1020,36 @@ class NPC_PARAM_ST(ParamRow):
         sbyte, "clothOffLodLevel", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseFootIKNormalByUnduration: int = ParamField(
-        byte, "isUseFootIKNormalByUnduration:1", default=0,
+    IsUseFootIKNormalByUnduration: bool = ParamField(
+        byte, "isUseFootIKNormalByUnduration:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    AttachHitInitializeDead: int = ParamField(
-        byte, "attachHitInitializeDead:1", default=0,
+    AttachHitInitializeDead: bool = ParamField(
+        byte, "attachHitInitializeDead:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ExcludeGroupRewardCheck: int = ParamField(
-        byte, "excludeGroupRewardCheck:1", default=0,
+    ExcludeGroupRewardCheck: bool = ParamField(
+        byte, "excludeGroupRewardCheck:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableAILockDmyPoly212: int = ParamField(
-        byte, "enableAILockDmyPoly_212:1", default=1,
+    EnableAILockDmyPoly212: bool = ParamField(
+        byte, "enableAILockDmyPoly_212:1", NPC_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    EnableAILockDmyPoly213: int = ParamField(
-        byte, "enableAILockDmyPoly_213:1", default=1,
+    EnableAILockDmyPoly213: bool = ParamField(
+        byte, "enableAILockDmyPoly_213:1", NPC_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    EnableAILockDmyPoly214: int = ParamField(
-        byte, "enableAILockDmyPoly_214:1", default=1,
+    EnableAILockDmyPoly214: bool = ParamField(
+        byte, "enableAILockDmyPoly_214:1", NPC_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    DisableActivateOpenxb1: int = ParamField(
-        byte, "disableActivateOpen_xb1:1", default=0,
+    DisableActivateOpenxb1: bool = ParamField(
+        byte, "disableActivateOpen_xb1:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableActivateLegacyxb1: int = ParamField(
-        byte, "disableActivateLegacy_xb1:1", default=0,
+    DisableActivateLegacyxb1: bool = ParamField(
+        byte, "disableActivateLegacy_xb1:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     EstusFlaskRecoveryParamId: int = ParamField(
@@ -1089,7 +1089,7 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     HearingHeadSize: float = ParamField(
-        float, "hearingHeadSize", default=-1,
+        float, "hearingHeadSize", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     SoundBankId: int = ParamField(
@@ -1113,11 +1113,11 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     EnableSoundObjDist: float = ParamField(
-        float, "enableSoundObjDist", default=48,
+        float, "enableSoundObjDist", default=48.0,
         tooltip="TOOLTIP-TODO",
     )
     UndulationCorrectGain: float = ParamField(
-        float, "undulationCorrectGain", default=0,
+        float, "undulationCorrectGain", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     AutoFootEffectDecalBaseId2: int = ParamField(
@@ -1137,20 +1137,20 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     UpdateActivatePriolity: float = ParamField(
-        float, "updateActivatePriolity", default=1,
+        float, "updateActivatePriolity", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ChrNavimeshFlagAlive: int = ParamField(
-        byte, "chrNavimeshFlag_Alive", default=0,
+        byte, "chrNavimeshFlag_Alive", NPC_NAVIMESH_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ChrNavimeshFlagDead: int = ParamField(
-        byte, "chrNavimeshFlag_Dead", default=0,
+        byte, "chrNavimeshFlag_Dead", NPC_NAVIMESH_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad7[1]")
+    _Pad2: bytes = ParamPad(1, "pad7[1]")
     WheelRotType: int = ParamField(
-        byte, "wheelRotType", default=0,
+        byte, "wheelRotType", NPC_WHEEL_ROT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     WheelRotRadius: float = ParamField(
@@ -1158,7 +1158,7 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RetargetMoveRate: float = ParamField(
-        float, "retargetMoveRate", default=1,
+        float, "retargetMoveRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     LadderWarpOffset: float = ParamField(
@@ -1202,11 +1202,11 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FootIkErrorOnGain: float = ParamField(
-        float, "footIkErrorOnGain", default=0,
+        float, "footIkErrorOnGain", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     FootIkErrorOffGain: float = ParamField(
-        float, "footIkErrorOffGain", default=0,
+        float, "footIkErrorOffGain", default=0.4,
         tooltip="TOOLTIP-TODO",
     )
     SoundAddBankId: int = ParamField(
@@ -1221,12 +1221,12 @@ class NPC_PARAM_ST(ParamRow):
         byte, "materialVariationValue_Weak", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxPoise: float = ParamField(
+    SuperArmorDurability: float = ParamField(
         float, "superArmorDurability", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
     SaRecoveryRate: float = ParamField(
-        float, "saRecoveryRate", default=1,
+        float, "saRecoveryRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SaGuardCutRate: float = ParamField(
@@ -1258,15 +1258,15 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     StepDispInterpolateTime: float = ParamField(
-        float, "stepDispInterpolateTime", default=0,
+        float, "stepDispInterpolateTime", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     StepDispInterpolateTriggerValue: float = ParamField(
-        float, "stepDispInterpolateTriggerValue", default=0,
+        float, "stepDispInterpolateTriggerValue", default=0.6,
         tooltip="TOOLTIP-TODO",
     )
     LockScoreOffset: float = ParamField(
         float, "lockScoreOffset", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(8, "pad12[8]")
+    _Pad3: bytes = ParamPad(8, "pad12[8]")

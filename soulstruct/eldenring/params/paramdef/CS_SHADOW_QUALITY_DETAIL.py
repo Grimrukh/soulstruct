@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_SHADOW_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=1,
+        byte, "enabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     MaxFilterLevel: int = ParamField(
-        byte, "maxFilterLevel", default=1,
+        byte, "maxFilterLevel", GX_SHADOW_FILTER_LEVEL, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "dmy[2]")

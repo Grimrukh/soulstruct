@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
     CommandType: int = ParamField(
-        int, "commandType", default=0,
+        int, "commandType", CHARMAKEMENU_CMD_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CaptionId: int = ParamField(
@@ -22,7 +22,7 @@ class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FaceParamId: int = ParamField(
-        int, "faceParamId", default=0,
+        int, "faceParamId", FACE_PARAM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TableId: int = ParamField(
@@ -30,11 +30,11 @@ class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ViewCondition: int = ParamField(
-        int, "viewCondition", default=0,
+        int, "viewCondition", CHARMAKEMENU_VIEW_CONDITION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PreviewMode: int = ParamField(
-        sbyte, "previewMode", default=0,
+        sbyte, "previewMode", CHARMAKEMENU_PREVIEW_MODE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "reserved2[3]")
@@ -43,7 +43,7 @@ class CHARMAKEMENUTOP_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefFaceParamId: int = ParamField(
-        int, "refFaceParamId", default=-1,
+        int, "refFaceParamId", FACE_PARAM, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     RefTextId: int = ParamField(

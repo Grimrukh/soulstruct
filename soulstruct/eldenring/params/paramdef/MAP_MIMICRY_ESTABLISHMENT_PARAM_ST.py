@@ -14,15 +14,15 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class MAP_MIMICRY_ESTABLISHMENT_PARAM_ST(ParamRow):
     MimicryEstablishment0: float = ParamField(
-        float, "mimicryEstablishment0", default=-1,
+        float, "mimicryEstablishment0", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     MimicryEstablishment1: float = ParamField(
-        float, "mimicryEstablishment1", default=-1,
+        float, "mimicryEstablishment1", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     MimicryEstablishment2: float = ParamField(
-        float, "mimicryEstablishment2", default=-1,
+        float, "mimicryEstablishment2", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     MimicryBeginSfxId0: int = ParamField(

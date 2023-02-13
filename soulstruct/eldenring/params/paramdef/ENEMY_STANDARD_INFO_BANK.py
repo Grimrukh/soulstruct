@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class ENEMY_STANDARD_INFO_BANK(ParamRow):
     EnemyBehaviorID: int = ParamField(
-        int, "EnemyBehaviorID", default=0,
+        int, "EnemyBehaviorID", ENEMY_BEHAVIOR_ID, default=0,
         tooltip="TOOLTIP-TODO",
     )
     HP: int = ParamField(
@@ -26,19 +26,19 @@ class ENEMY_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ChrType: int = ParamField(
-        int, "ChrType", default=5,
+        int, "ChrType", ChrType, default=5,
         tooltip="TOOLTIP-TODO",
     )
     HitHeight: float = ParamField(
-        float, "HitHeight", default=2,
+        float, "HitHeight", default=2.0,
         tooltip="TOOLTIP-TODO",
     )
     HitRadius: float = ParamField(
-        float, "HitRadius", default=0,
+        float, "HitRadius", default=0.4,
         tooltip="TOOLTIP-TODO",
     )
     Weight: float = ParamField(
-        float, "Weight", default=60,
+        float, "Weight", default=60.0,
         tooltip="TOOLTIP-TODO",
     )
     DynamicFriction: float = ParamField(
@@ -58,7 +58,7 @@ class ENEMY_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RotYperSecond: float = ParamField(
-        float, "RotY_per_Second", default=10,
+        float, "RotY_per_Second", default=10.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(20, "reserve0[20]")

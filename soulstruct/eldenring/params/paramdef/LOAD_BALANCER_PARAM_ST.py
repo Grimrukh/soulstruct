@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class LOAD_BALANCER_PARAM_ST(ParamRow):
     LowerFpsThreshold: float = ParamField(
-        float, "lowerFpsThreshold", default=23,
+        float, "lowerFpsThreshold", default=23.0,
         tooltip="TOOLTIP-TODO",
     )
     UpperFpsThreshold: float = ParamField(
-        float, "upperFpsThreshold", default=27,
+        float, "upperFpsThreshold", default=27.0,
         tooltip="TOOLTIP-TODO",
     )
     LowerFpsContinousCount: int = ParamField(

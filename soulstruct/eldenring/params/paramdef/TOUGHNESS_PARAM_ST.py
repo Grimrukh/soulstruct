@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class TOUGHNESS_PARAM_ST(ParamRow):
     CorrectionRate: float = ParamField(
-        float, "correctionRate", default=1,
+        float, "correctionRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     MinToughness: int = ParamField(
@@ -31,7 +31,7 @@ class TOUGHNESS_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ProCorrectionRate: float = ParamField(
-        float, "proCorrectionRate", default=1,
+        float, "proCorrectionRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(16, "pad1[16]")

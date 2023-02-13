@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class EVENT_FLAG_USAGE_PARAM_ST(ParamRow):
     UsageType: int = ParamField(
-        byte, "usageType", default=0,
+        byte, "usageType", EVENT_FLAG_USAGE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PlaylogCategory: int = ParamField(
-        byte, "playlogCategory", default=0,
+        byte, "playlogCategory", EVENT_FLAG_USAGE_PLAYLOG_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "padding1[2]")

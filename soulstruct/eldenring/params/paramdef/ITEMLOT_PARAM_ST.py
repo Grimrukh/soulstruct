@@ -13,292 +13,292 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ITEMLOT_PARAM_ST(ParamRow):
-    Item1: int = ParamField(
+    LotItemId01: int = ParamField(
         int, "lotItemId01", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2: int = ParamField(
+    LotItemId02: int = ParamField(
         int, "lotItemId02", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3: int = ParamField(
+    LotItemId03: int = ParamField(
         int, "lotItemId03", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4: int = ParamField(
+    LotItemId04: int = ParamField(
         int, "lotItemId04", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5: int = ParamField(
+    LotItemId05: int = ParamField(
         int, "lotItemId05", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6: int = ParamField(
+    LotItemId06: int = ParamField(
         int, "lotItemId06", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7: int = ParamField(
+    LotItemId07: int = ParamField(
         int, "lotItemId07", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8: int = ParamField(
+    LotItemId08: int = ParamField(
         int, "lotItemId08", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item1Category: int = ParamField(
-        int, "lotItemCategory01", default=0,
+    LotItemCategory01: int = ParamField(
+        int, "lotItemCategory01", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2Category: int = ParamField(
-        int, "lotItemCategory02", default=0,
+    LotItemCategory02: int = ParamField(
+        int, "lotItemCategory02", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3Category: int = ParamField(
-        int, "lotItemCategory03", default=0,
+    LotItemCategory03: int = ParamField(
+        int, "lotItemCategory03", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4Category: int = ParamField(
-        int, "lotItemCategory04", default=0,
+    LotItemCategory04: int = ParamField(
+        int, "lotItemCategory04", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5Category: int = ParamField(
-        int, "lotItemCategory05", default=0,
+    LotItemCategory05: int = ParamField(
+        int, "lotItemCategory05", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6Category: int = ParamField(
-        int, "lotItemCategory06", default=0,
+    LotItemCategory06: int = ParamField(
+        int, "lotItemCategory06", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7Category: int = ParamField(
-        int, "lotItemCategory07", default=0,
+    LotItemCategory07: int = ParamField(
+        int, "lotItemCategory07", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8Category: int = ParamField(
-        int, "lotItemCategory08", default=0,
+    LotItemCategory08: int = ParamField(
+        int, "lotItemCategory08", ITEMLOT_ITEMCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item1ChancePoints: int = ParamField(
+    LotItemBasePoint01: int = ParamField(
         ushort, "lotItemBasePoint01", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2ChancePoints: int = ParamField(
+    LotItemBasePoint02: int = ParamField(
         ushort, "lotItemBasePoint02", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3ChancePoints: int = ParamField(
+    LotItemBasePoint03: int = ParamField(
         ushort, "lotItemBasePoint03", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4ChancePoints: int = ParamField(
+    LotItemBasePoint04: int = ParamField(
         ushort, "lotItemBasePoint04", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5ChancePoints: int = ParamField(
+    LotItemBasePoint05: int = ParamField(
         ushort, "lotItemBasePoint05", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6ChancePoints: int = ParamField(
+    LotItemBasePoint06: int = ParamField(
         ushort, "lotItemBasePoint06", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7ChancePoints: int = ParamField(
+    LotItemBasePoint07: int = ParamField(
         ushort, "lotItemBasePoint07", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8ChancePoints: int = ParamField(
+    LotItemBasePoint08: int = ParamField(
         ushort, "lotItemBasePoint08", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item1CumulativePoints: int = ParamField(
+    CumulateLotPoint01: int = ParamField(
         ushort, "cumulateLotPoint01", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2CumulativePoints: int = ParamField(
+    CumulateLotPoint02: int = ParamField(
         ushort, "cumulateLotPoint02", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3CumulativePoints: int = ParamField(
+    CumulateLotPoint03: int = ParamField(
         ushort, "cumulateLotPoint03", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4CumulativePoints: int = ParamField(
+    CumulateLotPoint04: int = ParamField(
         ushort, "cumulateLotPoint04", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5CumulativePoints: int = ParamField(
+    CumulateLotPoint05: int = ParamField(
         ushort, "cumulateLotPoint05", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6CumulativePoints: int = ParamField(
+    CumulateLotPoint06: int = ParamField(
         ushort, "cumulateLotPoint06", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7CumulativePoints: int = ParamField(
+    CumulateLotPoint07: int = ParamField(
         ushort, "cumulateLotPoint07", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8CumulativePoints: int = ParamField(
+    CumulateLotPoint08: int = ParamField(
         ushort, "cumulateLotPoint08", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item1Flag: int = ParamField(
+    GetItemFlagId01: int = ParamField(
         uint, "getItemFlagId01", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2Flag: int = ParamField(
+    GetItemFlagId02: int = ParamField(
         uint, "getItemFlagId02", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3Flag: int = ParamField(
+    GetItemFlagId03: int = ParamField(
         uint, "getItemFlagId03", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4Flag: int = ParamField(
+    GetItemFlagId04: int = ParamField(
         uint, "getItemFlagId04", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5Flag: int = ParamField(
+    GetItemFlagId05: int = ParamField(
         uint, "getItemFlagId05", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6Flag: int = ParamField(
+    GetItemFlagId06: int = ParamField(
         uint, "getItemFlagId06", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7Flag: int = ParamField(
+    GetItemFlagId07: int = ParamField(
         uint, "getItemFlagId07", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8Flag: int = ParamField(
+    GetItemFlagId08: int = ParamField(
         uint, "getItemFlagId08", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ItemFlag: int = ParamField(
+    GetItemFlagId: int = ParamField(
         uint, "getItemFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FirstCumulativeFlag: int = ParamField(
+    CumulateNumFlagId: int = ParamField(
         uint, "cumulateNumFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxCumulativeAdditions: int = ParamField(
+    CumulateNumMax: int = ParamField(
         byte, "cumulateNumMax", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ItemLotRarity: int = ParamField(
+    LotItemRarity: int = ParamField(
         sbyte, "lotItem_Rarity", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    Item1Count: int = ParamField(
+    LotItemNum01: int = ParamField(
         byte, "lotItemNum01", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item2Count: int = ParamField(
+    LotItemNum02: int = ParamField(
         byte, "lotItemNum02", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item3Count: int = ParamField(
+    LotItemNum03: int = ParamField(
         byte, "lotItemNum03", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item4Count: int = ParamField(
+    LotItemNum04: int = ParamField(
         byte, "lotItemNum04", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item5Count: int = ParamField(
+    LotItemNum05: int = ParamField(
         byte, "lotItemNum05", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item6Count: int = ParamField(
+    LotItemNum06: int = ParamField(
         byte, "lotItemNum06", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item7Count: int = ParamField(
+    LotItemNum07: int = ParamField(
         byte, "lotItemNum07", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item8Count: int = ParamField(
+    LotItemNum08: int = ParamField(
         byte, "lotItemNum08", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Item1LuckEnabled: int = ParamField(
-        ushort, "enableLuck01:1", default=0,
+    EnableLuck01: bool = ParamField(
+        ushort, "enableLuck01:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item2LuckEnabled: int = ParamField(
-        ushort, "enableLuck02:1", default=0,
+    EnableLuck02: bool = ParamField(
+        ushort, "enableLuck02:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item3LuckEnabled: int = ParamField(
-        ushort, "enableLuck03:1", default=0,
+    EnableLuck03: bool = ParamField(
+        ushort, "enableLuck03:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item4LuckEnabled: int = ParamField(
-        ushort, "enableLuck04:1", default=0,
+    EnableLuck04: bool = ParamField(
+        ushort, "enableLuck04:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item5LuckEnabled: int = ParamField(
-        ushort, "enableLuck05:1", default=0,
+    EnableLuck05: bool = ParamField(
+        ushort, "enableLuck05:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item6LuckEnabled: int = ParamField(
-        ushort, "enableLuck06:1", default=0,
+    EnableLuck06: bool = ParamField(
+        ushort, "enableLuck06:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item7LuckEnabled: int = ParamField(
-        ushort, "enableLuck07:1", default=0,
+    EnableLuck07: bool = ParamField(
+        ushort, "enableLuck07:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item8LuckEnabled: int = ParamField(
-        ushort, "enableLuck08:1", default=0,
+    EnableLuck08: bool = ParamField(
+        ushort, "enableLuck08:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item1ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset01:1", default=0,
+    CumulateReset01: bool = ParamField(
+        ushort, "cumulateReset01:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item2ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset02:1", default=0,
+    CumulateReset02: bool = ParamField(
+        ushort, "cumulateReset02:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item3ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset03:1", default=0,
+    CumulateReset03: bool = ParamField(
+        ushort, "cumulateReset03:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item4ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset04:1", default=0,
+    CumulateReset04: bool = ParamField(
+        ushort, "cumulateReset04:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item5ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset05:1", default=0,
+    CumulateReset05: bool = ParamField(
+        ushort, "cumulateReset05:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item6ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset06:1", default=0,
+    CumulateReset06: bool = ParamField(
+        ushort, "cumulateReset06:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item7ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset07:1", default=0,
+    CumulateReset07: bool = ParamField(
+        ushort, "cumulateReset07:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Item8ResetCumulativePointsOnDrop: int = ParamField(
-        ushort, "cumulateReset08:1", default=0,
+    CumulateReset08: bool = ParamField(
+        ushort, "cumulateReset08:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     GameClearOffset: int = ParamField(
-        sbyte, "GameClearOffset", default=-1,
+        sbyte, "GameClearOffset", ITEMLOT_ROUND_COUNT, default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    CanExecByFriendlyGhost: int = ParamField(
-        byte, "canExecByFriendlyGhost:1", default=0,
+    CanExecByFriendlyGhost: bool = ParamField(
+        byte, "canExecByFriendlyGhost:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanExecByHostileGhost: int = ParamField(
-        byte, "canExecByHostileGhost:1", default=0,
+    CanExecByHostileGhost: bool = ParamField(
+        byte, "canExecByHostileGhost:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     PAD1: int = ParamField(
-        byte, "PAD1:6", default=0,
+        byte, "PAD1:6", bit_count=6, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PAD2: int = ParamField(

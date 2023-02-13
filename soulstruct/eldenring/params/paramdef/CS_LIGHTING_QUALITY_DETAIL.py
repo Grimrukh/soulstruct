@@ -14,15 +14,15 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_LIGHTING_QUALITY_DETAIL(ParamRow):
     LocalLightDistFactor: float = ParamField(
-        float, "localLightDistFactor", default=0,
+        float, "localLightDistFactor", default=0.75,
         tooltip="TOOLTIP-TODO",
     )
     LocalLightShadowEnabled: int = ParamField(
-        byte, "localLightShadowEnabled", default=1,
+        byte, "localLightShadowEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     ForwardPassLightingEnabled: int = ParamField(
-        byte, "forwardPassLightingEnabled", default=1,
+        byte, "forwardPassLightingEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     LocalLightShadowSpecLevelMax: int = ParamField(

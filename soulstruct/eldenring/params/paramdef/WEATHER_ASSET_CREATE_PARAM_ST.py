@@ -22,20 +22,20 @@ class WEATHER_ASSET_CREATE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CreateConditionType: int = ParamField(
-        byte, "CreateConditionType", default=0,
+        byte, "CreateConditionType", WEATHER_ASSET_CREATE_CONDITION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding0[3]")
     TransitionSrcWeather: int = ParamField(
-        short, "TransitionSrcWeather", default=0,
+        short, "TransitionSrcWeather", WEATHER_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TransitionDstWeather: int = ParamField(
-        short, "TransitionDstWeather", default=0,
+        short, "TransitionDstWeather", WEATHER_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ElapsedTimeCheckweather: int = ParamField(
-        short, "ElapsedTimeCheckweather", default=0,
+        short, "ElapsedTimeCheckweather", WEATHER_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(2, "padding1[2]")
@@ -44,7 +44,7 @@ class WEATHER_ASSET_CREATE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CreateDelayTime: float = ParamField(
-        float, "CreateDelayTime", default=-1,
+        float, "CreateDelayTime", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     CreateProbability: int = ParamField(
@@ -52,19 +52,19 @@ class WEATHER_ASSET_CREATE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     LifeTime: float = ParamField(
-        float, "LifeTime", default=600,
+        float, "LifeTime", default=600.0,
         tooltip="TOOLTIP-TODO",
     )
     FadeTime: float = ParamField(
-        float, "FadeTime", default=1,
+        float, "FadeTime", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     EnableCreateTimeMin: float = ParamField(
-        float, "EnableCreateTimeMin", default=-1,
+        float, "EnableCreateTimeMin", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     EnableCreateTimeMax: float = ParamField(
-        float, "EnableCreateTimeMax", default=-1,
+        float, "EnableCreateTimeMax", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     CreatePoint0: int = ParamField(

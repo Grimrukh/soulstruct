@@ -14,6 +14,6 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class SOUND_ASSET_SOUND_OBJ_ENABLE_DIST_PARAM_ST(ParamRow):
     SoundObjEnableDist: float = ParamField(
-        float, "SoundObjEnableDist", default=-1,
+        float, "SoundObjEnableDist", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )

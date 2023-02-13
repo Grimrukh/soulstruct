@@ -13,76 +13,76 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class OBJ_ACT_PARAM_ST(ParamRow):
-    PromptMessage: int = ParamField(
+    ActionEnableMsgId: int = ParamField(
         int, "actionEnableMsgId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FailureMessage: int = ParamField(
+    ActionFailedMsgId: int = ParamField(
         int, "actionFailedMsgId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlagForAutomaticSuccess: int = ParamField(
+    SpQualifiedPassEventFlag: int = ParamField(
         uint, "spQualifiedPassEventFlag", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PlayerActionAnimation: int = ParamField(
+    PlayerAnimId: int = ParamField(
         uint, "playerAnimId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    NonPlayerActionAnimation: int = ParamField(
+    ChrAnimId: int = ParamField(
         uint, "chrAnimId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxActionDistance: int = ParamField(
+    ValidDist: int = ParamField(
         ushort, "validDist", default=150,
         tooltip="TOOLTIP-TODO",
     )
-    spQualifiedId: int = ParamField(
+    SpQualifiedId: int = ParamField(
         ushort, "spQualifiedId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    spQualifiedId2: int = ParamField(
+    SpQualifiedId2: int = ParamField(
         ushort, "spQualifiedId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ObjectActionModelPoint: int = ParamField(
+    ObjDummyId: int = ParamField(
         byte, "objDummyId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsEventKickSync: int = ParamField(
-        byte, "isEventKickSync", default=0,
+        byte, "isEventKickSync", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ObjectActionAnimation: int = ParamField(
+    ObjAnimId: int = ParamField(
         uint, "objAnimId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxPlayerAngle: int = ParamField(
+    ValidPlayerAngle: int = ParamField(
         byte, "validPlayerAngle", default=30,
         tooltip="TOOLTIP-TODO",
     )
-    SuccessCondition1Type: int = ParamField(
-        byte, "spQualifiedType", default=0,
+    SpQualifiedType: int = ParamField(
+        byte, "spQualifiedType", OBJACT_SP_QUALIFIED_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SuccessCondition2Type: int = ParamField(
-        byte, "spQualifiedType2", default=0,
+    SpQualifiedType2: int = ParamField(
+        byte, "spQualifiedType2", OBJACT_SP_QUALIFIED_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxObjectAngle: int = ParamField(
+    ValidObjAngle: int = ParamField(
         byte, "validObjAngle", default=30,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterSnapType: int = ParamField(
-        byte, "chrSorbType", default=0,
+    ChrSorbType: int = ParamField(
+        byte, "chrSorbType", OBJACT_CHR_SORB_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EventTriggerDelay: int = ParamField(
-        byte, "eventKickTiming", default=0,
+    EventKickTiming: int = ParamField(
+        byte, "eventKickTiming", OBJACT_EVENT_KICK_TIMING, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "pad1[2]")
-    ActionButtonParamID: int = ParamField(
+    ActionButtonParamId: int = ParamField(
         int, "actionButtonParamId", default=-1,
         tooltip="TOOLTIP-TODO",
     )

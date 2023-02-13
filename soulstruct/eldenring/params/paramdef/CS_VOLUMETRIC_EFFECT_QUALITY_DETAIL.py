@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRow):
     FogEnabled: int = ParamField(
-        byte, "fogEnabled", default=1,
+        byte, "fogEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     FogShadowEnabled: int = ParamField(
-        byte, "fogShadowEnabled", default=1,
+        byte, "fogShadowEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "dmy[2]")
@@ -47,15 +47,15 @@ class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeEnabled: int = ParamField(
-        byte, "fogVolumeEnabled", default=1,
+        byte, "fogVolumeEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeUpScaleType: int = ParamField(
-        byte, "fogVolumeUpScaleType", default=1,
+        byte, "fogVolumeUpScaleType", GRAPHICS_CONFIG_CS_GCONFIG_FOG_VOLUME_UPSCALE_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeEdgeCorrectionLevel: int = ParamField(
-        byte, "fogVolumeEdgeCorrectionLevel", default=2,
+        byte, "fogVolumeEdgeCorrectionLevel", GRAPHICS_CONFIG_CS_GCONFIG_FOG_VOLUME_EDGE_CORRECTION_LEVEL, default=2,
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeRayMarcingSampleCountOffset: int = ParamField(
@@ -63,15 +63,15 @@ class CS_VOLUMETRIC_EFFECT_QUALITY_DETAIL(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeShadowEnabled: int = ParamField(
-        byte, "fogVolumeShadowEnabled", default=1,
+        byte, "fogVolumeShadowEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeForceShadowing: int = ParamField(
-        byte, "fogVolumeForceShadowing", default=0,
+        byte, "fogVolumeForceShadowing", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FogVolumeResolution: int = ParamField(
-        byte, "fogVolumeResolution", default=0,
+        byte, "fogVolumeResolution", GRAPHICS_CONFIG_CS_GCONFIG_FOG_VOLUME_RESOLUTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad2[1]")

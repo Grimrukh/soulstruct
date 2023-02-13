@@ -13,95 +13,95 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class OBJECT_PARAM_ST(ParamRow):
-    ObjectHP: int = ParamField(
+    Hp: int = ParamField(
         short, "hp", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MinAttackForDamage: int = ParamField(
+    Defense: int = ParamField(
         ushort, "defense", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ExternalTextureID: int = ParamField(
+    ExtRefTexId: int = ParamField(
         short, "extRefTexId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MaterialID: int = ParamField(
+    MaterialId: int = ParamField(
         short, "materialId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MaxDestructionAnimationID: int = ParamField(
+    AnimBreakIdMax: int = ParamField(
         byte, "animBreakIdMax", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CollidesWithCamera: int = ParamField(
-        byte, "isCamHit:1", default=0,
+    IsCamHit: bool = ParamField(
+        byte, "isCamHit:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    BrokenByPlayerCollision: int = ParamField(
-        byte, "isBreakByPlayerCollide:1", default=0,
+    IsBreakByPlayerCollide: bool = ParamField(
+        byte, "isBreakByPlayerCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HasDestructionAnimation: int = ParamField(
-        byte, "isAnimBreak:1", default=0,
+    IsAnimBreak: bool = ParamField(
+        byte, "isAnimBreak:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HitByPiercingBullets: int = ParamField(
-        byte, "isPenetrationBulletHit:1", default=0,
+    IsPenetrationBulletHit: bool = ParamField(
+        byte, "isPenetrationBulletHit:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterCollision: int = ParamField(
-        byte, "isChrHit:1", default=1,
+    IsChrHit: bool = ParamField(
+        byte, "isChrHit:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    DeflectsAttacks: int = ParamField(
-        byte, "isAttackBacklash:1", default=1,
+    IsAttackBacklash: bool = ParamField(
+        byte, "isAttackBacklash:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    CannotSpawnBroken: int = ParamField(
-        byte, "isDisableBreakForFirstAppear:1", default=0,
+    IsDisableBreakForFirstAppear: bool = ParamField(
+        byte, "isDisableBreakForFirstAppear:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLadder: int = ParamField(
-        byte, "isLadder:1", default=0,
+    IsLadder: bool = ParamField(
+        byte, "isLadder:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    StopAnimationDuringCutscenes: int = ParamField(
-        byte, "isAnimPauseOnRemoPlay:1", default=0,
+    IsAnimPauseOnRemoPlay: bool = ParamField(
+        byte, "isAnimPauseOnRemoPlay:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    PreventAllDamage: int = ParamField(
-        byte, "isDamageNoHit:1", default=0,
+    IsDamageNoHit: bool = ParamField(
+        byte, "isDamageNoHit:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMovingObject: int = ParamField(
-        byte, "isMoveObj:1", default=0,
+    IsMoveObj: bool = ParamField(
+        byte, "isMoveObj:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsRopeBridge: int = ParamField(
-        byte, "isRopeBridge:1", default=0,
+    IsRopeBridge: bool = ParamField(
+        byte, "isRopeBridge:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAddRigidImpulseByDamage: int = ParamField(
-        byte, "isAddRigidImpulse_ByDamage:1", default=0,
+    IsAddRigidImpulseByDamage: bool = ParamField(
+        byte, "isAddRigidImpulse_ByDamage:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByChrRide: int = ParamField(
-        byte, "isBreak_ByChrRide:1", default=0,
+    IsBreakByChrRide: bool = ParamField(
+        byte, "isBreak_ByChrRide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBurn: int = ParamField(
-        byte, "isBurn:1", default=0,
+    IsBurn: bool = ParamField(
+        byte, "isBurn:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByEnemyCollide: int = ParamField(
-        byte, "isBreakByEnemyCollide:1", default=0,
+    IsBreakByEnemyCollide: bool = ParamField(
+        byte, "isBreakByEnemyCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DefaultLOD: int = ParamField(
+    DefaultLodParamId: int = ParamField(
         sbyte, "defaultLodParamId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DestructionSoundEffect: int = ParamField(
+    BreakSfxId: int = ParamField(
         int, "breakSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -122,23 +122,23 @@ class OBJECT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WindEffectType0: int = ParamField(
-        byte, "windEffectType_0", default=0,
+        byte, "windEffectType_0", OBJECT_WIND_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectType1: int = ParamField(
-        byte, "windEffectType_1", default=0,
+        byte, "windEffectType_1", OBJECT_WIND_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CamAvoidType: int = ParamField(
-        byte, "camAvoidType", default=1,
+        byte, "camAvoidType", OBJECT_CAM_AVOID_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectRate0: float = ParamField(
-        float, "windEffectRate_0", default=0,
+        float, "windEffectRate_0", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectRate1: float = ParamField(
-        float, "windEffectRate_1", default=0,
+        float, "windEffectRate_1", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     BreakStopTime: float = ParamField(
@@ -150,7 +150,7 @@ class OBJECT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BurnBraekRate: float = ParamField(
-        float, "burnBraekRate", default=0,
+        float, "burnBraekRate", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     BurnSfxId: int = ParamField(
@@ -189,12 +189,12 @@ class OBJECT_PARAM_ST(ParamRow):
         ushort, "burnBulletInterval", default=30,
         tooltip="TOOLTIP-TODO",
     )
-    NavmeshFlag: int = ParamField(
-        byte, "navimeshFlag", default=0,
+    NavimeshFlag: int = ParamField(
+        byte, "navimeshFlag", OBJECT_NAVIMESH_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CollisionType: int = ParamField(
-        byte, "collisionType", default=0,
+        byte, "collisionType", OBJECT_COLLISION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BurnBulletDelayTime: float = ParamField(
@@ -262,8 +262,8 @@ class OBJECT_PARAM_ST(ParamRow):
         int, "LandTouchSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    IsDamageCover: int = ParamField(
-        byte, "isDamageCover:1", default=0,
+    IsDamageCover: bool = ParamField(
+        byte, "isDamageCover:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad_4[1]")
@@ -304,7 +304,7 @@ class OBJECT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AutoCreateDynamicOffsetHeight: float = ParamField(
-        float, "autoCreateDynamicOffsetHeight", default=0,
+        float, "autoCreateDynamicOffsetHeight", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     Reserved0: int = ParamField(

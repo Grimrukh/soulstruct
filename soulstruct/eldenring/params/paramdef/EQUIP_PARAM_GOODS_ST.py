@@ -13,41 +13,41 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class EQUIP_PARAM_GOODS_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     RefIddefault: int = ParamField(
         int, "refId_default", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationVariationID: int = ParamField(
+    SfxVariationId: int = ParamField(
         int, "sfxVariationId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Weight: float = ParamField(
-        float, "weight", default=1,
+        float, "weight", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BasicPrice: int = ParamField(
         int, "basicPrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FramptSellValue: int = ParamField(
+    SellValue: int = ParamField(
         int, "sellValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Behavior: int = ParamField(
+    BehaviorId: int = ParamField(
         int, "behaviorId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GoodToReplace: int = ParamField(
+    ReplaceItemId: int = ParamField(
         int, "replaceItemId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SortIndex: int = ParamField(
+    SortId: int = ParamField(
         int, "sortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -55,44 +55,44 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         int, "appearanceReplaceItemId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ConfirmationMessage: int = ParamField(
+    YesNoDialogMessageId: int = ParamField(
         int, "yesNoDialogMessageId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     UseEnableSpEffectType: int = ParamField(
-        ushort, "useEnableSpEffectType", default=0,
+        ushort, "useEnableSpEffectType", SP_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PotGroupId: int = ParamField(
         sbyte, "potGroupId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad[1]")
-    GoodIcon: int = ParamField(
+    _Pad1: bytes = ParamPad(1, "pad[1]")
+    IconId: int = ParamField(
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ModelID: int = ParamField(
+    ModelId: int = ParamField(
         ushort, "modelId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ShopLevel: int = ParamField(
+    ShopLv: int = ParamField(
         short, "shopLv", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CollectionAchievementID: int = ParamField(
+    CompTrophySedId: int = ParamField(
         short, "compTrophySedId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AchievementID: int = ParamField(
+    TrophySeqId: int = ParamField(
         short, "trophySeqId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MaxHoldQuantity: int = ParamField(
+    MaxNum: int = ParamField(
         short, "maxNum", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HumanityCost: int = ParamField(
+    ConsumeHeroPoint: int = ParamField(
         byte, "consumeHeroPoint", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -100,130 +100,130 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         byte, "overDexterity", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GoodType: int = ParamField(
-        byte, "goodsType", default=0,
+    GoodsType: int = ParamField(
+        byte, "goodsType", GOODS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ReferenceType: int = ParamField(
-        byte, "refCategory", default=0,
+    RefCategory: int = ParamField(
+        byte, "refCategory", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectCategory: int = ParamField(
-        byte, "spEffectCategory", default=0,
+    SpEffectCategory: int = ParamField(
+        byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad3[1]")
-    UseAnimation: int = ParamField(
-        byte, "goodsUseAnim", default=0,
+    _Pad2: bytes = ParamPad(1, "pad3[1]")
+    GoodsUseAnim: int = ParamField(
+        byte, "goodsUseAnim", GOODS_USE_ANIM, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MenuActivated: int = ParamField(
-        byte, "opmeMenuType", default=0,
+    OpmeMenuType: int = ParamField(
+        byte, "opmeMenuType", GOODS_OPEN_MENU, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LimitCategory: int = ParamField(
-        byte, "useLimitCategory", default=0,
+    UseLimitCategory: int = ParamField(
+        byte, "useLimitCategory", SP_EFFECT_USELIMIT_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ReplaceCategory: int = ParamField(
-        byte, "replaceCategory", default=0,
+        byte, "replaceCategory", REPLACE_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(2, "reserve4[2]")
-    UseableByHumans: int = ParamField(
-        byte, "enable_live:1", default=0,
+    _Pad3: bytes = ParamPad(2, "reserve4[2]")
+    Enablelive: bool = ParamField(
+        byte, "enable_live:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByHollows: int = ParamField(
-        byte, "enable_gray:1", default=0,
+    Enablegray: bool = ParamField(
+        byte, "enable_gray:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByWhitePhantoms: int = ParamField(
-        byte, "enable_white:1", default=0,
+    Enablewhite: bool = ParamField(
+        byte, "enable_white:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableByBlackPhantoms: int = ParamField(
-        byte, "enable_black:1", default=0,
+    Enableblack: bool = ParamField(
+        byte, "enable_black:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseableInMultiplayer: int = ParamField(
-        byte, "enable_multi:1", default=0,
+    Enablemulti: bool = ParamField(
+        byte, "enable_multi:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisabledOffline: int = ParamField(
-        byte, "disable_offline:1", default=0,
+    Disableoffline: bool = ParamField(
+        byte, "disable_offline:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeEquipped: int = ParamField(
-        byte, "isEquip:1", default=0,
+    IsEquip: bool = ParamField(
+        byte, "isEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConsumedOnUse: int = ParamField(
-        byte, "isConsume:1", default=0,
+    IsConsume: bool = ParamField(
+        byte, "isConsume:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    AutomaticallyEquipped: int = ParamField(
-        byte, "isAutoEquip:1", default=0,
+    IsAutoEquip: bool = ParamField(
+        byte, "isAutoEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStationary: int = ParamField(
-        byte, "isEstablishment:1", default=0,
+    IsEstablishment: bool = ParamField(
+        byte, "isEstablishment:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUnique: int = ParamField(
-        byte, "isOnlyOne:1", default=0,
+    IsOnlyOne: bool = ParamField(
+        byte, "isOnlyOne:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDiscard: int = ParamField(
-        byte, "isDiscard:1", default=0,
+    IsDiscard: bool = ParamField(
+        byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeStored: int = ParamField(
-        byte, "isDeposit:1", default=0,
+    IsDeposit: bool = ParamField(
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDisableHand: int = ParamField(
-        byte, "isDisableHand:1", default=0,
+    IsDisableHand: bool = ParamField(
+        byte, "isDisableHand:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsRemoveItemforGameClear: int = ParamField(
-        byte, "isRemoveItem_forGameClear:1", default=0,
+    IsRemoveItemforGameClear: bool = ParamField(
+        byte, "isRemoveItem_forGameClear:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEmptyEstusFlask: int = ParamField(
-        byte, "isSuppleItem:1", default=0,
+    IsSuppleItem: bool = ParamField(
+        byte, "isSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsNonEmptyEstusFlask: int = ParamField(
-        byte, "isFullSuppleItem:1", default=0,
+    IsFullSuppleItem: bool = ParamField(
+        byte, "isFullSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUpgradeMaterial: int = ParamField(
-        byte, "isEnhance:1", default=0,
+    IsEnhance: bool = ParamField(
+        byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFixItem: int = ParamField(
-        byte, "isFixItem:1", default=0,
+    IsFixItem: bool = ParamField(
+        byte, "isFixItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableMultiplayerShare: int = ParamField(
-        byte, "disableMultiDropShare:1", default=0,
+    DisableMultiDropShare: bool = ParamField(
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisabledInArena: int = ParamField(
-        byte, "disableUseAtColiseum:1", default=0,
+    DisableUseAtColiseum: bool = ParamField(
+        byte, "disableUseAtColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisabledOutsideArena: int = ParamField(
-        byte, "disableUseAtOutOfColiseum:1", default=0,
+    DisableUseAtOutOfColiseum: bool = ParamField(
+        byte, "disableUseAtOutOfColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableFastUseItem: int = ParamField(
-        byte, "isEnableFastUseItem:1", default=0,
+    IsEnableFastUseItem: bool = ParamField(
+        byte, "isEnableFastUseItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ApplySpecialEffect: int = ParamField(
-        byte, "isApplySpecialEffect:1", default=0,
+    IsApplySpecialEffect: bool = ParamField(
+        byte, "isApplySpecialEffect:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     SyncNumVaryId: int = ParamField(
@@ -234,19 +234,19 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         int, "refId_1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    VirtualWeaponID: int = ParamField(
+    RefVirtualWepId: int = ParamField(
         int, "refVirtualWepId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantItemLot: int = ParamField(
+    VagrantItemLotId: int = ParamField(
         int, "vagrantItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantBonusEnemyDropItemLot: int = ParamField(
+    VagrantBonusEneDropItemLotId: int = ParamField(
         int, "vagrantBonusEneDropItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantItemEnemyDropItemLot: int = ParamField(
+    VagrantItemEneDropItemLotId: int = ParamField(
         int, "vagrantItemEneDropItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -262,75 +262,75 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         int, "effectSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EnableActiveBigRune: int = ParamField(
-        byte, "enable_ActiveBigRune:1", default=0,
+    EnableActiveBigRune: bool = ParamField(
+        byte, "enable_ActiveBigRune:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBonfireWarpItem: int = ParamField(
-        byte, "isBonfireWarpItem:1", default=0,
+    IsBonfireWarpItem: bool = ParamField(
+        byte, "isBonfireWarpItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableLadder: int = ParamField(
-        byte, "enable_Ladder:1", default=0,
+    EnableLadder: bool = ParamField(
+        byte, "enable_Ladder:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseMultiPlayPreparation: int = ParamField(
-        byte, "isUseMultiPlayPreparation:1", default=0,
+    IsUseMultiPlayPreparation: bool = ParamField(
+        byte, "isUseMultiPlayPreparation:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMultiUse: int = ParamField(
-        byte, "canMultiUse:1", default=0,
+    CanMultiUse: bool = ParamField(
+        byte, "canMultiUse:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsShieldEnchant: int = ParamField(
-        byte, "isShieldEnchant:1", default=0,
+    IsShieldEnchant: bool = ParamField(
+        byte, "isShieldEnchant:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsWarpProhibited: int = ParamField(
-        byte, "isWarpProhibited:1", default=0,
+    IsWarpProhibited: bool = ParamField(
+        byte, "isWarpProhibited:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseMultiPenaltyOnly: int = ParamField(
-        byte, "isUseMultiPenaltyOnly:1", default=0,
+    IsUseMultiPenaltyOnly: bool = ParamField(
+        byte, "isUseMultiPenaltyOnly:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     SuppleType: int = ParamField(
-        byte, "suppleType", default=0,
+        byte, "suppleType", GOODS_SUPPLE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AutoReplenishType: int = ParamField(
-        byte, "autoReplenishType", default=0,
+        byte, "autoReplenishType", AUTO_REPLENISH_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeDropped: int = ParamField(
-        byte, "isDrop:1", default=0,
+    IsDrop: bool = ParamField(
+        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ShowLogCondType: int = ParamField(
-        byte, "showLogCondType:1", default=1,
+    ShowLogCondType: bool = ParamField(
+        byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsSummonHorse: int = ParamField(
-        byte, "isSummonHorse:1", default=0,
+    IsSummonHorse: bool = ParamField(
+        byte, "isSummonHorse:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     ShowDialogCondType: int = ParamField(
-        byte, "showDialogCondType:2", default=2,
+        byte, "showDialogCondType:2", GET_DIALOG_CONDITION_TYPE, bit_count=2, default=2,
         tooltip="TOOLTIP-TODO",
     )
-    IsSleepCollectionItem: int = ParamField(
-        byte, "isSleepCollectionItem:1", default=0,
+    IsSleepCollectionItem: bool = ParamField(
+        byte, "isSleepCollectionItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableRiding: int = ParamField(
-        byte, "enableRiding:1", default=0,
+    EnableRiding: bool = ParamField(
+        byte, "enableRiding:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableRiding: int = ParamField(
-        byte, "disableRiding:1", default=0,
+    DisableRiding: bool = ParamField(
+        byte, "disableRiding:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    MaxStorageCount: int = ParamField(
+    MaxRepositoryNum: int = ParamField(
         short, "maxRepositoryNum", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -338,11 +338,11 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         byte, "sortGroupId", default=255,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseNoAttackRegion: int = ParamField(
-        byte, "isUseNoAttackRegion:1", default=1,
+    IsUseNoAttackRegion: bool = ParamField(
+        byte, "isUseNoAttackRegion:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(1, "pad1:7")
+    _BitPad1: int = ParamBitPad(byte, "pad1:7", bit_count=7)
     SaleValue: int = ParamField(
         int, "saleValue", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -352,11 +352,11 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     UseLimitSummonBuddy: int = ParamField(
-        byte, "useLimitSummonBuddy", default=0,
+        byte, "useLimitSummonBuddy", GOODS_USELIMIT_SUMMONBUDDY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     UseLimitSpEffectType: int = ParamField(
-        ushort, "useLimitSpEffectType", default=0,
+        ushort, "useLimitSpEffectType", SP_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AiUseJudgeId: int = ParamField(
@@ -451,9 +451,9 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         ushort, "useLevel", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(2, "reserve5[2]")
+    _Pad4: bytes = ParamPad(2, "reserve5[2]")
     ItemGetTutorialFlagId: int = ParamField(
         uint, "itemGetTutorialFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad7: bytes = ParamPad(8, "reserve3[8]")
+    _Pad5: bytes = ParamPad(8, "reserve3[8]")

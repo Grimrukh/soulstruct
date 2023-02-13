@@ -124,13 +124,23 @@ class GameParamBND(Binder, abc.ABC):
                 self.add_entry(new_entry)
                 _LOGGER.debug(f"New Param entry added to GameParamBND (ID {new_id}): {param_name}")
 
-    def write(self, file_path: None | str | Path = None, make_dirs=True, check_hash=False, **pack_kwargs):
+    def write(
+        self,
+        file_path: None | str | Path = None,
+        bdt_file_path: None | str | Path = None,
+        make_dirs=True,
+        check_hash=False,
+    ):
         """Write the `GameParamBND` file after updating the binary BND entries from the loaded `Param` instances.
 
         See `GameFile.write()` for more.
         """
+        if bdt_file_path is not None:
+            raise TypeError(
+                f"Cannot write `GameParamBND` to a split `BXF` file. (Invalid `bdt_file_path`: {bdt_file_path})"
+            )
         self.regenerate_entries()
-        super().write(file_path, make_dirs=make_dirs, check_hash=check_hash, **pack_kwargs)
+        super(GameParamBND, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
         _LOGGER.info("GameParamBND written successfully.")
         if not self._reload_warning_given:
             _LOGGER.info("Remember to reload your game to see changes.")

@@ -13,17 +13,17 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    SortIndex: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    SortId: int = ParamField(
         int, "sortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GhostArmorReplacement: int = ParamField(
+    WanderingEquipId: int = ParamField(
         uint, "wanderingEquipId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -35,7 +35,7 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         ushort, "resistMadness", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Poise: float = ParamField(
+    SaDurability: float = ParamField(
         float, "saDurability", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -43,224 +43,224 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         float, "toughnessCorrectRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    RepairCost: int = ParamField(
+    FixPrice: int = ParamField(
         int, "fixPrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BasicCost: int = ParamField(
+    BasicPrice: int = ParamField(
         int, "basicPrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FramptSellValue: int = ParamField(
+    SellValue: int = ParamField(
         int, "sellValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
     Weight: float = ParamField(
-        float, "weight", default=1,
+        float, "weight", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    WearerSpecialEffect1: int = ParamField(
+    ResidentSpEffectId: int = ParamField(
         int, "residentSpEffectId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    WearerSpecialEffect2: int = ParamField(
+    ResidentSpEffectId2: int = ParamField(
         int, "residentSpEffectId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    WearerSpecialEffect3: int = ParamField(
+    ResidentSpEffectId3: int = ParamField(
         int, "residentSpEffectId3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeMaterialID: int = ParamField(
+    MaterialSetId: int = ParamField(
         int, "materialSetId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SiteDamageMultiplier: float = ParamField(
-        float, "partsDamageRate", default=1,
+    PartsDamageRate: float = ParamField(
+        float, "partsDamageRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseRecoveryTimeModifier: float = ParamField(
+    CorectSARecover: float = ParamField(
         float, "corectSARecover", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin0: int = ParamField(
+    OriginEquipPro: int = ParamField(
         int, "originEquipPro", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin1: int = ParamField(
+    OriginEquipPro1: int = ParamField(
         int, "originEquipPro1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin2: int = ParamField(
+    OriginEquipPro2: int = ParamField(
         int, "originEquipPro2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin3: int = ParamField(
+    OriginEquipPro3: int = ParamField(
         int, "originEquipPro3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin4: int = ParamField(
+    OriginEquipPro4: int = ParamField(
         int, "originEquipPro4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin5: int = ParamField(
+    OriginEquipPro5: int = ParamField(
         int, "originEquipPro5", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin6: int = ParamField(
+    OriginEquipPro6: int = ParamField(
         int, "originEquipPro6", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin7: int = ParamField(
+    OriginEquipPro7: int = ParamField(
         int, "originEquipPro7", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin8: int = ParamField(
+    OriginEquipPro8: int = ParamField(
         int, "originEquipPro8", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin9: int = ParamField(
+    OriginEquipPro9: int = ParamField(
         int, "originEquipPro9", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin10: int = ParamField(
+    OriginEquipPro10: int = ParamField(
         int, "originEquipPro10", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin11: int = ParamField(
+    OriginEquipPro11: int = ParamField(
         int, "originEquipPro11", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin12: int = ParamField(
+    OriginEquipPro12: int = ParamField(
         int, "originEquipPro12", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin13: int = ParamField(
+    OriginEquipPro13: int = ParamField(
         int, "originEquipPro13", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin14: int = ParamField(
+    OriginEquipPro14: int = ParamField(
         int, "originEquipPro14", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeOrigin15: int = ParamField(
+    OriginEquipPro15: int = ParamField(
         int, "originEquipPro15", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    MaleFaceScaleX: float = ParamField(
-        float, "faceScaleM_ScaleX", default=1,
+    FaceScaleMScaleX: float = ParamField(
+        float, "faceScaleM_ScaleX", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaleFaceScaleZ: float = ParamField(
-        float, "faceScaleM_ScaleZ", default=1,
+    FaceScaleMScaleZ: float = ParamField(
+        float, "faceScaleM_ScaleZ", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaleFaceMaxScaleX: float = ParamField(
-        float, "faceScaleM_MaxX", default=1,
+    FaceScaleMMaxX: float = ParamField(
+        float, "faceScaleM_MaxX", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaleFaceMaxScaleZ: float = ParamField(
-        float, "faceScaleM_MaxZ", default=1,
+    FaceScaleMMaxZ: float = ParamField(
+        float, "faceScaleM_MaxZ", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FemaleFaceScaleX: float = ParamField(
-        float, "faceScaleF_ScaleX", default=1,
+    FaceScaleFScaleX: float = ParamField(
+        float, "faceScaleF_ScaleX", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FemaleFaceScaleZ: float = ParamField(
-        float, "faceScaleF_ScaleZ", default=1,
+    FaceScaleFScaleZ: float = ParamField(
+        float, "faceScaleF_ScaleZ", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FemaleFaceMaxScaleX: float = ParamField(
-        float, "faceScaleF_MaxX", default=1,
+    FaceScaleFMaxX: float = ParamField(
+        float, "faceScaleF_MaxX", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FemaleFaceMaxScaleZ: float = ParamField(
-        float, "faceScaleF_MaxZ", default=1,
+    FaceScaleFMaxZ: float = ParamField(
+        float, "faceScaleF_MaxZ", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    QWCID: int = ParamField(
+    QwcId: int = ParamField(
         int, "qwcId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModel: int = ParamField(
+    EquipModelId: int = ParamField(
         ushort, "equipModelId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaleIcon: int = ParamField(
+    IconIdM: int = ParamField(
         ushort, "iconIdM", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FemaleIcon: int = ParamField(
+    IconIdF: int = ParamField(
         ushort, "iconIdF", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    KnockbackPercentageReduction: int = ParamField(
+    KnockBack: int = ParamField(
         ushort, "knockBack", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    KnockbackBouncePercentage: int = ParamField(
+    KnockbackBounceRate: int = ParamField(
         ushort, "knockbackBounceRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    InitialDurability: int = ParamField(
+    Durability: int = ParamField(
         ushort, "durability", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    MaxDurability: int = ParamField(
+    DurabilityMax: int = ParamField(
         ushort, "durabilityMax", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(2, "pad03[2]")
-    RepelDefense: int = ParamField(
+    _Pad1: bytes = ParamPad(2, "pad03[2]")
+    DefFlickPower: int = ParamField(
         ushort, "defFlickPower", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalDefense: int = ParamField(
+    DefensePhysics: int = ParamField(
         ushort, "defensePhysics", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    MagicDefense: int = ParamField(
+    DefenseMagic: int = ParamField(
         ushort, "defenseMagic", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    FireDefense: int = ParamField(
+    DefenseFire: int = ParamField(
         ushort, "defenseFire", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    LightningDefense: int = ParamField(
+    DefenseThunder: int = ParamField(
         ushort, "defenseThunder", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    SlashDefense: int = ParamField(
+    DefenseSlash: int = ParamField(
         short, "defenseSlash", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StrikeDefense: int = ParamField(
+    DefenseBlow: int = ParamField(
         short, "defenseBlow", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ThrustDefense: int = ParamField(
+    DefenseThrust: int = ParamField(
         short, "defenseThrust", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PoisonResistance: int = ParamField(
+    ResistPoison: int = ParamField(
         ushort, "resistPoison", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    ToxicResistance: int = ParamField(
+    ResistDisease: int = ParamField(
         ushort, "resistDisease", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    BleedResistance: int = ParamField(
+    ResistBlood: int = ParamField(
         ushort, "resistBlood", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    CurseResistance: int = ParamField(
+    ResistCurse: int = ParamField(
         ushort, "resistCurse", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    ArmorUpgradeID: int = ParamField(
+    ReinforceTypeId: int = ParamField(
         short, "reinforceTypeId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -268,28 +268,28 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         short, "trophySGradeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ShopLevel: int = ParamField(
+    ShopLv: int = ParamField(
         short, "shopLv", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    KnockbackID: int = ParamField(
+    KnockbackParamId: int = ParamField(
         byte, "knockbackParamId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RepelDamagePercentageReduction: int = ParamField(
+    FlickDamageCutRate: int = ParamField(
         byte, "flickDamageCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModelCategory: int = ParamField(
-        byte, "equipModelCategory", default=1,
+    EquipModelCategory: int = ParamField(
+        byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=1,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModelGender: int = ParamField(
-        byte, "equipModelGender", default=0,
+    EquipModelGender: int = ParamField(
+        byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ArmorType: int = ParamField(
-        byte, "protectorCategory", default=0,
+    ProtectorCategory: int = ParamField(
+        byte, "protectorCategory", PROTECTOR_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Rarity: int = ParamField(
@@ -300,40 +300,40 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         byte, "sortGroupId", default=255,
         tooltip="TOOLTIP-TODO",
     )
-    PartsDamageType: int = ParamField(
-        byte, "partsDmgType", default=0,
+    PartsDmgType: int = ParamField(
+        byte, "partsDmgType", ATK_PARAM_PARTSDMGTYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(2, "pad04[2]")
-    CanBeStored: int = ParamField(
-        byte, "isDeposit:1", default=0,
+    _Pad2: bytes = ParamPad(2, "pad04[2]")
+    IsDeposit: bool = ParamField(
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedToHead: int = ParamField(
-        byte, "headEquip:1", default=0,
+    HeadEquip: bool = ParamField(
+        byte, "headEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedToBody: int = ParamField(
-        byte, "bodyEquip:1", default=0,
+    BodyEquip: bool = ParamField(
+        byte, "bodyEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedToHands: int = ParamField(
-        byte, "armEquip:1", default=0,
+    ArmEquip: bool = ParamField(
+        byte, "armEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedToLegs: int = ParamField(
-        byte, "legEquip:1", default=0,
+    LegEquip: bool = ParamField(
+        byte, "legEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseFaceScale: int = ParamField(
-        byte, "useFaceScale:1", default=0,
+    UseFaceScale: bool = ParamField(
+        byte, "useFaceScale:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSkipWeakDamageAnim: int = ParamField(
-        byte, "isSkipWeakDamageAnim:1", default=0,
+    IsSkipWeakDamageAnim: bool = ParamField(
+        byte, "isSkipWeakDamageAnim:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(1, "pad06:1")
+    _BitPad1: int = ParamBitPad(byte, "pad06:1", bit_count=1)
     DefenseMaterialVariationValueWeak: int = ParamField(
         byte, "defenseMaterialVariationValue_Weak", default=0,
         tooltip="TOOLTIP-TODO",
@@ -350,89 +350,89 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         byte, "defenseMaterialVariationValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsDiscard: int = ParamField(
-        byte, "isDiscard:1", default=0,
+    IsDiscard: bool = ParamField(
+        byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDrop: int = ParamField(
-        byte, "isDrop:1", default=0,
+    IsDrop: bool = ParamField(
+        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableMultiplayerShare: int = ParamField(
-        byte, "disableMultiDropShare:1", default=0,
+    DisableMultiDropShare: bool = ParamField(
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    SimpleDLCModelExists: int = ParamField(
-        byte, "simpleModelForDlc:1", default=0,
+    SimpleModelForDlc: bool = ParamField(
+        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ShowLogCondType: int = ParamField(
-        byte, "showLogCondType:1", default=1,
+    ShowLogCondType: bool = ParamField(
+        byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
     ShowDialogCondType: int = ParamField(
-        byte, "showDialogCondType:2", default=2,
+        byte, "showDialogCondType:2", GET_DIALOG_CONDITION_TYPE, bit_count=2, default=2,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(1, "pad:1")
+    _BitPad2: int = ParamBitPad(byte, "pad:1", bit_count=1)
     NeutralDamageCutRate: float = ParamField(
-        float, "neutralDamageCutRate", default=1,
+        float, "neutralDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    SlashDamagePercentageReduction: float = ParamField(
-        float, "slashDamageCutRate", default=1,
+    SlashDamageCutRate: float = ParamField(
+        float, "slashDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    BluntDamagePercentageReduction: float = ParamField(
-        float, "blowDamageCutRate", default=1,
+    BlowDamageCutRate: float = ParamField(
+        float, "blowDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    ThrustDamagePercentageReduction: float = ParamField(
-        float, "thrustDamageCutRate", default=1,
+    ThrustDamageCutRate: float = ParamField(
+        float, "thrustDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicDamagePercentageReduction: float = ParamField(
-        float, "magicDamageCutRate", default=1,
+    MagicDamageCutRate: float = ParamField(
+        float, "magicDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FireDamagePercentageReduction: float = ParamField(
-        float, "fireDamageCutRate", default=1,
+    FireDamageCutRate: float = ParamField(
+        float, "fireDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningDamagePercentageReduction: float = ParamField(
-        float, "thunderDamageCutRate", default=1,
+    ThunderDamageCutRate: float = ParamField(
+        float, "thunderDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialSfx1: int = ParamField(
-        ushort, "defenseMaterialSfx1", default=50,
+        ushort, "defenseMaterialSfx1", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialSfxWeak1: int = ParamField(
-        ushort, "defenseMaterialSfx_Weak1", default=50,
+        ushort, "defenseMaterialSfx_Weak1", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterial1: int = ParamField(
-        ushort, "defenseMaterial1", default=50,
+        ushort, "defenseMaterial1", WEP_MATERIAL_DEF, default=50,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialWeak1: int = ParamField(
-        ushort, "defenseMaterial_Weak1", default=50,
+        ushort, "defenseMaterial_Weak1", WEP_MATERIAL_DEF, default=50,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialSfx2: int = ParamField(
-        ushort, "defenseMaterialSfx2", default=50,
+        ushort, "defenseMaterialSfx2", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialSfxWeak2: int = ParamField(
-        ushort, "defenseMaterialSfx_Weak2", default=50,
+        ushort, "defenseMaterialSfx_Weak2", WEP_MATERIAL_DEF_SFX, default=50,
         tooltip="TOOLTIP-TODO",
     )
     FootMaterialSe: int = ParamField(
-        ushort, "footMaterialSe", default=139,
+        ushort, "footMaterialSe", WEP_MATERIAL_DEF, default=139,
         tooltip="TOOLTIP-TODO",
     )
     DefenseMaterialWeak2: int = ParamField(
-        ushort, "defenseMaterial_Weak2", default=50,
+        ushort, "defenseMaterial_Weak2", WEP_MATERIAL_DEF, default=50,
         tooltip="TOOLTIP-TODO",
     )
     AutoFootEffectDecalBaseId1: int = ParamField(
@@ -440,7 +440,7 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ToughnessDamageCutRate: float = ParamField(
-        float, "toughnessDamageCutRate", default=1,
+        float, "toughnessDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ToughnessRecoverCorrection: float = ParamField(
@@ -448,52 +448,52 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DarkDamageCutRate: float = ParamField(
-        float, "darkDamageCutRate", default=1,
+        float, "darkDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DefenseDark: int = ParamField(
         ushort, "defenseDark", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(1, "invisibleFlag48:1")
-    _Pad7: bytes = ParamPad(1, "invisibleFlag49:1")
-    _Pad8: bytes = ParamPad(1, "invisibleFlag50:1")
-    _Pad9: bytes = ParamPad(1, "invisibleFlag51:1")
-    _Pad10: bytes = ParamPad(1, "invisibleFlag52:1")
-    _Pad11: bytes = ParamPad(1, "invisibleFlag53:1")
-    _Pad12: bytes = ParamPad(1, "invisibleFlag54:1")
-    _Pad13: bytes = ParamPad(1, "invisibleFlag55:1")
-    _Pad14: bytes = ParamPad(1, "invisibleFlag56:1")
-    _Pad15: bytes = ParamPad(1, "invisibleFlag57:1")
-    _Pad16: bytes = ParamPad(1, "invisibleFlag58:1")
-    _Pad17: bytes = ParamPad(1, "invisibleFlag59:1")
-    _Pad18: bytes = ParamPad(1, "invisibleFlag60:1")
-    _Pad19: bytes = ParamPad(1, "invisibleFlag61:1")
-    _Pad20: bytes = ParamPad(1, "invisibleFlag62:1")
-    _Pad21: bytes = ParamPad(1, "invisibleFlag63:1")
-    _Pad22: bytes = ParamPad(1, "invisibleFlag64:1")
-    _Pad23: bytes = ParamPad(1, "invisibleFlag65:1")
-    _Pad24: bytes = ParamPad(1, "invisibleFlag66:1")
-    _Pad25: bytes = ParamPad(1, "invisibleFlag67:1")
-    _Pad26: bytes = ParamPad(1, "invisibleFlag68:1")
-    _Pad27: bytes = ParamPad(1, "invisibleFlag69:1")
-    _Pad28: bytes = ParamPad(1, "invisibleFlag70:1")
-    _Pad29: bytes = ParamPad(1, "invisibleFlag71:1")
-    _Pad30: bytes = ParamPad(1, "invisibleFlag72:1")
-    _Pad31: bytes = ParamPad(1, "invisibleFlag73:1")
-    _Pad32: bytes = ParamPad(1, "invisibleFlag74:1")
-    _Pad33: bytes = ParamPad(1, "invisibleFlag75:1")
-    _Pad34: bytes = ParamPad(1, "invisibleFlag76:1")
-    _Pad35: bytes = ParamPad(1, "invisibleFlag77:1")
-    _Pad36: bytes = ParamPad(1, "invisibleFlag78:1")
-    _Pad37: bytes = ParamPad(1, "invisibleFlag79:1")
-    _Pad38: bytes = ParamPad(1, "invisibleFlag80:1")
-    _Pad39: bytes = ParamPad(1, "padbit:7")
+    _BitPad3: int = ParamBitPad(byte, "invisibleFlag48:1", bit_count=1)
+    _BitPad4: int = ParamBitPad(byte, "invisibleFlag49:1", bit_count=1)
+    _BitPad5: int = ParamBitPad(byte, "invisibleFlag50:1", bit_count=1)
+    _BitPad6: int = ParamBitPad(byte, "invisibleFlag51:1", bit_count=1)
+    _BitPad7: int = ParamBitPad(byte, "invisibleFlag52:1", bit_count=1)
+    _BitPad8: int = ParamBitPad(byte, "invisibleFlag53:1", bit_count=1)
+    _BitPad9: int = ParamBitPad(byte, "invisibleFlag54:1", bit_count=1)
+    _BitPad10: int = ParamBitPad(byte, "invisibleFlag55:1", bit_count=1)
+    _BitPad11: int = ParamBitPad(byte, "invisibleFlag56:1", bit_count=1)
+    _BitPad12: int = ParamBitPad(byte, "invisibleFlag57:1", bit_count=1)
+    _BitPad13: int = ParamBitPad(byte, "invisibleFlag58:1", bit_count=1)
+    _BitPad14: int = ParamBitPad(byte, "invisibleFlag59:1", bit_count=1)
+    _BitPad15: int = ParamBitPad(byte, "invisibleFlag60:1", bit_count=1)
+    _BitPad16: int = ParamBitPad(byte, "invisibleFlag61:1", bit_count=1)
+    _BitPad17: int = ParamBitPad(byte, "invisibleFlag62:1", bit_count=1)
+    _BitPad18: int = ParamBitPad(byte, "invisibleFlag63:1", bit_count=1)
+    _BitPad19: int = ParamBitPad(byte, "invisibleFlag64:1", bit_count=1)
+    _BitPad20: int = ParamBitPad(byte, "invisibleFlag65:1", bit_count=1)
+    _BitPad21: int = ParamBitPad(byte, "invisibleFlag66:1", bit_count=1)
+    _BitPad22: int = ParamBitPad(byte, "invisibleFlag67:1", bit_count=1)
+    _BitPad23: int = ParamBitPad(byte, "invisibleFlag68:1", bit_count=1)
+    _BitPad24: int = ParamBitPad(byte, "invisibleFlag69:1", bit_count=1)
+    _BitPad25: int = ParamBitPad(byte, "invisibleFlag70:1", bit_count=1)
+    _BitPad26: int = ParamBitPad(byte, "invisibleFlag71:1", bit_count=1)
+    _BitPad27: int = ParamBitPad(byte, "invisibleFlag72:1", bit_count=1)
+    _BitPad28: int = ParamBitPad(byte, "invisibleFlag73:1", bit_count=1)
+    _BitPad29: int = ParamBitPad(byte, "invisibleFlag74:1", bit_count=1)
+    _BitPad30: int = ParamBitPad(byte, "invisibleFlag75:1", bit_count=1)
+    _BitPad31: int = ParamBitPad(byte, "invisibleFlag76:1", bit_count=1)
+    _BitPad32: int = ParamBitPad(byte, "invisibleFlag77:1", bit_count=1)
+    _BitPad33: int = ParamBitPad(byte, "invisibleFlag78:1", bit_count=1)
+    _BitPad34: int = ParamBitPad(byte, "invisibleFlag79:1", bit_count=1)
+    _BitPad35: int = ParamBitPad(byte, "invisibleFlag80:1", bit_count=1)
+    _BitPad36: int = ParamBitPad(byte, "padbit:7", bit_count=7)
     PostureControlId: int = ParamField(
         byte, "postureControlId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad40: bytes = ParamPad(4, "pad2[4]")
+    _Pad3: bytes = ParamPad(4, "pad2[4]")
     SaleValue: int = ParamField(
         int, "saleValue", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -886,4 +886,4 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         byte, "invisibleFlag_SexVer95", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad41: bytes = ParamPad(14, "pad404[14]")
+    _Pad4: bytes = ParamPad(14, "pad404[14]")

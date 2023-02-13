@@ -13,111 +13,111 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class REINFORCE_PARAM_WEAPON_ST(ParamRow):
-    PhysicalDamageMultiplier: float = ParamField(
-        float, "physicsAtkRate", default=1,
+    PhysicsAtkRate: float = ParamField(
+        float, "physicsAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicDamageMultiplier: float = ParamField(
-        float, "magicAtkRate", default=1,
+    MagicAtkRate: float = ParamField(
+        float, "magicAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FireDamageMultiplier: float = ParamField(
-        float, "fireAtkRate", default=1,
+    FireAtkRate: float = ParamField(
+        float, "fireAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningDamageMultiplier: float = ParamField(
-        float, "thunderAtkRate", default=1,
+    ThunderAtkRate: float = ParamField(
+        float, "thunderAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaDamageMultiplier: float = ParamField(
-        float, "staminaAtkRate", default=1,
+    StaminaAtkRate: float = ParamField(
+        float, "staminaAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseDamageMultiplier: float = ParamField(
-        float, "saWeaponAtkRate", default=1,
+    SaWeaponAtkRate: float = ParamField(
+        float, "saWeaponAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseDefenseMultiplier: float = ParamField(
-        float, "saDurabilityRate", default=1,
+    SaDurabilityRate: float = ParamField(
+        float, "saDurabilityRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    StrengthScalingMultiplier: float = ParamField(
-        float, "correctStrengthRate", default=1,
+    CorrectStrengthRate: float = ParamField(
+        float, "correctStrengthRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    DexterityScalingMultiplier: float = ParamField(
-        float, "correctAgilityRate", default=1,
+    CorrectAgilityRate: float = ParamField(
+        float, "correctAgilityRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    IntelligenceScalingMultiplier: float = ParamField(
-        float, "correctMagicRate", default=1,
+    CorrectMagicRate: float = ParamField(
+        float, "correctMagicRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FaithScalingMultiplier: float = ParamField(
-        float, "correctFaithRate", default=1,
+    CorrectFaithRate: float = ParamField(
+        float, "correctFaithRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalGuardReductionMultiplier: float = ParamField(
-        float, "physicsGuardCutRate", default=1,
+    PhysicsGuardCutRate: float = ParamField(
+        float, "physicsGuardCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicGuardReductionMultiplier: float = ParamField(
-        float, "magicGuardCutRate", default=1,
+    MagicGuardCutRate: float = ParamField(
+        float, "magicGuardCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FireGuardReductionMultiplier: float = ParamField(
-        float, "fireGuardCutRate", default=1,
+    FireGuardCutRate: float = ParamField(
+        float, "fireGuardCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningGuardReductionMultiplier: float = ParamField(
-        float, "thunderGuardCutRate", default=1,
+    ThunderGuardCutRate: float = ParamField(
+        float, "thunderGuardCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    PoisonGuardResistanceMultiplier: float = ParamField(
-        float, "poisonGuardResistRate", default=1,
+    PoisonGuardResistRate: float = ParamField(
+        float, "poisonGuardResistRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    ToxicGuardResistanceMultiplier: float = ParamField(
-        float, "diseaseGuardResistRate", default=1,
+    DiseaseGuardResistRate: float = ParamField(
+        float, "diseaseGuardResistRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    BleedGuardResistanceMultiplier: float = ParamField(
-        float, "bloodGuardResistRate", default=1,
+    BloodGuardResistRate: float = ParamField(
+        float, "bloodGuardResistRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    CurseGuardResistanceMultiplier: float = ParamField(
-        float, "curseGuardResistRate", default=1,
+    CurseGuardResistRate: float = ParamField(
+        float, "curseGuardResistRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaGuardReductionMultiplier: float = ParamField(
-        float, "staminaGuardDefRate", default=1,
+    StaminaGuardDefRate: float = ParamField(
+        float, "staminaGuardDefRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit0: int = ParamField(
+    SpEffectId1: int = ParamField(
         byte, "spEffectId1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit1: int = ParamField(
+    SpEffectId2: int = ParamField(
         byte, "spEffectId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit2: int = ParamField(
+    SpEffectId3: int = ParamField(
         byte, "spEffectId3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedSpecialEffect0: int = ParamField(
+    ResidentSpEffectId1: int = ParamField(
         byte, "residentSpEffectId1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedSpecialEffect1: int = ParamField(
+    ResidentSpEffectId2: int = ParamField(
         byte, "residentSpEffectId2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EquippedSpecialEffect2: int = ParamField(
+    ResidentSpEffectId3: int = ParamField(
         byte, "residentSpEffectId3", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UpgradeMaterialOffset: int = ParamField(
+    MaterialSetId: int = ParamField(
         byte, "materialSetId", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -126,27 +126,27 @@ class REINFORCE_PARAM_WEAPON_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DarkAtkRate: float = ParamField(
-        float, "darkAtkRate", default=1,
+        float, "darkAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DarkGuardCutRate: float = ParamField(
-        float, "darkGuardCutRate", default=1,
+        float, "darkGuardCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     CorrectLuckRate: float = ParamField(
-        float, "correctLuckRate", default=1,
+        float, "correctLuckRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     FreezeGuardDefRate: float = ParamField(
-        float, "freezeGuardDefRate", default=1,
+        float, "freezeGuardDefRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ReinforcePriceRate: float = ParamField(
-        float, "reinforcePriceRate", default=1,
+        float, "reinforcePriceRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BaseChangePriceRate: float = ParamField(
-        float, "baseChangePriceRate", default=1,
+        float, "baseChangePriceRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     EnableGemRank: int = ParamField(
@@ -155,14 +155,14 @@ class REINFORCE_PARAM_WEAPON_ST(ParamRow):
     )
     _Pad0: bytes = ParamPad(3, "pad2[3]")
     SleepGuardDefRate: float = ParamField(
-        float, "sleepGuardDefRate", default=1,
+        float, "sleepGuardDefRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     MadnessGuardDefRate: float = ParamField(
-        float, "madnessGuardDefRate", default=1,
+        float, "madnessGuardDefRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BaseAtkRate: float = ParamField(
-        float, "baseAtkRate", default=1,
+        float, "baseAtkRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )

@@ -13,133 +13,133 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    SpecialEffect: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    RefId: int = ParamField(
         int, "refId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SFXVariation: int = ParamField(
+    SfxVariationId: int = ParamField(
         int, "sfxVariationId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Weight: float = ParamField(
-        float, "weight", default=1,
+        float, "weight", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Behavior: int = ParamField(
+    BehaviorId: int = ParamField(
         int, "behaviorId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BasicCost: int = ParamField(
+    BasicPrice: int = ParamField(
         int, "basicPrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FramptSellValue: int = ParamField(
+    SellValue: int = ParamField(
         int, "sellValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SortIndex: int = ParamField(
+    SortId: int = ParamField(
         int, "sortId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    QWCID: int = ParamField(
+    QwcId: int = ParamField(
         int, "qwcId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModel: int = ParamField(
+    EquipModelId: int = ParamField(
         ushort, "equipModelId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MenuIcon: int = ParamField(
+    IconId: int = ParamField(
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ShopLevel: int = ParamField(
+    ShopLv: int = ParamField(
         short, "shopLv", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AchievementContributionID: int = ParamField(
+    TrophySGradeId: int = ParamField(
         short, "trophySGradeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AchievementUnlockID: int = ParamField(
+    TrophySeqId: int = ParamField(
         short, "trophySeqId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModelCategory: int = ParamField(
-        byte, "equipModelCategory", default=0,
+    EquipModelCategory: int = ParamField(
+        byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EquipmentModelGender: int = ParamField(
-        byte, "equipModelGender", default=0,
+    EquipModelGender: int = ParamField(
+        byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AccessoryCategory: int = ParamField(
-        byte, "accessoryCategory", default=0,
+        byte, "accessoryCategory", ACCESSORY_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ReferenceType: int = ParamField(
-        byte, "refCategory", default=0,
+    RefCategory: int = ParamField(
+        byte, "refCategory", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectCategory: int = ParamField(
-        byte, "spEffectCategory", default=0,
+    SpEffectCategory: int = ParamField(
+        byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SortGroupId: int = ParamField(
         byte, "sortGroupId", default=255,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantItemLot: int = ParamField(
+    VagrantItemLotId: int = ParamField(
         int, "vagrantItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantBonusEnemyDropItemLot: int = ParamField(
+    VagrantBonusEneDropItemLotId: int = ParamField(
         int, "vagrantBonusEneDropItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantItemEnemyDropItemLot: int = ParamField(
+    VagrantItemEneDropItemLotId: int = ParamField(
         int, "vagrantItemEneDropItemLotId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeStored: int = ParamField(
-        byte, "isDeposit:1", default=0,
+    IsDeposit: bool = ParamField(
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    BreaksWhenUnequipped: int = ParamField(
-        byte, "isEquipOutBrake:1", default=0,
+    IsEquipOutBrake: bool = ParamField(
+        byte, "isEquipOutBrake:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableMultiplayerShare: int = ParamField(
-        byte, "disableMultiDropShare:1", default=0,
+    DisableMultiDropShare: bool = ParamField(
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDiscard: int = ParamField(
-        byte, "isDiscard:1", default=0,
+    IsDiscard: bool = ParamField(
+        byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDrop: int = ParamField(
-        byte, "isDrop:1", default=0,
+    IsDrop: bool = ParamField(
+        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ShowLogCondType: int = ParamField(
-        byte, "showLogCondType:1", default=1,
+    ShowLogCondType: bool = ParamField(
+        byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
     ShowDialogCondType: int = ParamField(
-        byte, "showDialogCondType:2", default=2,
+        byte, "showDialogCondType:2", GET_DIALOG_CONDITION_TYPE, bit_count=2, default=2,
         tooltip="TOOLTIP-TODO",
     )
     Rarity: int = ParamField(
         byte, "rarity", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(2, "pad2[2]")
+    _Pad1: bytes = ParamPad(2, "pad2[2]")
     SaleValue: int = ParamField(
         int, "saleValue", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -148,7 +148,7 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
         short, "accessoryGroup", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad3[1]")
+    _Pad2: bytes = ParamPad(1, "pad3[1]")
     CompTrophySedId: int = ParamField(
         sbyte, "compTrophySedId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -169,4 +169,4 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
         int, "residentSpEffectId4", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(4, "pad1[4]")
+    _Pad3: bytes = ParamPad(4, "pad1[4]")

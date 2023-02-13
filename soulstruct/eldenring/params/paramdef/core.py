@@ -36,17 +36,8 @@ class ParamDefBND(_BaseParamDefBND):
     @classmethod
     def from_paramdex(cls, paramdex_er_defs_path: Path | str = None):
         if paramdex_er_defs_path is None:
-            # Default to PARAMDEX_PATH.
-            if not PARAMDEX_PATH:
-                # Try Soulstruct root.
-                paramdex_er_defs_path = PACKAGE_PATH("Paramdex/ER/Defs")
-            else:
-                paramdex_er_defs_path = Path(PARAMDEX_PATH, "ER/Defs")
-            if not paramdex_er_defs_path.is_dir():
-                raise FileNotFoundError(
-                    f"Could not find path '{paramdex_er_defs_path}' for loading Elden Ring XML paramdefs.\n"
-                    f"This path defaults to the Soulstruct root. Change it in `soulstruct_config.json` if needed."
-                )
+            # Default to Erd-Tools-Defs.
+            paramdex_er_defs_path = PACKAGE_PATH("eldenring/params/paramdef/Erd-Tools-Defs")
         else:
             paramdex_er_defs_path = Path(paramdex_er_defs_path)
             if not paramdex_er_defs_path.is_dir():

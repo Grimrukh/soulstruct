@@ -14,19 +14,19 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_MOTION_BLUR_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=1,
+        byte, "enabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     OmbEnabled: int = ParamField(
-        byte, "ombEnabled", default=1,
+        byte, "ombEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     ForceScaleVelocityBuffer: int = ParamField(
-        byte, "forceScaleVelocityBuffer", default=1,
+        byte, "forceScaleVelocityBuffer", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     CheapFilterMode: int = ParamField(
-        byte, "cheapFilterMode", default=0,
+        byte, "cheapFilterMode", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SampleCountBias: int = ParamField(
@@ -38,6 +38,6 @@ class CS_MOTION_BLUR_QUALITY_DETAIL(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BlurMaxLengthScale: float = ParamField(
-        float, "blurMaxLengthScale", default=0,
+        float, "blurMaxLengthScale", default=0.75,
         tooltip="TOOLTIP-TODO",
     )

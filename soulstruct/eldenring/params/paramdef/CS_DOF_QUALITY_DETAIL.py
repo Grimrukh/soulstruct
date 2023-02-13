@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_DOF_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=1,
+        byte, "enabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "dmy[3]")

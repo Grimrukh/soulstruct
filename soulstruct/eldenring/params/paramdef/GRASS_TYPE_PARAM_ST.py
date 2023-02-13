@@ -18,36 +18,36 @@ class GRASS_TYPE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Lod0ClusterType: int = ParamField(
-        byte, "lod0ClusterType", default=0,
+        byte, "lod0ClusterType", GRASS_CLUSTER_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Lod1ClusterType: int = ParamField(
-        byte, "lod1ClusterType", default=0,
+        byte, "lod1ClusterType", GRASS_CLUSTER_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Lod2ClusterType: int = ParamField(
-        byte, "lod2ClusterType", default=0,
+        byte, "lod2ClusterType", GRASS_CLUSTER_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "pad0[2]")
     DistributionType: int = ParamField(
-        byte, "distributionType", default=0,
+        byte, "distributionType", GRASS_DISTRIBUTION_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BaseDensity: float = ParamField(
-        float, "baseDensity", default=1,
+        float, "baseDensity", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    Model0Name: bytes = ParamField(
-        bytes, "model0Name[16]", length=32, default='',
+    Model0Name: str = ParamField(
+        str, "model0Name[16]", encoding="utf-16", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )
-    FlatTextureName: bytes = ParamField(
-        bytes, "flatTextureName[32]", length=64, default='',
+    FlatTextureName: str = ParamField(
+        str, "flatTextureName[32]", encoding="utf-16", length=64, default='',
         tooltip="TOOLTIP-TODO",
     )
-    BillboardTextureName: bytes = ParamField(
-        bytes, "billboardTextureName[32]", length=64, default='',
+    BillboardTextureName: str = ParamField(
+        str, "billboardTextureName[32]", encoding="utf-16", length=64, default='',
         tooltip="TOOLTIP-TODO",
     )
     NormalInfluence: int = ParamField(
@@ -103,7 +103,7 @@ class GRASS_TYPE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FlatSplitType: int = ParamField(
-        byte, "flatSplitType", default=0,
+        byte, "flatSplitType", GRASS_FLAT_SPLIT_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FlatBladeCount: int = ParamField(
@@ -119,7 +119,7 @@ class GRASS_TYPE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CastShadow: int = ParamField(
-        byte, "castShadow", default=1,
+        byte, "castShadow", GRASS_SHADOW_TYPE_ENUM, default=1,
         tooltip="TOOLTIP-TODO",
     )
     WindAmplitude: int = ParamField(
@@ -132,11 +132,11 @@ class GRASS_TYPE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     OrientationAngle: float = ParamField(
-        float, "orientationAngle", default=-1,
+        float, "orientationAngle", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     OrientationRange: float = ParamField(
-        float, "orientationRange", default=-1,
+        float, "orientationRange", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     Spacing: float = ParamField(
@@ -144,15 +144,15 @@ class GRASS_TYPE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Dithering: int = ParamField(
-        byte, "dithering", default=0,
+        byte, "dithering", GRASS_DITHERING_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(3, "pad[3]")
-    SimpleModelName: bytes = ParamField(
-        bytes, "simpleModelName[16]", length=32, default='',
+    SimpleModelName: str = ParamField(
+        str, "simpleModelName[16]", encoding="utf-16", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )
-    Model1Name: bytes = ParamField(
-        bytes, "model1Name[16]", length=32, default='',
+    Model1Name: str = ParamField(
+        str, "model1Name[16]", encoding="utf-16", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )

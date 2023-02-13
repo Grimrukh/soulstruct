@@ -585,7 +585,7 @@ class Binder(BaseBinaryFile):
         else:
             if bdt_file_path is not None:
                 raise ValueError("Cannot pass in `bdt_file_path` when `Binder.is_split_bxf == False`.")
-            super().write(file_path, make_dirs=make_dirs, check_hash=check_hash)
+            super(Binder, self).write(file_path, make_dirs=make_dirs, check_hash=check_hash)
 
     def write_split(
         self,
@@ -642,7 +642,7 @@ class Binder(BaseBinaryFile):
                 "Cannot convert split BXF binder (`is_split_bxf=True`) to single `bytes`. Use `get_split_bytes()` to "
                 "return a tuple of two `bytes` objects."
             )
-        return super().__bytes__()
+        return super(Binder, self).__bytes__()
 
     def get_split_bytes(self) -> tuple[bytes, bytes]:
         """Applies `dcx_type` DCX automatically.

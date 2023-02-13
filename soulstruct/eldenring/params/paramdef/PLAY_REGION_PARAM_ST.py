@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class PLAY_REGION_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     MatchAreaId: int = ParamField(
         int, "matchAreaId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -44,39 +44,39 @@ class PLAY_REGION_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BMapGuradianRegion: int = ParamField(
-        byte, "bMapGuradianRegion", default=0,
+        byte, "bMapGuradianRegion", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BYellowCostumeRegion: int = ParamField(
-        byte, "bYellowCostumeRegion:1", default=0,
+    BYellowCostumeRegion: bool = ParamField(
+        byte, "bYellowCostumeRegion:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    MultiPlayStartLimitEventFlagIdtargetFlagState: int = ParamField(
-        byte, "multiPlayStartLimitEventFlagId_targetFlagState:1", default=1,
+    MultiPlayStartLimitEventFlagIdtargetFlagState: bool = ParamField(
+        byte, "multiPlayStartLimitEventFlagId_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    BreakInLimitEventFlagId1targetFlagState: int = ParamField(
-        byte, "breakInLimitEventFlagId_1_targetFlagState:1", default=1,
+    BreakInLimitEventFlagId1targetFlagState: bool = ParamField(
+        byte, "breakInLimitEventFlagId_1_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WhiteSignLimitEventFlagId1targetFlagState: int = ParamField(
-        byte, "whiteSignLimitEventFlagId_1_targetFlagState:1", default=1,
+    WhiteSignLimitEventFlagId1targetFlagState: bool = ParamField(
+        byte, "whiteSignLimitEventFlagId_1_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    RedSignLimitEventFlagId1targetFlagState: int = ParamField(
-        byte, "redSignLimitEventFlagId_1_targetFlagState:1", default=1,
+    RedSignLimitEventFlagId1targetFlagState: bool = ParamField(
+        byte, "redSignLimitEventFlagId_1_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    BreakInLimitEventFlagId2targetFlagState: int = ParamField(
-        byte, "breakInLimitEventFlagId_2_targetFlagState:1", default=1,
+    BreakInLimitEventFlagId2targetFlagState: bool = ParamField(
+        byte, "breakInLimitEventFlagId_2_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    BreakInLimitEventFlagId3targetFlagState: int = ParamField(
-        byte, "breakInLimitEventFlagId_3_targetFlagState:1", default=1,
+    BreakInLimitEventFlagId3targetFlagState: bool = ParamField(
+        byte, "breakInLimitEventFlagId_3_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WhiteSignLimitEventFlagId2targetFlagState: int = ParamField(
-        byte, "whiteSignLimitEventFlagId_2_targetFlagState:1", default=1,
+    WhiteSignLimitEventFlagId2targetFlagState: bool = ParamField(
+        byte, "whiteSignLimitEventFlagId_2_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
     WarpItemUsePermitBonfireId1: int = ParamField(
@@ -119,50 +119,50 @@ class PLAY_REGION_PARAM_ST(ParamRow):
         uint, "warpItemProhibitionEventFlagId_5", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EnableBloodstain: int = ParamField(
-        byte, "enableBloodstain:1", default=1,
+    EnableBloodstain: bool = ParamField(
+        byte, "enableBloodstain:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    EnableBloodMessage: int = ParamField(
-        byte, "enableBloodMessage:1", default=1,
+    EnableBloodMessage: bool = ParamField(
+        byte, "enableBloodMessage:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    EnableGhost: int = ParamField(
-        byte, "enableGhost:1", default=1,
+    EnableGhost: bool = ParamField(
+        byte, "enableGhost:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask00: int = ParamField(
-        byte, "dispMask00:1", default=0,
+    DispMask00: bool = ParamField(
+        byte, "dispMask00:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask01: int = ParamField(
-        byte, "dispMask01:1", default=0,
+    DispMask01: bool = ParamField(
+        byte, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    WhiteSignLimitEventFlagId3targetFlagState: int = ParamField(
-        byte, "whiteSignLimitEventFlagId_3_targetFlagState:1", default=1,
+    WhiteSignLimitEventFlagId3targetFlagState: bool = ParamField(
+        byte, "whiteSignLimitEventFlagId_3_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    RedSignLimitEventFlagId2targetFlagState: int = ParamField(
-        byte, "redSignLimitEventFlagId_2_targetFlagState:1", default=1,
+    RedSignLimitEventFlagId2targetFlagState: bool = ParamField(
+        byte, "redSignLimitEventFlagId_2_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    RedSignLimitEventFlagId3targetFlagState: int = ParamField(
-        byte, "redSignLimitEventFlagId_3_targetFlagState:1", default=1,
+    RedSignLimitEventFlagId3targetFlagState: bool = ParamField(
+        byte, "redSignLimitEventFlagId_3_targetFlagState:1", ON_OFF, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsAutoIntrudePoint: int = ParamField(
-        byte, "isAutoIntrudePoint:1", default=0,
+    IsAutoIntrudePoint: bool = ParamField(
+        byte, "isAutoIntrudePoint:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad1:7")
-    _Pad3: bytes = ParamPad(2, "pad2[2]")
+    _BitPad1: int = ParamBitPad(byte, "pad1:7", bit_count=7)
+    _Pad1: bytes = ParamPad(2, "pad2[2]")
     MultiPlayHASHostLimitEventFlagId: int = ParamField(
         uint, "multiPlayHASHostLimitEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     OtherMaxDistance: float = ParamField(
-        float, "otherMaxDistance", default=1000,
+        float, "otherMaxDistance", default=1000.0,
         tooltip="TOOLTIP-TODO",
     )
     SignPuddleOpenEventFlagId: int = ParamField(
@@ -181,7 +181,7 @@ class PLAY_REGION_PARAM_ST(ParamRow):
         byte, "gridZNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(1, "pad4[1]")
+    _Pad2: bytes = ParamPad(1, "pad4[1]")
     PosX: float = ParamField(
         float, "posX", default=0.0,
         tooltip="TOOLTIP-TODO",
@@ -334,4 +334,4 @@ class PLAY_REGION_PARAM_ST(ParamRow):
         uint, "mapMenuUnlockEventId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(32, "pad5[32]")
+    _Pad3: bytes = ParamPad(32, "pad5[32]")

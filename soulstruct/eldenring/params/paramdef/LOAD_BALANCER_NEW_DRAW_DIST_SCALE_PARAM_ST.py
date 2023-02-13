@@ -23,11 +23,11 @@ class LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST(ParamRow):
     )
     _Pad0: bytes = ParamPad(2, "reserve0[2]")
     DrawDistScaleBegin: float = ParamField(
-        float, "DrawDist_ScaleBegin", default=1,
+        float, "DrawDist_ScaleBegin", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DrawDistScaleEnd: float = ParamField(
-        float, "DrawDist_ScaleEnd", default=1,
+        float, "DrawDist_ScaleEnd", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ShadwDrawDistLvBegin: int = ParamField(
@@ -40,11 +40,11 @@ class LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST(ParamRow):
     )
     _Pad1: bytes = ParamPad(2, "reserve1[2]")
     ShadwDrawDistScaleBegin: float = ParamField(
-        float, "ShadwDrawDist_ScaleBegin", default=1,
+        float, "ShadwDrawDist_ScaleBegin", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     ShadwDrawDistScaleEnd: float = ParamField(
-        float, "ShadwDrawDist_ScaleEnd", default=1,
+        float, "ShadwDrawDist_ScaleEnd", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(24, "reserve2[24]")

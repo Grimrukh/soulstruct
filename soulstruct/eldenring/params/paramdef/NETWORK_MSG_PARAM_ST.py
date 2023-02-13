@@ -18,7 +18,7 @@ class NETWORK_MSG_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ForcePlay: int = ParamField(
-        byte, "forcePlay", default=0,
+        byte, "forcePlay", BOOL_YESNO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad1[1]")

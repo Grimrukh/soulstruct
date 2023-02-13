@@ -64,11 +64,11 @@ class MISSILE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DiedNaturaly: int = ParamField(
-        byte, "DiedNaturaly", default=0,
+        byte, "DiedNaturaly", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ExplosionDie: int = ParamField(
-        byte, "ExplosionDie", default=0,
+        byte, "ExplosionDie", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BehaviorId: int = ParamField(

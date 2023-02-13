@@ -14,19 +14,19 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST(ParamRow):
     NoHitDist: float = ParamField(
-        float, "NoHitDist", default=-1,
+        float, "NoHitDist", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     IsCollectNoHitPoint: int = ParamField(
-        byte, "isCollectNoHitPoint", default=0,
+        byte, "isCollectNoHitPoint", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsCollectOutdoorPoint: int = ParamField(
-        byte, "isCollectOutdoorPoint", default=0,
+        byte, "isCollectOutdoorPoint", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsCollectFloorPoint: int = ParamField(
-        byte, "isCollectFloorPoint", default=0,
+        byte, "isCollectFloorPoint", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DistValCalcType: int = ParamField(
@@ -34,7 +34,7 @@ class SOUND_AUTO_REVERB_EVALUATION_DIST_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     EnableLifeTime: float = ParamField(
-        float, "enableLifeTime", default=-1,
+        float, "enableLifeTime", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     MaxDistRecordNum: int = ParamField(

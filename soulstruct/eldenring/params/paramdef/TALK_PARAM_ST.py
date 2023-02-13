@@ -13,45 +13,45 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class TALK_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    SubtitleText: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    MsgId: int = ParamField(
         int, "msgId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    VoiceSound: int = ParamField(
+    VoiceId: int = ParamField(
         int, "voiceId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID0: int = ParamField(
+    SpEffectId0: int = ParamField(
         int, "spEffectId0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationID0: int = ParamField(
+    MotionId0: int = ParamField(
         int, "motionId0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectID1: int = ParamField(
+    SpEffectId1: int = ParamField(
         int, "spEffectId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AnimationID1: int = ParamField(
+    MotionId1: int = ParamField(
         int, "motionId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ReturnConversation: int = ParamField(
+    ReturnPos: int = ParamField(
         int, "returnPos", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ReactionConversation: int = ParamField(
+    ReactionId: int = ParamField(
         int, "reactionId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EventFlag: int = ParamField(
+    EventId: int = ParamField(
         int, "eventId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -71,18 +71,18 @@ class TALK_PARAM_ST(ParamRow):
         short, "lipSyncTime", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(4, "pad2[4]")
+    _Pad1: bytes = ParamPad(4, "pad2[4]")
     Timeout: float = ParamField(
-        float, "timeout", default=-1,
+        float, "timeout", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     TalkAnimationId: int = ParamField(
         int, "talkAnimationId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    IsForceDisp: int = ParamField(
-        byte, "isForceDisp:1", default=0,
+    IsForceDisp: bool = ParamField(
+        byte, "isForceDisp:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad3:7")
-    _Pad4: bytes = ParamPad(31, "pad1[31]")
+    _BitPad1: int = ParamBitPad(byte, "pad3:7", bit_count=7)
+    _Pad2: bytes = ParamPad(31, "pad1[31]")

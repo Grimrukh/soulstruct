@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MAP_DEFAULT_INFO_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     EnableFastTravelEventFlagId: int = ParamField(
         uint, "EnableFastTravelEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -32,23 +32,23 @@ class MAP_DEFAULT_INFO_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MapAiSightType: int = ParamField(
-        byte, "MapAiSightType", default=0,
+        byte, "MapAiSightType", MAP_AI_SIGHT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SoundIndoorType: int = ParamField(
-        byte, "SoundIndoorType", default=0,
+        byte, "SoundIndoorType", SOUND_INDOOR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ReverbDefaultType: int = ParamField(
-        sbyte, "ReverbDefaultType", default=-1,
+        sbyte, "ReverbDefaultType", SOUND_MAP_DEFAULT_REVERB_TYPE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     BgmPlaceInfo: int = ParamField(
-        short, "BgmPlaceInfo", default=0,
+        short, "BgmPlaceInfo", SOUND_BGM_MAP_PLACE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EnvPlaceInfo: int = ParamField(
-        short, "EnvPlaceInfo", default=0,
+        short, "EnvPlaceInfo", SOUND_ENV_MAP_PLACE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MapAdditionalSoundBankId: int = ParamField(
@@ -60,23 +60,23 @@ class MAP_DEFAULT_INFO_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     IsEnableBlendTimezoneEnvmap: int = ParamField(
-        byte, "IsEnableBlendTimezoneEnvmap", default=1,
+        byte, "IsEnableBlendTimezoneEnvmap", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     OverrideGIResolutionXSS: int = ParamField(
-        sbyte, "OverrideGIResolution_XSS", default=-1,
+        sbyte, "OverrideGIResolution_XSS", MAP_GI_RESOLUTION_OVERRIDE_TYPE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     MapLoHiChangeBorderDistXZ: float = ParamField(
-        float, "MapLoHiChangeBorderDist_XZ", default=40,
+        float, "MapLoHiChangeBorderDist_XZ", default=40.0,
         tooltip="TOOLTIP-TODO",
     )
     MapLoHiChangeBorderDistY: float = ParamField(
-        float, "MapLoHiChangeBorderDist_Y", default=40,
+        float, "MapLoHiChangeBorderDist_Y", default=40.0,
         tooltip="TOOLTIP-TODO",
     )
     MapLoHiChangePlayDist: float = ParamField(
-        float, "MapLoHiChangePlayDist", default=5,
+        float, "MapLoHiChangePlayDist", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     MapAutoDrawGroupBackFacePixelNum: int = ParamField(
@@ -84,15 +84,15 @@ class MAP_DEFAULT_INFO_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     PlayerLigntScale: float = ParamField(
-        float, "PlayerLigntScale", default=1,
+        float, "PlayerLigntScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     IsEnableTimezonnePlayerLigntScale: int = ParamField(
-        byte, "IsEnableTimezonnePlayerLigntScale", default=1,
+        byte, "IsEnableTimezonnePlayerLigntScale", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     IsDisableAutoCliffWind: int = ParamField(
-        byte, "isDisableAutoCliffWind", default=0,
+        byte, "isDisableAutoCliffWind", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     OpenChrActivateThreshold: int = ParamField(
@@ -104,7 +104,7 @@ class MAP_DEFAULT_INFO_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     OverrideGIResolutionXSX: int = ParamField(
-        sbyte, "OverrideGIResolution_XSX", default=-1,
+        sbyte, "OverrideGIResolution_XSX", MAP_GI_RESOLUTION_OVERRIDE_TYPE, default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(7, "Reserve[7]")
+    _Pad1: bytes = ParamPad(7, "Reserve[7]")

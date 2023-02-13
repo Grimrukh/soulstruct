@@ -42,11 +42,11 @@ class AI_ATTACK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     IsFirstAttack: int = ParamField(
-        byte, "isFirstAttack", default=0,
+        byte, "isFirstAttack", AI_ATTACK_BOOL, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DoesSelectOnOutRange: int = ParamField(
-        byte, "doesSelectOnOutRange", default=0,
+        byte, "doesSelectOnOutRange", AI_ATTACK_BOOL, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MinOptimalDistance: float = ParamField(
@@ -74,27 +74,27 @@ class AI_ATTACK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     IntervalForExec: float = ParamField(
-        float, "intervalForExec", default=1,
+        float, "intervalForExec", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SelectionTendency: float = ParamField(
-        float, "selectionTendency", default=-1,
+        float, "selectionTendency", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     ShortRangeTendency: float = ParamField(
-        float, "shortRangeTendency", default=-1,
+        float, "shortRangeTendency", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     MiddleRangeTendency: float = ParamField(
-        float, "middleRangeTendency", default=-1,
+        float, "middleRangeTendency", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     FarRangeTendency: float = ParamField(
-        float, "farRangeTendency", default=-1,
+        float, "farRangeTendency", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     OutRangeTendency: float = ParamField(
-        float, "outRangeTendency", default=-1,
+        float, "outRangeTendency", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DeriveAttackId1: int = ParamField(
@@ -170,15 +170,15 @@ class AI_ATTACK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DoesSelectOnInnerRange: int = ParamField(
-        byte, "doesSelectOnInnerRange", default=0,
+        byte, "doesSelectOnInnerRange", AI_ATTACK_BOOL, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EnableAttackOnBattleStart: int = ParamField(
-        byte, "enableAttackOnBattleStart", default=1,
+        byte, "enableAttackOnBattleStart", AI_ATTACK_BOOL, default=1,
         tooltip="TOOLTIP-TODO",
     )
     DoesSelectOnTargetDown: int = ParamField(
-        byte, "doesSelectOnTargetDown", default=1,
+        byte, "doesSelectOnTargetDown", AI_ATTACK_BOOL, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad1[1]")
@@ -191,10 +191,10 @@ class AI_ATTACK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ComboExecDistance: float = ParamField(
-        float, "comboExecDistance", default=4,
+        float, "comboExecDistance", default=4.0,
         tooltip="TOOLTIP-TODO",
     )
     ComboExecRange: float = ParamField(
-        float, "comboExecRange", default=180,
+        float, "comboExecRange", default=180.0,
         tooltip="TOOLTIP-TODO",
     )

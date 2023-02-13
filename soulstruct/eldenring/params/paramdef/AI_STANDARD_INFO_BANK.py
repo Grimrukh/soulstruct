@@ -34,7 +34,7 @@ class AI_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ForceThreatOnFirstLocked: int = ParamField(
-        byte, "ForceThreatOnFirstLocked", default=0,
+        byte, "ForceThreatOnFirstLocked", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(24, "reserve0[24]")
@@ -51,7 +51,7 @@ class AI_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Attack1ActionID: int = ParamField(
-        byte, "Attack1_ActionID", default=0,
+        byte, "Attack1_ActionID", ACTION_PATTERN, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Attack1DelayMin: int = ParamField(
@@ -80,7 +80,7 @@ class AI_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Attack2ActionID: int = ParamField(
-        byte, "Attack2_ActionID", default=0,
+        byte, "Attack2_ActionID", ACTION_PATTERN, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Attack2DelayMin: int = ParamField(
@@ -109,7 +109,7 @@ class AI_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Attack3ActionID: int = ParamField(
-        byte, "Attack3_ActionID", default=0,
+        byte, "Attack3_ActionID", ACTION_PATTERN, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Attack3DelayMin: int = ParamField(
@@ -138,7 +138,7 @@ class AI_STANDARD_INFO_BANK(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Attack4ActionID: int = ParamField(
-        byte, "Attack4_ActionID", default=0,
+        byte, "Attack4_ActionID", ACTION_PATTERN, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Attack4DelayMin: int = ParamField(

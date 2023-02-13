@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class MENU_PARAM_COLOR_TABLE_ST(ParamRow):
     LerpMode: int = ParamField(
-        byte, "lerpMode", default=0,
+        byte, "lerpMode", MENU_COLOR_LERP_MODE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "pad1[3]")
@@ -24,26 +24,26 @@ class MENU_PARAM_COLOR_TABLE_ST(ParamRow):
     )
     _Pad1: bytes = ParamPad(2, "pad2[2]")
     S1: float = ParamField(
-        float, "s1", default=1,
+        float, "s1", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     V1: float = ParamField(
-        float, "v1", default=1,
+        float, "v1", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     S2: float = ParamField(
-        float, "s2", default=1,
+        float, "s2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     V2: float = ParamField(
-        float, "v2", default=1,
+        float, "v2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     S3: float = ParamField(
-        float, "s3", default=1,
+        float, "s3", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     V3: float = ParamField(
-        float, "v3", default=1,
+        float, "v3", default=1.0,
         tooltip="TOOLTIP-TODO",
     )

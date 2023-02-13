@@ -284,7 +284,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         if ((flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset) and _row_data_offset != 0:
             raise ValueError(f"Expected `_row_data_offset` of zero in this `Param`, not: {_row_data_offset}")
         unknown = reader["H"]
-        if unknown not in {0, 1}:
+        if unknown not in {0, 1, 2}:  # TODO: Value of 2 in Elden Ring 'BaseChrSelectMenuParam'
             raise ValueError(f"Expected `unknown` of 0 or 1 in this `Param`, not: {unknown}")
         paramdef_data_version = reader["H"]
         row_count = reader["H"]
@@ -484,15 +484,18 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
 
         byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
         reader.default_byte_order = byte_order
-        version_info = reader.unpack("bbb", offset=0x2d)
+        version_info = reader.unpack("BBB", offset=0x2d)
         flags1 = ParamFlags1(version_info[0])
 
+        reader.unpack_value("I")
         _row_data_offset = reader["H"]  # NOT USED! It's an unsigned short, but can be larger.
         if ((flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset) and _row_data_offset != 0:
             raise ValueError(f"Expected `_row_data_offset` of zero in this `Param`, not: {_row_data_offset}")
         unknown = reader["H"]
-        if unknown not in {0, 1}:
+        if unknown not in {0, 1, 2}:  # TODO: Values of 2 found in Elden Ring.
             raise ValueError(f"Expected `unknown` of 0 or 1 in this `Param`, not: {unknown}")
+
+        reader.unpack("HH")  # paramdef data version, row count
 
         if flags1.OffsetParam:
             reader.assert_pad(4)
@@ -740,6 +743,8 @@ class ParamDict(Param):
 def TypedParam(data_type: tp.Type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
     for param_subclass in Param.__subclasses__():
+        if param_subclass.__name__ == "ParamDict":
+            continue
         if param_subclass.ROW_TYPE is data_type:
             return param_subclass
     return type(f"Param_{data_type.__name__}", (Param,), {"ROW_TYPE": data_type})

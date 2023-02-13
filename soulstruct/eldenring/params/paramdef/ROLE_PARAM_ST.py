@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class ROLE_PARAM_ST(ParamRow):
     TeamType: int = ParamField(
-        byte, "teamType", default=0,
+        byte, "teamType", TEAM_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "pad10[3]")
@@ -79,11 +79,11 @@ class ROLE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     VoiceChatGroup: int = ParamField(
-        byte, "voiceChatGroup", default=0,
+        byte, "voiceChatGroup", VOICE_CHAT_GROUP_Type, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RoleNameColor: int = ParamField(
-        byte, "roleNameColor", default=0,
+        byte, "roleNameColor", ROLE_NAME_COLOR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(2, "pad1[2]")

@@ -14,19 +14,19 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_SSAO_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=1,
+        byte, "enabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     CsreprojEnabledType: int = ParamField(
-        byte, "cs_reprojEnabledType", default=1,
+        byte, "cs_reprojEnabledType", CS_GCONFIG_ENABLED_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     CsupScaleEnabledType: int = ParamField(
-        byte, "cs_upScaleEnabledType", default=0,
+        byte, "cs_upScaleEnabledType", CS_GCONFIG_ENABLED_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CsuseNormalEnabledType: int = ParamField(
-        byte, "cs_useNormalEnabledType", default=1,
+        byte, "cs_useNormalEnabledType", CS_GCONFIG_ENABLED_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "dmy[1]")

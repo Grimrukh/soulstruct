@@ -22,16 +22,16 @@ class MENUPROPERTY_SPEC(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RequiredPropertyID: int = ParamField(
-        uint, "RequiredPropertyID", default=0,
+        uint, "RequiredPropertyID", MENU_PROPERTY_ID, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CompareType: int = ParamField(
-        sbyte, "CompareType", default=0,
+        sbyte, "CompareType", MENU_PROPERTY_CMP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad2[1]")
     FormatType: int = ParamField(
-        ushort, "FormatType", default=0,
+        ushort, "FormatType", MENU_PROPERTY_FORMAT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(16, "pad[16]")

@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BONFIRE_WARP_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     EventflagId: int = ParamField(
         uint, "eventflagId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -27,7 +27,7 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         uint, "bonfireEntityId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(2, "pad4[2]")
+    _Pad1: bytes = ParamPad(2, "pad4[2]")
     BonfireSubCategorySortId: int = ParamField(
         ushort, "bonfireSubCategorySortId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -56,16 +56,16 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask00: int = ParamField(
-        byte, "dispMask00:1", default=0,
+    DispMask00: bool = ParamField(
+        byte, "dispMask00:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask01: int = ParamField(
-        byte, "dispMask01:1", default=0,
+    DispMask01: bool = ParamField(
+        byte, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad1:6")
-    _Pad4: bytes = ParamPad(1, "pad2[1]")
+    _BitPad1: int = ParamBitPad(byte, "pad1:6", bit_count=6)
+    _Pad2: bytes = ParamPad(1, "pad2[1]")
     AreaNo: int = ParamField(
         byte, "areaNo", default=0,
         tooltip="TOOLTIP-TODO",
@@ -78,7 +78,7 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         byte, "gridZNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(1, "pad3[1]")
+    _Pad3: bytes = ParamPad(1, "pad3[1]")
     PosX: float = ParamField(
         float, "posX", default=0.0,
         tooltip="TOOLTIP-TODO",
@@ -188,35 +188,35 @@ class BONFIRE_WARP_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     TextType1: int = ParamField(
-        byte, "textType1", default=0,
+        byte, "textType1", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType2: int = ParamField(
-        byte, "textType2", default=0,
+        byte, "textType2", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType3: int = ParamField(
-        byte, "textType3", default=0,
+        byte, "textType3", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType4: int = ParamField(
-        byte, "textType4", default=0,
+        byte, "textType4", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType5: int = ParamField(
-        byte, "textType5", default=0,
+        byte, "textType5", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType6: int = ParamField(
-        byte, "textType6", default=0,
+        byte, "textType6", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType7: int = ParamField(
-        byte, "textType7", default=0,
+        byte, "textType7", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType8: int = ParamField(
-        byte, "textType8", default=0,
+        byte, "textType8", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     NoIgnitionSfxDmypolyId0: int = ParamField(

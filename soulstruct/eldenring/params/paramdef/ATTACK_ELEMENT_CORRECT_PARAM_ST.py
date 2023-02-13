@@ -13,107 +13,107 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ATTACK_ELEMENT_CORRECT_PARAM_ST(ParamRow):
-    IsStrengthCorrectbyPhysics: int = ParamField(
-        byte, "isStrengthCorrect_byPhysics:1", default=0,
+    IsStrengthCorrectbyPhysics: bool = ParamField(
+        byte, "isStrengthCorrect_byPhysics:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDexterityCorrectbyPhysics: int = ParamField(
-        byte, "isDexterityCorrect_byPhysics:1", default=0,
+    IsDexterityCorrectbyPhysics: bool = ParamField(
+        byte, "isDexterityCorrect_byPhysics:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMagicCorrectbyPhysics: int = ParamField(
-        byte, "isMagicCorrect_byPhysics:1", default=0,
+    IsMagicCorrectbyPhysics: bool = ParamField(
+        byte, "isMagicCorrect_byPhysics:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFaithCorrectbyPhysics: int = ParamField(
-        byte, "isFaithCorrect_byPhysics:1", default=0,
+    IsFaithCorrectbyPhysics: bool = ParamField(
+        byte, "isFaithCorrect_byPhysics:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLuckCorrectbyPhysics: int = ParamField(
-        byte, "isLuckCorrect_byPhysics:1", default=0,
+    IsLuckCorrectbyPhysics: bool = ParamField(
+        byte, "isLuckCorrect_byPhysics:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStrengthCorrectbyMagic: int = ParamField(
-        byte, "isStrengthCorrect_byMagic:1", default=0,
+    IsStrengthCorrectbyMagic: bool = ParamField(
+        byte, "isStrengthCorrect_byMagic:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDexterityCorrectbyMagic: int = ParamField(
-        byte, "isDexterityCorrect_byMagic:1", default=0,
+    IsDexterityCorrectbyMagic: bool = ParamField(
+        byte, "isDexterityCorrect_byMagic:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMagicCorrectbyMagic: int = ParamField(
-        byte, "isMagicCorrect_byMagic:1", default=0,
+    IsMagicCorrectbyMagic: bool = ParamField(
+        byte, "isMagicCorrect_byMagic:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFaithCorrectbyMagic: int = ParamField(
-        byte, "isFaithCorrect_byMagic:1", default=0,
+    IsFaithCorrectbyMagic: bool = ParamField(
+        byte, "isFaithCorrect_byMagic:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLuckCorrectbyMagic: int = ParamField(
-        byte, "isLuckCorrect_byMagic:1", default=0,
+    IsLuckCorrectbyMagic: bool = ParamField(
+        byte, "isLuckCorrect_byMagic:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStrengthCorrectbyFire: int = ParamField(
-        byte, "isStrengthCorrect_byFire:1", default=0,
+    IsStrengthCorrectbyFire: bool = ParamField(
+        byte, "isStrengthCorrect_byFire:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDexterityCorrectbyFire: int = ParamField(
-        byte, "isDexterityCorrect_byFire:1", default=0,
+    IsDexterityCorrectbyFire: bool = ParamField(
+        byte, "isDexterityCorrect_byFire:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMagicCorrectbyFire: int = ParamField(
-        byte, "isMagicCorrect_byFire:1", default=0,
+    IsMagicCorrectbyFire: bool = ParamField(
+        byte, "isMagicCorrect_byFire:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFaithCorrectbyFire: int = ParamField(
-        byte, "isFaithCorrect_byFire:1", default=0,
+    IsFaithCorrectbyFire: bool = ParamField(
+        byte, "isFaithCorrect_byFire:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLuckCorrectbyFire: int = ParamField(
-        byte, "isLuckCorrect_byFire:1", default=0,
+    IsLuckCorrectbyFire: bool = ParamField(
+        byte, "isLuckCorrect_byFire:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStrengthCorrectbyThunder: int = ParamField(
-        byte, "isStrengthCorrect_byThunder:1", default=0,
+    IsStrengthCorrectbyThunder: bool = ParamField(
+        byte, "isStrengthCorrect_byThunder:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDexterityCorrectbyThunder: int = ParamField(
-        byte, "isDexterityCorrect_byThunder:1", default=0,
+    IsDexterityCorrectbyThunder: bool = ParamField(
+        byte, "isDexterityCorrect_byThunder:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMagicCorrectbyThunder: int = ParamField(
-        byte, "isMagicCorrect_byThunder:1", default=0,
+    IsMagicCorrectbyThunder: bool = ParamField(
+        byte, "isMagicCorrect_byThunder:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFaithCorrectbyThunder: int = ParamField(
-        byte, "isFaithCorrect_byThunder:1", default=0,
+    IsFaithCorrectbyThunder: bool = ParamField(
+        byte, "isFaithCorrect_byThunder:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLuckCorrectbyThunder: int = ParamField(
-        byte, "isLuckCorrect_byThunder:1", default=0,
+    IsLuckCorrectbyThunder: bool = ParamField(
+        byte, "isLuckCorrect_byThunder:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsStrengthCorrectbyDark: int = ParamField(
-        byte, "isStrengthCorrect_byDark:1", default=0,
+    IsStrengthCorrectbyDark: bool = ParamField(
+        byte, "isStrengthCorrect_byDark:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDexterityCorrectbyDark: int = ParamField(
-        byte, "isDexterityCorrect_byDark:1", default=0,
+    IsDexterityCorrectbyDark: bool = ParamField(
+        byte, "isDexterityCorrect_byDark:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMagicCorrectbyDark: int = ParamField(
-        byte, "isMagicCorrect_byDark:1", default=0,
+    IsMagicCorrectbyDark: bool = ParamField(
+        byte, "isMagicCorrect_byDark:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFaithCorrectbyDark: int = ParamField(
-        byte, "isFaithCorrect_byDark:1", default=0,
+    IsFaithCorrectbyDark: bool = ParamField(
+        byte, "isFaithCorrect_byDark:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsLuckCorrectbyDark: int = ParamField(
-        byte, "isLuckCorrect_byDark:1", default=0,
+    IsLuckCorrectbyDark: bool = ParamField(
+        byte, "isLuckCorrect_byDark:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "pad1:7")
+    _BitPad0: int = ParamBitPad(byte, "pad1:7", bit_count=7)
     OverwriteStrengthCorrectRatebyPhysics: int = ParamField(
         short, "overwriteStrengthCorrectRate_byPhysics", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -314,4 +314,4 @@ class ATTACK_ELEMENT_CORRECT_PARAM_ST(ParamRow):
         short, "InfluenceLuckCorrectRate_byDark", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(24, "pad2[24]")
+    _Pad0: bytes = ParamPad(24, "pad2[24]")

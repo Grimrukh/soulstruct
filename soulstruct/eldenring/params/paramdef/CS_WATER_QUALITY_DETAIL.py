@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_WATER_QUALITY_DETAIL(ParamRow):
     InteractionEnabled: int = ParamField(
-        byte, "interactionEnabled", default=1,
+        byte, "interactionEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "dmy[3]")

@@ -14,18 +14,18 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_SHADER_QUALITY_DETAIL(ParamRow):
     SssEnabled: int = ParamField(
-        byte, "sssEnabled", default=1,
+        byte, "sssEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     TessellationEnabled: int = ParamField(
-        byte, "tessellationEnabled", default=0,
+        byte, "tessellationEnabled", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     HighPrecisionNormalEnabled: int = ParamField(
-        byte, "highPrecisionNormalEnabled", default=0,
+        byte, "highPrecisionNormalEnabled", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Dmy: bytes = ParamField(
-        bytes, "dmy[1]", length=1, default='',
+    Dmy: str = ParamField(
+        str, "dmy[1]", encoding="shift_jis_2004", length=1, default='',
         tooltip="TOOLTIP-TODO",
     )

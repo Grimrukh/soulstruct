@@ -13,159 +13,159 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MOVE_PARAM_ST(ParamRow):
-    StillAnimation: int = ParamField(
+    StayId: int = ParamField(
         int, "stayId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    WalkForwardAnimatiom: int = ParamField(
+    WalkF: int = ParamField(
         int, "walkF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    WalkBackwardAnimation: int = ParamField(
+    WalkB: int = ParamField(
         int, "walkB", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    StrafeLeftAnimation: int = ParamField(
+    WalkL: int = ParamField(
         int, "walkL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    StrafeRightAnimation: int = ParamField(
+    WalkR: int = ParamField(
         int, "walkR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunForwardAnimation: int = ParamField(
+    DashF: int = ParamField(
         int, "dashF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunBackwardAnimation: int = ParamField(
+    DashB: int = ParamField(
         int, "dashB", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    StrafeRunLeftAnimation: int = ParamField(
+    DashL: int = ParamField(
         int, "dashL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    StrafeRunRightAnimation: int = ParamField(
+    DashR: int = ParamField(
         int, "dashR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SprintForwardAnimation: int = ParamField(
+    SuperDash: int = ParamField(
         int, "superDash", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RollForwardAnimation: int = ParamField(
+    EscapeF: int = ParamField(
         int, "escapeF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RollBackwardAnimation: int = ParamField(
+    EscapeB: int = ParamField(
         int, "escapeB", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RollLeftAnimation: int = ParamField(
+    EscapeL: int = ParamField(
         int, "escapeL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RollRightAnimation: int = ParamField(
+    EscapeR: int = ParamField(
         int, "escapeR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    TurnLeftAnimation: int = ParamField(
+    TurnL: int = ParamField(
         int, "turnL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    TurnRightAnimation: int = ParamField(
+    TrunR: int = ParamField(
         int, "trunR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    LargeTurnLeftAnimation: int = ParamField(
+    LargeTurnL: int = ParamField(
         int, "largeTurnL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    LargeTurnRightAnimation: int = ParamField(
+    LargeTurnR: int = ParamField(
         int, "largeTurnR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    BackstepAnimation: int = ParamField(
+    StepMove: int = ParamField(
         int, "stepMove", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HoverAnimation: int = ParamField(
+    FlyStay: int = ParamField(
         int, "flyStay", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardAnimation: int = ParamField(
+    FlyWalkF: int = ParamField(
         int, "flyWalkF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardLeftAnimation: int = ParamField(
+    FlyWalkFL: int = ParamField(
         int, "flyWalkFL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardRightAnimation: int = ParamField(
+    FlyWalkFR: int = ParamField(
         int, "flyWalkFR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardLeft2Animation: int = ParamField(
+    FlyWalkFL2: int = ParamField(
         int, "flyWalkFL2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardRight2Animation: int = ParamField(
+    FlyWalkFR2: int = ParamField(
         int, "flyWalkFR2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardFastAnimation: int = ParamField(
+    FlyDashF: int = ParamField(
         int, "flyDashF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardLeftFastAnimation: int = ParamField(
+    FlyDashFL: int = ParamField(
         int, "flyDashFL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardRightFastAnimation: int = ParamField(
+    FlyDashFR: int = ParamField(
         int, "flyDashFR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardLeftFast2Animation: int = ParamField(
+    FlyDashFL2: int = ParamField(
         int, "flyDashFL2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlyForwardRightFast2Animation: int = ParamField(
+    FlyDashFR2: int = ParamField(
         int, "flyDashFR2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunningRollForwardAnimation: int = ParamField(
+    DashEscapeF: int = ParamField(
         int, "dashEscapeF", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunningRollBackwardAnimation: int = ParamField(
+    DashEscapeB: int = ParamField(
         int, "dashEscapeB", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunningRollLeftAnimation: int = ParamField(
+    DashEscapeL: int = ParamField(
         int, "dashEscapeL", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RunningRollRightAnimation: int = ParamField(
+    DashEscapeR: int = ParamField(
         int, "dashEscapeR", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    AnalogMovement: int = ParamField(
+    AnalogMoveParamId: int = ParamField(
         int, "analogMoveParamId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    TurnNoAnimationAngle: int = ParamField(
+    TurnNoAnimAngle: int = ParamField(
         byte, "turnNoAnimAngle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Turn45DegreeAngle: int = ParamField(
+    Turn45Angle: int = ParamField(
         byte, "turn45Angle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Turn90DegreeAngle: int = ParamField(
+    Turn90Angle: int = ParamField(
         byte, "turn90Angle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    TurnWaitNoAnimationAngle: int = ParamField(
+    TurnWaitNoAnimAngle: int = ParamField(
         byte, "turnWaitNoAnimAngle", default=0,
         tooltip="TOOLTIP-TODO",
     )

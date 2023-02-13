@@ -26,7 +26,7 @@ class MENU_OFFSCR_REND_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CamDist: float = ParamField(
-        float, "camDist", default=10,
+        float, "camDist", default=10.0,
         tooltip="TOOLTIP-TODO",
     )
     CamRotX: float = ParamField(
@@ -38,7 +38,7 @@ class MENU_OFFSCR_REND_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CamFov: float = ParamField(
-        float, "camFov", default=49,
+        float, "camFov", default=49.0,
         tooltip="TOOLTIP-TODO",
     )
     CamDistMin: float = ParamField(
@@ -46,15 +46,15 @@ class MENU_OFFSCR_REND_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CamDistMax: float = ParamField(
-        float, "camDistMax", default=100,
+        float, "camDistMax", default=100.0,
         tooltip="TOOLTIP-TODO",
     )
     CamRotXMin: float = ParamField(
-        float, "camRotXMin", default=-89,
+        float, "camRotXMin", default=-89.0,
         tooltip="TOOLTIP-TODO",
     )
     CamRotXMax: float = ParamField(
-        float, "camRotXMax", default=89,
+        float, "camRotXMax", default=89.0,
         tooltip="TOOLTIP-TODO",
     )
     GparamID: int = ParamField(

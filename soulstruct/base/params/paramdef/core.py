@@ -167,7 +167,7 @@ class ParamDef(GameFile):
              f"      name = {f.name}\n"
              f"      description = {f.description}\n"
              f"      size = {f.size}\n"
-             f"      internal_type = {f.internal_type}\n"
+             f"      internal_type = {f.internal_type_name}\n"
              f"      param_type = {f.param_type}\n"
              f"      display_name = {f.display_name}\n"
              f"      display_type = {f.display_type}\n"

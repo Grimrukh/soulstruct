@@ -34,22 +34,22 @@ class RESIST_CORRECT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AddRate1: float = ParamField(
-        float, "addRate1", default=1,
+        float, "addRate1", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AddRate2: float = ParamField(
-        float, "addRate2", default=1,
+        float, "addRate2", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AddRate3: float = ParamField(
-        float, "addRate3", default=1,
+        float, "addRate3", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AddRate4: float = ParamField(
-        float, "addRate4", default=1,
+        float, "addRate4", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AddRate5: float = ParamField(
-        float, "addRate5", default=1,
+        float, "addRate5", default=1.0,
         tooltip="TOOLTIP-TODO",
     )

@@ -18,14 +18,14 @@ class SOUND_AUTO_ENV_SOUND_GROUP_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ExpandRange: float = ParamField(
-        float, "ExpandRange", default=100,
+        float, "ExpandRange", default=100.0,
         tooltip="TOOLTIP-TODO",
     )
     FollowSpeed: float = ParamField(
-        float, "FollowSpeed", default=0,
+        float, "FollowSpeed", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     FollowRate: float = ParamField(
-        float, "FollowRate", default=0,
+        float, "FollowRate", default=0.015,
         tooltip="TOOLTIP-TODO",
     )

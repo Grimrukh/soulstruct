@@ -30,7 +30,7 @@ _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
 
 @dataclass(slots=True)
-class BaseBinaryFile(abc.ABC):
+class BaseBinaryFile:
     """Base class for anything that is represented in binary at some point: notably `GameFile` and `BaseBinder`.
 
     Includes methods for recording and automating DCX compression.

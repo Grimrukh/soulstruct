@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class WORLD_MAP_POINT_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     EventFlagId: int = ParamField(
         uint, "eventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -32,22 +32,22 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BgmPlaceType: int = ParamField(
-        short, "bgmPlaceType", default=0,
+        short, "bgmPlaceType", SOUND_BGM_MAP_PLACE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsAreaIcon: int = ParamField(
-        byte, "isAreaIcon:1", default=0,
+    IsAreaIcon: bool = ParamField(
+        byte, "isAreaIcon:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsOverrideDistViewMarkPos: int = ParamField(
-        byte, "isOverrideDistViewMarkPos:1", default=0,
+    IsOverrideDistViewMarkPos: bool = ParamField(
+        byte, "isOverrideDistViewMarkPos:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableNoText: int = ParamField(
-        byte, "isEnableNoText:1", default=0,
+    IsEnableNoText: bool = ParamField(
+        byte, "isEnableNoText:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad3:5")
+    _BitPad1: int = ParamBitPad(byte, "pad3:5", bit_count=5)
     AreaNoforDistViewMark: int = ParamField(
         byte, "areaNo_forDistViewMark", default=0,
         tooltip="TOOLTIP-TODO",
@@ -64,16 +64,16 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         uint, "clearedEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask00: int = ParamField(
-        byte, "dispMask00:1", default=0,
+    DispMask00: bool = ParamField(
+        byte, "dispMask00:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DispMask01: int = ParamField(
-        byte, "dispMask01:1", default=0,
+    DispMask01: bool = ParamField(
+        byte, "dispMask01:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad2_0:6")
-    _Pad4: bytes = ParamPad(1, "pad2[1]")
+    _BitPad2: int = ParamBitPad(byte, "pad2_0:6", bit_count=6)
+    _Pad1: bytes = ParamPad(1, "pad2[1]")
     DistViewIconId: int = ParamField(
         ushort, "distViewIconId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -94,7 +94,7 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         byte, "gridZNo", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(1, "pad[1]")
+    _Pad2: bytes = ParamPad(1, "pad[1]")
     PosX: float = ParamField(
         float, "posX", default=0.0,
         tooltip="TOOLTIP-TODO",
@@ -204,35 +204,35 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     TextType1: int = ParamField(
-        byte, "textType1", default=0,
+        byte, "textType1", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType2: int = ParamField(
-        byte, "textType2", default=0,
+        byte, "textType2", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType3: int = ParamField(
-        byte, "textType3", default=0,
+        byte, "textType3", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType4: int = ParamField(
-        byte, "textType4", default=0,
+        byte, "textType4", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType5: int = ParamField(
-        byte, "textType5", default=0,
+        byte, "textType5", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType6: int = ParamField(
-        byte, "textType6", default=0,
+        byte, "textType6", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType7: int = ParamField(
-        byte, "textType7", default=0,
+        byte, "textType7", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TextType8: int = ParamField(
-        byte, "textType8", default=0,
+        byte, "textType8", WORLD_MAP_POINT_TEXT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DistViewId: int = ParamField(
@@ -272,10 +272,10 @@ class WORLD_MAP_POINT_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     EntryFEType: int = ParamField(
-        byte, "entryFEType", default=0,
+        byte, "entryFEType", WORLD_MAP_ENTRY_FE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(9, "pad4[9]")
+    _Pad3: bytes = ParamPad(9, "pad4[9]")
     UnkC0: int = ParamField(
         int, "unkC0", default=0,
         tooltip="TOOLTIP-TODO",

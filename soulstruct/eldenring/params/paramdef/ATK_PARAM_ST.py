@@ -13,23 +13,23 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ATK_PARAM_ST(ParamRow):
-    Hitbox0Radius: float = ParamField(
+    Hit0Radius: float = ParamField(
         float, "hit0_Radius", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox1Radius: float = ParamField(
+    Hit1Radius: float = ParamField(
         float, "hit1_Radius", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox2Radius: float = ParamField(
+    Hit2Radius: float = ParamField(
         float, "hit2_Radius", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox3Radius: float = ParamField(
+    Hit3Radius: float = ParamField(
         float, "hit3_Radius", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    KnockbackDistance: float = ParamField(
+    KnockbackDist: float = ParamField(
         float, "knockbackDist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -37,317 +37,317 @@ class ATK_PARAM_ST(ParamRow):
         float, "hitStopTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit0: int = ParamField(
+    SpEffectId0: int = ParamField(
         int, "spEffectId0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit1: int = ParamField(
+    SpEffectId1: int = ParamField(
         int, "spEffectId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit2: int = ParamField(
+    SpEffectId2: int = ParamField(
         int, "spEffectId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit3: int = ParamField(
+    SpEffectId3: int = ParamField(
         int, "spEffectId3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffectOnHit4: int = ParamField(
+    SpEffectId4: int = ParamField(
         int, "spEffectId4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox0StartModelPoint: int = ParamField(
+    Hit0DmyPoly1: int = ParamField(
         short, "hit0_DmyPoly1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox1StartModelPoint: int = ParamField(
+    Hit1DmyPoly1: int = ParamField(
         short, "hit1_DmyPoly1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox2StartModelPoint: int = ParamField(
+    Hit2DmyPoly1: int = ParamField(
         short, "hit2_DmyPoly1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox3StartModelPoint: int = ParamField(
+    Hit3DmyPoly1: int = ParamField(
         short, "hit3_DmyPoly1", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox0EndModelPoint: int = ParamField(
+    Hit0DmyPoly2: int = ParamField(
         short, "hit0_DmyPoly2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox1EndModelPoint: int = ParamField(
+    Hit1DmyPoly2: int = ParamField(
         short, "hit1_DmyPoly2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox2EndModelPoint: int = ParamField(
+    Hit2DmyPoly2: int = ParamField(
         short, "hit2_DmyPoly2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox3EndModelPoint: int = ParamField(
+    Hit3DmyPoly2: int = ParamField(
         short, "hit3_DmyPoly2", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BlowOffCorrection: int = ParamField(
+    BlowingCorrection: int = ParamField(
         ushort, "blowingCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalAttackPowerPercentage: int = ParamField(
+    AtkPhysCorrection: int = ParamField(
         ushort, "atkPhysCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicAttackPowerPercentage: int = ParamField(
+    AtkMagCorrection: int = ParamField(
         ushort, "atkMagCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FireAttackPowerPercentage: int = ParamField(
+    AtkFireCorrection: int = ParamField(
         ushort, "atkFireCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningAttackPowerPercentage: int = ParamField(
+    AtkThunCorrection: int = ParamField(
         ushort, "atkThunCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaAttackPowerPercentage: int = ParamField(
+    AtkStamCorrection: int = ParamField(
         ushort, "atkStamCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardAttackPercentage: int = ParamField(
+    GuardAtkRateCorrection: int = ParamField(
         ushort, "guardAtkRateCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardBreakPercentage: int = ParamField(
+    GuardBreakCorrection: int = ParamField(
         ushort, "guardBreakCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AttackDuringThrowPercentage: int = ParamField(
+    AtkThrowEscapeCorrection: int = ParamField(
         ushort, "atkThrowEscapeCorrection", default=0,
         tooltip="TOOLTIP-TODO",
     )
     SubCategory1: int = ParamField(
-        byte, "subCategory1", default=0,
+        byte, "subCategory1", ATK_SUB_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SubCategory2: int = ParamField(
-        byte, "subCategory2", default=0,
+        byte, "subCategory2", ATK_SUB_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalAttackPower: int = ParamField(
+    AtkPhys: int = ParamField(
         ushort, "atkPhys", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicAttackPower: int = ParamField(
+    AtkMag: int = ParamField(
         ushort, "atkMag", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FireAttackPower: int = ParamField(
+    AtkFire: int = ParamField(
         ushort, "atkFire", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningAttackPower: int = ParamField(
+    AtkThun: int = ParamField(
         ushort, "atkThun", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaAttackPower: int = ParamField(
+    AtkStam: int = ParamField(
         ushort, "atkStam", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardAttackPower: int = ParamField(
+    GuardAtkRate: int = ParamField(
         ushort, "guardAtkRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardBreakPower: int = ParamField(
+    GuardBreakRate: int = ParamField(
         ushort, "guardBreakRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad6[1]")
     IsEnableCalcDamageForBushesObj: int = ParamField(
-        byte, "isEnableCalcDamageForBushesObj", default=0,
+        byte, "isEnableCalcDamageForBushesObj", ATK_PARAM_BOOL, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AttackPowerDuringThrows: int = ParamField(
+    AtkThrowEscape: int = ParamField(
         ushort, "atkThrowEscape", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ObjectDamage: int = ParamField(
+    AtkObj: int = ParamField(
         ushort, "atkObj", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardStaminaPercentage: int = ParamField(
+    GuardStaminaCutRate: int = ParamField(
         short, "guardStaminaCutRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    GuardPercentage: int = ParamField(
+    GuardRate: int = ParamField(
         short, "guardRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ThrowID: int = ParamField(
+    ThrowTypeId: int = ParamField(
         ushort, "throwTypeId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox0HitType: int = ParamField(
-        byte, "hit0_hitType", default=0,
+    Hit0hitType: int = ParamField(
+        byte, "hit0_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox1HitType: int = ParamField(
-        byte, "hit1_hitType", default=0,
+    Hit1hitType: int = ParamField(
+        byte, "hit1_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox2HitType: int = ParamField(
-        byte, "hit2_hitType", default=0,
+    Hit2hitType: int = ParamField(
+        byte, "hit2_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox3HitType: int = ParamField(
-        byte, "hit3_hitType", default=0,
+    Hit3hitType: int = ParamField(
+        byte, "hit3_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox0Priority: int = ParamField(
+    Hti0Priority: int = ParamField(
         byte, "hti0_Priority", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox1Priority: int = ParamField(
+    Hti1Priority: int = ParamField(
         byte, "hti1_Priority", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox2Priority: int = ParamField(
+    Hti2Priority: int = ParamField(
         byte, "hti2_Priority", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Hitbox3Priority: int = ParamField(
+    Hti3Priority: int = ParamField(
         byte, "hti3_Priority", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ImpactLevel: int = ParamField(
+    DmgLevel: int = ParamField(
         byte, "dmgLevel", default=0,
         tooltip="TOOLTIP-TODO",
     )
     MapHitType: int = ParamField(
-        byte, "mapHitType", default=0,
+        byte, "mapHitType", ATK_PARAM_MAP_HIT, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreGuardPercentage: int = ParamField(
+    GuardCutCancelRate: int = ParamField(
         sbyte, "guardCutCancelRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AttackAttribute: int = ParamField(
-        byte, "atkAttribute", default=0,
+    AtkAttribute: int = ParamField(
+        byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ElementAttribute: int = ParamField(
-        byte, "spAttribute", default=0,
+    SpAttribute: int = ParamField(
+        byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VisualSoundEffectsOnAttack: int = ParamField(
-        byte, "atkType", default=0,
+    AtkType: int = ParamField(
+        byte, "atkType", BEHAVIOR_ATK_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    VisualSoundEffectsOnHit: int = ParamField(
-        byte, "atkMaterial", default=0,
+    AtkMaterial: int = ParamField(
+        byte, "atkMaterial", WEP_MATERIAL_ATK, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GuardRangeType: int = ParamField(
-        byte, "guardRangeType", default=0,
+        byte, "guardRangeType", ATKPARAM_GUARD_RANGE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DefSeMaterial1: int = ParamField(
-        ushort, "defSeMaterial1", default=0,
+        ushort, "defSeMaterial1", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ModelPointSource: int = ParamField(
-        byte, "hitSourceType", default=0,
+    HitSourceType: int = ParamField(
+        byte, "hitSourceType", ATK_PARAM_HIT_SOURCE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ThrowFlag: int = ParamField(
-        byte, "throwFlag", default=0,
+        byte, "throwFlag", ATK_PATAM_THROWFLAG_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreGuard: int = ParamField(
-        byte, "disableGuard:1", default=0,
+    DisableGuard: bool = ParamField(
+        byte, "disableGuard:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    NoStaminaDamage: int = ParamField(
-        byte, "disableStaminaAttack:1", default=0,
+    DisableStaminaAttack: bool = ParamField(
+        byte, "disableStaminaAttack:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    NoSpecialEffects: int = ParamField(
-        byte, "disableHitSpEffect:1", default=0,
+    DisableHitSpEffect: bool = ParamField(
+        byte, "disableHitSpEffect:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    NoMissNotificationForAI: int = ParamField(
-        byte, "IgnoreNotifyMissSwingForAI:1", default=0,
+    IgnoreNotifyMissSwingForAI: bool = ParamField(
+        byte, "IgnoreNotifyMissSwingForAI:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    RepeatHitSoundEffects: int = ParamField(
-        byte, "repeatHitSfx:1", default=0,
+    RepeatHitSfx: bool = ParamField(
+        byte, "repeatHitSfx:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsPhysicalProjectile: int = ParamField(
-        byte, "isArrowAtk:1", default=0,
+    IsArrowAtk: bool = ParamField(
+        byte, "isArrowAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAttackByGhost: int = ParamField(
-        byte, "isGhostAtk:1", default=0,
+    IsGhostAtk: bool = ParamField(
+        byte, "isGhostAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreInvincibilityFrames: int = ParamField(
-        byte, "isDisableNoDamage:1", default=0,
+    IsDisableNoDamage: bool = ParamField(
+        byte, "isDisableNoDamage:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     AtkPowforSfx: int = ParamField(
-        sbyte, "atkPow_forSfx", default=0,
+        sbyte, "atkPow_forSfx", ATKPARAM_SFX_ATK_POW, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkDirforSfx: int = ParamField(
-        sbyte, "atkDir_forSfx", default=0,
+        sbyte, "atkDir_forSfx", ATKPARAM_SFX_ATK_DIR, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AffectsEnemies: int = ParamField(
-        byte, "opposeTarget:1", default=1,
+    OpposeTarget: bool = ParamField(
+        byte, "opposeTarget:1", ATK_PARAM_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    AffectsAllies: int = ParamField(
-        byte, "friendlyTarget:1", default=0,
+    FriendlyTarget: bool = ParamField(
+        byte, "friendlyTarget:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    AffectsSelf: int = ParamField(
-        byte, "selfTarget:1", default=0,
+    SelfTarget: bool = ParamField(
+        byte, "selfTarget:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsCheckDoorPenetration: int = ParamField(
-        byte, "isCheckDoorPenetration:1", default=0,
+    IsCheckDoorPenetration: bool = ParamField(
+        byte, "isCheckDoorPenetration:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsVsRideAtk: int = ParamField(
-        byte, "isVsRideAtk:1", default=0,
+    IsVsRideAtk: bool = ParamField(
+        byte, "isVsRideAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAddBaseAtk: int = ParamField(
-        byte, "isAddBaseAtk:1", default=0,
+    IsAddBaseAtk: bool = ParamField(
+        byte, "isAddBaseAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ExcludeThreatLvNotify: int = ParamField(
-        byte, "excludeThreatLvNotify:1", default=0,
+    ExcludeThreatLvNotify: bool = ParamField(
+        byte, "excludeThreatLvNotify:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "pad1:1")
+    _BitPad0: int = ParamBitPad(byte, "pad1:1", bit_count=1)
     AtkBehaviorId: int = ParamField(
-        byte, "atkBehaviorId", default=0,
+        byte, "atkBehaviorId", ATKPARAM_BEHAVIOR_ID, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkPowforSe: int = ParamField(
-        sbyte, "atkPow_forSe", default=0,
+        sbyte, "atkPow_forSe", ATKPARAM_SE_ATK_POW, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseAttackPower: float = ParamField(
+    AtkSuperArmor: float = ParamField(
         float, "atkSuperArmor", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    DecalID1: int = ParamField(
+    DecalId1: int = ParamField(
         int, "decalId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    DecalID2: int = ParamField(
+    DecalId2: int = ParamField(
         int, "decalId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -616,51 +616,51 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Hit4hitType: int = ParamField(
-        byte, "hit4_hitType", default=0,
+        byte, "hit4_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit5hitType: int = ParamField(
-        byte, "hit5_hitType", default=0,
+        byte, "hit5_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit6hitType: int = ParamField(
-        byte, "hit6_hitType", default=0,
+        byte, "hit6_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit7hitType: int = ParamField(
-        byte, "hit7_hitType", default=0,
+        byte, "hit7_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit8hitType: int = ParamField(
-        byte, "hit8_hitType", default=0,
+        byte, "hit8_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit9hitType: int = ParamField(
-        byte, "hit9_hitType", default=0,
+        byte, "hit9_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit10hitType: int = ParamField(
-        byte, "hit10_hitType", default=0,
+        byte, "hit10_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit11hitType: int = ParamField(
-        byte, "hit11_hitType", default=0,
+        byte, "hit11_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit12hitType: int = ParamField(
-        byte, "hit12_hitType", default=0,
+        byte, "hit12_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit13hitType: int = ParamField(
-        byte, "hit13_hitType", default=0,
+        byte, "hit13_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit14hitType: int = ParamField(
-        byte, "hit14_hitType", default=0,
+        byte, "hit14_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hit15hitType: int = ParamField(
-        byte, "hit15_hitType", default=0,
+        byte, "hit15_hitType", ATK_PARAM_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hti4Priority: int = ParamField(
@@ -712,15 +712,15 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DefSfxMaterial1: int = ParamField(
-        ushort, "defSfxMaterial1", default=0,
+        ushort, "defSfxMaterial1", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DefSeMaterial2: int = ParamField(
-        ushort, "defSeMaterial2", default=0,
+        ushort, "defSeMaterial2", WEP_MATERIAL_DEF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DefSfxMaterial2: int = ParamField(
-        ushort, "defSfxMaterial2", default=0,
+        ushort, "defSfxMaterial2", WEP_MATERIAL_DEF_SFX, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkDarkCorrection: int = ParamField(
@@ -731,22 +731,22 @@ class ATK_PARAM_ST(ParamRow):
         ushort, "atkDark", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad5:1")
-    IsDisableParry: int = ParamField(
-        byte, "isDisableParry:1", default=1,
+    _BitPad1: int = ParamBitPad(byte, "pad5:1", bit_count=1)
+    IsDisableParry: bool = ParamField(
+        byte, "isDisableParry:1", ATK_PARAM_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsDisableBothHandsAtkBonus: int = ParamField(
-        byte, "isDisableBothHandsAtkBonus:1", default=0,
+    IsDisableBothHandsAtkBonus: bool = ParamField(
+        byte, "isDisableBothHandsAtkBonus:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsInvalidatedByNoDamageInAir: int = ParamField(
-        byte, "isInvalidatedByNoDamageInAir:1", default=0,
+    IsInvalidatedByNoDamageInAir: bool = ParamField(
+        byte, "isInvalidatedByNoDamageInAir:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad2:4")
+    _BitPad2: int = ParamBitPad(byte, "pad2:4", bit_count=4)
     DmgLevelvsPlayer: int = ParamField(
-        sbyte, "dmgLevel_vsPlayer", default=0,
+        sbyte, "dmgLevel_vsPlayer", ATKPARAM_REP_DMGTYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     StatusAilmentAtkPowerCorrectRate: int = ParamField(
@@ -766,11 +766,11 @@ class ATK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AtkBehaviorId2: int = ParamField(
-        byte, "atkBehaviorId_2", default=0,
+        byte, "atkBehaviorId_2", ATKPARAM_BEHAVIOR_ID, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ThrowDamageAttribute: int = ParamField(
-        byte, "throwDamageAttribute", default=0,
+        byte, "throwDamageAttribute", ATKPARAM_THROWATTR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     StatusAilmentAtkPowerCorrectRatebyPoint: int = ParamField(
@@ -789,23 +789,23 @@ class ATK_PARAM_ST(ParamRow):
         short, "decalBaseId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    WeaponRegainHPScale: int = ParamField(
+    WepRegainHpScale: int = ParamField(
         ushort, "wepRegainHpScale", default=100,
         tooltip="TOOLTIP-TODO",
     )
-    AttackRegainHP: int = ParamField(
+    AtkRegainHp: int = ParamField(
         ushort, "atkRegainHp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RegainTimeScale: float = ParamField(
-        float, "regainableTimeScale", default=1,
+    RegainableTimeScale: float = ParamField(
+        float, "regainableTimeScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    RegainHPRateScale: float = ParamField(
-        float, "regainableHpRateScale", default=1,
+    RegainableHpRateScale: float = ParamField(
+        float, "regainableHpRateScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    RegainableSlotID: int = ParamField(
+    RegainableSlotId: int = ParamField(
         sbyte, "regainableSlotId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -817,7 +817,7 @@ class ATK_PARAM_ST(ParamRow):
         short, "parryForwardOffset", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PoiseAttackPercentage: float = ParamField(
+    AtkSuperArmorCorrection: float = ParamField(
         float, "atkSuperArmorCorrection", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -825,4 +825,9 @@ class ATK_PARAM_ST(ParamRow):
         byte, "defSfxMaterialVariationValue", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(19, "pad4[19]")
+    _Pad1: bytes = ParamPad(19, "pad4[19]")
+    FinalDamageRateId: int = ParamField(
+        int, "finalDamageRateId", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    _Pad2: bytes = ParamPad(12, "pad7[12]")

@@ -14,35 +14,35 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class NPC_AI_ACTION_PARAM_ST(ParamRow):
     MoveDir: int = ParamField(
-        byte, "moveDir", default=0,
+        byte, "moveDir", NPC_AI_ACTION_MOVE_DIR, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Key1: int = ParamField(
-        byte, "key1", default=0,
+        byte, "key1", NPC_AI_ACTION_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Key2: int = ParamField(
-        byte, "key2", default=0,
+        byte, "key2", NPC_AI_ACTION_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Key3: int = ParamField(
-        byte, "key3", default=0,
+        byte, "key3", NPC_AI_ACTION_KEY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BMoveDirHold: int = ParamField(
-        byte, "bMoveDirHold", default=0,
+        byte, "bMoveDirHold", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BKeyHold1: int = ParamField(
-        byte, "bKeyHold1", default=0,
+        byte, "bKeyHold1", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BKeyHold2: int = ParamField(
-        byte, "bKeyHold2", default=0,
+        byte, "bKeyHold2", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BKeyHold3: int = ParamField(
-        byte, "bKeyHold3", default=0,
+        byte, "bKeyHold3", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GestureId: int = ParamField(
@@ -50,7 +50,7 @@ class NPC_AI_ACTION_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BLifeEndSuccess: int = ParamField(
-        byte, "bLifeEndSuccess", default=0,
+        byte, "bLifeEndSuccess", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "pad1[3]")

@@ -13,9 +13,9 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class DIRECTION_CAMERA_PARAM_ST(ParamRow):
-    IsUseOption: int = ParamField(
-        byte, "isUseOption:1", default=0,
+    IsUseOption: bool = ParamField(
+        byte, "isUseOption:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "pad2:3")
-    _Pad1: bytes = ParamPad(15, "pad1[15]")
+    _BitPad0: int = ParamBitPad(byte, "pad2:3", bit_count=3)
+    _Pad0: bytes = ParamPad(15, "pad1[15]")

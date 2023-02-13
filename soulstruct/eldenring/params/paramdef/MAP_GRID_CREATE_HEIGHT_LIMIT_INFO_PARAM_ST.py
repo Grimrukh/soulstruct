@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class MAP_GRID_CREATE_HEIGHT_LIMIT_INFO_PARAM_ST(ParamRow):
     GridEnableCreateHeightMin: float = ParamField(
-        float, "GridEnableCreateHeightMin", default=-99999,
+        float, "GridEnableCreateHeightMin", default=-99999.0,
         tooltip="TOOLTIP-TODO",
     )
     GridEnableCreateHeightMax: float = ParamField(
-        float, "GridEnableCreateHeightMax", default=99999,
+        float, "GridEnableCreateHeightMax", default=99999.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(24, "Reserve[24]")

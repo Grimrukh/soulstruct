@@ -13,8 +13,8 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MATERIAL_EX_PARAM_ST(ParamRow):
-    ParamName: bytes = ParamField(
-        bytes, "paramName[32]", length=64, default='',
+    ParamName: str = ParamField(
+        str, "paramName[32]", encoding="utf-16", length=64, default='',
         tooltip="TOOLTIP-TODO",
     )
     MaterialId: int = ParamField(
@@ -38,7 +38,7 @@ class MATERIAL_EX_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaterialParamValue4: float = ParamField(
-        float, "materialParamValue4", default=1,
+        float, "materialParamValue4", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(8, "pad[8]")

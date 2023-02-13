@@ -374,123 +374,123 @@ class AI_ANIM_TBL_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Atk0AtkDistType: int = ParamField(
-        byte, "atk0_AtkDistType:4", default=0,
+        byte, "atk0_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk1AtkDistType: int = ParamField(
-        byte, "atk1_AtkDistType:4", default=0,
+        byte, "atk1_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk2AtkDistType: int = ParamField(
-        byte, "atk2_AtkDistType:4", default=0,
+        byte, "atk2_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk3AtkDistType: int = ParamField(
-        byte, "atk3_AtkDistType:4", default=0,
+        byte, "atk3_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk4AtkDistType: int = ParamField(
-        byte, "atk4_AtkDistType:4", default=0,
+        byte, "atk4_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk5AtkDistType: int = ParamField(
-        byte, "atk5_AtkDistType:4", default=0,
+        byte, "atk5_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk6AtkDistType: int = ParamField(
-        byte, "atk6_AtkDistType:4", default=0,
+        byte, "atk6_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk7AtkDistType: int = ParamField(
-        byte, "atk7_AtkDistType:4", default=0,
+        byte, "atk7_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk8AtkDistType: int = ParamField(
-        byte, "atk8_AtkDistType:4", default=0,
+        byte, "atk8_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk9AtkDistType: int = ParamField(
-        byte, "atk9_AtkDistType:4", default=0,
+        byte, "atk9_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk10AtkDistType: int = ParamField(
-        byte, "atk10_AtkDistType:4", default=0,
+        byte, "atk10_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk11AtkDistType: int = ParamField(
-        byte, "atk11_AtkDistType:4", default=0,
+        byte, "atk11_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk12AtkDistType: int = ParamField(
-        byte, "atk12_AtkDistType:4", default=0,
+        byte, "atk12_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk13AtkDistType: int = ParamField(
-        byte, "atk13_AtkDistType:4", default=0,
+        byte, "atk13_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk14AtkDistType: int = ParamField(
-        byte, "atk14_AtkDistType:4", default=0,
+        byte, "atk14_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk15AtkDistType: int = ParamField(
-        byte, "atk15_AtkDistType:4", default=0,
+        byte, "atk15_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk16AtkDistType: int = ParamField(
-        byte, "atk16_AtkDistType:4", default=0,
+        byte, "atk16_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk17AtkDistType: int = ParamField(
-        byte, "atk17_AtkDistType:4", default=0,
+        byte, "atk17_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk18AtkDistType: int = ParamField(
-        byte, "atk18_AtkDistType:4", default=0,
+        byte, "atk18_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk19AtkDistType: int = ParamField(
-        byte, "atk19_AtkDistType:4", default=0,
+        byte, "atk19_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk20AtkDistType: int = ParamField(
-        byte, "atk20_AtkDistType:4", default=0,
+        byte, "atk20_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk21AtkDistType: int = ParamField(
-        byte, "atk21_AtkDistType:4", default=0,
+        byte, "atk21_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk22AtkDistType: int = ParamField(
-        byte, "atk22_AtkDistType:4", default=0,
+        byte, "atk22_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk23AtkDistType: int = ParamField(
-        byte, "atk23_AtkDistType:4", default=0,
+        byte, "atk23_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk24AtkDistType: int = ParamField(
-        byte, "atk24_AtkDistType:4", default=0,
+        byte, "atk24_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk25AtkDistType: int = ParamField(
-        byte, "atk25_AtkDistType:4", default=0,
+        byte, "atk25_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk26AtkDistType: int = ParamField(
-        byte, "atk26_AtkDistType:4", default=0,
+        byte, "atk26_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk27AtkDistType: int = ParamField(
-        byte, "atk27_AtkDistType:4", default=0,
+        byte, "atk27_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk28AtkDistType: int = ParamField(
-        byte, "atk28_AtkDistType:4", default=0,
+        byte, "atk28_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Atk29AtkDistType: int = ParamField(
-        byte, "atk29_AtkDistType:4", default=0,
+        byte, "atk29_AtkDistType:4", AI_ATK_DIST_TYPE, bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(13, "pad0[13]")

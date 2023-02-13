@@ -26,19 +26,19 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     HitCreateType: int = ParamField(
-        sbyte, "hitCreateType", default=0,
+        sbyte, "hitCreateType", ASSET_HIT_CREATE_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BehaviorType: int = ParamField(
-        byte, "behaviorType", default=1,
+        byte, "behaviorType", ASSET_BEHAVIOR_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     CollisionType: int = ParamField(
-        byte, "collisionType", default=0,
+        byte, "collisionType", ASSET_COLLISION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RainBlockingType: int = ParamField(
-        byte, "rainBlockingType", default=0,
+        byte, "rainBlockingType", RAIN_BLOCKING_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Hp: int = ParamField(
@@ -50,7 +50,7 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BreakStopTime: float = ParamField(
-        float, "breakStopTime", default=30,
+        float, "breakStopTime", default=30.0,
         tooltip="TOOLTIP-TODO",
     )
     BreakSfxId: int = ParamField(
@@ -86,7 +86,7 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BreakItemLotType: int = ParamField(
-        sbyte, "breakItemLotType", default=0,
+        sbyte, "breakItemLotType", ASSET_BREAK_ITEM_LOT_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AnimBreakIdMax: int = ParamField(
@@ -94,72 +94,72 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BreakBulletAttributeDamageType: int = ParamField(
-        sbyte, "breakBulletAttributeDamageType", default=0,
+        sbyte, "breakBulletAttributeDamageType", ASSET_BREAK_ATTRIBUTE_DAMAGE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByPlayerCollide: int = ParamField(
-        byte, "isBreakByPlayerCollide:1", default=0,
+    IsBreakByPlayerCollide: bool = ParamField(
+        byte, "isBreakByPlayerCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByEnemyCollide: int = ParamField(
-        byte, "isBreakByEnemyCollide:1", default=0,
+    IsBreakByEnemyCollide: bool = ParamField(
+        byte, "isBreakByEnemyCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByChrRide: int = ParamField(
-        byte, "isBreak_ByChrRide:1", default=0,
+    IsBreakByChrRide: bool = ParamField(
+        byte, "isBreak_ByChrRide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDisableBreakForFirstAppear: int = ParamField(
-        byte, "isDisableBreakForFirstAppear:1", default=0,
+    IsDisableBreakForFirstAppear: bool = ParamField(
+        byte, "isDisableBreakForFirstAppear:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAnimBreak: int = ParamField(
-        byte, "isAnimBreak:1", default=0,
+    IsAnimBreak: bool = ParamField(
+        byte, "isAnimBreak:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDamageCover: int = ParamField(
-        byte, "isDamageCover:1", default=0,
+    IsDamageCover: bool = ParamField(
+        byte, "isDamageCover:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAttackBacklash: int = ParamField(
-        byte, "isAttackBacklash:1", default=1,
+    IsAttackBacklash: bool = ParamField(
+        byte, "isAttackBacklash:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "Reserve_2:1")
-    IsLadder: int = ParamField(
-        byte, "isLadder:1", default=0,
+    _BitPad0: int = ParamBitPad(byte, "Reserve_2:1", bit_count=1)
+    IsLadder: bool = ParamField(
+        byte, "isLadder:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMoveObj: int = ParamField(
-        byte, "isMoveObj:1", default=0,
+    IsMoveObj: bool = ParamField(
+        byte, "isMoveObj:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSkydomeFlag: int = ParamField(
-        byte, "isSkydomeFlag:1", default=0,
+    IsSkydomeFlag: bool = ParamField(
+        byte, "isSkydomeFlag:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAnimPauseOnRemoPlay: int = ParamField(
-        byte, "isAnimPauseOnRemoPlay:1", default=0,
+    IsAnimPauseOnRemoPlay: bool = ParamField(
+        byte, "isAnimPauseOnRemoPlay:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBurn: int = ParamField(
-        byte, "isBurn:1", default=0,
+    IsBurn: bool = ParamField(
+        byte, "isBurn:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableRepick: int = ParamField(
-        byte, "isEnableRepick:1", default=0,
+    IsEnableRepick: bool = ParamField(
+        byte, "isEnableRepick:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakOnPickUp: int = ParamField(
-        byte, "isBreakOnPickUp:1", default=0,
+    IsBreakOnPickUp: bool = ParamField(
+        byte, "isBreakOnPickUp:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsBreakByHugeenemyCollide: int = ParamField(
-        byte, "isBreakByHugeenemyCollide:1", default=0,
+    IsBreakByHugeenemyCollide: bool = ParamField(
+        byte, "isBreakByHugeenemyCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     NavimeshFlag: int = ParamField(
-        byte, "navimeshFlag", default=0,
+        byte, "navimeshFlag", ASSET_NAVIMESH_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BurnBulletInterval: int = ParamField(
@@ -167,7 +167,7 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ClothUpdateDist: float = ParamField(
-        float, "clothUpdateDist", default=30,
+        float, "clothUpdateDist", default=30.0,
         tooltip="TOOLTIP-TODO",
     )
     LifeTimeforRuntimeCreate: float = ParamField(
@@ -183,19 +183,19 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WindEffectRate0: float = ParamField(
-        float, "windEffectRate_0", default=0,
+        float, "windEffectRate_0", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectRate1: float = ParamField(
-        float, "windEffectRate_1", default=0,
+        float, "windEffectRate_1", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectType0: int = ParamField(
-        byte, "windEffectType_0", default=0,
+        byte, "windEffectType_0", ASSET_WIND_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     WindEffectType1: int = ParamField(
-        byte, "windEffectType_1", default=0,
+        byte, "windEffectType_1", ASSET_WIND_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     OverrideMaterialId: int = ParamField(
@@ -203,7 +203,7 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AutoCreateOffsetHeight: float = ParamField(
-        float, "autoCreateOffsetHeight", default=0,
+        float, "autoCreateOffsetHeight", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     BurnTime: float = ParamField(
@@ -211,7 +211,7 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BurnBraekRate: float = ParamField(
-        float, "burnBraekRate", default=0,
+        float, "burnBraekRate", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     BurnSfxId: int = ParamField(
@@ -287,11 +287,11 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     NavimeshFlagafter: int = ParamField(
-        byte, "navimeshFlag_after", default=0,
+        byte, "navimeshFlag_after", ASSET_NAVIMESH_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CamNearBehaviorType: int = ParamField(
-        sbyte, "camNearBehaviorType", default=0,
+        sbyte, "camNearBehaviorType", ASSET_CAM_NEAR_BEHAVIOR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BreakItemLotParamId: int = ParamField(
@@ -307,39 +307,39 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AutoDrawGroupBackFaceCheck: int = ParamField(
-        byte, "autoDrawGroupBackFaceCheck", default=0,
+        byte, "autoDrawGroupBackFaceCheck", ASSET_AUTO_DRAW_GROUP_BACKFACE_CHECK_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AutoDrawGroupDepthWrite: int = ParamField(
-        byte, "autoDrawGroupDepthWrite", default=0,
+        byte, "autoDrawGroupDepthWrite", ASSET_AUTO_DRAW_GROUP_DEPTH_WRITE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AutoDrawGroupShadowTest: int = ParamField(
-        byte, "autoDrawGroupShadowTest", default=0,
+        byte, "autoDrawGroupShadowTest", ASSET_AUTO_DRAW_GROUP_SHADOW_TEST_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DebugisHeightCheckEnable: int = ParamField(
-        byte, "debug_isHeightCheckEnable", default=0,
+        byte, "debug_isHeightCheckEnable", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     HitCarverCancelAreaFlag: int = ParamField(
-        byte, "hitCarverCancelAreaFlag", default=0,
+        byte, "hitCarverCancelAreaFlag", HIT_CARVER_CANCEL_AREA_FLAG, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AssetNavimeshNoCombine: int = ParamField(
-        byte, "assetNavimeshNoCombine", default=0,
+        byte, "assetNavimeshNoCombine", ASSET_NAVIMESH_GENERATE_ATTRIBUTE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     NavimeshFlagApply: int = ParamField(
-        byte, "navimeshFlagApply", default=0,
+        byte, "navimeshFlagApply", ASSET_NAVIMESH_FLAG_APPLY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     NavimeshFlagApplyafter: int = ParamField(
-        byte, "navimeshFlagApply_after", default=0,
+        byte, "navimeshFlagApply_after", ASSET_NAVIMESH_FLAG_APPLY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AutoDrawGroupPassPixelNum: float = ParamField(
-        float, "autoDrawGroupPassPixelNum", default=-1,
+        float, "autoDrawGroupPassPixelNum", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     PickUpReplacementEventFlag: int = ParamField(
@@ -359,29 +359,29 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SlidingBulletHitType: int = ParamField(
-        byte, "slidingBulletHitType", default=0,
+        byte, "slidingBulletHitType", ASSET_SLIDING_BULLET_HIT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsBushesForDamage: int = ParamField(
-        byte, "isBushesForDamage", default=0,
+        byte, "isBushesForDamage", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PenetrationBulletType: int = ParamField(
-        byte, "penetrationBulletType", default=0,
+        byte, "penetrationBulletType", ASSET_PENETRATION_BULLET_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "Reserve_3[1]")
-    _Pad2: bytes = ParamPad(4, "Reserve_4[4]")
+    _Pad0: bytes = ParamPad(1, "Reserve_3[1]")
+    _Pad1: bytes = ParamPad(4, "Reserve_4[4]")
     SoundBreakSECpId: int = ParamField(
         int, "soundBreakSECpId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     DebugHeightCheckCapacityMin: float = ParamField(
-        float, "debug_HeightCheckCapacityMin", default=-99,
+        float, "debug_HeightCheckCapacityMin", default=-99.0,
         tooltip="TOOLTIP-TODO",
     )
     DebugHeightCheckCapacityMax: float = ParamField(
-        float, "debug_HeightCheckCapacityMax", default=99,
+        float, "debug_HeightCheckCapacityMax", default=99.0,
         tooltip="TOOLTIP-TODO",
     )
     RepickActionButtonParamId: int = ParamField(
@@ -405,40 +405,40 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     NoGenerateCarver: int = ParamField(
-        byte, "noGenerateCarver", default=0,
+        byte, "noGenerateCarver", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     NoHitHugeAfterBreak: int = ParamField(
-        byte, "noHitHugeAfterBreak", default=0,
+        byte, "noHitHugeAfterBreak", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnabledBreakSync: int = ParamField(
-        byte, "isEnabledBreakSync:1", default=1,
+    IsEnabledBreakSync: bool = ParamField(
+        byte, "isEnabledBreakSync:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsHiddenOnRepick: int = ParamField(
-        byte, "isHiddenOnRepick:1", default=0,
+    IsHiddenOnRepick: bool = ParamField(
+        byte, "isHiddenOnRepick:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsCreateMultiPlayOnly: int = ParamField(
-        byte, "isCreateMultiPlayOnly:1", default=0,
+    IsCreateMultiPlayOnly: bool = ParamField(
+        byte, "isCreateMultiPlayOnly:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDisableBulletHitSfx: int = ParamField(
-        byte, "isDisableBulletHitSfx:1", default=0,
+    IsDisableBulletHitSfx: bool = ParamField(
+        byte, "isDisableBulletHitSfx:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableSignPreBreak: int = ParamField(
-        byte, "isEnableSignPreBreak:1", default=1,
+    IsEnableSignPreBreak: bool = ParamField(
+        byte, "isEnableSignPreBreak:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableSignPostBreak: int = ParamField(
-        byte, "isEnableSignPostBreak:1", default=1,
+    IsEnableSignPostBreak: bool = ParamField(
+        byte, "isEnableSignPostBreak:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "Reserve_1:2")
+    _BitPad1: int = ParamBitPad(byte, "Reserve_1:2", bit_count=2)
     GenerateMultiForbiddenRegion: int = ParamField(
-        byte, "generateMultiForbiddenRegion", default=0,
+        byte, "generateMultiForbiddenRegion", MULTI_FORBIDDEN_REGION_GENERATE_ATTRIBUTE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ResidentSeId0: int = ParamField(
@@ -474,19 +474,19 @@ class ASSET_GEOMETORY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ExcludeActivateRatioXboxoneGrid: int = ParamField(
-        byte, "excludeActivateRatio_Xboxone_Grid", default=0,
+        byte, "excludeActivateRatio_Xboxone_Grid", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ExcludeActivateRatioXboxoneLegacy: int = ParamField(
-        byte, "excludeActivateRatio_Xboxone_Legacy", default=0,
+        byte, "excludeActivateRatio_Xboxone_Legacy", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ExcludeActivateRatioPS4Grid: int = ParamField(
-        byte, "excludeActivateRatio_PS4_Grid", default=0,
+        byte, "excludeActivateRatio_PS4_Grid", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ExcludeActivateRatioPS4Legacy: int = ParamField(
-        byte, "excludeActivateRatio_PS4_Legacy", default=0,
+        byte, "excludeActivateRatio_PS4_Legacy", ASSET_EXCLUDE_ACTIVATE_RATIO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(32, "Reserve_0[32]")
+    _Pad2: bytes = ParamPad(32, "Reserve_0[32]")

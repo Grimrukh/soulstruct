@@ -14,87 +14,87 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class LOAD_BALANCER_DRAW_DIST_SCALE_PARAM_ST(ParamRow):
     Lv00: float = ParamField(
-        float, "Lv00", default=1,
+        float, "Lv00", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv01: float = ParamField(
-        float, "Lv01", default=1,
+        float, "Lv01", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv02: float = ParamField(
-        float, "Lv02", default=1,
+        float, "Lv02", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv03: float = ParamField(
-        float, "Lv03", default=1,
+        float, "Lv03", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv04: float = ParamField(
-        float, "Lv04", default=1,
+        float, "Lv04", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv05: float = ParamField(
-        float, "Lv05", default=1,
+        float, "Lv05", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv06: float = ParamField(
-        float, "Lv06", default=1,
+        float, "Lv06", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv07: float = ParamField(
-        float, "Lv07", default=1,
+        float, "Lv07", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv08: float = ParamField(
-        float, "Lv08", default=1,
+        float, "Lv08", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv09: float = ParamField(
-        float, "Lv09", default=1,
+        float, "Lv09", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv10: float = ParamField(
-        float, "Lv10", default=1,
+        float, "Lv10", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv11: float = ParamField(
-        float, "Lv11", default=1,
+        float, "Lv11", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv12: float = ParamField(
-        float, "Lv12", default=1,
+        float, "Lv12", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv13: float = ParamField(
-        float, "Lv13", default=1,
+        float, "Lv13", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv14: float = ParamField(
-        float, "Lv14", default=1,
+        float, "Lv14", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv15: float = ParamField(
-        float, "Lv15", default=1,
+        float, "Lv15", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv16: float = ParamField(
-        float, "Lv16", default=1,
+        float, "Lv16", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv17: float = ParamField(
-        float, "Lv17", default=1,
+        float, "Lv17", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv18: float = ParamField(
-        float, "Lv18", default=1,
+        float, "Lv18", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv19: float = ParamField(
-        float, "Lv19", default=1,
+        float, "Lv19", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     Lv20: float = ParamField(
-        float, "Lv20", default=1,
+        float, "Lv20", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(44, "reserve[44]")

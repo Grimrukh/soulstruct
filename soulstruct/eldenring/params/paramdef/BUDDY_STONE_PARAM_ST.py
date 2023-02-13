@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BUDDY_STONE_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     TalkChrEntityId: int = ParamField(
         uint, "talkChrEntityId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -31,12 +31,12 @@ class BUDDY_STONE_PARAM_ST(ParamRow):
         uint, "summonedEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsSpecial: int = ParamField(
-        byte, "isSpecial:1", default=0,
+    IsSpecial: bool = ParamField(
+        byte, "isSpecial:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad1:7")
-    _Pad3: bytes = ParamPad(3, "pad2[3]")
+    _BitPad1: int = ParamBitPad(byte, "pad1:7", bit_count=7)
+    _Pad1: bytes = ParamPad(3, "pad2[3]")
     BuddyId: int = ParamField(
         int, "buddyId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -61,4 +61,4 @@ class BUDDY_STONE_PARAM_ST(ParamRow):
         uint, "warnRegionEntityId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(24, "pad3[24]")
+    _Pad2: bytes = ParamPad(24, "pad3[24]")

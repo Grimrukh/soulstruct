@@ -47,7 +47,7 @@ class PLAYER_COMMON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     FlareOverrideHomingStopRange: float = ParamField(
-        float, "flareOverrideHomingStopRange", default=-1,
+        float, "flareOverrideHomingStopRange", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     AnimeIDSleepCollectorItemPick: int = ParamField(

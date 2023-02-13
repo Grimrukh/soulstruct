@@ -14,52 +14,52 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class HIT_EFFECT_SFX_CONCEPT_PARAM_ST(ParamRow):
     AtkIron1: int = ParamField(
-        short, "atkIron_1", default=0,
+        short, "atkIron_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkIron2: int = ParamField(
-        short, "atkIron_2", default=0,
+        short, "atkIron_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkLeather1: int = ParamField(
-        short, "atkLeather_1", default=0,
+        short, "atkLeather_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkLeather2: int = ParamField(
-        short, "atkLeather_2", default=0,
+        short, "atkLeather_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkWood1: int = ParamField(
-        short, "atkWood_1", default=0,
+        short, "atkWood_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkWood2: int = ParamField(
-        short, "atkWood_2", default=0,
+        short, "atkWood_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkBody1: int = ParamField(
-        short, "atkBody_1", default=0,
+        short, "atkBody_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkBody2: int = ParamField(
-        short, "atkBody_2", default=0,
+        short, "atkBody_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkStone1: int = ParamField(
-        short, "atkStone_1", default=0,
+        short, "atkStone_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkStone2: int = ParamField(
-        short, "atkStone_2", default=0,
+        short, "atkStone_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(4, "pad[4]")
     AtkNone1: int = ParamField(
-        short, "atkNone_1", default=0,
+        short, "atkNone_1", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AtkNone2: int = ParamField(
-        short, "atkNone_2", default=0,
+        short, "atkNone_2", HIT_EFFECT_SFX_CONCEPT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(52, "reserve[52]")

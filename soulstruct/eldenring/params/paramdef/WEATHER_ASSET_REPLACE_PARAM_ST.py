@@ -18,12 +18,12 @@ class WEATHER_ASSET_REPLACE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     TransitionSrcWeather: int = ParamField(
-        short, "TransitionSrcWeather", default=0,
+        short, "TransitionSrcWeather", WEATHER_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "padding0[2]")
     IsFireAsh: int = ParamField(
-        byte, "isFireAsh", default=0,
+        byte, "isFireAsh", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(3, "padding1[3]")

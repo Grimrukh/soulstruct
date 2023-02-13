@@ -18,23 +18,23 @@ class CS_KEY_ASSIGN_MENUITEM_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Key: int = ParamField(
-        int, "key", default=-1,
+        int, "key", CS_USER_INPUT_KEY, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     EnableUnassign: int = ParamField(
-        byte, "enableUnassign", default=1,
+        byte, "enableUnassign", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     EnablePadConfig: int = ParamField(
-        byte, "enablePadConfig", default=1,
+        byte, "enablePadConfig", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     EnableMouseConfig: int = ParamField(
-        byte, "enableMouseConfig", default=1,
+        byte, "enableMouseConfig", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     Group: int = ParamField(
-        byte, "group", default=0,
+        byte, "group", CS_KEY_ASSIGN_GROUP, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MappingTextID: int = ParamField(
@@ -42,11 +42,11 @@ class CS_KEY_ASSIGN_MENUITEM_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ViewPad: int = ParamField(
-        byte, "viewPad", default=1,
+        byte, "viewPad", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     ViewKeyboardMouse: int = ParamField(
-        byte, "viewKeyboardMouse", default=1,
+        byte, "viewKeyboardMouse", BOOL_CIRCLECROSS_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(6, "padding[6]")

@@ -13,11 +13,11 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class DECAL_PARAM_ST(ParamRow):
-    TextureID: int = ParamField(
+    TextureId: int = ParamField(
         int, "textureId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ModelPoint: int = ParamField(
+    DmypolyId: int = ParamField(
         int, "dmypolyId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -45,60 +45,60 @@ class DECAL_PARAM_ST(ParamRow):
         float, "farSize", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaskSpecialEffectID: int = ParamField(
+    MaskSpeffectId: int = ParamField(
         int, "maskSpeffectId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     Pad10: int = ParamField(
-        uint, "pad_10:4", default=0,
+        uint, "pad_10:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ReplaceTextureIDWithMaterial: int = ParamField(
-        uint, "replaceTextureId_byMaterial:1", default=0,
+    ReplaceTextureIdbyMaterial: bool = ParamField(
+        uint, "replaceTextureId_byMaterial:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ModelPointCategory: int = ParamField(
-        uint, "dmypolyCategory:2", default=0,
+    DmypolyCategory: int = ParamField(
+        uint, "dmypolyCategory:2", bit_count=2, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Pad05: int = ParamField(
-        uint, "pad_05:4", default=0,
+        uint, "pad_05:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    UseDeferredDecal: int = ParamField(
-        uint, "useDeferredDecal:1", default=1,
+    UseDeferredDecal: bool = ParamField(
+        uint, "useDeferredDecal:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    UsePaintDecal: int = ParamField(
-        uint, "usePaintDecal:1", default=1,
+    UsePaintDecal: bool = ParamField(
+        uint, "usePaintDecal:1", bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    BloodTypeEnable: int = ParamField(
-        uint, "bloodTypeEnable:1", default=0,
+    BloodTypeEnable: bool = ParamField(
+        uint, "bloodTypeEnable:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    BUseNormal: int = ParamField(
-        uint, "bUseNormal:1", default=0,
+    BUseNormal: bool = ParamField(
+        uint, "bUseNormal:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Pad08: int = ParamField(
-        uint, "pad_08:1", default=0,
+    Pad08: bool = ParamField(
+        uint, "pad_08:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    Pad09: int = ParamField(
-        uint, "pad_09:1", default=0,
+    Pad09: bool = ParamField(
+        uint, "pad_09:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UsePom: int = ParamField(
-        uint, "usePom:1", default=0,
+    UsePom: bool = ParamField(
+        uint, "usePom:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UseEmissive: int = ParamField(
-        uint, "useEmissive:1", default=0,
+    UseEmissive: bool = ParamField(
+        uint, "useEmissive:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    PutVertical: int = ParamField(
-        uint, "putVertical:1", default=0,
+    PutVertical: bool = ParamField(
+        uint, "putVertical:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     RandomSizeMin: int = ParamField(
@@ -133,8 +133,8 @@ class DECAL_PARAM_ST(ParamRow):
         float, "randomYawMax", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    PomHeightScale: float = ParamField(
-        float, "pomHightScale", default=1,
+    PomHightScale: float = ParamField(
+        float, "pomHightScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     PomSampleMin: int = ParamField(
@@ -146,19 +146,19 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BlendMode: int = ParamField(
-        sbyte, "blendMode", default=1,
+        sbyte, "blendMode", DECAL_PARAM_BLEND_MODE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     AppearDirType: int = ParamField(
-        sbyte, "appearDirType", default=0,
+        sbyte, "appearDirType", DECAL_PARAM_DIR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EmissiveValueBegin: float = ParamField(
-        float, "emissiveValueBegin", default=1,
+        float, "emissiveValueBegin", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     EmissiveValueEnd: float = ParamField(
-        float, "emissiveValueEnd", default=1,
+        float, "emissiveValueEnd", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     EmissiveTime: float = ParamField(
@@ -166,12 +166,12 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BIntpEnable: int = ParamField(
-        byte, "bIntpEnable", default=0,
+        byte, "bIntpEnable", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "pad_01[3]")
     IntpIntervalDist: float = ParamField(
-        float, "intpIntervalDist", default=0,
+        float, "intpIntervalDist", default=0.1,
         tooltip="TOOLTIP-TODO",
     )
     BeginIntpTextureId: int = ParamField(
@@ -203,7 +203,7 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaskScale: float = ParamField(
-        float, "maskScale", default=1,
+        float, "maskScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     NormalTextureId: int = ParamField(
@@ -244,11 +244,11 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BLifeEnable: int = ParamField(
-        byte, "bLifeEnable", default=0,
+        byte, "bLifeEnable", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SiniScale: float = ParamField(
-        float, "siniScale", default=1,
+        float, "siniScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     LifeTimeSec: float = ParamField(
@@ -264,11 +264,11 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BDistThinOutEnable: int = ParamField(
-        byte, "bDistThinOutEnable", default=0,
+        byte, "bDistThinOutEnable", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BAlignedTexRandomVariationEnable: int = ParamField(
-        byte, "bAlignedTexRandomVariationEnable", default=0,
+        byte, "bAlignedTexRandomVariationEnable", BOOL_YESNO_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DistThinOutCheckDist: float = ParamField(
@@ -292,35 +292,35 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RandVariaDiffuse: int = ParamField(
-        uint, "randVaria_Diffuse:4", default=0,
+        uint, "randVaria_Diffuse:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RandVariaMask: int = ParamField(
-        uint, "randVaria_Mask:4", default=0,
+        uint, "randVaria_Mask:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RandVariaReflec: int = ParamField(
-        uint, "randVaria_Reflec:4", default=0,
+        uint, "randVaria_Reflec:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Pad12: int = ParamField(
-        uint, "pad_12:4", default=0,
+        uint, "pad_12:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RandVariaNormal: int = ParamField(
-        uint, "randVaria_Normal:4", default=0,
+        uint, "randVaria_Normal:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RandVariaHeight: int = ParamField(
-        uint, "randVaria_Height:4", default=0,
+        uint, "randVaria_Height:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     RandVariaEmissive: int = ParamField(
-        uint, "randVaria_Emissive:4", default=0,
+        uint, "randVaria_Emissive:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Pad11: int = ParamField(
-        uint, "pad_11:4", default=0,
+        uint, "pad_11:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FadeInTimeSec: float = ParamField(
@@ -344,7 +344,7 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ThinOutMode: int = ParamField(
-        sbyte, "thinOutMode", default=0,
+        sbyte, "thinOutMode", DECAL_PARAM_THIN_OUT_MODE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EmissiveColorR: int = ParamField(
@@ -360,7 +360,7 @@ class DECAL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     MaxDecalSfxCreatableSlopeAngleDeg: float = ParamField(
-        float, "maxDecalSfxCreatableSlopeAngleDeg", default=-1,
+        float, "maxDecalSfxCreatableSlopeAngleDeg", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(40, "pad_02[40]")

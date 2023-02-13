@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class ACTIONBUTTON_PARAM_ST(ParamRow):
     RegionType: int = ParamField(
-        byte, "regionType", default=0,
+        byte, "regionType", ACTION_BUTTON_REGION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Category: int = ParamField(
-        byte, "category", default=0,
+        byte, "category", ACTION_BUTTON_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "padding1[2]")
@@ -55,7 +55,7 @@ class ACTIONBUTTON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AngleCheckType: int = ParamField(
-        byte, "angleCheckType", default=0,
+        byte, "angleCheckType", ACTION_BUTTON_ANGLE_CHECK_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(3, "padding2[3]")
@@ -68,28 +68,28 @@ class ACTIONBUTTON_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     TextBoxType: int = ParamField(
-        byte, "textBoxType", default=0,
+        byte, "textBoxType", ACTION_BUTTON_TEXT_BOX_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad2: bytes = ParamPad(2, "padding3[2]")
-    _Pad3: bytes = ParamPad(1, "padding5:1")
-    IsInvalidForRide: int = ParamField(
-        byte, "isInvalidForRide:1", default=0,
+    _BitPad0: int = ParamBitPad(byte, "padding5:1", bit_count=1)
+    IsInvalidForRide: bool = ParamField(
+        byte, "isInvalidForRide:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGrayoutForRide: int = ParamField(
-        byte, "isGrayoutForRide:1", default=0,
+    IsGrayoutForRide: bool = ParamField(
+        byte, "isGrayoutForRide:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsInvalidForCrouching: int = ParamField(
-        byte, "isInvalidForCrouching:1", default=0,
+    IsInvalidForCrouching: bool = ParamField(
+        byte, "isInvalidForCrouching:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGrayoutForCrouching: int = ParamField(
-        byte, "isGrayoutForCrouching:1", default=0,
+    IsGrayoutForCrouching: bool = ParamField(
+        byte, "isGrayoutForCrouching:1", BOOL_YESNO_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(1, "padding4:3")
+    _BitPad1: int = ParamBitPad(byte, "padding4:3", bit_count=3)
     TextId: int = ParamField(
         int, "textId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -110,4 +110,4 @@ class ACTIONBUTTON_PARAM_ST(ParamRow):
         float, "execInvalidTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(28, "padding6[28]")
+    _Pad3: bytes = ParamPad(28, "padding6[28]")

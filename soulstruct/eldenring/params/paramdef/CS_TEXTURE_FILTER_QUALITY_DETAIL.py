@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_TEXTURE_FILTER_QUALITY_DETAIL(ParamRow):
     Filter: int = ParamField(
-        byte, "filter", default=3,
+        byte, "filter", GX_TEXTURE_FILTER, default=3,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "dmy[3]")

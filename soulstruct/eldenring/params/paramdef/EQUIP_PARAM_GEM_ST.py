@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class EQUIP_PARAM_GEM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     IconId: int = ParamField(
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -75,282 +75,282 @@ class EQUIP_PARAM_GEM_ST(ParamRow):
         short, "trophySeqId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr00: int = ParamField(
-        byte, "configurableWepAttr00:1", default=0,
+    ConfigurableWepAttr00: bool = ParamField(
+        byte, "configurableWepAttr00:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr01: int = ParamField(
-        byte, "configurableWepAttr01:1", default=0,
+    ConfigurableWepAttr01: bool = ParamField(
+        byte, "configurableWepAttr01:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr02: int = ParamField(
-        byte, "configurableWepAttr02:1", default=0,
+    ConfigurableWepAttr02: bool = ParamField(
+        byte, "configurableWepAttr02:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr03: int = ParamField(
-        byte, "configurableWepAttr03:1", default=0,
+    ConfigurableWepAttr03: bool = ParamField(
+        byte, "configurableWepAttr03:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr04: int = ParamField(
-        byte, "configurableWepAttr04:1", default=0,
+    ConfigurableWepAttr04: bool = ParamField(
+        byte, "configurableWepAttr04:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr05: int = ParamField(
-        byte, "configurableWepAttr05:1", default=0,
+    ConfigurableWepAttr05: bool = ParamField(
+        byte, "configurableWepAttr05:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr06: int = ParamField(
-        byte, "configurableWepAttr06:1", default=0,
+    ConfigurableWepAttr06: bool = ParamField(
+        byte, "configurableWepAttr06:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr07: int = ParamField(
-        byte, "configurableWepAttr07:1", default=0,
+    ConfigurableWepAttr07: bool = ParamField(
+        byte, "configurableWepAttr07:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr08: int = ParamField(
-        byte, "configurableWepAttr08:1", default=0,
+    ConfigurableWepAttr08: bool = ParamField(
+        byte, "configurableWepAttr08:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr09: int = ParamField(
-        byte, "configurableWepAttr09:1", default=0,
+    ConfigurableWepAttr09: bool = ParamField(
+        byte, "configurableWepAttr09:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr10: int = ParamField(
-        byte, "configurableWepAttr10:1", default=0,
+    ConfigurableWepAttr10: bool = ParamField(
+        byte, "configurableWepAttr10:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr11: int = ParamField(
-        byte, "configurableWepAttr11:1", default=0,
+    ConfigurableWepAttr11: bool = ParamField(
+        byte, "configurableWepAttr11:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr12: int = ParamField(
-        byte, "configurableWepAttr12:1", default=0,
+    ConfigurableWepAttr12: bool = ParamField(
+        byte, "configurableWepAttr12:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr13: int = ParamField(
-        byte, "configurableWepAttr13:1", default=0,
+    ConfigurableWepAttr13: bool = ParamField(
+        byte, "configurableWepAttr13:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr14: int = ParamField(
-        byte, "configurableWepAttr14:1", default=0,
+    ConfigurableWepAttr14: bool = ParamField(
+        byte, "configurableWepAttr14:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr15: int = ParamField(
-        byte, "configurableWepAttr15:1", default=0,
+    ConfigurableWepAttr15: bool = ParamField(
+        byte, "configurableWepAttr15:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     Rarity: int = ParamField(
         byte, "rarity", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr16: int = ParamField(
-        byte, "configurableWepAttr16:1", default=0,
+    ConfigurableWepAttr16: bool = ParamField(
+        byte, "configurableWepAttr16:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr17: int = ParamField(
-        byte, "configurableWepAttr17:1", default=0,
+    ConfigurableWepAttr17: bool = ParamField(
+        byte, "configurableWepAttr17:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr18: int = ParamField(
-        byte, "configurableWepAttr18:1", default=0,
+    ConfigurableWepAttr18: bool = ParamField(
+        byte, "configurableWepAttr18:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr19: int = ParamField(
-        byte, "configurableWepAttr19:1", default=0,
+    ConfigurableWepAttr19: bool = ParamField(
+        byte, "configurableWepAttr19:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr20: int = ParamField(
-        byte, "configurableWepAttr20:1", default=0,
+    ConfigurableWepAttr20: bool = ParamField(
+        byte, "configurableWepAttr20:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr21: int = ParamField(
-        byte, "configurableWepAttr21:1", default=0,
+    ConfigurableWepAttr21: bool = ParamField(
+        byte, "configurableWepAttr21:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr22: int = ParamField(
-        byte, "configurableWepAttr22:1", default=0,
+    ConfigurableWepAttr22: bool = ParamField(
+        byte, "configurableWepAttr22:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    ConfigurableWepAttr23: int = ParamField(
-        byte, "configurableWepAttr23:1", default=0,
+    ConfigurableWepAttr23: bool = ParamField(
+        byte, "configurableWepAttr23:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDiscard: int = ParamField(
-        byte, "isDiscard:1", default=0,
+    IsDiscard: bool = ParamField(
+        byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDrop: int = ParamField(
-        byte, "isDrop:1", default=0,
+    IsDrop: bool = ParamField(
+        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDeposit: int = ParamField(
-        byte, "isDeposit:1", default=0,
+    IsDeposit: bool = ParamField(
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableMultiDropShare: int = ParamField(
-        byte, "disableMultiDropShare:1", default=0,
+    DisableMultiDropShare: bool = ParamField(
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     ShowDialogCondType: int = ParamField(
-        byte, "showDialogCondType:2", default=2,
+        byte, "showDialogCondType:2", GET_DIALOG_CONDITION_TYPE, bit_count=2, default=2,
         tooltip="TOOLTIP-TODO",
     )
-    ShowLogCondType: int = ParamField(
-        byte, "showLogCondType:1", default=1,
+    ShowLogCondType: bool = ParamField(
+        byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad:1")
+    _BitPad1: int = ParamBitPad(byte, "pad:1", bit_count=1)
     DefaultWepAttr: int = ParamField(
         byte, "defaultWepAttr", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(2, "pad2[2]")
-    CanMountWepDagger: int = ParamField(
-        byte, "canMountWep_Dagger:1", default=0,
+    _Pad1: bytes = ParamPad(2, "pad2[2]")
+    CanMountWepDagger: bool = ParamField(
+        byte, "canMountWep_Dagger:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSwordNormal: int = ParamField(
-        byte, "canMountWep_SwordNormal:1", default=0,
+    CanMountWepSwordNormal: bool = ParamField(
+        byte, "canMountWep_SwordNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSwordLarge: int = ParamField(
-        byte, "canMountWep_SwordLarge:1", default=0,
+    CanMountWepSwordLarge: bool = ParamField(
+        byte, "canMountWep_SwordLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSwordGigantic: int = ParamField(
-        byte, "canMountWep_SwordGigantic:1", default=0,
+    CanMountWepSwordGigantic: bool = ParamField(
+        byte, "canMountWep_SwordGigantic:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSaberNormal: int = ParamField(
-        byte, "canMountWep_SaberNormal:1", default=0,
+    CanMountWepSaberNormal: bool = ParamField(
+        byte, "canMountWep_SaberNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSaberLarge: int = ParamField(
-        byte, "canMountWep_SaberLarge:1", default=0,
+    CanMountWepSaberLarge: bool = ParamField(
+        byte, "canMountWep_SaberLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepkatana: int = ParamField(
-        byte, "canMountWep_katana:1", default=0,
+    CanMountWepkatana: bool = ParamField(
+        byte, "canMountWep_katana:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSwordDoubleEdge: int = ParamField(
-        byte, "canMountWep_SwordDoubleEdge:1", default=0,
+    CanMountWepSwordDoubleEdge: bool = ParamField(
+        byte, "canMountWep_SwordDoubleEdge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSwordPierce: int = ParamField(
-        byte, "canMountWep_SwordPierce:1", default=0,
+    CanMountWepSwordPierce: bool = ParamField(
+        byte, "canMountWep_SwordPierce:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepRapierHeavy: int = ParamField(
-        byte, "canMountWep_RapierHeavy:1", default=0,
+    CanMountWepRapierHeavy: bool = ParamField(
+        byte, "canMountWep_RapierHeavy:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepAxeNormal: int = ParamField(
-        byte, "canMountWep_AxeNormal:1", default=0,
+    CanMountWepAxeNormal: bool = ParamField(
+        byte, "canMountWep_AxeNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepAxeLarge: int = ParamField(
-        byte, "canMountWep_AxeLarge:1", default=0,
+    CanMountWepAxeLarge: bool = ParamField(
+        byte, "canMountWep_AxeLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepHammerNormal: int = ParamField(
-        byte, "canMountWep_HammerNormal:1", default=0,
+    CanMountWepHammerNormal: bool = ParamField(
+        byte, "canMountWep_HammerNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepHammerLarge: int = ParamField(
-        byte, "canMountWep_HammerLarge:1", default=0,
+    CanMountWepHammerLarge: bool = ParamField(
+        byte, "canMountWep_HammerLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepFlail: int = ParamField(
-        byte, "canMountWep_Flail:1", default=0,
+    CanMountWepFlail: bool = ParamField(
+        byte, "canMountWep_Flail:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSpearNormal: int = ParamField(
-        byte, "canMountWep_SpearNormal:1", default=0,
+    CanMountWepSpearNormal: bool = ParamField(
+        byte, "canMountWep_SpearNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSpearLarge: int = ParamField(
-        byte, "canMountWep_SpearLarge:1", default=0,
+    CanMountWepSpearLarge: bool = ParamField(
+        byte, "canMountWep_SpearLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSpearHeavy: int = ParamField(
-        byte, "canMountWep_SpearHeavy:1", default=0,
+    CanMountWepSpearHeavy: bool = ParamField(
+        byte, "canMountWep_SpearHeavy:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSpearAxe: int = ParamField(
-        byte, "canMountWep_SpearAxe:1", default=0,
+    CanMountWepSpearAxe: bool = ParamField(
+        byte, "canMountWep_SpearAxe:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSickle: int = ParamField(
-        byte, "canMountWep_Sickle:1", default=0,
+    CanMountWepSickle: bool = ParamField(
+        byte, "canMountWep_Sickle:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepKnuckle: int = ParamField(
-        byte, "canMountWep_Knuckle:1", default=0,
+    CanMountWepKnuckle: bool = ParamField(
+        byte, "canMountWep_Knuckle:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepClaw: int = ParamField(
-        byte, "canMountWep_Claw:1", default=0,
+    CanMountWepClaw: bool = ParamField(
+        byte, "canMountWep_Claw:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepWhip: int = ParamField(
-        byte, "canMountWep_Whip:1", default=0,
+    CanMountWepWhip: bool = ParamField(
+        byte, "canMountWep_Whip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepAxhammerLarge: int = ParamField(
-        byte, "canMountWep_AxhammerLarge:1", default=0,
+    CanMountWepAxhammerLarge: bool = ParamField(
+        byte, "canMountWep_AxhammerLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepBowSmall: int = ParamField(
-        byte, "canMountWep_BowSmall:1", default=0,
+    CanMountWepBowSmall: bool = ParamField(
+        byte, "canMountWep_BowSmall:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepBowNormal: int = ParamField(
-        byte, "canMountWep_BowNormal:1", default=0,
+    CanMountWepBowNormal: bool = ParamField(
+        byte, "canMountWep_BowNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepBowLarge: int = ParamField(
-        byte, "canMountWep_BowLarge:1", default=0,
+    CanMountWepBowLarge: bool = ParamField(
+        byte, "canMountWep_BowLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepClossBow: int = ParamField(
-        byte, "canMountWep_ClossBow:1", default=0,
+    CanMountWepClossBow: bool = ParamField(
+        byte, "canMountWep_ClossBow:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepBallista: int = ParamField(
-        byte, "canMountWep_Ballista:1", default=0,
+    CanMountWepBallista: bool = ParamField(
+        byte, "canMountWep_Ballista:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepStaff: int = ParamField(
-        byte, "canMountWep_Staff:1", default=0,
+    CanMountWepStaff: bool = ParamField(
+        byte, "canMountWep_Staff:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepSorcery: int = ParamField(
-        byte, "canMountWep_Sorcery:1", default=0,
+    CanMountWepSorcery: bool = ParamField(
+        byte, "canMountWep_Sorcery:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepTalisman: int = ParamField(
-        byte, "canMountWep_Talisman:1", default=0,
+    CanMountWepTalisman: bool = ParamField(
+        byte, "canMountWep_Talisman:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepShieldSmall: int = ParamField(
-        byte, "canMountWep_ShieldSmall:1", default=0,
+    CanMountWepShieldSmall: bool = ParamField(
+        byte, "canMountWep_ShieldSmall:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepShieldNormal: int = ParamField(
-        byte, "canMountWep_ShieldNormal:1", default=0,
+    CanMountWepShieldNormal: bool = ParamField(
+        byte, "canMountWep_ShieldNormal:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepShieldLarge: int = ParamField(
-        byte, "canMountWep_ShieldLarge:1", default=0,
+    CanMountWepShieldLarge: bool = ParamField(
+        byte, "canMountWep_ShieldLarge:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanMountWepTorch: int = ParamField(
-        byte, "canMountWep_Torch:1", default=0,
+    CanMountWepTorch: bool = ParamField(
+        byte, "canMountWep_Torch:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(1, "reserved_canMountWep:4")
-    _Pad5: bytes = ParamPad(3, "reserved2_canMountWep[3]")
+    _BitPad2: int = ParamBitPad(byte, "reserved_canMountWep:4", bit_count=4)
+    _Pad2: bytes = ParamPad(3, "reserved2_canMountWep[3]")
     SpEffectMsgId0: int = ParamField(
         int, "spEffectMsgId0", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -375,4 +375,4 @@ class EQUIP_PARAM_GEM_ST(ParamRow):
         int, "mountWepTextId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(8, "pad6[8]")
+    _Pad3: bytes = ParamPad(8, "pad6[8]")

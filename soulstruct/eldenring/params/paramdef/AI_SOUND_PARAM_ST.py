@@ -22,35 +22,35 @@ class AI_SOUND_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BSpEffectEnable: int = ParamField(
-        byte, "bSpEffectEnable", default=0,
+        byte, "bSpEffectEnable", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     Type: int = ParamField(
-        byte, "type", default=0,
+        byte, "type", AI_SOUND_RATE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    OpposeTarget: int = ParamField(
-        byte, "opposeTarget:1", default=1,
+    OpposeTarget: bool = ParamField(
+        byte, "opposeTarget:1", AI_SOUND_BOOL, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    FriendlyTarget: int = ParamField(
-        byte, "friendlyTarget:1", default=0,
+    FriendlyTarget: bool = ParamField(
+        byte, "friendlyTarget:1", AI_SOUND_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    SelfTarget: int = ParamField(
-        byte, "selfTarget:1", default=0,
+    SelfTarget: bool = ParamField(
+        byte, "selfTarget:1", AI_SOUND_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableOnTargetPCompany: int = ParamField(
-        byte, "disableOnTargetPCompany:1", default=0,
+    DisableOnTargetPCompany: bool = ParamField(
+        byte, "disableOnTargetPCompany:1", AI_SOUND_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     Rank: int = ParamField(
-        byte, "rank", default=0,
+        byte, "rank", AI_SOUND_RANK, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ForgetTime: float = ParamField(
-        float, "forgetTime", default=-1,
+        float, "forgetTime", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     Priority: int = ParamField(
@@ -66,7 +66,7 @@ class AI_SOUND_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ReplaningState: int = ParamField(
-        byte, "replaningState", default=0,
+        byte, "replaningState", AI_SOUND_REPLANNING_STATE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(6, "pad1[6]")

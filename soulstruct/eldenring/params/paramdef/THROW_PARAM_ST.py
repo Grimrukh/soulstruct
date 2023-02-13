@@ -34,15 +34,15 @@ class THROW_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     UpperYRange: float = ParamField(
-        float, "upperYRange", default=0,
+        float, "upperYRange", default=0.2,
         tooltip="TOOLTIP-TODO",
     )
     LowerYRange: float = ParamField(
-        float, "lowerYRange", default=0,
+        float, "lowerYRange", default=0.2,
         tooltip="TOOLTIP-TODO",
     )
     DiffAngMyToDef: float = ParamField(
-        float, "diffAngMyToDef", default=60,
+        float, "diffAngMyToDef", default=60.0,
         tooltip="TOOLTIP-TODO",
     )
     ThrowTypeId: int = ParamField(
@@ -74,20 +74,20 @@ class THROW_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     PadType: int = ParamField(
-        byte, "PadType", default=1,
+        byte, "PadType", THROW_PAD_TYPE, default=1,
         tooltip="TOOLTIP-TODO",
     )
     AtkEnableState: int = ParamField(
-        byte, "AtkEnableState", default=0,
+        byte, "AtkEnableState", THROW_ENABLE_STATE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ThrowFollowingType: int = ParamField(
-        byte, "throwFollowingType", default=0,
+        byte, "throwFollowingType", THROW_FOLLOWING_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad2[1]")
     ThrowType: int = ParamField(
-        byte, "throwType", default=0,
+        byte, "throwType", THROW_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SelfEscCycleCnt: int = ParamField(
@@ -95,34 +95,34 @@ class THROW_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DmyHasChrDirType: int = ParamField(
-        byte, "dmyHasChrDirType", default=0,
+        byte, "dmyHasChrDirType", THROW_DMY_CHR_DIR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsTurnAtker: int = ParamField(
-        byte, "isTurnAtker:1", default=0,
+    IsTurnAtker: bool = ParamField(
+        byte, "isTurnAtker:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSkipWepCate: int = ParamField(
-        byte, "isSkipWepCate:1", default=0,
+    IsSkipWepCate: bool = ParamField(
+        byte, "isSkipWepCate:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSkipSphereCast: int = ParamField(
-        byte, "isSkipSphereCast:1", default=0,
+    IsSkipSphereCast: bool = ParamField(
+        byte, "isSkipSphereCast:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableCorrectPosforThrowAdjust: int = ParamField(
-        byte, "isEnableCorrectPos_forThrowAdjust:1", default=1,
+    IsEnableCorrectPosforThrowAdjust: bool = ParamField(
+        byte, "isEnableCorrectPos_forThrowAdjust:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableThrowFollowingFallAssist: int = ParamField(
-        byte, "isEnableThrowFollowingFallAssist:1", default=1,
+    IsEnableThrowFollowingFallAssist: bool = ParamField(
+        byte, "isEnableThrowFollowingFallAssist:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableThrowFollowingFeedback: int = ParamField(
-        byte, "isEnableThrowFollowingFeedback:1", default=1,
+    IsEnableThrowFollowingFeedback: bool = ParamField(
+        byte, "isEnableThrowFollowingFeedback:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "pad0:2")
+    _BitPad0: int = ParamBitPad(byte, "pad0:2", bit_count=2)
     AtkSorbDmyId: int = ParamField(
         short, "atkSorbDmyId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -164,11 +164,11 @@ class THROW_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AdsrobModelPosInterpolationTime: float = ParamField(
-        float, "adsrobModelPosInterpolationTime", default=0,
+        float, "adsrobModelPosInterpolationTime", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
     ThrowFollowingEndEasingTime: float = ParamField(
-        float, "throwFollowingEndEasingTime", default=0,
+        float, "throwFollowingEndEasingTime", default=0.5,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(24, "pad1[24]")
+    _Pad1: bytes = ParamPad(24, "pad1[24]")

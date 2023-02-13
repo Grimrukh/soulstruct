@@ -1,13 +1,13 @@
 """Script that generates modules and classes in Soulstruct for a game's `ParamDef`s."""
+import logging
 import textwrap
 import typing as tp
-from pathlib import Path
 
 from soulstruct.base.params.utils import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
-from soulstruct.base.params.paramdef.field_types import *
-from soulstruct.utilities.files import PACKAGE_PATH, read_json
+from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 
+_LOGGER = logging.getLogger(__name__)
 
 GET_BUNDLED_PARAMDEFBND: tp.Callable
 
@@ -38,12 +38,48 @@ DSR_PARAMDEFS = (
 )
 
 
-def create_game_classes(game_submodule: str):
+def create_paramdef_info(game_submodule, template_info: dict = None):
+    """Create default info JSON, with nicknames generated from field names and no tooltips/defaults/etc."""
+    paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
+    json_path = paramdef_dir / "paramdef_info.json"
+    if json_path.exists():
+        raise FileExistsError(f"Cannot replace existing `paramdef_info.json` with default one.")
+
+    if template_info is None:
+        template_info = {}
+    paramdefbnd = GET_BUNDLED_PARAMDEFBND()  # type: ParamDefBND
+    json_dict = {}
+    for paramdef_stem, paramdef in paramdefbnd.paramdefs.items():
+        paramdef_dict = json_dict[paramdef_stem] = {}
+        for field_name in paramdef.fields.keys():
+            try:
+                template_field = template_info[paramdef_stem][field_name]
+            except KeyError:
+                template_field = {}
+            nickname = template_field.get("nickname", get_default_nickname(field_name))
+            tooltip = template_field.get("tooltip", "TOOLTIP-TODO")
+
+            paramdef_dict[field_name] = {"nickname": nickname, "tooltip": tooltip}
+
+            if template_field:
+                for optional_key in ("default", "game_type", "dynamic_callback"):
+                    try:
+                        paramdef_dict[field_name][optional_key] = template_field[optional_key]
+                    except KeyError:
+                        pass
+
+    write_json(json_path, json_dict)
+
+
+def create_game_classes(game_submodule: str, no_info: bool = False):
     """My script to convert these 'display info' dictionaries to NewBinaryStruct representations of ParamDefs."""
     paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
     paramdefbnd = GET_BUNDLED_PARAMDEFBND()  # type: ParamDefBND
 
-    paramdefbnd_info = read_json(paramdef_dir / "paramdef_info.json")
+    if no_info:
+        paramdefbnd_info = {}
+    else:
+        paramdefbnd_info = read_json(paramdef_dir / "paramdef_info.json")
 
     # TODO: Collect all used values of all enums by iterating over actual GameParam.
     all_enums = {}  # maps display type names to internal_type
@@ -85,7 +121,7 @@ def create_game_classes(game_submodule: str):
                 field_name = BAD_NAMES[field_name]
 
             display_type_name = paramdef_field.display_type.__name__
-            enum_name = paramdef_field.internal_type
+            enum_name = paramdef_field.internal_type_name
             if not enum_name:
                 if field_name == "sfxMultiplier":  # known bug in DSR ParamDef
                     enum_name = display_type_name
@@ -117,10 +153,18 @@ def create_game_classes(game_submodule: str):
                 if enum_name not in all_enums:
                     all_enums[enum_name] = display_type_name
                 elif all_enums[enum_name] != display_type_name:
-                    raise ValueError(
-                        f"Display type `{display_type_name}` had type {all_enums[display_type_name]} but now has type "
-                        f"'{enum_name}' from field '{field_name}' in '{paramdef_stem}."
-                    )
+                    old_display_type_name = all_enums[enum_name]
+                    if (
+                        old_display_type_name[0] in "su" and display_type_name[0] in "su"
+                        and old_display_type_name[1:] == display_type_name[1:]
+                    ):
+                        # Just a signed/unsigned difference. Use unsigned.
+                        all_enums[enum_name] = "u" + old_display_type_name[1:]
+                    else:
+                        raise ValueError(
+                            f"Enum type `{enum_name}` had display type {all_enums[enum_name]} but now has type "
+                            f"'{display_type_name}' from field '{field_name}' in '{paramdef_stem}."
+                        )
 
             if "game_type" in info:
                 field_args.append(f"game_type={info['game_type']}")
@@ -198,5 +242,6 @@ def create_game_classes(game_submodule: str):
 
 
 if __name__ == '__main__':
-    from soulstruct.bloodborne.params.paramdef import GET_BUNDLED_PARAMDEFBND
-    create_game_classes("bloodborne")
+    from soulstruct.eldenring.params.paramdef import GET_BUNDLED_PARAMDEFBND
+    # create_paramdef_info("eldenring", template_info=read_json(PACKAGE_PATH("bloodborne/params/paramdef/paramdef_info.json")))
+    create_game_classes("eldenring", no_info=True)

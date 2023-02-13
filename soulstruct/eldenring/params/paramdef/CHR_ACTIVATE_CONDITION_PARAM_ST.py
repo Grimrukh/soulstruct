@@ -13,63 +13,63 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CHR_ACTIVATE_CONDITION_PARAM_ST(ParamRow):
-    WeatherSunny: int = ParamField(
-        byte, "weatherSunny:1", default=1,
+    WeatherSunny: bool = ParamField(
+        byte, "weatherSunny:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherClearSky: int = ParamField(
-        byte, "weatherClearSky:1", default=1,
+    WeatherClearSky: bool = ParamField(
+        byte, "weatherClearSky:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherWeakCloudy: int = ParamField(
-        byte, "weatherWeakCloudy:1", default=1,
+    WeatherWeakCloudy: bool = ParamField(
+        byte, "weatherWeakCloudy:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherCloudy: int = ParamField(
-        byte, "weatherCloudy:1", default=1,
+    WeatherCloudy: bool = ParamField(
+        byte, "weatherCloudy:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherRain: int = ParamField(
-        byte, "weatherRain:1", default=1,
+    WeatherRain: bool = ParamField(
+        byte, "weatherRain:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherHeavyRain: int = ParamField(
-        byte, "weatherHeavyRain:1", default=1,
+    WeatherHeavyRain: bool = ParamField(
+        byte, "weatherHeavyRain:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherStorm: int = ParamField(
-        byte, "weatherStorm:1", default=1,
+    WeatherStorm: bool = ParamField(
+        byte, "weatherStorm:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherStormForBattle: int = ParamField(
-        byte, "weatherStormForBattle:1", default=1,
+    WeatherStormForBattle: bool = ParamField(
+        byte, "weatherStormForBattle:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherSnow: int = ParamField(
-        byte, "weatherSnow:1", default=1,
+    WeatherSnow: bool = ParamField(
+        byte, "weatherSnow:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherHeavySnow: int = ParamField(
-        byte, "weatherHeavySnow:1", default=1,
+    WeatherHeavySnow: bool = ParamField(
+        byte, "weatherHeavySnow:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherFog: int = ParamField(
-        byte, "weatherFog:1", default=1,
+    WeatherFog: bool = ParamField(
+        byte, "weatherFog:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherHeavyFog: int = ParamField(
-        byte, "weatherHeavyFog:1", default=1,
+    WeatherHeavyFog: bool = ParamField(
+        byte, "weatherHeavyFog:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherHeavyFogRain: int = ParamField(
-        byte, "weatherHeavyFogRain:1", default=1,
+    WeatherHeavyFogRain: bool = ParamField(
+        byte, "weatherHeavyFogRain:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    WeatherSandStorm: int = ParamField(
-        byte, "weatherSandStorm:1", default=1,
+    WeatherSandStorm: bool = ParamField(
+        byte, "weatherSandStorm:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "pad1:2")
+    _BitPad0: int = ParamBitPad(byte, "pad1:2", bit_count=2)
     TimeStartHour: int = ParamField(
         byte, "timeStartHour", default=0,
         tooltip="TOOLTIP-TODO",
@@ -86,4 +86,4 @@ class CHR_ACTIVATE_CONDITION_PARAM_ST(ParamRow):
         byte, "timeEndMin", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(2, "pad2[2]")
+    _Pad0: bytes = ParamPad(2, "pad2[2]")

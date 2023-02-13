@@ -13,18 +13,18 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CHR_MODEL_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     ModelMemoryType: int = ParamField(
-        byte, "modelMemoryType", default=0,
+        byte, "modelMemoryType", CHR_MEMORY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TexMemoryType: int = ParamField(
-        byte, "texMemoryType", default=0,
+        byte, "texMemoryType", CHR_MEMORY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CameraDitherFadeId: int = ParamField(
@@ -32,6 +32,6 @@ class CHR_MODEL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ReportAnimMemSizeMb: float = ParamField(
-        float, "reportAnimMemSizeMb", default=12,
+        float, "reportAnimMemSizeMb", default=12.0,
         tooltip="TOOLTIP-TODO",
     )

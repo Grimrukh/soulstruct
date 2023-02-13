@@ -21,7 +21,7 @@ except AttributeError:
     Self = "ParamDefField"
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params.param import ParamRow
+    from soulstruct.base.params.utils import ParamRow
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -57,9 +57,9 @@ class ParamDefField:
     size: int  # in bytes
     bit_count: int  # in bits (-1 unless bit field actually used)
 
-    internal_type: str  # format string, e.g. 'f32' or 'dummy8'
+    internal_type_name: str  # e.g. `ITEMLOT_ITEMCATEGORY` or just same as `internal_type`
     display_name: str
-    display_type: tp.Type[field_types.base_type]  # e.g. `ITEMLOT_ITEMCATEGORY` or just same as `internal_type`
+    display_type: tp.Type[field_types.base_type]  # raw format type, e.g. `f32` or `dummy8`
     display_format: str  # C++ string format template, e.g. '%d'
 
     # These are always floats, even for integer fields, except `default` is "" for string fields.
@@ -128,12 +128,12 @@ class ParamDefField:
             raw_display_name = reader.read(64)
             kwargs["display_name"] = raw_display_name.decode(encoding).rstrip("\0")
 
-        display_type_str = reader.unpack_string(length=8, encoding="shift_jis_2004")
+        display_type_name = reader.unpack_string(length=8, encoding="shift_jis_2004")
         # print(display_type_str.rstrip().encode())
         try:
-            kwargs["display_type"] = getattr(field_types, display_type_str)  # type: tp.Type[field_types.base_type]
+            kwargs["display_type"] = getattr(field_types, display_type_name)  # type: tp.Type[field_types.base_type]
         except AttributeError:
-            raise TypeError(f"Unknown `ParamDefField` display type: {display_type_str}")
+            raise TypeError(f"Unknown `ParamDefField` display type: {display_type_name}")
         kwargs["display_format"] = reader.unpack_string(length=8, encoding="shift_jis_2004")  # %i, %u, %d, etc.
 
         if format_version >= 203:
@@ -153,9 +153,9 @@ class ParamDefField:
 
         if uses_string_offsets:
             internal_type_offset = reader.unpack_value("v")
-            kwargs["internal_type"] = reader.unpack_string(offset=internal_type_offset, encoding="ASCII")
+            kwargs["internal_type_name"] = reader.unpack_string(offset=internal_type_offset, encoding="ASCII")
         else:
-            kwargs["internal_type"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
+            kwargs["internal_type_name"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
 
         kwargs["bit_count"] = -1  # default (does not use bit field)
         if format_version >= 102:
@@ -241,8 +241,11 @@ class ParamDefField:
         else:
             kwargs["size"] = display_type.size()
 
+        if match := cls._BIT_SIZE_RE.match(name):
+            kwargs["bit_count"] = int(match.group(1))
+
         # Defaults.
-        kwargs["internal_type"] = display_type
+        kwargs["internal_type_name"] = display_type.__name__
         kwargs["minimum"] = display_type.minimum()
         kwargs["maximum"] = display_type.maximum()
         if issubclass(display_type, (field_types.unsigned, field_types.signed)):
@@ -268,7 +271,7 @@ class ParamDefField:
             elif child.tag == "DisplayFormat":
                 kwargs["display_format"] = child.text
             elif child.tag == "Enum":
-                kwargs["internal_type"] = child.text
+                kwargs["internal_type_name"] = child.text
             elif child.tag == "Description":
                 kwargs["description"] = child.text
             elif child.tag == "EditFlags":
@@ -337,7 +340,7 @@ class ParamDefField:
 
     def __repr__(self):
         return (
-            f"{self.name} ({self.display_name}) | {self.internal_type} ({self.display_type.__name__}) | "
+            f"{self.name} ({self.display_name}) | {self.internal_type_name} ({self.display_type.__name__}) | "
             f"size = {self.size} | min/max/increment = {self.minimum}, {self.maximum}, {self.increment} | "
             f"default = {self.default} | {self.description}"
         )
@@ -355,8 +358,8 @@ class ParamDefField:
         # TODO: Use a 'get_game()' module lookup (from `ParamDef`) and fall back to this.
         if not self.default:
             return self.default
-        if self.bit_count == 1 and self.internal_type != "dummy8":
+        if self.bit_count == 1 and self.internal_type_name != "dummy8":
             return bool(self.default)
-        elif self.internal_type not in {"f32", "f64"}:
+        elif self.internal_type_name not in {"f32", "f64"}:
             return int(self.default)
         return self.default  # float or str

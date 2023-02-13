@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BUDDY_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     TriggerSpEffectId: int = ParamField(
         int, "triggerSpEffectId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -52,18 +52,18 @@ class BUDDY_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AppearOnAroundSekihi: int = ParamField(
-        byte, "appearOnAroundSekihi", default=0,
+        byte, "appearOnAroundSekihi", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DisablePCTargetShare: int = ParamField(
-        byte, "disablePCTargetShare", default=0,
+        byte, "disablePCTargetShare", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PcFollowType: int = ParamField(
-        byte, "pcFollowType", default=0,
+        byte, "pcFollowType", BUDDY_PC_FOLLOW_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "Reserve[1]")
+    _Pad1: bytes = ParamPad(1, "Reserve[1]")
     DopingSpEffectlv0: int = ParamField(
         int, "dopingSpEffect_lv0", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -116,4 +116,71 @@ class BUDDY_PARAM_ST(ParamRow):
         int, "generateAnimId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(4, "Reserve2[4]")
+    Unk1: int = ParamField(
+        uint, "Unk1", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk2: int = ParamField(
+        uint, "Unk2", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk3: int = ParamField(
+        int, "Unk3", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk4: int = ParamField(
+        int, "Unk4", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk5: int = ParamField(
+        int, "Unk5", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk6: int = ParamField(
+        int, "Unk6", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk7: int = ParamField(
+        int, "Unk7", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk8: int = ParamField(
+        int, "Unk8", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk9: int = ParamField(
+        int, "Unk9", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk10: int = ParamField(
+        int, "Unk10", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk11: int = ParamField(
+        uint, "Unk11", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk12: int = ParamField(
+        int, "Unk12", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk13: int = ParamField(
+        int, "Unk13", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk14: int = ParamField(
+        int, "Unk14", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk15: int = ParamField(
+        int, "Unk15", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk16: int = ParamField(
+        int, "Unk16", default=0,
+        tooltip="TOOLTIP-TODO",
+    )
+    Unk17: int = ParamField(
+        uint, "Unk17", default=0,
+        tooltip="TOOLTIP-TODO",
+    )

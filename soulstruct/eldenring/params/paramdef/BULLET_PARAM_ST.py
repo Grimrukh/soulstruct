@@ -13,83 +13,83 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BULLET_PARAM_ST(ParamRow):
-    BulletAttack: int = ParamField(
+    AtkIdBullet: int = ParamField(
         int, "atkId_Bullet", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ProjectileVFX: int = ParamField(
+    SfxIdBullet: int = ParamField(
         int, "sfxId_Bullet", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ImpactVFX: int = ParamField(
+    SfxIdHit: int = ParamField(
         int, "sfxId_Hit", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FlickVFX: int = ParamField(
+    SfxIdFlick: int = ParamField(
         int, "sfxId_Flick", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    LifeTime: float = ParamField(
-        float, "life", default=-1,
+    Life: float = ParamField(
+        float, "life", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    AttenuationDistance: float = ParamField(
+    Dist: float = ParamField(
         float, "dist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    LaunchInterval: float = ParamField(
+    ShootInterval: float = ParamField(
         float, "shootInterval", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    GravityBeforeAttenuation: float = ParamField(
+    GravityInRange: float = ParamField(
         float, "gravityInRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    GravityAfterAttenuation: float = ParamField(
+    GravityOutRange: float = ParamField(
         float, "gravityOutRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    ClosestHomingDistance: float = ParamField(
+    HormingStopRange: float = ParamField(
         float, "hormingStopRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    InitialSpeed: float = ParamField(
+    InitVellocity: float = ParamField(
         float, "initVellocity", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    AccelerationBeforeAttenuation: float = ParamField(
+    AccelInRange: float = ParamField(
         float, "accelInRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    AccelerationAfterAttenuation: float = ParamField(
+    AccelOutRange: float = ParamField(
         float, "accelOutRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxSpeed: float = ParamField(
+    MaxVellocity: float = ParamField(
         float, "maxVellocity", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    MinSpeed: float = ParamField(
+    MinVellocity: float = ParamField(
         float, "minVellocity", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    AccelerationTime: float = ParamField(
+    AccelTime: float = ParamField(
         float, "accelTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    HomingStartDistance: float = ParamField(
+    HomingBeginDist: float = ParamField(
         float, "homingBeginDist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    InitialHitRadius: float = ParamField(
-        float, "hitRadius", default=-1,
+    HitRadius: float = ParamField(
+        float, "hitRadius", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    FinalHitRadius: float = ParamField(
-        float, "hitRadiusMax", default=-1,
+    HitRadiusMax: float = ParamField(
+        float, "hitRadiusMax", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    RadiusIncreaseTime: float = ParamField(
+    SpreadTime: float = ParamField(
         float, "spreadTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -97,11 +97,11 @@ class BULLET_PARAM_ST(ParamRow):
         float, "expDelay", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    HomingOffsetRange: float = ParamField(
+    HormingOffsetRange: float = ParamField(
         float, "hormingOffsetRange", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    HitboxLifeTime: float = ParamField(
+    DmgHitRecordLifeTime: float = ParamField(
         float, "dmgHitRecordLifeTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -109,63 +109,63 @@ class BULLET_PARAM_ST(ParamRow):
         float, "externalForce", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    OwnerSpecialEffect: int = ParamField(
+    SpEffectIDForShooter: int = ParamField(
         int, "spEffectIDForShooter", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    BulletAI: int = ParamField(
+    AutoSearchNPCThinkID: int = ParamField(
         int, "autoSearchNPCThinkID", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BulletOnHit: int = ParamField(
+    HitBulletID: int = ParamField(
         int, "HitBulletID", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HitSpecialEffect0: int = ParamField(
+    SpEffectId0: int = ParamField(
         int, "spEffectId0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HitSpecialEffect1: int = ParamField(
+    SpEffectId1: int = ParamField(
         int, "spEffectId1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HitSpecialEffect2: int = ParamField(
+    SpEffectId2: int = ParamField(
         int, "spEffectId2", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HitSpecialEffect3: int = ParamField(
+    SpEffectId3: int = ParamField(
         int, "spEffectId3", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HitSpecialEffect4: int = ParamField(
+    SpEffectId4: int = ParamField(
         int, "spEffectId4", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    BulletCount: int = ParamField(
+    NumShoot: int = ParamField(
         ushort, "numShoot", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HomingAnglePerSecond: int = ParamField(
+    HomingAngle: int = ParamField(
         short, "homingAngle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AzimuthAngleStart: int = ParamField(
+    ShootAngle: int = ParamField(
         short, "shootAngle", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AzimuthAngleInterval: int = ParamField(
+    ShootAngleInterval: int = ParamField(
         short, "shootAngleInterval", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ElevationAngleInterval: int = ParamField(
+    ShootAngleXInterval: int = ParamField(
         short, "shootAngleXInterval", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PhysicalDamageDamp: int = ParamField(
+    DamageDamp: int = ParamField(
         sbyte, "damageDamp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MagicDamageDamp: int = ParamField(
+    SpelDamageDamp: int = ParamField(
         sbyte, "spelDamageDamp", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -173,7 +173,7 @@ class BULLET_PARAM_ST(ParamRow):
         sbyte, "fireDamageDamp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LightningDamageDamp: int = ParamField(
+    ThunderDamageDamp: int = ParamField(
         sbyte, "thunderDamageDamp", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -185,122 +185,122 @@ class BULLET_PARAM_ST(ParamRow):
         sbyte, "knockbackDamp", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FirstBulletElevationAngle: int = ParamField(
+    ShootAngleXZ: int = ParamField(
         sbyte, "shootAngleXZ", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LockShootLimitAngle: int = ParamField(
+    LockShootLimitAng: int = ParamField(
         byte, "lockShootLimitAng", default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad2[1]")
-    PreviousDirectionRatio: int = ParamField(
+    PrevVelocityDirRate: int = ParamField(
         byte, "prevVelocityDirRate", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AttackAttribute: int = ParamField(
-        byte, "atkAttribute", default=254,
+    AtkAttribute: int = ParamField(
+        byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=254,
         tooltip="TOOLTIP-TODO",
     )
-    ElementAttribute: int = ParamField(
-        byte, "spAttribute", default=254,
+    SpAttribute: int = ParamField(
+        byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=254,
         tooltip="TOOLTIP-TODO",
     )
     MaterialAttackType: int = ParamField(
-        byte, "Material_AttackType", default=254,
+        byte, "Material_AttackType", BEHAVIOR_ATK_TYPE, default=254,
         tooltip="TOOLTIP-TODO",
     )
-    EffectsOnHit: int = ParamField(
-        byte, "Material_AttackMaterial", default=254,
+    MaterialAttackMaterial: int = ParamField(
+        byte, "Material_AttackMaterial", WEP_MATERIAL_ATK, default=254,
         tooltip="TOOLTIP-TODO",
     )
-    IsPenetrateChr: int = ParamField(
-        byte, "isPenetrateChr:1", default=0,
+    IsPenetrateChr: bool = ParamField(
+        byte, "isPenetrateChr:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsPenetrateObj: int = ParamField(
-        byte, "isPenetrateObj:1", default=0,
+    IsPenetrateObj: bool = ParamField(
+        byte, "isPenetrateObj:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "pad:6")
+    _BitPad0: int = ParamBitPad(byte, "pad:6", bit_count=6)
     LaunchConditionType: int = ParamField(
-        byte, "launchConditionType", default=0,
+        byte, "launchConditionType", BULLET_LAUNCH_CONDITION_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     FollowType: int = ParamField(
-        byte, "FollowType:3", default=0,
+        byte, "FollowType:3", BULLET_FOLLOW_TYPE, bit_count=3, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    OriginType: int = ParamField(
-        byte, "EmittePosType:3", default=0,
+    EmittePosType: int = ParamField(
+        byte, "EmittePosType:3", BULLET_EMITTE_POS_TYPE, bit_count=3, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RemainAttachedToTarget: int = ParamField(
-        byte, "isAttackSFX:1", default=0,
+    IsAttackSFX: bool = ParamField(
+        byte, "isAttackSFX:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsEndlessHit: int = ParamField(
-        byte, "isEndlessHit:1", default=0,
+    IsEndlessHit: bool = ParamField(
+        byte, "isEndlessHit:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMapPiercing: int = ParamField(
-        byte, "isPenetrateMap:1", default=0,
+    IsPenetrateMap: bool = ParamField(
+        byte, "isPenetrateMap:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HitsBothTeams: int = ParamField(
-        byte, "isHitBothTeam:1", default=0,
+    IsHitBothTeam: bool = ParamField(
+        byte, "isHitBothTeam:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    SharedHitCheck: int = ParamField(
-        byte, "isUseSharedHitList:1", default=0,
+    IsUseSharedHitList: bool = ParamField(
+        byte, "isUseSharedHitList:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    UsesMultipleModelPoints: int = ParamField(
-        byte, "isUseMultiDmyPolyIfPlace:1", default=0,
+    IsUseMultiDmyPolyIfPlace: bool = ParamField(
+        byte, "isUseMultiDmyPolyIfPlace:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHitOtherBulletForceEraseA: int = ParamField(
-        byte, "isHitOtherBulletForceEraseA:1", default=0,
+    IsHitOtherBulletForceEraseA: bool = ParamField(
+        byte, "isHitOtherBulletForceEraseA:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHitOtherBulletForceEraseB: int = ParamField(
-        byte, "isHitOtherBulletForceEraseB:1", default=0,
+    IsHitOtherBulletForceEraseB: bool = ParamField(
+        byte, "isHitOtherBulletForceEraseB:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeDeflectedByMagic: int = ParamField(
-        byte, "isHitForceMagic:1", default=0,
+    IsHitForceMagic: bool = ParamField(
+        byte, "isHitForceMagic:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreVFXOnWaterHit: int = ParamField(
-        byte, "isIgnoreSfxIfHitWater:1", default=0,
+    IsIgnoreSfxIfHitWater: bool = ParamField(
+        byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreStateTransitionOnWaterHit: int = ParamField(
-        byte, "isIgnoreMoveStateIfHitWater:1", default=0,
+    IsIgnoreMoveStateIfHitWater: bool = ParamField(
+        byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanBeDeflectedByBeastRoar: int = ParamField(
-        byte, "isHitDarkForceMagic:1", default=0,
+    IsHitDarkForceMagic: bool = ParamField(
+        byte, "isHitDarkForceMagic:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     DmgCalcSide: int = ParamField(
-        byte, "dmgCalcSide:2", default=0,
+        byte, "dmgCalcSide:2", DMG_CALC_SIDE_TYPE, bit_count=2, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsEnableAutoHoming: int = ParamField(
-        byte, "isEnableAutoHoming:1", default=0,
+    IsEnableAutoHoming: bool = ParamField(
+        byte, "isEnableAutoHoming:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSyncBulletCulcDumypolyPos: int = ParamField(
-        byte, "isSyncBulletCulcDumypolyPos:1", default=0,
+    IsSyncBulletCulcDumypolyPos: bool = ParamField(
+        byte, "isSyncBulletCulcDumypolyPos:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsOwnerOverrideInitAngle: int = ParamField(
-        byte, "isOwnerOverrideInitAngle:1", default=0,
+    IsOwnerOverrideInitAngle: bool = ParamField(
+        byte, "isOwnerOverrideInitAngle:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsInheritSfxToChild: int = ParamField(
-        byte, "isInheritSfxToChild:1", default=0,
+    IsInheritSfxToChild: bool = ParamField(
+        byte, "isInheritSfxToChild:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     DarkDamageDamp: int = ParamField(
@@ -308,11 +308,11 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BulletSfxDeleteTypebyHit: int = ParamField(
-        sbyte, "bulletSfxDeleteType_byHit", default=0,
+        sbyte, "bulletSfxDeleteType_byHit", BULLET_SFX_DELETE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BulletSfxDeleteTypebyLifeDead: int = ParamField(
-        sbyte, "bulletSfxDeleteType_byLifeDead", default=0,
+        sbyte, "bulletSfxDeleteType_byLifeDead", BULLET_SFX_DELETE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     TargetYOffsetRange: float = ParamField(
@@ -348,41 +348,41 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SfxPostureType: int = ParamField(
-        byte, "sfxPostureType", default=0,
+        byte, "sfxPostureType", BULLET_SFX_CREATE_POSTURE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CreateLimitGroupId: int = ParamField(
         byte, "createLimitGroupId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad5[1]")
-    ChildrenInheritSpeed: int = ParamField(
-        byte, "isInheritSpeedToChild:1", default=0,
+    _Pad1: bytes = ParamPad(1, "pad5[1]")
+    IsInheritSpeedToChild: bool = ParamField(
+        byte, "isInheritSpeedToChild:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDisableHitSfxbyChrAndObj: int = ParamField(
-        byte, "isDisableHitSfx_byChrAndObj:1", default=0,
+    IsDisableHitSfxbyChrAndObj: bool = ParamField(
+        byte, "isDisableHitSfx_byChrAndObj:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsCheckWallbyCenterRay: int = ParamField(
-        byte, "isCheckWall_byCenterRay:1", default=0,
+    IsCheckWallbyCenterRay: bool = ParamField(
+        byte, "isCheckWall_byCenterRay:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHitFlare: int = ParamField(
-        byte, "isHitFlare:1", default=0,
+    IsHitFlare: bool = ParamField(
+        byte, "isHitFlare:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseBulletWallFilter: int = ParamField(
-        byte, "isUseBulletWallFilter:1", default=0,
+    IsUseBulletWallFilter: bool = ParamField(
+        byte, "isUseBulletWallFilter:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad1:1")
-    IsNonDependenceMagicForFunnleNum: int = ParamField(
-        byte, "isNonDependenceMagicForFunnleNum:1", default=0,
+    _BitPad1: int = ParamBitPad(byte, "pad1:1", bit_count=1)
+    IsNonDependenceMagicForFunnleNum: bool = ParamField(
+        byte, "isNonDependenceMagicForFunnleNum:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsAiInterruptShootNoDamageBullet: int = ParamField(
-        byte, "isAiInterruptShootNoDamageBullet:1", default=0,
+    IsAiInterruptShootNoDamageBullet: bool = ParamField(
+        byte, "isAiInterruptShootNoDamageBullet:1", ON_OFF, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     RandomCreateRadius: float = ParamField(
@@ -406,11 +406,11 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BallisticCalcType: int = ParamField(
-        byte, "ballisticCalcType", default=0,
+        byte, "ballisticCalcType", BULLET_BALLISTIC_CALC_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     AttachEffectType: int = ParamField(
-        byte, "attachEffectType", default=0,
+        byte, "attachEffectType", BULLET_ATTACH_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SeIdBullet1: int = ParamField(
@@ -450,10 +450,10 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BulletSfxDeleteTypebyForceErase: int = ParamField(
-        sbyte, "bulletSfxDeleteType_byForceErase", default=0,
+        sbyte, "bulletSfxDeleteType_byForceErase", BULLET_SFX_DELETE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(1, "pad3[1]")
+    _Pad2: bytes = ParamPad(1, "pad3[1]")
     FollowDmypolyforSfxPose: int = ParamField(
         short, "followDmypoly_forSfxPose", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -463,11 +463,11 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SpBulletDistUpRate: float = ParamField(
-        float, "spBulletDistUpRate", default=1,
+        float, "spBulletDistUpRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     NolockTargetDist: float = ParamField(
         float, "nolockTargetDist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(8, "pad4[8]")
+    _Pad3: bytes = ParamPad(8, "pad4[8]")

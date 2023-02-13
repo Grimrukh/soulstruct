@@ -14,15 +14,15 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class PERFORMANCE_CHECK_PARAM(ParamRow):
     WorkTag: int = ParamField(
-        byte, "workTag", default=0,
+        byte, "workTag", PerformanceCheckParamWork, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CategoryTag: int = ParamField(
-        byte, "categoryTag", default=0,
+        byte, "categoryTag", PerformanceCheckParamCategory, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CompareType: int = ParamField(
-        byte, "compareType", default=0,
+        byte, "compareType", PerformanceCheckParamCompare, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "dummy1[1]")
@@ -31,7 +31,7 @@ class PERFORMANCE_CHECK_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(8, "dummy2[8]")
-    UserTag: bytes = ParamField(
-        bytes, "userTag[16]", length=32, default='',
+    UserTag: str = ParamField(
+        str, "userTag[16]", encoding="utf-16", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )

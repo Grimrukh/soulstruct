@@ -14,11 +14,11 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_AA_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=0,
+        byte, "enabled", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ForceFXAA2: int = ParamField(
-        byte, "forceFXAA2", default=0,
+        byte, "forceFXAA2", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "dmy[2]")

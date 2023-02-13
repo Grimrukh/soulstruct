@@ -13,40 +13,40 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class HIT_MTRL_PARAM_ST(ParamRow):
-    SoundRadiusMultiplier: float = ParamField(
-        float, "aiVolumeRate", default=1,
+    AiVolumeRate: float = ParamField(
+        float, "aiVolumeRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffect1: int = ParamField(
+    SpEffectIdOnHit0: int = ParamField(
         int, "spEffectIdOnHit0", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SpecialEffect2: int = ParamField(
+    SpEffectIdOnHit1: int = ParamField(
         int, "spEffectIdOnHit1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     FootEffectHeightType: int = ParamField(
-        byte, "footEffectHeightType:2", default=0,
+        byte, "footEffectHeightType:2", HMP_FOOT_EFFECT_HEIGHT_TYPE, bit_count=2, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    FootEffectDirectionType: int = ParamField(
-        byte, "footEffectDirType:2", default=0,
+    FootEffectDirType: int = ParamField(
+        byte, "footEffectDirType:2", HMP_FOOT_EFFECT_DIR_TYPE, bit_count=2, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    TerrainHeightType: int = ParamField(
-        byte, "floorHeightType:2", default=0,
+    FloorHeightType: int = ParamField(
+        byte, "floorHeightType:2", HMP_FLOOR_HEIGHT_TYPE, bit_count=2, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DisableFallDamage: int = ParamField(
-        byte, "disableFallDamage:1", default=0,
+    DisableFallDamage: bool = ParamField(
+        byte, "disableFallDamage:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHardnessForSoundReverb: int = ParamField(
-        byte, "isHardnessForSoundReverb:1", default=0,
+    IsHardnessForSoundReverb: bool = ParamField(
+        byte, "isHardnessForSoundReverb:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
     HardnessType: int = ParamField(
-        byte, "hardnessType", default=0,
+        byte, "hardnessType", HMP_HARDNESS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(6, "pad2[6]")

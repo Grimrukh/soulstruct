@@ -13,24 +13,24 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BEHAVIOR_PARAM_ST(ParamRow):
-    VariationID: int = ParamField(
+    VariationId: int = ParamField(
         int, "variationId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BehaviorJudgeID: int = ParamField(
+    BehaviorJudgeId: int = ParamField(
         int, "behaviorJudgeId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EzstateBehaviorType: int = ParamField(
+    EzStateBehaviorTypeold: int = ParamField(
         byte, "ezStateBehaviorType_old", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ReferenceType: int = ParamField(
-        byte, "refType", default=0,
+    RefType: int = ParamField(
+        byte, "refType", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(2, "pad2[2]")
-    ReferenceID: int = ParamField(
+    RefId: int = ParamField(
         int, "refId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -38,7 +38,7 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         float, "consumeSA", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    StaminaCost: int = ParamField(
+    Stamina: int = ParamField(
         int, "stamina", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -47,10 +47,10 @@ class BEHAVIOR_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     Category: int = ParamField(
-        byte, "category", default=0,
+        byte, "category", BEHAVIOR_CATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HumanityCost: int = ParamField(
+    HeroPoint: int = ParamField(
         byte, "heroPoint", default=0,
         tooltip="TOOLTIP-TODO",
     )

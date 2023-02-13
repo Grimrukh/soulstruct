@@ -13,77 +13,77 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CUTSCENE_TEXTURE_LOAD_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableParamDebug: int = ParamField(
-        byte, "disableParam_Debug:1", default=0,
+    DisableParamDebug: bool = ParamField(
+        byte, "disableParam_Debug:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:6")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    TexName00: bytes = ParamField(
-        bytes, "texName_00[16]", length=16, default='',
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:6", bit_count=6)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    TexName00: str = ParamField(
+        str, "texName_00[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName01: bytes = ParamField(
-        bytes, "texName_01[16]", length=16, default='',
+    TexName01: str = ParamField(
+        str, "texName_01[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName02: bytes = ParamField(
-        bytes, "texName_02[16]", length=16, default='',
+    TexName02: str = ParamField(
+        str, "texName_02[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName03: bytes = ParamField(
-        bytes, "texName_03[16]", length=16, default='',
+    TexName03: str = ParamField(
+        str, "texName_03[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName04: bytes = ParamField(
-        bytes, "texName_04[16]", length=16, default='',
+    TexName04: str = ParamField(
+        str, "texName_04[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName05: bytes = ParamField(
-        bytes, "texName_05[16]", length=16, default='',
+    TexName05: str = ParamField(
+        str, "texName_05[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName06: bytes = ParamField(
-        bytes, "texName_06[16]", length=16, default='',
+    TexName06: str = ParamField(
+        str, "texName_06[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName07: bytes = ParamField(
-        bytes, "texName_07[16]", length=16, default='',
+    TexName07: str = ParamField(
+        str, "texName_07[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName08: bytes = ParamField(
-        bytes, "texName_08[16]", length=16, default='',
+    TexName08: str = ParamField(
+        str, "texName_08[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName09: bytes = ParamField(
-        bytes, "texName_09[16]", length=16, default='',
+    TexName09: str = ParamField(
+        str, "texName_09[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName10: bytes = ParamField(
-        bytes, "texName_10[16]", length=16, default='',
+    TexName10: str = ParamField(
+        str, "texName_10[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName11: bytes = ParamField(
-        bytes, "texName_11[16]", length=16, default='',
+    TexName11: str = ParamField(
+        str, "texName_11[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName12: bytes = ParamField(
-        bytes, "texName_12[16]", length=16, default='',
+    TexName12: str = ParamField(
+        str, "texName_12[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName13: bytes = ParamField(
-        bytes, "texName_13[16]", length=16, default='',
+    TexName13: str = ParamField(
+        str, "texName_13[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName14: bytes = ParamField(
-        bytes, "texName_14[16]", length=16, default='',
+    TexName14: str = ParamField(
+        str, "texName_14[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TexName15: bytes = ParamField(
-        bytes, "texName_15[16]", length=16, default='',
+    TexName15: str = ParamField(
+        str, "texName_15[16]", encoding="shift_jis_2004", length=16, default='',
         tooltip="TOOLTIP-TODO",
     )

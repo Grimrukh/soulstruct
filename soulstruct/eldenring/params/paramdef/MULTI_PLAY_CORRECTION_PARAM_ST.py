@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class MULTI_PLAY_CORRECTION_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     Client1SpEffectId: int = ParamField(
         int, "client1SpEffectId", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -32,7 +32,7 @@ class MULTI_PLAY_CORRECTION_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     BOverrideSpEffect: int = ParamField(
-        byte, "bOverrideSpEffect", default=0,
+        byte, "bOverrideSpEffect", MULTI_PLAY_CORRECTION_OVERRIDE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(15, "pad3[15]")
+    _Pad1: bytes = ParamPad(15, "pad3[15]")

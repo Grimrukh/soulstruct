@@ -35,19 +35,19 @@ class SOUND_AUTO_REVERB_SELECT_PARAM_ST(ParamRow):
     )
     _Pad0: bytes = ParamPad(1, "pad0[1]")
     DistMinA: float = ParamField(
-        float, "DistMinA", default=-1,
+        float, "DistMinA", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMaxA: float = ParamField(
-        float, "DistMaxA", default=-1,
+        float, "DistMaxA", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMinB: float = ParamField(
-        float, "DistMinB", default=-1,
+        float, "DistMinB", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistMaxB: float = ParamField(
-        float, "DistMaxB", default=-1,
+        float, "DistMaxB", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     NoHitNumMin: int = ParamField(

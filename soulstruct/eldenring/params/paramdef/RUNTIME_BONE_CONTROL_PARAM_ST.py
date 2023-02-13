@@ -18,19 +18,19 @@ class RUNTIME_BONE_CONTROL_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     CtrlType: int = ParamField(
-        byte, "ctrlType", default=0,
+        byte, "ctrlType", RUNTIME_BONE_CONTROL_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(11, "pad[11]")
-    ApplyBone: bytes = ParamField(
-        bytes, "applyBone[32]", length=32, default='',
+    ApplyBone: str = ParamField(
+        str, "applyBone[32]", encoding="shift_jis_2004", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TargetBone1: bytes = ParamField(
-        bytes, "targetBone1[32]", length=32, default='',
+    TargetBone1: str = ParamField(
+        str, "targetBone1[32]", encoding="shift_jis_2004", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )
-    TargetBone2: bytes = ParamField(
-        bytes, "targetBone2[32]", length=32, default='',
+    TargetBone2: str = ParamField(
+        str, "targetBone2[32]", encoding="shift_jis_2004", length=32, default='',
         tooltip="TOOLTIP-TODO",
     )

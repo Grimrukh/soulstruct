@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ROLLING_OBJ_LOT_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     AssetId0: int = ParamField(
         int, "AssetId_0", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -83,4 +83,4 @@ class ROLLING_OBJ_LOT_PARAM_ST(ParamRow):
         byte, "CreateWeight_7", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(20, "Reserve_0[20]")
+    _Pad1: bytes = ParamPad(20, "Reserve_0[20]")

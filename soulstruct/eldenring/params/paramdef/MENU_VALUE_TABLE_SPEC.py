@@ -17,12 +17,12 @@ class MENU_VALUE_TABLE_SPEC(ParamRow):
         int, "value", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    TextID: int = ParamField(
+    TextId: int = ParamField(
         int, "textId", default=0,
         tooltip="TOOLTIP-TODO",
     )
     CompareType: int = ParamField(
-        sbyte, "compareType", default=0,
+        sbyte, "compareType", MENU_VALUE_TABLE_CMP_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding[3]")

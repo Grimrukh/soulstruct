@@ -13,36 +13,36 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class LOCK_CAM_PARAM_ST(ParamRow):
-    CameraDistanceFromTarget: float = ParamField(
-        float, "camDistTarget", default=4,
+    CamDistTarget: float = ParamField(
+        float, "camDistTarget", default=4.0,
         tooltip="TOOLTIP-TODO",
     )
-    MinRotationElevation: float = ParamField(
-        float, "rotRangeMinX", default=-40,
+    RotRangeMinX: float = ParamField(
+        float, "rotRangeMinX", default=-40.0,
         tooltip="TOOLTIP-TODO",
     )
-    LockElevationShiftRatio: float = ParamField(
-        float, "lockRotXShiftRatio", default=0,
+    LockRotXShiftRatio: float = ParamField(
+        float, "lockRotXShiftRatio", default=0.6,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterVerticalOffset: float = ParamField(
-        float, "chrOrgOffset_Y", default=1,
+    ChrOrgOffsetY: float = ParamField(
+        float, "chrOrgOffset_Y", default=1.42,
         tooltip="TOOLTIP-TODO",
     )
-    MaxDistanceFromCharacter: float = ParamField(
-        float, "chrLockRangeMaxRadius", default=15,
+    ChrLockRangeMaxRadius: float = ParamField(
+        float, "chrLockRangeMaxRadius", default=15.0,
         tooltip="TOOLTIP-TODO",
     )
-    VerticalFieldOfView: float = ParamField(
-        float, "camFovY", default=43,
+    CamFovY: float = ParamField(
+        float, "camFovY", default=43.0,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterLockRangeMaxRadiusD: float = ParamField(
-        float, "chrLockRangeMaxRadius_forD", default=-1,
+    ChrLockRangeMaxRadiusforD: float = ParamField(
+        float, "chrLockRangeMaxRadius_forD", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    CharacterLockRangeMaxRadiusPD: float = ParamField(
-        float, "chrLockRangeMaxRadius_forPD", default=-1,
+    ChrLockRangeMaxRadiusforPD: float = ParamField(
+        float, "chrLockRangeMaxRadius_forPD", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     CloseMaxHeight: float = ParamField(
@@ -86,11 +86,11 @@ class LOCK_CAM_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     LockTgtKeepTime: float = ParamField(
-        float, "lockTgtKeepTime", default=2,
+        float, "lockTgtKeepTime", default=2.0,
         tooltip="TOOLTIP-TODO",
     )
     ChrTransChaseRateForNormal: float = ParamField(
-        float, "chrTransChaseRateForNormal", default=-1,
+        float, "chrTransChaseRateForNormal", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(48, "pad[48]")

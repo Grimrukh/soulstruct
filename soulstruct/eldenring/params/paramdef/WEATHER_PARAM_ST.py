@@ -30,7 +30,7 @@ class WEATHER_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WetTime: float = ParamField(
-        float, "WetTime", default=-1,
+        float, "WetTime", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
     GparamId: int = ParamField(
@@ -74,10 +74,10 @@ class WEATHER_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AiSightRate: float = ParamField(
-        float, "aiSightRate", default=1,
+        float, "aiSightRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     DistViewWeatherGparamOverrideWeight: float = ParamField(
-        float, "DistViewWeatherGparamOverrideWeight", default=-1,
+        float, "DistViewWeatherGparamOverrideWeight", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )

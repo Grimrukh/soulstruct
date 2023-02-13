@@ -13,15 +13,15 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SHOP_LINEUP_PARAM(ParamRow):
-    equipId: int = ParamField(
+    EquipId: int = ParamField(
         int, "equipId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SoulCost: int = ParamField(
+    Value: int = ParamField(
         int, "value", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RequiredGood: int = ParamField(
+    MtrlId: int = ParamField(
         int, "mtrlId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -33,17 +33,17 @@ class SHOP_LINEUP_PARAM(ParamRow):
         uint, "eventFlag_forRelease", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    InitialQuantity: int = ParamField(
+    SellQuantity: int = ParamField(
         short, "sellQuantity", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "pad3[1]")
-    ItemType: int = ParamField(
-        byte, "equipType", default=0,
+    EquipType: int = ParamField(
+        byte, "equipType", SHOP_LINEUP_EQUIPTYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CostType: int = ParamField(
-        byte, "costType", default=0,
+        byte, "costType", SHOP_LINEUP_COSTTYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad1[1]")
@@ -56,7 +56,7 @@ class SHOP_LINEUP_PARAM(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ValueMagnification: float = ParamField(
-        float, "value_Magnification", default=1,
+        float, "value_Magnification", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     IconId: int = ParamField(

@@ -13,17 +13,17 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class NPC_THINK_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
-    LogicID: int = ParamField(
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
+    LogicId: int = ParamField(
         int, "logicId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    BattleID: int = ParamField(
+    BattleGoalID: int = ParamField(
         int, "battleGoalID", default=-1,
         tooltip="TOOLTIP-TODO",
     )
@@ -35,81 +35,81 @@ class NPC_THINK_PARAM_ST(ParamRow):
         byte, "searchEye_angY", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsNoAvoidHugeEnemy: int = ParamField(
-        byte, "isNoAvoidHugeEnemy:1", default=0,
+    IsNoAvoidHugeEnemy: bool = ParamField(
+        byte, "isNoAvoidHugeEnemy:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableWeaponOnOff: int = ParamField(
-        byte, "enableWeaponOnOff:1", default=0,
+    EnableWeaponOnOff: bool = ParamField(
+        byte, "enableWeaponOnOff:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    TargetAILockDmyPoly: int = ParamField(
-        byte, "targetAILockDmyPoly:1", default=1,
+    TargetAILockDmyPoly: bool = ParamField(
+        byte, "targetAILockDmyPoly:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "pad8:5")
+    _BitPad1: int = ParamBitPad(byte, "pad8:5", bit_count=5)
     SpEffectIdRangedAttack: int = ParamField(
         int, "spEffectId_RangedAttack", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     SearchTargetLv1ForgetTime: float = ParamField(
-        float, "searchTargetLv1ForgetTime", default=5,
+        float, "searchTargetLv1ForgetTime", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
     SearchTargetLv2ForgetTime: float = ParamField(
-        float, "searchTargetLv2ForgetTime", default=8,
+        float, "searchTargetLv2ForgetTime", default=8.0,
         tooltip="TOOLTIP-TODO",
     )
-    RetreatTimeAfterHittingEnemyWall: float = ParamField(
-        float, "BackHomeLife_OnHitEneWal", default=5,
+    BackHomeLifeOnHitEneWal: float = ParamField(
+        float, "BackHomeLife_OnHitEneWal", default=5.0,
         tooltip="TOOLTIP-TODO",
     )
-    SightForgetTime: float = ParamField(
-        float, "SightTargetForgetTime", default=600,
+    SightTargetForgetTime: float = ParamField(
+        float, "SightTargetForgetTime", default=600.0,
         tooltip="TOOLTIP-TODO",
     )
-    StuckAnimationID: int = ParamField(
+    IdAttackCannotMove: int = ParamField(
         int, "idAttackCannotMove", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HearingDistance: float = ParamField(
+    Eardist: float = ParamField(
         float, "ear_dist", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallResponseAnimation: int = ParamField(
+    CallHelpActionAnimId: int = ParamField(
         int, "callHelp_ActionAnimId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallSendAnimation: int = ParamField(
+    CallHelpCallActionId: int = ParamField(
         int, "callHelp_CallActionId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SightDistance: int = ParamField(
+    Eyedist: int = ParamField(
         ushort, "eye_dist", default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsGuardAct: int = ParamField(
-        byte, "isGuard_Act", default=0,
+        byte, "isGuard_Act", BOOL_DODONT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad6[1]")
-    HearingCutDistance: int = ParamField(
+    _Pad1: bytes = ParamPad(1, "pad6[1]")
+    Earsoundcutdist: int = ParamField(
         ushort, "ear_soundcut_dist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SmellDistance: int = ParamField(
+    Nosedist: int = ParamField(
         ushort, "nose_dist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    MaxRetreatDistance: int = ParamField(
+    MaxBackhomeDist: int = ParamField(
         ushort, "maxBackhomeDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    BattleRetreatDistance: int = ParamField(
+    BackhomeDist: int = ParamField(
         ushort, "backhomeDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RetreatBattleStartDistance: int = ParamField(
+    BackhomeBattleDist: int = ParamField(
         ushort, "backhomeBattleDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
@@ -117,31 +117,31 @@ class NPC_THINK_PARAM_ST(ParamRow):
         ushort, "nonBattleActLife", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SearchTimeBeforeRetreat: int = ParamField(
+    BackHomeLookTargetTime: int = ParamField(
         ushort, "BackHome_LookTargetTime", default=3,
         tooltip="TOOLTIP-TODO",
     )
-    SearchDistanceBeforeRetreat: int = ParamField(
+    BackHomeLookTargetDist: int = ParamField(
         ushort, "BackHome_LookTargetDist", default=10,
         tooltip="TOOLTIP-TODO",
     )
-    HearingForgetTime: float = ParamField(
-        float, "SoundTargetForgetTime", default=3,
+    SoundTargetForgetTime: float = ParamField(
+        float, "SoundTargetForgetTime", default=3.0,
         tooltip="TOOLTIP-TODO",
     )
-    BattleStartDistance: int = ParamField(
+    BattleStartDist: int = ParamField(
         ushort, "BattleStartDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpGroupID: int = ParamField(
+    CallHelpMyPeerId: int = ParamField(
         ushort, "callHelp_MyPeerId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallGroupID: int = ParamField(
+    CallHelpCallPeerId: int = ParamField(
         ushort, "callHelp_CallPeerId", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    TargetSysDamageRate: int = ParamField(
+    TargetSysDmgEffectRate: int = ParamField(
         ushort, "targetSys_DmgEffectRate", default=100,
         tooltip="TOOLTIP-TODO",
     )
@@ -149,99 +149,99 @@ class NPC_THINK_PARAM_ST(ParamRow):
         byte, "TeamAttackEffectivity", default=25,
         tooltip="TOOLTIP-TODO",
     )
-    SightRangeHeight: int = ParamField(
+    EyeangX: int = ParamField(
         byte, "eye_angX", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SightRangeWidth: int = ParamField(
+    EyeangY: int = ParamField(
         byte, "eye_angY", default=0,
         tooltip="TOOLTIP-TODO",
     )
     DisableDark: int = ParamField(
-        byte, "disableDark", default=0,
+        byte, "disableDark", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CaravanRole: int = ParamField(
-        byte, "caravanRole", default=0,
+        byte, "caravanRole", NPC_THINK_CARAVAN_ROLE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallTargetMinDistance: int = ParamField(
+    CallHelpCallValidMinDistTarget: int = ParamField(
         byte, "callHelp_CallValidMinDistTarget", default=5,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallFriendMaxDistance: int = ParamField(
+    CallHelpCallValidRange: int = ParamField(
         byte, "callHelp_CallValidRange", default=15,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallForgetTime: int = ParamField(
+    CallHelpForgetTimeByArrival: int = ParamField(
         byte, "callHelp_ForgetTimeByArrival", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallMinWaitTime: int = ParamField(
+    CallHelpMinWaitTime: int = ParamField(
         byte, "callHelp_MinWaitTime", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallMaxWaitTime: int = ParamField(
+    CallHelpMaxWaitTime: int = ParamField(
         byte, "callHelp_MaxWaitTime", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CautionGoalAction: int = ParamField(
-        byte, "goalAction_ToCaution", default=0,
+    GoalActionToCaution: int = ParamField(
+        byte, "goalAction_ToCaution", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EarlistenLevel: int = ParamField(
         byte, "ear_listenLevel", default=128,
         tooltip="TOOLTIP-TODO",
     )
-    HelpCallReplyType: int = ParamField(
-        byte, "callHelp_ReplyBehaviorType", default=0,
+    CallHelpReplyBehaviorType: int = ParamField(
+        byte, "callHelp_ReplyBehaviorType", NPC_THINK_REPLY_BEHAVIOR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IgnoreNavmesh: int = ParamField(
-        byte, "disablePathMove", default=0,
+    DisablePathMove: int = ParamField(
+        byte, "disablePathMove", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     SkipArrivalVisibleCheck: int = ParamField(
-        byte, "skipArrivalVisibleCheck", default=0,
+        byte, "skipArrivalVisibleCheck", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    AdmirerAttribute: int = ParamField(
-        byte, "thinkAttr_doAdmirer", default=0,
+    ThinkAttrdoAdmirer: int = ParamField(
+        byte, "thinkAttr_doAdmirer", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    CanFallOffEdges: int = ParamField(
-        byte, "enableNaviFlg_Edge:1", default=1,
+    EnableNaviFlgEdge: bool = ParamField(
+        byte, "enableNaviFlg_Edge:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateWideSpaces: int = ParamField(
-        byte, "enableNaviFlg_LargeSpace:1", default=1,
+    EnableNaviFlgLargeSpace: bool = ParamField(
+        byte, "enableNaviFlg_LargeSpace:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateLadders: int = ParamField(
-        byte, "enableNaviFlg_Ladder:1", default=0,
+    EnableNaviFlgLadder: bool = ParamField(
+        byte, "enableNaviFlg_Ladder:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateHoles: int = ParamField(
-        byte, "enableNaviFlg_Hole:1", default=0,
+    EnableNaviFlgHole: bool = ParamField(
+        byte, "enableNaviFlg_Hole:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateDoors: int = ParamField(
-        byte, "enableNaviFlg_Door:1", default=0,
+    EnableNaviFlgDoor: bool = ParamField(
+        byte, "enableNaviFlg_Door:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateInsideWalls: int = ParamField(
-        byte, "enableNaviFlg_InSideWall:1", default=0,
+    EnableNaviFlgInSideWall: bool = ParamField(
+        byte, "enableNaviFlg_InSideWall:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    EnableNaviFlgLava: int = ParamField(
-        byte, "enableNaviFlg_Lava:1", default=0,
+    EnableNaviFlgLava: bool = ParamField(
+        byte, "enableNaviFlg_Lava:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    CanNavigateOrdinaryEdges: int = ParamField(
-        byte, "enableNaviFlg_Edge_Ordinary:1", default=1,
+    EnableNaviFlgEdgeOrdinary: bool = ParamField(
+        byte, "enableNaviFlg_Edge_Ordinary:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=True,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad4: bytes = ParamPad(3, "enableNaviFlg_reserve1[3]")
+    _Pad2: bytes = ParamPad(3, "enableNaviFlg_reserve1[3]")
     SearchThresholdLv0toLv1: int = ParamField(
         int, "searchThreshold_Lv0toLv1", default=10,
         tooltip="TOOLTIP-TODO",
@@ -254,7 +254,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
         float, "platoonReplyTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    PlatoonReplyRandomExtraTime: float = ParamField(
+    PlatoonReplyAddRandomTime: float = ParamField(
         float, "platoonReplyAddRandomTime", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
@@ -263,7 +263,7 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     IsUpdateBattleSight: int = ParamField(
-        byte, "isUpdateBattleSight", default=0,
+        byte, "isUpdateBattleSight", BOOL_DODONT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BattleEyeupdateDist: int = ParamField(
@@ -278,21 +278,21 @@ class NPC_THINK_PARAM_ST(ParamRow):
         byte, "battleEye_updateAngY", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad5: bytes = ParamPad(16, "pad4[16]")
-    SightBackOffsetDistance: int = ParamField(
+    _Pad3: bytes = ParamPad(16, "pad4[16]")
+    EyeBackOffsetDist: int = ParamField(
         ushort, "eye_BackOffsetDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SightBeginDistance: int = ParamField(
+    EyeBeginDist: int = ParamField(
         ushort, "eye_BeginDist", default=0,
         tooltip="TOOLTIP-TODO",
     )
     ActTypeOnFailedPath: int = ParamField(
-        byte, "actTypeOnFailedPath", default=0,
+        byte, "actTypeOnFailedPath", NPC_THINK_ACTTYPE_ON_FAILEDPATH, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GoalActionToCautionImportant: int = ParamField(
-        byte, "goalAction_ToCautionImportant", default=0,
+        byte, "goalAction_ToCautionImportant", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ShiftAnimeIdRangedAttack: int = ParamField(
@@ -300,39 +300,39 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ActTypeOnNonBtlFailedPath: int = ParamField(
-        byte, "actTypeOnNonBtlFailedPath", default=0,
+        byte, "actTypeOnNonBtlFailedPath", NPC_THINK_ACTTYPE_ON_NONBTL_FAILEDPATH, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsBuddyAI: int = ParamField(
-        byte, "isBuddyAI", default=0,
+        byte, "isBuddyAI", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GoalActionToSearchLv1: int = ParamField(
-        byte, "goalAction_ToSearchLv1", default=0,
+        byte, "goalAction_ToSearchLv1", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     GoalActionToSearchLv2: int = ParamField(
-        byte, "goalAction_ToSearchLv2", default=0,
+        byte, "goalAction_ToSearchLv2", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EnableJumpMove: int = ParamField(
-        byte, "enableJumpMove", default=0,
+        byte, "enableJumpMove", NPC_THINK_JUMPUSEREDGE_USE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     DisableLocalSteering: int = ParamField(
-        byte, "disableLocalSteering", default=0,
+        byte, "disableLocalSteering", BOOL_CIRCLECROSS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    DisappearGoalAction: int = ParamField(
-        byte, "goalAction_ToDisappear", default=0,
+    GoalActionToDisappear: int = ParamField(
+        byte, "goalAction_ToDisappear", NPC_THINK_GOAL_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ChangeStateActionToNormal: int = ParamField(
-        byte, "changeStateAction_ToNormal", default=0,
+        byte, "changeStateAction_ToNormal", NPC_THINK_CHANGE_STATE_ACTION, default=0,
         tooltip="TOOLTIP-TODO",
     )
     MemoryTargetForgetTime: float = ParamField(
-        float, "MemoryTargetForgetTime", default=150,
+        float, "MemoryTargetForgetTime", default=150.0,
         tooltip="TOOLTIP-TODO",
     )
     RangedAttackId: int = ParamField(
@@ -340,22 +340,22 @@ class NPC_THINK_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     UseFallonNormalCaution: int = ParamField(
-        byte, "useFall_onNormalCaution", default=2,
+        byte, "useFall_onNormalCaution", NPC_THINK_JUMPUSEREDGE_USE_TYPE, default=2,
         tooltip="TOOLTIP-TODO",
     )
     UseFallonSearchBattle: int = ParamField(
-        byte, "useFall_onSearchBattle", default=2,
+        byte, "useFall_onSearchBattle", NPC_THINK_JUMPUSEREDGE_USE_TYPE, default=2,
         tooltip="TOOLTIP-TODO",
     )
     EnableJumpMoveonBattle: int = ParamField(
-        byte, "enableJumpMove_onBattle", default=0,
+        byte, "enableJumpMove_onBattle", NPC_THINK_JUMPUSEREDGE_USE_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     BackToHomeStuckAct: int = ParamField(
-        byte, "backToHomeStuckAct", default=0,
+        byte, "backToHomeStuckAct", NPC_THINK_BackToHomeStuckAct, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad6: bytes = ParamPad(4, "pad3[4]")
+    _Pad4: bytes = ParamPad(4, "pad3[4]")
     SoundBehaviorId01: int = ParamField(
         int, "soundBehaviorId01", default=-1,
         tooltip="TOOLTIP-TODO",

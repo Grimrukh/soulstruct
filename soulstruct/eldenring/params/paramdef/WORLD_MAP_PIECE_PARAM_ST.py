@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class WORLD_MAP_PIECE_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     OpenEventFlagId: int = ParamField(
         uint, "openEventFlagId", default=0,
         tooltip="TOOLTIP-TODO",
@@ -44,7 +44,7 @@ class WORLD_MAP_PIECE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AcquisitionEventScale: float = ParamField(
-        float, "acquisitionEventScale", default=1,
+        float, "acquisitionEventScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AcquisitionEventCenterX: float = ParamField(
@@ -56,7 +56,7 @@ class WORLD_MAP_PIECE_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     AcquisitionEventResScale: float = ParamField(
-        float, "acquisitionEventResScale", default=1,
+        float, "acquisitionEventResScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     AcquisitionEventResOffsetX: float = ParamField(
@@ -67,4 +67,4 @@ class WORLD_MAP_PIECE_PARAM_ST(ParamRow):
         float, "acquisitionEventResOffsetY", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(12, "pad[12]")
+    _Pad1: bytes = ParamPad(12, "pad[12]")

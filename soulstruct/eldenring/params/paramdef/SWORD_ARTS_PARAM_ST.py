@@ -13,12 +13,12 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SWORD_ARTS_PARAM_ST(ParamRow):
-    DisableParamNT: int = ParamField(
-        byte, "disableParam_NT:1", default=0,
+    DisableParamNT: bool = ParamField(
+        byte, "disableParam_NT:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "disableParamReserve1:7")
-    _Pad1: bytes = ParamPad(3, "disableParamReserve2[3]")
+    _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
+    _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
     SwordArtsType: int = ParamField(
         byte, "swordArtsType", default=0,
         tooltip="TOOLTIP-TODO",
@@ -28,26 +28,26 @@ class SWORD_ARTS_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     RefStatus: int = ParamField(
-        sbyte, "refStatus", default=0,
+        sbyte, "refStatus", SWORD_ARTS_REF_STATUS_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsRefRightArts: int = ParamField(
-        byte, "isRefRightArts:1", default=0,
+    IsRefRightArts: bool = ParamField(
+        byte, "isRefRightArts:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGrayoutLeftHand: int = ParamField(
-        byte, "isGrayoutLeftHand:1", default=0,
+    IsGrayoutLeftHand: bool = ParamField(
+        byte, "isGrayoutLeftHand:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGrayoutRightHand: int = ParamField(
-        byte, "isGrayoutRightHand:1", default=0,
+    IsGrayoutRightHand: bool = ParamField(
+        byte, "isGrayoutRightHand:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsGrayoutBothHand: int = ParamField(
-        byte, "isGrayoutBothHand:1", default=0,
+    IsGrayoutBothHand: bool = ParamField(
+        byte, "isGrayoutBothHand:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad2: bytes = ParamPad(1, "reserve2:4")
+    _BitPad1: int = ParamBitPad(byte, "reserve2:4", bit_count=4)
     UsePointL1: int = ParamField(
         sbyte, "usePoint_L1", default=0,
         tooltip="TOOLTIP-TODO",
@@ -85,10 +85,10 @@ class SWORD_ARTS_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     ShieldIconType: int = ParamField(
-        sbyte, "shieldIconType", default=0,
+        sbyte, "shieldIconType", SWORD_ARTS_SHIELD_ICON_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad3: bytes = ParamPad(1, "pad[1]")
+    _Pad1: bytes = ParamPad(1, "pad[1]")
     IconId: int = ParamField(
         ushort, "iconId", default=0,
         tooltip="TOOLTIP-TODO",

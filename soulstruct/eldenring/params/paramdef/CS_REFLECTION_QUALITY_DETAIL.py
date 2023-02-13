@@ -14,15 +14,15 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class CS_REFLECTION_QUALITY_DETAIL(ParamRow):
     Enabled: int = ParamField(
-        byte, "enabled", default=1,
+        byte, "enabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     LocalLightEnabled: int = ParamField(
-        byte, "localLightEnabled", default=1,
+        byte, "localLightEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     LocalLightForceEnabled: int = ParamField(
-        byte, "localLightForceEnabled", default=0,
+        byte, "localLightForceEnabled", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     _Pad0: bytes = ParamPad(1, "dmy[1]")
@@ -31,20 +31,20 @@ class CS_REFLECTION_QUALITY_DETAIL(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SsrEnabled: int = ParamField(
-        byte, "ssrEnabled", default=1,
+        byte, "ssrEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     SsrGaussianBlurEnabled: int = ParamField(
-        byte, "ssrGaussianBlurEnabled", default=1,
+        byte, "ssrGaussianBlurEnabled", ON_OFF, default=1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(2, "dmy2[2]")
     SsrDepthRejectThresholdScale: float = ParamField(
-        float, "ssrDepthRejectThresholdScale", default=1,
+        float, "ssrDepthRejectThresholdScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SsrRayTraceStepScale: float = ParamField(
-        float, "ssrRayTraceStepScale", default=1,
+        float, "ssrRayTraceStepScale", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SsrFadeToViewerBias: float = ParamField(

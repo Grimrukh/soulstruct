@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class PHANTOM_PARAM_ST(ParamRow):
     EdgeColorA: float = ParamField(
-        float, "edgeColorA", default=1,
+        float, "edgeColorA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     FrontColorA: float = ParamField(
@@ -22,11 +22,11 @@ class PHANTOM_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     DiffMulColorA: float = ParamField(
-        float, "diffMulColorA", default=1,
+        float, "diffMulColorA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     SpecMulColorA: float = ParamField(
-        float, "specMulColorA", default=1,
+        float, "specMulColorA", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     LightColorA: float = ParamField(
@@ -95,31 +95,31 @@ class PHANTOM_PARAM_ST(ParamRow):
     )
     _Pad0: bytes = ParamPad(1, "reserve[1]")
     Alpha: float = ParamField(
-        float, "alpha", default=1,
+        float, "alpha", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BlendRate: float = ParamField(
-        float, "blendRate", default=1,
+        float, "blendRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     BlendType: int = ParamField(
-        byte, "blendType", default=0,
+        byte, "blendType", PHANTOM_BLEN_TYPE_ENUM, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsEdgeSubtract: int = ParamField(
-        byte, "isEdgeSubtract", default=0,
+        byte, "isEdgeSubtract", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsFrontSubtract: int = ParamField(
-        byte, "isFrontSubtract", default=0,
+        byte, "isFrontSubtract", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     IsNo2Pass: int = ParamField(
-        byte, "isNo2Pass", default=0,
+        byte, "isNo2Pass", ON_OFF, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EdgePower: float = ParamField(
-        float, "edgePower", default=1,
+        float, "edgePower", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
     GlowScale: float = ParamField(

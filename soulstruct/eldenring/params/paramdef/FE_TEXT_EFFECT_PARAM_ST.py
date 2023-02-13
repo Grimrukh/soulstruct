@@ -26,9 +26,9 @@ class FE_TEXT_EFFECT_PARAM_ST(ParamRow):
         int, "seId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    CanMixMapName: int = ParamField(
-        byte, "canMixMapName:1", default=0,
+    CanMixMapName: bool = ParamField(
+        byte, "canMixMapName:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(1, "pad3:7")
-    _Pad2: bytes = ParamPad(19, "pad2[19]")
+    _BitPad0: int = ParamBitPad(byte, "pad3:7", bit_count=7)
+    _Pad1: bytes = ParamPad(19, "pad2[19]")

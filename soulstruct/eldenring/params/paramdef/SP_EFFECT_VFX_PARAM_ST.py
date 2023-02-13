@@ -13,131 +13,131 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SP_EFFECT_VFX_PARAM_ST(ParamRow):
-    OngoingVisualEffect: int = ParamField(
+    MidstSfxId: int = ParamField(
         int, "midstSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    OngoingSoundEffect: int = ParamField(
+    MidstSeId: int = ParamField(
         int, "midstSeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    InitialVisualEffect: int = ParamField(
+    InitSfxId: int = ParamField(
         int, "initSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    InitialSoundEffect: int = ParamField(
+    InitSeId: int = ParamField(
         int, "initSeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FinishVisualEffect: int = ParamField(
+    FinishSfxId: int = ParamField(
         int, "finishSfxId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FinishSoundEffect: int = ParamField(
+    FinishSeId: int = ParamField(
         int, "finishSeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    HideStartDistance: float = ParamField(
-        float, "camouflageBeginDist", default=-1,
+    CamouflageBeginDist: float = ParamField(
+        float, "camouflageBeginDist", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    HideEndDistance: float = ParamField(
-        float, "camouflageEndDist", default=-1,
+    CamouflageEndDist: float = ParamField(
+        float, "camouflageEndDist", default=-1.0,
         tooltip="TOOLTIP-TODO",
     )
-    TransformationArmorID: int = ParamField(
+    TransformProtectorId: int = ParamField(
         int, "transformProtectorId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    OngoingModelPoint: int = ParamField(
+    MidstDmyId: int = ParamField(
         short, "midstDmyId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    InitialModelPoint: int = ParamField(
+    InitDmyId: int = ParamField(
         short, "initDmyId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    FinishModelPoint: int = ParamField(
+    FinishDmyId: int = ParamField(
         short, "finishDmyId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
     EffectType: int = ParamField(
-        byte, "effectType", default=0,
+        byte, "effectType", SP_EFFECT_VFX_EFFECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    WeaponEnchantmentSoulParam: int = ParamField(
-        byte, "soulParamIdForWepEnchant", default=0,
+    SoulParamIdForWepEnchant: int = ParamField(
+        byte, "soulParamIdForWepEnchant", SP_EFFECT_VFX_SOUL_PARAM_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PlaybackCategory: int = ParamField(
-        byte, "playCategory", default=0,
+    PlayCategory: int = ParamField(
+        byte, "playCategory", SP_EFFECT_VFX_PLAYCATEGORY, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    PlaybackPriority: int = ParamField(
+    PlayPriority: int = ParamField(
         byte, "playPriority", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LargeEffectExists: int = ParamField(
-        byte, "existEffectForLarge:1", default=0,
+    ExistEffectForLarge: bool = ParamField(
+        byte, "existEffectForLarge:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    SoulEffectExists: int = ParamField(
-        byte, "existEffectForSoul:1", default=0,
+    ExistEffectForSoul: bool = ParamField(
+        byte, "existEffectForSoul:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    InvisibleWhenHidden: int = ParamField(
-        byte, "effectInvisibleAtCamouflage:1", default=0,
+    EffectInvisibleAtCamouflage: bool = ParamField(
+        byte, "effectInvisibleAtCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HidingActive: int = ParamField(
-        byte, "useCamouflage:1", default=0,
+    UseCamouflage: bool = ParamField(
+        byte, "useCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    InvisibleWhenFriendHidden: int = ParamField(
-        byte, "invisibleAtFriendCamouflage:1", default=0,
+    InvisibleAtFriendCamouflage: bool = ParamField(
+        byte, "invisibleAtFriendCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHideFootEffectforCamouflage: int = ParamField(
-        byte, "isHideFootEffect_forCamouflage:1", default=0,
+    IsHideFootEffectforCamouflage: bool = ParamField(
+        byte, "isHideFootEffect_forCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HalfHiddenOnly: int = ParamField(
-        byte, "halfCamouflage:1", default=0,
+    HalfCamouflage: bool = ParamField(
+        byte, "halfCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFullBodyTransformProtectorId: int = ParamField(
-        byte, "isFullBodyTransformProtectorId:1", default=0,
+    IsFullBodyTransformProtectorId: bool = ParamField(
+        byte, "isFullBodyTransformProtectorId:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HideWeapon: int = ParamField(
-        byte, "isInvisibleWeapon:1", default=0,
+    IsInvisibleWeapon: bool = ParamField(
+        byte, "isInvisibleWeapon:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSilent: int = ParamField(
-        byte, "isSilence:1", default=0,
+    IsSilence: bool = ParamField(
+        byte, "isSilence:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsMidstFullbody: int = ParamField(
-        byte, "isMidstFullbody:1", default=0,
+    IsMidstFullbody: bool = ParamField(
+        byte, "isMidstFullbody:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsInitFullbody: int = ParamField(
-        byte, "isInitFullbody:1", default=0,
+    IsInitFullbody: bool = ParamField(
+        byte, "isInitFullbody:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsFinishFullbody: int = ParamField(
-        byte, "isFinishFullbody:1", default=0,
+    IsFinishFullbody: bool = ParamField(
+        byte, "isFinishFullbody:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsVisibleDeadChr: int = ParamField(
-        byte, "isVisibleDeadChr:1", default=0,
+    IsVisibleDeadChr: bool = ParamField(
+        byte, "isVisibleDeadChr:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsUseOffsetEnchantSfxSize: int = ParamField(
-        byte, "isUseOffsetEnchantSfxSize:1", default=0,
+    IsUseOffsetEnchantSfxSize: bool = ParamField(
+        byte, "isUseOffsetEnchantSfxSize:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad0: bytes = ParamPad(1, "pad_1:1")
+    _BitPad0: int = ParamBitPad(byte, "pad_1:1", bit_count=1)
     DecalId1: int = ParamField(
         int, "decalId1", default=-1,
         tooltip="TOOLTIP-TODO",
@@ -155,11 +155,11 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     TraceSfxIdOffsetType: int = ParamField(
-        byte, "traceSfxIdOffsetType", default=0,
+        byte, "traceSfxIdOffsetType", SP_EFFECT_VFX_SOUL_PARAM_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     ForceDeceasedType: int = ParamField(
-        byte, "forceDeceasedType", default=0,
+        byte, "forceDeceasedType", SP_EFFECT_VFX_FORCE_DECEASED_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     EnchantStartDmyId0: int = ParamField(
@@ -227,11 +227,11 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     SfxIdOffsetType: int = ParamField(
-        byte, "SfxIdOffsetType", default=0,
+        byte, "SfxIdOffsetType", SP_EFFECT_VFX_SFX_ID_OFFSET_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PhantomParamOverwriteType: int = ParamField(
-        byte, "phantomParamOverwriteType", default=0,
+        byte, "phantomParamOverwriteType", SP_EFFECT_OVERWRITE_PHANTOM_PARAM_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     CamouflageMinAlpha: int = ParamField(
@@ -239,7 +239,7 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     WetAspectType: int = ParamField(
-        byte, "wetAspectType", default=0,
+        byte, "wetAspectType", SP_EFFECT_VFX_WET_ASPECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
     PhantomParamOverwriteId: int = ParamField(
@@ -266,4 +266,4 @@ class SP_EFFECT_VFX_PARAM_ST(ParamRow):
         short, "footDecalMaterialOffsetOverwriteId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    _Pad1: bytes = ParamPad(14, "pad[14]")
+    _Pad0: bytes = ParamPad(14, "pad[14]")
