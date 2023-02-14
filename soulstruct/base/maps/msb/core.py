@@ -226,6 +226,8 @@ class MSB(GameFile, abc.ABC):
         model_instance_counts = {}
         for part in entry_lists["PARTS_PARAM_ST"]:
             part: BaseMSBPart
+            if part.model is None:
+                print(part.name)
             if part.model.name in model_instance_counts:
                 model_instance_counts[part.model.name] += 1
             else:

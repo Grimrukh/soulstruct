@@ -64,7 +64,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     attached_part: MSBPart = None
     attached_region: MSBRegion = None
 
-    unknowns: tuple[int, int, int, int] = (0, 0, 0, 0)
+    unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **Binary(length=4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -271,7 +271,7 @@ class MSBWindVFXEvent(MSBEvent):
     _wind_region_index: int = None
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBWindVFXEvent).indices_to_objects(entry_lists)
+        super(MSBWindVFXEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "wind_region")
 
 

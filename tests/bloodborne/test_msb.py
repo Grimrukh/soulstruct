@@ -1,5 +1,6 @@
 import os
 import unittest
+
 from soulstruct.bloodborne.maps import MSB
 
 
@@ -10,32 +11,50 @@ class MSBTest(unittest.TestCase):
 
         - Opening the (vanilla) Hunter's Dream MSB.
         - Copying Moon Presence character, 'c5400_0000'.
-        - Changing the entity ID, translate, and rotate of the new bonfire.
         - Writing the MSB.
         - Re-opening that new MSB.
         - Comparing every entry field.
         """
-        msb = MSB("m21_00_00_00.msb.dcx")
-        msb.parts.new_character(
-            copy_entry="c5400_0000", name="c5400_0000_COPY", entity_id=2100999, translate=(1.0, 2.0, 3.0)
+        msb = MSB.from_path("m21_00_00_00.msb.dcx")
+        source_chr = msb.characters.find_entry_name("c5400_0000")
+        msb.characters.duplicate(
+            source_chr, name="c5400_0000_COPY", entity_id=2100999, translate=(1.0, 2.0, 3.0)
         )
-        msb.write("_test.msb.dcx")
+        msb.treasures.duplicate(0, name="TREASURE_0_COPY")
+        msb.write("_test.msb")
+        try:
+            msb_reload = MSB.from_path("_test.msb")
+            new_chr = msb_reload.characters.find_entry_name("c5400_0000_COPY")
+            new_treasure = msb_reload.treasures.find_entry_name("TREASURE_0_COPY")
+            print(new_chr)
+            print(new_treasure)
+            for subtype in MSB.get_subtype_list_names():
+                source_entries = msb[subtype]
+                test_entries = msb_reload[subtype]
+                self.assertEqual(len(source_entries), len(test_entries))
+                for i, entry in enumerate(msb[subtype]):
+                    test_entry = test_entries[i]
+                    self.assertEqual(entry, test_entry)
+        finally:
+            os.remove("_test.msb")
 
-        msb_reload = MSB("_test.msb.dcx")
-        print(msb_reload.parts["c5400_0000_COPY"])
-        for msb_type in ("parts", "regions", "events", "models"):
-            source_entries = msb[msb_type].get_entries()
-            test_entries = msb_reload[msb_type].get_entries()
+    def test_json(self):
+        msb = MSB.from_path("m21_00_00_00.msb.dcx")
+
+        msb.write_json("_test_msb.json")
+        msb_reload = MSB.from_json("_test_msb.json")
+
+        for subtype in MSB.get_subtype_list_names():
+            source_entries = msb[subtype]
+            test_entries = msb_reload[subtype]
             self.assertEqual(len(source_entries), len(test_entries))
-            for i, entry in enumerate(msb[msb_type].get_entries()):
+            for i, entry in enumerate(msb[subtype]):
                 test_entry = test_entries[i]
-                for field_name in entry.field_names:
-                    source_value = getattr(entry, field_name)
-                    test_value = getattr(test_entry, field_name)
-                    self.assertEqual(source_value, test_value)
+                self.assertEqual(entry, test_entry)
 
-    def tearDown(self):
-        os.remove("_test.msb.dcx")
+    def tearDown(self) -> None:
+        os.remove("_test.msb")
+        os.remove("_test_msb.json")
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
     GROUP_SIZE: tp.ClassVar[int]
 
-    model: BaseMSBModel = ""
+    model: BaseMSBModel = None
     entity_id: int = -1
     sib_path: str = ""
     translate: Vector3 = field(default_factory=lambda: Vector3.zero())

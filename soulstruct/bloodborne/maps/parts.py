@@ -92,6 +92,22 @@ class MSBPart(BaseMSBPart, abc.ABC):
     part_unk_x0f_x10: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x0f-x10]", "Unknown parts integer."))
 
     @classmethod
+    def from_msb_reader(cls, reader: BinaryReader) -> Self:
+        entry_offset = reader.position
+        kwargs = cls.unpack_header(reader, entry_offset)
+        reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))
+        kwargs |= cls.SUPERTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+        relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
+        if relative_subtype_data_offset > 0:
+            reader.seek(entry_offset + relative_subtype_data_offset)
+            kwargs |= cls.unpack_subtype_data(reader)
+
+        kwargs.pop("gparam_data_offset")
+        kwargs.pop("scene_gparam_data_offset")
+
+        return cls(**kwargs)
+
+    @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
         header_subtype_int = header.pop("_subtype_int")
@@ -113,6 +129,23 @@ class MSBPart(BaseMSBPart, abc.ABC):
             backread_groups=int_group_to_bit_set(header.pop("backread_groups"), assert_size=8),
         )
         return header.to_dict(ignore_underscore_prefix=True) | kwargs
+
+    def to_msb_writer(
+        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
+    ):
+        """Default: pack header (with name), base data, and type data in that order."""
+        entry_offset = writer.position
+        self.pack_header(writer, entry_offset, supertype_index, subtype_index, entry_lists)
+        supertype_data_offset = writer.position - entry_offset if self.SUPERTYPE_DATA_STRUCT is not None else 0
+        writer.fill("supertype_data_offset", supertype_data_offset, obj=self)
+        self.pack_supertype_data(writer, entry_offset, entry_lists)
+        subtype_data_offset = writer.position - entry_offset if self.SUBTYPE_DATA_STRUCT is not None else 0
+        writer.fill("subtype_data_offset", subtype_data_offset, obj=self)
+        self.pack_subtype_data(writer, entry_lists)
+
+        # No Gparam/SceneGparam data in this base class.
+        writer.fill("gparam_data_offset", 0, obj=self)
+        writer.fill("scene_gparam_data_offset", 0, obj=self)
 
     def pack_header(
         self,
@@ -189,7 +222,9 @@ class MSBPartWithGParam(MSBPart, abc.ABC):
         relative_gparam_data_offset = kwargs.pop("gparam_data_offset")
         if relative_gparam_data_offset > 0:
             reader.seek(entry_offset + relative_gparam_data_offset)
-            kwargs = cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+            kwargs |= cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+
+        kwargs.pop("scene_gparam_data_offset")
 
         return cls(**kwargs)
 
@@ -200,6 +235,7 @@ class MSBPartWithGParam(MSBPart, abc.ABC):
         super(MSBPartWithGParam, self).to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
         writer.fill("gparam_data_offset", writer.position - entry_offset, obj=self)
         self.GPARAM_STRUCT.object_to_writer(self, writer)
+        writer.fill("scene_gparam_data_offset", 0, obj=self)
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -225,9 +261,7 @@ class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
     sg_unk_x0c_x10: int = field(default=0, **MapFieldInfo("Unk SceneG [x0c-x10]", "Unknown SceneGparam integer."))
     sg_unk_x10_x14: int = field(default=0, **MapFieldInfo("Unk SceneG [x10-x14]", "Unknown SceneGparam integer."))
     sg_unk_x14_x18: int = field(default=0, **MapFieldInfo("Unk SceneG [x14-x18]", "Unknown SceneGparam integer."))
-    event_ids: list[int, int, int, int] = field(
-        default=(-1, -1, -1, -1), **MapFieldInfo("Event IDs", "Gparam Event IDs.")
-    )
+    event_ids: list[int] = field(default_factory=lambda: [-1] * 4, **MapFieldInfo("Event IDs", "Gparam Event IDs."))
     sg_unk_x40_x44: float = field(default=0.0, **MapFieldInfo("Unk SceneG [x40-x44]", "Unknown SceneGparam float."))
 
     @classmethod
@@ -267,7 +301,9 @@ class MSBMapPiece(MSBPartWithGParam):
     """No further fields beyond GParam."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
 
-    SUBTYPE_DATA_STRUCT: tp.ClassVar = None
+    @dataclass(slots=True)
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+        _pad1: bytes = field(**BinaryPad(8))
 
     model: MSBMapPieceModel = None
 
@@ -300,8 +336,8 @@ class MSBObject(MSBPartWithGParam):
     net_sync_type: int = 0
     collision_hit_filter: bool = False
     set_main_object_structure_bools: bool = False
-    animation_ids: tuple[int, int, int, int] = (-1, -1, -1, -1)
-    model_vfx_param_id_offsets: tuple[int, int, int, int] = (0, 0, 0, 0)
+    animation_ids: list[int] = field(default_factory=lambda: [-1] * 4)
+    model_vfx_param_id_offsets: list[int] = field(default_factory=lambda: [0] * 4)
 
     _draw_parent_index: int = None
 
@@ -401,7 +437,7 @@ class MSBCollision(MSBPartWithSceneGParam):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
 
     @dataclass(slots=True)
-    class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
         hit_filter_id: byte
         sound_space_type: byte
         _environment_event_index: short
@@ -409,7 +445,7 @@ class MSBCollision(MSBPartWithSceneGParam):
         _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
         starts_disabled: bool
         unk_x0b_x0c: byte
-        attached_bonfire: int
+        attached_lantern: int
         _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
         camera_1_id: short
         camera_2_id: short
