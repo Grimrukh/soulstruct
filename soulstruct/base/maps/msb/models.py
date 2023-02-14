@@ -5,6 +5,7 @@ __all__ = ["BaseMSBModel"]
 import abc
 import typing as tp
 from dataclasses import dataclass
+from string import Formatter
 
 from soulstruct.utilities.binary import *
 
@@ -16,14 +17,14 @@ except AttributeError:
     Self = "BaseMSBModel"
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class BaseMSBModel(MSBEntry, abc.ABC):
     """Base class used by all MSB models. (They used to not even subclass this per subtype, but now do.)"""
 
     NAME_ENCODING: tp.ClassVar[str] = ""
     NULL: tp.ClassVar[bytes] = b"\0"
     EMPTY_SIB_PATH: tp.ClassVar[bytes] = b"\0"
-    SIB_PATH_STEM: tp.ClassVar[str] = ""
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
     sib_path: str = ""
 
@@ -37,11 +38,11 @@ class BaseMSBModel(MSBEntry, abc.ABC):
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
-        header_subtype_int = header.pop("subtype_int")
+        header_subtype_int = header.pop("_subtype_int")
         if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
-        sib_path = reader.unpack_string(offset=entry_offset + header.pop("sib_path"), encoding=cls.NAME_ENCODING)
+        sib_path = reader.unpack_string(offset=entry_offset + header.pop("sib_path_offset"), encoding=cls.NAME_ENCODING)
         return header.to_dict(ignore_underscore_prefix=True) | {"name": name, "sib_path": sib_path}
 
     @classmethod
@@ -49,7 +50,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         raise TypeError("MSB models contain no supertype data.")
 
     @classmethod
-    def unpack_sunrtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
+    def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
         raise TypeError("MSB models contain no subtype data.")
 
     def to_msb_writer(
@@ -60,11 +61,12 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         entry_lists: dict[str, list[MSBEntry]],
         instance_count: int = 0,
     ):
-        self.pack_header(writer, supertype_index, subtype_index, entry_lists, instance_count)
+        self.pack_header(writer, writer.position, supertype_index, subtype_index, entry_lists, instance_count)
 
     def pack_header(
         self,
         writer: BinaryWriter,
+        entry_offset: int,
         supertype_index: int,
         subtype_index: int,
         entry_lists: [dict[str, list[MSBEntry]]],
@@ -74,15 +76,15 @@ class BaseMSBModel(MSBEntry, abc.ABC):
             self,
             writer,
             name_offset=RESERVED,
-            subtype_int=self.SUBTYPE_ENUM.value,
+            _subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
             sib_path_offset=RESERVED,
             _instance_count=instance_count,
         )
-        writer.fill_with_position("name_offset", self)
+        writer.fill("name_offset", writer.position - entry_offset, obj=self)
         packed_name = self.name.encode(self.NAME_ENCODING) + self.NULL
         writer.append(packed_name)
-        writer.fill_with_position("sib_path_offset", self)
+        writer.fill("sib_path_offset", writer.position - entry_offset, obj=self)
         if self.sib_path:
             packed_sib_path = self.sib_path.encode(self.NAME_ENCODING) + self.NULL
         else:
@@ -95,17 +97,32 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         # TODO: Do some models use generic sib paths?
         return {"name": self.name, "sib_path": self.sib_path}
 
+    def set_auto_sib_path(self, **format_kwargs):
+        """Some `MSBModel` subclasses can auto-generate SIB path from `SIB_PATH_TEMPLATE` and `format_kwargs`.
+
+        Tries to format `SIB_PATH_TEMPLATE with just `self.name` by default. Typically, if more kwargs are required,
+        this method is overridden, but it should still work if I forget (and extra `kwargs` are harmless).
+        """
+        if not self.SIB_PATH_TEMPLATE:
+            raise TypeError(f"Cannot set `sib_path` automatically for type `{self.cls_name}`.")
+        # Otherwise, try to format with just model `name`.
+        try:
+            self.sib_path = self.SIB_PATH_TEMPLATE.format(name=self.name, **format_kwargs)
+        except KeyError:
+            keys = [i[1] for i in Formatter().parse(self.SIB_PATH_TEMPLATE) if i[1] is not None and i[1] != "name"]
+            raise TypeError(f"Setting `sib_path` automatically for type `{self.cls_name}` requires more kwargs: {keys}")
+
     def __repr__(self):
         data = self.to_dict(ignore_defaults=True)
         if data:
             fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
             return (
-                f"{self.__class__.__name__}(\n"
+                f"{self.cls_name}(\n"
                 f"    name={repr(self.name)},\n"
                 f"    {fields}\n"
                 f")"
             )
-        return f"{self.__class__.__name__}(name={repr(self.name)})"
+        return f"{self.cls_name}(name={repr(self.name)})"
 
 
 # TODO: Put in read methods of appropriate classes. Or __post_init__.
@@ -115,6 +132,6 @@ class __BaseMSBGeometryModel(BaseMSBModel):
         """Additionally Requires `map_id` if `source` is None."""
         if source is None and "sib_path" not in kwargs and ("map_id" not in kwargs or "name" not in kwargs):
             raise ValueError(
-                f"`name` and `map_id` must be given to `{self.__class__.__name__}` if `sib_path` is not given."
+                f"`name` and `map_id` must be given to `{self.cls_name}` if `sib_path` is not given."
             )
         super().__init__(source, **kwargs)

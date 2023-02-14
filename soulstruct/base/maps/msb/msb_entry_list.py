@@ -8,6 +8,7 @@ import typing as tp
 from enum import IntEnum
 
 from .msb_entry import MSBEntry
+from .utils import MSBSubtypeInfo
 
 try:
     Self = tp.Self
@@ -15,7 +16,7 @@ except AttributeError:
     Self = "MSBEntryList"
 
 if tp.TYPE_CHECKING:
-    from .enums import BaseMSBSubtype
+    from .core import MSB
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,19 +24,21 @@ _LOGGER = logging.getLogger(__name__)
 MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 
 
+# NOT a dataclass.
 class MSBEntryList(list[MSBEntryType]):
 
     supertype_name: str
-    subtype_enum: BaseMSBSubtype
-    subtype_class: tp.Type[MSBEntryType]
+    subtype_info: MSBSubtypeInfo
 
     def __init__(
-        self, supertype_name: str, subtype_enum: BaseMSBSubtype, subtype_class: tp.Type[MSBEntryType], *entries
+        self,
+        *entries,
+        supertype_name: str,
+        subtype_info: MSBSubtypeInfo,
     ):
         self.supertype_name = supertype_name
-        self.subtype_enum = subtype_enum
-        self.subtype_class = subtype_class
-        super().__init__(*entries)
+        self.subtype_info = subtype_info
+        super().__init__(entries)
 
     def copy(self) -> Self:
         return copy.deepcopy(self)
@@ -78,12 +81,14 @@ class MSBEntryList(list[MSBEntryType]):
         for entry in self:
             entity_id = entry.get_entity_id()
             if entity_id is None:
-                raise TypeError(f"`entity_id` is not a valid field for MSB subtype `{self.subtype_enum.name}`.")
+                raise TypeError(
+                    f"`entity_id` is not a valid field for MSB subtype `{self.subtype_name}`."
+                )
             if entity_id <= 0:
                 continue  # ignore null ID
             if entity_id in entries_by_id:
                 _LOGGER.warning(
-                    f"Found multiple `{self.subtype_enum.name}` entries for entity ID {entity_id}. Only using first."
+                    f"Found multiple `{self.subtype_name}` entries for entity ID {entity_id}. Only using first."
                 )
             else:
                 entries_by_id[entity_id] = entry
@@ -94,16 +99,15 @@ class MSBEntryList(list[MSBEntryType]):
         if filter_func is None:
             return self.copy()
         return MSBEntryList(
-            self.supertype_name,
-            self.subtype_enum,
-            self.subtype_class,
+            supertype_name=self.supertype_name,
+            subtype_info=self.subtype_info,
             *[entry.copy() for entry in self if filter_func(entry)],
         )
 
     def new(self, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list."""
         # noinspection PyArgumentList
-        entry = self.subtype_class(**kwargs)
+        entry = self.subtype_info.entry_class(**kwargs)
         self.append(entry)
         return entry
 
@@ -152,4 +156,19 @@ class MSBEntryList(list[MSBEntryType]):
 
     def to_dict(self, ignore_defaults=True) -> [dict[str, list[dict[str, tp.Any]]]]:
         """Get the entry list as a dictionary mapping the entry subtype name to a list of entry dictionaries."""
-        return {self.subtype_enum.name: [entry.to_dict(ignore_defaults=ignore_defaults) for entry in self]}
+        return {
+            self.subtype_name: [entry.to_dict(ignore_defaults=ignore_defaults) for entry in self]
+        }
+
+    def to_json_dict(self, msb: MSB, ignore_defaults=True) -> [dict[str, list[dict[str, tp.Any]]]]:
+        """Get the entry list as a dictionary mapping the entry subtype name to a list of entry dictionaries.
+
+        Fully serializes inter-entry references as name/index dictionaries.
+        """
+        return {
+            self.subtype_name: [entry.to_json_dict(msb, ignore_defaults) for entry in self]
+        }
+
+    @property
+    def subtype_name(self):
+        return self.subtype_info.subtype_enum.name

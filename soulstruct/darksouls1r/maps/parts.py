@@ -11,7 +11,6 @@ __all__ = [
     "MSBUnusedCharacter",
     "MSBNavmesh",
     "MSBMapConnection",
-    "MSBPartList",
 ]
 
 from soulstruct.darksouls1ptde.maps.parts import (
@@ -25,5 +24,4 @@ from soulstruct.darksouls1ptde.maps.parts import (
     MSBUnusedCharacter,
     MSBNavmesh,
     MSBMapConnection,
-    MSBPartList,
 )

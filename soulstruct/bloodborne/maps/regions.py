@@ -23,8 +23,8 @@ from .enums import MSBRegionSubtype
 class RegionHeader(NewBinaryStruct):
     name_offset: long
     _pad1: bytes = field(init=False, **BinaryPad(4))
-    _region_index: int
-    region_type: int
+    _supertype_index: int
+    _subtype_int: int
     translate: Vector3
     rotate: Vector3  # Euler angles in radians
     _pad2: bytes = field(init=False, **BinaryPad(4))
@@ -34,7 +34,7 @@ class RegionHeader(NewBinaryStruct):
     entity_id_offset: long
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
     SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]] = RegionHeader
@@ -42,8 +42,8 @@ class MSBRegion(BaseMSBRegion, abc.ABC):
     UNKNOWN_DATA_SIZE: tp.ClassVar[int] = 2
 
 
-@dataclass(slots=True)
-class MSBRegionPoint(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionPoint(MSBRegion):
     """No shape attributes. Note that the rotate attribute is still meaningful for many uses (e.g. what way the player
     will be facing when they spawn at or teleport to this point)."""
 
@@ -52,8 +52,8 @@ class MSBRegionPoint(BaseMSBRegion):
     SUBTYPE_DATA_STRUCT: tp.ClassVar = None
 
 
-@dataclass(slots=True)
-class MSBRegionCircle(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionCircle(MSBRegion):
     """Almost never used (no volume)."""
 
     SUBTYPE_ENUM = MSBRegionSubtype.Circle
@@ -65,8 +65,8 @@ class MSBRegionCircle(BaseMSBRegion):
     radius: float = 1.0
 
 
-@dataclass(slots=True)
-class MSBRegionSphere(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionSphere(MSBRegion):
 
     SUBTYPE_ENUM = MSBRegionSubtype.Sphere
 
@@ -77,8 +77,8 @@ class MSBRegionSphere(BaseMSBRegion):
     radius: float = 1.0
 
 
-@dataclass(slots=True)
-class MSBRegionCylinder(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionCylinder(MSBRegion):
 
     SUBTYPE_ENUM = MSBRegionSubtype.Cylinder
 
@@ -91,8 +91,8 @@ class MSBRegionCylinder(BaseMSBRegion):
     height: float = 1.0
 
 
-@dataclass(slots=True)
-class MSBRegionRect(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionRect(MSBRegion):
     """Almost never used (no volume)."""
 
     SUBTYPE_ENUM = MSBRegionSubtype.Rect
@@ -106,8 +106,8 @@ class MSBRegionRect(BaseMSBRegion):
     height: float = 1.0
 
 
-@dataclass(slots=True)
-class MSBRegionBox(BaseMSBRegion):
+@dataclass(slots=True, eq=False, repr=False)
+class MSBRegionBox(MSBRegion):
 
     SUBTYPE_ENUM = MSBRegionSubtype.Box
 

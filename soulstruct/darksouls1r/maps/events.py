@@ -2,7 +2,6 @@
 
 __all__ = [
     "MSBEvent",
-    "MSBEventList",
     "MSBLightEvent",
     "MSBSoundEvent",
     "MSBVFXEvent",
@@ -20,7 +19,6 @@ __all__ = [
 
 from soulstruct.darksouls1ptde.maps.events import (
     MSBEvent,
-    MSBEventList,
     MSBLightEvent,
     MSBSoundEvent,
     MSBVFXEvent,

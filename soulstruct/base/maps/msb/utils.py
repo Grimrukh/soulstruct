@@ -1,5 +1,6 @@
+from __future__ import annotations
 
-__all__ = ["BrokenReference", "MapFieldInfo"]
+__all__ = ["MSBBrokenEntryReference", "MSBSubtypeInfo", "MapFieldInfo"]
 
 import logging
 import typing as tp
@@ -10,6 +11,7 @@ from soulstruct.utilities.maths import Matrix3, Vector3, resolve_rotation
 
 if tp.TYPE_CHECKING:
     from .core import MSB
+    from .enums import BaseMSBSubtype
     from .msb_entry import MSBEntry
     from .msb_entry_list import MSBEntryList
     from .parts import BaseMSBPart
@@ -19,10 +21,16 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class BrokenReference:
+class MSBBrokenEntryReference:
     """Assigned to `MSBEntry` reference fields when the entry cannot be found."""
     name: str
     index: int
+
+
+class MSBSubtypeInfo(tp.NamedTuple):
+    subtype_enum: BaseMSBSubtype
+    entry_class: tp.Type[MSBEntry]
+    subtype_list_name: str
 
 
 def MapFieldInfo(

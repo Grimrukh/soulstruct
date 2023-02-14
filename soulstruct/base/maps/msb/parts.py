@@ -20,7 +20,7 @@ except AttributeError:
 _LOGGER = logging.getLogger(__name__)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class BaseMSBPart(MSBEntry, abc.ABC):
 
     # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
@@ -36,7 +36,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     draw_groups: set[int] = field(default_factory=set)
     display_groups: set[int] = field(default_factory=set)
 
-    _model_index: int = -1
+    _model_index: int = None
 
     # Game structures diverge too much for useful read/write base methods here.
 

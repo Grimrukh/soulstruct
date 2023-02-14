@@ -3,14 +3,19 @@ from __future__ import annotations
 __all__ = ["NVMTriangle", "NavmeshType", "NVMBox", "NVMEventEntity", "NVM"]
 
 import logging
+import typing as tp
 from collections import deque
 from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.games import DarkSoulsDSRType
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryStruct, ByteOrder
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector2, Vector3
 from ..events.emevd.enums import NavmeshType
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "NVM"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,10 +36,9 @@ class NVMTriangle:
             self.flag = None
 
     @classmethod
-    def unpack(cls, reader: BinaryReader) -> NVMTriangle:
+    def from_nvm_reader(cls, reader: BinaryReader) -> NVMTriangle:
         vertex_indices = reader.unpack("3i")
         connected_indices = reader.unpack("3i")
-
         obstacles_and_flags = reader.unpack("I")[0]
         if obstacles_and_flags & 3 != 0:
             raise ValueError(f"Lowest two bits of NVMTriangle obstacle/flag int != 0: {obstacles_and_flags:010b}")
@@ -42,7 +46,7 @@ class NVMTriangle:
         all_flags = cls.reverse_flags_bits(obstacles_and_flags >> 16)
         return NVMTriangle(vertex_indices, connected_indices, obstacle_count, all_flags)
 
-    def pack(self, writer: BinaryWriter):
+    def to_nvm_writer(self, writer: BinaryWriter):
         writer.pack("6i", *self.vertex_indices, *self.connected_indices)
         obstacles_and_flags = (self.obstacle_count << 2) | (self.reverse_flags_bits(self.all_flags) << 16)
         writer.pack("i", obstacles_and_flags)
@@ -77,10 +81,10 @@ class NVMBox:
     child_boxes: list[None | NVMBox]  # four child boxes that subdivide this one
 
     @classmethod
-    def unpack(cls, reader: BinaryReader) -> NVMBox:
-        start_corner = Vector3(reader.unpack("3f"))
+    def from_nvm_reader(cls, reader: BinaryReader) -> NVMBox:
+        start_corner = Vector3(*reader.unpack("3f"))
         triangle_count = reader.unpack_value("i")
-        end_corner = Vector3(reader.unpack("3f"))
+        end_corner = Vector3(*reader.unpack("3f"))
         triangles_offset = reader.unpack_value("i")
 
         child_box_offsets = reader.unpack("iiii")
@@ -98,11 +102,11 @@ class NVMBox:
                 child_boxes.append(None)
             else:
                 reader.seek(child_box_offset)
-                child_boxes.append(cls.unpack(reader))  # recur (no need to reset reader position)
+                child_boxes.append(cls.from_nvm_reader(reader))  # recur (no need to reset reader position)
 
         return cls(start_corner, end_corner, triangle_indices, child_boxes)
 
-    def pack(self, writer: BinaryWriter, triangle_index_offsets: deque[int]) -> int:
+    def to_nvm_writer(self, writer: BinaryWriter, triangle_index_offsets: deque[int]) -> int:
         """Pack `NVMBox` to `writer`. Returns start offset of pack. Dequeues triangle indices from given list.
 
         Boxes are packed depth-first, starting with the deepest zero-indexed child of the root box, and ending with the
@@ -112,7 +116,7 @@ class NVMBox:
         child_box_offsets = []
         for child_box in self.child_boxes:
             if child_box is not None:
-                child_box_offsets.append(child_box.pack(writer, triangle_index_offsets))
+                child_box_offsets.append(child_box.to_nvm_writer(writer, triangle_index_offsets))
             else:
                 child_box_offsets.append(0)
 
@@ -137,94 +141,105 @@ class NVMEventEntity:
     triangle_indices: list[int]
 
     @classmethod
-    def unpack(cls, reader: BinaryReader) -> NVMEventEntity:
+    def from_nvm_reader(cls, reader: BinaryReader) -> NVMEventEntity:
         entity_id, index_offset, index_count = reader.unpack("3i")
         reader.assert_pad(4)
         triangle_indices = list(reader.unpack(f"{index_count}i", offset=index_offset))
         return cls(entity_id, triangle_indices)
 
-    def pack(self, writer: BinaryWriter, index_offset: int):
+    def to_nvm_writer(self, writer: BinaryWriter, index_offset: int):
         writer.pack("4i", self.entity_id, index_offset, len(self.triangle_indices), 0)
 
 
-class NVM(GameFile, DarkSoulsDSRType):
+@dataclass(slots=True)
+class NVM(GameFile):
     """Holds a navigation mesh (vertices and triangles), per-triangle navigation flags, groups of triangles that can be
     manipulated with EMEVDS, and a box hierarchy that covers the mesh (which is simple to generate)."""
 
     # TODO: Always correct for DS1. Not sure about DeS.
-    BOX_LEVELS = 3  # number of nested quaternary levels in box tree
-    BOX_BORDER = 0.5  # in-game distance units
+    BOX_LEVELS: tp.ClassVar[int] = 3  # number of nested quaternary levels in box tree
+    BOX_BORDER: tp.ClassVar[float] = 0.5  # in-game distance units
 
     # NOTE: I can't find any tolerance that produces EXACTLY the same box contents as the vanilla files in DS1.
     #  The best inspection I can muster simple indicates that some barely-untouched faces are still assigned to boxes,
     #  but similarly narrow gaps are correctly interpreted in other cases (maybe a triangle vs. quad test thing).
     #  It almost certainly should not matter.
-    BOX_TRIANGLE_TOLERANCE = 1E-9  # absolute cross-products smaller than this will NOT be counted as outside triangle
+    #  Absolute cross-products smaller than this will NOT be counted as outside triangle
+    BOX_TRIANGLE_TOLERANCE: tp.ClassVar[float] = 1E-9
 
-    big_endian: bool
-    vertices: list[Vector3]
-    triangles: list[NVMTriangle]
-    root_box: NVMBox
-    event_entities: list[NVMEventEntity]
+    big_endian: bool = False
+    vertices: list[Vector3] = field(default_factory=list)
+    triangles: list[NVMTriangle] = field(default_factory=list)
+    root_box: NVMBox = None
+    event_entities: list[NVMEventEntity] = field(default_factory=list)
 
-    HEADER_STRUCT = BinaryStruct(
-        ("big_endian", "i"),  # 1 (LE) or 0x1000000 (BE)
-        ("vertex_count", "i"),
-        ("vertex_offset", "i", 0x80),  # straight after header
-        ("triangle_count", "i"),
-        ("triangles_offset", "i"),  # predictable from vertex count
-        ("root_box_offset", "i"),  # stored last
-        "4x",
-        ("entities_count", "i"),
-        ("entities_offset", "i"),
-        "92x",
-    )
+    @dataclass(slots=True)
+    class NVMHeaderStruct(NewBinaryStruct):
+        big_endian: int = field(**Binary(asserted=[1, 0x1000000]))  # 1 (LE) or 0x1000000 (BE)
+        vertices_count: int
+        vertices_offset: int = field(init=False, **Binary(asserted=0x80))  # immediately after this header
+        triangles_count: int
+        triangles_offset: int  # predictable from vertex count
+        root_box_offset: int  # last data in file
+        _pad1: bytes = field(init=False, **BinaryPad(4))
+        entities_count: int  # triangles marked with entity IDs (matching `MSBNavigation` events)
+        entities_offset: int
+        _pad2: bytes = field(init=False, **BinaryPad(92))
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        self.big_endian = reader.byte(big_endian=False)
-        reader.default_byte_order = "<"
-        first_byte = reader.peek_value("i")
-        self.big_endian = first_byte != 1
-        if self.big_endian:
-            reader.default_byte_order = ">"
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> Self:
+        endian_byte = reader.peek("i")
+        if endian_byte == 1:
+            reader.default_byte_order = ByteOrder.LittleEndian
+        elif endian_byte == 0x1000000:
+            reader.default_byte_order = ByteOrder.BigEndian
 
-        header = reader.unpack_struct(self.HEADER_STRUCT)
-        expected_triangles_offset = 0x80 + header["vertex_count"] * 0xC
-        if header["triangles_offset"] != expected_triangles_offset:
+        header = cls.NVMHeaderStruct.from_bytes(reader)
+        expected_triangles_offset = 0x80 + header.vertices_count * 0xC
+        if header.triangles_offset != expected_triangles_offset:
             raise ValueError(
-                f"Ttriangles offset for NVM should be {expected_triangles_offset}, not {header['triangles_offset']}.")
+                f"Ttriangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
 
-        self.vertices = [Vector3(reader.unpack("3f")) for _ in range(header["vertex_count"])]
-        self.triangles = [NVMTriangle.unpack(reader) for _ in range(header["triangle_count"])]
+        vertices = [Vector3(*reader.unpack("3f")) for _ in range(header.vertices_count)]
+        triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
-        reader.seek(header["root_box_offset"])
-        self.root_box = NVMBox.unpack(reader)
-        if (box_count := len(self.get_all_boxes())) != 85:
+        reader.seek(header.root_box_offset)
+        root_box = NVMBox.from_nvm_reader(reader)
+        if (box_count := len(cls.get_all_boxes(root_box))) != 85:
             _LOGGER.warning(
                 f"`NVM` has {box_count} boxes in its hierarchy, but 85 are always expected "
-                f"(root + three quaternary levels)."
+                f"(root + three levels of division into four)."
             )
 
-        reader.seek(header["entities_offset"])
-        self.event_entities = [NVMEventEntity.unpack(reader) for _ in range(header["entities_count"])]
+        reader.seek(header.entities_offset)
+        event_entities = [NVMEventEntity.from_nvm_reader(reader) for _ in range(header.entities_count)]
+        return cls(
+            big_endian=reader.default_byte_order == ByteOrder.BigEndian,
+            vertices=vertices,
+            triangles=triangles,
+            root_box=root_box,
+            event_entities=event_entities,
+        )
 
-    def pack(self, **kwargs) -> bytes:
+    def to_writer(self) -> BinaryWriter:
+
         writer = BinaryWriter(ByteOrder.big_endian_bool(self.big_endian))
-
-        writer.pack("4i", 1, len(self.vertices), self.HEADER_STRUCT.size, len(self.triangles))
-        writer.reserve("triangles_offset", "i")
-        writer.reserve("root_box_offset", "i")
-        writer.pad(4)
-        writer.pack("i", len(self.event_entities))
-        writer.reserve("entities_offset", "i")
-        writer.pad(92)
+        self.NVMHeaderStruct(
+            big_endian=self.big_endian,
+            vertices_count=len(self.vertices),
+            triangles_count=len(self.triangles),
+            triangles_offset=RESERVED,
+            root_box_offset=RESERVED,
+            entities_count=len(self.event_entities),
+            entities_offset=RESERVED,
+        ).to_writer(reserve_obj=self)
 
         for vertex in self.vertices:
             writer.pack("3f", *vertex)
 
-        writer.fill_with_position("triangles_offset")
+        writer.fill_with_position("triangles_offset", obj=self)
         for triangle in self.triangles:
-            triangle.pack(writer)
+            triangle.to_nvm_writer(writer)
 
         box_triangle_index_offsets = deque()
 
@@ -244,8 +259,8 @@ class NVM(GameFile, DarkSoulsDSRType):
 
         write_box_triangle_indices(self.root_box)
 
-        root_box_offset = self.root_box.pack(writer, box_triangle_index_offsets)
-        writer.fill("root_box_offset", root_box_offset)
+        root_box_offset = self.root_box.to_nvm_writer(writer, box_triangle_index_offsets)
+        writer.fill("root_box_offset", root_box_offset, obj=self)
 
         if self.event_entities:
             entity_triangles_index_offsets = []
@@ -253,22 +268,23 @@ class NVM(GameFile, DarkSoulsDSRType):
                 entity_triangles_index_offsets.append(writer.position)
                 writer.pack(f"{len(entity.triangle_indices)}i", *entity.triangle_indices)
 
-            writer.fill_with_position("entities_offset")
+            writer.fill_with_position("entities_offset", obj=self)
             for entity, entity_triangles_offset in zip(self.event_entities, entity_triangles_index_offsets):
-                entity.pack(writer, entity_triangles_offset)
+                entity.to_nvm_writer(writer, entity_triangles_offset)
         else:
-            writer.fill("entities_offset", 0)
+            writer.fill("entities_offset", 0, obj=self)
 
-        return bytes(writer)
+        return writer
 
-    def get_all_boxes(self) -> list[tuple[NVMBox, tuple[int]]]:
+    @staticmethod
+    def get_all_boxes(root_box: NVMBox) -> list[tuple[NVMBox, tuple[int]]]:
         """Returns a list of tuples, each containing a box and an index sequence that shows its nesting, such as
         `(1, 3, 0)` (first child of third child of first child of root box).
 
         List is depth-first.
         """
 
-        all_boxes = [self.root_box]  # type: list[NVMBox]
+        all_boxes = [root_box]  # type: list[NVMBox]
         all_indices = [tuple()]  # type: list[tuple[int]]
         current_index = []  # type: list[int]
 
@@ -281,7 +297,7 @@ class NVM(GameFile, DarkSoulsDSRType):
                     add_children(child_box)
                     current_index.pop()
 
-        add_children(self.root_box)
+        add_children(root_box)
 
         return list(zip(all_boxes, all_indices))
 

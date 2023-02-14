@@ -8,12 +8,10 @@ import shutil
 import typing as tp
 from pathlib import Path
 
-from soulstruct.containers.entry import BinderEntry
+from soulstruct.containers import Binder, BinderEntry
 from soulstruct.base.maps.utilities import get_map
 from soulstruct.base.models.flver import FLVER
 from soulstruct.config import DSR_PATH
-from soulstruct.containers.bxf import BXF3
-from soulstruct.containers.bnd import BND3
 
 from ..constants import CHARACTER_FFX_SOURCES
 
@@ -43,7 +41,7 @@ def build_ffxbnd(
     extra_character_ffx_directory: Path = None,
     check_area_ffxbnd=True,
     prefer_bak=True,
-) -> BND3:
+) -> Binder:
     """Iterate over all character models in given `msb` and ensure all their FFX files (including FLVER and TPF files)
     are present in the given FFXBND file `ffxbnd_path`. Missing FFXBND files will be taken from their vanilla locations
     (known by Soulstruct) and added.
@@ -79,10 +77,10 @@ def build_ffxbnd(
     if ffxbnd_search_directory is None:
         ffxbnd_search_directory = ffxbnd_path.parent
     try:
-        ffxbnd = BND3(ffxbnd_path)
+        ffxbnd = Binder.from_path(ffxbnd_path)
     except FileNotFoundError:
         raise FileNotFoundError(f"Could not find FFXBND file to modify: {ffxbnd_path}")
-    open_ffxbnd_sources = {}  # type: dict[str, BND3]
+    open_ffxbnd_sources = {}  # type: dict[str, Binder]
     existing_file_names = {entry.name for entry in ffxbnd.entries}
     existing_ffx_ids = [i for i in ffxbnd.entries_by_id if i < 100000]
     existing_tpf_ids = [i for i in ffxbnd.entries_by_id if 100000 <= i < 200000]

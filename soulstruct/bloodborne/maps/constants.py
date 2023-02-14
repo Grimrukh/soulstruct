@@ -27,7 +27,7 @@ __all__ = [
     "get_map_variable_name",
 ]
 
-from soulstruct.base.maps.utilities import get_map as _get_map_base
+from soulstruct.base.maps.utilities import get_map as _get_map_base, MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.game_types.map_types import Map
 
 COMMON = Map(
@@ -255,15 +255,19 @@ ALL_MAPS_NO_CHALICE_WITH_EVENT_COMMON = (
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 
-def get_map(source, block_id=None):
+def get_map(source: MAP_SOURCE_TYPING):
     if source in {30, (30, 0), (30, 1)}:
         # Reference to missing map m30_00_00_00 in Castle Cainhurst (m25_00_00_00).
         return UNKNOWN_MAP_30
-    return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+    return _get_map_base(source, game_maps=ALL_MAPS)
 
 
-def get_map_variable_name(area_id: int, block_id: int):
+def get_map_variable_name(source: MAP_SOURCE_TYPING):
     try:
-        return get_map(area_id, block_id).variable_name
+        return get_map(source).variable_name
     except (KeyError, ValueError):
-        return f"({area_id}, {block_id})"
+        try:
+            area_id, block_id, cc_id, dd_id = source
+        except ValueError:
+            raise ValueError("Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`.")
+        return f"({area_id}, {block_id}, {cc_id}, {dd_id})"

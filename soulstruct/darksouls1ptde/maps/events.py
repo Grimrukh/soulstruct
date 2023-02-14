@@ -21,8 +21,8 @@ import abc
 import typing as tp
 from dataclasses import dataclass, field
 
-from soulstruct.bloodborne.events.emevd.enums import SoundType
-from soulstruct.bloodborne.game_types import *
+from soulstruct.darksouls1ptde.events.emevd.enums import SoundType
+from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.base.maps.msb.events import BaseMSBEvent
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.utils import MapFieldInfo
@@ -30,32 +30,32 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
 from .enums import MSBEventSubtype
-
-if tp.TYPE_CHECKING:
-    from .regions import MSBRegion
-    from .parts import MSBPart
+from .regions import MSBRegion
+from .parts import MSBPart
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBEvent(BaseMSBEvent, abc.ABC):
     """MSB event entry in Bloodborne."""
 
+    @dataclass(slots=True)
     class SUPERTYPE_HEADER_STRUCT(NewBinaryStruct):
-        name_offset: long
-        _event_index: int
-        event_type: int
-        _local_event_index: int
+        name_offset: int
+        _supertype_index: int
+        _subtype_int: int
+        _subtype_index: int
+        supertype_data_offset: int
+        subtype_data_offset: int
         _pad1: bytes = field(**BinaryPad(4))
-        supertype_data_offset: long
-        subtype_data_offset: long
 
+    @dataclass(slots=True)
     class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
         _attached_part_index: int
         _attached_region_index: int
         entity_id: int
         unknowns: tuple[byte, byte, byte, byte]
 
-    NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
+    NAME_ENCODING: tp.ClassVar[str] = "shift-jis"
 
     # Field type overrides.
     attached_part: MSBPart = None
@@ -64,7 +64,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     unknowns: tuple[int, int, int, int] = (0, 0, 0, 0)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBLightEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Light
@@ -76,7 +76,7 @@ class MSBLightEvent(MSBEvent):
     point_light_id: int = field(default=0, **MapFieldInfo(linked_type=PointLightParam))
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBSoundEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Sound
 
@@ -89,7 +89,7 @@ class MSBSoundEvent(MSBEvent):
     sound_id: int = -1
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBVFXEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.VFX
 
@@ -100,7 +100,7 @@ class MSBVFXEvent(MSBEvent):
     vfx_id: int = 0
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBWindEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Wind
@@ -122,7 +122,7 @@ class MSBWindEvent(MSBEvent):
     wind_swing_powers: list[int] = field(default_factory=lambda: [0.0] * 4)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBTreasureEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
@@ -154,12 +154,23 @@ class MSBTreasureEvent(MSBEvent):
     is_in_chest: bool = False
     is_hidden: bool = False
 
+    _treasure_part_index: int = None
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.treasure_part),
+        )
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasures")
+        # TODO: My MSB entry `duplicate()` (copying entries) is doing a deep copy on referenced fields.
+        #  Create a custom `MSBEntry.copy()` method that does a shallow copy only
+        super(MSBEvent, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBSpawnerEvent(MSBEvent):
     """Attributes are identical to base event, except there are eight spawn region slots."""
 
@@ -195,16 +206,16 @@ class MSBSpawnerEvent(MSBEvent):
         default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectSequence((Region, 4)))
     )
 
-    _spawn_parts_indices: list[int] | None = None
-    _spawn_regions_indices: list[int] | None = None
+    _spawn_parts_indices: list[int] = None
+    _spawn_regions_indices: list[int] = None
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBSpawnerEvent, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "spawn_parts")
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "spawn_regions")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBMessageEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Message
@@ -221,7 +232,7 @@ class MSBMessageEvent(MSBEvent):
     is_hidden: bool = False
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBObjActEvent(MSBEvent):
     """Attributes are identical to base event, except the param ID is 32-bit rather than 16-bit."""
 
@@ -231,7 +242,7 @@ class MSBObjActEvent(MSBEvent):
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
         obj_act_entity_id: int
         _obj_act_part_index: int
-        obj_act_param_id: int
+        obj_act_param_id: short
         obj_act_state: byte
         _pad1: bytes = field(**BinaryPad(1))
         obj_act_flag: int
@@ -242,15 +253,22 @@ class MSBObjActEvent(MSBEvent):
     obj_act_state: int = 0
     obj_act_flag: int = field(default=0, **MapFieldInfo(linked_type=Flag))
 
-    _obj_act_part_index: int | None = None
+    _obj_act_part_index: int = None
     _obj_act_part_name: int | None = None
 
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.obj_act_part),
+        )
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBObjActEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBSpawnPointEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SpawnPoint
@@ -262,14 +280,21 @@ class MSBSpawnPointEvent(MSBEvent):
 
     spawn_point_region: MSBRegion = None
 
-    _spawn_point_region_index: int | None = None
+    _spawn_point_region_index: int = None
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
+        )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBSpawnPointEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBMapOffsetEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.MapOffset
@@ -283,7 +308,7 @@ class MSBMapOffsetEvent(MSBEvent):
     rotate: float = 0.0
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBNavigationEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
@@ -295,14 +320,21 @@ class MSBNavigationEvent(MSBEvent):
 
     navigation_region: MSBRegion = None
 
-    _navigation_region_index: int | None = None
+    _navigation_region_index: int = None
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.navigation_region),
+        )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBNavigationEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBEnvironmentEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Environment
@@ -325,11 +357,12 @@ class MSBEnvironmentEvent(MSBEvent):
     unk_x14_x18: float = 1.0
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBNPCInvasionEvent(MSBEvent):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
 
+    @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
         host_entity_id: int
         invasion_flag_id: int
@@ -341,5 +374,5 @@ class MSBNPCInvasionEvent(MSBEvent):
     spawn_point_region: MSBRegion = None
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBNPCInvasionEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")

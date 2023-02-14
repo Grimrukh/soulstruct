@@ -484,7 +484,7 @@ __all__ = [
     "get_map_variable_name",
 ]
 
-from soulstruct.base.maps.utilities import get_map as _get_map_base
+from soulstruct.base.maps.utilities import get_map as _get_map_base, MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.game_types.map_types import Map
 from soulstruct.eldenring.maps.generic_dungeons import *
 from soulstruct.eldenring.maps.overworld import *
@@ -1595,25 +1595,16 @@ ALL_OVERWORLD_MAPS = [
 ALL_MSB_FILE_NAMES = [m.msb_file_stem for m in ALL_MAPS if m.msb_file_stem]
 
 
-def get_map(source, block_id=None, cc_id=None, dd_id=None):
-    if cc_id is not None:
-        if dd_id is None:
-            dd_id = 0
-        return _get_map_base((source, block_id, cc_id, dd_id), game_maps=ALL_MAPS)
-    elif dd_id is not None:
-        return _get_map_base((source, block_id, 0, dd_id), game_maps=ALL_MAPS)
-    elif source == "common_func":
-        return COMMON_FUNC
-    return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+def get_map(source: MAP_SOURCE_TYPING):
+    return _get_map_base(source, game_maps=ALL_MAPS)
 
 
-def get_map_variable_name(area_id: int, block_id: int, cc_id: int, dd_id: int):
+def get_map_variable_name(source: MAP_SOURCE_TYPING):
     try:
-        return get_map((area_id, block_id, cc_id, dd_id)).variable_name
+        return get_map(source).variable_name
     except (KeyError, ValueError):
+        try:
+            area_id, block_id, cc_id, dd_id = source
+        except ValueError:
+            raise ValueError("Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`.")
         return f"({area_id}, {block_id}, {cc_id}, {dd_id})"
-
-
-if __name__ == '__main__':
-    for m in ALL_MAPS:
-        print(f"    {m.name} = map_property({m.variable_name})  # type: EMEVD")

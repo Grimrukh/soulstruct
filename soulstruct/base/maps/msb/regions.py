@@ -12,7 +12,6 @@ from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.text import pad_chars
 
 from .msb_entry import MSBEntry
-from .utils import MapFieldInfo
 
 try:
     Self = tp.Self
@@ -22,9 +21,10 @@ except AttributeError:
 _LOGGER = logging.getLogger(__name__)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class BaseMSBRegion(MSBEntry, abc.ABC):
 
+    # Regions have no supertype data struct.
     SUPERTYPE_DATA_STRUCT: tp.ClassVar = None
     UNKNOWN_DATA_SIZE: tp.ClassVar[int]
 
@@ -49,12 +49,13 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
 
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
+        region_start = reader.position
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
 
-        cls.check_null_field(reader, header.pop("unknown_offset_1"))
-        cls.check_null_field(reader, header.pop("unknown_offset_2"))
+        cls.check_null_field(reader, region_start + header.pop("unknown_offset_1"))
+        cls.check_null_field(reader, region_start + header.pop("unknown_offset_2"))
 
-        header_subtype_int = header.pop("subtype_int")
+        header_subtype_int = header.pop("_subtype_int")
         if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
 
@@ -71,31 +72,39 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
     ):
         """Default: pack header (with name), base data, and type data in that order."""
-        self.pack_header(writer, supertype_index, subtype_index, entry_lists)
+        entry_offset = writer.position
+        self.pack_header(writer, entry_offset, supertype_index, subtype_index, entry_lists)
+        subtype_data_offset = writer.position - entry_offset if self.SUBTYPE_DATA_STRUCT is not None else 0
+        writer.fill("subtype_data_offset", subtype_data_offset, obj=self)
         self.pack_subtype_data(writer, entry_lists)
-        writer.fill_with_position("entity_id_offset", self)
+        writer.fill("entity_id_offset", writer.position - entry_offset, obj=self)
         writer.pack("i", self.entity_id)
 
     def pack_header(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: [dict[str, list[MSBEntry]]]
+        self,
+        writer: BinaryWriter,
+        entry_offset: int,
+        supertype_index: int,
+        subtype_index: int,
+        entry_lists: [dict[str, list[MSBEntry]]],
     ):
         self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
             self,
             writer,
             name_offset=RESERVED,
             _supertype_index=supertype_index,
-            subtype_int=self.SUBTYPE_ENUM.value,
-            _subtype_index=subtype_index,
+            _subtype_int=self.SUBTYPE_ENUM.value,
+            # NOTE: No `_subtype_index` in Regions.
             unknown_offset_1=RESERVED,
             unknown_offset_2=RESERVED,
             subtype_data_offset=RESERVED,
             entity_id_offset=RESERVED,
         )
-        writer.fill_with_position("name_offset", self)
+        writer.fill("name_offset", writer.position - entry_offset, obj=self)
         writer.append(pad_chars(self.name, encoding=self.NAME_ENCODING, alignment=4))
-        writer.fill_with_position("unknown_offset_1", self)
+        writer.fill("unknown_offset_1", writer.position - entry_offset, obj=self)
         writer.pad(4)
-        writer.fill_with_position("unknown_offset_2", self)
+        writer.fill("unknown_offset_2", writer.position - entry_offset, obj=self)
         writer.pad(4)
 
     @classmethod

@@ -165,10 +165,10 @@ class State:
     def pack_condition_pointers(self, writer: BinaryWriter, all_condition_offsets: dict[Condition, int]) -> int:
         """Returns total number of `Condition` pointers used in this `State`."""
         if not self.conditions:
-            writer.fill("condition_pointers_offset", -1, self)
+            writer.fill("condition_pointers_offset", -1 , obj=self)
             return 0
 
-        writer.fill_with_position("condition_pointers_offset", self)
+        writer.fill_with_position("condition_pointers_offset", obj=self)
         count = 0
         for condition in self.conditions:
             try:

@@ -197,9 +197,9 @@ class FMG(GameFile):
             if self.version == 2:
                 writer.pad(4)
             range_count += 1
-        writer.fill("range_count", range_count, self)
+        writer.fill("range_count", range_count , obj=self)
 
-        writer.fill_with_position("string_offsets_offset", self)
+        writer.fill_with_position("string_offsets_offset", obj=self)
         packed_strings = b""  # saving ourselves an additional iteration
         packed_strings_offset = writer.position + writer.varint_size * len(self.entries)
         for string_id, string in self.entries.items():
@@ -209,7 +209,7 @@ class FMG(GameFile):
                 writer.pack("v", packed_strings_offset + len(packed_strings))
             packed_strings += string.encode("utf-16-le") + b"\0\0"
 
-        writer.fill_with_position("file_size", self)
+        writer.fill_with_position("file_size", obj=self)
 
         return writer
 

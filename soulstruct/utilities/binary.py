@@ -757,6 +757,8 @@ class BinaryBase:
             fmt = fmt.replace("v", "q").replace("V", "Q")
         else:
             raise ValueError(f"`BinaryWriter.var_int_size` must be 4 or 8, not {self.varint_size}.")
+        if "v" in fmt or "V" in fmt:
+            raise ValueError(f"Could not parse 'v' and 'V' characters in `fmt` without `varint_size`: {fmt}")
         return fmt
 
     def get_utf_16_encoding(self) -> str:
@@ -1543,8 +1545,9 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T]):
                         field, cls_name,
                         "`list` binary fields must specify exactly one element type (e.g. `list[int]`)."
                     )
-
-            if field_type.__origin__ is tuple:
+                # Continue validation on element type.
+                field_type = field_type.__args__[0]
+            elif field_type.__origin__ is tuple:
                 if not field_type.__args__:
                     raise BinaryFieldTypeError(
                         field, cls_name,
@@ -1555,6 +1558,7 @@ class BinaryFieldMetadata(tp.Generic[FIELD_T]):
                         field, cls_name,
                         "`tuple` binary field element types must match `length` metadata, if given.",
                     )
+                # TODO: Need to validate tuple element types recursively...?
             else:
                 raise BinaryFieldTypeError(
                     field, cls_name,
@@ -2355,8 +2359,10 @@ class NewBinaryStruct:
                         field_values,  # for `FieldValue` arguments to inspect
                     )
                 except Exception as ex:
-                    print(field_values)
-                    _LOGGER.error(f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}")
+                    _LOGGER.error(
+                        f"Error occurred while trying to unpack field `{cls_name}.{field.name}`: {ex}\n"
+                        f"Unpacked field values: {field_values}"
+                    )
                     raise
 
             field_values[field.name] = field_value
@@ -2664,16 +2670,20 @@ class NewBinaryStruct:
                             f"{metadata.asserted}. Cannot guess which one to pack; one of them must be set."
                         )
 
-            _pack_binary_field(
-                metadata,
-                writer,
-                field_type,
-                field_value,
-                byte_order,
-                self.varint_size,
-                field_values,
-                self.stored_encodings.get(field.name, None),
-            )
+            try:
+                _pack_binary_field(
+                    metadata,
+                    writer,
+                    field_type,
+                    field_value,
+                    byte_order,
+                    self.varint_size,
+                    field_values,
+                    self.stored_encodings.get(field.name, None),
+                )
+            except Exception as ex:
+                _LOGGER.error(f"Error occurred while writing binary field `{field.name}`: {ex}")
+                raise
 
         if auto_packing_offset_fields:
             raise ValueError(f"Reserved auto-offset fields were not filled: {auto_packing_offset_fields}")

@@ -62,10 +62,10 @@ class Command:
     def pack_args_offsets(self, writer: BinaryWriter) -> int:
         """Pack offsets to packed EZL arg data. Returns number of args."""
         if not self.args:
-            writer.fill("args_offset", -1, self)
+            writer.fill("args_offset", -1, obj=self)
             return 0
 
-        writer.fill_with_position("args_offset", self)
+        writer.fill_with_position("args_offset", obj=self)
         for arg_bytes in self.args:
             # Offsets are reserved using the bytes object IDs, so we don't use `CommandArgsStruct`.
             writer.reserve("arg_ezl_offset", "v", obj=arg_bytes)

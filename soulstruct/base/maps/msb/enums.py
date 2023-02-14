@@ -33,9 +33,6 @@ class BaseMSBModelSubtype(BaseMSBSubtype):
     def get_pluralized_type_name(cls) -> str:
         raise NotImplementedError
 
-    def get_default_sib_path(self, name: str, map_id=()) -> str:
-        raise NotImplementedError
-
 
 class BaseMSBEventSubtype(BaseMSBSubtype):
     @classmethod

@@ -22,7 +22,7 @@ __all__ = [
     "get_map_variable_name",
 ]
 
-from soulstruct.base.maps.utilities import get_map as _get_map_base
+from soulstruct.base.maps.utilities import get_map as _get_map_base, MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.game_types.map_types import Map
 
 COMMON = Map(
@@ -194,13 +194,16 @@ ALL_MAPS = (
 )
 
 
-def get_map(source, block_id=None):
-    return _get_map_base(source, block_id=block_id, game_maps=ALL_MAPS)
+def get_map(source: MAP_SOURCE_TYPING):
+    return _get_map_base(source, game_maps=ALL_MAPS)
 
 
-# TODO: implement for other games (adding CC and DD if appropriate).
-def get_map_variable_name(area_id: int, block_id: int):
+def get_map_variable_name(source: MAP_SOURCE_TYPING):
     try:
-        return get_map(area_id, block_id).variable_name
+        return get_map(source).variable_name
     except (KeyError, ValueError):
-        return f"({area_id}, {block_id})"
+        try:
+            area_id, block_id, cc_id, dd_id = source
+        except ValueError:
+            raise ValueError("Can only generate a variable name for an unknown map from source `(aa, bb, cc, dd)`.")
+        return f"({area_id}, {block_id}, {cc_id}, {dd_id})"

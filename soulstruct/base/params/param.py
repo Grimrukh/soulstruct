@@ -378,13 +378,13 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
         writer = BinaryWriter(byte_order=byte_order)  # no varints
 
-        writer.reserve("I", "name_data_offset", self)
-        writer.reserve("H", "_row_data_offset", self)  # unsigned short, but can be larger
+        writer.reserve("name_data_offset", "I", obj=self)
+        writer.reserve("_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
         writer.pack("HHH", self.unknown, self.paramdef_data_version, row_count)
 
         if self.flags1.OffsetParam:
             writer.pad(4)
-            writer.reserve("q", "param_type_offset", self)
+            writer.reserve("param_type_offset", "q", obj=self)
             writer.pad(20)
         else:
             writer.append(pad_chars(self.param_type, encoding="ASCII", null_terminate=False, alignment=32))
@@ -394,10 +394,10 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         )
 
         if self.flags1[0] and self.flags1.IntDataOffset:
-            writer.reserve("i", "row_data_offset", self)
+            writer.reserve("row_data_offset", "i", obj=self)
             writer.pad(12)
         elif self.flags1.LongDataOffset:
-            writer.reserve("q", "row_data_offset", self)
+            writer.reserve("row_data_offset", "q", obj=self)
             writer.pad(8)
         # End of header.
 
@@ -406,27 +406,27 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
             writer.pack("i", row_id)
             if self.flags1.LongDataOffset:
                 writer.pad(4)
-                writer.reserve("q", f"row_data_offset{row_id}")
-                writer.reserve("q", f"name_data_offset{row_id}")
+                writer.reserve(f"row_data_offset{row_id}", "q", obj=self)
+                writer.reserve(f"name_data_offset{row_id}", "q", obj=self)
             else:
-                writer.reserve("i", f"row_data_offset{row_id}",)
-                writer.reserve("i", f"name_data_offset{row_id}")
+                writer.reserve(f"row_data_offset{row_id}", "i", obj=self)
+                writer.reserve(f"name_data_offset{row_id}", "i", obj=self)
 
-        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1), self)
-        writer.fill_with_position("row_data_offset", self)
+        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1) , obj=self)
+        writer.fill_with_position("row_data_offset", obj=self)
 
         # Pack row data.
         for row_id, row in self.rows.items():
-            writer.fill_with_position(f"row_data_offset{row_id}")
+            writer.fill_with_position(f"row_data_offset{row_id}", obj=self)
             row.to_writer(writer)
 
         if self.flags1.OffsetParam:
-            writer.fill_with_position("param_type_offset", self)
+            writer.fill_with_position("param_type_offset", obj=self)
             writer.append(self.param_type.encode("ASCII") + b"\0")
 
         # Pack row names.
         for row_id, row in self.rows.items():
-            writer.fill_with_position(f"row_name_offset{row_id}")
+            writer.fill_with_position(f"row_name_offset{row_id}", obj=self)
             row.pack_name(writer, self.get_name_encoding(self.big_endian, self.flags2))
 
         return writer
@@ -671,13 +671,13 @@ class ParamDict(Param):
         byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
         writer = BinaryWriter(byte_order=byte_order)  # no varints
 
-        writer.reserve("I", "name_data_offset", self)
-        writer.reserve("H", "_row_data_offset", self)  # unsigned short, but can be larger
+        writer.reserve("name_data_offset", "I", obj=self)
+        writer.reserve("_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
         writer.pack("HHH", self.unknown, self.paramdef_data_version, row_count)
 
         if self.flags1.OffsetParam:
             writer.pad(4)
-            writer.reserve("q", "param_type_offset", self)
+            writer.reserve("param_type_offset", "q", obj=self)
             writer.pad(20)
         else:
             writer.append(pad_chars(self.param_type, encoding="ASCII", null_terminate=False, alignment=32))
@@ -687,10 +687,10 @@ class ParamDict(Param):
         )
 
         if self.flags1[0] and self.flags1.IntDataOffset:
-            writer.reserve("i", "row_data_offset", self)
+            writer.reserve("row_data_offset", "i", obj=self)
             writer.pad(12)
         elif self.flags1.LongDataOffset:
-            writer.reserve("q", "row_data_offset", self)
+            writer.reserve("row_data_offset", "q", obj=self)
             writer.pad(8)
         # End of header.
 
@@ -699,27 +699,27 @@ class ParamDict(Param):
             writer.pack("i", row_id)
             if self.flags1.LongDataOffset:
                 writer.pad(4)
-                writer.reserve("q", f"row_data_offset{row_id}")
-                writer.reserve("q", f"name_data_offset{row_id}")
+                writer.reserve(f"row_data_offset{row_id}", "q", obj=self)
+                writer.reserve(f"name_data_offset{row_id}", "q", obj=self)
             else:
-                writer.reserve("i", f"row_data_offset{row_id}",)
-                writer.reserve("i", f"name_data_offset{row_id}")
+                writer.reserve(f"row_data_offset{row_id}", "i", obj=self)
+                writer.reserve(f"name_data_offset{row_id}", "i", obj=self)
 
-        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1), self)
-        writer.fill_with_position("row_data_offset", self)
+        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1) , obj=self)
+        writer.fill_with_position("row_data_offset", obj=self)
 
         if self.row_bytes is not None:  # rows have not been unpacked
             for row_id, (_, _, data) in self.row_bytes.items():
-                writer.fill_with_position(f"row_data_offset{row_id}")
+                writer.fill_with_position(f"row_data_offset{row_id}", obj=self)
                 writer.append(data)
         else:
             # Pack row data.
             for row_id, row in self.row_dicts.items():
-                writer.fill_with_position(f"row_data_offset{row_id}")
+                writer.fill_with_position(f"row_data_offset{row_id}", obj=self)
                 row.to_param_writer(writer)
 
         if self.flags1.OffsetParam:
-            writer.fill_with_position("param_type_offset", self)
+            writer.fill_with_position("param_type_offset", obj=self)
             writer.append(self.param_type.encode("ASCII") + b"\0")
 
         # Pack row names.

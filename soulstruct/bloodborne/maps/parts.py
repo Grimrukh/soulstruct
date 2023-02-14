@@ -27,21 +27,18 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 
-from .constants import get_map
 from .enums import *
 from .models import *
+from .regions import MSBRegion
+from .events import MSBEnvironmentEvent
 
 try:
     Self = tp.Self
 except AttributeError:
     Self = "MSBPart"
 
-if tp.TYPE_CHECKING:
-    from .regions import MSBRegion
-    from .events import MSBEnvironmentEvent
 
-
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBPart(BaseMSBPart, abc.ABC):
 
     @dataclass(slots=True)
@@ -49,16 +46,16 @@ class MSBPart(BaseMSBPart, abc.ABC):
         description_offset: long
         name_offset: long
         _instance_index: int  # TK says "Unknown; appears to count up with each instance of a model added."
-        subtype_int: int
+        _subtype_int: int
         _subtype_index: int
-        _model_index: int
+        model_index: int
         sib_path_offset: long
         translate: Vector3
         rotate: Vector3
         scale: Vector3
-        draw_groups: list[int] = field(**Binary(length=8))
-        display_groups: list[int] = field(**Binary(length=8))
-        backread_groups: list[int] = field(**Binary(length=8))
+        draw_groups: list[uint] = field(**Binary(length=8))
+        display_groups: list[uint] = field(**Binary(length=8))
+        backread_groups: list[uint] = field(**Binary(length=8))
         _pad1: bytes = field(init=False, **BinaryPad(4))
         supertype_data_offset: long
         subtype_data_offset: long
@@ -95,7 +92,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     @classmethod
     def unpack_header(cls, reader: BinaryReader, entry_offset: int) -> dict[str, tp.Any]:
         header = cls.SUPERTYPE_HEADER_STRUCT.from_bytes(reader)
-        header_subtype_int = header.pop("subtype_int")
+        header_subtype_int = header.pop("_subtype_int")
         if header_subtype_int != cls.SUBTYPE_ENUM.value:
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
 
@@ -116,16 +113,22 @@ class MSBPart(BaseMSBPart, abc.ABC):
         return header.to_dict(ignore_underscore_prefix=True) | kwargs
 
     def pack_header(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: [dict[str, list[MSBEntry]]]
+        self,
+        writer: BinaryWriter,
+        entry_offset: int,
+        supertype_index: int,
+        subtype_index: int,
+        entry_lists: [dict[str, list[MSBEntry]]],
     ):
         self.SUPERTYPE_HEADER_STRUCT.object_to_writer(
             self,
+            writer,
             description_offset=RESERVED,
             name_offset=RESERVED,
             _instance_index=0,  # TODO: Need to pass in...
-            subtype_int=self.SUBTYPE_ENUM.value,
+            _subtype_int=self.SUBTYPE_ENUM.value,
             _subtype_index=subtype_index,
-            _model_index=entry_lists["MODEL_PARAM_ST"].index(self.model),
+            model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], self.model),
             sib_path_offset=RESERVED,
             draw_groups=bit_set_to_int_group(self.draw_groups, group_size=8),
             display_groups=bit_set_to_int_group(self.display_groups, group_size=8),
@@ -135,13 +138,13 @@ class MSBPart(BaseMSBPart, abc.ABC):
             gparam_data_offset=RESERVED,
             scene_gparam_data_offset=RESERVED,
         )
-        writer.fill_with_position("description_offset", self)
+        writer.fill("description_offset", writer.position - entry_offset, obj=self)
         packed_description = self.description.encode(self.NAME_ENCODING) + b"\0\0"
         writer.append(packed_description)
-        writer.fill_with_position("name_offset", self)
+        writer.fill("name_offset", writer.position - entry_offset, obj=self)
         packed_name = self.name.encode(self.NAME_ENCODING) + b"\0\0"
         writer.append(packed_name)
-        writer.fill_with_position("sib_path_offset", self)
+        writer.fill("sib_path_offset", writer.position - entry_offset, obj=self)
         packed_sib_path = (self.sib_path.encode(self.NAME_ENCODING) + b"\0\0") if self.sib_path else b"\0\0"
         strings_size = len(packed_description + packed_name + packed_sib_path)
         if strings_size <= 0x38:
@@ -153,7 +156,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
         writer.append(packed_sib_path)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBPartWithGParam(MSBPart, abc.ABC):
     """Subclass of `MSBPart` that includes GParam fields."""
 
@@ -191,12 +194,13 @@ class MSBPartWithGParam(MSBPart, abc.ABC):
     def to_msb_writer(
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
     ):
-        super().to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
-        writer.fill_with_position("gparam_data_offset", self)
+        entry_offset = writer.position
+        super(MSBPartWithGParam, self).to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
+        writer.fill("gparam_data_offset", writer.position - entry_offset, obj=self)
         self.GPARAM_STRUCT.object_to_writer(self, writer)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
     """Subclass of `MSBPart` that includes SceneGParam (and GParam) fields."""
 
@@ -250,12 +254,13 @@ class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
     def to_msb_writer(
         self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
     ):
-        super().to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
-        writer.fill_with_position("scene_gparam_data_offset", self)
+        entry_offset = writer.position
+        super(MSBPartWithSceneGParam, self).to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
+        writer.fill("scene_gparam_data_offset", writer.position - entry_offset, obj=self)
         self.SCENE_GPARAM_STRUCT.object_to_writer(self, writer)
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBMapPiece(MSBPartWithGParam):
     """No further fields beyond GParam."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
@@ -265,7 +270,7 @@ class MSBMapPiece(MSBPartWithGParam):
     model: MSBMapPieceModel = None
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBObject(MSBPartWithGParam):
     """Interactable object. Note that Bloodborne has six-digit model IDs for Objects."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
@@ -288,6 +293,7 @@ class MSBObject(MSBPartWithGParam):
     )
 
     model: MSBObjectModel = None
+    draw_parent: MSBPart = None
     break_term: int = 0
     net_sync_type: int = 0
     collision_hit_filter: bool = False
@@ -295,12 +301,21 @@ class MSBObject(MSBPartWithGParam):
     animation_ids: tuple[int, int, int, int] = (-1, -1, -1, -1)
     model_vfx_param_id_offsets: tuple[int, int, int, int] = (0, 0, 0, 0)
 
+    _draw_parent_index: int = None
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
+        )
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBObject, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "draw_parent")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBCharacter(MSBPartWithGParam):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
@@ -334,18 +349,32 @@ class MSBCharacter(MSBPartWithGParam):
     chr_unk_x18_x1c: int = field(default=0, **MapFieldInfo("Unknown Chr [18-1c]", "Unknown Character integer."))
     chr_unk_x20_x22: int = field(default=0, **MapFieldInfo("Unknown Chr [20-22]", "Unknown Character integer."))
 
+    _draw_parent_index: int = None
+    _patrol_regions_indices: list[int] = None
+
     HIDE_FIELDS: tp.ClassVar = (
         "scale",
         "display_groups",
     )
 
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        _patrol_regions_indices = [
+            self.try_index(entry_lists["POINT_PARAM_ST"], region) for region in self.patrol_regions
+        ]
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
+            _patrol_regions_indices=_patrol_regions_indices,
+        )
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBCharacter, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "PARTS_PARAM_ST", "draw_parent")
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "patrol_regions")
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBPlayerStart(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.PlayerStart
@@ -360,13 +389,16 @@ class MSBPlayerStart(MSBPart):
         "display_groups",
     )
 
-    model: MSBCharacterModel = None
+    model: MSBCharacterModel | MSBPlayerModel = None
 
 
 # noinspection PyRedeclaration
-@dataclass(slots=True)
+@dataclass(slots=True, eq=False, repr=False)
 class MSBCollision(MSBPartWithSceneGParam):
 
+    SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
+
+    @dataclass(slots=True)
     class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
         hit_filter_id: byte
         sound_space_type: byte
@@ -386,7 +418,7 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(linked_type=CollisionHitFilter))
     sound_space_type: int = 0
-    environment_event: MSBEnvironmentEvent = None
+    environment_event: MSBEntry = None  # NOTE: can't type-hint this as `MSBEnvironmentEvent` due to circularity
     reflect_place_height: float = 0.0
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(linked_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -397,9 +429,9 @@ class MSBCollision(MSBPartWithSceneGParam):
     camera_1_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
     camera_2_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
     unk_x0b_x0c: int = field(default=0, **MapFieldInfo("Unknown [x0b-x0c]", "Unknown Collision integer.")),
-    attached_lantern: int = -1
+    attached_lantern: int = 0
 
-    _environment_event_index: int = -1
+    _environment_event_index: int = None
 
     # Internally managed.
     _force_place_name_banner: bool = field(default=True, repr=False)
@@ -437,7 +469,7 @@ class MSBCollision(MSBPartWithSceneGParam):
             play_region_id = -self._stable_footing_flag - 10
         else:
             play_region_id = self._play_region_id
-        environment_event_index = entry_lists["environments"].index(self.environment_event)        
+        environment_event_index = self.try_index(entry_lists["environments"], self.environment_event)
         return self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
@@ -445,6 +477,10 @@ class MSBCollision(MSBPartWithSceneGParam):
             _place_name_banner_id=internal_place_name_banner_id,
             _play_region_id=play_region_id,
         )
+
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        super(MSBCollision, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "environments", "environment_event")
 
     @property
     def force_place_name_banner(self):
@@ -515,7 +551,7 @@ class MSBUnusedCharacter(MSBCharacter):
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedCharacter
 
 
-# noinspection PyRedeclaration
+@dataclass(slots=True, eq=False, repr=False)
 class MSBMapConnection(MSBPart):
     """Links to an `MSBCollision` entry and causes another specified map to load into backread when the linked collision
     is itself in backread in the current map.
@@ -530,46 +566,34 @@ class MSBMapConnection(MSBPart):
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
         _collision_index: int
-        _connected_map_id: tuple[byte, byte, byte, byte]
+        connected_map_id: tuple[sbyte, sbyte, sbyte, sbyte]
         _pad1: bytes = field(**BinaryPad(8))
-
-    GET_MAP: tp.ClassVar = staticmethod(get_map)
 
     model: MSBCollisionModel = None
     collision: MSBCollision = None
-    connected_map: Map = field(default=(21, 0, 0, 0))
+    connected_map_id: tuple[int, int, int, int] = field(default=(21, 0, 0, 0))
 
-    _connected_map: Map = field(default=(21, 0, 0, 0), repr=False)
-    _collision_index: int | None = None
+    _collision_index: int = None
 
     @classmethod
     def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
         data = cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-        data["connected_map"] = cls.GET_MAP(**data["_connected_map_id"])
         return data
 
-    def to_msb_writer(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
-    ):
-        collision_index = entry_lists["collisions"].index(self.collision)
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        collision_index = self.try_index(entry_lists["collisions"], self.collision)
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
             _collision_index=collision_index,
-            _connected_map_id=self.connected_map.map_load_tuple,
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super().indices_to_objects(entry_lists)
+        super(MSBMapConnection, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "collisions", "collision")
 
-    @property
-    def connected_map(self) -> Map:
-        return self._connected_map
-
-    @connected_map.setter
-    def connected_map(self, value):
-        self._connected_map = self.GET_MAP(value)
+    def get_connected_map(self, get_map_func: tp.Callable):
+        return get_map_func(self.connected_map_id)
 
 
 class MSBOtherPart(MSBPart):

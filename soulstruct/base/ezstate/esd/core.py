@@ -353,7 +353,7 @@ class ESD(GameFile, abc.ABC):
                 state_index_offsets[state.index] = writer.position
                 state.to_esd_writer(writer)
                 all_states.append(state)
-        external_header_writer.fill("state_count", len(all_states), self)
+        external_header_writer.fill("state_count", len(all_states), obj=self)
 
         # Offsets of existing Conditions, which can be re-used across States if they are identical.
         all_condition_offsets = {}  # type: dict[Condition, int]
@@ -361,23 +361,23 @@ class ESD(GameFile, abc.ABC):
         # Pack Conditions.
         for state in all_states:
             state.pack_conditions(writer, state_index_offsets, all_condition_offsets)
-        external_header_writer.fill("condition_count", len(all_condition_offsets), self)
+        external_header_writer.fill("condition_count", len(all_condition_offsets), obj=self)
         # Pack Commands.
         command_count = 0
         for state in all_states:
             command_count += state.pack_commands(writer)
-        external_header_writer.fill("command_count", command_count, self)
+        external_header_writer.fill("command_count", command_count, obj=self)
         # Pack Command arg offsets.
         command_arg_count = 0
         for state in all_states:
             command_arg_count += state.pack_command_args(writer)
-        external_header_writer.fill("command_arg_count", command_count, self)
+        external_header_writer.fill("command_arg_count", command_count, obj=self)
         # Pack Condition pointers.
         condition_pointers_count = 0
-        external_header_writer.fill("condition_pointers_offset", writer.position, self)
+        external_header_writer.fill("condition_pointers_offset", writer.position, obj=self)
         for state in all_states:
             condition_pointers_count += state.pack_condition_pointers(writer, all_condition_offsets)
-        external_header_writer.fill("condition_pointers_count", command_count, self)
+        external_header_writer.fill("condition_pointers_count", command_count, obj=self)
         # Pack Condition test EZL data.
         for state in all_states:
             state.pack_condition_test_data(writer)
@@ -386,21 +386,21 @@ class ESD(GameFile, abc.ABC):
             state.pack_command_arg_data(writer)
 
         if self.esd_name:
-            external_header_writer.fill("esd_name_offset_minus_1", writer.position - 1, self)
-            writer.fill_with_position("esd_name_offset", self)
-            writer.fill_with_position("unk_offset_1", self)
+            external_header_writer.fill("esd_name_offset_minus_1", writer.position - 1, obj=self)
+            writer.fill_with_position("esd_name_offset", obj=self)
+            writer.fill_with_position("unk_offset_1", obj=self)
             writer.append(self.esd_name.encode("utf-16-le"))
         # Otherwise, EOF file offset written to both below.
 
-        writer.fill_with_position("unk_offset_2", self)
+        writer.fill_with_position("unk_offset_2", obj=self)
         if not self.file_tail:
             writer.append(b"\0")  # MUST have at least one null byte after name (e.g. for SoulsFormats)
         writer.append(self.file_tail)
 
-        external_header_writer.fill("internal_data_size", writer.position, self)
+        external_header_writer.fill("internal_data_size", writer.position, obj=self)
         if not self.esd_name:
-            external_header_writer.fill("esd_name_offset_minus_1", writer.position, self)
-            writer.fill_with_position("esd_name_offset", self)
+            external_header_writer.fill("esd_name_offset_minus_1", writer.position, obj=self)
+            writer.fill_with_position("esd_name_offset", obj=self)
 
         # TODO: Old -- only kept until new tested.
         # tables = _ESDPacker(self)

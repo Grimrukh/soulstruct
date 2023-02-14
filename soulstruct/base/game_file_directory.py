@@ -83,7 +83,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
 
 
 @dataclass(slots=True)
-class GameFileMapDirectory(GameFileDirectory, abc.ABC):
+class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BASE_BINARY_FILE_T], abc.ABC):
     """Game file directory that expects to find a file for each game map in `ALL_MAPS`, which should be defined by the
     game-specific subclass.
 

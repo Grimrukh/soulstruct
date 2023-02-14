@@ -8,7 +8,6 @@ __all__ = [
     "MSBRegionSphere",
     "MSBRegionRect",
     "MSBRegionBox",
-    "MSBRegionList",
 ]
 
 from soulstruct.darksouls1ptde.maps.regions import (
@@ -19,5 +18,4 @@ from soulstruct.darksouls1ptde.maps.regions import (
     MSBRegionSphere,
     MSBRegionRect,
     MSBRegionBox,
-    MSBRegionList,
 )

@@ -1,92 +1,104 @@
 __all__ = ["MSB"]
 
 import logging
-import typing as tp
+from pathlib import Path
 
+from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
 from soulstruct.darksouls1ptde.maps.msb import MSB as _BaseMSB
-from soulstruct.darksouls1r.game_types.map_types import *
-from soulstruct.games import DarkSoulsDSRType
-from soulstruct.utilities.maths import Vector3
 
-from .constants import VANILLA_MSB_TRANSLATIONS
-from .models import MSBModelList
-from .events import MSBEventList
-from .regions import MSBRegionList
-from .parts import MSBPartList
+from .constants import VANILLA_MSB_TRANSLATIONS, get_map
+from .utilities import import_map_piece_flver
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(DarkSoulsDSRType, _BaseMSB):
+class MSB(_BaseMSB):
     """Only difference from DS1PTDE is in the methods."""
 
-    MODEL_LIST_CLASS = MSBModelList
-    EVENT_LIST_CLASS = MSBEventList
-    REGION_LIST_CLASS = MSBRegionList
-    PART_LIST_CLASS = MSBPartList
-
-    models: MSBModelList
-    events: MSBEventList
-    regions: MSBRegionList
-    parts: MSBPartList
-
-    # These are ordered by convenience (same as GUI).
-    ENTITY_GAME_TYPES = {
-        "parts": (
-            MapPiece,
-            Object,
-            Character,
-            PlayerStart,
-            Collision,
-        ),
-        "events": (
-            SoundEvent,
-            VFXEvent,
-            SpawnerEvent,
-            MessageEvent,
-            SpawnPointEvent,
-            NavigationEvent,
-        ),
-        "regions": (
-            RegionPoint,
-            RegionSphere,
-            RegionCylinder,
-            RegionBox,
-        ),
-    }
-
     def translate_entity_id_names(self):
-        for entry_type_name, entry_subtypes in self.ENTITY_GAME_TYPES.items():
-            if entry_type_name == "parts":
-                continue  # translations not provided for parts (names are all ASCII already)
-            translated_entity_ids = set()  # reset per entry type
-            for entry_subtype in entry_subtypes:
-                for entry in self[entry_type_name].get_entries(entry_subtype):
-                    if entry.entity_id not in {-1, 0}:
-                        if entry.entity_id in translated_entity_ids:
-                            _LOGGER.warning(f"Found repeated entity ID while translating: {entry.entity_id}. Ignored.")
-                            continue
-                        if entry.entity_id not in VANILLA_MSB_TRANSLATIONS:
-                            _LOGGER.warning(f"Unexpected entity ID for vanilla DSR: {entry.entity_id}. Not translated.")
-                        else:
-                            old_name = entry.name
-                            entry.name = VANILLA_MSB_TRANSLATIONS[entry.entity_id]
-                            self.rename_references(old_name, entry.name, entry_types=[entry_type_name])
-                            translated_entity_ids.add(entry.entity_id)
+        """Apply my hand-crafted translations of all vanilla Japanese DS1 MSB names (mostly those with entity IDs).
 
-    def new_light_event_with_point(
+        TODO: Can probably go in PTDE subclass. (Just not sure if there are old PTDE Arena event needing translation.)
+        """
+        for subtype_name, game_type in self.ENTITY_GAME_TYPES.items():
+            translated_entity_ids = set()  # reset per entry type
+            for entry in self[subtype_name]:
+                if entry.entity_id not in {-1, 0}:
+                    if entry.entity_id in translated_entity_ids:
+                        _LOGGER.warning(f"Found repeated entity ID while translating: {entry.entity_id}. Ignored.")
+                        continue
+                    if entry.entity_id not in VANILLA_MSB_TRANSLATIONS:
+                        _LOGGER.warning(f"Unexpected entity ID for vanilla DSR: {entry.entity_id}. Not translated.")
+                    else:
+                        # old_name = entry.name
+                        entry.name = VANILLA_MSB_TRANSLATIONS[entry.entity_id]
+                        translated_entity_ids.add(entry.entity_id)
+
+    def import_map_piece_model(
         self,
-        translate: tp.Union[Vector3, tuple, list],
-        rotate: tp.Union[Vector3, tuple, list],
-        **light_event_kwargs,
+        source_map: MAP_SOURCE_TYPING,
+        source_model_id: int | str,
+        dest_map: MAP_SOURCE_TYPING,
+        dest_model_id: int | str = None,
+        map_directory: Path | str = None,
+        overwrite=False,
     ):
-        if "base_region_name" in light_event_kwargs:
-            raise KeyError("`base_region_name` will be created and assigned automatically.")
-        light = self.events.new_light(**light_event_kwargs)
-        point = self.regions.new_point(
-            name=f"_LightEvent_{light.name}",
-            translate=translate,
-            rotate=rotate,
-        )
-        light.base_region_name = point.name
-        return light
+        """Import a Map Piece model from `source_map` to `dest_map` (should be this `MSB`).
+
+        Moves the `FLVER` file and adds the `MSBMapPieceModel` entry.
+
+        TODO: Can go in PTDE base class with some tweaks (no DCX extension, mainly).
+        """
+        source_map = get_map(source_map)
+        dest_map = get_map(dest_map)
+
+        if map_directory is None:
+            from soulstruct import DSR_PATH
+            map_directory = Path(DSR_PATH) / "map"
+        else:
+            map_directory = Path(map_directory)
+
+        if isinstance(source_model_id, int):
+            source_model_id = f"{source_model_id:04d}"
+        else:
+            source_model_id = source_model_id.lstrip("m")
+            if len(source_model_id) == 9 and source_model_id[6] == "A":
+                source_model_id = source_model_id[:6]  # remove 'AZZ' area suffix
+        if len(source_model_id) == 4:
+            source_model_id += f"B{source_map.block_id}"
+        elif len(source_model_id) != 6:
+            raise ValueError(
+                f"`source_model_id` of map piece (excluding 'm' prefix) must be four characters (in which case 'BX' "
+                f"will be appended) or the full six. Received: {source_model_id}"
+            )
+
+        source_model_name = f"m{source_model_id}A{source_map.area_id:02d}.flver.dcx"
+        source_flver_path = map_directory / f"{source_map.msb_file_stem}/{source_model_name}"
+        if not source_flver_path.is_file():
+            raise FileNotFoundError(f"Could not find source FLVER {source_flver_path}.")
+
+        if dest_model_id is None:  # defaults to "YZXXXX", where the source FLVER is "mXXXXBYAZZ"
+            dest_model_id = f"{str(source_map.area_id)[-1]}{str(source_map.block_id)[-1]}{source_model_id[:4]}"
+        else:
+            if isinstance(dest_model_id, int):
+                dest_model_id = f"{dest_model_id:04d}"
+            else:
+                dest_model_id = dest_model_id.lstrip("m")
+            if len(dest_model_id) == 4:
+                dest_model_id += f"B{source_map.block_id}"
+            elif len(dest_model_id) != 6:
+                raise ValueError(
+                    f"`dest_model_id` of map piece (excluding 'm' prefix) must be four characters (in which case 'BX' "
+                    f"will be appended) or the full six. Received: {dest_model_id}"
+                )
+        dest_model_name = f"m{dest_model_id}"
+
+        if dest_model_name in self.map_piece_models.get_entry_names():
+            raise ValueError(f"There is already a Map Piece model with name 'm{dest_model_id}' in this MSB.")
+
+        dest_flver_path = map_directory / f"{dest_map.msb_file_stem}/{dest_model_name}A{dest_map.area_id:02d}.flver.dcx"
+
+        import_map_piece_flver(source_flver_path, dest_flver_path, overwrite=overwrite)
+
+        new_model = self.map_piece_models.new(name=f"m{dest_model_id}")
+        new_model.set_auto_sib_path(dest_map.msb_file_stem)

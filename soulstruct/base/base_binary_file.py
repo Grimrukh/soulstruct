@@ -7,7 +7,7 @@ import copy
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict, field, fields
 from pathlib import Path
 
 from soulstruct.games import Game, get_game
@@ -93,14 +93,14 @@ class BaseBinaryFile:
             dcx_type = DCXType.Null
 
         try:
-            instance = cls.from_reader(reader)
-            instance.dcx_type = dcx_type
+            binary_file = cls.from_reader(reader)
+            binary_file.dcx_type = dcx_type
         except Exception:
             _LOGGER.error(f"Error occurred while reading `{cls.__name__}` from binary data. See traceback.")
             raise
         finally:
             reader.close()
-        return instance
+        return binary_file
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
@@ -229,6 +229,13 @@ class BaseBinaryFile:
     @property
     def cls_name(self) -> str:
         return self.__class__.__name__
+
+    def __repr__(self) -> str:
+        lines = [f"{self.cls_name}("]
+        for field_name, field_value in fields(self):
+            lines.append(f"    {field_name}={repr(field_value)}")
+        lines.append(")")
+        return "\n".join(lines)
 
 
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")

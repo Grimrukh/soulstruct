@@ -223,8 +223,8 @@ class Mesh:
     invalid_vertex_size: bool = False
 
     # Held temporarily while unpacking.
-    _face_set_indices: list[int] | None = None
-    _vertex_buffer_indices: list[int] | None = None
+    _face_set_indices: list[int] = None
+    _vertex_buffer_indices: list[int] = None
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):

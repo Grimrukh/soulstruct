@@ -141,9 +141,9 @@ class Texture:
         TextureStruct.object_to_writer(self, writer, _path_offset=None, _texture_type_offset=None)
 
     def pack_strings(self, writer: BinaryWriter, encoding: str):
-        writer.fill_with_position("_path_offset", self)
+        writer.fill_with_position("_path_offset", obj=self)
         writer.pack_z_string(self.path, encoding=encoding)
-        writer.fill_with_position("_texture_type_offset", self)
+        writer.fill_with_position("_texture_type_offset", obj=self)
         writer.pack_z_string(self.texture_type, encoding=encoding)
 
     def set_name(self, name: str):
@@ -184,7 +184,7 @@ class Material:
 
     # Held temporarily before FLVER textures are assigned.
     _texture_count: int | None = None
-    _first_texture_index: int | None = None
+    _first_texture_index: int = None
 
     @classmethod
     def from_flver_reader(

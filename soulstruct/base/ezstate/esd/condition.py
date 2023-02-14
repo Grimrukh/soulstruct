@@ -90,10 +90,10 @@ class Condition:
         self, writer: BinaryWriter, state_index_offsets: dict[int, int], all_conditions: dict[Condition, int]
     ):
         if not self.subconditions:
-            writer.fill("subconditions_offset", -1, self)
+            writer.fill("subconditions_offset", -1 , obj=self)
             return  # no subconditions to pack
 
-        writer.fill_with_position("subconditions_offset", self)
+        writer.fill_with_position("subconditions_offset", obj=self)
         # Pack these subconditions first, then recur on them.
         for subcondition in self.subconditions:
             if subcondition not in all_conditions:
@@ -105,10 +105,10 @@ class Condition:
     def pack_pass_commands(self, writer: BinaryWriter) -> int:
         """Returns the number of pass commands."""
         if not self.pass_commands:
-            writer.fill("pass_commands_offset", -1, self)
+            writer.fill("pass_commands_offset", -1 , obj=self)
             return 0  # no pass commands to pack
 
-        writer.fill_with_position("pass_commands_offset", self)
+        writer.fill_with_position("pass_commands_offset", obj=self)
         for pass_command in self.pass_commands:
             pass_command.to_esd_writer(writer)
         return len(self.pass_commands)
@@ -139,7 +139,7 @@ class Condition:
         return count
 
     def pack_test_data(self, writer: BinaryWriter):
-        writer.fill_with_position("test_ezl_offset", self)
+        writer.fill_with_position("test_ezl_offset", obj=self)
         writer.append(self.test_ezl)
 
     def pack_subconditions_test_data(self, writer: BinaryWriter):
@@ -161,10 +161,10 @@ class Condition:
     def pack_subconditions_pointers(self, writer: BinaryWriter, all_condition_offsets: dict[Condition, int]) -> int:
         """Returns total number of pointers found."""
         if not self.subconditions:
-            writer.fill("subcondition_pointers_offset", -1, self)
+            writer.fill("subcondition_pointers_offset", -1 , obj=self)
             return 0
 
-        writer.fill_with_position("subcondition_pointers_offset", self)
+        writer.fill_with_position("subcondition_pointers_offset", obj=self)
         count = 0
         for subcondition in self.subconditions:
             try:
