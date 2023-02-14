@@ -287,7 +287,7 @@ class MSBCharacter(MSBPart):
     damage_animation: int = -1
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = None
+    _patrol_regions_indices: list[int] = field(default=None, **Binary(length=8))
 
     HIDE_NAMES = (
         "scale",
@@ -605,8 +605,8 @@ class MSBMapConnection(MSBPart):
         _pad1: bytes = field(**BinaryPad(8))
 
     model: MSBCollisionModel = None
-    collision: MSBEntry = None
-    connected_map_id: tuple[int, int, int, int] = field(default=(10, 0, 0, 0))
+    collision: MSBCollision = None
+    connected_map_id: list[int] = field(default_factory=lambda: [10, 0, 0, 0], **Binary(length=4))
 
     _collision_index: int = None
 

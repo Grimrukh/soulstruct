@@ -29,13 +29,15 @@ from soulstruct.utilities.maths import Vector3
 
 from .enums import *
 from .models import *
-from .regions import MSBRegion
-from .events import MSBEnvironmentEvent
 
 try:
     Self = tp.Self
 except AttributeError:
     Self = "MSBPart"
+
+if tp.TYPE_CHECKING:
+    from .regions import MSBRegion
+    from .events import MSBEnvironmentEvent
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -350,7 +352,7 @@ class MSBCharacter(MSBPartWithGParam):
     chr_unk_x20_x22: int = field(default=0, **MapFieldInfo("Unknown Chr [20-22]", "Unknown Character integer."))
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = None
+    _patrol_regions_indices: list[int] = field(default=None, **Binary(length=8))
 
     HIDE_FIELDS: tp.ClassVar = (
         "scale",
@@ -418,7 +420,7 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(linked_type=CollisionHitFilter))
     sound_space_type: int = 0
-    environment_event: MSBEntry = None  # NOTE: can't type-hint this as `MSBEnvironmentEvent` due to circularity
+    environment_event: MSBEnvironmentEvent = None
     reflect_place_height: float = 0.0
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(linked_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -571,7 +573,7 @@ class MSBMapConnection(MSBPart):
 
     model: MSBCollisionModel = None
     collision: MSBCollision = None
-    connected_map_id: tuple[int, int, int, int] = field(default=(21, 0, 0, 0))
+    connected_map_id: list[int] = field(default_factory=lambda: [21, 0, 0, 0], **Binary(length=4))
 
     _collision_index: int = None
 

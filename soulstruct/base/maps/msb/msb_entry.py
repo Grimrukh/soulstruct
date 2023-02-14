@@ -5,10 +5,11 @@ __all__ = ["MSBEntry"]
 import abc
 import copy
 import logging
+import re
 import typing as tp
+from collections import ChainMap
 from dataclasses import dataclass, field, fields, MISSING
 from enum import IntEnum
-from types import GenericAlias
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector, Vector2, Vector3, Vector4
@@ -28,6 +29,23 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
+# Collection of all valid `MSBEntry` field types, and the annotation strings used to detect them and types.
+_BASIC_ENTRY_TYPES = {
+    "bool",
+    "int",
+    "float",
+    # No `bytes` fields in entries.
+    "str",
+    "list[int]",
+    "list[float]",
+    # No `tuple` fields in entries (makes element assignment too annoying).
+    "set[int]",
+    "Vector2",
+    "Vector3",
+    "Vector4",
+}  # type: set[str]
+
+
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEntry(abc.ABC):
     """Base class for entries of any type and subtype that appear in an `MSB` (under one of four entry superlists)."""
@@ -38,8 +56,8 @@ class MSBEntry(abc.ABC):
     SUBTYPE_ENUM: tp.ClassVar[tp.Type[BaseMSBSubtype]]
     # These fields will be marked as hidden in the GUI.
     HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
-    # Cached when first accessed. Maps field names to types for enforcement.
-    _FIELD_TYPES: tp.ClassVar[dict[str, str]] = {}
+    # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
+    _FIELD_TYPES: tp.ClassVar[dict[str, str | tp.Type[tp.Any]]] = {}
 
     # Structs for header, supertype data, and (optional but common) subtype data.
     SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]]
@@ -207,56 +225,46 @@ class MSBEntry(abc.ABC):
         return cls(**data)
 
     @classmethod
-    def from_json_dict(cls, data: dict[str, tp.Any], msb: MSB) -> Self:
-        """Converts reference dictionaries to entries."""
+    def from_json_dict(cls, data: dict[str, tp.Any]) -> tuple[Self, dict[str, dict]]:
+        """Defers conversion of reference dictionaries to entries: returns both the incomplete `MSBEntry` and a
+        dictionary mapping field names to reference dicts."""
         try:
             kwargs = {"name": data["name"]}
         except KeyError:
             raise ValueError("`MSBEntry` JSON dict must have 'name' field.")
+        deferred_refs = {}
         for field_name, field_value in data.items():
             if isinstance(field_value, dict):
-                try:
-                    subtype_list_name = field_value["subtype_list_name"]
-                    subtype_index = field_value["subtype_index"]
-                except KeyError:
+                if (
+                    "subtype_list_name" not in field_value or "subtype_index" not in field_value
+                    or len(field_value) != 2
+                ):
                     raise ValueError(
                         "`MSBEntry` JSON `dict` fields must be references to other entries with exact keys:\n"
                         "    'subtype_list_name', 'subtype_index'"
                     )
-                try:
-                    kwargs[field_name] = msb[subtype_list_name][subtype_index]
-                except IndexError:
-                    raise ValueError(
-                        f"`MSBEntry` JSON dict '{kwargs['name']}' field `{field_name}` references an invalid entry "
-                        f"in this MSB: {subtype_list_name}[{subtype_index}]"
-                    )
+                deferred_refs[field_name] = field_value
             elif isinstance(field_value, list) and any(isinstance(element, dict) for element in field_value):
-                entry_list = []
+                deferred_list = []
                 for element in field_value:
                     if element is None:
-                        entry_list.append(None)
+                        deferred_list.append(None)
                         continue
-                    try:
-                        subtype_list_name = element["subtype_list_name"]
-                        subtype_index = element["subtype_index"]
-                    except KeyError:
+                    if (
+                        "subtype_list_name" not in element or "subtype_index" not in element
+                        or len(element) != 2
+                    ):
                         raise ValueError(
-                            "`MSBEntry` JSON `dict` fields must be references to other entries with exact keys:\n"
+                            "`MSBEntry` JSON `list[dict]` fields must be references to other entries with exact keys:\n"
                             "    'subtype_list_name', 'subtype_index'"
                         )
-                    try:
-                        element_entry = msb[subtype_list_name][subtype_index]
-                    except IndexError:
-                        raise ValueError(
-                            f"`MSBEntry` JSON dict '{kwargs['name']}' field `{field_name}` references an invalid entry "
-                            f"in this MSB: {subtype_list_name}[{subtype_index}]"
-                        )
-                    entry_list.append(element_entry)
-                kwargs[field_name] = entry_list
+                    deferred_list.append(element)
+                deferred_refs[field_name] = deferred_list
             else:
-                kwargs[field_name] = field_value  # try direct assignment
+                # `__setattr__` enforcer should be able to convert all JSON values to their proper types.
+                kwargs[field_name] = field_value
 
-        return cls.from_dict(kwargs)
+        return cls(**kwargs), deferred_refs
 
     def to_dict(self, ignore_defaults=True) -> dict[str, tp.Any]:
         """Similar to `asdict`, but optionally (and by default) omits fields with their default values for brevity.
@@ -302,6 +310,7 @@ class MSBEntry(abc.ABC):
                             "subtype_list_name": ref_subtype_list.subtype_info.subtype_list_name,
                             "subtype_index": ref_subtype_list.index(element)
                         })
+                data[name] = ref_list
             elif isinstance(value, Vector):
                 data[name] = list(value)
             elif isinstance(value, set):
@@ -336,62 +345,134 @@ class MSBEntry(abc.ABC):
             return
 
         for field_name, field_type in self.__class__._FIELD_TYPES.items():
-            # TODO: Clean up/unify all the string parsing happening here. (Fortunately the list of types to handle is
-            #  not arbitrarily large.)
             if key == field_name:
-                # Correct type can be assigned directly.
+
                 if isinstance(value, property):
                     # No inspection.
-                    super(MSBEntry, self).__setattr__(key, value)
+                    super(MSBEntry, self).__setattr__(field_name, value)
                     return
+
+                if (
+                    field_name.startswith("_")
+                    and (field_name.endswith("_index") or field_name.endswith("_indices"))
+                    and value is None
+                ):
+                    # None can be assigned to internal index fields.
+                    super(MSBEntry, self).__setattr__(field_name, value)
+                    return
+
+                entry_type_name, length_str = re.match(r"([\w |]+)(\[\d+])?", field_type).groups()
+
+                # print(field_name, entry_type_name, length_str)
+
+                if length_str is not None:
+                    # List of entry subclasses or integers.
+                    length = int(length_str[1:-1])  # remove brackets
+                    if not isinstance(value, (list, tuple)):
+                        raise TypeError(
+                            f"Must assign a list/tuple to list field `{self.cls_name}.{field_name}`."
+                        )
+                    if entry_type_name == "int":
+                        if len(value) != length:
+                            raise ValueError(
+                                f"Int list field `{self.cls_name}.{field_name}` must have exactly {length} elements."
+                            )
+                        for element in value:
+                            if not isinstance(element, int):
+                                raise TypeError(
+                                    f"Int list field `{self.cls_name}.{field_name}` contains non-int: {value}"
+                                )
+                        list_value = list(value)
+                    elif entry_type_name == "float":
+                        if len(value) != length:
+                            raise ValueError(
+                                f"Float list field `{self.cls_name}.{field_name}` must have exactly {length} elements."
+                            )
+                        floats = []
+                        for element in value:
+                            if isinstance(element, int):
+                                element = float(element)
+                            elif not isinstance(element, float):
+                                raise TypeError(
+                                    f"Float list field `{self.cls_name}.{field_name}` contains non-number: {value}"
+                                )
+                            floats.append(element)
+                        list_value = floats
+                    elif entry_type_name.startswith("MSB"):  # MSBEntry
+                        if len(value) > length:
+                            raise ValueError(
+                                f"Maximum size of entry list field `{self.cls_name}.{field_name}` is {length}."
+                            )
+                        list_value = []
+                        for element in value:
+                            if element is None:
+                                list_value.append(None)
+                            elif self._is_subtype(element, entry_type_name):
+                                list_value.append(element)
+                            else:
+                                raise TypeError(
+                                    f"Invalid type for entry list field `{self.cls_name}.{field_name}`: "
+                                    f"{element.__class__.__name__}"
+                                )
+                        while len(list_value) < length:
+                            list_value.append(None)
+                    else:
+                        raise TypeError(f"Invalid field type for `{self.cls_name}.{field_name}`: {field_type}")
+                    super(MSBEntry, self).__setattr__(field_name, list_value)
+                    return
+
+                if entry_type_name.startswith("MSB"):
+                    # Single entry (or None).
+                    if value is not None and not self._is_subtype(value, entry_type_name):
+                        raise TypeError(
+                            f"Invalid type for entry field `{self.cls_name}.{field_name}`: "
+                            f"{value.__class__.__name__}"
+                        )
+                    super(MSBEntry, self).__setattr__(field_name, value)
+                    return
+
+                if field_type == "set[int]":
+                    int_set = set()
+                    if not isinstance(value, (set, list, tuple)):
+                        raise TypeError(
+                            f"Group set field `{self.cls_name}.{field_name}` must be an int set/sequence, not: {value}"
+                        )
+                    for v in value:
+                        if not isinstance(v, int):
+                            raise TypeError(
+                                f"Group set field `{self.cls_name}.{field_name}` cannot contain non-int: {v}"
+                            )
+                        int_set.add(v)
+                    super(MSBEntry, self).__setattr__(field_name, int_set)
+                    return
+
+                # Type is exactly correct.
                 if type(value).__name__ == field_type:
                     super(MSBEntry, self).__setattr__(key, value)
                     return
-                if field_type.startswith("MSB") and field_type in [cls.__name__ for cls in type(value).__mro__]:
-                    # Value is a valid subclass.
-                    super(MSBEntry, self).__setattr__(key, value)
-                    return
-                if " | " in field_type:
-                    for sub_type in field_type.split(" | "):
-                        if type(value).__name__ == sub_type:
-                            super(MSBEntry, self).__setattr__(key, value)
-                            return
-                        if sub_type.startswith("MSB") and sub_type in [cls.__name__ for cls in type(value).__mro__]:
-                            # Value is a valid subclass.
-                            super(MSBEntry, self).__setattr__(key, value)
-                            return
-                # `None` is allowed for `MSBEntry` fields or field names starting with an underscore.
-                if value is None:
-                    if field_type.startswith("MSB") or field_name.startswith("_"):
-                        super(MSBEntry, self).__setattr__(key, value)
-                        return
-                    raise ValueError(
-                        f"`None` can only be assigned to `MSBEntry` fields or internal index fields, "
-                        f"not `{self.cls_name}.{key}`."
-                    )
-                # Sequences.
-                if field_type.startswith("tuple["):
-                    if (expected := field_type.count(",") + 1) != len(value):
-                        raise ValueError(f"Wrong size for field `{field_name}`. Expected {expected} elements.")
-                    super(MSBEntry, self).__setattr__(key, tuple(value))
-                    return
-                if field_type.startswith("list["):
-                    # TODO: Check binary metadata to enforce length. I am too lazy right now.
-                    super(MSBEntry, self).__setattr__(key, list(value))
-                    return
-                if field_type == "set[int]":
-                    super(MSBEntry, self).__setattr__(key, set(value))
-                    return
-                # Try to convert.
+
+                # Try to convert to basic type.
                 if field_type in ("Vector2", "Vector3", "Vector4"):
-                    if not isinstance(value, (list, tuple)):
-                        raise ValueError(
-                            f"Can only assign sequences or `{field_type.__name__}` to field `{field_name}`."
-                        )
                     vector_type = {"Vector2": Vector2, "Vector3": Vector3, "Vector4": Vector4}[field_type]
-                    vector_value = vector_type(*value)
+                    try:
+                        vector_value = vector_type(*value)
+                    except (ValueError, TypeError):
+                        raise ValueError(
+                            f"Can only assign sequences or `{field_type}` to `{field_type}` "
+                            f"field `{self.cls_name}.{field_name}`."
+                        )
                     super(MSBEntry, self).__setattr__(key, vector_value)
                     return
+
+                if field_type in ("bool", "int", "float", "str"):
+                    py_type = globals()[field_type]
+                    if isinstance(value, int) and py_type is float:
+                        value = float(value)  # acceptable cast
+                    elif not isinstance(value, py_type):
+                        raise TypeError(f"Invalid type for `{field_type}` field `{self.cls_name}.{field_name}: {value}")
+                    super(MSBEntry, self).__setattr__(key, value)
+
+                # Shouldn't be able to reach this, but just in case.
                 raise ValueError(
                     f"Could not set/convert value {repr(value)} for assignment to field `{self.cls_name}.{field_name}`."
                 )
@@ -399,11 +480,59 @@ class MSBEntry(abc.ABC):
         raise ValueError(f"Invalid `MSBEntry` subclass field: `{self.cls_name}.{key}`")
 
     @classmethod
+    def _is_subtype(cls, value: MSBEntry, parent_type_name: str) -> bool:
+        """Checks if `parent_type_name` is a parent of `value` type."""
+        if "|" in parent_type_name:
+            # Recur on union members.
+            return any(cls._is_subtype(value, parent.strip()) for parent in parent_type_name.split("|"))
+        else:
+            return parent_type_name in [parent.__name__ for parent in value.__class__.__mro__]
+
+    @classmethod
+    def all_annotations(cls) -> ChainMap:
+        """Returns a dictionary-like ChainMap that includes annotations for all
+           attributes defined in cls or inherited from superclasses."""
+        return ChainMap(*(c.__annotations__ for c in cls.__mro__ if '__annotations__' in c.__dict__))
+
+    @classmethod
     def _cache_field_types(cls):
         """NOTE: Using string types from dataclass fields because of circular entry type references."""
         cls._FIELD_TYPES = {}
+
+        f_annotations = cls.all_annotations()
+
         for f in fields(cls):
-            cls._FIELD_TYPES[f.name] = f.type if isinstance(f.type, str) else f.type.__name__
+            ann = f_annotations[f.name]
+            if not isinstance(ann, str):
+                ann = ann.__name__
+
+            # Check `MSBEntry` types first.
+            if re.match(r"MSBEntry", ann):  # not allowed
+                raise TypeError(f"Field {cls.__name__}.{f.name} cannot have abstract `MSBEntry` type.")
+            elif re.match(r"MSB.*", ann):
+                # `MSBEntry` subclass. `__setattr__` will confirm that any set `value` has this name in its MRO.
+                # NOTE: Will match pipe unions and check them appropriately.
+                cls._FIELD_TYPES[f.name] = ann  # str
+            elif ann in {"list[int]", "list[float]"} or re.match(r"list\[MSB[\w, ]*]", ann):
+                # List of `MSBEntry` subclasses. Check binary metadata for length and store in type string.
+                try:
+                    binary = f.metadata["binary"]  # type: BinaryFieldMetadata
+                    if binary.length is None:
+                        raise KeyError
+                    length = binary.length
+                except KeyError:
+                    if f.default_factory != MISSING:
+                        # Detect length from default value.
+                        length = len(f.default_factory())
+                    else:
+                        raise TypeError(
+                            f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
+                        )
+                cls._FIELD_TYPES[f.name] = f"{ann[5:-1]}[{length}]"
+            elif ann in _BASIC_ENTRY_TYPES:
+                cls._FIELD_TYPES[f.name] = ann
+            else:
+                raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
 
     def __repr__(self):
         field_strings = []
@@ -412,8 +541,6 @@ class MSBEntry(abc.ABC):
                 field_strings.append(f"    {field_name}=<{value.cls_name}('{value.name}')>,")
             else:
                 field_strings.append(f"    {field_name}={repr(value)},")
-                if field_name == "translate":
-                    print(field_strings[-1])
 
         return f"{self.cls_name}(\n" + "\n".join(field_strings) + "\n)"
 

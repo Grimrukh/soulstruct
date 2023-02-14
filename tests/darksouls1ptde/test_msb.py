@@ -42,11 +42,21 @@ class MSBTest(unittest.TestCase):
 
     def test_json(self):
         msb = MSB.from_path("m10_00_00_00.msb")
+
         try:
             msb.write_json("_test_msb.json")
             msb_reload = MSB.from_json("_test_msb.json")
+
+            for subtype in MSB.get_subtype_list_names():
+                source_entries = msb[subtype]
+                test_entries = msb_reload[subtype]
+                self.assertEqual(len(source_entries), len(test_entries))
+                for i, entry in enumerate(msb[subtype]):
+                    test_entry = test_entries[i]
+                    self.assertEqual(entry, test_entry)
         finally:
-            os.remove("_test_msb.json")
+            # os.remove("_test_msb.json")
+            pass
 
 
 if __name__ == '__main__':

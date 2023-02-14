@@ -169,6 +169,8 @@ class MSBEntryList(list[MSBEntryType]):
             self.subtype_name: [entry.to_json_dict(msb, ignore_defaults) for entry in self]
         }
 
+    # NOTE: No `from_json_dict` method; `MSB` handles this.
+
     @property
     def subtype_name(self):
         return self.subtype_info.subtype_enum.name

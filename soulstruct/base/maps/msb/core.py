@@ -93,8 +93,8 @@ class MSB(GameFile, abc.ABC):
     #  - Dictionary that contains common field info ('entity_id', etc.) that can be indexed.
 
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]]
-    # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype ints to subtype info.
-    MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[int, MSBSubtypeInfo]]]
+    # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype enum names to subtype info.
+    MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]]
     # Maps MSB entry superlist names (parts, etc.) to the relative offsets of their subtype enums.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]]
     # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
@@ -152,16 +152,21 @@ class MSB(GameFile, abc.ABC):
     @classmethod
     def _unpack_entry(cls, reader: BinaryReader, supertype_name: str, entry_lists: dict[str, list[MSBEntry]]):
         subtype_int = reader.unpack_value("i", offset=reader.position + cls.MSB_ENTRY_SUBTYPE_OFFSETS[supertype_name])
-        subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_int]
-        subtype_class = subtype_info.entry_class
+        for _, subtype_info in cls.MSB_ENTRY_SUBTYPES[supertype_name].items():
+            if subtype_info.subtype_enum.value == subtype_int:
+                subtype_class = subtype_info.entry_class
+                subtype_list_name = subtype_info.subtype_list_name
+                break
+        else:
+            raise TypeError(f"Unknown '{supertype_name}' subtype enum value: {subtype_int}")
         entry = subtype_class.from_msb_reader(reader)
         # Put entry into appropriate supertype and subtype lists (creating if necessary).
         entry_lists.setdefault(supertype_name, []).append(entry)
-        if subtype_info.subtype_list_name not in entry_lists:
-            entry_lists[subtype_info.subtype_list_name] = MSBEntryList(
+        if subtype_list_name not in entry_lists:
+            entry_lists[subtype_list_name] = MSBEntryList(
                 supertype_name=supertype_name, subtype_info=subtype_info
             )
-        entry_lists[subtype_info.subtype_list_name].append(entry)
+        entry_lists[subtype_list_name].append(entry)
 
     @staticmethod
     def resolve_supertype_name(supertype_name: str):
@@ -251,7 +256,7 @@ class MSB(GameFile, abc.ABC):
             for supertype_index, entry in enumerate(supertype_list):
                 entry: MSBEntry
                 writer.fill_with_position("entry_offset", obj=entry)
-                subtype_name = self.MSB_ENTRY_SUBTYPES[supertype_name][entry.SUBTYPE_ENUM.value].subtype_list_name
+                subtype_name = self.MSB_ENTRY_SUBTYPES[supertype_name][entry.SUBTYPE_ENUM.name].subtype_list_name
                 subtype_index = entry_lists[subtype_name].index(entry)
                 if supertype_name == "MODEL_PARAM_ST":
                     entry: BaseMSBModel
@@ -340,29 +345,64 @@ class MSB(GameFile, abc.ABC):
         if data["version"] != cls.get_version_dict():
             raise TypeError(f"Invalid MSB 'version' info in dict for this MSB class: {data['version']}")
 
-        subtype_list_names = cls.get_subtype_list_names()
         subtype_lists = {}
+        deferred_refs = {}
         for supertype_name in MSB_ENTRY_SUPERTYPES:
             if supertype_name not in data:
                 _LOGGER.warning(f"No '{supertype_name}' key found in MSB dictionary, which is unusual.")
                 continue
             subtype_dict = data[supertype_name]
-            for subtype_name, subtype_list in subtype_dict.items():
-                subtype_name = cls.resolve_subtype_name(subtype_name)
-                if subtype_name not in subtype_list_names:
-                    raise TypeError(f"Invalid MSB subtype name '{subtype_name}' (supertype '{supertype_name}').")
-                subtype_info = [
-                    info for _, info in cls.MSB_ENTRY_SUBTYPES[supertype_name].items()
-                    if info.subtype_list_name == subtype_name
-                ][0]
-                # TODO: Have to defer entry reference dicts, construct the MSB below, then apply them all...
-                entries = [subtype_info.entry_class.from_json_dict(entry_dict) for entry_dict in subtype_list]
-                subtype_lists[subtype_name] = MSBEntryList(
+            for subtype_enum_name, subtype_list in subtype_dict.items():
+                subtype_info = cls.MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum_name]
+                entries = []
+                subtype_deferred = deferred_refs[subtype_info.subtype_list_name] = []
+                for entry_dict in subtype_list:
+                    entry, deferred = subtype_info.entry_class.from_json_dict(entry_dict)
+                    if deferred:
+                        subtype_deferred.append((entry, deferred))
+                    entries.append(entry)
+                subtype_lists[subtype_info.subtype_list_name] = MSBEntryList(
                     *entries, supertype_name=supertype_name, subtype_info=subtype_info
                 )
 
-        # noinspection PyArgumentList
+        cls._resolve_deferred_json_refs(subtype_lists, deferred_refs)
+
         return cls(**subtype_lists)
+
+    @classmethod
+    def _resolve_deferred_json_refs(cls, subtype_lists: dict[str, MSBEntryList], deferred_refs: dict):
+        """Resolve deferred entry references now that all lists are complete."""
+        for subtype_list_name, deferred_list in deferred_refs.items():
+            for entry, deferred_dict in deferred_list:
+                for field_name, field_ref in deferred_dict.items():
+                    if isinstance(field_ref, dict):
+                        ref_list_name = field_ref["subtype_list_name"]
+                        ref_index = field_ref["subtype_index"]
+                        try:
+                            ref_entry = subtype_lists[ref_list_name][ref_index]
+                        except (KeyError, IndexError):
+                            raise ValueError(
+                                f"Entry '{entry.name}' field `{field_name}` references invalid entry: "
+                                f"`{ref_list_name}[{ref_index}]`"
+                            )
+                        setattr(entry, field_name, ref_entry)
+                    elif isinstance(field_ref, list):
+                        entry_list = []
+                        for ref in field_ref:
+                            if ref is None:
+                                entry_list.append(None)
+                            else:
+                                ref_list_name = ref["subtype_list_name"]
+                                ref_index = ref["subtype_index"]
+                                try:
+                                    ref_entry = subtype_lists[ref_list_name][ref_index]
+                                except (KeyError, IndexError):
+                                    raise ValueError(
+                                        f"Entry '{entry.name}' field `{field_name}` references invalid entry in list: "
+                                        f"`{ref_list_name}[{ref_index}]`"
+                                    )
+                                entry_list.append(ref_entry)
+                        setattr(entry, field_name, entry_list)
 
     @classmethod
     def get_version_dict(cls) -> dict[str, bool | str]:

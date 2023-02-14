@@ -28,63 +28,63 @@ class MSBEntrySuperlistHeader(NewBinaryStruct):
 
 MSB_ENTRY_SUBTYPES = {
     "MODEL_PARAM_ST": {
-        0: MSBSubtypeInfo(MSBModelSubtype.MapPiece, MSBMapPieceModel, "map_piece_models"),
-        1: MSBSubtypeInfo(MSBModelSubtype.Object, MSBObjectModel, "object_models"),
-        2: MSBSubtypeInfo(MSBModelSubtype.Character, MSBCharacterModel, "character_models"),
-        4: MSBSubtypeInfo(MSBModelSubtype.Player, MSBPlayerModel, "player_models"),
-        5: MSBSubtypeInfo(MSBModelSubtype.Collision, MSBCollisionModel, "collision_models"),
-        6: MSBSubtypeInfo(MSBModelSubtype.Navmesh, MSBNavmeshModel, "navmesh_models"),
+        "MapPiece": MSBSubtypeInfo(MSBModelSubtype.MapPiece, MSBMapPieceModel, "map_piece_models"),
+        "Object": MSBSubtypeInfo(MSBModelSubtype.Object, MSBObjectModel, "object_models"),
+        "Character": MSBSubtypeInfo(MSBModelSubtype.Character, MSBCharacterModel, "character_models"),
+        "Player": MSBSubtypeInfo(MSBModelSubtype.Player, MSBPlayerModel, "player_models"),
+        "Collision": MSBSubtypeInfo(MSBModelSubtype.Collision, MSBCollisionModel, "collision_models"),
+        "Navmesh": MSBSubtypeInfo(MSBModelSubtype.Navmesh, MSBNavmeshModel, "navmesh_models"),
     },
     "EVENT_PARAM_ST": {
-        0: MSBSubtypeInfo(MSBEventSubtype.Light, MSBLightEvent, "lights"),
-        1: MSBSubtypeInfo(MSBEventSubtype.Sound, MSBSoundEvent, "sounds"),
-        2: MSBSubtypeInfo(MSBEventSubtype.VFX, MSBVFXEvent, "vfx"),
-        3: MSBSubtypeInfo(MSBEventSubtype.Wind, MSBWindEvent, "wind"),
-        4: MSBSubtypeInfo(MSBEventSubtype.Treasure, MSBTreasureEvent, "treasures"),
-        5: MSBSubtypeInfo(MSBEventSubtype.Spawner, MSBSpawnerEvent, "spawners"),
-        6: MSBSubtypeInfo(MSBEventSubtype.Message, MSBMessageEvent, "messages"),
-        7: MSBSubtypeInfo(MSBEventSubtype.ObjAct, MSBObjActEvent, "obj_acts"),
-        8: MSBSubtypeInfo(MSBEventSubtype.SpawnPoint, MSBSpawnPointEvent, "spawn_points"),
-        9: MSBSubtypeInfo(MSBEventSubtype.MapOffset, MSBMapOffsetEvent, "map_offsets"),
-        10: MSBSubtypeInfo(MSBEventSubtype.Navigation, MSBNavigationEvent, "navigation"),
-        11: MSBSubtypeInfo(MSBEventSubtype.Environment, MSBEnvironmentEvent, "environments"),
-        12: MSBSubtypeInfo(MSBEventSubtype.NPCInvasion, MSBNPCInvasionEvent, "npc_invasions"),
+        "Light": MSBSubtypeInfo(MSBEventSubtype.Light, MSBLightEvent, "lights"),
+        "Sound": MSBSubtypeInfo(MSBEventSubtype.Sound, MSBSoundEvent, "sounds"),
+        "VFX": MSBSubtypeInfo(MSBEventSubtype.VFX, MSBVFXEvent, "vfx"),
+        "Wind": MSBSubtypeInfo(MSBEventSubtype.Wind, MSBWindEvent, "wind"),
+        "Treasure": MSBSubtypeInfo(MSBEventSubtype.Treasure, MSBTreasureEvent, "treasures"),
+        "Spawner": MSBSubtypeInfo(MSBEventSubtype.Spawner, MSBSpawnerEvent, "spawners"),
+        "Message": MSBSubtypeInfo(MSBEventSubtype.Message, MSBMessageEvent, "messages"),
+        "ObjAct": MSBSubtypeInfo(MSBEventSubtype.ObjAct, MSBObjActEvent, "obj_acts"),
+        "SpawnPoint": MSBSubtypeInfo(MSBEventSubtype.SpawnPoint, MSBSpawnPointEvent, "spawn_points"),
+        "MapOffset": MSBSubtypeInfo(MSBEventSubtype.MapOffset, MSBMapOffsetEvent, "map_offsets"),
+        "Navigation": MSBSubtypeInfo(MSBEventSubtype.Navigation, MSBNavigationEvent, "navigation"),
+        "Environment": MSBSubtypeInfo(MSBEventSubtype.Environment, MSBEnvironmentEvent, "environments"),
+        "NPCInvasion": MSBSubtypeInfo(MSBEventSubtype.NPCInvasion, MSBNPCInvasionEvent, "npc_invasions"),
     },
     "POINT_PARAM_ST": {
-        0: MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
-        1: MSBSubtypeInfo(MSBRegionSubtype.Circle, MSBRegionCircle, "circles"),
-        2: MSBSubtypeInfo(MSBRegionSubtype.Sphere, MSBRegionSphere, "spheres"),
-        3: MSBSubtypeInfo(MSBRegionSubtype.Cylinder, MSBRegionCylinder, "cylinders"),
-        4: MSBSubtypeInfo(MSBRegionSubtype.Rect, MSBRegionRect, "rects"),
-        5: MSBSubtypeInfo(MSBRegionSubtype.Box, MSBRegionBox, "boxes"),
+        "Point": MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
+        "Circle": MSBSubtypeInfo(MSBRegionSubtype.Circle, MSBRegionCircle, "circles"),
+        "Sphere": MSBSubtypeInfo(MSBRegionSubtype.Sphere, MSBRegionSphere, "spheres"),
+        "Cylinder": MSBSubtypeInfo(MSBRegionSubtype.Cylinder, MSBRegionCylinder, "cylinders"),
+        "Rect": MSBSubtypeInfo(MSBRegionSubtype.Rect, MSBRegionRect, "rects"),
+        "Box": MSBSubtypeInfo(MSBRegionSubtype.Box, MSBRegionBox, "boxes"),
     },
     "PARTS_PARAM_ST": {
-        0: MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
-        1: MSBSubtypeInfo(MSBPartSubtype.Object, MSBObject, "objects"),
-        2: MSBSubtypeInfo(MSBPartSubtype.Character, MSBCharacter, "characters"),
+        "MapPiece": MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
+        "Object": MSBSubtypeInfo(MSBPartSubtype.Object, MSBObject, "objects"),
+        "Character": MSBSubtypeInfo(MSBPartSubtype.Character, MSBCharacter, "characters"),
         # 3 unused.
-        4: MSBSubtypeInfo(MSBPartSubtype.PlayerStart, MSBPlayerStart, "player_starts"),
-        5: MSBSubtypeInfo(MSBPartSubtype.Collision, MSBCollision, "collisions"),
+        "PlayerStart": MSBSubtypeInfo(MSBPartSubtype.PlayerStart, MSBPlayerStart, "player_starts"),
+        "Collision": MSBSubtypeInfo(MSBPartSubtype.Collision, MSBCollision, "collisions"),
         # 6 unused.
         # 7 unused.
-        8: MSBSubtypeInfo(MSBPartSubtype.Navmesh, MSBNavmesh, "navmeshes"),
-        9: MSBSubtypeInfo(MSBPartSubtype.UnusedObject, MSBUnusedObject, "unused_objects"),
-        10: MSBSubtypeInfo(MSBPartSubtype.UnusedCharacter, MSBUnusedCharacter, "unused_characters"),
-        11: MSBSubtypeInfo(MSBPartSubtype.MapConnection, MSBMapConnection, "map_connections"),
+        "Navmesh": MSBSubtypeInfo(MSBPartSubtype.Navmesh, MSBNavmesh, "navmeshes"),
+        "UnusedObject": MSBSubtypeInfo(MSBPartSubtype.UnusedObject, MSBUnusedObject, "unused_objects"),
+        "UnusedCharacter": MSBSubtypeInfo(MSBPartSubtype.UnusedCharacter, MSBUnusedCharacter, "unused_characters"),
+        "MapConnection": MSBSubtypeInfo(MSBPartSubtype.MapConnection, MSBMapConnection, "map_connections"),
     },
 }
 
 
-def empty_entry_list(supertype_prefix: str, subtype_int: int) -> tp.Callable[[], MSBEntryList]:
+def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
     supertype_name = f"{supertype_prefix}_PARAM_ST"
-    subtype_info = MSB_ENTRY_SUBTYPES[supertype_name][subtype_int]
+    subtype_info = MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum_name]
     return lambda: MSBEntryList(supertype_name=supertype_name, subtype_info=subtype_info)
 
 
 @dataclass(slots=True)
 class MSB(_BaseMSB):
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]] = MSBEntrySuperlistHeader
-    MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[int, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
+    MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
         "MODEL_PARAM_ST": 4,
         "EVENT_PARAM_ST": 8,
@@ -114,43 +114,43 @@ class MSB(_BaseMSB):
     LONG_VARINTS: tp.ClassVar[bool] = False
     NAME_ENCODING: tp.ClassVar[str] = "shift_jis_2004"
 
-    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_entry_list("MODEL", 0))
-    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_entry_list("MODEL", 1))
-    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_entry_list("MODEL", 2))
-    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_entry_list("MODEL", 4))
-    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_entry_list("MODEL", 5))
-    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_entry_list("MODEL", 6))
+    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPiece"))
+    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "Object"))
+    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "Character"))
+    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "Player"))
+    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "Collision"))
+    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_list("MODEL", "Navmesh"))
 
-    lights: MSBEntryList[MSBLightEvent] = field(default_factory=empty_entry_list("EVENT", 0))
-    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty_entry_list("EVENT", 1))
-    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty_entry_list("EVENT", 2))
-    wind: MSBEntryList[MSBWindEvent] = field(default_factory=empty_entry_list("EVENT", 3))
-    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty_entry_list("EVENT", 4))
-    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty_entry_list("EVENT", 5))
-    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty_entry_list("EVENT", 6))
-    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty_entry_list("EVENT", 7))
-    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty_entry_list("EVENT", 8))
-    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty_entry_list("EVENT", 9))
-    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty_entry_list("EVENT", 10))
-    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty_entry_list("EVENT", 11))
-    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty_entry_list("EVENT", 12))
+    lights: MSBEntryList[MSBLightEvent] = field(default_factory=empty_list("EVENT", "Light"))
+    sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty_list("EVENT", "Sound"))
+    vfx: MSBEntryList[MSBVFXEvent] = field(default_factory=empty_list("EVENT", "VFX"))
+    wind: MSBEntryList[MSBWindEvent] = field(default_factory=empty_list("EVENT", "Wind"))
+    treasures: MSBEntryList[MSBTreasureEvent] = field(default_factory=empty_list("EVENT", "Treasure"))
+    spawners: MSBEntryList[MSBSpawnerEvent] = field(default_factory=empty_list("EVENT", "Spawner"))
+    messages: MSBEntryList[MSBMessageEvent] = field(default_factory=empty_list("EVENT", "Message"))
+    obj_acts: MSBEntryList[MSBObjActEvent] = field(default_factory=empty_list("EVENT", "ObjAct"))
+    spawn_points: MSBEntryList[MSBSpawnPointEvent] = field(default_factory=empty_list("EVENT", "SpawnPoint"))
+    map_offsets: MSBEntryList[MSBMapOffsetEvent] = field(default_factory=empty_list("EVENT", "MapOffset"))
+    navigation: MSBEntryList[MSBNavigationEvent] = field(default_factory=empty_list("EVENT", "Navigation"))
+    environments: MSBEntryList[MSBEnvironmentEvent] = field(default_factory=empty_list("EVENT", "Environment"))
+    npc_invasions: MSBEntryList[MSBNPCInvasionEvent] = field(default_factory=empty_list("EVENT", "NPCInvasion"))
 
-    points: MSBEntryList[MSBRegionPoint] = field(default_factory=empty_entry_list("POINT", 0))
-    circles: MSBEntryList[MSBRegionCircle] = field(default_factory=empty_entry_list("POINT", 1))
-    spheres: MSBEntryList[MSBRegionSphere] = field(default_factory=empty_entry_list("POINT", 2))
-    cylinders: MSBEntryList[MSBRegionCylinder] = field(default_factory=empty_entry_list("POINT", 3))
-    rects: MSBEntryList[MSBRegionRect] = field(default_factory=empty_entry_list("POINT", 4))
-    boxes: MSBEntryList[MSBRegionBox] = field(default_factory=empty_entry_list("POINT", 5))
+    points: MSBEntryList[MSBRegionPoint] = field(default_factory=empty_list("POINT", "Point"))
+    circles: MSBEntryList[MSBRegionCircle] = field(default_factory=empty_list("POINT", "Circle"))
+    spheres: MSBEntryList[MSBRegionSphere] = field(default_factory=empty_list("POINT", "Sphere"))
+    cylinders: MSBEntryList[MSBRegionCylinder] = field(default_factory=empty_list("POINT", "Cylinder"))
+    rects: MSBEntryList[MSBRegionRect] = field(default_factory=empty_list("POINT", "Rect"))
+    boxes: MSBEntryList[MSBRegionBox] = field(default_factory=empty_list("POINT", "Box"))
 
-    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty_entry_list("PARTS", 0))
-    objects: MSBEntryList[MSBObject] = field(default_factory=empty_entry_list("PARTS", 1))
-    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_entry_list("PARTS", 2))
-    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_entry_list("PARTS", 4))
-    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_entry_list("PARTS", 5))
-    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty_entry_list("PARTS", 8))
-    unused_objects: MSBEntryList[MSBUnusedObject] = field(default_factory=empty_entry_list("PARTS", 9))
-    unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_entry_list("PARTS", 10))
-    map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_entry_list("PARTS", 11))
+    map_pieces: MSBEntryList[MSBMapPiece] = field(default_factory=empty_list("PARTS", "MapPiece"))
+    objects: MSBEntryList[MSBObject] = field(default_factory=empty_list("PARTS", "Object"))
+    characters: MSBEntryList[MSBCharacter] = field(default_factory=empty_list("PARTS", "Character"))
+    player_starts: MSBEntryList[MSBPlayerStart] = field(default_factory=empty_list("PARTS", "PlayerStart"))
+    collisions: MSBEntryList[MSBCollision] = field(default_factory=empty_list("PARTS", "Collision"))
+    navmeshes: MSBEntryList[MSBNavmesh] = field(default_factory=empty_list("PARTS", "Navmesh"))
+    unused_objects: MSBEntryList[MSBUnusedObject] = field(default_factory=empty_list("PARTS", "UnusedObject"))
+    unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_list("PARTS", "UnusedCharacter"))
+    map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
 
     # region Utility Methods
     def duplicate_collision_with_environment_event(

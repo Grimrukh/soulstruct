@@ -61,7 +61,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     attached_part: MSBPart = None
     attached_region: MSBRegion = None
 
-    unknowns: tuple[int, int, int, int] = (0, 0, 0, 0)
+    unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **Binary(length=4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -82,10 +82,10 @@ class MSBSoundEvent(MSBEvent):
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
-        sound_type: SoundType = field(**Binary(int))
+        sound_type: int
         sound_id: int
 
-    sound_type: SoundType = SoundType.m_Music
+    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(linked_type=SoundType))
     sound_id: int = -1
 
 
@@ -118,8 +118,8 @@ class MSBWindEvent(MSBEvent):
     unk_x04_x08: float = 0.0
     wind_vector_max: Vector3 = field(default_factory=lambda: Vector3.zero())
     unk_x0c_x10: float = 0.0
-    wind_swing_cycles: list[int] = field(default_factory=lambda: [0.0] * 4)
-    wind_swing_powers: list[int] = field(default_factory=lambda: [0.0] * 4)
+    wind_swing_cycles: list[float] = field(default_factory=lambda: [0.0] * 4, **Binary(length=4))
+    wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **Binary(length=4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -254,7 +254,6 @@ class MSBObjActEvent(MSBEvent):
     obj_act_flag: int = field(default=0, **MapFieldInfo(linked_type=Flag))
 
     _obj_act_part_index: int = None
-    _obj_act_part_name: int | None = None
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(

@@ -73,10 +73,10 @@ class MSBSoundEvent(MSBEvent):
 
     @dataclass(slots=True)
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
-        sound_type: SoundType = field(**Binary(int))
+        sound_type: int
         sound_id: int
 
-    sound_type: SoundType = SoundType.m_Music
+    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(linked_type=SoundType))
     sound_id: int = -1
 
 
@@ -239,7 +239,6 @@ class MSBObjActEvent(MSBEvent):
     obj_act_flag: int = field(default=0, **MapFieldInfo(linked_type=Flag))
 
     _obj_act_part_index: int = None
-    _obj_act_part_name: int | None = None
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
@@ -292,7 +291,7 @@ class MSBPatrolRouteEvent(MSBEvent):
     patrol_regions: list[MSBRegion] = field(
         default_factory=lambda: [None] * 32, **MapFieldInfo(linked_type=GameObjectSequence((Region, 32))))
 
-    _patrol_regions_indices: list[int] = None
+    _patrol_regions_indices: list[int] = field(default=None, **Binary(length=32))
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         _patrol_regions_indices = [
