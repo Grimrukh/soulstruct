@@ -31,7 +31,7 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     sib_path: str = ""
     translate: Vector3 = field(default_factory=lambda: Vector3.zero())
     rotate: Vector3 = field(default_factory=lambda: Vector3.zero())
-    scale: Vector3 = field(default_factory=lambda: Vector3.zero())
+    scale: Vector3 = field(default_factory=lambda: Vector3.ones())
 
     draw_groups: set[int] = field(default_factory=set)
     display_groups: set[int] = field(default_factory=set)
@@ -43,3 +43,5 @@ class BaseMSBPart(MSBEntry, abc.ABC):
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
         """Defined by most subclasses."""
         self._consume_index(entry_lists, "MODEL_PARAM_ST", "model")
+
+    # TODO: `set_auto_sib_path(map_stem)` for parts

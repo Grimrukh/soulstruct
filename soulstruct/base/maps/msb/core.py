@@ -84,14 +84,6 @@ class MSB(GameFile, abc.ABC):
     """
     EXT: tp.ClassVar[str] = ".msb"
 
-    # TODO: Lots of info needed here.
-    #  - Each superlist needs to know the offset to check for subtype int.
-    #  - Need to map subtype int to subtype class.
-    #   - Don't need a subtype enum anymore, really? Just dictionaries that map int <> class for reading/writing?
-
-    # TODO: Other stuff:
-    #  - Dictionary that contains common field info ('entity_id', etc.) that can be indexed.
-
     SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]]
     # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype enum names to subtype info.
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]]
@@ -227,7 +219,7 @@ class MSB(GameFile, abc.ABC):
         for part in entry_lists["PARTS_PARAM_ST"]:
             part: BaseMSBPart
             if part.model is None:
-                print(part.name)
+                continue
             if part.model.name in model_instance_counts:
                 model_instance_counts[part.model.name] += 1
             else:
@@ -251,9 +243,7 @@ class MSB(GameFile, abc.ABC):
             writer.reserve("next_list_offset", "v", obj=supertype_list)
 
             writer.fill_with_position("name_offset", obj=self)
-            packed_name = supertype_name.encode("ASCII")
-            packed_name += b"\0" * (16 - len(packed_name))  # pad to 16 characters (NOTE: 32 in older Soulstruct)
-            writer.append(packed_name)
+            self.pack_supertype_name(writer, supertype_name)
 
             for supertype_index, entry in enumerate(supertype_list):
                 entry: MSBEntry
@@ -282,6 +272,10 @@ class MSB(GameFile, abc.ABC):
                 writer.fill_with_position("next_list_offset", obj=supertype_list)
 
         return writer
+
+    @abc.abstractmethod
+    def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
+        """Differs between versions slightly."""
 
     def find_entry_by_name(
         self, name: str, supertypes: tp.Iterable[str] = (), subtypes: tp.Iterable[str] = ()

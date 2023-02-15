@@ -67,29 +67,38 @@ class MSBPart(BaseMSBPart, abc.ABC):
     @dataclass(slots=True)
     class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
         entity_id: int
-        part_unk_x04_x05: byte
-        part_unk_x05_x06: byte
-        part_unk_x06_x07: byte
-        part_unk_x07_x08: byte
+        part_unk_x04_x05: sbyte
+        part_unk_x05_x06: sbyte
+        part_unk_x06_x07: sbyte
+        part_unk_x07_x08: sbyte
         _pad1: bytes = field(**BinaryPad(4))
         lantern_id: byte
-        lod_id: byte
+        lod_id: sbyte
         part_unk_x0e_x0f: byte
         part_unk_x0f_x10: byte
+
+    GPARAM_STRUCT: tp.ClassVar[NewBinaryStruct] = None
+    SCENE_GPARAM_STRUCT: tp.ClassVar[NewBinaryStruct] = None
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     GROUP_SIZE: tp.ClassVar[int] = 256
 
     # NOTE: `model` defined by subclasses.
     backread_groups: set[int] = field(default_factory=set)
-    part_unk_x04_x05: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x04-x05]", "Unknown parts integer."))
-    part_unk_x05_x06: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x05-x06]", "Unknown parts integer."))
-    part_unk_x06_x07: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x06-x07]", "Unknown parts integer."))
-    part_unk_x07_x08: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x07-x08]", "Unknown parts integer."))
+    part_unk_x04_x05: int = field(default=-1, **MapFieldInfo(
+        "Unknown Parts Data [x04-x05]", "Unknown parts integer. Common values: -1, 0, 8"))
+    part_unk_x05_x06: int = field(default=-1, **MapFieldInfo(
+        "Unknown Parts Data [x05-x06]", "Unknown parts integer. Common values: -1, 0, 82"))
+    part_unk_x06_x07: int = field(default=-1, **MapFieldInfo(
+        "Unknown Parts Data [x06-x07]", "Unknown parts integer. Common values: -1, 0"))
+    part_unk_x07_x08: int = field(default=-1, **MapFieldInfo(
+        "Unknown Parts Data [x07-x08]", "Unknown parts integer. Common values: -1, 0"))
     lantern_id: int = field(default=0, **MapFieldInfo("Lantern ID", "Lantern param ID."))
     lod_id: int = field(default=-1, **MapFieldInfo("LoD ID", "LoD (level of detail) param ID."))
-    part_unk_x0e_x0f: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x0e-x0f]", "Unknown parts integer."))
-    part_unk_x0f_x10: int = field(default=-1, **MapFieldInfo("Unknown Parts Data [x0f-x10]", "Unknown parts integer."))
+    part_unk_x0e_x0f: int = field(default=-1, **MapFieldInfo(
+        "Unknown Parts Data [x0e-x0f]", "Unknown parts integer. Common values: 20, 22"))
+    part_unk_x0f_x10: int = field(default=0, **MapFieldInfo(
+        "Unknown Parts Data [x0f-x10]", "Unknown parts integer. Common values: 0"))
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> Self:
@@ -97,13 +106,25 @@ class MSBPart(BaseMSBPart, abc.ABC):
         kwargs = cls.unpack_header(reader, entry_offset)
         reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))
         kwargs |= cls.SUPERTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+
         relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
         if relative_subtype_data_offset > 0:
             reader.seek(entry_offset + relative_subtype_data_offset)
             kwargs |= cls.unpack_subtype_data(reader)
 
-        kwargs.pop("gparam_data_offset")
-        kwargs.pop("scene_gparam_data_offset")
+        relative_gparam_data_offset = kwargs.pop("gparam_data_offset")
+        if relative_gparam_data_offset > 0:
+            if cls.GPARAM_STRUCT is None:
+                raise ValueError(f"Found invalid non-zero Gparam offset in `{cls.__name__}` '{kwargs['name']}.")
+            reader.seek(entry_offset + relative_gparam_data_offset)
+            kwargs |= cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
+
+        relative_scene_gparam_data_offset = kwargs.pop("scene_gparam_data_offset")
+        if relative_scene_gparam_data_offset > 0:
+            if cls.SCENE_GPARAM_STRUCT is None:
+                raise ValueError(f"Found invalid non-zero SceneGparam offset in `{cls.__name__}` '{kwargs['name']}.")
+            reader.seek(entry_offset + relative_scene_gparam_data_offset)
+            kwargs |= cls.SCENE_GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
 
         return cls(**kwargs)
 
@@ -143,9 +164,17 @@ class MSBPart(BaseMSBPart, abc.ABC):
         writer.fill("subtype_data_offset", subtype_data_offset, obj=self)
         self.pack_subtype_data(writer, entry_lists)
 
-        # No Gparam/SceneGparam data in this base class.
-        writer.fill("gparam_data_offset", 0, obj=self)
-        writer.fill("scene_gparam_data_offset", 0, obj=self)
+        if self.GPARAM_STRUCT is not None:
+            writer.fill("gparam_data_offset", writer.position - entry_offset, obj=self)
+            self.GPARAM_STRUCT.object_to_writer(self, writer)
+        else:
+            writer.fill("gparam_data_offset", 0, obj=self)
+
+        if self.SCENE_GPARAM_STRUCT is not None:
+            writer.fill("scene_gparam_data_offset", writer.position - entry_offset, obj=self)
+            self.SCENE_GPARAM_STRUCT.object_to_writer(self, writer)
+        else:
+            writer.fill("scene_gparam_data_offset", 0, obj=self)
 
     def pack_header(
         self,
@@ -208,35 +237,6 @@ class MSBPartWithGParam(MSBPart, abc.ABC):
     light_scattering_id: int = field(default=0, **MapFieldInfo("Light Scattering ID", "Light scattering GParam ID."))
     environment_map_id: int = field(default=0, **MapFieldInfo("Environment Map ID", "Environment map GParam ID."))
 
-    @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
-        entry_offset = reader.position
-        kwargs = cls.unpack_header(reader, entry_offset)
-        reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))
-        kwargs |= cls.SUPERTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-        relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
-        if relative_subtype_data_offset > 0:
-            reader.seek(entry_offset + relative_subtype_data_offset)
-            kwargs |= cls.unpack_subtype_data(reader)
-
-        relative_gparam_data_offset = kwargs.pop("gparam_data_offset")
-        if relative_gparam_data_offset > 0:
-            reader.seek(entry_offset + relative_gparam_data_offset)
-            kwargs |= cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-
-        kwargs.pop("scene_gparam_data_offset")
-
-        return cls(**kwargs)
-
-    def to_msb_writer(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
-    ):
-        entry_offset = writer.position
-        super(MSBPartWithGParam, self).to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
-        writer.fill("gparam_data_offset", writer.position - entry_offset, obj=self)
-        self.GPARAM_STRUCT.object_to_writer(self, writer)
-        writer.fill("scene_gparam_data_offset", 0, obj=self)
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
@@ -264,37 +264,6 @@ class MSBPartWithSceneGParam(MSBPartWithGParam, abc.ABC):
     event_ids: list[int] = field(default_factory=lambda: [-1] * 4, **MapFieldInfo("Event IDs", "Gparam Event IDs."))
     sg_unk_x40_x44: float = field(default=0.0, **MapFieldInfo("Unk SceneG [x40-x44]", "Unknown SceneGparam float."))
 
-    @classmethod
-    def from_msb_reader(cls, reader: BinaryReader) -> Self:
-        entry_offset = reader.position
-        kwargs = cls.unpack_header(reader, entry_offset)
-        reader.seek(entry_offset + kwargs.pop("supertype_data_offset"))
-        kwargs |= cls.SUPERTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-        relative_subtype_data_offset = kwargs.pop("subtype_data_offset")
-        if relative_subtype_data_offset > 0:
-            reader.seek(entry_offset + relative_subtype_data_offset)
-            kwargs |= cls.unpack_subtype_data(reader)
-
-        relative_gparam_data_offset = kwargs.pop("gparam_data_offset")
-        if relative_gparam_data_offset > 0:
-            reader.seek(entry_offset + relative_gparam_data_offset)
-            kwargs |= cls.GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-
-        relative_scene_gparam_data_offset = kwargs.pop("scene_gparam_data_offset")
-        if relative_scene_gparam_data_offset > 0:
-            reader.seek(entry_offset + relative_scene_gparam_data_offset)
-            kwargs |= cls.SCENE_GPARAM_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-
-        return cls(**kwargs)
-
-    def to_msb_writer(
-        self, writer: BinaryWriter, supertype_index: int, subtype_index: int, entry_lists: dict[str, list[MSBEntry]]
-    ):
-        entry_offset = writer.position
-        super(MSBPartWithSceneGParam, self).to_msb_writer(writer, supertype_index, subtype_index, entry_lists)
-        writer.fill("scene_gparam_data_offset", writer.position - entry_offset, obj=self)
-        self.SCENE_GPARAM_STRUCT.object_to_writer(self, writer)
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBMapPiece(MSBPartWithGParam):
@@ -317,8 +286,8 @@ class MSBObject(MSBPartWithGParam):
     class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
         _pad1: bytes = field(init=False, **BinaryPad(4))
         _draw_parent_index: int
-        break_term: byte
-        net_sync_type: byte
+        break_term: sbyte
+        net_sync_type: sbyte
         collision_hit_filter: bool
         set_main_object_structure_bools: bool
         animation_ids: tuple[short, short, short, short]
@@ -332,12 +301,12 @@ class MSBObject(MSBPartWithGParam):
 
     model: MSBObjectModel = None
     draw_parent: MSBPart = None
-    break_term: int = 0
-    net_sync_type: int = 0
+    break_term: int = -1
+    net_sync_type: int = -1
     collision_hit_filter: bool = False
     set_main_object_structure_bools: bool = False
-    animation_ids: list[int] = field(default_factory=lambda: [-1] * 4)
-    model_vfx_param_id_offsets: list[int] = field(default_factory=lambda: [0] * 4)
+    animation_ids: list[int] = field(default_factory=lambda: [0, 0, -1, -1])
+    model_vfx_param_id_offsets: list[int] = field(default_factory=lambda: [-1, -1, 0, 0])
 
     _draw_parent_index: int = None
 
@@ -377,15 +346,17 @@ class MSBCharacter(MSBPartWithGParam):
     ai_id: int = field(default=-1, **MapFieldInfo(linked_type=AIParam))
     character_id: int = field(default=-1, **MapFieldInfo(linked_type=CharacterParam))
     talk_id: int = field(default=0, **MapFieldInfo(linked_type=TalkScript))
-    player_id: int = field(default=-1, **MapFieldInfo(linked_type=PlayerParam))
+    player_id: int = field(default=0, **MapFieldInfo(linked_type=PlayerParam))
     draw_parent: MSBPart = None
     patrol_regions: list[MSBRegion] = field(
         default_factory=lambda: [None] * 8, **MapFieldInfo(linked_type=GameObjectSequence((Region, 8)))
     )
     default_animation: int = -1
     damage_animation: int = -1
-    chr_unk_x18_x1c: int = field(default=0, **MapFieldInfo("Unknown Chr [18-1c]", "Unknown Character integer."))
-    chr_unk_x20_x22: int = field(default=0, **MapFieldInfo("Unknown Chr [20-22]", "Unknown Character integer."))
+    chr_unk_x18_x1c: int = field(default=-1, **MapFieldInfo(
+        "Unknown Chr [18-1c]", "Unknown Character integer. Usually -1."))
+    chr_unk_x20_x22: int = field(default=-1, **MapFieldInfo(
+        "Unknown Chr [20-22]", "Unknown Character integer. Usually -1."))
 
     _draw_parent_index: int = None
     _patrol_regions_indices: list[int] = field(default=None, **Binary(length=8))

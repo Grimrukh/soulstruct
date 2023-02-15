@@ -152,6 +152,11 @@ class MSB(_BaseMSB):
     unused_characters: MSBEntryList[MSBUnusedCharacter] = field(default_factory=empty_list("PARTS", "UnusedCharacter"))
     map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
 
+    def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
+        packed_name = supertype_name.encode(self.NAME_ENCODING)
+        packed_name += b"\0" * (16 - len(packed_name))  # pad to 16 characters (NOTE: 32 in older Soulstruct)
+        writer.append(packed_name)
+
     # region Utility Methods
     def duplicate_collision_with_environment_event(
         self, collision: MSBCollision | str, at_next_index=True, **kwargs,

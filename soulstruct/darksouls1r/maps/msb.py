@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
-from soulstruct.darksouls1ptde.maps.msb import MSB as _BaseMSB
+from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB
 
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
 from .utilities import import_map_piece_flver
@@ -12,7 +12,7 @@ from .utilities import import_map_piece_flver
 _LOGGER = logging.getLogger(__name__)
 
 
-class MSB(_BaseMSB):
+class MSB(_PTDE_MSB):
     """Only difference from DS1PTDE is in the methods."""
 
     def translate_entity_id_names(self):

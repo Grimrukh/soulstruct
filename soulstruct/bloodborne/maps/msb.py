@@ -148,6 +148,11 @@ class MSB(_BaseMSB):
     map_connections: MSBEntryList[MSBMapConnection] = field(default_factory=empty_list("PARTS", "MapConnection"))
     other_parts: MSBEntryList[MSBOtherPart] = field(default_factory=empty_list("PARTS", "Other"))
 
+    def pack_supertype_name(self, writer: BinaryWriter, supertype_name: str):
+        packed_name = supertype_name.encode(self.NAME_ENCODING)
+        writer.append(packed_name)
+        writer.pad(8)
+
     # region Utility Methods
     def duplicate_collision_with_environment_event(
         self, collision: MSBCollision | str, at_next_index=True, **kwargs,

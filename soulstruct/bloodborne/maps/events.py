@@ -270,6 +270,11 @@ class MSBWindVFXEvent(MSBEvent):
 
     _wind_region_index: int = None
 
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self, writer, _wind_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.wind_region)
+        )
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
         super(MSBWindVFXEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "wind_region")
