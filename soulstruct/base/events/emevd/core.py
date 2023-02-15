@@ -147,7 +147,7 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_path(cls, path: str | Path) -> Self:
-        emevd = super().from_path(path)  # type: Self
+        emevd = super(EMEVD, cls).from_path(path)  # type: Self
         emevd.map_name = emevd.path.name.split(".")[0]
         return emevd
 

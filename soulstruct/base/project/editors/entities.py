@@ -442,12 +442,12 @@ class EntityEditor(BaseEditor):
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("entities",))
+            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("entities",))
         self.select_entry_row_index(None)
         self.refresh_entries()
 
     def _get_map(self) -> Map:
-        return self.maps.GET_MAP(self.map_choice_id)
+        return self.maps.GET_MAP(self.map_choice_stem)
 
     def _import_entities_module(self, import_names=False):
         """Reads '{map_id}_entities.py' file and updates either:
@@ -457,7 +457,7 @@ class EntityEditor(BaseEditor):
         Either way, also tries to read descriptions from inline comments with regex. (Messing too much with unusual
         formatting in the module file may interfere with this.)
         """
-        game_map = self.maps.GET_MAP(self.map_choice_id)
+        game_map = self.maps.GET_MAP(self.map_choice_stem)
         module_path = self.entities_directory / f"{game_map.emevd_file_stem}_entities.py"
         if not module_path.is_file():
             return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
@@ -715,7 +715,7 @@ class EntityEditor(BaseEditor):
         return categories
 
     def get_selected_msb(self) -> MSB:
-        map_name = self.maps.GET_MAP(self.map_choice_id).name
+        map_name = self.maps.GET_MAP(self.map_choice_stem).name
         return self.maps[map_name]
 
     def get_category_data(self, category=None) -> dict[int, MSBEntryEntity]:

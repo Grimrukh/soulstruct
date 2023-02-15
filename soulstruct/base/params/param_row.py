@@ -177,7 +177,7 @@ class ParamFieldMetadata(tp.NamedTuple):
     param_enum: tp.Type[base_type] = None
     game_type: tp.Type[BaseGameObject] = None
     hide: bool = False
-    dynamic_callback: tp.Callable[[ParamRow], tuple[tp.Type[BaseGameObject], str, str]] | None = None
+    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[BaseGameObject, str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
 
 

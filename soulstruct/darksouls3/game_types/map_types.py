@@ -63,19 +63,7 @@ __all__ = [
 
 import typing as tp
 
-from soulstruct.base.game_types.map_types import Map, MapEntry, MapEntity, MapTyping
-
-
-class MapModel(MapEntry):
-    """3D model ID of something."""
-    @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return "Models", None
-
-    @classmethod
-    def get_msb_class_name(cls) -> str:
-        """All MSB models use the same class."""
-        return "MSBModel"
+from soulstruct.base.game_types.map_types import *
 
 
 class MapPieceModel(MapModel):
@@ -130,6 +118,7 @@ class MapEvent(MapEntity):
         return "Events", None
 
     def auto_region_name(self):
+        # TODO: what the fuck is happening
         event_enum_subclass = self.__class__.__bases__[0]
         while event_enum_subclass.__bases__[0] is not MapEvent:
             event_enum_subclass = event_enum_subclass.__bases__[0]

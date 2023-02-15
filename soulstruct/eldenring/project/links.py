@@ -16,6 +16,6 @@ class WindowLinker(_BaseWindowLinker):
 
     # TODO: Currently nothing.
 
-    def validate_model_subtype(self, model_subtype, name: str, map_id: str):
+    def validate_model_subtype(self, model_game_type, name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid."""
         raise NotImplementedError("Elden Ring cannot validate MSB model subtype yet.")

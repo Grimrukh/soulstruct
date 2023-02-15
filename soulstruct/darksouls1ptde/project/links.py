@@ -6,9 +6,8 @@ import typing as tp
 
 from soulstruct.base.project.links import WindowLinker as _BaseWindowLinker, BrokenLink, ParamsLink, LightingLink
 from soulstruct.containers import Binder
+from soulstruct.darksouls1ptde.game_types.map_types import *
 from soulstruct.darksouls1ptde.game_types.param_types import *
-from soulstruct.darksouls1ptde.maps.models import MSBModelList
-from soulstruct.darksouls1ptde.maps.enums import MSBModelSubtype
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.project.links import BaseLink
@@ -88,7 +87,7 @@ class WindowLinker(_BaseWindowLinker):
             # Always uses slot 0. You can easily jump to other slots from there (entry names should be the same).
             # Looks up map from Maps tab, since nothing else links there right now.
             param_nickname = field_type.get_param_nickname()
-            map_area_name = map_override[:3] if map_override else f"{self.window.maps_tab.map_choice_id.split('_')[0]}"
+            map_area_name = map_override[:3] if map_override else f"{self.window.maps_tab.map_choice_stem.split('_')[0]}"
             param_table = self.project.lighting.get_drawparambnd(map_area_name).get_param(param_nickname)[0]
             try:
                 name = param_table[field_value].name
@@ -106,36 +105,32 @@ class WindowLinker(_BaseWindowLinker):
 
         return []
 
-    def validate_model_subtype(self, model_subtype: MSBModelSubtype, name: str, map_id: str):
+    def validate_model_subtype(self, model_game_type: tp.Type[MapModel], model_name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid.
 
         Note that Character and Object models don't actually need `map_id` to validate them.
         """
-        model_subtype = MSBModelList.resolve_entry_subtype(model_subtype)
-
-        dcx = ".dcx" if self.project.GAME.default_dcx_type else ""
-
-        if model_subtype == MSBModelSubtype.Character:
-            if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
+        if model_game_type == CharacterModel:
+            if (self.project.game_root / f"chr/{model_name}.chrbnd").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.Object:
-            if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
+        elif model_game_type == ObjectModel:
+            if (self.project.game_root / f"obj/{model_name}.objbnd").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.MapPiece:
-            if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
+        elif model_game_type == MapPieceModel:
+            if (self.project.game_root / f"map/{map_stem}/{model_name}A{map_stem[1:3]}.flver").is_file():
                 return True
-        elif model_subtype == MSBModelSubtype.Collision:
-            # TODO: Rough BHD string scan until I have that file format.
-            hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
+        elif model_game_type == CollisionModel:
+            hkxbhd_path = self.project.game_root / f"map/{map_stem}/h{map_stem}.hkxbhd"
             if hkxbhd_path.is_file():
+                # NOTE: Brute-force check for name string in header file (for speed).
                 with hkxbhd_path.open("r") as f:
-                    if name + "A10.hkx" in f.read():
+                    if model_name + "A10.hkx" in f.read():
                         return True
-        elif model_subtype == MSBModelSubtype.Navmesh:
-            nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
+        elif model_game_type == NavmeshModel:
+            nvmbnd_path = self.project.game_root / f"map/{map_stem}/{map_stem}.nvmbnd"
             if nvmbnd_path.is_file():
                 navmesh_bnd = Binder(nvmbnd_path)
-                if name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():
+                if model_name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():
                     return True
 
         return False

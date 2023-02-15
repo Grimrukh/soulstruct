@@ -5,12 +5,13 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-from soulstruct.base.ai.exceptions import LuaError
+from soulstruct.base.ai.lua import LuaError
+from soulstruct.base.ai.lua_scripts import LuaGoalScript, GoalType
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.base.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
-    from soulstruct.base.ai.lua_bnd import LuaBND, LuaGoal
+    from soulstruct.base.ai.luabnd import LuaBND
     from soulstruct.base.ai.ai_directory import ScriptDirectory
 
 
@@ -55,7 +56,7 @@ class AIScriptTextEditor(TextEditor):
 
         # Outer scope (up-values)
         self.tag_remove("outer_scope_name", "1.0", "end")
-        outer_scope_matches = re.findall(r"^local ([\w_]+)[ ]*=", self.get("1.0", "end"), flags=re.MULTILINE)
+        outer_scope_matches = re.findall(r"^local ([\w_]+) *=", self.get("1.0", "end"), flags=re.MULTILINE)
         for match in outer_scope_matches:
             self.highlight_pattern(
                 rf"[ ,=(\[]{match}(?=($|[ ,)\]]))", tag="outer_scope_name", clear=False, start_offset=1, regexp=True
@@ -88,7 +89,7 @@ class AIScriptTextEditor(TextEditor):
                         regexp=True,
                     )
 
-            local_matches = re.findall(r"[ \t]local ([\w_]+)[ ]*=", function_text, flags=re.MULTILINE)
+            local_matches = re.findall(r"[ \t]local ([\w_]+) *=", function_text, flags=re.MULTILINE)
             for match in local_matches:
                 self.highlight_pattern(
                     rf"[\t ,=({{\[]{match}(?=($|[ ,)}}\[\]]))",
@@ -332,7 +333,7 @@ class AIEditor(BaseEditor):
                     sticky="w",
                     padx=(10, 30),
                 )
-                self.selected_map_id = self.map_choice_id
+                self.selected_map_id = self.map_choice_stem
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile",
                     font_size=10,
@@ -564,12 +565,12 @@ class AIEditor(BaseEditor):
         goal = self.get_goal(row_index)
         old_type = goal.goal_type
         if goal_type is None:
-            if old_type == goal.BATTLE_TYPE:
-                goal_type = goal.NEITHER_TYPE if reverse else goal.LOGIC_TYPE
-            elif old_type == goal.LOGIC_TYPE:
-                goal_type = goal.BATTLE_TYPE if reverse else goal.NEITHER_TYPE
-            elif old_type == goal.NEITHER_TYPE:
-                goal_type = goal.LOGIC_TYPE if reverse else goal.BATTLE_TYPE
+            if old_type == GoalType.Battle:
+                goal_type = GoalType.Unknown if reverse else GoalType.Logic
+            elif old_type == GoalType.Logic:
+                goal_type = GoalType.Battle if reverse else GoalType.Unknown
+            elif old_type == GoalType.Unknown:
+                goal_type = GoalType.Logic if reverse else GoalType.Battle
         elif old_type == goal_type:
             return False
         if (goal.goal_id, goal_type) in self.get_category_data():
@@ -596,7 +597,8 @@ class AIEditor(BaseEditor):
             ):
                 return False
             else:
-                goal.set_name_and_type(goal.goal_name + "_Logic", "logic")
+                goal.goal_name = goal.goal_name + "_Logic"
+                goal.goal_type = GoalType.Logic
                 self.entry_rows[row_index].entry_text = goal.goal_name
 
         self.entry_rows[row_index].goal_type = goal_type
@@ -691,7 +693,7 @@ class AIEditor(BaseEditor):
                 if (
                     self.CustomDialog(
                         title="Lua Write Error",
-                        message=f"Error encountered while writing script for goal {goal.id}: {goal.goal_name} "
+                        message=f"Error encountered while writing script for goal {goal.goal_id}: {goal.goal_name} "
                         f"({goal.goal_type}):\n\n{str(e)}"
                         f"\n\nContinue to next goal, or abort all remaining goals?",
                         button_names=("Continue to next goal", "Abort remaining"),
@@ -708,7 +710,7 @@ class AIEditor(BaseEditor):
 
     def export_selected_map(self):
         luabnd = self.get_selected_bnd()
-        luabnd_path = self.export_directory / luabnd.bnd.path.name
+        luabnd_path = self.export_directory / luabnd.path.name
         luabnd.write(luabnd_path)
 
     def load_all_from_project_folder(self, confirm=True):
@@ -738,7 +740,7 @@ class AIEditor(BaseEditor):
                 if (
                     self.CustomDialog(
                         title="Lua Read Error",
-                        message=f"Error encountered while reading script for goal {goal.id}: {goal.goal_name} "
+                        message=f"Error encountered while reading script for goal {goal.goal_id}: {goal.goal_name} "
                         f"({goal.goal_type}):\n\n{str(e)}"
                         f"\n\nContinue to next goal, or abort all remaining goals?",
                         button_names=("Continue to next goal", "Abort remaining"),
@@ -966,9 +968,9 @@ class AIEditor(BaseEditor):
             game_map = self.ai.GET_MAP(self.selected_map_id)
             self.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
             return
-        self.selected_map_id = self.map_choice_id
+        self.selected_map_id = self.map_choice_stem
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("ai",))
+            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("ai",))
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)
@@ -1020,7 +1022,7 @@ class AIEditor(BaseEditor):
     def get_selected_bnd(self) -> LuaBND:
         return self.ai[self.selected_map_id]
 
-    def get_category_data(self, category=None) -> Dict[(int, bool), LuaGoal]:
+    def get_category_data(self, category=None) -> Dict[(int, bool), LuaGoalScript]:
         """Gets dictionary of goals in LuaInfo from LuaBND. Category does nothing."""
         return self.get_selected_bnd().get_goal_dict()
 

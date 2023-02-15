@@ -13,7 +13,7 @@ import typing as tp
 
 from soulstruct.eldenring.params.enums import *
 from soulstruct.eldenring.game_types.param_types import *
-from soulstruct.base.params.utils import DynamicParamField
+from soulstruct.base.params.param_row import DynamicParamField
 
 
 if tp.TYPE_CHECKING:

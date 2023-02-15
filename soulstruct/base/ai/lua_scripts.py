@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["LuaScriptBase", "GoalType", "LuaGoalScript", "LuaUnknownScript"]
 
 import abc
+import copy
 import enum
 import logging
 import re
@@ -75,6 +76,9 @@ class LuaScriptBase(abc.ABC):
         lua_path = Path(lua_path)
         with lua_path.open("r", encoding="shift_jis_2004") as f:
             self.script = f.read()
+
+    def copy(self):
+        return copy.deepcopy(self)
 
     @property
     @abc.abstractmethod

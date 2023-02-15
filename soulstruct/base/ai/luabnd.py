@@ -46,7 +46,7 @@ class LuaBND(Binder):
         if bdt_reader is not None:
             raise TypeError("Cannot read `LuaBND` from a split `BXF` file.")
 
-        luabnd = super().from_reader(reader)  # type: Self
+        luabnd = super(LuaBND, cls).from_reader(reader)  # type: Self
 
         # Load goals and unknown scripts.
         try:
@@ -63,7 +63,7 @@ class LuaBND(Binder):
             if goal_match:
                 goal_id, goal_type = goal_match.group(1, 2)
                 goal_id = int(goal_id)
-                luabnd.load_goal_entry(entry, goal_id, goal_type)
+                luabnd.load_goal_entry(entry, goal_id, GoalType(goal_type))
             elif entry.entry_id not in {1000000, 1000001}:
                 lua_match = _LUA_SCRIPT_RE.match(entry.name)
                 if not lua_match:

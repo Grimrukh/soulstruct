@@ -4,7 +4,7 @@ __all__ = ["LOAD_BALANCER_NEW_DRAW_DIST_SCALE_PARAM_ST"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *

@@ -4,13 +4,12 @@ import logging
 import typing as tp
 
 from soulstruct.base.game_types import BaseParam
-from soulstruct.base.params.utils import DynamicParamFieldInfo
+from soulstruct.base.params.param_row import ParamRow, ParamFieldMetadata
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
 from soulstruct.base.project.utilities import NameSelectionBox
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params.param import ParamRow
     from soulstruct.base.params.gameparambnd import GameParamBND
 
 _LOGGER = logging.getLogger(__name__)
@@ -146,20 +145,22 @@ class ParamsEditor(BaseFieldEditor):
     def find_all_param_references(self, param_id):
         """Iterates over all ParamTables to find references to this param ID, and presents them in a floating list."""
         category = self.active_category
-        param_type = self.params.PARAM_TYPES[category]
-        linking_fields = []
+        game_type = self.params.GAME_TYPES[category]
+        linking_fields = []  # type: list[tuple[str, str, ParamFieldMetadata]]
         links = {}
 
         # Find all (param_name, field) pairs that could possibly reference this category.
-        for param_name in self.params.PARAM_TYPES:
+        # This could be from a static type reference or `POSSIBLE_TYPES` in a dynamic reference.
+        for param_name in self.params.GAME_TYPES:
             param = self.params.get_param(param_name)
-            for field_info in param.param_info["fields"]:
-                if isinstance(field_info, DynamicParamFieldInfo):
+            for param_field in param.ROW_TYPE.get_binary_fields():
+                metadata = param_field.metadata["param"]  # type: ParamFieldMetadata
+                if metadata.dynamic_callback:
                     # Field type will be checked below (per entry).
-                    if param_type in field_info.POSSIBLE_TYPES:
-                        linking_fields.append((param_name, field_info))
-                elif field_info.field_type == param_type:
-                    linking_fields.append((param_name, field_info))
+                    if game_type in metadata.dynamic_callback.POSSIBLE_TYPES:
+                        linking_fields.append((param_name, param_field.name, metadata))
+                elif metadata.game_type == game_type:
+                    linking_fields.append((param_name, param_field.name, metadata))
 
         if not linking_fields:
             self.CustomDialog(
@@ -169,12 +170,14 @@ class ParamsEditor(BaseFieldEditor):
             )
             return
 
-        for param_name, field_info in linking_fields:
+        for param_name, field_name, metadata in linking_fields:
             for row_id, row in self.params.get_param(param_name).items():
-                row_field_info = field_info(row)
-                if row_field_info.field_type == param_type and row[row_field_info.name] == param_id:
-                    link_text = f"{param_name}[{row_id}] {row_field_info.nickname}"
-                    links[link_text] = (param_name, row_id, row_field_info.name)
+                if metadata.dynamic_callback:
+                    dynamic_game_type, suffix, tooltip = metadata.dynamic_callback(row)
+                    if game_type == dynamic_game_type and getattr(row, field_name) == param_id:
+                        link_text = f"{param_name}[{row_id}] {field_name}"
+                        # TODO: Links use param nicknames now. Make sure of that.
+                        links[link_text] = (param_name, row_id, field_name)
 
         if not links:
             self.CustomDialog(
@@ -192,7 +195,7 @@ class ParamsEditor(BaseFieldEditor):
             self.select_field_name(field_name)
 
     def _get_display_categories(self):
-        return self.params.PARAM_TYPES
+        return self.params.GAME_TYPES
 
     def get_category_data(self, category=None) -> dict:
         if category is None:

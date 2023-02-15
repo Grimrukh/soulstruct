@@ -363,8 +363,6 @@ class MSBEntry(abc.ABC):
 
                 entry_type_name, length_str = re.match(r"([\w |]+)(\[\d+])?", field_type).groups()
 
-                # print(field_name, entry_type_name, length_str)
-
                 if length_str is not None:
                     # List of entry subclasses or integers.
                     length = int(length_str[1:-1])  # remove brackets

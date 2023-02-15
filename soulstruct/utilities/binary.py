@@ -772,7 +772,7 @@ class BinaryReader(BinaryBase):
         """Exception raised when trying to unpack data."""
         pass
 
-    buffer: tp.BinaryIO | io.BufferedIOBase
+    buffer: tp.BinaryIO | io.BufferedIOBase | None
 
     def __init__(
         self,
@@ -781,6 +781,8 @@ class BinaryReader(BinaryBase):
         varint_size=8,
     ):
         super().__init__(default_byte_order, varint_size)
+
+        self.buffer = None
 
         if isinstance(buffer, str):
             buffer = Path(buffer)

@@ -3,7 +3,7 @@ import logging
 import textwrap
 import typing as tp
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.base.params.paramdef.paramdefbnd import ParamDefBND
 from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 

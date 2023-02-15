@@ -90,7 +90,7 @@ class GameParamBND(_BaseGameParamBND):
     )
 
     # Maps attribute names to game types. Also defines display order.
-    PARAM_TYPES: tp.ClassVar = {
+    GAME_TYPES: tp.ClassVar = {
         "Players": PlayerParam,
         "Characters": CharacterParam,
         "PlayerBehaviors": BehaviorParam,

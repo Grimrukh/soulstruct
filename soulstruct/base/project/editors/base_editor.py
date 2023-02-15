@@ -363,7 +363,7 @@ class BaseEditor(SmartFrame, abc.ABC):
             pass
 
     @property
-    def map_choice_id(self):
+    def map_choice_stem(self):
         if self.map_choice is None:
             raise AttributeError("Tried to get map choice ID in a tab that does not have map choice.")
         return self.map_choice.var.get().split(" [")[0]
@@ -963,11 +963,11 @@ class BaseEditor(SmartFrame, abc.ABC):
                 self.next_range_button["state"] = "normal"
 
     def get_remembered_id(self, category) -> tp.Optional[int]:
-        key = (self.map_choice_id, category) if self.map_choice is not None else category
+        key = (self.map_choice_stem, category) if self.map_choice is not None else category
         return self.remembered_ids.get(key, None)
 
     def _update_remembered_id(self, category, selected_id):
-        key = (self.map_choice_id, category) if self.map_choice is not None else category
+        key = (self.map_choice_stem, category) if self.map_choice is not None else category
         self.remembered_ids[key] = selected_id
 
     # -------------------- #

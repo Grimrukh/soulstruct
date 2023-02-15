@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSGDirectory"]
+__all__ = ["MSGDirectory", "fmg_property"]
 
 import abc
 import csv
@@ -45,7 +45,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
 
     # Maps "item/menu" string and entry IDs to default entry names (without paths) to use when generating new FMG binder
     # entries from scratch.
-    DEFAULT_ENTRY_NAMES: tp.ClassVar[dict[(str, int), str]]
+    DEFAULT_ENTRY_STEMS: tp.ClassVar[dict[(str, int), str]]
 
     # Maps any non-patch ('base') FMG entry sources/IDs to patch FMG entry sources/IDs.
     # When `merge_base_and_patch()` is called, all base and patch FMGs will be merged (with 'patch' taking precedence in
@@ -119,12 +119,12 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         item_kwargs = cls.FILE_CLASS.process_manifest_header(item_manifest)
         menu_kwargs = cls.FILE_CLASS.process_manifest_header(menu_manifest)
 
-        missing_ids = list(cls.DEFAULT_ENTRY_NAMES)
+        missing_ids = list(cls.DEFAULT_ENTRY_STEMS)
         for msgbnd_name, kwargs in zip(("item", "menu"), (item_kwargs, menu_kwargs)):
             entries = []
             entry_json_dict = kwargs.pop("entries", {})
             for entry_id, json_name in entry_json_dict:
-                if (msgbnd_name, entry_id) not in cls.DEFAULT_ENTRY_NAMES:
+                if (msgbnd_name, entry_id) not in cls.DEFAULT_ENTRY_STEMS:
                     _LOGGER.warning(f"Ignoring unrecognized MSGBND JSON file with entry ID {entry_id}: {json_name}")
                     continue
                 try:
@@ -140,7 +140,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             files[msgbnd_name] = cls.FILE_CLASS.from_dict(kwargs)
 
         if missing_ids:
-            missing = f"\n  ".join(f"{entry_id}: {cls.DEFAULT_ENTRY_NAMES[entry_id]}" for entry_id in missing_ids)
+            missing = f"\n  ".join(f"{entry_id}: {cls.DEFAULT_ENTRY_STEMS[entry_id]}" for entry_id in missing_ids)
             _LOGGER.warning(f"Could not find these MSGBND entry IDs in JSON directory:\n  {missing}")
 
         return cls(directory, files, fmgs)
@@ -203,12 +203,12 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         # Add or update entries from new packed FMGs.
         for (msgbnd_name, entry_id), fmg in self.fmgs.items():
             msgbnd = self.files[msgbnd_name]
-            if (msgbnd_name, entry_id) not in self.DEFAULT_ENTRY_NAMES:
+            if (msgbnd_name, entry_id) not in self.DEFAULT_ENTRY_STEMS:
                 raise KeyError(
                     f"Class `{self.__class__.__name__}` does not have a default entry name for ID {entry_id} "
                     f"in '{msgbnd_name}' MSGBND."
                 )
-            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_NAMES[entry_id])
+            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[entry_id] + ".fmg")
 
     def merge_base_and_patch(self, use_patch_if_conflict=True):
         """Merge all base and patch FMGs together (as per class `BASE_PATCH_FMGS`) and write merged FMG to both.
@@ -442,30 +442,6 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             raise ValueError(f"Unrecognized item type: '{item_type}'")
 
 
-_CAN_MERGE_PATCH = {
-    "WeaponNamesPatch",
-    "WeaponSummariesPatch",
-    "WeaponDescriptionsPatch",
-    "ArmorNamesPatch",
-    "ArmorSummariesPatch",
-    "ArmorDescriptionsPatch",
-    "AccessoryNamesPatch",
-    "AccessorySummariesPatch",
-    "AccessoryDescriptionsPatch",
-    "GoodNamesPatch",
-    "GoodSummariesPatch",
-    "GoodDescriptionsPatch",
-    "SpellNamesPatch",
-    "SpellDescriptionsPatch",
-    "NPCNamesPatch",
-    "PlaceNamesPatch",
-}
-_CANNOT_MERGE_PATCH = {
-    "EventText",
-    "MenuDialogs",
-    "SoapstoneMessages",
-    "MenuHelpSnippets",
-    "KeyGuide",
-    "MenuText_Other",
-    "MenuText_Common",
-}
+def fmg_property(msgbnd_name: str, bnd_index: int):
+    """Assists in assigning properties to FMG nicknames, e.g. `ArmorDescriptions = fmg_property("item", 26)`"""
+    return property(lambda self: self.fmgs[msgbnd_name, bnd_index])

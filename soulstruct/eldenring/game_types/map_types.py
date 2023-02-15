@@ -64,7 +64,7 @@ __all__ = [
 
 import typing as tp
 
-from soulstruct.base.game_types.map_types import Map, MapEntry, MapEntity
+from soulstruct.base.game_types.map_types import *
 
 
 class MapTile(Map):
@@ -134,18 +134,6 @@ class MapTile(Map):
         self.sites_of_grace = sites_of_grace
         self.markers = markers
         self.parent_tile = parent_tile
-
-
-class MapModel(MapEntry):
-    """3D model ID of something."""
-    @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return "Models", None
-
-    @classmethod
-    def get_msb_class_name(cls) -> str:
-        """All MSB models use the same class."""
-        return "MSBModel"
 
 
 class MapPieceModel(MapModel):

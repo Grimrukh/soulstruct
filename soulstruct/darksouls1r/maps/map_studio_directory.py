@@ -1,15 +1,18 @@
+"""Identical to PTDE, but with proper DSR type hints (e.g. `MSB`)."""
+from __future__ import annotations
+
 __all__ = ["MapStudioDirectory"]
 
 import typing as tp
 
+from soulstruct.base.game_file_directory import map_property
 from soulstruct.base.maps.map_studio_directory import MapStudioDirectory as _BaseMapStudioDirectory
-from soulstruct.games import DarkSoulsDSRType
 
-from .constants import ALL_MAPS, get_map
+from .constants import *
 from .msb import MSB
 
 
-class MapStudioDirectory(_BaseMapStudioDirectory, DarkSoulsDSRType):
+class MapStudioDirectory(_BaseMapStudioDirectory):
     """Dark Souls (either version) `MapStudio` directory.
 
     The format of these files is exactly the same in PTD and DSR. The vanilla DSR files have a few new additions (the
@@ -22,27 +25,25 @@ class MapStudioDirectory(_BaseMapStudioDirectory, DarkSoulsDSRType):
     is still used for Darkroot's event scripts, however.
     """
 
-    MSB_CLASS = MSB
-    ALL_MAPS = ALL_MAPS
-    GET_MAP = staticmethod(get_map)
+    FILE_CLASS: tp.ClassVar = MSB
+    ALL_MAPS: tp.ClassVar = ALL_MAPS
+    GET_MAP: tp.ClassVar = staticmethod(get_map)
 
-    Depths: MSB
-    UndeadBurg: MSB  # and Undead Parish
-    FirelinkShrine: MSB
-    PaintedWorld: MSB
-    DarkrootGarden: MSB  # and Darkroot Basin
-    Oolacile: MSB  # and Royal Wood and Chasm of the Abyss
-    Catacombs: MSB
-    TombOfTheGiants: MSB
-    AshLake: MSB  # and Great Hollow
-    Blighttown: MSB  # and Quelaag's Domain
-    LostIzalith: MSB  # and Demon Ruins
-    SensFortress: MSB
-    AnorLondo: MSB
-    NewLondoRuins: MSB  # and Valley of Drakes
-    DukesArchives: MSB  # and Crystal Cave
-    KilnOfTheFirstFlame: MSB
-    UndeadAsylum: MSB
-
-    msbs: dict[str, MSB]
-    __getitem__: tp.Callable[[tp.Union[str, tuple]], MSB]
+    Common = map_property(COMMON)  # type: MSB
+    Depths = map_property(DEPTHS)  # type: MSB
+    UndeadBurg = map_property(UNDEAD_BURG)  # type: MSB  # and Undead Parish
+    FirelinkShrine = map_property(FIRELINK_SHRINE)  # type: MSB
+    PaintedWorld = map_property(PAINTED_WORLD)  # type: MSB
+    DarkrootGarden = map_property(DARKROOT_GARDEN)  # type: MSB  # and Darkroot Basin
+    Oolacile = map_property(OOLACILE)  # type: MSB  # and all DLC
+    Catacombs = map_property(CATACOMBS)  # type: MSB
+    TombOfTheGiants = map_property(TOMB_OF_THE_GIANTS)  # type: MSB
+    AshLake = map_property(ASH_LAKE)  # type: MSB  # and Great Hollow
+    Blighttown = map_property(BLIGHTTOWN)  # type: MSB
+    LostIzalith = map_property(LOST_IZALITH)  # type: MSB  # and Demon Ruins
+    SensFortress = map_property(SENS_FORTRESS)  # type: MSB
+    AnorLondo = map_property(ANOR_LONDO)  # type: MSB
+    NewLondoRuins = map_property(NEW_LONDO_RUINS)  # type: MSB  # and Valley of Drakes
+    DukesArchives = map_property(DUKES_ARCHIVES)  # type: MSB
+    KilnOfTheFirstFlame = map_property(KILN_OF_THE_FIRST_FLAME)  # type: MSB
+    UndeadAsylum = map_property(UNDEAD_ASYLUM)  # type: MSB

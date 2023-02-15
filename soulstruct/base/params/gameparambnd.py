@@ -40,7 +40,7 @@ class GameParamBND(Binder, abc.ABC):
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = {}
-    PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
+    GAME_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
 
     # Maps internal param stems, e.g. `NpcParam`, to `Param` or generic `ParamDict` instance.
     params: dict[str, Param | ParamDict] = field(default_factory=dict)

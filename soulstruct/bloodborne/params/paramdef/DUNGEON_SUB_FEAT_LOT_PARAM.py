@@ -4,7 +4,7 @@ __all__ = ["DUNGEON_SUB_FEAT_LOT_PARAM"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.bloodborne.game_types import *
 from soulstruct.bloodborne.params.enums import *
 from soulstruct.utilities.binary import *

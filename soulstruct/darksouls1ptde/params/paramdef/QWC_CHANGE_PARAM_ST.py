@@ -4,7 +4,7 @@ __all__ = ["QWC_CHANGE_PARAM_ST"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.utilities.binary import *

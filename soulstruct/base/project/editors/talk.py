@@ -217,7 +217,7 @@ class TalkEditor(BaseEditor):
                     sticky="w",
                     padx=(10, 30),
                 )
-                self.selected_map_id = self.map_choice_id
+                self.selected_map_id = self.map_choice_stem
                 self.reload_all_button = self.Button(
                     text="Reload All in Map",
                     font_size=10,
@@ -634,9 +634,9 @@ class TalkEditor(BaseEditor):
             # Keep currently selected map.
             self.map_choice.var.set(f"{self.selected_map_id} [{self.talk.GET_MAP(self.selected_map_id).name}]")
             return
-        self.selected_map_id = self.map_choice_id
+        self.selected_map_id = self.map_choice_stem
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("talk",))
+            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("talk",))
         self.select_entry_row_index(None, check_unsaved=False)
         self.refresh_entries()
         self.entry_canvas.yview_moveto(0)

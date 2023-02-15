@@ -4,6 +4,7 @@ __all__ = [
     "Map",
     "MapEntry",
     "MapEntity",
+    "MapModel",
     "MapTyping",
 ]
 
@@ -179,6 +180,18 @@ class MapEntity(MapEntry, IntEnum):
     @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         raise ValueError("Cannot use `auto()` for this `MapEntity` subclass.")
+
+
+class MapModel(MapEntry):
+    """3D model ID of something."""
+    @classmethod
+    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
+        return "Models", None
+
+    @classmethod
+    def get_msb_class_name(cls) -> str:
+        """All MSB models use the same class."""
+        return "MSBModel"
 
 
 MapTyping = tp.Union[Map, tuple, list]

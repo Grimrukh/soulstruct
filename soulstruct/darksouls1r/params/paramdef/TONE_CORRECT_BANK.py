@@ -4,7 +4,7 @@ __all__ = ["TONE_CORRECT_BANK"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.darksouls1r.game_types import *
 from soulstruct.darksouls1r.params.enums import *
 from soulstruct.utilities.binary import *

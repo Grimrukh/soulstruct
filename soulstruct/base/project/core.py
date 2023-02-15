@@ -53,8 +53,7 @@ _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 def _with_config_write(func):
     """Automatically write project config whenever this function/method is called."""
     @wraps(func)
-    def project_method(*args, **kwargs):
-        self = args[0]  # TODO: PyCharm decorator signature bug getaround
+    def project_method(self, *args, **kwargs):
         func(self, *args, **kwargs)
         self._write_config()
 
@@ -64,8 +63,7 @@ def _with_config_write(func):
 def _data_type_action(func):
     """Validate `data_type` argument and recur on all project types if it is `None`."""
     @wraps(func)
-    def data_type_action(*args, **kwargs):
-        self, data_type = args[0], args[1]  # TODO: PyCharm decorator signature bug getaround
+    def data_type_action(self, data_type, *args, **kwargs):
         if data_type is None:
             for data_type in self.DATA_TYPES:
                 func(self, data_type, *args, **kwargs)  # recur on every type
@@ -93,7 +91,7 @@ class GameDirectoryProject(abc.ABC):
     else:
         _DEFAULT_PROJECT_ROOT = Path(os.getcwd())
 
-    DATA_TYPES = {}  # type: dict[str, type]
+    DATA_TYPES = {}  # type: dict[str, tp.Type[BaseBinaryFile]]
 
     project_root: Path
 
@@ -200,6 +198,7 @@ class GameDirectoryProject(abc.ABC):
     def import_data_type(
         self, data_type: str, force_import_from_game=False, yes_to_all=False, with_window: ProjectWindow = None
     ):
+        print(f"Importing data type: {data_type}")
         if data_type in ("events", "talk"):
             return yes_to_all  # events and talk are not saved and loaded as pickles, just imported and exported
         try:
@@ -383,7 +382,7 @@ class GameDirectoryProject(abc.ABC):
         """
         import_directory = Path(import_directory)
         data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
-        data_instance = self.DATA_TYPES[data_type](data_import_path)
+        data_instance = self.DATA_TYPES[data_type].from_path(data_import_path)
         setattr(self, data_type, data_instance)
         if data_type == "events":  # data in `EventDirectory` is only read upon import and modified upon export
             self.events.write_evs(

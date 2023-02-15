@@ -1,7 +1,6 @@
 import logging
 import math
 
-from soulstruct.base.project.exceptions import SoulstructProjectError
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 from soulstruct.darksouls1r.maps import MSB
 from soulstruct.darksouls1r.maps.parts import MSBPlayerStart
@@ -103,8 +102,6 @@ class ProjectWindow(_BaseProjectWindow):
 
     def _rebuild_ffxbnds_from_maps(self):
         """Rebuild game FFXBND file for each map based on current characters in project."""
-        if self.project.GAME.name != "Dark Souls Remastered":
-            raise SoulstructProjectError("FFXBND Rebuilder is currently only available for Dark Souls Remastered.")
         vanilla_game_root = self.project.vanilla_game_root
         if vanilla_game_root == self.project.game_root:
             _LOGGER.warning(
@@ -173,7 +170,7 @@ class ProjectWindow(_BaseProjectWindow):
         current_msb_path = self.project.get_game_path_of_data_type("maps") / f"{current_map.msb_file_stem}.msb"
         current_msb = MSB.from_path(current_msb_path)
         try:
-            player_start = current_msb.get_entry_by_entity_id(player_start_id)
+            player_start = current_msb.find_entry_by_entity_id(player_start_id)
         except KeyError:
             return self.CustomDialog(
                 "Reload Warp Failed",

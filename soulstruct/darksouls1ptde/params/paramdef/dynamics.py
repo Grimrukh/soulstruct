@@ -13,7 +13,7 @@ import typing as tp
 
 from soulstruct.darksouls1ptde.params.enums import *
 from soulstruct.darksouls1ptde.game_types.param_types import *
-from soulstruct.base.params.utils import DynamicParamField
+from soulstruct.base.params.param_row import DynamicParamField
 
 
 if tp.TYPE_CHECKING:

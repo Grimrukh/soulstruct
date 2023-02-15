@@ -1,81 +1,73 @@
-__all__ = ["MSGDirectory", "NEW_FMG_NAMES"]
+__all__ = ["MSGDirectory"]
 
-from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
-from soulstruct.containers.bnd import BND3
-from soulstruct.utilities.misc import BiDict
-
+from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
 from .fmg import FMG
 
 
 class MSGDirectory(_BaseMSGDirectory):
-    IS_DCX = False
 
-    FMG_CLASS = FMG
-    MSGBND_CLASS = BND3
+    DEFAULT_ENTRY_STEMS = {
+        ("item", 10): "アイテム名",
+        ("item", 11): "武器名",
+        ("item", 12): "防具名",
+        ("item", 13): "アクセサリ名",
+        ("item", 14): "魔法名",
+        ("item", 15): "特徴名",
+        ("item", 16): "特徴説明",
+        ("item", 17): "特徴うんちく",
+        ("item", 18): "NPC名",
+        ("item", 19): "地名",
+        ("item", 20): "アイテム説明",
+        ("item", 21): "武器説明",
+        ("item", 22): "防具説明",
+        ("item", 23): "アクセサリ説明",
+        ("item", 24): "アイテムうんちく",
+        ("item", 25): "武器うんちく",
+        ("item", 26): "防具うんちく",
+        ("item", 27): "アクセサリうんちく",
+        ("item", 28): "魔法説明",
+        ("item", 29): "魔法うんちく",
 
-    _MSGBND_INDEX_NAMES = BiDict(
-        (1, "Subtitles"),
-        (2, "SoapstoneMessages"),
-        (3, "OpeningSubtitles"),
-        (10, "GoodNames"),
-        (11, "WeaponNames"),
-        (12, "ArmorNames"),
-        (13, "RingNames"),
-        (14, "SpellNames"),
-        (15, "FeatureNames"),
-        (16, "FeatureSummaries"),
-        (17, "FeatureDescriptions"),
-        (18, "NPCNames"),
-        (19, "PlaceNames"),
-        (20, "GoodSummaries"),
-        (21, "WeaponSummaries"),
-        (22, "ArmorSummaries"),
-        (23, "RingSummaries"),
-        (24, "GoodDescriptions"),
-        (25, "WeaponDescriptions"),
-        (26, "ArmorDescriptions"),
-        (27, "RingDescriptions"),
-        (28, "SpellSummaries"),
-        (29, "SpellDescriptions"),
-        (30, "EventText"),
-        (70, "IngameMenus"),
-        (76, "MenuText_Common"),
-        (77, "MenuText_Other"),
-        (78, "MenuDialogs"),
-        (79, "KeyGuide"),
-        (80, "MenuHelpSnippets"),
-        (81, "ContextualHelp"),
-        (90, "TextTagPlaceholders"),
-        (91, "DebugTags_Win32"),
-        (92, "SystemMessages_Win32"),
-        # Patch resources (all in menu.msgbnd in PTDE, but some in item.msgbnd in DSR).
-        (100, "GoodDescriptionsPatch"),
-        (101, "EventTextPatch"),
-        (102, "MenuDialogsPatch"),
-        (103, "SystemMessages_Win32Patch"),
-        (104, "SubtitlesPatch"),
-        (105, "SpellDescriptionsPatch"),
-        (106, "WeaponDescriptionsPatch"),
-        (107, "SoapstoneMessagesPatch"),
-        (108, "ArmorDescriptionsPatch"),
-        (109, "RingDescriptionsPatch"),
-        (110, "GoodSummariesPatch"),
-        (111, "GoodNamesPatch"),
-        (112, "RingSummariesPatch"),
-        (113, "RingNamesPatch"),
-        (114, "WeaponSummariesPatch"),
-        (115, "WeaponNamesPatch"),
-        (116, "ArmorSummariesPatch"),
-        (117, "ArmorNamesPatch"),
-        (118, "SpellNamesPatch"),
-        (119, "NPCNamesPatch"),
-        (120, "PlaceNamesPatch"),
-        (121, "MenuHelpSnippetsPatch"),
-        (122, "KeyGuidePatch"),
-        (123, "MenuText_OtherPatch"),
-        (124, "MenuText_CommonPatch"),
-    )
-    _ORIGINAL_PATCH_SUFFIX = "パッチ"
+        ("menu", 1): "会話",
+        ("menu", 2): "血文字",
+        ("menu", 3): "ムービー字幕",
+        ("menu", 30): "イベントテキスト",
+        ("menu", 70): "インゲームメニュー",
+        ("menu", 76): "メニュー共通テキスト",
+        ("menu", 77): "メニューその他",
+        ("menu", 78): "ダイアログ",
+        ("menu", 79): "キーガイド",
+        ("menu", 80): "一行ヘルプ",
+        ("menu", 81): "項目ヘルプ",
+        ("menu", 90): "テキスト表示用タグ一覧",
+        ("menu", 91): "機種別タグ_win32",
+        ("menu", 92): "システムメッセージ_win32",
+        ("menu", 100): "アイテムうんちくパッチ",
+        ("menu", 101): "イベントテキストパッチ",
+        ("menu", 102): "ダイアログパッチ",
+        ("menu", 103): "システムメッセージ_win32パッチ",
+        ("menu", 104): "会話パッチ",
+        ("menu", 105): "魔法うんちくパッチ",
+        ("menu", 106): "武器うんちくパッチ",
+        ("menu", 107): "血文字パッチ",
+        ("menu", 108): "防具うんちくパッチ",
+        ("menu", 109): "アクセサリうんちくパッチ",
+        ("menu", 110): "アイテム説明パッチ",
+        ("menu", 111): "アイテム名パッチ",
+        ("menu", 112): "アクセサリ説明パッチ",
+        ("menu", 113): "アクセサリ名パッチ",
+        ("menu", 114): "武器説明パッチ",
+        ("menu", 115): "武器名パッチ",
+        ("menu", 116): "防具説明パッチ",
+        ("menu", 117): "防具名パッチ",
+        ("menu", 118): "魔法名パッチ",
+        ("menu", 119): "NPC名パッチ",
+        ("menu", 120): "地名パッチ",
+        ("menu", 121): "一行ヘルプパッチ",
+        ("menu", 122): "キーガイドパッチ",
+        ("menu", 123): "メニューその他パッチ",
+        ("menu", 124): "メニュー共通テキストパッチ",
+    }
 
     MAIN_CATEGORIES = (
         "NPCNames",
@@ -117,105 +109,62 @@ class MSGDirectory(_BaseMSGDirectory):
         "TextTagPlaceholders",
     )
 
-    ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
-
-    ArmorDescriptions: dict
-    ArmorNames: dict
-    ArmorSummaries: dict
-    ContextualHelp: dict
-    Subtitles: dict
-    DebugTags_Win32: dict
-    EventText: dict
-    FeatureDescriptions: dict
-    FeatureNames: dict
-    FeatureSummaries: dict
-    IngameMenus: dict
-    GoodDescriptions: dict
-    GoodNames: dict
-    GoodSummaries: dict
-    KeyGuide: dict
-    SpellDescriptions: dict
-    SpellNames: dict
-    SpellSummaries: dict
-    MenuDialogs: dict
-    MenuHelpSnippets: dict
-    MenuText_Common: dict
-    MenuText_Other: dict
-    NPCNames: dict
-    OpeningSubtitles: dict
-    PlaceNames: dict
-    RingDescriptions: dict
-    RingNames: dict
-    RingSummaries: dict
-    SoapstoneMessages: dict
-    SystemMessages_Win32: dict
-    TextTagPlaceholders: dict
-    WeaponDescriptions: dict
-    WeaponNames: dict
-    WeaponSummaries: dict
-
-
-# Unused; using BND index instead.
-NEW_FMG_NAMES = {
-    # item.msgbnd (including patch)
-    "防具うんちく.fmg": "ArmorDescriptions",
-    "防具うんちくパッチ.fmg": "ArmorDescriptionsPatch",
-    "防具名.fmg": "ArmorNames",
-    "防具名パッチ.fmg": "ArmorNamesPatch",
-    "防具説明.fmg": "ArmorSummaries",
-    "防具説明パッチ.fmg": "ArmorSummariesPatch",
-    "特徴うんちく.fmg": "FeatureDescriptions",
-    "特徴名.fmg": "FeatureNames",
-    "特徴説明.fmg": "FeatureSummaries",
-    "アイテムうんちく.fmg": "GoodDescriptions",
-    "アイテムうんちくパッチ.fmg": "GoodDescriptionsPatch",
-    "アイテム名.fmg": "GoodNames",
-    "アイテム名パッチ.fmg": "GoodNamesPatch",
-    "アイテム説明.fmg": "GoodSummaries",
-    "アイテム説明パッチ.fmg": "GoodSummariesPatch",
-    "NPC名.fmg": "NPCNames",
-    "NPC名パッチ.fmg": "NPCNamesPatch",
-    "地名.fmg": "PlaceNames",
-    "地名パッチ.fmg": "PlaceNamesPatch",
-    "アクセサリうんちく.fmg": "RingDescriptions",
-    "アクセサリうんちくパッチ.fmg": "RingDescriptionsPatch",
-    "アクセサリ名.fmg": "RingNames",
-    "アクセサリ名パッチ.fmg": "RingNamesPatch",
-    "アクセサリ説明.fmg": "RingSummaries",
-    "アクセサリ説明パッチ.fmg": "RingSummariesPatch",
-    "魔法うんちく.fmg": "SpellDescriptions",
-    "魔法うんちくパッチ.fmg": "SpellDescriptionsPatch",
-    "魔法名.fmg": "SpellNames",
-    "魔法名パッチ.fmg": "SpellNamesPatch",
-    "魔法説明.fmg": "SpellSummaries",
-    "武器うんちく.fmg": "WeaponDescriptions",
-    "武器うんちくパッチ.fmg": "WeaponDescriptionsPatch",
-    "武器名.fmg": "WeaponNames",
-    "武器名パッチ.fmg": "WeaponNamesPatch",
-    "武器説明.fmg": "WeaponSummaries",
-    "武器説明パッチ.fmg": "WeaponSummariesPatch",
-    # menu.msgbnd
-    "項目ヘルプ.fmg": "ContextualHelp",
-    "会話.fmg": "Subtitles",
-    "会話パッチ.fmg": "SubtitlesPatch",
-    "機種別タグ_win32.fmg": "DebugTags_Win32",
-    "イベントテキスト.fmg": "EventText",
-    "イベントテキストパッチ.fmg": "EventTextPatch",
-    "インゲームメニュー.fmg": "IngameMenus",
-    "キーガイド.fmg": "KeyGuide",
-    "キーガイドパッチ.fmg": "KeyGuidePatch",
-    "ダイアログ.fmg": "MenuDialogs",
-    "ダイアログパッチ.fmg": "MenuDialogsPatch",
-    "一行ヘルプ.fmg": "MenuHelpSnippets",
-    "一行ヘルプパッチ.fmg": "MenuHelpSnippetsPatch",
-    "メニュー共通テキスト.fmg": "MenuText_Common",
-    "メニュー共通テキストパッチ.fmg": "MenuText_CommonPatch",
-    "メニューその他.fmg": "MenuText_Other",
-    "メニューその他パッチ.fmg": "MenuText_OtherPatch",
-    "ムービー字幕.fmg": "OpeningSubtitles",
-    "血文字.fmg": "SoapstoneMessages",
-    "血文字パッチ.fmg": "SoapstoneMessagesPatch",
-    "システムメッセージ_win32.fmg": "SystemMessages_Win32",
-    "システムメッセージ_win32パッチ.fmg": "SystemMessages_Win32Patch",
-    "テキスト表示用タグ一覧.fmg": "TextTagPlaceholders",
-}
+    ArmorDescriptions = fmg_property("item", 26)  # type: FMG
+    ArmorDescriptionsPatch = fmg_property("menu", 108)  # type: FMG
+    ArmorNames = fmg_property("item", 12)  # type: FMG
+    ArmorNamesPatch = fmg_property("menu", 117)  # type: FMG
+    ArmorSummaries = fmg_property("item", 22)  # type: FMG
+    ArmorSummariesPatch = fmg_property("menu", 116)  # type: FMG
+    ContextualHelp = fmg_property("menu", 81)  # type: FMG
+    DebugTags_Win32 = fmg_property("menu", 91)  # type: FMG
+    EventText = fmg_property("menu", 30)  # type: FMG
+    EventTextPatch = fmg_property("menu", 101)  # type: FMG
+    FeatureDescriptions = fmg_property("item", 17)  # type: FMG
+    FeatureNames = fmg_property("item", 15)  # type: FMG
+    FeatureSummaries = fmg_property("item", 16)  # type: FMG
+    GoodDescriptions = fmg_property("item", 24)  # type: FMG
+    GoodDescriptionsPatch = fmg_property("menu", 100)  # type: FMG
+    GoodNames = fmg_property("item", 10)  # type: FMG
+    GoodNamesPatch = fmg_property("menu", 111)  # type: FMG
+    GoodSummaries = fmg_property("item", 20)  # type: FMG
+    GoodSummariesPatch = fmg_property("menu", 110)  # type: FMG
+    IngameMenus = fmg_property("menu", 70)  # type: FMG
+    KeyGuide = fmg_property("menu", 79)  # type: FMG
+    KeyGuidePatch = fmg_property("menu", 122)  # type: FMG
+    MenuDialogs = fmg_property("menu", 78)  # type: FMG
+    MenuDialogsPatch = fmg_property("menu", 102)  # type: FMG
+    MenuHelpSnippets = fmg_property("menu", 80)  # type: FMG
+    MenuHelpSnippetsPatch = fmg_property("menu", 121)  # type: FMG
+    MenuText_Common = fmg_property("menu", 76)  # type: FMG
+    MenuText_CommonPatch = fmg_property("menu", 124)  # type: FMG
+    MenuText_Other = fmg_property("menu", 77)  # type: FMG
+    MenuText_OtherPatch = fmg_property("menu", 123)  # type: FMG
+    NPCNames = fmg_property("item", 18)  # type: FMG
+    NPCNamesPatch = fmg_property("menu", 119)  # type: FMG
+    OpeningSubtitles = fmg_property("item", 3)  # type: FMG
+    PlaceNames = fmg_property("item", 19)  # type: FMG
+    PlaceNamesPatch = fmg_property("menu", 120)  # type: FMG
+    RingDescriptions = fmg_property("item", 27)  # type: FMG
+    RingDescriptionsPatch = fmg_property("menu", 109)  # type: FMG
+    RingNames = fmg_property("item", 13)  # type: FMG
+    RingNamesPatch = fmg_property("menu", 113)  # type: FMG
+    RingSummaries = fmg_property("item", 23)  # type: FMG
+    RingSummariesPatch = fmg_property("menu", 112)  # type: FMG
+    SoapstoneMessages = fmg_property("item", 2)  # type: FMG
+    SoapstoneMessagesPatch = fmg_property("menu", 107)  # type: FMG
+    SpellDescriptions = fmg_property("item", 29)  # type: FMG
+    SpellDescriptionsPatch = fmg_property("menu", 105)  # type: FMG
+    SpellNames = fmg_property("item", 14)  # type: FMG
+    SpellNamesPatch = fmg_property("menu", 118)  # type: FMG
+    SpellSummaries = fmg_property("item", 28)  # type: FMG
+    Subtitles = fmg_property("item", 1)  # type: FMG
+    SubtitlesPatch = fmg_property("menu", 104)  # type: FMG
+    SystemMessages_Win32 = fmg_property("menu", 92)  # type: FMG
+    SystemMessages_Win32Patch = fmg_property("menu", 103)  # type: FMG
+    TextTagPlaceholders = fmg_property("menu", 90)  # type: FMG
+    WeaponDescriptions = fmg_property("item", 25)  # type: FMG
+    WeaponDescriptionsPatch = fmg_property("menu", 106)  # type: FMG
+    WeaponNames = fmg_property("item", 11)  # type: FMG
+    WeaponNamesPatch = fmg_property("menu", 115)  # type: FMG
+    WeaponSummaries = fmg_property("item", 21)  # type: FMG
+    WeaponSummariesPatch = fmg_property("menu", 114)  # type: FMG

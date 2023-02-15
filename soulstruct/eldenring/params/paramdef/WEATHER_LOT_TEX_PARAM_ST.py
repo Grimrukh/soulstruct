@@ -4,7 +4,7 @@ __all__ = ["WEATHER_LOT_TEX_PARAM_ST"]
 
 from dataclasses import dataclass
 
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *

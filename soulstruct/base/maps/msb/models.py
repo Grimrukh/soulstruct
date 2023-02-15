@@ -123,15 +123,3 @@ class BaseMSBModel(MSBEntry, abc.ABC):
                 f")"
             )
         return f"{self.cls_name}(name={repr(self.name)})"
-
-
-# TODO: Put in read methods of appropriate classes. Or __post_init__.
-class __BaseMSBGeometryModel(BaseMSBModel):
-
-    def __init__(self, source=None, **kwargs):
-        """Additionally Requires `map_id` if `source` is None."""
-        if source is None and "sib_path" not in kwargs and ("map_id" not in kwargs or "name" not in kwargs):
-            raise ValueError(
-                f"`name` and `map_id` must be given to `{self.cls_name}` if `sib_path` is not given."
-            )
-        super().__init__(source, **kwargs)

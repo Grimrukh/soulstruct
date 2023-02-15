@@ -47,13 +47,15 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
 
         yes_to_all = force_import_from_game
 
+        # TODO: Import settings window!!! No long sequence of prompts!
+
         for data_type in self.DATA_TYPES:
             yes_to_all = self.import_data_type(data_type, force_import_from_game, yes_to_all, with_window=with_window)
 
             if data_type == "maps" and first_time and self.maps is not None:
                 archives_msb = self.maps.DukesArchives
                 repeats = archives_msb.get_repeated_entity_ids()
-                if {e.entity_id for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
+                if {e.get_entity_id() for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
                     if self.offer_fix_broken_regions(with_window):
                         self.save("maps")
                 if self.offer_translate_entities(with_window=with_window):
@@ -98,9 +100,9 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         if result == 0:
             archives_msb = self.maps.DukesArchives
             repeats = archives_msb.get_repeated_entity_ids()  # re-checking just in case
-            if {e.entity_id for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
+            if {e.get_entity_id() for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
                 for entry in repeats["Regions"]:
-                    archives_msb.regions.delete_entry(entry)
+                    archives_msb.remove_entry(entry)
             return True
         else:
             return False

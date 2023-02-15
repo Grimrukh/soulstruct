@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.files import write_json
 
-from .utils import ParamRow
+from .param_row import ParamRow
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
@@ -436,7 +436,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         """Convert flags integers to `ParamFlagsX`."""
         data["flags1"] = ParamFlags1(int(data.pop("flags1", 0)))
         data["flags2"] = ParamFlags1(int(data.pop("flags2", 0)))
-        return super().from_dict(data)
+        return super(Param, cls).from_dict(data)
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True, use_internal_names=False):
         """Provides options to ignore pad fields and/or fields with default values."""

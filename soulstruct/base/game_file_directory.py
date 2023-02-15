@@ -135,6 +135,8 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
+        print(files)
+
         return cls(directory_path, files)
 
     def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):

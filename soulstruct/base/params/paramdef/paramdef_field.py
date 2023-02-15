@@ -21,7 +21,7 @@ except AttributeError:
     Self = "ParamDefField"
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params.utils import ParamRow
+    from soulstruct.base.params.param_row import ParamRow
 
 _LOGGER = logging.getLogger(__name__)
 

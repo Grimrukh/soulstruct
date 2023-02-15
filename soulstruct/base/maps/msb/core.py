@@ -13,6 +13,7 @@ from pathlib import Path
 from soulstruct.base.game_file import GameFile
 from soulstruct.base.game_types.map_types import MapEntity
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.files import write_json
 
 from .msb_entry import MSBEntry
 from .msb_entry_list import MSBEntryList
@@ -121,6 +122,7 @@ class MSB(GameFile, abc.ABC):
             found_name = reader.unpack_string(offset=name_offset, encoding=cls.NAME_ENCODING)
             if found_name != supertype_name:
                 raise ValueError(f"MSB internal list name '{found_name}' != expected name '{supertype_name}'.")
+            entry_lists[supertype_name] = []
             for entry_offset in entry_offsets[:-1]:  # exclude last offset
                 reader.seek(entry_offset)
                 cls._unpack_entry(reader, found_name, entry_lists)
@@ -153,7 +155,7 @@ class MSB(GameFile, abc.ABC):
             raise TypeError(f"Unknown '{supertype_name}' subtype enum value: {subtype_int}")
         entry = subtype_class.from_msb_reader(reader)
         # Put entry into appropriate supertype and subtype lists (creating if necessary).
-        entry_lists.setdefault(supertype_name, []).append(entry)
+        entry_lists[supertype_name].append(entry)
         if subtype_list_name not in entry_lists:
             entry_lists[subtype_list_name] = MSBEntryList(
                 supertype_name=supertype_name, subtype_info=subtype_info
@@ -332,6 +334,27 @@ class MSB(GameFile, abc.ABC):
                     msb_dict.setdefault(supertype_name, {}).update(subtype_list.to_json_dict(self, ignore_defaults))
         return msb_dict
 
+    def write_json(
+        self,
+        file_path: None | str | Path,
+        encoding="utf-8",
+        indent=4,
+        ignore_defaults=True,
+    ):
+        """Create a dictionary from instance and write it to a JSON file.
+
+        The file path will have the `.json` suffix added automatically if missing.
+        """
+        json_dict = self.to_dict(ignore_defaults=ignore_defaults)
+        if file_path is None:
+            if self.path is None:
+                raise ValueError("You must specify `file_path` because file default `path` has not been set.")
+            file_path = self.path
+        file_path = Path(file_path)
+        if file_path.suffix != ".json":
+            file_path = file_path.with_suffix(file_path.suffix + ".json")
+        write_json(file_path, json_dict, indent=indent, encoding=encoding)
+
     @classmethod
     def from_dict(cls, data: dict) -> Self:
         """Load MSB from dictionary of version info and entries (sorted by supertype and nested subtype keys)."""
@@ -416,8 +439,10 @@ class MSB(GameFile, abc.ABC):
         return [getattr(self, list_name) for list_name in self.get_subtype_list_names()]
 
     @classmethod
-    def resolve_subtype_name(cls, subtype_name: str):
-        for subtype_info_list in cls.MSB_ENTRY_SUBTYPES.values():
+    def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str = None):
+        for supertype_name, subtype_info_list in cls.MSB_ENTRY_SUBTYPES.items():
+            if supertype_name != assert_supertype_name:
+                continue
             for info in subtype_info_list.values():
                 if subtype_name in {info.subtype_list_name, info.subtype_enum.name, info.entry_class.__name__}:
                     return info.subtype_list_name
@@ -448,7 +473,7 @@ class MSB(GameFile, abc.ABC):
         Repeated IDs across different supertypes will be ignored.
         """
         repeats = {}
-        for supertype_name in MSB_ENTRY_SUPERTYPES[1:]:  # not 'MODEL_PARAM_ST'
+        for supertype_name in list(MSB_ENTRY_SUPERTYPES.keys())[1:]:  # not 'MODEL_PARAM_ST'
             supertype_list = self.get_supertype_list(supertype_name)
             entity_ids = set()
             repeated_entries = []  # type: list[MSBEntry]
@@ -511,6 +536,11 @@ class MSB(GameFile, abc.ABC):
             else:
                 raise ValueError(f"Found multiple entries with entity ID {entity_id} in MSB. This must be fixed.")
         return results[0]
+
+    def remove_entry(self, entry: MSBEntry):
+        """Find list containing entry and remove it."""
+        subtype_list = self.get_list_of_entry(entry)
+        subtype_list.remove(entry)
 
     def clear_all(self):
         """Clear all entry subtype lists."""
@@ -630,6 +660,15 @@ class MSB(GameFile, abc.ABC):
 
     # TODO: Methods to import entity IDs from module by matching names, and import names from module by matching entity
     #  IDs (e.g. once you fix exported Japanese names).
+
+    def new_model(self, model_subtype_name: str, name: str, sib_path="", map_stem=""):
+        subtype_list_name = self.resolve_subtype_name(model_subtype_name, "MODEL_PARAM_ST")
+        model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
+        if not model.sib_path:
+            if map_stem:  # prevents empty `map_stem` from being formatted
+                model.set_auto_sib_path(map_stem=map_stem)
+            else:
+                model.set_auto_sib_path()
 
     def has_c0000_model(self) -> bool:
         """Common check for character/player model c0000, which should be in every MSB (in every game)."""

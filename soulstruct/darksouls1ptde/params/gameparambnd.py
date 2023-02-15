@@ -97,7 +97,7 @@ class GameParamBND(_BaseGameParamBND):
     WeaponUpgrades = param_property("ReinforceParamWeapon")  # type: Param[REINFORCE_PARAM_WEAPON_ST]
 
     # Also defines display order.
-    PARAM_TYPES: tp.ClassVar = {
+    GAME_TYPES: tp.ClassVar = {
         "Players": PlayerParam,
         "Characters": CharacterParam,
         "PlayerBehaviors": BehaviorParam,

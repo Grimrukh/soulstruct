@@ -2,7 +2,7 @@ import inspect
 import re
 
 from soulstruct.bloodborne.params import paramdef as paramdef_module, ParamDefBND
-from soulstruct.base.params.utils import *
+from soulstruct.base.params.param_row import *
 from soulstruct.utilities.files import read_json, write_json
 
 

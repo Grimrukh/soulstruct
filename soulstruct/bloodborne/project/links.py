@@ -6,6 +6,7 @@ import typing as tp
 
 from soulstruct.base.project.links import WindowLinker as _BaseWindowLinker, BaseLink, ParamsLink, BrokenLink
 from soulstruct.containers import Binder
+from soulstruct.bloodborne.game_types.map_types import *
 from soulstruct.bloodborne.game_types.param_types import *
 
 if tp.TYPE_CHECKING:
@@ -81,32 +82,31 @@ class WindowLinker(_BaseWindowLinker):
         else:
             return [ParamsLink(self, param_name=param_nickname, param_entry_id=field_value, name=name)]
 
-    def validate_model_subtype(self, model_subtype_name: str, name: str, map_id: str):
+    def validate_model_subtype(self, model_game_type: tp.Type[MapModel], name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid.
 
         Note that Character and Object models don't actually need `map_id` to validate them.
         """
 
-        dcx = ".dcx" if self.project.GAME.default_dcx_type else ""
-
-        if model_subtype_name == "Characters":
-            if (self.project.game_root / f"chr/{name}.chrbnd{dcx}").is_file():
+        if model_game_type == CharacterModel:
+            if (self.project.game_root / f"chr/{name}.chrbnd.dcx").is_file():
                 return True
-        elif model_subtype_name == "Objects":
-            if (self.project.game_root / f"obj/{name}.objbnd{dcx}").is_file():
+        elif model_game_type == ObjectModel:
+            if (self.project.game_root / f"obj/{name}.objbnd.dcx").is_file():
                 return True
-        elif model_subtype_name == "MapPieces":
-            if (self.project.game_root / f"map/{map_id}/{name}A{map_id[1:3]}.flver{dcx}").is_file():
+        elif model_game_type == MapPieceModel:
+            if (self.project.game_root / f"map/{map_stem}/{name}A{map_stem[1:3]}.flver.dcx").is_file():
                 return True
-        elif model_subtype_name == "Collisions":
+        elif model_game_type == CollisionModel:
             # TODO: Rough BHD string scan until I have that file format.
-            hkxbhd_path = self.project.game_root / f"map/{map_id}/h{map_id}.hkxbhd"
+            hkxbhd_path = self.project.game_root / f"map/{map_stem}/h{map_stem}.hkxbhd"
             if hkxbhd_path.is_file():
                 with hkxbhd_path.open("r") as f:
                     if name + "A10.hkx" in f.read():
                         return True
-        elif model_subtype_name == "Navmeshes":
-            nvmbnd_path = self.project.game_root / f"map/{map_id}/{map_id}.nvmbnd{dcx}"
+        elif model_game_type == NavmeshModel:
+            # TODO: I don't think Bloodborne has these?
+            nvmbnd_path = self.project.game_root / f"map/{map_stem}/{map_stem}.nvmbnd.dcx"
             if nvmbnd_path.is_file():
                 navmesh_bnd = Binder(nvmbnd_path)
                 if name + "A10.nvm" in navmesh_bnd.entries_by_name.keys():

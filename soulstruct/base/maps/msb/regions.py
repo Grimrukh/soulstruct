@@ -32,10 +32,6 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     translate: Vector3 = field(default_factory=lambda: Vector3.zero())
     rotate: Vector3 = field(default_factory=lambda: Vector3.zero())
 
-    def __init__(self, source=None, **kwargs):
-        self._region_index = None  # Final automatic assignment done on `MSB.pack()`.
-        super().__init__(source=source, **kwargs)
-
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> Self:
         """Regions do not have 'supertype data'. Just a header (with some supertype data) and optional subtype data."""

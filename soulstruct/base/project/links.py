@@ -17,7 +17,6 @@ import typing as tp
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.base.game_types import *
-from soulstruct.base.maps.msb.enums import BaseMSBModelSubtype
 
 from .utilities import ItemTextEditBox
 
@@ -254,7 +253,7 @@ class WindowLinker:
         return base_weapon
 
     @abc.abstractmethod
-    def validate_model_subtype(self, model_subtype: BaseMSBModelSubtype, name: str, map_id: str):
+    def validate_model_subtype(self, model_game_type: tp.Type[MapModel], model_name: str, map_stem: str):
         """Check appropriate game model files to confirm the given model name is valid."""
         ...
 

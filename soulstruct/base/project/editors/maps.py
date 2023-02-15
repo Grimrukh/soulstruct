@@ -556,7 +556,7 @@ class MapsEditor(BaseFieldEditor):
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_id, ignore_tabs=("maps",))
+            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("maps",))
         self.select_entry_row_index(None)
         self.refresh_entries(reset_field_display=True)
 
@@ -823,7 +823,7 @@ class MapsEditor(BaseFieldEditor):
         return categories
 
     def get_selected_msb(self) -> MSB:
-        map_name = self.maps.GET_MAP(self.map_choice_id).name
+        map_name = self.maps.GET_MAP(self.map_choice_stem).name
         return self.maps[map_name]
 
     def get_category_data(self, category=None) -> list[MSBEntry]:
@@ -901,10 +901,10 @@ class MapsEditor(BaseFieldEditor):
             field_type, field_value, valid_null_values=valid_null_values, map_override=None,
         )
 
-    def add_models(self, model_subtype: tp.Type[MapModel], model_name):
-        map_id = self.map_choice_id
-        _, model_subtype_name = model_subtype.get_msb_entry_type_subtype()
-        if self.linker.validate_model_subtype(model_subtype_name, model_name, map_id=map_id):
+    def add_models(self, model_game_type: tp.Type[MapModel], model_name):
+        map_stem = self.map_choice_stem
+        _, model_subtype_name = model_game_type.get_msb_entry_type_subtype()
+        if self.linker.validate_model_subtype(model_game_type, model_name, map_stem=map_stem):
             result = self.CustomDialog(
                 title=f"Add {model_subtype_name} Model",
                 message=f"Add {model_subtype_name} model {model_name} to map?",
@@ -915,7 +915,7 @@ class MapsEditor(BaseFieldEditor):
                 cancel_output=1,
             )
             if result == 0:
-                self.get_selected_msb().models.new(entry_subtype=model_subtype_name, name=model_name)
+                self.get_selected_msb().new_model(model_subtype_name, name=model_name, map_stem=map_stem)
                 return True
         else:
             self.CustomDialog(
@@ -961,13 +961,13 @@ class MapsEditor(BaseFieldEditor):
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
             if draw_parent_name:
-                map_prefix = self.map_choice_id[:6]  # e.g. "m10_02"
+                map_prefix = self.map_choice_stem[:6]  # e.g. "m10_02"
                 display_group_ints = self.linker.get_game_value(f"{map_prefix}_display_groups")
                 display_groups = int_group_to_bit_set(display_group_ints, assert_size=4)  # TODO: Other game sizes.
                 if not display_groups:
                     self.CustomDialog(
                         title="No Collision Found",
-                        message=f"No display groups in {self.map_choice_id} are currently active.\n"
+                        message=f"No display groups in {self.map_choice_stem} are currently active.\n"
                                 f"Are you sure the player is currently standing in this map? (No changes made.)",
                     )
                     return
