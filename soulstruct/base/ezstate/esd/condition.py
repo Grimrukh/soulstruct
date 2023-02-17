@@ -18,7 +18,7 @@ except AttributeError:
 
 
 @dataclass(slots=True)
-class ConditionStruct(NewBinaryStruct):
+class ConditionStruct(BinaryStruct):
     next_state_offset: varint  # offset to the actual `State` header (where `index` is conveniently first)
     pass_commands_offset: varint
     pass_commands_count: varint

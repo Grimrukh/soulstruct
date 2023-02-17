@@ -18,7 +18,7 @@ except AttributeError:
 
 
 @dataclass(slots=True)
-class CommandStruct(NewBinaryStruct):
+class CommandStruct(BinaryStruct):
     bank: int
     index: int
     args_offset: varint
@@ -26,7 +26,7 @@ class CommandStruct(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class CommandArgsStruct(NewBinaryStruct):
+class CommandArgsStruct(BinaryStruct):
     arg_ezl_offset: varint
     arg_ezl_size: varint
 

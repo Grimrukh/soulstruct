@@ -7,13 +7,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def int_group_to_bit_set(flag_group, assert_size=None):
-    """Get draw or display group 128-bit field <a, b, c, ...> where a, b, c, ... are the little-endian bit
-    zero-based indices of the draw groups bit field (which is unpacked/packed internally as four 32-bit integers).
+    """Get draw or display group 128/256-bit field <a, b, c, ...> where a, b, c, ... are the little-endian bit
+    zero-based indices of the draw groups bit field (which is unpacked/packed internally as 4/8 32-bit integers).
 
     So draw groups `[0b01001..110, 0b0, 0b000...001, 0b100...000]` would return `{1, 4, 29, 30, 95, 96}`.
     """
     if not isinstance(flag_group, (list, tuple)) or (assert_size and len(flag_group) != assert_size):
-        raise ValueError("Flag group must be a sequence of four integers.")
+        raise ValueError(f"Flag group must be a sequence of {assert_size} integers.")
     return set([32 * i + j for i in range(4) for j in range(32) if (2 ** j) & flag_group[i]])
 
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-__all__ = ["MSB"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *
-from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSubtypeInfo, MSBEntryList
+from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSubtypeInfo, MSBSupertype, MSBEntryList
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.binary import *
 
@@ -20,14 +20,14 @@ from .parts import *
 
 
 @dataclass(slots=True)
-class MSBEntrySuperlistHeader(NewBinaryStruct):
+class MSBEntrySuperlistHeader(BinaryStruct):
     _pad1: bytes = field(init=False, **BinaryPad(4))
     name_offset: int
     entry_offset_count: int
 
 
 MSB_ENTRY_SUBTYPES = {
-    "MODEL_PARAM_ST": {
+    MSBSupertype.MODELS: {
         "MapPiece": MSBSubtypeInfo(MSBModelSubtype.MapPiece, MSBMapPieceModel, "map_piece_models"),
         "Object": MSBSubtypeInfo(MSBModelSubtype.Object, MSBObjectModel, "object_models"),
         "Character": MSBSubtypeInfo(MSBModelSubtype.Character, MSBCharacterModel, "character_models"),
@@ -35,7 +35,7 @@ MSB_ENTRY_SUBTYPES = {
         "Collision": MSBSubtypeInfo(MSBModelSubtype.Collision, MSBCollisionModel, "collision_models"),
         "Navmesh": MSBSubtypeInfo(MSBModelSubtype.Navmesh, MSBNavmeshModel, "navmesh_models"),
     },
-    "EVENT_PARAM_ST": {
+    MSBSupertype.EVENTS: {
         "Light": MSBSubtypeInfo(MSBEventSubtype.Light, MSBLightEvent, "lights"),
         "Sound": MSBSubtypeInfo(MSBEventSubtype.Sound, MSBSoundEvent, "sounds"),
         "VFX": MSBSubtypeInfo(MSBEventSubtype.VFX, MSBVFXEvent, "vfx"),
@@ -50,7 +50,7 @@ MSB_ENTRY_SUBTYPES = {
         "Environment": MSBSubtypeInfo(MSBEventSubtype.Environment, MSBEnvironmentEvent, "environments"),
         "NPCInvasion": MSBSubtypeInfo(MSBEventSubtype.NPCInvasion, MSBNPCInvasionEvent, "npc_invasions"),
     },
-    "POINT_PARAM_ST": {
+    MSBSupertype.REGIONS: {
         "Point": MSBSubtypeInfo(MSBRegionSubtype.Point, MSBRegionPoint, "points"),
         "Circle": MSBSubtypeInfo(MSBRegionSubtype.Circle, MSBRegionCircle, "circles"),
         "Sphere": MSBSubtypeInfo(MSBRegionSubtype.Sphere, MSBRegionSphere, "spheres"),
@@ -58,7 +58,7 @@ MSB_ENTRY_SUBTYPES = {
         "Rect": MSBSubtypeInfo(MSBRegionSubtype.Rect, MSBRegionRect, "rects"),
         "Box": MSBSubtypeInfo(MSBRegionSubtype.Box, MSBRegionBox, "boxes"),
     },
-    "PARTS_PARAM_ST": {
+    MSBSupertype.PARTS: {
         "MapPiece": MSBSubtypeInfo(MSBPartSubtype.MapPiece, MSBMapPiece, "map_pieces"),
         "Object": MSBSubtypeInfo(MSBPartSubtype.Object, MSBObject, "objects"),
         "Character": MSBSubtypeInfo(MSBPartSubtype.Character, MSBCharacter, "characters"),
@@ -83,13 +83,13 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
 
 @dataclass(slots=True)
 class MSB(_BaseMSB):
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]] = MSBEntrySuperlistHeader
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
-        "MODEL_PARAM_ST": 4,
-        "EVENT_PARAM_ST": 8,
-        "POINT_PARAM_ST": 12,
-        "PARTS_PARAM_ST": 4,
+        MSBSupertype.MODELS: 4,
+        MSBSupertype.EVENTS: 8,
+        MSBSupertype.REGIONS: 12,
+        MSBSupertype.PARTS: 4,
     }
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]] = {
         "map_pieces": MapPiece,

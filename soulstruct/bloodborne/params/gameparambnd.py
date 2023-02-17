@@ -18,6 +18,7 @@ from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBN
 from soulstruct.base.params.param import Param
 from soulstruct.utilities.misc import BiDict
 
+from . import paramdef
 from .paramdef import *
 
 if tp.TYPE_CHECKING:
@@ -26,6 +27,8 @@ if tp.TYPE_CHECKING:
 
 @dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
+
+    PARAMDEF_MODULE: tp.ClassVar = paramdef
 
     PARAM_NICKNAMES: tp.ClassVar = BiDict(
         ("ActionButtonParam", "ActionButtons"),

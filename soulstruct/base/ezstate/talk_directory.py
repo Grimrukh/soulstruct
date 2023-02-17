@@ -45,7 +45,7 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
 
             if file_path.is_dir() and file_path.stem in all_map_stems:

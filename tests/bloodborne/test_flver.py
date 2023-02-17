@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 from soulstruct.base.models.flver import FLVER
-from soulstruct.utilities.maths import Vector3, Matrix3
 
 
 def draw_skeleton(flver: FLVER):
@@ -24,7 +23,7 @@ def draw_skeleton(flver: FLVER):
 
 
 def test():
-    f = FLVER("c2800.flver")
+    f = FLVER.from_path("resources/c2800.flver")
     draw_skeleton(f)
 
 

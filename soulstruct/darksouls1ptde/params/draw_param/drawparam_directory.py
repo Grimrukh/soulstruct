@@ -86,7 +86,7 @@ class DrawParamDirectory(GameFileDirectory, abc.ABC):
         all_bnd_stems = cls.get_all_file_stems()
 
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension

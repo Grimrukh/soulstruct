@@ -6,6 +6,13 @@ from soulstruct.bloodborne.maps import MSB
 
 class MSBTest(unittest.TestCase):
 
+    def setUp(self) -> None:
+        for file in ("_test.msb.dcx", "_test_msb.json"):
+            try:
+                os.remove(file)
+            except FileNotFoundError:
+                pass
+
     def test_rewrite(self):
         """Test:
 
@@ -15,7 +22,7 @@ class MSBTest(unittest.TestCase):
         - Re-opening that new MSB.
         - Comparing every entry field.
         """
-        msb = MSB.from_path("m21_00_00_00.msb.dcx")
+        msb = MSB.from_path("resources/m21_00_00_00.msb.dcx")
         source_chr = msb.characters.find_entry_name("c5400_0000")
         msb.characters.duplicate(
             source_chr, name="c5400_0000_COPY", entity_id=2100999, translate=(1.0, 2.0, 3.0)
@@ -36,7 +43,7 @@ class MSBTest(unittest.TestCase):
                 self.assertEqual(entry, test_entry)
 
     def test_json(self):
-        msb = MSB.from_path("m21_00_00_00.msb.dcx")
+        msb = MSB.from_path("resources/m21_00_00_00.msb.dcx")
 
         msb.write_json("_test_msb.json")
         msb_reload = MSB.from_json("_test_msb.json")
@@ -47,14 +54,11 @@ class MSBTest(unittest.TestCase):
             self.assertEqual(len(source_entries), len(test_entries))
             for i, entry in enumerate(msb[subtype]):
                 test_entry = test_entries[i]
-                self.assertEqual(entry, test_entry)
-
-    def tearDown(self) -> None:
-        for file in ("_test.msb.dcx", "_test_msb.json"):
-            try:
-                os.remove(file)
-            except FileNotFoundError:
-                pass
+                # self.assertEqual(entry, test_entry)
+                for field_name in test_entry.get_field_names():
+                    test_field = getattr(test_entry, field_name)
+                    source_field = getattr(entry, field_name)
+                    self.assertEqual(source_field, test_field)
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class NPC_THINK_PARAM_ST(ParamRow):
     LogicID: int = ParamField(
-        int, "logicId", game_type=LogicAIScript, default=-1,
+        int, "logicId", game_type=LogicAIScript, default=10000,
         tooltip="ID of logic (non-battle) Lua script.",
     )
     BattleID: int = ParamField(

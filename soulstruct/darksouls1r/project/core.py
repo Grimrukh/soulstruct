@@ -55,7 +55,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
             if data_type == "maps" and first_time and self.maps is not None:
                 archives_msb = self.maps.DukesArchives
                 repeats = archives_msb.get_repeated_entity_ids()
-                if {e.get_entity_id() for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
+                if {e.get_entity_id() for e in repeats["POINT_PARAM_ST"]} == {1702745, 1702746, 1702747, 1702748}:
                     if self.offer_fix_broken_regions(with_window):
                         self.save("maps")
                 if self.offer_translate_entities(with_window=with_window):
@@ -100,8 +100,8 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         if result == 0:
             archives_msb = self.maps.DukesArchives
             repeats = archives_msb.get_repeated_entity_ids()  # re-checking just in case
-            if {e.get_entity_id() for e in repeats["Regions"]} == {1702745, 1702746, 1702747, 1702748}:
-                for entry in repeats["Regions"]:
+            if {e.get_entity_id() for e in repeats["POINT_PARAM_ST"]} == {1702745, 1702746, 1702747, 1702748}:
+                for entry in repeats["POINT_PARAM_ST"]:
                     archives_msb.remove_entry(entry)
             return True
         else:
@@ -129,7 +129,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
                 ).lower() == "n"
             ) else 0
         if result == 0:
-            for msb in self.maps.msbs.values():
+            for msb in self.maps.files.values():
                 msb.translate_entity_id_names()
             return True
         else:
@@ -190,8 +190,8 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
                     common_entities_path.write_text(vanilla_common_entities)
                     # `EventDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
 
-            for map_name, msb in self.maps.msbs.items():
-                game_map = self.maps.GET_MAP(map_name)
+            for map_stem, msb in self.maps.files.items():
+                game_map = self.maps.GET_MAP(map_stem)
 
                 if write_vanilla_entities_result == 0:
                     try:

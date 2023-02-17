@@ -26,7 +26,7 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     """
 
     FILE_CLASS: tp.ClassVar = MSB
-    ALL_MAPS: tp.ClassVar = ALL_MAPS
+    ALL_MAPS: tp.ClassVar = tuple(m for m in ALL_MAPS if m.msb_file_stem)
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
     Common = map_property(COMMON)  # type: MSB

@@ -99,17 +99,17 @@ __all__ = [
 
 import copy
 import shutil
-import struct
 import types
 import typing as tp
+from dataclasses import dataclass, field
 from itertools import product
 from pathlib import Path
 
 from soulstruct.exceptions import SoulstructError
 from soulstruct.base.game_file import GameFile
 from soulstruct.darksouls1ptde.maps.msb import MSB as PTDE_MSB
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
-from soulstruct.utilities.maths import Vector3, Matrix3
+from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector3, Matrix3, resolve_rotation
 
 from .msb import MSB
 from .parts import MSBNavmesh
@@ -127,73 +127,68 @@ class ExistingConnectionError(NavInfoError):
     """Tried to connect two MCG nodes or MCP AABBs that are already connected."""
 
 
-class NavmeshAABB(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("__map_id", "4b"),  # always just the current map; also, parts are reversed, so m12_01_00_00 has [0, 0, 1, 12]
-        ("__index", "i"),  # always identical to actual index in `MCP` file
-        ("__connected_aabbs_count", "i"),
-        ("__connected_aabbs_offset", "i"),
-        ("aabb_start", "3f"),
-        ("aabb_end", "3f"),
-    )
-
-    map_id: tuple[int, int, int, int]
+@dataclass(slots=True)
+class NavmeshAABBStruct(BinaryStruct):
+    map_id: list[int] = field(**BinaryArray(4, byte))  # (DD, CC, BB, AA) reversed format
+    _index: int  # just index in `MCP` file
+    connected_aabbs_count: int
+    connected_aabbs_offset: int
     aabb_start: Vector3
     aabb_end: Vector3
-    _connected_navmesh_indices: list[int, ...]
-    connected_aabbs: list[NavmeshAABB, ...]
 
-    def __init__(self, reader: BinaryReader = None, /, **kwargs):
-        """Simple AABB (axis-aligned bounding box) around a navmesh (indexed directly from MSB), with a list of other
-        `NavmeshAABB` instances (indexed) that this one connects to.
 
-        `NavmeshAABB`s are also indexed by `GateEdge`s in MCG files, which connect `Gate` nodes that generally lie close
-        to transitions between navmeshes.
+@dataclass(slots=True)
+class NavmeshAABB:
+    """Simple AABB (axis-aligned bounding box) around a navmesh (indexed directly from MSB), with a list of other
+    `NavmeshAABB` instances (indexed) that this one connects to.
 
-        More importantly, I believe that the navmesh distances used for backread purposes use simple raycasts into
-        these AABB volumes.
-        """
-        self.map_id = (-1, -1, -1, -1)
-        self.aabb_start = Vector3(0, 0, 0)
-        self.aabb_end = Vector3(1, 1, 1)
-        self.connected_aabbs = []  # constructed by `MCP` from indices below
-        self._connected_navmesh_indices = []
-        super().__init__(reader, **kwargs)
+    `NavmeshAABB`s are also indexed by `GateEdge`s in MCG files, which connect `Gate` nodes that generally lie close
+    to transitions between navmeshes.
 
-    def unpack(self, reader: BinaryReader):
+    More importantly, I believe that the navmesh distances used for backread purposes use simple raycasts into
+    these AABB volumes.
+    """
+
+    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)
+    aabb_start: Vector3 = field(default_factory=Vector3.zero)
+    aabb_end: Vector3 = field(default_factory=Vector3.zero)
+    connected_aabbs: list[NavmeshAABB] = field(default_factory=list)
+
+    _connected_navmesh_indices: list[int] | None = None
+
+    @classmethod
+    def from_mcp_reader(cls, reader: BinaryReader):
         """`connected_navmeshes` is constructed by calling `MCP`."""
-        room = reader.unpack_struct(self.STRUCT)
-        map_id = room.pop("__map_id")  # reversed
-        self.map_id = (map_id[3], map_id[2], map_id[1], map_id[0])
-        self._connected_navmesh_indices = []
-        with reader.temp_offset(room.pop("__connected_aabbs_offset")):
-            for _ in range(room.pop("__connected_aabbs_count")):
-                self._connected_navmesh_indices.append(reader.unpack_value("<i"))
+        aabb = NavmeshAABBStruct.from_bytes(reader)
 
-        self.set(**room)
+        _reversed_map_id = aabb.pop("map_id")
+        map_id = (_reversed_map_id[3], _reversed_map_id[2], _reversed_map_id[1], _reversed_map_id[0])
+        with reader.temp_offset(aabb.pop("connected_aabbs_offset")):
+            _connected_navmesh_indices = list(reader.unpack(f"{aabb.pop('connected_aabbs_count')}i"))
 
-    def set_connected_aabbs(self, aabbs: list[NavmeshAABB, ...]):
+        return cls(map_id, aabb.aabb_start, aabb.aabb_end, _connected_navmesh_indices=_connected_navmesh_indices)
+
+    def set_connected_aabbs(self, aabbs: list[NavmeshAABB]):
         self.connected_aabbs = [aabbs[i] for i in self._connected_navmesh_indices]
-        self._connected_navmesh_indices = []
+        self._connected_navmesh_indices = None
 
-    def pack(self, aabb_index: int, connected_aabbs_offset: int):
+    def to_mcp_writer(self, writer: BinaryWriter, aabb_index: int, connected_aabbs_offset: int):
         """Packs the `NavmeshAABB` header definition.
 
         Connected AABBs are packed further into `MCP` and the starting offset passed to this.
         """
-        return self.STRUCT.pack(
-            __map_id=list(reversed(self.map_id)),
-            __index=aabb_index,
-            __connected_aabbs_count=len(self.connected_aabbs),
-            __connected_aabbs_offset=connected_aabbs_offset,
-            aabb_start=list(self.aabb_start),
-            aabb_end=list(self.aabb_end),
-        )
+        return NavmeshAABBStruct(
+            map_id=list(reversed(self.map_id)),
+            _index=aabb_index,
+            connected_aabbs_count=len(self.connected_aabbs),
+            connected_aabbs_offset=connected_aabbs_offset,
+            aabb_start=self.aabb_start,
+            aabb_end=self.aabb_end,
+        ).to_writer(writer)
 
-    def pack_connected_navmesh_indices(self, navmesh_aabbs: list[NavmeshAABB, ...]) -> bytes:
-        self._connected_navmesh_indices = [navmesh_aabbs.index(aabb) for aabb in self.connected_aabbs]
-        return struct.pack(f"<{len(self._connected_navmesh_indices)}i", *self._connected_navmesh_indices)
+    def pack_connected_navmesh_indices(self, writer: BinaryWriter, navmesh_aabbs: list[NavmeshAABB]):
+        connected_navmesh_indices = [navmesh_aabbs.index(aabb) for aabb in self.connected_aabbs]
+        writer.pack(f"{len(connected_navmesh_indices)}i", *connected_navmesh_indices)
 
     def add_translate(self, translate: tp.Union[Vector3, list, tuple]):
         """Add `translate` to AABB start and end."""
@@ -213,12 +208,7 @@ class NavmeshAABB(BinaryObject):
         If `enclose_original=True` (default), the size of the rotated AABB will be modified to fully enclose what the
         original AABB would have looked like if it were properly rotated (as the AABB is aligned to the world axes).
         """
-        if isinstance(rotation, (int, float)):
-            rotation = Matrix3.from_euler_angles(0.0, rotation, 0.0, radians=radians)
-        elif isinstance(rotation, (Vector3, list, tuple)):
-            rotation = Matrix3.from_euler_angles(rotation, radians=radians)
-        elif not isinstance(rotation, Matrix3):
-            raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
+        rotation = resolve_rotation(rotation, radians=radians)
         pivot_point = Vector3(*pivot_point)
 
         if enclose_original:
@@ -290,53 +280,46 @@ class NavmeshAABB(BinaryObject):
             plt.show()
 
 
+@dataclass(slots=True)
 class MCP(GameFile):
+    """Straightforward file containing AABB volumes for navmeshes in the MSB.
 
-    HEADER_STRUCT = BinaryStruct(
-        ("__two", "i", 2),  # 0x2000000 for Demon's Souls (big endian)
-        ("__unknown", "i", 4228561),  # for DSR at least
-        ("__aabbs_count", "i"),
-        ("__aabbs_offset", "i"),
-    )
+    The number of AABBs must exactly match the number of `MSBNavmesh` entries in the corresponding MSB. Each one
+    also lists indices of connected navmeshes (referenced here directly as other `NavmeshAABB` instances for
+    convenience) for backread purposes.
+    """
 
-    aabbs: list[NavmeshAABB, ...]
+    @dataclass(slots=True)
+    class MCPHeader(BinaryStruct):
+        two: int = field(init=False, **Binary(asserted=2))  # 0x2000000 for Demon's Souls (big endian)
+        unknown: int = field(init=False, **Binary(asserted=4228561))  # for DSR at least
+        aabbs_count: int
+        aabbs_offset: int
 
-    def __init__(self, mcp_source=None, dcx_type=None):
-        """Straightforward file containing AABB volumes for navmeshes in the MSB.
+    aabbs: list[NavmeshAABB] = field(default_factory=list)
 
-        The number of AABBs must exactly match the number of `MSBNavmesh` entries in the corresponding MSB. Each one
-        also lists indices of connected navmeshes (referenced here directly as other `NavmeshAABB` instances for
-        convenience) for backread purposes.
-        """
-        self.aabbs = []
-        super().__init__(mcp_source, dcx_type)
-
-    def unpack(self, reader: BinaryReader, **kwargs):
-        header = reader.unpack_struct(self.HEADER_STRUCT)
-        reader.seek(header.pop("__aabbs_offset"))
-        self.aabbs = [NavmeshAABB(reader) for _ in range(header.pop("__aabbs_count"))]
-        for aabb in self.aabbs:
+    @classmethod
+    def from_reader(cls, reader: BinaryReader):
+        header = cls.MCPHeader.from_bytes(reader)
+        reader.seek(header.pop("aabbs_offset"))
+        aabbs = [NavmeshAABB.from_mcp_reader(reader) for _ in range(header.pop("aabbs_count"))]
+        for aabb in aabbs:
             # Resolve indices into `NavmeshAABB` instances.
-            aabb.set_connected_aabbs(self.aabbs)
+            aabb.set_connected_aabbs(aabbs)
 
-    def pack(self) -> bytes:
-        offset = self.HEADER_STRUCT.size
-        connected_navmesh_indices_offsets = []
-        all_packed_connected_navmesh_indices = b""
+    def to_writer(self) -> BinaryWriter:
+        writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
+        self.MCPHeader(aabbs_count=len(self.aabbs), aabbs_offset=RESERVED).to_writer(writer, self)
+        
+        connected_navmesh_indices_offsets = []  # needed below
         for aabb in self.aabbs:
-            connected_navmesh_indices_offsets.append(offset)
-            packed_connected_navmesh_indices = aabb.pack_connected_navmesh_indices(self.aabbs)
-            all_packed_connected_navmesh_indices += packed_connected_navmesh_indices
-            offset += len(packed_connected_navmesh_indices)
+            connected_navmesh_indices_offsets.append(writer.position)
+            aabb.pack_connected_navmesh_indices(writer, self.aabbs)
 
-        packed = self.HEADER_STRUCT.pack(
-            __aabbs_count=len(self.aabbs),
-            __aabbs_offset=offset,
-        )
-        packed += all_packed_connected_navmesh_indices
+        writer.fill_with_position("aabbs_offset", obj=self)
         for i, aabb in enumerate(self.aabbs):
-            packed += aabb.pack(i, connected_navmesh_indices_offsets[i])
-        return packed
+            aabb.to_mcp_writer(writer, i, connected_navmesh_indices_offsets[i])
+        return writer
 
     def __getitem__(self, navmesh_index: int):
         return self.aabbs[navmesh_index]
@@ -345,7 +328,7 @@ class MCP(GameFile):
         return iter(self.aabbs)
 
     def new_aabb(
-        self, map_id, aabb_start, aabb_end, connected_aabbs: list[tp.Union[int, NavmeshAABB], ...]
+        self, map_id, aabb_start, aabb_end, connected_aabbs: list[tp.Union[int, NavmeshAABB]]
     ) -> NavmeshAABB:
         """Add a new `NavmeshAABB` instance to the end of the MCP AABB list, connected to all given AABB instances or
         indices, and return it.
@@ -369,7 +352,8 @@ class MCP(GameFile):
                 f"`source` AABB to duplicate must be an `NavmeshAABB` or index of an existing one, not {type(source)}."
             )
         aabb = source.copy()
-        aabb.set(**kwargs)
+        for field_name, field_value in kwargs.items():
+            setattr(aabb, field_name, field_value)
         self.aabbs.append(aabb)
         return aabb
 
@@ -397,8 +381,8 @@ class MCP(GameFile):
 
     def disconnect_aabbs(
         self,
-        first_group: set[tp.Union[int, NavmeshAABB], ...],
-        second_group: set[tp.Union[int, NavmeshAABB], ...],
+        first_group: set[tp.Union[int, NavmeshAABB]],
+        second_group: set[tp.Union[int, NavmeshAABB]],
     ):
         """Disconnects all AABBBs in `first_group` from all AABBs in `second_group`."""
         if isinstance(first_group, int):
@@ -491,12 +475,7 @@ class MCP(GameFile):
 
         Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to move.
         """
-        if isinstance(rotation, (int, float)):
-            rotation = Matrix3.from_euler_angles(0.0, rotation, 0.0)  # single rotation value interpreted as Y rotation
-        elif isinstance(rotation, (Vector3, list, tuple)):
-            rotation = Matrix3.from_euler_angles(rotation)
-        elif not isinstance(rotation, Matrix3):
-            raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
+        rotation = resolve_rotation(rotation)
         pivot_point = Vector3(*pivot_point)
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
@@ -546,62 +525,62 @@ class MCP(GameFile):
             plt.show()
 
 
-class GateNode(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("__connection_count", "i"),
-        ("translate", "3f"),
-        ("__connected_nodes_offset", "i"),
-        ("__connected_edges_offset", "i"),
-        ("__connected_aabb_index", "i"),
-        ("unknown_offset", "i"),  # large offset (MB range) that mostly (but not always) ascends
-    )
-
+@dataclass(slots=True)
+class GateNodeHeader(BinaryStruct):
+    connection_count: int
     translate: Vector3
-    _connected_aabb_index: int
-    connected_aabb: tp.Optional[NavmeshAABB]
+    connected_nodes_offset: int
+    connected_edges_offset: int
+    connected_aabb_index: int
     unknown_offset: int
-    _connected_node_indices: list[int, ...]
-    connected_nodes: list[GateNode, ...]
-    _connected_edge_indices: list[int, ...]
-    connected_edges: list[GateEdge, ...]
 
-    def __init__(self, reader: BinaryReader = None, /, **kwargs):
-        self._connected_aabb_index = -1
-        self._connected_node_indices = []  # type: list[int, ...]
-        self._connected_edge_indices = []  # type: list[int, ...]
-        self.connected_aabb = None
-        self.connected_nodes = []  # constructed by `MCG`
-        self.connected_edges = []  # edges connect to `connected_nodes` with the same index
-        super().__init__(reader, **kwargs)
 
-    def unpack(self, reader: BinaryReader):
-        node = reader.unpack_struct(self.STRUCT)
-        connection_count = node.pop("__connection_count")
+@dataclass(slots=True)
+class GateNode:
 
-        self._connected_node_indices = []
-        with reader.temp_offset(node.pop("__connected_nodes_offset")):
-            for _ in range(connection_count):
-                self._connected_node_indices.append(reader.unpack_value("<i"))
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    unknown_offset: int = 0
+    connected_aabb: NavmeshAABB | None = None
+    connected_nodes: list[GateNode] = field(default_factory=list)
+    connected_edges: list[GateEdge] = field(default_factory=list)
 
-        self._connected_edge_indices = []
-        with reader.temp_offset(node.pop("__connected_edges_offset")):
-            for _ in range(connection_count):
-                self._connected_edge_indices.append(reader.unpack_value("<i"))
+    # Temporary indices.
+    _connected_aabb_index: int | None = None
+    _connected_node_indices: list[int] | None = None
+    _connected_edge_indices: list[int] | None = None
 
-        self._connected_aabb_index = node.pop("__connected_aabb_index")
+    @classmethod
+    def from_mcg_reader(cls, reader: BinaryReader) -> GateNode:
+        header = GateNodeHeader.from_bytes(reader)
 
-        self.set(**node)
+        with reader.temp_offset(header.connected_nodes_offset):
+            _connected_node_indices = list(reader.unpack(f"{header.connection_count}i"))
+
+        with reader.temp_offset(header.connected_edges_offset):
+            _connected_edge_indices = list(reader.unpack(f"{header.connection_count}i"))
+
+        return cls(
+            header.translate,
+            header.unknown_offset,
+            _connected_aabb_index=header.connected_aabb_index,
+            _connected_node_indices=_connected_node_indices,
+            _connected_edge_indices=_connected_edge_indices,
+        )
 
     def set_connected_aabb_nodes_edges(
-        self, aabbs: list[NavmeshAABB], gate_nodes: list[GateNode, ...], gate_edges: list[GateEdge, ...]
+        self, aabbs: list[NavmeshAABB], gate_nodes: list[GateNode], gate_edges: list[GateEdge]
     ):
-        if self._connected_aabb_index != -1:
+        if self._connected_aabb_index == -1:
+            self.connected_aabb = None  # being explicit
+        elif self._connected_aabb_index > -1:
             self.connected_aabb = aabbs[self._connected_aabb_index]
+
         self.connected_nodes = [gate_nodes[i] for i in self._connected_node_indices]
         self.connected_edges = [gate_edges[i] for i in self._connected_edge_indices]
-        self._connected_node_indices = []
-        self._connected_edge_indices = []
+
+        self._connected_aabb_index = None
+        self._connected_node_indices = None
+        self._connected_edge_indices = None
 
     def validate_connections(self):
         """Checks that connected node count and connected edge count are identical.
@@ -613,26 +592,38 @@ class GateNode(BinaryObject):
                 f"Number of connected nodes ({node_count}) does not match number of connected edges ({edge_count})."
             )
 
-    def pack(self, connected_nodes_offset: int, connected_edges_offset: int, aabbs: list[NavmeshAABB]):
+    def set_connected_aabb_index(self, aabbs: list[NavmeshAABB]):
+        self._connected_aabb_index = aabbs.index(self.connected_aabb) if self.connected_aabb else -1
+
+    def has_connected_aabb_index(self) -> bool:
+        """For checking at start of MCG write if indices have been set."""
+        return self._connected_aabb_index is not None
+
+    def to_mcg_writer(self, writer: BinaryWriter, connected_nodes_offset: int, connected_edges_offset: int):
+        """The offsets passed in are written earlier in the file, and are already known."""
+        if self._connected_aabb_index is None:
+            raise ValueError("Must call `MCG.set_indices(aabbs)` just before writing it.")
         self.validate_connections()
-        return self.STRUCT.pack(
-            __connection_count=len(self.connected_nodes),
-            translate=list(self.translate),
-            __connected_nodes_offset=connected_nodes_offset,
-            __connected_edges_offset=connected_edges_offset,
-            __connected_aabb_index=aabbs.index(self.connected_aabb) if self.connected_aabb else -1,
+
+        GateNodeHeader(
+            connection_count=len(self.connected_nodes),
+            translate=self.translate,
+            connected_nodes_offset=connected_nodes_offset,
+            connected_edges_offset=connected_edges_offset,
+            connected_aabb_index=self._connected_aabb_index,
             unknown_offset=self.unknown_offset,
-        )
+        ).to_writer(writer)
+        self._connected_aabb_index = None  # consumed
 
-    def pack_connected_node_indices(self, mcg_nodes: list[GateNode, ...]) -> bytes:
-        self._connected_node_indices = [mcg_nodes.index(node) for node in self.connected_nodes]
-        node_count = len(self._connected_node_indices)
-        return struct.pack(f"<{node_count}i", *self._connected_node_indices)
+    def pack_connected_node_indices(self, writer: BinaryWriter, mcg_nodes: list[GateNode]):
+        writer.fill_with_position("connected_nodes_offset", obj=self)
+        _connected_node_indices = [mcg_nodes.index(node) for node in self.connected_nodes]
+        writer.pack(f"<{len(_connected_node_indices)}i", *_connected_node_indices)
 
-    def pack_connected_edge_indices(self, mcg_edges: list[GateEdge, ...]):
-        self._connected_edge_indices = [mcg_edges.index(edge) for edge in self.connected_edges]
-        edge_count = len(self._connected_edge_indices)
-        return struct.pack(f"<{edge_count}i", *self._connected_edge_indices)
+    def pack_connected_edge_indices(self, writer: BinaryWriter, mcg_edges: list[GateEdge]):
+        writer.fill_with_position("connected_edges_offset", obj=self)
+        _connected_edge_indices = [mcg_edges.index(edge) for edge in self.connected_edges]
+        writer.pack(f"<{len(_connected_edge_indices)}i", *_connected_edge_indices)
 
     def add_connection(self, other_node: GateNode, edge: GateEdge):
         """Add a connection to `other_node` via `edge`.
@@ -701,7 +692,8 @@ class GateNode(BinaryObject):
         )
 
 
-class GateEdge(BinaryObject):
+@dataclass(slots=True)
+class GateEdge:
     """Edge between two `GateNode` instances in an `MCG` file.
 
     Note that these objects in the `MCG` file reference indices of `NavmeshAABB` instances in the `MCP` file.
@@ -714,193 +706,175 @@ class GateEdge(BinaryObject):
     suspects these are weights, for AI computations presumably.
     """
 
-    STRUCT = BinaryStruct(
-        ("_start_node_index", "i"),
-        ("__unk1_count", "i"),  # unknown indices; likely related to use of start node
-        ("__unk1_offset", "i"),
-        ("_end_node_index", "i"),
-        ("__unk2_count", "i"),  # unknown indices; likely related to use of end node
-        ("__unk2_offset", "i"),
-        ("_aabb_index", "i"),
-        ("map_id", "4b"),
-        ("cost", "f"),  # for AI navigation, presumably
-    )
+    @dataclass(slots=True)
+    class GateEdgeHeader(BinaryStruct):
+        _start_node_index: int
+        unk1_count: int  # unknown indices; likely related to use of start node
+        unk1_offset: int
+        _end_node_index: int
+        unk2_count: int  # unknown indices; likely related to use of end node
+        unk2_offset: int
+        _aabb_index: int
+        map_id: list[byte] = field(**BinaryArray(4))  # TODO: Is this also reversed?
+        cost: float  # for AI navigation, presumably
 
-    _start_node_index: tp.Optional[int]
-    start_node: tp.Optional[GateNode]
-    _end_node_index: tp.Optional[int]
-    end_node: tp.Optional[GateNode]
-    _aabb_index: tp.Optional[int]
-    aabb: tp.Optional[NavmeshAABB]
-    map_id: tuple[int, int, int, int]
-    cost: float
+    start_node: GateNode | None = None
+    end_node: GateNode | None = None
+    aabb: NavmeshAABB | None = None
+    unk1_indices: list[int] = field(default_factory=list)
+    unk2_indices: list[int] = field(default_factory=list)
+    map_id: tuple[int, int, int, int] = (-1, -1, -1, -1)
+    cost: float = 0.0
 
-    unk1_indices: list[int, ...]
-    unk2_indices: list[int, ...]
+    _start_node_index: int | None = None
+    _end_node_index: int | None = None
+    _aabb_index: int | None = None  # from `MCP`; set again just before `MCG` write
 
-    DEFAULTS = {
-        "_start_node_index": None,
-        "_end_node_index": None,
-        "_aabb_index": None,
-        "map_id": (-1, -1, -1, -1),
-    }
+    @classmethod
+    def from_mcg_reader(cls, reader: BinaryReader) -> GateEdge:
+        edge = cls.GateEdgeHeader.from_bytes(reader)
 
-    def __init__(self, reader: BinaryReader = None, /, **kwargs):
-        self.unk1_indices = []
-        self.unk2_indices = []
-        self.cost = 1.0
-        self.start_node = None
-        self.end_node = None
-        self.aabb = None
-        super().__init__(reader, **kwargs)
+        with reader.temp_offset(edge.unk1_offset):
+            unk1_indices = list(reader.unpack(f"{edge.unk1_count}i"))
 
-    def unpack(self, reader: BinaryReader):
-        edge = reader.unpack_struct(self.STRUCT)
+        with reader.temp_offset(edge.unk2_offset):
+            unk2_indices = list(reader.unpack(f"{edge.unk2_count}i"))
 
-        self.unk1_indices = []
-        with reader.temp_offset(edge.pop("__unk1_offset")):
-            for _ in range(edge.pop("__unk1_count")):
-                self.unk1_indices.append(reader.unpack_value("<i"))
+        return edge.to_object(cls, map_id=list(edge.map_id), unk1_indices=unk1_indices, unk2_indices=unk2_indices)
 
-        self.unk2_indices = []
-        with reader.temp_offset(edge.pop("__unk2_offset")):
-            for _ in range(edge.pop("__unk2_count")):
-                self.unk2_indices.append(reader.unpack_value("<i"))
-
-        self.set(**edge)
-
-    def set_aabb_nodes(self, aabbs: list[NavmeshAABB, ...], gate_nodes: list[GateNode, ...]):
+    def set_references(self, aabbs: list[NavmeshAABB], gate_nodes: list[GateNode]):
         self.start_node = gate_nodes[self._start_node_index]
-        self._start_node_index = None  # resolved
+        self._start_node_index = None  # consumed
         self.end_node = gate_nodes[self._end_node_index]
-        self._end_node_index = None  # resolved
+        self._end_node_index = None  # consumed
         self.aabb = aabbs[self._aabb_index]
-        self._aabb_index = None  # resolved
+        self._aabb_index = None  # consumed
 
-    def pack(
+    def set_aabb_index(self, aabbs: list[NavmeshAABB]):
+        self._aabb_index = aabbs.index(self.aabb)
+
+    def to_mcg_writer(
         self,
+        writer: BinaryWriter,
         unk1_offset: int,
         unk2_offset: int,
-        gate_nodes: list[GateNode, ...],
-        aabbs: list[NavmeshAABB, ...],
-    ) -> bytes:
-        return self.STRUCT.pack(
+        gate_nodes: list[GateNode],
+    ):
+        """The offsets passed in are written earlier in the file and are already known."""
+        if self._aabb_index is None:
+            raise ValueError("Must call `MCG.set_indices(aabbs)` before writing it.")
+        self.GateEdgeHeader(
             _start_node_index=gate_nodes.index(self.start_node),
-            __unk1_count=len(self.unk1_indices),
-            __unk1_offset=unk1_offset,
+            unk1_count=len(self.unk1_indices),
+            unk1_offset=unk1_offset,
             _end_node_index=gate_nodes.index(self.end_node),
-            __unk2_count=len(self.unk2_indices),
-            __unk2_offset=unk2_offset,
-            _aabb_index=aabbs.index(self.aabb),
-            map_id=self.map_id,
+            unk2_count=len(self.unk2_indices),
+            unk2_offset=unk2_offset,
+            _aabb_index=self._aabb_index,
+            map_id=list(self.map_id),
             cost=self.cost,
-        )
+        ).to_writer(writer)
+        self._aabb_index = None  # consumed
 
-    def pack_unk1_indices(self):
+    def pack_unk1_indices(self, writer: BinaryWriter):
+        """Happens before header write."""
         index_count = len(self.unk1_indices)
-        return struct.pack(f"<{index_count}i", *self.unk1_indices)
+        return writer.pack(f"{index_count}i", *self.unk1_indices)
 
-    def pack_unk2_indices(self):
+    def pack_unk2_indices(self, writer: BinaryWriter):
+        """Happens before header write."""
         index_count = len(self.unk2_indices)
-        return struct.pack(f"<{index_count}i", *self.unk2_indices)
+        return writer.pack(f"{index_count}i", *self.unk2_indices)
 
     def does_edge_connect_nodes(self, first_node: GateNode, second_node: GateNode) -> bool:
         """Returns `True` if this edge connects the two given nodes in either direction, and `False` if not."""
         return (self.start_node, self.end_node) in {(first_node, second_node), (second_node, first_node)}
 
 
+@dataclass(slots=True)
 class MCG(GameFile):
 
-    HEADER_STRUCT = BinaryStruct(
-        ("one", "i", 1),  # 0x1000000 in Demon's Souls (big endian)
-        ("__unk0", "i"),
-        ("__nodes_count", "i"),
-        ("__nodes_offset", "i"),
-        ("__edges_count", "i"),
-        ("__edges_offset", "i"),
-        ("__unk1", "i"),
-        ("__unk2", "i"),
-    )
+    @dataclass(slots=True)
+    class MCGHeaderStruct(BinaryStruct):
+        one: int = field(init=False, **Binary(asserted=1))  # 0x1000000 in Demon's Souls (big endian)
+        unk0: int
+        nodes_count: int
+        nodes_offset: int
+        edges_count: int
+        edges_offset: int
+        unk1: int
+        unk2: int
 
-    nodes: list[GateNode]
-    edges: list[GateEdge]
-    unknowns: tuple[int, int, int]
+    nodes: list[GateNode] = field(default_factory=list)
+    edges: list[GateEdge] = field(default_factory=list)
+    unknowns: tuple[int, int, int] = (-1, -1, -1)
 
-    def __init__(self, mcg_source=None, dcx_type=None):
-        self.unknowns = (-1, -1, -1)
-        super().__init__(mcg_source, dcx_type=dcx_type)
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> MCG:
+        header = cls.MCGHeaderStruct.from_bytes(reader)
+        unknowns = (header.unk0, header.unk1, header.unk2)
+        reader.seek(header.nodes_offset)
+        nodes = [GateNode.from_mcg_reader(reader) for _ in range(header.nodes_count)]
+        reader.seek(header.edges_offset)
+        edges = [GateEdge.from_mcg_reader(reader) for _ in range(header.edges_count)]
+        return cls(nodes=nodes, edges=edges, unknowns=unknowns)
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        mcg = reader.unpack_struct(self.HEADER_STRUCT)
-        self.unknowns = (mcg["__unk0"], mcg["__unk1"], mcg["__unk2"])
-        reader.seek(mcg["__nodes_offset"])
-        self.nodes = [GateNode(reader) for _ in range(mcg["__nodes_count"])]
-        reader.seek(mcg["__edges_offset"])
-        self.edges = [GateEdge(reader) for _ in range(mcg["__edges_count"])]
-
-    def set_references(self, aabbs: list[NavmeshAABB, ...]):
+    def set_references(self, aabbs: list[NavmeshAABB]):
         for node in self.nodes:
             node.set_connected_aabb_nodes_edges(aabbs, self.nodes, self.edges)
         for edge in self.edges:
-            edge.set_aabb_nodes(aabbs, self.nodes)
+            edge.set_references(aabbs, self.nodes)
 
-    def pack(self, aabbs: list[NavmeshAABB, ...]) -> bytes:
-        offset = self.HEADER_STRUCT.size
+    def set_indices(self, aabbs: list[NavmeshAABB]):
+        """Convert AABB references (from MCP) to indices. Must be called just prior to `write()` or `bytes(mcg)`."""
+        for node in self.nodes:
+            node.set_connected_aabb_index(aabbs)
+        for edge in self.edges:
+            edge.set_aabb_index(aabbs)
+
+    def to_writer(self) -> BinaryWriter:
+
+        if self.nodes and not self.nodes[0].has_connected_aabb_index():
+            raise ValueError("MCG.set_indices(aabbs)` must be called just before writing it.")
+
+        writer = BinaryWriter(byte_order=ByteOrder.LittleEndian)
+        self.MCGHeaderStruct(
+            unk0=self.unknowns[0],
+            nodes_count=len(self.nodes),
+            nodes_offset=RESERVED,
+            edges_count=len(self.edges),
+            edges_offset=RESERVED,
+            unk1=self.unknowns[1],
+            unk2=self.unknowns[2],
+        ).to_writer(writer, self)
+
         edge_unk1_offsets = []
         edge_unk2_offsets = []
-        packed_edge_unk_offsets = b""
         for edge in self.edges:
-            edge_unk1_offsets.append(offset)
-            packed_unk1_indices = edge.pack_unk1_indices()
-            packed_edge_unk_offsets += packed_unk1_indices
-            offset += len(packed_unk1_indices)
-
-            edge_unk2_offsets.append(offset)
-            packed_unk2_indices = edge.pack_unk2_indices()
-            packed_edge_unk_offsets += packed_unk2_indices
-            offset += len(packed_unk2_indices)
+            edge_unk1_offsets.append(writer.position)
+            edge.pack_unk1_indices(writer)
+            edge_unk2_offsets.append(writer.position)
+            edge.pack_unk2_indices(writer)
 
         connected_node_offsets = []
         connected_edge_offsets = []
-        packed_connection_offsets = b""
         for node in self.nodes:
-            connected_node_offsets.append(offset if node.connected_nodes else 0)
-            packed_node_offsets = node.pack_connected_node_indices(self.nodes)
-            packed_connection_offsets += packed_node_offsets
-            offset += len(packed_node_offsets)
+            connected_node_offsets.append(writer.position if node.connected_nodes else 0)
+            node.pack_connected_node_indices(writer, self.nodes)
+            connected_edge_offsets.append(writer.position if node.connected_edges else 0)
+            node.pack_connected_edge_indices(writer, self.edges)
 
-            connected_edge_offsets.append(offset if node.connected_edges else 0)
-            packed_edge_offsets = node.pack_connected_edge_indices(self.edges)
-            packed_connection_offsets += packed_edge_offsets
-            offset += len(packed_edge_offsets)
-
-        edges_offset = offset
-        packed_edges = b""
+        writer.fill_with_position("edges_offset", obj=self)
         for i, edge in enumerate(self.edges):
-            packed_edges += edge.pack(edge_unk1_offsets[i], edge_unk2_offsets[i], self.nodes, aabbs)
+            edge.to_mcg_writer(writer, edge_unk1_offsets[i], edge_unk2_offsets[i], self.nodes)
 
-        offset += len(packed_edges)
-        nodes_offset = offset
-        packed_nodes = b""
+        writer.fill_with_position("nodes_offset", obj=self)
         for i, node in enumerate(self.nodes):
-            packed_nodes += node.pack(connected_node_offsets[i], connected_edge_offsets[i], aabbs)
+            node.to_mcg_writer(writer, connected_node_offsets[i], connected_edge_offsets[i])
 
-        packed = self.HEADER_STRUCT.pack(
-            __unk0=self.unknowns[0],
-            __nodes_count=len(self.nodes),
-            __nodes_offset=nodes_offset,
-            __edges_count=len(self.edges),
-            __edges_offset=edges_offset,
-            __unk1=self.unknowns[1],
-            __unk2=self.unknowns[2],
-        )
-        packed += packed_edge_unk_offsets
-        packed += packed_connection_offsets
-        packed += packed_edges
-        packed += packed_nodes
-        return packed
+        return writer
 
-    def get_edges_in_aabb(self, aabb: NavmeshAABB) -> list[GateEdge, ...]:
+    def get_edges_in_aabb(self, aabb: NavmeshAABB) -> list[GateEdge]:
         """Return a list of all `GateEdge` instances in the given `NavmeshAABB`."""
         return [edge for edge in self.edges if edge.aabb is aabb]
 
@@ -988,7 +962,7 @@ class MCG(GameFile):
     def delete_edge(self, edge: tp.Union[int, GateEdge]):
         """Delete given `edge` from in `MCG` and remove all references to its connection in nodes.
 
-        Currently assumes that no two edges have identical (or reversed) start and end nodes, which should be true.
+        Currently, assumes that no two edges have identical (or reversed) start and end nodes, which should be true.
         """
         if isinstance(edge, int):
             edge = self.edges[edge]
@@ -1102,50 +1076,55 @@ class MCG(GameFile):
             plt.show()
 
 
+@dataclass(slots=True, init=False)
 class NavInfo:
+    """Simple wrapper for both MCP and MCG, which will generally be edited together, as they contain absolute
+    references to one another (and the MSB).
 
-    def __init__(
-        self,
-        map_path: str | Path,
-        msb_source: tp.Union[None, MSB, str, Path] = None,
-        map_id: str = None,
-    ):
-        """Simple wrapper for both MCP and MCG, which will generally be edited together, as they contain absolute
-        references to one another (and the MSB).
+    Loads MSB to validate navmesh AABB indices. Provides useful methods for joint editing/moving of MCP and MCG.
 
-        Loads MSB to validate navmesh AABB indices. Provides useful methods for joint editing/moving of MCP and MCG.
+    Args:
+        map_path (str or Path): Folder containing MCP and MCG files (e.g. '{game_root}/map/m10_01_00_00').
+        msb (MSB or None): MSB instance or file path. If None (default), searched for in adjacent `MapStudio` directory.
+        map_stem (str): map name stem, e.g. 'm10_01_00_00'. Auto-detected from `map_path` directory name by default.
+    """
 
-        Args:
-            map_path (str or Path): Folder containing MCP and MCG files (e.g. '{game_root}/map/m10_01_00_00').
-            msb_source (str, Path, or MSB): MSB instance or file path. If None (default), searched for in standard map
-                directory structure.
-        """
+    map_path: Path  # path to game `map/mAA_BB_CC_DD` directory (NOT `MapStudio`)
+    _msb: MSB  # MSB to pull navmeshes from; read from `MapStudio` adjacent to `map_path` by default
+    map_stem: str  # detected from `map_path` by default
+
+    msb_path: Path
+    mcp: MCP
+    mcg: MCG
+
+    def __init__(self, map_path: Path | str, msb: MSB = None, map_stem: str = None):
         self.map_path = Path(map_path)
         if not self.map_path.is_dir():
-            raise ValueError(f"Map directory does not exist: {str(map_path)}")
-        self.map_id = self.map_path.name if map_id is None else map_id
+            raise ValueError(f"Map directory does not exist: {self.map_path}")
+        self.map_stem = self.map_path.name if map_stem is None else map_stem
 
-        if isinstance(msb_source, (MSB, PTDE_MSB)):
-            self.msb_path = msb_source.path
-            self._msb = msb_source
-        else:
-            if msb_source is None:
-                self.msb_path = (self.map_path / f"../MapStudio/{self.map_id}.msb").resolve()
-            else:
-                self.msb_path = Path(msb_source)
+        if msb is None:
+            self.msb_path = (self.map_path / f"../MapStudio/{self.map_stem}.msb").resolve()
             try:
-                self._msb = MSB(self.msb_path)
+                self._msb = PTDE_MSB.from_path(self.msb_path)
             except FileNotFoundError:
-                raise FileNotFoundError(f"Could not find MSB file: {str(self.msb_path)}")
+                raise FileNotFoundError(f"Could not find MSB file: {self.msb_path}")
+        elif isinstance(msb, PTDE_MSB):
+            if not msb.path:
+                raise ValueError("`MSB` given to `NavInfo` must have `.path` set.")
+            self._msb = msb
+            self.msb_path = msb.path
+        else:
+            raise TypeError(f"`MSB` given to `NavInfo` has invalid type: `{msb.__class__.__name__}`")
 
-        mcp_path = self.map_path / f"{self.map_id}.mcp"
-        mcg_path = self.map_path / f"{self.map_id}.mcg"
+        mcp_path = self.map_path / f"{self.map_stem}.mcp"
+        mcg_path = self.map_path / f"{self.map_stem}.mcg"
         try:
-            self.mcp = MCP(mcp_path)
+            self.mcp = MCP.from_path(mcp_path)
         except FileNotFoundError:
             raise FileNotFoundError(f"Could not find MCP file: {str(mcp_path)}")
         try:
-            self.mcg = MCG(mcg_path)
+            self.mcg = MCG.from_path(mcg_path)
         except FileNotFoundError:
             raise FileNotFoundError(f"Could not find MCG file: {str(mcg_path)}")
         self.mcg.set_references(self.mcp.aabbs)
@@ -1158,7 +1137,7 @@ class NavInfo:
     @property
     def navmeshes(self):
         """Shortcut for getting list of Navmesh instances from MSB parts."""
-        return self._msb.parts.Navmeshes
+        return self._msb.navmeshes
 
     @property
     def aabbs(self):
@@ -1216,7 +1195,7 @@ class NavInfo:
         """
         self.check_navmesh_sync()
         if not isinstance(navmesh, MSBNavmesh):
-            navmesh = self._msb.parts.get_entry_by_name(navmesh)  # type: MSBNavmesh
+            navmesh = self._msb.navmeshes.find_entry_name(navmesh)  # type: MSBNavmesh
         navmesh_index = self.navmeshes.index(navmesh)
         return self.mcp.aabbs[navmesh_index]
 
@@ -1345,8 +1324,8 @@ class NavInfo:
         start_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
         end_rotate: tp.Union[Vector3, list, tuple, int, float] = None,
         enclose_original=True,
-        selected_aabbs: tp.Iterable[tp.Union[int, NavmeshAABB], ...] = None,
-        selected_nodes: tp.Iterable[tp.Union[int, GateNode], ...] = None,
+        selected_aabbs: tp.Iterable[tp.Union[int, NavmeshAABB]] = None,
+        selected_nodes: tp.Iterable[tp.Union[int, GateNode]] = None,
     ):
         """Rotate and then translate all AABBs in MCP (enclosing original AABBs by default) and all nodes in MCG in
         world coordinates, so that an entity with a translate of `start_translate` and rotate of `start_rotate` ends up
@@ -1442,14 +1421,15 @@ class NavInfo:
             plt.show()
         return axes
 
-    def write(self, map_path=None, write_msb=False, msb_path=None):
+    def write(self, map_path: Path | str = None, write_msb=False, msb_path: Path | str = None):
         if map_path is None:
             mcp_path = mcg_path = None  # use original paths
         else:
-            mcp_path = Path(map_path / f"{self.map_id}.mcp")
-            mcg_path = Path(map_path / f"{self.map_id}.mcg")
+            mcp_path = Path(map_path / f"{self.map_stem}.mcp")
+            mcg_path = Path(map_path / f"{self.map_stem}.mcg")
         self.mcp.write(mcp_path)
-        self.mcg.write(mcg_path, aabbs=self.aabbs)
+        self.mcg.set_indices(self.aabbs)
+        self.mcg.write(mcg_path)
         # print(f"# MCP and MCG files written for map {self.map_id}.")
         if write_msb:
             self._msb.write(msb_path)

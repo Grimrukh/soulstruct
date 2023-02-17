@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 
 from soulstruct.base.maps.utilities import MAP_SOURCE_TYPING
-from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB
+from soulstruct.darksouls1ptde.maps.msb import MSB as _PTDE_MSB, MSBSupertype
 
 from .constants import VANILLA_MSB_TRANSLATIONS, get_map
 from .utilities import import_map_piece_flver
@@ -20,9 +20,13 @@ class MSB(_PTDE_MSB):
 
         TODO: Can probably go in PTDE subclass. (Just not sure if there are old PTDE Arena event needing translation.)
         """
+        supertypes = {MSBSupertype.EVENTS, MSBSupertype.REGIONS}
         for subtype_name, game_type in self.ENTITY_GAME_TYPES.items():
             translated_entity_ids = set()  # reset per entry type
-            for entry in self[subtype_name]:
+            entry_list = self[subtype_name]
+            if entry_list.supertype_name not in supertypes:
+                continue  # parts and models do not need translation (already English and unique)
+            for entry in entry_list:
                 if entry.entity_id not in {-1, 0}:
                     if entry.entity_id in translated_entity_ids:
                         _LOGGER.warning(f"Found repeated entity ID while translating: {entry.entity_id}. Ignored.")

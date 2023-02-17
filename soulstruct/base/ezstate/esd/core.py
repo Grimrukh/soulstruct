@@ -30,7 +30,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class ESDExternalHeaderStruct(NewBinaryStruct):
+class ESDExternalHeaderStruct(BinaryStruct):
     """All offsets are relative to the END of this struct.
 
     The only difference between games thus far) is in the actual values of these `size` fields, and the case of the
@@ -38,23 +38,23 @@ class ESDExternalHeaderStruct(NewBinaryStruct):
 
     Unlike the rest of the file, this header always uses 32-bit ints, even for the couple of offset fields it has.
     """
-    signature: bytes = field(**Binary(length=4, asserted=[b"fSSL", b"fsSL"]))
+    signature: bytes = field(**BinaryString(4, asserted=[b"fSSL", b"fsSL"]))
     _one: int = field(**Binary(asserted=1))  # TODO: probably for indicating endianness
     game_version: tuple[int, int] = field(**Binary(asserted=[(1, 1), (2, 2), (3, 3)]))
     _table_size_offset: int = field(**Binary(asserted=84))
     internal_data_size: int  # excludes this header (i.e. EOF minus this header size)
     unk: int = field(**Binary(asserted=6))  # TODO: possibly 'table count'?
-    internal_header_size: int  # post-asserted based on varint_size
+    internal_header_size: int  # post-asserted based on varint size
     internal_header_count: int = field(**Binary(asserted=1))
-    state_machine_header_size: int  # post-asserted based on varint_size
+    state_machine_header_size: int  # post-asserted based on varint size
     state_machine_count: int
-    state_size: int  # post-asserted based on varint_size
+    state_size: int  # post-asserted based on varint size
     state_count: int
-    condition_size: int  # post-asserted based on varint_size
+    condition_size: int  # post-asserted based on varint size
     condition_count: int
-    command_size: int  # post-asserted based on varint_size
+    command_size: int  # post-asserted based on varint size
     command_count: int
-    command_arg_size: int  # post-asserted based on varint_size
+    command_arg_size: int  # post-asserted based on varint size
     command_arg_count: int
     condition_pointers_offset: int
     condition_pointers_count: int
@@ -68,7 +68,7 @@ class ESDExternalHeaderStruct(NewBinaryStruct):
 
 # Fields (table sizes) that vary depending on varint size, which is detected with `signature`.
 EXTERNAL_HEADER_VARINT_ASSERTED = {
-    4: {
+    False: {
         "signature": b"fSSL",
         "internal_header_size": 44,
         "state_machine_header_size": 16,
@@ -77,7 +77,7 @@ EXTERNAL_HEADER_VARINT_ASSERTED = {
         "command_size": 16,
         "command_arg_size": 8,
     },
-    8: {
+    True: {
         "signature": b"fsSL",
         "internal_header_size": 72,
         "state_machine_header_size": 32,
@@ -89,16 +89,16 @@ EXTERNAL_HEADER_VARINT_ASSERTED = {
 }
 
 INTERNAL_HEADER_VARINT_ASSERTED = {
-    4: {"state_machine_headers_offset": 44},
-    8: {"state_machine_headers_offset": 72}
+    False: {"state_machine_headers_offset": 44},
+    True: {"state_machine_headers_offset": 72}
 }
 
 
 @dataclass(slots=True)
-class ESDInternalHeaderStruct(NewBinaryStruct):
+class ESDInternalHeaderStruct(BinaryStruct):
     _one: int = field(**Binary(asserted=1))
     magic: tuple[int, int, int, int]  # TODO: check if this is constant per game
-    _pad1: bytes = field(**BinaryPad(4, skip_callback=lambda varint_size, _: varint_size == 4))
+    _pad1: bytes = field(**BinaryPad(4, should_skip_func=lambda long_varints, _: not long_varints))
     state_machine_headers_offset: varint  # 44 or 72
     state_machine_count: varint  # same as external header
     esd_name_offset: varint  # accurate, unlike external header
@@ -107,7 +107,7 @@ class ESDInternalHeaderStruct(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class StateMachineHeaderStruct(NewBinaryStruct):
+class StateMachineHeaderStruct(BinaryStruct):
     index: varint
     offset: varint
     state_count: varint
@@ -121,7 +121,7 @@ class ESD(GameFile, abc.ABC):
     EXT: tp.ClassVar[str] = ".esd"
     ESD_TYPE: tp.ClassVar[ESDType]
     VERSION: tp.ClassVar[int]
-    VARINT_SIZE: tp.ClassVar[int]
+    LONG_VARINTS: tp.ClassVar[bool]
 
     magic: tuple[int, int, int, int] = ()
     file_tail: bytes = b"\0"  # default for files loaded from ESP, etc.
@@ -178,11 +178,11 @@ class ESD(GameFile, abc.ABC):
         reader.default_byte_order = ByteOrder.LittleEndian
 
         header = ESDExternalHeaderStruct.from_bytes(reader)
-        header.assert_field_values(**EXTERNAL_HEADER_VARINT_ASSERTED[cls.VARINT_SIZE])
+        header.assert_field_values(**EXTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS])
         # Internal offsets start here, so we reset the reader to make these offsets naturally correct.
-        reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, varint_size=cls.VARINT_SIZE)
+        reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, long_varints=cls.LONG_VARINTS)
         internal_header = ESDInternalHeaderStruct.from_bytes(reader)
-        internal_header.assert_field_values(**INTERNAL_HEADER_VARINT_ASSERTED[cls.VARINT_SIZE])
+        internal_header.assert_field_values(**INTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS])
 
         state_machine_header_structs = [
             StateMachineHeaderStruct.from_bytes(reader)
@@ -321,17 +321,17 @@ class ESD(GameFile, abc.ABC):
             esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
             state_machine_count=len(self.state_machines),  # also appears in internal header
             # Other counts reserved.
-            **EXTERNAL_HEADER_VARINT_ASSERTED[self.VARINT_SIZE],
+            **EXTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
         )
 
         # Pack internal header. This is the writer we use throughout, except when filling external header offsets.
         writer = ESDInternalHeaderStruct.object_to_writer(
             self,
             byte_order=ByteOrder.LittleEndian,
-            varint_size=self.VARINT_SIZE,
+            long_varints=self.LONG_VARINTS,
             state_machine_count=len(self.state_machines),  # also appears in external header
             esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
-            **INTERNAL_HEADER_VARINT_ASSERTED[self.VARINT_SIZE],
+            **INTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
         )
 
         for state_machine_index, states in self.state_machines.items():

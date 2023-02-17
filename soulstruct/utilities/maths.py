@@ -16,7 +16,9 @@ __all__ = [
 ]
 
 import abc
+import ast
 import math
+import re
 import typing as tp
 from dataclasses import dataclass
 
@@ -177,6 +179,13 @@ class Vector2(Vector):
         return Vector2(*self._data)
 
     @classmethod
+    def from_repr(cls, repr_string: str) -> Vector2:
+        """For JSON decoding."""
+        if (match := re.match(r"^Vector2(\([\d .,]+\))", repr_string)) is not None:
+            return cls(*ast.literal_eval(match.group(1)))
+        raise ValueError(f"Cannot read `Vector2` string: {repr_string}")
+
+    @classmethod
     def zero(cls):
         return Vector2(0.0, 0.0)
 
@@ -214,6 +223,13 @@ class Vector3(Vector):
     @classmethod
     def from_column_mat(cls, column_mat):
         return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0])
+
+    @classmethod
+    def from_repr(cls, repr_string: str) -> Vector3:
+        """For JSON decoding."""
+        if (match := re.match(r"^Vector3(\([-\d., ]+\))", repr_string)) is not None:
+            return cls(*ast.literal_eval(match.group(1)))
+        raise ValueError(f"Cannot read `Vector3` string: {repr_string}")
 
     def cross(self, other_vector: Vector3) -> Vector3:
         if len(other_vector) != 3:
@@ -323,6 +339,13 @@ class Vector4(Vector):
     @classmethod
     def from_column_mat(cls, column_mat):
         return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0], column_mat[3][0])
+
+    @classmethod
+    def from_repr(cls, repr_string: str) -> Vector4:
+        """For JSON decoding."""
+        if (match := re.match(r"^Vector4(\([\d .,]+\))", repr_string)) is not None:
+            return cls(*ast.literal_eval(match.group(1)))
+        raise ValueError(f"Cannot read `Vector4` string: {repr_string}")
 
     def __neg__(self):
         return Vector4(-self._data[0], -self._data[1], -self._data[2], -self._data[3])

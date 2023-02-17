@@ -174,7 +174,7 @@ class NVM(GameFile):
     event_entities: list[NVMEventEntity] = field(default_factory=list)
 
     @dataclass(slots=True)
-    class NVMHeaderStruct(NewBinaryStruct):
+    class NVMHeaderStruct(BinaryStruct):
         big_endian: int = field(**Binary(asserted=[1, 0x1000000]))  # 1 (LE) or 0x1000000 (BE)
         vertices_count: int
         vertices_offset: int = field(init=False, **Binary(asserted=0x80))  # immediately after this header

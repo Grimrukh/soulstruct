@@ -14,6 +14,7 @@ __all__ = [
 ]
 
 import abc
+import ast
 import logging
 import typing as tp
 from dataclasses import dataclass, field
@@ -73,7 +74,7 @@ PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]
 
 
 @dataclass(slots=True)
-class ParamRow(NewBinaryStruct):
+class ParamRow(BinaryStruct):
     """Base class for `ParamDef`-spawned classes. Instances appear directly in `Param.rows`."""
 
     RawName: bytes = field(default=b"", metadata={"NOT_BINARY": True})
@@ -116,10 +117,13 @@ class ParamRow(NewBinaryStruct):
     def to_dict(
         self, ignore_pads=True, ignore_defaults=True, use_internal_names=False
     ) -> dict[str, PARAM_VALUE_TYPING]:
-        """Allows options for not including pads, defaults, or sizes, and whether keys are internal names."""
-        data = {"RawName": self.RawName, "Name": self.Name}
+        """Allows options for not including pads, defaults, or sizes, and whether keys are internal names.
+
+        NOTE: `RawName` is written as its string repr, e.g. 'b"name"', which will be read with `literal_eval`.
+        """
+        data = {"RawName": repr(self.RawName), "Name": self.Name}
         for binary_field in self.get_binary_fields():
-            binary = binary_field.metadata["binary"]  # type: BinaryFieldMetadata
+            binary = binary_field.metadata["binary"]  # type: BinaryMetadata
             if ignore_pads and binary_field.type == bytes and binary.asserted:
                 continue  # ignore pad
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
@@ -145,6 +149,12 @@ class ParamRow(NewBinaryStruct):
     def __repr__(self):
         names = [f"\n    {key} = {value}" for key, value in self.to_dict(ignore_pads=True)]
         return f"\nName: {self.try_name}" + "".join(names)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, tp.Any]):
+        """`RawName` is written to dictionary as a string repr."""
+        raw_name = ast.literal_eval(data.pop("RawName"))  # type: bytes
+        return cls(RawName=raw_name, **data)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader, raw_name: bytes, name: str = "") -> ParamRow:
@@ -200,7 +210,10 @@ def ParamField(
     value of one specific field) and returns a tuple of `(py_type, name_suffix, tooltip)`. The `name_suffix` will be
     appended to this field nickname in the GUI to indicate the category of the dynamic reference type.
     """
-    metadata = Binary(fmt=field_type, length=length, encoding=encoding, bit_count=bit_count, type_override=field_type)
+    if field_type is str:
+        metadata = BinaryString(fmt_or_byte_size=length, encoding=encoding)
+    else:
+        metadata = Binary(fmt=field_type, bit_count=bit_count)
     metadata["metadata"] |= {
         "param": ParamFieldMetadata(
             internal_name=internal_name,

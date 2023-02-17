@@ -3,6 +3,11 @@ soulstruct_config.json
 __address_cache__
 venv*/
 
+# Test files/folders
+soulstruct/_test*
+_test*/
+tests/*/_test*
+
 # Byte-compiled / optimized / DLL resources
 __pycache__/
 *.py[cod]

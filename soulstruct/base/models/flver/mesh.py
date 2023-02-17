@@ -29,7 +29,7 @@ class FaceSetFlags(IntEnum):
 
 
 @dataclass(slots=True)
-class FaceSetStruct(NewBinaryStruct):
+class FaceSetStruct(BinaryStruct):
 
     _pad1: bytes = field(init=False, **BinaryPad(3))
     flags: byte
@@ -189,7 +189,7 @@ class FaceSet:
 
 
 @dataclass(slots=True)
-class MeshStruct(NewBinaryStruct):
+class MeshStruct(BinaryStruct):
 
     is_bind_pose: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))

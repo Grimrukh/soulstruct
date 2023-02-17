@@ -18,7 +18,7 @@ from .parts import *
 
 
 @dataclass(slots=True)
-class MSBEntrySuperlistHeader(NewBinaryStruct):
+class MSBEntrySuperlistHeader(BinaryStruct):
     _version: int = field(init=False, **Binary(asserted=3))
     entry_offset_count: int
     name_offset: long
@@ -90,7 +90,7 @@ def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[],
 
 @dataclass(slots=True)
 class MSB(_BaseMSB):
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]] = MSBEntrySuperlistHeader
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]] = MSBEntrySuperlistHeader
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]] = MSB_ENTRY_SUBTYPES
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]] = {
         "MODEL_PARAM_ST": 8,

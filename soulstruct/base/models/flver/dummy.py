@@ -10,7 +10,7 @@ from soulstruct.base.models.flver.version import Version
 
 
 @dataclass(slots=True)
-class DummyStruct(NewBinaryStruct):
+class DummyStruct(BinaryStruct):
 
     position: Vector3
     _color: tuple[byte, byte, byte, byte]  # could be ARGB (Dark Souls 2 only) or BGRA

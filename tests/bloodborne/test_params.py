@@ -13,11 +13,11 @@ class ParamsTest(unittest.TestCase):
         with Timer("ParamDef read"):
             paramdef_bnd = GET_BUNDLED_PARAMDEFBND()
         with Timer("GameParamBND read"):
-            game_param = GameParamBND("gameparam.parambnd.dcx", paramdef_bnd=paramdef_bnd)
+            game_param = GameParamBND.from_path("resources/gameparam.parambnd.dcx")
         with Timer("GameParamBND write"):
             game_param.write("_test_gameparam.parambnd.dcx")
         with Timer("GameParamBND re-read"):
-            game_param_re = GameParamBND("_test_gameparam.parambnd.dcx")
+            game_param_re = GameParamBND.from_path("_test_gameparam.parambnd.dcx")
         with Timer("GameParamBND comparison"):
             for initial, reload in zip(game_param.params.values(), game_param_re.params.values()):
                 for i, reload_row in reload.items():
@@ -30,7 +30,7 @@ class ParamsTest(unittest.TestCase):
         with Timer("GameParamBND JSON write"):
             game_param.write_json("_test_gameparam.parambnd.json")
         with Timer("GameParamBND JSON re-read"):
-            game_param_from_json = GameParamBND("_test_gameparam.parambnd.json")
+            game_param_from_json = GameParamBND.from_json_directory("_test_gameparam.parambnd.json")
         with Timer("GameParamBND JSON re-write"):
             game_param_from_json.write_json("_test_json_re_gameparam.parambnd.json")
         with Timer("GameParamBND re-read JSON write"):

@@ -72,7 +72,7 @@ def create_paramdef_info(game_submodule, template_info: dict = None):
 
 
 def create_game_classes(game_submodule: str, no_info: bool = False):
-    """My script to convert these 'display info' dictionaries to NewBinaryStruct representations of ParamDefs."""
+    """My script to convert these 'display info' dictionaries to BinaryStruct representations of ParamDefs."""
     paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
     paramdefbnd = GET_BUNDLED_PARAMDEFBND()  # type: ParamDefBND
 

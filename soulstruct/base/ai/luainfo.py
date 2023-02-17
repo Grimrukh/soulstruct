@@ -8,15 +8,14 @@ from dataclasses import dataclass, field
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
 
-from .lua import LuaError
 from .lua_scripts import LuaGoalScript
 
 _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class LuaInfoStruct(NewBinaryStruct):
-    lua_version: bytes = field(**Binary(length=4, asserted=b"LUAI"))
+class LuaInfoStruct(BinaryStruct):
+    lua_version: bytes = field(**BinaryString(4, asserted=b"LUAI"))
     endian_one: int = field(**Binary(asserted=1))  # confirms byte order is correcet
     goal_count: int
     _pad1: bytes = field(init=False, **BinaryPad(4))
@@ -35,22 +34,20 @@ class LuaInfo(GameFile):
     """
 
     byte_order: ByteOrder = ByteOrder.LittleEndian
-    varint_size: int = 4
+    long_varints: bool = False
     goals: list[LuaGoalScript] = field(default_factory=list)
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> LuaInfo:
-        byte_order = BinaryCondition(
-            (4, 4), [(ByteOrder.BigEndian, b"\00\00\00\01"), (ByteOrder.LittleEndian, b"\01\00\00\00")]
-        )(reader)
+        byte_order = ByteOrder.from_reader_peek(reader, 4, 4, b"\00\00\00\01", b"\01\00\00\00")
         luainfo_struct = LuaInfoStruct.from_bytes(reader, byte_order=byte_order)
-        varint_size = cls.get_varint_size(reader, luainfo_struct.goal_count)
-        encoding = cls.get_encoding(byte_order, varint_size)
+        long_varints = cls.get_long_varints(reader, luainfo_struct.goal_count)
+        encoding = cls.get_encoding(byte_order, long_varints)
 
         goals = []
         goal_script_names = []
         for _ in range(luainfo_struct.goal_count):
-            goal = LuaGoalScript.from_luainfo_reader(reader, varint_size, encoding)
+            goal = LuaGoalScript.from_luainfo_reader(reader, long_varints, encoding)
             if goal.script_name in goal_script_names:
                 _LOGGER.warning(
                     f"Goal '{goal.goal_id}' is referenced multiple times in LuaInfo (same ID and type). Each goal ID "
@@ -61,35 +58,35 @@ class LuaInfo(GameFile):
                 goals.append(goal)
                 goal_script_names.append(goal.script_name)
 
-        return cls(byte_order, varint_size, goals)
+        return cls(byte_order=byte_order, long_varints=long_varints, goals=goals)
 
     def to_writer(self) -> BinaryWriter:
         writer = LuaInfoStruct.object_to_writer(self, byte_order=self.byte_order, goal_count=len(self.goals))
-        encoding = self.get_encoding(self.byte_order, self.varint_size)
+        encoding = self.get_encoding(self.byte_order, self.long_varints)
 
         for goal in self.goals:
-            goal.to_luainfo_writer(writer, self.varint_size)
+            goal.to_luainfo_writer(writer, self.long_varints)
         for goal in self.goals:
             goal.pack_logic_interrupt_name(writer, encoding)
 
         return writer
 
     @staticmethod
-    def get_encoding(byte_order: ByteOrder, varint_size: int):
-        if varint_size == 8:
-            return f"utf-16-{'be' if byte_order == ByteOrder.BigEndian else 'le'}"
+    def get_encoding(byte_order: ByteOrder, long_varints: bool):
+        if long_varints:
+            return byte_order.get_utf_16_encoding()
         return "shift_jis_2004"
 
     @staticmethod
-    def get_varint_size(reader: BinaryReader, goal_count: int) -> int:
+    def get_long_varints(reader: BinaryReader, goal_count: int) -> bool:
         if goal_count == 0:
-            raise LuaError("Cannot detect `LuaInfo` version if no goals are present.")
+            _LOGGER.warning("Cannot detect `LuaInfo` varint size if no goals are present. Defaulting to 8.")
         elif goal_count >= 2:
             return reader.unpack_value("i", offset=0x24) == 0
         else:
             # Hacky check if there's only one goal.
             if reader.unpack_value("i", offset=0x18) == 0x28:
-                return 8
+                return True
             if reader.unpack_value("i", offset=0x14) == 0x20:
-                return 4
-            raise ValueError("Found unexpected data while trying to detect `LuaInfo` version from single goal.")
+                return False
+            raise ValueError("Found unexpected data while trying to detect `LuaInfo` varint size from single goal.")

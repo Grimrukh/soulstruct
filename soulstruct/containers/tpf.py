@@ -58,15 +58,17 @@ class TextureHeader:
 
 
 @dataclass(slots=True)
-class TextureFloatStruct(NewBinaryStruct):
+class TextureFloatStruct(BinaryStruct):
     """Unknown optional data for some textures."""
     unk0: int
-    size: int = field(**BinaryAutoCompute(lambda self: 4 * len(self.values)))
-    values: list[float] = field(**Binary(length=FieldValue("size", lambda size: size // 4)))
+    size: int  # 4 * len(data)
+
+    def unpack_data(self, reader: BinaryReader) -> list[float]:
+        return list(reader.unpack(f"{self.size}f"))
 
 
 @dataclass(slots=True)
-class TPFTextureStruct(NewBinaryStruct, abc.ABC):
+class TPFTextureStruct(BinaryStruct, abc.ABC):
     data_offset: uint
     data_size: int
     format: byte
@@ -85,7 +87,7 @@ class TPFTexture:
     texture_flags: int = 0  # {2, 3} -> DCX-compressed; unknown otherwise
     data: bytes = b""
     header: TextureHeader | None = None
-    float_struct: TextureFloatStruct | None = None
+    unknown_floats: tuple[int, list[float]] | None = None
 
     @classmethod
     def from_tpf_reader(
@@ -123,10 +125,14 @@ class TPFTexture:
             header = None
 
         name_offset = reader.unpack_value("I")
-        has_float_struct = reader.unpack_value("i") == 1
+        has_unknown_floats = reader.unpack_value("i") == 1
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
             header.dxgi_format = reader.unpack_value("i")
-        float_struct = TextureFloatStruct.from_bytes(reader) if has_float_struct else None
+        if has_unknown_floats:
+            float_struct = TextureFloatStruct.from_bytes(reader)
+            unknown_floats = (float_struct.unk0, float_struct.unpack_data(reader))
+        else:
+            unknown_floats = None
 
         with reader.temp_offset(texture_struct.pop("data_offset")):
             data = reader.read(texture_struct.pop("data_size"))
@@ -142,7 +148,7 @@ class TPFTexture:
             name=name,
             data=data,
             header=header,
-            float_struct=float_struct,
+            unknown_float=unknown_floats,
         )
 
         return texture
@@ -150,9 +156,9 @@ class TPFTexture:
     def to_tpf_writer(self, writer: BinaryWriter, platform: TPFPlatform, tpf_flags: int):
         if platform == TPFPlatform.PC:
             dds = self.get_dds()
-            if dds.header.caps_2 & DDSCAPS2.CUBEMAP:
+            if dds.header.caps2 & DDSCAPS2.CUBEMAP:
                 texture_type = TextureType.Cubemap
-            elif dds.header.caps_2 & DDSCAPS2.VOLUME:
+            elif dds.header.caps2 & DDSCAPS2.VOLUME:
                 texture_type = TextureType.Volume
             else:
                 texture_type = TextureType.Texture
@@ -184,13 +190,15 @@ class TPFTexture:
                 writer.pack("i", self.header.unk2)
 
         writer.reserve("name_offset", "I", obj=self)
-        writer.pack("i", 0 if self.float_struct is None else 1)
+        writer.pack("i", 0 if self.unknown_floats is None else 1)
 
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
             writer.pack("i", self.header.dxgi_format)
 
-        if self.float_struct:
-            self.float_struct.to_writer(writer)
+        if self.unknown_floats is not None:
+            unk0, floats = self.unknown_floats
+            TextureFloatStruct(unk0, len(floats) * 4).to_writer(writer)
+            writer.pack(f"{len(floats) * 4}f", *floats)
 
     def pack_name(self, writer: BinaryWriter, encoding_type: int):
         writer.fill_with_position("name_offset", obj=self)
@@ -281,14 +289,14 @@ class TPFTexture:
             f"    texture_flags = {self.texture_flags}\n"
             f"    data = <{len(self.data)} bytes>\n"
             f"    has_header = {self.header is not None}\n"
-            f"    has_float_struct = {self.float_struct is not None}\n"
+            f"    has_unknown_floats = {self.unknown_floats is not None}\n"
             f")"
         )
 
 
 @dataclass(slots=True)
-class TPFStruct(NewBinaryStruct):
-    signature: bytes = field(**Binary(length=4, asserted=b"TPF\0"))
+class TPFStruct(BinaryStruct):
+    signature: bytes = field(**BinaryString(4, asserted=b"TPF\0"))
     _data_size: int
     file_count: int
     platform: TPFPlatform = field(**Binary(byte))
@@ -308,7 +316,7 @@ class TPF(BaseBinaryFile):
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> TPF:
         platform = TPFPlatform(reader.unpack_value("B", offset=0xC))
-        reader.default_byte_order = ">" if platform in {TPFPlatform.Xbox360, TPFPlatform.PS3} else "<"
+        reader.default_byte_order = ByteOrder.big_endian_bool(platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
         tpf_struct = TPFStruct.from_bytes(reader)
 
         encoding = reader.get_utf_16_encoding() if tpf_struct.encoding_type == 1 else "shift_jis_2004"
@@ -316,7 +324,9 @@ class TPF(BaseBinaryFile):
             TPFTexture.from_tpf_reader(reader, platform, tpf_struct.tpf_flags, encoding)
             for _ in range(tpf_struct.file_count)
         ]
-        return cls(textures, platform, tpf_struct.encoding, )
+        return cls(
+            textures=textures, platform=platform, encoding_type=tpf_struct.encoding_type, tpf_flags=tpf_struct.tpf_flags
+        )
 
     def to_writer(self) -> BinaryWriter:
         """Pack TPF file to bytes."""
@@ -424,7 +434,7 @@ class TPF(BaseBinaryFile):
         """Build a dictionary mapping TPF entry stems to `BinderEntry` instances."""
         from soulstruct.containers import Binder
 
-        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
+        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?$")
         tpfbhd_directory = Path(tpfbhd_directory)
         tpf_entries = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
@@ -447,7 +457,7 @@ class TPF(BaseBinaryFile):
         """
         from soulstruct.containers import Binder
 
-        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?")
+        tpf_re = re.compile(rf"(.*)\.tpf(\.dcx)?$")
         tpfbhd_directory = Path(tpfbhd_directory)
         textures = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):

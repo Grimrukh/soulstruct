@@ -1,12 +1,17 @@
 __all__ = ["MSGDirectory"]
 
+import typing as tp
+
 from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
 from soulstruct.utilities.misc import BiDict
 
 from soulstruct.base.text.fmg import FMG
+from .msgbnd import MSGBND
 
 
 class MSGDirectory(_BaseMSGDirectory):
+
+    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
 
     # TODO: Regenerate defaults/properties from BB msgbnds.
 

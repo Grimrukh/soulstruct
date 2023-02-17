@@ -1,12 +1,17 @@
 __all__ = ["MSGDirectory"]
 
+import typing as tp
+
 from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
 from .fmg import FMG
+from .msgbnd import MSGBND
 
 
 class MSGDirectory(_BaseMSGDirectory):
 
-    # NOTE: The 'patch' entries have the exact same paths as non-patch entries, which is (a) one
+    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
+
+    # NOTE: The 'patch' entries have the exact same Binder paths as non-patch entries, which is (a) one
     # of the VERY few times this has been seen in Binders, and (b) probably QLOC's oversight.
     DEFAULT_ENTRY_STEMS = {
         ("item", 10): "Item_name_",
@@ -29,6 +34,8 @@ class MSGDirectory(_BaseMSGDirectory):
         ("item", 27): "Accessory_long_desc_",
         ("item", 28): "Magic_description_",
         ("item", 29): "Magic_long_desc_",
+        # NOTE: The item 'patch' FMGs are in `item.msgbnd.dcx` rather than `menu` (as in PTDE).
+        # The entry IDs are exactly the same, though.
         ("item", 100): "Item_long_desc_",
         ("item", 105): "Magic_long_desc_",
         ("item", 106): "Weapon_long_desc_",
@@ -69,6 +76,35 @@ class MSGDirectory(_BaseMSGDirectory):
         ("menu", 122): "Key_guide_",
         ("menu", 123): "Menu_others_",
         ("menu", 124): "Menu_general_text_",
+    }
+
+    BASE_PATCH_FMGS = {
+        # NOTE: Identical to PTDE, except the `item` patches are still in `item`.
+        ("item", 10): ("item", 111),
+        ("item", 11): ("item", 115),
+        ("item", 12): ("item", 117),
+        ("item", 13): ("item", 113),
+        ("item", 14): ("item", 118),
+        ("item", 18): ("item", 119),
+        ("item", 19): ("item", 120),
+        ("item", 20): ("item", 110),
+        ("item", 21): ("item", 114),
+        ("item", 22): ("item", 116),
+        ("item", 23): ("item", 112),
+        ("item", 24): ("item", 100),
+        ("item", 25): ("item", 106),
+        ("item", 26): ("item", 108),
+        ("item", 27): ("item", 109),
+        ("item", 29): ("item", 105),
+        ("menu", 1): ("menu", 104),
+        ("menu", 2): ("menu", 107),
+        ("menu", 30): ("menu", 101),
+        ("menu", 76): ("menu", 124),
+        ("menu", 77): ("menu", 123),
+        ("menu", 78): ("menu", 102),
+        ("menu", 79): ("menu", 122),
+        ("menu", 80): ("menu", 121),
+        ("menu", 92): ("menu", 103),
     }
 
     MAIN_CATEGORIES = (

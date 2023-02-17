@@ -12,6 +12,7 @@ from soulstruct.base.params.gameparambnd import GameParamBND as _BaseGameParamBN
 from soulstruct.utilities.files import PACKAGE_PATH
 from soulstruct.utilities.ParamCrypt import ParamCrypt
 
+from . import paramdef
 
 try:
     Self = tp.Self
@@ -24,6 +25,8 @@ except Animation:
 
 @dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
+
+    PARAMDEF_MODULE: tp.ClassVar = paramdef
 
     signature: str = "10811000"
     dcx_type: DCXType = DCXType.DCX_DFLT_11000_44_9_15  # NOTE: This is NOT the standard `KRAK` Elden Ring compression.

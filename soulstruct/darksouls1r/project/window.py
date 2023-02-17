@@ -111,10 +111,10 @@ class ProjectWindow(_BaseProjectWindow):
             )
 
         def _threaded_rebuild_ffxbnd():
-            for map_name, msb in self.project.maps.msbs.items():
-                game_map = self.project.maps.GET_MAP(map_name)
+            for map_stem, msb in self.project.maps.files.items():
+                game_map = self.project.maps.GET_MAP(map_stem)
                 if not game_map.ffxbnd_file_name:
-                    _LOGGER.warning(f"No FFXBND file name known for map: {map_name}. Nothing written.")
+                    _LOGGER.warning(f"No FFXBND file name known for map: {map_stem}. Nothing written.")
                 build_ffxbnd(
                     msb,
                     ffxbnd_path=self.project.game_root / f"sfx/{game_map.ffxbnd_file_name}.ffxbnd.dcx",
@@ -140,7 +140,7 @@ class ProjectWindow(_BaseProjectWindow):
         Allows events and regions with Japanese names to be written to entities module. Parts should already be valid
         identifiers, but are checked as well anyway.
         """
-        for msb in self.project.maps.msbs.values():
+        for msb in self.project.maps.files.values():
             msb.translate_entity_id_names()
 
     def _reload_warp(self):

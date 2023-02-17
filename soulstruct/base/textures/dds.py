@@ -9,12 +9,18 @@ __all__ = ["DDS", "DDSD", "DDSCAPS", "DDSCAPS2", "texconv", "get_converted_textu
 import logging
 import subprocess
 import typing as tp
+from dataclasses import dataclass, field
 from enum import IntEnum, auto
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.files import PACKAGE_PATH
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, BinaryObject, BinaryStruct
+from soulstruct.utilities.binary import *
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "DDS"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -207,110 +213,69 @@ class DXGI_FORMAT(IntEnum):
     FORCE_UINT = auto()
 
 
-class DDSHeader(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("magic", "4s", b"DDS "),
-        ("size", "i", 0x7C),
-        ("flags", "I"),
-        ("height", "i"),
-        ("width", "i"),
-        ("pitch_or_linear_size", "i"),
-        ("depth", "i"),
-        ("mipmap_count", "i"),
-        ("reserved_1", "11i"),
-        # Start of `PIXELFORMAT` in SoulsFormats.
-        ("size", "i", 32),
-        ("flags", "I"),
-        ("fourcc", "4s"),
-        ("rgb_bit_count", "i"),
-        ("r_bitmask", "I"),
-        ("g_bitmask", "I"),
-        ("b_bitmask", "I"),
-        ("a_bitmask", "I"),
-        # End of `PIXELFORMAT`.
-        ("caps", "I"),
-        ("caps_2", "I"),
-        ("caps_3", "i"),
-        ("caps_4", "i"),
-        ("reserved_2", "i"),
-    )
-
-    flags: int
+@dataclass(slots=True)
+class DDSHeader(BinaryStruct):
+    magic: bytes = field(**BinaryString(4, asserted=b"DDS\0"))
+    size: int = field(**Binary(asserted=0x7C))
+    flags: uint
     height: int
     width: int
     pitch_or_linear_size: int
     depth: int
     mipmap_count: int
-    reserved_1: tuple[int]
+    reserved_1: list[int] = field(**BinaryArray(11))
     # Start of `PIXELFORMAT` in SoulsFormats.
-    flags: DDPF
-    fourcc: bytes
+    pixelformat_size: int = field(**Binary(asserted=32))
+    pixelformat_flags: DDPF = field(**Binary(uint))
+    fourcc: bytes = field(**BinaryString(4))
     rgb_bit_count: int
-    r_bitmask: int
-    g_bitmask: int
-    b_bitmask: int
-    a_bitmask: int
+    r_bitmask: uint
+    g_bitmask: uint
+    b_bitmask: uint
+    a_bitmask: uint
     # End of `PIXELFORMAT`.
-    caps: int
-    caps_2: int
-    caps_3: int
-    caps_4: int
+    caps1: uint
+    caps2: uint
+    caps3: uint
+    caps4: uint
     reserved_2: int
 
-    unpack = BinaryObject.default_unpack
-    pack = BinaryObject.default_pack
+
+@dataclass(slots=True)
+class DXT10Header(BinaryStruct):
+
+    dxgi_format: DXGI_FORMAT = field(**Binary(uint))
+    resource_dimension: DIMENSION = field(**Binary(uint))
+    misc_flag: uint  # RESOURCE_MISC
+    array_size: uint
+    alpha_mode: ALPHA_MODE = field(**Binary(uint))
 
 
-class DXT10Header(BinaryObject):
-
-    STRUCT = BinaryStruct(
-        ("dxgi_format", "I"),
-        ("resource_dimension", "I"),
-        ("misc_flag", "I"),
-        ("array_size", "I"),
-        ("alpha_mode", "I"),
-    )
-
-    dxgi_format: DXGI_FORMAT
-    resource_dimension: DIMENSION
-    misc_flag: int  # RESOURCE_MISC
-    array_size: int
-    alpha_mode: ALPHA_MODE
-
-    unpack = BinaryObject.default_unpack
-    pack = BinaryObject.default_pack
-
-
+@dataclass(slots=True)
 class DDS(GameFile):
     """Unpacks DDS header information.
 
     Does NOT unpack actual DDS information or support packing or writing.
     """
 
-    header: DDSHeader
-    dxt10_header: tp.Optional[DXT10Header]
+    header: DDSHeader = None
+    dxt10_header: DXT10Header | None = None
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        self.header = DDSHeader(reader)
-        self.dxt10_header = DXT10Header(reader) if self.header.fourcc == b"DX10" else None
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> Self:
+        header = DDSHeader.from_bytes(reader)
+        dxt10_header = DXT10Header.from_bytes(reader) if header.fourcc == b"DX10" else None
+        return cls(header=header, dxt10_header=dxt10_header)
 
-    def pack(self, **kwargs) -> bytes:
-        raise AttributeError("Cannot pack `DDS`. Use `.pack_header()` to pack header only.")
-
-    def pack_header(self) -> bytes:
-        writer = BinaryWriter()
-        self.header.pack(writer)
-        if self.dxt10_header:
-            self.dxt10_header.pack(writer)
-        return bytes(writer)
+    def to_writer(self) -> BinaryWriter:
+        raise TypeError("Cannot write `DDS` files. Only the header can be unpacked.")
 
     @property
     def fourcc(self) -> str:
         return self.header.fourcc.decode()
 
     @property
-    def dxgi_format(self) -> tp.Optional[DXGI_FORMAT]:
+    def dxgi_format(self) -> DXGI_FORMAT | None:
         return self.dxt10_header.dxgi_format if self.dxt10_header else None
 
     @property

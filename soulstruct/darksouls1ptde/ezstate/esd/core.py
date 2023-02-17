@@ -9,7 +9,7 @@ from soulstruct.base.ezstate.esd import ESD as _BaseESD, ESDType
 
 class ESD(_BaseESD, abc.ABC):
     VERSION = 1
-    VARINT_SIZE = 4
+    LONG_VARINTS = False
 
 
 class TalkESD(ESD):

@@ -40,6 +40,7 @@ class GameParamBND(Binder, abc.ABC):
     # Maps internal param names (some game-specific) to more friendly Soulstruct names. Two-way dictionary.
     # Values should match the names of getter properties on game subclass.
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = {}
+    # Maps param nicknames to their Soulstruct game types. Also defines order (and presence) of params in GUI.
     GAME_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {}
 
     # Maps internal param stems, e.g. `NpcParam`, to `Param` or generic `ParamDict` instance.
@@ -48,7 +49,7 @@ class GameParamBND(Binder, abc.ABC):
 
     def __post_init__(self):
         self._reload_warning_given = False
-        if not self.params and self.entries:
+        if self.params:  # passed to constructor; do not unpack from entries
             return
 
         # Load from binary Binder source.
@@ -57,7 +58,7 @@ class GameParamBND(Binder, abc.ABC):
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in `GameParamBND` binder.")
                 continue
             try:
-                self.params[entry.stem] = self.unpack_typed_param(entry)
+                typed_param_class = self.get_typed_param_class(entry)
             except TypedParamError:
                 _LOGGER.warning(
                     f"Loaded `GameParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
@@ -66,8 +67,14 @@ class GameParamBND(Binder, abc.ABC):
                     f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
                 )
                 self.params[entry.stem] = entry.to_game_file(ParamDict)
+            else:
+                try:
+                    self.params[entry.stem] = entry.to_game_file(typed_param_class)
+                except Exception as ex:
+                    _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
+                    raise
 
-    def unpack_typed_param(self, entry: BinderEntry):
+    def get_typed_param_class(self, entry: BinderEntry):
         try:
             param_type = Param.detect_param_type(entry.data)
         except Exception as ex:
@@ -76,17 +83,12 @@ class GameParamBND(Binder, abc.ABC):
                 f"  Error: {ex}"
             )
         try:
-            data_type = getattr(self.PARAMDEF_MODULE, param_type)
+            row_type = getattr(self.PARAMDEF_MODULE, param_type)
         except AttributeError:
             raise TypedParamError(
                 f"Soulstruct does not yet know how to unpack Param type `{param_type}` of entry: {entry.name}."
             )
-        param_class = TypedParam(data_type)
-        try:
-            self.params[entry.stem] = entry.to_game_file(param_class)
-        except Exception as ex:
-            _LOGGER.error(f"Could not load `Param` from `GameParamBND` entry '{entry.name}'.\n  Error: {ex}")
-            raise
+        return TypedParam(row_type)
 
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
@@ -152,26 +154,31 @@ class GameParamBND(Binder, abc.ABC):
             raise KeyError("Field `params` not specified in `GameParamBND` dict.")
 
         binder_kwargs = cls.process_manifest_header(data) | {"params": {}}
-        for param_stem, param_dict in data["params"].items():
-            try:
-                param_type = param_dict["param_type"]
-            except KeyError:
-                raise KeyError(f"Field `param_type` not in `params[{param_stem}]` dictionary.")
-            try:
-                data_type = getattr(cls.PARAMDEF_MODULE, param_type)
-            except AttributeError:
-                _LOGGER.warning(
-                    f"Soulstruct does not yet know how to unpack Param type `{param_type}` of '{param_stem}'. "
-                    f"Using generic `ParamDict`."
+        for param_stem, param in data["params"].items():
+            if isinstance(param, dict):
+                try:
+                    param_type = param["param_type"]
+                except KeyError:
+                    raise KeyError(f"Field `param_type` not in `params[{param_stem}]` dictionary.")
+                try:
+                    data_type = getattr(cls.PARAMDEF_MODULE, param_type)
+                except AttributeError:
+                    _LOGGER.warning(
+                        f"Soulstruct does not yet know how to unpack Param type `{param_type}` of '{param_stem}'. "
+                        f"Using generic `ParamDict`."
+                    )
+                    param = ParamDict.from_dict(param)
+                else:
+                    param_class = TypedParam(data_type)
+                    param = param_class.from_dict(param)
+            elif not isinstance(param, Param):
+                raise TypeError(
+                    f"Invalid type for '{param_stem}' in GameParamBND dictionary: {type(param).__name__}"
                 )
-                param = ParamDict.from_dict(param_dict)
-            else:
-                param_class = TypedParam(data_type)
-                param = param_class.from_dict(param_dict)
 
             binder_kwargs["params"][param_stem] = param
 
-        gameparambnd = super().from_dict(**binder_kwargs)
+        gameparambnd = super(GameParamBND, cls).from_dict(binder_kwargs)
         # gameparambnd.regenerate_binder_entries()  # TODO: no need to create entries until needed, right?
         return gameparambnd
 
@@ -185,7 +192,7 @@ class GameParamBND(Binder, abc.ABC):
         data["params"] = {}
         for param_stem, param in self.params.items():
             param_dict = param.to_dict(ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
-            data["params"]["param_stem"] = param_dict
+            data["params"][param_stem] = param_dict
         return data
 
     @classmethod
@@ -209,7 +216,15 @@ class GameParamBND(Binder, abc.ABC):
         manifest["params"] = {}
         for json_stem in manifest.pop("entries"):
             param_stem = cls.PARAM_NICKNAMES[json_stem]  # JSON nickname stem -> internal stem
-            manifest["params"][param_stem] = Param.from_json(f"{json_stem}.json")
+            param_dict = read_json(directory / f"{json_stem}.json")
+            try:
+                row_type = getattr(cls.PARAMDEF_MODULE, param_dict["param_type"])
+            except KeyError:
+                raise KeyError(f"Param JSON `{param_stem}.json` does not have 'param_type' key.")
+            except AttributeError:
+                raise ValueError(f"Unknown 'param_type' `{param_dict['param_type']} in Param JSON: {param_stem}.json")
+            typed_param_class = TypedParam(row_type)
+            manifest["params"][param_stem] = typed_param_class.from_dict(param_dict)
 
         gameparambnd = cls.from_dict(manifest)
         gameparambnd.path = directory  # TODO: auto-detect better default path, e.g. for binary?
@@ -228,7 +243,7 @@ class GameParamBND(Binder, abc.ABC):
         manifest["entries"] = []
 
         for param_stem, param in self.params.items():
-            json_stem = self.PARAM_NICKNAMES.get(param_stem)
+            json_stem = self.PARAM_NICKNAMES[param_stem]
             param.write_json(directory / f"{json_stem}.json", ignore_pads=ignore_pads, ignore_defaults=ignore_defaults)
             manifest["entries"].append(json_stem)
 

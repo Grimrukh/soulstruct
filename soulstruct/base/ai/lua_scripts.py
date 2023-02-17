@@ -87,7 +87,7 @@ class LuaScriptBase(abc.ABC):
 
 
 @dataclass(slots=True)
-class LuaGoal32(NewBinaryStruct):
+class LuaGoal32(BinaryStruct):
     goal_id: int
     name_offset: uint
     logic_interrupt_name_offset: uint
@@ -97,7 +97,7 @@ class LuaGoal32(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class LuaGoal64(NewBinaryStruct):
+class LuaGoal64(BinaryStruct):
     goal_id: int
     has_battle_interrupt: bool
     has_logic_interrupt: bool
@@ -130,13 +130,8 @@ class LuaGoalScript(LuaScriptBase):
             self.script_name = self.get_auto_script_name()
 
     @classmethod
-    def from_luainfo_reader(cls, reader: BinaryReader, varint_size: int, encoding: str) -> LuaGoalScript:
-        if varint_size == 4:
-            goal_struct = LuaGoal32.from_bytes(reader)
-        elif varint_size == 8:
-            goal_struct = LuaGoal64.from_bytes(reader)
-        else:
-            raise ValueError(f"Invalid `varint_size`: {varint_size}")
+    def from_luainfo_reader(cls, reader: BinaryReader, long_varints: bool, encoding: str) -> LuaGoalScript:
+        goal_struct = LuaGoal64.from_bytes(reader) if long_varints else LuaGoal32.from_bytes(reader)
         name = reader.unpack_string(offset=goal_struct.name_offset, encoding=encoding)
         if goal_struct.logic_interrupt_name_offset > 0:
             logic_interrupt_name = reader.unpack_string(
@@ -155,19 +150,14 @@ class LuaGoalScript(LuaScriptBase):
             goal_type=goal_type,
         )
 
-    def to_luainfo_writer(self, writer: BinaryWriter, varint_size: int):
+    def to_luainfo_writer(self, writer: BinaryWriter, long_varints: bool):
 
         goal_kwargs = {
             "has_battle_interrupt": self.goal_type == GoalType.Battle,
             "has_logic_interrupt": self.goal_type == GoalType.Logic,
         }
 
-        if varint_size == 4:
-            LuaGoal32.object_to_writer(self, writer, **goal_kwargs)
-        elif varint_size == 8:
-            LuaGoal64.object_to_writer(self, writer, **goal_kwargs)
-        else:
-            raise ValueError(f"Invalid `varint_size`: {varint_size}")
+        (LuaGoal64 if long_varints else LuaGoal32).object_to_writer(self, writer, **goal_kwargs)
 
     def pack_logic_interrupt_name(self, writer: BinaryWriter, encoding: str):
         if self.goal_type == GoalType.Logic:

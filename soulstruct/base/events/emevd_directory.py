@@ -43,7 +43,7 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension

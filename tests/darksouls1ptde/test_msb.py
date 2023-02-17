@@ -1,11 +1,31 @@
 import os
+import shutil
 import unittest
 
-from soulstruct.darksouls1ptde.maps import MSB
+from soulstruct.darksouls1ptde.maps import MSB, MapStudioDirectory
 from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.misc import Timer
 
 
 class MSBTest(unittest.TestCase):
+
+    def setUp(self) -> None:
+        try:
+            shutil.rmtree("_test_MapStudio")
+        except FileNotFoundError:
+            pass
+
+    def test_dir_rewrite(self):
+        from soulstruct import PTDE_PATH
+
+        with Timer("Map Studio Directory Read"):
+            msd = MapStudioDirectory.from_path(PTDE_PATH + "/map/MapStudio")
+
+        with Timer("Map Studio Directory Write"):
+            msd.write("_test_MapStudio")
+
+        with Timer("Map Studio Directory Reload"):
+            msd_reload = MapStudioDirectory.from_path("_test_MapStudio")
 
     def test_rewrite(self):
         """Test:
@@ -17,7 +37,7 @@ class MSBTest(unittest.TestCase):
         - Re-opening that new MSB.
         - Comparing every entry field.
         """
-        msb = MSB.from_path("m10_00_00_00.msb")
+        msb = MSB.from_path("resources/m10_00_00_00.msb")
         source_chr = msb.characters.find_entry_name("c1000_0000")
         msb.characters.duplicate(
             source_chr, name="c1000_0000_COPY", entity_id=1000999, translate=Vector3(1.0, 2.0, 3.0)
@@ -41,7 +61,7 @@ class MSBTest(unittest.TestCase):
             os.remove("_test.msb")
 
     def test_json(self):
-        msb = MSB.from_path("m10_00_00_00.msb")
+        msb = MSB.from_path("resources/m10_00_00_00.msb")
 
         try:
             msb.write_json("_test_msb.json")

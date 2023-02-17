@@ -20,7 +20,7 @@ from .enums import MSBModelSubtype
 
 
 @dataclass(slots=True)
-class ModelHeaderStruct(NewBinaryStruct):
+class ModelHeaderStruct(BinaryStruct):
     name_offset: long
     _subtype_int: int
     _subtype_index: int
@@ -33,7 +33,7 @@ class ModelHeaderStruct(NewBinaryStruct):
 class MSBModel(BaseMSBModel):
     """MSB model entry in Bloodborne."""
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]] = ModelHeaderStruct
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = ModelHeaderStruct
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
     NULL: tp.ClassVar[bytes] = b"\0\0"
     # TODO: Empty sib path different? b"\0\0" * 6 maybe?

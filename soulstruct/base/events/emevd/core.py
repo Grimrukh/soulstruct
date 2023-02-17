@@ -33,9 +33,9 @@ _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\
 
 
 @dataclass(slots=True)
-class EMEVDHeaderStruct(NewBinaryStruct):
+class EMEVDHeaderStruct(BinaryStruct):
     """Indicates fields that will always be present in this header, but cannot be used."""
-    _signature: bytes = field(**Binary(length=4, asserted=b"EVD\0"))
+    _signature: bytes = field(**BinaryString(4, asserted=b"EVD\0"))
     big_endian: bool
     varint_size_check: byte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
     version_unk_1: bool
@@ -99,7 +99,7 @@ class EMEVD(GameFile, abc.ABC):
 
     # Internal usage.
     byte_order: ByteOrder = field(repr=False, default=ByteOrder.LittleEndian)
-    varint_size: int = field(repr=False, default=4)
+    long_varints: bool = field(repr=False, default=False)
     event_signatures: dict[int, EventSignature] = field(repr=False, default=dict)
 
     # region Numeric/EVS Read Methods
@@ -107,7 +107,9 @@ class EMEVD(GameFile, abc.ABC):
     @classmethod
     def from_numeric_string(cls, numeric_string: str, map_name: str = "") -> Self:
         events, linked_file_offsets, packed_strings = build_numeric(numeric_string, cls.Event)
-        emevd = cls(events, packed_strings, linked_file_offsets, map_name)
+        emevd = cls(
+            events=events, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets, map_name=map_name
+        )
         emevd.dcx_type = cls.DCX_TYPE  # set default DCX
         return emevd
 
@@ -153,10 +155,10 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
-        byte_order = BinaryCondition((5, 1), [(ByteOrder.BigEndian, b"\01"), (ByteOrder.LittleEndian, b"\00")])
-        varint_size = BinaryCondition((6, 1), [(4, b"\00"), (8, b"\xFF")])
-        reader.default_byte_order = byte_order(reader)
-        reader.varint_size = varint_size(reader)
+        byte_order = ByteOrder.from_reader_peek(reader, 1, 5, b"\01", b"\00")
+        long_varints = long_varints_from_reader_peek(reader, 1, 6, b"\xFF", b"\00")
+        reader.default_byte_order = byte_order
+        reader.long_varints = long_varints
 
         header = EMEVDHeaderStruct.from_bytes(reader)
         # NOTE: 32-bit EMEVD files have four pad bytes at the end, but we're about to start seeking anyway.
@@ -204,9 +206,9 @@ class EMEVD(GameFile, abc.ABC):
             for _ in range(header.linked_files_count):
                 linked_file_offsets.append(reader.unpack_value("Q"))
 
-        emevd = cls(event_dict, packed_strings, linked_file_offsets)
+        emevd = cls(events=event_dict, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets)
         emevd.byte_order = byte_order
-        emevd.varint_size = varint_size
+        emevd.long_varints = long_varints
         emevd.event_signatures = event_signatures
         return emevd
 
@@ -438,9 +440,9 @@ class EMEVD(GameFile, abc.ABC):
         writer = EMEVDHeaderStruct.object_to_writer(
             self,
             byte_order=self.byte_order,
-            varint_size=self.varint_size,
+            long_varints=self.long_varints,
             big_endian=self.byte_order == ByteOrder.BigEndian,
-            varint_size_check=-1 if self.varint_size == 8 else 0,
+            varint_size_check=-1 if self.long_varints else 0,
             version_unk_1=self.HEADER_VERSION_INFO[0],
             version_unk_2=self.HEADER_VERSION_INFO[1],
             version=self.HEADER_VERSION_INFO[2],
@@ -483,13 +485,11 @@ class EMEVD(GameFile, abc.ABC):
         writer.fill_with_position("base_args_offset", obj=self)
         for event in events:
             event.pack_instruction_base_args(writer)
-        # Pad or alignment after base args, depending on `varint_size`.
-        if self.varint_size == 4:  # PTDE/DSR only
+        # Pad or alignment after base args, depending on `long_varints`.
+        if not self.long_varints:  # PTDE/DSR only
             writer.pad(4)
-        elif self.varint_size == 8:
+        else:  # long varints
             writer.pad_align(16)
-        else:
-            raise ValueError(f"Invalid `varint_size` for packing: {self.varint_size}")
         writer.fill("base_args_size", writer.position - base_args_start, obj=self)
 
         # Write event arg replacements.

@@ -23,7 +23,7 @@ __all__ = [
     "EntryTextEditBox",
     "ItemTextEditBox",
     "SequenceNameEditBox",
-    "BitGroupEditBox",
+    "GroupBitSetEditBox",
     "ActionHistory",
     "ViewHistory",
     "bind_events",
@@ -640,7 +640,7 @@ class SequenceNameEditBox(SmartFrame):
         self.quit()
 
 
-class BitGroupEditBox(SmartFrame):
+class GroupBitSetEditBox(SmartFrame):
     """Displays 128 checkbuttons to toggle for e.g. draw groups, display groups, navmesh groups."""
 
     def __init__(

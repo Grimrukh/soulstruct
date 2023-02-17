@@ -5438,6 +5438,7 @@
         "logicId": {
             "nickname": "LogicID",
             "tooltip": "ID of logic (non-battle) Lua script.",
+            "default": 10000,
             "game_type": "LogicAIScript"
         },
         "battleGoalID": {

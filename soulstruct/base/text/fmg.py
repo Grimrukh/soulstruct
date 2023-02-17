@@ -32,7 +32,7 @@ GAME_MAX_LINES = {
 
 
 @dataclass(slots=True)
-class FMGHeader(NewBinaryStruct):
+class FMGHeader(BinaryStruct):
     _pad1: bytes = field(**BinaryPad(1))
     big_endian: bool
     version: FMGVersion = field(**Binary(byte))
@@ -66,7 +66,7 @@ class FMG(GameFile):
 
         version = FMGVersion(reader.unpack_value("b", offset=2))
         reader.default_byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
-        reader.varint_size = 8 if version >= 2 else 4
+        reader.long_varints = version >= 2
         header = FMGHeader.from_bytes(reader)
 
         # Groups of contiguous text string IDs are defined by ranges (first ID, last ID) to save space.
@@ -92,10 +92,13 @@ class FMG(GameFile):
                 if string_offset == 0:
                     entries[string_id] = ""  # empty string (will trigger in-game error placeholder text)
                 else:
-                    entries[string_id] = reader.unpack_string(offset=string_offset, encoding="utf-16-le")
+                    entries[string_id] = reader.unpack_string(
+                        offset=string_offset,
+                        encoding=reader.get_utf_16_encoding(),
+                    )
                 first_index += 1
 
-        return cls(entries, version)
+        return cls(entries=entries, version=version)
 
     def sort(self):
         """Sort strings by ID in-place."""
@@ -111,7 +114,7 @@ class FMG(GameFile):
         Returns a copy, e.g. if you only want to do it before packing.
         """
         new_entries = {string_id: string for string_id, string in self.entries.items() if string}
-        return FMG(new_entries, self.version)
+        return FMG(entries=new_entries, version=self.version)
 
     def apply_line_limits(self, max_chars_per_line: int = None, max_lines: int = None) -> FMG:
         """Reformat strings to apply a word wrap limit and log a warning if line count exceeds `max_lines`. Returns a
@@ -145,7 +148,7 @@ class FMG(GameFile):
                     f"{wrapped_string}"
                 )
             new_entries[string_id] = wrapped_string
-        return FMG(new_entries, self.version)
+        return FMG(entries=new_entries, version=self.version)
 
     def to_writer(self, sort=True) -> BinaryWriter:
         """Pack text dictionary to binary FMG file."""
@@ -154,7 +157,7 @@ class FMG(GameFile):
 
         writer = BinaryWriter(
             byte_order=ByteOrder.BigEndian if self.version == 0 else ByteOrder.LittleEndian,
-            varint_size=8 if self.version >= 2 else 4,
+            long_varints=self.version >= 2,
         )
 
         FMGHeader.object_to_writer(
@@ -162,7 +165,7 @@ class FMG(GameFile):
             writer,
             big_endian=self.version == 0,
             file_size=RESERVED,
-            unknown1=-1 if self.version == 0 else 1,
+            unknown1=-1 if self.version == 0 else 0,
             range_count=RESERVED,
             string_count=len(self.entries),
             string_offsets_offset=RESERVED,
@@ -197,17 +200,19 @@ class FMG(GameFile):
             if self.version == 2:
                 writer.pad(4)
             range_count += 1
-        writer.fill("range_count", range_count , obj=self)
+        writer.fill("range_count", range_count, obj=self)
 
         writer.fill_with_position("string_offsets_offset", obj=self)
         packed_strings = b""  # saving ourselves an additional iteration
-        packed_strings_offset = writer.position + writer.varint_size * len(self.entries)
+        packed_strings_offset = writer.position + (8 if writer.long_varints else 4) * len(self.entries)
         for string_id, string in self.entries.items():
             if string == "":
                 writer.pack("v", 0)  # no offset
             else:
                 writer.pack("v", packed_strings_offset + len(packed_strings))
-            packed_strings += string.encode("utf-16-le") + b"\0\0"
+            packed_strings += string.encode(writer.get_utf_16_encoding()) + b"\0\0"
+
+        writer.append(packed_strings)
 
         writer.fill_with_position("file_size", obj=self)
 
@@ -271,7 +276,7 @@ class FMG(GameFile):
             string_id: string.replace(old_substring, new_substring)
             for string_id, string in self.entries
         }
-        return FMG(new_entries, self.version)
+        return FMG(entries=new_entries, version=self.version)
 
     def keys(self):
         return self.entries.keys()

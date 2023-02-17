@@ -24,9 +24,9 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class FLVERStruct(NewBinaryStruct):
-    _file_type: bytes = field(init=False, **Binary(length=6, asserted=b"FLVER\0"))
-    endian: bytes = field(**Binary(length=2, asserted=[b"L\0", b"R\0"]))
+class FLVERStruct(BinaryStruct):
+    _file_type: bytes = field(init=False, **BinaryString(6, asserted=b"FLVER\0"))
+    endian: bytes = field(**BinaryString(2, asserted=[b"L\0", b"R\0"]))
     version: Version = field(**Binary(int))
     vertex_data_offset: int
     vertex_data_size: int
@@ -54,6 +54,7 @@ class FLVERStruct(NewBinaryStruct):
     _pad3: bytes = field(init=False, **BinaryPad(20))
 
 
+# noinspection PyDataclass
 @dataclass(slots=True)
 class FLVER(GameFile):
     """Model format used since Dark Souls PTDE.
@@ -95,7 +96,7 @@ class FLVER(GameFile):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader):
-        byte_order = BinaryCondition((6, 2), [(ByteOrder.LittleEndian, b"L\0"), (ByteOrder.BigEndian, b"R\0")])(reader)
+        byte_order = ByteOrder.from_reader_peek(reader, 2, 6, b"R\0", b"L\0")
         reader.default_byte_order = byte_order  # applies to all FLVER structs
         header = FLVERStruct.from_bytes(reader)
 
@@ -181,7 +182,7 @@ class FLVER(GameFile):
 
         Will raise an exception if no FLVER files or multiple FLVER files exist in the BND.
         """
-        flver_entry = chrbnd.find_entry_matching_name(r".*\.flver(\.dcx)?")
+        flver_entry = chrbnd.find_entry_matching_name(r".*\.flver(\.dcx)?$")
         return cls.from_bytes(flver_entry)
 
     def to_writer(self) -> BinaryWriter:
@@ -212,7 +213,6 @@ class FLVER(GameFile):
         header = FLVERStruct.from_object(
             self,
             byte_order=byte_order,
-            varint_size=8,  # doesn't matter
             endian=b"B\0" if self.big_endian else b"L\0",
             vertex_data_offset=RESERVED,
             vertex_data_size=RESERVED,
@@ -503,10 +503,10 @@ class FLVER(GameFile):
             tpfbhd_directory = self.get_tpfbhd_directory_path()
         else:
             tpfbhd_directory = Path(tpfbhd_directory)
-        tpf_paths = [(p, re.compile(rf"{p.stem}\.tpf(\.dcx)?")) for p in self.get_all_texture_paths()]
+        tpf_paths = [(p, re.compile(rf"{p.stem}\.tpf(\.dcx)?$")) for p in self.get_all_texture_paths()]
         tpf_sources = {}
         for bhd_path in tpfbhd_directory.glob("*.tpfbhd"):
-            bxf = Binder(bhd_path, create_bak_if_missing=False)
+            bxf = Binder.from_path(bhd_path)
             for entry in bxf.entries:
                 for tpf_path, tpf_re in reversed(tpf_paths):
                     if tpf_re.match(entry.name):

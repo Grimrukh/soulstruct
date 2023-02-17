@@ -113,7 +113,7 @@ class WindowLinker:
                     f"does not match enforced type of field ({entry_subtype_name})."
                 )
         try:
-            entry_subtype_index = entry_subtype_list.index(entry)
+            entry_subtype_index = entry_subtype_list.index_entry(entry)
             pluralized_name = entry.SUBTYPE_ENUM.pluralized_name
             if pluralized_name in {"Characters", "Players"} and field_value == "c0000":
                 if not active_msb.has_c0000_model():

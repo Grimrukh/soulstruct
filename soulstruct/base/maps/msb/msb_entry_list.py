@@ -104,6 +104,23 @@ class MSBEntryList(list[MSBEntryType]):
             *[entry.copy() for entry in self if filter_func(entry)],
         )
 
+    def contains_entry(self, entry: MSBEntry):
+        """Checks if `entry` is in this list, by ID, not `__eq__`."""
+        for e in self:
+            if e is entry:
+                return True
+        return False
+
+    def index(self, value, start=None, stop=None):
+        raise TypeError(f"Cannot use `MSBEntryList.index()` as it is brutally slow. Use `.index_entry(entry)` instead.")
+
+    def index_entry(self, entry: MSBEntry) -> int:
+        """Index exact instance `entry`. Returns -1 if absent rather than raising an error."""
+        for i, e in enumerate(self):
+            if e is entry:
+                return i
+        return -1
+
     def new(self, **kwargs) -> MSBEntryType:
         """Create a new `MSBEntry` of this list's subtype and append it to list."""
         # noinspection PyArgumentList
@@ -128,7 +145,7 @@ class MSBEntryList(list[MSBEntryType]):
             index = entry_or_index
         elif isinstance(entry_or_index, MSBEntry):
             entry = entry_or_index
-            index = self.index(entry)  # -1 if not found
+            index = self.index_entry(entry)  # -1 if not found
         else:
             raise TypeError("`entry_or_index` must be an `MSBEntry` or index of one in this list.")
         

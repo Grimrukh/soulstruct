@@ -1,10 +1,15 @@
 __all__ = ["MSGDirectory"]
 
+import typing as tp
+
 from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
 from .fmg import FMG
+from .msgbnd import MSGBND
 
 
 class MSGDirectory(_BaseMSGDirectory):
+
+    FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
 
     DEFAULT_ENTRY_STEMS = {
         ("item", 10): "アイテム名",
@@ -42,6 +47,7 @@ class MSGDirectory(_BaseMSGDirectory):
         ("menu", 90): "テキスト表示用タグ一覧",
         ("menu", 91): "機種別タグ_win32",
         ("menu", 92): "システムメッセージ_win32",
+        # NOTE: In PTDE, the item 'patch' (DLC) FMGs are in `menu.msgbnd`. In DSR, they are in `item.msgbnd.dcx`.
         ("menu", 100): "アイテムうんちくパッチ",
         ("menu", 101): "イベントテキストパッチ",
         ("menu", 102): "ダイアログパッチ",
@@ -67,6 +73,34 @@ class MSGDirectory(_BaseMSGDirectory):
         ("menu", 122): "キーガイドパッチ",
         ("menu", 123): "メニューその他パッチ",
         ("menu", 124): "メニュー共通テキストパッチ",
+    }
+
+    BASE_PATCH_FMGS = {
+        ("item", 10): ("menu", 111),
+        ("item", 11): ("menu", 115),
+        ("item", 12): ("menu", 117),
+        ("item", 13): ("menu", 113),
+        ("item", 14): ("menu", 118),
+        ("item", 18): ("menu", 119),
+        ("item", 19): ("menu", 120),
+        ("item", 20): ("menu", 110),
+        ("item", 21): ("menu", 114),
+        ("item", 22): ("menu", 116),
+        ("item", 23): ("menu", 112),
+        ("item", 24): ("menu", 100),
+        ("item", 25): ("menu", 106),
+        ("item", 26): ("menu", 108),
+        ("item", 27): ("menu", 109),
+        ("item", 29): ("menu", 105),
+        ("menu", 1): ("menu", 104),
+        ("menu", 2): ("menu", 107),
+        ("menu", 30): ("menu", 101),
+        ("menu", 76): ("menu", 124),
+        ("menu", 77): ("menu", 123),
+        ("menu", 78): ("menu", 102),
+        ("menu", 79): ("menu", 122),
+        ("menu", 80): ("menu", 121),
+        ("menu", 92): ("menu", 103),
     }
 
     MAIN_CATEGORIES = (

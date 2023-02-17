@@ -80,13 +80,13 @@ class FSBSampleMode(IntEnum):
 
 
 @dataclass(slots=True)
-class FSBSampleHeader(NewBinaryStruct):
+class FSBSampleHeader(BinaryStruct):
     """Wavetable data that is written to the FSB file.
 
     Most of this information is not represented in the FDP, but comes directly from the sound sample file (WAV).
     """
     total_size: ushort
-    name: str = field(**Binary(length=30, encoding="utf-8"))
+    name: str = field(**BinaryString(30, encoding="utf-8"))
     length: uint
     compressed_length: uint
     loop_start: uint
@@ -167,7 +167,7 @@ class FSBSample:
     @classmethod
     def from_fsb_reader(cls, reader: BinaryReader, data_offset: int):
         header = FSBSampleHeader.from_bytes(reader)
-        metadata_size = header.total_size - FSBSampleHeader.get_cls_size(reader.default_byte_order, reader.varint_size)
+        metadata_size = header.total_size - FSBSampleHeader.get_size(reader.default_byte_order, reader.long_varints)
         metadata = reader.read(metadata_size)
         with reader.temp_offset(data_offset):
             data = reader.read(header.compressed_length)
@@ -216,8 +216,8 @@ class FSBHeaderVersion(IntEnum):
 
 
 @dataclass(slots=True)
-class FSBHeaderStruct(NewBinaryStruct):
-    _signature: bytes = field(init=False, **Binary(length=4, asserted=b"FSB4"))
+class FSBHeaderStruct(BinaryStruct):
+    _signature: bytes = field(init=False, **BinaryString(4, asserted=b"FSB4"))
     sample_count: int
     sample_headers_size: uint
     sample_data_size: uint

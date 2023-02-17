@@ -73,7 +73,7 @@ class MemberFormat(IntEnum):
 
 
 @dataclass(slots=True)
-class LayoutMemberStruct(NewBinaryStruct):
+class LayoutMemberStruct(BinaryStruct):
 
     unk_x00: int
     _struct_offset: int  # just the offset of this `LayoutMember` struct instance
@@ -287,7 +287,7 @@ USES_UV_FACTOR = {
 
 
 @dataclass(slots=True)
-class BufferLayoutStruct(NewBinaryStruct):
+class BufferLayoutStruct(BinaryStruct):
 
     _members_count: int
     _pad1: bytes = field(init=False, **BinaryPad(8))
@@ -612,7 +612,7 @@ class VertexBufferSizeError(SoulstructError):
 
 
 @dataclass(slots=True)
-class VertexBufferStruct(NewBinaryStruct):
+class VertexBufferStruct(BinaryStruct):
 
     _buffer_index: int
     layout_index: int

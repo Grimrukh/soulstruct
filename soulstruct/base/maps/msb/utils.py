@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-__all__ = ["MSBBrokenEntryReference", "MSBSubtypeInfo", "MapFieldInfo"]
+__all__ = ["MSB_JSONEncoder", "MSBBrokenEntryReference", "MSBSubtypeInfo", "GroupBitSet", "MapFieldInfo"]
 
+import ast
+import json
 import logging
+import re
 import typing as tp
 from dataclasses import dataclass, fields
 from enum import IntEnum
 
-from soulstruct.utilities.maths import Matrix3, Vector3, resolve_rotation
+from soulstruct.utilities.maths import Matrix3, Vector2, Vector3, Vector4, resolve_rotation
+from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 
 if tp.TYPE_CHECKING:
     from .core import MSB
@@ -18,6 +22,13 @@ if tp.TYPE_CHECKING:
     from .regions import BaseMSBRegion
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class MSB_JSONEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
+            return repr(obj)
 
 
 @dataclass(slots=True)
@@ -31,6 +42,73 @@ class MSBSubtypeInfo(tp.NamedTuple):
     subtype_enum: BaseMSBSubtype
     entry_class: tp.Type[MSBEntry]
     subtype_list_name: str
+
+
+@dataclass(slots=True)
+class GroupBitSet:
+    """Stores the huge, multi-`uint` bitfields used for draw/display/backread/navmesh groups in MSBs.
+
+    Handles `list[uint]` representation, `set[int]` representation, and allows custom JSON encoding.
+    """
+    bit_count: int
+    enabled_bits: set[int]
+
+    _REPR_RE = re.compile(r"^GroupBitSet<(\d+)>(\([\d, ]*\))$")
+
+    def __init__(self, uints_or_bit_set: list[int] | set[int], bit_count: int = None):
+        if isinstance(uints_or_bit_set, GroupBitSet):
+            if bit_count is not None and bit_count != uints_or_bit_set:
+                raise ValueError(
+                    f"`bit_count` argument ({bit_count}) != passed group `bit_count` ({uints_or_bit_set.bit_count}).")
+            self.bit_count = uints_or_bit_set.bit_count
+            self.enabled_bits = uints_or_bit_set.enabled_bits
+        elif isinstance(uints_or_bit_set, list):
+            self.bit_count = 32 * len(uints_or_bit_set) if bit_count is None else bit_count
+            self.enabled_bits = int_group_to_bit_set(uints_or_bit_set, assert_size=len(uints_or_bit_set))
+        elif isinstance(uints_or_bit_set, set):
+            if bit_count is None:
+                raise ValueError("`bit_count` must be given to `GroupBitSet` if initializing from an existing `set`.")
+            if not all(isinstance(i, int) and i < bit_count for i in uints_or_bit_set):
+                raise TypeError(f"All `set` elements passed to this `GroupBitSet` must be ints less than {bit_count}.")
+            self.bit_count = bit_count
+            self.enabled_bits = uints_or_bit_set
+
+    @classmethod
+    def from_repr(cls, repr_string: str) -> GroupBitSet:
+        """Also handles JSON."""
+        if (match := cls._REPR_RE.match(repr_string)) is None:
+            raise ValueError(f"Invalid JSON string for `GroupBitSet`: {repr_string}")
+        bit_tuple = ast.literal_eval(match.group(2))
+        if isinstance(bit_tuple, int):
+            bit_tuple = (bit_tuple,)  # formatting quirk (no single comma)
+        return cls(
+            uints_or_bit_set=set(bit_tuple),
+            bit_count=int(match.group(1)),
+        )
+
+    def to_uints(self) -> list[int]:
+        return bit_set_to_int_group(self.enabled_bits, self.bit_count // 32)
+
+    def __iter__(self):
+        """Enables seamless `BinaryStruct` field packing."""
+        return iter(self.to_uints())
+
+    def __repr__(self) -> str:
+        """Also used for JSON."""
+        bit_tuple = "(" + ", ".join(str(i) for i in sorted(self.enabled_bits)) + ")"
+        return f"GroupBitSet<{self.bit_count}>{bit_tuple}"
+
+    def add(self, bit: int):
+        if not 0 <= bit <= self.bit_count:
+            raise ValueError(f"Bit {bit} is out of range for {self.bit_count}-bit `GroupBitSet`.")
+        self.enabled_bits.add(bit)
+
+    def remove(self, bit: int):
+        if not 0 <= bit <= self.bit_count:
+            raise ValueError(f"Bit {bit} is out of range for {self.bit_count}-bit `GroupBitSet`.")
+        self.enabled_bits.remove(bit)
+
+    # TODO: Add more set methods here, like union and intersection.
 
 
 def MapFieldInfo(

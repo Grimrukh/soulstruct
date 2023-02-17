@@ -8,6 +8,7 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.utilities.maths import Vector3
+from soulstruct.base.maps.msb.utils import GroupBitSet
 
 from .models import BaseMSBModel
 from .msb_entry import MSBEntry
@@ -23,18 +24,17 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(slots=True, eq=False, repr=False)
 class BaseMSBPart(MSBEntry, abc.ABC):
 
-    # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
-    GROUP_SIZE: tp.ClassVar[int]
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
 
     model: BaseMSBModel = None
     entity_id: int = -1
     sib_path: str = ""
-    translate: Vector3 = field(default_factory=lambda: Vector3.zero())
-    rotate: Vector3 = field(default_factory=lambda: Vector3.zero())
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    rotate: Vector3 = field(default_factory=Vector3.zero)
     scale: Vector3 = field(default_factory=lambda: Vector3.ones())
 
-    draw_groups: set[int] = field(default_factory=set)
-    display_groups: set[int] = field(default_factory=set)
+    draw_groups: GroupBitSet = field(default_factory=set)
+    display_groups: GroupBitSet = field(default_factory=set)
 
     _model_index: int = None
 
@@ -44,4 +44,13 @@ class BaseMSBPart(MSBEntry, abc.ABC):
         """Defined by most subclasses."""
         self._consume_index(entry_lists, "MODEL_PARAM_ST", "model")
 
-    # TODO: `set_auto_sib_path(map_stem)` for parts
+    def set_auto_sib_path(self, map_stem: str):
+        """Most `MSBPart` subclasses have the same SIB path. The `layout.SIB` name might get a prefix.
+
+        The game's base class can typically implement it, especially in later games.
+
+        Empty `SIB_PATH_TEMPLATE` is permitted and indicates that it should be empty for that type.
+        """
+        if self.SIB_PATH_TEMPLATE is None:
+            raise TypeError(f"Cannot set `sib_path` automatically for type `{self.cls_name}`.")
+        self.sib_path = self.SIB_PATH_TEMPLATE.format(map_stem=map_stem)

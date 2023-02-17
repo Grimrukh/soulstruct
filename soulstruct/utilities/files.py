@@ -118,9 +118,9 @@ def read_json(json_path: str | Path, encoding=None) -> dict | list:
 
 
 def write_json(
-    json_path: str | Path, data: list | dict, indent=4, encoding="utf-8", ensure_ascii=True
+    json_path: str | Path, data: list | dict, indent=4, encoding="utf-8", ensure_ascii=True, encoder=None,
 ):
     """Write given `data` list or dictionary to JSON file with given `encoding`."""
-    json_str = json.dumps(data, indent=indent, ensure_ascii=ensure_ascii)
+    json_str = json.dumps(data, indent=indent, ensure_ascii=ensure_ascii, cls=encoder)
     json_bytes = json_str.encode(encoding)
     Path(json_path).write_bytes(json_bytes)

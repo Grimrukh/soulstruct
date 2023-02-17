@@ -13,6 +13,7 @@ from soulstruct.base.params.param import Param
 from soulstruct.utilities.misc import BiDict
 from soulstruct.darksouls1ptde.constants import PLAYER_WEAPON_BEHAVIOR_VARIATIONS, BEHAVIOR_SUB_ID
 
+from . import paramdef
 from .paramdef import *
 
 if tp.TYPE_CHECKING:
@@ -22,6 +23,8 @@ if tp.TYPE_CHECKING:
 @dataclass(slots=True)
 class GameParamBND(_BaseGameParamBND):
 
+    PARAMDEF_MODULE: tp.ClassVar = paramdef
+
     PARAM_NICKNAMES: tp.ClassVar = BiDict(
         ("AtkParam_Npc", "NonPlayerAttacks"),
         ("AtkParam_Pc", "PlayerAttacks"),
@@ -30,6 +33,8 @@ class GameParamBND(_BaseGameParamBND):
         ("Bullet", "Bullets"),
         ("CalcCorrectGraph", "GrowthCurves"),
         ("CharaInitParam", "Players"),
+        ("default_AIStandardInfoBank", "DefaultAIStandardInfo"),
+        ("default_EnemyBehaviorBank", "DefaultEnemyBehaviors"),
         ("EquipParamProtector", "Armor"),
         ("EquipMtrlSetParam", "UpgradeMaterials"),
         ("EquipParamAccessory", "Rings"),
@@ -48,10 +53,13 @@ class GameParamBND(_BaseGameParamBND):
         ("NpcThinkParam", "AI"),
         ("ObjActParam", "ObjectActivations"),
         ("ObjectParam", "Objects"),
+        ("QwcChange", "WorldTendencyChange"),
+        ("QwcJudge", "WorldTendencyJudgement"),
         ("RagdollParam", "Ragdolls"),
         ("ReinforceParamProtector", "ArmorUpgrades"),
         ("ReinforceParamWeapon", "WeaponUpgrades"),
         ("ShopLineupParam", "Shops"),
+        ("SkeletonParam", "Skeletons"),
         ("SpEffectParam", "SpecialEffects"),
         ("SpEffectVfxParam", "SpecialEffectVisuals"),
         ("TalkParam", "Dialogue"),
@@ -69,12 +77,14 @@ class GameParamBND(_BaseGameParamBND):
     Bullets = param_property("Bullet")  # type: Param[BULLET_PARAM_ST]
     Cameras = param_property("LockCamParam")  # type: Param[LOCK_CAM_PARAM_ST]
     Characters = param_property("NpcParam")  # type: Param[NPC_PARAM_ST]
+    DefaultAIStandardInfo = param_property("default_AIStandardInfoBank")  # type: Param[AI_STANDARD_INFO_BANK]
+    DefaultEnemyBehaviors = param_property("default_EnemyBehaviorBank")  # type: Param[ENEMY_STANDARD_INFO_BANK]
     Dialogue = param_property("TalkParam")  # type: Param[TALK_PARAM_ST]
     FaceGenerators = param_property("FaceGenParam")  # type: Param[FACE_PARAM_ST]
     Goods = param_property("EquipParamGoods")  # type: Param[EQUIP_PARAM_GOODS_ST]
     GrowthCurves = param_property("CalcCorrectGraph")  # type: Param[CACL_CORRECT_GRAPH_ST]
     ItemLots = param_property("ItemLotParam")  # type: Param[ITEMLOT_PARAM_ST]
-    Knockbacks = param_property("KnockBackParam")  # type: Param  # TODO: type
+    Knockbacks = param_property("KnockBackParam")  # type: Param[KNOCKBACK_PARAM_ST]
     NonPlayerAttacks = param_property("AtkParam_Npc")  # type: Param[ATK_PARAM_ST]
     NonPlayerBehaviors = param_property("BehaviorParam")  # type: Param[BEHAVIOR_PARAM_ST]
     MenuColors = param_property("MenuColorTableParam")  # type: Param[MENU_PARAM_COLOR_TABLE_ST]
@@ -84,9 +94,10 @@ class GameParamBND(_BaseGameParamBND):
     Players = param_property("CharaInitParam")  # type: Param[CHARACTER_INIT_PARAM]
     PlayerAttacks = param_property("AtkParam_Pc")  # type: Param[ATK_PARAM_ST]
     PlayerBehaviors = param_property("BehaviorParam_PC")  # type: Param[BEHAVIOR_PARAM_ST]
-    Ragdolls = param_property("RagdollParam")  # type: Param  # TODO: type
+    Ragdolls = param_property("RagdollParam")  # type: Param[RAGDOLL_PARAM_ST]
     Rings = param_property("EquipParamAccessory")  # type: Param[EQUIP_PARAM_ACCESSORY_ST]
     Shops = param_property("ShopLineupParam")  # type: Param[SHOP_LINEUP_PARAM]
+    Skeletons = param_property("SkeletonParam")  # type: Param[SKELETON_PARAM_ST]
     SpecialEffects = param_property("SpEffectParam")  # type: Param[SP_EFFECT_PARAM_ST]
     SpecialEffectVisuals = param_property("SpEffectVfxParam")  # type: Param[SP_EFFECT_VFX_PARAM_ST]
     Spells = param_property("Magic")  # type: Param[MAGIC_PARAM_ST]
@@ -95,6 +106,8 @@ class GameParamBND(_BaseGameParamBND):
     UpgradeMaterials = param_property("EquipMtrlSetParam")  # type: Param[EQUIP_MTRL_SET_PARAM_ST]
     Weapons = param_property("EquipParamWeapon")  # type: Param[EQUIP_PARAM_WEAPON_ST]
     WeaponUpgrades = param_property("ReinforceParamWeapon")  # type: Param[REINFORCE_PARAM_WEAPON_ST]
+    WorldTendencyChange = param_property("QwcChange")  # type: Param[QWC_CHANGE_PARAM_ST]
+    WorldTendencyJudgement = param_property("QwcJudge")  # type: Param[QWC_JUDGE_PARAM_ST]
 
     # Also defines display order.
     GAME_TYPES: tp.ClassVar = {
@@ -132,6 +145,10 @@ class GameParamBND(_BaseGameParamBND):
     }
 
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = GET_BUNDLED_PARAMDEFBND
+
+    @classmethod
+    def get_default_entry_path(cls, entry_name: str) -> str:
+        return f"N:\\FRPG\\data\\INTERROOT_win32\\param\\GameParam\\{entry_name}"
 
     def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.

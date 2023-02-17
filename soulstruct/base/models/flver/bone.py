@@ -10,7 +10,7 @@ from soulstruct.utilities.maths import Vector3, Matrix3
 
 
 @dataclass(slots=True)
-class FLVERBoneStruct(NewBinaryStruct):
+class FLVERBoneStruct(BinaryStruct):
 
     translate: Vector3
     _name_offset: int

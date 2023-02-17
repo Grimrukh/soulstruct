@@ -18,7 +18,7 @@ from .enums import MSBModelSubtype
 
 
 @dataclass(slots=True)
-class ModelHeaderStruct(NewBinaryStruct):
+class ModelHeaderStruct(BinaryStruct):
     name_offset: int
     _subtype_int: int
     _subtype_index: int
@@ -31,7 +31,7 @@ class ModelHeaderStruct(NewBinaryStruct):
 class MSBModel(BaseMSBModel):
     """MSB model entry in Bloodborne."""
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]] = ModelHeaderStruct
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = ModelHeaderStruct
     NAME_ENCODING = "shift-jis"
     NULL = b"\0"
     EMPTY_SIB_PATH = b"\0" * 6

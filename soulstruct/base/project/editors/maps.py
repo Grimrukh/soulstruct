@@ -16,7 +16,7 @@ from soulstruct.base.project.utilities import (
     NameSelectionBox,
     EntryTextEditBox,
     SequenceNameEditBox,
-    BitGroupEditBox,
+    GroupBitSetEditBox,
 )
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor, FieldRow
@@ -390,7 +390,7 @@ class MapFieldRow(FieldRow):
             self.build_field_context_menu()
 
     def _set_group_checkbuttons(self):
-        new_bit_set = BitGroupEditBox(
+        new_bit_set = GroupBitSetEditBox(
             self.master,
             initial_bit_set=self.master.get_selected_field_dict()[self.field_name],
             window_title=f"Modify {self.field_nickname}",

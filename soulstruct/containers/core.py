@@ -133,9 +133,9 @@ class BinderVersion(enum.Enum):
 
 
 @dataclass(slots=True)
-class BinderHeaderV3(NewBinaryStruct):
-    _version: bytes = field(init=False, **Binary(length=4, asserted=b"BND3"))
-    signature: str = field(**Binary(length=8, encoding="ASCII", rstrip_null=True))
+class BinderHeaderV3(BinaryStruct):
+    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BND3"))
+    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
     flags: byte
     big_endian: bool
     bit_big_endian: bool
@@ -149,17 +149,18 @@ class BinderHeaderV3(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class BinderHeaderV4(NewBinaryStruct):
-    _version: bytes = field(init=False, **Binary(length=4, asserted=b"BND4"))
+class BinderHeaderV4(BinaryStruct):
+    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BND4"))
     unknown1: bool
     unknown2: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))
     big_endian: bool
     bit_little_endian: bool
     _pad2: bytes = field(init=False, **BinaryPad(1))
-    _entry_count: int
+    entry_count: int
+    # NOTE: No `file_size` in V4.
     _header_size: long = field(init=False, **Binary(asserted=0x40))
-    signature: str = field(**Binary(length=8, encoding="ASCII", rstrip_null=True))
+    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
     _entry_header_size: long
     _data_offset: long
     unicode: bool
@@ -173,15 +174,15 @@ class BinderHeaderV4(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class BDTHeaderV3(NewBinaryStruct):
-    _version: bytes = field(init=False, **Binary(length=4, asserted=b"BDF3"))
-    signature: str = field(**Binary(length=8, encoding="ASCII", rstrip_null=True))
+class BDTHeaderV3(BinaryStruct):
+    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BDF3"))
+    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
     _pad1: bytes = field(init=False, **BinaryPad(4))
 
 
 @dataclass(slots=True)
-class BDTHeaderV4(NewBinaryStruct):
-    _version: bytes = field(init=False, **Binary(length=4, asserted=b"BDT4"))
+class BDTHeaderV4(BinaryStruct):
+    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BDT4"))
     unknown1: bool
     unknown2: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))
@@ -189,7 +190,7 @@ class BDTHeaderV4(NewBinaryStruct):
     bit_little_endian: bool
     _pad2: bytes = field(init=False, **BinaryPad(5))
     _header_size: long = field(init=False, **Binary(asserted=0x30))
-    signature: str = field(**Binary(length=8, encoding="ASCII", rstrip_null=True))
+    signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
     _pad3: bytes = field(init=False, **BinaryPad(16))
 
 
@@ -378,22 +379,22 @@ class Binder(BaseBinaryFile):
             entry_reader = reader  # headers and entries in same file
 
         if version_bytes in {b"BND3", b"BHF3"}:
-            binder, entry_headers = cls._read_header_v3(reader)
+            header_kwargs, entry_headers = cls._read_header_v3(reader)
         elif version_bytes in {b"BND4", b"BHF4"}:
-            binder, entry_headers = cls._read_header_v4(reader)
+            header_kwargs, entry_headers = cls._read_header_v4(reader)
         else:
             raise ValueError(f"Could not detect BND version from first four bytes: {version_bytes}:")
 
-        binder.entries = [BinderEntry.from_header(entry_reader, entry_header) for entry_header in entry_headers]
-        if binder.v4_info:
+        entries = [BinderEntry.from_header(entry_reader, entry_header) for entry_header in entry_headers]
+        if v4_info := header_kwargs.get("binder.v4_info", None):
             # Set existing V4 hash properties.
-            binder.v4_info.most_recent_entry_count = len(binder.entries)
-            binder.v4_info.most_recent_paths = [entry.path for entry in binder.entries]
+            v4_info.most_recent_entry_count = len(entries)
+            v4_info.most_recent_paths = [entry.path for entry in entries]
 
-        return binder
+        return cls(entries=entries, **header_kwargs)
 
     @classmethod
-    def _read_header_v3(cls, reader: BinaryReader) -> tuple[Self, list[BinderEntryHeader]]:
+    def _read_header_v3(cls, reader: BinaryReader) -> tuple[dict[str, tp.Any], list[BinderEntryHeader]]:
         # Test for endianness is a little complicated, as `flags.is_big_endian` can override the header `big_endian`.
         big_endian, bit_big_endian = reader.unpack("??", offset=0xD)
         flags_fmt = ">B" if bit_big_endian else "<B"
@@ -407,22 +408,19 @@ class Binder(BaseBinaryFile):
             for _ in range(header_struct.entry_count)
         ]
 
-        binder = cls(
+        header_kwargs = dict(
             signature=header_struct.signature,
             big_endian=big_endian,
             bit_big_endian=bit_big_endian,
-            entries=[],  # assigned later
             version=BinderVersion.V3,
             v4_info=None,
         )
-        return binder, entry_headers
+        return header_kwargs, entry_headers
 
     @classmethod
-    def _read_header_v4(cls, reader: BinaryReader) -> tuple[Self, list[BinderEntryHeader]]:
+    def _read_header_v4(cls, reader: BinaryReader) -> tuple[dict[str, tp.Any], list[BinderEntryHeader]]:
         """Less endian complexity than V3."""
-        byte_order = BinaryCondition(
-            (0x9, 1), [(ByteOrder.BigEndian, b"\01"), (ByteOrder.LittleEndian, b"\00")]
-        )(reader)
+        byte_order = ByteOrder.from_reader_peek(reader, 1, 9, b"\01", b"\00")
         reader.default_byte_order = byte_order
         header_struct = BinderHeaderV4.from_bytes(reader, byte_order=byte_order)  # type: BinderHeaderV4
 
@@ -431,7 +429,6 @@ class Binder(BaseBinaryFile):
 
         _entry_header_size = header_struct.pop("_entry_header_size")
         _hash_table_offset = header_struct.pop("_hash_table_offset")
-        _entry_count = header_struct.pop("_entry_count")
         _data_offset = header_struct.pop("_data_offset")
 
         if _entry_header_size != flags_header_size:
@@ -448,7 +445,7 @@ class Binder(BaseBinaryFile):
 
         entry_headers = [
             BinderEntryHeader.from_reader_v4(reader, flags, not header_struct.bit_little_endian, header_struct.unicode)
-            for _ in range(_entry_count)
+            for _ in range(header_struct.entry_count)
         ]
 
         v4_info = header_struct.to_object(BinderVersion4Info)
@@ -458,17 +455,16 @@ class Binder(BaseBinaryFile):
             reader.seek(_hash_table_offset)
             v4_info.most_recent_hash_table = reader.read(_data_offset - _hash_table_offset)
 
-        binder = cls(
+        header_kwargs = dict(
             signature=header_struct.signature,
             flags=flags,
             big_endian=header_struct.big_endian,
             bit_big_endian=not header_struct.bit_little_endian,  # REVERSED
-            entries=[],  # assigned later
             version=BinderVersion.V4,
             v4_info=v4_info,
         )
 
-        return binder, entry_headers
+        return header_kwargs, entry_headers
 
     @classmethod
     def from_unpacked_path(cls, path: str | Path) -> Self:
@@ -527,7 +523,7 @@ class Binder(BaseBinaryFile):
         binder_kwargs["is_split_bxf"] = is_split_bxf
         binder_kwargs["version"] = version
         binder_kwargs["flags"] = BinderFlags(manifest["flags"])
-        binder_kwargs["dcx_type"] = DCXType(manifest["dcx_type"])
+        binder_kwargs["dcx_type"] = DCXType[manifest["dcx_type"]]
         return binder_kwargs
 
     # endregion
@@ -712,10 +708,10 @@ class Binder(BaseBinaryFile):
         NOTE: Both writers should be the same for BND files.
         """
 
-        sorted_entries = list(sorted(self.entries, key=lambda e: e.id))
+        sorted_entries = list(sorted(self.entries, key=lambda e: e.entry_id))
         sorted_entry_headers = [entry.get_header(self.flags) for entry in sorted_entries]
         for entry_header in sorted_entry_headers:
-            entry_header.into_bnd3_writer(entry_writer, self.flags, self.bit_big_endian)
+            entry_header.into_bnd3_writer(header_writer, self.flags, self.bit_big_endian)
 
         if self.flags.has_names:
             for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
@@ -723,9 +719,9 @@ class Binder(BaseBinaryFile):
                 entry_header.pack_path(header_writer, entry_writer, packed_path)
 
         for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
-            entry_header.pack_path(header_writer, entry_writer, entry.data)
+            entry_header.pack_data(header_writer, entry_writer, entry.data)
 
-        header_writer.fill("_file_size", entry_writer.position, obj=self)
+        header_writer.fill("file_size", entry_writer.position, obj=self)
 
     def _header_to_writer_v4(self) -> BinaryWriter:
 
@@ -737,7 +733,7 @@ class Binder(BaseBinaryFile):
             unknown2=self.v4_info.unknown2,
             big_endian=self.big_endian,
             bit_little_endian=not self.bit_big_endian,  # REVERSED
-            _entry_count=len(self.entries),
+            entry_count=len(self.entries),
             signature=self.signature,
             _entry_header_size=long(self.flags.get_bnd_entry_header_size()),
             _data_offset=RESERVED,
@@ -775,10 +771,10 @@ class Binder(BaseBinaryFile):
         NOTE: Both writers should be the same for BND files.
         """
 
-        sorted_entries = list(sorted(self.entries, key=lambda e: e.id))
+        sorted_entries = list(sorted(self.entries, key=lambda e: e.entry_id))
         sorted_entry_headers = [entry.get_header(self.flags) for entry in sorted_entries]
         for entry_header in sorted_entry_headers:
-            entry_header.into_bnd4_writer(entry_writer, self.flags, self.bit_big_endian)
+            entry_header.into_bnd4_writer(header_writer, self.flags, self.bit_big_endian)
 
         if self.flags.has_names:
             path_encoding = entry_writer.get_utf_16_encoding() if self.v4_info.unicode else self.ENTRY_PATH_ENCODING
@@ -797,8 +793,8 @@ class Binder(BaseBinaryFile):
         header_writer.fill("_data_offset", entry_writer.position, obj=self)
 
         for entry, entry_header in zip(sorted_entries, sorted_entry_headers):
-            # Ten pad bytes between entries (for byte-perfect writes).
-            entry_header.pack_path(header_writer, entry_writer, entry.data + b"\0" * 10)
+            # Ten pad bytes between entry data blocks (for byte-perfect writes).
+            entry_header.pack_data(header_writer, entry_writer, entry.data + b"\0" * 10)
 
     def get_manifest_header(self) -> dict[str, tp.Any]:
         """Construct manifest header dictionary depending on file type."""
@@ -840,6 +836,7 @@ class Binder(BaseBinaryFile):
         else:
             directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
+        print(directory)
 
         entry_tree_dict = {}
         use_index_prefix = self.has_repeated_entry_names

@@ -20,7 +20,7 @@ if tp.TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d)\.ffxbnd(\.dcx)?")
+_BLOCK_FFXBND_RE = re.compile(r"FRPG_SfxBnd_m(\d\d)_(\d\d)\.ffxbnd(\.dcx)?$")
 _MAP_PIECE_RE = re.compile(r"^m(\d\d\d\d)B(\d)A(\d\d)\.flver\.dcx$")
 
 # The FFX and FLVER matches allow arbitrary non-numeric characters to appear after the ID digits

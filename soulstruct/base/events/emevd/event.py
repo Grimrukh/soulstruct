@@ -199,7 +199,7 @@ class EventSignature:
 
 
 @dataclass(slots=True)
-class EventStruct(NewBinaryStruct):
+class EventStruct(BinaryStruct):
     event_id: varuint
     instructions_count: varuint
     instructions_offset: varuint

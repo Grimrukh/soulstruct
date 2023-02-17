@@ -36,10 +36,10 @@ from .parts import MSBPart
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEvent(BaseMSBEvent, abc.ABC):
-    """MSB event entry in Bloodborne."""
+    """MSB event entry in Dark Souls 1."""
 
     @dataclass(slots=True)
-    class SUPERTYPE_HEADER_STRUCT(NewBinaryStruct):
+    class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
         name_offset: int
         _supertype_index: int
         _subtype_int: int
@@ -49,11 +49,11 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
         _pad1: bytes = field(**BinaryPad(4))
 
     @dataclass(slots=True)
-    class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUPERTYPE_DATA_STRUCT(BinaryStruct):
         _attached_part_index: int
         _attached_region_index: int
         entity_id: int
-        unknowns: tuple[byte, byte, byte, byte]
+        unknowns: list[byte] = field(**BinaryArray(4))
 
     NAME_ENCODING: tp.ClassVar[str] = "shift-jis"
 
@@ -61,7 +61,7 @@ class MSBEvent(BaseMSBEvent, abc.ABC):
     attached_part: MSBPart = None
     attached_region: MSBRegion = None
 
-    unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **Binary(length=4))
+    unknowns: list[int] = field(default_factory=lambda: [0, 0, 0, 0], **BinaryArray(4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -70,7 +70,7 @@ class MSBLightEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Light
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         point_light_id: int
 
     point_light_id: int = field(default=0, **MapFieldInfo(linked_type=PointLightParam))
@@ -81,7 +81,7 @@ class MSBSoundEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Sound
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         sound_type: int
         sound_id: int
 
@@ -94,7 +94,7 @@ class MSBVFXEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.VFX
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         vfx_id: int
 
     vfx_id: int = 0
@@ -106,20 +106,20 @@ class MSBWindEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Wind
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         wind_vector_min: Vector3
         unk_x04_x08: float
         wind_vector_max: Vector3
         unk_x0c_x10: float
-        wind_swing_cycles: tuple[float, float, float, float]
-        wind_swing_powers: tuple[float, float, float, float]
+        wind_swing_cycles: list[float] = field(**BinaryArray(4))
+        wind_swing_powers: list[float] = field(**BinaryArray(4))
 
-    wind_vector_min: Vector3 = field(default_factory=lambda: Vector3.zero())
+    wind_vector_min: Vector3 = field(default_factory=Vector3.zero)
     unk_x04_x08: float = 0.0
-    wind_vector_max: Vector3 = field(default_factory=lambda: Vector3.zero())
+    wind_vector_max: Vector3 = field(default_factory=Vector3.zero)
     unk_x0c_x10: float = 0.0
-    wind_swing_cycles: list[float] = field(default_factory=lambda: [0.0] * 4, **Binary(length=4))
-    wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **Binary(length=4))
+    wind_swing_cycles: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
+    wind_swing_powers: list[float] = field(default_factory=lambda: [0.0] * 4, **BinaryArray(4))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -128,7 +128,7 @@ class MSBTreasureEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Treasure
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _pad1: bytes = field(**BinaryPad(4))
         _treasure_part_index: int
         item_lot_1: int
@@ -156,18 +156,18 @@ class MSBTreasureEvent(MSBEvent):
 
     _treasure_part_index: int = None
 
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        # TODO: My MSB entry `duplicate()` (copying entries) is doing a deep copy on referenced fields.
+        #  Create a custom `MSBEntry.copy()` method that does a shallow copy only
+        super(MSBEvent, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
+
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
             _treasure_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.treasure_part),
         )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        # TODO: My MSB entry `duplicate()` (copying entries) is doing a deep copy on referenced fields.
-        #  Create a custom `MSBEntry.copy()` method that does a shallow copy only
-        super(MSBEvent, self).indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "PARTS_PARAM_ST", "treasure_part")
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -177,7 +177,7 @@ class MSBSpawnerEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Spawner
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         max_count: byte
         spawner_type: sbyte
         limit_count: short
@@ -187,8 +187,8 @@ class MSBSpawnerEvent(MSBEvent):
         max_interval: float
         initial_spawn_count: int
         _pad1: bytes = field(**BinaryPad(28))
-        _spawn_region_indices: list[int] = field(**Binary(length=4))
-        _spawn_part_indices: list[int] = field(**Binary(length=32))
+        _spawn_regions_indices: list[int] = field(**BinaryArray(4))
+        _spawn_parts_indices: list[int] = field(**BinaryArray(32))
         _pad2: bytes = field(**BinaryPad(64))
 
     max_count: int = 255
@@ -206,13 +206,21 @@ class MSBSpawnerEvent(MSBEvent):
         default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectSequence((Region, 4)))
     )
 
-    _spawn_parts_indices: list[int] = None
-    _spawn_regions_indices: list[int] = None
+    _spawn_parts_indices: list[int] = field(default=None, **BinaryArray(32))
+    _spawn_regions_indices: list[int] = field(default=None, **BinaryArray(4))
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
         super(MSBSpawnerEvent, self).indices_to_objects(entry_lists)
         self._consume_indices(entry_lists, "PARTS_PARAM_ST", "spawn_parts")
         self._consume_indices(entry_lists, "POINT_PARAM_ST", "spawn_regions")
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _spawn_parts_indices=self.try_index(entry_lists["PARTS_PARAM_ST"], self.spawn_parts),
+            _spawn_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_regions),
+        )
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -221,7 +229,7 @@ class MSBMessageEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Message
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         text_id: short
         unk_x02_x04: short
         is_hidden: bool
@@ -239,7 +247,7 @@ class MSBObjActEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.ObjAct
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         obj_act_entity_id: int
         _obj_act_part_index: int
         obj_act_param_id: short
@@ -255,16 +263,16 @@ class MSBObjActEvent(MSBEvent):
 
     _obj_act_part_index: int = None
 
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        super(MSBObjActEvent, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
+
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
             _obj_act_part_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.obj_act_part),
         )
-
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBObjActEvent, self).indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "PARTS_PARAM_ST", "obj_act_part")
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -273,13 +281,17 @@ class MSBSpawnPointEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.SpawnPoint
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _spawn_point_region_index: int
         _pad1: bytes = field(**BinaryPad(12))
 
     spawn_point_region: MSBRegion = None
 
     _spawn_point_region_index: int = None
+
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        super(MSBSpawnPointEvent, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
@@ -288,10 +300,6 @@ class MSBSpawnPointEvent(MSBEvent):
             _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
         )
 
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBSpawnPointEvent, self).indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBMapOffsetEvent(MSBEvent):
@@ -299,12 +307,12 @@ class MSBMapOffsetEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.MapOffset
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         translate: Vector3
         rotate_y: float
 
-    translate: Vector3 = field(default_factory=lambda: Vector3.zero())
-    rotate: float = 0.0
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    rotate_y: float = 0.0
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -313,13 +321,17 @@ class MSBNavigationEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Navigation
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _navigation_region_index: int
         _pad1: bytes = field(**BinaryPad(12))
 
     navigation_region: MSBRegion = None
 
     _navigation_region_index: int = None
+
+    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
+        super(MSBNavigationEvent, self).indices_to_objects(entry_lists)
+        self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
@@ -328,10 +340,6 @@ class MSBNavigationEvent(MSBEvent):
             _navigation_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.navigation_region),
         )
 
-    def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
-        super(MSBNavigationEvent, self).indices_to_objects(entry_lists)
-        self._consume_index(entry_lists, "POINT_PARAM_ST", "navigation_region")
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBEnvironmentEvent(MSBEvent):
@@ -339,7 +347,7 @@ class MSBEnvironmentEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.Environment
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         unk_x00_x04: int
         unk_x04_x08: float
         unk_x08_x0c: float
@@ -362,7 +370,7 @@ class MSBNPCInvasionEvent(MSBEvent):
     SUBTYPE_ENUM: tp.ClassVar = MSBEventSubtype.NPCInvasion
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         host_entity_id: int
         invasion_flag_id: int
         _spawn_point_region_index: int
@@ -372,6 +380,15 @@ class MSBNPCInvasionEvent(MSBEvent):
     invasion_flag_id: int = field(default=-1, **MapFieldInfo(linked_type=Flag))
     spawn_point_region: MSBRegion = None
 
+    _spawn_point_region_index: int = None
+
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
         super(MSBNPCInvasionEvent, self).indices_to_objects(entry_lists)
         self._consume_index(entry_lists, "POINT_PARAM_ST", "spawn_point_region")
+
+    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+        self.SUBTYPE_DATA_STRUCT.object_to_writer(
+            self,
+            writer,
+            _spawn_point_region_index=self.try_index(entry_lists["POINT_PARAM_ST"], self.spawn_point_region),
+        )

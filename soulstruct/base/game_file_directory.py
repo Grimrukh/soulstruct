@@ -49,7 +49,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
         if not directory_path.is_dir():
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_path_stem = file_path.name.split(".")[0]
@@ -116,7 +116,7 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?")
+        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
@@ -129,13 +129,11 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
                     )
                     continue
             else:
-                _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
+                # _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
                 continue
 
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
-
-        print(files)
 
         return cls(directory_path, files)
 

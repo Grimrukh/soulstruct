@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-__all__ = ["DrawParam"]
+__all__ = ["DrawParam", "TypedDrawParam"]
 
+import typing as tp
 from dataclasses import dataclass
 
 from soulstruct.base.params.param import Param
+from soulstruct.base.params.param_row import ParamRow
 
 
 @dataclass(slots=True)
@@ -23,3 +25,13 @@ class DrawParam(Param):
             for index, row in self.rows.items()
             if row.Name and not row.Name.startswith("0") and not row.Name.lower().startswith("polyg")
         }
+
+
+def TypedDrawParam(data_type: tp.Type[ParamRow]):
+    """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
+    for draw_param_subclass in DrawParam.__subclasses__():
+        if draw_param_subclass.__name__ == "ParamDict":
+            continue
+        if draw_param_subclass.ROW_TYPE is data_type:
+            return draw_param_subclass
+    return type(f"DrawParam_{data_type.__name__}", (DrawParam,), {"ROW_TYPE": data_type})

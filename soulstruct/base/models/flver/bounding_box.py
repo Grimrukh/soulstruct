@@ -7,7 +7,7 @@ from soulstruct.utilities.maths import Vector3
 
 
 @dataclass(slots=True)
-class BoundingBox(NewBinaryStruct):
+class BoundingBox(BinaryStruct):
     """Axis-aligned bounding box specified by `minimum` and `maximum` corners."""
     minimum: Vector3
     maximum: Vector3

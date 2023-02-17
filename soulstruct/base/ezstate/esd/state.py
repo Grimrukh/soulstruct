@@ -19,7 +19,7 @@ except AttributeError:
 
 
 @dataclass(slots=True)
-class StateStruct(NewBinaryStruct):
+class StateStruct(BinaryStruct):
     index: varint
     condition_pointers_offset: varint
     condition_pointers_count: varint

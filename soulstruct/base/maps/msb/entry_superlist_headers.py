@@ -13,7 +13,7 @@ from soulstruct.utilities.binary import *
 # TODO: move to game subclasses, changed my mind
 
 @dataclass(slots=True)
-class MSBEntrySuperlistHeader_PTDE(NewBinaryStruct):
+class MSBEntrySuperlistHeader_PTDE(BinaryStruct):
     # TODO: apparently big-endian if this is > 0xFFFF, but I've only seen zero in DS1.
     _big_endian_check: int = field(init=False, **Binary(asserted=0))
     name_offset: int
@@ -24,7 +24,7 @@ class MSBEntrySuperlistHeader_PTDE(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class MSBEntrySuperlistHeader_BB(NewBinaryStruct):
+class MSBEntrySuperlistHeader_BB(BinaryStruct):
     _version: int = field(init=False, **Binary(asserted=3))
     entry_offset_count: int
     name_offset: long

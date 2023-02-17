@@ -59,7 +59,7 @@ class ParamDef(GameFile):
         byte_order = ByteOrder.BigEndian if reader.unpack_value("b", offset=0x2c) == -1 else ByteOrder.LittleEndian
         format_version = reader.unpack_value("h", offset=0x2e)
         reader.default_byte_order = byte_order
-        reader.varint_size = 8 if format_version >= 200 else 4
+        reader.long_varints = format_version >= 200
 
         reader.read(4)  # file size
         header_size = reader.unpack_value("h")

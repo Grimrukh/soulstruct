@@ -56,13 +56,13 @@ class MTDInfo:
 
 
 @dataclass(slots=True)
-class GXItem(NewBinaryStruct):
+class GXItem(BinaryStruct):
     """Item that sets various material rendering properties."""
 
-    gx_id: bytes = field(**Binary(length=4))
+    gx_id: bytes = field(**BinaryString(4))
     unk_x04: int
-    size: int = field(**BinaryAutoCompute(lambda self: len(self.data) + 12))
-    data: bytes = field(**Binary(length=FieldValue("size", lambda x: x - 12)))
+    size: int
+    data: bytes = field(metadata={"NOT_BINARY": True})  # `size - 12` bytes
 
 
 @dataclass(slots=True)
@@ -81,10 +81,15 @@ class GXList:
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, flver_version: Version):
         if flver_version <= Version.DarkSouls2:
-            return cls([GXItem.from_bytes(reader)])
+            # Only one `GXItem`.
+            gx_item = GXItem.from_bytes(reader)
+            gx_item.data = reader.read(gx_item.size - 12)
+            return cls([gx_item])
         gx_items = []
         while reader.unpack_value("<i", offset=reader.position) not in {2 ** 31 - 1, -1}:
-            gx_items.append(GXItem.from_bytes(reader))
+            gx_item = GXItem.from_bytes(reader)
+            gx_item.data = reader.read(gx_item.size - 12)
+            gx_items.append(gx_item)
         terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
         reader.unpack_value("<i", asserted=100)
         terminator_null_count = reader.unpack_value("<i") - 12
@@ -95,7 +100,8 @@ class GXList:
 
     def to_flver_writer(self, writer: BinaryWriter):
         for gx_item in self.gx_items:
-            writer.pack_new_struct(gx_item)
+            GXItem.object_to_writer(gx_item, writer, size=len(gx_item.data) + 12)
+            writer.append(gx_item.data)
         writer.pack("iii", self.terminator_id, 100, self.terminator_null_count + 12)
         writer.pad(self.terminator_null_count)
 
@@ -104,7 +110,7 @@ class GXList:
 
 
 @dataclass(slots=True)
-class TextureStruct(NewBinaryStruct):
+class TextureStruct(BinaryStruct):
 
     _path_offset: int
     _texture_type_offset: int
@@ -158,7 +164,7 @@ class Texture:
 
 
 @dataclass(slots=True)
-class MaterialStruct(NewBinaryStruct):
+class MaterialStruct(BinaryStruct):
 
     _name_offset: int
     _mtd_path_offset: int
@@ -184,7 +190,7 @@ class Material:
 
     # Held temporarily before FLVER textures are assigned.
     _texture_count: int | None = None
-    _first_texture_index: int = None
+    _first_texture_index: int | None = None
 
     @classmethod
     def from_flver_reader(

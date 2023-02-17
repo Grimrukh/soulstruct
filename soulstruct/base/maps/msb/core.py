@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB", "MSBSubtypeInfo"]
+__all__ = ["MSB", "MSBSubtypeInfo", "MSBSupertype"]
 
 import abc
 import logging
@@ -21,7 +21,7 @@ from .events import BaseMSBEvent
 from .models import BaseMSBModel
 from .parts import BaseMSBPart
 from .regions import BaseMSBRegion
-from .utils import MSBSubtypeInfo
+from .utils import MSBSubtypeInfo, MSB_JSONEncoder
 
 try:
     Self = tp.Self
@@ -38,20 +38,27 @@ MAP_NAME_RE = re.compile(r"m(\d\d)_(\d\d)_.*")
 PY_NAME_RE = re.compile(r"^[A-z_][\w_]*$")  # valid Python variable name
 
 
+class MSBSupertype:
+    MODELS = "MODEL_PARAM_ST"
+    EVENTS = "EVENT_PARAM_ST"
+    REGIONS = "POINT_PARAM_ST"
+    PARTS = "PARTS_PARAM_ST"
+
+
 # NOTE: Completely absent in DS1 and earlier.
 MSB_HEADER_BYTES = struct.pack("4sII??BB", b"MSB ", 1, 16, False, False, 1, 255)
 MSB_ENTRY_SUPERTYPES = {
-    "MODEL_PARAM_ST": BaseMSBModel,
-    "EVENT_PARAM_ST": BaseMSBEvent,
-    "POINT_PARAM_ST": BaseMSBRegion,
-    "PARTS_PARAM_ST": BaseMSBPart,
+    MSBSupertype.MODELS: BaseMSBModel,
+    MSBSupertype.EVENTS: BaseMSBEvent,
+    MSBSupertype.REGIONS: BaseMSBRegion,
+    MSBSupertype.PARTS: BaseMSBPart,
 }
 # Keys are lower-cased and 's' is removed from the end before they are checked in here.
 MSB_ENTRY_SUPERTYPE_ALIASES = {
-    "model": "MODEL_PARAM_ST",
-    "event": "EVENT_PARAM_ST",
-    "region": "POINT_PARAM_ST",
-    "part": "PARTS_PARAM_ST",
+    "model": MSBSupertype.MODELS,
+    "event": MSBSupertype.EVENTS,
+    "region": MSBSupertype.REGIONS,
+    "part": MSBSupertype.PARTS,
 }
 
 
@@ -85,13 +92,15 @@ class MSB(GameFile, abc.ABC):
     """
     EXT: tp.ClassVar[str] = ".msb"
 
-    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[NewBinaryStruct]]
+    SUPERTYPE_LIST_HEADER: tp.ClassVar[tp.Type[BinaryStruct]]
     # Maps MSB entry supertype names (e.g. 'POINT_PARAM_ST') to dicts that map subtype enum names to subtype info.
     MSB_ENTRY_SUBTYPES: tp.ClassVar[dict[str, dict[str, MSBSubtypeInfo]]]
     # Maps MSB entry superlist names (parts, etc.) to the relative offsets of their subtype enums.
     MSB_ENTRY_SUBTYPE_OFFSETS: tp.ClassVar[dict[str, int]]
     # Maps entry subtype names ("characters", "sounds", etc.) to their corresponding `BaseGameType`, if applicable.
     ENTITY_GAME_TYPES: tp.ClassVar[dict[str, MapEntity]]
+    # Cached when first accessed. Maps subtype list names, e.g. 'map_pieces', to the list. Immutable.
+    _SUBTYPE_LIST_NAMES: tp.ClassVar[tuple[str]] = None
 
     # Version info.
     HAS_HEADER: tp.ClassVar[bool]
@@ -129,11 +138,11 @@ class MSB(GameFile, abc.ABC):
             reader.seek(entry_offsets[-1])
 
         # Resolve entry indices to actual object references.
-        for event in entry_lists["EVENT_PARAM_ST"]:
+        for event in entry_lists[MSBSupertype.EVENTS]:
             event: BaseMSBEvent
             event.indices_to_objects(entry_lists)
 
-        for part in entry_lists["PARTS_PARAM_ST"]:
+        for part in entry_lists[MSBSupertype.PARTS]:
             part: BaseMSBPart
             part.indices_to_objects(entry_lists)
 
@@ -181,24 +190,24 @@ class MSB(GameFile, abc.ABC):
 
     def get_models(self) -> list[BaseMSBModel]:
         # noinspection PyTypeChecker
-        return self.get_supertype_list("MODEL_PARAM_ST")
+        return self.get_supertype_list(MSBSupertype.MODELS)
 
     def get_events(self) -> list[BaseMSBEvent]:
         # noinspection PyTypeChecker
-        return self.get_supertype_list("EVENT_PARAM_ST")
+        return self.get_supertype_list(MSBSupertype.EVENTS)
 
     def get_regions(self) -> list[BaseMSBRegion]:
         # noinspection PyTypeChecker
-        return self.get_supertype_list("POINT_PARAM_ST")
+        return self.get_supertype_list(MSBSupertype.REGIONS)
 
     def get_parts(self) -> list[BaseMSBPart]:
         # noinspection PyTypeChecker
-        return self.get_supertype_list("PARTS_PARAM_ST")
+        return self.get_supertype_list(MSBSupertype.PARTS)
 
     def get_list_of_entry(self, entry: MSBEntry) -> MSBEntryList:
-        """Find subtype list that contains `entry` (e.g. for an event's attached region/part)."""
+        """Find subtype list that contains exact instance `entry` (e.g. for an event's attached region/part)."""
         for entry_list in self:
-            if entry in entry_list:
+            if entry_list.contains_entry(entry):
                 return entry_list
         raise ValueError(f"Entry '{entry.name}' does not appear anywhere in this MSB.")
 
@@ -208,7 +217,7 @@ class MSB(GameFile, abc.ABC):
             entry_lists[supertype_name] = self.get_supertype_list(supertype_name)
 
         # Check for duplicate names within supertypes (except events, where duplicates are permitted and common).
-        for supertype_name in ("MODEL_PARAM_ST", "POINT_PARAM_ST", "PARTS_PARAM_ST"):
+        for supertype_name in (MSBSupertype.MODELS, MSBSupertype.REGIONS, MSBSupertype.PARTS):
             names = set()
             for entry in entry_lists[supertype_name]:
                 if entry.name in names:
@@ -218,7 +227,7 @@ class MSB(GameFile, abc.ABC):
 
         # Get model instance counts.
         model_instance_counts = {}
-        for part in entry_lists["PARTS_PARAM_ST"]:
+        for part in entry_lists[MSBSupertype.PARTS]:
             part: BaseMSBPart
             if part.model is None:
                 continue
@@ -227,8 +236,8 @@ class MSB(GameFile, abc.ABC):
             else:
                 model_instance_counts[part.model.name] = 1
 
-        # TODO: use writer.varint_size to communicate encoding?
-        writer = BinaryWriter(byte_order=ByteOrder.LittleEndian, varint_size=8 if self.LONG_VARINTS else 4)
+        # TODO: use writer.long_varints to communicate encoding?
+        writer = BinaryWriter(byte_order=ByteOrder.LittleEndian, long_varints=self.LONG_VARINTS)
         if self.HAS_HEADER:
             writer.append(MSB_HEADER_BYTES)
 
@@ -251,8 +260,8 @@ class MSB(GameFile, abc.ABC):
                 entry: MSBEntry
                 writer.fill_with_position("entry_offset", obj=entry)
                 subtype_name = self.MSB_ENTRY_SUBTYPES[supertype_name][entry.SUBTYPE_ENUM.name].subtype_list_name
-                subtype_index = entry_lists[subtype_name].index(entry)
-                if supertype_name == "MODEL_PARAM_ST":
+                subtype_index = entry_lists[subtype_name].index_entry(entry)
+                if supertype_name == MSBSupertype.MODELS:
                     entry: BaseMSBModel
                     instance_count = model_instance_counts.get(entry.name, 0)
                     if instance_count == 0:
@@ -353,7 +362,7 @@ class MSB(GameFile, abc.ABC):
         file_path = Path(file_path)
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
-        write_json(file_path, json_dict, indent=indent, encoding=encoding)
+        write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=MSB_JSONEncoder)
 
     @classmethod
     def from_dict(cls, data: dict) -> Self:
@@ -432,8 +441,11 @@ class MSB(GameFile, abc.ABC):
         }
 
     @classmethod
-    def get_subtype_list_names(cls) -> list[str]:
-        return [field.name for field in fields(cls) if field.name not in {"path", "dcx_type"}]
+    def get_subtype_list_names(cls) -> tuple[str]:
+        if cls._SUBTYPE_LIST_NAMES is not None:
+            return cls._SUBTYPE_LIST_NAMES
+        cls._SUBTYPE_LIST_NAMES = tuple(f.name for f in fields(cls) if f.name not in {"path", "dcx_type"})
+        return cls._SUBTYPE_LIST_NAMES
 
     def get_all_subtype_lists(self) -> list[MSBEntryList]:
         return [getattr(self, list_name) for list_name in self.get_subtype_list_names()]
@@ -662,7 +674,7 @@ class MSB(GameFile, abc.ABC):
     #  IDs (e.g. once you fix exported Japanese names).
 
     def new_model(self, model_subtype_name: str, name: str, sib_path="", map_stem=""):
-        subtype_list_name = self.resolve_subtype_name(model_subtype_name, "MODEL_PARAM_ST")
+        subtype_list_name = self.resolve_subtype_name(model_subtype_name, MSBSupertype.MODELS)
         model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
         if not model.sib_path:
             if map_stem:  # prevents empty `map_stem` from being formatted
@@ -690,10 +702,10 @@ class MSB(GameFile, abc.ABC):
         for supertype_name, subtypes_info in cls.MSB_ENTRY_SUBTYPES.items():
             display_dict[supertype_name] = tuple(info.subtype_enum for info in subtypes_info.values())
         return {
-            "Parts": display_dict["PARTS_PARAM_ST"],
-            "Regions": display_dict["POINT_PARAM_ST"],
-            "Events": display_dict["EVENT_PARAM_ST"],
-            "Models": display_dict["MODELS_PARAM_ST"],
+            "Parts": display_dict[MSBSupertype.PARTS],
+            "Regions": display_dict[MSBSupertype.REGIONS],
+            "Events": display_dict[MSBSupertype.EVENTS],
+            "Models": display_dict[MSBSupertype.MODELS],
         }
 
     def __getitem__(self, subtype_list_name: str) -> MSBEntryList:

@@ -7,7 +7,7 @@ import json
 import logging
 import re
 import typing as tp
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.base.game_file_directory import GameFileMapDirectory
@@ -31,6 +31,11 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
     FILE_CLASS: tp.ClassVar[tp.Type[MSB]]
     FILE_EXTENSION: tp.ClassVar[str] = ".msb"
 
+    MAP_STEM_ATTRIBUTE: tp.ClassVar[str] = "msb_file_stem"
+
+    # Override file type.
+    files: dict[str, MSB] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
+
     @classmethod
     def from_json_directory(cls, directory_path: Path | str):
         """Open directory of JSON files containing MSB data instead of standard `.msb` files."""
@@ -40,7 +45,7 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
 
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         files = {}
-        file_name_re = re.compile(r"\.json")
+        file_name_re = re.compile(r".*\.json")
         for file_path in directory_path.glob("*"):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
@@ -54,7 +59,7 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
         if all_map_stems:
             _LOGGER.warning(f"Could not find some JSON files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
     def write_combined_json(self, json_path: str | Path, ignore_defaults=True):
         """Write all MSBs to one giant JSON file, keyed by MSB name stem.
@@ -71,7 +76,7 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
 
     def write_json_directory(self, directory_path: str | Path = None, ignore_defaults=True):
         """Write each MSB to a separate JSON file, named by MSB stem, inside `dir_path`."""
-        if directory_path:
+        if directory_path is None:
             directory_path = self.directory
         directory_path = Path(directory_path)
         directory_path.mkdir(exist_ok=True, parents=True)

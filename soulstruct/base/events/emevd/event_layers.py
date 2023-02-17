@@ -8,7 +8,7 @@ from soulstruct.utilities.binary import *
 
 
 @dataclass(slots=True)
-class EventLayersStruct(NewBinaryStruct):
+class EventLayersStruct(BinaryStruct):
     _two: uint = field(init=False, **Binary(asserted=2))
     event_layers_uint: uint  # bit flag field (only real variable field)
     _zero: varuint = field(init=False, **Binary(asserted=0))

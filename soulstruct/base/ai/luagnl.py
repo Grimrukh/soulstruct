@@ -18,7 +18,7 @@ class LuaGNL(GameFile):
     """
 
     byte_order: ByteOrder = ByteOrder.LittleEndian
-    varint_size: int = 4
+    long_varints: bool = False
     names: list[str] = field(default_factory=list)
 
     @classmethod
@@ -27,26 +27,26 @@ class LuaGNL(GameFile):
         first_eight_bytes = reader.peek(8)
         reader.default_byte_order = ByteOrder.BigEndian if first_eight_bytes[0:2] == b"\0\0" else ByteOrder.LittleEndian
         zeroes = first_eight_bytes[2:4] if reader.default_byte_order == ByteOrder.BigEndian else first_eight_bytes[4:6]
-        reader.varint_size = 8 if zeroes == b"\0\0" else 4  # probable
+        reader.long_varints = zeroes == b"\0\0"  # probable
         offset = reader.unpack_value("v")
-        encoding = cls.get_encoding(reader.default_byte_order, reader.varint_size)
+        encoding = cls.get_encoding(reader.default_byte_order, reader.long_varints)
         names = []
         while offset != 0:
             names.append(reader.unpack_string(offset=offset, encoding=encoding))
             offset = reader.unpack_value("v")
-        return cls(reader.default_byte_order, reader.varint_size, names)
+        return cls(byte_order=reader.default_byte_order, long_varints=reader.long_varints, names=names)
 
     def to_writer(self) -> BinaryWriter:
         writer = BinaryWriter(
             byte_order=self.byte_order,
-            varint_size=self.varint_size,
+            long_varints=self.long_varints,
         )
 
         for i, name in self.names:
             writer.reserve(f"name_{i}", "v")
-        writer.pad(self.varint_size)
+        writer.pad(8 if self.long_varints else 4)
 
-        encoding = self.get_encoding(self.byte_order, self.varint_size)
+        encoding = self.get_encoding(self.byte_order, self.long_varints)
         for i, name in self.names:
             writer.fill_with_position(f"name_{i}")
             writer.pack_z_string(name, encoding=encoding)
@@ -54,7 +54,7 @@ class LuaGNL(GameFile):
         return writer
 
     @staticmethod
-    def get_encoding(byte_order: ByteOrder, varint_size: int):
-        if varint_size == 8:
-            return f"utf-16-{'be' if byte_order == ByteOrder.BigEndian else 'le'}"
+    def get_encoding(byte_order: ByteOrder, long_varints: bool):
+        if long_varints:
+            return byte_order.get_utf_16_encoding()
         return "shift_jis_2004"

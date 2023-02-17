@@ -38,6 +38,7 @@ __all__ = [
     "WeaponUpgradeParam",
 
     "FogParam",
+    "EnvLightTexParam",
     "BakedLightParam",
     "ScatteredLightParam",
     "PointLightParam",
@@ -354,6 +355,12 @@ class FogParam(BaseDrawParam):
     @classmethod
     def get_param_nickname(cls):
         return "Fog"
+
+
+class EnvLightTexParam(BaseDrawParam):
+    @classmethod
+    def get_param_nickname(cls):
+        return "EnvLightTex"
 
 
 class BakedLightParam(BaseDrawParam):

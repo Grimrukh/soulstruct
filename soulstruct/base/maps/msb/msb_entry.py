@@ -10,13 +10,14 @@ import typing as tp
 from collections import ChainMap
 from dataclasses import dataclass, field, fields, MISSING
 from enum import IntEnum
+from types import MappingProxyType
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector, Vector2, Vector3, Vector4
 from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype
-from .utils import MSBBrokenEntryReference
+from .utils import MSBBrokenEntryReference, GroupBitSet
 
 try:
     Self = tp.Self
@@ -50,23 +51,32 @@ _BASIC_ENTRY_TYPES = {
 class MSBEntry(abc.ABC):
     """Base class for entries of any type and subtype that appear in an `MSB` (under one of four entry superlists)."""
 
-    # Shared between all game MSB entries. TODO: Infer from `reader.varint_size`?
+    # Shared between all game MSB entries. TODO: Infer from `reader.long_varints`?
     NAME_ENCODING: tp.ClassVar[str]
     # Generally only used to check against unpacked indices (which should have already been 'peeked' by the MSB).
     SUBTYPE_ENUM: tp.ClassVar[tp.Type[BaseMSBSubtype]]
     # These fields will be marked as hidden in the GUI.
     HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
+    # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
+    GROUP_SIZE: tp.ClassVar[int]
+    # Cached when first accessed. Maps field names to their default values. Immutable.
+    _FIELD_DEFAULTS: tp.ClassVar[MappingProxyType[str, tp.Any]] = None
     # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
-    _FIELD_TYPES: tp.ClassVar[dict[str, str | tp.Type[tp.Any]]] = {}
+    _FIELD_TYPES: tp.ClassVar[MappingProxyType[str, str | tp.Type[tp.Any]]] = None
+    # Internal field that prevents my `__setattr__` checks during `__init__`.
+    _SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
     # Structs for header, supertype data, and (optional but common) subtype data.
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]]
-    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]]
-    SUBTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]]
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
+    SUPERTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
+    SUBTYPE_DATA_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
 
     # Basic data fields.
     name: str
     description: str = field(default="", kw_only=True)  # not actually present in MSB until DS2
+
+    def __post_init__(self):
+        self.__class__._SETATTR_CHECKS_DISABLED = True
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> Self:
@@ -80,6 +90,7 @@ class MSBEntry(abc.ABC):
             reader.seek(entry_offset + relative_subtype_data_offset)
             kwargs |= cls.unpack_subtype_data(reader)
 
+        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         return cls(**kwargs)
 
     @classmethod
@@ -201,16 +212,34 @@ class MSBEntry(abc.ABC):
 
         return self.from_dict(copied_dict)
 
-    def get_field_names(self, visible_only=False) -> tuple[str]:
+    @classmethod
+    def get_field_names(cls, visible_only=False) -> tuple[str]:
         """Get all field names in `FIELD_ORDER`, or all names excluding basic 'name' and 'description'."""
         return tuple(
-            f.name for f in fields(self)
+            f.name for f in fields(cls)
             if f.name not in {"name", "description"}
-            and (not visible_only or f.name not in self.HIDE_FIELDS)
+            and (not visible_only or f.name not in cls.HIDE_FIELDS)
         )
 
+    @classmethod
+    def get_custom_json_decoders(cls) -> dict[str, tp.Callable]:
+        """Get a dictionary mapping field names to string-parsing decoders for JSON."""
+        decoders = {}
+        for f in fields(cls):
+            if f.type in (GroupBitSet, GroupBitSet.__name__):
+                decoders[f.name] = GroupBitSet.from_repr
+            else:
+                for check_type in (Vector2, Vector3, Vector4):
+                    if f.type in (check_type, check_type.__name__):
+                        decoders[f.name] = lambda v, t=check_type: t(*v)
+
+        return decoders
+
     def set_entity_enum(self, entity_enum: IntEnum):
-        """Only works for subclasses with `entity_id` field."""
+        """Only works for subclasses with `entity_id` field.
+
+        Getaround for some kind of mix-in, as `entity_id` is so common but not strictly hierarchical.
+        """
         if not isinstance(entity_enum, IntEnum):
             raise TypeError(f"`entity_enum` must be an `IntEnum` subclass, not `{type(entity_enum)}`.")
         if "entity_id" in self.get_field_names(visible_only=False):
@@ -233,8 +262,11 @@ class MSBEntry(abc.ABC):
         except KeyError:
             raise ValueError("`MSBEntry` JSON dict must have 'name' field.")
         deferred_refs = {}
+        decoders = cls.get_custom_json_decoders()
         for field_name, field_value in data.items():
-            if isinstance(field_value, dict):
+            if field_name in decoders:
+                kwargs[field_name] = decoders[field_name](field_value)
+            elif isinstance(field_value, dict):
                 if (
                     "subtype_list_name" not in field_value or "subtype_index" not in field_value
                     or len(field_value) != 2
@@ -273,7 +305,7 @@ class MSBEntry(abc.ABC):
         `to_json_dict()`.
         """
         default_values = self.get_default_values() if ignore_defaults else {}
-        data = {"name": self.name}
+        data = {"name": self.name, "description": self.description}
         for name in self.get_field_names(visible_only=False):
             value = getattr(self, name)
             if default_values and value == default_values[name]:
@@ -284,7 +316,7 @@ class MSBEntry(abc.ABC):
     def to_json_dict(self, msb: MSB, ignore_defaults=True) -> dict[str, tp.Any]:
         """NOTE: This converts types to JSON-ready types. Use `.asdict()` for a straightforward field value mapping."""
         default_values = self.get_default_values() if ignore_defaults else {}
-        data = {"name": self.name}
+        data = {"name": self.name, "description": self.description}
         for name in self.get_field_names(visible_only=False):
             value = getattr(self, name)
             if default_values and value == default_values[name]:
@@ -294,7 +326,7 @@ class MSBEntry(abc.ABC):
                 subtype_list = msb.get_list_of_entry(value)
                 data[name] = {
                     "subtype_list_name": subtype_list.subtype_info.subtype_list_name,
-                    "subtype_index": subtype_list.index(value)
+                    "subtype_index": subtype_list.index_entry(value)
                 }
             elif isinstance(value, list) and any(isinstance(element, MSBEntry) for element in value):
                 # Construct a reference dictionary. (There are no real dictionary fields in `MSBEntry` subclasses.)
@@ -308,19 +340,21 @@ class MSBEntry(abc.ABC):
                             ref_subtype_list = msb.get_list_of_entry(element)
                         ref_list.append({
                             "subtype_list_name": ref_subtype_list.subtype_info.subtype_list_name,
-                            "subtype_index": ref_subtype_list.index(element)
+                            "subtype_index": ref_subtype_list.index_entry(element)
                         })
                 data[name] = ref_list
             elif isinstance(value, Vector):
                 data[name] = list(value)
-            elif isinstance(value, set):
-                data[name] = sorted(value)
             else:
+                # Custom types like `Vector3` and `GroupBitSet` can decode their own string `repr`.
                 data[name] = value
         return data
 
     @classmethod
-    def get_default_values(cls) -> dict[str, tp.Any]:
+    def get_default_values(cls) -> MappingProxyType[str, tp.Any]:
+        if cls._FIELD_DEFAULTS is not None:
+            return cls._FIELD_DEFAULTS  # NOTE: immutable mapping
+
         defaults = {}
         for f in fields(cls):
             if f.name in {"name", "description"}:
@@ -331,12 +365,21 @@ class MSBEntry(abc.ABC):
                 defaults[f.name] = f.default
             else:
                 raise ValueError(f"Field {f.name} on class {cls.__name__} has no default or factory.")
-        return defaults
+
+        cls._FIELD_DEFAULTS = MappingProxyType(defaults)
+        return cls._FIELD_DEFAULTS
 
     def __setattr__(self, key: str, value: tp.Any):
-        """Enforces correct type and field presence."""
-        if not self.__class__._FIELD_TYPES:
-            self._cache_field_types()
+        """Enforces correct type and field presence.
+
+        NOTE: Typically deactivated during class creation, as it is too slow. It's more for validating MSB edits after
+        it is loaded.
+        """
+        if self.__class__._SETATTR_CHECKS_DISABLED:
+            super(MSBEntry, self).__setattr__(key, value)
+            return
+
+        field_types = self.get_field_types()
 
         if key in {"name", "description"}:
             if not isinstance(value, str):
@@ -344,7 +387,7 @@ class MSBEntry(abc.ABC):
             super(MSBEntry, self).__setattr__(key, value)
             return
 
-        for field_name, field_type in self.__class__._FIELD_TYPES.items():
+        for field_name, field_type in field_types.items():
             if key == field_name:
 
                 if isinstance(value, property):
@@ -422,10 +465,11 @@ class MSBEntry(abc.ABC):
                 if entry_type_name.startswith("MSB"):
                     # Single entry (or None).
                     if value is not None and not self._is_subtype(value, entry_type_name):
-                        raise TypeError(
-                            f"Invalid type for entry field `{self.cls_name}.{field_name}`: "
-                            f"{value.__class__.__name__}"
-                        )
+                        if not self._is_permitted_wrong_msb_entry_type(value):
+                            raise TypeError(
+                                f"Invalid type for entry field `{self.cls_name}.{field_name}` of '{self.name}': "
+                                f"{value.__class__.__name__} ({value})"
+                            )
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
@@ -486,6 +530,19 @@ class MSBEntry(abc.ABC):
         else:
             return parent_type_name in [parent.__name__ for parent in value.__class__.__mro__]
 
+    def _is_permitted_wrong_msb_entry_type(self, value: MSBEntry) -> bool:
+        """Checks for a handful of permitted exceptions for incorrect `MSBEntry` field references."""
+
+        # Special exceptions (with warnings) for unused character/object models, which have been known
+        # to reference the wrong model type in Undead Burg in DSR (thanks QLOC?).
+        if self.cls_name == "MSBUnusedCharacter" and value.__class__.__name__ == "MSBObjectModel":
+            _LOGGER.warning(
+                f"`MSBUnusedCharacter` '{self.name}' uses an `MSBObjectModel`: '{value.name}'.\n"
+                f"    This happens, e.g., in m10_01_00_00 in vanilla DSR (unused bonfire 'o0200_0004')."
+            )
+            return True
+        return False
+
     @classmethod
     def all_annotations(cls) -> ChainMap:
         """Returns a dictionary-like ChainMap that includes annotations for all
@@ -493,12 +550,14 @@ class MSBEntry(abc.ABC):
         return ChainMap(*(c.__annotations__ for c in cls.__mro__ if '__annotations__' in c.__dict__))
 
     @classmethod
-    def _cache_field_types(cls):
+    def get_field_types(cls):
         """NOTE: Using string types from dataclass fields because of circular entry type references."""
-        cls._FIELD_TYPES = {}
+        if cls._FIELD_TYPES is not None:
+            return cls._FIELD_TYPES
 
         f_annotations = cls.all_annotations()
 
+        field_types = {}
         for f in fields(cls):
             ann = f_annotations[f.name]
             if not isinstance(ann, str):
@@ -510,14 +569,19 @@ class MSBEntry(abc.ABC):
             elif re.match(r"MSB.*", ann):
                 # `MSBEntry` subclass. `__setattr__` will confirm that any set `value` has this name in its MRO.
                 # NOTE: Will match pipe unions and check them appropriately.
-                cls._FIELD_TYPES[f.name] = ann  # str
+                field_types[f.name] = ann  # str
             elif ann in {"list[int]", "list[float]"} or re.match(r"list\[MSB[\w, ]*]", ann):
                 # List of `MSBEntry` subclasses. Check binary metadata for length and store in type string.
                 try:
-                    binary = f.metadata["binary"]  # type: BinaryFieldMetadata
-                    if binary.length is None:
-                        raise KeyError
-                    length = binary.length
+                    binary = f.metadata["binary"]  # type: BinaryMetadata
+                    if isinstance(binary, BinaryArrayMetadata):
+                        if binary.length is None:
+                            raise KeyError
+                        length = binary.length
+                    else:
+                        raise TypeError(
+                            f"Array MSB entry field `{cls.__name__}{f.name}` must have `BinaryArray` metadata."
+                        )
                 except KeyError:
                     if f.default_factory != MISSING:
                         # Detect length from default value.
@@ -526,11 +590,14 @@ class MSBEntry(abc.ABC):
                         raise TypeError(
                             f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
                         )
-                cls._FIELD_TYPES[f.name] = f"{ann[5:-1]}[{length}]"
+                field_types[f.name] = f"{ann[5:-1]}[{length}]"
             elif ann in _BASIC_ENTRY_TYPES:
-                cls._FIELD_TYPES[f.name] = ann
+                field_types[f.name] = ann
             else:
                 raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")
+
+        cls._FIELD_TYPES = MappingProxyType(field_types)
+        return cls._FIELD_TYPES
 
     def __repr__(self):
         field_strings = []
@@ -539,7 +606,6 @@ class MSBEntry(abc.ABC):
                 field_strings.append(f"    {field_name}=<{value.cls_name}('{value.name}')>,")
             else:
                 field_strings.append(f"    {field_name}={repr(value)},")
-
         return f"{self.cls_name}(\n" + "\n".join(field_strings) + "\n)"
 
     def __eq__(self, entry: MSBEntry):
@@ -627,14 +693,34 @@ class MSBEntry(abc.ABC):
         setattr(self, indices_field_name, None)
 
     @staticmethod
-    def try_index(entry_list: list, entry: MSBEntry) -> int:
-        """Returns -1 if `entry` is not in `entry_list`. Checks ID, not dataclass equality."""
-        if entry is None:
-            return -1
+    def try_index(entry_list: list, entry_or_entry_list: MSBEntry | list[MSBEntry | None]) -> int | list[int]:
+        """Find index of single entry or indices of all entries in list.
+
+        Returns -1 (or puts -1 in list) if an entry is `None`. Searches by `is` (ID), NOT dataclass equality.
+        Raises a `ValueError` if an entry cannot be found in the list.
+
+        Note that unlike `MSBEntryList.index_entry()`, non-null entries MUST be present here.
+        """
+        if entry_or_entry_list is None:
+            return -1  # non-set single entry
+        if isinstance(entry_or_entry_list, list):
+            indices = []
+            for entry in entry_or_entry_list:
+                if entry is None:
+                    indices.append(-1)
+                else:
+                    for i, e in enumerate(entry_list):
+                        if e is entry:
+                            indices.append(i)
+                            break
+                    else:
+                        raise ValueError(f"Could not find referenced entry `{entry.name}` in MSB list while packing.")
+            return indices
+        # Otherwise, single entry.
         for i, e in enumerate(entry_list):
-            if e is entry:
+            if e is entry_or_entry_list:
                 return i
-        raise ValueError(f"Could not find referenced entry `{entry.name}` in MSB list while packing.")
+        raise ValueError(f"Could not find referenced entry `{entry_or_entry_list.name}` in MSB list while packing.")
 
     @property
     def cls_name(self) -> str:

@@ -7,14 +7,20 @@ from soulstruct.utilities.misc import Timer
 
 
 class TextTest(unittest.TestCase):
-    
+
+    def setUp(self) -> None:
+        try:
+            shutil.rmtree("_test_dsr_text")
+        except FileNotFoundError:
+            pass
+
     def test_text(self):
+
         with Timer("Read MSG Directory"):
-            dsr_text = MSGDirectory(DSR_PATH + "/msg/ENGLISH")
+            dsr_text = MSGDirectory.from_path(DSR_PATH + "/msg/ENGLISH")
+
         with Timer("Write MSG Directory"):
             dsr_text.write("_test_dsr_text")
-        with Timer("Re-read MSG Directory"):
-            MSGDirectory("_test_dsr_text")
 
-    def tearDown(self):
-        shutil.rmtree("_test_dsr_text")
+        with Timer("Re-read MSG Directory"):
+            MSGDirectory.from_path("_test_dsr_text")

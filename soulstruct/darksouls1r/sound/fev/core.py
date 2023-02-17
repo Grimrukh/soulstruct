@@ -7,10 +7,10 @@ import logging
 import math
 import os
 import re
-import struct
 import typing as tp
 import uuid
 import xml.dom.minidom
+from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 from xml.etree import ElementTree
@@ -18,7 +18,8 @@ from xml.etree import ElementTree
 from soulstruct.base.game_file import GameFile
 from soulstruct.darksouls1r.sound.fsb import FSB, FSBSampleMode, fsbext
 from soulstruct.darksouls1r.sound.utilities import move_extracted_mp3
-from soulstruct.utilities.binary import BinaryStruct, BinaryObject, BinaryReader
+from soulstruct.utilities.binary import *
+from soulstruct.utilities.maths import Vector2
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,8 +32,9 @@ def new_guid() -> str:
     return f"<guid>{{{str(uuid.uuid4())}}}</guid>"
 
 
-def read_string_from_length(reader: BinaryReader, strip=True) -> str:
-    length = reader.unpack_value("I")
+def read_lp_string(reader: BinaryReader, strip=True, length_fmt="I") -> str:
+    """Read a length-prefixed UTF-8 string."""
+    length = reader.unpack_value(length_fmt)
     return reader.unpack_string(length=length, strip=strip, encoding="utf-8")
 
 
@@ -156,9 +158,11 @@ PROJECT_FOOTER_COMPOSITION = """
 """
 
 
-class XMLObject(BinaryObject):
+@dataclass(slots=True)
+class XMLObject:
     """Implements a dictionary that maps attribute names to XML (name, func(text)) pairs for setting that attribute."""
-    FROM_XML: dict[str, tuple[str, tp.Callable[[ElementTree.Element], tp.Any]]]
+    STRUCT: tp.ClassVar[tp.Type[BinaryStruct]]
+    FROM_XML: tp.ClassVar[dict[str, tuple[str, tp.Callable[[ElementTree.Element], tp.Any]]]]
 
     @classmethod
     def from_xml(cls, element: ElementTree.Element):
@@ -171,11 +175,22 @@ class XMLObject(BinaryObject):
                 raise ValueError(f"Invalid child node for `{cls.__name__}` XML: {child.tag}")
         return self
 
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader):
+        """Pure struct default."""
+        return cls.STRUCT.reader_to_object(reader, cls)
 
+    def to_fev_writer(self, writer: BinaryWriter):
+        """Pure struct default."""
+        self.STRUCT.object_to_writer(self, writer)
+
+
+@dataclass(slots=True)
 class WavebankInfo(XMLObject):
     """Wavebank information from the 'Banks' view."""
 
     class BankType(IntEnum):
+        # TODO: Rename to tags.
         STREAM_FROM_DISK = 0x0080
         LOAD_INTO_MEM = 0x0200
         DECOMP_INTO_MEM = 0x0100
@@ -201,23 +216,21 @@ class WavebankInfo(XMLObject):
         MP3 = 2
         MP2 = 3
 
-    STRUCT = BinaryStruct(
-        ("_bank_type", "I"),
-        ("max_streams", "I"),
-        ("_bank_hash", "8s"),
-    )
+    class STRUCT(BinaryStruct):
+        bank_type: WavebankInfo.BankType = field(**Binary(uint))
+        max_streams: uint
+        bank_hash: ulong
 
     bank_type: WavebankInfo.BankType
     max_streams: int
     bank_hash: str
     bank_name: str
 
-    def unpack(self, reader: BinaryReader):
-        kwargs = self.extract_kwargs_from_struct(reader)
-        self.bank_type = self.BankType(kwargs.pop("_bank_type"))
-        self.bank_hash = struct.unpack(">Q", kwargs.pop("_bank_hash"))[0]
-        self.bank_name = read_string_from_length(reader)
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader):
+        instance = cls.STRUCT.reader_to_object(reader, cls)
+        instance.bank_name = read_lp_string(reader)
+        return instance
 
     FROM_XML = {
         "name": ("bank_name", lambda e: e.text),
@@ -302,6 +315,7 @@ class WavebankInfo(XMLObject):
         return default_props
 
 
+@dataclass(slots=True)
 class EventCategory(XMLObject):
     """Event category from the 'Events' view, in the Event Categories pane.
 
@@ -316,33 +330,21 @@ class EventCategory(XMLObject):
         JUST_FAIL = 3
         JUST_FAIL_IF_QUIETEST = 4
 
-        def to_xml_name(self):
-            return {
-                self.STEAL_OLDEST: "Steal_oldest",
-                self.STEAL_NEWEST: "Steal_newest",
-                self.STEAL_QUIETEST: "Steal_quietest",
-                self.JUST_FAIL: "Just_fail",
-                self.JUST_FAIL_IF_QUIETEST: "Just_fail_if_quietest",
-            }[self]
+        def to_xml_name(self) -> str:
+            return self.name.capitalize()
 
         @classmethod
-        def from_xml_name(cls, name):
-            return {
-                "Steal_oldest": cls.STEAL_OLDEST,
-                "Steal_newest": cls.STEAL_NEWEST,
-                "Steal_quietest": cls.STEAL_QUIETEST,
-                "Just_fail": cls.JUST_FAIL,
-                "Just_fail_if_quietest": cls.JUST_FAIL_IF_QUIETEST,
-            }[name]
+        def from_xml_name(cls, name: str) -> EventCategory.PlaybackBehavior:
+            return cls[name.upper()]
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # Name comes first.
-        ("volume", "f"),
-        ("pitch", "f"),
-        ("maxplaybacks", "I"),
-        ("maxplaybacks_behavior", "I"),
-        ("_subcategory_count", "I"),
-    )
+        volume: float
+        pitch: float
+        maxplaybacks: uint
+        maxplaybacks_behavior: EventCategory.PlaybackBehavior = field(**Binary(uint))
+        _subcategory_count: uint
 
     name: str
     volume: float
@@ -351,11 +353,12 @@ class EventCategory(XMLObject):
     maxplaybacks_behavior: EventCategory.PlaybackBehavior
     subcategories: list[EventCategory]
 
-    def unpack(self, reader: BinaryReader):
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader)
-        self.subcategories = [EventCategory(reader) for _ in range(kwargs.pop("_subcategory_count"))]
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> EventCategory:
+        name = read_lp_string(reader)
+        header = cls.STRUCT.from_bytes(reader)
+        subcategories = [EventCategory.from_fev_reader(reader) for _ in range(header.pop("_subcategory_count"))]
+        return header.to_object(cls, name=name, subcategories=subcategories)
 
     FROM_XML = {
         "name": ("name", lambda e: e.text),
@@ -388,6 +391,7 @@ class EventCategory(XMLObject):
         return output
 
 
+@dataclass(slots=True)
 class UserProperty(XMLObject):
     """User Property that can be attached to Layers, Event Groups, etc.
 
@@ -395,69 +399,75 @@ class UserProperty(XMLObject):
     """
 
     class PropertyType(IntEnum):
+        # TODO: Rename to upper-case tags.
         INTEGER = 0
         FLOATING_POINT = 1
         STRING = 2
 
         def get_tag(self):
-            return {
-                self.INTEGER: "data_int",
-                self.FLOATING_POINT: "data_float",
-                self.STRING: "data_string",
-            }[self]
+            match self:
+                case self.INTEGER:
+                    return "data_int"
+                case self.FLOATING_POINT:
+                    return "data_float"
+                case self.STRING:
+                    return "data_string"
+            raise KeyError(f"Unknown `PropertyType`: {self}")
 
-    STRUCT = BinaryStruct(
-        # Name comes first.
-        ("_property_type", "I"),
-    )
+        def unpack_value(self, reader: BinaryReader) -> int | float | str:
+            if self == self.INTEGER:
+                return reader.unpack_value("i")
+            elif self == self.FLOATING_POINT:
+                return reader.unpack_value("f")
+            elif self == self.STRING:
+                return reader.unpack_string(offset=reader["I"])
+            else:
+                raise ValueError(f"Invalid `UserProperty.property_type`: {self}")
+
+    STRUCT = None
 
     name: str
     property_type: UserProperty.PropertyType
     value: tp.Union[int, float, str]
 
-    def unpack(self, reader: BinaryReader):
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader)
-        self.property_type = self.PropertyType(kwargs.pop("_property_type"))
-        if self.property_type == self.PropertyType.INTEGER:
-            self.value = reader.unpack_value("i")
-        elif self.property_type == self.PropertyType.FLOATING_POINT:
-            self.value = reader.unpack_value("f")
-        elif self.property_type == self.PropertyType.STRING:
-            self.value = reader.unpack_string(offset=reader.unpack_value("I"))
-        else:
-            raise ValueError(f"Invalid `UserProperty.property_type`: {self.property_type}")
-        # No other fields to set.
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader):
+        name = read_lp_string(reader)
+        property_type = cls.PropertyType(reader["I"])
+        value = property_type.unpack_value(reader)
+        return cls(name, property_type, value)
 
     @classmethod
     def from_xml(cls, element: ElementTree.Element):
         """Needs special handling for variable property type tag name."""
-        self = cls()
         value_set = False
+        name = property_type = value = None
         for child in element.getchildren():
             if child.tag == "name":
-                self.name = child.text
+                name = child.text
             elif child.tag == "data_int":
                 if value_set:
                     raise ValueError("Found multiple property types in `UserProperty`.")
-                self.property_type = cls.PropertyType.INTEGER
-                self.value = int(child.text)
+                property_type = cls.PropertyType.INTEGER
+                value = int(child.text)
                 value_set = True
             elif child.tag == "data_float":
                 if value_set:
                     raise ValueError("Found multiple property types in `UserProperty`.")
-                self.property_type = cls.PropertyType.FLOATING_POINT
-                self.value = float(child.text)
+                property_type = cls.PropertyType.FLOATING_POINT
+                value = float(child.text)
                 value_set = True
             elif child.tag == "data_string":
                 if value_set:
                     raise ValueError("Found multiple property types in `UserProperty`.")
-                self.property_type = cls.PropertyType.STRING
-                self.value = child.text
+                property_type = cls.PropertyType.STRING
+                value = child.text
                 value_set = True
             else:
                 raise ValueError(f"Invalid child node for `{cls.__name__}` XML: {child.tag}")
-        return self
+        if None in (name, property_type, value):
+            raise ValueError("Could not find name, property_type, and/or value in `UserProperty` XML.")
+        return cls(name, property_type, value)
 
     def to_xml_lines(self) -> list[str]:
         return [
@@ -470,6 +480,7 @@ class UserProperty(XMLObject):
         ]
 
 
+@dataclass(slots=True)
 class SoundInstance(XMLObject):
     """Sound Definition Instance included on Layers in Events.
 
@@ -487,7 +498,7 @@ class SoundInstance(XMLObject):
 
     class AutopitchParameter(IntEnum):
         EVENT_PRIMARY = 0
-        LAYER_CONTROL = 2
+        LAYER_CONTROL = 2  # Different to XML name.
 
         def to_xml_name(self):
             return {
@@ -504,7 +515,46 @@ class SoundInstance(XMLObject):
         POWER_45_MID = 5
         POWER_30_LATE = 6
         POWER_30_EARLY = 7
-
+    
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        sounddef_index: ushort
+        start: float
+        length: float
+        start_mode: SoundInstance.StartMode = field(**Binary(uint))
+        loop_mode: SoundInstance.LoopMode = field(**Binary(byte))
+        autopitch_param: SoundInstance.AutopitchParameter = field(**Binary(byte))
+        _pad1: bytes = field(**BinaryPad(2))
+        loop_count: int
+        autopitch_enabled: bool = field(**Binary(uint, unpack_func=bool))
+        autopitch_reference: float
+        autopitch_at_min: float
+        fine_tune: float
+        volume: float
+        fade_in_length: float
+        fade_out_length: float
+        fade_in_type: SoundInstance.CrossfadeType = field(**Binary(uint))
+        fade_out_type: SoundInstance.CrossfadeType = field(**Binary(uint))
+   
+    FROM_XML = {
+        "sounddef_index": ("sounddef_index", lambda e: int(e.text)),
+        "start": ("start", lambda e: float(e.text)),
+        "length": ("length", lambda e: float(e.text)),
+        "start_mode": ("start_mode", lambda e: SoundInstance.StartMode(int(e.text))),
+        "loop_mode": ("loop_mode", lambda e: SoundInstance.LoopMode(int(e.text))),
+        "autopitch_param": ("autopitch_param", lambda e: SoundInstance.AutopitchParameter(int(e.text))),
+        "loop_count": ("loop_count", lambda e: int(e.text)),
+        "autopitch_enabled": ("autopitch_enabled", lambda e: bool(e.text)),
+        "autopitch_reference": ("autopitch_reference", lambda e: float(e.text)),
+        "autopitch_at_min": ("autopitch_at_min", lambda e: float(e.text)),
+        "fine_tune": ("fine_tune", lambda e: float(e.text)),
+        "volume": ("volume", lambda e: float(e.text)),
+        "fade_in_length": ("fade_in_length", lambda e: float(e.text)),
+        "fade_out_length": ("fade_out_length", lambda e: float(e.text)),
+        "fade_in_type": ("fade_in_type", lambda e: SoundInstance.CrossfadeType(int(e.text))),
+        "fade_out_type": ("fade_out_type", lambda e: SoundInstance.CrossfadeType(int(e.text))),
+    }
+    
     sounddef_index: int
     start: float
     length: float
@@ -521,48 +571,6 @@ class SoundInstance(XMLObject):
     fade_out_length: float
     fade_in_type: SoundInstance.CrossfadeType
     fade_out_type: SoundInstance.CrossfadeType
-
-    STRUCT = BinaryStruct(
-        ("sounddef_index", "H"),
-        ("start", "f"),
-        ("length", "f"),
-        ("start_mode", "I"),
-        ("loop_mode", "B"),
-        ("autopitch_param", "B"),
-        "2x",
-        ("loop_count", "i"),
-        ("autopitch_enabled", "I"),  # long bool
-        ("autopitch_reference", "f"),
-        ("autopitch_at_min", "f"),
-        ("fine_tune", "f"),
-        ("volume", "f"),
-        ("fade_in_length", "f"),
-        ("fade_out_length", "f"),
-        ("fade_in_type", "I"),
-        ("fade_out_type", "I"),
-    )
-
-    unpack = BinaryObject.default_unpack
-
-    # TODO: Not finished. Too painful for now.
-    FROM_XML = {
-        "sounddef_index": ("sounddef_index", lambda e: int(e.text)),
-        "start": ("start", lambda e: int(e.text)),
-        "length": ("length", lambda e: int(e.text)),
-        "start_mode": ("start_mode", lambda e: int(e.text)),
-        "loop_mode": ("loop_mode", lambda e: int(e.text)),
-        "autopitch_param": ("autopitch_param", lambda e: int(e.text)),
-        "loop_count": ("loop_count", lambda e: int(e.text)),
-        "autopitch_enabled": ("autopitch_enabled", lambda e: int(e.text)),
-        "autopitch_reference": ("autopitch_reference", lambda e: int(e.text)),
-        "autopitch_at_min": ("autopitch_at_min", lambda e: int(e.text)),
-        "fine_tune": ("fine_tune", lambda e: int(e.text)),
-        "volume": ("volume", lambda e: int(e.text)),
-        "fade_in_length": ("fade_in_length", lambda e: int(e.text)),
-        "fade_out_length": ("fade_out_length", lambda e: int(e.text)),
-        "fade_in_type": ("fade_in_type", lambda e: int(e.text)),
-        "fade_out_type": ("fade_out_type", lambda e: int(e.text)),
-    }
 
     def to_xml_lines(self, sounddef: SoundDef) -> list[str]:
         return [
@@ -585,6 +593,7 @@ class SoundInstance(XMLObject):
         ]
 
 
+@dataclass(slots=True)
 class Point(XMLObject):
     """An `(x, y, is_first, curve_shape)` tuple that is used to describe an Envelope."""
 
@@ -594,19 +603,17 @@ class Point(XMLObject):
         LOGARITHMIC = 4
         FLAT_MIDDLE = 8
 
-    STRUCT = BinaryStruct(
-        ("point_x", "f"),
-        ("point_y", "f"),
-        ("curve_shape", "I"),
-    )
+    @dataclass(slots=True)
+    class PointStruct(BinaryStruct):
+        xy: Vector2
+        curve_shape: Point.CurveShape = field(**Binary(uint))
 
-    point_x: float
-    point_y: float
+    xy: Vector2
     curve_shape: Point.CurveShape
 
     def to_xml_string(self, index: int) -> str:
         is_first = "1" if index == 0 else "0"
-        return tag("point", ",".join([str(self.point_x), str(self.point_y), is_first, str(self.curve_shape.value)]))
+        return tag("point", ",".join([str(self.xy.x), str(self.xy.y), is_first, str(self.curve_shape.value)]))
 
 
 # Attached to Layers by effects. Unlike what might be expected,
@@ -614,6 +621,7 @@ class Point(XMLObject):
 #  which are attached directly to the Layer, rather than Envelopes
 #  being attached to the effect, which is then attached to the Layer 
 #  itself.
+@dataclass(slots=True)
 class Envelope(XMLObject):
 
     class EffectType(IntEnum):
@@ -646,18 +654,14 @@ class Envelope(XMLObject):
                 self.SPAWN_INTENSITY: "Spawn Intensity",
             }[self]
 
-    STRUCT = BinaryStruct(
-        # Parent index and name come first.
-        ("effect_parameter_index", "I"),
-        ("_combined_flags", "I"),
-        "4x",
-        ("_point_count", "I"),
-    )
-
-    STRUCT_2 = BinaryStruct(
-        ("control_parameter_index", "I"),
-        ("mapping_method", "I"),
-    )
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        # Parent index and name are here.
+        effect_parameter_index: uint
+        _combined_flags: uint  # split into `effect`, `is_muted`, and remaining `flags`
+        _pad1: bytes = field(**BinaryPad(4))
+        _point_count: uint
+        # Points are here, then `control_parameter_index (I) and `mapping_method` (I).
 
     parent_index: int
     name: str
@@ -669,17 +673,17 @@ class Envelope(XMLObject):
     control_parameter_index: int
     mapping_method: int
 
-    def unpack(self, reader: BinaryReader, encoding=None, byte_order=None):
-        self.parent_index = reader.unpack_value("i")
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT, encoding, byte_order)
-        combined_flags = kwargs.pop("_combined_flags")
-        self.effect = self.EffectType(combined_flags & ~0x01 & 0xFFFF)
-        self.is_muted = bool(combined_flags & 0x01)
-        self.flags = combined_flags & ~0xFFFF
-        self.points = [Point(reader) for _ in range(kwargs.pop("_point_count"))]
-        kwargs |= self.extract_kwargs_from_struct(reader, self.STRUCT_2, encoding, byte_order)
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> Envelope:
+        kwargs = {"parent_index": reader.unpack_value("i"), "name": read_lp_string(reader)}
+        header = cls.STRUCT.from_bytes(reader)
+        combined_flags = header.pop("_combined_flags")
+        kwargs["effect"] = cls.EffectType(combined_flags & ~0x01 & 0xFFFF)
+        kwargs["is_muted"] = bool(combined_flags & 0x01)
+        kwargs["flags"] = combined_flags & ~0xFFFF
+        kwargs["points"] = [Point.from_fev_reader(reader) for _ in range(header.pop("_point_count"))]
+        kwargs["control_parameter_index"], kwargs["mapping_method"] = reader.unpack_value("II")
+        return cls(**kwargs)
 
     def to_xml_lines(self, envelope_name: str, envelopes: list[Envelope], parameters: list[Parameter]) -> list[str]:
         """Get XML representation of Envelope.
@@ -723,39 +727,40 @@ class Envelope(XMLObject):
                ]
 
 
+@dataclass(slots=True)
 class Layer(XMLObject):
     """Holds Sound Definition Instances, so that a single event may play several at the same time for the same control
     parameter value.
-    """
+    """    
+    @dataclass(slots=True)
+    class COMPLEX_STRUCT(BinaryStruct):
+        signature: bytes = field(**BinaryString(2, asserted=b"\x02\x00"))
+        priority: short
+        control_parameter: short
 
-    COMPLEX_STRUCT = BinaryStruct(
-        ("signature", "2s", b"\x02\x00"),
-        ("priority", "h"),
-        ("control_parameter", "h"),
-    )
-
-    STRUCT = BinaryStruct(
-        ("_sound_instance_count", "H"),
-        ("_envelope_count", "H"),
-    )
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        sound_instance_count: ushort
+        envelope_count: ushort
 
     priority: int
     control_parameter: int
     sound_instances: list[SoundInstance]
     envelopes: list[Envelope]
 
-    def unpack(self, reader: BinaryReader, event_type: Event.EventType = None):
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader, event_type: Event.EventType = None):
         if event_type == Event.EventType.COMPLEX:
-            complex_data = reader.unpack_struct(self.COMPLEX_STRUCT, exclude_asserted=True)
-            self.priority = complex_data["priority"]
-            self.control_parameter = complex_data["control_parameter"]
+            complex_data = cls.COMPLEX_STRUCT.from_bytes(reader)
+            priority = complex_data.priority
+            control_parameter = complex_data.control_parameter
         else:
-            self.priority = -1
-            self.control_parameter = -1
-        data = reader.unpack_struct(self.STRUCT)
-        self.sound_instances = [SoundInstance(reader) for _ in range(data["_sound_instance_count"])]
-        self.envelopes = [Envelope(reader) for _ in range(data["_envelope_count"])]
-        # No other fields to set.
+            priority = -1
+            control_parameter = -1
+        data = cls.STRUCT.from_bytes(reader)
+        sound_instances = [SoundInstance.from_fev_reader(reader) for _ in range(data.sound_instance_count)]
+        envelopes = [Envelope.from_fev_reader(reader) for _ in range(data.envelope_count)]
+        return cls(priority, control_parameter, sound_instances, envelopes)
 
     def to_xml_lines(self, layer_name: str, parameters: list[Parameter], sounddefs: list[SoundDef]) -> list[str]:
         """XML string for `Layer`, including all attached SoundDefInstances and Envelopes.
@@ -790,6 +795,7 @@ class Layer(XMLObject):
         return xml_lines
 
 
+@dataclass(slots=True)
 class Parameter(XMLObject):
     """Provides functionality to adjust playback characteristics of an Event in real-time during the game."""
 
@@ -814,24 +820,25 @@ class Parameter(XMLObject):
     seek_speed: float
     controlled_envelope_count: int
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # Name comes first.
-        ("velocity", "f"),
-        ("param_min", "f"),
-        ("param_max", "f"),
-        ("_param_info", "I"),
-        ("seek_speed", "f"),
-        ("controlled_envelope_count", "I"),
-        "4x",
-    )
+        velocity: float
+        param_min: float
+        param_max: float
+        _param_info: uint
+        seek_speed: float
+        controlled_envelope_count: uint
+        _pad1: bytes = field(**BinaryPad(4))
 
-    def unpack(self, reader: BinaryReader):
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
-        param_info = kwargs.pop("_param_info")
-        self.is_primary = bool(param_info & 0x01)
-        self.loop_behavior = self.LoopBehavior(param_info & ~0x01)
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader):
+        name = read_lp_string(reader)
+        header = cls.STRUCT.from_bytes(reader)
+        param_info = header.pop("_param_info")
+        is_primary = bool(param_info & 0x01)
+        loop_behavior = cls.LoopBehavior(param_info & ~0x01)
+        return header.to_object(cls, name=name, is_primary=is_primary, loop_behavior=loop_behavior)
 
     def to_xml_lines(self) -> list[str]:
         """
@@ -858,6 +865,7 @@ class Parameter(XMLObject):
         ]
 
 
+@dataclass(slots=True)
 class Event(XMLObject):
     """Core class of the FMOD Sound Event system.
 
@@ -975,82 +983,80 @@ class Event(XMLObject):
     user_properties: list[UserProperty]
     category_names: list[str]
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # Event type and name come first.
-        ("_guid", "16s"),
-        ("volume", "f"),
-        ("pitch", "f"),
-        ("volume_rand", "f"),
-        ("pitch_rand", "f"),
-        ("priority", "I"),
-        ("max_playbacks", "I"),
-        ("steal_priority", "i"),
-        ("_mode", "H"),
-        ("_geom_flags", "H"),
-        ("three_dim_min_dist", "f"),
-        ("three_dim_max_dist", "f"),
-        "2x",
-        ("_oneshot", "B"),
-        ("_pitch_rand_units", "B"),
-        ("speaker_l", "f"),
-        ("speaker_r", "f"),
-        ("speaker_c", "f"),
-        ("speaker_lfe", "f"),
-        ("speaker_lr", "f"),
-        ("speaker_rr", "f"),
-        ("speaker_ls", "f"),
-        ("speaker_rs", "f"),
-        ("cone_inside_angle", "f"),
-        ("cone_outside_angle", "f"),
-        ("cone_outside_volume", "f"),
-        ("_max_playback_behavior", "I"),
-        ("doppler_factor", "f"),
-        ("reverb_dry", "f"),
-        ("reverb_wet", "f"),
-        ("speaker_spread", "f"),
-        ("fadein_time", "I"),
-        ("fadeout_time", "I"),
-        ("spawn_intensity", "f"),
-        ("spawn_intensity_rand", "f"),
-        ("pan_level", "f"),
-        ("position_rand", "I"),
-    )
+        _guid: bytes = field(**BinaryString(16))
+        volume: float
+        pitch: float
+        volume_rand: float
+        pitch_rand: float
+        priority: int
+        max_playbacks: int
+        steal_priority: int
+        mode: Event.EventMode = field(**Binary(ushort))
+        _geom_flags: ushort
+        three_dim_min_dist: float
+        three_dim_max_dist: float
+        _pad1: bytes = field(init=False, **BinaryPad(2))
+        _oneshot: byte
+        pitch_rand_units: Event.PitchUnits = field(**Binary(byte))
+        speaker_l: float
+        speaker_r: float
+        speaker_c: float
+        speaker_lfe: float
+        speaker_lr: float
+        speaker_rr: float
+        speaker_ls: float
+        speaker_rs: float
+        cone_inside_angle: float
+        cone_outside_angle: float
+        cone_outside_volume: float
+        max_playback_behavior: Event.PlaybackBehavior = field(**Binary(uint))
+        doppler_factor: float
+        reverb_dry: float
+        reverb_wet: float
+        speaker_spread: float
+        fadein_time: int
+        fadeout_time: int
+        spawn_intensity: float
+        spawn_intensity_rand: float
+        pan_level: float
+        position_rand: int
 
-    def unpack(self, reader: BinaryReader):
-        event_type = self.EventType(reader.unpack_value("I"))
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader)
-        raw_guid = kwargs.pop("_guid")
-        self.guid = "-".join((
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> Event:
+        event_type = cls.EventType(reader["I"])
+        kwargs = {"event_type": event_type, "name": read_lp_string(reader)}
+        header = cls.STRUCT.from_bytes(reader)
+        raw_guid = header.pop("_guid")
+        kwargs["guid"] = "-".join((
             raw_guid[3::-1].hex(),  # first three chunks need to be reversed
             raw_guid[5:3:-1].hex(),
             raw_guid[7:5:-1].hex(),
             raw_guid[8:10].hex(),
             raw_guid[10:].hex(),
         ))
-        self.mode = self.EventMode(kwargs.pop("_mode"))
-        geom_flags = kwargs.pop("_geom_flags")
-        self.ignore_geometry = geom_flags & 0xF000 == 0x4000
-        self.three_dim_rolloff = self.ThreeDimRolloff(geom_flags & 0x0FF0)
-        self.three_dim_position = self.ThreeDimPosition(geom_flags & 0x00F)
-        self.oneshot = kwargs.pop("_oneshot") == 0x08
-        self.pitch_rand_units = self.PitchUnits(kwargs.pop("_pitch_rand_units"))
-        self.max_playback_behavior = self.PlaybackBehavior(kwargs.pop("_max_playback_behavior"))
+        geom_flags = header.pop("_geom_flags")
+        kwargs["ignore_geometry"] = geom_flags & 0xF000 == 0x4000
+        kwargs["three_dim_rolloff"] = cls.ThreeDimRolloff(geom_flags & 0x0FF0)
+        kwargs["three_dim_position"] = cls.ThreeDimPosition(geom_flags & 0x00F)
+        kwargs["oneshot"] = header.pop("_oneshot") == 0x08
 
-        layer_count = reader.unpack_value("I") if event_type == Event.EventType.COMPLEX else 1
-        self.layers = [Layer(reader, event_type=event_type) for _ in range(layer_count)]
+        layer_count = reader["I"] if event_type == Event.EventType.COMPLEX else 1
+        kwargs["layers"] = [Layer.from_fev_reader(reader, event_type=event_type) for _ in range(layer_count)]
 
-        self.parameters = []
-        self.user_properties = []
         if event_type == Event.EventType.COMPLEX:
-            param_count = reader.unpack_value("I")
-            self.parameters = [Parameter(reader) for _ in range(param_count)]
-            user_prop_count = reader.unpack_value("I")
-            self.user_properties = [UserProperty(reader) for _ in range(user_prop_count)]
-        category_name_count = reader.unpack_value("I")
-        self.category_names = [read_string_from_length(reader) for _ in range(category_name_count)]
-
-        self.set(**kwargs)
+            param_count = reader["I"]
+            kwargs["parameters"] = [Parameter.from_fev_reader(reader) for _ in range(param_count)]
+            user_prop_count = reader["I"]
+            kwargs["user_properties"] = [UserProperty.from_fev_reader(reader) for _ in range(user_prop_count)]
+        else:
+            kwargs["parameters"] = []
+            kwargs["user_properties"] = []
+        category_name_count = reader["I"]
+        kwargs["category_names"] = [read_lp_string(reader) for _ in range(category_name_count)]
+        return header.to_object(cls, **kwargs)
 
     def has_name(self, name: str | re.Pattern) -> bool:
         """Compares name to given string or regex pattern."""
@@ -1137,6 +1143,7 @@ class Event(XMLObject):
         return xml_lines
 
 
+@dataclass(slots=True)
 class EventGroup(XMLObject):
     """Folders used to organize Events for more convenient referencing in-game.
 
@@ -1144,25 +1151,26 @@ class EventGroup(XMLObject):
     Events in-game.
     """
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # Name comes first.
-        ("_user_property_count", "I"),
-        ("_subgroup_count", "I"),
-        ("_event_count", "I"),
-    )
+        user_property_count: int
+        subgroup_count: int
+        event_count: int
 
     name: str
     user_properties: list[UserProperty]
     subgroups: list[EventGroup]
     events: list[Event]
 
-    def unpack(self, reader: BinaryReader):
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
-        self.user_properties = [UserProperty(reader) for _ in range(kwargs.pop("_user_property_count"))]
-        self.subgroups = [EventGroup(reader) for _ in range(kwargs.pop("_subgroup_count"))]
-        self.events = [Event(reader) for _ in range(kwargs.pop("_event_count"))]
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> EventGroup:
+        name = read_lp_string(reader)
+        header = cls.STRUCT.from_bytes(reader)
+        user_properties = [UserProperty.from_fev_reader(reader) for _ in range(header.user_property_count)]
+        subgroups = [EventGroup.from_fev_reader(reader) for _ in range(header.subgroup_count)]
+        events = [Event.from_fev_reader(reader) for _ in range(header.event_count)]
+        return cls(name, user_properties, subgroups, events)
 
     def to_xml_lines(self, sounddefs: list[SoundDef]) -> list[str]:
         xml_lines = [
@@ -1186,6 +1194,7 @@ class EventGroup(XMLObject):
         return xml_lines
 
 
+@dataclass(slots=True)
 class SoundDefProperty(XMLObject):
     """Properties that can be set about a Sound Definition in the Sound Definitions view.
 
@@ -1218,6 +1227,25 @@ class SoundDefProperty(XMLObject):
         ON_TRIGGER = 1
         ON_START = 2
 
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
+        play_mode: SoundDefProperty.PlayMode = field(**Binary(int))
+        spawn_time_min: uint
+        spawn_time_max: uint
+        max_spawned: uint
+        volume: float
+        volume_randmethod: uint
+        volume_randmin: float
+        volume_randmax: float
+        volume_rand: float
+        pitch: float
+        pitch_randmethod: uint
+        pitch_randmin: float
+        pitch_randmax: float
+        pitch_rand: float
+        recalc_pitch_rand_value: SoundDefProperty.RecalculateRand = field(**Binary(uint))
+        three_dim_position_rand: float
+
     play_mode: SoundDefProperty.PlayMode
     spawn_time_min: int
     spawn_time_max: int
@@ -1234,31 +1262,6 @@ class SoundDefProperty(XMLObject):
     pitch_rand: float
     recalc_pitch_rand: SoundDefProperty.RecalculateRand
     three_dim_position_rand: float
-
-    STRUCT = BinaryStruct(
-        ("_play_mode", "I"),
-        ("spawn_time_min", "I"),
-        ("spawn_time_max", "I"),
-        ("max_spawned", "I"),
-        ("volume", "f"),
-        ("volume_randmethod", "I"),
-        ("volume_randmin", "f"),
-        ("volume_randmax", "f"),
-        ("volume_rand", "f"),
-        ("pitch", "f"),
-        ("pitch_randmethod", "I"),
-        ("pitch_randmin", "f"),
-        ("pitch_randmax", "f"),
-        ("pitch_rand", "f"),
-        ("_recalc_pitch_rand_value", "I"),
-        ("three_dim_position_rand", "f"),
-    )
-
-    def unpack(self, reader: BinaryReader):
-        kwargs = self.extract_kwargs_from_struct(reader)
-        self.play_mode = self.PlayMode(kwargs.pop("_play_mode"))
-        self.recalc_pitch_rand = self.RecalculateRand(kwargs.pop("_recalc_pitch_rand_value"))
-        self.set(**kwargs)
 
     def to_xml_lines(self) -> list[str]:
         """Chunk of data to be inserted into a `SoundDef`."""
@@ -1283,17 +1286,18 @@ class SoundDefProperty(XMLObject):
         ]
 
 
+@dataclass(slots=True)
 class Waveform(XMLObject):
     """Container for FEV-specific information about the wavetables found in a given wavebank.
 
     The audio data and specific format information before and after compression is saved into the FSB instead.
     """
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # 4x, weight, name, and bank name come first.
-        ("index_in_bank", "I"),
-        ("playtime", "I"),
-    )
+        index_in_bank: uint
+        playtime: uint
 
     weight: int
     name: str
@@ -1301,13 +1305,13 @@ class Waveform(XMLObject):
     index_in_bank: int
     playtime: int
 
-    def unpack(self, reader: BinaryReader):
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> Waveform:
         reader.assert_pad(4)
-        self.weight = reader.unpack_value("I")
-        self.name = read_string_from_length(reader)
-        self.bank_name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader)
-        self.set(**kwargs)
+        weight = reader["I"]
+        name = read_lp_string(reader)
+        bank_name = read_lp_string(reader)
+        return cls.STRUCT.reader_to_object(reader, cls, weight=weight, name=name, bank_name=bank_name)
 
     def to_xml_lines(self) -> list[str]:
         """Note that `playtime` is not stored in the FDP XML."""
@@ -1321,6 +1325,7 @@ class Waveform(XMLObject):
         ]
 
 
+@dataclass(slots=True)
 class SoundDef(XMLObject):
     """Container for sound-producing entities (e.g. wavetables)."""
 
@@ -1328,17 +1333,18 @@ class SoundDef(XMLObject):
     sounddef_prop_index: int
     waveforms: list[Waveform]
 
-    STRUCT = BinaryStruct(
+    @dataclass(slots=True)
+    class STRUCT(BinaryStruct):
         # Name comes first.
-        ("sounddef_prop_index", "I"),
-        ("_waveform_count", "I"),
-    )
+        sounddef_prop_index: uint
+        waveform_count: uint
 
-    def unpack(self, reader: BinaryReader):
-        self.name = read_string_from_length(reader)
-        kwargs = self.extract_kwargs_from_struct(reader, self.STRUCT)
-        self.waveforms = [Waveform(reader) for _ in range(kwargs.pop("_waveform_count"))]
-        self.set(**kwargs)
+    @classmethod
+    def from_fev_reader(cls, reader: BinaryReader) -> SoundDef:
+        name = read_lp_string(reader)
+        header = cls.STRUCT.from_bytes(reader)
+        waveforms = [Waveform.from_fev_reader(reader) for _ in range(header.waveform_count)]
+        return cls(name, header.sounddef_prop_index, waveforms)
 
     def to_xml_lines(self, sounddef_property: SoundDefProperty) -> list[str]:
         xml_lines = [
@@ -1358,6 +1364,7 @@ class SoundDef(XMLObject):
         return xml_lines
 
 
+@dataclass(slots=True)
 class SoundDefFolder:
     """Path-like container for `SoundDef`s.
 
@@ -1366,13 +1373,8 @@ class SoundDefFolder:
     """
 
     name: str
-    subfolders: dict[str, SoundDefFolder]
-    sounddefs: list[SoundDef]
-
-    def __init__(self, name: str):
-        self.name = name
-        self.subfolders = {}
-        self.sounddefs = []
+    subfolders: dict[str, SoundDefFolder] = field(default_factory=dict)
+    sounddefs: list[SoundDef] = field(default_factory=list)
 
     def add_new_sounddef(self, sounddef_path: str, sounddef: SoundDef):
         """Adds a `SoundDef` as a (possibly indirect) child of this SoundDefFolder.
@@ -1417,6 +1419,8 @@ class SoundDefFolder:
         return xml_lines
 
 
+# noinspection PyDataclass
+@dataclass(slots=True)
 class FEV(GameFile):
     """FMOD Event file that holes all event data about an FMOD project.
 
@@ -1433,44 +1437,44 @@ class FEV(GameFile):
     sounddef_properties: list[SoundDefProperty]
     sounddefs: list[SoundDef]
 
-    STRUCT = BinaryStruct(
-        ("signature", "4s", b"FEV1"),
-        ("version_byte", "I"),
-        ("unk_offset1", "I"),
-        ("unk_offset2", "I"),
+    @dataclass(slots=True)
+    class FEVHeaderStruct(BinaryStruct):
+        signature: bytes = field(**BinaryString(4, asserted=b"FEV1"))
+        version_byte: uint
+        unk_offset1: uint
+        unk_offset2: uint
         # Project name.
-    )
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        data = reader.unpack_struct(self.STRUCT)
-        self.version_byte = data.pop("version_byte")
-        self.unk_offset1 = data.pop("unk_offset1")
-        self.unk_offset2 = data.pop("unk_offset2")
-        self.project_name = read_string_from_length(reader)
+    @classmethod
+    def from_reader(cls, reader: BinaryReader):
+        header = cls.FEVHeaderStruct.from_bytes(reader)
+        kwargs = {"project_name": read_lp_string(reader)}
 
-        wavebank_count = reader.unpack_value("I")
-        self.wavebanks = [WavebankInfo(reader) for _ in range(wavebank_count)]
+        wavebank_count = reader["I"]
+        kwargs["wavebanks"] = [WavebankInfo.from_fev_reader(reader) for _ in range(wavebank_count)]
 
-        self.top_event_category = EventCategory(reader)
+        kwargs["top_event_category"] = EventCategory.from_fev_reader(reader)
 
-        top_event_group_count = reader.unpack_value("I")
-        self.top_event_groups = [EventGroup(reader) for _ in range(top_event_group_count)]
+        top_event_group_count = reader["I"]
+        kwargs["top_event_groups"] = [EventGroup.from_fev_reader(reader) for _ in range(top_event_group_count)]
 
-        sounddef_prop_count = reader.unpack_value("I")
-        self.sounddef_properties = [SoundDefProperty(reader) for _ in range(sounddef_prop_count)]
+        sounddef_prop_count = reader["I"]
+        kwargs["sounddef_properties"] = [SoundDefProperty.from_fev_reader(reader) for _ in range(sounddef_prop_count)]
 
-        sounddef_count = reader.unpack_value("I")
-        self.sounddefs = [SoundDef(reader) for _ in range(sounddef_count)]
+        sounddef_count = reader["I"]
+        kwargs["sounddefs"] = [SoundDef.from_fev_reader(reader) for _ in range(sounddef_count)]
 
         # TODO: Reverb?
         reader.assert_pad(4)
 
         # TODO: Music block?
-        music_block_size = reader.unpack_value("I")
+        music_block_size = reader["I"]
         reader.seek(music_block_size, 1)
 
-    def pack(self):
-        raise ValueError("FEV pack not implemented. Use FMOD Designer to build FEV/FSB from the generated FDP.")
+        return header.to_object(cls, **kwargs)
+
+    def to_writer(self):
+        raise TypeError("FEV cannot be written in Python. Use FMOD Designer to build FEV/FSB from the generated FDP.")
 
     def remove_events(self, event_name: str | re.Pattern, remove_unused_sounddefs=True) -> list[Event]:
         """Remove `Event` with the given name.
@@ -1699,7 +1703,7 @@ class FEV(GameFile):
                             f"Cannot find required file '{bank.bank_name}.fev' associated with matching bank."
                         )
                     bank_original_fev = open_fevs.setdefault(
-                        str(fsb_original_fev_filepath), FEV(fsb_original_fev_filepath)
+                        str(fsb_original_fev_filepath), FEV.from_path(fsb_original_fev_filepath)
                     )
 
                 for index, sample in enumerate(fsb.samples):

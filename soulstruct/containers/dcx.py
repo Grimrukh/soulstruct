@@ -14,13 +14,19 @@ __all__ = [
 import logging
 import typing as tp
 import zlib
+from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 
 from soulstruct.containers import oodle
-from soulstruct.utilities.binary import BinaryStruct, BinaryReader, ByteOrder
+from soulstruct.exceptions import SoulstructError
+from soulstruct.utilities.binary import *
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class DCXError(SoulstructError):
+    pass
 
 
 class DCXType(Enum):
@@ -37,149 +43,99 @@ class DCXType(Enum):
     DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in the ER regulation.
     DCX_KRAK = 10  # DCX header, Oodle compression. Used in Sekiro and Elden Ring.
 
+    def get_version_info(self) -> tuple | tuple[int, int, int, int, int]:
+        return DCX_VERSION_INFO[self]
+
     @classmethod
     def detect(cls, reader: BinaryReader) -> DCXType:
         """Detect type of DCX. Resets offset when done."""
-        old_offset = reader.tell()
+        with reader.temp_offset():
+            magic = reader.peek(4)
+            if magic == b"DCP\0":  # rare, only for older games and DeS test maps
+                # Possible file pattern for DFLT or EDGE compression.
+                dcx_fmt = reader.peek(4, 4)
+                if dcx_fmt == b"DCP\0":
+                    return cls.DCP_DFLT
+                elif dcx_fmt == b"EDGE":
+                    return cls.DCP_EDGE
+                else:
+                    return cls.Unknown
 
-        dcx_type = cls.Unknown
+            if magic != b"DCX\0":
+                b0, b1 = reader.unpack("BB")
+                if b0 == 0x78 and (b1 in {0x01, 0x5E, 0x9C, 0xDA}):
+                    return cls.Zlib
+                return cls.Unknown  # very unlikely to be DCX at this point
 
-        magic = reader.unpack_value("4s")
-        if magic == b"DCP\0":  # rare, only for older games and DeS test maps
-            # Possible file pattern for DFLT or EDGE compression.
-            dcx_fmt = reader.unpack_value("4s", offset=4)
-            if dcx_fmt == b"DCP\0":
-                dcx_type = cls.DCP_DFLT
-            elif dcx_fmt == b"EDGE":
-                dcx_type = cls.DCP_EDGE
-        elif magic == b"DCX\0":
-            dcx_fmt = reader.unpack_value("4s", offset=0x28)
-            if dcx_fmt == b"EDGE":
-                dcx_type = cls.DCX_EDGE
-            elif dcx_fmt == b"DFLT":
-                # Check four unknown header fields to determine DFLT subtype.
-                unk04 = reader.unpack_value("i", offset=0x4)
-                unk10 = reader.unpack_value("i", offset=0x10)
-                unk30 = reader.unpack_value("i", offset=0x30)
-                unk38 = reader.unpack_value("B", offset=0x38)
-                if unk10 == 0x24:
-                    dcx_type = cls.DCX_DFLT_10000_24_9
-                elif unk10 == 0x44:
-                    if unk04 == 0x10000:
-                        dcx_type = cls.DCX_DFLT_10000_44_9
-                    elif unk04 == 0x11000:
-                        if unk30 == 0x8000000:
-                            dcx_type = cls.DCX_DFLT_11000_44_8
-                        elif unk30 == 0x9000000:
-                            if unk38 == 15:
-                                dcx_type = cls.DCX_DFLT_11000_44_9_15
-                            elif unk38 == 0:
-                                dcx_type = cls.DCX_DFLT_11000_44_9
-            elif dcx_fmt == b"KRAK":  # requires `oo2core_6_win64.dll`
-                dcx_type = cls.DCX_KRAK
-        else:
-            b0 = reader.unpack_value("B", offset=0)
-            b1 = reader.unpack_value("B", offset=1)
-            if b0 == 0x78 and (b1 in {0x01, 0x5E, 0x9C, 0xDA}):
-                dcx_type = cls.Zlib
+            try:
+                header = DCXHeaderStruct.from_bytes(reader)
+            except BinaryFieldValueError as ex:
+                _LOGGER.error(f"Error while trying to detect `DCXType`: {ex}")
+                return cls.Unknown
 
-        reader.seek(old_offset)
-        return dcx_type
+            header_version_info = header.get_version_info()
+            for dcx_type, version_info in DCX_VERSION_INFO.items():
+                if version_info == header_version_info:
+                    return dcx_type
+
+            _LOGGER.error(
+                f"Unknown configuration of DCX version fields in DCX header: {header_version_info}\n"
+                "  Maybe tell Grimrukh about this new DCX format..."
+            )
+            return cls.Unknown
 
 
-# Maps DCX types to their expected header `BinaryStruct`s.
-DCX_HEADER_STRUCTS = {
-    DCXType.DCP_DFLT: BinaryStruct(
-        ("type", "4s", b"DCP\0"),
-        ("subtype", "4s", b"DFLT"),
-        ("unks", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        byte_order=ByteOrder.BigEndian,
-    ),
-    # TODO: DCP_EDGE
-    # TODO: DCX_EDGE
-    DCXType.DCX_DFLT_10000_24_9: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x10000, 0x18, 0x24, 0x24, 0x2C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"DFLT"),
-        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
-    DCXType.DCX_DFLT_10000_44_9: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x10000, 0x18, 0x24, 0x44, 0x4C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"DFLT"),
-        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
-    DCXType.DCX_DFLT_11000_44_8: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"DFLT"),
-        ("unks2", "6i", (0x20, 0x8000000, 0, 0, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
-    DCXType.DCX_DFLT_11000_44_9: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"DFLT"),
-        ("unks2", "6i", (0x20, 0x9000000, 0, 0, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
-    DCXType.DCX_DFLT_11000_44_9_15: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "i"),
-        ("compressed_size", "i"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"DFLT"),
-        ("unks2", "6i", (0x20, 0x9000000, 0, 0xF000000, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
-
-    DCXType.DCX_KRAK: BinaryStruct(
-        ("type", "4s", b"DCX\0"),
-        ("unks1", "5i", (0x11000, 0x18, 0x24, 0x44, 0x4C)),
-        ("dcs", "4s", b"DCS\0"),
-        ("decompressed_size", "I"),
-        ("compressed_size", "I"),
-        ("dcp", "4s", b"DCP\0"),
-        ("dflt", "4s", b"KRAK"),
-        ("unks2", "6i", (0x20, 0x6000000, 0, 0, 0, 0x10100)),
-        ("dca", "4s", b"DCA\0"),
-        ("compressed_header_size", "i", 8),
-        byte_order=ByteOrder.BigEndian,
-    ),
+DCX_VERSION_INFO = {
+    DCXType.DCP_DFLT: (),
+    DCXType.DCX_DFLT_10000_24_9: (0x10000, 0x24, 0x2C, 0x9000000, 0),
+    DCXType.DCX_DFLT_10000_44_9: (0x10000, 0x44, 0x4C, 0x9000000, 0),
+    DCXType.DCX_DFLT_11000_44_8: (0x11000, 0x44, 0x4C, 0x8000000, 0),
+    DCXType.DCX_DFLT_11000_44_9: (0x11000, 0x44, 0x4C, 0x9000000, 0),
+    DCXType.DCX_DFLT_11000_44_9_15: (0x11000, 0x44, 0x4C, 0x9000000, 0xF000000),
+    DCXType.DCX_KRAK: (0x11000, 0x44, 0x4C, 0x6000000, 0),
 }
+
+
+@dataclass(slots=True)
+class DCP_DFLT_Struct(BinaryStruct):
+    dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
+    dflt: bytes = field(init=False, **BinaryString(4, asserted=b"DFLT"))
+    unks: list[int] = field(init=False, **BinaryArray(6, asserted=[0x20, 0x9000000, 0, 0, 0, 0x10100]))
+    dcs: bytes = field(init=False, **BinaryString(4, b"DCS"))
+    decompressed_size: int
+    compressed_size: int
+
+
+# TODO: These structs are almost identical, except for variation in a few scattered ints (four spots).
+#  Could merge them with multiple assertion and then assert the configuration of version ints... yep.
+
+
+@dataclass(slots=True)
+class DCXHeaderStruct(BinaryStruct):
+    """NOTE: Not asserting the five 'version' fields so that we can guess when a new format is available."""
+    dcx: bytes = field(init=False, **BinaryString(4, asserted=b"DCX"))
+    version1: int  # = field(**Binary(asserted=(0x10000, 0x11000)))  # 1
+    unk1: int = field(init=False, **Binary(asserted=0x18))
+    unk2: int = field(init=False, **Binary(asserted=0x24))
+    version2: int  # = field(**Binary(asserted=(0x24, 0x44)))  # 2
+    version3: int  # = field(**Binary(asserted=(0x2C, 0x4C)))  # 3
+    dcs: bytes = field(init=False, **BinaryString(4, b"DCS"))
+    decompressed_size: int
+    compressed_size: int
+    dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
+    dflt: bytes = field(init=False, **BinaryString(4, asserted=b"DFLT"))
+    unk3: int = field(init=False, **Binary(asserted=0x20))
+    version4: int  # = field(**Binary(asserted=(0x6000000, 0x8000000, 0x9000000)))  # 3
+    unk4: int = field(init=False, **Binary(asserted=0))
+    version5: int  # = field(**Binary(asserted=(0, 0xF000000)))  # 4
+    unk5: int = field(init=False, **Binary(asserted=0))
+    unk6: int = field(init=False, **Binary(asserted=0x10100))
+    dca: bytes = field(init=False, **BinaryString(4, asserted=b"DCA"))
+    compressed_header_size: int = field(**Binary(asserted=8))
+
+    def get_version_info(self) -> tuple[int, int, int, int, int]:
+        """Actually used."""
+        return self.version1, self.version2, self.version3, self.version4, self.version5
 
 
 def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> tuple[bytes, DCXType]:
@@ -192,18 +148,21 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     dcx_type = DCXType.detect(reader)
 
     if dcx_type == DCXType.Unknown:
-        raise ValueError("Unknown DCX type. Cannot decompress.")
+        raise DCXError("Unknown DCX type. Cannot decompress.")
+    if dcx_type == DCXType.DCP_DFLT:
+        header = DCP_DFLT_Struct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
+    else:
+        header = DCXHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
 
-    header = reader.unpack_struct(DCX_HEADER_STRUCTS[dcx_type], byte_order=ByteOrder.BigEndian)
-    compressed = reader.read(header["compressed_size"])  # TODO: do I need to rstrip nulls?
+    compressed = reader.read(header.compressed_size)  # TODO: do I need to rstrip nulls?
 
     if dcx_type == DCXType.DCX_KRAK:
-        decompressed = oodle.decompress(compressed, header["decompressed_size"])
+        decompressed = oodle.decompress(compressed, header.decompressed_size)
     else:
         decompressed = zlib.decompressobj().decompress(compressed)
 
-    if len(decompressed) != header["decompressed_size"]:
-        raise ValueError("Decompressed DCX data size does not match size in header.")
+    if len(decompressed) != header.decompressed_size:
+        raise DCXError("Decompressed DCX data size does not match size in header.")
     return decompressed, dcx_type
 
 
@@ -217,10 +176,18 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     else:
         compressed = zlib.compress(raw_data, level=7)
 
-    header = DCX_HEADER_STRUCTS[dcx_type].pack(
-        decompressed_size=len(raw_data),
-        compressed_size=len(compressed),
-    )
+    if dcx_type == DCXType.DCP_DFLT:
+        header = bytes(DCP_DFLT_Struct(
+            decompressed_size=len(raw_data),
+            compressed_size=len(compressed),
+        ))
+    else:
+        version_info = dcx_type.get_version_info()
+        header = bytes(DCXHeaderStruct(
+            *version_info,
+            decompressed_size=len(raw_data),
+            compressed_size=len(compressed),
+        ))
     return header + compressed
 
 

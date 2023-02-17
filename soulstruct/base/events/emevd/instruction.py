@@ -22,7 +22,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
-class EventArgStruct(NewBinaryStruct):
+class EventArgStruct(BinaryStruct):
     """Supports all games."""
     instruction_line: varuint
     write_from_byte: varuint
@@ -80,7 +80,7 @@ class EventArg:
 
 
 @dataclass(slots=True)
-class InstructionStruct(NewBinaryStruct):
+class InstructionStruct(BinaryStruct):
     """Supports all games."""
     category: uint
     index: uint
@@ -140,7 +140,7 @@ class Instruction(abc.ABC):
     def from_emevd_reader(cls, reader: BinaryReader, base_arg_data_offset: int, event_layers_table_offset: int):
 
         header = InstructionStruct.from_bytes(reader)
-        if reader.varint_size == 4:
+        if not reader.long_varints:
             reader.assert_pad(4)  # TODO: alignment would be nicer?
 
         # Process arguments.

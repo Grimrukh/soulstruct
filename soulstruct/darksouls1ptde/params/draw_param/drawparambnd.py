@@ -7,17 +7,21 @@ import re
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
 
 from soulstruct.containers import Binder, BinderEntry, BinderVersion
 from soulstruct.darksouls1ptde.game_types.param_types import *
+from soulstruct.exceptions import SoulstructError
 from soulstruct.games import DARK_SOULS_PTDE
 from soulstruct.utilities.files import read_json, write_json
 from soulstruct.utilities.misc import BiDict
 
 from soulstruct.base.params.paramdef import ParamDefBND
+from soulstruct.base.params.param import ParamDict
 
-from .core import DrawParam
-from ..paramdef import GET_BUNDLED_PARAMDEFBND
+from .core import DrawParam, TypedDrawParam
+from .. import paramdef
+from ..paramdef import *
 
 try:
     Self = tp.Self
@@ -33,12 +37,16 @@ def draw_param_property(draw_param_stem: str):
     return property(lambda self: self.draw_params[draw_param_stem])
 
 
+class TypedDrawParamError(SoulstructError):
+    pass
+
+
 @dataclass(slots=True)
 class DrawParamBND(Binder):
     """Structure that manages double-slots and DrawParam nicknames for one `DrawParamBND` file (i.e. one map "area")."""
 
     EXT: tp.ClassVar[str] = ".parambnd"
-    DRAW_PARAM_CLASS: tp.ClassVar[tp.Type[DrawParam]] = DrawParam
+    PARAMDEF_MODULE: tp.ClassVar[ModuleType] = paramdef
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = staticmethod(GET_BUNDLED_PARAMDEFBND)
     PARAM_NICKNAMES: tp.ClassVar[BiDict[str, str]] = BiDict(
         ("DofBank", "DepthOfField"),
@@ -86,20 +94,22 @@ class DrawParamBND(Binder):
     map_area: str = ""
     # Maps DrawParam game stems, e.g. 'LightBank', to a pair of two `DrawParam`s for the two slots. These `DrawParam`s
     # (usually the second) may be `None` if that slot is not used.
-    draw_params: dict[str, list[DrawParam | None, DrawParam | None]] = field(default_factory=dict)
+    draw_params: dict[str, list[DrawParam | ParamDict | None, DrawParam | ParamDict | None]] = field(
+        default_factory=dict
+    )
 
-    DepthOfField = draw_param_property("DofBank")  # type: list[DrawParam]
-    # EnvLightTex = draw_param_property("EnvLightTexBank")  # type: list[DrawParam]
-    Fog = draw_param_property("FogBank")  # type: list[DrawParam]
-    LensFlares = draw_param_property("LensFlareBank")  # type: list[DrawParam]
-    LensFlareSources = draw_param_property("LensFlareExBank")  # type: list[DrawParam]
-    BakedLight = draw_param_property("LightBank")  # type: list[DrawParam]
-    ScatteredLight = draw_param_property("ScatteredLightBank")  # type: list[DrawParam]
-    PointLights = draw_param_property("PointLightBank")  # type: list[DrawParam]
-    Shadows = draw_param_property("ShadowBank")  # type: list[DrawParam]
-    ToneCorrection = draw_param_property("ToneCorrectBank")  # type: list[DrawParam]
-    ToneMapping = draw_param_property("ToneMapBank")  # type: list[DrawParam]
-    # DebugBakedLight = draw_param_property("s_LightBank")  # type: list[DrawParam]
+    DepthOfField = draw_param_property("DofBank")  # type: list[DrawParam[DOF_BANK]]
+    EnvLightTex = draw_param_property("EnvLightTexBank")  # type: list[DrawParam[ENV_LIGHT_TEX_BANK]]
+    Fog = draw_param_property("FogBank")  # type: list[DrawParam[FOG_BANK]]
+    LensFlares = draw_param_property("LensFlareBank")  # type: list[DrawParam[LENS_FLARE_BANK]]
+    LensFlareSources = draw_param_property("LensFlareExBank")  # type: list[DrawParam[LENS_FLARE_EX_BANK]]
+    BakedLight = draw_param_property("LightBank")  # type: list[DrawParam[LIGHT_BANK]]
+    ScatteredLight = draw_param_property("ScatteredLightBank")  # type: list[DrawParam[LIGHT_SCATTERING_BANK]]
+    PointLights = draw_param_property("PointLightBank")  # type: list[DrawParam[POINT_LIGHT_BANK]]
+    Shadows = draw_param_property("ShadowBank")  # type: list[DrawParam[SHADOW_BANK]]
+    ToneCorrection = draw_param_property("ToneCorrectBank")  # type: list[DrawParam[TONE_CORRECT_BANK]]
+    ToneMapping = draw_param_property("ToneMapBank")  # type: list[DrawParam[TONE_MAP_BANK]]
+    DebugBakedLight = draw_param_property("s_LightBank")  # type: list[DrawParam[LIGHT_BANK]]
 
     def __post_init__(self):
         if not self.draw_params and self.entries:
@@ -134,15 +144,44 @@ class DrawParamBND(Binder):
             self.draw_params.setdefault(param_stem, [None, None])
 
             try:
-                self.draw_params[param_stem][slot] = entry.to_game_file(self.DRAW_PARAM_CLASS)  # rows not unpacked yet
-            except Exception as ex:
-                _LOGGER.error(f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'. Error: {ex}")
-                raise
+                typed_draw_param_class = self.get_typed_draw_param_class(entry)
+            except TypedDrawParamError:
+                _LOGGER.warning(
+                    f"Loaded `DrawParamBND` entry '{entry.name}' as a generic `ParamDict`. You must call "
+                    f"`unpack_all_param_rows(paramdefbnd)` to manually interpret the row data using a `ParamDefBND`. "
+                    f"(You can omit the `paramdefbnd` argument to use Soulstruct's bundled `.paramdefbnd` file for "
+                    f"this game, but if you're seeing this warning, it's possible the bundled file is outdated.)"
+                )
+                self.draw_params[param_stem][slot] = entry.to_game_file(ParamDict)
+            else:
+                try:
+                    self.draw_params[param_stem][slot] = entry.to_game_file(typed_draw_param_class)
+                except Exception as ex:
+                    _LOGGER.error(
+                        f"Could not load `DrawParam` from `DrawParamBND` entry '{entry.name}'.\n  Error: {ex}"
+                    )
+                    raise
+
+    def get_typed_draw_param_class(self, entry: BinderEntry):
+        try:
+            param_type = DrawParam.detect_param_type(entry.data)
+        except Exception as ex:
+            raise TypedDrawParamError(
+                f"Could not detect `param_type` of `DrawParamBND` entry: {entry.name}.\n"
+                f"  Error: {ex}"
+            )
+        try:
+            data_type = getattr(self.PARAMDEF_MODULE, param_type)
+        except AttributeError:
+            raise TypedDrawParamError(
+                f"Soulstruct does not yet know how to unpack DrawParam type `{param_type}` of entry: {entry.name}."
+            )
+        return TypedDrawParam(data_type)
 
     def unpack_all_param_rows(self, paramdefbnd: ParamDefBND = None):
         """Unpack all row data of all `Param` entries with `paramdefbnd` (defaults to bundled file)."""
         if paramdefbnd is None:
-            paramdefbnd = self.DRAW_PARAM_CLASS.GET_BUNDLED_PARAMDEFBND()
+            paramdefbnd = GET_BUNDLED_PARAMDEFBND()
         for draw_param_0, draw_param_1 in self.draw_params.values():
             if draw_param_0:
                 draw_param_0.unpack_rows(paramdefbnd)
@@ -240,8 +279,20 @@ class DrawParamBND(Binder):
         for json_stem in manifest.pop("entries"):
             param_stem = cls.PARAM_NICKNAMES[json_stem]
             slot = 1 if param_stem.endswith("_1") else 0
+
+            # Open JSON file to get 'param_type'.
+            param_dict = read_json(directory / f"{json_stem}.json")
+            try:
+                row_type = getattr(cls.PARAMDEF_MODULE, param_dict["param_type"])
+            except KeyError:
+                raise KeyError(f"DrawParam JSON `{param_stem}.json` does not have 'param_type' key.")
+            except AttributeError:
+                raise ValueError(
+                    f"Unknown 'param_type' `{param_dict['param_type']} in DrawParam JSON: {param_stem}.json"
+                )
+            typed_draw_param_class = TypedDrawParam(row_type)
             manifest["draw_params"].setdefault(param_stem, [None, None])
-            manifest["draw_params"][param_stem][slot] = cls.DRAW_PARAM_CLASS.from_json(f"{json_stem}.json")
+            manifest["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
 
         drawparambnd = cls.from_dict(manifest)
         drawparambnd.path = directory  # TODO: auto-detect better default path, e.g. for binary?
@@ -261,9 +312,7 @@ class DrawParamBND(Binder):
 
         for draw_param_stem, draw_param_slots in self.draw_params.items():
             for slot, draw_param in enumerate(draw_param_slots):
-                json_stem = self.PARAM_NICKNAMES.get(
-                    draw_param_stem, draw_param_stem if draw_param.nickname is None else draw_param.nickname
-                )
+                json_stem = self.PARAM_NICKNAMES[draw_param_stem]
                 if slot == 1:
                     json_stem += "_1"
                 elif slot != 0:

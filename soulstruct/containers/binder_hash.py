@@ -8,7 +8,7 @@ from soulstruct.utilities.binary import *
 
 
 @dataclass(slots=True)
-class HashTableHeader(NewBinaryStruct):
+class HashTableHeader(BinaryStruct):
     _pad1: bytes = field(init=False, **BinaryPad(8))
     path_hashes_offset: long
     hash_group_count: uint
@@ -16,13 +16,13 @@ class HashTableHeader(NewBinaryStruct):
 
 
 @dataclass(slots=True)
-class PathHash(NewBinaryStruct):
+class PathHash(BinaryStruct):
     hashed_value: uint
     entry_index: int
 
 
 @dataclass(slots=True)
-class HashGroup(NewBinaryStruct):
+class HashGroup(BinaryStruct):
     length: int
     index: int
 

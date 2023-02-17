@@ -33,6 +33,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         """Models have no supertype or subtype data, just a header."""
         entry_offset = reader.position
         kwargs = cls.unpack_header(reader, entry_offset)
+        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         return cls(**kwargs)
 
     @classmethod
@@ -100,7 +101,7 @@ class BaseMSBModel(MSBEntry, abc.ABC):
     def set_auto_sib_path(self, **format_kwargs):
         """Some `MSBModel` subclasses can auto-generate SIB path from `SIB_PATH_TEMPLATE` and `format_kwargs`.
 
-        Tries to format `SIB_PATH_TEMPLATE with just `self.name` by default. Typically, if more kwargs are required,
+        Tries to format `SIB_PATH_TEMPLATE` with just `self.name` by default. Typically, if more kwargs are required,
         this method is overridden, but it should still work if I forget (and extra `kwargs` are harmless).
         """
         if not self.SIB_PATH_TEMPLATE:
@@ -111,15 +112,3 @@ class BaseMSBModel(MSBEntry, abc.ABC):
         except KeyError:
             keys = [i[1] for i in Formatter().parse(self.SIB_PATH_TEMPLATE) if i[1] is not None and i[1] != "name"]
             raise TypeError(f"Setting `sib_path` automatically for type `{self.cls_name}` requires more kwargs: {keys}")
-
-    def __repr__(self):
-        data = self.to_dict(ignore_defaults=True)
-        if data:
-            fields = "\n    ".join(f"{k}={repr(v)}," for k, v in data.items())
-            return (
-                f"{self.cls_name}(\n"
-                f"    name={repr(self.name)},\n"
-                f"    {fields}\n"
-                f")"
-            )
-        return f"{self.cls_name}(name={repr(self.name)})"

@@ -7,7 +7,7 @@ __all__ = ["TalkESD", "ChrESD"]
 
 class ESD(_BaseESD, abc.ABC):
     VERSION = 3
-    VARINT_SIZE = 8
+    LONG_VARINTS = True
 
 
 class TalkESD(ESD):

@@ -19,11 +19,10 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.parts import *
-from soulstruct.base.maps.msb.utils import MapFieldInfo
+from soulstruct.base.maps.msb.utils import MapFieldInfo, GroupBitSet
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
 from soulstruct.utilities.maths import Vector3
 
 from .enums import *
@@ -43,7 +42,7 @@ if tp.TYPE_CHECKING:
 class MSBPart(BaseMSBPart, abc.ABC):
 
     @dataclass(slots=True)
-    class SUPERTYPE_HEADER_STRUCT(NewBinaryStruct):
+    class SUPERTYPE_HEADER_STRUCT(BinaryStruct):
         # No description offset.
         name_offset: int
         # No instance index.
@@ -54,8 +53,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
         translate: Vector3
         rotate: Vector3
         scale: Vector3
-        draw_groups: list[uint] = field(**Binary(length=4))
-        display_groups: list[uint] = field(**Binary(length=4))
+        draw_groups: GroupBitSet = field(**BinaryArray(4, uint))
+        display_groups: GroupBitSet = field(**BinaryArray(4, uint))
         # No backread groups.
         supertype_data_offset: int
         subtype_data_offset: int
@@ -63,7 +62,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
         _pad1: bytes = field(**BinaryPad(4))
 
     @dataclass(slots=True)
-    class SUPERTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUPERTYPE_DATA_STRUCT(BinaryStruct):
         """Uses old `DrawParam` fields here, rather than separate Gparam/SceneGparam structs."""
         entity_id: int
         ambient_light_id: sbyte
@@ -93,8 +92,8 @@ class MSBPart(BaseMSBPart, abc.ABC):
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
     # really sporadic in which Part subtypes actually use each of them.
     sib_path: str = ""
-    draw_groups: set[int] = field(default_factory=set)
-    display_groups: set[int] = field(default_factory=set)
+    draw_groups: GroupBitSet = field(default_factory=set)
+    display_groups: GroupBitSet = field(default_factory=set)
     ambient_light_id: int = field(default=-1, **MapFieldInfo(linked_type=BakedLightParam))
     fog_id: int = field(default=-1, **MapFieldInfo(linked_type=FogParam))
     scattered_light_id: int = field(default=-1, **MapFieldInfo(linked_type=ScatteredLightParam))
@@ -127,8 +126,6 @@ class MSBPart(BaseMSBPart, abc.ABC):
             description="",  # no packed description in DS1 (but user/JSON descriptions are still supported)
             sib_path=sib_path,
             _model_index=header.pop("model_index"),
-            draw_groups=int_group_to_bit_set(header.pop("draw_groups"), assert_size=4),
-            display_groups=int_group_to_bit_set(header.pop("display_groups"), assert_size=4),
         )
         return header.to_dict(ignore_underscore_prefix=True) | kwargs
 
@@ -148,8 +145,6 @@ class MSBPart(BaseMSBPart, abc.ABC):
             _subtype_index=subtype_index,
             model_index=self.try_index(entry_lists["MODEL_PARAM_ST"], self.model),
             sib_path_offset=RESERVED,
-            draw_groups=bit_set_to_int_group(self.draw_groups, group_size=4),
-            display_groups=bit_set_to_int_group(self.display_groups, group_size=4),
             supertype_data_offset=RESERVED,
             subtype_data_offset=RESERVED,
         )
@@ -167,9 +162,10 @@ class MSBPart(BaseMSBPart, abc.ABC):
 class MSBMapPiece(MSBPart):
     """Just a textured, visible mesh asset. Does not include any collision."""
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapPiece
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\layout.SIB"
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _pad1: bytes = field(**BinaryPad(8))
 
     model: MSBMapPieceModel = None
@@ -190,10 +186,12 @@ class MSBMapPiece(MSBPart):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBObject(MSBPart):
     """Instance of a physical object."""
+
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Object
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\o_layout.SIB"
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _pad1: bytes = field(init=False, **BinaryPad(4))
         _draw_parent_index: int
         break_term: sbyte
@@ -250,9 +248,10 @@ class MSBObject(MSBPart):
 class MSBCharacter(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Character
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # empty
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _pad1: bytes = field(init=False, **BinaryPad(8))
         ai_id: int
         character_id: int
@@ -263,7 +262,7 @@ class MSBCharacter(MSBPart):
         player_id: int
         _draw_parent_index: int
         _pad3: bytes = field(init=False, **BinaryPad(8))
-        _patrol_regions_indices: list[short] = field(**Binary(length=8))
+        _patrol_regions_indices: list[short] = field(**BinaryArray(8))
         default_animation: int
         damage_animation: int
 
@@ -287,7 +286,7 @@ class MSBCharacter(MSBPart):
     damage_animation: int = -1
 
     _draw_parent_index: int = None
-    _patrol_regions_indices: list[int] = field(default=None, **Binary(length=8))
+    _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(8))
 
     HIDE_NAMES = (
         "scale",
@@ -307,14 +306,11 @@ class MSBCharacter(MSBPart):
     )
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        _patrol_regions_indices = [
-            self.try_index(entry_lists["POINT_PARAM_ST"], region) for region in self.patrol_regions
-        ]
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
             _draw_parent_index=self.try_index(entry_lists["PARTS_PARAM_ST"], self.draw_parent),
-            _patrol_regions_indices=_patrol_regions_indices,
+            _patrol_regions_indices=self.try_index(entry_lists["POINT_PARAM_ST"], self.patrol_regions),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):
@@ -327,9 +323,10 @@ class MSBCharacter(MSBPart):
 class MSBPlayerStart(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.PlayerStart
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _pad1: bytes = field(init=False, **BinaryPad(16))
 
     HIDE_FIELDS: tp.ClassVar = (
@@ -368,20 +365,21 @@ class MSBPlayerStart(MSBPart):
 class MSBCollision(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Collision
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\h_layout.SIB"
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         hit_filter_id: byte
         sound_space_type: byte
         _environment_event_index: short
         reflect_place_height: float
-        navmesh_groups: list[uint] = field(**Binary(length=4))
-        vagrant_entity_ids: list[int] = field(**Binary(length=3))
+        navmesh_groups: GroupBitSet = field(**BinaryArray(4, uint))
+        vagrant_entity_ids: list[int] = field(**BinaryArray(3))
         _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
         starts_disabled: bool
         unk_x27_x28: byte
         attached_bonfire: int
-        _minus_ones: tuple[int, int, int] = field(**Binary("3i", asserted=[(-1, -1, -1)]))  # never used
+        _minus_ones: list[int] = field(**BinaryArray(3, asserted=[-1, -1, -1]))  # never used
         _play_region_id: int  # -10 or greater is real play region ID, less than -10 is a negated stable footing flag
         camera_1_id: short
         camera_2_id: short
@@ -389,7 +387,7 @@ class MSBCollision(MSBPart):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: set[int] = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all enabled by default
+    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
@@ -398,7 +396,7 @@ class MSBCollision(MSBPart):
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
     reflect_place_height: float = 0.0
-    navmesh_groups: set[int] = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all enabled by default
+    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
     place_name_banner_id: int = field(default=-1, **MapFieldInfo(linked_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
@@ -427,8 +425,6 @@ class MSBCollision(MSBPart):
     def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
         data = cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
 
-        data["navmesh_groups"] = int_group_to_bit_set(data.pop("navmesh_groups"), assert_size=4)
-
         # Negative area name means that banner will appear (-1 means get area name from map area/block).
         internal_place_name_banner_id = data.pop("_place_name_banner_id")
         if internal_place_name_banner_id != -1:
@@ -446,25 +442,25 @@ class MSBCollision(MSBPart):
         return data
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
+
+        # Determine internal banner ID (negative if forced).
         if self.place_name_banner_id == -1 and not self._force_place_name_banner:
             raise InvalidFieldValueError(
                 "`force_place_name_banner` must be enabled if `place_name_banner_id == -1` (default)."
             )
         place_name_sign = -1 if self.place_name_banner_id >= 0 and self._force_place_name_banner else 1
         internal_place_name_banner_id = self.place_name_banner_id * place_name_sign
+
+        # Resolve play region ID or stable footing flag.
         if self._stable_footing_flag != 0:
             play_region_id = -self._stable_footing_flag - 10
         else:
             play_region_id = self._play_region_id
-        try:
-            environment_event_index = self.try_index(entry_lists["environments"], self.environment_event)
-        except ValueError:
-            environment_event_index = -1
+
         return self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            navmesh_groups=bit_set_to_int_group(self.navmesh_groups, group_size=4),
-            _environment_event_index=environment_event_index,
+            _environment_event_index=self.try_index(entry_lists["environments"], self.environment_event),
             _place_name_banner_id=internal_place_name_banner_id,
             _play_region_id=play_region_id,
         )
@@ -522,17 +518,18 @@ class MSBCollision(MSBPart):
 class MSBNavmesh(MSBPart):
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.Navmesh
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\FRPG\\data\\Model\\map\\{map_stem}\\sib\\n_layout.SIB"
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
-        navmesh_groups: list[uint] = field(**Binary(length=4))
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
+        navmesh_groups: GroupBitSet = field(**BinaryArray(4, uint))
         _pad1: bytes = field(**BinaryPad(16))
 
     # Type/default overrides.
     model: MSBNavmeshModel = None
     is_shadow_source: bool = True
 
-    navmesh_groups: set[int] = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all enabled by default
+    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
 
     HIDE_FIELDS = (
         "scale",
@@ -558,25 +555,13 @@ class MSBNavmesh(MSBPart):
         "disable_point_light_effect"
     )
 
-    @classmethod
-    def unpack_subtype_data(cls, reader: BinaryReader) -> dict[str, tp.Any]:
-        data = cls.SUBTYPE_DATA_STRUCT.from_bytes(reader).to_dict(ignore_underscore_prefix=False)
-        data["navmesh_groups"] = int_group_to_bit_set(data.pop("navmesh_groups"), assert_size=4)
-        return data
-
-    def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        return self.SUBTYPE_DATA_STRUCT.object_to_writer(
-            self,
-            writer,
-            navmesh_groups=bit_set_to_int_group(self.navmesh_groups, group_size=4),
-        )
-
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBUnusedObject(MSBObject):
     """Unused object. May be used in cutscenes; disabled otherwise. Identical structure to `MSBObject`."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedObject
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""  # no SIB path, unlike real objects
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -584,6 +569,7 @@ class MSBUnusedCharacter(MSBCharacter):
     """Unused character. May be used in cutscenes; disabled otherwise. Identical structure to `MSBCharacter`."""
 
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.UnusedCharacter
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -597,16 +583,17 @@ class MSBMapConnection(MSBPart):
     Uses collision models, and almost always has the same model as the linked `MSBCollision`.
     """
     SUBTYPE_ENUM: tp.ClassVar = MSBPartSubtype.MapConnection
+    SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         _collision_index: int
-        connected_map_id: tuple[sbyte, sbyte, sbyte, sbyte]
+        connected_map_id: list[sbyte] = field(**BinaryArray(4))
         _pad1: bytes = field(**BinaryPad(8))
 
     model: MSBCollisionModel = None
     collision: MSBCollision = None
-    connected_map_id: list[int] = field(default_factory=lambda: [10, 0, 0, 0], **Binary(length=4))
+    connected_map_id: list[int] = field(default_factory=lambda: [10, 0, 0, 0], **BinaryArray(4))
 
     _collision_index: int = None
 
@@ -616,11 +603,10 @@ class MSBMapConnection(MSBPart):
         return data
 
     def pack_subtype_data(self, writer: BinaryWriter, entry_lists: dict[str, list[MSBEntry]]):
-        collision_index = self.try_index(entry_lists["collisions"], self.collision)
         self.SUBTYPE_DATA_STRUCT.object_to_writer(
             self,
             writer,
-            _collision_index=collision_index,
+            _collision_index=self.try_index(entry_lists["collisions"], self.collision),
         )
 
     def indices_to_objects(self, entry_lists: dict[str, list[MSBEntry]]):

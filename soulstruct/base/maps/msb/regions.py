@@ -29,8 +29,8 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
     UNKNOWN_DATA_SIZE: tp.ClassVar[int]
 
     entity_id: int = -1
-    translate: Vector3 = field(default_factory=lambda: Vector3.zero())
-    rotate: Vector3 = field(default_factory=lambda: Vector3.zero())
+    translate: Vector3 = field(default_factory=Vector3.zero)
+    rotate: Vector3 = field(default_factory=Vector3.zero)
 
     @classmethod
     def from_msb_reader(cls, reader: BinaryReader) -> Self:
@@ -41,6 +41,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
         if relative_subtype_data_offset > 0:
             reader.seek(entry_offset + relative_subtype_data_offset)
             kwargs |= cls.unpack_subtype_data(reader)
+        cls._SETATTR_CHECKS_DISABLED = True  # will be re-enabled in `__post_init__`
         return cls(**kwargs)
 
     @classmethod

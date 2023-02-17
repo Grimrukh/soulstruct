@@ -20,7 +20,7 @@ from .enums import MSBRegionSubtype
 
 
 @dataclass(slots=True)
-class RegionHeader(NewBinaryStruct):
+class RegionHeader(BinaryStruct):
     name_offset: int
     _pad1: bytes = field(init=False, **BinaryPad(4))
     _supertype_index: int
@@ -36,7 +36,7 @@ class RegionHeader(NewBinaryStruct):
 @dataclass(slots=True, eq=False, repr=False)
 class MSBRegion(BaseMSBRegion, abc.ABC):
 
-    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[NewBinaryStruct]] = RegionHeader
+    SUPERTYPE_HEADER_STRUCT: tp.ClassVar[tp.Type[BinaryStruct]] = RegionHeader
     NAME_ENCODING = "shift_jis_2004"
     UNKNOWN_DATA_SIZE = 4
 
@@ -58,7 +58,7 @@ class MSBRegionCircle(MSBRegion):
     SUBTYPE_ENUM = MSBRegionSubtype.Circle
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         radius: float
 
     radius: float = 1.0
@@ -70,7 +70,7 @@ class MSBRegionSphere(MSBRegion):
     SUBTYPE_ENUM = MSBRegionSubtype.Sphere
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         radius: float
 
     radius: float = 1.0
@@ -82,7 +82,7 @@ class MSBRegionCylinder(MSBRegion):
     SUBTYPE_ENUM = MSBRegionSubtype.Cylinder
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         radius: float
         height: float
 
@@ -97,7 +97,7 @@ class MSBRegionRect(MSBRegion):
     SUBTYPE_ENUM = MSBRegionSubtype.Rect
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         width: float
         height: float
 
@@ -111,7 +111,7 @@ class MSBRegionBox(MSBRegion):
     SUBTYPE_ENUM = MSBRegionSubtype.Box
 
     @dataclass(slots=True)
-    class SUBTYPE_DATA_STRUCT(NewBinaryStruct):
+    class SUBTYPE_DATA_STRUCT(BinaryStruct):
         width: float
         depth: float
         height: float

@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-__all__ = ["Param", "TypedParam", "ParamRowDict", "ParamDict"]
+__all__ = ["Param", "TypedParam", "ParamDictRow", "ParamDict"]
 
+import abc
 import copy
 import logging
 import struct
 import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
@@ -18,6 +20,11 @@ from .param_row import ParamRow
 from .flags import ParamFlags1, ParamFlags2
 from .paramdef import ParamDef, ParamDefField, ParamDefBND, field_types as ft
 
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "Param"
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -25,7 +32,7 @@ PARAM_ROW_DATA_T = tp.TypeVar("PARAM_ROW_DATA_T", bound=ParamRow)
 
 
 @dataclass(slots=True)
-class ParamRowDict:
+class ParamDictRow:
     """A single entry in a `Param` table. Layout is defined by the `ParamDef` for this `Param` type.
 
     Supports all (known) games.
@@ -83,7 +90,7 @@ class ParamRowDict:
         return copy.deepcopy(self)
 
     @classmethod
-    def from_reader(cls, reader: BinaryReader, paramdef: ParamDef, raw_name: bytes, name="") -> ParamRowDict:
+    def from_reader(cls, reader: BinaryReader, paramdef: ParamDef, raw_name: bytes, name="") -> ParamDictRow:
         """Unpack `ParamRow` from binary game data using `paramdef`."""
         bit_reader = BitFieldReader()
 
@@ -159,6 +166,8 @@ class ParamRowDict:
                     writer.append(struct.pack(paramdef_field.py_fmt, value))
         bit_writer.finish_field(writer)
 
+    # NOTE: Cannot be loaded `from_dict()`.
+
     def to_dict(self, ignore_pads=True, ignore_defaults=True, ignore_sizes=False) -> dict[str, tp.Any]:
         data = {"raw_name": self.raw_name, "name": self.name, "fields": {}}
         for paramdef_field in self.paramdef.fields.values():
@@ -170,7 +179,7 @@ class ParamRowDict:
             data["fields"][field_name] = self.fields[paramdef_field.name]
         return data
 
-    def compare(self, other_row: ParamRowDict):
+    def compare(self, other_row: ParamDictRow):
         """Prints each field that differs between the given `ParamRow` and this one."""
         for field_name, paramdef_field in self.paramdef.fields.items():
             other = other_row[field_name]
@@ -178,7 +187,7 @@ class ParamRowDict:
             if other != this:
                 print(f"  {field_name}: this = {this}, other = {other}")
 
-    def __eq__(self, other_row: ParamRowDict):
+    def __eq__(self, other_row: ParamDictRow):
         """Returns `True` if all fields have the same value, and `False` if not."""
         for field_name, paramdef_field in self.paramdef.fields.items():
             other = other_row[field_name]
@@ -191,10 +200,10 @@ class ParamRowDict:
 
 
 @dataclass(slots=True)
-class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
+class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
     """Table of `ParamRows` (spreadsheet entries full of numbers used all over the place).
 
-    This class supports all (known) games, but should be retrieved dynamically with `TypeParam(data_type)` to specify
+    This class supports all (known) games, but should be retrieved dynamically with `TypedParam(row_type)` to specify
     the `ParamDef`-generated Soulstruct `ParamRow` subclass it uses (e.g. `NPC_PARAM_ST`). That class will be used
     to unpack the row data.
 
@@ -204,17 +213,18 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
     the game engine ITSELF basically treats it as such -- that I am using the dictionary structure and not even
     bothering loading duplicate IDs.
     """
-    ROW_TYPE: tp.ClassVar[tp.Type[ParamRow]]
+    ROW_TYPE: tp.ClassVar[tp.Type[ParamRow]] = None
+    PARAMDEF_MODULE: tp.ClassVar[ModuleType] = None
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = None
 
     @dataclass(slots=True)
-    class RowPointerStruct32(NewBinaryStruct):
+    class RowPointerStruct32(BinaryStruct):
         row_id: int
         data_offset: uint
         name_offset: uint
 
     @dataclass(slots=True)
-    class RowPointerStruct64(NewBinaryStruct):
+    class RowPointerStruct64(BinaryStruct):
         row_id: int
         unknown: int  # not zero in DS2:SOFTS "generatordbglocation" params according to TKGP
         data_offset: long
@@ -378,8 +388,8 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
         writer = BinaryWriter(byte_order=byte_order)  # no varints
 
-        writer.reserve("name_data_offset", "I", obj=self)
-        writer.reserve("_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
+        writer.reserve("row_names_offset", "I", obj=self)
+        writer.reserve("_short_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
         writer.pack("HHH", self.unknown, self.paramdef_data_version, row_count)
 
         if self.flags1.OffsetParam:
@@ -396,9 +406,13 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         if self.flags1[0] and self.flags1.IntDataOffset:
             writer.reserve("row_data_offset", "i", obj=self)
             writer.pad(12)
+            has_long_row_data_offset = True
         elif self.flags1.LongDataOffset:
             writer.reserve("row_data_offset", "q", obj=self)
             writer.pad(8)
+            has_long_row_data_offset = True
+        else:
+            has_long_row_data_offset = False
         # End of header.
 
         # Pack row pointers.
@@ -407,13 +421,14 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
             if self.flags1.LongDataOffset:
                 writer.pad(4)
                 writer.reserve(f"row_data_offset{row_id}", "q", obj=self)
-                writer.reserve(f"name_data_offset{row_id}", "q", obj=self)
+                writer.reserve(f"row_name_offset{row_id}", "q", obj=self)
             else:
                 writer.reserve(f"row_data_offset{row_id}", "i", obj=self)
-                writer.reserve(f"name_data_offset{row_id}", "i", obj=self)
+                writer.reserve(f"row_name_offset{row_id}", "i", obj=self)
 
-        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1) , obj=self)
-        writer.fill_with_position("row_data_offset", obj=self)
+        writer.fill("_short_row_data_offset", min(writer.position, 2 ** 16 - 1), obj=self)
+        if has_long_row_data_offset:
+            writer.fill_with_position("row_data_offset", obj=self)
 
         # Pack row data.
         for row_id, row in self.rows.items():
@@ -425,6 +440,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
             writer.append(self.param_type.encode("ASCII") + b"\0")
 
         # Pack row names.
+        writer.fill_with_position("row_names_offset", obj=self)
         for row_id, row in self.rows.items():
             writer.fill_with_position(f"row_name_offset{row_id}", obj=self)
             row.pack_name(writer, self.get_name_encoding(self.big_endian, self.flags2))
@@ -432,11 +448,31 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         return writer
 
     @classmethod
-    def from_dict(cls, data: dict):
-        """Convert flags integers to `ParamFlagsX`."""
+    def from_dict(cls, data: dict) -> Self:
+        """Try to find `TypeParam`, and convert flags integers to `ParamFlagsX`."""
+        if cls.ROW_TYPE is None:
+            raise TypeError("Cannot read `Param` dictionary of unknown type. Use `TypedParam` first.")
+
+        if data["param_type"] != cls.ROW_TYPE.__name__:
+            raise ValueError(
+                f"Incompatible 'param_type' in JSON: {data['param_type']}. Expected `{cls.ROW_TYPE.__name__}`."
+            )
         data["flags1"] = ParamFlags1(int(data.pop("flags1", 0)))
         data["flags2"] = ParamFlags1(int(data.pop("flags2", 0)))
-        return super(Param, cls).from_dict(data)
+        rows = data.pop("rows")  # type: dict[int, dict | ParamRow]
+        data["rows"] = {}
+        for row_id, row in rows.items():
+            if isinstance(row, ParamRow):
+                data["rows"][row_id] = row  # direct assignment
+            elif isinstance(row, dict):
+                data["rows"][row_id] = cls.ROW_TYPE.from_dict(row)
+            else:
+                raise TypeError(
+                    f"Each entry in dictionary 'rows' must be a `{cls.ROW_TYPE.__name__}` instance or dictionary "
+                    f"version of one, not: {type(row).__name__} (row ID {row_id})"
+                )
+
+        return cls(**data)
 
     def to_dict(self, ignore_pads=True, ignore_defaults=True, use_internal_names=False):
         """Provides options to ignore pad fields and/or fields with default values."""
@@ -454,6 +490,12 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile):
         for i in sorted(self.rows):
             data["rows"][i] = self.rows[i].to_dict(ignore_pads, ignore_defaults, use_internal_names)
         return data
+
+    @classmethod
+    def from_json(cls, json_path: str | Path) -> Self:
+        if cls.ROW_TYPE is None:
+            raise TypeError("Cannot call `Param.from_json()` on `Param` of unknown row type.")
+        return super(Param, cls).from_json(json_path)
 
     def write_json(
         self, file_path: Path | str = None, encoding="utf-8", indent=4, ignore_pads=True, ignore_defaults=True
@@ -521,7 +563,7 @@ class ParamDict(Param):
     # Initially, rows are kept as just `(raw_name, name, row_bytes)` tuple, until `ParamDef` is applied.
     row_bytes: dict[int, tuple[bytes, str, bytes]] | None = None
     # Generated by manual `unpack_rows()` call with `paramdef`.
-    row_dicts: dict[int, ParamRowDict] = field(default_factory=dict)
+    row_dicts: dict[int, ParamDictRow] = field(default_factory=dict)
     paramdef: ParamDef = None
 
     @classmethod
@@ -535,7 +577,7 @@ class ParamDict(Param):
         flags2 = ParamFlags2(version_info[1])
         paramdef_format_version = version_info[2]
 
-        name_data_offset = reader["I"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
+        row_names_offset = reader["I"]  # CANNOT BE TRUSTED IN VANILLA FILES! Off by +12 bytes.
         _row_data_offset = reader["H"]  # NOT USED! It's an unsigned short, but can be larger.
         if ((flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset) and _row_data_offset != 0:
             raise ValueError(f"Expected `_row_data_offset` of zero in this `Param`, not: {_row_data_offset}")
@@ -580,7 +622,7 @@ class ParamDict(Param):
             if param_type == "LEVELSYNC_PARAM_ST":
                 row_size = 220
             else:  # best guess
-                row_size = name_data_offset - row_data_offset
+                row_size = row_names_offset - row_data_offset
         else:  # most reliable: just use difference between first two row pointer data offsets
             row_size = row_pointer_structs[1].data_offset - row_pointer_structs[0].data_offset
 
@@ -648,10 +690,14 @@ class ParamDict(Param):
         # Note that we no longer need to track reader offset.
         self.row_dicts = {}
         for row_id, (raw_name, name, data) in self.row_bytes.items():
-            self.row_dicts[row_id] = ParamRowDict.from_reader(BinaryReader(data), paramdef, raw_name, name)
+            self.row_dicts[row_id] = ParamDictRow.from_reader(BinaryReader(data), paramdef, raw_name, name)
 
         # Remove row bytes.
         self.row_bytes = None
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        raise TypeError("Cannot load a generic `ParamDict` from a dictionary (yes, ironic).")
 
     def to_writer(self, sort=True) -> BinaryWriter:
         # if len(self.entries) > 5461:
@@ -671,8 +717,8 @@ class ParamDict(Param):
         byte_order = ByteOrder.BigEndian if self.big_endian else ByteOrder.LittleEndian
         writer = BinaryWriter(byte_order=byte_order)  # no varints
 
-        writer.reserve("name_data_offset", "I", obj=self)
-        writer.reserve("_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
+        writer.reserve("row_names_offset", "I", obj=self)
+        writer.reserve("_short_row_data_offset", "H", obj=self)  # unsigned short, but can be larger
         writer.pack("HHH", self.unknown, self.paramdef_data_version, row_count)
 
         if self.flags1.OffsetParam:
@@ -689,9 +735,12 @@ class ParamDict(Param):
         if self.flags1[0] and self.flags1.IntDataOffset:
             writer.reserve("row_data_offset", "i", obj=self)
             writer.pad(12)
+            has_long_row_data_offset = True
         elif self.flags1.LongDataOffset:
             writer.reserve("row_data_offset", "q", obj=self)
             writer.pad(8)
+            has_long_row_data_offset = True
+        has_long_row_data_offset = False
         # End of header.
 
         # Pack row pointers.
@@ -700,13 +749,14 @@ class ParamDict(Param):
             if self.flags1.LongDataOffset:
                 writer.pad(4)
                 writer.reserve(f"row_data_offset{row_id}", "q", obj=self)
-                writer.reserve(f"name_data_offset{row_id}", "q", obj=self)
+                writer.reserve(f"row_name_offset{row_id}", "q", obj=self)
             else:
                 writer.reserve(f"row_data_offset{row_id}", "i", obj=self)
-                writer.reserve(f"name_data_offset{row_id}", "i", obj=self)
+                writer.reserve(f"row_name_offset{row_id}", "i", obj=self)
 
-        writer.fill("_row_data_offset", min(writer.position, 2 ** 16 - 1) , obj=self)
-        writer.fill_with_position("row_data_offset", obj=self)
+        writer.fill("_short_row_data_offset", min(writer.position, 2 ** 16 - 1), obj=self)
+        if has_long_row_data_offset:
+            writer.fill_with_position("row_data_offset", obj=self)
 
         if self.row_bytes is not None:  # rows have not been unpacked
             for row_id, (_, _, data) in self.row_bytes.items():
@@ -740,11 +790,11 @@ class ParamDict(Param):
         return writer
 
 
-def TypedParam(data_type: tp.Type[ParamRow]):
+def TypedParam(row_type: tp.Type[ParamRow]):
     """Generate a `Param` subclass dynamically with the given row type (or retrieve correct existing subclass)."""
     for param_subclass in Param.__subclasses__():
         if param_subclass.__name__ == "ParamDict":
             continue
-        if param_subclass.ROW_TYPE is data_type:
+        if param_subclass.ROW_TYPE is row_type:
             return param_subclass
-    return type(f"Param_{data_type.__name__}", (Param,), {"ROW_TYPE": data_type})
+    return type(f"Param_{row_type.__name__}", (Param,), {"ROW_TYPE": row_type})

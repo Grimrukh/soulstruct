@@ -5,7 +5,6 @@ import abc
 import typing as tp
 from dataclasses import dataclass
 
-from soulstruct.utilities.text import pad_chars
 from soulstruct.utilities.binary import *
 
 from .msb_entry import MSBEntry

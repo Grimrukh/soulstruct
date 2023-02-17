@@ -69,18 +69,18 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         if not directory_path.is_dir():
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         files = {}
-        file_name_re = re.compile(r"(item|menu)\.msgbnd(\.dcx)?")
+        file_name_re = re.compile(r"^(item|menu)\.msgbnd(\.dcx)?$")
         for file_path in directory_path.glob("*"):
             if match := file_name_re.match(file_path.name):
                 if match.group(1) == "item":
                     files["item"] = cls.FILE_CLASS.from_path(file_path)
-                elif match.group(2) == "menu":
+                elif match.group(1) == "menu":
                     files["menu"] = cls.FILE_CLASS.from_path(file_path)
 
-        if not files["item"]:
-            raise FileNotFoundError("Could not find `item.msgbnd[.dcx]` in directory.")
-        if not files["menu"]:
-            raise FileNotFoundError("Could not find `menu.msgbnd[.dcx]` in directory.")
+        if "item" not in files:
+            raise FileNotFoundError(f"Could not find `item.msgbnd[.dcx]` in directory: {directory_path}.")
+        if "menu" not in files:
+            raise FileNotFoundError(f"Could not find `menu.msgbnd[.dcx]` in directory: {directory_path}.")
 
         # Open FMGs.
         fmgs = cls.create_fmgs(files["item"], files["menu"])
@@ -208,7 +208,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     f"Class `{self.__class__.__name__}` does not have a default entry name for ID {entry_id} "
                     f"in '{msgbnd_name}' MSGBND."
                 )
-            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[entry_id] + ".fmg")
+            msgbnd.add_or_replace_entry_id(entry_id, fmg, self.DEFAULT_ENTRY_STEMS[msgbnd_name, entry_id] + ".fmg")
 
     def merge_base_and_patch(self, use_patch_if_conflict=True):
         """Merge all base and patch FMGs together (as per class `BASE_PATCH_FMGS`) and write merged FMG to both.
@@ -283,8 +283,8 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         directory_path.mkdir(parents=True, exist_ok=True)
 
         self.regenerate_binders()
-        self.files["item"].write(directory_path / f"item.{self.FILE_EXTENSION}", check_hash=check_file_hashes)
-        self.files["menu"].write(directory_path / f"item.{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+        self.files["item"].write(directory_path / f"item{self.FILE_EXTENSION}", check_hash=check_file_hashes)
+        self.files["menu"].write(directory_path / f"menu{self.FILE_EXTENSION}", check_hash=check_file_hashes)
         _LOGGER.info(
             f"`{self.__class__.__name__}` written to `{directory_path}` successfully ({len(self.files)} files)."
         )

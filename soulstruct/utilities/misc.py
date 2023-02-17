@@ -127,9 +127,9 @@ class Timer:
 
     def __exit__(self, *exc):
         if any(exc):
-            print(f"{self._name} FAILED after {time.time() - self._start} s.")
+            _LOGGER.error(f"{self._name} FAILED after {time.time() - self._start} s.")
         else:
-            print(f"{self._name} COMPLETED in {time.time() - self._start} s.")
+            _LOGGER.info(f"{self._name} COMPLETED in {time.time() - self._start} s.")
 
 
 class Flags8(abc.ABC):
