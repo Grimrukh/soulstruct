@@ -330,6 +330,7 @@ class EMEVD(GameFile, abc.ABC):
         game = self.get_game()
         imports = f"from soulstruct.{game.submodule_name}.events import *"
         imports += f"\nfrom soulstruct.{game.submodule_name}.events.instructions import *"
+        imports += f"\nfrom soulstruct.{game.submodule_name}.game_types import *"
         evs_events = [
             event.to_evs(enums_manager, self.event_signatures, event_function_prefix)
             for event in self.events.values()
@@ -499,7 +500,7 @@ class EMEVD(GameFile, abc.ABC):
         event_arg_replacements_count = 0
         for event in events:
             event_arg_replacements_count += event.pack_event_arg_replacements(writer)
-        writer.fill("event_arg_replacements_count", obj=self)
+        writer.fill("event_arg_replacements_count", event_arg_replacements_count, obj=self)
 
         # Write linked files (offsets to names in packed strings).
         # TODO: Linked file offsets currently can't be modified very easily, as packed strings also include rare logging

@@ -420,6 +420,8 @@ class BinaryWriter(BinaryBase):
         self.reserved[name] = (offset, fmt)
 
     def fill(self, name: str, *values, obj: object = None):
+        if not values:
+            raise ValueError("No values given to fill.")
         if obj is not None:
             name = f"{id(obj)}({name})"
             if name not in self.reserved:

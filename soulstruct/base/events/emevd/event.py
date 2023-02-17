@@ -690,9 +690,10 @@ class Event(abc.ABC):
         return output_lines
 
     def to_emevd_writer(self, writer: BinaryWriter):
-        EventStruct.object_to_writer(self, writer)
+        EventStruct.object_to_writer(self, writer, instructions_count=len(self.instructions))
 
     def pack_instructions(self, writer: BinaryWriter):
+        writer.fill_with_position("instructions_offset", obj=self)
         for instruction in self.instructions:
             instruction.to_emevd_writer(writer)
 
@@ -708,7 +709,9 @@ class Event(abc.ABC):
             event_arg_replacements += instruction.event_arg_replacements
 
         # Sort arg replacements to better match original EMEVD resources. (Should be purely cosmetic.)
-        for replacement in sorted(event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.line)):
+        for replacement in sorted(
+            event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.instruction_line)
+        ):
             replacement.to_emevd_writer(writer)
         return len(event_arg_replacements)
 

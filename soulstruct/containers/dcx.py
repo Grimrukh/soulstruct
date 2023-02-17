@@ -43,7 +43,7 @@ class DCXType(Enum):
     DCX_DFLT_11000_44_9_15 = 9  # DCX header, deflate compression. Used in the ER regulation.
     DCX_KRAK = 10  # DCX header, Oodle compression. Used in Sekiro and Elden Ring.
 
-    def get_version_info(self) -> tuple | tuple[int, int, int, int, int]:
+    def get_version_info(self) -> tuple | tuple[bytes, int, int, int, int, int]:
         return DCX_VERSION_INFO[self]
 
     @classmethod
@@ -87,12 +87,12 @@ class DCXType(Enum):
 
 DCX_VERSION_INFO = {
     DCXType.DCP_DFLT: (),
-    DCXType.DCX_DFLT_10000_24_9: (0x10000, 0x24, 0x2C, 0x9000000, 0),
-    DCXType.DCX_DFLT_10000_44_9: (0x10000, 0x44, 0x4C, 0x9000000, 0),
-    DCXType.DCX_DFLT_11000_44_8: (0x11000, 0x44, 0x4C, 0x8000000, 0),
-    DCXType.DCX_DFLT_11000_44_9: (0x11000, 0x44, 0x4C, 0x9000000, 0),
-    DCXType.DCX_DFLT_11000_44_9_15: (0x11000, 0x44, 0x4C, 0x9000000, 0xF000000),
-    DCXType.DCX_KRAK: (0x11000, 0x44, 0x4C, 0x6000000, 0),
+    DCXType.DCX_DFLT_10000_24_9: (b"DFLT", 0x10000, 0x24, 0x2C, 0x9000000, 0),
+    DCXType.DCX_DFLT_10000_44_9: (b"DFLT", 0x10000, 0x44, 0x4C, 0x9000000, 0),
+    DCXType.DCX_DFLT_11000_44_8: (b"DFLT", 0x11000, 0x44, 0x4C, 0x8000000, 0),
+    DCXType.DCX_DFLT_11000_44_9: (b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0),
+    DCXType.DCX_DFLT_11000_44_9_15: (b"DFLT", 0x11000, 0x44, 0x4C, 0x9000000, 0xF000000),
+    DCXType.DCX_KRAK: (b"KRAK", 0x11000, 0x44, 0x4C, 0x6000000, 0),
 }
 
 
@@ -126,7 +126,7 @@ class DCXHeaderStruct(BinaryStruct):
     decompressed_size: int
     compressed_size: int
     dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
-    dflt: bytes = field(init=False, **BinaryString(4, asserted=b"DFLT"))
+    compression_type: bytes = field(**BinaryString(4, asserted=(b"DFLT", b"KRAK")))
     unk3: int = field(init=False, **Binary(asserted=0x20))
     version4: int  # = field(**Binary(asserted=(0x6000000, 0x8000000, 0x9000000)))  # 3
     unk4: int = field(init=False, **Binary(asserted=0))
@@ -139,9 +139,9 @@ class DCXHeaderStruct(BinaryStruct):
     def get_default_byte_order(self) -> ByteOrder:
         return ByteOrder.BigEndian
 
-    def get_version_info(self) -> tuple[int, int, int, int, int]:
+    def get_version_info(self) -> tuple[bytes, int, int, int, int, int]:
         """Actually used."""
-        return self.version1, self.version2, self.version3, self.version4, self.version5
+        return self.compression_type, self.version1, self.version2, self.version3, self.version4, self.version5
 
 
 def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> tuple[bytes, DCXType]:
@@ -190,13 +190,14 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
     else:
         version_info = dcx_type.get_version_info()
         header = bytes(DCXHeaderStruct(
-            version1=version_info[0],
-            version2=version_info[1],
-            version3=version_info[2],
+            version1=version_info[1],
+            version2=version_info[2],
+            version3=version_info[3],
+            compression_type=version_info[0],
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
-            version4=version_info[3],
-            version5=version_info[4],
+            version4=version_info[4],
+            version5=version_info[5],
         ))
     return header + compressed
 
