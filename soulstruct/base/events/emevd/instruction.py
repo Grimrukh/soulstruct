@@ -323,7 +323,7 @@ class Instruction(abc.ABC):
     def pack_event_layers(self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int]):
         if not self.event_layers:
             writer.fill("event_layers_offset", 0, obj=self)
-        if self.event_layers in existing_event_layers:
+        elif self.event_layers in existing_event_layers:
             writer.fill("event_layers_offset", existing_event_layers[self.event_layers], obj=self)
         else:
             # Write new `EventLayers`.

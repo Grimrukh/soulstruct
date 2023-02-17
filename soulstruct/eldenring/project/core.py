@@ -5,7 +5,6 @@ __all__ = ["GameDirectoryProject"]
 import typing as tp
 
 from soulstruct.base.project.core import GameDirectoryProject as _BaseGameDirectoryProject
-from soulstruct.games import EldenRingType
 
 from soulstruct.eldenring.events import EventDirectory
 from soulstruct.eldenring.events.create_vanilla_entities import copy_vanilla_entities
@@ -15,7 +14,7 @@ if tp.TYPE_CHECKING:
     from .window import ProjectWindow
 
 
-class GameDirectoryProject(_BaseGameDirectoryProject, EldenRingType):
+class GameDirectoryProject(_BaseGameDirectoryProject):
     DATA_TYPES = {
         # "ai": ScriptDirectory,
         "events": EventDirectory,

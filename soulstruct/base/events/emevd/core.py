@@ -37,9 +37,9 @@ class EMEVDHeaderStruct(BinaryStruct):
     """Indicates fields that will always be present in this header, but cannot be used."""
     _signature: bytes = field(**BinaryString(4, asserted=b"EVD"))
     big_endian: bool
-    varint_size_check: byte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
+    varint_size_check: sbyte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
     version_unk_1: bool
-    version_unk_2: byte
+    version_unk_2: sbyte
     version: uint
     file_size: uint
     events_count: varuint
@@ -474,7 +474,7 @@ class EMEVD(GameFile, abc.ABC):
         existing_event_layers = {}  # type: dict[EventLayers, int]
         for event in events:
             event.pack_instruction_event_layers(writer, existing_event_layers)
-        writer.fill("event_layers_count", len(existing_event_layers))
+        writer.fill("event_layers_count", len(existing_event_layers), obj=self)
 
         # NOTE: The order of tables from here (base args, event arg replacements, linked files, packed strings) does
         # NOT match the order of the offsets given in the EMEVD header.
@@ -484,7 +484,7 @@ class EMEVD(GameFile, abc.ABC):
 
         # Write instruction base arg data.
         base_args_start = writer.position
-        writer.fill_with_position("base_args_offset", obj=self)
+        writer.fill_with_position("base_arg_data_offset", obj=self)
         for event in events:
             event.pack_instruction_base_args(writer)
         # Pad or alignment after base args, depending on `long_varints`.
@@ -492,7 +492,7 @@ class EMEVD(GameFile, abc.ABC):
             writer.pad(4)
         else:  # long varints
             writer.pad_align(16)
-        writer.fill("base_args_size", writer.position - base_args_start, obj=self)
+        writer.fill("base_arg_data_size", writer.position - base_args_start, obj=self)
 
         # Write event arg replacements.
         writer.fill_with_position("event_arg_replacements_offset", obj=self)
@@ -585,7 +585,7 @@ class EMEVD(GameFile, abc.ABC):
 
     def merge(
         self,
-        other_emevd_source: EMEVD | Path | str | bytes | BinaryReader,
+        other_emevd: EMEVD,
         merge_events=(0, 50),
         event_id_offset=0,
     ) -> Self:
@@ -601,23 +601,6 @@ class EMEVD(GameFile, abc.ABC):
 
         NOTE: Currently cannot merge any events that use event arguments.
         """
-        if isinstance(other_emevd_source, self.__class__):
-            other_emevd = other_emevd_source
-        elif isinstance(other_emevd_source, (Path, str)):
-            other_emevd_source = Path(other_emevd_source)
-            if other_emevd_source.name.endswith(".evs") or other_emevd_source.name.endswith(".evs.py"):
-                other_emevd = self.from_evs_path(other_emevd_source)
-            else:
-                other_emevd = self.from_path(other_emevd_source)
-        elif isinstance(other_emevd_source, BinaryReader):
-            other_emevd = self.from_reader(other_emevd_source)
-        elif isinstance(other_emevd_source, bytes):
-            other_emevd = self.from_bytes(other_emevd_source)
-        else:
-            if isinstance(other_emevd_source, EMEVD):
-                raise TypeError("EMEVD game class of `other_emevd_source` is not compatible with this one.")
-            raise TypeError(f"Invalid `other_emevd_source` type: {type(other_emevd_source).__name__}")
-
         combined_emevd = self.copy()
         for event_id, other_event in other_emevd.events.items():
             event_id += event_id_offset

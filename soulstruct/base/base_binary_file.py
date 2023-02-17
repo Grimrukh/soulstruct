@@ -21,7 +21,7 @@ if tp.TYPE_CHECKING:
 
 try:
     Self = tp.Self
-except ImportError:  # < Python 3.11
+except AttributeError:  # < Python 3.11
     Self = "BaseBinaryFile"
 
 _LOGGER = logging.getLogger(__name__)
