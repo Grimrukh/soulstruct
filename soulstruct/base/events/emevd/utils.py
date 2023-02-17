@@ -133,7 +133,7 @@ def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]
 
 def get_instruction_args(
     reader: BinaryReader, category: int, index: int, first_arg_offset: int, event_args_size: int, emedf: dict
-):
+) -> tuple[str, list[tp.Any]]:
     """Process instruction arguments (required and optional) from EMEVD reader.
 
     Uses the `EMEDF` class variable attached to the caller `Instruction`.
@@ -161,6 +161,7 @@ def get_instruction_args(
             f"only {event_args_size}."
         )
 
+    # NOTE: Reader will be reset to initial offset below.
     reader.seek(first_arg_offset)
     args = reader.unpack(struct_args_format)
 
@@ -187,7 +188,7 @@ def get_instruction_args(
             f"size is not a multiple of four bytes ({extra_size})."
         )
 
-    opt_args = [reader.unpack_value("<I") for _ in range(opt_arg_count)]
+    opt_args = [reader["I"] for _ in range(opt_arg_count)]
     reader.seek(previous_offset)
     return args_format[1:] + "|" + "I" * (extra_size // 4), list(args) + opt_args
 

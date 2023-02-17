@@ -242,7 +242,7 @@ class FSB(GameFile):
 
         header = FSBHeaderStruct.from_bytes(reader)
 
-        bank_hash = reader.unpack_value(">Q")  # big-endian field
+        bank_hash = reader[">Q"]  # big-endian field
         guid_bytes = reader.read(16)
         guid = "-".join((
             guid_bytes[3::-1].hex(),  # first three chunks need to be reversed

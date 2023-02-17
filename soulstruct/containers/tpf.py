@@ -100,34 +100,34 @@ class TPFTexture:
         texture_struct = TPFTextureStruct.from_bytes(reader)
 
         if platform != TPFPlatform.PC:
-            width = reader.unpack_value("h")
-            height = reader.unpack_value("h")
+            width = reader["h"]
+            height = reader["h"]
             header = TextureHeader(width, height)
             if platform == TPFPlatform.Xbox360:
                 reader.assert_pad(4)
             elif platform == TPFPlatform.PS3:
-                header.unk1 = reader.unpack_value("i")
+                header.unk1 = reader["i"]
                 if tpf_flags != 0:
-                    header.unk2 = reader.unpack_value("i")
+                    header.unk2 = reader["i"]
                     if header.unk2 not in {0, 0x68E0, 0xAAE4}:
                         raise ValueError(
                             f"`TextureHeader.unk2` was {header.unk2}, but expected 0, 0x68E0, or 0xAAE4."
                         )
             elif platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-                header.texture_count = reader.unpack_value("i")
+                header.texture_count = reader["i"]
                 if header.texture_count not in {1, 6}:
                     f"`TextureHeader.texture_count` was {header.texture_count}, but expected 1 or 6."
-                header.unk2 = reader.unpack_value("i")
+                header.unk2 = reader["i"]
                 if header.unk2 != 0xD:
                     f"`TextureHeader.unk2` was {header.unk2}, but expected 0xD."
             # `dxgi_format` unpacked below.
         else:
             header = None
 
-        name_offset = reader.unpack_value("I")
-        has_unknown_floats = reader.unpack_value("i") == 1
+        name_offset = reader["I"]
+        has_unknown_floats = reader["i"] == 1
         if platform in {TPFPlatform.PS4, TPFPlatform.XboxOne}:
-            header.dxgi_format = reader.unpack_value("i")
+            header.dxgi_format = reader["i"]
         if has_unknown_floats:
             float_struct = TextureFloatStruct.from_bytes(reader)
             unknown_floats = (float_struct.unk0, float_struct.unpack_data(reader))
@@ -315,7 +315,7 @@ class TPF(BaseBinaryFile):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> TPF:
-        platform = TPFPlatform(reader.unpack_value("B", offset=0xC))
+        platform = TPFPlatform(reader["B", 0xC])
         reader.default_byte_order = ByteOrder.big_endian_bool(platform in {TPFPlatform.Xbox360, TPFPlatform.PS3})
         tpf_struct = TPFStruct.from_bytes(reader)
 

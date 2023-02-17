@@ -63,7 +63,7 @@ class Condition:
 
         if condition_struct.next_state_offset > 0:
             reader.seek(condition_struct.next_state_offset)
-            next_state_index = reader.unpack_value("v")
+            next_state_index = reader["v"]
         else:
             next_state_index = -1
 

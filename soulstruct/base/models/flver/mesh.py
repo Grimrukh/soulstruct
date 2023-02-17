@@ -223,8 +223,8 @@ class Mesh:
     invalid_vertex_size: bool = False
 
     # Held temporarily while unpacking.
-    _face_set_indices: list[int] = None
-    _vertex_buffer_indices: list[int] = None
+    _face_set_indices: list[int] | None = None
+    _vertex_buffer_indices: list[int] | None = None
 
     @classmethod
     def from_flver_reader(cls, reader: BinaryReader, bounding_box_has_unknown: bool = None):
@@ -280,7 +280,7 @@ class Mesh:
 
         # Check that all vertex buffers for this Mesh have the same length.
         if self.vertex_buffers:
-            if len({buffer._struct._vertex_count for buffer in self.vertex_buffers}) != 1:
+            if len({buffer.get_vertex_count() for buffer in self.vertex_buffers}) != 1:
                 raise ValueError("Vertex buffers for Mesh do not all have the same size.")
         else:
             _LOGGER.warning("Mesh has no vertex buffers.")
@@ -306,8 +306,8 @@ class Mesh:
         layouts: list[BufferLayout],
         uv_factor: int,
     ):
-        # Start with empty vertices.
-        self.vertices = [Vertex() for _ in range(self.vertex_buffers[0]._struct._vertex_count)]
+        # Start with empty vertices. (All vertex buffers have been asserted as having the same size already.)
+        self.vertices = [Vertex() for _ in range(self.vertex_buffers[0].get_vertex_count())]
         # Load data into them from all buffers (usually just one) attached to this Mesh.
         for vertex_buffer in self.vertex_buffers:
             vertex_buffer.read_buffer(reader, layouts, self.vertices, vertex_data_offset, uv_factor)

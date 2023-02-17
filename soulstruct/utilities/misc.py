@@ -4,16 +4,12 @@ __all__ = [
     "traverse_path_tree",
     "BiDict",
     "get_startupinfo",
-    "partialmethod",
-    "Timer",
     "Flags8",
 ]
 
 import abc
-import functools
 import logging
 import subprocess
-import time
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,27 +105,6 @@ def get_startupinfo():
     else:
         si = None
     return si
-
-
-class partialmethod(functools.partialmethod):
-    """Wrapper for `partialmethod` that adds a `__call__` attribute to stop PyCharm from complaining."""
-
-    __call__ = None
-
-
-class Timer:
-
-    def __init__(self, name: str):
-        self._name = name
-
-    def __enter__(self):
-        self._start = time.time()
-
-    def __exit__(self, *exc):
-        if any(exc):
-            _LOGGER.error(f"{self._name} FAILED after {time.time() - self._start} s.")
-        else:
-            _LOGGER.info(f"{self._name} COMPLETED in {time.time() - self._start} s.")
 
 
 class Flags8(abc.ABC):

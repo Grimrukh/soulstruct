@@ -5,8 +5,7 @@ from pathlib import Path
 
 from soulstruct.darksouls1r.maps import MSB, MapStudioDirectory
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.misc import Timer
-from soulstruct.utilities.inspection import profile_function
+from soulstruct.utilities.inspection import profile_function, Timer
 
 
 class MSBTest(unittest.TestCase):

@@ -7280,13 +7280,13 @@ def BanishPhantoms(unknown: int, event_layers=()):
     """
 
 
-def SuppressSoundEvent(sound_id: int, unk_4_8: int, suppression_active: bool | int, event_layers=()):
+def SuppressSoundEvent(sound_id: SoundEvent | int, unk_4_8: int, suppression_active: bool | int, event_layers=()):
     """
     TODO
     """
 
 
-def UnknownSound_2010_8(sound_id: int, event_layers=()):
+def UnknownSound_2010_8(sound_id: SoundEvent | int, event_layers=()):
     """
     TODO
     """

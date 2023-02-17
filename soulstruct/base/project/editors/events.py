@@ -400,7 +400,6 @@ class EventEditor(SmartFrame):
             emevd = self.events.EMEVD_CLASS(
                 self.evs_file_paths[self.selected_map_id],
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
-                dcx_type=self.events.EMEVD_CLASS.DCX_TYPE if self.events.IS_DCX else None,
             )
         except Exception as e:
             return self.error_dialog(

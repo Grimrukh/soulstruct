@@ -1,9 +1,12 @@
-__all__ = ["print_binary_as_integers", "get_hex_repr", "write_hex_repr", "profile_function"]
+from __future__ import annotations
+
+__all__ = ["print_binary_as_integers", "get_hex_repr", "write_hex_repr", "profile_function", "Timer"]
 
 import cProfile
 import logging
 import pstats
 import struct
+import time
 import typing as tp
 from binascii import hexlify
 from functools import wraps
@@ -69,3 +72,18 @@ def profile_function(print_count: int, sort="tottime", strip_dirs=True):
         return decorated
 
     return decorator
+
+
+class Timer:
+
+    def __init__(self, name: str):
+        self._name = name
+
+    def __enter__(self):
+        self._start = time.time()
+
+    def __exit__(self, *exc):
+        if any(exc):
+            _LOGGER.error(f"{self._name} FAILED after {time.time() - self._start} s.")
+        else:
+            _LOGGER.info(f"{self._name} COMPLETED in {time.time() - self._start} s.")

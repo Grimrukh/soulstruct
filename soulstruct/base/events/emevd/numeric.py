@@ -1,11 +1,17 @@
-import logging
-import re
-
-from .emedf import ArgType
-from .exceptions import NumericEmevdError
+from __future__ import annotations
 
 __all__ = ["build_numeric"]
 
+import logging
+import re
+import typing as tp
+
+from .emedf import ArgType
+from .exceptions import NumericEmevdError
+from .instruction import EventArg
+
+if tp.TYPE_CHECKING:
+    from .event import Event
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +27,7 @@ class MissingInstructionError(Exception):
         super().__init__(f"Instruction ({category}, {index}) is not present in EMEDF dictionary.")
 
 
-def build_numeric(numeric_string: str, event_class):
+def build_numeric(numeric_string: str, event_class: tp.Type[Event]):
     """Parses the text data from the given numeric-style string into a dictionary of events suitable for use as an
     `EMEVD` source, which can then be packed to binary.
 
@@ -139,7 +145,16 @@ def build_numeric(numeric_string: str, event_class):
                                 f"args_format = {display_arg_types}, args_list = {args_list_string})"
                             )
 
-                instr = event_class.Instruction(category, index, display_arg_types, args_list, event_layers)
+                # TODO: Not sure why PyCharm flubs so hard here. Can't detect `Instruction` init args.
+                # noinspection PyArgumentList
+                instr = event_class.INSTRUCTION_CLASS(
+                    category=category,
+                    index=index,
+                    display_args_fmt=display_arg_types,
+                    args_list=args_list,
+                    evs_args_list=[],
+                    event_layers=event_layers,
+                )
                 instruction_list.append(instr)
 
             elif m_arg_r:
@@ -149,7 +164,7 @@ def build_numeric(numeric_string: str, event_class):
                     read_from_byte = int(m_arg_r.group(2))
                     bytes_to_write = int(m_arg_r.group(3))
 
-                    event_arg = event_class.EventArg(
+                    event_arg = EventArg(
                         len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write
                     )
                     instruction_list[-1].event_arg_replacements.append(event_arg)
@@ -165,6 +180,9 @@ def build_numeric(numeric_string: str, event_class):
                     f"Line '{instruction_or_event_arg}' cannot be parsed as an instruction or event arg "
                     f"replacement.",
                 )
+
+        # TODO: PyCharm flubs `Event` init args for some reason.
+        # noinspection PyArgumentList
         events[event_id] = event_class(event_id, on_rest_behavior, instruction_list)
 
     return events, linked_offsets, strings

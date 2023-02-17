@@ -4766,19 +4766,19 @@ def PlaySoundEffect(
     """
 
 
-def SetSoundEventState(sound_id: int, state: bool | int, event_layers=()):
+def SetSoundEventState(sound_id: SoundEvent | int, state: bool | int, event_layers=()):
     """
     The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
     """
 
 
-def EnableSoundEvent(sound_id: int, event_layers=()):
+def EnableSoundEvent(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetSoundEventState` with `state=True`.
     """
 
 
-def DisableSoundEvent(sound_id: int, event_layers=()):
+def DisableSoundEvent(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetSoundEventState` with `state=False`.
     """
@@ -6774,7 +6774,7 @@ def BanishPhantoms(unknown: int, event_layers=()):
     """
 
 
-def SetBossMusicState(sound_id: int, state: bool | int, event_layers=()):
+def SetBossMusicState(sound_id: SoundEvent | int, state: bool | int, event_layers=()):
     """
     Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music
     out rather than abruptly stopping it.
@@ -6784,13 +6784,13 @@ def SetBossMusicState(sound_id: int, state: bool | int, event_layers=()):
     """
 
 
-def EnableBossMusic(sound_id: int, event_layers=()):
+def EnableBossMusic(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetBossMusicState` with `state=True`.
     """
 
 
-def DisableBossMusic(sound_id: int, event_layers=()):
+def DisableBossMusic(sound_id: SoundEvent | int, event_layers=()):
     """
     Calls `SetBossMusicState` with `state=False`.
     """
@@ -6802,25 +6802,25 @@ def NotifyDoorEventSoundDampening(obj: Object | int, state: DoorState | int, eve
     """
 
 
-def SetSoundEventWithFade(sound_id: int, state: bool | int, fade_duration: float, event_layers=()):
+def SetSoundEventWithFade(sound_id: SoundEvent | int, state: bool | int, fade_duration: float, event_layers=()):
     """
     TODO
     """
 
 
-def EnableSoundEventWithFade(sound_id: int, fade_duration: float, event_layers=()):
+def EnableSoundEventWithFade(sound_id: SoundEvent | int, fade_duration: float, event_layers=()):
     """
     Calls `SetSoundEventWithFade` with `state=True`.
     """
 
 
-def DisableSoundEventWithFade(sound_id: int, fade_duration: float, event_layers=()):
+def DisableSoundEventWithFade(sound_id: SoundEvent | int, fade_duration: float, event_layers=()):
     """
     Calls `SetSoundEventWithFade` with `state=False`.
     """
 
 
-def Unknown_2010_07(sound_id: int, event_layers=()):
+def Unknown_2010_07(sound_id: SoundEvent | int, event_layers=()):
     """
     Unknown SoundEvent instruction.
     """

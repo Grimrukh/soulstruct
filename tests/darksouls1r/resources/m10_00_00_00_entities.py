@@ -1,5 +1,7 @@
 from soulstruct.darksouls1r.game_types import *
 
+# __all__ = ["Objects", "VFXEvents", "SoundEvents", "ObjActs"]
+
 
 class Objects(Object):
 

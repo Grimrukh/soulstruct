@@ -1,36 +1,41 @@
 __all__ = ["EMEVD", "Event", "Instruction"]
 
+import typing as tp
+from dataclasses import dataclass, field
+
 from soulstruct.base.events.emevd import (
     EMEVD as _BaseEMEVD,
     Event as _BaseEvent,
     Instruction as _BaseInstruction,
 )
-from soulstruct.containers.dcx import DCXType
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
 from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
-from .entity_enums_manager import EntityEnumsManager
+from .entity_enums_manager import GameEnumsManager
 from .evs import EVSParser
 
 
+@dataclass(slots=True)
 class Instruction(_BaseInstruction):
-    EMEDF = EMEDF
-    DECOMPILER = DECOMPILER
-    OPT_ARGS_DECOMPILER = OPT_ARGS_DECOMPILER
-    DECOMPILE = staticmethod(decompile_instruction)
+    EMEDF: tp.ClassVar = EMEDF
+    DECOMPILER: tp.ClassVar = DECOMPILER
+    OPT_ARGS_DECOMPILER: tp.ClassVar = OPT_ARGS_DECOMPILER
+    DECOMPILE: tp.ClassVar = staticmethod(decompile_instruction)
 
 
+@dataclass(slots=True)
 class Event(_BaseEvent):
-    Instruction = Instruction
-    EMEDF_TESTS = EMEDF_TESTS
-    EMEDF_COMPARISON_TESTS = EMEDF_COMPARISON_TESTS
+    INSTRUCTION_CLASS: tp.ClassVar = Instruction
+    EMEDF_TESTS: tp.ClassVar = EMEDF_TESTS
+    EMEDF_COMPARISON_TESTS: tp.ClassVar = EMEDF_COMPARISON_TESTS
 
 
+@dataclass(slots=True)
 class EMEVD(_BaseEMEVD):
 
-    events: dict[int, Event]
+    events: dict[int, Event] = field(default_factory=dict)
 
-    Event = Event
-    EVS_PARSER = EVSParser
-    STRING_ENCODING = "utf-8"
-    ENTITY_ENUMS_MANAGER = EntityEnumsManager
-    DCX_TYPE = DCXType.Null
+    EVENT_CLASS: tp.ClassVar = Event
+    EVS_PARSER: tp.ClassVar = EVSParser
+    STRING_ENCODING: tp.ClassVar = "utf-8"
+    ENTITY_ENUMS_MANAGER: tp.ClassVar = GameEnumsManager
+    HEADER_VERSION_INFO: tp.ClassVar = (False, 0, 204)

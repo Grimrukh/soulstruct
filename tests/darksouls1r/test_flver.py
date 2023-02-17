@@ -3,22 +3,19 @@ import unittest
 from pathlib import Path
 
 from soulstruct.base.models.flver import FLVER
-from soulstruct.utilities.misc import Timer
+from soulstruct.utilities.inspection import profile_function, Timer
 
 
 class FLVERTest(unittest.TestCase):
 
+    @profile_function(20)
     def test_map_piece_read(self):
         with Timer("Reading map piece FLVER (DCX)"):
-            map_piece = FLVER("resources/m2200B0A10.flver.dcx")  # Depths sewers
+            map_piece = FLVER.from_path("resources/m2200B0A10.flver.dcx")  # Depths sewers
         with Timer("Writing map piece FLVER (DCX)"):
             map_piece.write("_test_m2200B0A10.flver.dcx")
         with Timer("Re-reading map piece FLVER (DCX)"):
-            FLVER("_test_m2200B0A10.flver.dcx")
-
-        # TODO: Cannot convert mesh to OBJ because one or more vertices has multiple UVs.
-        # with Timer("Writing map piece OBJ"):
-            # map_piece.write_obj("_test_m2200B0A10.obj")
+            FLVER.from_path("_test_m2200B0A10.flver.dcx")
 
     # def test_chr_read(self):
     #     with Timer("Reading chr FLVER"):

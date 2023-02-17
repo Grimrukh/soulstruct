@@ -82,11 +82,11 @@ class LuaInfo(GameFile):
         if goal_count == 0:
             _LOGGER.warning("Cannot detect `LuaInfo` varint size if no goals are present. Defaulting to 8.")
         elif goal_count >= 2:
-            return reader.unpack_value("i", offset=0x24) == 0
+            return reader["i", 0x24] == 0
         else:
             # Hacky check if there's only one goal.
-            if reader.unpack_value("i", offset=0x18) == 0x28:
+            if reader["i", 0x18] == 0x28:
                 return True
-            if reader.unpack_value("i", offset=0x14) == 0x20:
+            if reader["i", 0x14] == 0x20:
                 return False
             raise ValueError("Found unexpected data while trying to detect `LuaInfo` varint size from single goal.")

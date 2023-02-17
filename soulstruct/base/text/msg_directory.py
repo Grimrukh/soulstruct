@@ -123,7 +123,9 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         for msgbnd_name, kwargs in zip(("item", "menu"), (item_kwargs, menu_kwargs)):
             entries = []
             entry_json_dict = kwargs.pop("entries", {})
-            for entry_id, json_name in entry_json_dict:
+            for entry_id, json_stem in entry_json_dict.items():
+                entry_id = int(entry_id)
+                json_name = f"{json_stem}.json"
                 if (msgbnd_name, entry_id) not in cls.DEFAULT_ENTRY_STEMS:
                     _LOGGER.warning(f"Ignoring unrecognized MSGBND JSON file with entry ID {entry_id}: {json_name}")
                     continue
@@ -131,12 +133,13 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     fmg = FMG.from_json(directory / json_name)
                 except FileNotFoundError:
                     raise FileNotFoundError(f"Could not find text (FMG) JSON file: {directory / json_name}")
-                entry_path = cls.FILE_CLASS.get_default_entry_path(json_name.split(".")[0] + ".fmg")
+                entry_path = cls.FILE_CLASS.get_default_entry_path(json_stem + ".fmg")
                 entry = BinderEntry(bytes(fmg), entry_id, entry_path, cls.FILE_CLASS.DEFAULT_ENTRY_FLAGS)
                 entries.append(entry)
                 fmgs[(msgbnd_name, entry_id)] = fmg
-                missing_ids.remove(entry_id)
+                missing_ids.remove((msgbnd_name, entry_id))
             kwargs["entries"] = entries
+            kwargs.pop("use_id_prefix", None)  # if present
             files[msgbnd_name] = cls.FILE_CLASS.from_dict(kwargs)
 
         if missing_ids:
@@ -178,6 +181,10 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             "item": self.files["item"].get_manifest_header() | {"entries": {}},
             "menu": self.files["menu"].get_manifest_header() | {"entries": {}},
         }
+
+        # `use_id_prefix` not required for JSON manifest, even in DSR, where internal paths repeat.
+        manifests["item"].pop("use_id_prefix", None)
+        manifests["menu"].pop("use_id_prefix", None)
 
         category_fmgs = self.get_matching_fmgs()
 

@@ -33,7 +33,7 @@ class EventLayers:
     event_layers_uint: int
 
     @classmethod
-    def from_emevd_reader(cls, reader: BinaryReader, event_layers_offset: int):
+    def from_emevd_reader(cls, reader: BinaryReader):
         """Unpack event layer bit field as <a, b, c, ...> where a, b, c, ... are the little-endian bit
         zero-based indices of the event layer bit field. 
 
@@ -42,7 +42,6 @@ class EventLayers:
         NOTE: The same `event_layers_offset` may be used by multiple instructions, rather than packing the same event
         layer over and over. This is handled when writing as well.
         """
-        reader.seek(event_layers_offset)
         event_layers_struct = EventLayersStruct.from_bytes(reader)
         return cls(event_layers_struct.event_layers_uint)
 

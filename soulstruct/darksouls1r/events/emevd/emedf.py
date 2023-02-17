@@ -39,10 +39,10 @@ BLOCK_ID = {
 GAME_MAP_EVS = {
     "type": MapTyping,
     "default": None,
-    "to_evs": lambda args: get_map_variable_name(args["area_id"], args["block_id"]),
+    "to_evs": lambda args: get_map_variable_name((args["area_id"], args["block_id"])),
 }
 FLAG = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
 }
 

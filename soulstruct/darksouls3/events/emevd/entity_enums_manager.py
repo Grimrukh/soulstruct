@@ -1,15 +1,26 @@
 
-from soulstruct.base.events.emevd.entity_enums_manager import EntityEnumsManager as _BaseEntityEnumsManager
+from soulstruct.base.events.emevd.entity_enums_manager import GameEnumsManager as _BaseGameEnumsManager
 from soulstruct.darksouls3.game_types import *
 from .enums import ProtectedEntities
 
 
-class EntityEnumsManager(_BaseEntityEnumsManager):
+class GameEnumsManager(_BaseGameEnumsManager):
 
-    ENTITY_ID_SUBCLASSES = {
-        "flags": (Flag,),
-        "parts": (MapPiece, Object, Character, PlayerStart, Collision),
-        "events": (SoundEvent, VFXEvent, SpawnerEvent, MessageEvent, SpawnPointEvent, NavigationEvent),
-        "regions": (RegionPoint, RegionCircle, RegionCylinder, RegionSphere, RegionRect, RegionBox),
-    }
-    PROTECTED_ENTITIES = ProtectedEntities
+    VALID_GAME_TYPES = (
+        Flag,
+        MapPart,
+        MapPiece,
+        Object,
+        Character,
+        PlayerStart,
+        Collision,
+        SoundEvent,
+        VFXEvent,
+        SpawnerEvent,
+        MessageEvent,
+        SpawnPointEvent,
+        NavigationEvent,
+        RegionVolume,
+        RegionPoint,
+    )
+    PROTECTED_ENUM = ProtectedEntities

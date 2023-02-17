@@ -154,7 +154,7 @@ class MSB(GameFile, abc.ABC):
 
     @classmethod
     def _unpack_entry(cls, reader: BinaryReader, supertype_name: str, entry_lists: dict[str, list[MSBEntry]]):
-        subtype_int = reader.unpack_value("i", offset=reader.position + cls.MSB_ENTRY_SUBTYPE_OFFSETS[supertype_name])
+        subtype_int = reader["i", reader.position + cls.MSB_ENTRY_SUBTYPE_OFFSETS[supertype_name]]
         for _, subtype_info in cls.MSB_ENTRY_SUBTYPES[supertype_name].items():
             if subtype_info.subtype_enum.value == subtype_int:
                 subtype_class = subtype_info.entry_class

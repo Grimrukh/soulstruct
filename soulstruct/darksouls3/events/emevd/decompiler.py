@@ -15,7 +15,7 @@ from soulstruct.darksouls3.game_types.map_types import *
 from soulstruct.darksouls3.maps.constants import get_map_variable_name
 
 from . import enums
-from .entity_enums_manager import EntityEnumsManager
+from .entity_enums_manager import GameEnumsManager
 from .enums import *
 from .emedf import EMEDF
 
@@ -54,7 +54,7 @@ def decompile_instruction(
     req_args: list[tp.Any],
     opt_args: list[tp.Any] = None,
     opt_arg_types="",
-    enums_manager: EntityEnumsManager = None,
+    enums_manager: GameEnumsManager = None,
 ) -> str:
     """Uses a manual function (decorated below) or EMEDF information to decompile an EMEVD instruction to EVS format.
 
@@ -76,7 +76,7 @@ def decompile_instruction(
 
 @_decompile(2000, 0, uses_opt_args=True)
 def _RunEvent(
-    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     return base_decompile_run_event(
         slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
@@ -85,7 +85,7 @@ def _RunEvent(
 
 @_decompile(2000, 6, uses_opt_args=True)
 def _RunCommonEvent(
-    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     return base_decompile_run_common_event(
         event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
@@ -97,7 +97,7 @@ def _PlayCutsceneAndMovePlayer(
     cutscene_id: int, cutscene_flags: CutsceneFlags, move_to_region: Region, area_id: int, block_id: int
 ):
     """Wrapper is always allowable."""
-    game_map = get_map_variable_name(area_id, block_id)
+    game_map = merge_eget_map_variable_name((area_id, block_id))
     return f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {move_to_region=}, game_map={game_map})"
 
 
@@ -117,7 +117,7 @@ def _PlayCutsceneAndMoveSpecificPlayer(
     player_id: Character,
 ):
     """Wrapper is always allowable."""
-    game_map = get_map_variable_name(area_id, block_id)
+    game_map = merge_eget_map_variable_name((area_id, block_id))
     return (
         f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=}, {move_to_region=}, game_map={game_map})"
     )

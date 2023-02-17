@@ -15,7 +15,7 @@ from .event_layers import EventLayers
 from .utils import get_byte_offset_from_struct, get_instruction_args
 
 if tp.TYPE_CHECKING:
-    from .entity_enums_manager import EntityEnumsManager
+    from .entity_enums_manager import GameEnumsManager
     from .event import EventSignature
 
 _LOGGER = logging.getLogger(__name__)
@@ -93,7 +93,7 @@ class InstructionStruct(BinaryStruct):
 @dataclass(slots=True)
 class Instruction(abc.ABC):
 
-    # Environment class attributes that must be set by game-specific subclasses.
+    # EMEVD 'environment' class attributes that must be set by game-specific subclasses.
     EMEDF: tp.ClassVar[dict[tuple[int, int], dict]]
     DECOMPILER: tp.ClassVar[dict[tuple[int, int], tp.Callable]]
     OPT_ARGS_DECOMPILER: tp.ClassVar[dict[tuple[int, int], tp.Callable]]
@@ -106,16 +106,16 @@ class Instruction(abc.ABC):
     # `EventArg` replacements, which specify offsets used to determine which part of the packed `Event` arguments they
     # read from and which index in `args_list` they replace. Order does not matter.
     # TODO: sort immediately when added?
-    event_arg_replacements: list[EventArg] = field(init=False)
+    event_arg_replacements: list[EventArg] = field(default_factory=list)
     # Actual Python values of instruction arguments, unpacked directly from the `EMEVD` file. Includes 'dummy' values
     # waiting to be replaced in-game by an `EventArg` from above.
     args_list: list[tp.Any] = field(default_factory=list)
     # Processed version of `args_list` where the 'dummy' values overwritten by an `EventArg` are replaced with unique
     # arg string names ('arg_i_j' by default for `EventArg` reading from `Event` packed arg range `(i, j)`.
-    evs_args_list: list[tp.Any] = field(init=False)
+    evs_args_list: list[tp.Any] = field(default_factory=list)
     # Universal add-on data for instructions used by some later games. Instructions with event layers will only run if
     # the game currently considers those layers active.
-    event_layers: tp.Optional[EventLayers] = None
+    event_layers: EventLayers | None = None
 
     def __post_init__(self):
         if len(self.struct_args_fmt) != len(self.args_list):
@@ -162,13 +162,19 @@ class Instruction(abc.ABC):
 
         # Process event layers.
         if header.event_layers_offset > 0:
-            event_layers = EventLayers.from_emevd_reader(
-                reader, event_layers_table_offset + header.event_layers_offset
-            )
+            with reader.temp_offset(event_layers_table_offset + header.event_layers_offset):
+                event_layers = EventLayers.from_emevd_reader(reader)
         else:
             event_layers = None
 
-        return cls(header.category, header.index, args_format, args_list, event_layers)
+        return cls(
+            category=header.category,
+            index=header.index,
+            display_args_fmt=args_format,
+            event_arg_replacements=[],  # added later
+            args_list=args_list,
+            event_layers=event_layers,
+        )
 
     @property
     def base_args_size(self):
@@ -195,7 +201,7 @@ class Instruction(abc.ABC):
             numeric.append("    ^" + replacement.to_numeric())
         return numeric
 
-    def to_evs(self, enums_manager: EntityEnumsManager, event_signatures: dict[int, EventSignature]) -> str:
+    def to_evs(self, enums_manager: GameEnumsManager, event_signatures: dict[int, EventSignature]) -> str:
         """Convert single event instruction to EVS."""
         args, opt_args = self.get_required_and_optional_args()
 

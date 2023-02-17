@@ -13,7 +13,7 @@ from soulstruct.base.models.flver.version import Version
 class DummyStruct(BinaryStruct):
 
     position: Vector3
-    _color: tuple[byte, byte, byte, byte]  # could be ARGB (Dark Souls 2 only) or BGRA
+    _color: list[byte] = field(**BinaryArray(4))  # could be ARGB (Dark Souls 2 only) or BGRA
     forward: Vector3
     reference_id: short
     parent_bone_index: short
@@ -30,7 +30,7 @@ class DummyStruct(BinaryStruct):
 class Dummy:
 
     position: Vector3
-    color_rgba: list[int, int, int, int]  # always stored as RGBA
+    color_rgba: list[int]  # always stored as RGBA
     forward: Vector3
     reference_id: short
     parent_bone_index: short

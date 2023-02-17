@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 
 @dataclass(slots=True)
 class FLVERStruct(BinaryStruct):
-    _file_type: bytes = field(init=False, **BinaryString(6, asserted=b"FLVER\0"))
+    _file_type: bytes = field(init=False, **BinaryString(6, asserted=b"FLVER"))
     endian: bytes = field(**BinaryString(2, asserted=[b"L\0", b"R\0"]))
     version: Version = field(**Binary(int))
     vertex_data_offset: int
@@ -213,7 +213,7 @@ class FLVER(GameFile):
         header = FLVERStruct.from_object(
             self,
             byte_order=byte_order,
-            endian=b"B\0" if self.big_endian else b"L\0",
+            endian=b"B" if self.big_endian else b"L",
             vertex_data_offset=RESERVED,
             vertex_data_size=RESERVED,
             dummy_count=len(self.dummies),

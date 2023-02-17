@@ -6,7 +6,7 @@ __all__ = [
     "BaseParam",
     "BaseGameParam",
     "Flag",
-    "FlagInt",
+    "FlagTyping",
     "MapFlagSuffix",
     "FlagRange",
     "FlagRangeTyping",
@@ -37,7 +37,7 @@ class BaseGameObject:
     @classmethod
     def get_event_arg_fmt(cls) -> tp.Optional[str]:
         """If not `None`, allows this type to be used as an EVS event arg type hint for this format."""
-        return None
+        raise TypeError(f"Game type `{cls.__name__}` cannot be used as an EVS event argument type hint.")
 
 
 class GameObjectSequence(type):
@@ -168,5 +168,5 @@ class BattleAIScript(BaseAIScript):
     """Script that governs a character in battle."""
 
 
-FlagInt = tp.Union[Flag, int]
+FlagTyping = tp.Union[Flag, int]
 FlagRangeTyping = tp.Union[FlagRange, tuple, list]

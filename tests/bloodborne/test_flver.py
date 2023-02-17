@@ -24,7 +24,9 @@ def draw_skeleton(flver: FLVER):
 
 def test():
     f = FLVER.from_path("resources/c2800.flver")
-    draw_skeleton(f)
+    f.write("_test_c2800.flver")
+    ff = FLVER.from_path("_test_c2800.flver")
+    # draw_skeleton(f)
 
 
 if __name__ == '__main__':

@@ -28,12 +28,12 @@ class LuaGNL(GameFile):
         reader.default_byte_order = ByteOrder.BigEndian if first_eight_bytes[0:2] == b"\0\0" else ByteOrder.LittleEndian
         zeroes = first_eight_bytes[2:4] if reader.default_byte_order == ByteOrder.BigEndian else first_eight_bytes[4:6]
         reader.long_varints = zeroes == b"\0\0"  # probable
-        offset = reader.unpack_value("v")
+        offset = reader["v"]
         encoding = cls.get_encoding(reader.default_byte_order, reader.long_varints)
         names = []
         while offset != 0:
             names.append(reader.unpack_string(offset=offset, encoding=encoding))
-            offset = reader.unpack_value("v")
+            offset = reader["v"]
         return cls(byte_order=reader.default_byte_order, long_varints=reader.long_varints, names=names)
 
     def to_writer(self) -> BinaryWriter:

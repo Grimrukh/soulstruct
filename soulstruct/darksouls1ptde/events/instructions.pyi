@@ -3996,19 +3996,19 @@ def PlaySoundEffect(
     """
 
 
-def SetSoundEventState(sound_id: int, state: bool | int):
+def SetSoundEventState(sound_id: SoundEvent | int, state: bool | int):
     """
     The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
     """
 
 
-def EnableSoundEvent(sound_id: int):
+def EnableSoundEvent(sound_id: SoundEvent | int):
     """
     Calls `SetSoundEventState` with `state=True`.
     """
 
 
-def DisableSoundEvent(sound_id: int):
+def DisableSoundEvent(sound_id: SoundEvent | int):
     """
     Calls `SetSoundEventState` with `state=False`.
     """

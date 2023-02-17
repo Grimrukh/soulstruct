@@ -62,7 +62,7 @@ class GXItem(BinaryStruct):
     gx_id: bytes = field(**BinaryString(4))
     unk_x04: int
     size: int
-    data: bytes = field(metadata={"NOT_BINARY": True})  # `size - 12` bytes
+    data: bytes = field(init=False, metadata={"NOT_BINARY": True})  # `size - 12` bytes
 
 
 @dataclass(slots=True)
@@ -86,13 +86,13 @@ class GXList:
             gx_item.data = reader.read(gx_item.size - 12)
             return cls([gx_item])
         gx_items = []
-        while reader.unpack_value("<i", offset=reader.position) not in {2 ** 31 - 1, -1}:
+        while reader["i", reader.position] not in {2 ** 31 - 1, -1}:
             gx_item = GXItem.from_bytes(reader)
             gx_item.data = reader.read(gx_item.size - 12)
             gx_items.append(gx_item)
-        terminator_id = reader.unpack_value("<i")  # either 2 ** 31 - 1 or -1
-        reader.unpack_value("<i", asserted=100)
-        terminator_null_count = reader.unpack_value("<i") - 12
+        terminator_id = reader["i"]  # either 2 ** 31 - 1 or -1
+        reader.unpack_value("i", asserted=100)
+        terminator_null_count = reader["i"] - 12
         terminator_nulls = reader.read(terminator_null_count)
         if terminator_nulls.strip(b"\0"):
             raise ValueError(f"Found non-null reader in `GXList` terminator: {terminator_nulls}")

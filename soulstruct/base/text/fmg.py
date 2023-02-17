@@ -6,10 +6,12 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
+from pathlib import Path
 from textwrap import wrap
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.utilities.binary import *
+from soulstruct.utilities.files import read_json
 
 try:
     Self = tp.Self
@@ -43,10 +45,10 @@ class FMGHeader(BinaryStruct):
     _pad3: bytes = field(**BinaryPad(2))
     range_count: int
     string_count: int
-    unknown2: int = field(**Binary(asserted=255, skip_callback=lambda _, values: values["version"] < 2))
+    unknown2: int = field(**Binary(asserted=255, should_skip_func=lambda _, values: values["version"] < 2))
     string_offsets_offset: varint
     _pad4: bytes = field(**BinaryPad(4))
-    _pad5: bytes = field(**BinaryPad(4, skip_callback=lambda _, values: values["version"] < 2))
+    _pad5: bytes = field(**BinaryPad(4, should_skip_func=lambda _, values: values["version"] < 2))
 
 
 @dataclass(slots=True)
@@ -64,7 +66,7 @@ class FMG(GameFile):
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
 
-        version = FMGVersion(reader.unpack_value("b", offset=2))
+        version = FMGVersion(reader["b", 2])
         reader.default_byte_order = ByteOrder.BigEndian if version == 0 else ByteOrder.LittleEndian
         reader.long_varints = version >= 2
         header = FMGHeader.from_bytes(reader)
@@ -99,6 +101,13 @@ class FMG(GameFile):
                 first_index += 1
 
         return cls(entries=entries, version=version)
+
+    @classmethod
+    def from_json(cls, json_path: str | Path) -> Self:
+        """`entries` dictionary keys need to be converted to `int`."""
+        json_dict = read_json(json_path)
+        json_dict["entries"] = {int(k): v for k, v in json_dict["entries"].items()}
+        return cls.from_dict(json_dict)
 
     def sort(self):
         """Sort strings by ID in-place."""

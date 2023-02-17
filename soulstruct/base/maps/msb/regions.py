@@ -57,7 +57,7 @@ class BaseMSBRegion(MSBEntry, abc.ABC):
             raise ValueError(f"Unexpected MSB event subtype index for `{cls.__name__}`: {header_subtype_int}")
 
         name = reader.unpack_string(offset=entry_offset + header.pop("name_offset"), encoding=cls.NAME_ENCODING)
-        entity_id = reader.unpack_value("i", offset=entry_offset + header.pop("entity_id_offset"))
+        entity_id = reader["i", entry_offset + header.pop("entity_id_offset")]
 
         return header.to_dict(ignore_underscore_prefix=True) | {"name": name, "entity_id": entity_id}
 

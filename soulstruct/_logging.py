@@ -45,7 +45,7 @@ class _ColoredFormatter(logging.Formatter):
 
 
 CONSOLE_FORMATTER = _ColoredFormatter(
-    fmt="$COLOR{levelname:>7} :: $BOLD_COLOR{asctime}$COLOR :: {name:<45} :: Line {lineno:>4d} :: {message}$RESET",
+    fmt="$COLOR{levelname:>7} :: {name:<40} :: {lineno:>4d} :: {message}$RESET",
     style="{",
     use_color=bool(colorama),
 )

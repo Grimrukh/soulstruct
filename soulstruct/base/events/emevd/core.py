@@ -20,7 +20,7 @@ from .numeric import build_numeric
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd.evs import EVSParser
-    from .entity_enums_manager import EntityEnumsManager
+    from .entity_enums_manager import GameEnumsManager
 
 try:
     Self = tp.Self
@@ -35,7 +35,7 @@ _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\
 @dataclass(slots=True)
 class EMEVDHeaderStruct(BinaryStruct):
     """Indicates fields that will always be present in this header, but cannot be used."""
-    _signature: bytes = field(**BinaryString(4, asserted=b"EVD\0"))
+    _signature: bytes = field(**BinaryString(4, asserted=b"EVD"))
     big_endian: bool
     varint_size_check: byte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
     version_unk_1: bool
@@ -83,11 +83,10 @@ class EMEVD(GameFile, abc.ABC):
     `script_directory` can be detected automatically.)
     """
 
-    Event: tp.ClassVar[tp.Type[BaseEvent]]
-    ENTITY_ENUMS_MANAGER: tp.ClassVar[tp.Type[EntityEnumsManager]]
+    EVENT_CLASS: tp.ClassVar[tp.Type[BaseEvent]]
+    ENTITY_ENUMS_MANAGER: tp.ClassVar[tp.Type[GameEnumsManager]]
     EVS_PARSER: tp.ClassVar[tp.Type[EVSParser]]
     STRING_ENCODING: tp.ClassVar[str]
-    DCX_TYPE: tp.ClassVar[DCXType]  # TODO: rename `DEFAULT_DCX_TYPE`
     HEADER_VERSION_INFO: tp.ClassVar[tuple[bool, int, int]] = (False, 0, 204)  # DS1 default
 
     events: dict[int, BaseEvent] = field(default_factory=dict)
@@ -106,11 +105,10 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_numeric_string(cls, numeric_string: str, map_name: str = "") -> Self:
-        events, linked_file_offsets, packed_strings = build_numeric(numeric_string, cls.Event)
+        events, linked_file_offsets, packed_strings = build_numeric(numeric_string, cls.EVENT_CLASS)
         emevd = cls(
             events=events, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets, map_name=map_name
         )
-        emevd.dcx_type = cls.DCX_TYPE  # set default DCX
         return emevd
 
     @classmethod
@@ -172,8 +170,8 @@ class EMEVD(GameFile, abc.ABC):
 
         reader.seek(header.events_offset)
         event_dict = {}  # type: dict[int, BaseEvent]
-        for _ in header.events_count:
-            event = cls.Event.from_emevd_reader(
+        for _ in range(header.events_count):
+            event = cls.EVENT_CLASS.from_emevd_reader(
                 reader,
                 header.instructions_offset,
                 header.base_arg_data_offset,
@@ -204,7 +202,7 @@ class EMEVD(GameFile, abc.ABC):
             reader.seek(header.linked_files_offset)
             # These are relative offsets into the packed string data. They are always 64-bit.
             for _ in range(header.linked_files_count):
-                linked_file_offsets.append(reader.unpack_value("Q"))
+                linked_file_offsets.append(reader["Q"])
 
         emevd = cls(events=event_dict, packed_strings=packed_strings, linked_file_offsets=linked_file_offsets)
         emevd.byte_order = byte_order
@@ -323,7 +321,7 @@ class EMEVD(GameFile, abc.ABC):
         )
 
         if common_func_emevd:
-            # Add common event IDs to `EntityEnumsManager`.
+            # Add common event IDs to `GameEnumsManager`.
             enums_manager.all_common_event_ids = list(common_func_emevd.events)
 
         self.regenerate_signatures()
@@ -370,7 +368,7 @@ class EMEVD(GameFile, abc.ABC):
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
     def add_event_call_keywords(
-        self, event_string: str, enums_manager: EntityEnumsManager, common_func_emevd: EMEVD = None
+        self, event_string: str, enums_manager: GameEnumsManager, common_func_emevd: EMEVD = None
     ):
         """Add keyword argument names to `Event_{ID}(_, x, y, z)` calls.
 
@@ -390,8 +388,10 @@ class EMEVD(GameFile, abc.ABC):
             try:
                 if call_name == "CommonFunc":
                     event_args = common_func_emevd.event_signatures[event_id].event_args
+                    arg_names = common_func_emevd.event_signatures[event_id].get_evs_arg_names()
                 else:  # standard local "Event"
-                    event_args = self.event_signatures[event_id]
+                    event_args = self.event_signatures[event_id].event_args
+                    arg_names = self.event_signatures[event_id].get_evs_arg_names()
             except KeyError:
                 pass  # event ID not defined in this script or in CommonFunc
             else:
@@ -416,10 +416,12 @@ class EMEVD(GameFile, abc.ABC):
                     except ValueError:
                         continue
                     try:
-                        args[j] = f"{enums_manager.check_out_enum(int_value, *event_args[j - 1].py_types)}"
-                    except enums_manager.MissingEntityError:
+                        py_types = event_args[j - 1].combined_py_types
+                        if py_types:
+                            args[j] = f"{enums_manager.check_out_enum(int_value, *py_types)}"
+                    except enums_manager.EnumManagerError:
                         pass
-                kwargs = [f"{arg.combined_name}={arg_value}" for arg, arg_value in zip(event_args, args[1:])]
+                kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(arg_names, args[1:], strict=True)]
                 one_line_event_call = f"{indent}{call_name}_{event_id}({slot}, {', '.join(kwargs)}){end}"
                 if len(one_line_event_call) > 121:  # last newline character doesn't count
                     # Multiline call.
@@ -556,45 +558,30 @@ class EMEVD(GameFile, abc.ABC):
             f.write(evs_string)
 
     @classmethod
-    def from_auto_detect_source_type(cls, emevd_source: Path | str | bytes | BinaryReader) -> tuple[Self, str]:
+    def from_auto_detect_source_type(cls, emevd_source: Path | str | bytes | BinaryReader) -> str:
         """Tries to detect the type of `emevd_source` and load it.
 
         Returns the loaded `EMEVD` and a string from {"emevd", "evs", "numeric"}.
         """
         if isinstance(emevd_source, str) and "\n" in emevd_source:
             # Guess numeric string.
-            try:
-                emevd = cls.from_numeric_string(emevd_source, map_name="")
-                return emevd, "numeric"
-            except Exception as ex:
-                raise TypeError(f"Guessed that `emevd_source` was a numeric string, but failed to load it: {ex}")
+            return "numeric_string"
 
         if isinstance(emevd_source, (Path, str)):
-            try:
-                emevd_source = Path(emevd_source)
-                if emevd_source.suffix == ".txt":
-                    emevd = cls.from_numeric_path(emevd_source, map_name=emevd_source.name.split(".")[0])
-                    return emevd, "numeric"
-                if emevd_source.name.endswith(".evs") or emevd_source.name.endswith(".evs.py"):
-                    emevd = cls.from_evs_path(emevd_source)
-                    return emevd, "evs"
-                else:  # try EMEVD
-                    emevd = cls.from_path(emevd_source)
-                    return emevd, "emevd"
-            except Exception as ex:
-                raise TypeError(
-                    f"Guessed that `emevd_source` was a path, but failed to load it as numeric/EVS/EMEVD: {ex}"
-                )
+            emevd_source = Path(emevd_source)
+            if emevd_source.suffix == ".txt":
+                return "numeric_path"
+            if emevd_source.name.endswith(".evs") or emevd_source.name.endswith(".evs.py"):
+                return "evs_path"
+            if any(emevd_source.name.endswith(suffix) for suffix in (".emevd", ".emevd.dcx")):
+                return "emevd_path"
+            raise TypeError(f"Unknown EMEVD source path name: {emevd_source.name}")
 
-        try:
-            if isinstance(emevd_source, BinaryReader):
-                emevd = cls.from_reader(emevd_source)
-                return emevd, "emevd"
-            if isinstance(emevd_source, bytes):
-                emevd = cls.from_bytes(emevd_source)
-                return emevd, "emevd"
-        except Exception as ex:
-            raise TypeError(f"Could not load binary `emevd_source` as an EMEVD: {ex}")
+        if isinstance(emevd_source, BinaryReader):
+            return "emevd_reader"
+        if isinstance(emevd_source, bytes):
+            return "emevd_bytes"
+        raise TypeError(f"Cannot detect EMEVD source type from object type: {type(emevd_source).__name__}")
 
     def merge(
         self,

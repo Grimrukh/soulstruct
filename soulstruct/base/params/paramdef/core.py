@@ -56,38 +56,38 @@ class ParamDef(GameFile):
         and we don't want game subclasses for it, so this just uses old-fashioned reader logic.
         """
 
-        byte_order = ByteOrder.BigEndian if reader.unpack_value("b", offset=0x2c) == -1 else ByteOrder.LittleEndian
-        format_version = reader.unpack_value("h", offset=0x2e)
+        byte_order = ByteOrder.BigEndian if reader["b", 0x2c] == -1 else ByteOrder.LittleEndian
+        format_version = reader["h", 0x2e]
         reader.default_byte_order = byte_order
         reader.long_varints = format_version >= 200
 
         reader.read(4)  # file size
-        header_size = reader.unpack_value("h")
+        header_size = reader["h"]
         if (format_version < 200 and header_size != 0x30) or (format_version >= 200 and header_size != 0xFF):
             raise ValueError(f"Invalid `ParamDef` header size {header_size} for format version {format_version}.")
-        data_version = reader.unpack_value("h")
-        field_count = reader.unpack_value("h")
-        field_size = reader.unpack_value("h")
+        data_version = reader["h"]
+        field_count = reader["h"]
+        field_size = reader["h"]
         if field_size != (expected := cls._EXPECTED_FIELD_SIZES[format_version]):
             raise ValueError(f"Expected `ParamDef` field size of {hex(expected)} for format version {format_version}.")
 
         if format_version >= 202:
             reader.assert_pad(4)
-            param_type_offset = reader.unpack_value("q")
+            param_type_offset = reader["q"]
             param_type = reader.unpack_string(offset=param_type_offset, encoding="ASCII")
             reader.assert_pad(20)
         elif 106 <= format_version < 200:
-            param_type_offset = reader.unpack_value("i")
+            param_type_offset = reader["i"]
             param_type = reader.unpack_string(offset=param_type_offset, encoding="ASCII")
             reader.assert_pad(28)
         else:
             param_type = reader.unpack_string(length=32, encoding="shift_jis_2004")
 
         reader.read(1)  # big endian
-        unicode = reader.unpack_value("?")
+        unicode = reader["?"]
         reader.read(2)  # format version
         if format_version >= 200:
-            if reader.unpack_value("q") != 0x38:
+            if reader["q"] != 0x38:
                 raise ValueError(f"Asserted value 0x38 did not appear in`ParamDef` header ({format_version=}).")
 
         fields_list = [

@@ -13,7 +13,7 @@ from functools import partial
 from pathlib import Path
 
 from soulstruct.base.game_types.basic_types import BaseGameObject, FlagRange, MapFlagSuffix
-from soulstruct.games import Game
+from soulstruct.games import Game, get_game
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
 from .utils import (
@@ -42,6 +42,16 @@ _EVS_TYPES = ("B", "b", "H", "h", "I", "i", "f", "s")
 _PY_TYPES = {"uchar": "B", "char": "b", "ushort": "H", "short": "h", "uint": "I", "int": "i", "float": "f", "str": "s"}
 _BUILTIN_NAMES = {"Condition", "MAIN", "slot", "event_layers"}.union(_RESTART_TYPES.keys())
 _IGNORE_IMPORT_RE = re.compile(r"^import typing.*")
+_GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
+
+
+_EVENT_ARG_TYPE_MSG = f"""
+    fmt character in: {repr(_EVS_TYPES)}
+         fmt type in: ({', '.join(_PY_TYPES)})
+           game type: e.g. `Flag`, `Character`, `Object`
+         game typing: e.g. `FlagTyping`, `CharacterTyping`, `ObjectTyping`
+     game type | int: e.g. `Flag | int`, `Character | int`, `Object | int`
+"""
 
 
 EventStatementTyping = tp.Union[ast.Expr, ast.For, ast.If, ast.Assign, ast.Return]
@@ -65,7 +75,6 @@ class EventInfo(tp.NamedTuple):
 
 class EVSParser(abc.ABC):
 
-    GAME: Game = None  # mixed in by subclasses
     EMEDF_ALIASES: dict[str, tp.Any] = None
     EMEDF_TESTS: dict[str, tp.Any] = None
     EMEDF_COMPARISON_TESTS: dict[str, tp.Any] = None
@@ -154,6 +163,12 @@ class EVSParser(abc.ABC):
         self.tree = ast.parse(evs_string)
         self.numeric_emevd = ""
         self._compile_evs()
+
+    @classmethod
+    def get_game(cls) -> Game:
+        if match := re.match(_GAME_MODULE_RE, cls.__module__):
+            return get_game(match.group(1))
+        raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
     def _reset_conditions(self):
         """Reset for every new event. Contains names of `Condition` and/or `HeldCondition` instances created in EVS."""
@@ -305,11 +320,12 @@ class EVSParser(abc.ABC):
                         self.strings_with_offsets.append(offset_with_string)
                 # Otherwise ignore (you can add anything else to the docstring, provided you leave blank lines between).
 
+        game = self.get_game()
         ignore_import_names = [
             "typing",
-            f"soulstruct.{self.GAME.submodule_name}.events",
-            f"soulstruct.{self.GAME.submodule_name}.events.instructions",
-            f"soulstruct.{self.GAME.submodule_name}.events.tests",
+            f"soulstruct.{game.submodule_name}.events",
+            f"soulstruct.{game.submodule_name}.events.instructions",
+            f"soulstruct.{game.submodule_name}.events.tests",
         ]
 
         for node in self.tree.body[1:]:
@@ -1710,12 +1726,45 @@ def _parse_event_arguments(
 
         arg_type_node = arg_node.annotation
 
+        if isinstance(arg_type_node, ast.BinOp):
+            # `{GameObject} | int` type hints are accepted (but no others).
+            if not isinstance(arg_type_node.op, ast.BitOr):
+                raise EVSSyntaxError(
+                    event_node,
+                    f"Invalid event argument type: {repr(arg_type_node)}. "
+                    f"Valid type hints: {_EVENT_ARG_TYPE_MSG}"
+                )
+            if not isinstance(arg_type_node.left, ast.Name):
+                raise EVSSyntaxError(
+                    event_node,
+                    f"Invalid event argument type (left of |): {repr(arg_type_node.left)}. "
+                    f"Valid type hints: {_EVENT_ARG_TYPE_MSG}"
+                )
+            if not isinstance(arg_type_node.right, ast.Name):
+                raise EVSSyntaxError(
+                    event_node,
+                    f"Invalid event argument type (right of |): {repr(arg_type_node.right)}. "
+                    f"Valid type hints: {_EVENT_ARG_TYPE_MSG}"
+                )
+            left_name = arg_type_node.left.id
+            right_name = arg_type_node.right.id
+            if left_name == "int":
+                arg_type_node = arg_type_node.right  # process class name below
+            elif right_name == "int":
+                arg_type_node = arg_type_node.left  # process class name below
+            else:
+                raise EVSSyntaxError(
+                    event_node,
+                    f"Invalid event argument type. If '|' is used, one side must be `int` and the other must be "
+                    f"a game type. Valid type hints: {_EVENT_ARG_TYPE_MSG}"
+                )
+
         if isinstance(arg_type_node, ast.Constant) and isinstance(arg_type_node.value, str):
             if arg_type_node.value not in _EVS_TYPES:
                 raise EVSSyntaxError(
                     event_node,
-                    f"Invalid event argument type string {repr(arg_type_node)}. "
-                    f"Must be one of: {' '.join(_EVS_TYPES)}",
+                    f"Invalid event argument type string {repr(arg_type_node.value)}. "
+                    f"Valid type hints: {_EVENT_ARG_TYPE_MSG}"
                 )
             arg_type = arg_type_node.value
 
@@ -1724,6 +1773,7 @@ def _parse_event_arguments(
                 arg_type = _PY_TYPES[arg_type_node.id]
             except KeyError:
                 class_name = arg_type_node.id
+                class_name = class_name.removesuffix("Typing")  # not decompiled but could be used
                 try:
                     arg_class = namespace[class_name]
                 except KeyError:
@@ -1744,9 +1794,7 @@ def _parse_event_arguments(
         else:
             raise EVSSyntaxError(
                 event_node,
-                f"Every event argument needs a type. You can specify any type with a type format\n"
-                f"character in {repr(_EVS_TYPES)}, use a Soulstruct game type like `Flag` or `Character`,\n"
-                f"or use the Python built-in types `int` (signed), `float`, or (in very rare cases) `str`.",
+                f"Every event argument needs a type. Valid type hints: {_EVENT_ARG_TYPE_MSG}"
             )
 
         arg_types += arg_type
@@ -1810,11 +1858,13 @@ def _import_from(
                 all_names = vars(module)["__all__"]
             else:
                 # Get all names that were defined in the module and don't begin with an underscore.
-                module_name = node.module.split(".")[-1]
+                module_name = node.module.split(".")[-1]  # `__module__` is name-only in certain contexts I think
                 all_names = [
                     n
                     for n, attr in vars(module).items()
-                    if not n.startswith("_") and (not hasattr(attr, "__module__") or attr.__module__ == module_name)
+                    if not n.startswith("_") and (
+                        not hasattr(attr, "__module__") or attr.__module__ in (node.module, module_name)
+                    )
                 ]
             for name_ in all_names:
                 try:

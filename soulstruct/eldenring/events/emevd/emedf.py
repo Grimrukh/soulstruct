@@ -67,7 +67,7 @@ DD_ID = {
 GAME_MAP_EVS = {
     "type": MapTyping,
     "default": None,
-    "to_evs": lambda args: get_map_variable_name(args["area_id"], args["block_id"], args["cc_id"], args["dd_id"]),
+    "to_evs": lambda args: get_map_variable_name((args["area_id"], args["block_id"], args["cc_id"], args["dd_id"])),
 }
 HOUR = {
     "type": int,
@@ -95,7 +95,7 @@ ITEM_TYPE = {
     "comment": "Auto-detected from `item` type by default.",
 }
 FLAG = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
 }
 LABEL = {
@@ -109,12 +109,12 @@ FLAG_RANGE = {
     "to_evs": lambda args: FlagRange(args["first_flag"], args["last_flag"]),
 }
 FLAG_RANGE_FIRST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][0],
 }
 FLAG_RANGE_LAST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][1],
 }
@@ -1898,7 +1898,7 @@ EMEDF = {
         "partials": {
             "RemoveWeaponFromPlayer": dict(item_type=ItemType.Weapon),
             "RemoveArmorFromPlayer": dict(item_type=ItemType.Armor),
-            "RemoveRingFromPlayer": dict(item_type=ItemType.Ring),
+            "RemoveTalismanFromPlayer": dict(item_type=ItemType.Talisman),
             "RemoveGoodFromPlayer": dict(item_type=ItemType.Good),
         },
         "evs_args": {
@@ -3776,7 +3776,7 @@ EMEDF = {
             "label": LABEL,
             "state": BOOL,
             "flag_type": NO_DEFAULT(FlagType),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
         },
         "partials": {
             "GotoIfThisEventFlagEnabled": dict(
@@ -4464,10 +4464,10 @@ EMEDF = {
             Performs a binary operation on the source flag and operand value, and stores the result in the target flag.
         """,
         "args": {
-            "source_flag": NO_DEFAULT(FlagInt),
+            "source_flag": NO_DEFAULT(FlagTyping),
             "source_flag_bit_count": INT,
             "operand": INT,
-            "target_flag": NO_DEFAULT(FlagInt),
+            "target_flag": NO_DEFAULT(FlagTyping),
             "target_flag_bit_count": INT,
             "calculation_type": NO_DEFAULT(CalculationType),
         },
@@ -4480,7 +4480,7 @@ EMEDF = {
         "args": {
             "item_type": NO_DEFAULT(ItemType),
             "item": NO_DEFAULT(ItemTyping),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
             "bit_count": INT,
         },
     },
@@ -4493,7 +4493,7 @@ EMEDF = {
         "args": {
             "item_type": NO_DEFAULT(ItemType),
             "item": NO_DEFAULT(ItemTyping),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
             "bit_count": INT,
         },
     },
@@ -4518,8 +4518,8 @@ EMEDF = {
             "sign_type": NO_DEFAULT(SingleplayerSummonSignType) | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "region": NO_DEFAULT(RegionTyping),
-            "summon_flag": NO_DEFAULT(FlagInt),
-            "dismissal_flag": NO_DEFAULT(FlagInt),
+            "summon_flag": NO_DEFAULT(FlagTyping),
+            "dismissal_flag": NO_DEFAULT(FlagTyping),
         },
     },
     (2003, 52): {
@@ -5068,7 +5068,7 @@ EMEDF = {
         "alias": "SuppressSoundEvent",
         "docstring": "TODO",
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
             "unk_4_8": INT,
             "suppression_active": BOOL,
         },
@@ -5077,7 +5077,7 @@ EMEDF = {
         "alias": "UnknownSound_2010_8",
         "docstring": "TODO",
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
         },
     },
     (2010, 10): {

@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 from soulstruct.darksouls1r.ezstate import TalkESDBND
-from soulstruct.utilities.misc import Timer
+from soulstruct.utilities.inspection import Timer
 
 
 class TextTest(unittest.TestCase):

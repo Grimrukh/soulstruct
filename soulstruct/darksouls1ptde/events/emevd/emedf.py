@@ -58,7 +58,7 @@ BLOCK_ID = {
 GAME_MAP_EVS = {
     "type": MapTyping,
     "default": None,
-    "to_evs": lambda args: get_map_variable_name(args["area_id"], args["block_id"]),
+    "to_evs": lambda args: get_map_variable_name((args["area_id"], args["block_id"])),
 }
 ITEM_TYPE = {
     "type": ItemType,
@@ -66,7 +66,7 @@ ITEM_TYPE = {
     "comment": "Auto-detected from `item` type by default.",
 }
 FLAG = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
 }
 FLAG_RANGE = {
@@ -75,12 +75,12 @@ FLAG_RANGE = {
     "to_evs": lambda args: FlagRange(args["first_flag"], args["last_flag"]),
 }
 FLAG_RANGE_FIRST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][0],
 }
 FLAG_RANGE_LAST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][1],
 }
@@ -3396,7 +3396,7 @@ EMEDF = {
             The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
         """,
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
             "state": BOOL | HIDE_NAME,
         },
         "partials": {

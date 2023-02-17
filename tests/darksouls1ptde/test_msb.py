@@ -4,7 +4,7 @@ import unittest
 
 from soulstruct.darksouls1ptde.maps import MSB, MapStudioDirectory
 from soulstruct.utilities.maths import Vector3
-from soulstruct.utilities.misc import Timer
+from soulstruct.utilities.inspection import Timer
 
 
 class MSBTest(unittest.TestCase):

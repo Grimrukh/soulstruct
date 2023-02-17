@@ -97,7 +97,8 @@ DCX_VERSION_INFO = {
 
 
 @dataclass(slots=True)
-class DCP_DFLT_Struct(BinaryStruct):
+class DCPHeaderStruct(BinaryStruct):
+    """Early, abbreviated compression version (Demon's Souls only)."""
     dcp: bytes = field(init=False, **BinaryString(4, asserted=b"DCP"))
     dflt: bytes = field(init=False, **BinaryString(4, asserted=b"DFLT"))
     unks: list[int] = field(init=False, **BinaryArray(6, asserted=[0x20, 0x9000000, 0, 0, 0, 0x10100]))
@@ -105,14 +106,16 @@ class DCP_DFLT_Struct(BinaryStruct):
     decompressed_size: int
     compressed_size: int
 
-
-# TODO: These structs are almost identical, except for variation in a few scattered ints (four spots).
-#  Could merge them with multiple assertion and then assert the configuration of version ints... yep.
+    def get_default_byte_order(self) -> ByteOrder:
+        return ByteOrder.BigEndian
 
 
 @dataclass(slots=True)
 class DCXHeaderStruct(BinaryStruct):
-    """NOTE: Not asserting the five 'version' fields so that we can guess when a new format is available."""
+    """Compression header (with variation in the `version` fields) in all FromSoft games after Demon's Souls.
+
+    NOTE: Not asserting the five 'version' fields so that we can guess when a new format is available.
+    """
     dcx: bytes = field(init=False, **BinaryString(4, asserted=b"DCX"))
     version1: int  # = field(**Binary(asserted=(0x10000, 0x11000)))  # 1
     unk1: int = field(init=False, **Binary(asserted=0x18))
@@ -131,7 +134,10 @@ class DCXHeaderStruct(BinaryStruct):
     unk5: int = field(init=False, **Binary(asserted=0))
     unk6: int = field(init=False, **Binary(asserted=0x10100))
     dca: bytes = field(init=False, **BinaryString(4, asserted=b"DCA"))
-    compressed_header_size: int = field(**Binary(asserted=8))
+    compressed_header_size: int = field(init=False, **Binary(asserted=8))
+
+    def get_default_byte_order(self) -> ByteOrder:
+        return ByteOrder.BigEndian
 
     def get_version_info(self) -> tuple[int, int, int, int, int]:
         """Actually used."""
@@ -150,11 +156,11 @@ def decompress(dcx_source: bytes | BinaryReader | tp.BinaryIO | Path | str) -> t
     if dcx_type == DCXType.Unknown:
         raise DCXError("Unknown DCX type. Cannot decompress.")
     if dcx_type == DCXType.DCP_DFLT:
-        header = DCP_DFLT_Struct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
+        header = DCPHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
     else:
         header = DCXHeaderStruct.from_bytes(reader, byte_order=ByteOrder.BigEndian)
 
-    compressed = reader.read(header.compressed_size)  # TODO: do I need to rstrip nulls?
+    compressed = reader.read(header.compressed_size)
 
     if dcx_type == DCXType.DCX_KRAK:
         decompressed = oodle.decompress(compressed, header.decompressed_size)
@@ -177,20 +183,24 @@ def compress(raw_data: bytes, dcx_type: DCXType) -> bytes:
         compressed = zlib.compress(raw_data, level=7)
 
     if dcx_type == DCXType.DCP_DFLT:
-        header = bytes(DCP_DFLT_Struct(
+        header = bytes(DCPHeaderStruct(
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
         ))
     else:
         version_info = dcx_type.get_version_info()
         header = bytes(DCXHeaderStruct(
-            *version_info,
+            version1=version_info[0],
+            version2=version_info[1],
+            version3=version_info[2],
             decompressed_size=len(raw_data),
             compressed_size=len(compressed),
+            version4=version_info[3],
+            version5=version_info[4],
         ))
     return header + compressed
 
 
 def is_dcx(reader: BinaryReader) -> bool:
     """Checks if file data starts with DCX (or DCP) magic."""
-    return reader.unpack_value("4s", offset=0) in {b"DCP\0", b"DCX\0"}
+    return reader["4s", 0] in {b"DCP\0", b"DCX\0"}

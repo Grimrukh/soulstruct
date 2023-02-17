@@ -83,9 +83,9 @@ class NVMBox:
     @classmethod
     def from_nvm_reader(cls, reader: BinaryReader) -> NVMBox:
         start_corner = Vector3(*reader.unpack("3f"))
-        triangle_count = reader.unpack_value("i")
+        triangle_count = reader["i"]
         end_corner = Vector3(*reader.unpack("3f"))
-        triangles_offset = reader.unpack_value("i")
+        triangles_offset = reader["i"]
 
         child_box_offsets = reader.unpack("iiii")
         reader.assert_pad(16)

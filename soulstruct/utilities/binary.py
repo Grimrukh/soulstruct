@@ -142,6 +142,10 @@ class BinaryBase:
             fmt = fmt.replace("v", "i").replace("V", "I")
         return fmt
 
+    def calcsize(self, fmt: str) -> int:
+        """Calculate fmt struct size after parsing it."""
+        return struct.calcsize(self.parse_fmt(fmt))
+
     def get_utf_16_encoding(self) -> str:
         return self.default_byte_order.get_utf_16_encoding()
 
@@ -690,8 +694,10 @@ class BinaryMetadata(tp.Generic[FIELD_T]):
     field_name: str = dataclasses.field(default=None, init=False)
     field_type: tp.Type[FIELD_T] = dataclasses.field(default=None, init=False)
 
-    def is_single_asserted(self) -> bool:
-        return self.asserted and len(self.asserted) == 1
+    def get_single_asserted(self) -> FIELD_T | None:
+        if self.asserted and len(self.asserted) == 1:
+            return self.asserted[0]
+        return None
 
     def get_unpacker(self) -> tp.Callable[[list[tp.Any]], FIELD_T]:
         """Configures and returns a function that produces field values from `struct.unpack()` output.
@@ -786,6 +792,11 @@ class BinaryStringMetadata(BinaryMetadata):
     def get_packer(self) -> tp.Callable[[list[tp.Any], FIELD_T], None]:
         """Pack a single value into input for `struct.pack(full_fmt)`."""
         func = "def pack(struct_input: list[tp.Any], value: FIELD_T, metadata=self):\n"
+        if self.rstrip_null:  # asserted values are stripped, so value should be too
+            if self.encoding is None:  # bytes
+                func += "    value = value.rstrip(b\"\\0\")\n"
+            else:  # str
+                func += "    value = value.rstrip(\"\\0\")\n"
         if self.asserted:
             error_msg = f"Field '{self.field_name}' value {{value}} is not an asserted value: {self.asserted}"
             func += "    if value not in metadata.asserted:\n"
@@ -831,6 +842,13 @@ def BinaryString(
 
     if encoding and encoding.lower().replace("-", "") == "utf16":
         encoding = "utf16"
+
+    # If `rstrip_null=True`, asserted values should be stripped too for comparison.
+    if rstrip_null and asserted:
+        if encoding is not None:  # asserted value are strings
+            asserted = tuple(s.rstrip("\0") for s in asserted)
+        else:  # asserted value are bytes
+            asserted = tuple(s.rstrip(b"\0") for s in asserted)
 
     return {"metadata": {"binary": BinaryStringMetadata(
         fmt, asserted, unpack_func, pack_func, bit_count=-1, should_skip_func=should_skip_func,
@@ -959,6 +977,7 @@ OBJ_T = tp.TypeVar("OBJ_T")
 class BinaryStruct:
     """Dataclass that supports automatic reading/writing from packed binary data."""
 
+    # Caches for class binary information, each constructed on first use.
     _STRUCT_INITIALIZED: tp.ClassVar[bool] = False
     _FIELDS: tp.ClassVar[tuple[dataclasses.Field, ...] | None] = None
     _FIELD_TYPES: tp.ClassVar[tuple[tp.Type[FIELD_T], ...] | None] = None
@@ -1308,7 +1327,12 @@ class BinaryStruct:
         obj = struct_instance.to_object(obj_type, **init_kwargs)
         return obj
 
-    def __bytes__(self) -> bytes:
+    def to_bytes(self, byte_order: ByteOrder = None, long_varints: bool = None):
+        """"""
+        if byte_order is not None:
+            self.byte_order = byte_order
+        if long_varints is not None:
+            self.long_varints = long_varints
         writer = self.to_writer()
         if writer.reserved:
             raise ValueError(
@@ -1316,6 +1340,10 @@ class BinaryStruct:
                 f"    Remaining: {writer.reserved}"
             )
         return bytes(writer)
+
+    def __bytes__(self) -> bytes:
+        """Calls `to_bytes()` without the ability to change byte order or varint size."""
+        return self.to_bytes()
 
     def to_writer(self, writer: BinaryWriter = None, reserve_obj: OBJ_T = None) -> BinaryWriter:
         """Use fields to pack this instance into a `BinaryWriter`, which may be given or started automatically.
@@ -1370,10 +1398,7 @@ class BinaryStruct:
             nonlocal full_fmt
             if long_varints is None:
                 return struct.calcsize(full_fmt)
-            if long_varints:
-                return struct.calcsize(full_fmt.replace("v", "q").replace("V", "Q"))
-            else:
-                return struct.calcsize(full_fmt.replace("v", "i").replace("V", "I"))
+            return writer.calcsize(full_fmt)
 
         for field, field_type, field_metadata, field_packer, field_value in zip(
             self._FIELDS, self._FIELD_TYPES, self._FIELD_METADATA, self._FIELD_PACKERS, field_values.values()
@@ -1402,25 +1427,21 @@ class BinaryStruct:
                 )
                 continue
 
-            # Pack is assured from here.
-
-            # Needed to inspect `asserted` here to get a default field value for packing function call.
-            single_asserted = field_metadata.is_single_asserted()
-
-            if field_value is None and not single_asserted:
-                # Reserved for custom external filling, as it requires data beyond this struct's scope (even just to
-                # choose one of multiple provided asserted values). Current byte order is used.
-                reserve_offset = start_offset + get_fmt_size()
-                reserve_fmt = byte_order.value + field_metadata.fmt
-                writer.mark_reserved_offset(field.name, reserve_fmt, reserve_offset, obj=reserve_obj)
-                null_size = struct.calcsize(reserve_fmt)
-                struct_input.append(b"\0" * null_size)
-                full_fmt += f"{null_size}s"
-                continue
-
-            if field_value is None and single_asserted:
-                # Use lone asserted value.
-                field_value = field_metadata.asserted[0]
+            if field_value is None:
+                single_asserted = field_metadata.get_single_asserted()
+                if single_asserted is None:
+                    # Reserved for custom external filling, as it requires data beyond this struct's scope (even just to
+                    # choose one of multiple provided asserted values). Current byte order is used.
+                    reserve_offset = start_offset + get_fmt_size()
+                    reserve_fmt = byte_order.value + field_metadata.fmt
+                    writer.mark_reserved_offset(field.name, reserve_fmt, reserve_offset, obj=reserve_obj)
+                    null_size = writer.calcsize(reserve_fmt)
+                    struct_input.append(b"\0" * null_size)
+                    full_fmt += f"{null_size}s"
+                    continue
+                else:
+                    # Use lone asserted value.
+                    field_value = field_metadata.asserted[0]
 
             try:
                 field_packer(struct_input, field_value)
@@ -1512,8 +1533,8 @@ class BinaryStruct:
     def get_binary_field_values(self) -> dict[str, tp.Any]:
         """Get all current binary field values, unless it has a single asserted value."""
         field_values = {}
-        for field, metadata in zip(self._FIELDS, self._FIELD_METADATA):
-            if not metadata.is_single_asserted():
+        for field, metadata in zip(self.get_binary_fields(), self._FIELD_METADATA):
+            if metadata.get_single_asserted() is None:
                 field_values[field.name] = getattr(self, field.name, None)
         return field_values
 
@@ -1599,7 +1620,7 @@ class BitFieldReader(_BitFieldBase):
         max_bit_count = 8 * struct.calcsize(fmt)
         if self._field == "" or fmt != self._fmt or self._offset + bit_count > max_bit_count:
             # Consume (and reverse) new bit field. Any previous bit field is discarded.
-            integer = reader.unpack_value(fmt)
+            integer = reader[fmt]
             self._field = format(integer, f"0{max_bit_count}b")[::-1]
             self._fmt = fmt
         binary_str = self._field[self._offset:self._offset + bit_count][::-1]

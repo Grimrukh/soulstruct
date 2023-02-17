@@ -58,7 +58,7 @@ BLOCK_ID = {
 GAME_MAP_EVS = {
     "type": MapTyping,
     "default": None,
-    "to_evs": lambda args: get_map_variable_name(args["area_id"], args["block_id"]),
+    "to_evs": lambda args: get_map_variable_name((args["area_id"], args["block_id"])),
 }
 ITEM_TYPE = {
     "type": ItemType,
@@ -66,7 +66,7 @@ ITEM_TYPE = {
     "comment": "Auto-detected from `item` type by default.",
 }
 FLAG = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
 }
 LABEL = {
@@ -80,12 +80,12 @@ FLAG_RANGE = {
     "to_evs": lambda args: FlagRange(args["first_flag"], args["last_flag"]),
 }
 FLAG_RANGE_FIRST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][0],
 }
 FLAG_RANGE_LAST = {
-    "type": FlagInt,
+    "type": FlagTyping,
     "default": None,
     "from_evs": lambda args: args["flag_range"][1],
 }
@@ -3378,7 +3378,7 @@ EMEDF = {
             The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
         """,
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
             "state": BOOL | HIDE_NAME,
         },
         "partials": {
@@ -3922,7 +3922,7 @@ EMEDF = {
             "label": LABEL,
             "state": BOOL,
             "flag_type": NO_DEFAULT(FlagType),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
         },
         "partials": {
             "GotoIfThisEventFlagEnabled": dict(
@@ -4451,10 +4451,10 @@ EMEDF = {
             Performs a binary operation on the source flag and operand value, and stores the result in the target flag.
         """,
         "args": {
-            "source_flag": NO_DEFAULT(FlagInt),
+            "source_flag": NO_DEFAULT(FlagTyping),
             "source_flag_bit_count": INT,
             "operand": INT,
-            "target_flag": NO_DEFAULT(FlagInt),
+            "target_flag": NO_DEFAULT(FlagTyping),
             "target_flag_bit_count": INT,
             "calculation_type": NO_DEFAULT(CalculationType),
         },
@@ -4467,7 +4467,7 @@ EMEDF = {
         "args": {
             "item_type": NO_DEFAULT(ItemType),
             "item": NO_DEFAULT(ItemTyping),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
             "bit_count": INT,
         },
     },
@@ -4480,7 +4480,7 @@ EMEDF = {
         "args": {
             "item_type": NO_DEFAULT(ItemType),
             "item": NO_DEFAULT(ItemTyping),
-            "flag": NO_DEFAULT(FlagInt),
+            "flag": NO_DEFAULT(FlagTyping),
             "bit_count": INT,
         },
     },
@@ -4561,8 +4561,8 @@ EMEDF = {
             "sign_type": NO_DEFAULT(SingleplayerSummonSignType) | HIDE_NAME,
             "character": NO_DEFAULT(CharacterTyping) | HIDE_NAME,
             "region": NO_DEFAULT(RegionTyping),
-            "summon_flag": NO_DEFAULT(FlagInt),
-            "dismissal_flag": NO_DEFAULT(FlagInt),
+            "summon_flag": NO_DEFAULT(FlagTyping),
+            "dismissal_flag": NO_DEFAULT(FlagTyping),
         },
     },
     (2003, 52): {
@@ -4988,7 +4988,7 @@ EMEDF = {
             TODO: Argument -1 is sometimes used. Fades out ALL music?
         """,
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
             "state": BOOL,
         },
         "partials": {
@@ -5010,7 +5010,7 @@ EMEDF = {
         "alias": "SetSoundEventWithFade",
         "docstring": "TODO",
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEvent),
             "state": BOOL,
             "fade_duration": FLOAT,
         },
@@ -5025,7 +5025,7 @@ EMEDF = {
             Unknown SoundEvent instruction.
         """,
         "args": {
-            "sound_id": INT,
+            "sound_id": NO_DEFAULT(SoundEventTyping),
         },
     },
     (2011, 3): {

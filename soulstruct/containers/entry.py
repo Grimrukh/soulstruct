@@ -96,17 +96,17 @@ class BinderEntryHeader:
 
     @classmethod
     def from_reader_v3(cls, reader: BinaryReader, binder_flags: BinderFlags, bit_big_endian: bool):
-        flags = BinderEntryFlags.from_byte(reader.unpack_value("B"), bit_big_endian)
+        flags = BinderEntryFlags.from_byte(reader["B"], bit_big_endian)
         reader.assert_pad(3)
-        compressed_size = reader.unpack_value("i")
-        data_offset = reader.unpack_value("q" if binder_flags.has_long_offsets else "I")
-        entry_id = reader.unpack_value("i") if binder_flags.has_ids else None
+        compressed_size = reader["i"]
+        data_offset = reader["q" if binder_flags.has_long_offsets else "I"]
+        entry_id = reader["i"] if binder_flags.has_ids else None
         if binder_flags.has_names:
-            path_offset = reader.unpack_value("i")
+            path_offset = reader["i"]
             path = reader.unpack_string(path_offset, encoding="shift-jis")  # NOT `shift_jis_2004`
         else:
             path = None
-        uncompressed_size = reader.unpack_value("i") if binder_flags.has_compression else None
+        uncompressed_size = reader["i"] if binder_flags.has_compression else None
         return cls(
             flags=flags,
             compressed_size=compressed_size,
@@ -130,15 +130,15 @@ class BinderEntryHeader:
 
     @classmethod
     def from_reader_v4(cls, reader: BinaryReader, binder_flags: BinderFlags, bit_big_endian: bool, unicode: bool):
-        flags = BinderEntryFlags.from_byte(reader.unpack_value("B"), bit_big_endian)
+        flags = BinderEntryFlags.from_byte(reader["B"], bit_big_endian)
         reader.assert_pad(3)
-        assert reader.unpack_value("i") == -1
-        compressed_size = reader.unpack_value("q")
-        uncompressed_size = reader.unpack_value("q") if binder_flags.has_compression else None
-        data_offset = reader.unpack_value("q" if binder_flags.has_long_offsets else "I")
-        entry_id = reader.unpack_value("i") if binder_flags.has_ids else None
+        assert reader["i"] == -1
+        compressed_size = reader["q"]
+        uncompressed_size = reader["q"] if binder_flags.has_compression else None
+        data_offset = reader["q" if binder_flags.has_long_offsets else "I"]
+        entry_id = reader["i"] if binder_flags.has_ids else None
         if binder_flags.has_names:
-            path_offset = reader.unpack_value("I")
+            path_offset = reader["I"]
             path = reader.unpack_string(path_offset, encoding="utf-16-le" if unicode else "shift-jis")
         else:
             path = None

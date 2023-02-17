@@ -4934,25 +4934,25 @@ def PlaySoundEffect(
     """
 
 
-def SetSoundEventState(sound_id: int, state: bool | int):
+def SetSoundEventState(sound_id: SoundEvent | int, state: bool | int):
     """
     The sound ID is in the MSB. Includes boss music, which is obviously the most common use, and ambiance.
     """
 
 
-def EnableSoundEvent(sound_id: int):
+def EnableSoundEvent(sound_id: SoundEvent | int):
     """
     Calls `SetSoundEventState` with `state=True`.
     """
 
 
-def DisableSoundEvent(sound_id: int):
+def DisableSoundEvent(sound_id: SoundEvent | int):
     """
     Calls `SetSoundEventState` with `state=False`.
     """
 
 
-def SetBossMusicState(sound_id: int, state: bool | int):
+def SetBossMusicState(sound_id: SoundEvent | int, state: bool | int):
     """
     Not sure how this differs from the standard map sound instructions, but my guess is that it fades the music
     out rather than abruptly stopping it.
@@ -4962,13 +4962,13 @@ def SetBossMusicState(sound_id: int, state: bool | int):
     """
 
 
-def EnableBossMusic(sound_id: int):
+def EnableBossMusic(sound_id: SoundEvent | int):
     """
     Calls `SetBossMusicState` with `state=True`.
     """
 
 
-def DisableBossMusic(sound_id: int):
+def DisableBossMusic(sound_id: SoundEvent | int):
     """
     Calls `SetBossMusicState` with `state=False`.
     """

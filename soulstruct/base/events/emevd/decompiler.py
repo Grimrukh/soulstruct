@@ -12,9 +12,9 @@ import logging
 import struct
 import typing as tp
 
-from soulstruct.base.events.emevd.entity_enums_manager import EntityEnumsManager
+from soulstruct.base.events.emevd.entity_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
-from soulstruct.base.game_types.map_types import *
+from soulstruct.base.game_types import BaseGameObject
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ def _process_arg_types(
     args: dict[str, tp.Any],
     emedf_args_info: dict,
     enums_module: tp.Any,
-    enums_manager: EntityEnumsManager,
+    enums_manager: GameEnumsManager,
 ):
     """Convert arguments to their appropriate types and (if `enums_manager` is given) game-defined enums."""
     for arg_name, arg_value in args.items():
@@ -94,19 +94,25 @@ def _process_arg_types(
         except AttributeError:
             union_types = ()  # implies `arg_type` is a class for checks below
         else:
-            union_types = tp.get_args(arg_type) if origin is tp.Union else ()
-
-            if bool in union_types:  # convert `int` to `bool`
-                args[arg_name] = bool(arg_value)
-                continue
+            union_types = tuple(t for t in tp.get_args(arg_type) if t is not int) if origin is tp.Union else ()
+            if len(union_types) == 1:
+                arg_type = union_types[0]
+                union_types = ()
+                if arg_type is bool:
+                    args[arg_name] = bool(arg_value)
+                    continue
+            else:
+                if bool in union_types:  # convert `int` to `bool`
+                    args[arg_name] = bool(arg_value)
+                    continue
 
             # All union types should be `MapEntity` subclasses; this will be enforced by the checkout method
             # below (invalid types will have no entity ID dictionaries).
 
-        if union_types or issubclass(arg_type, MapEntity):
+        if union_types or issubclass(arg_type, BaseGameObject):
 
             try:
-                protected_value = EnumValue(enums_manager.PROTECTED_ENTITIES, arg_value)
+                protected_value = EnumValue(enums_manager.PROTECTED_ENUM, arg_value)
             except ValueError:
                 pass  # check enums below
             else:
@@ -123,7 +129,7 @@ def _process_arg_types(
                     args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, *union_types))
                 else:  # single class
                     args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, arg_type))
-            except EntityEnumsManager.MissingEntityError:
+            except GameEnumsManager.EnumManagerError:
                 pass
             continue  # leave as entity ID if not replaced
 
@@ -186,7 +192,7 @@ def base_decompiler_instruction(
     req_args: list[tp.Any],
     opt_args: list[tp.Any],
     opt_arg_types="",
-    enums_manager: EntityEnumsManager = None,
+    enums_manager: GameEnumsManager = None,
 ):
     instr_info = emedf[category, index]
     emedf_args_info = instr_info["args"]
@@ -265,7 +271,7 @@ def base_decompiler_instruction(
 
 
 def base_decompile_run_event(
-    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     """Shared across all games."""
     if not opt_args and first_arg == 0:
@@ -300,7 +306,7 @@ def base_decompile_run_event(
             if looks_like_entity_id(arg, event_id):
                 try:
                     new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
-                except EntityEnumsManager.MissingEntityError:
+                except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)
 
@@ -316,7 +322,7 @@ def base_decompile_run_event(
 
 
 def base_decompile_run_common_event(
-    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None, slot=None,
+    event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None, slot=None,
 ):
     """Shared across games from Dark Souls 3 onward.
 
@@ -355,7 +361,7 @@ def base_decompile_run_common_event(
             if looks_like_entity_id(arg, event_id):
                 try:
                     new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
-                except EntityEnumsManager.MissingEntityError:
+                except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)
 

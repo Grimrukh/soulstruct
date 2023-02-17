@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-__all__ = ["BaseBinaryFile", "BASE_BINARY_FILE_T"]
+__all__ = ["BaseBinaryFile", "BASE_BINARY_FILE_T", "BaseJSONEncoder"]
 
 import abc
 import copy
+import json
 import logging
 import re
 import typing as tp
@@ -160,7 +161,7 @@ class BaseBinaryFile:
         file_path = Path(file_path)
         if file_path.suffix != ".json":
             file_path = file_path.with_suffix(file_path.suffix + ".json")
-        write_json(file_path, json_dict, indent=indent, encoding=encoding)
+        write_json(file_path, json_dict, indent=indent, encoding=encoding, encoder=BaseJSONEncoder)
 
     def create_bak(self, file_path: None | str | Path = None, make_dirs=True):
         file_path = self._get_file_path(file_path)
@@ -230,6 +231,13 @@ class BaseBinaryFile:
     def cls_name(self) -> str:
         return self.__class__.__name__
 
+    def __setattr__(self, key: str, value):
+        """Converts `dcx_type` name string (e.g. from JSON) appropriately."""
+        if key == "dcx_type" and isinstance(value, str):
+            super(BaseBinaryFile, self).__setattr__(key, DCXType[value])
+            return
+        super(BaseBinaryFile, self).__setattr__(key, value)
+
     def __repr__(self) -> str:
         lines = [f"{self.cls_name}("]
         for field_name, field_value in fields(self):
@@ -239,3 +247,10 @@ class BaseBinaryFile:
 
 
 BASE_BINARY_FILE_T = tp.TypeVar("BASE_BINARY_FILE_T", bound="BaseBinaryFile")
+
+
+class BaseJSONEncoder(json.JSONEncoder):
+    """Handles `DCXType`."""
+    def default(self, o):
+        if isinstance(o, DCXType):
+            return o.name

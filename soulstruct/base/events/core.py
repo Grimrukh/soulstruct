@@ -33,7 +33,7 @@ def convert_events(
     emevd_class: tp.Type[EMEVD],
     input_type: tp.Optional[str] = None,
     check_hash=False,
-    merge_emevd_sources: tp.Sequence[str | Path] = (),
+    merge_emevd_paths: tp.Sequence[str | Path] = (),
 ):
     """Convert all events from one format to another.
 
@@ -47,7 +47,7 @@ def convert_events(
 
     If `check_hash=True`, the file will not be written if a file with the same hash already exists.
 
-    If any `merge_emevd_sources` are given, sources with a shortest stem (i.e. ignoring ALL file extensions) that
+    If any `merge_emevd_paths` are given, sources with a shortest stem (i.e. ignoring ALL file extensions) that
     matches one of the map's EMEVD file stems will be merged into that `EMEVD` before conversion.
     """
     output_ext = "." + output_type.lower().lstrip(".")
@@ -65,7 +65,7 @@ def convert_events(
     input_ext = "." + input_type.lower().lstrip(".") if input_type is not None else None
     input_directory = Path(input_directory)
     emevd_source_paths = {m.emevd_file_stem: None for m in maps}
-    merge_emevd_sources = [Path(merge_source) for merge_source in merge_emevd_sources]
+    merge_emevd_paths = [Path(merge_source) for merge_source in merge_emevd_paths]
     for available in input_directory.glob("*"):
         parts = available.name.split(".")
         name, ext = parts[0], "." + ".".join(parts[1:])
@@ -81,7 +81,6 @@ def convert_events(
         output_path = output_directory / (name + output_ext)
         name_stem = name.split(".")[0]
         try:
-            # NOTE: EMEVD default `DCX_TYPE` applied automatically for EVS/numeric sources.
             if input_type == "evs":
                 emevd = emevd_class.from_evs_path(source_path, script_directory=input_directory)
             elif input_type == "numeric":
@@ -91,16 +90,23 @@ def convert_events(
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to load {name + output_ext}:\n  {str(ex)}")
 
-        for merge_source in tuple(merge_emevd_sources):
-            if merge_source.stem.startswith(name_stem):
-                merge_emevd, source_type = emevd_class.from_auto_detect_source_type(merge_source)
-                if source_type != "evs":
-                    dump_name = "__" + merge_source.name.split(".")[0] + ".evs.py"
+        for merge_path in tuple(merge_emevd_paths):
+            if merge_path.stem.startswith(name_stem):
+                if any(merge_path.name.endswith(x) for x in (".evs", ".evs.py")):
+                    merge_emevd = emevd_class.from_evs_path(merge_path)
+                elif any(merge_path.name.endswith(x) for x in (".emevd", ".emevd.dcx")):
+                    merge_emevd = emevd_class.from_path(merge_path)
+                    dump_name = "__" + merge_path.name.split(".")[0] + ".evs.py"
                     _LOGGER.info(f"EVS version of merge source file written for inspection: {dump_name}")
-                    merge_emevd.write_evs(merge_source.with_name(dump_name))
+                    merge_emevd.write_evs(merge_path.with_name(dump_name))
+                elif merge_path.name.endswith(".txt"):
+                    merge_emevd = emevd_class.from_numeric_path(merge_path)
+                else:
+                    raise TypeError(f"Unknown EMEVD file source extension: {merge_path}")
+
                 emevd = emevd.merge(merge_emevd)
-                merge_emevd_sources.remove(merge_source)
-                _LOGGER.info(f"Merged '{merge_source.name}' into {name} EMEVD.")
+                merge_emevd_paths.remove(merge_path)
+                _LOGGER.info(f"Merged '{merge_path.name}' into {name} EMEVD.")
         try:
             if output_type == "evs":
                 emevd.write_evs(output_path)
@@ -112,11 +118,11 @@ def convert_events(
                 emevd.write_numeric(output_path)
         except Exception as ex:
             raise EMEVDError(f"Encountered an error while attempting to write {name + output_ext}: {str(ex)}")
-    if merge_emevd_sources:
-        _LOGGER.warning(f"Unused `merge_emevd_sources` after EMEVD conversion: {merge_emevd_sources}")
+    if merge_emevd_paths:
+        _LOGGER.warning(f"Unused `merge_emevd_paths` after EMEVD conversion: {merge_emevd_paths}")
 
 
-def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True):
+def compare_events(emevd_1: EMEVD, emevd_2: EMEVD, use_evs=True):
     """Converts both `EMEVD` sources to raw, decompiled EVS (if `use_evs=True`) or numeric form.
 
     Note that if a source is already an EVS script, it will still be compiled and then decompiled before comparison, so
@@ -127,9 +133,6 @@ def compare_events(source_1, source_2, emevd_class: tp.Type[EMEVD], use_evs=True
 
     TODO: dataclass equality comparison should be possible now...?
     """
-    emevd_1 = emevd_class.from_auto_detect_source_type(source_1)[0]
-    emevd_2 = emevd_class.from_auto_detect_source_type(source_2)[0]
-
     if use_evs:
         string_1 = emevd_1.to_evs()
         string_2 = emevd_2.to_evs()

@@ -14,7 +14,7 @@ from soulstruct.base.events.emevd.decompiler import (
 from soulstruct.eldenring.game_types.map_types import *
 
 from . import enums
-from .entity_enums_manager import EntityEnumsManager
+from .entity_enums_manager import GameEnumsManager
 from .enums import *
 from .emedf import EMEDF
 
@@ -53,7 +53,7 @@ def decompile_instruction(
     req_args: list[tp.Any],
     opt_args: list[tp.Any] = None,
     opt_arg_types="",
-    enums_manager: EntityEnumsManager = None,
+    enums_manager: GameEnumsManager = None,
 ) -> str:
     """Uses a manual function (decorated below) or EMEDF information to decompile an EMEVD instruction to EVS format.
 
@@ -75,7 +75,7 @@ def decompile_instruction(
 
 @_decompile(2000, 0, uses_opt_args=True)
 def _RunEvent(
-    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     return base_decompile_run_event(
         slot, event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager
@@ -84,7 +84,7 @@ def _RunEvent(
 
 @_decompile(2000, 6, uses_opt_args=True)
 def _RunCommonEvent(
-    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: EntityEnumsManager = None
+    slot: int, event_id: int, first_arg: int, *opt_args, arg_types: str, enums_manager: GameEnumsManager = None
 ):
     return base_decompile_run_common_event(
         event_id, first_arg, *opt_args, arg_types=arg_types, enums_manager=enums_manager, slot=slot

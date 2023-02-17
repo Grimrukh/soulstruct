@@ -71,28 +71,28 @@ class SIBCAM(GameFile):
         reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)
 
         self.unk_pre_vector_count = reader.read(0x24)
-        vector_count = reader.unpack_value("I")
+        vector_count = reader["I"]
         self.unk_post_vector_count = reader.read(0x14C)
 
         self.camera_name = reader.unpack_string(encoding="ASCII")
         reader.align(4)
 
         self.unk_pre_frame_count = reader.read(0x4)
-        frame_count = reader.unpack_value("I")  # TODO: equal to length of `self.camera_animation`
+        frame_count = reader["I"]  # TODO: equal to length of `self.camera_animation`
         self.unk_post_frame_count = reader.read(0x20)
 
         frame_refs = [FrameRef(*reader.unpack("8I")) for _ in range(frame_count)]
 
-        self.initial_fov = reader.unpack_value("f")
+        self.initial_fov = reader["f"]
 
         self.unk_pre_fov_count = reader.read(4)  # 'i'?
-        self.fov_keyframe_count = reader.unpack_value("I")
+        self.fov_keyframe_count = reader["I"]
         self.unk_post_fov_count = reader.read(4)  # 'i'?
 
         self.fov_keyframes = [FoVKeyframe(*reader.unpack("I3f")) for _ in range(self.fov_keyframe_count)]
 
         # Position, rotation, and scale vectors indexed by `FrameRef`.
-        vectors = [Vector3(reader.unpack_value("3f")) for _ in range(vector_count)]
+        vectors = [Vector3(reader["3f"]) for _ in range(vector_count)]
 
         # Done reading the file; now resolve into `CameraFrameTransform` list.
         self.camera_animation = [

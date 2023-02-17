@@ -398,7 +398,7 @@ class Binder(BaseBinaryFile):
         # Test for endianness is a little complicated, as `flags.is_big_endian` can override the header `big_endian`.
         big_endian, bit_big_endian = reader.unpack("??", offset=0xD)
         flags_fmt = ">B" if bit_big_endian else "<B"
-        flags = BinderFlags.from_byte(reader.unpack_value(flags_fmt, offset=0xC), bit_big_endian)
+        flags = BinderFlags.from_byte(reader[flags_fmt, 0xC], bit_big_endian)
         byte_order = ByteOrder.BigEndian if (big_endian or flags.is_big_endian) else ByteOrder.LittleEndian
 
         header_struct = BinderHeaderV3.from_bytes(reader, byte_order=byte_order)

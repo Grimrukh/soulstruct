@@ -103,6 +103,7 @@ class MSGDirectory(_BaseMSGDirectory):
         ("menu", 92): ("menu", 103),
     }
 
+    # NOTE: This is for the GUI, which will always sync Patch categories, so those aren't needed.
     MAIN_CATEGORIES = (
         "NPCNames",
         "PlaceNames",
@@ -175,7 +176,7 @@ class MSGDirectory(_BaseMSGDirectory):
     MenuText_OtherPatch = fmg_property("menu", 123)  # type: FMG
     NPCNames = fmg_property("item", 18)  # type: FMG
     NPCNamesPatch = fmg_property("menu", 119)  # type: FMG
-    OpeningSubtitles = fmg_property("item", 3)  # type: FMG
+    OpeningSubtitles = fmg_property("menu", 3)  # type: FMG
     PlaceNames = fmg_property("item", 19)  # type: FMG
     PlaceNamesPatch = fmg_property("menu", 120)  # type: FMG
     RingDescriptions = fmg_property("item", 27)  # type: FMG
@@ -184,14 +185,14 @@ class MSGDirectory(_BaseMSGDirectory):
     RingNamesPatch = fmg_property("menu", 113)  # type: FMG
     RingSummaries = fmg_property("item", 23)  # type: FMG
     RingSummariesPatch = fmg_property("menu", 112)  # type: FMG
-    SoapstoneMessages = fmg_property("item", 2)  # type: FMG
+    SoapstoneMessages = fmg_property("menu", 2)  # type: FMG
     SoapstoneMessagesPatch = fmg_property("menu", 107)  # type: FMG
     SpellDescriptions = fmg_property("item", 29)  # type: FMG
     SpellDescriptionsPatch = fmg_property("menu", 105)  # type: FMG
     SpellNames = fmg_property("item", 14)  # type: FMG
     SpellNamesPatch = fmg_property("menu", 118)  # type: FMG
-    SpellSummaries = fmg_property("item", 28)  # type: FMG
-    Subtitles = fmg_property("item", 1)  # type: FMG
+    SpellSummaries = fmg_property("item", 28)  # type: FMG  # NOTE: No patch.
+    Subtitles = fmg_property("menu", 1)  # type: FMG
     SubtitlesPatch = fmg_property("menu", 104)  # type: FMG
     SystemMessages_Win32 = fmg_property("menu", 92)  # type: FMG
     SystemMessages_Win32Patch = fmg_property("menu", 103)  # type: FMG

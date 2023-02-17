@@ -122,7 +122,10 @@ class ActionHistory:
             return False
 
 
-TagData = namedtuple("TagData", ("foreground", "pattern", "offsets"))
+class TagData(tp.NamedTuple):
+    foreground: str  # hex color
+    pattern: str
+    offsets: tuple[int, int]
 
 
 _TEXT_EDITOR_TK_SETUP = """

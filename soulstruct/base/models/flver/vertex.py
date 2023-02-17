@@ -339,7 +339,7 @@ class BufferLayout:
                     count += 2
         return count
 
-    def get_vertex_read_function(self, uv_factor: int) -> tp.Callable[[BinaryReader, Vertex], None]:
+    def get_vertex_read_function(self, uv_factor: int) -> tuple[tp.Callable[[tuple, Vertex, int], int], str]:
         """Construct a relatively efficient function that can be used to read data for each `Vertex` whose data lies
         in a `VertexBuffer` with this layout."""
 
@@ -372,10 +372,7 @@ class BufferLayout:
             member_infos.append(member_info)
             full_fmt += member_info.fmt
 
-        def read_vertex_data(reader: BinaryReader, vertex: Vertex):
-            vertex.raw = reader.read(struct.calcsize("<" + full_fmt))
-            data = struct.unpack("<" + full_fmt, vertex.raw)
-            index = 0
+        def read_vertex_data(data: tuple, vertex: Vertex, index: int) -> int:
             for info in member_infos:
                 raw_value = data[index:index + info.size]  # raw tuple
                 value = info.read_callback(raw_value) if info.read_callback is not None else list(raw_value)
@@ -388,8 +385,9 @@ class BufferLayout:
                 else:
                     setattr(vertex, info.attr, value)
                 index += info.size
+            return index
 
-        return read_vertex_data
+        return read_vertex_data, full_fmt
 
     def get_vertex_write_function(self, uv_factor: int) -> tp.Callable[[BinaryWriter, Vertex], None]:
         """Construct a relatively efficient function that can be used to write data for each `Vertex` into a packed
@@ -527,7 +525,6 @@ class Vertex:
     bitangent: list[float] = field(default_factory=lambda: [0.0] * 4)
     colors: list[list[float]] = field(default_factory=list)
 
-    raw: bytes = field(default=b"", init=False, repr=False)
     uv_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
     tangent_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
     color_queue: list[list[float]] = field(default_factory=list, init=False, repr=False)
@@ -613,14 +610,13 @@ class VertexBufferSizeError(SoulstructError):
 
 @dataclass(slots=True)
 class VertexBufferStruct(BinaryStruct):
-
-    _buffer_index: int
+    buffer_index: int
     layout_index: int
-    _vertex_size: int
-    _vertex_count: int
+    vertex_size: int
+    vertex_count: int
     _pad1: bytes = field(init=False, **BinaryPad(8))
-    _buffer_length: int
-    _buffer_offset: int
+    buffer_length: int
+    buffer_offset: int
 
 
 @dataclass(slots=True)
@@ -650,25 +646,32 @@ class VertexBuffer:
     ):
         layout = layouts[self.layout_index]
         layout_size = layout.get_total_size()
-        expected_size = self._struct._buffer_length / self._struct._vertex_count
-        if self._struct._vertex_size != expected_size:
+        expected_size = self._struct.buffer_length / self._struct.vertex_count
+        if self._struct.vertex_size != expected_size:
             raise ValueError(
-                f"Vertex buffer size ({self._struct._vertex_size}) != buffer length / vertex count ({expected_size})."
+                f"Vertex buffer size ({self._struct.vertex_size}) != buffer length / vertex count ({expected_size})."
             )
-        if self._struct._vertex_size != layout_size:
+        if self._struct.vertex_size != layout_size:
             # This happens for a few vanilla meshes; we ignore such meshes.
             # TODO: I've looked at the buffer data for mesh 0 of m8000B2A10, and it appears very abnormal. In fact,
             #  some of the 28-byte data clusters appear to just be counting upward as integers; there definitely does
             #  not seem to be any position float data in there. Later on, they appear to change into random shorts.
-            raise VertexBufferSizeError(self._struct._vertex_size, layout_size)
+            raise VertexBufferSizeError(self._struct.vertex_size, layout_size)
 
-        read_func = layout.get_vertex_read_function(uv_factor)
+        read_func, full_fmt = layout.get_vertex_read_function(uv_factor)
 
-        with reader.temp_offset(vertex_data_offset + self._struct._buffer_offset):
+        with reader.temp_offset(vertex_data_offset + self._struct.buffer_offset):
+            data = reader.unpack("<" + full_fmt * len(vertices))
+            index = 0
             for vertex in vertices:
-                read_func(reader, vertex)
+                index = read_func(data, vertex, index)
 
         self._struct = None
+
+    def get_vertex_count(self) -> int:
+        if self._struct is None:
+            raise ValueError("Cannot get `VertexBuffer` vertex count after struct has been consumed.")
+        return self._struct.vertex_count
 
     def to_flver_writer(
         self,
@@ -682,11 +685,11 @@ class VertexBuffer:
         VertexBufferStruct.object_to_writer(
             self,
             writer,
-            _buffer_index=mesh_vertex_buffer_index,
-            _vertex_size=layout_size,
-            _vertex_count=mesh_vertex_count,
-            _buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
-            _buffer_offset=None,  # reserved
+            buffer_index=mesh_vertex_buffer_index,
+            vertex_size=layout_size,
+            vertex_count=mesh_vertex_count,
+            buffer_length=layout_size * mesh_vertex_count if version >= 0x20005 else 0,
+            buffer_offset=RESERVED,
         )
 
     def pack_buffer(
@@ -698,7 +701,7 @@ class VertexBuffer:
         uv_factor: int,
     ):
         layout = buffer_layouts[self.layout_index]
-        writer.fill("_buffer_offset", buffer_offset, obj=self)
+        writer.fill("buffer_offset", buffer_offset, obj=self)
 
         write_func = layout.get_vertex_write_function(uv_factor)
 

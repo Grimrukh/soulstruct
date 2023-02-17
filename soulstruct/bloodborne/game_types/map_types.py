@@ -25,7 +25,6 @@ __all__ = [
     "MapOffsetEvent",
     "NavigationEvent",
     "EnvironmentEvent",
-    "NPCInvasionEvent",
 
     "MapPart",
     "MapPiece",
@@ -55,6 +54,8 @@ __all__ = [
     "AnimatedEntityTyping",
     "MapPieceTyping",
     "CollisionTyping",
+    "SoundEventTyping",
+    "EnvironmentEventTyping",
     "NavigationEventTyping",
     "VFXEventTyping",
 ]
@@ -143,6 +144,9 @@ class VFXEvent(MapEvent):
     Can be created or deleted. When deleted, the particles already emitted can be allowed to live out their remaining
     life (`erase_root_only=True` by default).
     """
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
@@ -249,13 +253,6 @@ class EnvironmentEvent(MapEvent):
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
         return ("Events", "Environments") if pluralized_subtype else ("Events", "Environment")
-
-
-class NPCInvasionEvent(MapEvent):
-    """Event describing invasion of NPC's world (e.g. Lautrec) in MSB."""
-    @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
-        return ("Events", "NPCInvasion") if pluralized_subtype else ("Events", "NPCInvasion")
 
 
 class Region(MapEntity):
@@ -459,7 +456,7 @@ CharacterTyping = tp.Union[Character, int]
 AnimatedEntityTyping = tp.Union[Character, Object, int]
 MapPieceTyping = tp.Union[MapPiece, int]
 CollisionTyping = tp.Union[Collision, int]
+SoundEventTyping = tp.Union[SoundEvent, int]
 NavigationEventTyping = tp.Union[NavigationEvent, int]
 EnvironmentEventTyping = tp.Union[EnvironmentEvent, int]
-NPCInvasionEventTyping = tp.Union[NPCInvasionEvent, int]
 VFXEventTyping = tp.Union[VFXEvent, int]

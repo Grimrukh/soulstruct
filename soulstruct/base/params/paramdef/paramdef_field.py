@@ -122,7 +122,7 @@ class ParamDefField:
         kwargs = {"index": field_index, "param_type": param_type}
 
         if uses_string_offsets:
-            display_name_offset = reader.unpack_value("v")
+            display_name_offset = reader["v"]
             kwargs["display_name"] = reader.unpack_string(display_name_offset, encoding="utf-16-le")
         else:
             raw_display_name = reader.read(64)
@@ -142,17 +142,17 @@ class ParamDefField:
         else:
             kwargs["default"], kwargs["minimum"], kwargs["maximum"], kwargs["increment"] = reader.unpack("4f")
 
-        kwargs["edit_flags"] = ParamDefEditFlags(reader.unpack_value("i"))
-        kwargs["size"] = reader.unpack_value("i")
+        kwargs["edit_flags"] = ParamDefEditFlags(reader["i"])
+        kwargs["size"] = reader["i"]
 
-        description_offset = reader.unpack_value("v")
+        description_offset = reader["v"]
         if description_offset != 0:
             kwargs["description"] = reader.unpack_string(offset=description_offset, encoding=encoding)
         else:
             kwargs["description"] = ""
 
         if uses_string_offsets:
-            internal_type_offset = reader.unpack_value("v")
+            internal_type_offset = reader["v"]
             kwargs["internal_type_name"] = reader.unpack_string(offset=internal_type_offset, encoding="ASCII")
         else:
             kwargs["internal_type_name"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
@@ -160,7 +160,7 @@ class ParamDefField:
         kwargs["bit_count"] = -1  # default (does not use bit field)
         if format_version >= 102:
             if uses_string_offsets:
-                name_offset = reader.unpack_value("v")
+                name_offset = reader["v"]
                 name = kwargs["name"] = reader.unpack_string(offset=name_offset, encoding="ASCII")
             else:
                 name = kwargs["name"] = reader.unpack_string(length=32, encoding="shift_jis_2004")
@@ -170,7 +170,7 @@ class ParamDefField:
 
             # NOTE: `length` is set and validated in `__post_init__`, as it uses the attached Python type information.
 
-        kwargs["sort_id"] = reader.unpack_value("i") if format_version >= 104 else -1
+        kwargs["sort_id"] = reader["i"] if format_version >= 104 else -1
 
         kwargs["unk_xb8"] = kwargs["unk_xc0"] = kwargs["unk_xc8"] = ""
         if format_version >= 200:
@@ -195,14 +195,14 @@ class ParamDefField:
                 reader.assert_pad(32)  # four null 64-bit values
             elif issubclass(kwargs["display_type"], (field_types.f32, field_types.angle32)):
                 for key in keys:
-                    kwargs[key] = reader.unpack_value("f")
+                    kwargs[key] = reader["f"]
                     reader.assert_pad(4)
             elif issubclass(kwargs["display_type"], field_types.f64):
                 for key in keys:
-                    kwargs[key] = reader.unpack_value("d")
+                    kwargs[key] = reader["d"]
             elif kwargs["display_type"].size() <= 4:
                 for key in keys:
-                    kwargs[key] = reader.unpack_value("i")
+                    kwargs[key] = reader["i"]
                     reader.assert_pad(4)
             # NOTE: No 64-bit integer fields have been seen in any game yet.
             else:

@@ -34,7 +34,7 @@ def new_guid() -> str:
 
 def read_lp_string(reader: BinaryReader, strip=True, length_fmt="I") -> str:
     """Read a length-prefixed UTF-8 string."""
-    length = reader.unpack_value(length_fmt)
+    length = reader[length_fmt]
     return reader.unpack_string(length=length, strip=strip, encoding="utf-8")
 
 
@@ -416,9 +416,9 @@ class UserProperty(XMLObject):
 
         def unpack_value(self, reader: BinaryReader) -> int | float | str:
             if self == self.INTEGER:
-                return reader.unpack_value("i")
+                return reader["i"]
             elif self == self.FLOATING_POINT:
-                return reader.unpack_value("f")
+                return reader["f"]
             elif self == self.STRING:
                 return reader.unpack_string(offset=reader["I"])
             else:
@@ -675,14 +675,14 @@ class Envelope(XMLObject):
 
     @classmethod
     def from_fev_reader(cls, reader: BinaryReader) -> Envelope:
-        kwargs = {"parent_index": reader.unpack_value("i"), "name": read_lp_string(reader)}
+        kwargs = {"parent_index": reader["i"], "name": read_lp_string(reader)}
         header = cls.STRUCT.from_bytes(reader)
         combined_flags = header.pop("_combined_flags")
         kwargs["effect"] = cls.EffectType(combined_flags & ~0x01 & 0xFFFF)
         kwargs["is_muted"] = bool(combined_flags & 0x01)
         kwargs["flags"] = combined_flags & ~0xFFFF
         kwargs["points"] = [Point.from_fev_reader(reader) for _ in range(header.pop("_point_count"))]
-        kwargs["control_parameter_index"], kwargs["mapping_method"] = reader.unpack_value("II")
+        kwargs["control_parameter_index"], kwargs["mapping_method"] = reader["II"]
         return cls(**kwargs)
 
     def to_xml_lines(self, envelope_name: str, envelopes: list[Envelope], parameters: list[Parameter]) -> list[str]:
