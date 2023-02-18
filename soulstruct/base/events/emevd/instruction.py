@@ -85,8 +85,8 @@ class InstructionStruct(BinaryStruct):
     category: uint
     index: uint
     base_args_size: varuint
-    base_args_offset: varint
-    event_layers_offset: varint
+    base_args_local_offset: varint
+    event_layers_local_offset: varint
     # Pad 4 (or maybe align to 8) for 32-bit classes.
 
 
@@ -137,7 +137,7 @@ class Instruction(abc.ABC):
         return self.display_args_fmt.replace("s", "I").replace("|", "")
 
     @classmethod
-    def from_emevd_reader(cls, reader: BinaryReader, base_arg_data_offset: int, event_layers_table_offset: int):
+    def from_emevd_reader(cls, reader: BinaryReader, base_arg_data_offset: int, event_layers_offset: int):
 
         header = InstructionStruct.from_bytes(reader)
         if not reader.long_varints:
@@ -149,7 +149,7 @@ class Instruction(abc.ABC):
                 reader,
                 header.category,
                 header.index,
-                base_arg_data_offset + header.base_args_offset,
+                base_arg_data_offset + header.base_args_local_offset,
                 header.base_args_size,
                 cls.EMEDF,
             )
@@ -161,8 +161,8 @@ class Instruction(abc.ABC):
             raise
 
         # Process event layers.
-        if header.event_layers_offset > 0:
-            with reader.temp_offset(event_layers_table_offset + header.event_layers_offset):
+        if header.event_layers_local_offset > 0:
+            with reader.temp_offset(event_layers_offset + header.event_layers_local_offset):
                 event_layers = EventLayers.from_emevd_reader(reader)
         else:
             event_layers = None
@@ -311,24 +311,29 @@ class Instruction(abc.ABC):
 
     def to_emevd_writer(self, writer: BinaryWriter):
         InstructionStruct.object_to_writer(self, writer)
+        if not writer.long_varints:
+            writer.pad(4)
 
-    def pack_base_args(self, writer: BinaryWriter):
+    def pack_base_args(self, writer: BinaryWriter, base_args_start_offset: int):
         if self.category == 1014:  # 'DefineLabel' category has NO arg data offset, not even to empty bytes
-            writer.fill("base_args_offset", -1, obj=self)
+            writer.fill("base_args_local_offset", -1, obj=self)
             return
-        writer.fill_with_position("base_args_offset", obj=self)
+        writer.fill("base_args_local_offset", writer.position - base_args_start_offset, obj=self)
         packed_base_args = struct.pack(f"@{self.struct_args_fmt}0i", *self.args_list) if self.args_list else b""
         writer.append(packed_base_args)
 
-    def pack_event_layers(self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int]):
+    def pack_event_layers(
+        self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int], event_layers_start_offset: int
+    ):
         if not self.event_layers:
-            writer.fill("event_layers_offset", 0, obj=self)
+            writer.fill("event_layers_local_offset", -1, obj=self)
         elif self.event_layers in existing_event_layers:
-            writer.fill("event_layers_offset", existing_event_layers[self.event_layers], obj=self)
+            writer.fill("event_layers_local_offset", existing_event_layers[self.event_layers], obj=self)
         else:
             # Write new `EventLayers`.
-            writer.fill_with_position("event_layers_offset", obj=self)
-            existing_event_layers[self.event_layers] = writer.position
+            relative_offset = event_layers_start_offset - writer.position
+            writer.fill("event_layers_local_offset", relative_offset, obj=self)
+            existing_event_layers[self.event_layers] = relative_offset
             self.event_layers.to_emevd_writer(writer)
 
     def __repr__(self) -> str:

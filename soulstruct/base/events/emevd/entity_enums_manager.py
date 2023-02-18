@@ -188,14 +188,13 @@ class GameEnumsManager(abc.ABC):
                             continue  # skip member
                     elif member.value in self.all_enum_values:
                         existing_entry_type, existing_enum_class = self.all_enum_values[member.value]
-                        if game_enum_class is existing_enum_class:
-                            continue  # same class
-                        _LOGGER.info(
-                            f"Entity ID {member.value} in enum `{game_enum_name}` (for {game_type.__name__}) is "
-                            f"already defined by enum `{existing_enum_class.__name__}` (in "
-                            f"{existing_entry_type.__name__}). This shouldn't cause a game issue, but it may cause you "
-                            f"headaches."
-                        )
+                        if game_type not in existing_enum_class.__mro__ and existing_enum_class not in game_type.__mro__:
+                            _LOGGER.info(
+                                f"Entity ID {member.value} in enum `{game_enum_name}` (for {game_type.__name__}) is "
+                                f"already defined by enum `{existing_enum_class.__name__}` (in "
+                                f"{existing_entry_type.__name__}). This shouldn't cause a game issue, but it may cause "
+                                f"you headaches."
+                            )
                     if member.value in self.protected_values:
                         raise ValueError(
                             f"Entity ID {member.value} in enum `{game_enum_name}` is a protected entity ID: "
@@ -246,18 +245,22 @@ class GameEnumsManager(abc.ABC):
         elif any_class:
             raise ValueError("If `any_class=True`, do not give any `game_types` arguments.")
 
-        print(any_class, game_types)
-
+        type_valid = False
         for game_type in game_types:
             if game_type not in self.enums:
-                # No enums managed for this game type. Return
-                raise self.MissingEnumValueError(f"No enums available for game type `{game_type.__name__}`.")
+                # No enums managed for this game type.
+                continue
             try:
+                type_valid = True
                 enum_info = self.enums[game_type][enum_value]
                 break  # found
             except KeyError:
                 continue  # try other passed-in (or any) game types
         else:
+            if not type_valid:
+                raise self.MissingEnumValueError(
+                    f"No enums available for any of the given game types: `{[gt.__name__ for gt in game_types]}`."
+                )
             # Entity ID not found under any of the given classes.
             all_cls_names = "Any" if any_class else " | ".join(gt.__name__ for gt in game_types)
             self.missing_enums.add((all_cls_names, enum_value))

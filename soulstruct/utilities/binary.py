@@ -436,9 +436,13 @@ class BinaryWriter(BinaryBase):
         self._array[offset:offset + len(packed)] = packed
         self.reserved.pop(name)  # pop after successful fill only
 
-    def fill_with_position(self, name: str, obj: object = None):
-        """Fill `name` (optionally also identified by `id(obj)` with current `writer.position`."""
+    def fill_with_position(self, name: str, obj: object = None) -> int:
+        """Fill `name` (optionally also identified by `id(obj)` with current `writer.position`.
+
+        Also returns current `writer.position` for convenience, as it is often needed right after.
+        """
         self.fill(name, self.position, obj=obj)
+        return self.position
 
     def __bytes__(self) -> bytes:
         """Just checks that no reserved offsets remain, then converts stored `bytearray` to immutable `bytes`."""
@@ -993,6 +997,15 @@ class BinaryStruct:
     byte_order: None | ByteOrder = dataclasses.field(init=False, default=None)
     long_varints: None | bool = dataclasses.field(init=False, default=None)
 
+    def __post_init__(self):
+        if not self._STRUCT_INITIALIZED:
+            self._initialize_struct_cls()
+
+        # Set single-asserted fields to their default values, regardless of `init` setting.
+        for field, field_metadata in zip(self._FIELDS, self._FIELD_METADATA, strict=True):
+            if (asserted := field_metadata.get_single_asserted()) is not None:
+                setattr(self, field.name, asserted)
+
     @classmethod
     def _initialize_struct_cls(cls):
         if not dataclasses.is_dataclass(cls):
@@ -1216,6 +1229,9 @@ class BinaryStruct:
         If `long_varints` and/or `field_values` are given, `should_skip_func` will be checked for each field (e.g. when
         packing). This can't be done when unpacking, though, and this method is therefore not used.
         """
+        if not cls._STRUCT_INITIALIZED:
+            cls._initialize_struct_cls()
+
         full_fmt = ""
         used_bits = 0
         bit_field_max = 0

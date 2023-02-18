@@ -106,7 +106,9 @@ class SingleEventArg:
     # Computed from above sets.
     combined_name: str = field(default="")
     combined_fmt: str = field(default="")
-    combined_py_types: tuple[tp.Type, ...] = field(default=())
+    combined_py_types: tuple[tp.Type, ...] = ()
+    # Subset of the above; ONLY contains game types (for enum lookups).
+    combined_game_types: tuple[tp.Type[BaseGameObject], ...] = ()
 
     def add_info(self, event_arg: EventArg):
         """Merge in information from a single replacement usage."""
@@ -160,17 +162,23 @@ class SingleEventArg:
             self.combined_fmt = next(iter(self.fmts))
 
         all_py_types = []
+        all_game_types = []
         for py_type in self.py_types:
             try:  # convert `typing.Union` to `tuple`
                 origin = tp.get_origin(py_type)
             except AttributeError:  # implies `py_type` is a real Python type (no `__origin__`)
                 all_py_types.append(py_type)
+                if issubclass(py_type, BaseGameObject):
+                    all_game_types.append(py_type)
             else:
                 union_types = tp.get_args(py_type) if origin is tp.Union else ()
                 for union_type in union_types:
                     if union_type not in all_py_types:
                         all_py_types.append(union_type)
+                        if issubclass(union_type, BaseGameObject):
+                            all_game_types.append(union_type)
         self.combined_py_types = tuple(all_py_types)
+        self.combined_game_types = tuple(all_game_types)
 
 
 @dataclass(slots=True)
@@ -220,9 +228,9 @@ class EventSignature:
 class EventStruct(BinaryStruct):
     event_id: varuint
     instructions_count: varuint
-    instructions_offset: varuint
+    instructions_local_offset: varint
     event_arg_replacements_count: varuint
-    event_arg_replacements_offset: varuint
+    event_arg_replacements_local_offset: varint
     on_rest_behavior: uint  # always 32-bit
     _pad1: bytes = field(init=False, **BinaryPad(4))
 
@@ -279,20 +287,22 @@ class Event(abc.ABC):
     ) -> Self:
         event_struct = EventStruct.from_bytes(reader)
 
-        with reader.temp_offset(instruction_table_offset + event_struct.instructions_offset):
-            instructions = [
-                cls.INSTRUCTION_CLASS.from_emevd_reader(reader, base_arg_data_offset, event_layers_table_offset)
-                for _ in range(event_struct.instructions_count)
-            ]
+        if event_struct.instructions_local_offset != -1:
+            with reader.temp_offset(instruction_table_offset + event_struct.instructions_local_offset):
+                instructions = [
+                    cls.INSTRUCTION_CLASS.from_emevd_reader(reader, base_arg_data_offset, event_layers_table_offset)
+                    for _ in range(event_struct.instructions_count)
+                ]
 
-        with reader.temp_offset(event_arg_table_offset + event_struct.event_arg_replacements_offset):
-            # Read `EventArg`s but attach each one to its `Instruction` rather than here.
-            event_arg_replacements = [
-                EventArg.from_emevd_reader(reader)
-                for _ in range(event_struct.event_arg_replacements_count)
-            ]
-            for replacement in event_arg_replacements:
-                instructions[replacement.instruction_line].event_arg_replacements.append(replacement)
+        if event_struct.event_arg_replacements_local_offset != -1:
+            with reader.temp_offset(event_arg_table_offset + event_struct.event_arg_replacements_local_offset):
+                # Read `EventArg`s but attach each one to its `Instruction` rather than here.
+                event_arg_replacements = [
+                    EventArg.from_emevd_reader(reader)
+                    for _ in range(event_struct.event_arg_replacements_count)
+                ]
+                for replacement in event_arg_replacements:
+                    instructions[replacement.instruction_line].event_arg_replacements.append(replacement)
 
         return cls(event_struct.event_id, OnRestBehavior(event_struct.on_rest_behavior), instructions)
 
@@ -692,33 +702,40 @@ class Event(abc.ABC):
     def to_emevd_writer(self, writer: BinaryWriter):
         EventStruct.object_to_writer(self, writer, instructions_count=len(self.instructions))
 
-    def pack_instructions(self, writer: BinaryWriter):
-        writer.fill_with_position("instructions_offset", obj=self)
+    def pack_instructions(self, writer: BinaryWriter, instructions_offset: int):
+        writer.fill("instructions_local_offset", writer.position - instructions_offset, obj=self)
         for instruction in self.instructions:
             instruction.to_emevd_writer(writer)
 
-    def pack_instruction_base_args(self, writer: BinaryWriter):
+    def pack_instruction_base_args(self, writer: BinaryWriter, base_args_data_offset: int):
         for instruction in self.instructions:
-            instruction.pack_base_args(writer)
+            instruction.pack_base_args(writer, base_args_data_offset)
 
-    def pack_event_arg_replacements(self, writer: BinaryWriter) -> int:
+    def pack_event_arg_replacements(self, writer: BinaryWriter, event_arg_replacements_offset: int) -> int:
         """Returns the number of event arg replacements written (for summing in EMEVD header)."""
-        writer.fill_with_position("event_arg_replacements_offset", obj=self)
         event_arg_replacements = []  # type: list[EventArg]
         for instruction in self.instructions:
             event_arg_replacements += instruction.event_arg_replacements
 
-        # Sort arg replacements to better match original EMEVD resources. (Should be purely cosmetic.)
-        for replacement in sorted(
-            event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.instruction_line)
-        ):
-            replacement.to_emevd_writer(writer)
+        if event_arg_replacements:
+            # Sort arg replacements to better match original EMEVD resources. (Should be purely cosmetic.)
+            event_arg_replacements_local_offset = writer.position - event_arg_replacements_offset
+            writer.fill("event_arg_replacements_local_offset", event_arg_replacements_local_offset, obj=self)
+            for replacement in sorted(
+                event_arg_replacements, key=lambda arg_r: (arg_r.read_from_byte, arg_r.instruction_line)
+            ):
+                replacement.to_emevd_writer(writer)
+        else:
+            writer.fill("event_arg_replacements_local_offset", -1, obj=self)
+
         return len(event_arg_replacements)
 
-    def pack_instruction_event_layers(self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int]):
+    def pack_instruction_event_layers(
+        self, writer: BinaryWriter, existing_event_layers: dict[EventLayers, int], event_layers_start_offset: int
+    ):
         """Checks `existing_event_layers` (which maps packed `event_layers_uint` to offsets for reuse)."""
         for instruction in self.instructions:
-            instruction.pack_event_layers(writer, existing_event_layers)
+            instruction.pack_event_layers(writer, existing_event_layers, event_layers_start_offset)
 
     @staticmethod
     def _indent_and_wrap_instruction(instr: str, wrap_limit=121, indent=4):

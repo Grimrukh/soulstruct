@@ -35,7 +35,7 @@ _EVENT_CALL_RE = re.compile(r"( *)(Event|CommonFunc)_(\d+)\(([\d\-,. \n]+)\) *(\
 @dataclass(slots=True)
 class EMEVDHeaderStruct(BinaryStruct):
     """Indicates fields that will always be present in this header, but cannot be used."""
-    _signature: bytes = field(**BinaryString(4, asserted=b"EVD"))
+    _signature: bytes = field(init=False, **BinaryString(4, asserted=b"EVD"))
     big_endian: bool
     varint_size_check: sbyte = field(**Binary(asserted=[-1, 0]))  # -1 if True, 0 if False
     version_unk_1: bool
@@ -46,8 +46,8 @@ class EMEVDHeaderStruct(BinaryStruct):
     events_offset: varuint
     instructions_count: varuint
     instructions_offset: varuint
-    _unknown_count: varuint = field(**Binary(asserted=0))  # unused in all games
-    unknown_offset: varuint  # unused in all games (but cannot be asserted)
+    _unknown_count: varuint = field(init=False, **Binary(asserted=0))  # unused in all games
+    unknown_offset: varuint  # unused in all games (but still an offset, at `base_arg_data_offset`)
     event_layers_count: varuint
     event_layers_offset: varuint
     event_arg_replacements_count: varuint
@@ -153,8 +153,9 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
-        byte_order = ByteOrder.from_reader_peek(reader, 1, 5, b"\01", b"\00")
-        long_varints = long_varints_from_reader_peek(reader, 1, 6, b"\xFF", b"\00")
+        print(reader.peek(6))
+        byte_order = ByteOrder.from_reader_peek(reader, 1, 4, b"\01", b"\00")
+        long_varints = long_varints_from_reader_peek(reader, 1, 5, b"\xFF", b"\00")
         reader.default_byte_order = byte_order
         reader.long_varints = long_varints
 
@@ -417,9 +418,9 @@ class EMEVD(GameFile, abc.ABC):
                     except ValueError:
                         continue
                     try:
-                        py_types = event_args[j - 1].combined_py_types
-                        if py_types:
-                            args[j] = f"{enums_manager.check_out_enum(int_value, *py_types)}"
+                        game_types = event_args[j - 1].combined_game_types
+                        if game_types:
+                            args[j] = f"{enums_manager.check_out_enum(int_value, *game_types)}"
                     except enums_manager.EnumManagerError:
                         pass
                 kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(arg_names, args[1:], strict=True)]
@@ -440,21 +441,35 @@ class EMEVD(GameFile, abc.ABC):
 
         self.regenerate_signatures()
 
-        writer = EMEVDHeaderStruct.object_to_writer(
-            self,
-            byte_order=self.byte_order,
-            long_varints=self.long_varints,
+        writer = BinaryWriter(byte_order=self.byte_order, long_varints=self.long_varints)
+
+        header = EMEVDHeaderStruct(
             big_endian=self.byte_order == ByteOrder.BigEndian,
             varint_size_check=-1 if self.long_varints else 0,
             version_unk_1=self.HEADER_VERSION_INFO[0],
             version_unk_2=self.HEADER_VERSION_INFO[1],
             version=self.HEADER_VERSION_INFO[2],
+            file_size=RESERVED,
             events_count=len(self.events),
+            events_offset=RESERVED,
             instructions_count=sum([e.instruction_count for e in self.events.values()]),
+            instructions_offset=RESERVED,
+            unknown_offset=RESERVED,
+            event_layers_count=RESERVED,
+            event_layers_offset=RESERVED,
+            event_arg_replacements_count=RESERVED,
+            event_arg_replacements_offset=RESERVED,
             linked_files_count=len(self.linked_file_offsets),
+            linked_files_offset=RESERVED,
+            base_arg_data_size=RESERVED,
+            base_arg_data_offset=RESERVED,
             packed_strings_size=len(self.packed_strings),
-            # All remaining fields (offsets/counts/file size) are reserved.
+            packed_strings_offset=RESERVED,
         )
+        header.to_writer(writer, reserve_obj=self)
+
+        if not self.long_varints:
+            writer.pad(4)
 
         events = tuple(self.events.values())
 
@@ -465,16 +480,16 @@ class EMEVD(GameFile, abc.ABC):
         # Count already written.
 
         # Write instruction headers.
-        writer.fill_with_position("instructions_offset", obj=self)
+        instructions_offset = writer.fill_with_position("instructions_offset", obj=self)
         for event in events:
-            event.pack_instructions(writer)
+            event.pack_instructions(writer, instructions_offset)
         # Count already written.
 
         # Write event layers.
-        writer.fill_with_position("event_layers_offset", obj=self)
+        event_layers_offset = writer.fill_with_position("event_layers_offset", obj=self)
         existing_event_layers = {}  # type: dict[EventLayers, int]
         for event in events:
-            event.pack_instruction_event_layers(writer, existing_event_layers)
+            event.pack_instruction_event_layers(writer, existing_event_layers, event_layers_offset)
         writer.fill("event_layers_count", len(existing_event_layers), obj=self)
 
         # NOTE: The order of tables from here (base args, event arg replacements, linked files, packed strings) does
@@ -487,19 +502,16 @@ class EMEVD(GameFile, abc.ABC):
         base_args_start = writer.position
         writer.fill_with_position("base_arg_data_offset", obj=self)
         for event in events:
-            event.pack_instruction_base_args(writer)
+            event.pack_instruction_base_args(writer, base_args_start)
+        writer.pad_align(16)
         # Pad or alignment after base args, depending on `long_varints`.
-        if not self.long_varints:  # PTDE/DSR only
-            writer.pad(4)
-        else:  # long varints
-            writer.pad_align(16)
         writer.fill("base_arg_data_size", writer.position - base_args_start, obj=self)
 
         # Write event arg replacements.
-        writer.fill_with_position("event_arg_replacements_offset", obj=self)
+        event_arg_replacements_offset = writer.fill_with_position("event_arg_replacements_offset", obj=self)
         event_arg_replacements_count = 0
         for event in events:
-            event_arg_replacements_count += event.pack_event_arg_replacements(writer)
+            event_arg_replacements_count += event.pack_event_arg_replacements(writer, event_arg_replacements_offset)
         writer.fill("event_arg_replacements_count", event_arg_replacements_count, obj=self)
 
         # Write linked files (offsets to names in packed strings).

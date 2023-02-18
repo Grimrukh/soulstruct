@@ -13,8 +13,11 @@ class EMEVDTest(unittest.TestCase):
 
     def test_emevd(self):
 
-        with Timer("EMEVD Binary Reader"):
+        with Timer("EMEVD Binary Reade"):
             emevd = EMEVD.from_path("resources/m10_00_00_00.emevd.dcx")
+
+        with Timer("EMEVD Binary Write"):
+            emevd.write("_test.emevd.dcx")
 
         with Timer("EMEVD EVS Write"):
             emevd.write_evs("_test_emevd.evs.py")
@@ -22,12 +25,10 @@ class EMEVDTest(unittest.TestCase):
         with Timer("EMEVD EVS Read"):
             evs = EMEVD.from_evs_path("_test_emevd.evs.py")
 
-        # with Timer("EMEVD EVS Re-Write"):
-        #     evs.write_evs(
-        #         "_test_emevd_rewrite.evs.py",
-        #         entity_star_module_paths=("resources/m10_00_00_00_entities.py",),
-        #         entity_module_prefix="resources.",
-        #     )
+        with Timer("EMEVD EVS Re-Write"):
+            evs.write_evs(
+                "_test_emevd_rewrite.evs.py",
+            )
 
         # print(evs.events[0].instructions[0])
         # print(evs.events[0].instructions[1])
