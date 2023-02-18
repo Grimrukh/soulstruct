@@ -4,18 +4,20 @@ Currently uses original FMG names as dictionary names, and lists all as non-inte
 
 __all__ = ["MSGDirectory"]
 
-from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
-from soulstruct.containers.bnd import BND4
+import typing as tp
+from dataclasses import dataclass
+
+from soulstruct.base.text import MSGDirectory as _BaseMSGDirectory, FMG
+from soulstruct.base.text.msg_directory import fmg_property
 from soulstruct.utilities.misc import BiDict
+from .msgbnd import MSGBND
 
-from .fmg import FMG
 
-
+@dataclass(slots=True)
 class MSGDirectory(_BaseMSGDirectory):
-    IS_DCX = True
+    FILE_CLASS: tp.ClassVar = MSGBND
 
-    FMG_CLASS = FMG
-    MSGBND_CLASS = BND4
+    # TODO: Auto-generate all this stuff, with nicknames added.
 
     _MSGBND_INDEX_NAMES = BiDict(
         # item.msgbnd.dcx

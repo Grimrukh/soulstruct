@@ -120,7 +120,7 @@ def generate_instr_pyi(
     emedf_aliases: dict,
     emedf_tests: dict,
     emedf_comparison_tests: dict,
-    condition_count: int,
+    condition_group_enum: tp.Type[IntEnum],
     pyi_path: Path | str,
     compiler_module,
     has_event_layers: bool = False,
@@ -159,12 +159,9 @@ def generate_instr_pyi(
 
     pyi_funcs_str = BASICS
 
-    for i in range(1, condition_count + 1):
-        pyi_funcs_str += f"OR_{i} = ConditionGroup.OR_{i}\n"
-        pyi_all_lines.append(f"\"OR_{i}\",")
-    for i in range(1, condition_count + 1):
-        pyi_funcs_str += f"AND_{i} = ConditionGroup.AND_{i}\n"
-        pyi_all_lines.append(f"\"AND_{i}\",")
+    for condition_group in condition_group_enum:
+        pyi_funcs_str += f"{condition_group.name} = {condition_group_enum.__name__}.{condition_group.name}\n"
+        pyi_all_lines.append(f"\"{condition_group.name}\",")
 
     pyi_all_lines.append("# Built-in instructions:")
 
@@ -305,6 +302,7 @@ def generate_instr_pyi(
 
 def darksouls1ptde():
     from soulstruct.darksouls1ptde.events.emevd import compiler
+    from soulstruct.darksouls1ptde.events.emevd.enums import ConditionGroup
     from soulstruct.darksouls1ptde.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1ptde",
@@ -312,7 +310,7 @@ def darksouls1ptde():
         EMEDF_ALIASES,
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
-        7,
+        ConditionGroup,
         PACKAGE_PATH("darksouls1ptde/events/instructions.pyi"),
         compiler,
     )
@@ -320,6 +318,7 @@ def darksouls1ptde():
 
 def darksouls1r():
     from soulstruct.darksouls1r.events.emevd import compiler
+    from soulstruct.darksouls1r.events.emevd.enums import ConditionGroup
     from soulstruct.darksouls1r.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls1r",
@@ -327,7 +326,7 @@ def darksouls1r():
         EMEDF_ALIASES,
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
-        7,
+        ConditionGroup,
         PACKAGE_PATH("darksouls1r/events/instructions.pyi"),
         compiler,
     )
@@ -335,6 +334,7 @@ def darksouls1r():
 
 def bloodborne():
     from soulstruct.bloodborne.events.emevd import compiler
+    from soulstruct.bloodborne.events.emevd.enums import ConditionGroup
     from soulstruct.bloodborne.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "bloodborne",
@@ -342,7 +342,7 @@ def bloodborne():
         EMEDF_ALIASES,
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
-        15,
+        ConditionGroup,
         PACKAGE_PATH("bloodborne/events/instructions.pyi"),
         compiler,
     )
@@ -350,6 +350,7 @@ def bloodborne():
 
 def darksouls3():
     from soulstruct.darksouls3.events.emevd import compiler
+    from soulstruct.darksouls3.events.emevd.enums import ConditionGroup
     from soulstruct.darksouls3.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "darksouls3",
@@ -357,7 +358,7 @@ def darksouls3():
         EMEDF_ALIASES,
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
-        15,
+        ConditionGroup,
         PACKAGE_PATH("darksouls3/events/instructions.pyi"),
         compiler,
         has_event_layers=True,
@@ -366,6 +367,7 @@ def darksouls3():
 
 def eldenring():
     from soulstruct.eldenring.events.emevd import compiler
+    from soulstruct.eldenring.events.emevd.enums import ConditionGroup
     from soulstruct.eldenring.events.emevd.emedf import EMEDF, EMEDF_ALIASES, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
     generate_instr_pyi(
         "eldenring",
@@ -373,7 +375,7 @@ def eldenring():
         EMEDF_ALIASES,
         EMEDF_TESTS,
         EMEDF_COMPARISON_TESTS,
-        15,
+        ConditionGroup,
         PACKAGE_PATH("eldenring/events/instructions.pyi"),
         compiler,
         has_event_layers=True,

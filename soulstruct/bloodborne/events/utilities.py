@@ -1,5 +1,6 @@
-__all__ = ["convert_events", "compare_events"]
+__all__ = ["convert_events", "compare_events", "scrape_event_info"]
 
+import re
 from pathlib import Path
 
 from soulstruct.base.events.core import convert_events as convert_events_base, compare_events as compare_events_base
@@ -46,3 +47,29 @@ def convert_events(
 
 def compare_events(emevd_1, emevd_2, use_evs=True):
     return compare_events_base(emevd_1, emevd_2, use_evs=use_evs)
+
+
+def scrape_event_info(evs_path: Path | str):
+    """Parse an EVS file's text to create a dictionary mapping event IDs to their Python function names and docstrings.
+
+    Useful if you've done some renaming work and want to turn it into an `EVENT_INFO` dictionary for `GameEnumsManager`.
+    """
+
+    def_re = re.compile(r"^def (.*)\(")  # NOTE: has no issue with multi-line defs
+    doc_re = re.compile(r" {4}\"\"\" (\d+): (.*)\"\"\"", re.MULTILINE)
+
+    evs_text = Path(evs_path).read_text(encoding="utf-8")
+    event_info = {}
+    event_name = None
+    for line in evs_text.split("\n"):
+        if match := def_re.match(line):
+            event_name = match.group(1)
+        if match := doc_re.match(line):
+            if event_name is None:
+                raise ValueError(f"Found docstring before event def: {line}")
+            event_info[int(match.group(1))] = (event_name, match.group(2).strip())
+            event_name = None
+    print("EVENT_INFO = {")
+    for k, v in event_info.items():
+        print(f"    {k}: (\"{v[0]}\", \"{v[1]}\"),")
+    print("}")

@@ -94,9 +94,6 @@ class FLVERBone:
             rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
         return absolute_translate, rotate
 
-    def __eq__(self, other_bone: FLVERBone):
-        return slots_equality(self, other_bone)
-
     def __repr__(self):
         lines = [
             f"FLVERBone(\n"

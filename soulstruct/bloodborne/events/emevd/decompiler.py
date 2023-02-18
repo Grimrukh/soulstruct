@@ -107,7 +107,7 @@ def _PlayCutsceneAndMoveSpecificPlayer(
     player_id: Character,
 ):
     """Wrapper is always allowable."""
-    game_map = merge_eget_map_variable_name((area_id, block_id))
+    game_map = get_map_variable_name((area_id, block_id))
     return (
         f"PlayCutscene({cutscene_id}, {cutscene_flags=}, {player_id=}, {move_to_region=}, game_map={game_map})"
     )

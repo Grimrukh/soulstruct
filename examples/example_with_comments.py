@@ -151,7 +151,7 @@ def PullOutMeltedIronKey():
     # If you look at the actual numeric output of your script, you'll notice that these two lines are compressed into a
     # single instruction that ends the event if the flag is enabled. The EVS compiler works hard to use as few lines of
     # EMEVD as necessary, and particularly tries to avoid creating conditions whenever possible.
-    if THIS_FLAG:
+    if ThisEventFlagEnabled():
         return  # (You'll see this two-line combo a lot in 'one-off' events.)
 
     # Our first actual instruction (aside from running an event). This stops the player from being able to activate the
@@ -181,8 +181,8 @@ def PullOutMeltedIronKey():
 
     # We can also equivalently use the built-in 'await' keyword, which I find helps these critical instruction stand out
     # from the rest. Again, note that the prompt won't appear until the previous conditions are true.
-    await ActionButton(EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0,
-                       model_point=100, max_distance=1.5)
+    Await(ActionButton(EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0,
+                       model_point=100, max_distance=1.5))
 
     # This instruction defaults to 'host_only', which you can set to False to share the love with your summons.
     AwardItemLot(ItemLots.InDepthsDoor)
@@ -239,7 +239,7 @@ def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Chara
     # Here's an actual use of THIS_SLOT_FLAG. In this case, it prevents the slime from falling if it's already fallen.
     # Because this event uses a temporary 5000 flag, this logic will probably always happen unless you run very far
     # away from the slime to despawn it, then run back without reloading.
-    if not THIS_SLOT_FLAG:
+    if not ThisEventSlotFlagEnabled():
         DisableGravity(slime)
         DisableMapCollision(slime)
         if trigger_region_2 == 0:

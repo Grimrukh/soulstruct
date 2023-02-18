@@ -25,7 +25,7 @@ def Constructor():
 
 def PullOutMeltedIronKey():
     """ 11000112: Inspect door to Depths from Blighttown and pull out Melted Iron Key. """
-    if THIS_FLAG:
+    if ThisEventFlagEnabled():
         return
     DisableObjectActivation(Objects.DepthsDoor, -1)
     Await(
@@ -35,9 +35,9 @@ def PullOutMeltedIronKey():
     )
     DisplayDialog(EventTexts.SomethingInDoor, anchor_entity=Objects.DepthsDoor)
     Wait(1.0)
-    await ActionButton(
+    Await(ActionButton(
         EventTexts.RemoveItemFromDoor, anchor_entity=Objects.DepthsDoor, facing_angle=60.0, model_point=100, max_distance=1.5
-    )
+    ))
     AwardItemLot(ItemLots.InDepthsDoor)
     Wait(DOOR_INACTIVE_DELAY)
     EnableObjectActivation(Objects.DepthsDoor, -1)
@@ -56,7 +56,7 @@ def DespawnChanneler(channeler: int):
 @RestartOnRest
 def SlimeAmbush(trigger_region_1: Region, trigger_region_2: Region, slime: Character, delay: float):
     """ 11005100: Slime ambushes. Now takes two region triggers rather than one. """
-    if not THIS_SLOT_FLAG:
+    if not ThisEventSlotFlagEnabled():
         DisableGravity(slime)
         DisableMapCollision(slime)
         if trigger_region_2 == 0:

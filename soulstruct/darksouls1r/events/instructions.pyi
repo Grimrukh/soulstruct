@@ -30,6 +30,7 @@ __all__ = [
     "AND_5",
     "AND_6",
     "AND_7",
+    "AND_8",
     # Built-in instructions:
     "IfConditionState",  # 0[0]
     "IfConditionTrue",
@@ -770,6 +771,7 @@ AND_4 = ConditionGroup.AND_4
 AND_5 = ConditionGroup.AND_5
 AND_6 = ConditionGroup.AND_6
 AND_7 = ConditionGroup.AND_7
+AND_8 = ConditionGroup.AND_8
 
 
 def IfConditionState(condition: ConditionGroup | int, state: bool | int, input_condition: ConditionGroup | int):

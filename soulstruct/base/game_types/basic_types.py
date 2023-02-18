@@ -16,6 +16,7 @@ __all__ = [
     "EquipmentModel",
     "VisualEffect",
     "TalkScript",
+    "Cutscene",
     "Text",
     "Animation",
     "PlayerAnimation",
@@ -138,6 +139,10 @@ class VisualEffect(BaseGameObject, IntEnum):
 
 class TalkScript(BaseGameObject, IntEnum):
     """Talk ID of a Map Character."""
+
+
+class Cutscene(BaseGameObject, IntEnum):
+    """ID of a cutscene (`remo/scn...` file)."""
 
 
 class Text(BaseGameObject, IntEnum):

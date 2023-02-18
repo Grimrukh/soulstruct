@@ -1,4 +1,4 @@
-from soulstruct.text import MSGDirectory
+from soulstruct.darksouls1r.text import MSGDirectory
 
 PTD_VANILLA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/pre-doa-backup/msg/ENGLISH'
 PTD_DOA_DIR = 'G:/Steam/steamapps/common/Dark Souls Prepare to Die Edition/PTD_DOA_DATA/msg/ENGLISH'
