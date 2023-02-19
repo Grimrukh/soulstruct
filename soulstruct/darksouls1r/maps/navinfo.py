@@ -209,12 +209,12 @@ class NavmeshAABB:
         original AABB would have looked like if it were properly rotated (as the AABB is aligned to the world axes).
         """
         rotation = resolve_rotation(rotation, radians=radians)
-        pivot_point = Vector3(*pivot_point)
+        pivot_point = Vector3(pivot_point)
 
         if enclose_original:
-            rotated_vertices = [(rotation @ (Vector3(*v) - pivot_point)) + pivot_point for v in self.get_vertices()]
-            self.aabb_start = Vector3(*[min(v[i] for v in rotated_vertices) for i in range(3)])
-            self.aabb_end = Vector3(*[max(v[i] for v in rotated_vertices) for i in range(3)])
+            rotated_vertices = [(rotation @ (Vector3(v) - pivot_point)) + pivot_point for v in self.get_vertices()]
+            self.aabb_start = Vector3([min(v[i] for v in rotated_vertices) for i in range(3)])
+            self.aabb_end = Vector3([max(v[i] for v in rotated_vertices) for i in range(3)])
         else:
             self.aabb_start = (rotation @ (self.aabb_start - pivot_point)) + pivot_point
             self.aabb_end = (rotation @ (self.aabb_end - pivot_point)) + pivot_point
@@ -430,23 +430,23 @@ class MCP(GameFile):
         if start_translate is None:
             start_translate = Vector3.zero()
         elif not isinstance(start_translate, Vector3):
-            start_translate = Vector3(*start_translate)
+            start_translate = Vector3(start_translate)
         if end_translate is None:
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
-            end_translate = Vector3(*end_translate)
+            end_translate = Vector3(end_translate)
         if start_rotate is None:
             start_rotate = Vector3.zero()
         elif isinstance(start_rotate, (int, float)):
-            start_rotate = Vector3(0, start_rotate, 0)
+            start_rotate = Vector3([0, start_rotate, 0])
         else:
-            start_rotate = Vector3(*start_rotate)
+            start_rotate = Vector3(start_rotate)
         if end_rotate is None:
             end_rotate = Vector3.zero()
         elif isinstance(end_rotate, (int, float)):
-            end_rotate = Vector3(0, end_rotate, 0)
+            end_rotate = Vector3([0, end_rotate, 0])
         else:
-            end_rotate = Vector3(*end_rotate)
+            end_rotate = Vector3(end_rotate)
 
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
         m_start_rotate = Matrix3.from_euler_angles(start_rotate)
@@ -476,7 +476,7 @@ class MCP(GameFile):
         Use `selected_aabbs` (indices or `NavmeshAABB` instances) to specify only a subset of AABBs to move.
         """
         rotation = resolve_rotation(rotation)
-        pivot_point = Vector3(*pivot_point)
+        pivot_point = Vector3(pivot_point)
         for i, aabb in enumerate(self.aabbs):
             if selected_aabbs is None or i in selected_aabbs or aabb in selected_aabbs:
                 aabb.rotate_in_world(rotation, pivot_point, radians=radians, enclose_original=enclose_original)
@@ -511,8 +511,8 @@ class MCP(GameFile):
                 axes.plot(x, y, z, color="red")
 
         # Get min/max values on each axis to simulate equal aspect ratio.
-        mins = Vector3(*[min(aabb.aabb_start[i] for aabb in self.aabbs) for i in range(3)])
-        maxs = Vector3(*[max(aabb.aabb_end[i] for aabb in self.aabbs) for i in range(3)])
+        mins = Vector3([min(aabb.aabb_start[i] for aabb in self.aabbs) for i in range(3)])
+        maxs = Vector3([max(aabb.aabb_end[i] for aabb in self.aabbs) for i in range(3)])
         mids = (mins + maxs) / 2
         max_range = max(maxs - mins) / 2
         axes.set_xlim(mids.x - max_range, mids.x + max_range)
@@ -635,37 +635,38 @@ class GateNode:
         self.connected_nodes.append(other_node)
         self.connected_edges.append(edge)
 
-    def remove_connections(
-        self, nodes: tp.Iterable[tp.Union[int, GateNode]] = (), edges: tp.Iterable[tp.Union, int, GateEdge] = ()
-    ):
-        """Remove connections to all given `nodes` or through any given `edges` and corresponding edges/nodes."""
-        raise NotImplementedError("`node.remove_connections` currently not working as intended!")
-        self.validate_connections()
-        if isinstance(nodes, int):
-            nodes = {self.connected_nodes[nodes]}
-        elif isinstance(nodes, GateNode):
-            nodes = {nodes}
-        else:
-            nodes = {self.connected_nodes[i] if isinstance(i, int) else i for i in edges}
-        if isinstance(edges, int):
-            edges = {self.connected_edges[edges]}
-        elif isinstance(edges, GateEdge):
-            edges = {edges}
-        else:
-            edges = {self.connected_edges[i] if isinstance(i, int) else i for i in edges}
-        self.connected_edges = []
-        self.connected_nodes = []
-        for edge, node in zip(self.connected_edges, self.connected_nodes):
-            if node not in nodes and edge not in edges:
-                self.connected_edges.append(edge)
-                self.connected_nodes.append(node)
+    # TODO: Fix `remove_connections` method.
+    # def remove_connections(
+    #     self, nodes: tp.Iterable[tp.Union[int, GateNode]] = (), edges: tp.Iterable[tp.Union, int, GateEdge] = ()
+    # ):
+    #     """Remove connections to all given `nodes` or through any given `edges` and corresponding edges/nodes."""
+    #     raise NotImplementedError("`node.remove_connections` currently not working as intended!")
+    #     self.validate_connections()
+    #     if isinstance(nodes, int):
+    #         nodes = {self.connected_nodes[nodes]}
+    #     elif isinstance(nodes, GateNode):
+    #         nodes = {nodes}
+    #     else:
+    #         nodes = {self.connected_nodes[i] if isinstance(i, int) else i for i in edges}
+    #     if isinstance(edges, int):
+    #         edges = {self.connected_edges[edges]}
+    #     elif isinstance(edges, GateEdge):
+    #         edges = {edges}
+    #     else:
+    #         edges = {self.connected_edges[i] if isinstance(i, int) else i for i in edges}
+    #     self.connected_edges = []
+    #     self.connected_nodes = []
+    #     for edge, node in zip(self.connected_edges, self.connected_nodes):
+    #         if node not in nodes and edge not in edges:
+    #             self.connected_edges.append(edge)
+    #             self.connected_nodes.append(node)
 
-    def delete_edges_in_aabb(self, aabb: NavmeshAABB):
-        node_connections_to_delete = []
-        for connected_node, connected_edge in zip(self.connected_nodes, self.connected_edges):
-            if connected_edge.aabb is aabb:
-                node_connections_to_delete.append(connected_node)
-        self.remove_connections(nodes=node_connections_to_delete)
+    # def delete_edges_in_aabb(self, aabb: NavmeshAABB):
+    #     node_connections_to_delete = []
+    #     for connected_node, connected_edge in zip(self.connected_nodes, self.connected_edges):
+    #         if connected_edge.aabb is aabb:
+    #             node_connections_to_delete.append(connected_node)
+    #     self.remove_connections(nodes=node_connections_to_delete)
 
     def rotate_in_world(
         self, rotation: tp.Union[Matrix3, Vector3, list, tuple, int, float], pivot_point=(0, 0, 0), radians=False
@@ -678,7 +679,7 @@ class GateNode:
             rotation = Matrix3.from_euler_angles(rotation, radians=radians)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(*pivot_point)
+        pivot_point = Vector3(pivot_point)
 
         self.translate = (rotation @ (self.translate - pivot_point)) + pivot_point
 
@@ -996,23 +997,23 @@ class MCG(GameFile):
         if start_translate is None:
             start_translate = Vector3.zero()
         elif not isinstance(start_translate, Vector3):
-            start_translate = Vector3(*start_translate)
+            start_translate = Vector3(start_translate)
         if end_translate is None:
             end_translate = Vector3.zero()
         elif not isinstance(end_translate, Vector3):
-            end_translate = Vector3(*end_translate)
+            end_translate = Vector3(end_translate)
         if start_rotate is None:
             start_rotate = Vector3.zero()
         elif isinstance(start_rotate, (int, float)):
-            start_rotate = Vector3(0, start_rotate, 0)
+            start_rotate = Vector3([0, start_rotate, 0])
         else:
-            start_rotate = Vector3(*start_rotate)
+            start_rotate = Vector3(start_rotate)
         if end_rotate is None:
             end_rotate = Vector3.zero()
         elif isinstance(end_rotate, (int, float)):
-            end_rotate = Vector3(0, end_rotate, 0)
+            end_rotate = Vector3([0, end_rotate, 0])
         else:
-            end_rotate = Vector3(*end_rotate)
+            end_rotate = Vector3(end_rotate)
 
         # Compute global rotation matrix required to get from `start_rotate` to `end_rotate`.
         m_start_rotate = Matrix3.from_euler_angles(start_rotate)
@@ -1042,7 +1043,7 @@ class MCG(GameFile):
             rotation = Matrix3.from_euler_angles(rotation)
         elif not isinstance(rotation, Matrix3):
             raise TypeError("`rotation` must be a Matrix3, Vector3/list/tuple, or int/float (for Y rotation only).")
-        pivot_point = Vector3(*pivot_point)
+        pivot_point = Vector3(pivot_point)
         for i, node in enumerate(self.nodes):
             if selected_nodes is None or i in selected_nodes or node in selected_nodes:
                 node.rotate_in_world(rotation, pivot_point=pivot_point, radians=radians)
@@ -1278,25 +1279,26 @@ class NavInfo:
         first_aabb.connected_aabbs.append(second_aabb)
         second_aabb.connected_aabbs.append(first_aabb)
 
-    def disconnect_aabbs(
-        self, first_aabb: tp.Union[NavmeshAABB, str, MSBNavmesh], second_aabb: tp.Union[NavmeshAABB, str, MSBNavmesh]
-    ):
-        """Disconnect the two given MCP AABBs, which can also be given as MSB navmeshes or names thereof.
-
-        Any MCG nodes with edges through both of these navmesh AABBs will also have their edge through `second_navmesh`
-        deleted.
-        """
-        self.check_navmesh_sync()
-        if isinstance(first_aabb, (str, MSBNavmesh)):
-            first_aabb = self.get_navmesh_aabb(first_aabb)
-        if isinstance(second_aabb, (str, MSBNavmesh)):
-            second_aabb = self.get_navmesh_aabb(second_aabb)
-        self.mcp.disconnect_aabbs({first_aabb}, {second_aabb})
-        for node in self.mcg.nodes:
-            edge_in_first_aabb = any(edge.aabb is first_aabb for edge in node.connected_edges)
-            edge_in_second_aabb = any(edge.aabb is second_aabb for edge in node.connected_edges)
-            if edge_in_first_aabb and edge_in_second_aabb:
-                node.delete_edges_in_aabb(second_aabb)
+    # TODO: Need to repair `remove_connections()` to use this.
+    # def disconnect_aabbs(
+    #     self, first_aabb: tp.Union[NavmeshAABB, str, MSBNavmesh], second_aabb: tp.Union[NavmeshAABB, str, MSBNavmesh]
+    # ):
+    #     """Disconnect the two given MCP AABBs, which can also be given as MSB navmeshes or names thereof.
+    #
+    #     Any MCG nodes with edges through both of these navmesh AABBs will also have their edge through
+    #     `second_navmesh` deleted.
+    #     """
+    #     self.check_navmesh_sync()
+    #     if isinstance(first_aabb, (str, MSBNavmesh)):
+    #         first_aabb = self.get_navmesh_aabb(first_aabb)
+    #     if isinstance(second_aabb, (str, MSBNavmesh)):
+    #         second_aabb = self.get_navmesh_aabb(second_aabb)
+    #     self.mcp.disconnect_aabbs({first_aabb}, {second_aabb})
+    #     for node in self.mcg.nodes:
+    #         edge_in_first_aabb = any(edge.aabb is first_aabb for edge in node.connected_edges)
+    #         edge_in_second_aabb = any(edge.aabb is second_aabb for edge in node.connected_edges)
+    #         if edge_in_first_aabb and edge_in_second_aabb:
+    #             node.delete_edges_in_aabb(second_aabb)
 
     def add_aabbs_nodes_edges(
         self,

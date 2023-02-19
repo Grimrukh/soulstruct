@@ -529,7 +529,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         version_info = reader.unpack("BBB", offset=0x2d)
         flags1 = ParamFlags1(version_info[0])
 
-        reader["I"]
+        _ = reader["I"]
         _row_data_offset = reader["H"]  # NOT USED! It's an unsigned short, but can be larger.
         if ((flags1[0] and flags1.IntDataOffset) or flags1.LongDataOffset) and _row_data_offset != 0:
             raise ValueError(f"Expected `_row_data_offset` of zero in this `Param`, not: {_row_data_offset}")
@@ -740,7 +740,8 @@ class ParamDict(Param):
             writer.reserve("row_data_offset", "q", obj=self)
             writer.pad(8)
             has_long_row_data_offset = True
-        has_long_row_data_offset = False
+        else:
+            has_long_row_data_offset = False
         # End of header.
 
         # Pack row pointers.

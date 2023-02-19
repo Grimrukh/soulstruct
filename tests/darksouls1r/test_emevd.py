@@ -2,7 +2,7 @@ import os
 import unittest
 from pathlib import Path
 
-from soulstruct.darksouls1r.events.emevd import EMEVD
+from soulstruct.darksouls1r.events import EMEVD, EventDirectory
 from soulstruct.utilities.inspection import Timer
 
 
@@ -12,6 +12,24 @@ class EMEVDTest(unittest.TestCase):
     #     for test_file in Path(".").glob("_test*"):
     #         if test_file.is_file():
     #             os.remove(str(test_file))
+
+    def test_event_directory(self):
+        from soulstruct import DSR_PATH
+
+        with Timer("Event Directory Read"):
+            ed = EventDirectory.from_path(DSR_PATH + "/event")
+
+        with Timer("Event Directory Write"):
+            ed.write("_test_event_directory")
+
+        with Timer("Event Directory EVS Write"):
+            ed.write_evs("_test_evs_directory")
+
+        with Timer("Event Directory EVS Read"):
+            evs_ed = ed.from_path("_test_evs_directory")
+
+        with Timer("Event Directory Write from EVS"):
+            evs_ed.write("_test_event_from_evs_directory")
 
     def test_emevd(self):
 

@@ -201,6 +201,10 @@ class GrowthCurveParam(BaseGameParam):
 class ItemLotParam(BaseGameParam):
     """ItemLot entry."""
     @classmethod
+    def get_event_arg_fmt(cls) -> str:
+        return "i"
+
+    @classmethod
     def get_param_nickname(cls):
         return "ItemLots"
 

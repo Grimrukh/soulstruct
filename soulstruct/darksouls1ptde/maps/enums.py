@@ -24,7 +24,7 @@ class MSBModelSubtype(BaseMSBModelSubtype):
         return "N:\\FRPG\\data\\Model\\"
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Models"
 
 
@@ -44,7 +44,7 @@ class MSBEventSubtype(BaseMSBEventSubtype):
     NPCInvasion = 12
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Events"
 
 
@@ -57,7 +57,7 @@ class MSBRegionSubtype(BaseMSBRegionSubtype):
     Box = 5
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Regions"
 
 
@@ -76,7 +76,7 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     MapConnection = 11
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Parts"
 
 

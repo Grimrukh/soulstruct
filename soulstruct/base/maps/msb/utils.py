@@ -43,6 +43,15 @@ class MSBSubtypeInfo(tp.NamedTuple):
     entry_class: tp.Type[MSBEntry]
     subtype_list_name: str
 
+    def matches_name(self, name: str) -> bool:
+        """Check if `name` is one of the valid specifiers for this MSB entry subtype."""
+        return name.lower() in {
+            self.subtype_list_name.lower(),
+            self.subtype_enum.name.lower(),
+            self.subtype_enum.pluralized_name.lower(),
+            self.entry_class.__name__.lower(),
+        }
+
 
 @dataclass(slots=True)
 class GroupBitSet:
@@ -167,7 +176,7 @@ def rotate_entry(
     Default `pivot_point` is the world origin (0, 0, 0). Default rotation units are degrees.
     """
     rotation = resolve_rotation(rotation, radians)
-    pivot_point = Vector3(*pivot_point)
+    pivot_point = Vector3(pivot_point)
     entry.rotate = (rotation @ Matrix3.from_euler_angles(entry.rotate)).to_euler_angles()
     entry.translate = (rotation @ (entry.translate - pivot_point)) + pivot_point
 

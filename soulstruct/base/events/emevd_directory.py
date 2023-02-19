@@ -49,7 +49,21 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_map_stems:
                     # Tries to auto-detect EMEVD, EVS, and numeric (.txt) files appropriately.
-                    files[file_path.name] = cls.FILE_CLASS.from_auto_detect_source_type(file_path)[0]
+                    try:
+                        source_type = cls.FILE_CLASS.from_auto_detect_source_type(file_path)
+                    except TypeError:
+                        _LOGGER.error(f"Cannot read file format in `{cls.__name__}` directory: {file_path.name}")
+                        continue
+                    match source_type:
+                        case "numeric_path":
+                            files[file_stem] = cls.FILE_CLASS.from_numeric_path(file_path)
+                        case "emevd_path":
+                            files[file_stem] = cls.FILE_CLASS.from_path(file_path)
+                        case "evs_path":
+                            files[file_stem] = cls.FILE_CLASS.from_evs_path(file_path, script_directory=directory_path)
+                        case _:
+                            _LOGGER.error(f"Cannot open EMEVD source type '{source_type}': {file_path.name}")
+                            continue
                     all_map_stems.remove(file_stem)
                 else:
                     _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
@@ -58,11 +72,11 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
     def write_evs(
         self,
-        emevd_directory=None,
+        evs_directory=None,
         entities_directory=None,
         warn_missing_enums=True,
         entity_module_prefix=".",
@@ -76,9 +90,9 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
 
         See `EMEVD.write_evs()` for argument usage.
         """
-        if emevd_directory is None:
-            emevd_directory = self.directory
-        emevd_directory = Path(emevd_directory)
+        if evs_directory is None:
+            evs_directory = self.directory
+        evs_directory = Path(evs_directory)
         if entities_directory is not None:
             entities_directory = Path(entities_directory)
 
@@ -87,7 +101,7 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
             # Write `common_func` first.
             common_func_emevd = self.files[self.COMMON_FUNC.name]
             common_func_emevd.write_evs(
-                evs_path=emevd_directory / f"{common_func_emevd.map_name}.py",  # no '.evs' extension (for importing)
+                evs_path=evs_directory / f"{common_func_emevd.map_name}.py",  # no '.evs' extension (for importing)
                 entity_star_module_paths=[],
                 entity_non_star_module_paths=[],
                 warn_missing_enums=warn_missing_enums,
@@ -114,7 +128,7 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
                         entity_non_star_module_paths.append(module_path)
 
             emevd.write_evs(
-                evs_path=emevd_directory / f"{emevd.map_name}.evs.py",
+                evs_path=evs_directory / f"{emevd.map_name}.evs.py",
                 entity_star_module_paths=entity_star_module_paths,
                 entity_non_star_module_paths=entity_non_star_module_paths,
                 warn_missing_enums=warn_missing_enums,

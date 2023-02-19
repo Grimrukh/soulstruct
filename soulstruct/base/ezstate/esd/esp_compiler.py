@@ -79,11 +79,11 @@ class ESPCompiler:
                 )
 
         for state in self.state_info.values():
-            self.states[state["index"]] = self.build_state(state["index"], state["nodes"])
+            self.states[state["state_id"]] = self.build_state(state["state_id"], state["nodes"])
 
-    def build_state(self, index, nodes):
+    def build_state(self, state_id, nodes):
         """`nodes` is a sequence of the non-docstring nodes of the state class definition."""
-        index = index
+        state_id = state_id
         conditions = []
         enter_commands = []
         exit_commands = []
@@ -115,7 +115,7 @@ class ESPCompiler:
             else:
                 raise ESDSyntaxError(node.lineno, f"Unexpected state function: '{node.name.id}'.")
 
-        return self.State(index, conditions, enter_commands, exit_commands, ongoing_commands)
+        return State(state_id, conditions, enter_commands, exit_commands, ongoing_commands)
 
     def scan_state(self, node):
         """Get state name, description (from docstring), and node list."""
@@ -124,11 +124,11 @@ class ESPCompiler:
         if docstring is None:
             raise ESDSyntaxError(node.lineno, f"No docstring given for state {state_name}.")
         try:
-            state_index, description = _STATE_DOCSTRING_RE.match(docstring).group(1, 2)
+            state_id, description = _STATE_DOCSTRING_RE.match(docstring).group(1, 2)
         except AttributeError:
             raise ESDSyntaxError(node.lineno, f"Invalid docstring for event {state_name}.")
         self.state_info[state_name] = {
-            "index": int(state_index),
+            "state_id": int(state_id),
             "description": description,
             "nodes": node.body[1:],  # skip docstring
         }
@@ -195,8 +195,8 @@ class ESPCompiler:
                 raise ESDSyntaxError(if_nodes[0].lineno, "Condition IF block should return a state class name.")
             if if_nodes[0].value.id not in self.state_info:
                 raise ESDError(if_nodes[0].lineno, f"Could not find a state class named '{if_nodes[0].value.id}'.")
-            next_state_index = self.state_info[if_nodes[0].value.id]["index"]
-            return [Condition(next_state_index, b"\x41\xa1", [], [])]
+            next_state_id = self.state_info[if_nodes[0].value.id]["state_id"]
+            return [Condition(next_state_id, b"\x41\xa1", [], [])]
 
         for i, node in enumerate(if_nodes):
             if not isinstance(node, ast.If):
@@ -222,7 +222,7 @@ class ESPCompiler:
 
             pass_commands = []
             subcondition_nodes = []
-            next_state_index = -1
+            next_state_id = -1
 
             pass_commands_allowed = True
             subconditions_allowed = True
@@ -242,19 +242,19 @@ class ESPCompiler:
                         raise ESDSyntaxError(node.lineno, "'return NextState' should be last statement in IF block.")
                     if isinstance(node.value, ast.Constant) and node.value.n == -1:
                         # Last state of callable state machine.
-                        next_state_index = -1
+                        next_state_id = -1
                     else:
                         if not isinstance(node.value, ast.Name):
                             raise ESDSyntaxError(node.lineno, "Condition IF block should return a state class name.")
                         if node.value.id not in self.state_info:
                             raise ESDError(node.lineno, f"Could not find a state class named '{node.value.id}'.")
-                        next_state_index = self.state_info[node.value.id]["index"]
+                        next_state_id = self.state_info[node.value.id]["state_id"]
 
             # Condition registers are *not* reset when scanning and building subconditions.
             subconditions = self.build_conditions(subcondition_nodes) if subcondition_nodes else ()
 
             conditions.append(
-                Condition(next_state_index, test_ezl, pass_commands, subconditions)
+                Condition(next_state_id, test_ezl, pass_commands, subconditions)
             )
 
         return conditions

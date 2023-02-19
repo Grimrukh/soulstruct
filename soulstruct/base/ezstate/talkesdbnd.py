@@ -10,17 +10,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from soulstruct.containers import Binder, BinderEntry
+from .esd import ESD, ESDType
 
 try:
     Self = tp.Self
 except AttributeError:
     Self = "TalkESDBND"
 
-if tp.TYPE_CHECKING:
-    from .esd import ESD
-
 _LOGGER = logging.getLogger(__name__)
 
+_TALK_RE = re.compile(r"t(\d+)")
 _TALK_ESD_RE = re.compile(r"t(\d+)\.esd$")
 _TALK_ESP_RE = re.compile(r"t(\d+)\.esp(\.py)$")
 
@@ -36,7 +35,7 @@ class TalkESDBND(Binder, abc.ABC):
     talk: dict[int, ESD] = field(default_factory=dict)
 
     def __post_init__(self):
-        if not self.talk and self.entries:
+        if self.talk:
             return
 
         # Load from binary Binder source.
@@ -44,7 +43,7 @@ class TalkESDBND(Binder, abc.ABC):
             if not (match := _TALK_ESD_RE.match(entry.name)):
                 _LOGGER.warning(f"Ignoring unknown entry '{entry.name}' in TalkESDBND Binder.")
                 continue
-            talk_id = match.group(1)
+            talk_id = int(match.group(1))
             try:
                 self.talk[talk_id] = entry.to_game_file(self.TALK_ESD_CLASS)
             except Exception as ex:
@@ -55,65 +54,48 @@ class TalkESDBND(Binder, abc.ABC):
         return self.get_first_new_entry_id_in_range(0, 1000000)
 
     @classmethod
-    def from_esp_directory(cls, esp_directory: str | Path) -> Self:
+    def from_esp_directory(cls, esp_directory: Path | str) -> Self:
         """Load from directory of individual ESP files/folders."""
-        talkesdbnd = cls()  # type: Self
-        talkesdbnd.path = esp_directory.with_suffix(cls.EXT)
-        talkesdbnd.reload_all_esp(esp_directory, allow_new=True)
-        talkesdbnd.regenerate_entries()
-        return talkesdbnd
+        esp_directory = Path(esp_directory)
+
+        talk = {}
+        for esp_path in Path(esp_directory).glob("t*"):
+            if not (match := _TALK_RE.match(esp_path.name)):
+                continue  # ignore file
+
+            talk_id = int(match.group(1))
+
+            try:
+                if esp_path.is_dir():
+                    talk[talk_id] = cls.TALK_ESD_CLASS.from_esp_directory(esp_path)
+                elif _TALK_ESP_RE.match(esp_path.name):
+                    talk[talk_id] = cls.TALK_ESD_CLASS.from_esp_file(esp_path)
+                else:
+                    continue  # ignore file
+            except Exception as ex:
+                _LOGGER.error(f"Could not load talk 't{talk_id}' from ESP directory/file {esp_path.name}. Error: {ex}")
+
+        # No need to generate Binder entries until write requested.
+        return cls(path=esp_directory.with_suffix(cls.EXT), talk=talk)
 
     @classmethod
     def from_talk_dict(cls, talk_dict: dict[int, ESD]) -> Self:
-        talkesdbnd = cls()  # type: Self
-        talkesdbnd.talk = talk_dict.copy()
-        talkesdbnd.regenerate_entries()
-        return talkesdbnd
+        return cls(talk=talk_dict.copy())
 
-    def write_esp(self, esp_directory: Path | str):
+    def write_esp_directory(self, esp_directory: Path | str):
         esp_directory = Path(esp_directory)
         esp_directory.mkdir(parents=True, exist_ok=True)
         for talk_id, talk_esd in self.talk.items():
-            talk_esd.write_esp(esp_directory / f"t{talk_id}.esp")
-
-    def reload_all_esp(self, esp_directory: Path | str, allow_new=True):
-        """Read ESP files in `esp_directory` into `talk`.
-
-        If `allow_new=False`, only existing keys in `talk` will be reloaded from found files.
-        """
-        for esp_path in Path(esp_directory).glob("*.esp*"):
-            talk_match = _TALK_ESP_RE.match(esp_path.name)
-            if talk_match:
-                talk_id = int(talk_match.group(1))
-                if not allow_new and talk_id not in self.talk:
-                    _LOGGER.warning(
-                        f"# WARNING: `allow_new=False` and no talk ID found for ESP file: {esp_path.name}. "
-                        f"Ignoring it."
-                    )
-                    continue
-                try:
-                    self.talk[talk_id] = esd = self.TALK_ESD_CLASS.from_path(esp_path)
-                except Exception as e:
-                    _LOGGER.error(f"Could not load talk ESD 't{talk_id}' from ESP file {esp_path.name}. Error: {e}")
-                    raise
-                else:
-                    # Update/create this Binder entry rather than blindly regenerating all of them.
-                    entry_path = self.get_default_entry_path(f"t{talk_id}.esd")
-                    if entry_path in self.entries_by_path:
-                        # Just update data.
-                        self.entries_by_path[entry_path].set_from_game_file(esd)
-                    else:
-                        # Add new entry.
-                        new_id = self.get_default_entry_id(entry_path)
-                        new_entry = BinderEntry(data=bytes(esd), entry_id=new_id, path=entry_path)
-                        self.add_entry(new_entry)
-                        _LOGGER.debug(f"New ESD entry from ESP file {esp_path.name} added to TalkESDBND (ID {new_id}).")
+            if len(talk_esd.state_machines) == 1:
+                talk_esd.write_esp_file(esp_directory / f"t{talk_id}.esp.py", esd_type=ESDType.TALK)
+            else:
+                talk_esd.write_esp_directory(esp_directory / f"t{talk_id}", esd_type=ESDType.TALK)
 
     def regenerate_entries(self):
         """Regenerate Binder entries from `talk` dictionary."""
 
         # Remove BND talk entries that aren't still present in this `TalkESDBND` instance.
-        current_entry_names = [f"{talk_id}.esd" for talk_id in self.talk]
+        current_entry_names = [f"t{talk_id}.esd" for talk_id in self.talk]
         for entry_name in [entry.name for entry in self.entries]:
             if entry_name not in current_entry_names:
                 self.remove_entry_name(entry_name)

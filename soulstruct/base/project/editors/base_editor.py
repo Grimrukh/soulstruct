@@ -783,7 +783,7 @@ class BaseEditor(SmartFrame, abc.ABC):
             text = self.get_entry_text(entry_id)  # Copies name of origin entry by default.
         self._add_entry(entry_id=new_id, text=text)
 
-    def delete_entry(self, row_index, category=None):
+    def delete_entry(self, row_index: int, category=None):
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         if row_index is None:
             self.bell()

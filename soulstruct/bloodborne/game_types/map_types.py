@@ -234,6 +234,9 @@ class NavigationEvent(MapEvent):
     Enable/disable/toggle functions require you to specify a navigation type; only the flags for that type will be
     modified in the navmesh.
     """
+    @classmethod
+    def get_event_arg_fmt(cls) -> str:
+        return "i"
 
     @classmethod
     def get_msb_entry_type_subtype(cls, pluralized_subtype=False):

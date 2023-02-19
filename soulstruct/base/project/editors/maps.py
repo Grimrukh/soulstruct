@@ -26,8 +26,7 @@ from soulstruct.utilities.memory import MemoryHookCallError
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
-    from soulstruct.base.maps.msb import MSB
-    from soulstruct.base.maps.msb.msb_entry import MSBEntry
+    from soulstruct.base.maps.msb import MSB, MSBEntryList, MSBEntry
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +61,7 @@ class MapEntryRow(EntryRow):
         entry_data = self.master.get_category_data()[entry_index]
         if hasattr(entry_data, "entity_id"):
             text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
-        elif isinstance(entry_data, BaseMSBModel) and entry_data.ENTRY_SUBTYPE.name in {"Character", "Player"}:
+        elif isinstance(entry_data, BaseMSBModel) and entry_data.SUBTYPE_ENUM.name in {"Character", "Player"}:
             try:
                 model_id = int(entry_text.lstrip("c"))
             except ValueError:
@@ -564,37 +563,35 @@ class MapsEditor(BaseFieldEditor):
     def _get_category_text_fg(category: str):
         return ENTRY_LIST_FG_COLORS.get(category.split(":")[0], "#FFF")
 
-    def _add_entry(self, entry_subtype_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
-        """Active category is required."""
+    def _get_category_subtype_list(self, category: str = None) -> MSBEntryList:
+        """Get the selected category's subtype name and return its `MSB` entry list."""
         if category is None:
             category = self.active_category
             if category is None:
-                raise ValueError("Cannot add entry without specifying category if 'active_category' is None.")
-        entry_type_name, entry_subtype_name = category.split(": ")
-        entry_list = self.get_selected_msb()[entry_type_name]
+                raise ValueError("Cannot get MSB subtype entry list without `category` if `active_category` is None.")
         try:
-            global_index = entry_list.get_entry_global_index(entry_subtype_index, entry_subtype=entry_subtype_name)
-        except IndexError:
-            global_index = None  # will append to subtype
+            supertype_name, subtype_name = self.active_category.split(": ")
+        except ValueError:
+            raise ValueError(f"MSB category name was not in '[supertype]: [subtype]' format: {self.active_category}")
+        return self.get_selected_msb()[subtype_name]
 
+    def _add_entry(self, subtype_index: int, text: str, category=None, new_field_dict: MSBEntry = None):
+        """Active category is required."""
+        subtype_list = self._get_category_subtype_list(category)
         self._cancel_entry_text_edit()
         new_field_dict.name = text
-        entry_list.add_entry(new_field_dict, global_index)
-        local_index = entry_list.get_entries(entry_subtype=new_field_dict.ENTRY_SUBTYPE).index(new_field_dict)
-        self.select_entry_id(local_index, set_focus_to_text=True, edit_if_already_selected=False)
+        subtype_list.insert(subtype_index, new_field_dict)
+        self.select_entry_id(subtype_index, set_focus_to_text=True, edit_if_already_selected=False)
         # TODO: ActionHistory stuff?
         return True
 
-    def add_relative_entry(self, entry_index, offset=1, text=None):
-        """Uses entry index instead of dictionary ID."""
-        try:
-            entry_type, entry_subtype = self.active_category.split(": ")
-        except ValueError:
-            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {self.active_category}")
-        entry_list = self.get_selected_msb()[entry_type]
-        entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
-        msb_entry = entry_list.duplicate(entry_index, entry_subtype=entry_subtype, auto_add=False, name=text)
-        return self._add_entry(entry_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
+    def add_relative_entry(self, subtype_index: int, offset=1, text=None):
+        """Duplicate entry at `subtype_index` to index `subtype_index + offset`."""
+        subtype_list = self._get_category_subtype_list()
+        source_msb_entry = subtype_list[subtype_index]
+        msb_entry = source_msb_entry.copy()
+        msb_entry.name = text if text is None else source_msb_entry.name + " <COPY>"
+        return self._add_entry(subtype_index + offset, text=msb_entry.name, new_field_dict=msb_entry)
 
     def add_relative_entry_and_copy_player_transform(
         self, entry_index, translate=False, rotate=False, draw_parent_name=False
@@ -603,49 +600,35 @@ class MapsEditor(BaseFieldEditor):
         # Duplicated entry is selected, so we can apply player transform now.
         self.copy_player_position(translate=translate, rotate=rotate, draw_parent_name=draw_parent_name)
 
-    def add_new_default_entry(self, entry_index=None):
+    def add_new_default_entry(self, entry_index=-1):
         """Add a new `MSBEntry` instance of the appropriate subtype to the end of the list, with all default values."""
-        try:
-            entry_type, entry_subtype = self.active_category.split(": ")
-        except ValueError:
-            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {self.active_category}")
-        entry_list = self.get_selected_msb()[entry_type]
-        entry_subtype = entry_list.resolve_entry_subtype(entry_subtype)
-        if entry_index is None:
-            entry_index = len(entry_list.get_entry_names(entry_subtype))  # index after last index
-        msb_entry = entry_list.new(entry_subtype, auto_add=False)
+        subtype_list = self._get_category_subtype_list()
+        msb_entry = subtype_list.default_entry()
         return self._add_entry(entry_index, text=msb_entry.name, new_field_dict=msb_entry)
 
-    def delete_entry(self, row_index, category=None):
+    def delete_entry(self, row_index: int, category=None) -> MSBEntry | None:
         """Deletes entry and returns it (or False upon failure) so that the action manager can undo the deletion."""
         if row_index is None:
             self.bell()
             return
 
-        if category is None:
-            category = self.active_category
-            if category is None:
-                raise ValueError("Cannot delete entry without specifying category if `active_category` is None.")
+        subtype_list = self._get_category_subtype_list(category)
         self._cancel_entry_text_edit()
-        entry_subtype_index = self.get_entry_id(row_index)  # row_index == entry_id for Maps, but being consistent
-        entry_type, entry_subtype = category.split(": ")
-        entry_list = self.get_selected_msb()[entry_type]
-        deleted_entry = entry_list.delete_entry(entry_subtype_index, entry_subtype=entry_subtype)
+        # Row index and subtype index may be different if displayed row range does not start at zero.
+        entry_subtype_index = self.get_entry_id(row_index)
+        deleted_entry = subtype_list.pop(entry_subtype_index)
         self.select_entry_row_index(None)
         self.refresh_entries()
         return deleted_entry
 
-    def copy_python_instance_text(self, row_index, category=None):
+    def copy_python_instance_text(self, row_index: int, category=None):
         """Copies valid string representation of given entry to clipboard."""
         if row_index is None:
             self.bell()
             return
-        if category is None:
-            category = self.active_category
-            if category is None:
-                raise ValueError("Cannot copy entry Python text to clipboard without known category.")
-        entry_type, entry_subtype = category.split(": ")
-        entry = self.get_selected_msb()[entry_type].get_entries(entry_subtype)[row_index]
+
+        subtype_list = self._get_category_subtype_list(category)
+        entry = subtype_list[row_index]
         self.clipboard_clear()
         self.clipboard_append(repr(entry))
         self.update()
@@ -829,19 +812,10 @@ class MapsEditor(BaseFieldEditor):
     def get_category_data(self, category=None) -> list[MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
-        For Maps, this actually returns a *list*, not a dict. Entry IDs are equivalent to entry indexes in this list, so
-        all parent methods still function as expected.
+        For Maps, this actually returns a *list*, not a dict, and not the real `MSBEntryList`. Entry IDs are equivalent
+        to entry/row indices in this list, so all parent methods still function as expected.
         """
-        if category is None:
-            category = self.active_category
-            if category is None:
-                return []
-        selected_msb = self.get_selected_msb()
-        try:
-            entry_type, entry_subtype = category.split(": ")
-        except ValueError:
-            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {category}")
-        return selected_msb[entry_type].get_entries(entry_subtype)
+        return list(self._get_category_subtype_list(category))
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns a `zip()` generator for parent method."""
@@ -851,7 +825,7 @@ class MapsEditor(BaseFieldEditor):
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Entry index and entry ID are equivalent in Maps.
 
-        Note that .get_entry_id() is still necessary to get the true entry index from the displayed row index.
+        Note that `.get_entry_id()` is still necessary to get the true entry index from the displayed row index.
         """
         return entry_id
 
@@ -864,23 +838,15 @@ class MapsEditor(BaseFieldEditor):
         return entry_list[entry_index].description
 
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
-        entry_list = self.get_category_data(category)
 
-        try:
-            entry_type, _ = category.split(": ")
-        except ValueError:
-            raise ValueError(f"Category name was not in '[type]: [subtype]' format: {category}")
-        old_name = entry_list[entry_index].name
-        entry_list[entry_index].name = text
-
-        self.get_selected_msb().rename_references(old_name, text, entry_types=[entry_type])
-
+        subtype_list = self._get_category_subtype_list(category)
+        subtype_list[entry_index].name = text
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(entry_index, text, entry_list[entry_index].description)
+            self.entry_rows[update_row_index].update_entry(entry_index, text, subtype_list[entry_index].description)
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Not implemented for Map Editor."""
-        raise ValueError("Cannot set entry IDs in Maps Editor.")
+        raise TypeError("Cannot set entry IDs in Maps Editor (entries are just a list).")
 
     def get_field_dict(self, entry_index: int, category=None) -> MSBEntry:
         """Uses entry index instad of entry ID."""
@@ -957,7 +923,7 @@ class MapsEditor(BaseFieldEditor):
                 player_x = self.linker.get_game_value("player_x")
                 player_y = self.linker.get_game_value("player_y") + y_offset
                 player_z = self.linker.get_game_value("player_z")
-                new_translate = Vector3(player_x, player_y, player_z)
+                new_translate = Vector3([player_x, player_y, player_z])
             if rotate:
                 new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
             if draw_parent_name:
@@ -971,8 +937,9 @@ class MapsEditor(BaseFieldEditor):
                                 f"Are you sure the player is currently standing in this map? (No changes made.)",
                     )
                     return
+                # NOTE: `.collisions` subtype is always present, but still not defined in base class.
                 search = [
-                    col for col in self.get_selected_msb().parts.Collisions
+                    col for col in self.get_selected_msb()["collisions"]
                     if col.display_groups == display_groups
                 ]
                 if len(search) > 1:
@@ -1066,7 +1033,7 @@ class MapsEditor(BaseFieldEditor):
             player_x = self.linker.get_game_value("player_x")
             player_y = self.linker.get_game_value("player_y")
             player_z = self.linker.get_game_value("player_z")
-            new_translate = Vector3(player_x, player_y, player_z)
+            new_translate = Vector3([player_x, player_y, player_z])
             new_rotate_y = math.degrees(self.linker.get_game_value("player_angle"))
         except MemoryHookCallError as e:
             _LOGGER.error(str(e), exc_info=True)
@@ -1079,10 +1046,10 @@ class MapsEditor(BaseFieldEditor):
             )
             return
 
-        self.get_selected_msb().regions.new_point(
+        self.get_selected_msb()["points"].new(
             name=point_name,
             translate=new_translate,
-            rotate=Vector3(0, new_rotate_y, 0),
+            rotate=Vector3([0, new_rotate_y, 0]),
         )
         sequence[i] = point_name
         self.refresh_fields()

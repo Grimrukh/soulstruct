@@ -18,8 +18,7 @@ from soulstruct.utilities.text import word_wrap
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
-    from soulstruct.base.maps.msb import MSB, MSBEntryEntity
-    from soulstruct.base.maps.msb.msb_entry import MSBEntryEntity
+    from soulstruct.base.maps.msb import MSB, MSBEntry, MSBEntryList
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -216,7 +215,6 @@ class EntityEditor(BaseEditor):
         self,
         project,
         entities_directory,
-        events_directory,
         global_map_choice_func,
         linker,
         master=None,
@@ -501,7 +499,7 @@ class EntityEditor(BaseEditor):
             found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
                 try:
-                    entry = msb.get_entry_by_entity_id(entity_enum.value)
+                    entry = msb.find_entry_by_entity_id(entity_enum.value, allow_multiple=False)
                 except ValueError:
                     return self.error_dialog(
                         "Duplicate Entity IDs",
@@ -511,8 +509,8 @@ class EntityEditor(BaseEditor):
                 except KeyError:
                     not_found.append(entity_enum.value)
                     continue
-                entry_type_name = entry.ENTRY_SUBTYPE.get_pluralized_type_name()
-                entry_subtype_name = entry.ENTRY_SUBTYPE.name
+                entry_type_name = entry.SUBTYPE_ENUM.get_plural_supertype_name()
+                entry_subtype_name = entry.SUBTYPE_ENUM.name
                 if entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
                     return self.error_dialog(
                         "Entity Type Mismatch",
@@ -568,7 +566,7 @@ class EntityEditor(BaseEditor):
         for (attr_name, entity_id), description in descriptions_by_attr_and_id.items():
             # attr_name not actually used, as entity ID uniqueness should have already been resolved
             try:
-                entry = msb.get_entry_by_entity_id(entity_id)
+                entry = msb.find_entry_by_entity_id(entity_id, allow_multiple=False)
             except KeyError:
                 continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
             entry.description = description
@@ -600,7 +598,7 @@ class EntityEditor(BaseEditor):
             found_map_entry_class_names.append(attr_name)
             for entity_enum in attr:
                 try:
-                    entry = msb.get_entry_by_name(entity_enum.name)
+                    entry = msb.find_entry_by_entity_id(entity_enum.name, allow_multiple=False)
                 except ValueError:
                     return self.error_dialog(
                         "Duplicate Entity Names",
@@ -610,10 +608,10 @@ class EntityEditor(BaseEditor):
                 except KeyError:
                     not_found.append(entity_enum.name)
                     continue
-                entry_type_name = entry.ENTRY_SUBTYPE.get_pluralized_type_name()
-                entry_subtype_name = entry.ENTRY_SUBTYPE.name
+                supertype_name = entry.SUBTYPE_ENUM.get_plural_supertype_name()
+                entry_subtype_name = entry.SUBTYPE_ENUM.name
                 if entry_game_type is RegionVolume:
-                    if entry_type_name != "Regions" or entry_subtype_name not in {"Sphere", "Cylinder", "Box"}:
+                    if supertype_name != "Regions" or entry_subtype_name not in {"Sphere", "Cylinder", "Box"}:
                         return self.error_dialog(
                             "Entity Type Mismatch",
                             f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
@@ -621,12 +619,12 @@ class EntityEditor(BaseEditor):
                             f"import entity IDs from entities module until this is fixed.",
                         )
                     entries_by_entity_enum[entity_enum] = entry
-                elif entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
+                elif entry_game_type.get_msb_entry_type_subtype() != (supertype_name, entry_subtype_name):
                     return self.error_dialog(
                         "Entity Type Mismatch",
                         f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
-                        f"`{attr_name}`, but has different type '{entry_type_name}.{entry_subtype_name}` in MSB. Cannot "
-                        f"import entity IDs from entities module until this is fixed.",
+                        f"`{attr_name}`, but has different type '{supertype_name}.{entry_subtype_name}` in MSB. "
+                        f"Cannot import entity IDs from entities module until this is fixed.",
                     )
                 entries_by_entity_enum[entity_enum] = entry
 
@@ -676,7 +674,7 @@ class EntityEditor(BaseEditor):
         for (attr_name, name), description in descriptions_by_attr_and_id.items():
             # attr_name not actually used, as name uniqueness should have already been resolved
             try:
-                entry = msb.get_entry_by_name(name)
+                entry = msb.find_entry_by_name(name)
             except KeyError:
                 continue  # shouldn't happen (as missing entity ID should be skipped) but just in case
             entry.description = description
@@ -718,33 +716,32 @@ class EntityEditor(BaseEditor):
         map_name = self.maps.GET_MAP(self.map_choice_stem).name
         return self.maps[map_name]
 
-    def get_category_data(self, category=None) -> dict[int, MSBEntryEntity]:
+    def _get_category_subtype_list(self, category: str = None) -> MSBEntryList:
+        """Get the selected category's subtype name and return its `MSB` entry list."""
+        if category is None:
+            category = self.active_category
+            if category is None:
+                raise ValueError("Cannot get MSB subtype entry list without `category` if `active_category` is None.")
+        try:
+            supertype_name, subtype_name = self.active_category.split(": ")
+        except ValueError:
+            raise ValueError(f"MSB category name was not in '[supertype]: [subtype]' format: {self.active_category}")
+        return self.get_selected_msb()[subtype_name]
+
+    def get_category_data(self, category=None) -> dict[int, MSBEntry]:
         """Gets entry data from map choice, entry list choice, and entry type choice (active category).
 
         Entity dictionary is generated from `MSB.get_entity_id_dict()` every time and is sorted by entity ID.
         """
-        if category is None:
-            category = self.active_category
-            if category is None:
-                return {}
-        selected_msb = self.get_selected_msb()
-        try:
-            entry_type, entry_subtype = category.split(": ")
-        except ValueError:
-            raise ValueError(f"Category name was not in [Type: Subtype] format: {category}")
-        entries = selected_msb.get_entity_id_dict(entry_type, entry_subtype)
-        return {k: entries[k] for k in sorted(entries)}
+        subtype_list = self._get_category_subtype_list(category)
+        return subtype_list.get_entity_id_dict(sort_by_entity_id=True)
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns entire dictionary (no previous/next range buttons here)."""
         return list(self.get_category_data(category).items())
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
-        """Returns index of given entry ID (entity ID) in dictionary."""
-        if category is None:
-            category = self.active_category
-            if category is None:
-                raise ValueError("No text category selected.")
+        """Returns index of given entry ID (entity ID) in dictionary keys."""
         return list(self.get_category_data(category)).index(entry_id)
 
     def get_entry_text(self, entry_id: int, category=None) -> str:
@@ -774,7 +771,7 @@ class EntityEditor(BaseEditor):
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Changes 'entity_id' field of MSB entry."""
         entry_list = self.get_category_data(category)
-        entry_list[entry_id].entity_id = new_id
+        entry_list[entry_id].set_entity_id(new_id)
         self.linker.window.maps_tab.refresh_entries()
         entry_list[new_id] = entry = entry_list.pop(entry_id)
         if category == self.active_category and update_row_index is not None:

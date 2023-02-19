@@ -355,12 +355,13 @@ class BinaryWriter(BinaryBase):
 
     AUTO_RESERVE = Reserved()  # reserve using `id(source)` and field name
 
+    _array: bytearray
     reserved: dict[str, tuple[int, str]]
 
     def __init__(self, byte_order=ByteOrder.LittleEndian, long_varints: bool = True):
         super().__init__(byte_order, long_varints)
-        self.reserved = {}
         self._array = bytearray()
+        self.reserved = {}
 
     def pack(self, fmt: str, *values):
         self._array += struct.pack(self.parse_fmt(fmt), *values)
@@ -403,7 +404,7 @@ class BinaryWriter(BinaryBase):
 
     def reserve(self, name: str, fmt: str, obj: object = None):
         if obj is not None:
-            name = f"{id(obj)}({name})"
+            name = f"{obj.__class__.__name__}__{id(obj)}({name})"
         if name in self.reserved:
             raise ValueError(f"Name {repr(name)} is already reserved in `BytesWriter`.")
         fmt = self.parse_fmt(fmt)
@@ -413,7 +414,7 @@ class BinaryWriter(BinaryBase):
     def mark_reserved_offset(self, name: str, fmt: str, offset: int, obj: object = None):
         """Does not pad array anywhere. User must write nulls to the reserved offset themselves."""
         if obj is not None:
-            name = f"{id(obj)}({name})"
+            name = f"{obj.__class__.__name__}__{id(obj)}({name})"
         if name in self.reserved:
             raise ValueError(f"Name {repr(name)} is already reserved in `BytesWriter`.")
         fmt = self.parse_fmt(fmt)
@@ -423,7 +424,7 @@ class BinaryWriter(BinaryBase):
         if not values:
             raise ValueError("No values given to fill.")
         if obj is not None:
-            name = f"{id(obj)}({name})"
+            name = f"{obj.__class__.__name__}__{id(obj)}({name})"
             if name not in self.reserved:
                 raise ValueError(f"Field {repr(name)} reserved by `{type(obj).__name__}` object not found.")
         elif name not in self.reserved:
@@ -443,6 +444,10 @@ class BinaryWriter(BinaryBase):
         """
         self.fill(name, self.position, obj=obj)
         return self.position
+
+    def block_copy(self, source_offset: int, dest_offset: int, size: int):
+        """Copy one block of the buffer to another."""
+        self._array[dest_offset:dest_offset + size] = self._array[source_offset:source_offset + size]
 
     def __bytes__(self) -> bytes:
         """Just checks that no reserved offsets remain, then converts stored `bytearray` to immutable `bytes`."""
@@ -994,8 +999,8 @@ class BinaryStruct:
     # Set by `from_bytes()` class method, or can be manually set.
     # Will be auto-detected from values with `get_byte_order()` (defaulting to `LittleEndian`) if not defined, e.g.
     # by a manually-constructed instance.
-    byte_order: None | ByteOrder = dataclasses.field(init=False, default=None)
-    long_varints: None | bool = dataclasses.field(init=False, default=None)
+    byte_order: None | ByteOrder = dataclasses.field(init=False, repr=False, default=None)
+    long_varints: None | bool = dataclasses.field(init=False, repr=False, default=None)
 
     def __post_init__(self):
         if not self._STRUCT_INITIALIZED:
@@ -1005,6 +1010,10 @@ class BinaryStruct:
         for field, field_metadata in zip(self._FIELDS, self._FIELD_METADATA, strict=True):
             if (asserted := field_metadata.get_single_asserted()) is not None:
                 setattr(self, field.name, asserted)
+
+    @property
+    def cls_name(self):
+        return self.__class__.__name__
 
     @classmethod
     def _initialize_struct_cls(cls):
@@ -1031,13 +1040,13 @@ class BinaryStruct:
             if metadata is None:
                 # NOTE: We can't add new keys to `field.metadata` now, but store it in `_FIELD_METADATA`.
 
-                # TODO: Change `Vector` init to NOT unpacking, i.e. `Vector3([x, y, z])`.
+                # `Vector` types can be specified without needing any field metadata.
                 if field_type == Vector2:
-                    metadata = BinaryArrayMetadata(2, "2f", unpack_func=lambda v: Vector2(*v))
+                    metadata = BinaryArrayMetadata(2, "2f", unpack_func=Vector2)
                 elif field_type == Vector3:
-                    metadata = BinaryArrayMetadata(3, "3f", unpack_func=lambda v: Vector3(*v))
+                    metadata = BinaryArrayMetadata(3, "3f", unpack_func=Vector3)
                 elif field_type == Vector4:
-                    metadata = BinaryArrayMetadata(4, "4f", unpack_func=lambda v: Vector4(*v))
+                    metadata = BinaryArrayMetadata(4, "4f", unpack_func=Vector4)
                 else:
                     try:
                         fmt = _PRIMITIVE_FIELD_FMTS[field_type]
@@ -1331,7 +1340,7 @@ class BinaryStruct:
                 continue
             value = getattr(self, field.name, field.name)
             if value is None:
-                raise ValueError(f"Field `{self.__class__.__name__}.{field.name}` is None. Cannot set to object.")
+                raise ValueError(f"Field `{self.cls_name}.{field.name}` is None. Cannot set to object.")
             init_kwargs[field.name] = value
 
         return obj_type(**init_kwargs)
@@ -1354,7 +1363,7 @@ class BinaryStruct:
         writer = self.to_writer()
         if writer.reserved:
             raise ValueError(
-                f"`{self.__class__.__name__}` BinaryStruct cannot fill all fields on its own. Use `to_writer()`.\n"
+                f"`{self.cls_name}` BinaryStruct cannot fill all fields on its own. Use `to_writer()`.\n"
                 f"    Remaining: {writer.reserved}"
             )
         return bytes(writer)
@@ -1394,14 +1403,14 @@ class BinaryStruct:
         if writer is not None:
             if writer.default_byte_order != byte_order:
                 _LOGGER.warning(
-                    f"Existing writer passed to `{self.__class__.__name__}.to_writer()` has default byte order "
+                    f"Existing writer passed to `{self.cls_name}.to_writer()` has default byte order "
                     f"{writer.default_byte_order}, but this class wants to use {byte_order}. Using this class's byte "
                     f"order.")
                 writer.default_byte_order = byte_order
         else:
             writer = BinaryWriter(byte_order)  # NOTE: `BinaryWriter.long_varints` not used here
 
-        cls_name = self.__class__.__name__
+        cls_name = self.cls_name
         bit_writer = BitFieldWriter()
 
         # Get all field values.
@@ -1490,7 +1499,7 @@ class BinaryStruct:
             try:
                 value = getattr(self, field_name)
             except AttributeError:
-                raise AssertionError(f"Field '{field_name}' does not exist on `{self.__class__.__name__}`.")
+                raise AssertionError(f"Field '{field_name}' does not exist on `{self.cls_name}`.")
             if value != field_value:
                 raise AssertionError(f"Field value assertion error: {repr(value)} != asserted {repr(field_value)}")
 
@@ -1513,7 +1522,7 @@ class BinaryStruct:
         """
         value = getattr(self, field_name, None)
         if value is None:
-            raise BinaryFieldValueError(f"Field `{self.__class__.__name__}.{field_name}` has no set value to consume.")
+            raise BinaryFieldValueError(f"Field `{self.cls_name}.{field_name}` has no set value to consume.")
         setattr(self, field_name, None)
         return value
 
@@ -1528,13 +1537,13 @@ class BinaryStruct:
 
         Called on pack if `self.byte_order` is not already assigned. This base method also logs a warning.
         """
-        _LOGGER.warning(f"Byte order defaulting to `LittleEndian` for `{self.__class__.__name__}`.")
+        _LOGGER.warning(f"Byte order defaulting to `LittleEndian` for `{self.cls_name}`.")
         return ByteOrder.LittleEndian
 
-    def row_repr(self) -> str:
+    def repr_multiline(self) -> str:
         """Only includes binary fields with non-default values."""
         lines = [
-            f"{self.__class__.__name__}(",
+            f"{self.cls_name}(",
         ]
         for field in self._FIELDS:
             if not field.repr:

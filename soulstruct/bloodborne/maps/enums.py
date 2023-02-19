@@ -25,7 +25,7 @@ class MSBModelSubtype(BaseMSBModelSubtype):
         return "N:\\FPRG\\data\\Model\\"
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Models"
 
 
@@ -48,7 +48,7 @@ class MSBEventSubtype(BaseMSBEventSubtype):
     Other = -1
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Events"
 
 
@@ -61,7 +61,7 @@ class MSBRegionSubtype(BaseMSBRegionSubtype):
     Box = 5
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Regions"
 
 
@@ -81,7 +81,7 @@ class MSBPartSubtype(BaseMSBPartSubtype):
     Other = -1
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         return "Parts"
 
 

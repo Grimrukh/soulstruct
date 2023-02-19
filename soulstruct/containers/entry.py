@@ -262,8 +262,5 @@ class BinderEntry:
             path = self.name  # relative path only
         Path(path).write_bytes(self.data)
 
-    def __eq__(self, other_bnd_entry) -> bool:
-        return all(getattr(self, field) == getattr(other_bnd_entry, field) for field in ("id", "path", "flags", "data"))
-
     def __repr__(self):
-        return f"BinderEntry({self.entry_id}, {hex(self.flags)}, \"{self.path}\")"
+        return f"BinderEntry({self.entry_id}, {hex(self.flags)}, \"{self.path}\", <{len(self.data)} bytes>)"

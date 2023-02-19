@@ -124,9 +124,9 @@ class ParamRow(BinaryStruct):
         data = {"RawName": repr(self.RawName), "Name": self.Name}
         for binary_field in self.get_binary_fields():
             binary = binary_field.metadata["binary"]  # type: BinaryMetadata
-            if ignore_pads and binary_field.type == bytes and binary.asserted:
-                continue  # ignore pad
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
+            if ignore_pads and info.is_pad:
+                continue  # ignore pad
             value = getattr(self, binary_field.name)
             if ignore_defaults and value == binary_field.default:
                 continue  # ignore default value
@@ -189,6 +189,7 @@ class ParamFieldMetadata(tp.NamedTuple):
     hide: bool = False
     dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[BaseGameObject, str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
+    is_pad: bool = False
 
 
 def ParamField(
@@ -232,7 +233,7 @@ def ParamPad(size: int, internal_name: str):
     """Shortcut for a Param normal 'array' padding field (a field with type `dummy8` and [] in name)."""
     metadata = Binary(
         fmt=f"{size}s",
-        # asserted=[b"\0" * size],  # TODO: Finding non-null pad values...
+        # asserted=(b"\0" * size,),  # TODO: Finding non-null pad values...
     )
     metadata["metadata"] |= {
         "param": ParamFieldMetadata(
@@ -240,6 +241,7 @@ def ParamPad(size: int, internal_name: str):
             hide=True,
             dynamic_callback=None,
             tooltip=f"Null padding ({size} bytes).",
+            is_pad=True,
         ),
     }
     return field(default=b"\0" * size, **metadata)

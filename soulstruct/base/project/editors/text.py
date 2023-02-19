@@ -31,14 +31,14 @@ class TextEntryRow(EntryRow):
             separator_added = False
             text_categories = ("Names", "Summaries", "Descriptions")
             linked_id = ((text_id // 100) * 100) if item_type in {"Weapon", "Armor"} else text_id
-            for link_category in text_categories:
-                if text_type != link_category and linked_id in self.master.text[item_type + link_category]:
+            for linked_cat in text_categories:
+                if text_type != linked_cat and linked_id in self.master.text[item_type + linked_cat]:
                     if not separator_added:
                         self.context_menu.add_separator()
                         separator_added = True
                     self.context_menu.add_command(
-                        label=f"Go to Text.{item_type}{link_category}[{linked_id}]",
-                        command=lambda it=item_type, lc=link_category, i=linked_id: self.master.linker.execute_text_link(
+                        label=f"Go to Text.{item_type}{linked_cat}[{linked_id}]",
+                        command=lambda it=item_type, lc=linked_cat, i=linked_id: self.master.linker.execute_text_link(
                             it + lc, i
                         ),
                     )
@@ -213,7 +213,7 @@ class TextEditor(BaseEditor):
             self.flash_bg(self.replace_text_string_entry if replace else self.find_text_string_entry)
 
     def _get_display_categories(self):
-        return self.text.ALL_CATEGORIES if self.show_all_categories.get() else self.text.MAIN_CATEGORIES
+        return self.text.GET_ALL_CATEGORIES() if self.show_all_categories.get() else self.text.MAIN_CATEGORIES
 
     def get_category_data(self, category=None) -> dict:
         if category is None:

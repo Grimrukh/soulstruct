@@ -36,7 +36,7 @@ class BaseGameObject:
     """
 
     @classmethod
-    def get_event_arg_fmt(cls) -> tp.Optional[str]:
+    def get_event_arg_fmt(cls) -> str:
         """If not `None`, allows this type to be used as an EVS event arg type hint for this format."""
         raise TypeError(f"Game type `{cls.__name__}` cannot be used as an EVS event argument type hint.")
 

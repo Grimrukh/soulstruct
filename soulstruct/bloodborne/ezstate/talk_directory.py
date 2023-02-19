@@ -2,17 +2,21 @@ from __future__ import annotations
 
 __all__ = ["TalkDirectory"]
 
+import typing as tp
+from dataclasses import dataclass
+
 from soulstruct.base.ezstate.talk_directory import TalkDirectory as _BaseTalkDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.bloodborne.ezstate.talkesdbnd import TalkESDBND
 from soulstruct.bloodborne.maps.constants import *
 
 
+@dataclass(slots=True)
 class TalkDirectory(_BaseTalkDirectory):
     """Does not include Chalice Dungeons."""
-    FILE_CLASS = TalkESDBND
-    ALL_MAPS = ALL_MAPS_NO_CHALICE
-    GET_MAP = staticmethod(get_map)
+    ALL_MAPS: tp.ClassVar = ALL_MAPS_NO_CHALICE
+    GET_MAP: tp.ClassVar = staticmethod(get_map)
+    FILE_CLASS: tp.ClassVar = TalkESDBND
 
     Common = map_property(COMMON)  # type: TalkESDBND
     HuntersDream = map_property(HUNTERS_DREAM)  # type: TalkESDBND

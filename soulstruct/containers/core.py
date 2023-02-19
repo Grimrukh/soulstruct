@@ -875,7 +875,7 @@ class Binder(BaseBinaryFile):
             self.add_entry(BinderEntry(entry_id=entry_id, path=path, data=data, flags=flags))
 
     def add_entry(self, entry: BinderEntry):
-        if entry in self.entries:
+        if id(entry) in {id(e) for e in self.entries}:
             raise BinderError(f"Given `BinderEntry` instance with ID {entry.entry_id} is already in this binder.")
         if entry.entry_id in self.entries_by_id:
             _LOGGER.warning(f"Entry ID {entry.entry_id} appears more than once in this binder. You should fix this!")

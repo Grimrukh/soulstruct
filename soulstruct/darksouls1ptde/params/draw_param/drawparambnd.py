@@ -55,11 +55,12 @@ class DrawParamBND(Binder):
         ("LensFlareBank", "LensFlares"),
         ("LensFlareExBank", "LensFlareSources"),
         ("LightBank", "BakedLight"),
-        ("ScatteredLightBank", "ScatteredLight"),
+        ("LightScatteringBank", "ScatteredLight"),
         ("PointLightBank", "PointLights"),
         ("ShadowBank", "Shadows"),
         ("ToneCorrectBank", "ToneCorrection"),
         ("ToneMapBank", "ToneMapping"),
+        ("LodBank", "Lod"),
         ("s_LightBank", "s_BakedLight"),  # unused (debug)
     )
     PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {
@@ -69,11 +70,12 @@ class DrawParamBND(Binder):
         "LensFlareBank": LensFlareParam,
         "LensFlareExBank": LensFlareSourceParam,
         "LightBank": BakedLightParam,
-        "ScatteredLightBank": ScatteredLightParam,
+        "LightScatteringBank": ScatteredLightParam,
         "PointLightBank": PointLightParam,
         "ShadowBank": ShadowParam,
         "ToneCorrectBank": ToneCorrectionParam,
         "ToneMapBank": ToneMappingParam,
+        "LodBank": None,
         "s_LightBank": BakedLightParam,
     }
 
@@ -104,7 +106,7 @@ class DrawParamBND(Binder):
     LensFlares = draw_param_property("LensFlareBank")  # type: list[DrawParam[LENS_FLARE_BANK]]
     LensFlareSources = draw_param_property("LensFlareExBank")  # type: list[DrawParam[LENS_FLARE_EX_BANK]]
     BakedLight = draw_param_property("LightBank")  # type: list[DrawParam[LIGHT_BANK]]
-    ScatteredLight = draw_param_property("ScatteredLightBank")  # type: list[DrawParam[LIGHT_SCATTERING_BANK]]
+    ScatteredLight = draw_param_property("LightScatteringBank")  # type: list[DrawParam[LIGHT_SCATTERING_BANK]]
     PointLights = draw_param_property("PointLightBank")  # type: list[DrawParam[POINT_LIGHT_BANK]]
     Shadows = draw_param_property("ShadowBank")  # type: list[DrawParam[SHADOW_BANK]]
     ToneCorrection = draw_param_property("ToneCorrectBank")  # type: list[DrawParam[TONE_CORRECT_BANK]]
@@ -112,7 +114,7 @@ class DrawParamBND(Binder):
     DebugBakedLight = draw_param_property("s_LightBank")  # type: list[DrawParam[LIGHT_BANK]]
 
     def __post_init__(self):
-        if not self.draw_params and self.entries:
+        if self.draw_params:
             return
 
         # Load from binary Binder source.
@@ -274,14 +276,18 @@ class DrawParamBND(Binder):
             raise ValueError(f"`map_area` key not in `DrawParamBND` JSON manifest: {manifest_path}")
         if "entries" not in manifest:
             raise ValueError(f"`entries` key not in `DrawParamBND` JSON manifest: {manifest_path}")
+        kwargs = cls.process_manifest_header(manifest) | {"draw_params": {}}
 
-        manifest["draw_params"] = {}
-        for json_stem in manifest.pop("entries"):
-            param_stem = cls.PARAM_NICKNAMES[json_stem]
-            slot = 1 if param_stem.endswith("_1") else 0
+        for json_nickname_stem in kwargs.pop("entries"):
+            if json_nickname_stem.endswith("_1"):
+                param_stem = cls.PARAM_NICKNAMES[json_nickname_stem[:-2]]
+                slot = 1
+            else:
+                param_stem = cls.PARAM_NICKNAMES[json_nickname_stem]
+                slot = 0
 
             # Open JSON file to get 'param_type'.
-            param_dict = read_json(directory / f"{json_stem}.json")
+            param_dict = read_json(directory / f"{json_nickname_stem}.json")
             try:
                 row_type = getattr(cls.PARAMDEF_MODULE, param_dict["param_type"])
             except KeyError:
@@ -291,10 +297,10 @@ class DrawParamBND(Binder):
                     f"Unknown 'param_type' `{param_dict['param_type']} in DrawParam JSON: {param_stem}.json"
                 )
             typed_draw_param_class = TypedDrawParam(row_type)
-            manifest["draw_params"].setdefault(param_stem, [None, None])
-            manifest["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
+            kwargs["draw_params"].setdefault(param_stem, [None, None])
+            kwargs["draw_params"][param_stem][slot] = typed_draw_param_class.from_dict(param_dict)
 
-        drawparambnd = cls.from_dict(manifest)
+        drawparambnd = cls.from_dict(kwargs)
         drawparambnd.path = directory  # TODO: auto-detect better default path, e.g. for binary?
         return drawparambnd
 
@@ -304,14 +310,20 @@ class DrawParamBND(Binder):
 
         The resulting folder can be loaded with `load_json_directory(directory)`.
         """
+        if self.map_area is None:
+            raise ValueError(
+                "Must set `DrawParamBND.map_area` (e.g. 'm15') before it can be written to JSON directory."
+            )
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
-        manifest = self.get_manifest_header()
+        manifest = self.get_manifest_header() | {"map_area": self.map_area}
         manifest.pop("use_id_prefix")
         manifest["entries"] = []
 
         for draw_param_stem, draw_param_slots in self.draw_params.items():
             for slot, draw_param in enumerate(draw_param_slots):
+                if draw_param is None:
+                    continue  # empty slot
                 json_stem = self.PARAM_NICKNAMES[draw_param_stem]
                 if slot == 1:
                     json_stem += "_1"

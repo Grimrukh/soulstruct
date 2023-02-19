@@ -85,14 +85,14 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
         # Open FMGs.
         fmgs = cls.create_fmgs(files["item"], files["menu"])
 
-        return cls(directory_path, files, fmgs)
+        return cls(directory=directory_path, files=files, fmgs=fmgs)
 
     @classmethod
     def from_item_menu_binders(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> Self:
 
         files = {"item": item_msgbnd, "menu": menu_msgbnd}
         fmgs = cls.create_fmgs(item_msgbnd, menu_msgbnd)
-        return cls(directory=Path(), files=files, fmgs=fmgs)
+        return cls(directory=None, files=files, fmgs=fmgs)
 
     @classmethod
     def from_json_directory(cls, directory: Path | str) -> Self:
@@ -146,7 +146,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
             missing = f"\n  ".join(f"{entry_id}: {cls.DEFAULT_ENTRY_STEMS[entry_id]}" for entry_id in missing_ids)
             _LOGGER.warning(f"Could not find these MSGBND entry IDs in JSON directory:\n  {missing}")
 
-        return cls(directory, files, fmgs)
+        return cls(directory=directory, files=files, fmgs=fmgs)
 
     @classmethod
     def create_fmgs(cls, item_msgbnd: Binder, menu_msgbnd: Binder) -> dict[(str, int), FMG]:

@@ -69,7 +69,7 @@ class MSBEntryList(list[MSBEntryType]):
         """Returns a list of `MSBEntry` names."""
         return [entry.name for entry in self]
 
-    def get_entity_id_dict(self) -> dict[int, MSBEntry]:
+    def get_entity_id_dict(self, sort_by_entity_id=False) -> dict[int, MSBEntry]:
         """Get a dictionary mapping entity IDs to `MSBEntry` instances for this subtype list.
 
         If multiple `MSBEntry` instances are found for a given ID, a warning is logged, and only the *first* one found
@@ -92,6 +92,8 @@ class MSBEntryList(list[MSBEntryType]):
                 )
             else:
                 entries_by_id[entity_id] = entry
+        if sort_by_entity_id:
+            entries_by_id = {k: entries_by_id[k] for k in sorted(entries_by_id.keys())}
         return entries_by_id
 
     def get_filtered_list(self, filter_func: tp.Callable[[MSBEntry], bool]) -> MSBEntryList[MSBEntryType]:
@@ -121,24 +123,33 @@ class MSBEntryList(list[MSBEntryType]):
                 return i
         return -1
 
-    def new(self, **kwargs) -> MSBEntryType:
-        """Create a new `MSBEntry` of this list's subtype and append it to list."""
+    def default_entry(self) -> MSBEntryType:
+        """Create a new `MSBEntry` of this list's subtype, with all default field values, and return it.
+
+        Does NOT add the new entry to this list, unlike `new()`.
+        """
+        return self.subtype_info.entry_class()
+
+    def new(self, new_index=-1, **kwargs) -> MSBEntryType:
+        """Create a new `MSBEntry` of this list's subtype and append it to list (or insert it at `new_index`)."""
         # noinspection PyArgumentList
         entry = self.subtype_info.entry_class(**kwargs)
-        self.append(entry)
+        if new_index >= 0:
+            self.insert(new_index, entry)
+        else:
+            self.append(entry)
         return entry
 
-    def duplicate(self, entry_or_index: MSBEntryType | int, at_next_index=True, **kwargs) -> MSBEntryType:
+    def duplicate(self, entry_or_index: MSBEntryType | int, index_offset=0, **kwargs) -> MSBEntryType:
         """Duplicate the specified `entry`.
 
-        By default, the duplicated entry is inserted just below the source entry. If `at_next_index=False`, it
-        will instead be inserted at the end of its entry subtype (not global subtype).
+        If `index_offset = 0` (default), the duplicated entry will be inserted right after the source entry. Higher
+        values will insert it further ahead in the list. A value of -1 will insert it at the end of the list. If the
+        source entry is not in this list, the new entry will always be added at the end.
 
         Any `kwargs` given will be passed to the `set()` method of the duplicated entry (which is then also returned for
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
-        unique '<i>' duplicate tag suffix to retain name uniqueness (which will be removed upon final pack).
-
-        You can also call this with `add_{subtype}(copy_entry=entry, at_next_index=True, **kwargs)`.
+        '<COPY>' duplicate tag suffix, which must be edited/removed by the user.
         """
         if isinstance(entry_or_index, int):
             entry = self[entry_or_index]
@@ -160,12 +171,13 @@ class MSBEntryList(list[MSBEntryType]):
         for field_name, field_value in kwargs.items():
             setattr(duplicated, field_name, field_value)
 
-        if at_next_index and index != -1:
-            self.insert(index, duplicated)
+        if index_offset >= 0 and index != -1:
+            self.insert(index + index_offset, duplicated)
         else:
-            if at_next_index:
+            if index_offset >= 0:
                 _LOGGER.warning(
-                    f"Cannot insert duplicate of entry `{entry.name}` at next index (entry is not in this list)."
+                    f"Cannot insert duplicate of entry `{entry.name}` at index offset {index_offset} (source entry is "
+                    f"not in this list)."
                 )
             self.append(duplicated)
 

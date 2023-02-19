@@ -1,3 +1,4 @@
+from .param_row import ParamRow
 from .param import Param
-from .paramdef import ParamDefField, ParamDef, ParamDefBND
 from .gameparambnd import GameParamBND
+from .paramdef import ParamDefField, ParamDef, ParamDefBND

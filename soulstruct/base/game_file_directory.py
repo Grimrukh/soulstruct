@@ -34,8 +34,10 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
     FILE_CLASS: tp.ClassVar[tp.Type[BaseBinaryFile]]
     FILE_EXTENSION: tp.ClassVar[str] = ""  # NOTE: `.dcx` extension will be applied by `BinaryBaseFile.write()`
 
-    directory: Path | None = None
-    files: dict[str, BASE_BINARY_FILE_T] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
+    # Tracks directory that instance was loaded from (if any) for argument-free write calls.
+    directory: Path | None = field(default=None, kw_only=True)
+    # Maps 'true stems' to `FILE_CLASS` instances.
+    files: dict[str, BASE_BINARY_FILE_T] = field(default_factory=dict, kw_only=True)
 
     @classmethod
     def from_path(cls, directory_path: Path | str):
@@ -55,7 +57,7 @@ class GameFileDirectory(tp.Generic[BASE_BINARY_FILE_T], abc.ABC):
                 file_path_stem = file_path.name.split(".")[0]
                 files[file_path_stem] = cls.FILE_CLASS.from_path(file_path)
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
     def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
         if directory_path is None:
@@ -135,7 +137,7 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
     def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
         """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""

@@ -105,7 +105,7 @@ class DrawParamDirectory(GameFileDirectory, abc.ABC):
         if all_bnd_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_bnd_stems)}")
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
     def write(self, directory_path: Path | str | None = None, check_file_hashes: bool = False):
         """Same as `GameFileDirectory`, but reports unknown files and if any maps are missing."""
@@ -140,7 +140,7 @@ class DrawParamDirectory(GameFileDirectory, abc.ABC):
 
         all_bnd_stems = cls.get_all_file_stems()
 
-        for bnd_stem in all_bnd_stems:
+        for bnd_stem in tuple(all_bnd_stems):
             if (bnd_json_directory := directory / bnd_stem).is_dir():
                 drawparambnd = cls.FILE_CLASS.from_json_directory(bnd_json_directory)
             elif (bnd_json := directory / f"{bnd_stem}.json").is_file():
@@ -149,7 +149,6 @@ class DrawParamDirectory(GameFileDirectory, abc.ABC):
             else:
                 continue  # can't find file
             all_bnd_stems.remove(bnd_stem)
-            # TODO: Key should be full file name. And how to detect if '.dcx' should be appended to name?
             files[bnd_stem] = drawparambnd
 
         if all_bnd_stems:

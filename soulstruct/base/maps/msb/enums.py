@@ -19,7 +19,7 @@ class BaseMSBSubtype(IntEnum):
         return self.name + "s"
 
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         raise NotImplementedError
 
 
@@ -30,23 +30,23 @@ class BaseMSBModelSubtype(BaseMSBSubtype):
         raise NotImplementedError
 
     @classmethod
-    def get_pluralized_type_name(cls) -> str:
+    def get_plural_supertype_name(cls) -> str:
         raise NotImplementedError
 
 
 class BaseMSBEventSubtype(BaseMSBSubtype):
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         raise NotImplementedError
 
 
 class BaseMSBRegionSubtype(BaseMSBSubtype):
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         raise NotImplementedError
 
 
 class BaseMSBPartSubtype(BaseMSBSubtype):
     @classmethod
-    def get_pluralized_type_name(cls):
+    def get_plural_supertype_name(cls):
         raise NotImplementedError

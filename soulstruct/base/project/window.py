@@ -220,7 +220,6 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 smart_frame_class=self.ENTITIES_EDITOR_CLASS,
                 project=self.project,
                 entities_directory=self.project.entities_directory,
-                events_directory=self.project.project_root / "events",
                 global_map_choice_func=self.set_global_map_choice,
                 linker=self.linker,
                 sticky="nsew",

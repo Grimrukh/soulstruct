@@ -153,7 +153,6 @@ class EMEVD(GameFile, abc.ABC):
 
     @classmethod
     def from_reader(cls, reader: BinaryReader) -> Self:
-        print(reader.peek(6))
         byte_order = ByteOrder.from_reader_peek(reader, 1, 4, b"\01", b"\00")
         long_varints = long_varints_from_reader_peek(reader, 1, 5, b"\xFF", b"\00")
         reader.default_byte_order = byte_order

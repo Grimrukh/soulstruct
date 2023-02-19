@@ -60,7 +60,7 @@ class NVMTriangle:
         x = sum(v.x for v in (v1, v2, v3)) / 3.0
         y = sum(v.y for v in (v1, v2, v3)) / 3.0
         z = sum(v.z for v in (v1, v2, v3)) / 3.0
-        return Vector3(x, y, z)
+        return Vector3([x, y, z])
 
     @staticmethod
     def reverse_flags_bits(n):
@@ -82,9 +82,9 @@ class NVMBox:
 
     @classmethod
     def from_nvm_reader(cls, reader: BinaryReader) -> NVMBox:
-        start_corner = Vector3(*reader.unpack("3f"))
+        start_corner = Vector3(reader.unpack("3f"))
         triangle_count = reader["i"]
-        end_corner = Vector3(*reader.unpack("3f"))
+        end_corner = Vector3(reader.unpack("3f"))
         triangles_offset = reader["i"]
 
         child_box_offsets = reader.unpack("iiii")
@@ -200,7 +200,7 @@ class NVM(GameFile):
             raise ValueError(
                 f"Ttriangles offset for NVM should be {expected_triangles_offset}, not {header.triangles_offset}.")
 
-        vertices = [Vector3(*reader.unpack("3f")) for _ in range(header.vertices_count)]
+        vertices = [Vector3(reader.unpack("3f")) for _ in range(header.vertices_count)]
         triangles = [NVMTriangle.from_nvm_reader(reader) for _ in range(header.triangles_count)]
 
         reader.seek(header.root_box_offset)
@@ -312,11 +312,11 @@ class NVM(GameFile):
         x_min = min(v.x for v in self.vertices)
         y_min = min(v.y for v in self.vertices)  # same for all boxes
         z_min = min(v.z for v in self.vertices)
-        root_start_corner = Vector3(x_min, y_min, z_min) - self.BOX_BORDER
+        root_start_corner = Vector3([x_min, y_min, z_min]) - self.BOX_BORDER
         x_max = max(v.x for v in self.vertices)
         y_max = max(v.y for v in self.vertices)  # same for all boxes
         z_max = max(v.z for v in self.vertices)
-        root_end_corner = Vector3(x_max, y_max, z_max) + self.BOX_BORDER
+        root_end_corner = Vector3([x_max, y_max, z_max]) + self.BOX_BORDER
 
         def create_box(start_corner: Vector3, end_corner: Vector3, level: int) -> NVMBox:
             # Box will either start or end at these halfway points, depending on its index.
@@ -339,8 +339,8 @@ class NVM(GameFile):
                     else:  # high Z
                         z_start, z_end = z_bisect, end_corner.z
 
-                    child_start_corner = Vector3(x_start, root_start_corner.y, z_start)
-                    child_end_corner = Vector3(x_end, root_end_corner.y, z_end)
+                    child_start_corner = Vector3([x_start, root_start_corner.y, z_start])
+                    child_end_corner = Vector3([x_end, root_end_corner.y, z_end])
 
                     child_box = create_box(child_start_corner, child_end_corner, level + 1)
                     child_boxes.append(child_box)
@@ -364,14 +364,14 @@ class NVM(GameFile):
         triangle_indices = []
 
         quad_vertices = [
-            Vector2(start_corner.x, start_corner.z),
-            Vector2(end_corner.x, start_corner.z),
-            Vector2(end_corner.x, end_corner.z),
-            Vector2(start_corner.x, end_corner.z),
+            Vector2([start_corner.x, start_corner.z]),
+            Vector2([end_corner.x, start_corner.z]),
+            Vector2([end_corner.x, end_corner.z]),
+            Vector2([start_corner.x, end_corner.z]),
         ]
 
         for i, triangle in enumerate(self.triangles):
-            tri_vertices = [Vector2(self.vertices[i].x, self.vertices[i].z) for i in triangle.vertex_indices]
+            tri_vertices = [Vector2([self.vertices[i].x, self.vertices[i].z]) for i in triangle.vertex_indices]
             clockwise = line_point_cross(*tri_vertices) < 0
             if self.collides(quad_vertices, tri_vertices, clockwise):
                 triangle_indices.append(i)

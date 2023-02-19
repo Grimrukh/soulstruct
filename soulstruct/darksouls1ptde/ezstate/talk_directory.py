@@ -2,17 +2,20 @@ from __future__ import annotations
 
 __all__ = ["TalkDirectory"]
 
+import typing as tp
+from dataclasses import dataclass
+
 from soulstruct.base.ezstate.talk_directory import TalkDirectory as _BaseTalkDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.darksouls1ptde.ezstate.talkesdbnd import TalkESDBND
 from soulstruct.darksouls1ptde.maps.constants import *
 
 
+@dataclass(slots=True)
 class TalkDirectory(_BaseTalkDirectory):
-    ALL_MAPS = ALL_MAPS
-    GET_MAP = staticmethod(get_map)
-    IS_DCX = False
-    TALKESDBND_CLASS = TalkESDBND
+    ALL_MAPS: tp.ClassVar = ALL_MAPS
+    GET_MAP: tp.ClassVar = staticmethod(get_map)
+    FILE_CLASS: tp.ClassVar = TalkESDBND
 
     Common = map_property(COMMON)  # type: TalkESDBND
     Depths = map_property(DEPTHS)  # type: TalkESDBND

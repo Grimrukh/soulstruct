@@ -6,7 +6,7 @@ from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params.param import Param, ParamRow
+    from soulstruct.base.params import Param, ParamRow
     from soulstruct.darksouls1ptde.params.draw_param import DrawParamBND, DrawParamDirectory
 
 

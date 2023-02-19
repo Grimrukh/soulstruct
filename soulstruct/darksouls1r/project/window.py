@@ -186,7 +186,7 @@ class ProjectWindow(_BaseProjectWindow):
         player_z = self.linker.get_game_value("player_z")
         player_angle = math.degrees(self.linker.get_game_value("player_angle"))
         _LOGGER.info(f"Reloading player at {player_x}, {player_y}, {player_z} (angle {player_angle})")
-        player_start.translate = Vector3(player_x, player_y, player_z)
+        player_start.translate = Vector3([player_x, player_y, player_z])
         player_start.rotate.y = player_angle
 
         current_msb.write()

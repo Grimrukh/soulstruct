@@ -44,6 +44,7 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
         if not directory_path.is_dir():
             raise NotADirectoryError(f"Missing directory: {directory_path}")
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
+        all_map_stems = [stem for stem in all_map_stems if stem is not None]
         files = {}
         file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
         for file_path in directory_path.glob("*"):
@@ -56,7 +57,7 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
             elif file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_map_stems:  # `.talkesdbnd` file
-                    files[file_path.name] = cls.FILE_CLASS.from_path(file_path)
+                    files[file_stem] = cls.FILE_CLASS.from_path(file_path)
                     all_map_stems.remove(file_stem)
                     continue
             _LOGGER.warning(f"Ignoring unexpected file in `{cls.__name__}` directory: {file_path.name}")
@@ -64,13 +65,16 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
         if all_map_stems:
             _LOGGER.warning(f"Could not find some files in `{cls.__name__}` directory: {', '.join(all_map_stems)}")
 
-        return cls(directory_path, files)
+        return cls(directory=directory_path, files=files)
 
-    def write_esp(self, esp_directory=None):
-        """Write ESP for all maps. Defaults to loaded directory."""
+    def write_esp_directory(self, esp_directory: Path | str = None):
+        """Write ESP for all maps. Defaults to loaded directory.
+
+        Each individual ESD will be written to a single ESP file if possible, or a nested directory if not.
+        """
         if esp_directory is None:
             esp_directory = self.directory
         esp_directory = Path(esp_directory)
         for game_map in [m for m in self.ALL_MAPS if m.esd_file_stem]:
             talkesdbnd = self.files[game_map.esd_file_stem]
-            talkesdbnd.write_esp(talk_directory=esp_directory / f"{game_map.esd_file_stem}")
+            talkesdbnd.write_esp_directory(esp_directory=esp_directory / f"{game_map.esd_file_stem}")

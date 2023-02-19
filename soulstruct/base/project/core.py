@@ -392,7 +392,7 @@ class GameDirectoryProject(abc.ABC):
                 entity_module_prefix="..entities.",
             )
         if data_type == "talk":  # data in `TalkDirectory` is only read upon import and modified upon export
-            self.talk.write_esp(self.project_root / "talk")
+            self.talk.write_esp_directory(self.project_root / "talk")
 
     def import_data_from_game(self, data_type=None):
         """Reads data substructures in game formats from the live game directory."""

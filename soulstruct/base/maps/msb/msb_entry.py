@@ -173,22 +173,34 @@ class MSBEntry(abc.ABC):
     def get_entity_id(self) -> int | None:
         """`entity_id` is a critical field for most MSB entries, but not quite all of them (and not models).
 
-        This method simply returns the `entity_id` field if it exists, or `None` otherwise.
+        This method simply returns the `entity_id` field if it exists, or raises a TypeError otherwise.
         """
-        return getattr(self, "entity_id", None)
+        try:
+            return getattr(self, "entity_id")
+        except AttributeError:
+            raise TypeError(f"MSB entry subtype `{self.__class__.__name__}` does not have the `entity_id` field.")
+
+    def set_entity_id(self, value: int):
+        """`entity_id` is a critical field for most MSB entries, but not quite all of them (and not models).
+
+        This method simply sets the `entity_id` field to `value` if it exists, or raises a TypeError otherwise.
+        """
+        if "entity_id" not in self.get_field_names():
+            raise TypeError(f"MSB entry subtype `{self.__class__.__name__}` does not have the `entity_id` field.")
+        setattr(self, "entity_id", value)
 
     @property
     def entity_enum(self):
         raise AttributeError(
-            "You can set `MSBEntry.entity_enum` as a way to set both `name` and `entity_id`, but cannot access it."
+            "You can set `MSBEntry.entity_enum` as a shortcut to set both `name` and `entity_id`, but cannot access it."
         )
 
     @entity_enum.setter
     def entity_enum(self, value: IntEnum):
         """Set both entry `name` and `entity_id` (if valid) for this entry."""
-        if not hasattr(self, "entity_id"):
-            raise AttributeError(f"MSB entry type `{self.__class__.__name__}` does not have an `entity_id`.")
-        setattr(self, "name", value.name)
+        if "entity_id" not in self.get_field_names():
+            raise TypeError(f"MSB entry subtype `{self.__class__.__name__}` does not have the `entity_id` field.")
+        self.name = value.name
         setattr(self, "entity_id", value.value)
 
     def copy(self):
@@ -231,7 +243,7 @@ class MSBEntry(abc.ABC):
             else:
                 for check_type in (Vector2, Vector3, Vector4):
                     if f.type in (check_type, check_type.__name__):
-                        decoders[f.name] = lambda v, t=check_type: t(*v)
+                        decoders[f.name] = check_type
 
         return decoders
 
@@ -591,7 +603,7 @@ class MSBEntry(abc.ABC):
                             f"MSB entry type `{cls.__name__}` needs `Binary(length)` metadata for field `{f.name}`."
                         )
                 field_types[f.name] = f"{ann[5:-1]}[{length}]"
-            elif ann in _BASIC_ENTRY_TYPES:
+            elif ann in _BASIC_ENTRY_TYPES or ann == "GroupBitSet":
                 field_types[f.name] = ann
             else:
                 raise TypeError(f"Could not parse field type annotation '{ann}' for `{cls.__name__}.{f.name}`.")

@@ -451,12 +451,13 @@ class MSB(GameFile, abc.ABC):
         return [getattr(self, list_name) for list_name in self.get_subtype_list_names()]
 
     @classmethod
-    def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str = None):
+    def resolve_subtype_name(cls, subtype_name: str, assert_supertype_name: str = None) -> str:
+        """Parse `subtype_name` (which could be an enemy name or class name) to its subtype list name."""
         for supertype_name, subtype_info_list in cls.MSB_ENTRY_SUBTYPES.items():
-            if supertype_name != assert_supertype_name:
+            if assert_supertype_name is not None and supertype_name != assert_supertype_name:
                 continue
             for info in subtype_info_list.values():
-                if subtype_name in {info.subtype_list_name, info.subtype_enum.name, info.entry_class.__name__}:
+                if info.matches_name(subtype_name):
                     return info.subtype_list_name
         raise KeyError(f"Invalid MSB subtype name: {subtype_name}")
 
@@ -670,9 +671,6 @@ class MSB(GameFile, abc.ABC):
         with module_path.open("w", encoding="utf-8") as f:
             f.write(module_text)
 
-    # TODO: Methods to import entity IDs from module by matching names, and import names from module by matching entity
-    #  IDs (e.g. once you fix exported Japanese names).
-
     def new_model(self, model_subtype_name: str, name: str, sib_path="", map_stem=""):
         subtype_list_name = self.resolve_subtype_name(model_subtype_name, MSBSupertype.MODELS)
         model = self[subtype_list_name].new(name=name, sib_path=sib_path)  # type: BaseMSBModel
@@ -708,7 +706,7 @@ class MSB(GameFile, abc.ABC):
             "Models": display_dict[MSBSupertype.MODELS],
         }
 
-    def __getitem__(self, subtype_list_name: str) -> MSBEntryList:
-        """Retrieve entry subtype list by name, e.g. "characters" or "map_piece_models"."""
-        subtype_list_name = subtype_list_name.lower()
+    def __getitem__(self, subtype_name: str) -> MSBEntryList:
+        """Retrieve entry subtype list by name, e.g. "characters", or enum name, e.g. "Character"."""
+        subtype_list_name = self.resolve_subtype_name(subtype_name)
         return getattr(self, subtype_list_name)

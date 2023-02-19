@@ -40,7 +40,7 @@ class MSBTest(unittest.TestCase):
         msb = MSB.from_path("resources/m10_00_00_00.msb")
         source_chr = msb.characters.find_entry_name("c1000_0000")
         msb.characters.duplicate(
-            source_chr, name="c1000_0000_COPY", entity_id=1000999, translate=Vector3(1.0, 2.0, 3.0)
+            source_chr, name="c1000_0000_COPY", entity_id=1000999, translate=Vector3([1.0, 2.0, 3.0])
         )
         msb.treasures.duplicate(0, name="TREASURE_0_COPY")
         msb.write("_test.msb")

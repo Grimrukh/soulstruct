@@ -11,7 +11,7 @@ from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.base.project.utilities import bind_events, TagData, TextEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.ezstate.talk_directory import TalkDirectory
+    from soulstruct.base.ezstate import TalkDirectory, TalkESDBND
 
 __all__ = ["TalkEditor"]
 _LOGGER = logging.getLogger(__name__)
@@ -433,10 +433,8 @@ class TalkEditor(BaseEditor):
         export_directory = Path(export_directory)
         bnd_name = f"script/talk/{self.selected_map_id}.talkesdbnd{'.dcx' if self.talk.IS_DCX else ''}"
         try:
-            self.talk.TALKESDBND_CLASS.write_from_dict(
-                talk_dict=self.esp_file_paths[self.selected_map_id],
-                talkesdbnd_path=export_directory / bnd_name,
-            )
+            talkesdbnd_class = self.talk.FILE_CLASS  # type: tp.Type[TalkESDBND]
+            talkesdbnd_class(talk=self.esp_file_paths[self.selected_map_id]).write(export_directory / bnd_name)
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
             self.CustomDialog(

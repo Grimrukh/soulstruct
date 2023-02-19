@@ -15,7 +15,6 @@ from soulstruct.base.ezstate.esd.esd_type import ESDType
 from soulstruct.utilities.binary import *
 
 from .exceptions import ESDTypeError
-from .command import Command
 from .condition import Condition
 from .state import State
 from .esp_compiler import ESPCompiler
@@ -40,7 +39,7 @@ class ESDExternalHeaderStruct(BinaryStruct):
     """
     signature: bytes = field(**BinaryString(4, asserted=[b"fSSL", b"fsSL"]))
     _one: int = field(**Binary(asserted=1))  # TODO: probably for indicating endianness
-    game_version: tuple[int, int] = field(**Binary(asserted=[(1, 1), (2, 2), (3, 3)]))
+    game_version: list[int] = field(**BinaryArray(2, asserted=([1, 1], [2, 2], [3, 3])))
     _table_size_offset: int = field(**Binary(asserted=84))
     internal_data_size: int  # excludes this header (i.e. EOF minus this header size)
     unk: int = field(**Binary(asserted=6))  # TODO: possibly 'table count'?
@@ -58,7 +57,7 @@ class ESDExternalHeaderStruct(BinaryStruct):
     command_arg_count: int
     condition_pointers_offset: int
     condition_pointers_count: int
-    esd_name_offset_minus_1: int  # unclear why this is 1 less (internal header has accurate offset)
+    tail_offset: int  # points to just before actual name
     esd_name_length: int
     unk_offset_1: int
     unk_size_1: int = field(**Binary(asserted=0))
@@ -88,30 +87,32 @@ EXTERNAL_HEADER_VARINT_ASSERTED = {
     }
 }
 
-INTERNAL_HEADER_VARINT_ASSERTED = {
-    False: {"state_machine_headers_offset": 44},
-    True: {"state_machine_headers_offset": 72}
-}
-
 
 @dataclass(slots=True)
 class ESDInternalHeaderStruct(BinaryStruct):
     _one: int = field(**Binary(asserted=1))
-    magic: tuple[int, int, int, int]  # TODO: check if this is constant per game
+    magic: list[int] = field(**BinaryArray(4))  # TODO: check if this is constant per game
     _pad1: bytes = field(**BinaryPad(4, should_skip_func=lambda long_varints, _: not long_varints))
     state_machine_headers_offset: varint  # 44 or 72
     state_machine_count: varint  # same as external header
     esd_name_offset: varint  # accurate, unlike external header
-    esd_name_length: varint
-    _footer: tuple[varint, varint] = field(**Binary(asserted=[(-1, -1)]))
+    esd_name_length: varint  # same as value in external header
+    footer: list[varint] = field(**BinaryArray(2, asserted=([0, 0], [-1, -1])))  # [0, 0] in PTDE/DSR only
+
+
+INTERNAL_HEADER_VARINT_ASSERTED = {
+    # NOTE: We can't assert `footer` here as it depends on `game_version`, not `long_varints`.
+    False: {"state_machine_headers_offset": 44},
+    True: {"state_machine_headers_offset": 72},
+}
 
 
 @dataclass(slots=True)
 class StateMachineHeaderStruct(BinaryStruct):
     index: varint
-    offset: varint
+    states_offset: varint
     state_count: varint
-    offset_2: varint  # duplicate
+    states_offset_2: varint  # duplicate
 
 
 @dataclass(slots=True)
@@ -120,11 +121,10 @@ class ESD(GameFile, abc.ABC):
 
     EXT: tp.ClassVar[str] = ".esd"
     ESD_TYPE: tp.ClassVar[ESDType]
-    VERSION: tp.ClassVar[int]
+    VERSION: tp.ClassVar[int]  # used to assert binary `game_version` and a few other connected fields
     LONG_VARINTS: tp.ClassVar[bool]
 
-    magic: tuple[int, int, int, int] = ()
-    file_tail: bytes = b"\0"  # default for files loaded from ESP, etc.
+    magic: list[int] = field(default_factory=lambda: [0] * 4)
     esd_name: str = ""
     # Maps state machine IDs to dictionaries mapping state IDs to `State` instances.
     # NOTE: Called `StateGroups` in SoulsFormats.
@@ -136,14 +136,14 @@ class ESD(GameFile, abc.ABC):
             esd_source = Path(esd_source)
             if esd_source.is_dir():
                 try:
-                    esd = cls.compile_from_esp_directory(esd_source)
+                    esd = cls.from_esp_directory(esd_source)
                 except Exception as ex:
                     raise ValueError(f"Error while parsing '{esd_source}' as ESP directory: {ex}")
                 return esd, "esp_directory"
             for ext in (".esp.py", ".esp", ".py"):
                 if esd_source.is_file() and esd_source.name.endswith(ext):
                     try:
-                        esd = cls.compile_from_esp_single_file(esd_source)
+                        esd = cls.from_esp_file(esd_source)
                     except Exception as ex:
                         raise ValueError(f"Error encountered while parsing '{esd_source}' as single ESP file: {ex}")
                     return esd, "esp_file"
@@ -176,39 +176,49 @@ class ESD(GameFile, abc.ABC):
         # NOTE: big-endian not supported (or encountered). Consoles probably use it and `one` in external header is
         # probably a safe test for it.
         reader.default_byte_order = ByteOrder.LittleEndian
+        reader.long_varints = cls.LONG_VARINTS
 
         header = ESDExternalHeaderStruct.from_bytes(reader)
-        header.assert_field_values(**EXTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS])
+        header.assert_field_values(
+            game_version=[cls.VERSION, cls.VERSION],
+            **EXTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS],
+        )
+
         # Internal offsets start here, so we reset the reader to make these offsets naturally correct.
         reader = BinaryReader(reader.read(), default_byte_order=ByteOrder.LittleEndian, long_varints=cls.LONG_VARINTS)
-        internal_header = ESDInternalHeaderStruct.from_bytes(reader)
-        internal_header.assert_field_values(**INTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS])
 
+        internal_header = ESDInternalHeaderStruct.from_bytes(reader)
+        internal_header.assert_field_values(
+            footer=[0, 0] if cls.VERSION == 1 else [-1, -1],
+            **INTERNAL_HEADER_VARINT_ASSERTED[cls.LONG_VARINTS]
+        )
         state_machine_header_structs = [
             StateMachineHeaderStruct.from_bytes(reader)
             for _ in range(header.state_machine_count)
         ]
 
-        # NOTE: We do not care about maintaining reader offset beyond this point, so `seek()` is used frequently, both
-        # here and in all the component class `from_esd_reader()` constructors.
-
         state_machines = {}
         for state_machine_header in state_machine_header_structs:
             if state_machine_header.index in state_machines:
                 raise ValueError(f"State machine with index {state_machine_header.index} appeared more than once.")
-            reader.seek(state_machine_header.offset)
+            reader.seek(state_machine_header.states_offset)
             states = {}
             for _ in range(state_machine_header.state_count):
-                # State construction will recursively unpack all other data (Conditions, Commands, etc.) as they apepar.
+                # State construction will recursively unpack all other data (Conditions, Commands, etc.) as they appear.
+                # NOTE: State machines with more than one State have a completely identical copy of the first state at
+                # the end of the machine. This contributes to `total_state_count` in the file, but not the state machine
+                # header itself, and will therefore not be unpacked (or even asserted) here.
                 state = State.from_esd_reader(reader)
-                if state.index in states and state.index != 0:
-                    # State 0 repeats at the end of the table, for some reason, but other states should not.
-                    _LOGGER.warning(
-                        f"State {state.index} in {state_machine_header.index} appeared multiple times. Using first "
-                        f"only."
-                    )
+                if state.state_id in states:
+                    # First state (index 0) repeats at the end, for some reason, but other states should not.
+                    if state.state_id != list(states.keys())[0]:
+                        _LOGGER.warning(
+                            f"State {state.state_id} in {state_machine_header.index} appeared multiple times. "
+                            f"Using first only."
+                        )
+                    # Otherwise, ignore duplicate first state.
                 else:
-                    states[state.index] = state
+                    states[state.state_id] = state
             state_machines[state_machine_header.index] = states
 
         if internal_header.esd_name_length > 0:
@@ -216,16 +226,14 @@ class ESD(GameFile, abc.ABC):
             # The actual UTF-16 encoded bytes are twice that size.
             reader.seek(internal_header.esd_name_offset)
             esd_name = reader.unpack_string(length=2 * internal_header.esd_name_length, encoding="utf-16-le")
-            file_tail = reader.read()  # remainder of file
         else:
             esd_name = ""
-            reader.seek(header.unk_offset_1)  # after packed EZL
-            file_tail = reader.read()  # remainder of file
 
-        return cls(internal_header.magic, file_tail, esd_name, state_machines)
+        return cls(magic=internal_header.magic, esd_name=esd_name, state_machines=state_machines)
 
     @classmethod
-    def compile_from_esp_directory(cls, esp_directory: Path | str) -> Self:
+    def from_esp_directory(cls, esp_directory: Path | str) -> Self:
+        """Load `ESD` instance from a directory of ESP scripts (one per state machine) with an `ESD_Header` file."""
         esp_directory = Path(esp_directory)
 
         header_path = list(esp_directory.glob("ESD_Header*"))
@@ -235,6 +243,7 @@ class ESD(GameFile, abc.ABC):
 
         state_machines = {}
         for esp_path in esp_directory.glob("StateMachine_*"):
+            # TODO: Also writing state machine index to docstring. Can use that...
             _LOGGER.info(f"Compiling ESD state machine: {esp_path.name}")
             esp_match = re.match(r"StateMachine_(x?)(\d*)(\.esp)?(\.py)?", esp_path.name)
             if esp_match is None:
@@ -249,17 +258,18 @@ class ESD(GameFile, abc.ABC):
             compiler = ESPCompiler(esp_path, cls.ESD_TYPE)
             state_machines[state_machine_index] = compiler.states
 
-        esd = cls(magic, esd_name=esd_name, state_machines=state_machines)
+        esd = cls(magic=list(magic), esd_name=esd_name, state_machines=state_machines)
         esd.path = esp_directory.name
         return esd
 
     @classmethod
-    def compile_from_esp_single_file(cls, esp_file) -> Self:
+    def from_esp_file(cls, esp_file: Path | str) -> Self:
         """TODO: Surely I can put magic in ESP file docstring?"""
         esp_file = Path(esp_file)
         _LOGGER.debug(f"Compiling single-file ESD state machine: {esp_file.name}")
         compiler = ESPCompiler(esp_file, cls.ESD_TYPE)
-        esd = cls(magic=(0, 0, 0, 0), esd_name=esp_file.stem + cls.EXT, state_machines={1: compiler.states})
+        # TODO: Read state machine index from docstring. Only default to 1 (and warn) if necessary.
+        esd = cls(magic=[0, 0, 0, 0], esd_name=esp_file.stem + cls.EXT, state_machines={1: compiler.states})
         esd.path = esp_file.parent / esd.esd_name
         return esd
 
@@ -295,33 +305,16 @@ class ESD(GameFile, abc.ABC):
         """Packs tables and computes new byte offsets for them."""
         # TODO: is 'existing commands' a thing for enemyCommon.esd? Probably, but only for efficiency.
 
-        # TODO:
-        """
-        - Pack external header.
-        - Pack internal header.
-        
-        - Pack state machine headers.
-        
-        
-        - Pack State headers.
-            - Reserve offsets for `condition_pointers`, `enter/exit/ongoing_commands`.
-            
-        - Create 'existing condition' dictionary that maps Condition instances to writer offsets.
-        
-        - Pack Condition headers by:
-            - Iterate over States and pack all Conditions in each. 
-            - If a Condition is already in 'existing conditions', just use that for state 'condition pointers'.
-            - Otherwise, pack condition:
-                - Reserve offsets for 
-        """
-
         # External header is constructed last, as all offsets are relative to the end of it.
         external_header_writer = ESDExternalHeaderStruct.object_to_writer(
             self,
-            esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
+            byte_order=ByteOrder.LittleEndian,  # big-endian versions not handled
+            long_varints=self.LONG_VARINTS,
+            esd_name_length=len(self.esd_name) // 2,  # number of UTF-16 characters, NOT size of encoded bytes
             state_machine_count=len(self.state_machines),  # also appears in internal header
-            # Other counts reserved.
+            game_version=[self.VERSION, self.VERSION],
             **EXTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
+            # All other fields reserved.
         )
 
         # Pack internal header. This is the writer we use throughout, except when filling external header offsets.
@@ -330,184 +323,195 @@ class ESD(GameFile, abc.ABC):
             byte_order=ByteOrder.LittleEndian,
             long_varints=self.LONG_VARINTS,
             state_machine_count=len(self.state_machines),  # also appears in external header
-            esd_name_length=len(self.esd_name) * 2,  # size of UTF-16 encoded bytes
+            esd_name_offset=RESERVED,  # only reserved field in internal header
+            esd_name_length=len(self.esd_name) // 2,  # number of UTF-16 characters, NOT size of encoded bytes
+            footer=[0, 0] if self.VERSION == 1 else [-1, -1],
             **INTERNAL_HEADER_VARINT_ASSERTED[self.LONG_VARINTS],
         )
 
         for state_machine_index, states in self.state_machines.items():
             StateMachineHeaderStruct.object_to_writer(
-                self,
+                states,
                 writer,
                 index=state_machine_index,
-                offset=RESERVED,
-                state_count=len(states),
-                offset_2=RESERVED,  # same as `offset`
+                states_offset=RESERVED,
+                state_count=len(states),  # does NOT include dummy state, confusingly
+                states_offset_2=RESERVED,  # duplicate of `states_offset`
             )
 
         # For `next_state_offset` of Conditions.
-        state_index_offsets = {}  # type: dict[int, int]
+        state_id_offsets = {}  # type: dict[int, int]
+        all_states = []  # for ease below (includes dummy state)
 
-        all_states = []  # for ease below
-        for states in self.state_machines.values():
-            for state_index, state in states.items():
-                state_index_offsets[state.index] = writer.position
+        for state_machine_index, states in self.state_machines.items():
+            writer.fill_with_position("states_offset", obj=states)
+            writer.fill_with_position("states_offset_2", obj=states)
+            for state_id, state in states.items():
+                state_id_offsets[state.state_id] = writer.position
                 state.to_esd_writer(writer)
                 all_states.append(state)
+            if len(states) > 1:
+                # Create and pack a duplicate of the first state. It will have its own condition pointers and arg data,
+                # so needs proper creation rather than just duplicating the State struct.
+                dummy_state = list(states.values())[0].copy()  # needs a new ID for reserving
+                dummy_state.to_esd_writer(writer)
+                all_states.append(dummy_state)
+                # NOTE: NOT added to `state_id_offsets`. Any Condition pointing to the first state uses the real one.
+
+        # Total state count in header includes dummy states.
         external_header_writer.fill("state_count", len(all_states), obj=self)
 
         # Offsets of existing Conditions, which can be re-used across States if they are identical.
         all_condition_offsets = {}  # type: dict[Condition, int]
 
-        # Pack Conditions.
+        # Pack Conditions. These are the real `Condition` instances, which may be shared by multiple `State`s. States
+        # do not reference these offsets directly, but instead go through 'condition pointer' offsets packed near the
+        # end of the file. (Every condition of every State has a unique condition pointer, but multiple pointers may
+        # point to the same `Condition` instance up here.)
+        state_fresh_conditions = []
         for state in all_states:
-            state.pack_conditions(writer, state_index_offsets, all_condition_offsets)
+            fresh_conditions = state.pack_conditions(writer, state_id_offsets, all_condition_offsets)
+            state_fresh_conditions.append(fresh_conditions)
         external_header_writer.fill("condition_count", len(all_condition_offsets), obj=self)
+
         # Pack Commands.
         command_count = 0
-        for state in all_states:
-            command_count += state.pack_commands(writer)
+        for state, fresh_conditions in zip(all_states, state_fresh_conditions):
+            command_count += state.pack_commands(writer, fresh_conditions)
         external_header_writer.fill("command_count", command_count, obj=self)
+
         # Pack Command arg offsets.
         command_arg_count = 0
-        for state in all_states:
-            command_arg_count += state.pack_command_args(writer)
-        external_header_writer.fill("command_arg_count", command_count, obj=self)
+        for state, fresh_conditions in zip(all_states, state_fresh_conditions):
+            command_arg_count += state.pack_command_args(writer, fresh_conditions)
+        external_header_writer.fill("command_arg_count", command_arg_count, obj=self)
+
         # Pack Condition pointers.
         condition_pointers_count = 0
+        recurred_conditions = set()
         external_header_writer.fill("condition_pointers_offset", writer.position, obj=self)
         for state in all_states:
-            condition_pointers_count += state.pack_condition_pointers(writer, all_condition_offsets)
-        external_header_writer.fill("condition_pointers_count", command_count, obj=self)
+            condition_pointers_count += state.pack_condition_pointers(
+                writer, all_condition_offsets, recurred_conditions
+            )
+        external_header_writer.fill("condition_pointers_count", condition_pointers_count, obj=self)
+
         # Pack Condition test EZL data.
-        for state in all_states:
-            state.pack_condition_test_data(writer)
+        for state, fresh_conditions in zip(all_states, state_fresh_conditions):
+            state.pack_condition_test_data(writer, fresh_conditions)
+
         # Pack Command arg EZL data.
-        for state in all_states:
-            state.pack_command_arg_data(writer)
+        for state, fresh_conditions in zip(all_states, state_fresh_conditions):
+            state.pack_command_arg_data(writer, fresh_conditions)
+
+        external_header_writer.fill("tail_offset", writer.position, obj=self)
 
         if self.esd_name:
-            external_header_writer.fill("esd_name_offset_minus_1", writer.position - 1, obj=self)
+            # writer.pad(2)  # TODO: TKGP does this in SF. Not correct for DSR, but maybe later games?
             writer.fill_with_position("esd_name_offset", obj=self)
-            writer.fill_with_position("unk_offset_1", obj=self)
-            writer.append(self.esd_name.encode("utf-16-le"))
+            writer.append(self.esd_name.encode("utf-16-le") + b"\0\0")
+        else:
+            writer.fill("esd_name_offset", -1, obj=self)
+
         # Otherwise, EOF file offset written to both below.
 
-        writer.fill_with_position("unk_offset_2", obj=self)
-        if not self.file_tail:
-            writer.append(b"\0")  # MUST have at least one null byte after name (e.g. for SoulsFormats)
-        writer.append(self.file_tail)
-
+        external_header_writer.fill("unk_offset_1", writer.position, obj=self)
+        external_header_writer.fill("unk_offset_2", writer.position, obj=self)
         external_header_writer.fill("internal_data_size", writer.position, obj=self)
-        if not self.esd_name:
-            external_header_writer.fill("esd_name_offset_minus_1", writer.position, obj=self)
-            writer.fill_with_position("esd_name_offset", obj=self)
 
-        # TODO: Old -- only kept until new tested.
-        # tables = _ESDPacker(self)
-        # external_header = self.EXTERNAL_HEADER_STRUCT.pack(tables.external_header)
-        # packed = b""
-        # packed += self.INTERNAL_HEADER_STRUCT.pack(tables.internal_header)
-        # for sm_i, sm in tables.state_machine_headers.items():
-        #     assert len(packed) == tables.offsets["state_machine_headers"][sm_i]
-        #     packed += self.STATE_MACHINE_HEADER_STRUCT.pack(sm)
-        # for sm_i, sm in tables.state_machines.items():
-        #     assert len(packed) == tables.offsets["state_machines"][sm_i]
-        #     packed += self.State.STRUCT.pack_multiple(sm)
-        # assert len(packed) == tables.offsets["conditions"]
-        # packed += self.State.Condition.STRUCT.pack_multiple(tables.conditions)
-        # assert len(packed) == tables.offsets["commands"]
-        # packed += self.State.Command.STRUCT.pack_multiple(tables.commands)
-        # assert len(packed) == tables.offsets["command_args"]
-        # packed += self.State.Command.ARG_STRUCT.pack_multiple(tables.command_args)
-        # assert len(packed) == tables.offsets["condition_pointers"]
-        # packed += self.State.Condition.POINTER_STRUCT.pack_multiple(tables.condition_pointers)
-        # assert len(packed) == tables.offsets["ezl"]
-        # packed += tables.ezl
-        # assert len(packed) == tables.offsets["esd_name"]
-        # packed += tables.esd_name
-        # assert len(packed) == tables.offsets["file_tail"]
-        # packed += tables.file_tail
-        # return external_header + packed
-
-        return writer
+        # Combine writers.
+        external_header_writer.append(bytes(writer))
+        return external_header_writer
 
     def get_next_states(self, condition: Condition):
         next_states = []
         for subcondition in condition.subconditions:
             next_states += self.get_next_states(subcondition)
-        if condition.next_state_index != -1:
-            next_states.append(condition.next_state_index)
+        if condition.next_state_id != -1:
+            next_states.append(condition.next_state_id)
         return next_states
 
-    def to_esp(self, state_machine_index=1):
-        """Writes each state machine to a separate script."""
+    def to_esp(self, esd_type: ESDType, state_machine_index=1) -> str:
+        """Writes a single state machine to a single Python module."""
+
         # Scan each state to build 'from' lists.
         from_states = {}
         for i, state in self.state_machines[state_machine_index].items():
             for condition in state.conditions:
                 for next_state in self.get_next_states(condition):
                     from_states.setdefault(next_state, set()).add(i)
-        s = f"from soulstruct.{self.get_game().submodule_name}.ezstate.esd import *\n\n"
+        s = f"\"\"\"{esd_type.name} ESD STATE MACHINE {state_machine_index}\"\"\"\n"
+        s += f"from soulstruct.{self.get_game().submodule_name}.ezstate.esd import *\n\n"
         for i, state in self.state_machines[state_machine_index].items():
-            s += state.to_esp(from_states=from_states.get(i, None))
+            s += state.to_esp(esd_type, from_states=from_states.get(i, None))
         s = s.strip("\n") + "\n"  # End with just one newline.
         return s
 
-    def write_esp(self, esp_directory=None, force_folder=False):
+    def write_esp_file(self, esp_path: Path | str = None, esd_type=ESDType.TALK):
+        """Write ESP language script to a single file. Only works for single state machine Talk ESD.
+
+        NOTE: This ESP format discards the four 'magic' integers, which will default to zeroes when this file is read.
+        This shouldn't matter in-game. The ESD internal name will be inferred from the file stem (and this also doesn't
+        matter in-game).
+        """
+        if len(self.state_machines) > 1:
+            raise ValueError(
+                f"Cannot write an `ESD` instance with {len(self.state_machines)} state machines to a single ESP file. "
+                f"Use `write_esp_directory()`."
+            )
+        if esd_type != ESDType.TALK:
+            raise TypeError("Can currently only write single-file ESP for 'TALK'. Use `write_esp_directory()`.")
+
+        if esp_path is None:
+            if self.path is None:
+                raise ValueError("Cannot auto-detect ESP file path (no previous `path` set).")
+            esp_path = self.path.with_suffix(".esp.py")
+        else:
+            esp_path = Path(esp_path)
+
+        # Write single 'talk' state machine to a single ESP file.
+        esp_path.parent.mkdir(parents=True, exist_ok=True)
+        state_machine_py = self.to_esp(esd_type, next(iter(self.state_machines)))
+        esp_path.write_text(state_machine_py, encoding="utf-8")
+
+    def write_esp_directory(self, directory=None, esd_type=ESDType.TALK):
         """Write ESD to a collection of Python-like 'ESP' scripts (one per state machine) in the specified folder.
 
-        If only one state machine is present and `esd_type` is 'talk', it will be written to a single file in the given
-        directory named after the internal name (discarding any junk at the end of it), with the unknown 'magic' bytes
-        discarded (neither the internal name nor magic matters in-game). You can disable this behavior and force an ESP
-        folder to be written even in this case by setting `force_folder=True`.
+        Header information about the ESD file (internal name, ESD type, and four unknown 'magic' integers) is written to
+        a file called 'ESD_Header.esp.py' in the directory. The state machine indices are written into the script names,
+        and both the ESD type and state machine indices are also written into each script's docstring.
+
+        NOTE: Neither the internal ESD name nor the four 'magic' integers seems to matter in-game (i.e. the file works
+        normally if the name is empty and the 'magic' is just [0, 0, 0, 0]).
         """
-        if esp_directory is None:
-            esp_directory = self.path
-            if not esp_directory.suffix == ".esp":
-                esp_directory = esp_directory.with_suffix(esp_directory.suffix + ".esp")
+        if directory is None:
+            directory = self.path
+            if not directory.suffix == ".esp":
+                directory = directory.with_suffix(directory.suffix + ".esp")
         else:
-            esp_directory = Path(esp_directory)
+            directory = Path(directory)
 
-        single_file = (
-            len(self.state_machines) == 1
-            and 1 in self.state_machines
-            and self.ESD_TYPE == ESDType.TALK
-            and not esp_directory.is_dir()
-            and not force_folder
-        )
-
-        # TODO: read from single file
-
-        if single_file:
-            # Write single 'talk' state machine to a single ESP file.
-            if esp_directory.suffix != ".py":
-                esp_directory = esp_directory.with_suffix(esp_directory.suffix + ".py")
-            esp_directory.parent.mkdir(parents=True, exist_ok=True)
-            with esp_directory.open(mode="w", encoding="utf-8") as esp_file:
-                state_machine_py = self.to_esp(1)
-                esp_file.write(state_machine_py)
-            return
-
-        esp_directory.mkdir(parents=True, exist_ok=True)
+        directory.mkdir(parents=True, exist_ok=True)
         for i, state_machine in self.state_machines.items():
             if i >= 0x70000000:
                 # 'Callable' state machine.
-                state_machine_path = esp_directory / f"StateMachine_x{0x80000000 - i}.esp.py"
+                state_machine_path = directory / f"StateMachine_x{0x80000000 - i}.esp.py"
             else:
                 # Primary state machine.
-                state_machine_path = esp_directory / f"StateMachine_{i}.esp.py"
+                state_machine_path = directory / f"StateMachine_{i}.esp.py"
             with state_machine_path.open(mode="w", encoding="utf-8") as state_machine_file:
-                state_machine_py = self.to_esp(i)
+                state_machine_py = self.to_esp(esd_type, i)
                 state_machine_file.write(state_machine_py)
+
         header = (
             f"ESD_NAME = {repr(self.esd_name)}\n"
             f"ESD_TYPE = {repr(self.ESD_TYPE.name)}\n"
             f"MAGIC = {repr(self.magic)}\n"
         )
-        with (esp_directory / "ESD_Header.esp.py").open(mode="w", encoding="utf-8") as header_file:
+        with (directory / "ESD_Header.esp.py").open(mode="w", encoding="utf-8") as header_file:
             header_file.write(header)
 
-    def to_html(self):
+    def to_html(self, esd_type: ESDType):
 
         SET_INTERNAL_SYMBOLS(True)
 
@@ -527,291 +531,16 @@ class ESD(GameFile, abc.ABC):
 
         for state_machine in self.state_machines.values():
             for state in state_machine.values():
-                html += state.to_html()
+                html += state.to_html(esd_type)
 
         SET_INTERNAL_SYMBOLS(False)
 
         return html + "</body></html>"
 
-    def write_html(self, html_path=None):
+    def write_html(self, html_path=None, /, esd_type=ESDType.TALK):
         if html_path is None:
             html_path = self.path.with_suffix(self.path.suffix + ".html")
         else:
             html_path = Path(html_path)
         with html_path.open(mode="w", encoding="shift_jis_2004") as output_file:
-            output_file.write(self.to_html())
-
-
-# TODO: Delete once new system tested.
-class _ESDPacker:
-    """Utility one-shot class for packing an `ESD` instance into binary, which is a complicated process."""
-
-    def __init__(self, esd: ESD):
-        self.__updated = False
-        self.esd = esd
-
-        # Various constants.
-        self.magic = esd.magic
-        self.esd_name = esd.esd_name.encode("utf-16-le")
-        self.file_tail = esd.file_tail
-
-        self.state_machine_headers = {}
-        self.state_machines = {}
-        self.conditions = []
-        self.commands = []
-        self.command_args = []
-        self.condition_pointers = []  # only table that is simply an integer sequence for direct packing
-        self.ezl = b""  # packed byte code language for command arguments and condition tests
-
-        self.state_indices = {}  # {state_index: state_index_in_sequence}  (in case state indices are missing)
-
-        self.offsets = {
-            "state_machine_headers": {},  # index: offset
-            "state_machines": {},  # index: offset
-            "conditions": 0,
-            "commands": 0,
-            "command_args": 0,
-            "condition_pointers": 0,
-            "ezl": 0,
-            "esd_name": 0,
-            "file_tail": 0,
-            "end_of_file": 0,
-        }
-
-        # Build tables with relative within-table offsets.
-        for state_machine_index, state_machine in esd.state_machines.items():
-            self.current_state_machine_index = state_machine_index
-            self.existing_condition_pointers = {}  # TODO: Current resetting it for every state machine.
-            self.state_machines[state_machine_index] = self.build_state_machine(state_machine)
-            state_count = len({sm["index"] for sm in self.state_machines[state_machine_index]})  # duplicate 0 excluded
-            self.state_machine_headers[state_machine_index] = {
-                "state_machine_index": state_machine_index,  # index starts at 1
-                "state_machine_offset": len(self.state_machine_headers) * self.esd.STATE_MACHINE_HEADER_STRUCT.size,
-                "state_count": state_count,
-                "state_machine_offset_2": len(self.state_machine_headers) * self.esd.STATE_MACHINE_HEADER_STRUCT.size,
-            }
-
-        self.__update_offsets()
-
-        self.__update_tables()
-
-        self.external_header = {
-            "internal_data_size": self.offsets["end_of_file"],  # excludes external header
-            "state_machine_count": len(self.state_machine_headers),
-            "state_count": sum([len(sm) for sm in self.state_machines.values()]),  # includes repeated state
-            "condition_count": len(self.conditions),
-            "command_count": len(self.commands),
-            "command_arg_count": len(self.command_args),
-            "condition_pointers_offset": self.offsets["condition_pointers"],
-            "condition_pointers_count": len(self.condition_pointers),
-            "esd_name_offset_minus_1": self.offsets["esd_name"] - 1 if self.esd_name else self.offsets["end_of_file"],
-            "esd_name_length": len(self.esd_name) // 2,
-            "unk_offset_1": self.offsets["esd_name"] if self.esd_name else self.offsets["end_of_file"],
-            "unk_offset_2": self.offsets["file_tail"],
-        }
-
-        self.internal_header = {
-            "magic": self.magic,
-            "state_machine_count": len(self.state_machine_headers),
-            "esd_name_offset": self.offsets["esd_name"] if self.esd_name else self.offsets["end_of_file"],
-            "esd_name_length": len(self.esd_name) // 2,
-        }
-
-    def __update_offsets(self):
-        state_machine_headers_offset = self.esd.INTERNAL_HEADER_STRUCT.size
-        for state_machine_index in self.state_machine_headers:
-            self.offsets["state_machine_headers"][state_machine_index] = (
-                state_machine_headers_offset
-                + len(self.offsets["state_machine_headers"]) * self.esd.STATE_MACHINE_HEADER_STRUCT.size
-            )
-        state_machines_offset = (
-            state_machine_headers_offset + len(self.state_machine_headers) * self.esd.STATE_MACHINE_HEADER_STRUCT.size
-        )
-        state_machine_total_size = 0
-        for state_machine_index, sm in self.state_machines.items():
-            self.offsets["state_machines"][state_machine_index] = state_machines_offset + state_machine_total_size
-            state_machines_offset += len(sm) * self.State.STRUCT.size
-        self.offsets["conditions"] = state_machines_offset + state_machine_total_size
-        self.offsets["commands"] = self.offsets["conditions"] + len(self.conditions) * self.Condition.STRUCT.size
-        self.offsets["command_args"] = self.offsets["commands"] + len(self.commands) * self.Command.STRUCT.size
-        self.offsets["condition_pointers"] = (
-            self.offsets["command_args"] + len(self.command_args) * self.Command.ARG_STRUCT.size
-        )
-        self.offsets["ezl"] = (
-            self.offsets["condition_pointers"] + len(self.condition_pointers) * self.Condition.POINTER_STRUCT.size
-        )
-        self.offsets["esd_name"] = self.offsets["ezl"] + len(self.ezl)
-        self.offsets["file_tail"] = self.offsets["esd_name"] + len(self.esd_name)
-        self.offsets["end_of_file"] = self.offsets["file_tail"] + len(self.file_tail)
-
-    def __update_tables(self):
-        if self.__updated:
-            raise ValueError("ESDPacker has already updated the tables.")
-        for sm_index, header in self.state_machine_headers.items():
-            header["state_machine_offset"] = header["state_machine_offset_2"] = self.offsets["state_machines"][sm_index]
-        for sm in self.state_machines.values():
-            states_done = set()
-            for state in sm:
-                if state["index"] not in states_done:
-                    if state["condition_pointers_offset"] >= 0:
-                        state["condition_pointers_offset"] += self.offsets["condition_pointers"]
-                    if state["enter_commands_offset"] >= 0:
-                        state["enter_commands_offset"] += self.offsets["commands"]
-                    if state["exit_commands_offset"] >= 0:
-                        state["exit_commands_offset"] += self.offsets["commands"]
-                    if state["ongoing_commands_offset"] >= 0:
-                        state["ongoing_commands_offset"] += self.offsets["commands"]
-                    states_done.add(state["index"])
-        for condition in self.conditions:
-            state_machine_index = condition.pop("__state_machine_index__")
-            state_machine_offset = self.offsets["state_machines"][state_machine_index]
-            if condition["next_state_offset"] >= 0:
-                # 'next_state_offset' is actually an absolute state index before this.
-                relative_state_offset = self.state_indices[condition["next_state_offset"]] * self.State.STRUCT.size
-                condition["next_state_offset"] = state_machine_offset + relative_state_offset
-            if condition["pass_commands_offset"] >= 0:
-                condition["pass_commands_offset"] += self.offsets["commands"]
-            if condition["subcondition_pointers_offset"] >= 0:
-                condition["subcondition_pointers_offset"] += self.offsets["condition_pointers"]
-            if condition["test_ezl_offset"] >= 0:
-                condition["test_ezl_offset"] += self.offsets["ezl"]
-        for command in self.commands:
-            if command["args_offset"] >= 0:
-                command["args_offset"] += self.offsets["command_args"]
-        for command_arg in self.command_args:
-            command_arg["arg_ezl_offset"] += self.offsets["ezl"]
-        for condition_pointer in self.condition_pointers:
-            condition_pointer["condition_offset"] += self.offsets["conditions"]
-        self.__updated = True
-
-    def build_state_machine(self, state_machine: dict):
-        built = []
-        for index, state in state_machine.items():
-            self.state_indices[index] = len(built)
-            built_state = self.build_state(index, state)
-            built.append(built_state)
-        if len(built) > 1:
-            built.append(built[0])  # First state (generally index 0) repeats at end of table (if not alone).
-        return built
-
-    def build_state(self, index: int, state: State):
-        built = {
-            "index": index,
-            "condition_pointers_offset": None,
-            "condition_pointers_count": None,
-            "enter_commands_offset": None,
-            "enter_commands_count": None,
-            "exit_commands_offset": None,
-            "exit_commands_count": None,
-            "ongoing_commands_offset": None,
-            "ongoing_commands_count": None,
-        }
-
-        condition_pointers_offset, condition_pointers_count = self.build_condition_list(state.conditions)
-        built["condition_pointers_offset"] = condition_pointers_offset if condition_pointers_count > 0 else -1
-        built["condition_pointers_count"] = condition_pointers_count
-
-        enter_commands = []
-        for enter_command in state.enter_commands:
-            enter_commands.append(self.build_command(enter_command))
-        built["enter_commands_offset"] = enter_commands[0] if enter_commands else -1
-        built["enter_commands_count"] = len(enter_commands)
-
-        exit_commands = []
-        for exit_command in state.exit_commands:
-            exit_commands.append(self.build_command(exit_command))
-        built["exit_commands_offset"] = exit_commands[0] if exit_commands else -1
-        built["exit_commands_count"] = len(exit_commands)
-
-        ongoing_commands = []
-        for ongoing_command in state.ongoing_commands:
-            ongoing_commands.append(self.build_command(ongoing_command))
-        built["ongoing_commands_offset"] = ongoing_commands[0] if ongoing_commands else -1
-        built["ongoing_commands_count"] = len(ongoing_commands)
-
-        return built
-
-    def build_condition_list(self, condition_list):
-        """ Ensures that adjacent conditions are built sequentially before blocks of subconditions. """
-        condition_pointers = []
-        subconditions_to_build = []
-        for condition in condition_list:
-            condition_pointer_offset, condition_dict, subconditions = self.build_condition(condition)
-            condition_pointers.append(condition_pointer_offset)
-            if condition_dict is not None:
-                subconditions_to_build.append((condition_dict, subconditions))
-
-        for condition_dict, subconditions in subconditions_to_build:
-            offset, count = self.build_condition_list(subconditions)
-            condition_dict["subcondition_pointers_offset"] = offset
-            condition_dict["subcondition_pointers_count"] = count
-
-        return (condition_pointers[0] if condition_pointers else -1), len(condition_pointers)
-
-    def build_condition(self, condition: Condition):
-
-        built = {
-            "__state_machine_index__": self.current_state_machine_index,  # removed later
-            "next_state_offset": condition.next_state_index,  # converted to offset later
-            "pass_commands_offset": None,
-            "pass_commands_count": None,
-            "subcondition_pointers_offset": None,
-            "subcondition_pointers_count": None,
-            "test_ezl_offset": None,
-            "test_ezl_size": None,
-        }
-
-        pass_commands = []
-        for pass_command in condition.pass_commands:
-            pass_commands.append(self.build_command(pass_command))
-        built["pass_commands_offset"] = pass_commands[0] if pass_commands else -1
-        built["pass_commands_count"] = len(pass_commands)
-
-        # TODO: Need to pack conditions breadth-first rather than depth-first...
-        subconditions_to_build = list(condition.subconditions)
-
-        built["test_ezl_offset"] = self.build_ezl(condition.test_ezl)
-        built["test_ezl_size"] = len(condition.test_ezl)
-
-        this_pointer_offset = len(self.condition_pointers) * self.Condition.POINTER_STRUCT.size
-        if condition in self.existing_condition_pointers:
-            self.condition_pointers.append({"condition_offset": self.existing_condition_pointers[condition]})
-            return this_pointer_offset, None, None
-
-        this_condition_offset = len(self.conditions) * self.Condition.STRUCT.size
-        self.condition_pointers.append({"condition_offset": this_condition_offset})
-        self.conditions.append(built)
-        self.existing_condition_pointers[condition] = this_condition_offset
-        return this_pointer_offset, built, subconditions_to_build
-
-    def build_command(self, command: Command):
-        this_command_offset = len(self.commands) * self.Command.STRUCT.size
-        built = {
-            "bank": command.bank,
-            "index": command.index,
-            "args_offset": len(self.command_args) * self.Command.ARG_STRUCT.size if command.args else -1,
-            "args_count": len(command.args),
-        }
-        for arg in command.args:
-            self.command_args.append({"arg_ezl_offset": self.build_ezl(arg), "arg_ezl_size": len(arg)})
-        self.commands.append(built)
-        return this_command_offset
-
-    def build_ezl(self, ezl_bytes):
-        # TODO: Conditions and commands are currently intermingled (ordered by state), which is not true for the
-        #  original resources (where all condition data comes before all command data), but it shouldn't matter at all.
-        this_offset = len(self.ezl)
-        self.ezl += ezl_bytes
-        return this_offset
-
-    @property
-    def State(self):
-        return self.esd.State
-
-    @property
-    def Condition(self):
-        return self.esd.State.Condition
-
-    @property
-    def Command(self):
-        return self.esd.State.Command
+            output_file.write(self.to_html(esd_type))

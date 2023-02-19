@@ -151,24 +151,24 @@ class Vector(abc.ABC):
 class Vector2(Vector):
     """Simple [x, y] container."""
 
-    def __init__(self, x, y):
-        self._data = [float(x), float(y)]
+    def __init__(self, xy: tp.Sequence[float, float]):
+        self._data = [float(xy[0]), float(xy[1])]
 
     def __neg__(self):
-        return Vector2(-self._data[0], -self._data[1])
+        return Vector2([-self._data[0], -self._data[1]])
 
     def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
         if isinstance(other, Vector2):
-            x, y = [op_func(self._data[i], other._data[i]) for i in range(2)]
+            xy = [op_func(self._data[i], other._data[i]) for i in range(2)]
         elif isinstance(other, (list, tuple)):
             if len(other) != 2:
                 raise ValueError(f"List or tuple to {op_name} `Vector2` must have 2 elements.")
-            x, y = [op_func(self._data[i], other[i]) for i in range(2)]
+            xy = [op_func(self._data[i], other[i]) for i in range(2)]
         elif isinstance(other, (int, float)):
-            x, y = [op_func(x, other) for x in self._data]
+            xy = [op_func(x, other) for x in self._data]
         else:
             raise TypeError(f"`Vector2` arithmetic not defined for type {type(other)}.")
-        return Vector2(x, y)
+        return Vector2(xy)
 
     def dot(self, other_vector) -> float:
         if len(other_vector) != 2:
@@ -176,7 +176,7 @@ class Vector2(Vector):
         return sum(self[i] * other_vector[i] for i in range(2))
 
     def copy(self):
-        return Vector2(*self._data)
+        return Vector2(self._data)
 
     @classmethod
     def from_repr(cls, repr_string: str) -> Vector2:
@@ -187,18 +187,18 @@ class Vector2(Vector):
 
     @classmethod
     def zero(cls):
-        return Vector2(0.0, 0.0)
+        return Vector2([0.0, 0.0])
 
     @classmethod
     def ones(cls):
-        return Vector2(1.0, 1.0)
+        return Vector2([1.0, 1.0])
 
 
 class Vector3(Vector):
     """Simple [x, y, z] container."""
 
-    def __init__(self, x, y, z):
-        self._data = [float(x), float(y), float(z)]
+    def __init__(self, xyz: tp.Sequence[float, float, float]):
+        self._data = [float(xyz[0]), float(xyz[1]), float(xyz[2])]
 
     @property
     def y(self):
@@ -218,11 +218,11 @@ class Vector3(Vector):
 
     @classmethod
     def from_row_mat(cls, row_mat):
-        return cls(row_mat[0][0], row_mat[0][1], row_mat[0][2])
+        return cls(row_mat[0][:3])
 
     @classmethod
     def from_column_mat(cls, column_mat):
-        return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0])
+        return cls([column_mat[0][0], column_mat[1][0], column_mat[2][0]])
 
     @classmethod
     def from_repr(cls, repr_string: str) -> Vector3:
@@ -234,14 +234,14 @@ class Vector3(Vector):
     def cross(self, other_vector: Vector3) -> Vector3:
         if len(other_vector) != 3:
             raise TypeError("Cannot only use `cross` with another Vector3 or sequence of length 3.")
-        return Vector3(
+        return Vector3([
             self.y * other_vector.z - self.z * other_vector.y,
             self.z * other_vector.x - self.x * other_vector.z,
             self.x * other_vector.y - self.y * other_vector.x,
-        )
+        ])
 
     def transform(self, matrix3: Matrix3):
-        return Vector3(*list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
+        return Vector3(list(zip(*matrix_multiply(matrix3, self.to_mat_column())))[0])
 
     def get_as_axes(self, axes: str) -> Vector2 | Vector3:
         """Reorder and/or negate axes, e.g. `get_as_axes("-x-zy")`."""
@@ -260,30 +260,30 @@ class Vector3(Vector):
             else:
                 raise ValueError(f"Invalid `axes` character: '{c}'. Should be '-' or in 'xyz'.")
         if len(new_data) == 2:
-            return Vector2(*new_data)
+            return Vector2(new_data)
         elif len(new_data) == 3:
-            return Vector3(*new_data)
+            return Vector3(new_data)
         else:
             raise ValueError(f"Not enough axes given in `axes`: '{axes}'. Must be at least 2.")
 
     def to_xzy(self) -> Vector3:
-        return Vector3(self.x, self.z, self.y)
+        return Vector3([self._data[0], self._data[2], self._data[1]])
 
     def __neg__(self):
-        return Vector3(-self._data[0], -self._data[1], -self._data[2])
+        return Vector3([-self._data[0], -self._data[1], -self._data[2]])
 
     def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
         if isinstance(other, Vector3):
-            x, y, z = [op_func(self._data[i], other._data[i]) for i in range(3)]
+            xyz = [op_func(self._data[i], other._data[i]) for i in range(3)]
         elif isinstance(other, (list, tuple)):
             if len(other) != 3:
                 raise ValueError(f"List or tuple to {op_name} `Vector3` must have 3 elements.")
-            x, y, z = [op_func(self._data[i], other[i]) for i in range(3)]
+            xyz = [op_func(self._data[i], other[i]) for i in range(3)]
         elif isinstance(other, (int, float)):
-            x, y, z = [op_func(x, other) for x in self._data]
+            xyz = [op_func(x, other) for x in self._data]
         else:
             raise TypeError(f"`Vector3` arithmetic not defined for type {type(other)}.")
-        return Vector3(x, y, z)
+        return Vector3(xyz)
 
     def dot(self, other_vector) -> float:
         if len(other_vector) != 3:
@@ -291,22 +291,22 @@ class Vector3(Vector):
         return sum(self[i] * other_vector[i] for i in range(3))
 
     def copy(self):
-        return Vector3(*self._data)
+        return Vector3(self._data)
 
     @classmethod
     def zero(cls):
-        return Vector3(0.0, 0.0, 0.0)
+        return Vector3([0.0, 0.0, 0.0])
 
     @classmethod
     def ones(cls):
-        return Vector3(1.0, 1.0, 1.0)
+        return Vector3([1.0, 1.0, 1.0])
 
 
 class Vector4(Vector):
     """Simple [x, y, z, w] container."""
 
-    def __init__(self, x, y, z, w):
-        self._data = [float(x), float(y), float(z), float(w)]
+    def __init__(self, xyzw):
+        self._data = [float(xyzw[0]), float(xyzw[1]), float(xyzw[2]), float(xyzw[3])]
 
     @property
     def y(self):
@@ -334,34 +334,34 @@ class Vector4(Vector):
 
     @classmethod
     def from_row_mat(cls, row_mat):
-        return Vector4(row_mat[0][0], row_mat[0][1], row_mat[0][2], row_mat[0][3])
+        return Vector4(row_mat[0][0:4])
 
     @classmethod
     def from_column_mat(cls, column_mat):
-        return cls(column_mat[0][0], column_mat[1][0], column_mat[2][0], column_mat[3][0])
+        return cls([column_mat[0][0], column_mat[1][0], column_mat[2][0], column_mat[3][0]])
 
     @classmethod
     def from_repr(cls, repr_string: str) -> Vector4:
         """For JSON decoding."""
         if (match := re.match(r"^Vector4(\([\d .,]+\))", repr_string)) is not None:
-            return cls(*ast.literal_eval(match.group(1)))
+            return cls(ast.literal_eval(match.group(1)))
         raise ValueError(f"Cannot read `Vector4` string: {repr_string}")
 
     def __neg__(self):
-        return Vector4(-self._data[0], -self._data[1], -self._data[2], -self._data[3])
+        return Vector4([-self._data[0], -self._data[1], -self._data[2], -self._data[3]])
 
     def _arithmetic(self, other, op_func: tp.Callable[[float, float], float], op_name: str):
         if isinstance(other, Vector4):
-            x, y, z, w = [op_func(self._data[i], other._data[i]) for i in range(4)]
+            xyzw = [op_func(self._data[i], other._data[i]) for i in range(4)]
         elif isinstance(other, (list, tuple)):
             if len(other) != 4:
                 raise ValueError(f"List or tuple to {op_name} `Vector4` must have 4 elements.")
-            x, y, z, w = [op_func(self._data[i], other[i]) for i in range(4)]
+            xyzw = [op_func(self._data[i], other[i]) for i in range(4)]
         elif isinstance(other, (int, float)):
-            x, y, z, w = [op_func(x, other) for x in self._data]
+            xyzw = [op_func(x, other) for x in self._data]
         else:
             raise TypeError(f"`Vector4` arithmetic not defined for type {type(other)}.")
-        return Vector4(x, y, z, w)
+        return Vector4(xyzw)
 
     def dot(self, other_vector) -> float:
         if len(other_vector) != 4:
@@ -369,15 +369,15 @@ class Vector4(Vector):
         return sum(self[i] * other_vector[i] for i in range(4))
 
     def copy(self):
-        return Vector4(*self._data)
+        return Vector4(self._data)
 
     @classmethod
     def zero(cls):
-        return Vector4(0.0, 0.0, 0.0, 0.0)
+        return Vector4([0.0, 0.0, 0.0, 0.0])
 
     @classmethod
     def ones(cls):
-        return Vector4(1.0, 1.0, 1.0, 1.0)
+        return Vector4([1.0, 1.0, 1.0, 1.0])
 
 
 class Matrix(abc.ABC):
@@ -547,7 +547,7 @@ class Matrix3(Matrix):
             y = math.atan2(self[2, 1], self[2, 2])
             x = 0
 
-        return Vector3(x, y, z) if radians else Vector3(math.degrees(x), math.degrees(y), math.degrees(z))
+        return Vector3([x, y, z]) if radians else Vector3([math.degrees(x), math.degrees(y), math.degrees(z)])
 
 
 class Matrix4(Matrix):
@@ -587,14 +587,14 @@ class Matrix4(Matrix):
         ])
 
     def get_scale(self) -> Vector3:
-        return Vector3(self.data[0][0], self.data[1][1], self.data[2][2])
+        return Vector3([self.data[0][0], self.data[1][1], self.data[2][2]])
 
     def set_scale(self, scale_vector: Vector3 | list | tuple | int | float):
         """Set the scale part of the matrix (diagonal of top-left 3x3 sub-matrix)."""
         if isinstance(scale_vector, (list, tuple)):
-            scale_vector = Vector3(*scale_vector)
+            scale_vector = Vector3(scale_vector)
         elif isinstance(scale_vector, (int, float)):
-            scale_vector = Vector3(scale_vector, scale_vector, scale_vector)
+            scale_vector = Vector3([scale_vector, scale_vector, scale_vector])
 
         if isinstance(scale_vector, Vector3):
             for i in range(3):
@@ -637,14 +637,14 @@ class Matrix4(Matrix):
         )
 
     def get_translate(self) -> Vector3:
-        return Vector3(self.data[0][3], self.data[1][3], self.data[2][3])
+        return Vector3([self.data[0][3], self.data[1][3], self.data[2][3]])
 
     def set_translate(self, translate_vector: Vector3 | list | tuple | int | float):
         """Set the translate part of the matrix (first three elements of last column)."""
         if isinstance(translate_vector, (list, tuple)):
-            translate_vector = Vector3(*translate_vector)
+            translate_vector = Vector3(translate_vector)
         elif isinstance(translate_vector, (int, float)):
-            translate_vector = Vector3(translate_vector, translate_vector, translate_vector)
+            translate_vector = Vector3([translate_vector] * 3)
         elif not isinstance(translate_vector, Vector3):
             raise TypeError("`translate_vector` must be a Vector3, list, tuple, int, or float.")
         for i in range(3):
@@ -692,9 +692,9 @@ def resolve_rotation(rotation: Matrix3 | Vector3 | list | tuple | int | float, r
 
 def get_distance(x1: Vector3, x2: Vector3, squared=False):
     if not isinstance(x1, Vector3):
-        x1 = Vector3(*x1)
+        x1 = Vector3(x1)
     if not isinstance(x2, Vector3):
-        x2 = Vector3(*x2)
+        x2 = Vector3(x2)
     squared_distance = (x2.x - x1.x) ** 2 + (x2.y - x1.y) ** 2 + (x2.z - x1.z) ** 2
     if squared:
         return squared_distance
