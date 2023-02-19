@@ -462,6 +462,7 @@ class Param(tp.Generic[PARAM_ROW_DATA_T], GameFile, abc.ABC):
         rows = data.pop("rows")  # type: dict[int, dict | ParamRow]
         data["rows"] = {}
         for row_id, row in rows.items():
+            row_id = int(row_id)  # JSON keys are strings
             if isinstance(row, ParamRow):
                 data["rows"][row_id] = row  # direct assignment
             elif isinstance(row, dict):

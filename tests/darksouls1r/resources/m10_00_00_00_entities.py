@@ -7,7 +7,7 @@ class Objects(Object):
 
     # noinspection PyMethodParameters
     def _generate_next_value_(name, start, count, last_values):
-        return Object.auto_generate(count, 1000000)
+        return Object.auto_generate(ID_RANGES, count, 1000000)
 
     o0100_0000 = 1001900
     o0100_0001 = 1001901

@@ -701,14 +701,18 @@ class BinaryMetadata(tp.Generic[FIELD_T]):
     bit_count: int = -1  # NOTE: Field is packed/unpacked manually if this is not -1.
     should_skip_func: tp.Callable[[bool, dict[str, tp.Any]], bool] = None
 
+    # Constructed in `__post_init__` for efficiency.
+    single_asserted: FIELD_T | None = dataclasses.field(init=False, default=None)
+
     # Assigned by `BinaryStruct` to allow better error logging below. (NOT used otherwise.)
     field_name: str = dataclasses.field(default=None, init=False)
     field_type: tp.Type[FIELD_T] = dataclasses.field(default=None, init=False)
 
-    def get_single_asserted(self) -> FIELD_T | None:
+    def __post_init__(self):
         if self.asserted and len(self.asserted) == 1:
-            return self.asserted[0]
-        return None
+            self.single_asserted = self.asserted[0]
+        else:
+            self.single_asserted = None
 
     def get_unpacker(self) -> tp.Callable[[list[tp.Any]], FIELD_T]:
         """Configures and returns a function that produces field values from `struct.unpack()` output.
@@ -1008,8 +1012,8 @@ class BinaryStruct:
 
         # Set single-asserted fields to their default values, regardless of `init` setting.
         for field, field_metadata in zip(self._FIELDS, self._FIELD_METADATA, strict=True):
-            if (asserted := field_metadata.get_single_asserted()) is not None:
-                setattr(self, field.name, asserted)
+            if field_metadata.single_asserted is not None:
+                setattr(self, field.name, field_metadata.single_asserted)
 
     @property
     def cls_name(self):
@@ -1455,8 +1459,7 @@ class BinaryStruct:
                 continue
 
             if field_value is None:
-                single_asserted = field_metadata.get_single_asserted()
-                if single_asserted is None:
+                if field_metadata.single_asserted is None:
                     # Reserved for custom external filling, as it requires data beyond this struct's scope (even just to
                     # choose one of multiple provided asserted values). Current byte order is used.
                     reserve_offset = start_offset + get_fmt_size()
@@ -1468,7 +1471,7 @@ class BinaryStruct:
                     continue
                 else:
                     # Use lone asserted value.
-                    field_value = field_metadata.asserted[0]
+                    field_value = field_metadata.single_asserted
 
             try:
                 field_packer(struct_input, field_value)
@@ -1561,7 +1564,7 @@ class BinaryStruct:
         """Get all current binary field values, unless it has a single asserted value."""
         field_values = {}
         for field, metadata in zip(self.get_binary_fields(), self._FIELD_METADATA):
-            if metadata.get_single_asserted() is None:
+            if metadata.single_asserted is None:
                 field_values[field.name] = getattr(self, field.name, None)
         return field_values
 

@@ -108,7 +108,7 @@ class SingleEventArg:
     combined_fmt: str = field(default="")
     combined_py_types: tuple[tp.Type, ...] = ()
     # Subset of the above; ONLY contains game types (for enum lookups).
-    combined_game_types: tuple[tp.Type[BaseGameObject], ...] = ()
+    combined_game_types: tuple[GAME_TYPE, ...] = ()
 
     def add_info(self, event_arg: EventArg):
         """Merge in information from a single replacement usage."""

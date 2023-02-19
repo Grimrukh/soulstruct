@@ -7,11 +7,13 @@ from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 
 from .core import GameDirectoryProject
 from .links import WindowLinker
+from .maps import MapsEditor
 
 
 class ProjectWindow(_BaseProjectWindow):
     PROJECT_CLASS = GameDirectoryProject
     LINKER_CLASS = WindowLinker
+    MAPS_EDITOR_CLASS = MapsEditor
     RUNTIME_MANAGER_CLASS = None
     CHARACTER_MODELS = {}  # TODO
 

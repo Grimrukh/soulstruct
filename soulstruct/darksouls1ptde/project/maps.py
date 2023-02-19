@@ -1,16 +1,22 @@
+from __future__ import annotations
 
 __all__ = ["MapsEditor"]
 
 from soulstruct.base.project.editors.maps import MapsEditor as BaseMapsEditor
+from soulstruct.darksouls1ptde import game_types
 from soulstruct.darksouls1ptde.game_types import ObjActParam, PlaceName, BaseDrawParam
+from soulstruct.darksouls1ptde.maps.parts import MSBPart
 
 
 class MapsEditor(BaseMapsEditor):
 
+    GAME_TYPES_MODULE = game_types
+    GROUP_BIT_COUNT = MSBPart.GROUP_BIT_COUNT
+
     def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
         if field_type == ObjActParam and field_value == -1:
             # Link to ObjActParam with the same ID as its attached `MSBObject` model.
-            obj_act_part = self.get_selected_field_dict()["obj_act_part"]
+            obj_act_part = self.get_selected_field_dict()["obj_act_part"]  # type: MSBPart
             try:
                 if obj_act_part is None:
                     raise KeyError(f"`obj_act_part` is None.")

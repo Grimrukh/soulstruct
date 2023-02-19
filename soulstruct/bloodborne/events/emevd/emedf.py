@@ -98,14 +98,16 @@ def AUTO_COORD_ENTITY_TYPE(arg_name: str, check_player=False):
         return {
             "type": CoordEntityType,
             "default": (
-                lambda args: CoordEntityType.Character if args[arg_name] == PLAYER
-                else args[arg_name].get_coord_entity_type()
+                lambda args: (
+                    CoordEntityType.Character if args[arg_name] == PLAYER
+                    else args[arg_name].get_coord_entity_type(CoordEntityType)
+                )
             ),
             "comment": f"Auto-detected from `{arg_name}` type by default. Sets `Character` type for `PLAYER`.",
         }
     return {
         "type": CoordEntityType,
-        "default": lambda args: args[arg_name].get_coord_entity_type(),
+        "default": lambda args: args[arg_name].get_coord_entity_type(CoordEntityType),
         "comment": f"Auto-detected from `{arg_name}` type by default.",
     }
 

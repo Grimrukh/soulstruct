@@ -3684,42 +3684,42 @@
     },
     "ITEMLOT_PARAM_ST": {
         "lotItemId01": {
-            "nickname": "lotItemId01",
+            "nickname": "Item1ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(1)"
         },
         "lotItemId02": {
-            "nickname": "lotItemId02",
+            "nickname": "Item2ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(2)"
         },
         "lotItemId03": {
-            "nickname": "lotItemId03",
+            "nickname": "Item3ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(3)"
         },
         "lotItemId04": {
-            "nickname": "lotItemId04",
+            "nickname": "Item4ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(4)"
         },
         "lotItemId05": {
-            "nickname": "lotItemId05",
+            "nickname": "Item5ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(5)"
         },
         "lotItemId06": {
-            "nickname": "lotItemId06",
+            "nickname": "Item6ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(6)"
         },
         "lotItemId07": {
-            "nickname": "lotItemId07",
+            "nickname": "Item7ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(7)"
         },
         "lotItemId08": {
-            "nickname": "lotItemId08",
+            "nickname": "Item8ID",
             "tooltip": "TODO",
             "dynamic_callback": "ItemLotReference(8)"
         },
@@ -5771,12 +5771,12 @@
             "game_type": "Animation"
         },
         "spQualifiedId": {
-            "nickname": "spQualifiedId",
+            "nickname": "SuccessConditionID1",
             "tooltip": "TODO",
             "dynamic_callback": "ObjActSuccessCondition(1)"
         },
         "spQualifiedId2": {
-            "nickname": "spQualifiedId2",
+            "nickname": "SuccessConditionID2",
             "tooltip": "TODO",
             "dynamic_callback": "ObjActSuccessCondition(2)"
         },
@@ -6024,8 +6024,7 @@
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialOffset",
-            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters.",
-            "game_type": "UpgradeMaterialParam"
+            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters."
         },
         "reinforcementLevel": {
             "nickname": "ReinforcementLevel",
@@ -6092,7 +6091,7 @@
     },
     "SHOP_LINEUP_PARAM": {
         "equipId": {
-            "nickname": "equipId",
+            "nickname": "ItemID",
             "tooltip": "TODO",
             "dynamic_callback": "ShopReference()"
         },

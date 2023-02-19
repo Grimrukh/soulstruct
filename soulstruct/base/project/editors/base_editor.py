@@ -100,7 +100,7 @@ class EntryRow:
 
         self.context_menu = editor.Menu(self.row_box)
 
-        self.tool_tip = ToolTip(
+        self.tooltip = ToolTip(
             self.row_box, self.id_box, self.id_label, self.text_box, self.text_label, text=None, wraplength=350
         )
 

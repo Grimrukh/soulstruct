@@ -2,6 +2,7 @@ from __future__ import annotations
 
 __all__ = [
     "BaseGameObject",
+    "GAME_TYPE",
     "GameObjectSequence",
     "BaseParam",
     "BaseGameParam",
@@ -33,12 +34,18 @@ class BaseGameObject:
     """Base class for all game types.
 
     Note that using `abc.ABC` for this, or any of its technically abstract intermediate subclasses, leads to problems.
+
+    Also note that while most subclasses also inherit from `IntEnum`, not all of them do (e.g. `Map`), so this does not.
     """
 
     @classmethod
     def get_event_arg_fmt(cls) -> str:
         """If not `None`, allows this type to be used as an EVS event arg type hint for this format."""
         raise TypeError(f"Game type `{cls.__name__}` cannot be used as an EVS event argument type hint.")
+
+
+# For type-hinting.
+GAME_TYPE = tp.Type[BaseGameObject]
 
 
 class GameObjectSequence(type):
@@ -49,7 +56,7 @@ class GameObjectSequence(type):
 
         `GameObjectSequence((Region, 8))`
     """
-    game_object_type: tp.Type[BaseGameObject]
+    game_object_type: GAME_TYPE
     count: int
 
     def __new__(mcs, game_object_and_count):

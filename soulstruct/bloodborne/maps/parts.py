@@ -20,7 +20,8 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.parts import *
-from soulstruct.base.maps.msb.utils import MapFieldInfo, GroupBitSet
+from soulstruct.base.maps.msb.field_info import MapFieldInfo
+from soulstruct.base.maps.msb.utils import GroupBitSet
 from soulstruct.bloodborne.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -28,6 +29,7 @@ from soulstruct.utilities.maths import Vector3
 
 from .enums import *
 from .models import *
+from .regions import MSBRegion
 
 try:
     Self = tp.Self
@@ -35,7 +37,6 @@ except AttributeError:
     Self = "MSBPart"
 
 if tp.TYPE_CHECKING:
-    from .regions import MSBRegion
     from .events import MSBEnvironmentEvent
 
 
@@ -82,7 +83,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
     SCENE_GPARAM_STRUCT: tp.ClassVar[BinaryStruct] = None
 
     NAME_ENCODING: tp.ClassVar[str] = "utf-16-le"
-    GROUP_SIZE: tp.ClassVar[int] = 256
+    GROUP_BIT_COUNT: tp.ClassVar[int] = 256
 
     # NOTE: `model` defined by subclasses.
     backread_groups: GroupBitSet = field(default_factory=set)
@@ -339,13 +340,13 @@ class MSBCharacter(MSBPartWithGParam):
         damage_animation: int
 
     model: MSBCharacterModel = None
-    ai_id: int = field(default=-1, **MapFieldInfo(linked_type=AIParam))
-    character_id: int = field(default=-1, **MapFieldInfo(linked_type=CharacterParam))
-    talk_id: int = field(default=0, **MapFieldInfo(linked_type=TalkScript))
-    player_id: int = field(default=0, **MapFieldInfo(linked_type=PlayerParam))
+    ai_id: int = field(default=-1, **MapFieldInfo(game_type=AIParam))
+    character_id: int = field(default=-1, **MapFieldInfo(game_type=CharacterParam))
+    talk_id: int = field(default=0, **MapFieldInfo(game_type=TalkScript))
+    player_id: int = field(default=0, **MapFieldInfo(game_type=PlayerParam))
     draw_parent: MSBPart = None
     patrol_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 8, **MapFieldInfo(linked_type=GameObjectSequence((Region, 8)))
+        default_factory=lambda: [None] * 8, **MapFieldInfo(game_type=GameObjectSequence((Region, 8)))
     )
     default_animation: int = -1
     damage_animation: int = -1
@@ -406,7 +407,7 @@ class MSBCollision(MSBPartWithSceneGParam):
         hit_filter_id: byte
         sound_space_type: byte
         _environment_event_index: short
-        reflect_place_height: float
+        reflect_plane_height: float
         _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
         starts_disabled: bool
         unk_x0b_x0c: byte
@@ -417,20 +418,20 @@ class MSBCollision(MSBPartWithSceneGParam):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))
+    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))
 
-    hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(linked_type=CollisionHitFilter))
+    hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
-    reflect_place_height: float = 0.0
-    place_name_banner_id: int = field(default=-1, **MapFieldInfo(linked_type=PlaceName))
+    reflect_plane_height: float = 0.0
+    place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
     starts_disabled: bool = False
     # TODO: Confirm Bloodborne uses the same signed combined field as DS1 for play region and stable footing.
     play_region_id: int = 0
     stable_footing_flag: int = 0  # TODO: event flag type
-    camera_1_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
-    camera_2_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
+    camera_1_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
+    camera_2_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
     unk_x0b_x0c: int = field(default=0, **MapFieldInfo("Unknown [x0b-x0c]", "Unknown Collision integer.")),
     attached_lantern: int = 0
 

@@ -19,7 +19,8 @@ from dataclasses import dataclass, field
 
 from soulstruct.base.maps.msb import MSBEntry
 from soulstruct.base.maps.msb.parts import *
-from soulstruct.base.maps.msb.utils import MapFieldInfo, GroupBitSet
+from soulstruct.base.maps.msb.field_info import MapFieldInfo
+from soulstruct.base.maps.msb.utils import GroupBitSet
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.exceptions import InvalidFieldValueError
 from soulstruct.utilities.binary import *
@@ -27,6 +28,7 @@ from soulstruct.utilities.maths import Vector3
 
 from .enums import *
 from .models import *
+from .regions import MSBRegion
 
 try:
     Self = tp.Self
@@ -35,7 +37,6 @@ except AttributeError:
 
 if tp.TYPE_CHECKING:
     from .events import MSBEnvironmentEvent
-    from .regions import MSBRegion
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -86,7 +87,7 @@ class MSBPart(BaseMSBPart, abc.ABC):
         _pad2: bytes = field(**BinaryPad(2))
 
     NAME_ENCODING: tp.ClassVar[str] = "shift-jis"  # NOT `shift_jis_2004` (backslashes in SIB paths)
-    GROUP_SIZE: tp.ClassVar[int] = 128  # 4 ints
+    GROUP_BIT_COUNT: tp.ClassVar[int] = 128  # 4 ints
 
     # NOTE: `model` type overridden by subclasses.
     # Subclasses may also use more appropriate defaults for convenience, as these Part supertype fields in DS1 are
@@ -94,15 +95,15 @@ class MSBPart(BaseMSBPart, abc.ABC):
     sib_path: str = ""
     draw_groups: GroupBitSet = field(default_factory=set)
     display_groups: GroupBitSet = field(default_factory=set)
-    ambient_light_id: int = field(default=-1, **MapFieldInfo(linked_type=BakedLightParam))
-    fog_id: int = field(default=-1, **MapFieldInfo(linked_type=FogParam))
-    scattered_light_id: int = field(default=-1, **MapFieldInfo(linked_type=ScatteredLightParam))
-    lens_flare_id: int = field(default=-1, **MapFieldInfo(linked_type=LensFlareSourceParam))
-    shadow_id: int = field(default=-1, **MapFieldInfo(linked_type=ShadowParam))
-    dof_id: int = field(default=-1, **MapFieldInfo(linked_type=DepthOfFieldParam))
-    tone_map_id: int = field(default=-1, **MapFieldInfo(linked_type=ToneMappingParam))
-    point_light_id: int = field(default=-1, **MapFieldInfo(linked_type=PointLightParam))
-    tone_correction_id: int = field(default=-1, **MapFieldInfo(linked_type=ToneCorrectionParam))
+    ambient_light_id: int = field(default=-1, **MapFieldInfo(game_type=BakedLightParam))
+    fog_id: int = field(default=-1, **MapFieldInfo(game_type=FogParam))
+    scattered_light_id: int = field(default=-1, **MapFieldInfo(game_type=ScatteredLightParam))
+    lens_flare_id: int = field(default=-1, **MapFieldInfo(game_type=LensFlareSourceParam))
+    shadow_id: int = field(default=-1, **MapFieldInfo(game_type=ShadowParam))
+    dof_id: int = field(default=-1, **MapFieldInfo(game_type=DepthOfFieldParam))
+    tone_map_id: int = field(default=-1, **MapFieldInfo(game_type=ToneMappingParam))
+    point_light_id: int = field(default=-1, **MapFieldInfo(game_type=PointLightParam))
+    tone_correction_id: int = field(default=-1, **MapFieldInfo(game_type=ToneCorrectionParam))
     lod_id: int = -1
     is_shadow_source: bool = False
     is_shadow_destination: bool = False
@@ -272,15 +273,15 @@ class MSBCharacter(MSBPart):
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
 
-    ai_id: int = field(default=-1, **MapFieldInfo(linked_type=AIParam))
-    character_id: int = field(default=-1, **MapFieldInfo(linked_type=CharacterParam))
-    talk_id: int = field(default=0, **MapFieldInfo(linked_type=TalkScript))
+    ai_id: int = field(default=-1, **MapFieldInfo(game_type=AIParam))
+    character_id: int = field(default=-1, **MapFieldInfo(game_type=CharacterParam))
+    talk_id: int = field(default=0, **MapFieldInfo(game_type=TalkScript))
     platoon_id: int = 0
     patrol_type: int = 0
-    player_id: int = field(default=-1, **MapFieldInfo(linked_type=PlayerParam))
+    player_id: int = field(default=-1, **MapFieldInfo(game_type=PlayerParam))
     draw_parent: MSBPart = None
     patrol_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 8, **MapFieldInfo(linked_type=GameObjectSequence((Region, 8)))
+        default_factory=lambda: [None] * 8, **MapFieldInfo(game_type=GameObjectSequence((Region, 8)))
     )
     default_animation: int = -1
     damage_animation: int = -1
@@ -372,7 +373,7 @@ class MSBCollision(MSBPart):
         hit_filter_id: byte
         sound_space_type: byte
         _environment_event_index: short
-        reflect_place_height: float
+        reflect_plane_height: float
         navmesh_groups: GroupBitSet = field(**BinaryArray(4, uint))
         vagrant_entity_ids: list[int] = field(**BinaryArray(3))
         _place_name_banner_id: short  # -1 means use map area/block, and any negative value means banner is forced
@@ -387,24 +388,24 @@ class MSBCollision(MSBPart):
 
     # Field type overrides.
     model: MSBCollisionModel = None
-    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
+    display_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
     is_shadow_source: bool = True
     is_shadow_destination: bool = True
     draw_by_reflect_cam: bool = True
 
-    hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(linked_type=CollisionHitFilter))
+    hit_filter_id: int = field(default=CollisionHitFilter.Normal.value, **MapFieldInfo(game_type=CollisionHitFilter))
     sound_space_type: int = 0
     environment_event: MSBEnvironmentEvent = None
-    reflect_place_height: float = 0.0
-    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
+    reflect_plane_height: float = 0.0
+    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
     vagrant_entity_ids: list[int] = field(default_factory=lambda: [-1, -1, -1])
-    place_name_banner_id: int = field(default=-1, **MapFieldInfo(linked_type=PlaceName))
+    place_name_banner_id: int = field(default=-1, **MapFieldInfo(game_type=PlaceName))
     force_place_name_banner: bool = True  # necessary default because `place_name_banner_id` defaults to -1
     starts_disabled: bool = False
     play_region_id: int = 0
     stable_footing_flag: int = 0  # TODO: event flag type
-    camera_1_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
-    camera_2_id: int = field(default=-1, **MapFieldInfo(linked_type=CameraParam))
+    camera_1_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
+    camera_2_id: int = field(default=-1, **MapFieldInfo(game_type=CameraParam))
     unk_x27_x28: int = field(default=0, **MapFieldInfo("Unknown [x27-x28]", "Unknown Collision byte.")),
     attached_bonfire: int = 0
 
@@ -529,7 +530,7 @@ class MSBNavmesh(MSBPart):
     model: MSBNavmeshModel = None
     is_shadow_source: bool = True
 
-    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_SIZE)))  # all on by default
+    navmesh_groups: GroupBitSet = field(default_factory=lambda: set(range(MSBPart.GROUP_BIT_COUNT)))  # all on by default
 
     HIDE_FIELDS = (
         "scale",

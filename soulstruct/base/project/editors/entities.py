@@ -143,16 +143,18 @@ class EntityEntryRow(EntryRow):
 
         self.tool_tip = None
 
-    def update_entry(self, entry_id: int, entry_text: str, entry_description: str = ""):
+    def update_entry(self, entry_id: int, entry_text: str, entry: MSBEntry = None):
+        if entry is None:
+            raise ValueError("`entry` required for `EntitiesEditor.update_entry()` (for Maps link).")
         self.entry_id = entry_id
         self._entry_text = entry_text
         self.text_label.var.set(entry_text)
-        self.description_label.var.set(entry_description if entry_description else "<No Description>")
+        self.description_label.var.set(entry.description if entry.description else "<No Description>")
 
-        for game_type in ENTITY_GAME_TYPES:
-            entry_type, entry_subtype = game_type.get_msb_entry_type_subtype(pluralized_subtype=True)
-            if f"{entry_type}: {entry_subtype}" == self.master.active_category:
-                self.maps_link = self.master.linker.soulstruct_link(game_type, entry_text)[0]
+        for entry_game_type in ENTITY_GAME_TYPES:
+            supertype, subtype = entry_game_type.get_msb_entry_supertype_subtype(pluralized_subtype=True)
+            if f"{supertype}: {subtype}" == self.master.active_category:
+                self.maps_link = self.master.linker.soulstruct_link(entry_game_type, entry)[0]
                 break
 
         self.build_entry_context_menu()
@@ -323,12 +325,12 @@ class EntityEditor(BaseEditor):
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
 
-        entries_to_display = self._get_category_name_range()
+        entries_to_display = self._get_category_name_range() if self.active_category else []
 
         row = 0
         for entry_id, entry in entries_to_display:
             try:
-                self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
+                self.entry_rows[row].update_entry(entry_id, entry.name, entry)
             except IndexError:
                 # Create new rows as needed.
                 with self.set_master(self.entry_i_frame):
@@ -347,7 +349,7 @@ class EntityEditor(BaseEditor):
                             },
                         )
                     )
-                self.entry_rows[row].update_entry(entry_id, entry.name, entry.description)
+                self.entry_rows[row].update_entry(entry_id, entry.name, entry)
             self.entry_rows[row].unhide()
             row += 1
 
@@ -511,7 +513,7 @@ class EntityEditor(BaseEditor):
                     continue
                 entry_type_name = entry.SUBTYPE_ENUM.get_plural_supertype_name()
                 entry_subtype_name = entry.SUBTYPE_ENUM.name
-                if entry_game_type.get_msb_entry_type_subtype() != (entry_type_name, entry_subtype_name):
+                if entry_game_type.get_msb_entry_supertype_subtype() != (entry_type_name, entry_subtype_name):
                     return self.error_dialog(
                         "Entity Type Mismatch",
                         f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' has type "
@@ -619,7 +621,7 @@ class EntityEditor(BaseEditor):
                             f"import entity IDs from entities module until this is fixed.",
                         )
                     entries_by_entity_enum[entity_enum] = entry
-                elif entry_game_type.get_msb_entry_type_subtype() != (supertype_name, entry_subtype_name):
+                elif entry_game_type.get_msb_entry_supertype_subtype() != (supertype_name, entry_subtype_name):
                     return self.error_dialog(
                         "Entity Type Mismatch",
                         f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
@@ -707,9 +709,9 @@ class EntityEditor(BaseEditor):
     def _get_display_categories(self):
         """ALl combinations of MSB entry list names (except Model) and their subtypes, properly formatted."""
         categories = []
-        for map_entry_type in ENTITY_GAME_TYPES:
-            entry_type_name, entry_subtype_name = map_entry_type.get_msb_entry_type_subtype(pluralized_subtype=True)
-            categories.append(f"{entry_type_name}: {entry_subtype_name}")
+        for entry_game_type in ENTITY_GAME_TYPES:
+            supertype, subtype = entry_game_type.get_msb_entry_supertype_subtype(pluralized_subtype=True)
+            categories.append(f"{supertype}: {subtype}")
         return categories
 
     def get_selected_msb(self) -> MSB:
@@ -754,19 +756,19 @@ class EntityEditor(BaseEditor):
 
     def _set_entry_text(self, entry_index: int, text: str, category=None, update_row_index=None):
         entry_list = self.get_category_data(category)
-        entry_list[entry_index].name = text  # Will update Maps tab as well (once refreshed).
-        description = entry_list[entry_index].description  # keep current description
+        entry = entry_list[entry_index]
+        entry.name = text  # Will update Maps tab as well (once refreshed).
         self.linker.window.maps_tab.refresh_entries()
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(entry_index, text, description)
+            self.entry_rows[update_row_index].update_entry(entry_index, text, entry)
 
     def _set_entry_description(self, entry_index: int, description: str, category=None, update_row_index=None):
         entry_list = self.get_category_data(category)
-        entry_list[entry_index].description = description  # Will update Maps tab tooltip as well.
+        entry = entry_list[entry_index]
+        entry.description = description  # Will update Maps tab tooltip as well.
+        entry_text = self.entry_rows[update_row_index].entry_text  # keep same text
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(
-                entry_index, self.entry_rows[update_row_index].entry_text, description
-            )
+            self.entry_rows[update_row_index].update_entry(entry_index, entry_text, entry)
 
     def _set_entry_id(self, entry_id: int, new_id: int, category=None, update_row_index=None):
         """Changes 'entity_id' field of MSB entry."""
@@ -775,5 +777,5 @@ class EntityEditor(BaseEditor):
         self.linker.window.maps_tab.refresh_entries()
         entry_list[new_id] = entry = entry_list.pop(entry_id)
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(new_id, entry.name, entry.description)
+            self.entry_rows[update_row_index].update_entry(new_id, entry.name, entry)
         return True

@@ -64,11 +64,11 @@ class GameEnumsManager(abc.ABC):
         """Indicates a specific enum value is missing from a known game type, which you might want to remedy."""
 
     # List of `BaseGameObject` types that are valid enum keys (e.g. can appear as EMEVD instruction/event arguments).
-    VALID_GAME_TYPES: dict[tp.Type[BaseGameObject], dict[int, BaseGameObject]]
+    VALID_GAME_TYPES: dict[GAME_TYPE, dict[int, BaseGameObject]]
     # No loaded enum members are permitted to overlap with values in this `IntEnum` (e.g. `PLAYER = 10000`).
     PROTECTED_ENUM: tp.Type[IntEnum]
 
-    enums: dict[tp.Type[BaseGameObject], dict[int, EntityEnumInfo]]
+    enums: dict[GAME_TYPE, dict[int, EntityEnumInfo]]
     all_event_ids: list[int]
     all_common_event_ids: list[int]
 
@@ -142,8 +142,8 @@ class GameEnumsManager(abc.ABC):
         self,
         module_name: str,
         module,
-        type_star_sources: dict[tp.Type[BaseGameObject], dict[int, str]],
-        type_non_star_sources: dict[tp.Type[BaseGameObject], dict[int, str]],
+        type_star_sources: dict[GAME_TYPE, dict[int, str]],
+        type_non_star_sources: dict[GAME_TYPE, dict[int, str]],
         is_star: bool,
     ):
         for game_enum_name, game_enum_class in inspect.getmembers(
@@ -153,7 +153,7 @@ class GameEnumsManager(abc.ABC):
                 and (not o.__module__ or o.__module__.endswith(module_name))
             )
         ):
-            game_enum_class: tp.Type[BaseGameObject] | tp.Iterable
+            game_enum_class: GAME_TYPE | tp.Iterable
 
             match_found = False
             for member in game_enum_class:
@@ -219,7 +219,7 @@ class GameEnumsManager(abc.ABC):
     def check_out_enum(
         self,
         enum_value: int,
-        *game_types: tp.Type[BaseGameObject] | tp.Sequence[tp.Type[BaseGameObject]],
+        *game_types: GAME_TYPE | tp.Sequence[GAME_TYPE],
         any_class=False,
     ) -> str:
         """Attempt to check out an enum with one of the given `entity_cls_names` and `entity_id`.

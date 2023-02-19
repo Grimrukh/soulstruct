@@ -10,13 +10,14 @@ import typing as tp
 from collections import ChainMap
 from dataclasses import dataclass, field, fields, MISSING
 from enum import IntEnum
-from types import MappingProxyType
+from types import MappingProxyType, ModuleType
 
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector, Vector2, Vector3, Vector4
 from soulstruct.utilities.text import pad_chars
 
-from .enums import BaseMSBSubtype
+from .enums import BaseMSBSubtype, MSBSupertype
+from .field_info import MapFieldMetadata, FIELD_INFO
 from .utils import MSBBrokenEntryReference, GroupBitSet
 
 try:
@@ -53,16 +54,22 @@ class MSBEntry(abc.ABC):
 
     # Shared between all game MSB entries. TODO: Infer from `reader.long_varints`?
     NAME_ENCODING: tp.ClassVar[str]
+    # Required to look up default field info (and just of general relevance). Defined in the four base classes.
+    SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype]
     # Generally only used to check against unpacked indices (which should have already been 'peeked' by the MSB).
-    SUBTYPE_ENUM: tp.ClassVar[tp.Type[BaseMSBSubtype]]
+    SUBTYPE_ENUM: tp.ClassVar[BaseMSBSubtype]
     # These fields will be marked as hidden in the GUI.
     HIDE_FIELDS: tp.ClassVar[tuple[str, ...]] = ()
     # Number of bits in draw/display/navmesh/backread groups (e.g. 128 or 256).
-    GROUP_SIZE: tp.ClassVar[int]
+    GROUP_BIT_COUNT: tp.ClassVar[int]
     # Cached when first accessed. Maps field names to their default values. Immutable.
     _FIELD_DEFAULTS: tp.ClassVar[MappingProxyType[str, tp.Any]] = None
     # Cached when first accessed. Maps field names to types for enforcement, or type names for `MSBEntry` subclasses.
     _FIELD_TYPES: tp.ClassVar[MappingProxyType[str, str | tp.Type[tp.Any]]] = None
+    # Cached when first accessed. Maps field names to `(nickname, tooltip, display_type)` tuples.
+    _FIELD_DISPLAY_INFO: tp.ClassVar[MappingProxyType[str, tuple[str, str, tp.Type[tp.Any]]]] = None
+    # Cached when first accessed. Maps field names to functions that convert JSON string values to that field's type.
+    _CUSTOM_JSON_DECODERS: tp.ClassVar[MappingProxyType[str, tp.Callable[[str], tp.Any]]] = None
     # Internal field that prevents my `__setattr__` checks during `__init__`.
     _SETATTR_CHECKS_DISABLED: tp.ClassVar[bool] = False
 
@@ -226,26 +233,28 @@ class MSBEntry(abc.ABC):
 
     @classmethod
     def get_field_names(cls, visible_only=False) -> tuple[str]:
-        """Get all field names in `FIELD_ORDER`, or all names excluding basic 'name' and 'description'."""
         return tuple(
             f.name for f in fields(cls)
             if f.name not in {"name", "description"}
+            and not f.name.startswith("_")
             and (not visible_only or f.name not in cls.HIDE_FIELDS)
         )
 
     @classmethod
-    def get_custom_json_decoders(cls) -> dict[str, tp.Callable]:
+    def get_custom_json_decoders(cls) -> MappingProxyType[str, tp.Callable[[str], tp.Any]]:
         """Get a dictionary mapping field names to string-parsing decoders for JSON."""
-        decoders = {}
-        for f in fields(cls):
-            if f.type in (GroupBitSet, GroupBitSet.__name__):
-                decoders[f.name] = GroupBitSet.from_repr
-            else:
-                for check_type in (Vector2, Vector3, Vector4):
-                    if f.type in (check_type, check_type.__name__):
-                        decoders[f.name] = check_type
+        if cls._CUSTOM_JSON_DECODERS is None:
+            decoders = {}
+            for f in fields(cls):
+                if f.type in (GroupBitSet, GroupBitSet.__name__):
+                    decoders[f.name] = GroupBitSet.from_repr
+                else:
+                    for check_type in (Vector2, Vector3, Vector4):
+                        if f.type in (check_type, check_type.__name__):
+                            decoders[f.name] = check_type
+            cls._CUSTOM_JSON_DECODERS = MappingProxyType(decoders)
 
-        return decoders
+        return cls._CUSTOM_JSON_DECODERS
 
     def set_entity_enum(self, entity_enum: IntEnum):
         """Only works for subclasses with `entity_id` field.
@@ -412,7 +421,7 @@ class MSBEntry(abc.ABC):
                     and (field_name.endswith("_index") or field_name.endswith("_indices"))
                     and value is None
                 ):
-                    # None can be assigned to internal index fields.
+                    # `None` can be assigned to internal index fields.
                     super(MSBEntry, self).__setattr__(field_name, value)
                     return
 
@@ -556,6 +565,99 @@ class MSBEntry(abc.ABC):
         return False
 
     @classmethod
+    def get_field_display_info(cls, field_name: str, game_types_module: ModuleType) -> tuple[str, str, tp.Type[tp.Any]]:
+        if cls._FIELD_DISPLAY_INFO is not None:
+            try:
+                return cls._FIELD_DISPLAY_INFO[field_name]
+            except KeyError:
+                raise KeyError(f"Invalid MSB entry field (no metadata): `{cls.__name__}.{field_name}`")
+
+        # Create and cache all fields' metadata.
+        field_types = cls.get_field_types()
+        field_metadata = {}  # type: dict[str, tuple[str, str, tp.Type[tp.Any]]]
+        for f in fields(cls):
+            if f.name in {"name", "description"}:
+                # Dummy metadata (not treated as regular fields for display).
+                field_metadata[f.name] = (f.name.capitalize(), f.name.capitalize(), str)
+                continue
+
+            if f.name.startswith("_"):
+                continue  # ignore (not a displayed field)
+
+            metadata = f.metadata.get("msb", None)  # type: MapFieldMetadata
+            if metadata is not None:
+                nickname = metadata.nickname
+                tooltip = metadata.tooltip
+                display_type = metadata.game_type
+            else:
+                nickname = ""
+                tooltip = ""
+                display_type = None
+
+            if not nickname or not tooltip:
+                # Try to get default name and/or tooltip.
+                keys = (f"{cls.SUBTYPE_ENUM.name}[{f.name}]", f"{cls.SUPERTYPE_ENUM}[{f.name}]")
+                for key in keys:
+                    if key in FIELD_INFO:
+                        default_nickname, default_tooltip = FIELD_INFO[key]
+                        if not nickname:
+                            nickname = default_nickname
+                        if not tooltip:
+                            tooltip = default_tooltip
+                        break
+                else:
+                    _LOGGER.warning(
+                        f"No default nickname/tooltip metadata for field `{cls.__name__}.{f.name}`. Keys: {keys}"
+                    )
+                    nickname = f.name.capitalize()
+                    tooltip = "TODO-TOOLTIP"
+
+            if display_type is None:
+                # Parse field type string.
+                f_type_str = field_types[f.name]
+                if re.match(r".*\[.*", f_type_str):
+                    display_type = list
+                elif re.match(r"MSB(.*Model)", f_type_str):  # display links not specific to a model subtype
+                    display_type = getattr(game_types_module, "MapModel")
+                else:
+                    # TODO: Move basic map game types to `base` submodule so `game_types_module` isn't needed here?
+                    match f_type_str:
+                        case "int":
+                            display_type = int
+                        case "float":
+                            display_type = float
+                        case "bool":
+                            display_type = bool
+                        case "str":
+                            display_type = str
+                        case "GroupBitSet":
+                            display_type = GroupBitSet
+                        case "Vector2":
+                            display_type = Vector2
+                        case "Vector3":
+                            display_type = Vector3
+                        case "Vector4":
+                            display_type = Vector4
+                        case "MSBPart":
+                            display_type = getattr(game_types_module, "MapPart")
+                        case "MSBRegion":
+                            display_type = getattr(game_types_module, "Region")
+                        case "MSBEnvironmentEvent":
+                            display_type = getattr(game_types_module, "EnvironmentEvent")
+                        case "MSBCollision":
+                            display_type = getattr(game_types_module, "Collision")
+                        case _:
+                            raise TypeError(f"Cannot get display type of MSB entry field `{f.name}` type: {f_type_str}")
+
+            field_metadata[f.name] = (nickname, tooltip, display_type)
+
+        cls._FIELD_DISPLAY_INFO = MappingProxyType(field_metadata)
+        try:
+            return cls._FIELD_DISPLAY_INFO[field_name]
+        except KeyError:
+            raise KeyError(f"Invalid MSB entry field (no metadata): `{cls.__name__}.{field_name}`")
+
+    @classmethod
     def all_annotations(cls) -> ChainMap:
         """Returns a dictionary-like ChainMap that includes annotations for all
            attributes defined in cls or inherited from superclasses."""
@@ -563,7 +665,7 @@ class MSBEntry(abc.ABC):
 
     @classmethod
     def get_field_types(cls):
-        """NOTE: Using string types from dataclass fields because of circular entry type references."""
+        """NOTE: Using string types from dataclass field annotations due to circular entry type references."""
         if cls._FIELD_TYPES is not None:
             return cls._FIELD_TYPES
 

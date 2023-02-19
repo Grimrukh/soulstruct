@@ -7,12 +7,13 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 
 from soulstruct.darksouls1ptde.game_types.map_types import *
-from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSubtypeInfo, MSBSupertype, MSBEntryList
+from soulstruct.base.maps.msb import MSB as _BaseMSB, MSBSupertype, MSBEntryList
+from soulstruct.base.maps.msb.utils import MSBSubtypeInfo
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.binary import *
 
 from .constants import get_map
-from .enums import MSBModelSubtype, MSBEventSubtype, MSBRegionSubtype, MSBPartSubtype
+from .enums import *
 from .models import *
 from .events import *
 from .regions import *
@@ -28,12 +29,12 @@ class MSBEntrySuperlistHeader(BinaryStruct):
 
 MSB_ENTRY_SUBTYPES = {
     MSBSupertype.MODELS: {
-        "MapPiece": MSBSubtypeInfo(MSBModelSubtype.MapPiece, MSBMapPieceModel, "map_piece_models"),
-        "Object": MSBSubtypeInfo(MSBModelSubtype.Object, MSBObjectModel, "object_models"),
-        "Character": MSBSubtypeInfo(MSBModelSubtype.Character, MSBCharacterModel, "character_models"),
-        "Player": MSBSubtypeInfo(MSBModelSubtype.Player, MSBPlayerModel, "player_models"),
-        "Collision": MSBSubtypeInfo(MSBModelSubtype.Collision, MSBCollisionModel, "collision_models"),
-        "Navmesh": MSBSubtypeInfo(MSBModelSubtype.Navmesh, MSBNavmeshModel, "navmesh_models"),
+        "MapPieceModel": MSBSubtypeInfo(MSBModelSubtype.MapPieceModel, MSBMapPieceModel, "map_piece_models"),
+        "ObjectModel": MSBSubtypeInfo(MSBModelSubtype.ObjectModel, MSBObjectModel, "object_models"),
+        "CharacterModel": MSBSubtypeInfo(MSBModelSubtype.CharacterModel, MSBCharacterModel, "character_models"),
+        "PlayerModel": MSBSubtypeInfo(MSBModelSubtype.PlayerModel, MSBPlayerModel, "player_models"),
+        "CollisionModel": MSBSubtypeInfo(MSBModelSubtype.CollisionModel, MSBCollisionModel, "collision_models"),
+        "NavmeshModel": MSBSubtypeInfo(MSBModelSubtype.NavmeshModel, MSBNavmeshModel, "navmesh_models"),
     },
     MSBSupertype.EVENTS: {
         "Light": MSBSubtypeInfo(MSBEventSubtype.Light, MSBLightEvent, "lights"),
@@ -76,9 +77,9 @@ MSB_ENTRY_SUBTYPES = {
 
 
 def empty_list(supertype_prefix: str, subtype_enum_name: str) -> tp.Callable[[], MSBEntryList]:
-    supertype_name = f"{supertype_prefix}_PARAM_ST"
-    subtype_info = MSB_ENTRY_SUBTYPES[supertype_name][subtype_enum_name]
-    return lambda: MSBEntryList(supertype_name=supertype_name, subtype_info=subtype_info)
+    supertype = MSBSupertype(f"{supertype_prefix}_PARAM_ST")
+    subtype_info = MSB_ENTRY_SUBTYPES[supertype][subtype_enum_name]
+    return lambda: MSBEntryList(supertype=supertype, subtype_info=subtype_info)
 
 
 @dataclass(slots=True)
@@ -114,12 +115,12 @@ class MSB(_BaseMSB):
     LONG_VARINTS: tp.ClassVar[bool] = False
     NAME_ENCODING: tp.ClassVar[str] = "shift_jis_2004"
 
-    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPiece"))
-    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "Object"))
-    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "Character"))
-    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "Player"))
-    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "Collision"))
-    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_list("MODEL", "Navmesh"))
+    map_piece_models: MSBEntryList[MSBMapPieceModel] = field(default_factory=empty_list("MODEL", "MapPieceModel"))
+    object_models: MSBEntryList[MSBObjectModel] = field(default_factory=empty_list("MODEL", "ObjectModel"))
+    character_models: MSBEntryList[MSBCharacterModel] = field(default_factory=empty_list("MODEL", "CharacterModel"))
+    player_models: MSBEntryList[MSBPlayerModel] = field(default_factory=empty_list("MODEL", "PlayerModel"))
+    collision_models: MSBEntryList[MSBCollisionModel] = field(default_factory=empty_list("MODEL", "CollisionModel"))
+    navmesh_models: MSBEntryList[MSBNavmeshModel] = field(default_factory=empty_list("MODEL", "NavmeshModel"))
 
     lights: MSBEntryList[MSBLightEvent] = field(default_factory=empty_list("EVENT", "Light"))
     sounds: MSBEntryList[MSBSoundEvent] = field(default_factory=empty_list("EVENT", "Sound"))

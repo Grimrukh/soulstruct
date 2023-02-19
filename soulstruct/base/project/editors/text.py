@@ -215,12 +215,13 @@ class TextEditor(BaseEditor):
     def _get_display_categories(self):
         return self.text.GET_ALL_CATEGORIES() if self.show_all_categories.get() else self.text.MAIN_CATEGORIES
 
-    def get_category_data(self, category=None) -> dict:
+    def get_category_data(self, category=None) -> dict[int, str]:
+        """Returns `FMG.entries` dictionary."""
         if category is None:
             category = self.active_category
             if category is None:
                 return {}
-        return self.text[category]
+        return self.text[category].entries
 
     def _get_category_name_range(self, category=None, first_index=None, last_index=None) -> list:
         if category is None:

@@ -67,7 +67,7 @@ class EventInfo(tp.NamedTuple):
     id: int
     args: dict[str, tuple[int, int]]
     arg_types: str
-    arg_classes: dict[str, tp.Type[BaseGameObject]]
+    arg_classes: dict[str, GAME_TYPE]
     on_rest_behavior: int
     nodes: list[ast.stmt]
     description: str
@@ -1697,7 +1697,7 @@ class EVSParser(abc.ABC):
 
 def _parse_event_arguments(
     event_node: ast.FunctionDef, namespace: dict[str, tp.Any],
-) -> tuple[dict[str, tuple[int, int]], str, dict[str, tp.Type[BaseGameObject]]]:
+) -> tuple[dict[str, tuple[int, int]], str, dict[str, GAME_TYPE]]:
     """Parse argument nodes of given event function node and return:
         - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArg` instances
         - event's argument format string, e.g. `"iIIBh"`
@@ -1705,7 +1705,7 @@ def _parse_event_arguments(
     """
     arg_names = []  # type: list[str]
     arg_types = ""
-    arg_classes = {}  # type: dict[str, tp.Type[BaseGameObject]]
+    arg_classes = {}  # type: dict[str, GAME_TYPE]
 
     if event_node.args.defaults:
         raise EVSSyntaxError(event_node, "You cannot provide default values for event arguments.")

@@ -28,7 +28,7 @@ from soulstruct.bloodborne.events.emevd.enums import SoundType
 from soulstruct.bloodborne.game_types import *
 from soulstruct.base.maps.msb.events import BaseMSBEvent
 from soulstruct.base.maps.msb import MSBEntry
-from soulstruct.base.maps.msb.utils import MapFieldInfo
+from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
@@ -76,7 +76,7 @@ class MSBSoundEvent(MSBEvent):
         sound_type: int
         sound_id: int
 
-    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(linked_type=SoundType))
+    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(game_type=SoundType))
     sound_id: int = -1
 
 
@@ -124,9 +124,9 @@ class MSBTreasureEvent(MSBEvent):
         _pad3: bytes = field(**BinaryPad(4))
 
     treasure_part: MSBPart = None
-    item_lot_1: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_2: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_3: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
+    item_lot_1: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_2: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_3: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
     is_in_chest: bool = False
     is_hidden: bool = False
     unknown_x1c_x20: int = -1
@@ -186,7 +186,7 @@ class MSBSpawnerEvent(MSBEvent):
     max_interval: float = 1.0
     initial_spawn_count: int = 1
     spawn_parts: list[MSBPart] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(linked_type=GameObjectSequence((Character, 32))))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Character, 32))))
     spawn_regions: list[MSBRegion] = field(
         default_factory=lambda: [None] * 8, **MapFieldInfo(GameObjectSequence((Region, 8))))
 
@@ -219,7 +219,7 @@ class MSBMessageEvent(MSBEvent):
         is_hidden: bool
         _pad1: bytes = field(**BinaryPad(3))
         
-    text_id: int = field(default=-1, **MapFieldInfo(linked_type=SoapstoneMessage))
+    text_id: int = field(default=-1, **MapFieldInfo(game_type=SoapstoneMessage))
     unk_x02_x04: int = 2
     is_hidden: bool = False
 
@@ -242,9 +242,9 @@ class MSBObjActEvent(MSBEvent):
 
     obj_act_entity_id: int = -1
     obj_act_part: MSBPart = None
-    obj_act_param_id: int = field(default=-1, **MapFieldInfo(linked_type=ObjActParam))
+    obj_act_param_id: int = field(default=-1, **MapFieldInfo(game_type=ObjActParam))
     obj_act_state: int = 0
-    obj_act_flag: int = field(default=0, **MapFieldInfo(linked_type=Flag))
+    obj_act_flag: int = field(default=0, **MapFieldInfo(game_type=Flag))
 
     _obj_act_part_index: int = None
 
@@ -302,7 +302,7 @@ class MSBPatrolRouteEvent(MSBEvent):
 
     unk_x00_x04: int = -1
     patrol_regions: list[MSBRegion] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(linked_type=GameObjectSequence((Region, 32))))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Region, 32))))
 
     _patrol_regions_indices: list[int] = field(default=None, **BinaryArray(32))
 
@@ -345,9 +345,9 @@ class MSBPlatoonEvent(MSBEvent):
         _platoon_parent_indices: list[int] = field(**BinaryArray(2))
 
     platoon_characters: list[MSBCharacter] = field(
-        default_factory=lambda: [None] * 30, **MapFieldInfo(linked_type=GameObjectSequence((Character, 30))))
+        default_factory=lambda: [None] * 30, **MapFieldInfo(game_type=GameObjectSequence((Character, 30))))
     platoon_parents: list[MSBPart] = field(
-        default_factory=lambda: [None] * 2, **MapFieldInfo(linked_type=GameObjectSequence((MapPart, 2))))
+        default_factory=lambda: [None] * 2, **MapFieldInfo(game_type=GameObjectSequence((MapPart, 2))))
     platoon_id_script_active: int = -1
     state: int = -1
 

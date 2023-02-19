@@ -137,7 +137,7 @@ class GameParamBND(_BaseGameParamBND):
         "Movement": MovementParam,
         "Cameras": CameraParam,
         "Terrains": TerrainParam,
-        "Faces": FaceGenParam,
+        "FaceGenerators": FaceGenParam,
         "Dialogue": DialogueParam,
         "MenuColors": MenuColorsParam,
         "SpecialEffectVisuals": SpecialEffectVisualParam,
@@ -173,7 +173,7 @@ class GameParamBND(_BaseGameParamBND):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_row in param.items():
                     if param_id in text_dict:
-                        param_row.name = text_dict[param_id]
+                        param_row.Name = text_dict[param_id]
 
     def print_hitbox_info(self):
         current_var_id = None

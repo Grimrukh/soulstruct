@@ -6,7 +6,7 @@ from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import BaseFieldEditor
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.params import Param, ParamRow
+    from soulstruct.base.params import Param, ParamRow, ParamFieldMetadata
     from soulstruct.darksouls1ptde.params.draw_param import DrawParamBND, DrawParamDirectory
 
 
@@ -28,7 +28,7 @@ class LightingEntryRow(EntryRow):
         self.entry_text = entry_text
         self._update_colors()
         self.build_entry_context_menu(text_links)
-        self.tool_tip.text = text_links[2].name if text_links and text_links[2].name else None
+        self.tooltip.text = text_links[2].name if text_links and text_links[2].name else None
 
     @property
     def entry_text(self):
@@ -158,7 +158,7 @@ class LightingEditor(BaseFieldEditor):
         return self.map_area_choice.get().split(" [")[0]
 
     def _get_display_categories(self) -> list[str]:
-        return list(self.lighting.DRAW_PARAM_AREAS.keys())
+        return list(self.lighting.FILE_CLASS.PARAM_NICKNAMES.values())
 
     def get_category_data(self, category=None) -> tp.Union[Param, dict]:
         if category is None:
@@ -191,14 +191,15 @@ class LightingEditor(BaseFieldEditor):
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        return self.get_category_data(category)[entry_id].name
+        return self.get_category_data(category)[entry_id].Name
 
     def _set_entry_text(self, entry_id: int, text: str, category=None, update_row_index=None):
         if category is None:
             category = self.active_category
             if category is None:
                 raise ValueError("No params category selected.")
-        self.get_category_data(category)[entry_id].name = text
+        draw_param_row = self.get_category_data(category)[entry_id]
+        draw_param_row.Name = text
         if category == self.active_category and update_row_index is not None:
             self.entry_rows[update_row_index].update_entry(entry_id, text)
 
@@ -206,7 +207,7 @@ class LightingEditor(BaseFieldEditor):
         entry_data = self.get_category_data(category).pop(entry_id)
         self.get_category_data(category)[new_id] = entry_data
         if category == self.active_category and update_row_index is not None:
-            self.entry_rows[update_row_index].update_entry(new_id, entry_data.name)
+            self.entry_rows[update_row_index].update_entry(new_id, entry_data.Name)
         return True
 
     def get_field_dict(self, entry_id: int, category=None) -> ParamRow:
@@ -217,11 +218,17 @@ class LightingEditor(BaseFieldEditor):
         return self.get_category_data(category)[entry_id]
 
     def get_field_display_info(self, field_dict, field_name):
-        display_info = field_dict.get_paramdef_field_display_info(field_name)
-        return display_info.nickname, display_info.is_enabled, display_info.field_type, display_info.description
+        field_metadata = field_dict.get_field_metadata(field_name)  # type: ParamFieldMetadata
+        if field_metadata.dynamic_callback:
+            game_type, suffix, tooltip = field_metadata.dynamic_callback(field_dict)
+            field_name += suffix
+        else:  # static metadata
+            game_type = field_metadata.game_type
+            tooltip = field_metadata.tooltip
+        return field_name, not field_metadata.hide, game_type, tooltip
 
-    def get_field_names(self, field_dict):
-        return field_dict.field_names if field_dict else []
+    def get_field_names(self, field_dict: ParamRow):
+        return field_dict.get_binary_field_names() if field_dict else []
 
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:

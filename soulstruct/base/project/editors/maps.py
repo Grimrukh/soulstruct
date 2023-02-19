@@ -2,15 +2,19 @@ from __future__ import annotations
 
 __all__ = ["MapsEditor"]
 
+import abc
+import ast
 import logging
 import math
 import typing as tp
+from types import ModuleType
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import BaseGameObject, GameObjectSequence
-from soulstruct.darksouls1ptde.game_types.map_types import *
-from soulstruct.base.maps.msb.enums import BaseMSBModelSubtype, BaseMSBRegionSubtype
+from soulstruct.base.game_types import GAME_TYPE, BaseGameObject, GameObjectSequence
+from soulstruct.base.game_types.map_types import *
+from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
+from soulstruct.base.maps.msb.utils import GroupBitSet
 from soulstruct.base.project.utilities import (
     bind_events,
     NameSelectionBox,
@@ -27,6 +31,7 @@ from soulstruct.utilities.memory import MemoryHookCallError
 if tp.TYPE_CHECKING:
     from soulstruct.base.maps.map_studio_directory import MapStudioDirectory
     from soulstruct.base.maps.msb import MSB, MSBEntryList, MSBEntry
+    from ..links import MapsLink
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,6 +45,16 @@ ENTRY_LIST_FG_COLORS = {
     "Events": "#DFD",
     "Models": "#FFC",
 }
+
+
+"""
+Have to rebuild a lot of this to get the new `MSB` changes working, I think.
+    - Entry reference fields are now actual instances, not just name strings.
+        - This means that when a new name string is set, I need to search for that entry by name.
+        - This is already currently happening because of the linking system, so the logic should be buried in here...
+    - Links of all game types appear to be permanently red.
+    - I think GroupBitSets are now handled correctly. 
+"""
 
 
 class MapEntryRow(EntryRow):
@@ -56,9 +71,10 @@ class MapEntryRow(EntryRow):
     def __init__(self, editor: MapsEditor, row_index: int, main_bindings: dict = None):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
-    def update_entry(self, entry_index: int, entry_text: str, entry_description: str = ""):
+    def update_entry(self, entry_index: int, entry_text: str, entry_tooltip: str = ""):
+        """Update the data contain in this `MapEntryRow`."""
         self.entry_id = entry_index
-        entry_data = self.master.get_category_data()[entry_index]
+        entry_data = self.master.get_category_data()[entry_index]  # type: MSBEntry
         if hasattr(entry_data, "entity_id"):
             text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
         elif isinstance(entry_data, BaseMSBModel) and entry_data.SUBTYPE_ENUM.name in {"Character", "Player"}:
@@ -74,10 +90,10 @@ class MapEntryRow(EntryRow):
         else:
             text_tail = ""
 
-        if entry_description:
-            self.tool_tip.text = entry_description
+        if entry_tooltip:
+            self.tooltip.text = entry_tooltip
         else:
-            self.tool_tip.text = None
+            self.tooltip.text = None
         self._entry_text = entry_text
         self.text_label.var.set(entry_text + text_tail)
         self.build_entry_context_menu()
@@ -135,10 +151,12 @@ class MapFieldRow(FieldRow):
     master: MapsEditor
 
     def __init__(self, editor: MapsEditor, row_index: int, main_bindings: dict = None):
+        """Represents, at any given time, the name and value (string representation) of an `MSBEntry` field."""
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
         bg_color = self._get_color()
 
+        # Main difference of Maps tab is the ability to support three separate `Vector3` fields.
         self.value_vector_frame = editor.Frame(
             self.value_box,
             bg=bg_color,
@@ -166,8 +184,13 @@ class MapFieldRow(FieldRow):
 
         self.unhide()
 
-    def update_field_value_display(self, new_value):
-        """Updates field value and display/option properties related to it."""
+    def update_field_value_display(self, new_value: tp.Any):
+        """Updates field value display.
+
+        This handles `Vector3` field types separately (`self.master.e_coord` is the string name of the component).
+        Otherwise, it is identical to the base method, calling `field_update_method()` (which in turns looks for
+        `_update_field_{type}()` methods or falls back to some basic types) and then updating links/context menu.
+        """
         if issubclass(self.field_type, Vector3) and self.master.e_coord is not None:
             # A single coordinate is being edited.
             self._set_linked_value_label(f"{self.master.e_coord}: {new_value:.3f}")
@@ -182,8 +205,10 @@ class MapFieldRow(FieldRow):
         self.link_missing = self.field_links and not any(link.name for link in self.field_links)
         self.build_field_context_menu()
 
+    # region Value Update Methods
+
     def _update_field_GameObject(self, value):
-        """Adds any recognized `GameObject` names as hints."""
+        """Adds any recognized `BaseGameObject` names as hints."""
         try:
             self.field_links = self.master.get_field_links(self.field_type, value)
         except ValueError:
@@ -195,13 +220,13 @@ class MapFieldRow(FieldRow):
             self._activate_value_widget(self.value_label)
 
         if issubclass(self.field_type, MapEntry):
-            # `value` is the name of another MSB entry, or an empty string to reset to `None`.
+            # `value` is an `MSBEntry` or `None`.
             if not value:
                 self.value_label.var.set("None")
             else:
-                msb_entry_name = str(value)
-                if self.field_type == CharacterModel:
-                    # Auto-display DS1 character model names for convenience.
+                msb_entry_name = value.name
+                if self.field_type == self.master.GAME_TYPES_MODULE.CharacterModel:
+                    # Auto-display character model names for convenience.
                     if self.field_links[0].name is None:
                         msb_entry_name += "  {BROKEN LINK}"
                     else:
@@ -231,6 +256,13 @@ class MapFieldRow(FieldRow):
         """
         self.value_label.var.set(value.emevd_file_stem)
         self._activate_value_widget(self.value_label)
+
+    def _update_field_GroupBitSet(self, value: GroupBitSet):
+        """Update `set` field with a sorted list."""
+        self.value_label.var.set(repr(value.to_sorted_bit_list()))
+        self._activate_value_widget(self.value_label)
+
+    # endregion
 
     def _set_linked_value_label(self, value_text, multiple_hint="{AMBIGUOUS}"):
         if self.master.e_coord is not None:
@@ -276,7 +308,7 @@ class MapFieldRow(FieldRow):
                 self.context_menu.add_command(
                     label="Select linked entry name from list", command=self.choose_linked_map_entry
                 )
-            if self.field_type == CharacterModel:
+            if self.field_type == self.master.GAME_TYPES_MODULE.CharacterModel:
                 self.context_menu.add_command(
                     label="Select model from complete list", command=self.choose_character_model
                 )
@@ -330,36 +362,44 @@ class MapFieldRow(FieldRow):
     def choose_linked_map_entry(self):
         if not issubclass(self.field_type, MapEntry):
             return  # option shouldn't even appear
-        names = self.master.linker.get_map_entry_type_names(self.field_type)  # adds suffix for Characters
-        selected_name = NameSelectionBox(self.master, names).go()
+        entries = self.master.linker.get_map_entry_subtype_list(self.field_type)
+
+        display_names = [e.name for e in entries]
+        if self.master.character_models and self.field_type.__name__ in ("CharacterModel", "PlayerModel"):
+            # Add suffix with model name.
+            # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
+            for i, name in enumerate(display_names):
+                model_id = int(name.lstrip("c"))
+                display_names[i] += f"  {{{self.master.character_models.get(model_id, 'UNKNOWN')}}}"
+
+        # Wait for user to select entry name.
+        selected_name = NameSelectionBox(self.master, display_names).go()
+
         if selected_name is not None:
-            selected_name = selected_name.split("  {")[0]  # remove suffix
-            self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
-            if not self.field_links[0].name:
-                display_name = selected_name + "  {BROKEN LINK}"
+            selected_entry = entries[display_names.index(selected_name)]
+            self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_entry)
+            # noinspection PyTypeChecker
+            entry_link = self.field_links[0]  # type: MapsLink
+            if not entry_link.entry:
+                # Shouldn't be possible.
+                selected_name = selected_name + "  {BROKEN LINK}"
                 self.link_missing = True
                 self.master.CustomDialog(
                     title="Map Link Error",
                     message="Map link was broken after selecting map entry from list. This should not happen; "
                     "please try restarting Soulstruct, and inform Grimrukh if the problem persists.",
                 )
+                selected_entry = None
             else:
-                if self.field_type in (CharacterModel, PlayerModel):
-                    model_id = int(selected_name[1:])  # ignore 'c' prefix
-                    try:
-                        display_name = selected_name + f"  {{{self.master.character_models[model_id]}}}"
-                    except KeyError:
-                        display_name = selected_name + "  {UNKNOWN}"
-                else:
-                    display_name = selected_name
                 self.link_missing = False
+                selected_entry = entry_link.entry
 
-            self.master.change_field_value(self.field_name, selected_name)
-            self.value_label.var.set(display_name)
+            self.master.change_field_value(self.field_name, selected_entry)
+            self.value_label.var.set(selected_name)  # already includes any model tail we want
             self.build_field_context_menu()
 
     def choose_character_model(self):
-        if not issubclass(self.field_type, CharacterModel):
+        if not issubclass(self.field_type, self.master.GAME_TYPES_MODULE.CharacterModel):
             return  # option shouldn't even appear
         names = [f"c{model_id:04d}  {{{model_name}}}" for model_id, model_name in self.master.character_models.items()]
         selected_name = NameSelectionBox(self.master, names).go()
@@ -367,6 +407,7 @@ class MapFieldRow(FieldRow):
             selected_name = selected_name.split("  {")[0]  # remove suffix
             self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
             if not self.field_links[0].name:
+                # noinspection PyTypeChecker
                 self.master.add_models(self.field_type, selected_name)
                 self.field_links = self.master.linker.soulstruct_link(self.field_type, selected_name)
             if self.field_links[0].name:
@@ -405,7 +446,15 @@ class MapFieldRow(FieldRow):
         return id(self.active_value_widget) in {id(self.value_label), id(self.value_vector_frame)}
 
     def _string_to_Vector3(self, string):
+        """Operates on individual vector component `float` fields."""
         return self._string_to_float(string)
+
+    def _string_to_MapEntry(self, string):
+        """Look up new `MSBEntry` name."""
+
+    def _string_to_GroupBitSet(self, string):
+        enabled_bits_list = ast.literal_eval(string)
+        return GroupBitSet(set(enabled_bits_list), bit_count=self.master.GROUP_BIT_COUNT)
 
     def _string_to_Map(self, string):
         try:
@@ -433,7 +482,7 @@ class MapFieldRow(FieldRow):
             widget["bg"] = bg_color
 
 
-class MapsEditor(BaseFieldEditor):
+class MapsEditor(BaseFieldEditor, abc.ABC):
     DATA_NAME = "Maps"
     TAB_NAME = "maps"
     CATEGORY_BOX_WIDTH = 165
@@ -449,6 +498,10 @@ class MapsEditor(BaseFieldEditor):
 
     ENTRY_ROW_CLASS = MapEntryRow
     FIELD_ROW_CLASS = MapFieldRow
+
+    GAME_TYPES_MODULE: ModuleType
+    GROUP_BIT_COUNT: int
+    CHARACTER_MODELS: dict[int, str] = None
 
     entry_rows: list[MapEntryRow]
     field_rows: list[MapFieldRow]
@@ -500,13 +553,13 @@ class MapsEditor(BaseFieldEditor):
         self.entry_canvas.bind("<Button-3>", self.right_click_entry_canvas)
 
     def check_for_repeated_entity_ids(self):
-        # Check for duplicate entity IDs.
+        """Check for duplicate entity IDs."""
         repeat_warning = ""
         for map_name, msb in self.maps.items():
             repeats = msb.get_repeated_entity_ids()
-            if repeats["Regions"]:
-                regions = "\n".join(f"{e.entity_id}: {e.name}" for e in repeats["Regions"])
-                region_ids = ", ".join(str(e.entity_id) for e in repeats["Regions"])
+            if repeats[MSBSupertype.REGIONS]:
+                regions = "\n".join(f"{e.entity_id}: {e.name}" for e in repeats[MSBSupertype.REGIONS])
+                region_ids = ", ".join(str(e.entity_id) for e in repeats[MSBSupertype.REGIONS])
                 repeat_warning += f"{map_name}:\n{regions}\n"
                 _LOGGER.warning(f"Found repeated region entity IDs in {map_name}: {region_ids}")
         if repeat_warning:
@@ -529,9 +582,12 @@ class MapsEditor(BaseFieldEditor):
         self._cancel_entry_id_edit()
         self._cancel_entry_text_edit()
 
-        entries_to_display = self._get_category_name_range(
-            first_index=self.first_display_index, last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
-        )
+        if self.active_category is not None:
+            entries_to_display = self._get_category_name_range(
+                first_index=self.first_display_index, last_index=self.first_display_index + self.ENTRY_RANGE_SIZE,
+            )
+        else:
+            entries_to_display = []
 
         row = 0
         for entry_id, _ in entries_to_display:
@@ -677,11 +733,16 @@ class MapsEditor(BaseFieldEditor):
     # TODO: how does field_press react if a coord is being edited? Should go to next coord, probably.
 
     def _get_field_edit_widget(self, row_index):
+        """Handles special cases (Vector3, GroupBitSet, MSBEntry) or goes to parent method."""
         field_row = self.field_rows[row_index]
         if not field_row.editable:
-            raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell the developer!)")
+            raise TypeError("Cannot edit a boolean or dropdown field. (Internal error, tell Grimrukh!)")
         field_type = field_row.field_type
         field_value = self.get_field_dict(self.get_entry_id(self.active_row_index))[field_row.field_name]
+
+        if issubclass(field_type, MapEntry):
+            field_row.choose_linked_map_entry()
+            return None
 
         if issubclass(field_type, Vector3):
             if self.e_coord is None:
@@ -693,6 +754,30 @@ class MapsEditor(BaseFieldEditor):
                 sticky="ew",
                 width=5,
                 column="xyz".index(self.e_coord),
+            )
+
+        if issubclass(field_type, MapEntry):
+            field_value: MSBEntry
+            initial_text = field_value.name
+            return self.Entry(
+                field_row.value_box,
+                initial_text=initial_text,
+                integers_only=field_type == int,
+                numbers_only=field_type == float,
+                sticky="ew",
+                width=5,
+            )
+
+        if field_type == GroupBitSet:
+            field_value: GroupBitSet
+            initial_text = repr(field_value.to_sorted_bit_list())
+            return self.Entry(
+                field_row.value_box,
+                initial_text=initial_text,
+                integers_only=field_type == int,
+                numbers_only=field_type == float,
+                sticky="ew",
+                width=5,
             )
 
         return super()._get_field_edit_widget(row_index)
@@ -728,9 +813,15 @@ class MapsEditor(BaseFieldEditor):
                 row.update_field_value_display(new_value)
             self._cancel_field_value_edit()
 
-            if issubclass(row.field_type, (CharacterModel, ObjectModel)) and row.field_links[0].name is None:
+            if (
+                issubclass(row.field_type, MapModel)
+                and issubclass(
+                    row.field_type, (self.GAME_TYPES_MODULE.CharacterModel, self.GAME_TYPES_MODULE.ObjectModel)
+                ) and row.field_links[0].name is None
+            ):
                 # Offer to create models (after checking if they're valid) then update field display again if done.
-                if self.add_models(row.field_type, new_value):
+                new_model_created = self.add_models(row.field_type, new_value)
+                if new_model_created:
                     row.update_field_value_display(new_value)
 
     def change_field_value(self, field_name: str, new_value):
@@ -793,16 +884,16 @@ class MapsEditor(BaseFieldEditor):
             if self.field_canvas.yview()[0] != 0.0 or self.selected_field_row_index > 5:
                 self.field_canvas.yview_scroll(1, "units")
 
-    def _get_display_categories(self):
+    def _get_display_categories(self) -> list[str]:
         """ALl combinations of MSB entry list names and their subtypes, properly formatted."""
         categories = []
-        for msb_type, subtypes in self.maps.MSB_CLASS.get_display_type_dict().items():
-            for msb_subtype in subtypes:
-                if isinstance(msb_subtype, BaseMSBRegionSubtype) and msb_subtype.name in {"Circle", "Rect"}:
+        for msb_supertype, subtype_enums in self.maps.FILE_CLASS.get_display_type_dict().items():
+            for subtype_enum in subtype_enums:
+                if isinstance(subtype_enum, BaseMSBRegionSubtype) and subtype_enum.name in {"Circle", "Rect"}:
                     continue  # These useless 2D region types are hidden.
-                if isinstance(msb_subtype, BaseMSBModelSubtype) and msb_subtype.name in {"Items"}:
+                if isinstance(subtype_enum, BaseMSBModelSubtype) and subtype_enum.name in {"Items"}:
                     continue  # Unused 'item' model type hidden.
-                categories.append(f"{msb_type}: {msb_subtype.pluralized_name}")
+                categories.append(f"{msb_supertype}: {subtype_enum.pluralized_name}")
         return categories
 
     def get_selected_msb(self) -> MSB:
@@ -820,7 +911,7 @@ class MapsEditor(BaseFieldEditor):
     def _get_category_name_range(self, category=None, first_index=None, last_index=None):
         """Returns a `zip()` generator for parent method."""
         entry_list = self.get_category_data(category)
-        return zip(range(first_index, last_index), entry_list[first_index:last_index])
+        return zip(range(first_index, last_index), entry_list[first_index:last_index])  # NOT strict
 
     def get_entry_index(self, entry_id: int, category=None) -> int:
         """Entry index and entry ID are equivalent in Maps.
@@ -852,14 +943,15 @@ class MapsEditor(BaseFieldEditor):
         """Uses entry index instad of entry ID."""
         return self.get_category_data(category)[entry_index]
 
-    def get_field_display_info(self, field_dict, field_name):
-        field = field_dict.FIELD_INFO[field_name]
-        return field.nickname, field_name in field_dict.field_names, field.display_type, field.description
+    def get_field_display_info(self, field_dict: MSBEntry, field_name: str) -> tuple[str, bool, tp.Type[tp.Any], str]:
+        nickname, tooltip, display_type = field_dict.get_field_display_info(field_name, self.GAME_TYPES_MODULE)
+        return nickname, field_name not in field_dict.HIDE_FIELDS, display_type, tooltip
 
-    def get_field_names(self, field_dict):
-        return field_dict.all_field_names if field_dict else []
+    def get_field_names(self, field_dict: MSBEntry) -> tuple[str]:
+        """NOTE: Includes hidden fields (which are filtered by caller if option set)."""
+        return field_dict.get_field_names() if field_dict else ()
 
-    def get_field_links(self, field_type, field_value, valid_null_values=None) -> list:
+    def get_field_links(self, field_type: GAME_TYPE, field_value, valid_null_values=None) -> list:
         """Game subclasses can override this to support more link types."""
         if valid_null_values is None:
             valid_null_values = {0: "Default/None", -1: "Default/None"}
@@ -869,7 +961,7 @@ class MapsEditor(BaseFieldEditor):
 
     def add_models(self, model_game_type: tp.Type[MapModel], model_name):
         map_stem = self.map_choice_stem
-        _, model_subtype_name = model_game_type.get_msb_entry_type_subtype()
+        _, model_subtype_name = model_game_type.get_msb_entry_supertype_subtype()
         if self.linker.validate_model_subtype(model_game_type, model_name, map_stem=map_stem):
             result = self.CustomDialog(
                 title=f"Add {model_subtype_name} Model",
@@ -964,7 +1056,7 @@ class MapsEditor(BaseFieldEditor):
                 f"hooking into it?) please inform Grimrukh.",
             )
             return
-        field_dict = self.get_selected_field_dict()
+        field_dict = self.get_selected_field_dict()  # type: MSBEntry
         if translate:
             field_dict["translate"] = new_translate
         if rotate:
@@ -973,16 +1065,17 @@ class MapsEditor(BaseFieldEditor):
             field_dict["draw_parent_name"] = new_collision.name
         self.refresh_fields()
 
-    def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_type: tp.Type):
+    def popout_sequence_name_edit(self, field_name: str, field_nickname: str, game_object_type: GAME_TYPE):
+        """NOTE: Currently assumes that `game_object_type` is specifically a `MapEntry` subclass."""
         msb_entry = self.get_selected_field_dict()
-        valid_names = [
-            name for name in self.linker.get_map_entry_type_names(game_object_type)
-            if not name.startswith("_EnvironmentEvent")  # exclude all these
+        valid_entries = [
+            entry for entry in self.linker.get_map_entry_subtype_list(game_object_type)
+            if not entry.name.startswith("_EnvironmentEvent")  # exclude all these (too many)
         ]
         popout_editor = SequenceNameEditBox(
             self,
             initial_names=msb_entry[field_name],
-            valid_names=valid_names,
+            valid_names=[e.name for e in valid_entries],
             window_title=f"Editing {field_nickname}",
         )
         try:
@@ -991,7 +1084,7 @@ class MapsEditor(BaseFieldEditor):
             _LOGGER.error(ex, exc_info=True)
             return self.CustomDialog("Sequence Name Error", f"Error occurred while setting sequence names:\n\n{ex}")
         if new_names is not None:
-            msb_entry[field_name] = new_names
+            msb_entry[field_name] = [valid_entries[new_names.index(name)] for name in new_names]
             self.refresh_fields()
 
     def add_point_from_player_position(self, sequence_field: str, field_nickname: str):

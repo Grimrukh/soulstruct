@@ -9,7 +9,7 @@ from ast import literal_eval
 from enum import IntEnum
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import BaseGameObject, GameObjectSequence, MapEntry, BaseParam
+from soulstruct.base.game_types import GAME_TYPE, BaseGameObject, GameObjectSequence, MapEntry, BaseParam
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
 from soulstruct.base.project.utilities import bind_events, NumberEditBox
@@ -22,7 +22,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-FieldTypeTyping = tp.Union[tp.Type[BaseGameObject], tp.Type[GameObjectSequence], type, tp.Iterable]
+FieldTypeTyping = tp.Union[GAME_TYPE, tp.Type[GameObjectSequence], type, tp.Iterable]
 
 
 class FieldRow:
@@ -258,7 +258,10 @@ class FieldRow:
 
     def _set_field_fg(self, value):
         """Color field text ('fg') depending on whether value is some default that shouldn't draw attention."""
-        if self._is_default(self.field_type, value, self.field_nickname):
+        if issubclass(self.field_type, BaseGameObject):
+            self.field_name_label["fg"] = self.master.FIELD_NAME_FG
+            self.value_label["fg"] = self.master.FIELD_NAME_FG_GAME_TYPE
+        elif self._is_default(self.field_type, value, self.field_nickname):
             self.field_name_label["fg"] = self.master.FIELD_NAME_FG_DEFAULT
             self.value_label["fg"] = self.master.FIELD_VALUE_FG_DEFAULT
         else:
@@ -467,6 +470,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
     FIELD_VALUE_WIDTH = 50
     FIELD_ROW_COUNT = 0  # must be set in child
     FIELD_NAME_FG = "#DDE"
+    FIELD_NAME_FG_GAME_TYPE = "#ADA"
     FIELD_NAME_FG_DEFAULT = "#777"
     FIELD_VALUE_FG = "#FFF"
     FIELD_VALUE_FG_DEFAULT = "#777"
@@ -643,8 +647,14 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
                     continue
                 raise
 
-            self.field_rows[row].update_field(name=field_name, nickname=field_nickname, value=field_value,
-                                              field_type=field_type, docstring=field_doc)
+            if not isinstance(field_type, type):
+                raise TypeError(
+                    f"`field_type` of field {field_name} must be a type at this point, not: {repr(field_type)}"
+                )
+
+            self.field_rows[row].update_field(
+                name=field_name, nickname=field_nickname, value=field_value, field_type=field_type, docstring=field_doc
+            )
             row += 1
 
         self.displayed_field_count = row

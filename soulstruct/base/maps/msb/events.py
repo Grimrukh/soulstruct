@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from soulstruct.utilities.binary import *
 
+from .enums import BaseMSBEventSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
 try:
@@ -19,6 +20,8 @@ except AttributeError:
 class BaseMSBEvent(MSBEntry, abc.ABC):
     """Parent class for MSB events, which describe various things that occur in maps (often attached to Regions)."""
 
+    SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.EVENTS
+    SUBTYPE_ENUM: tp.ClassVar[BaseMSBEventSubtype]
     NAME_ENCODING: tp.ClassVar[str] = ""
 
     entity_id: int = -1

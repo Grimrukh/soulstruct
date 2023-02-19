@@ -121,7 +121,7 @@ class REINFORCE_PARAM_WEAPON_ST(ParamRow):
                 "parameters.",
     )
     UpgradeMaterialOffset: int = ParamField(
-        byte, "materialSetId", game_type=UpgradeMaterialParam, default=0,
+        byte, "materialSetId", default=0,
         tooltip="Value to be added to Upgrade Materials field in base weapon parameters.",
     )
     ReinforcementLevel: int = ParamField(

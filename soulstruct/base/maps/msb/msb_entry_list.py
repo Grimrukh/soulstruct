@@ -7,6 +7,7 @@ import logging
 import typing as tp
 from enum import IntEnum
 
+from .enums import MSBSupertype
 from .msb_entry import MSBEntry
 from .utils import MSBSubtypeInfo
 
@@ -27,16 +28,16 @@ MSBEntryType = tp.TypeVar("MSBEntryType", bound=MSBEntry)
 # NOT a dataclass.
 class MSBEntryList(list[MSBEntryType]):
 
-    supertype_name: str
+    supertype: MSBSupertype
     subtype_info: MSBSubtypeInfo
 
     def __init__(
         self,
         *entries,
-        supertype_name: str,
+        supertype: MSBSupertype,
         subtype_info: MSBSubtypeInfo,
     ):
-        self.supertype_name = supertype_name
+        self.supertype = supertype
         self.subtype_info = subtype_info
         super().__init__(entries)
 
@@ -101,7 +102,7 @@ class MSBEntryList(list[MSBEntryType]):
         if filter_func is None:
             return self.copy()
         return MSBEntryList(
-            supertype_name=self.supertype_name,
+            supertype=self.supertype,
             subtype_info=self.subtype_info,
             *[entry.copy() for entry in self if filter_func(entry)],
         )

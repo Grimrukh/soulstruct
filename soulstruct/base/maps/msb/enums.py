@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 __all__ = [
+    "MSBSupertype",
     "BaseMSBSubtype",
     "BaseMSBModelSubtype",
     "BaseMSBEventSubtype",
@@ -7,6 +10,29 @@ __all__ = [
 ]
 
 from enum import IntEnum
+
+from soulstruct.utilities.future import StrEnum
+
+
+class MSBSupertype(StrEnum):
+    """Same for all games."""
+    MODELS = "MODEL_PARAM_ST"
+    EVENTS = "EVENT_PARAM_ST"
+    REGIONS = "POINT_PARAM_ST"
+    PARTS = "PARTS_PARAM_ST"
+
+    @classmethod
+    def resolve(cls, supertype: str) -> MSBSupertype:
+        """Resolve various forms of the supertype name into this enum."""
+        if supertype.upper().startswith("MODEL"):
+            return cls.MODELS
+        if supertype.upper().startswith("EVENT"):
+            return cls.EVENTS
+        if supertype.upper().startswith("REGION") or supertype.upper().startswith("POINT"):
+            return cls.REGIONS
+        if supertype.upper().startswith("PARTS"):
+            return cls.PARTS
+        raise ValueError(f"Cannot resolve unknown MSB supertype name: {supertype}")
 
 
 class BaseMSBSubtype(IntEnum):

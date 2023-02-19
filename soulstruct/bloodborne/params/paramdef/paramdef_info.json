@@ -8070,12 +8070,12 @@
             "tooltip": "Maximum distance from action model point at which the object action will be prompted."
         },
         "spQualifiedId": {
-            "nickname": "spQualifiedId",
+            "nickname": "SuccessConditionID1",
             "tooltip": "TODO",
             "dynamic_callback": "ObjActSuccessCondition(1)"
         },
         "spQualifiedId2": {
-            "nickname": "spQualifiedId2",
+            "nickname": "SuccessConditionID2",
             "tooltip": "TODO",
             "dynamic_callback": "ObjActSuccessCondition(2)"
         },
@@ -8457,8 +8457,7 @@
         },
         "materialSetId": {
             "nickname": "UpgradeMaterialOffset",
-            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters.",
-            "game_type": "UpgradeMaterialParam"
+            "tooltip": "Value to be added to Upgrade Materials field in base weapon parameters."
         },
         "pad[9]": {
             "nickname": "_Pad0",
@@ -8565,7 +8564,7 @@
     },
     "SHOP_LINEUP_PARAM": {
         "equipId": {
-            "nickname": "equipId",
+            "nickname": "ItemID",
             "tooltip": "TODO",
             "dynamic_callback": "ShopReference()"
         },

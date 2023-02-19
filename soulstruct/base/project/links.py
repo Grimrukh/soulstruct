@@ -23,7 +23,7 @@ from .utilities import ItemTextEditBox
 if tp.TYPE_CHECKING:
     from soulstruct.base.project.window import ProjectWindow
     from soulstruct.base.project.editors.field_editor import BaseFieldEditor
-    from soulstruct.base.maps.msb import MSB
+    from soulstruct.base.maps.msb import MSB, MSBEntry
 
 
 class LinkError(SoulstructError):
@@ -55,9 +55,9 @@ class WindowLinker:
         return True  # Jump succeeded.
 
     def soulstruct_link(
-        self, field_type, field_value, valid_null_values: dict = None, map_override=None,
+        self, field_type: GAME_TYPE, field_value, valid_null_values: dict = None, map_override=None,
     ) -> list[BaseLink]:
-        """Some field types are `GameObject` subclasses, which means that the field values are IDs to look up.
+        """Some field types are `BaseGameObject` subclasses, which means that the field values are IDs to look up.
 
         Currently, only `MapEntry`, `Text`, and `BaseGameParam` field types are supported here. In the future,
         `Texture`, `Animation`, `AIScriptBase` etc. will also be supported.
@@ -66,7 +66,8 @@ class WindowLinker:
             valid_null_values = {}
 
         if issubclass(field_type, MapEntry):
-            return self.map_entry_link(field_type, field_value)
+            field_value: MSBEntry
+            return self.map_entry_link(field_type, entry=field_value)
 
         # This is the right time to check for null values.
         if field_value in valid_null_values:
@@ -82,47 +83,49 @@ class WindowLinker:
 
         return self.check_other_link_types(field_type, field_value, valid_null_values, map_override)
 
-    def map_entry_link(self, field_type: tp.Type[MapEntry], field_value: str):
-        entry_name = field_value
-        if not entry_name:  # no link expected (None or empty string)
+    def map_entry_link(self, entry_game_type: tp.Type[MapEntry], entry: MSBEntry | None):
+        if not entry:  # no link expected (reference is `None`)
             return [NullLink(self, name="None")]
-        entry_supertype_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
+        entry_supertype_name, entry_subtype_name = entry_game_type.get_msb_entry_supertype_subtype()
         active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-        entry_subtype_list = active_msb[entry_subtype_name]
+
         try:
-            entry = entry_subtype_list.find_entry_name(entry_name)
-        except KeyError:
+            entry_list = active_msb.get_list_of_entry(entry)
+        except ValueError:
             # Entry name is missing.
             return [BrokenLink()]
+
         if entry_subtype_name is not None:
-            # Technically, map links only care about entry list type (except for the collision field of Map
-            # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
+            # Technically, map links only care about entry list type, (except for the collision field of Map
+            # Connections and the Environment field of Collisions), but I'm sometimes adding some additional subtype
+            # enforcement (e.g. model types).
             if (
-                entry.ENTRY_SUBTYPE.name == "Player" and entry_subtype_name == "Character"
-                and entry_name == "c0000"
+                entry.SUBTYPE_ENUM.name == "Player" and entry_subtype_name == "Character"
+                and entry.name == "c0000"
             ):
                 # c0000 model happens to be in "Player" category for this map.
                 pass
-            elif entry.ENTRY_SUBTYPE.name == "UnusedObject" and entry_subtype_name == "Object":
+            elif entry.SUBTYPE_ENUM.name == "UnusedObject" and entry_subtype_name in {"Object", "Asset"}:
                 pass
-            elif entry.ENTRY_SUBTYPE.name == "UnusedCharacter" and entry_subtype_name == "Character":
+            elif entry.SUBTYPE_ENUM.name == "UnusedCharacter" and entry_subtype_name == "Character":
                 pass
-            elif entry.ENTRY_SUBTYPE.name != entry_subtype_name:
+            elif entry.SUBTYPE_ENUM.name != entry_subtype_name:
                 raise ValueError(
-                    f"Type of entry name in field ({entry.ENTRY_SUBTYPE.name}) "
+                    f"Type of entry name in field ({entry.SUBTYPE_ENUM.name}) "
                     f"does not match enforced type of field ({entry_subtype_name})."
                 )
         try:
-            entry_subtype_index = entry_subtype_list.index_entry(entry)
+            entry_subtype_index = entry_list.index_entry(entry)
             pluralized_name = entry.SUBTYPE_ENUM.pluralized_name
-            if pluralized_name in {"Characters", "Players"} and field_value == "c0000":
+            if pluralized_name in {"Characters", "Players"} and entry.name == "c0000":
+                # Check if map has `c0000` model (as every map should).
                 if not active_msb.has_c0000_model():
                     raise LinkError(f"Could not find player model c0000 in Character or Player model lists.")
                 pluralized_name = "Players"  # redirect c0000 to 'Player' models
             return [
                 MapsLink(
                     self,
-                    name=field_value,
+                    entry=entry,
                     entry_supertype_name=entry_supertype_name,
                     entry_subtype_name=pluralized_name,
                     entry_subtype_index=entry_subtype_index,
@@ -140,11 +143,11 @@ class WindowLinker:
         text = text_table[field_value]
         return [TextLink(self, text_type_name=text_category_name, text_id=field_value, name=text)]
 
-    def game_param_link(self, field_type, field_value):
+    def game_param_link(self, field_type: tp.Type[BaseGameParam], field_value: int):
         param_nickname = field_type.get_param_nickname()
-        param_table = self.project.params.get_param(param_nickname)
+        param = self.project.params.get_param(param_nickname)
         try:
-            name = param_table[field_value].name
+            name = param[field_value].Name
         except KeyError:
             return [BrokenLink()]
         else:
@@ -154,28 +157,16 @@ class WindowLinker:
         """Override this to check other game-specific types for links."""
         return []
 
-    def get_map_entry_type_names(self, field_type: type):
-        """Retrieves a list of names of the given type, sometimes with hint suffixes.
+    def get_map_entry_subtype_list(self, entry_game_type: GAME_TYPE) -> list[MSBEntry]:
+        """Retrieves a list of MSB entries of the given type."""
+        if not issubclass(entry_game_type, MapEntry):
+            raise TypeError(f"Invalid field type. Must be a `MapEntry` subtype, not: {entry_game_type.__name__}")
 
-        Currently only supports `MapEntry` fields.
-        """
-        if issubclass(field_type, MapEntry):
-            entry_supertype_name, entry_subtype_name = field_type.get_msb_entry_type_subtype()
-            active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
-            entry_list = active_msb[entry_subtype_name]
-            if entry_subtype_name is not None:
-                # Technically, map links only care about entry list type (except for the collision field of Map
-                # Connections) but I'm sometimes adding some additional subtype enforcement (e.g. model types).
-                names = entry_list.get_entry_names()
-                if entry_supertype_name == "Models" and entry_subtype_name in {"Character", "Player"}:
-                    # Add model names as suffixes.
-                    for i, name in enumerate(names):
-                        model_id = int(name.lstrip("c"))
-                        names[i] += f"  {{{self.window.CHARACTER_MODELS.get(model_id, 'UNKNOWN')}}}"
-                return names
-            else:
-                return entry_list.get_entry_names()
-        # TODO: raise type error?
+        entry_supertype_name, entry_subtype_name = entry_game_type.get_msb_entry_supertype_subtype()
+        active_msb = self.window.maps_tab.get_selected_msb()  # type: MSB
+        if entry_subtype_name:
+            return list(active_msb[entry_subtype_name])
+        return active_msb.get_supertype_list(entry_supertype_name)
 
     def get_param_entry_text_links(self, entry_id):
         """Return three (name, link) pairs for entries in item categories (Name, Summary, and Description).
@@ -388,14 +379,15 @@ class NullLink(BaseLink):
 
 class MapsLink(BaseLink):
     # TODO: Supertype name may no longer be needed. (I think it's used to get the dropdown category name.)
-    def __init__(self, linker, entry_supertype_name, entry_subtype_index, entry_subtype_name, name=None):
+    def __init__(self, linker, entry, entry_supertype_name, entry_subtype_index, entry_subtype_name):
         super().__init__(
             linker,
-            name=name,
+            name=entry.name,
             menu_text=f"Go to Maps.{entry_supertype_name}"
             f"{'.' + entry_subtype_name if entry_subtype_name is not None else ''}[{entry_subtype_index}]"
-            f" {{{name}}}",
+            f" {{{entry.name}}}",
         )
+        self.entry = entry
         self.entry_supertype_name = entry_supertype_name
         self.entry_subtype_name = entry_subtype_name
         self.entry_subtype_index = entry_subtype_index

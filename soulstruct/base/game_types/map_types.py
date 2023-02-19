@@ -2,10 +2,70 @@ from __future__ import annotations
 
 __all__ = [
     "Map",
+
     "MapEntry",
     "MapEntity",
+
     "MapModel",
+    "MapPieceModel",
+    "ObjectModel",
+    "AssetModel",
+    "CharacterModel",
+    "PlayerModel",
+    "CollisionModel",
+    "NavmeshModel",
+
+    "MapEvent",
+    "LightEvent",
+    "SoundEvent",
+    "VFXEvent",
+    "WindEvent",
+    "TreasureEvent",
+    "SpawnerEvent",
+    "MessageEvent",
+    "ObjActEvent",
+    "SpawnPointEvent",
+    "MapOffsetEvent",
+    "NavigationEvent",
+    "EnvironmentEvent",
+    "NPCInvasionEvent",
+
+    "Region",
+    "RegionVolume",
+    "RegionPoint",
+    "RegionCircle",
+    "RegionSphere",
+    "RegionCylinder",
+    "RegionRect",
+    "RegionBox",
+
+    "MapPart",
+    "MapPiece",
+    "Object",
+    "Asset",
+    "Character",
+    "Collision",
+    "PlayerStart",
+    "Navmesh",
+    "UnusedObject",
+    "UnusedCharacter",
+    "MapConnection",
+
     "MapTyping",
+    "RegionTyping",
+    "MapPartTyping",
+    "MapPieceTyping",
+    "ObjectTyping",
+    "AssetTyping",
+    "CharacterTyping",
+    "CollisionTyping",
+    "AnimatedEntityTyping",
+    "CoordEntityTyping",
+    "SoundEventTyping",
+    "NavigationEventTyping",
+    "EnvironmentEventTyping",
+    "VFXEventTyping",
+    "NPCInvasionEventTyping",
 ]
 
 import typing as tp
@@ -133,7 +193,7 @@ class Map(BaseGameObject):
 class MapEntry(BaseGameObject):
     """Anything that appears in an MSB."""
     @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False) -> [str, str]:
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:
         """Returns the pluralized name of the MSB type (e.g. "Parts") and the non-pluralized name of the subtype
         (e.g. "Character")."""
         raise NotImplementedError
@@ -153,24 +213,16 @@ class MapEntity(MapEntry, IntEnum):
     """Any MSB entry with an entity ID (enum values)."""
 
     @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False) -> [str, str]:
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:
         raise NotImplementedError
 
     @classmethod
-    def get_id_start_and_max(cls) -> tuple[int, int]:
-        """Return first and last entity ID value for automatic generation of entity IDs for specific `game`.
-
-        Not supported by default; supported subclasses will override this method.
-        """
-        raise TypeError(f"`{cls.__name__}` does not use entity IDs.")
-
-    @classmethod
-    def auto_generate(cls, count, map_range_start: int):
+    def auto_generate(cls, ranges: dict[tp.Type[MapEntity], tuple[int, int]], count: int, map_range_start: int):
         """Get value for `auto()`.
 
         Raises `TypeError` if not valid for this class, and `NotImplementedError` if not implemented for given `game`.
         """
-        start_value, max_value = cls.get_id_start_and_max()
+        start_value, max_value = ranges[cls]
         value = map_range_start + start_value + count
         if value > map_range_start + max_value:
             raise ValueError(f"Too many members in `{cls.__name__}` for `auto()` range `({start_value}, {max_value})`.")
@@ -182,10 +234,11 @@ class MapEntity(MapEntry, IntEnum):
         raise ValueError("Cannot use `auto()` for this `MapEntity` subclass.")
 
 
+# region MODELS
 class MapModel(MapEntry):
     """3D model ID of something."""
     @classmethod
-    def get_msb_entry_type_subtype(cls, pluralized_subtype=False):
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
         return "Models", None
 
     @classmethod
@@ -194,4 +247,385 @@ class MapModel(MapEntry):
         return "MSBModel"
 
 
+class MapPieceModel(MapModel):
+    """Map piece model (e.g. m0000). """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "MapPieces") if pluralized_subtype else ("Models", "MapPiece")
+
+
+class ObjectModel(MapModel):
+    """Object model (e.g. o0000). """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Objects") if pluralized_subtype else ("Models", "Object")
+
+
+class AssetModel(MapModel):
+    """Asset model (e.g. o0000). """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Assets") if pluralized_subtype else ("Models", "Asset")
+
+
+class CharacterModel(MapModel):
+    """Character model (e.g. c0000).
+
+    Note that c0000 can appear in either the Characters or Players parts list in an MSB.
+    """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Characters") if pluralized_subtype else ("Models", "Character")
+
+
+class PlayerModel(MapModel):
+    """Sometimes c0000 is registered as this type instead of a CharacterModel."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Players") if pluralized_subtype else ("Models", "Player")
+
+
+class CollisionModel(MapModel):
+    """Map piece model (e.g. h0000). """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Collisions") if pluralized_subtype else ("Models", "Collision")
+
+
+class NavmeshModel(MapModel):
+    """Navmesh model (e.g. n0000). """
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Models", "Navmeshes") if pluralized_subtype else ("Models", "Navmesh")
+# endregion
+
+
+# region EVENTS
+class MapEvent(MapEntity):
+    """Base class for things that appear in the 'events' section of the MSB, such as sounds, ObjActs, and VFX."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return "Events", None
+
+    def auto_region_name(self):
+        event_enum_subclass = self.__class__.__bases__[0]
+        while event_enum_subclass.__bases__[0] is not MapEvent:
+            event_enum_subclass = event_enum_subclass.__bases__[0]
+        return f"_{event_enum_subclass.__name__}_{self.name.lstrip('_')}"
+
+
+class LightEvent(MapEvent):
+    """Light event in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Lights") if pluralized_subtype else ("Events", "Light")
+
+
+class SoundEvent(MapEvent):
+    """Sound event in MSB attached to a Region (a 'map sound'), which can be enabled or disabled.
+
+    Note that these are enabled on map load, so you may want to disable it (e.g. boss music) in your constructor event.
+    """
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Sounds") if pluralized_subtype else ("Events", "Sound")
+
+
+class VFXEvent(MapEvent):
+    """VFX event (visual effect, e.g. fog gate) in MSB attached to a region.
+
+    Can be created or deleted. When deleted, the particles already emitted can be allowed to live out their remaining
+    life (`erase_root_only=True` by default).
+    """
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "VFX") if pluralized_subtype else ("Events", "VFX")
+
+
+class WindEvent(MapEvent):
+    """Wind event in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Wind") if pluralized_subtype else ("Events", "Wind")
+
+
+class TreasureEvent(MapEvent):
+    """Treasure event in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Treasure") if pluralized_subtype else ("Events", "Treasure")
+
+
+class SpawnerEvent(MapEvent):
+    """Spawner event (causes linked enemies to respawn) in MSB attached to a region. Can be enabled or disabled."""
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Spawners") if pluralized_subtype else ("Events", "Spawner")
+
+
+class MessageEvent(MapEvent):
+    """Message event in MSB that causes a "developer message" to appear in a region. Can be enabled or disabled."""
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Messages") if pluralized_subtype else ("Events", "Message")
+
+
+class ObjActEvent(MapEvent):
+    """ObjAct (object activation event) added in MSB.
+
+    It can be used in conditions as a test for the ObjAct event being triggered.
+    """
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "I"
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "ObjActs") if pluralized_subtype else ("Events", "ObjAct")
+
+    @classmethod
+    def get_id_start_and_max(cls) -> tuple[int, int]:
+        raise TypeError("`ObjActEvent` does not use normal entity IDs, but uses special flags instead.")
+
+
+class SpawnPointEvent(MapEvent):
+    """Spawn point attached to an MSB region."""
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "SpawnPoints") if pluralized_subtype else ("Events", "SpawnPoint")
+
+
+class MapOffsetEvent(MapEvent):
+    """Map offset event in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "MapOffsets") if pluralized_subtype else ("Events", "MapOffset")
+
+
+class NavigationEvent(MapEvent):
+    """Event attached to an MSB navmesh part.
+
+    Enable/disable/toggle functions require you to specify a navigation type; only the flags for that type will be
+    modified in the navmesh.
+    """
+    @classmethod
+    def get_event_arg_fmt(cls) -> str:
+        return "i"
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Navigation") if pluralized_subtype else ("Events", "Navigation")
+
+
+class EnvironmentEvent(MapEvent):
+    """Environment event in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "Environments") if pluralized_subtype else ("Events", "Environment")
+
+
+class NPCInvasionEvent(MapEvent):
+    """Event describing invasion of NPC's world (e.g. Lautrec) in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Events", "NPCInvasion") if pluralized_subtype else ("Events", "NPCInvasion")
+
+
+# TODO: Event types from later games.
+
+# endregion
+
+
+# region REGIONS
+class Region(MapEntity):
+    """Condition upon a region as a shortcut to condition upon the player being inside it (condition only)."""
+
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "I"
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return "Regions", None
+
+
+class RegionVolume(Region):
+    """Soulstruct ABC for Spheres, Cylinders, and Boxes, which share an auto-enumeration schema separate from Points."""
+
+
+class RegionPoint(Region):
+    """Single point region."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Points") if pluralized_subtype else ("Regions", "Point")
+
+
+class RegionCircle(Region):
+    """2D circle region. Never used."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Circles") if pluralized_subtype else ("Regions", "Circle")
+
+
+class RegionSphere(RegionVolume):
+    """3D spherical region."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Spheres") if pluralized_subtype else ("Regions", "Sphere")
+
+
+class RegionCylinder(RegionVolume):
+    """3D cylindrical region."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Cylinders") if pluralized_subtype else ("Regions", "Cylinder")
+
+
+class RegionRect(Region):
+    """2D rectangular region. Never used."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Rects") if pluralized_subtype else ("Regions", "Rect")
+
+
+class RegionBox(RegionVolume):
+    """3D box region."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Regions", "Boxes") if pluralized_subtype else ("Regions", "Box")
+
+
+# endregion
+
+
+# region PARTS
+class MapPart(MapEntity):
+    """Base class for anything that appears in the Parts section of the MSB."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return "i"
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return "Parts", None
+
+
+class MapPiece(MapPart):
+    """Map Piece added in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "MapPieces") if pluralized_subtype else ("Parts", "MapPiece")
+
+
+class Object(MapPart):
+    """Condition upon an object as a shortcut to condition upon it *not* being destroyed."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "Objects") if pluralized_subtype else ("Parts", "Object")
+
+
+class Asset(MapPart):
+    """Only used in Elden Ring, in place of 'Objects'. Probably functionally identical but renaming to be clear."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "Assets") if pluralized_subtype else ("Parts", "Asset")
+
+
+class Character(MapPart):
+    """Condition upon a character as a shortcut to condition upon them being alive."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "Characters") if pluralized_subtype else ("Parts", "Character")
+
+
+class PlayerStart(MapPart):
+    """PlayerStart added in MSB. Used as an argument in `Warp` instructions. No additional state."""
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "PlayerStarts") if pluralized_subtype else ("Parts", "PlayerStart")
+
+
+class Collision(MapPart):
+    """Collision added in MSB."""
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "Collisions") if pluralized_subtype else ("Parts", "Collision")
+
+
+class Navmesh(MapPart):
+    """Navmesh instance. NavmeshEvents are attached to it and manipulated with EMEVD."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "Navmeshes") if pluralized_subtype else ("Parts", "Navmesh")
+
+
+class UnusedObject(MapPart):
+    """Unused (or cutscene-only) object in MSB."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "UnusedObjects") if pluralized_subtype else ("Parts", "UnusedObject")
+
+
+class UnusedCharacter(MapPart):
+    """Unused (or cutscene-only) character in MSB."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "UnusedCharacters") if pluralized_subtype else ("Parts", "UnusedCharacter")
+
+
+class MapConnection(MapPart):
+    """MapConnection added in MSB. No additional state."""
+    @classmethod
+    def get_event_arg_fmt(cls):
+        return None  # not valid
+
+    @classmethod
+    def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False):
+        return ("Parts", "MapConnections") if pluralized_subtype else ("Parts", "MapConnection")
+
+# endregion
+
+
+# region Type Hints
 MapTyping = tp.Union[Map, tuple, list]
+
+RegionTyping = tp.Union[Region, int]
+
+MapPartTyping = tp.Union[MapPart, int]
+MapPieceTyping = tp.Union[MapPiece, int]
+ObjectTyping = tp.Union[Object, int]
+AssetTyping = tp.Union[Asset, int]
+CharacterTyping = tp.Union[Character, int]
+CollisionTyping = tp.Union[Collision, int]
+AnimatedEntityTyping = tp.Union[Character, Object, int]
+CoordEntityTyping = tp.Union[Object, Region, Character, int]
+
+LightEventTyping = tp.Union[LightEvent, int]
+SoundEventTyping = tp.Union[SoundEvent, int]
+NavigationEventTyping = tp.Union[NavigationEvent, int]
+EnvironmentEventTyping = tp.Union[EnvironmentEvent, int]
+VFXEventTyping = tp.Union[VFXEvent, int]
+NPCInvasionEventTyping = tp.Union[NPCInvasionEvent, int]
+
+# endregion

@@ -9,6 +9,7 @@ from string import Formatter
 
 from soulstruct.utilities.binary import *
 
+from .enums import BaseMSBModelSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
 try:
@@ -21,7 +22,10 @@ except AttributeError:
 class BaseMSBModel(MSBEntry, abc.ABC):
     """Base class used by all MSB models. (They used to not even subclass this per subtype, but now do.)"""
 
+    SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.MODELS
+    SUBTYPE_ENUM: tp.ClassVar[BaseMSBModelSubtype]
     NAME_ENCODING: tp.ClassVar[str] = ""
+
     NULL: tp.ClassVar[bytes] = b"\0"
     EMPTY_SIB_PATH: tp.ClassVar[bytes] = b"\0"
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = ""

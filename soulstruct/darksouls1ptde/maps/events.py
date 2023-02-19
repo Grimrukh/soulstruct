@@ -25,7 +25,7 @@ from soulstruct.darksouls1ptde.events.emevd.enums import SoundType
 from soulstruct.darksouls1ptde.game_types import *
 from soulstruct.base.maps.msb.events import BaseMSBEvent
 from soulstruct.base.maps.msb import MSBEntry
-from soulstruct.base.maps.msb.utils import MapFieldInfo
+from soulstruct.base.maps.msb.field_info import MapFieldInfo
 from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 
@@ -73,7 +73,7 @@ class MSBLightEvent(MSBEvent):
     class SUBTYPE_DATA_STRUCT(BinaryStruct):
         point_light_id: int
 
-    point_light_id: int = field(default=0, **MapFieldInfo(linked_type=PointLightParam))
+    point_light_id: int = field(default=0, **MapFieldInfo(game_type=PointLightParam))
 
 
 @dataclass(slots=True, eq=False, repr=False)
@@ -85,7 +85,7 @@ class MSBSoundEvent(MSBEvent):
         sound_type: int
         sound_id: int
 
-    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(linked_type=SoundType))
+    sound_type: int = field(default=SoundType.m_Music.value, **MapFieldInfo(game_type=SoundType))
     sound_id: int = -1
 
 
@@ -146,11 +146,11 @@ class MSBTreasureEvent(MSBEvent):
         _pad2: bytes = field(**BinaryPad(2))
 
     treasure_part: MSBPart = None
-    item_lot_1: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_2: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_3: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_4: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
-    item_lot_5: int = field(default=-1, **MapFieldInfo(linked_type=ItemLotParam))
+    item_lot_1: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_2: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_3: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_4: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
+    item_lot_5: int = field(default=-1, **MapFieldInfo(game_type=ItemLotParam))
     is_in_chest: bool = False
     is_hidden: bool = False
 
@@ -200,7 +200,7 @@ class MSBSpawnerEvent(MSBEvent):
     max_interval: float = 1.0
     initial_spawn_count: int = 1
     spawn_parts: list[MSBPart] = field(
-        default_factory=lambda: [None] * 32, **MapFieldInfo(linked_type=GameObjectSequence((Character, 32)))
+        default_factory=lambda: [None] * 32, **MapFieldInfo(game_type=GameObjectSequence((Character, 32)))
     )
     spawn_regions: list[MSBRegion] = field(
         default_factory=lambda: [None] * 4, **MapFieldInfo(GameObjectSequence((Region, 4)))
@@ -235,7 +235,7 @@ class MSBMessageEvent(MSBEvent):
         is_hidden: bool
         _pad1: bytes = field(**BinaryPad(3))
 
-    text_id: int = field(default=-1, **MapFieldInfo(linked_type=SoapstoneMessage))
+    text_id: int = field(default=-1, **MapFieldInfo(game_type=SoapstoneMessage))
     unk_x02_x04: int = 2
     is_hidden: bool = False
 
@@ -257,9 +257,9 @@ class MSBObjActEvent(MSBEvent):
 
     obj_act_entity_id: int = -1
     obj_act_part: MSBPart = None
-    obj_act_param_id: int = field(default=-1, **MapFieldInfo(linked_type=ObjActParam))
+    obj_act_param_id: int = field(default=-1, **MapFieldInfo(game_type=ObjActParam))
     obj_act_state: int = 0
-    obj_act_flag: int = field(default=0, **MapFieldInfo(linked_type=Flag))
+    obj_act_flag: int = field(default=0, **MapFieldInfo(game_type=Flag))
 
     _obj_act_part_index: int = None
 
@@ -377,7 +377,7 @@ class MSBNPCInvasionEvent(MSBEvent):
         _pad1: bytes = field(**BinaryPad(4))
 
     host_entity_id: int = -1
-    invasion_flag_id: int = field(default=-1, **MapFieldInfo(linked_type=Flag))
+    invasion_flag_id: int = field(default=-1, **MapFieldInfo(game_type=Flag))
     spawn_point_region: MSBRegion = None
 
     _spawn_point_region_index: int = None

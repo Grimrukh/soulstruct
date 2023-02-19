@@ -39,11 +39,11 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         ushort, "chrAnimId", game_type=Animation, default=0,
         tooltip="Animation played by a non-player character when they successfully activate the object.",
     )
-    spQualifiedId: int = ParamField(
+    SuccessConditionID1: int = ParamField(
         ushort, "spQualifiedId", default=0, dynamic_callback=ObjActSuccessCondition(1),
         tooltip="TODO",
     )
-    spQualifiedId2: int = ParamField(
+    SuccessConditionID2: int = ParamField(
         ushort, "spQualifiedId2", default=0, dynamic_callback=ObjActSuccessCondition(2),
         tooltip="TODO",
     )

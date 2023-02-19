@@ -15,35 +15,35 @@ from .dynamics import ItemLotReference, ItemLotReference, ItemLotReference, Item
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ITEMLOT_PARAM_ST(ParamRow):
-    lotItemId01: int = ParamField(
+    Item1ID: int = ParamField(
         int, "lotItemId01", default=0, dynamic_callback=ItemLotReference(1),
         tooltip="TODO",
     )
-    lotItemId02: int = ParamField(
+    Item2ID: int = ParamField(
         int, "lotItemId02", default=0, dynamic_callback=ItemLotReference(2),
         tooltip="TODO",
     )
-    lotItemId03: int = ParamField(
+    Item3ID: int = ParamField(
         int, "lotItemId03", default=0, dynamic_callback=ItemLotReference(3),
         tooltip="TODO",
     )
-    lotItemId04: int = ParamField(
+    Item4ID: int = ParamField(
         int, "lotItemId04", default=0, dynamic_callback=ItemLotReference(4),
         tooltip="TODO",
     )
-    lotItemId05: int = ParamField(
+    Item5ID: int = ParamField(
         int, "lotItemId05", default=0, dynamic_callback=ItemLotReference(5),
         tooltip="TODO",
     )
-    lotItemId06: int = ParamField(
+    Item6ID: int = ParamField(
         int, "lotItemId06", default=0, dynamic_callback=ItemLotReference(6),
         tooltip="TODO",
     )
-    lotItemId07: int = ParamField(
+    Item7ID: int = ParamField(
         int, "lotItemId07", default=0, dynamic_callback=ItemLotReference(7),
         tooltip="TODO",
     )
-    lotItemId08: int = ParamField(
+    Item8ID: int = ParamField(
         int, "lotItemId08", default=0, dynamic_callback=ItemLotReference(8),
         tooltip="TODO",
     )

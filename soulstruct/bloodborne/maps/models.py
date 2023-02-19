@@ -41,7 +41,7 @@ class MSBModel(BaseMSBModel):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBMapPieceModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.MapPiece
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.MapPieceModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\sib\\{name}.sib"
 
@@ -51,33 +51,33 @@ class MSBMapPieceModel(MSBModel):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBObjectModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Object
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.ObjectModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\obj\\{name}\\sib\\{name}.sib"
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBCharacterModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Character
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.CharacterModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\chr\\{name}\\sib\\{name}.sib"
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBItemModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Item
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.ItemModel
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBPlayerModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Player
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.PlayerModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\chr\\{name}\\sib\\{name}.sib"
 
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBCollisionModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Collision
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.CollisionModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\hkxwin\\{name}.hkxwin"
 
@@ -87,7 +87,7 @@ class MSBCollisionModel(MSBModel):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBNavmeshModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Navmesh
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.NavmeshModel
 
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = "N:\\SPRJ\\data\\Model\\map\\{map_stem}\\navimesh\\{name}.SIB"
 
@@ -97,4 +97,4 @@ class MSBNavmeshModel(MSBModel):
 
 @dataclass(slots=True, eq=False, repr=False)
 class MSBOtherModel(MSBModel):
-    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.Other
+    SUBTYPE_ENUM: tp.ClassVar = MSBModelSubtype.OtherModel

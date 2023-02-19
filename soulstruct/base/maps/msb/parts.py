@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from soulstruct.utilities.maths import Vector3
 from soulstruct.base.maps.msb.utils import GroupBitSet
 
+from .enums import BaseMSBPartSubtype, MSBSupertype
 from .models import BaseMSBModel
 from .msb_entry import MSBEntry
 
@@ -24,6 +25,8 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(slots=True, eq=False, repr=False)
 class BaseMSBPart(MSBEntry, abc.ABC):
 
+    SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.PARTS
+    SUBTYPE_ENUM: tp.ClassVar[BaseMSBPartSubtype]
     SIB_PATH_TEMPLATE: tp.ClassVar[str] = None
 
     model: BaseMSBModel = None

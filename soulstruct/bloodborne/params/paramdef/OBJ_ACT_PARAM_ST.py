@@ -39,11 +39,11 @@ class OBJ_ACT_PARAM_ST(ParamRow):
         ushort, "validDist", default=150,
         tooltip="Maximum distance from action model point at which the object action will be prompted.",
     )
-    spQualifiedId: int = ParamField(
+    SuccessConditionID1: int = ParamField(
         ushort, "spQualifiedId", default=0, dynamic_callback=ObjActSuccessCondition(1),
         tooltip="TODO",
     )
-    spQualifiedId2: int = ParamField(
+    SuccessConditionID2: int = ParamField(
         ushort, "spQualifiedId2", default=0, dynamic_callback=ObjActSuccessCondition(2),
         tooltip="TODO",
     )

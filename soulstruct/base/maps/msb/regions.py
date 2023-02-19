@@ -11,6 +11,7 @@ from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
 from soulstruct.utilities.text import pad_chars
 
+from .enums import BaseMSBRegionSubtype, MSBSupertype
 from .msb_entry import MSBEntry
 
 try:
@@ -24,6 +25,10 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(slots=True, eq=False, repr=False)
 class BaseMSBRegion(MSBEntry, abc.ABC):
 
+    SUPERTYPE_ENUM: tp.ClassVar[MSBSupertype] = MSBSupertype.REGIONS
+
+    # Further specify subtype enum type.
+    SUBTYPE_ENUM: tp.ClassVar[BaseMSBRegionSubtype]
     # Regions have no supertype data struct.
     SUPERTYPE_DATA_STRUCT: tp.ClassVar = None
     UNKNOWN_DATA_SIZE: tp.ClassVar[int]

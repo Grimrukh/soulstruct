@@ -1,4 +1,5 @@
 __all__ = [
+    "MSBSupertype",
     "MSBModelSubtype",
     "MSBEventSubtype",
     "MSBRegionSubtype",

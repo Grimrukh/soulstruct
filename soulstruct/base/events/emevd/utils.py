@@ -6,6 +6,7 @@ __all__ = [
     "no_skip_or_negate_or_return",
     "negate_only",
     "skip_and_negate_and_return",
+    "get_coord_entity_type",
     "EventArgumentData",
     "boolify",
     "get_write_offset",
@@ -18,12 +19,13 @@ import ast
 import logging
 import struct
 import typing as tp
+from enum import IntEnum
 from functools import wraps
 
 from .exceptions import NoSkipOrReturnError, NoNegateError
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.game_types import BaseGameObject
+    from soulstruct.base.game_types import GAME_TYPE
     from soulstruct.utilities.binary import BinaryReader
 
 _LOGGER = logging.getLogger(__name__)
@@ -99,22 +101,29 @@ class EventArgumentData:
     specified with properly type-annotated event arguments.
     """
     offset_tuple: tuple[int, int]
-    arg_class: tp.Optional[tp.Type[BaseGameObject]]
+    arg_class: tp.Optional[GAME_TYPE]
 
-    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[tp.Type[BaseGameObject]] = None):
+    def __init__(self, offset_tuple: tuple[int, int], arg_class: tp.Optional[GAME_TYPE] = None):
         self.offset_tuple = offset_tuple
         self.arg_class = arg_class
 
-    def get_coord_entity_type(self):
-        if hasattr(self.arg_class, "get_coord_entity_type"):
-            return self.arg_class.get_coord_entity_type()
-        else:
-            raise AttributeError("Event argument does not have a `CoordEntityType`.")
+    def get_coord_entity_type(self, coord_entity_type_enum: tp.Type[IntEnum]):
+        try:
+            return get_coord_entity_type(coord_entity_type_enum, self.arg_class)
+        except KeyError:
+            raise ValueError("Event argument does not have a `CoordEntityType`.")
 
     def __repr__(self):
         if self.arg_class:
             return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]}, {self.arg_class})"
         return f"EventArgumentData({self.offset_tuple[0]}, {self.offset_tuple[1]})"
+
+
+def get_coord_entity_type(coord_entity_type_enum: tp.Type[IntEnum], arg_type) -> IntEnum:
+    try:
+        return coord_entity_type_enum[arg_type.__name__]
+    except KeyError:
+        raise KeyError(f"Cannot auto-detect `CoordEntityType` from argument type: {arg_type.__name__}")
 
 
 def get_byte_offset_from_struct(format_string: str) -> dict[int, tuple[int, str]]:

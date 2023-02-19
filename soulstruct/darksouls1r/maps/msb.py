@@ -24,7 +24,7 @@ class MSB(_PTDE_MSB):
         for subtype_name, game_type in self.ENTITY_GAME_TYPES.items():
             translated_entity_ids = set()  # reset per entry type
             entry_list = self[subtype_name]
-            if entry_list.supertype_name not in supertypes:
+            if entry_list.supertype not in supertypes:
                 continue  # parts and models do not need translation (already English and unique)
             for entry in entry_list:
                 if entry.entity_id not in {-1, 0}:

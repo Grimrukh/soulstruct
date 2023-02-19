@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["MSB_JSONEncoder", "MSBBrokenEntryReference", "MSBSubtypeInfo", "GroupBitSet", "MapFieldInfo"]
+__all__ = ["MSBSupertype", "MSB_JSONEncoder", "MSBBrokenEntryReference", "MSBSubtypeInfo", "GroupBitSet"]
 
 import ast
 import json
@@ -8,7 +8,6 @@ import logging
 import re
 import typing as tp
 from dataclasses import dataclass, fields
-from enum import IntEnum
 
 from soulstruct.utilities.maths import Matrix3, Vector2, Vector3, Vector4, resolve_rotation
 from soulstruct.utilities.conversion import int_group_to_bit_set, bit_set_to_int_group
@@ -25,6 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class MSB_JSONEncoder(json.JSONEncoder):
+    """Handles a few extra types that appear as `MSBEntry` field types."""
 
     def default(self, obj):
         if isinstance(obj, (Vector2, Vector3, Vector4, GroupBitSet)):
@@ -95,6 +95,10 @@ class GroupBitSet:
             bit_count=int(match.group(1)),
         )
 
+    def to_sorted_bit_list(self) -> list[int]:
+        """For GUI display, mainly."""
+        return sorted(self.enabled_bits)
+
     def to_uints(self) -> list[int]:
         return bit_set_to_int_group(self.enabled_bits, self.bit_count // 32)
 
@@ -118,13 +122,6 @@ class GroupBitSet:
         self.enabled_bits.remove(bit)
 
     # TODO: Add more set methods here, like union and intersection.
-
-
-def MapFieldInfo(
-    display_name="", description="", linked_type: tp.Type[IntEnum] = None
-) -> dict[str, dict[str, str]]:
-    """Convenience generator for use with ** in `field()`."""
-    return {"metadata": {"display_name": display_name, "description": description, "linked_type": linked_type}}
 
 
 def merge(msb_1: MSB, msb_2: MSB, filter_func: tp.Callable = None, allow_repeated_names=False) -> MSB:

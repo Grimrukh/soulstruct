@@ -251,4 +251,4 @@ class GameParamBND(_BaseGameParamBND):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_row in param.items():
                     if param_id in text_dict and text_dict[param_id].strip(" *"):
-                        param_row.name = text_dict[param_id]
+                        param_row.Name = text_dict[param_id]

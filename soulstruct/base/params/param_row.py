@@ -19,8 +19,9 @@ import logging
 import typing as tp
 from dataclasses import dataclass, field
 from enum import IntEnum
+from types import MappingProxyType
 
-from soulstruct.base.game_types import BaseGameObject
+from soulstruct.base.game_types import GAME_TYPE
 from soulstruct.base.params.paramdef.field_types import base_type
 from soulstruct.utilities.binary import *
 
@@ -42,7 +43,7 @@ class DynamicParamField(abc.ABC):
     POSSIBLE_TYPES = set()
 
     @abc.abstractmethod
-    def __call__(self, data: ParamRow) -> tuple[tp.Type[BaseGameObject, str, str]]:
+    def __call__(self, data: ParamRow) -> tuple[GAME_TYPE, str, str]:
         ...
 
 
@@ -76,6 +77,9 @@ PARAM_VALUE_TYPING = tp.Union[int, bool, float, str, bytes]
 @dataclass(slots=True)
 class ParamRow(BinaryStruct):
     """Base class for `ParamDef`-spawned classes. Instances appear directly in `Param.rows`."""
+
+    # Cached on first use. Maps binary field names (i.e. not including Name/RawName) to `ParamFieldMetadata` instances.
+    _FIELD_PARAM_METADATA: tp.ClassVar[MappingProxyType[str, ParamFieldMetadata]] = None
 
     RawName: bytes = field(default=b"", metadata={"NOT_BINARY": True})
     Name: str = field(default="", metadata={"NOT_BINARY": True})
@@ -114,6 +118,20 @@ class ParamRow(BinaryStruct):
                 return
         raise KeyError(f"No field with internal name or nickname '{field_name_or_nickname}'.")
 
+    @classmethod
+    def get_field_metadata(cls, field_name: str) -> ParamFieldMetadata:
+        if cls._FIELD_PARAM_METADATA is None:
+            field_types = tp.get_type_hints(cls)
+            field_metadata = {}
+            for f in cls.get_binary_fields():
+                metadata = f.metadata.get("param")  # type: ParamFieldMetadata  # must always exist
+                if not metadata.game_type:
+                    metadata.game_type = field_types[f.name]
+                field_metadata[f.name] = metadata
+            cls._FIELD_PARAM_METADATA = MappingProxyType(field_metadata)
+
+        return cls._FIELD_PARAM_METADATA[field_name]
+
     def to_dict(
         self, ignore_pads=True, ignore_defaults=True, use_internal_names=False
     ) -> dict[str, PARAM_VALUE_TYPING]:
@@ -123,7 +141,6 @@ class ParamRow(BinaryStruct):
         """
         data = {"RawName": repr(self.RawName), "Name": self.Name}
         for binary_field in self.get_binary_fields():
-            binary = binary_field.metadata["binary"]  # type: BinaryMetadata
             info = binary_field.metadata["param"]  # type: ParamFieldMetadata
             if ignore_pads and info.is_pad:
                 continue  # ignore pad
@@ -182,12 +199,14 @@ class ParamRow(BinaryStruct):
                 print(f"  {field_name}: this = {field_value}, other = {other_value}")
 
 
-class ParamFieldMetadata(tp.NamedTuple):
+@dataclass(slots=True)
+class ParamFieldMetadata:
+    """Not a `NamedTuple` as it may be modified with defaults."""
     internal_name: str
     param_enum: tp.Type[base_type] = None
-    game_type: tp.Type[BaseGameObject] = None
+    game_type: GAME_TYPE = None
     hide: bool = False
-    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[BaseGameObject, str, str]] | None = None
+    dynamic_callback: DynamicParamField | tp.Callable[[ParamRow], tuple[GAME_TYPE, str, str]] | None = None
     tooltip: str = "TOOLTIP-TODO"
     is_pad: bool = False
 
@@ -196,7 +215,7 @@ def ParamField(
     field_type: tp.Type[PRIMITIVE_FIELD_TYPING],
     internal_name: str,
     param_enum: tp.Type[base_type] = None,
-    game_type: tp.Type[BaseGameObject] = None,
+    game_type: GAME_TYPE = None,
     length: int | None = None,
     encoding: str = None,
     bit_count: int = -1,

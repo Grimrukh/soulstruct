@@ -1,4 +1,5 @@
 __all__ = [
+    "MSBSupertype",
     "MSBModelSubtype",
     "MSBEventSubtype",
     "MSBRegionSubtype",
@@ -12,12 +13,12 @@ from soulstruct.base.maps.msb.enums import *
 
 
 class MSBModelSubtype(BaseMSBModelSubtype):
-    MapPiece = 0
-    Object = 1
-    Character = 2
-    Player = 4
-    Collision = 5
-    Navmesh = 6
+    MapPieceModel = 0
+    ObjectModel = 1
+    CharacterModel = 2
+    PlayerModel = 4
+    CollisionModel = 5
+    NavmeshModel = 6
 
     @classmethod
     def get_sib_path_stem(cls):

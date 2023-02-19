@@ -202,7 +202,7 @@ class AIEntryRow(EntryRow):
         self.entry_id = entry_id
         self.entry_text = entry_text
         if goal_type is None:
-            raise ValueError("Logic state cannot be None (suggests design problem).")
+            raise ValueError("Logic state cannot be `None` (suggests design problem).")
         self.goal_type = goal_type
         self._update_colors()
         self.build_entry_context_menu()
@@ -248,19 +248,20 @@ class AIEntryRow(EntryRow):
         return self._goal_type
 
     @goal_type.setter
-    def goal_type(self, goal_type: str):
+    def goal_type(self, goal_type: GoalType):
         if goal_type != self._goal_type:
-            if goal_type == "battle":
-                self.type_label.var.set("B")
-                self.type_label["fg"] = "#F33"
-            elif goal_type == "logic":
-                self.type_label.var.set("L")
-                self.type_label["fg"] = "#3F3"
-            elif goal_type == "neither":
-                self.type_label.var.set("N")
-                self.type_label["fg"] = "#FFF"
-            else:
-                raise ValueError(f"Invalid goal type: {goal_type}")
+            match goal_type:
+                case GoalType.Battle:
+                    self.type_label.var.set("B")
+                    self.type_label["fg"] = "#F33"
+                case GoalType.Logic:
+                    self.type_label.var.set("L")
+                    self.type_label["fg"] = "#3F3"
+                case GoalType.Unknown:
+                    self.type_label.var.set("N")
+                    self.type_label["fg"] = "#FFF"
+                case _:
+                    raise ValueError(f"Invalid goal type: {goal_type}")
             self._goal_type = goal_type
 
 

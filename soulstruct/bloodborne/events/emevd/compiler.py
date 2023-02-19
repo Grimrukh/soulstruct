@@ -37,6 +37,7 @@ import logging
 import typing as tp
 
 from soulstruct.base.events.emevd.compiler import base_compile_instruction, BooleanTestCompiler
+from soulstruct.base.events.emevd.utils import get_coord_entity_type
 from soulstruct.bloodborne.game_types import *
 
 from .emedf import EMEDF_ALIASES
@@ -61,7 +62,7 @@ def compile_instruction(instr_name: str, *args, **kwargs) -> list[str]:
 
 
 def compile_game_object_test(
-    game_object_type: tp.Type[BaseGameObject],
+    game_object_type: GAME_TYPE,
     game_object: tp.Union[BaseGameObject, tuple],
     negate=False,
     condition: int = None,
@@ -272,7 +273,7 @@ def Move(
             destination_type = CoordEntityType.Character
         else:
             try:
-                destination_type = destination.get_coord_entity_type()
+                destination_type = get_coord_entity_type(CoordEntityType, destination)
             except AttributeError:
                 raise AttributeError(
                     "Warp destination has no category. Use 'destination_type' keyword or a " "typed destination."
@@ -406,7 +407,7 @@ def IfActionButton(
     if anchor_type is None:
         # Anchor type will never be PLAYER here.
         try:
-            anchor_type = anchor_entity.get_coord_entity_type()
+            anchor_type = get_coord_entity_type(CoordEntityType, anchor_entity)
         except AttributeError:
             raise ValueError(
                 "The `anchor_type` keyword is needed if `anchor_entity` is not an `Object`, `Region`, or `Character`."

@@ -60,6 +60,7 @@ class WindowLinker(_BaseWindowLinker):
                     return links
                 return [BrokenLink()]
         elif field_type in {ArmorParam, WeaponParam}:
+            # Armor/weapon IDs can include reinforcement level offset, which we separate into a link name extension.
             param_nickname = field_type.get_param_nickname()
             true_param_id = (
                 self.check_armor_id(field_value) if field_type == ArmorParam else self.check_weapon_id(field_value)
@@ -73,9 +74,9 @@ class WindowLinker(_BaseWindowLinker):
         else:
             param_nickname = field_type.get_param_nickname()
 
-        param_table = self.project.params.get_param(param_nickname)
+        param = self.project.params.get_param(param_nickname)
         try:
-            name = param_table[field_value].name + name_extension
+            name = param[field_value].Name + name_extension
         except KeyError:
             return [BrokenLink()]
         else:
@@ -87,10 +88,14 @@ class WindowLinker(_BaseWindowLinker):
             # Always uses slot 0. You can easily jump to other slots from there (entry names should be the same).
             # Looks up map from Maps tab, since nothing else links there right now.
             param_nickname = field_type.get_param_nickname()
-            map_area_name = map_override[:3] if map_override else f"{self.window.maps_tab.map_choice_stem.split('_')[0]}"
-            param_table = self.project.lighting.get_drawparambnd(map_area_name).get_param(param_nickname)[0]
+            if map_override:
+                map_area_name = map_override[:3]
+            else:
+                map_area_name = self.window.maps_tab.map_choice_stem.split('_')[0]
+            map_area_name = f"a{map_area_name[1:3]}"
+            draw_param = self.project.lighting.get_drawparambnd(map_area_name).get_draw_param_slot(param_nickname, 0)
             try:
-                name = param_table[field_value].name
+                name = draw_param[field_value].Name
             except KeyError:
                 return [BrokenLink()]
             else:
