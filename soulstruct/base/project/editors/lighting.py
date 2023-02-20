@@ -55,7 +55,7 @@ class LightingEntryRow(EntryRow):
 class LightingEditor(BaseFieldEditor):
     DATA_NAME = "Lighting"
     TAB_NAME = "lighting"
-    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_WIDTH = 280
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 200
     FIELD_BOX_WIDTH = 500
@@ -87,19 +87,18 @@ class LightingEditor(BaseFieldEditor):
                     width=40,
                     padx=10,
                     label="Map Area:",
-                    label_font_size=12,
                     label_position="left",
-                    font=("Segoe UI", 12),
+                    font=self.CONFIG.REGULAR_FONT,
                 ).var
-                self.slot_choice_label = self.Label(text="Slot:", font_size=10, padx=(30, 0))
+                self.slot_choice_label = self.Label(text="Slot:", padx=(30, 0))
                 self.slot_choice = self.Combobox(
-                    values=("0", "1"), font=("Segoe UI", 10), on_select_function=self._on_slot_choice, width=2, padx=10
+                    values=("0", "1"), font=self.CONFIG.SMALL_FONT, on_select_function=self._on_slot_choice,
+                    width=2, padx=10
                 )
                 self.Button(
                     text="Copy Slot 0 to Slot 1",
                     bg="#622",
                     width=20,
-                    font_size=10,
                     padx=5,
                     command=self.regenerate_slot_1,
                 )

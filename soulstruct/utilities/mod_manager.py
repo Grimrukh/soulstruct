@@ -39,7 +39,7 @@ class ModManagerWindow(SmartFrame):
             self.mods = []
 
         with self.set_master(padx=20, pady=20, auto_rows=0):
-            self.Label(text="Mod Manager", font_size=25, pady=(5, 10))
+            self.Label(text="Mod Manager", font=("Segoe UI", 25), pady=(5, 10))
             with self.set_master(auto_columns=0, grid_defaults={"padx": 10}):
                 with self.set_master(width=20, auto_rows=0):
                     self.Label(text="Mod List:")

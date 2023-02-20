@@ -29,7 +29,7 @@ _LOGGER = logging.getLogger(__name__)
 _DEFAULT_STEAM_PATH = r"C:\Program Files (x86)\Steam\steamapps\common"
 _CONFIG_DEFAULTS = {
     "DEFAULT_PROJECT_PATH": "",
-    "DEFAULT_TEXT_EDITOR_FONT_SIZE": 10,
+    "DEFAULT_TEXT_EDITOR_FONT_SIZE": 14,
     "DES_PATH": r"C:\Demon's Souls\PS3_GAME\USRDIR",
     "DESR_PATH": r"C:\Demon's Souls Remake\dvdroot_ps5",
     "PTDE_PATH": _DEFAULT_STEAM_PATH + r"\Dark Souls Prepare to Die Edition\DATA",

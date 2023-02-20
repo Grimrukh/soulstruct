@@ -18,7 +18,6 @@ class ProjectTest(unittest.TestCase):
     #     except FileNotFoundError:
     #         pass
 
-    @profile_function(20)
     def test_project_window(self):
         ProjectWindow(project_path="_test_project", game_root=DSR_VANILLA_PATH).wait_window()
 

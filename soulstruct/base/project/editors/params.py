@@ -93,7 +93,7 @@ class ParamEntryRow(EntryRow):
 class ParamsEditor(BaseFieldEditor):
     DATA_NAME = "Params"
     TAB_NAME = "params"
-    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_WIDTH = 400
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 300
     FIELD_BOX_WIDTH = 500
@@ -120,7 +120,7 @@ class ParamsEditor(BaseFieldEditor):
                     label="Go to Param ID:", label_position="left", integers_only=True, width=30, padx=10
                 )
                 self.go_to_param_id_entry.bind("<Return>", self.go_to_param_id)
-                self.search_result = self.Label(font_size=10, fg="#CCF").var
+                self.search_result = self.Label(fg="#CCF").var
 
             super().build()
 

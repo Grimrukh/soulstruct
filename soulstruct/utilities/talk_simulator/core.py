@@ -239,7 +239,7 @@ class TalkSimulatorWindow(SmartFrame):
         with self.set_master(auto_columns=0, padx=10, pady=10):
             with self.set_master(auto_rows=0):
 
-                self.current_state = self.Label(text="State: None", font_size=20, pady=10)
+                self.current_state = self.Label(text="State: None", pady=10)
 
                 self.current_conditions = self.Listbox(
                     label="Conditions:",
@@ -264,13 +264,13 @@ class TalkSimulatorWindow(SmartFrame):
 
             # Panel
             with self.set_master():
-                self.Label(text="Game State", font_size=14, row=0, column=0)
+                self.Label(text="Game State", row=0, column=0)
                 with self.set_master(row=1, column=0, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
                     self.sim.game_state.build(self)
-                self.Label(text="Entity State", font_size=14, row=0, column=1)
+                self.Label(text="Entity State", row=0, column=1)
                 with self.set_master(row=1, column=1, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
                     self.sim.entity_state.build(self)
-                self.Label(text="Player State", font_size=14, row=0, column=2)
+                self.Label(text="Player State", row=0, column=2)
                 with self.set_master(row=1, column=2, auto_rows=0, grid_defaults={"pady": 5}, padx=20):
                     self.sim.player_state.build(self)
 

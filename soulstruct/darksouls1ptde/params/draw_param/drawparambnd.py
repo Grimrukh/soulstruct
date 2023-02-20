@@ -60,7 +60,7 @@ class DrawParamBND(Binder):
         ("ShadowBank", "Shadows"),
         ("ToneCorrectBank", "ToneCorrection"),
         ("ToneMapBank", "ToneMapping"),
-        ("LodBank", "Lod"),
+        ("LodBank", "Lods"),
         ("s_LightBank", "s_BakedLight"),  # unused (debug)
     )
     PARAM_TYPES: tp.ClassVar[dict[str, BaseGameParam]] = {
@@ -112,6 +112,7 @@ class DrawParamBND(Binder):
     ToneCorrection = draw_param_property("ToneCorrectBank")  # type: list[DrawParam[TONE_CORRECT_BANK]]
     ToneMapping = draw_param_property("ToneMapBank")  # type: list[DrawParam[TONE_MAP_BANK]]
     DebugBakedLight = draw_param_property("s_LightBank")  # type: list[DrawParam[LIGHT_BANK]]
+    Lods = draw_param_property("LodBank")  # type: list[DrawParam[LOD_BANK]]
 
     def __post_init__(self):
         if self.draw_params:

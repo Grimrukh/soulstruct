@@ -485,7 +485,7 @@ class MapFieldRow(FieldRow):
 class MapsEditor(BaseFieldEditor, abc.ABC):
     DATA_NAME = "Maps"
     TAB_NAME = "maps"
-    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_WIDTH = 400
     ENTRY_BOX_WIDTH = 350
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 200
@@ -537,10 +537,9 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
                 self.map_choice = self.Combobox(
                     values=map_display_names,
                     label="Map:",
-                    label_font_size=12,
                     label_position="left",
-                    width=35,
-                    font=("Segoe UI", 12),
+                    width=55,
+                    font=self.CONFIG.REGULAR_FONT,
                     on_select_function=self.on_map_choice,
                     sticky="w",
                     padx=10,

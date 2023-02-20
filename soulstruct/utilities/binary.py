@@ -892,6 +892,7 @@ class BinaryArrayMetadata(BinaryMetadata):
         self.pack_func = pack_func
         self.should_skip_func = should_skip_func
         self.bit_count = -1
+        super(BinaryArrayMetadata, self).__post_init__()
 
     def get_unpacker(self) -> tp.Callable[[list[tp.Any]], FIELD_T]:
         func = "def unpack(struct_output: list[tp.Any], metadata=self) -> FIELD_T:\n"

@@ -92,7 +92,6 @@ class EntityEntryRow(EntryRow):
             width=self.ENTRY_ID_WIDTH,
             bg=bg_color,
             fg=self.ENTRY_ID_FG,
-            font_size=11,
             sticky="e",
         )
         if self.EDIT_ENTRY_ID:
@@ -113,7 +112,6 @@ class EntityEntryRow(EntryRow):
             bg=bg_color,
             fg=self.ENTRY_TEXT_FG,
             anchor="w",
-            font_size=11,
             justify="left",
             width=self.ENTRY_TEXT_WIDTH,
         )
@@ -127,7 +125,6 @@ class EntityEntryRow(EntryRow):
             bg=bg_color,
             fg=self.ENTRY_TEXT_FG,
             anchor="w",
-            font_size=11,
             justify="left",
             width=self.ENTRY_DESCRIPTION_WIDTH,
         )
@@ -205,7 +202,7 @@ class EntityEntryRow(EntryRow):
 class EntityEditor(BaseEditor):
     DATA_NAME = "Maps"
     TAB_NAME = "entities"
-    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_WIDTH = 400
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100  # More are added dynamically as needed.
@@ -235,6 +232,7 @@ class EntityEditor(BaseEditor):
     def build(self):
         with self.set_master(sticky="nsew", row_weights=[0, 1], column_weights=[1], auto_rows=0):
 
+            # HEADER BUTTONS
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1, 1, 1], auto_columns=0):
                 map_display_names = [
                     f"{game_map.msb_file_stem} [{game_map.verbose_name}]"
@@ -244,17 +242,15 @@ class EntityEditor(BaseEditor):
                 self.map_choice = self.Combobox(
                     values=map_display_names,
                     label="Map:",
-                    label_font_size=12,
                     label_position="left",
-                    width=35,
-                    font=("Segoe UI", 12),
+                    width=55,
+                    font=self.CONFIG.REGULAR_FONT,
                     on_select_function=self.on_map_choice,
                     sticky="w",
                     padx=10,
                 )
                 self.Button(
                     text="Import Entity IDs",
-                    font_size=10,
                     width=17,
                     padx=10,
                     command=lambda: self._import_entities_module(import_names=False),
@@ -263,7 +259,6 @@ class EntityEditor(BaseEditor):
                 )
                 self.Button(
                     text="Import Entity Names",
-                    font_size=10,
                     width=20,
                     padx=10,
                     command=lambda: self._import_entities_module(import_names=True),
@@ -272,7 +267,6 @@ class EntityEditor(BaseEditor):
                 )
                 self.Button(
                     text="Write Entities",
-                    font_size=10,
                     width=15,
                     padx=10,
                     command=self._write_entities_module,
@@ -282,6 +276,7 @@ class EntityEditor(BaseEditor):
                     "regenerating this file.",
                 )
 
+            # MAIN BOXES
             with self.set_master(sticky="nsew", row_weights=[1], column_weights=[0, 1], auto_columns=0):
                 self.build_category_canvas()
                 with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1], auto_rows=0):

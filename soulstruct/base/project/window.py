@@ -17,6 +17,8 @@ from soulstruct.containers import Binder
 from soulstruct.utilities.text import word_wrap
 from soulstruct.utilities.window import SmartFrame
 
+from . import editor_config
+
 from .editors import (
     AIEditor,
     EntityEditor,
@@ -148,7 +150,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.export_all_button = None
         self.export_tab_button = None
 
-        self.toplevel.minsize(700, 500)
+        self.toplevel.minsize(900, 800)
         self.alphanumeric_word_boundaries()
         if getattr(sys, "frozen", False):
             self.toplevel.protocol("WM_DELETE_WINDOW", self.confirm_quit)
@@ -162,22 +164,27 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.build_top_menu()
 
         with self.set_master(self.global_ribbon, auto_columns=0, grid_defaults={"padx": 5}):
+            button_width = 30
+            font = editor_config.BOLD_FONT
             self.save_all_button = self.Button(
-                text="Save Entire Project",
-                width=20,
+                text="SAVE FULL PROJECT",
+                width=button_width,
+                font=font,
                 bg="#622",
                 tooltip_text="Saves all project data types to local project files. (Ctrl + Shift + S)",
                 command=self._save_data,
             )
             self.save_tab_button = self.Button(
-                text="Save Tab Data",
-                width=20,
+                text="SAVE TAB DATA",
+                width=button_width,
+                font=font,
                 tooltip_text="Saves just the indicated data type to local project files. (Ctrl + S)",
                 command=lambda: self._save_data(self.current_data_type),
             )
             self.export_tab_button = self.Button(
-                text="Export Tab Data",
-                width=20,
+                text="EXPORT TAB DATA",
+                width=button_width,
+                font=font,
                 tooltip_text=(
                     "Saves and exports just the indicated data type to the game directory. For Events/Talk, exports "
                     "ONLY the currently selected script. (Ctrl + E)"
@@ -189,8 +196,9 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 ),
             )
             self.export_all_button = self.Button(
-                text="Export Entire Project",
-                width=20,
+                text="EXPORT ALL DATA",
+                width=button_width,
+                font=font,
                 bg="#622",
                 tooltip_text="Saves and exports ALL project data files to the game directory. (Ctrl + Shift + E)",
                 command=lambda: self._export_data(data_type=None, export_directory=self.project.game_root),
@@ -321,7 +329,9 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.create_key_bindings()
 
-        self.set_geometry()
+        # Default window dimensions are 75% of screen width/height.
+        dimensions = (0.75 * self.toplevel.winfo_screenwidth(), 0.75 * self.toplevel.winfo_screenheight())
+        self.set_geometry(dimensions=dimensions)
 
     def build_top_menu(self):
         top_menu = self.Menu()
@@ -892,8 +902,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         except AttributeError:
             raise AttributeError(f"No `DATA_NAME` for widget: {type(event.widget)}")
         if data_name is None:
-            self.save_tab_button.var.set(f"Save")
-            self.export_tab_button.var.set(f"Export")
+            self.save_tab_button.var.set("SAVE")
+            self.export_tab_button.var.set("EXPORT")
             self.save_tab_button["state"] = "disabled"
             self.export_tab_button["state"] = "disabled"
         else:
@@ -902,17 +912,17 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.export_all_button["state"] = "normal"
             self.export_tab_button["state"] = "normal"
             if data_name == "Events":
-                self.save_tab_button.var.set(f"Save Event Script")
-                self.export_tab_button.var.set(f"Export Event Script")
+                self.save_tab_button.var.set(f"SAVE EVENT SCRIPT")
+                self.export_tab_button.var.set(f"EXPORT EVENT SCRIPT")
             elif data_name == "AI":
-                self.save_tab_button.var.set(f"Save All AI")
-                self.export_tab_button.var.set(f"Export All AI")
+                self.save_tab_button.var.set(f"SAVE MAP AI")
+                self.export_tab_button.var.set(f"EXPORT MAP AI")
             elif data_name == "Talk":
-                self.save_tab_button.var.set(f"Save Talk Script")
-                self.export_tab_button.var.set(f"Export All Talk in Map")
+                self.save_tab_button.var.set(f"SAVE TALK SCRIPT")
+                self.export_tab_button.var.set(f"EXPORT MAP TALK")
             else:
-                self.save_tab_button.var.set(f"Save {data_name}")
-                self.export_tab_button.var.set(f"Export {data_name}")
+                self.save_tab_button.var.set(f"SAVE {data_name.upper()}")
+                self.export_tab_button.var.set(f"EXPORT {data_name.upper()}")
 
     def _thread_with_loading_dialog(self, dialog_title: str, dialog_message: str, func: tp.Callable, *args, **kwargs):
         """Run `func(*args, **kwargs)` in another thread while displaying an animated loading dialog in the main thread.

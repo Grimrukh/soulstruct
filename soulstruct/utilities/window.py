@@ -14,8 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 
 _GRID_KEYWORDS = {"column", "columnspan", "in", "ipadx", "ipady", "padx", "pady", "row", "rowspan", "sticky"}
 
-# TODO: Fixes blurry text at 4K, but widgets are too small.
-SET_DPI_AWARENESS = False
+SET_DPI_AWARENESS = True
 if SET_DPI_AWARENESS:
     try:
         windll.shcore.SetProcessDpiAwareness(1)
@@ -87,8 +86,7 @@ def _embed_component(component_func):
         self: SmartFrame,
         frame=None,
         label="",
-        label_font_type=None,
-        label_font_size=None,
+        label_font=None,
         label_position=None,
         label_fg=None,
         label_bg=None,
@@ -130,13 +128,10 @@ def _embed_component(component_func):
                 label_bg = kwargs.get("bg", self.STYLE_DEFAULTS["bg"])
             if label_fg is None:
                 label_fg = kwargs.get("text_fg", self.STYLE_DEFAULTS["text_fg"])
-            if label_font_type is None:
-                label_font_type = self.FONT_DEFAULTS["label_font_type"]
-            if label_font_size is None:
-                label_font_size = self.FONT_DEFAULTS["label_font_size"]
+            label_font = self.resolve_font(label_font, "label")
             inherit_bg = frame.cget("bg")
             frame = tk.Frame(frame, bg=inherit_bg)
-            label = tk.Label(frame, text=label, font=(label_font_type, label_font_size), fg=label_fg, bg=label_bg)
+            label = tk.Label(frame, text=label, font=label_font, fg=label_fg, bg=label_bg)
 
         if vertical_scrollbar or horizontal_scrollbar:
             inherit_bg = frame.cget("bg")
@@ -186,13 +181,18 @@ def _embed_component(component_func):
     return component_with_label
 
 
+# TODO: Testing here. Need a better setup for imports/config.
+from soulstruct.base.project import editor_config
+
+
 # noinspection PyPep8Naming
 class SmartFrame(tk.Frame):
     FONT_DEFAULTS = {
-        "label_font_type": "Segoe UI",
-        "label_font_size": 10,
-        "heading_font_type": "Segoe UI",
-        "heading_font_size": 15,
+        "label": editor_config.REGULAR_FONT,
+        "heading": editor_config.HEADING_FONT,
+        "button": editor_config.SMALL_FONT,
+        "tab": editor_config.REGULAR_FONT,
+        "entry": editor_config.REGULAR_FONT,
     }
 
     FileDialog = filedialog
@@ -204,7 +204,6 @@ class SmartFrame(tk.Frame):
         "disabled_fg": "#888",
         "disabled_bg": "#444",
         "readonly_bg": "#444",
-        "entry_font": ("Segoe UI", 10),
     }
 
     DEFAULT_BUTTON_KWARGS = {
@@ -212,6 +211,9 @@ class SmartFrame(tk.Frame):
         "YES": {"fg": "#FFFFFF", "bg": "#442222", "width": 20},
         "NO": {"fg": "#FFFFFF", "bg": "#444444", "width": 20},
     }
+
+    _ON_IMAGE: tk.PhotoImage = None
+    _OFF_IMAGE: tk.PhotoImage = None
 
     toplevel: Optional[tk.Toplevel]
 
@@ -230,6 +232,7 @@ class SmartFrame(tk.Frame):
             super().__init__(master, **frame_kwargs)
             if icon_data is not None:
                 self.icon = tk.PhotoImage(data=icon_data)
+                # noinspection PyProtectedMember,PyUnresolvedReferences
                 self.toplevel.tk.call("wm", "iconphoto", self.toplevel._w, self.icon)
             self.grid(sticky="nsew")
         else:
@@ -241,6 +244,13 @@ class SmartFrame(tk.Frame):
         self.grid_defaults = {}
         self.current_row = None
         self.current_column = None
+
+        if self._ON_IMAGE is None:
+            self.__class__._ON_IMAGE = tk.PhotoImage(width=48, height=24)
+            self.__class__._ON_IMAGE.put(("green",), to=(24, 0, 47, 23))
+        if self._OFF_IMAGE is None:
+            self.__class__._OFF_IMAGE = tk.PhotoImage(width=48, height=24)
+            self.__class__._OFF_IMAGE.put(("red",), to=(0, 0, 23, 23))
 
         # Current frame tracked, defaults to master frame.
         self.master_frame = self.current_frame = self.Frame(
@@ -325,7 +335,7 @@ class SmartFrame(tk.Frame):
         self.toplevel.update_idletasks()  # Actualize geometry information
 
         if dimensions is not None:
-            w_width, w_height = dimensions
+            w_width, w_height = int(dimensions[0]), int(dimensions[1])
         else:
             w_width, w_height = self.toplevel.winfo_reqwidth(), self.toplevel.winfo_reqheight()
 
@@ -363,7 +373,7 @@ class SmartFrame(tk.Frame):
             "TNotebook", background=self.STYLE_DEFAULTS["bg"], tabmargins=[2, 10, 2, 0], tabposition="nw"
         )
         self.style.configure(
-            "TNotebook.Tab", background="#333", foreground="#FFF", padding=[15, 1], font=("Segoe UI", 10)
+            "TNotebook.Tab", background="#333", foreground="#FFF", padding=[15, 1], font=(self.FONT_DEFAULTS["tab"])
         )
         self.style.map("TNotebook.Tab", background=[("selected", "#555")], expand=[("selected", [5, 3, 3, 0])])
         self.style.configure(
@@ -373,7 +383,7 @@ class SmartFrame(tk.Frame):
             "TCombobox", fieldbackground=[("readonly", "#222")], selectedbackground=[("readonly", "#222")],
         )
         self.option_add("*TCombobox*Listbox*background", "#222")
-        self.option_add("*TCombobox*Listbox*font", ("Segoe UI", 10))
+        self.option_add("*TCombobox*Listbox*font", (self.FONT_DEFAULTS["label"]))
         self.option_add("*TCombobox*Listbox*foreground", "#FFF")
 
     def start_auto_rows(self, start=0):
@@ -398,7 +408,21 @@ class SmartFrame(tk.Frame):
             kwargs_dict.setdefault("disabledforeground", self.STYLE_DEFAULTS.get("disabled_fg", None))
             kwargs_dict.setdefault("disabledbackground", self.STYLE_DEFAULTS.get("disabled_bg", None))
             kwargs_dict.setdefault("readonlybackground", self.STYLE_DEFAULTS.get("readonly_bg", None))
-            kwargs_dict.setdefault("font", self.STYLE_DEFAULTS.get("entry_font", None))
+            kwargs_dict.setdefault("font", self.FONT_DEFAULTS.get("entry", None))
+
+    def resolve_font(
+        self, font: tuple[str | None, int | None] | str | int | None, default_key: str = "label"
+    ) -> tuple[str, int]:
+        if font is None:
+            return self.FONT_DEFAULTS[default_key]
+        if isinstance(font, int):
+            return self.FONT_DEFAULTS[default_key][0], font
+        if isinstance(font, str):
+            return font, self.FONT_DEFAULTS[default_key][1]
+        return (
+            font[0] if font[0] else self.FONT_DEFAULTS[default_key][0],
+            font[1] if font[1] else self.FONT_DEFAULTS[default_key][1],
+        )
 
     # VARIABLES
 
@@ -484,16 +508,12 @@ class SmartFrame(tk.Frame):
         text=None,
         text_padx=None,
         text_pady=None,
-        font_type=None,
-        font_size=None,
+        font=None,
         style=None,
         **kwargs,
     ):
         self.set_style_defaults(kwargs, text=True)
-        if font_type is None:
-            font_type = self.FONT_DEFAULTS["label_font_type"]
-        if font_size is None:
-            font_size = self.FONT_DEFAULTS["label_font_size"]
+        font = self.resolve_font(font, "button")
         if text is not None:
             text_var = tk.StringVar(value=text)
         else:
@@ -509,7 +529,7 @@ class SmartFrame(tk.Frame):
                 textvariable=text_var,
                 padx=text_padx,
                 pady=text_pady,
-                font=(font_type, font_size),
+                font=font,
                 **kwargs,
             )
         button.var = text_var
@@ -519,7 +539,19 @@ class SmartFrame(tk.Frame):
     def Checkbutton(self, frame=None, command=None, initial_state=False, text="", **kwargs):
         self.set_style_defaults(kwargs)
         boolean_var = tk.BooleanVar(value=initial_state)
-        checkbutton = tk.Checkbutton(frame, text=text, variable=boolean_var, command=command, **kwargs)
+        kwargs["bg"] = "#444"
+        kwargs["selectcolor"] = "#444"
+        checkbutton = tk.Checkbutton(
+            frame,
+            text=text,
+            variable=boolean_var,
+            command=command,
+            image=self._OFF_IMAGE,
+            selectimage=self._ON_IMAGE,
+            indicatoron=False,
+            borderwidth=0,
+            **kwargs,
+        )
         checkbutton.var = boolean_var
         return checkbutton
 
@@ -575,19 +607,16 @@ class SmartFrame(tk.Frame):
         return entry
 
     @_embed_component
-    def Label(self, text="", frame=None, font_type=None, font_size=None, **kwargs):
+    def Label(self, text="", frame=None, font=None, **kwargs):
         self.set_style_defaults(kwargs, text=True)
-        if font_type is None:
-            font_type = self.FONT_DEFAULTS["label_font_type"]
-        if font_size is None:
-            font_size = self.FONT_DEFAULTS["label_font_size"]
+        font = self.resolve_font(font, "label")
         if isinstance(text, str):
             string_var = tk.StringVar(value=text)
         elif isinstance(text, tk.StringVar):
             string_var = text
         else:
             raise ValueError("Text must be a string or StringVar.")
-        label = tk.Label(frame, textvariable=string_var, font=(font_type, font_size), **kwargs)
+        label = tk.Label(frame, textvariable=string_var, font=font, **kwargs)
         label.var = string_var
         return label
 
@@ -662,8 +691,7 @@ class SmartFrame(tk.Frame):
         self,
         title,
         message,
-        font_size=10,
-        font_type="Segoe UI",
+        font=None,
         style_defaults=None,
         loading_dialog_subclass=None,
         **progressbar_kwargs,
@@ -674,6 +702,8 @@ class SmartFrame(tk.Frame):
         elif not issubclass(loading_dialog_subclass, LoadingDialog):
             raise TypeError("`loading_dialog_subclass` must be a subclass of `LoadingDialog`, if specified.")
 
+        font = self.resolve_font(font, "label")
+
         if style_defaults is None:
             style_defaults = self.STYLE_DEFAULTS
 
@@ -681,8 +711,7 @@ class SmartFrame(tk.Frame):
             master=self,
             title=title,
             message=message,
-            font_size=font_size,
-            font_type=font_type,
+            font=font,
             style_defaults=style_defaults,
             **progressbar_kwargs,
         )
@@ -691,8 +720,7 @@ class SmartFrame(tk.Frame):
         self,
         title,
         message,
-        font_size=10,
-        font_type="Segoe UI",
+        font=None,
         button_names=("OK",),
         button_kwargs=("OK",),
         style_defaults=None,
@@ -709,6 +737,8 @@ class SmartFrame(tk.Frame):
         elif not issubclass(custom_dialog_subclass, CustomDialog):
             raise TypeError("`custom_dialog_subclass` must be a subclass of `CustomDialog`, if specified.")
 
+        font = self.resolve_font(font, "label")
+
         if style_defaults is None:
             style_defaults = self.STYLE_DEFAULTS
         if isinstance(button_names, str):
@@ -724,8 +754,7 @@ class SmartFrame(tk.Frame):
             master=self,
             title=title,
             message=message,
-            font_size=font_size,
-            font_type=font_type,
+            font=font,
             button_names=button_names,
             button_kwargs=button_kwargs,
             style_defaults=style_defaults,
@@ -915,8 +944,7 @@ class LoadingDialog(SmartFrame):
         master,
         title="Loading...",
         message="",
-        font_size=None,
-        font_type=None,
+        font=None,
         style_defaults=None,
         **progressbar_kwargs,
     ):
@@ -929,7 +957,7 @@ class LoadingDialog(SmartFrame):
         progressbar_kwargs.setdefault("sticky", EW)
 
         with self.set_master(auto_rows=0, padx=20, pady=20):
-            self.Label(text=message, font_size=font_size, font_type=font_type, pady=10)
+            self.Label(text=message, font=font, pady=10)
             self.progress = self.Progressbar(**progressbar_kwargs)
 
         self.set_geometry(transient=True)
@@ -941,8 +969,7 @@ class CustomDialog(SmartFrame):
         master,
         title="Custom Dialog",
         message="",
-        font_size=None,
-        font_type=None,
+        font=None,
         button_names=(),
         button_kwargs=(),
         style_defaults=None,
@@ -964,7 +991,7 @@ class CustomDialog(SmartFrame):
         self.cancel_output = cancel_output
         self.default_output = default_output
 
-        self.build(message, font_size, font_type, button_names, button_kwargs)
+        self.build(message, font, button_names, button_kwargs)
 
         self.protocol("WM_DELETE_WINDOW", self.wm_delete_window)
         self.resizable(width=False, height=False)
@@ -975,14 +1002,14 @@ class CustomDialog(SmartFrame):
 
         self.set_geometry(relative_position=(0.5, 0.3), transient=True)
 
-    def build(self, message, font_size, font_type, button_names, button_kwargs):
+    def build(self, message, font, button_names, button_kwargs):
         """You can override this as desired, as long as you call `self.build_buttons()` at some point.
 
         Otherwise you can construct your own buttons with commands `lambda s=self, output=i: s.done(output)` for each
         button index `i`).
         """
         with self.set_master(auto_rows=0, padx=20, pady=20):
-            self.Label(text=message, font_size=font_size, font_type=font_type, pady=20)
+            self.Label(text=message, font=font, pady=20)
             self.build_buttons(button_names, button_kwargs)
 
     def build_buttons(self, button_names, button_kwargs):

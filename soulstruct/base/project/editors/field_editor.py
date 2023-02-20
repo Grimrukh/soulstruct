@@ -73,7 +73,6 @@ class FieldRow:
             width=editor.FIELD_NAME_WIDTH,
             bg=bg_color,
             anchor="w",
-            font_size=10,
         )
         bind_events(self.field_name_label, main_bindings)
 
@@ -104,7 +103,7 @@ class FieldRow:
             values=None,
             width=editor.FIELD_VALUE_WIDTH,
             no_grid=True,
-            font=("Segoe UI", 10),
+            font=self.master.CONFIG.REGULAR_FONT,
             on_select_function=self._combobox_choice,
         )
         self.value_combobox.bind("<MouseWheel>", lambda _: "break")  # prevent scrolling on collapsed Combobox
@@ -464,7 +463,7 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
     FIELD_CANVAS_BG = "#1d1d1d"
     FIELD_BOX_WIDTH = 450
     FIELD_BOX_HEIGHT = 400
-    FIELD_ROW_HEIGHT = 30
+    FIELD_ROW_HEIGHT = 50
     FIELD_NAME_WIDTH = 30
     FIELD_VALUE_BOX_WIDTH = 200
     FIELD_VALUE_WIDTH = 50

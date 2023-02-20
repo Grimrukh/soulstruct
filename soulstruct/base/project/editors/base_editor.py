@@ -21,6 +21,8 @@ from soulstruct.base.project.utilities import (
 from soulstruct.utilities.text import camel_case_to_spaces, string_to_identifier
 from soulstruct.utilities.window import SmartFrame, ToolTip
 
+from .. import editor_config
+
 if tp.TYPE_CHECKING:
     from soulstruct.base.project.core import GameDirectoryProject
     from soulstruct.base.project.links import WindowLinker
@@ -31,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 class EntryRow:
     """Container/manager for widgets of a single entry row in the Editor."""
     ENTRY_ANCHOR = "center"
-    ENTRY_ROW_HEIGHT = 30
+    ENTRY_ROW_HEIGHT = 50
     SHOW_ENTRY_ID = True
     EDIT_ENTRY_ID = True
     ENTRY_ID_WIDTH = 15
@@ -68,7 +70,6 @@ class EntryRow:
                 width=self.ENTRY_ID_WIDTH,
                 bg=bg_color,
                 fg=self.ENTRY_ID_FG,
-                font_size=11,
                 sticky="e",
             )
             if self.EDIT_ENTRY_ID:
@@ -92,7 +93,6 @@ class EntryRow:
             bg=bg_color,
             fg=self.ENTRY_TEXT_FG,
             anchor="w",
-            font_size=11,
             justify="left",
             width=self.ENTRY_TEXT_WIDTH,
         )
@@ -205,9 +205,9 @@ class BaseEditor(SmartFrame, abc.ABC):
     DATA_NAME = ""
     TAB_NAME = ""
     CANVAS_BG = "#1d1d1d"
-    CATEGORY_BOX_WIDTH = 250
+    CATEGORY_BOX_WIDTH = 280
     CATEGORY_BOX_HEIGHT = 400
-    CATEGORY_ROW_HEIGHT = 30
+    CATEGORY_ROW_HEIGHT = 50
     CATEGORY_ROW_HIGHLIGHT = 1
     CATEGORY_UNSELECTED_BG = "#242424"
     CATEGORY_SELECTED_BG = "#414141"
@@ -215,6 +215,8 @@ class BaseEditor(SmartFrame, abc.ABC):
     ENTRY_BOX_WIDTH = 800
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 500
+
+    CONFIG = editor_config
 
     ENTRY_ROW_CLASS = EntryRow
     entry_rows: list[EntryRow]
@@ -283,7 +285,6 @@ class BaseEditor(SmartFrame, abc.ABC):
     def build_previous_range_button(self, **kwargs):
         self.previous_range_button = self.Button(
             text=f"Previous {self.ENTRY_RANGE_SIZE}",
-            font_size=10,
             bg="#111",
             width=30,
             command=self._go_to_previous_entry_range,
@@ -295,7 +296,6 @@ class BaseEditor(SmartFrame, abc.ABC):
     def build_next_range_button(self, **kwargs):
         self.next_range_button = self.Button(
             text=f"Next {self.ENTRY_RANGE_SIZE}",
-            font_size=10,
             bg="#111",
             width=30,
             command=self._go_to_next_entry_range,
@@ -472,8 +472,7 @@ class BaseEditor(SmartFrame, abc.ABC):
                     row=row,
                     fg=self._get_category_text_fg(category),
                     bg=self.CATEGORY_UNSELECTED_BG,
-                    padx=1,
-                    font_size=10,
+                    padx=5,
                 )
                 for widget in {label, box}:
                     bind_events(

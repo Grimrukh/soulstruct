@@ -44,7 +44,7 @@ class TalkEntryRow(EntryRow):
     """Container/manager for widgets of a single entry row in the Editor."""
 
     ENTRY_ANCHOR = "center"
-    ENTRY_ROW_HEIGHT = 30
+    ENTRY_ROW_HEIGHT = 50
     EDIT_ENTRY_ID = True
     ENTRY_ID_WIDTH = 15
     ENTRY_ID_FG = "#CDF"
@@ -78,7 +78,6 @@ class TalkEntryRow(EntryRow):
             width=self.ENTRY_ID_WIDTH,
             bg=bg_color,
             fg=self.ENTRY_ID_FG,
-            font_size=11,
             sticky="e",
         )
         id_bindings = main_bindings.copy()
@@ -127,7 +126,7 @@ class TalkEditor(BaseEditor):
     DATA_NAME = "Talk"
     TAB_NAME = "talk"
     CATEGORY_BOX_WIDTH = 0
-    ENTRY_BOX_WIDTH = 126
+    ENTRY_BOX_WIDTH = 217  # NOTE: very exact (can't remember how inner text box is being sized...)
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 200
 
@@ -139,7 +138,7 @@ class TalkEditor(BaseEditor):
         project,
         esp_directory: str | Path,
         global_map_choice_func: tp.Callable,
-        text_font_size=10,
+        text_font_size=14,
         linker=None,
         master=None,
         toplevel=False,
@@ -209,10 +208,9 @@ class TalkEditor(BaseEditor):
                 self.map_choice = self.Combobox(
                     values=map_display_strings,
                     label="Map:",
-                    label_font_size=12,
                     label_position="left",
-                    width=35,
-                    font=("Segoe UI", 12),
+                    width=55,
+                    font=self.CONFIG.REGULAR_FONT,
                     on_select_function=self.on_map_choice,
                     sticky="w",
                     padx=(10, 30),
@@ -220,7 +218,6 @@ class TalkEditor(BaseEditor):
                 self.selected_map_id = self.map_choice_stem
                 self.reload_all_button = self.Button(
                     text="Reload All in Map",
-                    font_size=10,
                     bg="#222",
                     width=25,
                     padx=5,
@@ -251,7 +248,6 @@ class TalkEditor(BaseEditor):
                     ):
                         self.compile_button = self.Button(
                             text="Save & Compile",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,
@@ -263,7 +259,6 @@ class TalkEditor(BaseEditor):
                         )
                         self.reload_button = self.Button(
                             text="Reload Script",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,

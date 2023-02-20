@@ -113,7 +113,7 @@ class AIEntryRow(EntryRow):
     master: AIEditor
 
     ENTRY_ANCHOR = "center"
-    ENTRY_ROW_HEIGHT = 30
+    ENTRY_ROW_HEIGHT = 50
     EDIT_ENTRY_ID = True
     ENTRY_TYPE_WIDTH = 5
     ENTRY_TYPE_FG = "#FFA"
@@ -152,7 +152,6 @@ class AIEntryRow(EntryRow):
             width=self.ENTRY_TYPE_WIDTH,
             bg=bg_color,
             fg="#F33",
-            font_size=11,
             sticky="ew",
             tooltip_text="Type of goal: battle (B), logic (L), or neither (N). Left or right click to cycle "
             "between types.",
@@ -170,7 +169,6 @@ class AIEntryRow(EntryRow):
             width=self.ENTRY_ID_WIDTH,
             bg=bg_color,
             fg=self.ENTRY_ID_FG,
-            font_size=11,
             sticky="e",
         )
         id_bindings = main_bindings.copy()
@@ -188,7 +186,6 @@ class AIEntryRow(EntryRow):
             bg=bg_color,
             fg=self.ENTRY_TEXT_FG,
             anchor="w",
-            font_size=11,
             justify="left",
             width=self.ENTRY_TEXT_WIDTH,
         )
@@ -258,7 +255,7 @@ class AIEntryRow(EntryRow):
                     self.type_label.var.set("L")
                     self.type_label["fg"] = "#3F3"
                 case GoalType.Unknown:
-                    self.type_label.var.set("N")
+                    self.type_label.var.set("U")
                     self.type_label["fg"] = "#FFF"
                 case _:
                     raise ValueError(f"Invalid goal type: {goal_type}")
@@ -286,7 +283,7 @@ class AIEditor(BaseEditor):
         allow_decompile,
         global_map_choice_func,
         linker,
-        text_font_size=10,
+        text_font_size=14,
         master=None,
         toplevel=False,
     ):
@@ -326,10 +323,9 @@ class AIEditor(BaseEditor):
                 self.map_choice = self.Combobox(
                     values=map_names,
                     label="Map:",
-                    label_font_size=12,
                     label_position="left",
-                    width=35,
-                    font=("Segoe UI", 12),
+                    width=55,
+                    font=self.CONFIG.REGULAR_FONT,
                     on_select_function=self.on_map_choice,
                     sticky="w",
                     padx=(10, 30),
@@ -337,7 +333,6 @@ class AIEditor(BaseEditor):
                 self.selected_map_id = self.map_choice_stem
                 self.decompile_all_button = self.Button(
                     text="Decompile All" if self.allow_decompile else "Cannot Decompile",
-                    font_size=10,
                     bg="#622",
                     width=20,
                     padx=10,
@@ -345,11 +340,10 @@ class AIEditor(BaseEditor):
                     state="normal" if self.allow_decompile else "disabled",
                 )
                 self.write_all_button = self.Button(
-                    text="Write All in Map", font_size=10, bg="#222", width=20, padx=10, command=self.write_all
+                    text="Write All in Map", bg="#222", width=20, padx=10, command=self.write_all
                 )
                 self.Button(
                     text="Reload All in Map",
-                    font_size=10,
                     bg="#222",
                     width=20,
                     padx=10,
@@ -357,7 +351,6 @@ class AIEditor(BaseEditor):
                 )
                 self.Button(
                     text="Export This Map",
-                    font_size=10,
                     bg="#222",
                     width=20,
                     padx=10,
@@ -385,7 +378,6 @@ class AIEditor(BaseEditor):
                     ):
                         self.confirm_button = self.Button(
                             text="Confirm Changes",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,
@@ -398,7 +390,6 @@ class AIEditor(BaseEditor):
                         )
                         self.compile_button = self.Button(
                             text="Compile",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,
@@ -409,7 +400,6 @@ class AIEditor(BaseEditor):
                         )
                         self.decompile_button = self.Button(
                             text="Decompile",
-                            font_size=10,
                             bg="#822",
                             width=20,
                             padx=5,
@@ -420,7 +410,6 @@ class AIEditor(BaseEditor):
                     with self.set_master(sticky="nsew", row_weights=[1], column_weights=[1, 1], pady=5, auto_columns=0):
                         self.write_button = self.Button(
                             text="Write to Project",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,
@@ -433,7 +422,6 @@ class AIEditor(BaseEditor):
                         )
                         self.reload_button = self.Button(
                             text="Reload from Project",
-                            font_size=10,
                             bg="#222",
                             width=20,
                             padx=5,

@@ -101,7 +101,7 @@ class GameDirectoryProject(abc.ABC):
         self.last_import_time = ""
         self.last_export_time = ""
         self._vanilla_game_root = ""
-        self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
+        self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE  # TODO: more dynamic
         self.custom_script_directory = Path()
         self.entities_in_events_directory = False
         # TODO: Record last edit time for each file/structure.
@@ -198,7 +198,7 @@ class GameDirectoryProject(abc.ABC):
     def import_data_type(
         self, data_type: str, force_import_from_game=False, yes_to_all=False, with_window: ProjectWindow = None
     ):
-        print(f"Importing data type: {data_type}")
+        _LOGGER.info(f"Importing data type: {data_type.capitalize()}")
         if data_type in ("events", "talk"):
             return yes_to_all  # events and talk are not saved and loaded as pickles, just imported and exported
         try:
@@ -797,7 +797,6 @@ class GameDirectoryProject(abc.ABC):
             with_window.CustomDialog(
                 title="Select game directory for project",
                 message=None,
-                font_size=10,
                 custom_dialog_subclass=GameRootDialog,
                 game=game,
             )
@@ -851,7 +850,7 @@ class GameRootDialog(CustomDialog):
         self.generic_game_path = game.generic_game_path
         super().__init__(*args, **kwargs)
 
-    def build(self, message, font_size, font_type, button_names, button_kwargs):
+    def build(self, message, font, button_names, button_kwargs):
         with self.set_master(auto_rows=0, padx=20, pady=20):
             if self.generic_game_path:
                 self.Label(
@@ -861,8 +860,7 @@ class GameRootDialog(CustomDialog):
                 )
                 self.Label(
                     text=self.generic_game_path,
-                    font_size=8,
-                    font_type="Consolas",
+                    font=("Consolas", 8),
                     bg="#000",
                 )
                 self.Label(text="Otherwise, Steam can help you find your Steam installation.", pady=10)

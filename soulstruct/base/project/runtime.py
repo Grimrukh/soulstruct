@@ -11,6 +11,7 @@ import typing as tp
 
 from soulstruct.utilities.window import SmartFrame
 
+from . import editor_config
 from .exceptions import SoulstructProjectError
 from .utilities import error_as_dialog
 
@@ -52,7 +53,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                     self.Label(
                         text="Cannot use runtime tools without Python package psutil.\n"
                         "Click below to install it, then restart Soulstruct.",
-                        font_size=14,
                         pady=10,
                         row=0,
                     )
@@ -61,7 +61,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
                         command=self._install_psutil,
                         bg="#422",
                         width=30,
-                        font_size=16,
+                        font=self.FONT_DEFAULTS["heading"],
                         row=1,
                         tooltip_text="Install the Python package `psutil` into your Python distribution, which will "
                         "enable runtime tools.",
@@ -70,7 +70,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
                 with self.set_master(
                     auto_columns=0, padx=10, pady=10, row_weights=[1], column_weights=[1, 1, 1, 1, 1], sticky="n"
                 ):
-                    button_kwargs = {"width": 20, "sticky": "nsew", "padx": 10, "pady": 10, "font_size": 12}
+                    button_kwargs = {"width": 20, "sticky": "nsew", "padx": 10, "pady": 10}
                     self.Button(
                         text="Launch Game",
                         command=self._error_as_dialog(self.project.launch_game),
@@ -117,16 +117,14 @@ class RuntimeManager(SmartFrame, abc.ABC):
                         values=game_saves,
                         initial_value=game_saves[0] if game_saves else "",
                         width=40,
-                        label_font_size=10,
                         label="Available Saves:",
                         label_position="left",
-                        font=("Segoe UI", 10),
+                        font=editor_config.SMALL_FONT,
                         row=0,
                         column=0,
                     )
                     self.Button(
                         text="Load Save",
-                        font_size=10,
                         bg="#222",
                         padx=10,
                         width=15,
@@ -136,7 +134,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                     )
                     delete_button = self.Button(
                         text="Delete (Shift + Click)",
-                        font_size=10,
                         bg="#422",
                         padx=20,
                         width=20,
@@ -151,7 +148,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                     ).var
                     create_save_button = self.Button(
                         text="Create Save",
-                        font_size=10,
                         bg="#222",
                         padx=10,
                         pady=(10, 0),
@@ -160,7 +156,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
                         row=1,
                         column=1,
                     )
-                    self.Label(text="Shift + Click to Overwrite", font_size=8, row=2, column=1)
+                    self.Label(text="Shift + Click to Overwrite", row=2, column=1)
                     create_save_button.bind(
                         "<Button-1>", self._error_as_dialog(lambda _: self.create_game_save(overwrite=False))
                     )
@@ -185,7 +181,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                     )
                     self.Button(
                         text="Read Flag",
-                        font_size=10,
                         bg="#222",
                         padx=10,
                         pady=(10, 0),
@@ -194,7 +189,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                     )
                     self.Button(
                         text="Write Flag",
-                        font_size=10,
                         bg="#422",
                         padx=10,
                         pady=(10, 0),
@@ -206,7 +200,6 @@ class RuntimeManager(SmartFrame, abc.ABC):
                 with self.set_master(padx=10, pady=20):
                     self.Label(
                         text="Event flag read/write not supported for this game.",
-                        font_size=14,
                         pady=10,
                         row=0,
                     )

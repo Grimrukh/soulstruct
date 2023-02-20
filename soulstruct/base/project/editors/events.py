@@ -16,6 +16,8 @@ from soulstruct.base.events.emevd.evs import EVSError
 from soulstruct.base.project.utilities import TagData, TextEditor
 from soulstruct.utilities.window import SmartFrame
 
+from .. import editor_config
+
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd_directory import EventDirectory
 
@@ -86,6 +88,8 @@ class EventEditor(SmartFrame):
     TEXT_BG = "#232323"
     TEXT_BOX_WIDTH = 300
 
+    CONFIG = editor_config
+
     events: EventDirectory
 
     def __init__(
@@ -94,7 +98,7 @@ class EventEditor(SmartFrame):
         evs_directory,
         game_root,
         global_map_choice_func,
-        text_font_size=10,
+        text_font_size=14,
         master=None,
         toplevel=False,
     ):
@@ -137,13 +141,12 @@ class EventEditor(SmartFrame):
             self.map_choice = self.Combobox(
                 values=(),
                 initial_value="",
-                width=35,
+                width=55,
                 on_select_function=self.on_map_choice,
                 sticky="w",
                 label="Map:",
-                label_font_size=12,
                 label_position="left",
-                font=("Segoe UI", 12),
+                font=self.CONFIG.REGULAR_FONT,
                 padx=10,
                 pady=10,
             )
@@ -196,7 +199,6 @@ class EventEditor(SmartFrame):
         with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky="n"):
             self.compile_button = self.Button(
                 text="Save & Compile",
-                font_size=10,
                 width=15,
                 padx=5,
                 command=self._compile_selected,
@@ -205,7 +207,6 @@ class EventEditor(SmartFrame):
             )
             self.reload_button = self.Button(
                 text="Reload Script",
-                font_size=10,
                 width=15,
                 padx=5,
                 command=self.reload_selected,
@@ -213,7 +214,6 @@ class EventEditor(SmartFrame):
             )
             self.Button(
                 text="Reload & Export",
-                font_size=10,
                 width=15,
                 padx=5,
                 bg="#822",

@@ -71,7 +71,7 @@ class TextEntryRow(EntryRow):
 class TextEditor(BaseEditor):
     DATA_NAME = "Text"
     TAB_NAME = "text"
-    CATEGORY_BOX_WIDTH = 165
+    CATEGORY_BOX_WIDTH = 280
     CATEGORY_BOX_HEIGHT = 400
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
