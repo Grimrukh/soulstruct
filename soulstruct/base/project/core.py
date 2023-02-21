@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["GameDirectoryProject"]
+__all__ = ["ProjectDataType", "GameDirectoryProject", "DATA_CLASS_TYPING", "DATA_OBJECT_TYPING"]
 
 import abc
 import datetime
@@ -8,13 +8,11 @@ import json
 import logging
 import os
 import re
-import pickle
 import shutil
 import subprocess
 import sys
 import threading
 import typing as tp
-from functools import wraps
 from pathlib import Path
 
 from soulstruct import __version__
@@ -24,21 +22,42 @@ from soulstruct.utilities.files import PACKAGE_PATH, read_json, write_json
 from soulstruct.utilities.misc import traverse_path_tree
 from soulstruct.utilities.window import CustomDialog
 
+from .enums import ProjectDataType
 from .exceptions import SoulstructProjectError, RestoreBackupError
+from .save_manager import SaveManager
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.base_binary_file import BaseBinaryFile
-    from soulstruct.base.game_file_directory import GameFileDirectory
     from soulstruct.games import Game
     # Relative imports for easier copy-pasting into game submodules.
-    from ..ai.ai_directory import ScriptDirectory
-    from ..events.emevd_directory import EventDirectory
-    from ..ezstate.talk_directory import TalkDirectory
-    from ..maps.map_studio_directory import MapStudioDirectory
-    from ..params.gameparambnd import GameParamBND
-    from soulstruct.darksouls1ptde.params.draw_param import DrawParamDirectory
-    from ..text.msg_directory import MSGDirectory
+    from ..ai import LuaBND, AIScriptDirectory
+    from ..game_types import GameEnumsManager
+    from ..events import EventDirectory
+    from ..ezstate import TalkDirectory
+    from ..maps import MapStudioDirectory
+    from ..params import GameParamBND
+    from soulstruct.darksouls1ptde.params.draw_param import DrawParamDirectory  # TODO: Move to PTDE/DSR subclasses.
+    from ..text import MSGDirectory
     from .window import ProjectWindow
+
+    DATA_OBJECT_TYPING = tp.Union[
+        AIScriptDirectory,
+        # `Events` has no data object, just plaintext EVS scripts.
+        DrawParamDirectory,
+        GameParamBND,
+        MapStudioDirectory,
+        MSGDirectory,
+        # `Talk` has no data object, just plaintext EVS scripts.
+    ]
+
+    DATA_CLASS_TYPING = tp.Union[
+        AIScriptDirectory,
+        EventDirectory,
+        DrawParamDirectory,
+        GameParamBND,
+        MapStudioDirectory,
+        MSGDirectory,
+        TalkDirectory,
+    ]
 
 try:
     import psutil
@@ -50,372 +69,551 @@ _LOGGER = logging.getLogger(__name__)
 _GAME_MODULE_RE = re.compile(r"^soulstruct\.(\w+)\..*$")
 
 
-def _with_config_write(func):
-    """Automatically write project config whenever this function/method is called."""
-    @wraps(func)
-    def project_method(self, *args, **kwargs):
-        func(self, *args, **kwargs)
-        self._write_config()
-
-    return project_method
-
-
-def _data_type_action(func):
-    """Validate `data_type` argument and recur on all project types if it is `None`."""
-    @wraps(func)
-    def data_type_action(self, data_type, *args, **kwargs):
-        if data_type is None:
-            for data_type in self.DATA_TYPES:
-                func(self, data_type, *args, **kwargs)  # recur on every type
-            return
-        data_type = data_type.lower()
-        if data_type not in self.DATA_TYPES:
-            data_type_list = list(self.DATA_TYPES)
-            raise ValueError(f"`data_type` should be None (for all types) or one of {data_type_list}, not {data_type}.")
-        func(self, data_type, *args, **kwargs)
-
-    return data_type_action
-
-
-# NOT a dataclass.
 class GameDirectoryProject(abc.ABC):
-    """Manages an entire editable instance of a game installation (or rather, all the file types Soulstruct can handle).
+    """Manages an entire editable instance of a game installation (or at least, all the files Soulstruct can handle
+    for that specific game).
 
     It is recommended that you create one of these projects for each Soulstruct-based mod.
     """
 
-    # Default project root (for relative project paths) is in the current working directory for standard Python use
-    # or next to the frozen PyInstaller executable, if applicable.
+    # Default project root (for relative project paths) is in the current working directory for standard Python
+    # environments or next to the frozen PyInstaller executable.
     if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
         _DEFAULT_PROJECT_ROOT = Path(sys.executable).parent
     else:
         _DEFAULT_PROJECT_ROOT = Path(os.getcwd())
 
-    DATA_TYPES = {}  # type: dict[str, tp.Type[BaseBinaryFile]]
+    # Maps `ProjectDataType` enums supported by this game to the classes that load them (`MapStudioDirectory`, etc.).
+    DATA_TYPES: tp.ClassVar[dict[ProjectDataType, tp.Type[DATA_CLASS_TYPING]]] = {}
 
+    game_root: Path
     project_root: Path
+    save_manager: SaveManager
+    last_import_time: str
+    last_export_time: str
+    python_script_directory: Path
+    text_editor_font_size: int
+    enums_in_events_folder: bool
+    other_settings: dict[str, tp.Any]
 
-    def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: str | Path = None):
+    # Instance data dictionary. Contents should be accessed with properties (`ai`, `maps`, etc.).
+    # Values here are not necessarily classes from `DATA_TYPES.values()`, e.g. Events/Talk are stored as plaintext.
+    _data: dict[ProjectDataType, DATA_OBJECT_TYPING]
+    _vanilla_game_root: Path
+
+    def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: Path | str = None):
 
         self.game_root = Path()
+        self.save_manager = SaveManager(self.get_game())
         self.last_import_time = ""
         self.last_export_time = ""
-        self._vanilla_game_root = ""
-        self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE  # TODO: more dynamic
-        self.custom_script_directory = Path()
-        self.entities_in_events_directory = False
-        # TODO: Record last edit time for each file/structure.
+        self._vanilla_game_root = Path()
+        self.python_script_directory = Path()
+        self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
+        self.enums_in_events_folder = False
+        self.do_not_write_param_defaults = True
+        self.other_settings = {}
 
-        # Initialize with empty structures.
-        self.ai_directory = self._get_default_data("ai")  # type: ScriptDirectory
-        self.draw_param_directory = self._get_default_data("lighting")  # type: DrawParamDirectory
-        self.emevd_directory = self._get_default_data("events")  # type: EventDirectory
-        self.gameparambnd = self._get_default_data("params")  # type: GameParamBND
-        self.map_studio_directory = self._get_default_data("maps")  # type: MapStudioDirectory
-        self.msg_directory = self._get_default_data("text")  # type: MSGDirectory
-        self.talk_directory = self._get_default_data("talk")  # type: TalkDirectory
+        self._data = {}
 
         self.project_root = self._validate_project_directory(Path(project_path), self._DEFAULT_PROJECT_ROOT)
-        first_time, force_import_from_game = self.load_config(with_window=with_window, game_root=game_root)
-        self.initialize_project(force_import_from_game, with_window=with_window, first_time=first_time)
 
-    def _get_default_data(self, data_type: str):
-        if data_type not in self.DATA_TYPES:
-            return None
+        config_path = self.project_root / "project_config.json"
+        if config_path.is_file():
+            success = self.load_existing_project(config_path, new_game_root=game_root)
+            if not success:
+                _LOGGER.warning("Project load interrupted. Project instance will be empty.")
         else:
-            return self.DATA_TYPES[data_type]()
+            success = self.create_new_project(with_window=with_window, game_root=game_root)
+            if not success:
+                _LOGGER.warning("Project creation interrupted. Project instance will be empty.")
+
+    def _get_data(self, data_type: ProjectDataType) -> DATA_OBJECT_TYPING:
+        if data_type not in self.DATA_TYPES:
+            raise TypeError(f"This game's `GameDirectoryProject` does not support {data_type.name} data.")
+        return self._data.get(data_type, None)
+
+    def _set_data(self, data_type: ProjectDataType, data: DATA_OBJECT_TYPING):
+        if data_type not in self.DATA_TYPES:
+            raise TypeError(f"This game's `GameDirectoryProject` does not support {data_type.name} data.")
+        self._data[data_type] = data
+
+    def get_data_class(self, data_type: ProjectDataType) -> tp.Type[DATA_CLASS_TYPING]:
+        if data_type not in self.DATA_TYPES:
+            raise TypeError(f"This game's project class does not support {data_type.name} data.")
+        return self.DATA_TYPES[data_type]
 
     @property
-    def ai(self) -> ScriptDirectory:
-        return self.ai_directory
+    def is_empty(self) -> bool:
+        return not self._data
+
+    # region Data Properties
+    @property
+    def ai(self) -> AIScriptDirectory:
+        return self._get_data(ProjectDataType.AI)
 
     @ai.setter
-    def ai(self, value: ScriptDirectory):
-        self.ai_directory = value
+    def ai(self, value: AIScriptDirectory):
+        self._set_data(ProjectDataType.AI, value)
 
-    @property
-    def events(self) -> EventDirectory:
-        return self.emevd_directory
-
-    @events.setter
-    def events(self, value: EventDirectory):
-        self.emevd_directory = value
+    # NOTE: No `events` property. Events are stored as plaintext EVS scripts until binary file needs to be written.
 
     @property
     def lighting(self) -> DrawParamDirectory:
-        return self.draw_param_directory
+        return self._get_data(ProjectDataType.Lighting)
 
     @lighting.setter
     def lighting(self, value: DrawParamDirectory):
-        self.draw_param_directory = value
+        self._set_data(ProjectDataType.Lighting, value)
 
     @property
     def maps(self) -> MapStudioDirectory:
-        return self.map_studio_directory
+        return self._get_data(ProjectDataType.Maps)
 
     @maps.setter
     def maps(self, value: MapStudioDirectory):
-        self.map_studio_directory = value
+        self._set_data(ProjectDataType.Maps, value)
 
     @property
     def params(self) -> GameParamBND:
-        return self.gameparambnd
+        return self._get_data(ProjectDataType.Params)
 
     @params.setter
     def params(self, value: GameParamBND):
-        self.gameparambnd = value
+        self._set_data(ProjectDataType.Params, value)
 
-    @property
-    def talk(self):
-        return self.talk_directory
-
-    @talk.setter
-    def talk(self, value: TalkDirectory):
-        self.talk_directory = value
+    # NOTE: No `talk` property. Talk scripts are stored as plaintext ESP scripts until binary file needs to be written.
 
     @property
     def text(self) -> MSGDirectory:
-        return self.msg_directory
+        return self._get_data(ProjectDataType.Text)
 
     @text.setter
     def text(self, value: MSGDirectory):
-        self.msg_directory = value
+        self._set_data(ProjectDataType.Text, value)
+    # endregion
 
-    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None, first_time=False):
-        """Load project structures from pickled project files if available, or prompt for initial import to create."""
-
-        yes_to_all = force_import_from_game
-        for data_type in self.DATA_TYPES:
-            yes_to_all = self.import_data_type(data_type, force_import_from_game, yes_to_all, with_window=with_window)
-
-        if "events" in self.DATA_TYPES:
-            self.import_events(force_import=yes_to_all, with_window=with_window)
-            self.offer_events_submodule_copy(with_window=with_window)
-
-        if "talk" in self.DATA_TYPES:
-            self.import_talk(force_import=yes_to_all, with_window=with_window)
-
-    def import_data_type(
-        self, data_type: str, force_import_from_game=False, yes_to_all=False, with_window: ProjectWindow = None
-    ):
-        _LOGGER.info(f"Importing data type: {data_type.capitalize()}")
-        if data_type in ("events", "talk"):
-            return yes_to_all  # events and talk are not saved and loaded as pickles, just imported and exported
-        try:
-            if force_import_from_game:
-                raise FileNotFoundError  # don't bother looking for existing file
-            self.load(data_type)
-        except FileNotFoundError:
-            if yes_to_all:
-                self.import_data_from_game(data_type)
-                self.save(data_type)
-            else:
-                if with_window:
-                    result = with_window.CustomDialog(
-                        title="Data Missing",
-                        message=f"Could not find saved '{data_type}' data in project.\n"
-                                f"Would you like to import it from the game directory now?",
-                        button_names=("Yes", "Yes to All", "No, quit now"),
-                        button_kwargs=("YES", "YES", "NO"),
-                        cancel_output=2,
-                        default_output=2,
-                    )
-                else:
-                    result = 2 if (
-                            input(
-                                f"Could not find saved '{data_type}' data in project.\n"
-                                f"Would you like to import it from the game directory now? [y]/n "
-                            ).lower() == "n"
-                    ) else 0
-                if result in {0, 1}:
-                    self.import_data_from_game(data_type)
-                    self.save(data_type)
-                    if result == 1:
-                        yes_to_all = True
-                else:
-                    raise SoulstructProjectError("Could not open project files.")
-
-        return yes_to_all
-
-    def import_events(self, force_import=False, with_window: ProjectWindow = None):
-        if not (self.project_root / "events").is_dir() or not (self.project_root / "events").glob("*"):
-            if force_import:
-                self.import_data_from_game("events")
-            else:
-                if with_window:
-                    result = with_window.CustomDialog(
-                        title="Project Error",
-                        message=f"Could not find any event scripts in project.\n"
-                                f"Would you like to decompile and import them from the game directory now?",
-                        button_names=("Yes", "No, I'll handle events"),
-                        button_kwargs=("YES", "NO"),
-                        cancel_output=1,
-                        default_output=1,
-                    )
-                else:
-                    result = 1 if (
-                            input(
-                                f"Could not find any event scripts in project.\n"
-                                f"Would you like to import them from the game directory now? [y]/n "
-                            ).lower() == "n"
-                    ) else 0
-                if result == 0:
-                    self.import_data_from_game("events")
-
-    def import_talk(self, force_import=False, with_window: ProjectWindow = None):
-        if not (self.project_root / "talk").is_dir() or not (self.project_root / "talk").glob("*"):
-            if force_import:
-                self.import_data_from_game("talk")
-            else:
-                if with_window:
-                    result = with_window.CustomDialog(
-                        title="Project Error",
-                        message=f"Could not find any talk scripts in project.\n"
-                                f"Would you like to decompile and import them from the game directory now?",
-                        button_names=("Yes", "No, I'll handle talk"),
-                        button_kwargs=("YES", "NO"),
-                        cancel_output=1,
-                        default_output=1,
-                    )
-                else:
-                    result = 1 if (
-                            input(
-                                f"Could not find any talk scripts in project.\n"
-                                f"Would you like to import them from the game directory now? [y]/n "
-                            ).lower() == "n"
-                    ) else 0
-                if result == 0:
-                    self.import_data_from_game("talk")
-
-    @_with_config_write
-    @_data_type_action
-    def save(self, data_type: str = None):
-        """Save given data type ('maps', 'text', etc.) as pickled project file.
-
-        Events and Talk scripts have no additional data to save beyond the project's text script files.
-        """
-        if data_type not in {"events", "talk"}:
-            self._save_project_data(getattr(self, data_type), data_type=data_type)
-
-    @_data_type_action
-    def load(self, data_type=None):
-        """Load give data type ('maps', 'text', etc.) from pickled project file.
-
-        Events and Talk scripts have no additional data to load beyond the project's text script files.
-        """
-        if data_type not in {"events", "talk"}:
-            setattr(self, data_type, self._load_project_data(data_type))
-
-    def _save_project_data(self, data: BaseBinaryFile | GameFileDirectory, data_type: str):
-        """Write given project data structure `data` to project JSON file or directory."""
-        if hasattr(data, "write_json_directory"):
-            # JSON directory.
-            json_directory_path = self.project_root / data_type
-            first_time = not json_directory_path.exists()
-            # TODO: Configurable `Param` pad/default write options?
-            data.write_json_directory(json_directory_path)
-            if first_time:
-                _LOGGER.info(f"Created new '{data_type}' project folder with JSON files/subdirectories.")
-            return
-
-        if hasattr(data, "write_json"):
-            # Single JSON file.
-            json_file_path = (self.project_root / data_type).with_suffix(".json")
-            first_time = not json_file_path.exists()
-            data.write_json(json_file_path)
-            if first_time:
-                _LOGGER.info(f"Created new '{data_type}.json' project file.")
-            return
-
-        # FALLBACK: Pickled file (`.ssp`, or 'SoulStructPickle').
-        ssp_file_path = (self.project_root / data_type).with_suffix(".ssp")
-        first_time = not ssp_file_path.exists()
-        with ssp_file_path.open("wb") as f:
-            pickle.dump(data, f)
-        if first_time:
-            _LOGGER.info(f"Created new '{data_type}.ssp' project file. (Data type does not yet support JSON.)")
-
-    def _load_project_data(self, data_type: str) -> BaseBinaryFile | GameFileDirectory:
-        data_type_class = self.DATA_TYPES[data_type]
-
-        data_directory_path = self.project_root / data_type
-        if data_directory_path.is_dir():
-            if hasattr(data_type_class, "from_json_directory"):
-                # Read JSON directory.
-                return data_type_class.from_json_directory(data_directory_path)
-            raise TypeError(f"Cannot read project data type '{data_type}' from directory: {data_directory_path}")
-
-        data_json_path = self.project_root / f"{data_type}.json"
-        if data_json_path.is_file():
-            if hasattr(data_type_class, "from_json"):
-                # Read single JSON file.
-                return data_type_class.from_json(data_json_path)
-            raise TypeError(f"Cannot read project data type '{data_type}' from JSON file: {data_json_path}")
-
-        data_ssp_path = self.project_root / f"{data_type}.ssp"
-        if data_ssp_path.is_file():
-            with data_ssp_path.open("rb") as f:
-                try:
-                    return pickle.load(f)
-                except Exception as ex:
-                    raise SoulstructProjectError(
-                        f"Could not open pickled SSP project file: '{data_ssp_path}'.\n\n"
-                        f"If you are seeing this after downloading a new version of Soulstruct, there may have been a "
-                        f"non-backwards-compatible change in the internal structure of the program. Please export your "
-                        f"project files from the last working version, delete the problematic file(s) after backing "
-                        f"them up somewhere else, then re-import them into this new version.\n\n"
-                        f"Note that this data type may now support JSON project files instead, which you may see when "
-                        f"creating a new project."
-                        f""
-                        f"Specific error:\n{ex}"
-                    )
-
-        raise FileNotFoundError(f"Could not find any project files for data type '{data_type}'.")
-
-    @_with_config_write
-    @_data_type_action
-    def import_data(self, data_type=None, import_directory=None):
-        """Import data sub-structure from binary game files.
-
-        If `data_type` is None (default), all data types will be imported, in which case the given `import_directory`
-        should contain the appropriate folder structure ('map/MapStudio', etc.) for all files.
-        """
+    # region Project Import Methods
+    def _default_import(self, data_type: ProjectDataType, import_directory: Path | str) -> DATA_OBJECT_TYPING:
+        """Simply uses `from_path()` method of data type class."""
+        # TODO: warn user if project data already exists (even though we're not saving yet).
+        data_class = self.get_data_class(data_type)
         import_directory = Path(import_directory)
         data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
-        data_instance = self.DATA_TYPES[data_type].from_path(data_import_path)
-        setattr(self, data_type, data_instance)
-        if data_type == "events":  # data in `EventDirectory` is only read upon import and modified upon export
-            self.events.write_evs(
-                self.project_root / "events",
-                entities_directory=self.entities_directory,
-                warn_missing_enums=True,  # TODO: project setting
-                entity_module_prefix="..entities.",
+        return data_class.from_path(data_import_path)
+
+    def import_all(self, import_directory: Path | str):
+        for data_type in self.DATA_TYPES:
+            import_func = getattr(self, f"import_{data_type}")
+            import_func(import_directory)
+
+    def import_AI(self, import_directory: Path | str):
+        """Currently no options."""
+        ai = self._default_import(ProjectDataType.AI, import_directory)
+        self._set_data(ProjectDataType.AI, ai)
+
+    def import_Maps(self, import_directory: Path | str, put_enums_in_events_folder=False):
+        maps = self._default_import(ProjectDataType.Maps, import_directory)  # type: MapStudioDirectory
+
+        if put_enums_in_events_folder and ProjectDataType.Events not in self.DATA_TYPES:
+            _LOGGER.warning(f"Cannot put entity modules in 'events' folder when game project does not support Events.")
+            put_enums_in_events_folder = False
+
+        self.enums_in_events_folder = put_enums_in_events_folder
+
+        enums_folder = self.project_root / ("events" if put_enums_in_events_folder else "enums")
+        for map_stem, msb in maps.files.items():
+            game_map = maps.GET_MAP(map_stem)
+            msb.write_entities_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
+
+        self._set_data(ProjectDataType.Maps, maps)
+
+    def import_Params(self, import_directory: Path | str):
+        """Currently no options."""
+        params = self._default_import(ProjectDataType.Params, import_directory)
+        self._set_data(ProjectDataType.Params, params)
+
+    def import_Lighting(self, import_directory: Path | str):
+        """Currently no options."""
+        lighting = self._default_import(ProjectDataType.Lighting, import_directory)
+        self._set_data(ProjectDataType.Lighting, lighting)
+
+    def import_Events(
+        self,
+        import_directory: Path | str,
+        use_enums_in_event_scripts=True,
+        copy_python_events_submodule=False,
+    ):
+        event_class = self.get_data_class(ProjectDataType.Events)  # type: tp.Type[EventDirectory]
+        import_directory = Path(import_directory)
+        event_directory_path = self.get_game_path_of_data_type(ProjectDataType.Events, root=import_directory)
+        event_directory = event_class.from_path(event_directory_path)
+        # TODO: Enums must be written first to make use of them (obviously).
+        #  Can just pass our GameEnumsManager itself, in that case.
+        event_directory.write_evs()
+        if use_enums_in_event_scripts:
+            enums_directory = self.project_root / ("events" if self.enums_in_events_folder else "enums")
+        else:
+            enums_directory = None
+        event_directory.write_evs(
+            self.project_root / "events",
+            enums_directory=enums_directory,
+            warn_missing_enums=True,  # TODO: project setting
+            enums_module_prefix="." if self.enums_in_events_folder else "..enums.",
+        )
+        if copy_python_events_submodule:
+            self.copy_events_submodule()
+
+    def import_Text(self, import_directory: Path | str, delete_empty_text_entries=True):
+        """Option to remove all empty strings from all FMGs."""
+        text = self._default_import(ProjectDataType.Text, import_directory)  # type: MSGDirectory
+        if delete_empty_text_entries:
+            for fmg in text.fmgs.values():
+                fmg.remove_empty_strings()
+        self._set_data(ProjectDataType.Text, text)
+
+    def import_Talk(self, import_directory: Path | str):
+        # TODO: Automatically writes ESP scripts to project. Should be made clear.
+        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: tp.Type[TalkDirectory]
+        import_directory = Path(import_directory)
+        talk_directory_path = self.get_game_path_of_data_type(ProjectDataType.Talk, root=import_directory)
+        talk_directory = talk_class.from_path(talk_directory_path)
+        talk_directory.write_esp_directory(self.project_root / "talk")
+    # endregion
+
+    # region Project Export Methods
+    def _get_data_and_export_path(
+        self, data_type: ProjectDataType, export_directory: Path | str
+    ) -> tuple[DATA_OBJECT_TYPING | None, Path | None]:
+        """Get default path for exporting `data_type` relative to root `export_directory`."""
+        data = self._get_data(data_type)
+        if not data:
+            _LOGGER.warning(f"There is no {data_type.name} data to export in this project.")
+            return None, None
+        return data, self.get_game_path_of_data_type(data_type, root=Path(export_directory))
+
+    def export_all(self, export_directory: Path | str):
+        for data_type in self.DATA_TYPES:
+            export_func = getattr(self, f"export_{data_type}")
+            export_func(export_directory)
+
+    def export_AI(self, export_directory: Path | str, specific_map=""):
+        ai, export_path = self._get_data_and_export_path(ProjectDataType.AI, export_directory)
+        if specific_map:
+            luabnd = ai[specific_map]  # type: LuaBND
+            luabnd.write(export_path / specific_map, check_hash=True)  # extension handled automatically
+        else:
+            ai.write(export_path, check_file_hashes=True)
+        self._write_config()
+
+    # TODO: Enums cannot be exported. However, may want to do a 'final sync' before exporting Maps/Events.
+
+    def export_Events(self, export_directory: Path | str, specific_map=""):
+        event_class = self.get_data_class(ProjectDataType.Events)  # type: tp.Type[EventDirectory]
+        _, export_path = self._get_data_and_export_path(ProjectDataType.Events, export_directory)
+        if specific_map:
+            emevd = event_class.FILE_CLASS.from_evs_path(
+                self.project_root / f"events/{specific_map}.evs.py",
+                script_directory=self.project_root / "events"
             )
-        if data_type == "talk":  # data in `TalkDirectory` is only read upon import and modified upon export
-            self.talk.write_esp_directory(self.project_root / "talk")
+            emevd.write(export_path / specific_map)  # extension handled automatically
+        else:
+            event_directory = event_class.from_path(self.project_root / "events")  # just saved
+            event_directory.write(export_path)
+        self._write_config()
 
-    def import_data_from_game(self, data_type=None):
-        """Reads data substructures in game formats from the live game directory."""
-        self.import_data(data_type=data_type, import_directory=self.game_root)
+    def export_Lighting(self, export_directory: Path | str, specific_area=""):
+        lighting, export_path = self._get_data_and_export_path(ProjectDataType.Lighting, export_directory)
+        if specific_area:
+            drawparambnd = lighting[specific_area]
+            drawparambnd.write(export_path / (specific_area + "_DrawParam"))  # extension handled automatically
+        else:
+            lighting.write(export_path)
+        self._write_config()
 
-    @_data_type_action
-    def export_data(self, data_type=None, export_directory=None):
-        export_directory = Path(export_directory)
-        data_export_path = self.get_game_path_of_data_type(data_type, root=export_directory)
-        data_export_path.parent.mkdir(parents=True, exist_ok=True)
-        # TODO: Differentiate between exporting single EMEVD or entire directory.
-        #  - Annoying to export every script individually.
-        #  - Also annoying to update the 'last modified time' metadata of every game EMEVD when only one is updated.
-        data = getattr(self, data_type)
-        if data_type in {"events", "talk"}:
-            data.load(self.project_root / data_type)  # load text files into managed `Directory` structure for export
-        data.write(data_export_path)
+    def export_Maps(self, export_directory: Path | str, specific_map=""):
+        maps, export_path = self._get_data_and_export_path(ProjectDataType.Maps, export_directory)
+        if specific_map:
+            msb = maps[specific_map]
+            msb.write(export_path / specific_map)  # extension handled automatically
+        else:
+            maps.write(export_path)
+        self._write_config()
 
-    def export_data_to_game(self, data_type=None):
-        """Writes data substructures in game formats in the live game directory, ready for play."""
-        self.export_data(data_type=data_type, export_directory=self.game_root)
+    def export_Params(self, export_directory: Path | str, specific_param=""):
+        params, export_path = self._get_data_and_export_path(ProjectDataType.Params, export_directory)
+        if specific_param and export_path.is_file():
+            # Open active Binder and modify precise entry. Probably still faster than writing all Params.
+            param = params[specific_param]
+            params_class = self.get_data_class(ProjectDataType.Params)  # type: tp.Type[GameParamBND]
+            gameparambnd = GameParamBND.from_path(export_path)
+            internal_name = params_class.PARAM_NICKNAMES[specific_param]
+            entry = gameparambnd.find_entry_matching_name(rf"{internal_name}\.param")
+            entry.set_from_game_file(param)
+            gameparambnd.write()  # same path
+        else:
+            params.write(export_path)
+        self._write_config()
 
+    def export_Text(self, export_directory: Path | str, specific_fmg=""):
+        text, export_path = self._get_data_and_export_path(ProjectDataType.Text, export_directory)
+        if specific_fmg:
+            # TODO: need to map FMG nickname to msgbnd name, entry index
+            raise NotImplementedError("Cannot export specific Text categories yet.")
+        else:
+            text.write(export_path)
+        self._write_config()
+
+    def export_Talk(self, export_directory: Path | str, specific_map="", specific_talk_id=-1):
+        """Export ESP scripts in 'talk' directory as binary game files."""
+        talk_class = self.get_data_class(ProjectDataType.Talk)  # type: tp.Type[TalkDirectory]
+        _, export_path = self._get_data_and_export_path(ProjectDataType.Talk, export_directory)
+        if specific_map:
+            if (
+                specific_talk_id > -1
+                and (export_path / f"t{specific_talk_id}{talk_class.get_default_extension()}").is_file()
+            ):
+                talkesdbnd = talk_class.FILE_CLASS.from_path(export_path)
+                esd = talkesdbnd.find_entry_matching_name(rf"t{specific_talk_id}.esd")
+                talk = talkesdbnd.TALK_ESD_CLASS.from_esp_file(
+                    self.project_root / f"talk/{specific_map}/t{specific_talk_id}.esp.py"
+                )
+                esd.set_from_game_file(talk)
+                talkesdbnd.write()  # same path
+            else:
+                talkesdbnd = talk_class.FILE_CLASS.from_esp_directory(self.project_root / f"talk/{specific_map}")
+                talkesdbnd.write(export_path / specific_map, check_hash=True)  # extension handled automatically
+        else:
+            talk_directory = talk_class.from_path(self.project_root / "talk")
+            talk_directory.write(export_path)
+        self._write_config()
+    # endregion
+
+    # region Project Save Methods
+    def save_all(self):
+        for data_type in self.DATA_TYPES:
+            if data_type in {ProjectDataType.Events, ProjectDataType.Talk}:
+                continue  # saved externally by editor window
+            save_func = getattr(self, f"save_{data_type.name}")
+            save_func()
+
+    def save_AI(self, specific_map=""):
+        ai = self._get_data(ProjectDataType.AI)  # type: AIScriptDirectory
+        if not ai:
+            _LOGGER.warning("There is no AI data to save in this project.")
+            return
+        if specific_map:
+            luabnd = ai[specific_map]
+            luabnd.write_unpacked_directory(self.project_root / f"ai/{specific_map}")
+        else:
+            ai.write_unpacked_luabnds(self.project_root / "ai")
+        self._write_config()
+
+    # TODO: Save Enums.
+
+    # `Events` data is saved from `EventsEditor` text to EVS scripts manually.
+
+    def save_Lighting(self, specific_area=""):
+        lighting = self._get_data(ProjectDataType.Lighting)  # type: DrawParamDirectory
+        if not lighting:
+            _LOGGER.warning("There is no Lighting data to save in this project.")
+            return
+        if specific_area:
+            drawparambnd = lighting[specific_area]
+            drawparambnd.write_json_directory(
+                self.project_root / f"lighting/{specific_area}",
+                ignore_pads=True,
+                ignore_defaults=self.do_not_write_param_defaults)
+        else:
+            lighting.write_json_directory(
+                self.project_root / "lighting", ignore_pads=True, ignore_defaults=self.do_not_write_param_defaults
+            )
+        self._write_config()
+
+    def save_Maps(self, specific_map=""):
+        maps = self._get_data(ProjectDataType.Maps)  # type: MapStudioDirectory
+        if not maps:
+            _LOGGER.warning("There is no Maps data to save in this project.")
+            return
+        if specific_map:
+            msb = maps[specific_map]
+            msb.write_json(self.project_root / f"maps/{specific_map}.json")
+        else:
+            maps.write_json_directory(self.project_root / "maps")
+        self._write_config()
+
+    def save_Params(self, specific_param=""):
+        params = self._get_data(ProjectDataType.Params)  # type: GameParamBND
+        if not params:
+            _LOGGER.warning("There is no Params data to save in this project.")
+            return
+        if specific_param:
+            param = params[specific_param]
+            param.write_json(
+                self.project_root / f"params/{specific_param}.json",
+                ignore_pads=True,
+                ignore_defaults=self.do_not_write_param_defaults)
+        else:
+            params.write_json_directory(
+                self.project_root / "params", ignore_pads=True, ignore_defaults=self.do_not_write_param_defaults
+            )
+        self._write_config()
+
+    def save_Text(self, specific_fmg=""):
+        text = self._get_data(ProjectDataType.Text)  # type: MSGDirectory
+        if not text:
+            _LOGGER.warning("There is no Text data to save in this project.")
+            return
+        if specific_fmg:
+            text[specific_fmg].write_json(self.project_root / f"text/{specific_fmg}.json")
+        else:
+            text.write_json_directory(self.project_root / "text")
+        self._write_config()
+
+    # `Talk` data is saved from `TalkEditor` text to ESP manually.
+    # endregion
+
+    # region Project Load Methods
+
+    def load_AI(self) -> AIScriptDirectory | None:
+        ai_class = self.get_data_class(ProjectDataType.AI)  # type: tp.Type[AIScriptDirectory]
+        ai_dir = self.project_root / "ai_scripts"
+        if not ai_dir.is_dir():
+            return None  # no AI data (yet)
+        try:
+            return ai_class.from_unpacked_luabnds(ai_dir)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load AI data from 'ai_scripts' directory:\n\n{ex}"
+            )
+
+    def load_Lighting(self) -> DrawParamDirectory | None:
+        lighting_class = self.get_data_class(ProjectDataType.Lighting)  # type: tp.Type[DrawParamDirectory]
+        lighting_dir = self.project_root / "lighting"
+        if not lighting_dir.is_dir():
+            return None  # no Lighting data (yet)
+        try:
+            return lighting_class.from_json_directory(lighting_dir)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load Lighting data from 'lighting' directory:\n\n{ex}"
+            )
+
+    def load_Enums(self) -> GameEnumsManager | None:
+        enums_class = self.get_data_class(ProjectDataType.Enums)  # type: tp.Type[GameEnumsManager]
+        enums_dir = self.enums_directory
+        if not enums_dir.is_dir():
+            return None  # no Enums data (yet)
+
+        if enums_dir.name == "events":  # must end in 'enums.py'
+            module_paths = list(enums_dir.rglob("*_enums.py"))
+        else:  # any Python modules can be used
+            module_paths = list(enums_dir.rglob("*.py"))
+        try:
+            return enums_class(module_paths)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load Enums data from 'enums' directory:\n\n{ex}"
+            )
+
+    # `Events` EVS scripts are loaded by `EventsEditor` for text display.
+
+    def load_Params(self) -> GameParamBND | None:
+        params_class = self.get_data_class(ProjectDataType.Params)  # type: tp.Type[GameParamBND]
+        params_dir = self.project_root / "params"
+        if not params_dir.is_dir():
+            return None  # no Params data (yet)
+        try:
+            return params_class.from_json_directory(params_dir)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load Params data from 'params' directory:\n\n{ex}"
+            )
+
+    def load_Maps(self) -> MapStudioDirectory | None:
+        maps_class = self.get_data_class(ProjectDataType.Maps)  # type: tp.Type[MapStudioDirectory]
+        maps_dir = self.project_root / "maps"
+        if not maps_dir.is_dir():
+            return None  # no Maps data (yet)
+        try:
+            return maps_class.from_json_directory(maps_dir)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load Maps data from 'maps' directory:\n\n{ex}"
+            )
+
+    def load_Text(self) -> MSGDirectory | None:
+        text_class = self.get_data_class(ProjectDataType.Text)  # type: tp.Type[MSGDirectory]
+        text_dir = self.project_root / "text"
+        if not text_dir.is_dir():
+            return None  # no Text data (yet)
+        try:
+            return text_class.from_json_directory(text_dir)
+        except Exception as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                f"An error occurred while trying to load Text data from 'text' directory:\n\n{ex}"
+            )
+
+    # `Talk` ESP scripts are loaded by `TalkEditor` for text display.
+    # endregion
+
+    def get_data_type_import_settings(self, data_type: ProjectDataType) -> dict[str, tuple[str, bool, str]]:
+        """Get dictionary of settings to show in Creator Wizard (or console).
+
+        Returned dict maps each setting name to a `(display_label, default_setting)` tuple.
+        """
+        if data_type == ProjectDataType.Maps:
+            return dict(
+                put_enums_in_events_folder=(
+                    "Put Enums in Events Folder", False,
+                    "Write enums Python modules to 'events' folder instead of 'enums' folder."
+                ),
+            )
+
+        if data_type == ProjectDataType.Events:
+            return dict(
+
+                use_enums_in_event_scripts=(
+                    "Use Enums in Event Scripts", True,
+                    "Use variables from enums modules to replace game IDs (flags, entity IDs, etc.) in "
+                    "decompiled EVS scripts.",
+                ),
+                copy_python_events_submodule=(
+                    "Copy Python Events Submodule", False,
+                    "Copy Soulstruct `events` game submodule to 'events' project folder so your Python IDE "
+                    "can resolve the EVS module imports and apply intellisense when editing the EVS scripts."
+                ),  # for IDE autocomplete
+            )
+
+        if data_type == ProjectDataType.Text:
+            return dict(
+                delete_empty_text_entries=(
+                    "Delete Empty Text Entries", True,
+                    "Delete all empty text entries. The games have many of these, but they don't do "
+                    "anything except make the FMG files a tiny bit smaller (due to ID range compression)."
+                ),
+            )
+
+        return {}
+
+    def get_game_path_of_data_type(self, data_type: ProjectDataType, root=None) -> Path:
+        game = self.get_game()
+        root = self.game_root if root is None else Path(root)
+        data_class_name = self.DATA_TYPES[data_type].__name__
+        try:
+            return root / game.default_file_paths[data_class_name]
+        except KeyError:
+            raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {game.name}")
+
+    # region Process/Backup Utilities
     def export_timestamped_backup(self, data_type=None):
+        # TODO: Use this?
         timestamped = self.project_root / "export" / self._get_timestamp(for_path=True)
         self.export_data(data_type=data_type, export_directory=timestamped)
 
@@ -454,10 +652,10 @@ class GameDirectoryProject(abc.ABC):
 
     def launch_game(self, try_force_quit_first=False, threaded=True):
         if not psutil:
-            raise ModuleNotFoundError(
+            raise SoulstructProjectError(
                 "Python package `psutil` required for this method. Install it with `python -m pip install psutil`."
             )
-        
+
         game = self.get_game()
 
         if try_force_quit_first:
@@ -510,66 +708,6 @@ class GameDirectoryProject(abc.ABC):
             # Blocks Python (including window) until DS Gadget is closed.
             subprocess.run(str(gadget_path))
 
-    def get_game_saves(self):
-        save_folder = self._get_save_folder()
-        return [save_file.stem for save_file in save_folder.glob("*.sl2") if save_file.stem != "DRAKS0005"]
-
-    def _get_save_folder(self):
-        game = self.get_game()
-        if not game.save_file_path:
-            raise SoulstructProjectError(f"No save file directory known for {game.name}.")
-        if not game.save_file_path.is_dir():
-            raise SoulstructProjectError(f"Could not find save file directory root: {game.save_file_path}")
-        if game.name == "Dark Souls Remastered":
-            # DSR save files are saved under a Steam ID subfolder.
-            steam_id_folders = list(game.save_file_path.glob("*"))
-            if len(steam_id_folders) > 1:
-                raise SoulstructProjectError(
-                    f"Multiple Dark Souls Remastered save folders found in {str(game.save_file_path)}. Please "
-                    f"remove all of them except the real one that matches your Steam ID."
-                )
-            elif not steam_id_folders:
-                raise SoulstructProjectError(
-                    f"No Dark Souls Remastered save folders found in {str(game.save_file_path)}."
-                )
-            return steam_id_folders[0]
-        return game.save_file_path
-
-    def load_game_save(self, save_name):
-        if not save_name:
-            raise SoulstructProjectError("No save name given.")
-        save_folder = self._get_save_folder()
-        save_file_path = (save_folder / save_name).with_suffix(".sl2")
-        if not save_file_path.is_file():
-            raise SoulstructProjectError(f"Could not find save file: {str(save_file_path)}")
-        active_path_str = str(save_folder / "DRAKS0005.sl2")
-        try:
-            os.remove(active_path_str)
-        except FileNotFoundError:
-            pass
-        shutil.copy2(str(save_file_path), active_path_str)
-
-    def delete_game_save(self, save_name):
-        if not save_name:
-            raise SoulstructProjectError("No save name given.")
-        save_folder = self._get_save_folder()
-        save_file_path = (save_folder / save_name).with_suffix(".sl2")
-        if not save_file_path.is_file():
-            raise SoulstructProjectError(f"Could not find save file: {str(save_file_path)}")
-        os.remove(save_file_path)
-
-    def create_game_save(self, save_name, overwrite=False):
-        if not save_name:
-            raise SoulstructProjectError("No save name given.")
-        save_folder = self._get_save_folder()
-        save_file_path = (save_folder / save_name).with_suffix(".sl2")
-        active_path = save_folder / "DRAKS0005.sl2"
-        if save_file_path.is_file() and not overwrite:
-            raise SoulstructProjectError(f"Save file already exists: {str(save_file_path)}")
-        if not active_path.is_file():
-            raise SoulstructProjectError(f"Active game save file {str(active_path)} could not be found.")
-        shutil.copy2(str(active_path), str(save_file_path))
-
     def create_game_backup(self, backup_path=None):
         """Copy existing game files (that can be edited with Soulstruct) to a backup directory, which defaults to
         'soulstruct-backup' in your game directory. Use `restore_game_backup(backup_dir)` to restore those files."""
@@ -602,141 +740,200 @@ class GameDirectoryProject(abc.ABC):
             game_file_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(str(backup_file_path), str(game_file_path))
 
-    def load_config(self, with_window: ProjectWindow = None, game_root: Path = None) -> tuple[bool, bool]:
+    def load_existing_project(self, config_path: Path, new_game_root: Path | str = None) -> bool:
+
+        game = self.get_game()
+        rewrite_config = False
+
+        try:
+            config = read_json(config_path)
+        except json.JSONDecodeError as ex:
+            _LOGGER.error(ex)
+            raise SoulstructProjectError(
+                "Could not interpret 'project_config.json' file. Check it for errors, or delete it to have Soulstruct "
+                "create a fresh one on next load. (See log for full JSON error.)"
+            )
+
+        if "GameName" not in config:
+            raise SoulstructProjectError(
+                "Project config JSON file does not contain required 'GameName' key. Delete the file and load the "
+                "project directory again to create a fresh config JSON. (Your project files will not be affected.)"
+            )
+        elif game.name != config["GameName"]:
+            raise SoulstructProjectError(
+                f"Project config 'GameName' is {config['GameName']}, but `GameDirectoryProject` class belongs to "
+                f"{game.name}. Fix this in the JSON or delete it and load the project directory again to choose the "
+                f"right game."
+            )
+
+        if "GameDirectory" not in config:
+            if new_game_root is None:
+                raise SoulstructProjectError(
+                    "Project config JSON file does not contain 'GameRoot' key and a new `game_root` argument was not "
+                    "passed to the project. Provide this argument, or delete the JSON file and load the project "
+                    "directory again to create a fresh config JSON. (Your project files will not be affected.)"
+                )
+            self.game_root = Path(new_game_root)
+            rewrite_config = True
+        else:
+            if new_game_root is not None:
+                self.game_root = Path(new_game_root)
+                _LOGGER.info(
+                    f"Previous project 'GameDirectory' ({config['GameDirectory']}) has been replaced with new "
+                    f"directory: {self.game_root}"
+                )
+                rewrite_config = True
+            else:
+                self.game_root = Path(config["GameDirectory"])
+
+        if not self._validate_game_directory(self.game_root):
+            return False
+
+        last_save_version = config.get("LastSaveVersion", "unknown")
+        self.last_import_time = config.get("LastImportTime", None)
+        self.last_export_time = config.get("LastExportTime", None)
+
+        # TODO: Project creator wizard could let user choose this. Or just from File menu.
+        if vanilla_game_root := config.get("VanillaGameDirectory", ""):
+            self._vanilla_game_root = Path(vanilla_game_root)
+
+        if "PythonScriptDirectory" in config:
+            self.python_script_directory = Path(config["PythonScriptDirectory"])
+            if not self.python_script_directory.is_absolute():
+                self.python_script_directory = self.project_root / self.python_script_directory
+        else:
+            self.python_script_directory = self.project_root / "python_scripts"
+            rewrite_config = True
+            _LOGGER.info("Default project setting: PythonScriptDirectory = \"python_scripts\"")
+
+        if "TextEditorFontSize" in config:
+            self.text_editor_font_size = config["TextEditorFontSize"]
+        else:
+            self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
+            _LOGGER.info(f"Default project setting: TextEditorFontSize = {DEFAULT_TEXT_EDITOR_FONT_SIZE}")
+            rewrite_config = True
+
+        if "EnumsInEventsFolder" in config:
+            self.enums_in_events_folder = config["EnumsInEventsFolder"]
+        else:
+            # Try to auto-detect.
+            if (self.project_root / "enums").is_dir():
+                self.enums_in_events_folder = config["EnumsInEventsFolder"] = False
+            events_dir = self.project_root / "events"
+            if events_dir.is_dir() and list(events_dir.glob("*_enums.py")):
+                self.enums_in_events_folder = config["EnumsInEventsFolder"] = True
+            else:  # default
+                self.enums_in_events_folder = config["EnumsInEventsFolder"] = False
+            _LOGGER.info(f"Default project setting: EnumsInEventsFolder = {self.enums_in_events_folder}")
+            rewrite_config = True
+
+        if "DoNotWriteParamDefaults" in config:
+            self.do_not_write_param_defaults = config["DoNotWriteParamDefaults"]
+        else:
+            self.do_not_write_param_defaults = True
+            _LOGGER.info("Default project setting: DoNotWriteParamDefaults = True")
+            rewrite_config = True
+
+        self.other_settings = config.get("OtherSettings", {})
+
+        if last_save_version.split(".")[0] != __version__.split(".")[0]:
+            # Major version difference indicates potential project file incompatibility.
+            _LOGGER.warning(
+                f"Project was last saved with Soulstruct version {last_save_version}, which has a different major "
+                f"version number to this version of Soulstruct ({__version__}). You may need to export your "
+                f"project from the other version of Soulstruct and import those game files into this project."
+            )
+
+        if rewrite_config:
+            self._write_config()
+        return True
+    # endregion
+
+    def create_new_project(self, with_window: ProjectWindow = None, game_root: Path | str = None) -> bool:
         """Load config JSON from project, or create it if missing.
 
         Returns two bools: `first_time` (if project JSON was created) and `force_import_from_game` (if the user
         accepted the offer to import all game data immediately).
         """
-        game = self.get_game()
-        config_path = self.project_root / "project_config.json"
-
-        if config_path.is_file():
-            try:
-                config = read_json(config_path)
-            except json.JSONDecodeError:
-                raise SoulstructProjectError(
-                    "Could not interpret 'project_config.json' file. Check it for errors, or "
-                    "delete it to have Soulstruct create a fresh copy on next load."
-                )
-            try:
-                if game.name != config["GameName"]:
-                    raise SoulstructProjectError(
-                        f"Project config 'GameName' is {config['GameName']}, but `GameDirectoryProject` "
-                        f"instance belongs to {game.name}."
-                    )
-                last_save_version = config.get("LastSaveVersion", "'unknown'")
-                self.game_root = Path(config["GameDirectory"])
-                if game_root and str(game_root) != str(self.game_root):
-                    _LOGGER.warning(
-                        f"You passed `game_root` {game_root}` to the project, but it already has root "
-                        f"{self.game_root}. You should change this in the config JSON directly."
-                    )
-                self.last_import_time = config.get("LastImportTime", None)
-                self.last_export_time = config["LastExportTime"]
-                self.custom_script_directory = Path(config.get("CustomScriptDirectory", "scripts"))
-                if not self.custom_script_directory.is_absolute():
-                    self.custom_script_directory = self.project_root / self.custom_script_directory
-                if vanilla_game_root := config.get("VanillaGameDirectory", ""):
-                    self._vanilla_game_root = Path(vanilla_game_root)
-                self.text_editor_font_size = config.get("TextEditorFontSize", DEFAULT_TEXT_EDITOR_FONT_SIZE)
-                self.entities_in_events_directory = config.get("EntitiesInEventsDirectory", False)
-            except KeyError:
-                raise SoulstructProjectError(
-                    "Project config file does not contain necessary settings. "
-                    "Delete it and load the project directory again to create "
-                    "a fresh copy and re-link your project to the game."
-                )
-            if last_save_version.split(".")[0] != __version__.split(".")[0]:
-                # Major version difference indicates potential project file incompatibility.
-                _LOGGER.warning(
-                    f"Project was last saved with Soulstruct version {last_save_version}, which has a different major "
-                    f"version number to this version of Soulstruct ({__version__}). You may need to export your "
-                    f"project from the other version of Soulstruct and import those game files into this project."
-                )
+        if game_root:
+            self.game_root = Path(game_root)
         else:
-            # Create project config file.
-            if game_root:
-                self.game_root = Path(game_root)
-            else:
-                try:
-                    self.game_root = self._get_game_root(with_window=with_window)
-                except SoulstructProjectError as ex:
-                    raise SoulstructProjectError(str(ex) + "\n\nAborting project setup.")
-            self._write_config()
-            # Offer import of all data types immediately.
-            if with_window:
-                result = with_window.CustomDialog(
-                    title="Import Project Files",
-                    message="Import all game files now? This will override any project\n"
-                    "files that are already in this folder.",
-                    button_names=("Yes, import the files", "No, I'll do it later"),
-                    button_kwargs=("YES", "NO"),
-                    cancel_output=None,
-                    default_output=0,
-                )
-            else:
-                result = input(
-                    "Import game files now? This will override any project files\n"
-                    "that are already in this folder. [y]/n "
-                )
-                if result.lower == "n":
-                    result = 1
-                else:
-                    result = 0
-            if result == 0:
-                return True, True
-            return True, False
+            try:
+                self.game_root = self._get_game_root(with_window=with_window)
+            except SoulstructProjectError as ex:
+                raise SoulstructProjectError(str(ex) + "\n\nAborting project setup.")
+            if self.game_root is None:
+                return False  # abort peacefully
 
-        return False, False
+        if not self._validate_game_directory(self.game_root):
+            return False
 
-    def get_game_path_of_data_type(self, data_type, root=None) -> Path:
-        game = self.get_game()
-        root = self.game_root if root is None else Path(root)
-        data_class_name = self.DATA_TYPES[data_type.lower()].__name__
-        try:
-            return root / game.default_file_paths[data_class_name]
-        except KeyError:
-            raise KeyError(f"Could not get data path to {data_type} ({data_class_name}) for game {game.name}")
-
-    def offer_events_submodule_copy(self, with_window: ProjectWindow = None):
-        """Offer to copy `soulstruct.events.{game}` into project `events` folder for IDE purposes."""
-        if (self.project_root / "events").is_dir() and (self.project_root / "events").glob("*"):
-            return  # don't offer if `events` already imported/exist
-        if with_window:
-            result = with_window.CustomDialog(
-                title="Events Module Copy",
-                message="Would you like to copy the game events submodule for IDE autocomplete?",
-                button_names=("Yes, copy it", "No, don't bother"),
-                button_kwargs=("YES", "NO"),
-                cancel_output=1,
-                default_output=1,
+        if not with_window:
+            # Console project import settings are very limited.
+            result = input(
+                "Import game files now? This will override any project files that are already in this folder. [y]/n"
             )
-        else:
-            result = 1 if (
-                    input(
-                        "Would you like to copy the game events submodule for IDE autocomplete? [y]/n",
-                    ).lower() == "n"
-            ) else 0
-        if result == 0:
-            self.copy_events_submodule()
+            result = 1 if result.lower() == "n" else 0
+            if result == 0:
+                for data_type in self.DATA_TYPES:
+                    import_func = getattr(self, f"import_{data_type.name}")
+                    import_func(import_directory=self.game_root)  # TODO: no options supported
+                    # NOTE: Events and Talk data are 'saved' implicitly on import (plaintext scripts written).
+                    if data_type not in {ProjectDataType.Events, ProjectDataType.Talk}:
+                        save_func = getattr(self, f"save_{data_type.name}")
+                        save_func()
+            self._write_config()
+            return True
 
-    def copy_events_submodule(self):
+        data_type_settings = {}
+        for data_type in self.DATA_TYPES:
+            data_type_settings[data_type] = self.get_data_type_import_settings(data_type)
+
+        import_settings = with_window.run_creator_wizard(
+            self.get_game().name, list(self.DATA_TYPES), data_type_settings
+        )
+        if not import_settings:
+            return False  # abort peacefully
+
+        for data_type in self.DATA_TYPES:
+            if data_type not in import_settings.import_data_types:
+                # Data not imported. Tab will not appear. Can be imported later from GUI menu.
+                setattr(self, data_type.value, None)
+                continue
+            # NOTE: It's up to each `import` function signature to match settings names properly.
+            import_func = getattr(self, f"import_{data_type.name}")
+            import_func(import_directory=self.game_root, **import_settings.data_type_settings[data_type])
+            # NOTE: Events and Talk data are 'saved' implicitly on import (plaintext scripts written).
+            if data_type not in {ProjectDataType.Events, ProjectDataType.Talk}:
+                save_func = getattr(self, f"save_{data_type.name}")
+                save_func()
+
+        self._write_config()
+        return True
+
+    def copy_events_submodule(self, with_window: ProjectWindow = None):
         name = self.get_game().submodule_name
         events_submodule = PACKAGE_PATH(f"{name}/events")
+        if (self.project_root / "events/soulstruct").is_dir():
+            self.error(
+                "'events/soulstruct' folder already exists. Cannot copy Python submodule over. "
+                "Delete it and try again from the top menu.",
+                with_window,
+            )
+            return
         (self.project_root / f"events/soulstruct/{name}").mkdir(parents=True, exist_ok=True)
         shutil.copytree(events_submodule, self.project_root / f"events/soulstruct/{name}/events")
         _LOGGER.info(f"Copied `soulstruct.{name}.events` submodule into project events folder.")
 
-    def run_script(self, script_path: Path, stdout=None, stderr=None) -> subprocess.CompletedProcess:
+    def run_python_script(self, script_path: Path, stdout=None, stderr=None) -> subprocess.CompletedProcess:
         """Run given `script_path` Python script in a subprocess and wait for it to return.
 
-        If the given path is relative, it will be resolved relative to `self.custom_script_directory`, which in turn
-        defaults to `{project_root}/scripts`.
+        If the given path is relative, it will be resolved relative to `self.python_script_directory`, which in turn
+        defaults to `{project_root}/python_scripts` and can be edited in the project JSON config.
         """
         script_path = Path(script_path)
         if not script_path.is_absolute():
-            script_path = (self.custom_script_directory / script_path).absolute()
+            script_path = (self.python_script_directory / script_path).absolute()
         return subprocess.run(
             [sys.executable, script_path],
             text=True,
@@ -745,17 +942,30 @@ class GameDirectoryProject(abc.ABC):
             creationflags=subprocess.CREATE_NEW_CONSOLE,
         )
 
-    @property
-    def entities_directory(self) -> Path:
-        return self.project_root / ("events" if self.entities_in_events_directory else "entities")
+    @classmethod
+    def get_game(cls) -> Game:
+        if match := re.match(_GAME_MODULE_RE, cls.__module__):
+            return get_game(match.group(1))
+        raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
-    # ~~~ PRIVATE METHODS ~~~ #
+    @property
+    def enums_directory(self) -> Path:
+        """Enums modules can optionally be written next to EVS scripts in 'events' folder, but by default,
+        go in their own folder 'enums'."""
+        return self.project_root / ("events" if self.enums_in_events_folder else "enums")
+
+    @property
+    def vanilla_game_root(self):
+        return self._vanilla_game_root if self._vanilla_game_root else self.game_root
+
+    # region Private Methods
 
     @staticmethod
     def _get_timestamp(for_path=False):
         return datetime.datetime.now().strftime("%Y-%m-%d %H%M%S" if for_path else "%Y-%m-%d %H:%M:%S")
 
     def _build_config_dict(self):
+        # TODO: Data-specific 'last' times.
         return {
             "LastSaveVersion": __version__,
             "GameName": self.get_game().name,
@@ -763,8 +973,10 @@ class GameDirectoryProject(abc.ABC):
             "LastImportTime": self.last_import_time,
             "LastExportTime": self.last_export_time,
             "VanillaGameDirectory": str(self._vanilla_game_root),
+            "PythonScriptDirectory": str(self.python_script_directory),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
-            "EntitiesInEventsDirectory": self.entities_in_events_directory,
+            "EnumsInEventsFolder": self.enums_in_events_folder,
+            "OtherSettings": self.other_settings,
         }
 
     def _write_config(self):
@@ -783,13 +995,19 @@ class GameDirectoryProject(abc.ABC):
             try:
                 project_path.mkdir(parents=True, exist_ok=True)
             except NotADirectoryError:
-                raise SoulstructProjectError(f"Invalid directory path: {str(project_path)}.")
+                raise SoulstructProjectError(f"Invalid directory path: {str(project_path)}")
             except PermissionError:
-                raise SoulstructProjectError(f"No write access to create directory: {str(project_path)}.")
+                raise SoulstructProjectError(f"No write access to create directory: {str(project_path)}")
 
         return project_path
 
-    def _get_game_root(self, with_window: ProjectWindow = None):
+    @staticmethod
+    def _validate_game_directory(game_root: Path) -> bool:
+        """Optional method that can be overridden to validate `game_root` when it is set/loaded."""
+        return True
+
+    def _get_game_root(self, with_window: ProjectWindow = None) -> Path | None:
+        """Interactively select game directory for project. Returns `None` if no directory chosen."""
         game = self.get_game()
         initial_dir = game.default_game_path if Path(game.default_game_path).is_dir() else None
 
@@ -821,10 +1039,6 @@ class GameDirectoryProject(abc.ABC):
 
         return game_root
 
-    @property
-    def vanilla_game_root(self):
-        return self._vanilla_game_root if self._vanilla_game_root else self.game_root
-
     def _check_steam_appid_file(self, game_root):
         steam_appid_path = Path(game_root) / "steam_appid.txt"
         if not steam_appid_path.is_file():
@@ -835,12 +1049,18 @@ class GameDirectoryProject(abc.ABC):
                 return True
             return False
         return True
-    
-    @classmethod
-    def get_game(cls) -> Game:
-        if match := re.match(_GAME_MODULE_RE, cls.__module__):
-            return get_game(match.group(1))
-        raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
+
+    def warning(self, msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Warning"):
+        _LOGGER.warning(msg)
+        if with_window:
+            with_window.CustomDialog(dialog_title, msg)
+
+    def error(self, msg, with_window: ProjectWindow = None, dialog_title="Soulstruct Error"):
+        _LOGGER.error(msg)
+        if with_window:
+            with_window.CustomDialog(dialog_title, msg)
+
+    # endregion
 
 
 class GameRootDialog(CustomDialog):

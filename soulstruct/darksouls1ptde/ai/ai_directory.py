@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-__all__ = ["ScriptDirectory"]
+__all__ = ["AIScriptDirectory"]
 
 import logging
 import typing as tp
 
-from soulstruct.base.ai.ai_directory import ScriptDirectory as _BaseScriptDirectory
+from soulstruct.base.ai.ai_directory import AIScriptDirectory as _BaseScriptDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.darksouls1ptde.maps.constants import *
 
@@ -15,7 +15,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class ScriptDirectory(_BaseScriptDirectory):
+class AIScriptDirectory(_BaseScriptDirectory):
     ALL_MAPS = ALL_MAPS
     GET_MAP = staticmethod(get_map)
 

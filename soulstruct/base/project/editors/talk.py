@@ -8,6 +8,7 @@ from pathlib import Path
 
 from soulstruct.base.ezstate.esd.exceptions import ESDScriptError
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
+from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.utilities import bind_events, TagData, TextEditor
 
 if tp.TYPE_CHECKING:
@@ -167,8 +168,8 @@ class TalkEditor(BaseEditor):
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Talk Editor")
 
     @property
-    def talk(self) -> TalkDirectory:
-        return self._project.talk
+    def talk_class(self) -> tp.Type[TalkDirectory]:
+        return self._project.get_data_class(ProjectDataType.Talk)
 
     def refresh(self):
         """Reloads all ESP files from all maps."""
@@ -178,7 +179,7 @@ class TalkEditor(BaseEditor):
             if not map_directory.is_dir():
                 continue
             try:
-                game_map = self.talk.GET_MAP(map_directory.name)
+                game_map = self.talk_class.GET_MAP(map_directory.name)
             except ValueError:
                 _LOGGER.warning(
                     f"Unexpected folder found in project '/talk' directory and ignored: " f"{map_directory.name}"
@@ -202,7 +203,7 @@ class TalkEditor(BaseEditor):
             with self.set_master(pady=10, sticky="w", row_weights=[1], column_weights=[1, 1], auto_columns=0):
                 map_display_strings = [
                     f"{game_map.esd_file_stem} [{game_map.verbose_name}]"
-                    for game_map in self.talk.ALL_MAPS
+                    for game_map in self.talk_class.ALL_MAPS
                     if game_map.esd_file_stem
                 ]
                 self.map_choice = self.Combobox(
@@ -426,9 +427,9 @@ class TalkEditor(BaseEditor):
             if export_directory is None:
                 return
         export_directory = Path(export_directory)
-        bnd_name = f"script/talk/{self.selected_map_id}.talkesdbnd{'.dcx' if self.talk.IS_DCX else ''}"
+        bnd_name = f"script/talk/{self.selected_map_id}.talkesdbnd{'.dcx' if self.talk_class.IS_DCX else ''}"
         try:
-            talkesdbnd_class = self.talk.FILE_CLASS  # type: tp.Type[TalkESDBND]
+            talkesdbnd_class = self.talk_class.FILE_CLASS  # type: tp.Type[TalkESDBND]
             talkesdbnd_class(talk=self.esp_file_paths[self.selected_map_id]).write(export_directory / bnd_name)
         except Exception as e:
             _LOGGER.exception("Error encountered while trying to export ESP scripts.")
@@ -450,7 +451,7 @@ class TalkEditor(BaseEditor):
                 self.mimic_click(self.compile_button)
             talk_id = self.get_entry_id()
             try:
-                self.talk.TALKESDBND_CLASS.TALK_ESD_CLASS(self.esp_file_paths[self.selected_map_id][talk_id])
+                self.talk_class.TALKESDBND_CLASS.TALK_ESD_CLASS(self.esp_file_paths[self.selected_map_id][talk_id])
             except ESDScriptError as e:
                 _LOGGER.error(
                     f"Error encountered when parsing ESP script {talk_id} in {self.selected_map_id}. "
@@ -625,7 +626,7 @@ class TalkEditor(BaseEditor):
     def on_map_choice(self, event=None):
         if self.active_row_index is not None and not self._ignored_unsaved():
             # Keep currently selected map.
-            self.map_choice.var.set(f"{self.selected_map_id} [{self.talk.GET_MAP(self.selected_map_id).name}]")
+            self.map_choice.var.set(f"{self.selected_map_id} [{self.talk_class.GET_MAP(self.selected_map_id).name}]")
             return
         self.selected_map_id = self.map_choice_stem
         if self.global_map_choice_func and event is not None:

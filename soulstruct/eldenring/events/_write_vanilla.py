@@ -15,7 +15,7 @@ def main():
         "vanilla",
         entities_directory=ENTITIES_DIR if ENTITIES_DIR.is_dir() else None,
         warn_missing_enums=False,
-        entity_module_prefix=".entities.",
+        enums_module_prefix=".entities.",
     )
 
     # For fun.

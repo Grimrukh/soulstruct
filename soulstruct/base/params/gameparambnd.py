@@ -257,6 +257,9 @@ class GameParamBND(Binder, abc.ABC):
             return self.params[self.PARAM_NICKNAMES[param_stem]]
         raise KeyError(f"Cannot find `Param` named '{param_stem}' (from '{param_name}').")
 
+    # Overrides `Binder.__getitem__`.
+    __getitem__ = get_param
+
     # TODO: Inherit from some abstract `ProjectData` class that provides this interface.
     def get_range(self, param_name: str, start: int, count: int):
         """Get a list of (id, entry) pairs from a certain range inside ID-sorted param dictionary."""

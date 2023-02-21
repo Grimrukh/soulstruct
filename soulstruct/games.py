@@ -117,7 +117,7 @@ DARK_SOULS_PTDE = Game(
     executable_name="DARKSOULS.exe",
     gadget_name="DS Gadget.exe",
     default_file_paths={
-        "ScriptDirectory": "script",
+        "AIScriptDirectory": "script",
         "DrawParamDirectory": "param/DrawParam",
         "EventDirectory": "event",
         "GameParamBND": "param/GameParam/GameParam.parambnd",
@@ -143,7 +143,7 @@ DARK_SOULS_DSR = Game(
     executable_name="DarkSoulsRemastered.exe",
     gadget_name="DSR-Gadget.exe",
     default_file_paths={
-        "ScriptDirectory": "script",
+        "AIScriptDirectory": "script",
         "DrawParamDirectory": "param/DrawParam",
         "EventDirectory": "event",
         "GameParamBND": "param/GameParam/GameParam.parambnd.dcx",
@@ -187,7 +187,7 @@ BLOODBORNE = Game(
     generic_game_path="{DISC}/Image0/dvdroot_ps4",
     executable_name="../eboot.bin",
     default_file_paths={
-        "ScriptDirectory": "script",
+        "AIScriptDirectory": "script",
         "EventDirectory": "event",
         "GameParamBND": "param/gameparam/gameparam.parambnd.dcx",
         "MapStudioDirectory": "map/mapstudio",

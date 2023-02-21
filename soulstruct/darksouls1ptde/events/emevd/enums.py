@@ -9,8 +9,16 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
+    "CLIENT_PLAYER_6",
+    "CLIENT_PLAYER_7",
+    "CLIENT_PLAYER_8",
+    "CLIENT_PLAYER_9",
     "BaseEMEVDEnum",
-    "ProtectedEntities",
     "AIStatusType",
     "BitOperation",
     "ButtonType",
@@ -49,16 +57,6 @@ __all__ = [
 from enum import IntEnum
 
 from soulstruct.base.events.emevd.enums import *
-
-
-class ProtectedEntities(IntEnum):
-    """Hard-coded entity IDs used in EMEVD instructions. Used by decompiler; you can use global names above instead."""
-    PLAYER = PLAYER
-    CLIENT_PLAYER_1 = 10001
-    CLIENT_PLAYER_2 = 10002
-    CLIENT_PLAYER_3 = 10003
-    CLIENT_PLAYER_4 = 10004
-    CLIENT_PLAYER_5 = 10005
 
 
 # Basic obvious booleans are omitted:

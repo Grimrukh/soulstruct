@@ -13,13 +13,14 @@ from pathlib import Path
 from tkinter import TclError
 
 from soulstruct.base.events.emevd.evs import EVSError
+from soulstruct.base.project import GameDirectoryProject, ProjectDataType
 from soulstruct.base.project.utilities import TagData, TextEditor
 from soulstruct.utilities.window import SmartFrame
 
 from .. import editor_config
 
 if tp.TYPE_CHECKING:
-    from soulstruct.base.events.emevd_directory import EventDirectory
+    from soulstruct.base.events.event_directory import EventDirectory
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,7 +30,9 @@ class EvsTextEditor(TextEditor):
     TAGS = {
         "on_rest_behavior": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
         "python_word": TagData(
-            "#FF7F50", r"(^| )(class|def|if|and|or|not|elif|else|return|import|from|for|True|False|await)(\n| |:)", (0, 1)
+            "#FF7F50",
+            r"(^| )(class|def|if|and|or|not|elif|else|return|import|from|for|True|False|await)(\n| |:)",
+            (0, 1),
         ),
         "true_false": TagData("#FF7F50", r"[ =](True|False)(,|\n| |:|\))", (1, 1)),
         "event_def": TagData("#FF6980", r"^def [\w_]+", (4, 0)),
@@ -94,7 +97,7 @@ class EventEditor(SmartFrame):
 
     def __init__(
         self,
-        project,
+        project: GameDirectoryProject,
         evs_directory,
         game_root,
         global_map_choice_func,
@@ -130,10 +133,6 @@ class EventEditor(SmartFrame):
         self.bind_to_all_children("<Control-r>", lambda _: self.reload_selected(mimic_click=True))
 
         self.refresh()
-
-    @property
-    def events(self) -> EventDirectory:
-        return self._project.events
 
     def build(self):
 
@@ -221,6 +220,10 @@ class EventEditor(SmartFrame):
                 tooltip_text="Reload script from project, then immediately export it to game.",
             )
 
+    @property
+    def events_class(self) -> tp.Type[EventDirectory]:
+        return self._project.get_data_class(ProjectDataType.Events)
+
     def scan_evs_files(self):
         """Detect all EVS files in project event directory."""
 
@@ -243,7 +246,7 @@ class EventEditor(SmartFrame):
                 self.evs_text[evs_name] = f.read()
 
     def refresh(self):
-        game_maps = [self.events.GET_MAP(m) for m in self.evs_file_paths]
+        game_maps = [self.events_class.GET_MAP(m) for m in self.evs_file_paths]
         map_options = [f"{game_map.emevd_file_stem} [{game_map.verbose_name}]" for game_map in game_maps]
         self.map_choice["values"] = map_options
         if map_options:
@@ -321,7 +324,7 @@ class EventEditor(SmartFrame):
     def on_map_choice(self, event=None):
         """Check if current text has changed (and warn), then switch to other text."""
         if not self._ignored_unsaved():
-            game_map = self.events.GET_MAP(self.selected_map_id)
+            game_map = self.events_class.GET_MAP(self.selected_map_id)
             self.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name}]")
             return
         self.selected_map_id = self.map_choice.var.get().split(" [")[0]
@@ -369,7 +372,7 @@ class EventEditor(SmartFrame):
         if mimic_click:
             self.mimic_click(self.compile_button)
         try:
-            self.events.EMEVD_CLASS(
+            self.events_class.EMEVD_CLASS(
                 self._get_current_text(),
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent)
             )
@@ -397,7 +400,7 @@ class EventEditor(SmartFrame):
                 return
         export_directory = Path(export_directory)
         try:
-            emevd = self.events.EMEVD_CLASS(
+            emevd = self.events_class.EMEVD_CLASS(
                 self.evs_file_paths[self.selected_map_id],
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
             )
@@ -407,7 +410,7 @@ class EventEditor(SmartFrame):
                 f"Could not interpret current EVS file in project.\n"
                 f"Fix this error and try again (see console for full traceback):\n\n{str(e)}",
             )
-        emevd.write(export_directory / f"event/{self.selected_map_id}.emevd{'.dcx' if self.events.IS_DCX else ''}")
+        emevd.write(export_directory / f"event/{self.selected_map_id}.emevd")
 
     def reload_selected(self, mimic_click=False, flash_bg=True):
         if not self.selected_map_id:

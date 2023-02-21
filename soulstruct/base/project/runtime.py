@@ -104,7 +104,7 @@ class RuntimeManager(SmartFrame, abc.ABC):
 
             with self.set_master(padx=10, pady=20, row_weights=[1, 1], column_weights=[1, 1, 1]):
                 try:
-                    game_saves = self.project.get_game_saves()
+                    game_saves = self.project.save_manager.get_game_saves()
                 except SoulstructProjectError:
                     self.Label(
                         text="Could not find game saves.\n\nTry setting 'SaveDirectory' to your save directory "
@@ -265,20 +265,20 @@ class RuntimeManager(SmartFrame, abc.ABC):
         selected_game_save = self.game_save_list.get()
         if not selected_game_save:
             return
-        self.project.load_game_save(selected_game_save)
+        self.project.save_manager.load_game_save(selected_game_save)
 
     def delete_game_save(self):
         selected_game_save = self.game_save_list.get()
         if not selected_game_save:
             return
-        self.project.delete_game_save(selected_game_save)
-        self.game_save_list["values"] = self.project.get_game_saves()
+        self.project.save_manager.delete_game_save(selected_game_save)
+        self.game_save_list["values"] = self.project.save_manager.get_game_saves()
         self.game_save_list.set("")
 
     def create_game_save(self, overwrite=False):
         game_save_name = self.game_save_entry.get()
-        self.project.create_game_save(game_save_name, overwrite=overwrite)
-        self.game_save_list["values"] = self.project.get_game_saves()
+        self.project.save_manager.create_game_save(game_save_name, overwrite=overwrite)
+        self.game_save_list["values"] = self.project.save_manager.get_game_saves()
 
     def hook_into_game(self):
         """Returns True if hook was successful, and False if not."""

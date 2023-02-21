@@ -156,7 +156,7 @@ class GameFileMapDirectory(tp.Generic[BASE_BINARY_FILE_T], GameFileDirectory[BAS
             instance.write(directory_path / f"{file_stem}{self.FILE_EXTENSION}", check_hash=check_file_hashes)
         if all_map_stems:
             _LOGGER.warning(
-                f"Could not find some files while writing `{self.__class__.__name__}` directory: "
+                f"Could not find some file keys while writing `{self.__class__.__name__}` directory: "
                 f"{', '.join(all_map_stems)}"
             )
         _LOGGER.info(

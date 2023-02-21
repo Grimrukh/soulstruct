@@ -10,20 +10,17 @@ import typing as tp
 from dataclasses import dataclass, field
 from types import GenericAlias
 
-from soulstruct.base.game_types.basic_types import Flag, BaseGameObject
+from soulstruct.base.game_types import GAME_TYPE, Flag, GameObject, GameEnumsManager
 from soulstruct.utilities.binary import *
 
 from .enums import OnRestBehavior
-from .instruction import Instruction, EventArg
+from .instruction import Instruction, EventArgRepl
 from .event_layers import EventLayers
 
 try:
     Self = tp.Self
 except AttributeError:
     Self = "Event"
-
-if tp.TYPE_CHECKING:
-    from .entity_enums_manager import GameEnumsManager
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -110,7 +107,7 @@ class SingleEventArg:
     # Subset of the above; ONLY contains game types (for enum lookups).
     combined_game_types: tuple[GAME_TYPE, ...] = ()
 
-    def add_info(self, event_arg: EventArg):
+    def add_info(self, event_arg: EventArgRepl):
         """Merge in information from a single replacement usage."""
         self.names.add(event_arg.name)
         self.fmts.add(event_arg.fmt)
@@ -168,14 +165,14 @@ class SingleEventArg:
                 origin = tp.get_origin(py_type)
             except AttributeError:  # implies `py_type` is a real Python type (no `__origin__`)
                 all_py_types.append(py_type)
-                if issubclass(py_type, BaseGameObject):
+                if issubclass(py_type, GameObject):
                     all_game_types.append(py_type)
             else:
                 union_types = tp.get_args(py_type) if origin is tp.Union else ()
                 for union_type in union_types:
                     if union_type not in all_py_types:
                         all_py_types.append(union_type)
-                        if issubclass(union_type, BaseGameObject):
+                        if issubclass(union_type, GameObject):
                             all_game_types.append(union_type)
         self.combined_py_types = tuple(all_py_types)
         self.combined_game_types = tuple(all_game_types)
@@ -211,7 +208,7 @@ class EventSignature:
         for event_arg, name in zip(self.event_args, arg_names, strict=True):
             game_object_types = {
                 py_type for py_type in event_arg.combined_py_types
-                if issubclass(py_type, BaseGameObject)
+                if issubclass(py_type, GameObject)
             }
             if len(game_object_types) == 1:
                 py_type_name = next(iter(game_object_types)).__name__ + " | int"
@@ -250,8 +247,8 @@ class Event(abc.ABC):
     When an event ends (even if it restarts), the event flag that has the same ID as the event (plus the called `slot`
     of the event instance) will be enabled.
 
-    Events also have `EventArg` instances attached to them, which represent where any packed event data passed to the
-    `Run{Common}Event` instruction is used inside the event. Soulstruct will attach each `EventArg` to the `Instruction`
+    Events also have `EventArgRepl` instances attached to them, which represent where any packed event data passed to the
+    `Run{Common}Event` instruction is used inside the event. Soulstruct will attach each `EventArgRepl` to the `Instruction`
     it affects, rather than keeping them in the `Event` instance.
     """
     
@@ -296,9 +293,9 @@ class Event(abc.ABC):
 
         if event_struct.event_arg_replacements_local_offset != -1:
             with reader.temp_offset(event_arg_table_offset + event_struct.event_arg_replacements_local_offset):
-                # Read `EventArg`s but attach each one to its `Instruction` rather than here.
+                # Read `EventArgRepl`s but attach each one to its `Instruction` rather than here.
                 event_arg_replacements = [
-                    EventArg.from_emevd_reader(reader)
+                    EventArgRepl.from_emevd_reader(reader)
                     for _ in range(event_struct.event_arg_replacements_count)
                 ]
                 for replacement in event_arg_replacements:
@@ -431,7 +428,7 @@ class Event(abc.ABC):
     def update_signature(self):
         """Process event arg information for ALL instructions at once.
 
-        Returns a dictionary that maps each (i, j) arg read range to a single generic `EventArg` storing combined
+        Returns a dictionary that maps each (i, j) arg read range to a single generic `EventArgRepl` storing combined
         information about all individual uses (replacements) with that event arg.
 
         Has NO side effects.
@@ -713,7 +710,7 @@ class Event(abc.ABC):
 
     def pack_event_arg_replacements(self, writer: BinaryWriter, event_arg_replacements_offset: int) -> int:
         """Returns the number of event arg replacements written (for summing in EMEVD header)."""
-        event_arg_replacements = []  # type: list[EventArg]
+        event_arg_replacements = []  # type: list[EventArgRepl]
         for instruction in self.instructions:
             event_arg_replacements += instruction.event_arg_replacements
 

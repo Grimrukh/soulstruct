@@ -1,3 +1,3 @@
-__all__ = ["ScriptDirectory"]
+__all__ = ["AIScriptDirectory"]
 
-from .ai_directory import ScriptDirectory
+from .ai_directory import AIScriptDirectory

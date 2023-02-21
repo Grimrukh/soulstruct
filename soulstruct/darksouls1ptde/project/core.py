@@ -2,12 +2,11 @@ from __future__ import annotations
 
 __all__ = ["GameDirectoryProject"]
 
-import typing as tp
+from pathlib import Path
 
-from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryProject
-from soulstruct.base.project.exceptions import SoulstructProjectError
+from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryProject, ProjectDataType
 
-from soulstruct.darksouls1ptde.ai import ScriptDirectory
+from soulstruct.darksouls1ptde.ai import AIScriptDirectory
 from soulstruct.darksouls1ptde.ezstate import TalkDirectory
 from soulstruct.darksouls1ptde.events import EventDirectory
 from soulstruct.darksouls1ptde.maps import MapStudioDirectory
@@ -15,29 +14,24 @@ from soulstruct.darksouls1ptde.params import GameParamBND
 from soulstruct.darksouls1ptde.params import DrawParamDirectory
 from soulstruct.darksouls1ptde.text import MSGDirectory
 
-if tp.TYPE_CHECKING:
-    from soulstruct.base.project.window import ProjectWindow
-
 
 class GameDirectoryProject(_BaseGameDirectoryProject):
     DATA_TYPES = {
-        "ai": ScriptDirectory,
-        "events": EventDirectory,
-        "lighting": DrawParamDirectory,
-        "maps": MapStudioDirectory,
-        "params": GameParamBND,
-        "talk": TalkDirectory,
-        "text": MSGDirectory,
+        ProjectDataType.AI: AIScriptDirectory,
+        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
+        ProjectDataType.Lighting: DrawParamDirectory,
+        ProjectDataType.Maps: MapStudioDirectory,
+        ProjectDataType.Params: GameParamBND,
+        ProjectDataType.Talk: TalkDirectory,  # modified via ESP state machine script files
+        ProjectDataType.Text: MSGDirectory,
     }
 
-    def initialize_project(self, force_import_from_game=False, with_window: ProjectWindow = None, **kwargs):
-        self._check_ptde_unpacked()
-        super().initialize_project(force_import_from_game, with_window)
-
-    def _check_ptde_unpacked(self):
-        if not (self.game_root / "map").is_dir():
-            raise SoulstructProjectError(
+    def _validate_game_directory(self, game_root: Path) -> bool:
+        if not (game_root / "map").is_dir():
+            self.error(
                 "Your Dark Souls: Prepare to Die Edition does not appear to be unpacked.\n"
                 "Please download and run 'UnpackDarkSoulsForModding' (UDSFM) from Nexus:\n"
                 "https://www.nexusmods.com/darksouls/mods/1304"
             )
+            return False
+        return True

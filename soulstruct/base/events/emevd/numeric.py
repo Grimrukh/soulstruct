@@ -8,7 +8,7 @@ import typing as tp
 
 from .emedf import ArgType
 from .exceptions import NumericEmevdError
-from .instruction import EventArg
+from .instruction import EventArgRepl
 
 if tp.TYPE_CHECKING:
     from .event import Event
@@ -164,7 +164,7 @@ def build_numeric(numeric_string: str, event_class: tp.Type[Event]):
                     read_from_byte = int(m_arg_r.group(2))
                     bytes_to_write = int(m_arg_r.group(3))
 
-                    event_arg = EventArg(
+                    event_arg = EventArgRepl(
                         len(instruction_list) - 1, write_from_byte, read_from_byte, bytes_to_write
                     )
                     instruction_list[-1].event_arg_replacements.append(event_arg)

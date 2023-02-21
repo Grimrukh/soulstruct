@@ -1,4 +1,4 @@
-from soulstruct.base.events.emevd_directory import EventDirectory as _BaseEventDirectory
+from soulstruct.base.events.event_directory import EventDirectory as _BaseEventDirectory
 from .emevd import EMEVD
 from soulstruct.eldenring.maps.constants import ALL_MAPS, get_map
 

@@ -9,6 +9,7 @@ import subprocess
 import sys
 import threading
 import time
+import tkinter
 import typing as tp
 from pathlib import Path
 from queue import Queue
@@ -21,7 +22,7 @@ from . import editor_config
 
 from .editors import (
     AIEditor,
-    EntityEditor,
+    EnumsEditor,
     EventEditor,
     LightingEditor,
     MapsEditor,
@@ -29,27 +30,168 @@ from .editors import (
     TalkEditor,
     TextEditor,
 )
+from .core import GameDirectoryProject, ProjectDataType
 from .exceptions import SoulstructProjectError, RestoreBackupError
 from .icon import SOULSTRUCT_ICON
 from .links import WindowLinker  # TODO: Move to base, with game subclasses
 
 if tp.TYPE_CHECKING:
-    from .core import GameDirectoryProject
     from .runtime import RuntimeManager
 
 _LOGGER = logging.getLogger(__name__)
 
 
+# Maps tab name to editor window class. Also determines tab order.
+# (Runtime dab is always last, followed by any game-specific extras.)
 TAB_EDITORS = {
-    "maps": MapsEditor,
-    "entities": EntityEditor,
-    "params": ParamsEditor,
-    "lighting": LightingEditor,
-    "text": TextEditor,
-    "events": EventEditor,
-    "ai": AIEditor,
-    "talk": TalkEditor,
+    ProjectDataType.Maps: MapsEditor,
+    ProjectDataType.Enums: EnumsEditor,
+    ProjectDataType.Params: ParamsEditor,
+    ProjectDataType.Lighting: LightingEditor,
+    ProjectDataType.Text: TextEditor,
+    ProjectDataType.Events: EventEditor,
+    ProjectDataType.AI: AIEditor,
+    ProjectDataType.Talk: TalkEditor,
 }  # also specifies tab order ("runtime" always comes last, followed by any other game-specific extras)
+
+
+class ImportSettings(tp.NamedTuple):
+    """Constructed from `ProjectCreatorWizard.done()`."""
+    import_data_types: list[ProjectDataType]
+    data_type_settings: dict[ProjectDataType, dict[str, bool]]
+    extra_settings: dict[str, bool]
+
+
+class ProjectCreatorWizard(SmartFrame):
+    """Provides a bunch of checkbuttons for creating a new project."""
+    # TODO: Can probably fold the Game Selector into this too?
+
+    import_data_type_bool_vars: dict[ProjectDataType, tkinter.BooleanVar]
+    data_type_settings_bool_vars: dict[ProjectDataType, dict[str, tkinter.BooleanVar]]
+    extra_bool_vars: dict[str, tkinter.BooleanVar]
+
+    output: ImportSettings | None
+
+    def __init__(
+        self,
+        master,
+        game_name: str,
+        supported_data_types: tp.Sequence[ProjectDataType],
+        data_type_settings: dict[ProjectDataType, dict[str, tuple[str, bool, str | None]]] = None,
+        extra_settings: dict[str, tuple[str, bool, str | None]] = None,
+    ):
+        super().__init__(master=master, toplevel=True, icon_data=SOULSTRUCT_ICON, window_title="Project Creator Wizard")
+        self.import_data_type_bool_vars = {}
+        self.data_type_settings_bool_vars = {}
+        self.extra_bool_vars = {}
+        self.output = None
+
+        # TODO: Game-specific options:
+        #  - DS1:
+        #     - Rename Japanese regions/events referenced in vanilla EMEVD?
+        #     - Remove glitched, unused Duke's Archives regions?
+
+        with self.set_master(column_weights=[1], row_weights=[0, 1, 0], auto_rows=0, sticky="nsew", padx=20, pady=20):
+            self.Label(text=game_name, font=24)
+            self.build_data_type_settings(supported_data_types, data_type_settings, extra_settings)
+            self.Button(
+                text="Create Project",
+                font=editor_config.HEADING_FONT,
+                width=30,
+                bg="#622",
+                tooltip_text="Import project with selected settings",
+                command=lambda: self.done(True),
+            )
+
+        self.bind_all("<Escape>", lambda e: self.done(False))
+        self.protocol("WM_DELETE_WINDOW", lambda: self.done(False))
+        self.resizable(width=False, height=False)
+        self.set_geometry(relative_position=(0.5, 0.3), transient=True)
+
+    def go(self):
+        self.wait_visibility()
+        self.grab_set()
+        self.mainloop()
+        self.destroy()
+        return self.output
+
+    def done(self, confirm=False):
+        if confirm:
+            import_data_types = [
+                data_type for data_type, bool_var in self.import_data_type_bool_vars.items() if bool_var.get()
+            ]
+            data_type_settings = {}
+            for data_type, data_type_bool_vars in self.data_type_settings_bool_vars.items():
+                if data_type not in import_data_types:
+                    continue  # ignore
+                data_type_settings[data_type] = {
+                    key: bool_var.get() for key, bool_var in data_type_bool_vars.items()
+                }
+            extra_settings = {key: bool_var.get() for key, bool_var in self.extra_bool_vars.items()}
+
+            self.output = ImportSettings(import_data_types, data_type_settings, extra_settings)
+
+        self.quit()
+
+    def build_data_type_settings(
+        self,
+        supported_data_type: tp.Sequence[ProjectDataType],
+        data_type_settings: dict[ProjectDataType, dict[str, tuple[str, bool, str | None]]] = None,
+        extra_settings: dict[str, tuple[str, bool, str | None]] = None,
+    ):
+        self.import_data_type_bool_vars = {}
+        self.data_type_settings_bool_vars = {}
+        self.extra_bool_vars = {}
+
+        with self.set_master(column_weights=[1], auto_rows=0, sticky="nsew", padx=20, pady=20):
+            for data_type in supported_data_type:
+                settings = data_type_settings.get(data_type, {}) if data_type_settings else {}
+                with self.set_master(
+                    column_weights=[1], row_weights=[1] * (len(settings) + 1), auto_rows=0, sticky="nsew", pady=0
+                ):
+                    import_check = self.Checkbutton(
+                        label=f"Import {data_type.name}",
+                        label_position="right",
+                        initial_state=True,
+                        label_font=editor_config.BOLD_FONT,
+                        pady=5,
+                        sticky="w",
+                    )
+                    self.import_data_type_bool_vars[data_type] = import_check.var
+
+                    self.data_type_settings_bool_vars[data_type] = {}
+                    for setting_name, (label, initial_state, tooltip) in settings.items():
+                        check = self.Checkbutton(
+                            label=label,
+                            label_position="right",
+                            initial_state=initial_state,
+                            tooltip_text=tooltip,
+                            label_font=editor_config.SMALL_FONT,
+                            pady=5,
+                            padx=(20, 0),
+                            sticky="w",
+                        )
+                        self.data_type_settings_bool_vars[data_type][setting_name] = check.var
+
+                    if data_type != supported_data_type[-1]:
+                        self.Separator(sticky="ew")
+
+            if not extra_settings:
+                return
+
+            with self.set_master(
+                column_weights=[1], row_weights=[1] * len(extra_settings), auto_rows=0, sticky="nsew", pady=20
+            ):
+                for bool_key, (bool_label, initial_state, tooltip) in extra_settings.items():
+                    check = self.Checkbutton(
+                        label=bool_label,
+                        initial_state=initial_state,
+                        tooltip_text=tooltip,
+                        label_font=editor_config.SMALL_FONT,
+                        pady=10,
+                        anchor="e",
+                    )
+                    self.extra_bool_vars[bool_key] = check.var
 
 
 class ProjectWindow(SmartFrame, abc.ABC):
@@ -57,7 +199,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     PROJECT_CLASS: tp.Type[GameDirectoryProject] = None
     LINKER_CLASS: tp.Type[WindowLinker] = WindowLinker
     MAPS_EDITOR_CLASS: tp.Type[MapsEditor] = MapsEditor
-    ENTITIES_EDITOR_CLASS: tp.Type[EntityEditor] = EntityEditor
+    ENUMS_EDITOR_CLASS: tp.Type[EnumsEditor] = EnumsEditor
     PARAMS_EDITOR_CLASS: tp.Type[ParamsEditor] = ParamsEditor
     LIGHTING_EDITOR_CLASS: tp.Type[LightingEditor] = LightingEditor
     TEXT_EDITOR_CLASS: tp.Type[TextEditor] = TextEditor
@@ -65,18 +207,20 @@ class ProjectWindow(SmartFrame, abc.ABC):
     AI_EDITOR_CLASS: tp.Type[AIEditor] = AIEditor
     TALK_EDITOR_CLASS: tp.Type[TalkEditor] = TalkEditor
     RUNTIME_MANAGER_CLASS: tp.Type[RuntimeManager] = None
-    EXTRA_TAB_CLASSES = {}  # maps tab names to classes
-    CHARACTER_MODELS = {}
 
-    maps_tab: tp.Optional[MapsEditor]
-    entities_tab: tp.Optional[EntityEditor]
-    params_tab: tp.Optional[ParamsEditor]
-    lighting_tab: tp.Optional[LightingEditor]
-    text_tab: tp.Optional[TextEditor]
-    events_tab: tp.Optional[EventEditor]
-    ai_tab: tp.Optional[AIEditor]
-    talk_tab: tp.Optional[TalkEditor]
-    runtime_tab: tp.Optional[RuntimeManager]
+    EXTRA_TAB_CLASSES = {}  # maps tab names to classes
+    # TODO: Random specific info to have here. Probably combine into a more general class (when more is actually here).
+    CHARACTER_MODELS = {}  # optional game-specific dictionary
+
+    maps_tab: MapsEditor | None
+    enums_tab: EnumsEditor | None
+    params_tab: ParamsEditor | None
+    lighting_tab: LightingEditor | None
+    text_tab: TextEditor | None
+    events_tab: EventEditor | None
+    ai_tab: AIEditor | None
+    talk_tab: TalkEditor | None
+    runtime_tab: RuntimeManager | None
 
     def __init__(self, project_path="", game_root=None, master=None):
         super().__init__(
@@ -88,6 +232,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.withdraw()
 
         if not project_path:
+            # User must select project path.
             self.CustomDialog(
                 title="Choose Soulstruct project directory",
                 message="Navigate to your Soulstruct project directory.\n\n"
@@ -109,24 +254,28 @@ class ProjectWindow(SmartFrame, abc.ABC):
         try:
             self.project = self.PROJECT_CLASS(project_path, with_window=self, game_root=game_root)
             _LOGGER.info(f"Opened project: {project_path}")
-        except SoulstructProjectError as e:
+        except SoulstructProjectError as ex:
             self.deiconify()
             msg = (
                 f"Fatal Soulstruct project error encountered (see log for full traceback):\n\n"
-                f"{word_wrap(str(e), 50)}\n\nAborting startup."
+                f"{word_wrap(str(ex), 50)}\n\nAborting startup."
             )
             _LOGGER.exception("Fatal Soulstruct project error encountered. Aborting startup.")
             self.CustomDialog(title="Project Error", message=msg)
             raise
-        except Exception as e:
+        except Exception as ex:
             self.deiconify()
             _LOGGER.exception("Fatal internal error encountered. Aborting startup.")
             msg = (
                 f"Fatal internal error encountered (see log for full traceback):"
-                f"\n\n{word_wrap(str(e), 50)}\n\nAborting startup."
+                f"\n\n{word_wrap(str(ex), 50)}\n\nAborting startup."
             )
             self.CustomDialog(title="Internal Error", message=msg)
             raise
+
+        if self.project.is_empty:
+            self.destroy()
+            return
 
         self.linker = self.LINKER_CLASS(self)  # TODO: Individual editors should have a lesser linker.
 
@@ -135,7 +284,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.page_tabs = self.Notebook(name="project_notebook", sticky="nsew")
 
         self.maps_tab = None
-        self.entities_tab = None
+        self.enums_tab = None
         self.params_tab = None
         self.text_tab = None
         self.lighting_tab = None
@@ -172,7 +321,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 font=font,
                 bg="#622",
                 tooltip_text="Saves all project data types to local project files. (Ctrl + Shift + S)",
-                command=self._save_data,
+                command=self._save_all,
             )
             self.save_tab_button = self.Button(
                 text="SAVE TAB DATA",
@@ -201,7 +350,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 font=font,
                 bg="#622",
                 tooltip_text="Saves and exports ALL project data files to the game directory. (Ctrl + Shift + E)",
-                command=lambda: self._export_data(data_type=None, export_directory=self.project.game_root),
+                command=lambda: self._export_all(export_directory=self.project.game_root),
             )
 
         tab_frames = {
@@ -211,7 +360,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         for tab_name in self.EXTRA_TAB_CLASSES:
             tab_frames[tab_name] = self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
 
-        if "maps" in self.data_types:
+        if ProjectDataType.Maps in self.data_types and self.project.maps:
             self.maps_tab = self.SmartFrame(
                 frame=tab_frames["maps"],
                 smart_frame_class=self.MAPS_EDITOR_CLASS,
@@ -223,18 +372,18 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.maps_tab.bind("<Visibility>", self._update_banner)
 
-            self.entities_tab = self.SmartFrame(
-                frame=tab_frames["entities"],
-                smart_frame_class=self.ENTITIES_EDITOR_CLASS,
+            self.enums_tab = self.SmartFrame(
+                frame=tab_frames["enums"],
+                smart_frame_class=self.ENUMS_EDITOR_CLASS,
                 project=self.project,
-                entities_directory=self.project.entities_directory,
+                enums_directory=self.project.enums_directory,
                 global_map_choice_func=self.set_global_map_choice,
                 linker=self.linker,
                 sticky="nsew",
             )
-            self.entities_tab.bind("<Visibility>", self._update_banner)
+            self.enums_tab.bind("<Visibility>", self._update_banner)
 
-        if "params" in self.data_types:
+        if ProjectDataType.Params in self.data_types and self.project.params:
             self.params_tab = self.SmartFrame(
                 frame=tab_frames["params"],
                 smart_frame_class=self.PARAMS_EDITOR_CLASS,
@@ -244,7 +393,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.params_tab.bind("<Visibility>", self._update_banner)
 
-        if "lighting" in self.data_types:
+        if ProjectDataType.Lighting in self.data_types and self.project.lighting:
             self.lighting_tab = self.SmartFrame(
                 frame=tab_frames["lighting"],
                 smart_frame_class=self.LIGHTING_EDITOR_CLASS,
@@ -254,7 +403,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.lighting_tab.bind("<Visibility>", self._update_banner)
 
-        if "text" in self.data_types:
+        if ProjectDataType.Text in self.data_types and self.project.text:
             self.text_tab = self.SmartFrame(
                 frame=tab_frames["text"],
                 smart_frame_class=self.TEXT_EDITOR_CLASS,
@@ -264,7 +413,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.text_tab.bind("<Visibility>", self._update_banner)
 
-        if "events" in self.data_types:
+        if ProjectDataType.Events in self.data_types and (self.project.project_root / "events").is_dir():
             self.events_tab = self.SmartFrame(
                 frame=tab_frames["events"],
                 smart_frame_class=self.EVENT_EDITOR_CLASS,
@@ -277,13 +426,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.events_tab.bind("<Visibility>", self._update_banner)
 
-        if "ai" in self.data_types:
+        if ProjectDataType.AI in self.data_types and self.project.ai:
             self.ai_tab = self.SmartFrame(
                 frame=tab_frames["ai"],
                 smart_frame_class=self.AI_EDITOR_CLASS,
                 project=self.project,
                 script_directory=self.project.project_root / "ai_scripts",
-                export_directory=self.project.get_game_path_of_data_type("ai"),
                 allow_decompile=self.project.get_game().name == "Dark Souls Remastered",
                 global_map_choice_func=self.set_global_map_choice,
                 text_font_size=self.project.text_editor_font_size,
@@ -292,7 +440,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             )
             self.ai_tab.bind("<Visibility>", self._update_banner)
 
-        if "talk" in self.data_types:
+        if ProjectDataType.Talk in self.data_types and (self.project.project_root / "talk").is_dir():
             self.talk_tab = self.SmartFrame(
                 frame=tab_frames["talk"],
                 smart_frame_class=self.TALK_EDITOR_CLASS,
@@ -400,7 +548,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         file_menu.add_command(label="Quit", foreground="#FFF", command=self.confirm_quit)
 
     def _build_save_submenu(self, save_menu):
-        save_menu.add_command(label="Save Entire Project", foreground="#FFF", command=self._save_data)
+        save_menu.add_command(label="Save Entire Project", foreground="#FFF", command=self._save_all)
         save_menu.add_separator()
         for data_type in self.data_types:
             save_menu.add_command(
@@ -423,21 +571,21 @@ class ProjectWindow(SmartFrame, abc.ABC):
         import_menu.add_command(
             label=f"Import Everything",
             foreground="#FFF",
-            command=lambda i=import_dir: self._import_data(import_directory=i),
+            command=lambda i=import_dir: self._import_all(import_directory=i),
         )
         import_menu.add_separator()
         for data_type in self.data_types:
             import_menu.add_command(
                 label=f"Import {data_type_caps(data_type)}",
                 foreground="#FFF",
-                command=lambda d=data_type, i=import_dir: self._import_data(d, import_directory=i),
+                command=lambda d=data_type, i=import_dir: self._import_data_type(d, import_directory=i),
             )
 
     def _build_export_submenu(self, export_menu, export_dir):
         export_menu.add_command(
             label=f"Export Everything",
             foreground="#FFF",
-            command=lambda e=export_dir: self._export_data(export_directory=e),
+            command=lambda e=export_dir: self._export_all(export_directory=e),
         )
         export_menu.add_separator()
         for data_type in self.data_types:
@@ -463,7 +611,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return tools_menu
 
     def _build_scripts_menu(self, scripts_menu):
-        for script in self.project.custom_script_directory.rglob("*.py"):
+        for script in self.project.python_script_directory.rglob("*.py"):
             if script.name.startswith("_"):
                 continue  # skipped
             scripts_menu.add_command(label=script.stem, foreground="#FFF", command=lambda s=script: self._run_script(s))
@@ -472,7 +620,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     def _run_script(self, script_path: Path):
         """Run given Python script `script_path` in a subprocess and wait for it to return."""
-        completed_process = self.project.run_script(script_path.absolute())  # same stdout and stderr
+        completed_process = self.project.run_python_script(script_path.absolute())  # same stdout and stderr
         if completed_process.returncode != 0:
             self.CustomDialog(
                 title="Script Error",
@@ -527,7 +675,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             for data_type in self.project.DATA_TYPES:
                 if data_type not in {"maps", "params", "lighting", "text"}:
                     continue
-                self.project.load(data_type)
+                self.project.load(data_type)  # TODO: fix
 
     def alphanumeric_word_boundaries(self):
         """See: http://www.tcl.tk/man/tcl8.5/TclCmd/library.htm#M19"""
@@ -537,7 +685,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
     def create_key_bindings(self):
         self.bind_all("<Control-s>", lambda _: self._save_data(self.current_data_type, mimic_click=True))
-        self.bind_all("<Control-S>", lambda _: self._save_data(mimic_click=True))
+        self.bind_all("<Control-S>", lambda _: self._save_all(mimic_click=True))
         self.bind_all(
             "<Control-e>",
             lambda _: self._export_data(
@@ -545,48 +693,44 @@ class ProjectWindow(SmartFrame, abc.ABC):
             ),
         )
         self.bind_all(
-            "<Control-E>", lambda _: self._export_data(export_directory=self.project.game_root, mimic_click=True)
+            "<Control-E>", lambda _: self._export_all(export_directory=self.project.game_root, mimic_click=True)
         )
 
-    def refresh_tab_data(self, data_type=None):
+    def refresh_tab_data(self, data_type: ProjectDataType = None):
         if data_type is None:
             for data_type in self.data_types:
                 self.refresh_tab_data(data_type)
-        data_type = data_type.lower()
         if data_type not in self.data_types:
             raise ValueError(f"Invalid data type name: {data_type}")
 
-        if data_type == "events":
+        # TODO: Can't refresh AI tab?
+        if data_type == ProjectDataType.Events and self.events_tab:
             self.events_tab.scan_evs_files()
             self.events_tab.refresh()
-        elif data_type == "talk":
+        elif data_type == ProjectDataType.Talk and self.talk_tab:
             self.talk_tab.refresh()
-        elif data_type == "entities":
-            self.entities_tab.maps = self.project.maps
-            self.entities_tab.refresh_entries()
-        else:
-            if data_type == "params":
-                self.params_tab.refresh_entries()
-            elif data_type == "maps":
-                self.maps_tab.refresh_entries()
-                self.maps_tab.check_for_repeated_entity_ids()
-            elif data_type == "lighting":
-                self.lighting_tab.refresh_entries()
-            elif data_type == "text":
-                self.text_tab.refresh_entries()
+        elif data_type == ProjectDataType.Enums and self.enums_tab:
+            self.enums_tab.maps = self.project.maps
+            self.enums_tab.refresh_entries()
+        elif data_type == ProjectDataType.Params and self.params_tab:
+            self.params_tab.refresh_entries()
+        elif data_type == ProjectDataType.Maps and self.maps_tab:
+            self.maps_tab.refresh_entries()
+            self.maps_tab.check_for_repeated_entity_ids()
+        elif data_type == ProjectDataType.Lighting and self.lighting_tab:
+            self.lighting_tab.refresh_entries()
+        elif data_type == ProjectDataType.Text and self.text_tab:
+            self.text_tab.refresh_entries()
 
     def confirm_quit(self):
-        if (
-            self.CustomDialog(
-                title="Quit Soulstruct?",
-                message="Quit Soulstruct? Any unsaved changes will be lost.",
-                button_names=("Yes, quit", "No, go back"),
-                button_kwargs=("YES", "NO"),
-                cancel_output=1,
-                default_output=1,
-            )
-            == 0
-        ):
+        if self.CustomDialog(
+            title="Quit Soulstruct?",
+            message="Quit Soulstruct? Any unsaved changes will be lost.",
+            button_names=("Yes, quit", "No, go back"),
+            button_kwargs=("YES", "NO"),
+            cancel_output=1,
+            default_output=1,
+        ) == 0:
             self.destroy()
 
     def destroy(self):
@@ -594,14 +738,32 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.withdraw()
         super().destroy()
 
+    def run_creator_wizard(
+        self,
+        game_name: str,
+        supported_data_types: tp.Sequence[ProjectDataType],
+        data_type_settings: dict[ProjectDataType, dict[str, tuple[str, bool, str]]],
+    ) -> ImportSettings | None:
+        """Launch Project Creator Wizard window and block until it returns its boolean dictionary."""
+        wizard = ProjectCreatorWizard(
+            master=self,
+            game_name=game_name,
+            supported_data_types=supported_data_types,
+            data_type_settings=data_type_settings,
+        )
+        return wizard.go()
+
     @property
     def current_data_type(self):
         """Return name of current tab's data type. Could be 'runtime'."""
         tab_index = self.page_tabs.index(self.page_tabs.select())
-        data_type = self.ordered_tabs[tab_index]
-        if data_type == "entities":
-            return "maps"
-        return data_type
+        tab_name = self.ordered_tabs[tab_index]
+        if tab_name == "runtime":
+            return None
+        if tab_name == "enums":
+            # TODO: Improve.
+            return ProjectDataType.Maps
+        return ProjectDataType.Maps
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
         data_types = self.data_types
@@ -609,29 +771,29 @@ class ProjectWindow(SmartFrame, abc.ABC):
             # Cannot get map to set it globally.
             return
         # noinspection PyUnresolvedReferences
-        game_map = self.PROJECT_CLASS.DATA_TYPES["maps"].GET_MAP(map_id)
-        if "maps" not in ignore_tabs:
+        game_map = self.project.DATA_TYPES[ProjectDataType.Maps].GET_MAP(map_id)
+        if "maps" not in ignore_tabs and self.maps_tab:
             if game_map.msb_file_stem is not None:
                 self.maps_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
                 self.maps_tab.on_map_choice()
-        if "entities" not in ignore_tabs:
+        if "enums" not in ignore_tabs and self.enums_tab:
             if game_map.msb_file_stem is not None:
-                self.entities_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
-                self.entities_tab.on_map_choice()
-        if "events" in data_types and "events" not in ignore_tabs:
+                self.enums_tab.map_choice.var.set(f"{game_map.msb_file_stem} [{game_map.verbose_name}]")
+                self.enums_tab.on_map_choice()
+        if ProjectDataType.Events in data_types and self.events_tab and "events" not in ignore_tabs:
             if game_map.emevd_file_stem is not None:
                 self.events_tab.map_choice.var.set(f"{game_map.emevd_file_stem} [{game_map.verbose_name})")
                 self.events_tab.on_map_choice()
-        if "ai" in data_types and "ai" not in ignore_tabs:
+        if ProjectDataType.AI in data_types and self.ai_tab and "ai" not in ignore_tabs:
             if game_map.ai_file_stem is not None:
                 self.ai_tab.map_choice.var.set(f"{game_map.ai_file_stem} [{game_map.verbose_name}]")
                 self.ai_tab.on_map_choice()
-        if "talk" in data_types and "talk" not in ignore_tabs:
+        if ProjectDataType.Talk in data_types and self.talk_tab and "talk" not in ignore_tabs:
             if game_map.esd_file_stem is not None:
                 self.talk_tab.map_choice.var.set(f"{game_map.esd_file_stem} [{game_map.verbose_name}]")
                 self.talk_tab.on_map_choice()
 
-    def _import_data(self, data_type=None, import_directory=None):
+    def _import_all(self, import_directory: Path = None):
         if import_directory is None:
             import_directory = self._choose_directory()
             if not import_directory:
@@ -640,9 +802,33 @@ class ProjectWindow(SmartFrame, abc.ABC):
         try:
             self._thread_with_loading_dialog(
                 "Importing",
-                f"Importing {data_type_caps(data_type) if data_type is not None else 'all files'}...",
-                self.project.import_data,
-                data_type,
+                f"Importing all data types...",
+                self.project.import_all,
+                import_directory,
+            )
+        except Exception as ex:
+            message = (
+                f"Error occurred while importing data:\n\n{ex}\n\n"
+                f"Import operation may have only partially completed."
+            )
+            return self.CustomDialog(title="Import Error", message=message)
+
+        self.refresh_tab_data()
+
+    def _import_data_type(self, data_type: ProjectDataType, import_directory: Path = None):
+        if import_directory is None:
+            import_directory = self._choose_directory()
+            if not import_directory:
+                return  # Abort import.
+
+        # TODO: No options.
+        import_func = getattr(self.project, f"import_{data_type.name}")
+
+        try:
+            self._thread_with_loading_dialog(
+                "Importing",
+                f"Importing {data_type.name}...",
+                import_func,
                 import_directory,
             )
         except Exception as ex:
@@ -654,70 +840,101 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         self.refresh_tab_data(data_type)
 
-    def _save_data(self, data_type=None, mimic_click=False, single_script_only=False):
-        if data_type == "runtime":
-            return  # nothing to save
-        elif data_type == "events":
+    def _save_all(self, mimic_click=False):
+        self.events_tab.save_all_evs()
+        self.talk_tab.save_selected_esp()  # TODO: not exactly 'save all'
+        self.ai_tab.confirm_selected(mimic_click=mimic_click)
+        if mimic_click:
+            self.mimic_click(self.save_all_button)
+        self.project.save_all()
+
+    def _save_data(self, data_type: ProjectDataType, mimic_click=False, single_script_only=False):
+        if data_type == ProjectDataType.Events:
             # Saves '.evs.py' file(s) to project 'events' directory.
             self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
             if mimic_click:
                 self.mimic_click(self.save_tab_button)
             return
-        elif data_type == "talk":
+        elif data_type == ProjectDataType.Talk:
             self.talk_tab.save_selected_esp()
             if mimic_click:
                 self.mimic_click(self.save_tab_button)
             return
-        elif data_type == "ai" and self.ai_tab.confirm_button["state"] == "normal":
+        elif data_type == ProjectDataType.AI and self.ai_tab.confirm_button["state"] == "normal":
             self.ai_tab.confirm_selected(mimic_click=mimic_click)
             # doesn't return here
 
         if mimic_click:
-            self.mimic_click(self.save_all_button if data_type is None else self.save_tab_button)
+            self.mimic_click(self.save_tab_button)
 
-        self.project.save(data_type)
-        if data_type is None:
-            self.events_tab.save_selected_evs() if single_script_only else self.events_tab.save_all_evs()
+        save_func = getattr(self.project, f"save_{data_type.name}")
+        save_func()
         self.flash_bg(self)
 
-    def _reload_data(self, data_type=None):
-        if data_type is None:
-            message = "Are you sure you want to reload all project data? Any unsaved changes will be lost."
-        else:
-            message = f"Are you sure you want to reload project {data_type} data? Any unsaved changes will be lost."
-        if (
-            self.CustomDialog(
-                title="Reload Project Data?",
-                message=message,
-                button_names=("Yes, reload data", "No, do nothing"),
-                button_kwargs=("YES", "NO"),
-                cancel_output=1,
-                default_output=1,
-            )
+    def _reload_data(self, data_type: ProjectDataType):
+        if self.CustomDialog(
+            title="Reload Project Data?",
+            message=f"Are you sure you want to reload project {data_type} data? Any unsaved changes will be lost.",
+            button_names=("Yes, reload data", "No, do nothing"),
+            button_kwargs=("YES", "NO"),
+            cancel_output=1,
+            default_output=1,
         ) != 0:
             return
-        if data_type == "runtime":
-            return  # nothing to reload
-        elif data_type == "events":
+
+        if data_type == ProjectDataType.Events:
             # No need to reload `EventDirectory` instance.
             self.events_tab.scan_evs_files()
             self.events_tab.refresh()
             return
-        elif data_type == "talk":
+        elif data_type == ProjectDataType.Talk:
             # No need to reload `TalkDirectory` instance.
             self.talk_tab.refresh()
             return
 
-        self.project.load(data_type)
+        load_func = getattr(self.project, f"load_{data_type.name}")
+        load_func()
         self.flash_bg(self)
 
-    def _export_data(self, data_type=None, export_directory=None, mimic_click=False, single_script_only=False):
+    def _export_all(self,  export_directory=None, mimic_click=False):
         if export_directory is None:
             export_directory = self._choose_directory()
             if not export_directory:
                 return  # Abort export.
-        if single_script_only and data_type is not None:
-            if data_type == "events":
+
+        # Save active Events and Talk scripts.
+        self.events_tab.save_selected_evs()
+        if self.talk_tab.active_row_index is not None:
+            self.talk_tab.save_selected_esp()
+
+        if mimic_click:
+            self.mimic_click(self.export_all_button)
+
+        try:
+            self._thread_with_loading_dialog(
+                "Exporting",
+                f"Exporting all data...",
+                self.project.export_all,
+                export_directory,
+            )
+        except Exception as ex:
+            _LOGGER.error(f"Error occurred while exporting data.", exc_info=ex)
+            message = (
+                f"Error occurred while exporting data:\n\n{str(ex)}\n\n"
+                f"See full traceback in log. Export operation may have only partially completed."
+            )
+            return self.CustomDialog(title="Export Error", message=message)
+
+    def _export_data(
+        self, data_type: ProjectDataType, export_directory=None, mimic_click=False, single_script_only=False
+    ):
+        if export_directory is None:
+            export_directory = self._choose_directory()
+            if not export_directory:
+                return  # Abort export.
+
+        if single_script_only:
+            if data_type == ProjectDataType.Events:
                 # Specifying 'events' here means the selected script only.
                 self.events_tab.save_selected_evs()
                 self.mimic_click(self.save_tab_button)
@@ -725,7 +942,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 if mimic_click:
                     self.mimic_click(self.export_tab_button)
                 return
-            elif data_type == "talk":
+            elif data_type == ProjectDataType.Talk:
                 # All talk scripts in selected map are exported.
                 if self.talk_tab.active_row_index is not None:
                     self.talk_tab.save_selected_esp()
@@ -737,33 +954,23 @@ class ProjectWindow(SmartFrame, abc.ABC):
             # Otherwise, ignore `single_script_only` argument.
 
         if mimic_click:
-            self.mimic_click(self.export_all_button if data_type is None else self.export_tab_button)
+            self.mimic_click(self.export_tab_button)
+
+        export_func = getattr(self.project, f"export_{data_type.name}")
 
         try:
             self._thread_with_loading_dialog(
                 "Exporting",
-                f"Exporting {data_type_caps(data_type) if data_type is not None else 'all files'}...",
-                self.project.export_data,
-                data_type,
+                f"Exporting {data_type.name}...",
+                export_func,
                 export_directory,
             )
         except Exception as ex:
-            caps = data_type_caps(data_type) if data_type is not None else "all"
-            _LOGGER.error(f"Error occurred while exporting {caps} data.", exc_info=ex)
+            _LOGGER.error(f"Error occurred while exporting {data_type.name} data.", exc_info=ex)
             message = (
-                f"Error occurred while exporting {caps} data:\n\n{str(ex)}\n\n"
+                f"Error occurred while exporting {data_type.name} data:\n\n{str(ex)}\n\n"
                 f"See full traceback in log. Export operation may have only partially completed."
             )
-            if " object has no attribute " in str(ex):
-                message += (
-                    f"\n\nThis error may have occurred because of a change in Soulstruct's internal data.\n"
-                    f"If you recently updated Soulstruct before seeing this error, try exporting {caps}\n"
-                    f"with the older version (File > Export to... > Export {caps}), then importing those\n"
-                    f"exported game files into this new version of Soulstruct (File > Import from... >\n"
-                    f"Import {caps}).\n\n"
-                    f"These format-changing updates will only happen while we are\n"
-                    f"discovering the correct data types for the handful of remaining unknown variables."
-                )
             return self.CustomDialog(title="Export Error", message=message)
 
     def _restore_backup(self, target=None, full_folder=False):
@@ -957,15 +1164,15 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return output.get()
 
     @property
-    def data_types(self) -> tuple[str]:
+    def data_types(self) -> tuple[ProjectDataType]:
         return tuple(self.PROJECT_CLASS.DATA_TYPES)
 
     @property
     def ordered_tabs(self) -> list[str]:
+        """NOTE: Tab names/keys are just strings, not `ProjectDataType`s."""
         editor_tabs = [
-            tab_name for tab_name in TAB_EDITORS
-            if tab_name in self.PROJECT_CLASS.DATA_TYPES
-            or (tab_name == "entities" and "maps" in self.PROJECT_CLASS.DATA_TYPES)
+            tab_name.value for tab_name in TAB_EDITORS
+            if tab_name in self.PROJECT_CLASS.DATA_TYPES or tab_name == "enums"
         ]
         if self.RUNTIME_MANAGER_CLASS:
             return editor_tabs + ["runtime"]

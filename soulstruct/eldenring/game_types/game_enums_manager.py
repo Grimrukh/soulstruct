@@ -1,7 +1,6 @@
 
-from soulstruct.base.events.emevd.entity_enums_manager import GameEnumsManager as _BaseGameEnumsManager
+from soulstruct.base.game_types.game_enums_manager import GameEnumsManager as _BaseGameEnumsManager
 from soulstruct.eldenring.game_types import *
-from .enums import ProtectedEntities
 
 
 class GameEnumsManager(_BaseGameEnumsManager):
@@ -23,4 +22,3 @@ class GameEnumsManager(_BaseGameEnumsManager):
         RegionVolume,
         RegionPoint,
     )
-    PROTECTED_ENUM = ProtectedEntities

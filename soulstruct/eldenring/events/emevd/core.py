@@ -4,9 +4,10 @@ import typing as tp
 from dataclasses import dataclass, field
 
 from soulstruct.base.events.emevd import EMEVD as _BaseEMEVD, Event as _BaseEvent, Instruction as _BaseInstruction
+from soulstruct.eldenring.game_types.game_enums_manager import GameEnumsManager
+
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
 from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
-from .entity_enums_manager import GameEnumsManager
 from .evs import EVSParser
 
 

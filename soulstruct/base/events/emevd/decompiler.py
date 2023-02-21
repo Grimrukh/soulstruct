@@ -12,9 +12,9 @@ import logging
 import struct
 import typing as tp
 
-from soulstruct.base.events.emevd.entity_enums_manager import GameEnumsManager
+from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.base.events.emevd.enums import BaseEMEVDFlags
-from soulstruct.base.game_types import BaseGameObject
+from soulstruct.base.game_types import GameObject
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,17 +109,13 @@ def _process_arg_types(
             # All union types should be `MapEntity` subclasses; this will be enforced by the checkout method
             # below (invalid types will have no entity ID dictionaries).
 
-        if union_types or issubclass(arg_type, BaseGameObject):
+        if union_types or issubclass(arg_type, GameObject):
 
-            try:
-                protected_value = EnumValue(enums_manager.PROTECTED_ENUM, arg_value)
-            except ValueError:
-                pass  # check enums below
-            else:
-                if protected_value == 10000:
-                    args[arg_name] = Variable("PLAYER")
-                else:
-                    args[arg_name] = Variable(protected_value)
+            if arg_value == 10000:
+                args[arg_name] = Variable("PLAYER")
+                continue
+            if 10001 <= arg_value <= 10009:
+                args[arg_name] = Variable(f"CLIENT_PLAYER_{arg_value - 10000}")
                 continue
 
             # Look up entity ID from imported module enums (generally parsed in `EMEVD.to_evs()`).
@@ -305,7 +301,7 @@ def base_decompile_run_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
-                    new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
+                    new_args[i] = Variable(enums_manager.check_out_enum(arg))
                 except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)
@@ -360,7 +356,7 @@ def base_decompile_run_common_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
-                    new_args[i] = Variable(enums_manager.check_out_enum(arg, any_class=True))
+                    new_args[i] = Variable(enums_manager.check_out_enum(arg))
                 except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)

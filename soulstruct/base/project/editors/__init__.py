@@ -1,5 +1,5 @@
 from .ai import AIEditor
-from .entities import EntityEditor
+from .game_enums import EnumsEditor
 from .maps import MapsEditor
 from .lighting import LightingEditor
 from .params import ParamsEditor

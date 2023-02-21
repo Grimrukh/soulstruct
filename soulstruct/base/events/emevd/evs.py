@@ -12,7 +12,7 @@ import typing as tp
 from functools import partial
 from pathlib import Path
 
-from soulstruct.base.game_types.basic_types import BaseGameObject, FlagRange, MapFlagSuffix
+from soulstruct.base.game_types.basic_types import GameObject, FlagRange, MapFlagSuffix
 from soulstruct.games import Game, get_game
 from soulstruct.utilities.files import import_arbitrary_file
 from .exceptions import NoNegateError, NoSkipOrReturnError
@@ -565,9 +565,9 @@ class EVSParser(abc.ABC):
             # Method of a game object or `.Add` method of a condition group.
             attr = node.func.attr
             game_object = self._parse_nodes(node.func.value)
-            if not isinstance(game_object, BaseGameObject):
+            if not isinstance(game_object, GameObject):
                 raise EVSSyntaxError(
-                    node, "Only methods of `BaseGameObject` subclasses can be called as instructions."
+                    node, "Only methods of `GameObject` subclasses can be called as instructions."
                 )
             _, args, kwargs = self._parse_function_call(node)
             try:
@@ -849,9 +849,9 @@ class EVSParser(abc.ABC):
         # 5. The condition is a 'compilable' game object in the global namespace that requires no arguments.
         if isinstance(node, (ast.Attribute, ast.Name)):
             game_object = self._parse_nodes(node)  # This will raise an EmevdNameError if the name is invalid.
-            if not isinstance(game_object, BaseGameObject):
+            if not isinstance(game_object, GameObject):
                 raise EVSValueError(
-                    node.lineno, f"Only (some) `BaseGameObjectObject` subclasses are directly testable."
+                    node.lineno, f"Only (some) `GameObjectObject` subclasses are directly testable."
                 )
             if isinstance(game_object, FlagRange):
                 raise EVSValueError(
@@ -1121,10 +1121,10 @@ class EVSParser(abc.ABC):
         # Constant / Event Argument
         if isinstance(node, (ast.Attribute, ast.Name)):
             game_object = self._parse_nodes(node)  # This will raise an `EmevdNameError` if the name is invalid.
-            if not isinstance(game_object, BaseGameObject):
+            if not isinstance(game_object, GameObject):
                 raise EVSValueError(
                     node.lineno,
-                    f"Only (some) `BaseGameObject` subclasses are directly testable, not {type(game_object).__name__}.",
+                    f"Only (some) `GameObject` subclasses are directly testable, not {type(game_object).__name__}.",
                 )
             elif isinstance(game_object, FlagRange):
                 raise EVSValueError(
@@ -1699,7 +1699,7 @@ def _parse_event_arguments(
     event_node: ast.FunctionDef, namespace: dict[str, tp.Any],
 ) -> tuple[dict[str, tuple[int, int]], str, dict[str, GAME_TYPE]]:
     """Parse argument nodes of given event function node and return:
-        - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArg` instances
+        - dictionary mapping argument names to `(write_offset, size)` tuples for creating `EventArgRepl` instances
         - event's argument format string, e.g. `"iIIBh"`
         - dictionary mapping argument names (where applicable) to `GameObject` subclasses
     """
@@ -1921,7 +1921,7 @@ def _header(event_id, on_rest_behavior=0):
 
 def _define_args(arg_types: str) -> list[tuple[int, int]]:
     """Converts an argument format string (e.g. `"iIIfB"`) to a list of `(write_offset, size)` tuples, usually for
-    generating `EventArg` instances."""
+    generating `EventArgRepl` instances."""
     args = []
     for i, c in enumerate(arg_types):
         if c in "Bb":

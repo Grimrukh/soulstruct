@@ -5,3 +5,4 @@ from .map_types import *
 from .param_types import *
 from .sound_types import *
 from .text_types import *
+from .game_enums_manager import GameEnumsManager

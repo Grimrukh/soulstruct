@@ -10,7 +10,7 @@ from soulstruct.base.events.emevd import (
 )
 from .decompiler import DECOMPILER, OPT_ARGS_DECOMPILER, decompile_instruction
 from .emedf import EMEDF, EMEDF_TESTS, EMEDF_COMPARISON_TESTS
-from .entity_enums_manager import GameEnumsManager
+from soulstruct.bloodborne.game_types.game_enums_manager import GameEnumsManager
 
 from .evs import EVSParser
 

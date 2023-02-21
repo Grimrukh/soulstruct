@@ -10,11 +10,11 @@ from soulstruct.base.events.emevd.decompiler import (
     assemble_arg_string,
     base_decompile_run_event,
 )
+from soulstruct.bloodborne.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.bloodborne.game_types.map_types import *
 from soulstruct.bloodborne.maps.constants import get_map_variable_name
 
 from . import enums
-from .entity_enums_manager import GameEnumsManager
 from .enums import *
 from .emedf import EMEDF
 

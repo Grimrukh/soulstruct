@@ -9,7 +9,7 @@ from ast import literal_eval
 from enum import IntEnum
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import GAME_TYPE, BaseGameObject, GameObjectSequence, MapEntry, BaseParam
+from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence, MapEntry, BaseParam
 from soulstruct.base.project.editors.base_editor import BaseEditor
 from soulstruct.base.project.links import WindowLinker
 from soulstruct.base.project.utilities import bind_events, NumberEditBox
@@ -236,7 +236,7 @@ class FieldRow:
             return self._set_linked_value_label
         if issubclass(self.field_type, GameObjectSequence):
             return self._update_field_GameObjectSequence
-        if issubclass(self.field_type, BaseGameObject):
+        if issubclass(self.field_type, GameObject):
             return self._update_field_GameObject
         if issubclass(self.field_type, IntEnum):
             return self._update_field_IntEnum
@@ -257,7 +257,7 @@ class FieldRow:
 
     def _set_field_fg(self, value):
         """Color field text ('fg') depending on whether value is some default that shouldn't draw attention."""
-        if issubclass(self.field_type, BaseGameObject):
+        if issubclass(self.field_type, GameObject):
             self.field_name_label["fg"] = self.master.FIELD_NAME_FG
             self.value_label["fg"] = self.master.FIELD_NAME_FG_GAME_TYPE
         elif self._is_default(self.field_type, value, self.field_nickname):
@@ -379,7 +379,7 @@ class FieldRow:
             return lambda value: value
         if issubclass(self.field_type, GameObjectSequence):
             return self._string_to_GameObjectSequence
-        if issubclass(self.field_type, BaseGameObject):
+        if issubclass(self.field_type, GameObject):
             return self._string_to_GameObject
         if issubclass(self.field_type, IntEnum):
             raise NotImplementedError

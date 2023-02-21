@@ -174,6 +174,11 @@ class DrawParamDirectory(GameFileDirectory, abc.ABC):
                 )
             drawparambnd.write_json_directory(directory / file_stem, ignore_pads, ignore_defaults)
 
+    def __getitem__(self, area_name: str) -> DrawParamBND:
+        if not area_name.endswith("_DrawParam"):
+            area_name += "_DrawParam"
+        return self.files[area_name]
+
     @classmethod
     def get_all_file_stems(cls) -> list[str]:
         return [f"{area_name}_DrawParam" for area_name in cls.DRAW_PARAM_AREAS]

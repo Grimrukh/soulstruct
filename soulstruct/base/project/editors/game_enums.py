@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["EntityEditor"]
+__all__ = ["EnumsEditor"]
 
 import inspect
 import logging
@@ -46,14 +46,14 @@ ENTITY_GAME_TYPES = (
     RegionBox,
 )
 
-_RE_ENTITIES_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")
-_RE_ENTITIES_ENUM_MEMBER = re.compile(r"^ +([\w_]+) *= *(\d+) *#(.*)$")
+_RE_ENUM_CLASS = re.compile(r"^class (\w+)\(\w+\): *$")
+_RE_ENUM_MEMBER = re.compile(r"^ +([\w_]+) *= *(\d+) *#(.*)$")
 
 
-class EntityEntryRow(EntryRow):
+class EnumEntryRow(EntryRow):
     """Entry rows for Maps have no ID, and also display their Entity ID field if they have a non-default value."""
 
-    master: EntityEditor
+    master: EnumsEditor
 
     ENTRY_ID_WIDTH = 15
     SHOW_ENTRY_ID = True
@@ -62,7 +62,7 @@ class EntityEntryRow(EntryRow):
     ENTRY_DESCRIPTION_WIDTH = 120
 
     # noinspection PyMissingConstructor
-    def __init__(self, editor: EntityEditor, row_index: int, main_bindings: dict = None):
+    def __init__(self, editor: EnumsEditor, row_index: int, main_bindings: dict = None):
         self.master = editor
         self.STYLE_DEFAULTS = editor.STYLE_DEFAULTS
 
@@ -142,7 +142,7 @@ class EntityEntryRow(EntryRow):
 
     def update_entry(self, entry_id: int, entry_text: str, entry: MSBEntry = None):
         if entry is None:
-            raise ValueError("`entry` required for `EntitiesEditor.update_entry()` (for Maps link).")
+            raise ValueError("`entry` required for `EnumsEditor.update_entry()` (for Maps link).")
         self.entry_id = entry_id
         self._entry_text = entry_text
         self.text_label.var.set(entry_text)
@@ -199,21 +199,21 @@ class EntityEntryRow(EntryRow):
         )
 
 
-class EntityEditor(BaseEditor):
+class EnumsEditor(BaseEditor):
     DATA_NAME = "Maps"
-    TAB_NAME = "entities"
+    TAB_NAME = "enums"
     CATEGORY_BOX_WIDTH = 400
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
     ENTRY_RANGE_SIZE = 100  # More are added dynamically as needed.
 
-    ENTRY_ROW_CLASS = EntityEntryRow
-    entry_rows: list[EntityEntryRow]
+    ENTRY_ROW_CLASS = EnumEntryRow
+    entry_rows: list[EnumEntryRow]
 
     def __init__(
         self,
         project,
-        entities_directory,
+        enums_directory,
         global_map_choice_func,
         linker,
         master=None,
@@ -221,7 +221,7 @@ class EntityEditor(BaseEditor):
     ):
         self.map_choice = None
         self.global_map_choice_func = global_map_choice_func
-        self.entities_directory = Path(entities_directory)
+        self.enums_directory = Path(enums_directory)
         self._e_entry_description_edit = None
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct Map Data Editor")
 
@@ -253,7 +253,7 @@ class EntityEditor(BaseEditor):
                     text="Import Entity IDs",
                     width=17,
                     padx=10,
-                    command=lambda: self._import_entities_module(import_names=False),
+                    command=lambda: self._import_enums_module(import_names=False),
                     tooltip_text="Import all entity IDs and descriptions, based on matching entity names, from an "
                     "existing Python module using Soulstruct game type enums (i.e. the format auto-generated).",
                 )
@@ -261,16 +261,16 @@ class EntityEditor(BaseEditor):
                     text="Import Entity Names",
                     width=20,
                     padx=10,
-                    command=lambda: self._import_entities_module(import_names=True),
+                    command=lambda: self._import_enums_module(import_names=True),
                     tooltip_text="Import all entity names and descriptions, based on matching entity IDs, from an "
                     "existing Python module using Soulstruct game type enums (i.e. the format auto-generated).",
                 )
                 self.Button(
-                    text="Write Entities",
+                    text="Write Enums",
                     width=15,
                     padx=10,
-                    command=self._write_entities_module,
-                    tooltip_text="Create or replace the Python entities module that can be imported into "
+                    command=self._write_enums_module,
+                    tooltip_text="Create or replace the Python enums module that can be imported into "
                     "this map's EVS script. If you have changed any existing names and want to "
                     "update the names in the EVS script, make sure to restore the IDs before "
                     "regenerating this file.",
@@ -437,15 +437,15 @@ class EntityEditor(BaseEditor):
 
     def on_map_choice(self, event=None):
         if self.global_map_choice_func and event is not None:
-            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("entities",))
+            self.global_map_choice_func(self.map_choice_stem, ignore_tabs=("enums",))
         self.select_entry_row_index(None)
         self.refresh_entries()
 
     def _get_map(self) -> Map:
         return self.maps.GET_MAP(self.map_choice_stem)
 
-    def _import_entities_module(self, import_names=False):
-        """Reads '{map_id}_entities.py' file and updates either:
+    def _import_enums_module(self, import_names=False):
+        """Reads '{map_id}_enums.py' file and updates either:
             - entry ENTITY IDs based on matching entity names, if `import_names=False` (default)
             - entry NAMES based on matching entity IDs, if `import_names=True`
 
@@ -453,10 +453,10 @@ class EntityEditor(BaseEditor):
         formatting in the module file may interfere with this.)
         """
         game_map = self.maps.GET_MAP(self.map_choice_stem)
-        module_path = self.entities_directory / f"{game_map.emevd_file_stem}_entities.py"
+        module_path = self.enums_directory / f"{game_map.emevd_file_stem}_enums.py"
         if not module_path.is_file():
             return self.error_dialog("No Entity Module", "Entity module not yet created in project 'events' folder.")
-        evs_path = self.entities_directory / f"{game_map.emevd_file_stem}.evs.py"
+        evs_path = self.enums_directory / f"{game_map.emevd_file_stem}.evs.py"
         if not evs_path.is_file():
             return self.error_dialog("No EVS Script", "EVS script not yet imported into project 'events' folder.")
         sys.path.append(str(module_path.parent))
@@ -501,7 +501,7 @@ class EntityEditor(BaseEditor):
                     return self.error_dialog(
                         "Duplicate Entity IDs",
                         f"MSB contains multiple entries with entity ID {entity_enum.value}. Cannot import names from "
-                        f"entities module until this is fixed.",
+                        f"enums module until this is fixed.",
                     )
                 except KeyError:
                     not_found.append(entity_enum.value)
@@ -513,14 +513,14 @@ class EntityEditor(BaseEditor):
                         "Entity Type Mismatch",
                         f"Entity ID {entity_enum.value} in Python module '{module_path.stem}' has type "
                         f"'{attr_name}', but has different type '{entry_type_name}.{entry_subtype_name} in MSB. Cannot "
-                        f"import names from entities module until this is fixed.",
+                        f"import names from enums module until this is fixed.",
                     )
                 entries_by_entity_enum[entity_enum] = entry
 
         if not entries_by_entity_enum:
             return self.CustomDialog(
                 "No IDs to Update",
-                "No IDs in the imported entities module are present in the MSB.",
+                "No IDs in the imported enums module are present in the MSB.",
             )
 
         if not_found:
@@ -545,14 +545,14 @@ class EntityEditor(BaseEditor):
         descriptions_by_attr_and_id = {}
         with module_path.open("r", encoding="utf-8") as module:
             for line in module:
-                class_match = _RE_ENTITIES_ENUM_CLASS.match(line)
+                class_match = _RE_ENUM_CLASS.match(line)
                 if class_match:
                     attr_name = class_match.group(1)
                     if attr_name in found_map_entry_class_names:
                         current_attr_name = attr_name
                     continue
                 if current_attr_name:
-                    member_match = _RE_ENTITIES_ENUM_MEMBER.match(line)
+                    member_match = _RE_ENUM_MEMBER.match(line)
                     if member_match:
                         entity_id, description = member_match.group(2, 3)
                         if entity_id not in not_found:
@@ -600,7 +600,7 @@ class EntityEditor(BaseEditor):
                     return self.error_dialog(
                         "Duplicate Entity Names",
                         f"MSB contains multiple entries with name {entity_enum.name}. Cannot import entity IDs from "
-                        f"entities module until this is fixed.",
+                        f"enums module until this is fixed.",
                     )
                 except KeyError:
                     not_found.append(entity_enum.name)
@@ -613,7 +613,7 @@ class EntityEditor(BaseEditor):
                             "Entity Type Mismatch",
                             f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
                             f"`RegionVolume`, but is not a Sphere, Cylinder, or Box in the MSB. Cannot "
-                            f"import entity IDs from entities module until this is fixed.",
+                            f"import entity IDs from enums module until this is fixed.",
                         )
                     entries_by_entity_enum[entity_enum] = entry
                 elif entry_game_type.get_msb_entry_supertype_subtype() != (supertype_name, entry_subtype_name):
@@ -621,14 +621,14 @@ class EntityEditor(BaseEditor):
                         "Entity Type Mismatch",
                         f"Entity name {entity_enum.name} in Python module '{module_path.stem}' has type "
                         f"`{attr_name}`, but has different type '{supertype_name}.{entry_subtype_name}` in MSB. "
-                        f"Cannot import entity IDs from entities module until this is fixed.",
+                        f"Cannot import entity IDs from enums module until this is fixed.",
                     )
                 entries_by_entity_enum[entity_enum] = entry
 
         if not entries_by_entity_enum:
             return self.CustomDialog(
                 "No Names to Update",
-                "No names in the imported entities module are present in the MSB.",
+                "No names in the imported enums module are present in the MSB.",
             )
 
         if not_found:
@@ -653,14 +653,14 @@ class EntityEditor(BaseEditor):
         descriptions_by_attr_and_id = {}
         with module_path.open("r", encoding="utf-8") as module:
             for line in module:
-                class_match = _RE_ENTITIES_ENUM_CLASS.match(line)
+                class_match = _RE_ENUM_CLASS.match(line)
                 if class_match:
                     attr_name = class_match.group(1)
                     if attr_name in found_map_entry_class_names:
                         current_attr_name = attr_name
                     continue
                 if current_attr_name:
-                    member_match = _RE_ENTITIES_ENUM_MEMBER.match(line)
+                    member_match = _RE_ENUM_MEMBER.match(line)
                     if member_match:
                         name, description = member_match.group(1, 3)
                         if name not in not_found:
@@ -680,10 +680,10 @@ class EntityEditor(BaseEditor):
 
         self.CustomDialog("Import Successful", "Entity IDs and descriptions imported successfully.")
 
-    def _write_entities_module(self):
-        """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script."""
+    def _write_enums_module(self):
+        """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS script."""
         game_map = self._get_map()
-        module_path = self.entities_directory / f"{game_map.emevd_file_stem}_entities.py"
+        module_path = self.enums_directory / f"{game_map.emevd_file_stem}_enums.py"
 
         msb = self.get_selected_msb()
         try:

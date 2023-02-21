@@ -1,4 +1,4 @@
-from soulstruct.darksouls1ptde.events.emevd_directory import EventDirectory
+from soulstruct.darksouls1ptde.events.event_directory import EventDirectory
 from soulstruct.config import PTDE_PATH
 
 

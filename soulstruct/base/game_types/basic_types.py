@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 __all__ = [
-    "BaseGameObject",
+    "GameObject",
     "GAME_TYPE",
     "GameObjectSequence",
     "BaseParam",
@@ -30,7 +30,7 @@ import typing as tp
 from enum import IntEnum
 
 
-class BaseGameObject:
+class GameObject:
     """Base class for all game types.
 
     Note that using `abc.ABC` for this, or any of its technically abstract intermediate subclasses, leads to problems.
@@ -45,7 +45,7 @@ class BaseGameObject:
 
 
 # For type-hinting.
-GAME_TYPE = tp.Type[BaseGameObject]
+GAME_TYPE = tp.Type[GameObject]
 
 
 class GameObjectSequence(type):
@@ -62,7 +62,7 @@ class GameObjectSequence(type):
     def __new__(mcs, game_object_and_count):
         if not game_object_and_count or len(game_object_and_count) != 2:
             raise TypeError("`GameObjectSequence` argument must be `(game_object_type, count)`.")
-        if not issubclass(game_object_and_count[0], BaseGameObject):
+        if not issubclass(game_object_and_count[0], GameObject):
             raise TypeError(
                 f"`GameObjectSequence` takes one sequence of `GameObject` subclasses, with the last element "
                 f"optionally being an integer. Invalid sequence element: {type(game_object_and_count[0])}."
@@ -72,7 +72,7 @@ class GameObjectSequence(type):
         return cls
 
 
-class BaseParam(BaseGameObject, IntEnum):
+class BaseParam(GameObject, IntEnum):
     """Base class for IDs of param entries."""
 
     @classmethod
@@ -88,7 +88,7 @@ class BaseGameParam(BaseParam):
         raise NotImplementedError
 
 
-class Flag(BaseGameObject, IntEnum):
+class Flag(GameObject, IntEnum):
     """Event flag."""
 
     @classmethod
@@ -103,7 +103,7 @@ class MapFlagSuffix(IntEnum):
     """
 
 
-class FlagRange(BaseGameObject):
+class FlagRange(GameObject):
 
     def __init__(self, first, last):
         self.first = first
@@ -124,35 +124,35 @@ class FlagRange(BaseGameObject):
         return f"({self.first}, {self.last})"
 
 
-class ModelDummy(BaseGameObject, IntEnum):
+class ModelDummy(GameObject, IntEnum):
     """`Dummy`, `dmy`, `damipoly`, etc. of a FLVER model."""
 
 
-class Texture(BaseGameObject, IntEnum):
+class Texture(GameObject, IntEnum):
     """2D texture ID of something."""
 
 
-class Icon(BaseGameObject, IntEnum):
+class Icon(GameObject, IntEnum):
     """Icon in some type-specific spritesheet."""
 
 
-class EquipmentModel(BaseGameObject, IntEnum):
+class EquipmentModel(GameObject, IntEnum):
     """FLVER model for c0000 appearance in the game `parts` folder."""
 
 
-class VisualEffect(BaseGameObject, IntEnum):
+class VisualEffect(GameObject, IntEnum):
     """VFX ID of something."""
 
 
-class TalkScript(BaseGameObject, IntEnum):
+class TalkScript(GameObject, IntEnum):
     """Talk ID of a Map Character."""
 
 
-class Cutscene(BaseGameObject, IntEnum):
+class Cutscene(GameObject, IntEnum):
     """ID of a cutscene (`remo/scn...` file)."""
 
 
-class Text(BaseGameObject, IntEnum):
+class Text(GameObject, IntEnum):
     """Text ID for an entry in some FMG."""
 
     @classmethod
@@ -160,7 +160,7 @@ class Text(BaseGameObject, IntEnum):
         raise NotImplementedError
 
 
-class Animation(BaseGameObject, IntEnum):
+class Animation(GameObject, IntEnum):
     """Animation ID base class."""
 
 
@@ -168,7 +168,7 @@ class PlayerAnimation(Animation):
     """Animation IDs for player character and human NPCs."""
 
 
-class BaseAIScript(BaseGameObject, IntEnum):
+class BaseAIScript(GameObject, IntEnum):
     """Base type for Logic and Battle scripts."""
 
 

@@ -11,10 +11,10 @@ from soulstruct.base.events.emevd.decompiler import (
     base_decompile_run_event,
     base_decompile_run_common_event,
 )
+from soulstruct.eldenring.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.eldenring.game_types.map_types import *
 
 from . import enums
-from .entity_enums_manager import GameEnumsManager
 from .enums import *
 from .emedf import EMEDF
 

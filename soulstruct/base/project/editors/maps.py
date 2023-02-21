@@ -10,7 +10,7 @@ import typing as tp
 from types import ModuleType
 
 from soulstruct.exceptions import InvalidFieldValueError
-from soulstruct.base.game_types import GAME_TYPE, BaseGameObject, GameObjectSequence
+from soulstruct.base.game_types import GAME_TYPE, GameObject, GameObjectSequence
 from soulstruct.base.game_types.map_types import *
 from soulstruct.base.maps.msb.enums import MSBSupertype, BaseMSBModelSubtype, BaseMSBRegionSubtype
 from soulstruct.base.maps.msb.models import BaseMSBModel
@@ -45,16 +45,6 @@ ENTRY_LIST_FG_COLORS = {
     "Events": "#DFD",
     "Models": "#FFC",
 }
-
-
-"""
-Have to rebuild a lot of this to get the new `MSB` changes working, I think.
-    - Entry reference fields are now actual instances, not just name strings.
-        - This means that when a new name string is set, I need to search for that entry by name.
-        - This is already currently happening because of the linking system, so the logic should be buried in here...
-    - Links of all game types appear to be permanently red.
-    - I think GroupBitSets are now handled correctly. 
-"""
 
 
 class MapEntryRow(EntryRow):
@@ -208,7 +198,7 @@ class MapFieldRow(FieldRow):
     # region Value Update Methods
 
     def _update_field_GameObject(self, value):
-        """Adds any recognized `BaseGameObject` names as hints."""
+        """Adds any recognized `GameObject` names as hints."""
         try:
             self.field_links = self.master.get_field_links(self.field_type, value)
         except ValueError:
@@ -301,7 +291,7 @@ class MapFieldRow(FieldRow):
     def build_field_context_menu(self):
         """For linked fields, adds an option to select an entry name from the linked table."""
         self.context_menu.delete(0, "end")
-        if issubclass(self.field_type, BaseGameObject):
+        if issubclass(self.field_type, GameObject):
             for field_link in self.field_links:
                 field_link.add_to_context_menu(self.context_menu)
             if issubclass(self.field_type, MapEntry):

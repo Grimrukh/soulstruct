@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["Instruction", "EventArg"]
+__all__ = ["Instruction", "EventArgRepl"]
 
 import abc
 import logging
@@ -15,7 +15,7 @@ from .event_layers import EventLayers
 from .utils import get_byte_offset_from_struct, get_instruction_args
 
 if tp.TYPE_CHECKING:
-    from .entity_enums_manager import GameEnumsManager
+    from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
     from .event import EventSignature
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,9 +31,8 @@ class EventArgStruct(BinaryStruct):
     unknown: int
 
 
-# TODO: rename `EventArgReplacement` to distinguish from actual arguments (with multiple possible replacements).
 @dataclass(slots=True)
-class EventArg:
+class EventArgRepl:
     """Overrides argument data in a particular instruction using from dynamic args attached to the event.
 
     Supports all games.
@@ -52,7 +51,7 @@ class EventArg:
     py_type_hint: tp.Type | GenericAlias = None  # EMEDF game types or `typing.Union` hints
 
     @classmethod
-    def from_emevd_reader(cls, reader: BinaryReader) -> EventArg:
+    def from_emevd_reader(cls, reader: BinaryReader) -> EventArgRepl:
         return EventArgStruct.reader_to_object(reader, cls)
 
     @property
@@ -70,11 +69,11 @@ class EventArg:
     def __repr__(self) -> str:
         if self.unknown == 0:
             return (
-                f"EventArg(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
+                f"EventArgRepl(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
                 f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write})"
             )
         return (
-            f"EventArg(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
+            f"EventArgRepl(line={self.instruction_line}, write_from_bytes={self.write_from_byte}, "
             f"read_from_byte={self.read_from_byte}, bytes_to_write={self.bytes_to_write}, unknown={self.unknown})"
         )
 
@@ -103,15 +102,15 @@ class Instruction(abc.ABC):
     index: int
     display_args_fmt: str = ""
 
-    # `EventArg` replacements, which specify offsets used to determine which part of the packed `Event` arguments they
-    # read from and which index in `args_list` they replace. Order does not matter.
+    # `EventArgRepl` replacements, which specify offsets used to determine which part of the packed `Event` arguments
+    # they read from and which index in `args_list` they replace. Order does not matter.
     # TODO: sort immediately when added?
-    event_arg_replacements: list[EventArg] = field(default_factory=list)
+    event_arg_replacements: list[EventArgRepl] = field(default_factory=list)
     # Actual Python values of instruction arguments, unpacked directly from the `EMEVD` file. Includes 'dummy' values
-    # waiting to be replaced in-game by an `EventArg` from above.
+    # waiting to be replaced in-game by an `EventArgRepl` from above.
     args_list: list[tp.Any] = field(default_factory=list)
-    # Processed version of `args_list` where the 'dummy' values overwritten by an `EventArg` are replaced with unique
-    # arg string names ('arg_i_j' by default for `EventArg` reading from `Event` packed arg range `(i, j)`.
+    # Processed version of `args_list` where the 'dummy' values overwritten by an `EventArgRepl` are replaced with
+    # unique arg string names ('arg_i_j' by default for `EventArgRepl` reading from `Event` packed arg range `(i, j)`.
     evs_args_list: list[tp.Any] = field(default_factory=list)
     # Universal add-on data for instructions used by some later games. Instructions with event layers will only run if
     # the game currently considers those layers active.
@@ -241,7 +240,7 @@ class Instruction(abc.ABC):
         return required_args, optional_args
 
     def process_event_arg_replacements(self):
-        """Adds name, fmt, and Python type information to `EventArg` replacements in this instruction.
+        """Adds name, fmt, and Python type information to `EventArgRepl` replacements in this instruction.
 
         Also builds `evs_args_list`, using `arg_i_j` names for event arguments. These default names may be overwritten
         later based on how ALL the different Instructions in the same event use them.

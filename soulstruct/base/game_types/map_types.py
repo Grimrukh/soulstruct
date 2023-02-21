@@ -71,10 +71,10 @@ __all__ = [
 import typing as tp
 from enum import IntEnum, unique
 
-from .basic_types import BaseGameObject
+from .basic_types import GameObject
 
 
-class Map(BaseGameObject):
+class Map(GameObject):
     def __init__(
         self,
         area_id: tp.Optional[int],
@@ -190,7 +190,7 @@ class Map(BaseGameObject):
         return cls(0, 0, 0, 0, name="NONE")
 
 
-class MapEntry(BaseGameObject):
+class MapEntry(GameObject):
     """Anything that appears in an MSB."""
     @classmethod
     def get_msb_entry_supertype_subtype(cls, pluralized_subtype=False) -> [str, str]:

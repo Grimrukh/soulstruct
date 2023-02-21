@@ -4,7 +4,7 @@ __all__ = ["EventDirectory"]
 
 import typing as tp
 
-from soulstruct.base.events.emevd_directory import EventDirectory as _BaseEventDirectory
+from soulstruct.base.events.event_directory import EventDirectory as _BaseEventDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.bloodborne.events.emevd.core import EMEVD
 from soulstruct.bloodborne.maps.constants import *

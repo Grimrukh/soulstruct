@@ -1,4 +1,4 @@
-from soulstruct.darksouls1r.events.emevd_directory import EventDirectory
+from soulstruct.darksouls1r.events.event_directory import EventDirectory
 from soulstruct.config import DSR_PATH
 
 

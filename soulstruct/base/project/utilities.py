@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import tkinter as tk
 import typing as tp
-from collections import namedtuple
 from functools import wraps
 
 from ...utilities.text import word_wrap, camel_case_to_spaces
@@ -125,7 +124,7 @@ class ActionHistory:
 class TagData(tp.NamedTuple):
     foreground: str  # hex color
     pattern: str
-    offsets: tuple[int, int]
+    offsets: tuple[int, int] | None
 
 
 _TEXT_EDITOR_TK_SETUP = """
@@ -527,7 +526,9 @@ class ItemTextEditBox(SmartFrame):
     WIDTH = 70  # characters
     DESCRIPTION_HEIGHT = 10  # lines
 
-    def __init__(self, master, initial_name, initial_summary="", initial_description="", title="Editing Item Text"):
+    def __init__(
+        self, master: BaseEditor, initial_name, initial_summary="", initial_description="", title="Editing Item Text"
+    ):
         super().__init__(master=master, window_title=title)
         self.editor = master
         self.output = [initial_name, initial_summary, initial_description]

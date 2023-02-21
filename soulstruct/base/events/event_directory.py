@@ -77,15 +77,15 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
     def write_evs(
         self,
         evs_directory=None,
-        entities_directory=None,
+        enums_directory: Path | str = None,
         warn_missing_enums=True,
-        entity_module_prefix=".",
+        enums_module_prefix=".",
     ):
         """Write EVS scripts for all EMEVD files.
 
-        If given, `entities_directory` should contain files named `{emevd_path_stem}_entities.py`. The entities module
+        If given, `enums_directory` should contain files named `{emevd_path_stem}_enums.py`. The entities module
         matching the map stem for each EMEVD will be available as a star import for that EVS script; all other modules
-        with names ending in "_entities.py" present in the directory will be available for non-star import, for the rare
+        with names ending in "_enums.py" present in the directory will be available for non-star import, for the rare
         case where map EMEVD references IDs from other maps (e.g. in `PlayCutscene`).
 
         See `EMEVD.write_evs()` for argument usage.
@@ -93,8 +93,8 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         if evs_directory is None:
             evs_directory = self.directory
         evs_directory = Path(evs_directory)
-        if entities_directory is not None:
-            entities_directory = Path(entities_directory)
+        if enums_directory is not None:
+            enums_directory = Path(enums_directory)
 
         common_func_emevd: EMEVD | None
         if self.COMMON_FUNC and self.COMMON_FUNC.name in self.files:
@@ -102,10 +102,10 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
             common_func_emevd = self.files[self.COMMON_FUNC.name]
             common_func_emevd.write_evs(
                 evs_path=evs_directory / f"{common_func_emevd.map_name}.py",  # no '.evs' extension (for importing)
-                entity_star_module_paths=[],
-                entity_non_star_module_paths=[],
+                enums_star_module_paths=[],
+                enums_non_star_module_paths=[],
                 warn_missing_enums=warn_missing_enums,
-                entity_module_prefix=entity_module_prefix,
+                enums_module_prefix=enums_module_prefix,
                 event_prefix="CommonFunc",
                 docstring="Common functions that can be imported and used in other EVS scripts.",
             )
@@ -116,23 +116,23 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
         for map_name, emevd in self.files.items():
             if self.COMMON_FUNC and map_name == self.COMMON_FUNC.name:
                 continue  # already done above
-            entity_star_module_paths = []
-            entity_non_star_module_paths = []
+            enums_star_module_paths = []
+            enums_non_star_module_paths = []
 
-            if entities_directory and map_name != "Common":  # TODO: why not allow 'common_entities' import?
-                matching_map_module_name = f"{emevd.map_name}_entities.py"
-                for module_path in entities_directory.glob("*_entities.py"):
+            if enums_directory and map_name != "Common":  # TODO: why not allow 'common_enums' import?
+                matching_map_module_name = f"{emevd.map_name}_enums.py"
+                for module_path in enums_directory.glob("*_enums.py"):
                     if module_path.name == matching_map_module_name:
-                        entity_star_module_paths.append(module_path)
+                        enums_star_module_paths.append(module_path)
                     else:
-                        entity_non_star_module_paths.append(module_path)
+                        enums_non_star_module_paths.append(module_path)
 
             emevd.write_evs(
                 evs_path=evs_directory / f"{emevd.map_name}.evs.py",
-                entity_star_module_paths=entity_star_module_paths,
-                entity_non_star_module_paths=entity_non_star_module_paths,
+                enums_star_module_paths=enums_star_module_paths,
+                enums_non_star_module_paths=enums_non_star_module_paths,
                 warn_missing_enums=warn_missing_enums,
-                entity_module_prefix=entity_module_prefix,
+                enums_module_prefix=enums_module_prefix,
                 event_prefix="Event",
                 docstring=self.GET_MAP(map_name).verbose_name,
                 common_func_emevd=common_func_emevd,
@@ -141,10 +141,10 @@ class EventDirectory(GameFileMapDirectory[EMEVD], abc.ABC):
 
         _LOGGER.info("All EMEVD files written to decompiled EVS scripts successfully.")
 
-    def write_numeric(self, emevd_directory=None):
-        if emevd_directory is None:
-            emevd_directory = self.directory
-        emevd_directory = Path(emevd_directory)
+    def write_numeric(self, event_directory=None):
+        if event_directory is None:
+            event_directory = self.directory
+        event_directory = Path(event_directory)
         for emevd in self.files.values():
-            emevd.write_numeric(emevd_directory / emevd.path.name.split(".")[0] + ".txt")
+            emevd.write_numeric(event_directory / emevd.path.name.split(".")[0] + ".txt")
         _LOGGER.info("All EMEVD files written to numeric TXT format successfully.")

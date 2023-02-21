@@ -20,7 +20,7 @@ from .numeric import build_numeric
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.events.emevd.evs import EVSParser
-    from .entity_enums_manager import GameEnumsManager
+    from soulstruct.base.game_types.game_enums_manager import GameEnumsManager
 
 try:
     Self = tp.Self
@@ -284,41 +284,43 @@ class EMEVD(GameFile, abc.ABC):
 
     def to_evs(
         self,
-        entity_star_module_paths: tp.Sequence[str | Path, ...] = (),
-        entity_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        enum_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        enum_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
         warn_missing_enums=True,
-        entity_module_prefix=".",
+        enums_module_prefix=".",
         event_function_prefix="Event",
         docstring="",
         common_func_emevd: EMEVD = None,
     ) -> str:
         """Convert EMEVD to a Python-style EVS string.
 
-        Any `entity_module_paths` passed in will be star-imported into the EVS script with `entity_module_prefix`. These
+        Any `entity_module_paths` passed in will be star-imported into the EVS script with `enums_module_prefix`. These
         modules will be scanned for `MapEntity`-subclassed entity ID enumerations, the names of which will be
         substituted for entity IDs of matching type anywhere in the decompiled EVS script.
 
-        NOTE: It is currently assumed that all entity modules can be imported using the same `entity_module_prefix`. It
+        NOTE: It is currently assumed that all entity modules can be imported using the same `enums_module_prefix`. It
         would be a confusing setup to do otherwise, but you can always edit the import lines yourself to adjust.
 
         For example:
         ```
-            # without entities modules
+            # without enums modules
             AddSpecialEffect(1510100, special_effect_id=1234)
 
-            # entities module `m15_01_00_00_entities.py` defining `class Characters(Character)` enum with 1510100
-            from .m15_01_00_00_entities.py import *
+            # enums module `m15_01_00_00_enums.py` defining `class Characters(Character)` enum with 1510100
+            from .m15_01_00_00_enums.py import *
             ...
             AddSpecialEffect(Characters.BlackKnight3, special_effect_id=1234)
         ```
 
         If `warn_missing_enums=True` (default) and any `entity_module_paths` are given, entity IDs that are not found in
-        any of the given entities modules will cause a warning to be logged and a TO-DO comment to be written at the end
+        any of the given enums modules will cause a warning to be logged and a TO-DO comment to be written at the end
         of that line. Entity IDs that appear multiple times in the given modules will always raise a `ValueError`.
         """
         enums_manager = self.ENTITY_ENUMS_MANAGER(
-            entity_star_module_paths, entity_non_star_module_paths, list(self.events)
+            list(enum_star_module_paths) + list(enum_non_star_module_paths), list(self.events)
         )
+        star_module_names = [Path(path).name.split(".")[0] for path in enum_star_module_paths]
+        enums_manager.star_module_names = star_module_names
 
         if common_func_emevd:
             # Add common event IDs to `GameEnumsManager`.
@@ -348,23 +350,13 @@ class EMEVD(GameFile, abc.ABC):
         # Create imports.
         if enums_manager:
             if warn_missing_enums:
-                for entity_cls_name, missing_id in enums_manager.missing_enums:
-                    if entity_cls_name == "Flag":
+                for missing_enum_ex in enums_manager.missing_enums:
+                    if "Flag" in missing_enum_ex.missing_enum_game_types:
                         continue  # TODO: Too many missing Flags to print.
-                    _LOGGER.warning(f"Missing '{entity_cls_name}' entity ID: {missing_id}")
-            for name in sorted(enums_manager.used_star_modules):
-                imports += f"\nfrom {entity_module_prefix}{name} import *"
-            for name, enums in sorted(enums_manager.used_non_star_imports.items()):
-                if enums:
-                    import_strings = sorted({e.import_string for e in enums})
-                    import_prefix = f"\nfrom {entity_module_prefix}{name} import "
-                    one_line_suffix = ", ".join(import_strings)
-                    if len(import_prefix + one_line_suffix) > 119:
-                        # Split across multiple lines.
-                        multi_line_imports = "\n    ".join(import_strings)
-                        imports += f"{import_prefix}(\n    {multi_line_imports}\n)"
-                    else:
-                        imports += f"{import_prefix}{one_line_suffix}"
+                    _LOGGER.warning(
+                        f"Missing '{missing_enum_ex.missing_enum_game_types}' entity ID: {missing_enum_ex.enum_value}"
+                    )
+            imports += enums_manager.get_import_lines(star_module_names, enums_module_prefix)
 
         return docstring + "\n" + "\n\n\n".join([imports] + evs_events) + "\n"
 
@@ -416,8 +408,8 @@ class EMEVD(GameFile, abc.ABC):
                         int_value = int(args[j])
                     except ValueError:
                         continue
+                    game_types = event_args[j - 1].combined_game_types
                     try:
-                        game_types = event_args[j - 1].combined_game_types
                         if game_types:
                             args[j] = f"{enums_manager.check_out_enum(int_value, *game_types)}"
                     except enums_manager.EnumManagerError:
@@ -542,10 +534,10 @@ class EMEVD(GameFile, abc.ABC):
     def write_evs(
         self,
         evs_path=None,
-        entity_star_module_paths: tp.Sequence[str | Path, ...] = (),
-        entity_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        enums_star_module_paths: tp.Sequence[str | Path, ...] = (),
+        enums_non_star_module_paths: tp.Sequence[str | Path, ...] = (),
         warn_missing_enums=True,
-        entity_module_prefix=".",
+        enums_module_prefix=".",
         event_prefix="Event",
         docstring="",
         common_func_emevd: EMEVD = None,
@@ -558,10 +550,10 @@ class EMEVD(GameFile, abc.ABC):
         if evs_path.parent:
             evs_path.parent.mkdir(exist_ok=True, parents=True)
         evs_string = self.to_evs(
-            entity_star_module_paths,
-            entity_non_star_module_paths,
+            enums_star_module_paths,
+            enums_non_star_module_paths,
             warn_missing_enums,
-            entity_module_prefix,
+            enums_module_prefix,
             event_prefix,
             docstring,
             common_func_emevd,

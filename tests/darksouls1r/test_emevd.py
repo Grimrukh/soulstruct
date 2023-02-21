@@ -45,15 +45,15 @@ class EMEVDTest(unittest.TestCase):
         with Timer("EMEVD EVS Write"):
             emevd.write_evs(
                 "_test_emevd.evs.py",
-                entity_star_module_paths=(Path("resources/m10_00_00_00_entities.py"),),
+                enums_star_module_paths=(Path("resources/m10_00_00_00_enums.py"),),
                 warn_missing_enums=True,
-                entity_module_prefix="resources.",
+                enums_module_prefix="resources.",
             )
             # re_emevd.write_evs(
             #     "_test_re_emevd.evs.py",
-            #     entity_star_module_paths=(Path("resources/m10_00_00_00_entities.py"),),
+            #     enum_star_module_paths=(Path("resources/m10_00_00_00_enums.py"),),
             #     warn_missing_enums=True,
-            #     entity_module_prefix="resources.",
+            #     enums_module_prefix="resources.",
             # )
 
         # with Timer("EMEVD EVS Read"):
@@ -62,8 +62,8 @@ class EMEVDTest(unittest.TestCase):
         # with Timer("EMEVD EVS Re-Write"):
         #     evs.write_evs(
         #         "_test_emevd_rewrite.evs.py",
-        #         entity_star_module_paths=("resources/m10_00_00_00_entities.py",),
-        #         entity_module_prefix="resources.",
+        #         enum_star_module_paths=("resources/m10_00_00_00_enums.py",),
+        #         enums_module_prefix="resources.",
         #     )
 
         # print(evs.events[0].instructions[0])

@@ -58,11 +58,12 @@ __all__ = [
     "EnvironmentEventTyping",
     "NavigationEventTyping",
     "VFXEventTyping",
-    
+
     "ID_RANGES",
 ]
 
 from soulstruct.base.game_types.map_types import *
+
 
 # TODO
 ID_RANGES = {}

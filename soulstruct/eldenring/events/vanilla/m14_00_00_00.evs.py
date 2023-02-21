@@ -4302,12 +4302,12 @@ def Event_14003880(
     Move(PLAYER, destination=destination, destination_type=CoordEntityType.Region, copy_draw_parent=0)
     DisableBossHealthBar(character)
     Wait(3.0)
-    AND_10.Add(CharacterType(ProtectedEntities.ClientPlayer1, character_type=CharacterType.WhitePhantom))
+    AND_10.Add(CharacterType(CLIENT_PLAYER_1, character_type=CharacterType.WhitePhantom))
     GotoIfConditionFalse(Label.L0, input_condition=AND_10)
     if FlagDisabled(flag):
         EnableFlag(flag)
         Move(
-            ProtectedEntities.ClientPlayer1,
+            CLIENT_PLAYER_1,
             destination=destination_1,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4315,7 +4315,7 @@ def Event_14003880(
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
         Move(
-            ProtectedEntities.ClientPlayer1,
+            CLIENT_PLAYER_1,
             destination=destination_2,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4323,7 +4323,7 @@ def Event_14003880(
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
         Move(
-            ProtectedEntities.ClientPlayer1,
+            CLIENT_PLAYER_1,
             destination=destination_3,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4331,12 +4331,12 @@ def Event_14003880(
 
     # --- Label 0 --- #
     DefineLabel(0)
-    AND_11.Add(CharacterType(ProtectedEntities.ClientPlayer2, character_type=CharacterType.WhitePhantom))
+    AND_11.Add(CharacterType(CLIENT_PLAYER_2, character_type=CharacterType.WhitePhantom))
     GotoIfConditionFalse(Label.L1, input_condition=AND_11)
     if FlagDisabled(flag):
         EnableFlag(flag)
         Move(
-            ProtectedEntities.ClientPlayer2,
+            CLIENT_PLAYER_2,
             destination=destination_1,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4344,7 +4344,7 @@ def Event_14003880(
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
         Move(
-            ProtectedEntities.ClientPlayer2,
+            CLIENT_PLAYER_2,
             destination=destination_2,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4352,7 +4352,7 @@ def Event_14003880(
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
         Move(
-            ProtectedEntities.ClientPlayer2,
+            CLIENT_PLAYER_2,
             destination=destination_3,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4360,12 +4360,12 @@ def Event_14003880(
 
     # --- Label 1 --- #
     DefineLabel(1)
-    AND_12.Add(CharacterType(ProtectedEntities.ClientPlayer3, character_type=CharacterType.WhitePhantom))
+    AND_12.Add(CharacterType(CLIENT_PLAYER_3, character_type=CharacterType.WhitePhantom))
     GotoIfConditionFalse(Label.L2, input_condition=AND_12)
     if FlagDisabled(flag):
         EnableFlag(flag)
         Move(
-            ProtectedEntities.ClientPlayer3,
+            CLIENT_PLAYER_3,
             destination=destination_1,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4373,7 +4373,7 @@ def Event_14003880(
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
         Move(
-            ProtectedEntities.ClientPlayer3,
+            CLIENT_PLAYER_3,
             destination=destination_2,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4381,7 +4381,7 @@ def Event_14003880(
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
         Move(
-            ProtectedEntities.ClientPlayer3,
+            CLIENT_PLAYER_3,
             destination=destination_3,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4391,12 +4391,12 @@ def Event_14003880(
     DefineLabel(2)
     if FlagEnabled(flag_2):
         return
-    AND_13.Add(CharacterType(ProtectedEntities.ClientPlayer4, character_type=CharacterType.WhitePhantom))
+    AND_13.Add(CharacterType(CLIENT_PLAYER_4, character_type=CharacterType.WhitePhantom))
     GotoIfConditionFalse(Label.L3, input_condition=AND_13)
     if FlagDisabled(flag):
         EnableFlag(flag)
         Move(
-            ProtectedEntities.ClientPlayer4,
+            CLIENT_PLAYER_4,
             destination=destination_1,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4404,7 +4404,7 @@ def Event_14003880(
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
         Move(
-            ProtectedEntities.ClientPlayer4,
+            CLIENT_PLAYER_4,
             destination=destination_2,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4412,7 +4412,7 @@ def Event_14003880(
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
         Move(
-            ProtectedEntities.ClientPlayer4,
+            CLIENT_PLAYER_4,
             destination=destination_3,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4422,12 +4422,12 @@ def Event_14003880(
     DefineLabel(3)
     if FlagEnabled(flag_2):
         return
-    AND_14.Add(CharacterType(ProtectedEntities.ClientPlayer5, character_type=CharacterType.WhitePhantom))
+    AND_14.Add(CharacterType(CLIENT_PLAYER_5, character_type=CharacterType.WhitePhantom))
     GotoIfConditionFalse(Label.L4, input_condition=AND_14)
     if FlagDisabled(flag):
         EnableFlag(flag)
         Move(
-            ProtectedEntities.ClientPlayer5,
+            CLIENT_PLAYER_5,
             destination=destination_1,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4435,7 +4435,7 @@ def Event_14003880(
     if FlagDisabled(flag_1):
         EnableFlag(flag_1)
         Move(
-            ProtectedEntities.ClientPlayer5,
+            CLIENT_PLAYER_5,
             destination=destination_2,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,
@@ -4443,7 +4443,7 @@ def Event_14003880(
     if FlagDisabled(flag_2):
         EnableFlag(flag_2)
         Move(
-            ProtectedEntities.ClientPlayer5,
+            CLIENT_PLAYER_5,
             destination=destination_3,
             destination_type=CoordEntityType.Region,
             copy_draw_parent=0,

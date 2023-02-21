@@ -1,1 +1,2 @@
-"""No imports. Use game-specific module."""
+from .emevd import EMEVD
+from .event_directory import EventDirectory

@@ -9,6 +9,15 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
+    "CLIENT_PLAYER_6",
+    "CLIENT_PLAYER_7",
+    "CLIENT_PLAYER_8",
+    "CLIENT_PLAYER_9",
     "BaseEMEVDEnum",
     "BaseNegatableEMEVDEnum",
     "BaseEMEVDFlags",
@@ -30,7 +39,18 @@ ushort = "H"
 char = "b"
 uchar = "B"
 
+# NOTE: Not sure exactly how many clients are supported, but being safe.
+# MSB entries should not use any five-digit entity IDs anyway.
 PLAYER = 10000
+CLIENT_PLAYER_1 = 10001
+CLIENT_PLAYER_2 = 10002
+CLIENT_PLAYER_3 = 10003
+CLIENT_PLAYER_4 = 10004
+CLIENT_PLAYER_5 = 10005
+CLIENT_PLAYER_6 = 10006
+CLIENT_PLAYER_7 = 10007
+CLIENT_PLAYER_8 = 10008
+CLIENT_PLAYER_9 = 10009
 
 
 class BaseEMEVDEnum(IntEnum):

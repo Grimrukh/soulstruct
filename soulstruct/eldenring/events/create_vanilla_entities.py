@@ -123,7 +123,7 @@ def create_vanilla_entities(entities_dir: Path | str = None):
             for name, (entity_id, desc) in map_entities["Assets"].items():
                 module_string += f"    {name} = {entity_id}  # {desc}\n"
 
-        (entities_dir / f"{map_id}_entities.py").write_text(module_string)
+        (entities_dir / f"{map_id}_enums.py").write_text(module_string)
 
 
 def copy_vanilla_entities(entities_dir: Path | str):

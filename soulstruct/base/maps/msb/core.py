@@ -556,14 +556,14 @@ class MSB(GameFile, abc.ABC):
         # TODO: cc_id and dd_id for Elden Ring
         append_to_module: str = ""
     ):
-        """Generates a '{mXX_YY}_entities.py' file with entity IDs for import into EVS script.
+        """Generates a '{mXX_YY}_enums.py' file with entity IDs for import into EVS script.
 
         If `append_to_module` text is given, all map entities will be appended to it.
         """
         if module_path is None:
             if self.path is None:
                 raise ValueError("Cannot auto-detect MSB entities `module_path` (MSB path not known).")
-            module_path = self.path.parent / f"{self.path.name.split('.')[0]}_entities.py"
+            module_path = self.path.parent / f"{self.path.name.split('.')[0]}_enums.py"
 
         module_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -586,6 +586,7 @@ class MSB(GameFile, abc.ABC):
                     "commented out; replace the {MAP_RANGE_START} string in each one and uncomment to use."
                 )
         elif area_id is not None and block_id is not None:
+            # TODO: Is this still right for Elden Ring? For legacy dungeons, at least.
             auto_map_range_start = area_id * 100000 + block_id * 10000
         else:
             raise ValueError("Both `area_id` and `block_id` must be given, or neither for automatic detection.")

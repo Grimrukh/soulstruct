@@ -8,11 +8,12 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 from soulstruct.base.ai.lua import LuaError
 from soulstruct.base.ai.lua_scripts import LuaGoalScript, GoalType
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
+from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.utilities import bind_events, TextEditor, TagData
 
 if TYPE_CHECKING:
     from soulstruct.base.ai.luabnd import LuaBND
-    from soulstruct.base.ai.ai_directory import ScriptDirectory
+    from soulstruct.base.ai.ai_directory import AIScriptDirectory
 
 
 class AIScriptTextEditor(TextEditor):
@@ -153,7 +154,7 @@ class AIEntryRow(EntryRow):
             bg=bg_color,
             fg="#F33",
             sticky="ew",
-            tooltip_text="Type of goal: battle (B), logic (L), or neither (N). Left or right click to cycle "
+            tooltip_text="Type of goal: battle (B), logic (L), or neither (U). Left or right click to cycle "
             "between types.",
         )
         type_bindings = main_bindings.copy()
@@ -279,7 +280,6 @@ class AIEditor(BaseEditor):
         self,
         project,
         script_directory,
-        export_directory,
         allow_decompile,
         global_map_choice_func,
         linker,
@@ -290,7 +290,6 @@ class AIEditor(BaseEditor):
         self.script_directory = Path(script_directory)
         self.global_map_choice_func = global_map_choice_func
         self.text_font_size = text_font_size
-        self.export_directory = Path(export_directory)
         self.allow_decompile = allow_decompile
         self.selected_map_id = ""
 
@@ -310,7 +309,7 @@ class AIEditor(BaseEditor):
         super().__init__(project, linker, master=master, toplevel=toplevel, window_title="Soulstruct AI Script Editor")
 
     @property
-    def ai(self) -> ScriptDirectory:
+    def ai(self) -> AIScriptDirectory:
         return self._project.ai
 
     def refresh_categories(self):
@@ -699,7 +698,7 @@ class AIEditor(BaseEditor):
 
     def export_selected_map(self):
         luabnd = self.get_selected_bnd()
-        luabnd_path = self.export_directory / luabnd.path.name
+        luabnd_path = self._project.get_game_path_of_data_type(ProjectDataType.AI) / luabnd.path.name
         luabnd.write(luabnd_path)
 
     def load_all_from_project_folder(self, confirm=True):

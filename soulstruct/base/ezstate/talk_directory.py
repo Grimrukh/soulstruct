@@ -46,15 +46,15 @@ class TalkDirectory(GameFileMapDirectory, abc.ABC):
         all_map_stems = [getattr(game_map, cls.MAP_STEM_ATTRIBUTE) for game_map in cls.ALL_MAPS]
         all_map_stems = [stem for stem in all_map_stems if stem is not None]
         files = {}
-        file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
-        for file_path in directory_path.glob("*"):
+        binary_file_name_re = re.compile(cls.FILE_NAME_PATTERN + r"(\.dcx)?$")
 
+        for file_path in directory_path.glob("*"):
             if file_path.is_dir() and file_path.stem in all_map_stems:
                 # Try to load `TalkESDBND` from directory of ESP files matching the map stem.
                 files[file_path.stem] = cls.FILE_CLASS.from_esp_directory(file_path)
                 all_map_stems.remove(file_path.stem)
                 continue
-            elif file_name_re.match(file_path.name):
+            elif binary_file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_map_stems:  # `.talkesdbnd` file
                     files[file_stem] = cls.FILE_CLASS.from_path(file_path)

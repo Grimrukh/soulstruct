@@ -38,7 +38,15 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "ProtectedEntities",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
+    "CLIENT_PLAYER_6",
+    "CLIENT_PLAYER_7",
+    "CLIENT_PLAYER_8",
+    "CLIENT_PLAYER_9",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -79,5 +87,5 @@ from soulstruct.darksouls1ptde.maps import constants
 from soulstruct.darksouls1ptde.maps.constants import *
 from .emevd import EMEVD, decompiler, enums
 from .emevd.enums import *
-from .emevd_directory import EventDirectory
+from .event_directory import EventDirectory
 from .utilities import convert_events, compare_events

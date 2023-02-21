@@ -194,6 +194,15 @@ class BaseBinaryFile:
 
         return file_path
 
+    @classmethod
+    def get_default_extension(cls) -> str:
+        if not cls.EXT:
+            raise TypeError(f"Class `{cls.__name__}` has not defined `EXT`. Cannot detect default file extension.")
+        ext = cls.EXT
+        if cls.get_game().default_dcx_type != DCXType.Null:
+            ext += ".dcx"
+        return ext
+
     def _get_dcx_type(self) -> DCXType:
         if self.dcx_type is None:
             try:

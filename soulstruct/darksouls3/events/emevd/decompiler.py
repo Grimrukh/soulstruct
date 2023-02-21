@@ -11,11 +11,11 @@ from soulstruct.base.events.emevd.decompiler import (
     base_decompile_run_event,
     base_decompile_run_common_event,
 )
+from soulstruct.darksouls3.game_types.game_enums_manager import GameEnumsManager
 from soulstruct.darksouls3.game_types.map_types import *
 from soulstruct.darksouls3.maps.constants import get_map_variable_name
 
 from . import enums
-from .entity_enums_manager import GameEnumsManager
 from .enums import *
 from .emedf import EMEDF
 

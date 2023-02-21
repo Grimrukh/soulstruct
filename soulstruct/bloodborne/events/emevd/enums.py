@@ -9,7 +9,15 @@ __all__ = [
     "char",
     "uchar",
     "PLAYER",
-    "ProtectedEntities",
+    "CLIENT_PLAYER_1",
+    "CLIENT_PLAYER_2",
+    "CLIENT_PLAYER_3",
+    "CLIENT_PLAYER_4",
+    "CLIENT_PLAYER_5",
+    "CLIENT_PLAYER_6",
+    "CLIENT_PLAYER_7",
+    "CLIENT_PLAYER_8",
+    "CLIENT_PLAYER_9",
     # Enums identical in all games
     "AIStatusType",
     "BitOperation",
@@ -62,16 +70,6 @@ __all__ = [
 
 from enum import IntEnum
 from soulstruct.base.events.emevd.enums import *
-
-
-class ProtectedEntities(IntEnum):
-    """Hard-coded entity IDs used in EMEVD instructions. Used by decompiler; you can use global names above instead."""
-    Player = PLAYER
-    ClientPlayer1 = 10001
-    ClientPlayer2 = 10002
-    ClientPlayer3 = 10003
-    ClientPlayer4 = 10004
-    ClientPlayer5 = 10005
 
 
 # Basic obvious booleans are omitted:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 __all__ = ["EventDirectory"]
 
-from soulstruct.base.events.emevd_directory import EventDirectory as _BaseEventDirectory
+from soulstruct.base.events.event_directory import EventDirectory as _BaseEventDirectory
 from soulstruct.base.game_file_directory import map_property
 from soulstruct.darksouls3.events.emevd.core import EMEVD
 from soulstruct.darksouls3.maps.constants import *

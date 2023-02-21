@@ -16,7 +16,7 @@ if tp.TYPE_CHECKING:
 
 class GameDirectoryProject(_BaseGameDirectoryProject):
     DATA_TYPES = {
-        # "ai": ScriptDirectory,
+        # "ai": AIScriptDirectory,
         "events": EventDirectory,
         # "lighting": DrawParamDirectory,
         # "maps": MapStudioDirectory,
@@ -41,7 +41,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
                 "The project window will appear when done."
             )
 
-    def import_events(self, force_import=False, with_window: ProjectWindow = None):
+    def import_Events(self, force_import=False, with_window: ProjectWindow = None):
         """Offers entities directory creation."""
         events_dir = self.project_root / "events"
         entities_dir = self.entities_directory
