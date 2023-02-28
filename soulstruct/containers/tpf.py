@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from enum import IntEnum
 from pathlib import Path
 
-from soulstruct.base.base_binary_file import BaseBinaryFile
+from soulstruct.base.game_file import GameFile
 from soulstruct.base.textures.dds import DDS, DDSCAPS2, texconv, convert_dds_file
 from soulstruct.utilities.binary import *
 
@@ -148,7 +148,7 @@ class TPFTexture:
             name=name,
             data=data,
             header=header,
-            unknown_float=unknown_floats,
+            unknown_floats=unknown_floats,
         )
 
         return texture
@@ -306,7 +306,7 @@ class TPFStruct(BinaryStruct):
 
 
 @dataclass(slots=True)
-class TPF(BaseBinaryFile):
+class TPF(GameFile):
 
     textures: list[TPFTexture] = field(default_factory=list)
     platform: TPFPlatform = TPFPlatform.PC

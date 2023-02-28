@@ -73,19 +73,19 @@ class FLVER(GameFile):
 
     EXT: tp.ClassVar = ".flver"
 
-    # Header information that can't be inferred, and must be stored from unpack or manually set.
+    # Header information that can't be inferred, and must be stored from unpack or manually set. They default to DSR.
     # (These fields have no underscore prefix in `FLVERStruct` and will be passed here automatically.)
-    big_endian: bool
-    version: Version
-    bounding_box_min: Vector3
-    bounding_box_max: Vector3
-    vertex_indices_size: byte
-    unicode: bool
-    unk_x4a: bool
-    unk_x4c: int
-    unk_x5c: byte
-    unk_x5d: byte
-    unk_x68: int
+    big_endian: bool = False
+    version: Version = Version.DarkSouls_A
+    bounding_box_min: Vector3 = field(default_factory=Vector3.zero)
+    bounding_box_max: Vector3 = field(default_factory=Vector3.zero)
+    vertex_indices_size: int = 16
+    unicode: bool = True
+    unk_x4a: bool = False
+    unk_x4c: int = 0
+    unk_x5c: int = 0
+    unk_x5d: int = 0
+    unk_x68: int = 0
 
     dummies: list[Dummy] = field(default_factory=list)
     gx_lists: list[GXList] = field(default_factory=list)
@@ -454,7 +454,7 @@ class FLVER(GameFile):
         if auto_show:
             plt.show()
 
-    def scale(self, factor: float):
+    def scale_all_translations(self, factor: float):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.
 
         Will NOT have full functionality in-game until Havok physics files are modified as well.

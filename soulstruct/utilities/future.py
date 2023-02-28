@@ -1,9 +1,9 @@
 __all__ = ["StrEnum"]
 
-from enum import ReprEnum
+from enum import Enum
 
 
-class StrEnum(str, ReprEnum):
+class StrEnum(str, Enum):
     """
     FROM PYTHON 3.11
 

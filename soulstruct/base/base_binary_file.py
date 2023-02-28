@@ -44,10 +44,10 @@ class BaseBinaryFile:
     # If given, extension will be enforced (before DCX is checked) when calling `.write()`.
     EXT: tp.ClassVar[str] = ""
 
-    # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
-    path: Path | None = field(default=None, kw_only=True)
     # Default DCX compression type for file. If `None`, then `get_game().default_dcx_type` will be used.
     dcx_type: DCXType | None = field(default=None, kw_only=True)
+    # Records origin path of file if loaded from disk (or a `BinderEntry`). Not always available.
+    path: Path | None = field(default=None, kw_only=True)
 
     # region Read Methods
 

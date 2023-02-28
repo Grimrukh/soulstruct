@@ -13,7 +13,7 @@ from enum import IntEnum
 from types import MappingProxyType, ModuleType
 
 from soulstruct.utilities.binary import *
-from soulstruct.utilities.maths import Vector, Vector2, Vector3, Vector4
+from soulstruct.utilities.maths import BaseVector, Vector2, Vector3, Vector4
 from soulstruct.utilities.text import pad_chars
 
 from .enums import BaseMSBSubtype, MSBSupertype
@@ -364,7 +364,7 @@ class MSBEntry(abc.ABC):
                             "subtype_index": ref_subtype_list.index_entry(element)
                         })
                 data[name] = ref_list
-            elif isinstance(value, Vector):
+            elif isinstance(value, BaseVector):
                 data[name] = list(value)
             else:
                 # Custom types like `Vector3` and `GroupBitSet` can decode their own string `repr`.

@@ -4,9 +4,8 @@ __all__ = ["GameFile", "GAME_FILE_T"]
 
 import abc
 import logging
-import re
 import typing as tp
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from .base_binary_file import BaseBinaryFile
@@ -17,12 +16,6 @@ except ImportError:  # < Python 3.11
     Self = "GameFile"
 
 _LOGGER = logging.getLogger(__name__)
-
-
-"""
-TODO:
-    - More of an ECS system for MSB entries.    
-"""
 
 GAME_FILE_T = tp.TypeVar("GAME_FILE_T", bound="GameFile")
 

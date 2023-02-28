@@ -212,8 +212,7 @@ class BinderEntry:
         self.data = zlib.compress(data, level=7) if self.flags.is_compressed else data
 
     def set_from_game_file(self, game_file: GAME_FILE_T):
-        data = bytes(game_file)
-        self.data = zlib.compress(data, level=7) if self.flags.is_compressed else data
+        self.set_uncompressed_data(bytes(game_file))
 
     def get_packed_path(self, encoding: str) -> bytes:
         """Encodes path and null-terminates."""

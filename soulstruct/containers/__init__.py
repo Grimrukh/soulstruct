@@ -6,6 +6,7 @@ __all__ = [
     "BinderVersion4Info",
     "BinderFlags",
     "BinderError",
+    "BinderEntryNotFoundError",
     "BinderEntry",
     "BinderEntryFlags",
     "DCXType",
@@ -15,7 +16,7 @@ __all__ = [
     "TPFTexture",
 ]
 
-from .core import Binder, BinderVersion, BinderVersion4Info, BinderFlags, BinderError
+from .core import Binder, BinderVersion, BinderVersion4Info, BinderFlags, BinderError, BinderEntryNotFoundError
 from .entry import BinderEntry, BinderEntryFlags
 from .dcx import DCXType, decompress, compress
 from .tpf import TPF, TPFTexture

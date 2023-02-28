@@ -128,7 +128,7 @@ class Texture:
 
     path: str
     texture_type: str
-    scale: Vector2 = Vector2.ones()
+    scale: Vector2 = field(default_factory=Vector2.ones)
     unk_x10: int = 1
     unk_x11: bool = True
     unk_x14: float = 0.0

@@ -7,14 +7,21 @@ from __future__ import annotations
 __all__ = [
     "CameraFrameTransform",
     "FoVKeyframe",
+    "SIBCAMUnknownBytes",
     "SIBCAM",
 ]
 
-from dataclasses import dataclass
+import typing as tp
+from dataclasses import dataclass, field
 
 from soulstruct.base.game_file import GameFile
-from soulstruct.utilities.binary import BinaryReader, BinaryWriter, ByteOrder
+from soulstruct.utilities.binary import *
 from soulstruct.utilities.maths import Vector3
+
+try:
+    Self = tp.Self
+except AttributeError:
+    Self = "SIBCAM"
 
 
 @dataclass(slots=True)
@@ -49,53 +56,64 @@ class FoVKeyframe:
     tan_out: float
 
 
+@dataclass(slots=True)
+class SIBCAMUnknownBytes:
+    """Unified place to put the six unknown chunks of data in the SIBCAM file."""
+    unk_pre_vector_count: bytes  # 0x24
+    unk_post_vector_count: bytes  # 0x14C
+    unk_pre_frame_count: bytes  # 0x4
+    unk_post_frame_count: bytes  # 0x20
+    unk_pre_fov_count: bytes  # 0x4
+    unk_post_fov_count: bytes  # 0x4
+
+
+@dataclass(slots=True)
 class SIBCAM(GameFile):
 
-    big_endian: bool
-    camera_name: str
-    fov_keyframe_count: int
-    initial_fov: float
-    camera_animation: list[CameraFrameTransform]
-    fov_keyframes: list[FoVKeyframe]
+    big_endian: bool = False
+    camera_name: str = ""
+    fov_keyframe_count: int = 0
+    initial_fov: float = 0.0
+    camera_animation: list[CameraFrameTransform] = field(default_factory=list)
+    fov_keyframes: list[FoVKeyframe] = field(default_factory=list)
 
-    # TODO: Unknown chunks of data. Check it for counts and offsets...?
-    unk_pre_vector_count: bytes
-    unk_post_vector_count: bytes
-    unk_pre_frame_count: bytes
-    unk_post_frame_count: bytes
-    unk_pre_fov_count: bytes
-    unk_post_fov_count: bytes
+    unknowns: SIBCAMUnknownBytes = None
 
-    def unpack(self, reader: BinaryReader, **kwargs):
-        self.big_endian = reader.read(4) == b"\00\00\00\01"
-        reader.default_byte_order = ByteOrder.big_endian_bool(self.big_endian)
+    @classmethod
+    def from_reader(cls, reader: BinaryReader) -> Self:
+        """NOTE: File contains a null-terminated `camera_name` string early on and is hence not amenable to structs.
 
-        self.unk_pre_vector_count = reader.read(0x24)
+        (It's also full of unknown chunks of data, so a struct may be premature.)
+        """
+        big_endian = reader.read(4) == b"\00\00\00\01"
+        reader.default_byte_order = ByteOrder.big_endian_bool(big_endian)
+
+        unk_pre_vector_count = reader.read(0x24)
         vector_count = reader["I"]
-        self.unk_post_vector_count = reader.read(0x14C)
+        unk_post_vector_count = reader.read(0x14C)
 
-        self.camera_name = reader.unpack_string(encoding="ASCII")
+        camera_name = reader.unpack_string(encoding="ASCII")
         reader.align(4)
 
-        self.unk_pre_frame_count = reader.read(0x4)
+        unk_pre_frame_count = reader.read(0x4)
         frame_count = reader["I"]  # TODO: equal to length of `self.camera_animation`
-        self.unk_post_frame_count = reader.read(0x20)
+        unk_post_frame_count = reader.read(0x20)
 
         frame_refs = [FrameRef(*reader.unpack("8I")) for _ in range(frame_count)]
 
-        self.initial_fov = reader["f"]
+        initial_fov = reader["f"]
 
-        self.unk_pre_fov_count = reader.read(4)  # 'i'?
-        self.fov_keyframe_count = reader["I"]
-        self.unk_post_fov_count = reader.read(4)  # 'i'?
+        unk_pre_fov_count = reader.read(4)  # 'i'?
+        fov_keyframe_count = reader["I"]
+        unk_post_fov_count = reader.read(4)  # 'i'?
 
-        self.fov_keyframes = [FoVKeyframe(*reader.unpack("I3f")) for _ in range(self.fov_keyframe_count)]
+        fov_keyframes = [FoVKeyframe(*reader.unpack("I3f")) for _ in range(fov_keyframe_count)]
 
         # Position, rotation, and scale vectors indexed by `FrameRef`.
-        vectors = [Vector3(reader["3f"]) for _ in range(vector_count)]
+        vectors = [Vector3(reader.unpack("3f")) for _ in range(vector_count)]
 
         # Done reading the file; now resolve into `CameraFrameTransform` list.
-        self.camera_animation = [
+        camera_animation = [
             CameraFrameTransform(
                 index=frame_ref.index,
                 position=vectors[frame_ref.position_index],
@@ -107,15 +125,38 @@ class SIBCAM(GameFile):
             for frame_ref in frame_refs
         ]
 
-    def pack(self, **kwargs) -> bytes:
+        unknowns = SIBCAMUnknownBytes(
+            unk_pre_vector_count=unk_pre_vector_count,
+            unk_post_vector_count=unk_post_vector_count,
+            unk_pre_frame_count=unk_pre_frame_count,
+            unk_post_frame_count=unk_post_frame_count,
+            unk_pre_fov_count=unk_pre_fov_count,
+            unk_post_fov_count=unk_post_fov_count,
+        )
+
+        return cls(
+            big_endian=big_endian,
+            camera_name=camera_name,
+            fov_keyframe_count=fov_keyframe_count,
+            initial_fov=initial_fov,
+            camera_animation=camera_animation,
+            fov_keyframes=fov_keyframes,
+            unknowns=unknowns,
+        )
+
+    def to_writer(self) -> BinaryWriter:
         """TODO: Not implemented by Meow. Would need to figure out the 'skipped' bytes first?
             (Or just store them and only support editing the other data, rather than writing from scratch.)
         """
+        if not self.unknowns:
+            raise ValueError(
+                "Cannot write SIBCAM without all the unknown chunks of data. (This means all SIBCAM instances should "
+                "be loaded from existing files.)"
+            )
+
         writer = BinaryWriter(byte_order=ByteOrder.big_endian_bool(self.big_endian))
 
-        # TODO
-
-        return bytes(writer)
+        raise NotImplementedError("SIBCAM files cannot be written yet.")
 
     @property
     def frame_count(self):
