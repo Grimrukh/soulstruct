@@ -3,13 +3,11 @@ from __future__ import annotations
 __all__ = ["Matrix3", "Matrix4"]
 
 import math
-import typing as tp
 from dataclasses import dataclass, field
 
 import numpy as np
 
-if tp.TYPE_CHECKING:
-    from .vector import Vector3, Vector4
+from .vector import Vector3, Vector4
 
 
 @dataclass(slots=True)
