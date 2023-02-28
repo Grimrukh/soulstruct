@@ -21,7 +21,7 @@ class FLVERBoneStruct(BinaryStruct):
     next_sibling_index: short
     previous_sibling_index: short
     bounding_box_min: Vector3
-    unk_x3c: int
+    unk_x3c: int  # seems to be 1 for root bones?
     bounding_box_max: Vector3
     _pad1: bytes = field(init=False, **BinaryPad(52))
 
@@ -36,7 +36,7 @@ class FLVERBone:
     scale: Vector3
     bounding_box_min: Vector3
     bounding_box_max: Vector3
-    unk_x3c: int
+    unk_x3c: int  # seems to be 1 for root bones?
     parent_index: int = -1
     child_index: int = -1
     next_sibling_index: int = -1
@@ -91,7 +91,7 @@ class FLVERBone:
         rotate = Matrix3.identity()
         for bone in self.get_all_parents(bones, include_self=True):
             absolute_translate += rotate @ bone.translate
-            rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True)
+            rotate @= Matrix3.from_euler_angles(bone.rotate, radians=True, order="xzy")
         return absolute_translate, rotate
 
     def __repr__(self):
@@ -101,7 +101,7 @@ class FLVERBone:
             f"  translate = {self.translate}",
             f"  rotate = {self.rotate}",
         ]
-        if not self.scale.is_identity():
+        if not self.scale == Vector3.ones():
             lines.append(f"  scale = {self.scale}")
         lines.append(f"  parent_index = {self.parent_index}")
         if self.next_sibling_index != -1:

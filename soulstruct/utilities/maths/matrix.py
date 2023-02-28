@@ -59,7 +59,7 @@ class Matrix3:
 
     def __matmul__(self, other: Matrix3 | Vector3):
         if isinstance(other, Matrix3):
-            return Matrix3(self._data * other._data)
+            return Matrix3(np.matmul(self._data, other._data))
         elif isinstance(other, Vector3):
             return Vector3(np.inner(self._data, other))
         raise TypeError(f"Can only multiply `Matrix3` with another `Matrix3` or a `Vector3`, not `{type(other)}`.")
@@ -73,6 +73,11 @@ class Matrix3:
     def __setitem__(self, key, value):
         self._data[key] = value
 
+    def __repr__(self):
+        # noinspection PyTypeChecker
+        rows = self._data.tolist()  # type: list[list[float]]
+        return f"Matrix3([\n    {rows[0]},\n    {rows[1]},\n    {rows[2]}\n])"
+
     @classmethod
     def zero(cls) -> Matrix3:
         return cls(np.zeros((3, 3)))
@@ -81,11 +86,15 @@ class Matrix3:
     def identity(cls) -> Matrix3:
         return cls(np.identity(3))
 
+    @property
+    def T(self) -> Matrix3:
+        """Transpose of `Matrix3`."""
+        return Matrix3(self._data.T)
+
     @classmethod
-    def from_euler_angles(cls, rx, ry=None, rz=None, radians=False, order="xzy") -> Matrix3:
+    def from_euler_angles(cls, euler_xyz, radians=False, order="xzy") -> Matrix3:
         """Order defaults to XZY as per FromSoft usage (i.e. will be applied to point `p` as `Ry @ Rz @ Rx @ p`)."""
-        if ry is None and rz is None:
-            rx, ry, rz = rx
+        rx, ry, rz = euler_xyz
         if not radians:
             rx, ry, rz = math.radians(rx), math.radians(ry), math.radians(rz)
         sx, sy, sz = math.sin(rx), math.sin(ry), math.sin(rz)
@@ -96,11 +105,6 @@ class Matrix3:
             "z": cls.from_flat_row_order([cz, -sz, 0, sz, cz, 0, 0, 0, 1]),
         }
         return m[order[2]] @ m[order[1]] @ m[order[0]]
-
-    @property
-    def T(self) -> Matrix3:
-        """Transpose of `Matrix3`."""
-        return Matrix3(self._data.T)
 
     def to_euler_angles(self, radians=False, order="xzy") -> Vector3:
         """Only supports order XZY for now (standard FromSoft usage)."""
@@ -189,6 +193,11 @@ class Matrix4:
 
     def __setitem__(self, key, value):
         self._data[key] = value
+
+    def __repr__(self):
+        # noinspection PyTypeChecker
+        rows = self._data.tolist()  # type: list[list[float]]
+        return f"Matrix4([\n    {rows[0]},\n    {rows[1]},\n    {rows[2]},\n    {rows[3]}\n])"
 
     @classmethod
     def zero(cls) -> Matrix4:

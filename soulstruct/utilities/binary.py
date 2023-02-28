@@ -896,9 +896,7 @@ class BinaryArrayMetadata(BinaryMetadata):
 
     def get_unpacker(self) -> tp.Callable[[list[tp.Any]], FIELD_T]:
         func = "def unpack(struct_output: list[tp.Any], metadata=self) -> FIELD_T:\n"
-        func += f"    value = struct_output[-{self.length}:]\n"
-        func += f"    for _ in range({self.length}):\n"
-        func += f"        struct_output.pop()\n"  # remove last `length` elements in-place
+        func += f"    value = [struct_output.pop() for _ in range({self.length})]\n"  # pops in suitable reverse order
         if self.unpack_func:
             func += "    value = metadata.unpack_func(value)\n"
         if self.asserted:

@@ -50,7 +50,7 @@ class BaseVector(abc.ABC):
         self._data[index] = value
 
     def __eq__(self, other_vector: BaseVector):
-        return self._data == other_vector._data
+        return np.array_equal(self._data, other_vector._data)
 
     def __add__(self, other) -> Self:
         return self.__class__(np.add(self, other))
@@ -139,7 +139,7 @@ class BaseVector(abc.ABC):
         self._data[1] = value
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class Vector2(BaseVector):
     """Simple [x, y] container."""
     LENGTH: tp.ClassVar[int] = 2
@@ -152,7 +152,7 @@ class Vector2(BaseVector):
         raise ValueError(f"Cannot read `Vector2` string: {repr_string}")
 
 
-@dataclass(slots=True, init=False)
+@dataclass(slots=True, init=False, repr=False, eq=False)
 class Vector3(BaseVector):
     """Simple [x, y, z] container."""
     LENGTH: tp.ClassVar[int] = 3
