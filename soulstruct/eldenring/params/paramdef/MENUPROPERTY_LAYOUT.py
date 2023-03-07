@@ -15,18 +15,18 @@ from soulstruct.utilities.binary import *
 class MENUPROPERTY_LAYOUT(ParamRow):
     LayoutPath: str = ParamField(
         str, "LayoutPath[16]", encoding="shift_jis_2004", length=16, default='',
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    PropertyID: int = ParamField(
+    MenuPropertyID: int = ParamField(
         int, "PropertyID", MENU_PROPERTY_ID, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CaptionTextID: int = ParamField(
         int, "CaptionTextID", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     HelpTextID: int = ParamField(
         int, "HelpTextID", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(4, "reserved[4]")

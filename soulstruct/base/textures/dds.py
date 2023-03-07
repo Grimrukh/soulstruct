@@ -215,8 +215,8 @@ class DXGI_FORMAT(IntEnum):
 
 @dataclass(slots=True)
 class DDSHeader(BinaryStruct):
-    magic: bytes = field(**BinaryString(4, asserted=b"DDS\0"))
-    size: int = field(**Binary(asserted=0x7C))
+    magic: bytes = field(init=False, **BinaryString(4, rstrip_null=True, asserted=b"DDS "))  # note space!
+    size: int = field(init=False, **Binary(asserted=0x7C))
     flags: uint
     height: int
     width: int
@@ -225,7 +225,7 @@ class DDSHeader(BinaryStruct):
     mipmap_count: int
     reserved_1: list[int] = field(**BinaryArray(11))
     # Start of `PIXELFORMAT` in SoulsFormats.
-    pixelformat_size: int = field(**Binary(asserted=32))
+    pixelformat_size: int = field(init=False, **Binary(asserted=32))
     pixelformat_flags: DDPF = field(**Binary(uint))
     fourcc: bytes = field(**BinaryString(4))
     rgb_bit_count: int

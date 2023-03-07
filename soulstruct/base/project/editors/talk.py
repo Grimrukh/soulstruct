@@ -9,7 +9,7 @@ from pathlib import Path
 from soulstruct.base.ezstate.esd.exceptions import ESDScriptError
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.base.project.enums import ProjectDataType
-from soulstruct.base.project.utilities import bind_events, TagData, TextEditor
+from soulstruct.base.project.utilities import bind_events, TagData, TkTextEditor
 
 if tp.TYPE_CHECKING:
     from soulstruct.base.ezstate import TalkDirectory, TalkESDBND
@@ -19,7 +19,7 @@ _LOGGER = logging.getLogger(__name__)
 _TALK_ESP_MATCH = re.compile(r"^t(\d+)\.esp\.py$")
 
 
-class ESPTextEditor(TextEditor):
+class ESPTkTextEditor(TkTextEditor):
     TAGS = {
         "import": TagData("#FFAAAA", r"^(from|import) [\w_ .*]+", (0, 0)),
         "python_word": TagData(
@@ -158,7 +158,7 @@ class TalkEditor(BaseEditor):
         self.string_to_find = None
         self.state_to_find = None
         self.esp_editor_canvas = None
-        self.esp_editor = None  # type: tp.Optional[ESPTextEditor]
+        self.esp_editor = None  # type: tp.Optional[ESPTkTextEditor]
         self.compile_button = None
         self.reload_button = None
 
@@ -292,7 +292,7 @@ class TalkEditor(BaseEditor):
 
         self.esp_editor = self.CustomWidget(
             editor_i_frame,
-            custom_widget_class=ESPTextEditor,
+            custom_widget_class=ESPTkTextEditor,
             set_style_defaults=("text", "cursor"),
             row=0,
             width=400,

@@ -4,7 +4,7 @@ TODO:
 """
 from __future__ import annotations
 
-__all__ = ["EventEditor"]
+__all__ = ["EventsEditor"]
 
 import logging
 import re
@@ -14,7 +14,7 @@ from tkinter import TclError
 
 from soulstruct.base.events.emevd.evs import EVSError
 from soulstruct.base.project import GameDirectoryProject, ProjectDataType
-from soulstruct.base.project.utilities import TagData, TextEditor
+from soulstruct.base.project.utilities import TagData, TkTextEditor
 from soulstruct.utilities.window import SmartFrame
 
 from .. import editor_config
@@ -25,7 +25,7 @@ if tp.TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class EvsTextEditor(TextEditor):
+class EVSTkTextEditor(TkTextEditor):
 
     TAGS = {
         "on_rest_behavior": TagData("#FFFFAA", r"^@[\w_]+", (0, 0)),
@@ -85,7 +85,7 @@ class EvsTextEditor(TextEditor):
             start_index = next_def_index
 
 
-class EventEditor(SmartFrame):
+class EventsEditor(SmartFrame):
     DATA_NAME = "Events"
     TAB_NAME = "events"
     TEXT_BG = "#232323"
@@ -172,7 +172,7 @@ class EventEditor(SmartFrame):
 
             self.text_editor = self.CustomWidget(
                 editor_i_frame,
-                custom_widget_class=EvsTextEditor,
+                custom_widget_class=EVSTkTextEditor,
                 set_style_defaults=("text", "cursor"),
                 width=300,
                 height=50,
@@ -192,7 +192,7 @@ class EventEditor(SmartFrame):
 
             self.evs_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
-            self.text_editor.bind("<<CursorChange>>", self._update_line_number)
+            self.text_editor.set_callback(self._update_line_number)
             self.text_editor.bind("<Control-f>", self._control_f_search)
 
         with self.set_master(auto_columns=0, pady=10, column_weights=[1, 1, 1], sticky="n"):
@@ -257,7 +257,7 @@ class EventEditor(SmartFrame):
             self.text_editor.mark_set("insert", "1.0")
             self.text_editor.color_syntax()
 
-    def _update_line_number(self, _):
+    def _update_line_number(self, *_):
         current_line = self.text_editor.index("insert").split(".")[0]
         self.line_number.set(f"Line: {current_line}")
 
@@ -360,7 +360,7 @@ class EventEditor(SmartFrame):
             self.text_editor.see(f"{lineno}.0")
             self.text_editor.highlight_line(lineno, "error")
         if message:
-            self.error_dialog(
+            self.CustomDialog(
                 "EVS Error",
                 f"Error encountered when trying to parse EVS script (see console for full traceback):\n\n" f"{message}",
             )
@@ -372,18 +372,19 @@ class EventEditor(SmartFrame):
         if mimic_click:
             self.mimic_click(self.compile_button)
         try:
-            self.events_class.EMEVD_CLASS(
-                self._get_current_text(),
+            # Simply attempts to parse the EVS into EMEVD; the result is not used.
+            self.events_class.FILE_CLASS.from_evs_string(
+                evs_string=self._get_current_text(),
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent)
             )
-        except EVSError as e:
-            self._raise_error(e.lineno, str(e))
-        except Exception as e:
-            lineno_match = re.search(r"line (\d+)", str(e))
+        except EVSError as ex:
+            self._raise_error(ex.lineno, str(ex))
+        except Exception as ex:
+            lineno_match = re.search(r"line (\d+)", str(ex))
             if lineno_match:
-                self._raise_error(lineno_match.group(1), str(e))
+                self._raise_error(lineno_match.group(1), str(ex))
             else:
-                self._raise_error(message=str(e))
+                self._raise_error(message=str(ex))
         else:
             self.text_editor.tag_remove("error", "1.0", "end")
             if flash_bg:
@@ -400,15 +401,16 @@ class EventEditor(SmartFrame):
                 return
         export_directory = Path(export_directory)
         try:
-            emevd = self.events_class.EMEVD_CLASS(
-                self.evs_file_paths[self.selected_map_id],
+            emevd = self.events_class.FILE_CLASS.from_evs_string(
+                evs_string=self.evs_file_paths[self.selected_map_id],
                 script_directory=str(self.evs_file_paths[self.selected_map_id].parent),
             )
-        except Exception as e:
-            return self.error_dialog(
+        except Exception as ex:
+            _LOGGER.exception("Could not interpret current EVS file in project.")
+            return self.CustomDialog(
                 "EVS Error",
                 f"Could not interpret current EVS file in project.\n"
-                f"Fix this error and try again (see console for full traceback):\n\n{str(e)}",
+                f"Fix this error and try again (see console/log for full traceback):\n\n{str(ex)}",
             )
         emevd.write(export_directory / f"event/{self.selected_map_id}.emevd")
 

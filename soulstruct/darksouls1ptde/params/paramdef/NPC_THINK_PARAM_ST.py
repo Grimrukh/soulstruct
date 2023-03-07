@@ -218,27 +218,27 @@ class NPC_THINK_PARAM_ST(ParamRow):
                 "Skeletons and Skeleton Beasts, and Pisaca.",
     )
     CanFallOffEdges: bool = ParamField(
-        byte, "enableNaviFlg_Edge:1", bit_count=1, default=1,
+        byte, "enableNaviFlg_Edge:1", bit_count=1, default=True,
         tooltip="If True, this NPC will pursue targets off navmesh edges (survivable falls).",
     )
     CanNavigateWideSpaces: bool = ParamField(
-        byte, "enableNaviFlg_LargeSpace:1", bit_count=1, default=1,
+        byte, "enableNaviFlg_LargeSpace:1", bit_count=1, default=True,
         tooltip="If True, this NPC can enter navmesh regions flagged as 'large spaces'.",
     )
     CanNavigateLadders: bool = ParamField(
-        byte, "enableNaviFlg_Ladder:1", bit_count=1, default=0,
+        byte, "enableNaviFlg_Ladder:1", bit_count=1, default=False,
         tooltip="If True, this NPC will use ladders.",
     )
     CanNavigateHoles: bool = ParamField(
-        byte, "enableNaviFlg_Hole:1", bit_count=1, default=0,
+        byte, "enableNaviFlg_Hole:1", bit_count=1, default=False,
         tooltip="If True, this NPC can fall into navmesh holes.",
     )
     CanNavigateDoors: bool = ParamField(
-        byte, "enableNaviFlg_Door:1", bit_count=1, default=0,
+        byte, "enableNaviFlg_Door:1", bit_count=1, default=False,
         tooltip="If True, this NPC can go through doors (but not necessarily open closed doors).",
     )
     CanNavigateInsideWalls: bool = ParamField(
-        byte, "enableNaviFlg_InSideWall:1", bit_count=1, default=0,
+        byte, "enableNaviFlg_InSideWall:1", bit_count=1, default=False,
         tooltip="If True, this NPC can go through walls (i.e. ignores navmesh walls).",
     )
     _BitPad0: int = ParamBitPad(byte, "enableNaviFlg_reserve0:2", bit_count=2)

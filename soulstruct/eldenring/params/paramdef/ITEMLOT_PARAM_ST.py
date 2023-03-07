@@ -9,281 +9,318 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
+from .dynamics import ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference, ItemLotReference
+
 
 # noinspection PyDataclass
 @dataclass(slots=True)
 class ITEMLOT_PARAM_ST(ParamRow):
-    LotItemId01: int = ParamField(
-        int, "lotItemId01", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item1: int = ParamField(
+        int, "lotItemId01", default=0, dynamic_callback=ItemLotReference(1),
+        tooltip="TODO",
     )
-    LotItemId02: int = ParamField(
-        int, "lotItemId02", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item2: int = ParamField(
+        int, "lotItemId02", default=0, dynamic_callback=ItemLotReference(2),
+        tooltip="TODO",
     )
-    LotItemId03: int = ParamField(
-        int, "lotItemId03", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item3: int = ParamField(
+        int, "lotItemId03", default=0, dynamic_callback=ItemLotReference(3),
+        tooltip="TODO",
     )
-    LotItemId04: int = ParamField(
-        int, "lotItemId04", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item4: int = ParamField(
+        int, "lotItemId04", default=0, dynamic_callback=ItemLotReference(4),
+        tooltip="TODO",
     )
-    LotItemId05: int = ParamField(
-        int, "lotItemId05", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item5: int = ParamField(
+        int, "lotItemId05", default=0, dynamic_callback=ItemLotReference(5),
+        tooltip="TODO",
     )
-    LotItemId06: int = ParamField(
-        int, "lotItemId06", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item6: int = ParamField(
+        int, "lotItemId06", default=0, dynamic_callback=ItemLotReference(6),
+        tooltip="TODO",
     )
-    LotItemId07: int = ParamField(
-        int, "lotItemId07", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item7: int = ParamField(
+        int, "lotItemId07", default=0, dynamic_callback=ItemLotReference(7),
+        tooltip="TODO",
     )
-    LotItemId08: int = ParamField(
-        int, "lotItemId08", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item8: int = ParamField(
+        int, "lotItemId08", default=0, dynamic_callback=ItemLotReference(8),
+        tooltip="TODO",
     )
-    LotItemCategory01: int = ParamField(
+    Item1Category: int = ParamField(
         int, "lotItemCategory01", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 1).",
     )
-    LotItemCategory02: int = ParamField(
+    Item2Category: int = ParamField(
         int, "lotItemCategory02", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 2).",
     )
-    LotItemCategory03: int = ParamField(
+    Item3Category: int = ParamField(
         int, "lotItemCategory03", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 3).",
     )
-    LotItemCategory04: int = ParamField(
+    Item4Category: int = ParamField(
         int, "lotItemCategory04", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 4).",
     )
-    LotItemCategory05: int = ParamField(
+    Item5Category: int = ParamField(
         int, "lotItemCategory05", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 5).",
     )
-    LotItemCategory06: int = ParamField(
+    Item6Category: int = ParamField(
         int, "lotItemCategory06", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 6).",
     )
-    LotItemCategory07: int = ParamField(
+    Item7Category: int = ParamField(
         int, "lotItemCategory07", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 7).",
     )
-    LotItemCategory08: int = ParamField(
+    Item8Category: int = ParamField(
         int, "lotItemCategory08", ITEMLOT_ITEMCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item (slot 8).",
     )
-    LotItemBasePoint01: int = ParamField(
+    Item1ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint01", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint02: int = ParamField(
+    Item2ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint02", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint03: int = ParamField(
+    Item3ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint03", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint04: int = ParamField(
+    Item4ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint04", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint05: int = ParamField(
+    Item5ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint05", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint06: int = ParamField(
+    Item6ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint06", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint07: int = ParamField(
+    Item7ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint07", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    LotItemBasePoint08: int = ParamField(
+    Item8ChancePoints: int = ParamField(
         ushort, "lotItemBasePoint08", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Relative chance (divided by total chance points across all eight slots) that this item will be "
+                "dropped.",
     )
-    CumulateLotPoint01: int = ParamField(
+    Item1CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint01", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint02: int = ParamField(
+    Item2CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint02", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint03: int = ParamField(
+    Item3CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint03", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint04: int = ParamField(
+    Item4CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint04", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint05: int = ParamField(
+    Item5CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint05", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint06: int = ParamField(
+    Item6CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint06", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint07: int = ParamField(
+    Item7CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint07", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    CumulateLotPoint08: int = ParamField(
+    Item8CumulativePoints: int = ParamField(
         ushort, "cumulateLotPoint08", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points that will be cumulatively added to this slot's chance points every time the item lot is "
+                "rolled. This",
     )
-    GetItemFlagId01: int = ParamField(
-        uint, "getItemFlagId01", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item1Flag: int = ParamField(
+        uint, "getItemFlagId01", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId02: int = ParamField(
-        uint, "getItemFlagId02", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item2Flag: int = ParamField(
+        uint, "getItemFlagId02", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId03: int = ParamField(
-        uint, "getItemFlagId03", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item3Flag: int = ParamField(
+        uint, "getItemFlagId03", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId04: int = ParamField(
-        uint, "getItemFlagId04", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item4Flag: int = ParamField(
+        uint, "getItemFlagId04", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId05: int = ParamField(
-        uint, "getItemFlagId05", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item5Flag: int = ParamField(
+        uint, "getItemFlagId05", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId06: int = ParamField(
-        uint, "getItemFlagId06", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item6Flag: int = ParamField(
+        uint, "getItemFlagId06", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId07: int = ParamField(
-        uint, "getItemFlagId07", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item7Flag: int = ParamField(
+        uint, "getItemFlagId07", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId08: int = ParamField(
-        uint, "getItemFlagId08", default=0,
-        tooltip="TOOLTIP-TODO",
+    Item8Flag: int = ParamField(
+        uint, "getItemFlagId08", game_type=Flag, default=0,
+        tooltip="Flag that will be enabled when this exact item slot is dropped (and presumably picked up). Never "
+                "used.",
     )
-    GetItemFlagId: int = ParamField(
-        uint, "getItemFlagId", default=0,
-        tooltip="TOOLTIP-TODO",
+    ItemFlag: int = ParamField(
+        uint, "getItemFlagId", game_type=Flag, default=0,
+        tooltip="Flag enabled when any item from this item lot is picked up.",
     )
-    CumulateNumFlagId: int = ParamField(
-        uint, "cumulateNumFlagId", default=0,
-        tooltip="TOOLTIP-TODO",
+    FirstCumulativeFlag: int = ParamField(
+        uint, "cumulateNumFlagId", game_type=Flag, default=0,
+        tooltip="First of eight consecutive flags used to store the cumulative points for this item lot.",
     )
-    CumulateNumMax: int = ParamField(
+    MaxCumulativeAdditions: int = ParamField(
         byte, "cumulateNumMax", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum number of times that cumulative points will be added to the total. I suspect that the "
+                "cumulative slot may be awarded automatically after this; if not, I don't know how the Symbol of "
+                "Avarice always drops after all seven Mimics are killed.",
     )
-    LotItemRarity: int = ParamField(
+    ItemLotRarity: int = ParamField(
         sbyte, "lotItem_Rarity", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Overall rarity of item lot, from 0 to 3. Used fairly consistently, but seems to have no effect. Set "
+                "to 2 for all character drops except Crystal Lizards, who have 3.",
     )
-    LotItemNum01: int = ParamField(
+    Item1Count: int = ParamField(
         byte, "lotItemNum01", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 1).",
     )
-    LotItemNum02: int = ParamField(
+    Item2Count: int = ParamField(
         byte, "lotItemNum02", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 2).",
     )
-    LotItemNum03: int = ParamField(
+    Item3Count: int = ParamField(
         byte, "lotItemNum03", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 3).",
     )
-    LotItemNum04: int = ParamField(
+    Item4Count: int = ParamField(
         byte, "lotItemNum04", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 4).",
     )
-    LotItemNum05: int = ParamField(
+    Item5Count: int = ParamField(
         byte, "lotItemNum05", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 5).",
     )
-    LotItemNum06: int = ParamField(
+    Item6Count: int = ParamField(
         byte, "lotItemNum06", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 6).",
     )
-    LotItemNum07: int = ParamField(
+    Item7Count: int = ParamField(
         byte, "lotItemNum07", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 7).",
     )
-    LotItemNum08: int = ParamField(
+    Item8Count: int = ParamField(
         byte, "lotItemNum08", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of item (slot 8).",
     )
-    EnableLuck01: bool = ParamField(
+    Item1LuckEnabled: bool = ParamField(
         ushort, "enableLuck01:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck02: bool = ParamField(
+    Item2LuckEnabled: bool = ParamField(
         ushort, "enableLuck02:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck03: bool = ParamField(
+    Item3LuckEnabled: bool = ParamField(
         ushort, "enableLuck03:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck04: bool = ParamField(
+    Item4LuckEnabled: bool = ParamField(
         ushort, "enableLuck04:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck05: bool = ParamField(
+    Item5LuckEnabled: bool = ParamField(
         ushort, "enableLuck05:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck06: bool = ParamField(
+    Item6LuckEnabled: bool = ParamField(
         ushort, "enableLuck06:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck07: bool = ParamField(
+    Item7LuckEnabled: bool = ParamField(
         ushort, "enableLuck07:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    EnableLuck08: bool = ParamField(
+    Item8LuckEnabled: bool = ParamField(
         ushort, "enableLuck08:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
+                "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
-    CumulateReset01: bool = ParamField(
+    Item1ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset01:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset02: bool = ParamField(
+    Item2ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset02:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset03: bool = ParamField(
+    Item3ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset03:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset04: bool = ParamField(
+    Item4ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset04:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset05: bool = ParamField(
+    Item5ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset05:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset06: bool = ParamField(
+    Item6ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset06:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset07: bool = ParamField(
+    Item7ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset07:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
-    CumulateReset08: bool = ParamField(
+    Item8ResetCumulativePointsOnDrop: bool = ParamField(
         ushort, "cumulateReset08:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     GameClearOffset: int = ParamField(
         sbyte, "GameClearOffset", ITEMLOT_ROUND_COUNT, default=-1,

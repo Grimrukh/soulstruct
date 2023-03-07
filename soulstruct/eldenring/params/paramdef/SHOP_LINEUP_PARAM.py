@@ -9,21 +9,24 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
+from .dynamics import ShopReference
+
 
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SHOP_LINEUP_PARAM(ParamRow):
-    EquipId: int = ParamField(
-        int, "equipId", default=0,
-        tooltip="TOOLTIP-TODO",
+    ItemID: int = ParamField(
+        int, "equipId", default=0, dynamic_callback=ShopReference(),
+        tooltip="TODO",
     )
-    Value: int = ParamField(
+    SoulCost: int = ParamField(
         int, "value", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Cost of item, in souls.",
     )
-    MtrlId: int = ParamField(
+    RequiredGood: int = ParamField(
         int, "mtrlId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Good that must be possessed for item to be listed. Used to control appearance of spells in "
+                "attunement menu.",
     )
     EventFlagforStock: int = ParamField(
         uint, "eventFlag_forStock", default=0,
@@ -33,14 +36,14 @@ class SHOP_LINEUP_PARAM(ParamRow):
         uint, "eventFlag_forRelease", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SellQuantity: int = ParamField(
+    InitialQuantity: int = ParamField(
         short, "sellQuantity", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Quantity of this item initially available to be sold. Set to -1 for infinite quantity.",
     )
     _Pad0: bytes = ParamPad(1, "pad3[1]")
-    EquipType: int = ParamField(
+    ItemType: int = ParamField(
         byte, "equipType", SHOP_LINEUP_EQUIPTYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of item listed in menu.",
     )
     CostType: int = ParamField(
         byte, "costType", SHOP_LINEUP_COSTTYPE, default=0,

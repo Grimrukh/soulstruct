@@ -1,12 +1,18 @@
+from __future__ import annotations
+
+__all__ = ["ProjectWindow"]
+
 import logging
 import math
 
+from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 from soulstruct.darksouls1r.maps import MSB
 from soulstruct.darksouls1r.maps.parts import MSBPlayerStart
 from soulstruct.darksouls1r.maps.utilities import build_ffxbnd
 from soulstruct.darksouls1r.constants import CHARACTER_MODELS
 from soulstruct.utilities.maths import Vector3
+
 from .core import GameDirectoryProject
 from .lighting import LightingEditor
 from .links import WindowLinker
@@ -34,7 +40,7 @@ class ProjectWindow(_BaseProjectWindow):
 
         super().__init__(project_path, game_root, master)
 
-        # Ctrl + Shift + R triggers reload warp from anywhere in Lighting editor.
+        # Ctrl + Shift + R triggers reload warp from anywhere in GUI.
         self.bind_all("<Control-R>", lambda _: self._reload_warp())
 
     def _build_tools_menu(self, tools_menu):
@@ -57,11 +63,11 @@ class ProjectWindow(_BaseProjectWindow):
             foreground="#FFF",
             command=self._rename_param_entries_from_text,
         )
-        for param_table in ("Weapons", "Armor", "Rings", "Goods", "Spells"):
+        for param_nickname in ("Weapons", "Armor", "Rings", "Goods", "Spells"):
             params_menu.add_command(
-                label=f"Rename {param_table} from Text",
+                label=f"Rename {param_nickname} from Text",
                 foreground="#FFF",
-                command=lambda p=param_table: self._rename_param_entries_from_text(p),
+                command=lambda p=param_nickname: self._rename_param_entries_from_text(p),
             )
         return params_menu
 
@@ -81,7 +87,7 @@ class ProjectWindow(_BaseProjectWindow):
         events_menu.add_command(
             label="Copy Events Module to Project",
             foreground="#FFF",
-            command=self.project.offer_events_submodule_copy(with_window=self),
+            command=lambda: self.project.copy_events_submodule(with_window=self),
         )
         events_menu.add_command(
             label="Translate Vanilla Event/Region Entries with Entity IDs",
@@ -89,14 +95,15 @@ class ProjectWindow(_BaseProjectWindow):
             command=self._translate_all_event_region_entity_id_names,
         )
 
-    def _rename_param_entries_from_text(self, param_table=None):
+    def _rename_param_entries_from_text(self, param_nickname: str = None):
         # TODO: Add `rename_entries_from_text` method to supported games (or base class, even).
-        self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_table)
-        if self.page_tabs.index(self.page_tabs.select()) == self.ordered_tabs.index("params"):
+        print("Renaming entries from text...")
+        self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_nickname)
+        if self.current_data_type == self.PROJECT_CLASS.DataType.Params:
             if (
-                not param_table
+                not param_nickname
                 and self.params_tab.active_category in {"Weapons", "Armor", "Rings", "Goods", "Spells"}
-                or param_table == self.params_tab.active_category
+                or param_nickname == self.params_tab.active_category
             ):
                 self.params_tab.refresh_entries()
 
@@ -167,7 +174,7 @@ class ProjectWindow(_BaseProjectWindow):
         player_start_id = map_id[0] * 100000 + map_id[1] * 10000 + self.RELOAD_WARP_PLAYER_START_SUFFIX
         request_warp_flag_id = 10000000 + map_id[0] * 100000 + map_id[1] * 10000 + self.RELOAD_WARP_FLAG_SUFFIX
         current_map = self.project.maps.GET_MAP(map_id)
-        current_msb_path = self.project.get_game_path_of_data_type("maps") / f"{current_map.msb_file_stem}.msb"
+        current_msb_path = self.project.get_data_game_path(ProjectDataType.Maps) / f"{current_map.msb_file_stem}.msb"
         current_msb = MSB.from_path(current_msb_path)
         try:
             player_start = current_msb.find_entry_by_entity_id(player_start_id)

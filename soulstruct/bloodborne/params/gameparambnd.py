@@ -127,6 +127,7 @@ class GameParamBND(_BaseGameParamBND):
         "GrowthCurves": GrowthCurveParam,
 
         # NEW IN BLOODBORNE
+        # TODO: Mix order with above as desired.
         "AISounds": AISoundParam,
         "ActionButtonPrompts": ActionButtonParam,
         "Decals": DecalParam,
@@ -161,7 +162,7 @@ class GameParamBND(_BaseGameParamBND):
     version: BinderVersion = BinderVersion.V4
     v4_info: BinderVersion4Info = field(default_factory=lambda: BinderVersion4Info(False, False, True, 0))
 
-    # TODO: Some of these may be Dark Souls junk (like Rings).
+    # TODO: Some of these may be Dark Souls junk (like EquipParamAccessory?).
 
     ActionButtons = param_property("ActionButtonParam")  # type: Param[ACTIONBUTTON_PARAM_ST]
     AI = param_property("NpcThinkParam")  # type: Param[NPC_THINK_PARAM_ST]
@@ -224,7 +225,7 @@ class GameParamBND(_BaseGameParamBND):
     WeaponUpgrades = param_property("ReinforceParamWeapon")  # type: Param[REINFORCE_PARAM_WEAPON_ST]
     Wind = param_property("Wind")  # type: Param[WIND_PARAM_ST]
 
-    def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
+    def rename_entries_from_text(self, text: MSGDirectory, param_nickname: str = None):
         """Rename item param entries according to their (presumably more desirable) names in Bloodborne text data.
 
         Many Bloodborne names (mainly for cut stuff) use a single asterisk as a placeholder. Such names are ignored by
@@ -241,14 +242,15 @@ class GameParamBND(_BaseGameParamBND):
             param_nickname = param_nickname.lower().rstrip("s")
             if param_nickname not in {"weapon", "armor", "good", "gemsandrune"}:
                 raise ValueError(
-                    f"Invalid item type: {param_nickname}. Must be 'Weapons', 'Armor', 'Goods', or 'GemsAndRunes'."
+                    f"Invalid `param_nickname`: {param_nickname}. "
+                    f"Must be 'Weapons', 'Armor', 'Goods', or 'GemsAndRunes'."
                 )
-        for item_type_check, param, text_dict in zip(
+        for item_type_check, param, text_fmg in zip(
             ("weapon", "armor", "good", "gemsandrune"),
             (self.Weapons, self.Armor, self.Goods, self.GemsAndRunes),
             (text.WeaponNames, text.ArmorNames, text.GoodNames, text.BloodGemNames),
         ):
             if not param_nickname or param_nickname == item_type_check:
                 for param_id, param_row in param.items():
-                    if param_id in text_dict and text_dict[param_id].strip(" *"):
-                        param_row.Name = text_dict[param_id]
+                    if param_id in text_fmg and text_fmg[param_id].strip(" *"):
+                        param_row.Name = text_fmg[param_id]

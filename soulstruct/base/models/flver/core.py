@@ -10,7 +10,7 @@ from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
 from soulstruct.containers import Binder, TPF
-from soulstruct.utilities.maths import Vector3
+from soulstruct.utilities.maths import Vector3, Vector4
 from soulstruct.utilities.binary import *
 
 from .bone import FLVERBone
@@ -454,18 +454,24 @@ class FLVER(GameFile):
         if auto_show:
             plt.show()
 
-    def scale_all_translations(self, factor: float):
+    def scale_all_translations(self, scale_factor: float | Vector3 | Vector4):
         """Modifies the FLVER in place by scaling all dummies, bones, and vertices by `factor`.
 
         Will NOT have full functionality in-game until Havok physics files are modified as well.
         """
+        if isinstance(scale_factor, Vector4):
+            scale_factor = Vector3((scale_factor.x, scale_factor.y, scale_factor.z))
         for dummy in self.dummies:
-            dummy.position *= factor
+            dummy.translate *= scale_factor
         for bone in self.bones:
-            bone.translate *= factor
+            bone.translate *= scale_factor
         for mesh in self.meshes:
             for vertex in mesh.vertices:
-                vertex.position *= factor
+                # Vertex positions are just lists, not Vectors, and we want to keep them that way.
+                if isinstance(scale_factor, Vector3):
+                    vertex.position = [scale_factor[i] * vertex.position[i] for i in range(3)]
+                else:
+                    vertex.position = [scale_factor * vertex.position[i] for i in range(3)]
 
     def replace_tpf_name(self, old_name: str, new_name: str):
         """Iterate over all `Material` textures and replace all '{old_name}.tga' names with '{new_name}.tga'."""

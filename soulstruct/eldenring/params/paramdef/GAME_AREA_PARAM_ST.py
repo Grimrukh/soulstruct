@@ -19,57 +19,57 @@ class GAME_AREA_PARAM_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    BonusSoulsingle: int = ParamField(
+    SingleplayerSoulReward: int = ParamField(
         uint, "bonusSoul_single", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Souls awarded (after delay) when boss is defeated with no summons.",
     )
-    BonusSoulmulti: int = ParamField(
+    MultiplayerSoulReward: int = ParamField(
         uint, "bonusSoul_multi", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Souls awarded to each player (after delay) when boss is defeated with summons.",
     )
-    HumanityPointCountFlagIdTop: int = ParamField(
-        uint, "humanityPointCountFlagIdTop", default=0,
-        tooltip="TOOLTIP-TODO",
+    FirstHumanityFlag: int = ParamField(
+        uint, "humanityPointCountFlagIdTop", game_type=Flag, default=0,
+        tooltip="First flag for recording number of humanity drops awarded in boss's area.",
     )
     HumanityDropPoint1: int = ParamField(
         ushort, "humanityDropPoint1", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for first Humanity.",
     )
     HumanityDropPoint2: int = ParamField(
         ushort, "humanityDropPoint2", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for second Humanity.",
     )
     HumanityDropPoint3: int = ParamField(
         ushort, "humanityDropPoint3", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for third Humanity.",
     )
     HumanityDropPoint4: int = ParamField(
         ushort, "humanityDropPoint4", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for fourth Humanity.",
     )
     HumanityDropPoint5: int = ParamField(
         ushort, "humanityDropPoint5", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for fifth Humanity.",
     )
     HumanityDropPoint6: int = ParamField(
         ushort, "humanityDropPoint6", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for sixth Humanity.",
     )
     HumanityDropPoint7: int = ParamField(
         ushort, "humanityDropPoint7", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for seventh Humanity.",
     )
     HumanityDropPoint8: int = ParamField(
         ushort, "humanityDropPoint8", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for eighth Humanity.",
     )
     HumanityDropPoint9: int = ParamField(
         ushort, "humanityDropPoint9", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for ninth Humanity.",
     )
     HumanityDropPoint10: int = ParamField(
         ushort, "humanityDropPoint10", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of 'points' needed from killing enemies in the boss area for final Humanity.",
     )
     SoloBreakInPointMin: int = ParamField(
         uint, "soloBreakInPoint_Min", default=0,

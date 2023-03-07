@@ -122,9 +122,9 @@ def _process_arg_types(
 
             try:
                 if union_types:
-                    args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, *union_types))
+                    args[arg_name] = Variable(enums_manager.check_out_enum_variable(arg_value, *union_types))
                 else:  # single class
-                    args[arg_name] = Variable(enums_manager.check_out_enum(arg_value, arg_type))
+                    args[arg_name] = Variable(enums_manager.check_out_enum_variable(arg_value, arg_type))
             except GameEnumsManager.EnumManagerError:
                 pass
             continue  # leave as entity ID if not replaced
@@ -301,7 +301,7 @@ def base_decompile_run_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
-                    new_args[i] = Variable(enums_manager.check_out_enum(arg))
+                    new_args[i] = Variable(enums_manager.check_out_enum_variable(arg))
                 except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)
@@ -356,7 +356,7 @@ def base_decompile_run_common_event(
         for i, arg in enumerate(event_args):
             if looks_like_entity_id(arg, event_id):
                 try:
-                    new_args[i] = Variable(enums_manager.check_out_enum(arg))
+                    new_args[i] = Variable(enums_manager.check_out_enum_variable(arg))
                 except GameEnumsManager.EnumManagerError:
                     pass  # do nothing
         event_args = tuple(new_args)

@@ -166,15 +166,15 @@ class MAGIC_PARAM_ST(ParamRow):
                 "in vanilla game.",
     )
     DisabledOutsideMultiplayer: bool = ParamField(
-        byte, "enable_multi_only:1", MAGIC_BOOL, bit_count=1, default=0,
+        byte, "enable_multi_only:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="Determines if this spell can ONLY be cast while multiple players are together. Always False.",
     )
     IsWeaponBuff: bool = ParamField(
-        byte, "isEnchant:1", MAGIC_BOOL, bit_count=1, default=0,
+        byte, "isEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="Indicates if this spell buffs your weapon.",
     )
     IsShieldBuff: bool = ParamField(
-        byte, "isShieldEnchant:1", MAGIC_BOOL, bit_count=1, default=0,
+        byte, "isShieldEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="Indicates if this spell buffs your shield.",
     )
     UseableByHumans: bool = ParamField(
@@ -196,11 +196,11 @@ class MAGIC_PARAM_ST(ParamRow):
                 "the unused Escape Death miracle in vanilla game.",
     )
     DisabledOffline: bool = ParamField(
-        byte, "disableOffline:1", MAGIC_BOOL, bit_count=1, default=0,
+        byte, "disableOffline:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="If True, this spell cannot be cast without a network connection. Always False.",
     )
     CreateResonanceRing: bool = ParamField(
-        byte, "castResonanceMagic:1", MAGIC_BOOL, bit_count=1, default=0,
+        byte, "castResonanceMagic:1", MAGIC_BOOL, bit_count=1, default=False,
         tooltip="If True, using this spell will create a resonance ring to help players in other worlds.",
     )
     _BitPad0: int = ParamBitPad(byte, "pad_1:6", bit_count=6)

@@ -530,129 +530,129 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="Not something you want to mess with.",
     )
     UseRagdollCameraHit: bool = ParamField(
-        byte, "useRagdollCamHit:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "useRagdollCamHit:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DisableClothRigidHit: bool = ParamField(
-        byte, "disableClothRigidHit:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "disableClothRigidHit:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     UseRagdoll: bool = ParamField(
-        byte, "useRagdoll:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "useRagdoll:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsDemon: bool = ParamField(
-        byte, "isDemon:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isDemon:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsGhost: bool = ParamField(
-        byte, "isGhost:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isGhost:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsNoDamageMotion: bool = ParamField(
-        byte, "isNoDamageMotion:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isNoDamageMotion:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsUnduration: bool = ParamField(
-        byte, "isUnduration:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isUnduration:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsChangeWanderGhost: bool = ParamField(
-        byte, "isChangeWanderGhost:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isChangeWanderGhost:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="Always false.",
     )
     ModelDisplayMask0: bool = ParamField(
-        byte, "modelDispMask0:1", bit_count=1, default=0,
+        byte, "modelDispMask0:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask1: bool = ParamField(
-        byte, "modelDispMask1:1", bit_count=1, default=0,
+        byte, "modelDispMask1:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask2: bool = ParamField(
-        byte, "modelDispMask2:1", bit_count=1, default=0,
+        byte, "modelDispMask2:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask3: bool = ParamField(
-        byte, "modelDispMask3:1", bit_count=1, default=0,
+        byte, "modelDispMask3:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask4: bool = ParamField(
-        byte, "modelDispMask4:1", bit_count=1, default=0,
+        byte, "modelDispMask4:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask5: bool = ParamField(
-        byte, "modelDispMask5:1", bit_count=1, default=0,
+        byte, "modelDispMask5:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask6: bool = ParamField(
-        byte, "modelDispMask6:1", bit_count=1, default=0,
+        byte, "modelDispMask6:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask7: bool = ParamField(
-        byte, "modelDispMask7:1", bit_count=1, default=0,
+        byte, "modelDispMask7:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask8: bool = ParamField(
-        byte, "modelDispMask8:1", bit_count=1, default=0,
+        byte, "modelDispMask8:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask9: bool = ParamField(
-        byte, "modelDispMask9:1", bit_count=1, default=0,
+        byte, "modelDispMask9:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask10: bool = ParamField(
-        byte, "modelDispMask10:1", bit_count=1, default=0,
+        byte, "modelDispMask10:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask11: bool = ParamField(
-        byte, "modelDispMask11:1", bit_count=1, default=0,
+        byte, "modelDispMask11:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask12: bool = ParamField(
-        byte, "modelDispMask12:1", bit_count=1, default=0,
+        byte, "modelDispMask12:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask13: bool = ParamField(
-        byte, "modelDispMask13:1", bit_count=1, default=0,
+        byte, "modelDispMask13:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask14: bool = ParamField(
-        byte, "modelDispMask14:1", bit_count=1, default=0,
+        byte, "modelDispMask14:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     ModelDisplayMask15: bool = ParamField(
-        byte, "modelDispMask15:1", bit_count=1, default=0,
+        byte, "modelDispMask15:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     EnableNeckTurn: bool = ParamField(
-        byte, "isEnableNeckTurn:1", bit_count=1, default=0,
+        byte, "isEnableNeckTurn:1", bit_count=1, default=False,
         tooltip="Character can turn their neck.",
     )
     DisableRespawnOnRest: bool = ParamField(
-        byte, "disableRespawn:1", bit_count=1, default=0,
+        byte, "disableRespawn:1", bit_count=1, default=False,
         tooltip="Prevents character from respawning when you rest at a bonfire, though they will still respawn when "
                 "you die or the map is de-loaded unless they are disabled by an event script.",
     )
     IsMoveAnimationWait: bool = ParamField(
-        byte, "isMoveAnimWait:1", bit_count=1, default=0,
+        byte, "isMoveAnimWait:1", bit_count=1, default=False,
         tooltip="TODO",
     )
     IsCrowd: bool = ParamField(
-        byte, "isCrowd:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isCrowd:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="Always false.",
     )
     IsWeakToDivine: bool = ParamField(
-        byte, "isWeakSaint:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isWeakSaint:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="True for skeletons and friends, but not sure how it is actually used to disable their reanimation by "
                 "Necromancers.",
     )
     IsWeakToOccult: bool = ParamField(
-        byte, "isWeakA:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isWeakA:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="True for all Gods and most NPCs in Anor Londo.",
     )
     IsAbyssal: bool = ParamField(
-        byte, "isWeakB:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "isWeakB:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="True for Darkwraiths, Primordial Serpents, and the Four Kings, but not Manus.",
     )
     _BitPad0: int = ParamBitPad(byte, "pad1:1", bit_count=1)
@@ -661,7 +661,7 @@ class NPC_PARAM_ST(ParamRow):
         tooltip="Effects unknown. Set to 1 (Way of White) for Andre and 0 for everyone else.",
     )
     DisableInitializeDead: bool = ParamField(
-        byte, "disableInitializeDead:1", NPC_BOOL, bit_count=1, default=0,
+        byte, "disableInitializeDead:1", NPC_BOOL, bit_count=1, default=False,
         tooltip="True for bosses and non-respawning enemies that are disabled in event scripts, but its effects are "
                 "unknown.",
     )

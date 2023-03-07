@@ -14,8 +14,8 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     SpecialEffect: int = ParamField(
-        int, "refId", default=-1,
-        tooltip="Special effect applied when ring is equipped.",
+        int, "refId", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied when accessory is equipped.",
     )
     SFXVariation: int = ParamField(
         int, "sfxVariationId", default=-1,
@@ -24,12 +24,12 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     )
     Weight: float = ParamField(
         float, "weight", default=0.0,
-        tooltip="Weight of ring. Always set to zero in vanilla Dark Souls, but likely works just like other "
+        tooltip="Weight of accessory. Always set to zero in vanilla Dark Souls, but likely works just like other "
                 "equipment.",
     )
     Behavior: int = ParamField(
         int, "behaviorId", game_type=BehaviorParam, default=0,
-        tooltip="Behavior of ring 'skill'. Always zero in the vanilla game.",
+        tooltip="Behavior of accessory 'skill'. Always zero in the vanilla game.",
     )
     BasicCost: int = ParamField(
         int, "basicPrice", default=0,
@@ -102,15 +102,15 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
         tooltip="TODO",
     )
     CanBeStored: bool = ParamField(
-        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this ring can be stored in the Bottomless Box. Always True for rings.",
     )
     BreaksWhenUnequipped: bool = ParamField(
-        byte, "isEquipOutBrake:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isEquipOutBrake:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this ring will break when it is unequipped (e.g. Ring of Favor and Protection).",
     )
     DisableMultiplayerShare: bool = ParamField(
-        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this ring cannot be given to other players by dropping it. Always False in vanilla.",
     )
     _Pad1: bytes = ParamPad(3, "pad1[3]")

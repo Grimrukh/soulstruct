@@ -62,27 +62,27 @@ class EQUIP_MTRL_SET_PARAM_ST(ParamRow):
                 "(though it may still work as a requirement).",
     )
     DisableQuantityIndicator: bool = ParamField(
-        byte, "isDisableDispNum01:1", bit_count=1, default=0,
+        byte, "isDisableDispNum01:1", bit_count=1, default=False,
         tooltip="If True, the upgrade quantity will not be shown. Often used when only one of the upgrade good is "
                 "needed.",
     )
     DisableQuantityIndicator2: bool = ParamField(
-        byte, "isDisableDispNum02:1", bit_count=1, default=0,
+        byte, "isDisableDispNum02:1", bit_count=1, default=False,
         tooltip="If True, the upgrade quantity for Upgrade Good 2 will not be shown. Often used when only one of the "
                 "upgrade good is needed (though again, this slot is never used).",
     )
     DisableQuantityIndicator3: bool = ParamField(
-        byte, "isDisableDispNum03:1", bit_count=1, default=0,
+        byte, "isDisableDispNum03:1", bit_count=1, default=False,
         tooltip="If True, the upgrade quantity for Upgrade Good 3 will not be shown. Often used when only one of the "
                 "upgrade good is needed (though again, this slot is never used).",
     )
     DisableQuantityIndicator4: bool = ParamField(
-        byte, "isDisableDispNum04:1", bit_count=1, default=0,
+        byte, "isDisableDispNum04:1", bit_count=1, default=False,
         tooltip="If True, the upgrade quantity for Upgrade Good 4 will not be shown. Often used when only one of the "
                 "upgrade good is needed (though again, this slot is never used).",
     )
     DisableQuantityIndicator5: bool = ParamField(
-        byte, "isDisableDispNum05:1", bit_count=1, default=0,
+        byte, "isDisableDispNum05:1", bit_count=1, default=False,
         tooltip="If True, the upgrade quantity for Upgrade Good 5 will not be shown. Often used when only one of the "
                 "upgrade good is needed (though again, this slot is never used).",
     )

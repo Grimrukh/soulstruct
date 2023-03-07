@@ -13,37 +13,39 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class LOCK_CAM_PARAM_ST(ParamRow):
-    CamDistTarget: float = ParamField(
+    CameraDistanceFromTarget: float = ParamField(
         float, "camDistTarget", default=4.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Distance maintained from target by camera in meters. (Default value is 4.)",
     )
-    RotRangeMinX: float = ParamField(
+    MinRotationElevation: float = ParamField(
         float, "rotRangeMinX", default=-40.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Minimum angle of elevation (X-axis rotation) permitted for camera.",
     )
-    LockRotXShiftRatio: float = ParamField(
+    LockElevationShiftRatio: float = ParamField(
         float, "lockRotXShiftRatio", default=0.6,
-        tooltip="TOOLTIP-TODO",
+        tooltip="'Lock X-rotation shift ratio (0.0 to 1.0).' Unclear effect. Default value is 0.6.",
     )
-    ChrOrgOffsetY: float = ParamField(
+    CharacterVerticalOffset: float = ParamField(
         float, "chrOrgOffset_Y", default=1.42,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Vertical offset of camera target from character's base. Default value is 1.42.",
     )
-    ChrLockRangeMaxRadius: float = ParamField(
+    MaxDistanceFromCharacter: float = ParamField(
         float, "chrLockRangeMaxRadius", default=15.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum distance ('radius') of camera from character in meters. Default value is 15; only other "
+                "value used is 7.",
     )
-    CamFovY: float = ParamField(
+    VerticalFieldOfView: float = ParamField(
         float, "camFovY", default=43.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Vertical field of view of camera in degrees. Default value is 43. Never goes above 48 (Lost "
+                "Izalith).",
     )
-    ChrLockRangeMaxRadiusforD: float = ParamField(
+    CharacterLockRangeMaxRadiusD: float = ParamField(
         float, "chrLockRangeMaxRadius_forD", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrLockRangeMaxRadiusforPD: float = ParamField(
+    CharacterLockRangeMaxRadiusPD: float = ParamField(
         float, "chrLockRangeMaxRadius_forPD", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CloseMaxHeight: float = ParamField(
         float, "closeMaxHeight", default=0.0,

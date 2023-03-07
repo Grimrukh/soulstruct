@@ -11,11 +11,12 @@ from .exceptions import SoulstructProjectError
 
 if tp.TYPE_CHECKING:
     from .editors.base_editor import BaseEditor
+    from .window import ProjectWindow
 
 __all__ = [
     "error_as_dialog",
     "TagData",
-    "TextEditor",
+    "TkTextEditor",
     "NameSelectionBox",
     "NumberEditBox",
     "TextEditBox",
@@ -160,7 +161,7 @@ interp alias {{}} ::{widget} {{}} widget_proxy _{widget} {callback}
 """
 
 
-class TextEditor(tk.Text):
+class TkTextEditor(tk.Text):
     TAGS = {}  # type: dict[str, TagData]
 
     def __init__(self, *args, **kwargs):
@@ -187,6 +188,9 @@ class TextEditor(tk.Text):
         self.bind("<Tab>", self._tab_four_spaces)
         self.bind("<Home>", self._home_key)
         self.bind("<Control-slash>", self._toggle_comment)
+        self.bind("<Control-BackSpace>", self._delete_word)
+        self.bind("<less>", self._decrease_font_size)
+        self.bind("<greater>", self._increase_font_size)
 
     def _callback(self, result, *args):
         if self.callback:
@@ -247,7 +251,7 @@ class TextEditor(tk.Text):
         return "break"
 
     def _home_key(self, _):
-        """Home key ignores starting whitespace, unless there's only whitespace."""
+        """Home key ignores starting whitespace, unless there's ONLY whitespace before the caret."""
         pre_text = self.get("insert linestart", "insert")
         first_non_space_index = len(pre_text) - len(pre_text.lstrip(" "))
         if first_non_space_index != len(pre_text):
@@ -277,6 +281,23 @@ class TextEditor(tk.Text):
             hash_index = self.index("insert linestart").split(".")[0] + f".{spaces_before_hash}"
             self.insert(hash_index, "#")
             self.color_syntax("insert linestart", "insert lineend")
+        return "break"
+
+    def _delete_word(self, _):
+        """Deletes the word before the cursor."""
+        self.delete("insert wordstart", "insert")
+        return "break"
+
+    def _decrease_font_size(self, _):
+        """Decreases the font size by 1."""
+        font_name, font_size = self["font"].split(" ")
+        self["font"] = (font_name, int(font_size) - 1)
+        return "break"
+
+    def _increase_font_size(self, _):
+        """Increases the font size by 1."""
+        font_name, font_size = self["font"].split(" ")
+        self["font"] = (font_name, int(font_size) + 1)
         return "break"
 
 
@@ -527,7 +548,7 @@ class ItemTextEditBox(SmartFrame):
     DESCRIPTION_HEIGHT = 10  # lines
 
     def __init__(
-        self, master: BaseEditor, initial_name, initial_summary="", initial_description="", title="Editing Item Text"
+        self, master: ProjectWindow, initial_name, initial_summary="", initial_description="", title="Editing Item Text"
     ):
         super().__init__(master=master, window_title=title)
         self.editor = master

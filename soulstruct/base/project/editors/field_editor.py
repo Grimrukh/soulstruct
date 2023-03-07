@@ -73,6 +73,7 @@ class FieldRow:
             width=editor.FIELD_NAME_WIDTH,
             bg=bg_color,
             anchor="w",
+            padx=(5, 0),
         )
         bind_events(self.field_name_label, main_bindings)
 
@@ -113,7 +114,7 @@ class FieldRow:
         #  (Class will need access to ParamEntry for this, which is fine.)
 
         self.context_menu = editor.Menu(self.row_box)
-        self.tool_tip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
+        self.tooltip = ToolTip(self.row_box, self.field_name_box, self.field_name_label, text=None)
 
         self.active_value_widget = self.value_label
         self.hide()
@@ -166,7 +167,7 @@ class FieldRow:
 
         self.update_field_value_display(value)
 
-        self.tool_tip.text = self.field_docstring
+        self.tooltip.text = f"{self.field_nickname}: {self.field_docstring}"
         self.unhide()
 
     def _update_field_GameObjectSequence(self, value):
@@ -241,7 +242,9 @@ class FieldRow:
         if issubclass(self.field_type, IntEnum):
             return self._update_field_IntEnum
 
-        raise AttributeError(f"Could not find field update method '_update_field_{field_type_name}' or a superclass.")
+        raise AttributeError(
+            f"Could not find field update method '_update_field_{field_type_name}' or a superclass."
+            f"    Field: {self.field_name}")
 
     def _set_linked_value_label(self, value_text, multiple_hint="{AMBIGUOUS}"):
         if self.field_links:
@@ -633,8 +636,6 @@ class BaseFieldEditor(BaseEditor, abc.ABC):
             except ValueError as e:
                 raise ValueError(f"Could not get field information for field {field_name}. Error: {str(e)}")
 
-            if isinstance(field_type, str) and ("<Pad:" in field_type or "<BitPad:" in field_type):
-                continue  # always skip pad field
             if not is_main and not show_hidden_fields:
                 continue  # skip hidden field
 

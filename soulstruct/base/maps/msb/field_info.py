@@ -33,21 +33,21 @@ def MapFieldInfo(
 FIELD_INFO = {
 
     # region MODELS
-    "MODEL_PARAM_ST[sib_path]": (
+    "MODELS[sib_path]": (
         "Placeholder Path",
         "Internal path to model placeholder SIB file. The path's base name should match the model name.",
     ),
     # endregion
 
     # region REGIONS
-    "POINT_PARAM_ST[translate]": (
+    "REGIONS[translate]": (
         "Translate",
         "3D coordinates of the region's position. Note that this is the middle of the bottom face for box regions.",
     ),
-    "POINT_PARAM_ST[rotate]": (
+    "REGIONS[rotate]": (
         "Rotate", "Euler angles for region rotation around its local X, Y, and Z axes.",
     ),
-    "POINT_PARAM_ST[entity_id]": (
+    "REGIONS[entity_id]": (
         "Entity ID",
         "Entity ID for region, for referring to it in EMEVD event scripts.",
     ),
@@ -122,107 +122,107 @@ FIELD_INFO = {
     # endregion (All Games)
 
     # region PARTS
-    "PARTS_PARAM_ST[model]": (
+    "PARTS[model]": (
         "Part Model",
         "Model in MSB to use for instantiating this part.",
     ),
-    "PARTS_PARAM_ST[entity_id]": (
+    "PARTS[entity_id]": (
         "Entity ID",
         "Entity ID for part, for referring to it in EMEVD event scripts.",
     ),
-    "PARTS_PARAM_ST[sib_path]": (
+    "PARTS[sib_path]": (
         "Placeholder Path",
         "Internal path to part/model placeholder SIB file. Generally constant per subtype and ends in 'layout.sib'.",
     ),
-    "PARTS_PARAM_ST[draw_parent]": (
+    "PARTS[draw_parent]": (
         "Draw Parent",
         "Part will be drawn as long as this parent (usually a Collision or Map Piece part) is drawn. Used as "
         "a simpler alternative to draw groups (unsure what will take precedence if any draw groups are set). Set "
         "to `None` to indicate no draw parent and force the use of draw groups instead.",
     ),
-    "PARTS_PARAM_ST[translate]": (
+    "PARTS[translate]": (
         "Translate", "3D coordinates of the part's position. Note that the anchor of the part is usually at its base.",
     ),
-    "PARTS_PARAM_ST[rotate]": (
+    "PARTS[rotate]": (
         "Rotate", "Euler angles for part rotation around its local X, Y, and Z axes.",
     ),
-    "PARTS_PARAM_ST[scale]": (
+    "PARTS[scale]": (
         "Scale",
         "Scale of part. Only works for Map Pieces and Objects.",
     ),
-    "PARTS_PARAM_ST[draw_groups]": (
+    "PARTS[draw_groups]": (
         "Draw Groups",
         "Draw groups of part. This part will be drawn when the corresponding display group is active.",
     ),
-    "PARTS_PARAM_ST[display_groups]": (
+    "PARTS[display_groups]": (
         "Display Groups",
         "Display groups are present in all MSB Parts, but only function for collisions.",
     ),
-    "PARTS_PARAM_ST[ambient_light_id]": (
+    "PARTS[ambient_light_id]": (
         "Ambient Light ID",
         "ID of Ambient Light parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[fog_id]": (
+    "PARTS[fog_id]": (
         "Fog ID",
         "ID of Fog parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[scattered_light_id]": (
+    "PARTS[scattered_light_id]": (
         "Scattered Light ID",
         "ID of Scattered Light parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[lens_flare_id]": (
+    "PARTS[lens_flare_id]": (
         "Lens Flare ID",
         "ID of Lens Flare parameter (both types) to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[shadow_id]": (
+    "PARTS[shadow_id]": (
         "Shadow ID",
         "ID of Shadow parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[dof_id]": (
+    "PARTS[dof_id]": (
         "Depth of Field ID",
         "ID of Depth Of Field ID parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[tone_map_id]": (
+    "PARTS[tone_map_id]": (
         "Tone Map ID",
         "ID of Tone Map parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[point_light_id]": (
+    "PARTS[point_light_id]": (
         "Point Light ID",
         "ID of Point Light parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[tone_correction_id]": (
+    "PARTS[tone_correction_id]": (
         "Tone Correction ID",
         "ID of Tone Correction parameter to use from this map's lighting parameters (DrawParam).",
     ),
-    "PARTS_PARAM_ST[lod_id]": (
+    "PARTS[lod_id]": (
         "Level of Detail ID",
         "Level of Detail (LoD) parameter. Always -1 or 0, seemingly at random; probably unused.",
     ),
-    "PARTS_PARAM_ST[is_shadow_source]": (
+    "PARTS[is_shadow_source]": (
         "Casts Shadow",
         "If True, this entity will cast dynamic shadows.",
     ),
-    "PARTS_PARAM_ST[is_shadow_destination]": (
+    "PARTS[is_shadow_destination]": (
         "Receives Shadow",
         "If True, this entity can have dynamic shadows cast onto it.",
     ),
-    "PARTS_PARAM_ST[is_shadow_only]": (
+    "PARTS[is_shadow_only]": (
         "Only Casts Shadow",
         "If True, this entity only casts shadows.",
     ),
-    "PARTS_PARAM_ST[draw_by_reflect_cam]": (
+    "PARTS[draw_by_reflect_cam]": (
         "Is Reflected",
         "If True, this entity will be reflected in water, etc.",
     ),
-    "PARTS_PARAM_ST[draw_only_reflect_cam]": (
+    "PARTS[draw_only_reflect_cam]": (
         "Is Only Reflected",
         "If True, this entity will only be drawn in reflections in water, etc.",
     ),
-    "PARTS_PARAM_ST[use_depth_bias_float]": (
+    "PARTS[use_depth_bias_float]": (
         "Use Depth Bias Float",
         "Unknown.",
     ),
-    "PARTS_PARAM_ST[disable_point_light_effect]": (
+    "PARTS[disable_point_light_effect]": (
         "Ignore Point Lights",
         "If True, this entity will not be illuminated by point lights (I think).",
     ),
@@ -393,19 +393,19 @@ FIELD_INFO = {
     # endregion
 
     # region EVENTS
-    "EVENT_PARAM_ST[entity_id]": (
+    "EVENTS[entity_id]": (
         "Entity ID",
         "Entity ID for event. Not used for this event type.",
     ),
-    "EVENT_PARAM_ST[attached_part]": (
+    "EVENTS[attached_part]": (
         "Attached Part",
         "MSB part to which event is attached. Not used for this event type.",
     ),
-    "EVENT_PARAM_ST[attached_region]": (
+    "EVENTS[attached_region]": (
         "Attached Region",
         "MSB region to which event is attached. Not used for this event type.",
     ),
-    "EVENT_PARAM_ST[unknowns]": (
+    "EVENTS[unknowns]": (
         "Unknown Integers",
         "Four unknown integers that appear in all events.",
     ),

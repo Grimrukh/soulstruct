@@ -115,16 +115,16 @@ class THROW_INFO_BANK(ParamRow):
                 "255 for the Iron Golem and Gaping Dragon grabs, and 0 otherwise.",
     )
     AttackerTurns: bool = ParamField(
-        byte, "isTurnAtker:1", bit_count=1, default=0,
+        byte, "isTurnAtker:1", bit_count=1, default=False,
         tooltip="Attacker will turn when throw begins (presumably before model point snapping occurs).",
     )
     SkipAttackerWeaponCategoryCheck: bool = ParamField(
-        byte, "isSkipWepCate:1", bit_count=1, default=0,
+        byte, "isSkipWepCate:1", bit_count=1, default=False,
         tooltip="If True, the weapon category check for the attacker will be skipped. Enabled only for Dark Hand "
                 "drain.",
     )
     SkipSphereCast: bool = ParamField(
-        byte, "isSkipSphereCast:1", bit_count=1, default=0,
+        byte, "isSkipSphereCast:1", bit_count=1, default=False,
         tooltip="If True, the sphere cast check will be skipped. Usually False, but True for the coffin stab, Armored "
                 "Tusk backstab, and a few large enemy grabs. (Presumably, if False, the throw trigger relies on "
                 "distance and character angles only and is generally easier to trigger.)",

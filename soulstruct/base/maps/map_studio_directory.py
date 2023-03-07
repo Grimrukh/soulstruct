@@ -50,7 +50,8 @@ class MapStudioDirectory(GameFileMapDirectory, abc.ABC):
             if file_name_re.match(file_path.name):
                 file_stem = file_path.name.split(".")[0]  # `.stem` not good enough with possible double DCX extension
                 if file_stem in all_map_stems:
-                    files[file_stem] = cls.FILE_CLASS.from_json(file_path)
+                    msb = files[file_stem] = cls.FILE_CLASS.from_json(file_path)
+                    msb.path = directory_path / f"{file_stem}{cls.FILE_EXTENSION}"
                     all_map_stems.remove(file_stem)
                 else:
                     _LOGGER.warning(f"Ignoring unexpected JSON file in `{cls.__name__}` directory: {file_path.name}")

@@ -20,6 +20,7 @@ import types
 from pathlib import Path
 
 _LOGGER = logging.getLogger(__name__)
+LOG_BACKUP_CREATION = True
 
 
 def PACKAGE_PATH(*relative_parts) -> Path:
@@ -53,7 +54,8 @@ def create_bak(file_path, bak_suffix=".bak"):
         bak_path = file_path.with_suffix(file_path.suffix + bak_suffix)
         if not bak_path.is_file():
             shutil.copy2(file_path, bak_path)
-            _LOGGER.info(f"Created backup file: '{bak_path}'.")
+            if LOG_BACKUP_CREATION:
+                _LOGGER.info(f"Created backup file: '{bak_path}'.")
             return True
     return False
 

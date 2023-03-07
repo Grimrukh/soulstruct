@@ -83,15 +83,15 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         tooltip="Percentage of lightning damage prevented when guarding with this weapon.",
     )
     SpecialEffectOnHit0: int = ParamField(
-        int, "spEffectBehaviorId0", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId0", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 0).",
     )
     SpecialEffectOnHit1: int = ParamField(
-        int, "spEffectBehaviorId1", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId1", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 1).",
     )
     SpecialEffectOnHit2: int = ParamField(
-        int, "spEffectBehaviorId2", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId2", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 2).",
     )
     EquippedSpecialEffect0: int = ParamField(
@@ -440,99 +440,99 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
                 "documented.",
     )
     RightHandAllowed: bool = ParamField(
-        byte, "rightHandEquipable:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "rightHandEquipable:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this weapon can be equipped in the right hand.",
     )
     LeftHandAllowed: bool = ParamField(
-        byte, "leftHandEquipable:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "leftHandEquipable:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this weapon can be equipped in the left hand.",
     )
     BothHandsAllowed: bool = ParamField(
-        byte, "bothHandEquipable:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "bothHandEquipable:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this weapon can be held in two-handed mode.",
     )
     UsesEquippedArrows: bool = ParamField(
-        byte, "arrowSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "arrowSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon will use equipped arrow slot.",
     )
     UsesEquippedBolts: bool = ParamField(
-        byte, "boltSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "boltSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon will use equipped bolt slot.",
     )
     GuardEnabled: bool = ParamField(
-        byte, "enableGuard:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableGuard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, the player can guard with this weapon by holding L1.",
     )
     ParryEnabled: bool = ParamField(
-        byte, "enableParry:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableParry:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, the player can parry with this weapon by pressing L2.",
     )
     CanCastSorceries: bool = ParamField(
-        byte, "enableMagic:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableMagic:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon can be used to cast sorceries.",
     )
     CanCastPyromancy: bool = ParamField(
-        byte, "enableSorcery:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableSorcery:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon can be used to cast pyromancy.",
     )
     CanCastMiracles: bool = ParamField(
-        byte, "enableMiracle:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableMiracle:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon can be used to cast miracles.",
     )
     CanCastCovenantMagic: bool = ParamField(
-        byte, "enableVowMagic:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enableVowMagic:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DealsNeutralDamage: bool = ParamField(
-        byte, "isNormalAttackType:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isNormalAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DealsStrikeDamage: bool = ParamField(
-        byte, "isBlowAttackType:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isBlowAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DealsSlashDamage: bool = ParamField(
-        byte, "isSlashAttackType:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isSlashAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DealsThrustDamage: bool = ParamField(
-        byte, "isThrustAttackType:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isThrustAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsUpgraded: bool = ParamField(
-        byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TODO",
     )
     IsAffectedByLuck: bool = ParamField(
-        byte, "isLuckCorrect:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isLuckCorrect:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     IsCustom: bool = ParamField(
-        byte, "isCustom:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isCustom:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="TODO",
     )
     DisableBaseChangeReset: bool = ParamField(
-        byte, "disableBaseChangeReset:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableBaseChangeReset:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     DisableRepairs: bool = ParamField(
-        byte, "disableRepair:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableRepair:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon cannot be repaired.",
     )
     IsDarkHand: bool = ParamField(
-        byte, "isDarkHand:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isDarkHand:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Enabled only for the Dark Hand.",
     )
     SimpleDLCModelExists: bool = ParamField(
-        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Unknown; always set to False.",
     )
     IsLantern: bool = ParamField(
-        byte, "lanternWep:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "lanternWep:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     CanHitGhosts: bool = ParamField(
-        byte, "isVersusGhostWep:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isVersusGhostWep:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon can hit ghosts without a Transient Curse active.",
     )
     BaseChangeCategory: int = ParamField(
@@ -540,15 +540,15 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         tooltip="Never used. Likely Demon's Souls junk.",
     )
     IsDragonSlayer: bool = ParamField(
-        byte, "isDragonSlayer:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isDragonSlayer:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TODO",
     )
     CanBeStored: bool = ParamField(
-        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this weapon can be stored in the Bottomless Box. Always True for rings.",
     )
     DisableMultiplayerShare: bool = ParamField(
-        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this weapon cannot be given to other players by dropping it. Always False in vanilla.",
     )
     _Pad0: bytes = ParamPad(1, "pad_0[1]")

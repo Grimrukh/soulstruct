@@ -19,105 +19,108 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    RefId: int = ParamField(
-        int, "refId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffect: int = ParamField(
+        int, "refId", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied when accessory is equipped.",
     )
-    SfxVariationId: int = ParamField(
+    SFXVariation: int = ParamField(
         int, "sfxVariationId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="SFX variation ID combined with the value specified in TAE animation data. Always -1; likely works "
+                "with unused Behavior parameter below.",
     )
     Weight: float = ParamField(
         float, "weight", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weight of accessory. Always set to zero in vanilla Dark Souls, but likely works just like other "
+                "equipment.",
     )
-    BehaviorId: int = ParamField(
-        int, "behaviorId", default=0,
-        tooltip="TOOLTIP-TODO",
+    Behavior: int = ParamField(
+        int, "behaviorId", game_type=BehaviorParam, default=0,
+        tooltip="Behavior of accessory 'skill'. Always zero in the vanilla game.",
     )
-    BasicPrice: int = ParamField(
+    BasicCost: int = ParamField(
         int, "basicPrice", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown purpose, and unused.",
     )
-    SellValue: int = ParamField(
+    FramptSellValue: int = ParamField(
         int, "sellValue", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold.",
     )
-    SortId: int = ParamField(
+    SortIndex: int = ParamField(
         int, "sortId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index for automatic inventory sorting.",
     )
-    QwcId: int = ParamField(
+    QWCID: int = ParamField(
         int, "qwcId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unused world tendency remnant.",
     )
-    EquipModelId: int = ParamField(
-        ushort, "equipModelId", default=0,
-        tooltip="TOOLTIP-TODO",
+    EquipmentModel: int = ParamField(
+        ushort, "equipModelId", game_type=EquipmentModel, default=0,
+        tooltip="Always zero. (Talismans have no model, presumably.)",
     )
-    IconId: int = ParamField(
-        ushort, "iconId", default=0,
-        tooltip="TOOLTIP-TODO",
+    MenuIcon: int = ParamField(
+        ushort, "iconId", game_type=Icon, default=0,
+        tooltip="Icon ID of talisman in menu.",
     )
-    ShopLv: int = ParamField(
+    ShopLevel: int = ParamField(
         short, "shopLv", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'Level that can be solved in the shop.' Unknown and unused (talismans have no "
+                "level).",
     )
-    TrophySGradeId: int = ParamField(
+    AchievementContributionID: int = ParamField(
         short, "trophySGradeId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index of talisman as it contributes to certain multi-item achievements (none for talismans).",
     )
-    TrophySeqId: int = ParamField(
+    AchievementUnlockID: int = ParamField(
         short, "trophySeqId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Achievement unlocked when talisman is acquired (Covenant of Artorias).",
     )
-    EquipModelCategory: int = ParamField(
+    EquipmentModelCategory: int = ParamField(
         byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
-    EquipModelGender: int = ParamField(
+    EquipmentModelGender: int = ParamField(
         byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
     AccessoryCategory: int = ParamField(
         byte, "accessoryCategory", ACCESSORY_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
-    RefCategory: int = ParamField(
+    ReferenceType: int = ParamField(
         byte, "refCategory", BEHAVIOR_REF_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always set to Special Effects. No idea what happens if you set it to Attacks for a talisman...",
     )
-    SpEffectCategory: int = ParamField(
+    SpecialEffectCategory: int = ParamField(
         byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines what type of special effects affect the stats of this equipment. Unused for talismans.",
     )
     SortGroupId: int = ParamField(
         byte, "sortGroupId", default=255,
         tooltip="TOOLTIP-TODO",
     )
-    VagrantItemLotId: int = ParamField(
-        int, "vagrantItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantItemLot: int = ParamField(
+        int, "vagrantItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
-    VagrantBonusEneDropItemLotId: int = ParamField(
-        int, "vagrantBonusEneDropItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantBonusEnemyDropItemLot: int = ParamField(
+        int, "vagrantBonusEneDropItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
-    VagrantItemEneDropItemLotId: int = ParamField(
-        int, "vagrantItemEneDropItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantItemEnemyDropItemLot: int = ParamField(
+        int, "vagrantItemEneDropItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
-    IsDeposit: bool = ParamField(
+    CanBeStored: bool = ParamField(
         byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this talisman can be stored in storage. Always True for talismans.",
     )
-    IsEquipOutBrake: bool = ParamField(
+    BreaksWhenUnequipped: bool = ParamField(
         byte, "isEquipOutBrake:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this talisman will break when it is unequipped.",
     )
-    DisableMultiDropShare: bool = ParamField(
+    DisableMultiplayerShare: bool = ParamField(
         byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this talisman cannot be given to other players by dropping it. Always False in vanilla.",
     )
     IsDiscard: bool = ParamField(
         byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,

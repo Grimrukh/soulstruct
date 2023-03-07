@@ -5,6 +5,8 @@ __all__ = [
     "BaseGameParam",
     "BaseItemParam",
 
+    # TODO: Many more ER params to go. This seems to cover all the known reference types in ParamDex, at least.
+    "ActionButtonParam",
     "AIParam",
     "ArmorParam",
     "ArmorUpgradeParam",
@@ -14,8 +16,10 @@ __all__ = [
     "BulletParam",
     "CameraParam",
     "CharacterParam",
+    "DecalParam",
     "DialogueParam",
     "FaceParam",
+    "FaceGenParam",
     "GoodParam",
     "GrowthCurveParam",
     "ItemLotParam",
@@ -96,6 +100,13 @@ class BaseItemParam(BaseGameParam):
 
 
 # region Game Params
+class ActionButtonParam(BaseGameParam):
+    """Entry collecting information about a button prompt."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "ActionButtonPrompts"
+
+
 class AIParam(BaseGameParam):
     """AI entry."""
     @classmethod
@@ -165,6 +176,13 @@ class CharacterParam(BaseGameParam):
         return "Characters"
 
 
+class DecalParam(BaseGameParam):
+    """Decal (e.g. blood spatter on player) entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "Decals"
+
+
 class DialogueParam(BaseGameParam):
     """Dialogue entry."""
     @classmethod
@@ -177,6 +195,13 @@ class FaceParam(BaseGameParam):
     @classmethod
     def get_param_nickname(cls):
         return "Faces"
+
+
+class FaceGenParam(BaseGameParam):
+    """Face generator entry."""
+    @classmethod
+    def get_param_nickname(cls):
+        return "FaceGenerators"
 
 
 class GoodParam(BaseItemParam):

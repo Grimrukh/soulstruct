@@ -19,41 +19,43 @@ class TALK_PARAM_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    MsgId: int = ParamField(
+    SubtitleText: int = ParamField(
         int, "msgId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Text ID for dialogue subtitle.",
     )
-    VoiceId: int = ParamField(
+    VoiceSound: int = ParamField(
         int, "voiceId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Sound ID (voice) for dialogue.",
     )
-    SpEffectId0: int = ParamField(
-        int, "spEffectId0", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectID0: int = ParamField(
+        int, "spEffectId0", game_type=SpecialEffectParam, default=-1,
+        tooltip="TODO",
     )
-    MotionId0: int = ParamField(
+    AnimationID0: int = ParamField(
         int, "motionId0", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SpEffectId1: int = ParamField(
-        int, "spEffectId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectID1: int = ParamField(
+        int, "spEffectId1", game_type=SpecialEffectParam, default=-1,
+        tooltip="TODO",
     )
-    MotionId1: int = ParamField(
+    AnimationID1: int = ParamField(
         int, "motionId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ReturnPos: int = ParamField(
+    ReturnConversation: int = ParamField(
         int, "returnPos", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Conversation ID to use instead if the player has 'returned' to this conversation. Used exactly once "
+                "for one line by the Crestfallen Warrior, so presumably works, but probably not useful.",
     )
-    ReactionId: int = ParamField(
+    ReactionConversation: int = ParamField(
         int, "reactionId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Conversation ID to use as 'reaction'. Always -1.",
     )
-    EventId: int = ParamField(
+    EventFlag: int = ParamField(
         int, "eventId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Flag that is enabled when conversation plays (I assume). Used exactly once, for the same Crestfallen "
+                "Warrior line that uses the ReturnConversation field.",
     )
     MsgIdfemale: int = ParamField(
         int, "msgId_female", default=-1,

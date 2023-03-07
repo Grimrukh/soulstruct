@@ -744,71 +744,88 @@
         },
         "equip_Wep_Right": {
             "nickname": "RightHandWeapon1",
-            "tooltip": "First (default) weapon/shield equipped in right hand."
+            "tooltip": "First (default) weapon/shield equipped in right hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Subwep_Right": {
             "nickname": "RightHandWeapon2",
-            "tooltip": "Second weapon/shield equipped in right hand."
+            "tooltip": "Second weapon/shield equipped in right hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Wep_Left": {
             "nickname": "LeftHandWeapon1",
-            "tooltip": "First (default) weapon/shield equipped in left hand."
+            "tooltip": "First (default) weapon/shield equipped in left hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Subwep_Left": {
             "nickname": "LeftHandWeapon2",
-            "tooltip": "Second weapon/shield equipped in left hand."
+            "tooltip": "Second weapon/shield equipped in left hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Helm": {
             "nickname": "HeadArmor",
-            "tooltip": "Armor equipped to head."
+            "tooltip": "Armor equipped to head.",
+            "game_type": "ArmorParam"
         },
         "equip_Armer": {
             "nickname": "BodyArmor",
-            "tooltip": "Armor equipped to body."
+            "tooltip": "Armor equipped to body.",
+            "game_type": "ArmorParam"
         },
         "equip_Gaunt": {
             "nickname": "HandsArmor",
-            "tooltip": "Armor equipped to hands."
+            "tooltip": "Armor equipped to hands.",
+            "game_type": "ArmorParam"
         },
         "equip_Leg": {
             "nickname": "LegsArmor",
-            "tooltip": "Armor equipped to legs."
+            "tooltip": "Armor equipped to legs.",
+            "game_type": "ArmorParam"
         },
         "equip_Arrow": {
             "nickname": "ArrowSlot1",
-            "tooltip": "Arrows equipped in slot 1."
+            "tooltip": "Arrows equipped in slot 1.",
+            "game_type": "WeaponParam"
         },
         "equip_Bolt": {
             "nickname": "BoltSlot1",
-            "tooltip": "Bolts equipped in slot 1."
+            "tooltip": "Bolts equipped in slot 1.",
+            "game_type": "WeaponParam"
         },
         "equip_SubArrow": {
             "nickname": "ArrowSlot2",
-            "tooltip": "Arrows equipped in slot 2."
+            "tooltip": "Arrows equipped in slot 2.",
+            "game_type": "WeaponParam"
         },
         "equip_SubBolt": {
             "nickname": "BoltSlot2",
-            "tooltip": "Bolts equipped in slot 2."
+            "tooltip": "Bolts equipped in slot 2.",
+            "game_type": "WeaponParam"
         },
         "equip_Accessory01": {
             "nickname": "RingSlot1",
-            "tooltip": "First ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "tooltip": "First ring equipped. Note that up to five rings can be equipped to human NPCs.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory02": {
             "nickname": "RingSlot2",
-            "tooltip": "Second ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "tooltip": "Second ring equipped. Note that up to five rings can be equipped to human NPCs.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory03": {
             "nickname": "RingSlot3",
-            "tooltip": "Third ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "tooltip": "Third ring equipped. Note that up to five rings can be equipped to human NPCs.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory04": {
             "nickname": "RingSlot4",
-            "tooltip": "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "tooltip": "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory05": {
             "nickname": "RingSlot5",
-            "tooltip": "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "tooltip": "Fifth ring equipped. Note that up to five rings can be equipped to human NPCs.",
+            "game_type": "AccessoryParam"
         },
         "equip_Skill_01": {
             "nickname": "SkillSlot1",
@@ -824,71 +841,88 @@
         },
         "equip_Spell_01": {
             "nickname": "SpellSlot1",
-            "tooltip": "First spell equipped."
+            "tooltip": "First spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_02": {
             "nickname": "SpellSlot2",
-            "tooltip": "Second spell equipped."
+            "tooltip": "Second spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_03": {
             "nickname": "SpellSlot3",
-            "tooltip": "Third spell equipped."
+            "tooltip": "Third spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_04": {
             "nickname": "SpellSlot4",
-            "tooltip": "Fourth spell equipped."
+            "tooltip": "Fourth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_05": {
             "nickname": "SpellSlot5",
-            "tooltip": "Fifth spell equipped."
+            "tooltip": "Fifth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_06": {
             "nickname": "SpellSlot6",
-            "tooltip": "Sixth spell equipped."
+            "tooltip": "Sixth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_07": {
             "nickname": "SpellSlot7",
-            "tooltip": "Seventh spell equipped."
+            "tooltip": "Seventh spell equipped.",
+            "game_type": "SpellParam"
         },
         "item_01": {
             "nickname": "GoodSlot1",
-            "tooltip": "Good (item) equipped in slot 1."
+            "tooltip": "Good (item) equipped in slot 1.",
+            "game_type": "GoodParam"
         },
         "item_02": {
             "nickname": "GoodSlot2",
-            "tooltip": "Good (item) equipped in slot 2."
+            "tooltip": "Good (item) equipped in slot 2.",
+            "game_type": "GoodParam"
         },
         "item_03": {
             "nickname": "GoodSlot3",
-            "tooltip": "Good (item) equipped in slot 3."
+            "tooltip": "Good (item) equipped in slot 3.",
+            "game_type": "GoodParam"
         },
         "item_04": {
             "nickname": "GoodSlot4",
-            "tooltip": "Good (item) equipped in slot 4."
+            "tooltip": "Good (item) equipped in slot 4.",
+            "game_type": "GoodParam"
         },
         "item_05": {
             "nickname": "GoodSlot5",
-            "tooltip": "Good (item) equipped in slot 5."
+            "tooltip": "Good (item) equipped in slot 5.",
+            "game_type": "GoodParam"
         },
         "item_06": {
             "nickname": "GoodSlot6",
-            "tooltip": "Good (item) equipped in slot 6."
+            "tooltip": "Good (item) equipped in slot 6.",
+            "game_type": "GoodParam"
         },
         "item_07": {
             "nickname": "GoodSlot7",
-            "tooltip": "Good (item) equipped in slot 7."
+            "tooltip": "Good (item) equipped in slot 7.",
+            "game_type": "GoodParam"
         },
         "item_08": {
             "nickname": "GoodSlot8",
-            "tooltip": "Good (item) equipped in slot 8."
+            "tooltip": "Good (item) equipped in slot 8.",
+            "game_type": "GoodParam"
         },
         "item_09": {
             "nickname": "GoodSlot9",
-            "tooltip": "Good (item) equipped in slot 9."
+            "tooltip": "Good (item) equipped in slot 9.",
+            "game_type": "GoodParam"
         },
         "item_10": {
             "nickname": "GoodSlot10",
-            "tooltip": "Good (item) equipped in slot 10."
+            "tooltip": "Good (item) equipped in slot 10.",
+            "game_type": "GoodParam"
         },
         "npcPlayerFaceGenId": {
             "nickname": "FaceID",
@@ -1587,7 +1621,8 @@
     "EQUIP_PARAM_ACCESSORY_ST": {
         "refId": {
             "nickname": "SpecialEffect",
-            "tooltip": "Special effect applied when ring is equipped."
+            "tooltip": "Special effect applied when accessory is equipped.",
+            "game_type": "SpecialEffectParam"
         },
         "sfxVariationId": {
             "nickname": "SFXVariation",
@@ -1595,12 +1630,12 @@
         },
         "weight": {
             "nickname": "Weight",
-            "tooltip": "Weight of ring. Always set to zero in vanilla Dark Souls, but likely works just like other equipment.",
+            "tooltip": "Weight of accessory. Always set to zero in vanilla Dark Souls, but likely works just like other equipment.",
             "default": 0.0
         },
         "behaviorId": {
             "nickname": "Behavior",
-            "tooltip": "Behavior of ring 'skill'. Always zero in the vanilla game.",
+            "tooltip": "Behavior of accessory 'skill'. Always zero in the vanilla game.",
             "game_type": "BehaviorParam"
         },
         "basicPrice": {
@@ -2635,17 +2670,17 @@
         "spEffectBehaviorId0": {
             "nickname": "SpecialEffectOnHit0",
             "tooltip": "Special effect applied to struck target (slot 0).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "spEffectBehaviorId1": {
             "nickname": "SpecialEffectOnHit1",
             "tooltip": "Special effect applied to struck target (slot 1).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "spEffectBehaviorId2": {
             "nickname": "SpecialEffectOnHit2",
             "tooltip": "Special effect applied to struck target (slot 2).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId": {
             "nickname": "EquippedSpecialEffect0",

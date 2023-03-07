@@ -13,85 +13,85 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CHARACTER_INIT_PARAM(ParamRow):
-    BaseRecmp: float = ParamField(
+    BaseRecMP: float = ParamField(
         float, "baseRec_mp", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown.",
     )
-    BaseRecsp: float = ParamField(
+    BaseRecSP: float = ParamField(
         float, "baseRec_sp", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown.",
     )
-    RedFalldam: float = ParamField(
+    RedFallDamage: float = ParamField(
         float, "red_Falldam", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown.",
     )
-    Soul: int = ParamField(
+    SoulCount: int = ParamField(
         int, "soul", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Starting soul count of character.",
     )
-    EquipWepRight: int = ParamField(
-        int, "equip_Wep_Right", default=-1,
-        tooltip="TOOLTIP-TODO",
+    RightHandWeapon1: int = ParamField(
+        int, "equip_Wep_Right", game_type=WeaponParam, default=-1,
+        tooltip="First (default) weapon/shield equipped in right hand.",
     )
-    EquipSubwepRight: int = ParamField(
-        int, "equip_Subwep_Right", default=-1,
-        tooltip="TOOLTIP-TODO",
+    RightHandWeapon2: int = ParamField(
+        int, "equip_Subwep_Right", game_type=WeaponParam, default=-1,
+        tooltip="Second weapon/shield equipped in right hand.",
     )
-    EquipWepLeft: int = ParamField(
-        int, "equip_Wep_Left", default=-1,
-        tooltip="TOOLTIP-TODO",
+    LeftHandWeapon1: int = ParamField(
+        int, "equip_Wep_Left", game_type=WeaponParam, default=-1,
+        tooltip="First (default) weapon/shield equipped in left hand.",
     )
-    EquipSubwepLeft: int = ParamField(
-        int, "equip_Subwep_Left", default=-1,
-        tooltip="TOOLTIP-TODO",
+    LeftHandWeapon2: int = ParamField(
+        int, "equip_Subwep_Left", game_type=WeaponParam, default=-1,
+        tooltip="Second weapon/shield equipped in left hand.",
     )
-    EquipHelm: int = ParamField(
-        int, "equip_Helm", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HeadArmor: int = ParamField(
+        int, "equip_Helm", game_type=ArmorParam, default=-1,
+        tooltip="Armor equipped to head.",
     )
-    EquipArmer: int = ParamField(
-        int, "equip_Armer", default=-1,
-        tooltip="TOOLTIP-TODO",
+    BodyArmor: int = ParamField(
+        int, "equip_Armer", game_type=ArmorParam, default=-1,
+        tooltip="Armor equipped to body.",
     )
-    EquipGaunt: int = ParamField(
-        int, "equip_Gaunt", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HandsArmor: int = ParamField(
+        int, "equip_Gaunt", game_type=ArmorParam, default=-1,
+        tooltip="Armor equipped to hands.",
     )
-    EquipLeg: int = ParamField(
-        int, "equip_Leg", default=-1,
-        tooltip="TOOLTIP-TODO",
+    LegsArmor: int = ParamField(
+        int, "equip_Leg", game_type=ArmorParam, default=-1,
+        tooltip="Armor equipped to legs.",
     )
-    EquipArrow: int = ParamField(
-        int, "equip_Arrow", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ArrowSlot1: int = ParamField(
+        int, "equip_Arrow", game_type=WeaponParam, default=-1,
+        tooltip="Arrows equipped in slot 1.",
     )
-    EquipBolt: int = ParamField(
-        int, "equip_Bolt", default=-1,
-        tooltip="TOOLTIP-TODO",
+    BoltSlot1: int = ParamField(
+        int, "equip_Bolt", game_type=WeaponParam, default=-1,
+        tooltip="Bolts equipped in slot 1.",
     )
-    EquipSubArrow: int = ParamField(
-        int, "equip_SubArrow", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ArrowSlot2: int = ParamField(
+        int, "equip_SubArrow", game_type=WeaponParam, default=-1,
+        tooltip="Arrows equipped in slot 2.",
     )
-    EquipSubBolt: int = ParamField(
-        int, "equip_SubBolt", default=-1,
-        tooltip="TOOLTIP-TODO",
+    BoltSlot2: int = ParamField(
+        int, "equip_SubBolt", game_type=WeaponParam, default=-1,
+        tooltip="Bolts equipped in slot 2.",
     )
-    EquipAccessory01: int = ParamField(
-        int, "equip_Accessory01", default=-1,
-        tooltip="TOOLTIP-TODO",
+    TalismanSlot1: int = ParamField(
+        int, "equip_Accessory01", game_type=AccessoryParam, default=-1,
+        tooltip="First talisman equipped.",
     )
-    EquipAccessory02: int = ParamField(
-        int, "equip_Accessory02", default=-1,
-        tooltip="TOOLTIP-TODO",
+    TalismanSlot2: int = ParamField(
+        int, "equip_Accessory02", game_type=AccessoryParam, default=-1,
+        tooltip="Second talisman equipped.",
     )
-    EquipAccessory03: int = ParamField(
-        int, "equip_Accessory03", default=-1,
-        tooltip="TOOLTIP-TODO",
+    TalismanSlot3: int = ParamField(
+        int, "equip_Accessory03", game_type=AccessoryParam, default=-1,
+        tooltip="Third talisman equipped.",
     )
-    EquipAccessory04: int = ParamField(
-        int, "equip_Accessory04", default=-1,
-        tooltip="TOOLTIP-TODO",
+    TalismanSlot4: int = ParamField(
+        int, "equip_Accessory04", game_type=AccessoryParam, default=-1,
+        tooltip="Fourth talisman equipped.",
     )
     _Pad0: bytes = ParamPad(4, "pad8[4]")
     Elixirmaterial00: int = ParamField(
@@ -106,239 +106,239 @@ class CHARACTER_INIT_PARAM(ParamRow):
         int, "elixir_material02", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    EquipSpell01: int = ParamField(
-        int, "equip_Spell_01", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot1: int = ParamField(
+        int, "equip_Spell_01", game_type=SpellParam, default=-1,
+        tooltip="First spell equipped.",
     )
-    EquipSpell02: int = ParamField(
-        int, "equip_Spell_02", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot2: int = ParamField(
+        int, "equip_Spell_02", game_type=SpellParam, default=-1,
+        tooltip="Second spell equipped.",
     )
-    EquipSpell03: int = ParamField(
-        int, "equip_Spell_03", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot3: int = ParamField(
+        int, "equip_Spell_03", game_type=SpellParam, default=-1,
+        tooltip="Third spell equipped.",
     )
-    EquipSpell04: int = ParamField(
-        int, "equip_Spell_04", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot4: int = ParamField(
+        int, "equip_Spell_04", game_type=SpellParam, default=-1,
+        tooltip="Fourth spell equipped.",
     )
-    EquipSpell05: int = ParamField(
-        int, "equip_Spell_05", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot5: int = ParamField(
+        int, "equip_Spell_05", game_type=SpellParam, default=-1,
+        tooltip="Fifth spell equipped.",
     )
-    EquipSpell06: int = ParamField(
-        int, "equip_Spell_06", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot6: int = ParamField(
+        int, "equip_Spell_06", game_type=SpellParam, default=-1,
+        tooltip="Sixth spell equipped.",
     )
-    EquipSpell07: int = ParamField(
-        int, "equip_Spell_07", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpellSlot7: int = ParamField(
+        int, "equip_Spell_07", game_type=SpellParam, default=-1,
+        tooltip="Seventh spell equipped.",
     )
-    Item01: int = ParamField(
-        int, "item_01", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot1: int = ParamField(
+        int, "item_01", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 1.",
     )
-    Item02: int = ParamField(
-        int, "item_02", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot2: int = ParamField(
+        int, "item_02", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 2.",
     )
-    Item03: int = ParamField(
-        int, "item_03", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot3: int = ParamField(
+        int, "item_03", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 3.",
     )
-    Item04: int = ParamField(
-        int, "item_04", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot4: int = ParamField(
+        int, "item_04", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 4.",
     )
-    Item05: int = ParamField(
-        int, "item_05", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot5: int = ParamField(
+        int, "item_05", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 5.",
     )
-    Item06: int = ParamField(
-        int, "item_06", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot6: int = ParamField(
+        int, "item_06", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 6.",
     )
-    Item07: int = ParamField(
-        int, "item_07", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot7: int = ParamField(
+        int, "item_07", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 7.",
     )
-    Item08: int = ParamField(
-        int, "item_08", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot8: int = ParamField(
+        int, "item_08", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 8.",
     )
-    Item09: int = ParamField(
-        int, "item_09", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot9: int = ParamField(
+        int, "item_09", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 9.",
     )
-    Item10: int = ParamField(
-        int, "item_10", default=-1,
-        tooltip="TOOLTIP-TODO",
+    GoodSlot10: int = ParamField(
+        int, "item_10", game_type=GoodParam, default=-1,
+        tooltip="Good (item) equipped in slot 10.",
     )
-    NpcPlayerFaceGenId: int = ParamField(
-        int, "npcPlayerFaceGenId", default=0,
-        tooltip="TOOLTIP-TODO",
+    FaceID: int = ParamField(
+        int, "npcPlayerFaceGenId", game_type=FaceGenParam, default=0,
+        tooltip="Face parameter ID (NPCs only).",
     )
-    NpcPlayerThinkId: int = ParamField(
-        int, "npcPlayerThinkId", default=0,
-        tooltip="TOOLTIP-TODO",
+    DefaultAI: int = ParamField(
+        int, "npcPlayerThinkId", game_type=AIParam, default=0,
+        tooltip="Default AI (NPCs only).",
     )
-    BaseHp: int = ParamField(
+    BaseMaxHP: int = ParamField(
         ushort, "baseHp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base amount of maximum HP (excluding effects of vitality).",
     )
-    BaseMp: int = ParamField(
+    BaseMaxMP: int = ParamField(
         ushort, "baseMp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base amount of maximum MP (unused in Dark Souls).",
     )
-    BaseSp: int = ParamField(
+    BaseMaxStamina: int = ParamField(
         ushort, "baseSp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base maximum stamina (excluding effects of endurance).",
     )
-    ArrowNum: int = ParamField(
+    ArrowSlot1Count: int = ParamField(
         ushort, "arrowNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of arrows equipped in slot 1.",
     )
-    BoltNum: int = ParamField(
+    BoltSlot1Count: int = ParamField(
         ushort, "boltNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of arrows equipped in slot 2.",
     )
-    SubArrowNum: int = ParamField(
+    ArrowSlot2Count: int = ParamField(
         ushort, "subArrowNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of bolts equipped in slot 1.",
     )
-    SubBoltNum: int = ParamField(
+    BoltSlot2Count: int = ParamField(
         ushort, "subBoltNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of bolts equipped in slot 2.",
     )
     _Pad1: bytes = ParamPad(6, "pad4[6]")
-    SoulLv: int = ParamField(
+    Level: int = ParamField(
         short, "soulLv", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Soul level, independent of actual stats. Determines amount of souls rewarded by human NPCs.",
     )
-    BaseVit: int = ParamField(
+    Vitality: int = ParamField(
         byte, "baseVit", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base vitality level. Determines maximum health.",
     )
-    BaseWil: int = ParamField(
+    Attunement: int = ParamField(
         byte, "baseWil", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base attunement level. Determines spell slots and casting speed.",
     )
-    BaseEnd: int = ParamField(
+    Endurance: int = ParamField(
         byte, "baseEnd", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base endurance level. Determines maximum stamina and equip load.",
     )
-    BaseStr: int = ParamField(
+    Strength: int = ParamField(
         byte, "baseStr", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base strength level. Affects strength-based weapons and damage.",
     )
-    BaseDex: int = ParamField(
+    Dexterity: int = ParamField(
         byte, "baseDex", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base dexterity level. Affects skill-based weapons and damage.",
     )
-    BaseMag: int = ParamField(
+    Intelligence: int = ParamField(
         byte, "baseMag", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base intelligence level. Affects magic usability and effectiveness.",
     )
-    BaseFai: int = ParamField(
+    Faith: int = ParamField(
         byte, "baseFai", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base faith level. Affects miracle usability and effectiveness.",
     )
-    BaseLuc: int = ParamField(
+    Luck: int = ParamField(
         byte, "baseLuc", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base luck level. Improves chances of rare item drops.",
     )
-    BaseHeroPoint: int = ParamField(
+    Humanity: int = ParamField(
         byte, "baseHeroPoint", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base 'soft' humanity.",
     )
-    BaseDurability: int = ParamField(
+    Resistance: int = ParamField(
         byte, "baseDurability", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base resistance level. Improves resistances to status ailments.",
     )
-    ItemNum01: int = ParamField(
+    GoodSlot1Count: int = ParamField(
         byte, "itemNum_01", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 1.",
     )
-    ItemNum02: int = ParamField(
+    GoodSlot2Count: int = ParamField(
         byte, "itemNum_02", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 2.",
     )
-    ItemNum03: int = ParamField(
+    GoodSlot3Count: int = ParamField(
         byte, "itemNum_03", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 3.",
     )
-    ItemNum04: int = ParamField(
+    GoodSlot4Count: int = ParamField(
         byte, "itemNum_04", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 4.",
     )
-    ItemNum05: int = ParamField(
+    GoodSlot5Count: int = ParamField(
         byte, "itemNum_05", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 5.",
     )
-    ItemNum06: int = ParamField(
+    GoodSlot6Count: int = ParamField(
         byte, "itemNum_06", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 6.",
     )
-    ItemNum07: int = ParamField(
+    GoodSlot7Count: int = ParamField(
         byte, "itemNum_07", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 7.",
     )
-    ItemNum08: int = ParamField(
+    GoodSlot8Count: int = ParamField(
         byte, "itemNum_08", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 8.",
     )
-    ItemNum09: int = ParamField(
+    GoodSlot9Count: int = ParamField(
         byte, "itemNum_09", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 9.",
     )
-    ItemNum10: int = ParamField(
+    GoodSlot10Count: int = ParamField(
         byte, "itemNum_10", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Count of good equipped in slot 10.",
     )
     _Pad2: bytes = ParamPad(5, "pad5[5]")
-    GestureId0: int = ParamField(
+    Gesture1: int = ParamField(
         sbyte, "gestureId0", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="First equipped gesture.",
     )
-    GestureId1: int = ParamField(
+    Gesture2: int = ParamField(
         sbyte, "gestureId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Second equipped gesture.",
     )
-    GestureId2: int = ParamField(
+    Gesture3: int = ParamField(
         sbyte, "gestureId2", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Third equipped gesture.",
     )
-    GestureId3: int = ParamField(
+    Gesture4: int = ParamField(
         sbyte, "gestureId3", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Fourth equipped gesture.",
     )
-    GestureId4: int = ParamField(
+    Gesture5: int = ParamField(
         sbyte, "gestureId4", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Fifth equipped gesture.",
     )
-    GestureId5: int = ParamField(
+    Gesture6: int = ParamField(
         sbyte, "gestureId5", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Sixth equipped gesture.",
     )
-    GestureId6: int = ParamField(
+    Gesture7: int = ParamField(
         sbyte, "gestureId6", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Seventh equipped gesture.",
     )
-    NpcPlayerType: int = ParamField(
+    CharacterType: int = ParamField(
         byte, "npcPlayerType", NPC_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of human NPC.",
     )
-    NpcPlayerDrawType: int = ParamField(
+    DrawType: int = ParamField(
         sbyte, "npcPlayerDrawType", NPC_DRAW_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Draw type of human NPC.",
     )
-    NpcPlayerSex: int = ParamField(
+    Gender: int = ParamField(
         byte, "npcPlayerSex", CHARACTER_INIT_SEX, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Character gender.",
     )
-    VowType: int = ParamField(
+    Covenant: int = ParamField(
         byte, "vowType:4", VOW_TYPE, bit_count=4, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Character covenant.",
     )
     IsSyncTarget: bool = ParamField(
         byte, "isSyncTarget:1", BOOL_CIRCLECROSS_TYPE, bit_count=1, default=False,
@@ -372,61 +372,61 @@ class CHARACTER_INIT_PARAM(ParamRow):
     )
     _Pad4: bytes = ParamPad(26, "pad2[26]")
     EquipSubwepRight3: int = ParamField(
-        int, "equip_Subwep_Right3", default=-1,
+        int, "equip_Subwep_Right3", game_type=WeaponParam, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     EquipSubwepLeft3: int = ParamField(
-        int, "equip_Subwep_Left3", default=-1,
+        int, "equip_Subwep_Left3", game_type=WeaponParam, default=-1,
         tooltip="TOOLTIP-TODO",
     )
     _Pad5: bytes = ParamPad(4, "pad3[4]")
-    SecondaryItem01: int = ParamField(
+    SecondaryGoodSlot1: int = ParamField(
         int, "secondaryItem_01", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItem02: int = ParamField(
+    SecondaryGoodSlot2: int = ParamField(
         int, "secondaryItem_02", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItem03: int = ParamField(
+    SecondaryGoodSlot3: int = ParamField(
         int, "secondaryItem_03", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItem04: int = ParamField(
+    SecondaryGoodSlot4: int = ParamField(
         int, "secondaryItem_04", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItem05: int = ParamField(
+    SecondaryGoodSlot5: int = ParamField(
         int, "secondaryItem_05", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItem06: int = ParamField(
+    SecondaryGoodSlot6: int = ParamField(
         int, "secondaryItem_06", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum01: int = ParamField(
+    SecondaryGoodSlot1Count1: int = ParamField(
         byte, "secondaryItemNum_01", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum02: int = ParamField(
+    SecondaryGoodSlot1Count2: int = ParamField(
         byte, "secondaryItemNum_02", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum03: int = ParamField(
+    SecondaryGoodSlot1Count3: int = ParamField(
         byte, "secondaryItemNum_03", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum04: int = ParamField(
+    SecondaryGoodSlot1Count4: int = ParamField(
         byte, "secondaryItemNum_04", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum05: int = ParamField(
+    SecondaryGoodSlot1Count5: int = ParamField(
         byte, "secondaryItemNum_05", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    SecondaryItemNum06: int = ParamField(
+    SecondaryGoodSlot1Count6: int = ParamField(
         byte, "secondaryItemNum_06", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     HpEstMax: int = ParamField(
         sbyte, "HpEstMax", default=-1,
@@ -439,6 +439,6 @@ class CHARACTER_INIT_PARAM(ParamRow):
     _Pad6: bytes = ParamPad(5, "pad7[5]")
     VoiceType: int = ParamField(
         byte, "voiceType", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Voice type.",
     )
     _Pad7: bytes = ParamPad(6, "reserve[6]")

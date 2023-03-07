@@ -2984,6 +2984,14 @@
         "pad4[19]": {
             "nickname": "Pad4",
             "tooltip": "TOOLTIP-TODO"
+        },
+        "finalDamageRateId": {
+            "nickname": "FinalDamageRateID",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "pad7[12]": {
+            "nickname": "Pad5",
+            "tooltip": "TOOLTIP-TODO"
         }
     },
     "ATTACK_ELEMENT_CORRECT_PARAM_ST": {
@@ -3898,8 +3906,72 @@
             "nickname": "GenerateAnimId",
             "tooltip": "TOOLTIP-TODO"
         },
-        "Reserve2[4]": {
-            "nickname": "Reserve2",
+        "Unk1": {
+            "nickname": "Unk1",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk2": {
+            "nickname": "Unk2",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk3": {
+            "nickname": "Unk3",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk4": {
+            "nickname": "Unk4",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk5": {
+            "nickname": "Unk5",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk6": {
+            "nickname": "Unk6",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk7": {
+            "nickname": "Unk7",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk8": {
+            "nickname": "Unk8",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk9": {
+            "nickname": "Unk9",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk10": {
+            "nickname": "Unk10",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk11": {
+            "nickname": "Unk11",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk12": {
+            "nickname": "Unk12",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk13": {
+            "nickname": "Unk13",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk14": {
+            "nickname": "Unk14",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk15": {
+            "nickname": "Unk15",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk16": {
+            "nickname": "Unk16",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "Unk17": {
+            "nickname": "Unk17",
             "tooltip": "TOOLTIP-TODO"
         }
     },
@@ -4743,67 +4815,83 @@
         },
         "equip_Wep_Right": {
             "nickname": "RightHandWeapon1",
-            "tooltip": "First (default) weapon/shield equipped in right hand."
+            "tooltip": "First (default) weapon/shield equipped in right hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Subwep_Right": {
             "nickname": "RightHandWeapon2",
-            "tooltip": "Second weapon/shield equipped in right hand."
+            "tooltip": "Second weapon/shield equipped in right hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Wep_Left": {
             "nickname": "LeftHandWeapon1",
-            "tooltip": "First (default) weapon/shield equipped in left hand."
+            "tooltip": "First (default) weapon/shield equipped in left hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Subwep_Left": {
             "nickname": "LeftHandWeapon2",
-            "tooltip": "Second weapon/shield equipped in left hand."
+            "tooltip": "Second weapon/shield equipped in left hand.",
+            "game_type": "WeaponParam"
         },
         "equip_Helm": {
             "nickname": "HeadArmor",
-            "tooltip": "Armor equipped to head."
+            "tooltip": "Armor equipped to head.",
+            "game_type": "ArmorParam"
         },
         "equip_Armer": {
             "nickname": "BodyArmor",
-            "tooltip": "Armor equipped to body."
+            "tooltip": "Armor equipped to body.",
+            "game_type": "ArmorParam"
         },
         "equip_Gaunt": {
             "nickname": "HandsArmor",
-            "tooltip": "Armor equipped to hands."
+            "tooltip": "Armor equipped to hands.",
+            "game_type": "ArmorParam"
         },
         "equip_Leg": {
             "nickname": "LegsArmor",
-            "tooltip": "Armor equipped to legs."
+            "tooltip": "Armor equipped to legs.",
+            "game_type": "ArmorParam"
         },
         "equip_Arrow": {
             "nickname": "ArrowSlot1",
-            "tooltip": "Arrows equipped in slot 1."
+            "tooltip": "Arrows equipped in slot 1.",
+            "game_type": "WeaponParam"
         },
         "equip_Bolt": {
             "nickname": "BoltSlot1",
-            "tooltip": "Bolts equipped in slot 1."
+            "tooltip": "Bolts equipped in slot 1.",
+            "game_type": "WeaponParam"
         },
         "equip_SubArrow": {
             "nickname": "ArrowSlot2",
-            "tooltip": "Arrows equipped in slot 2."
+            "tooltip": "Arrows equipped in slot 2.",
+            "game_type": "WeaponParam"
         },
         "equip_SubBolt": {
             "nickname": "BoltSlot2",
-            "tooltip": "Bolts equipped in slot 2."
+            "tooltip": "Bolts equipped in slot 2.",
+            "game_type": "WeaponParam"
         },
         "equip_Accessory01": {
-            "nickname": "RingSlot1",
-            "tooltip": "First ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "nickname": "TalismanSlot1",
+            "tooltip": "First talisman equipped.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory02": {
-            "nickname": "RingSlot2",
-            "tooltip": "Second ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "nickname": "TalismanSlot2",
+            "tooltip": "Second talisman equipped.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory03": {
-            "nickname": "RingSlot3",
-            "tooltip": "Third ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "nickname": "TalismanSlot3",
+            "tooltip": "Third talisman equipped.",
+            "game_type": "AccessoryParam"
         },
         "equip_Accessory04": {
-            "nickname": "RingSlot4",
-            "tooltip": "Fourth ring equipped. Note that up to five rings can be equipped to human NPCs."
+            "nickname": "TalismanSlot4",
+            "tooltip": "Fourth talisman equipped.",
+            "game_type": "AccessoryParam"
         },
         "pad8[4]": {
             "nickname": "Pad8",
@@ -4823,71 +4911,88 @@
         },
         "equip_Spell_01": {
             "nickname": "SpellSlot1",
-            "tooltip": "First spell equipped."
+            "tooltip": "First spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_02": {
             "nickname": "SpellSlot2",
-            "tooltip": "Second spell equipped."
+            "tooltip": "Second spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_03": {
             "nickname": "SpellSlot3",
-            "tooltip": "Third spell equipped."
+            "tooltip": "Third spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_04": {
             "nickname": "SpellSlot4",
-            "tooltip": "Fourth spell equipped."
+            "tooltip": "Fourth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_05": {
             "nickname": "SpellSlot5",
-            "tooltip": "Fifth spell equipped."
+            "tooltip": "Fifth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_06": {
             "nickname": "SpellSlot6",
-            "tooltip": "Sixth spell equipped."
+            "tooltip": "Sixth spell equipped.",
+            "game_type": "SpellParam"
         },
         "equip_Spell_07": {
             "nickname": "SpellSlot7",
-            "tooltip": "Seventh spell equipped."
+            "tooltip": "Seventh spell equipped.",
+            "game_type": "SpellParam"
         },
         "item_01": {
             "nickname": "GoodSlot1",
-            "tooltip": "Good (item) equipped in slot 1."
+            "tooltip": "Good (item) equipped in slot 1.",
+            "game_type": "GoodParam"
         },
         "item_02": {
             "nickname": "GoodSlot2",
-            "tooltip": "Good (item) equipped in slot 2."
+            "tooltip": "Good (item) equipped in slot 2.",
+            "game_type": "GoodParam"
         },
         "item_03": {
             "nickname": "GoodSlot3",
-            "tooltip": "Good (item) equipped in slot 3."
+            "tooltip": "Good (item) equipped in slot 3.",
+            "game_type": "GoodParam"
         },
         "item_04": {
             "nickname": "GoodSlot4",
-            "tooltip": "Good (item) equipped in slot 4."
+            "tooltip": "Good (item) equipped in slot 4.",
+            "game_type": "GoodParam"
         },
         "item_05": {
             "nickname": "GoodSlot5",
-            "tooltip": "Good (item) equipped in slot 5."
+            "tooltip": "Good (item) equipped in slot 5.",
+            "game_type": "GoodParam"
         },
         "item_06": {
             "nickname": "GoodSlot6",
-            "tooltip": "Good (item) equipped in slot 6."
+            "tooltip": "Good (item) equipped in slot 6.",
+            "game_type": "GoodParam"
         },
         "item_07": {
             "nickname": "GoodSlot7",
-            "tooltip": "Good (item) equipped in slot 7."
+            "tooltip": "Good (item) equipped in slot 7.",
+            "game_type": "GoodParam"
         },
         "item_08": {
             "nickname": "GoodSlot8",
-            "tooltip": "Good (item) equipped in slot 8."
+            "tooltip": "Good (item) equipped in slot 8.",
+            "game_type": "GoodParam"
         },
         "item_09": {
             "nickname": "GoodSlot9",
-            "tooltip": "Good (item) equipped in slot 9."
+            "tooltip": "Good (item) equipped in slot 9.",
+            "game_type": "GoodParam"
         },
         "item_10": {
             "nickname": "GoodSlot10",
-            "tooltip": "Good (item) equipped in slot 10."
+            "tooltip": "Good (item) equipped in slot 10.",
+            "game_type": "GoodParam"
         },
         "npcPlayerFaceGenId": {
             "nickname": "FaceID",
@@ -5105,11 +5210,13 @@
         },
         "equip_Subwep_Right3": {
             "nickname": "EquipSubwepRight3",
-            "tooltip": "TOOLTIP-TODO"
+            "tooltip": "TOOLTIP-TODO",
+            "game_type": "WeaponParam"
         },
         "equip_Subwep_Left3": {
             "nickname": "EquipSubwepLeft3",
-            "tooltip": "TOOLTIP-TODO"
+            "tooltip": "TOOLTIP-TODO",
+            "game_type": "WeaponParam"
         },
         "pad3[4]": {
             "nickname": "Pad3",
@@ -6838,7 +6945,8 @@
         },
         "refId": {
             "nickname": "SpecialEffect",
-            "tooltip": "Special effect applied when ring is equipped."
+            "tooltip": "Special effect applied when accessory is equipped.",
+            "game_type": "SpecialEffectParam"
         },
         "sfxVariationId": {
             "nickname": "SFXVariation",
@@ -6846,11 +6954,11 @@
         },
         "weight": {
             "nickname": "Weight",
-            "tooltip": "Weight of ring. Always set to zero in vanilla Dark Souls, but likely works just like other equipment."
+            "tooltip": "Weight of accessory. Always set to zero in vanilla Dark Souls, but likely works just like other equipment."
         },
         "behaviorId": {
             "nickname": "Behavior",
-            "tooltip": "Behavior of ring 'skill'. Always zero in the vanilla game.",
+            "tooltip": "Behavior of accessory 'skill'. Always zero in the vanilla game.",
             "game_type": "BehaviorParam"
         },
         "basicPrice": {
@@ -6871,25 +6979,25 @@
         },
         "equipModelId": {
             "nickname": "EquipmentModel",
-            "tooltip": "Always zero. (Rings have no model, presumably.)",
+            "tooltip": "Always zero. (Talismans have no model, presumably.)",
             "game_type": "EquipmentModel"
         },
         "iconId": {
             "nickname": "MenuIcon",
-            "tooltip": "Icon ID of ring in menu.",
+            "tooltip": "Icon ID of talisman in menu.",
             "game_type": "Icon"
         },
         "shopLv": {
             "nickname": "ShopLevel",
-            "tooltip": "Internal description: 'Level that can be solved in the shop.' Unknown and unused (rings have no level)."
+            "tooltip": "Internal description: 'Level that can be solved in the shop.' Unknown and unused (talismans have no level)."
         },
         "trophySGradeId": {
             "nickname": "AchievementContributionID",
-            "tooltip": "Index of ring as it contributes to certain multi-item achievements (none for rings)."
+            "tooltip": "Index of talisman as it contributes to certain multi-item achievements (none for talismans)."
         },
         "trophySeqId": {
             "nickname": "AchievementUnlockID",
-            "tooltip": "Achievement unlocked when ring is acquired (Covenant of Artorias)."
+            "tooltip": "Achievement unlocked when talisman is acquired (Covenant of Artorias)."
         },
         "equipModelCategory": {
             "nickname": "EquipmentModelCategory",
@@ -6905,11 +7013,11 @@
         },
         "refCategory": {
             "nickname": "ReferenceType",
-            "tooltip": "Always set to Special Effects. No idea what happens if you set it to Attacks for a ring..."
+            "tooltip": "Always set to Special Effects. No idea what happens if you set it to Attacks for a talisman..."
         },
         "spEffectCategory": {
             "nickname": "SpecialEffectCategory",
-            "tooltip": "Determines what type of special effects affect the stats of this equipment. Unused for rings."
+            "tooltip": "Determines what type of special effects affect the stats of this equipment. Unused for talismans."
         },
         "sortGroupId": {
             "nickname": "SortGroupId",
@@ -6932,15 +7040,15 @@
         },
         "isDeposit:1": {
             "nickname": "CanBeStored",
-            "tooltip": "If True, this ring can be stored in the Bottomless Box. Always True for rings."
+            "tooltip": "If True, this talisman can be stored in storage. Always True for talismans."
         },
         "isEquipOutBrake:1": {
             "nickname": "BreaksWhenUnequipped",
-            "tooltip": "If True, this ring will break when it is unequipped (e.g. Ring of Favor and Protection)."
+            "tooltip": "If True, this talisman will break when it is unequipped."
         },
         "disableMultiDropShare:1": {
             "nickname": "DisableMultiplayerShare",
-            "tooltip": "If True, this ring cannot be given to other players by dropping it. Always False in vanilla."
+            "tooltip": "If True, this talisman cannot be given to other players by dropping it. Always False in vanilla."
         },
         "isDiscard:1": {
             "nickname": "IsDiscard",
@@ -8199,7 +8307,7 @@
         },
         "isDeposit:1": {
             "nickname": "CanBeStored",
-            "tooltip": "If True, this armor can be stored in the Bottomless Box."
+            "tooltip": "If True, this armor can be stored in storage."
         },
         "headEquip:1": {
             "nickname": "EquippedToHead",
@@ -8974,17 +9082,17 @@
         "spEffectBehaviorId0": {
             "nickname": "SpecialEffectOnHit0",
             "tooltip": "Special effect applied to struck target (slot 0).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "spEffectBehaviorId1": {
             "nickname": "SpecialEffectOnHit1",
             "tooltip": "Special effect applied to struck target (slot 1).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "spEffectBehaviorId2": {
             "nickname": "SpecialEffectOnHit2",
             "tooltip": "Special effect applied to struck target (slot 2).",
-            "game_type": "BehaviorParam"
+            "game_type": "SpecialEffectParam"
         },
         "residentSpEffectId": {
             "nickname": "EquippedSpecialEffect0",
@@ -9407,7 +9515,7 @@
         },
         "isDeposit:1": {
             "nickname": "CanBeStored",
-            "tooltip": "If True, this weapon can be stored in the Bottomless Box. Always True for rings."
+            "tooltip": "If True, this weapon can be stored in storage. Always True for rings."
         },
         "disableMultiDropShare:1": {
             "nickname": "DisableMultiplayerShare",
@@ -14012,7 +14120,7 @@
             "nickname": "BonfireCheckEnemyRange",
             "tooltip": "TOOLTIP-TODO"
         },
-        "reserved_124[48]": {
+        "reserved_124[128]": {
             "nickname": "Reserved124",
             "tooltip": "TOOLTIP-TODO"
         }
@@ -16634,32 +16742,32 @@
             "tooltip": "Determines if this spell can be cast by characters with no covenant."
         },
         "vowType1:1": {
-            "nickname": "UseableByWayOfWhite",
-            "tooltip": "Determines if this spell can be cast by characters in the Way of White."
+            "nickname": "UseableByCovenant1",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 1."
         },
         "vowType2:1": {
-            "nickname": "UseableByPrincessGuard",
-            "tooltip": "Determines if this spell can be cast by characters in the Princess's Guard."
+            "nickname": "UseableByCovenant2",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 2."
         },
         "vowType3:1": {
-            "nickname": "UseableByWarriorsOfSunlight",
-            "tooltip": "Determines if this spell can be cast by characters in the Warriors of Sunlight."
+            "nickname": "UseableByCovenant3",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 3."
         },
         "vowType4:1": {
-            "nickname": "UseableByDarkwraith",
-            "tooltip": "Determines if this spell can be cast by characters in the Darkwraith covenant."
+            "nickname": "UseableByCovenant4",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 4."
         },
         "vowType5:1": {
-            "nickname": "UseableByPathOfTheDragon",
-            "tooltip": "Determines if this spell can be cast by characters in the Path of the Dragon."
+            "nickname": "UseableByCovenant5",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 5."
         },
         "vowType6:1": {
-            "nickname": "UseableByGravelordServant",
-            "tooltip": "Determines if this spell can be cast by characters in the Gravelord Servants."
+            "nickname": "UseableByCovenant6",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 6."
         },
         "vowType7:1": {
-            "nickname": "UseableByForestHunter",
-            "tooltip": "Determines if this spell can be cast by characters in the Forest Hunters."
+            "nickname": "UseableByCovenant7",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 7."
         },
         "enable_multi:1": {
             "nickname": "UseableInMultiplayer",
@@ -16726,12 +16834,12 @@
             "tooltip": "TOOLTIP-TODO"
         },
         "vowType8:1": {
-            "nickname": "UseableByDarkmoonBlade",
-            "tooltip": "Determines if this spell can be cast by characters in the Blades of the Darkmoon."
+            "nickname": "UseableByCovenant8",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 8."
         },
         "vowType9:1": {
-            "nickname": "UseableByChaosServant",
-            "tooltip": "Determines if this spell can be cast by characters in the Chaos Servant covenant."
+            "nickname": "UseableByCovenant9",
+            "tooltip": "Determines if this spell can be cast by characters in Covenant 9."
         },
         "vowType10:1": {
             "nickname": "UseableByCovenant10",
@@ -25310,7 +25418,8 @@
         },
         "NoGuardDamageRate": {
             "nickname": "NoGuardIncomingDamageMultiplier",
-            "tooltip": "Multiplier to use instead of usual multiplier if character is not guarding. (Always set to 0 in vanilla game, which must deactivate it. Only an educated guess that it refers to incoming damage, not outgoing.)"
+            "tooltip": "Multiplier to use instead of usual multiplier if character is not guarding. (Always set to 0 in vanilla game, which must deactivate it. Only an educated guess that it refers to incoming damage, not outgoing.)",
+            "default": 0.0
         },
         "vitalSpotChangeRate": {
             "nickname": "CriticalHitIncomingDamageMultiplier",
@@ -26617,8 +26726,12 @@
             "nickname": "GoodsConsumptionRate",
             "tooltip": "TOOLTIP-TODO"
         },
-        "pad3[8]": {
+        "unk2": {
             "nickname": "Pad3",
+            "tooltip": "TOOLTIP-TODO"
+        },
+        "unk3[4]": {
+            "nickname": "Pad4",
             "tooltip": "TOOLTIP-TODO"
         }
     },

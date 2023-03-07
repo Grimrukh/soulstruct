@@ -16,14 +16,16 @@ from soulstruct.darksouls1ptde.text import MSGDirectory
 
 
 class GameDirectoryProject(_BaseGameDirectoryProject):
+    # This also determines load order, which is important for some types (e.g. Maps -> Enums -> Events).
     DATA_TYPES = {
-        ProjectDataType.AI: AIScriptDirectory,
-        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
-        ProjectDataType.Lighting: DrawParamDirectory,
-        ProjectDataType.Maps: MapStudioDirectory,
         ProjectDataType.Params: GameParamBND,
+        ProjectDataType.Lighting: DrawParamDirectory,
+        ProjectDataType.AI: AIScriptDirectory,
         ProjectDataType.Talk: TalkDirectory,  # modified via ESP state machine script files
         ProjectDataType.Text: MSGDirectory,
+        ProjectDataType.Maps: MapStudioDirectory,
+        ProjectDataType.Enums: None,  # modified via Python modules; must be loaded after `Maps`
+        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
     }
 
     def _validate_game_directory(self, game_root: Path) -> bool:

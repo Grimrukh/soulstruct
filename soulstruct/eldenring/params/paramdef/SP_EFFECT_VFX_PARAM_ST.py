@@ -13,109 +13,109 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class SP_EFFECT_VFX_PARAM_ST(ParamRow):
-    MidstSfxId: int = ParamField(
-        int, "midstSfxId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    OngoingVisualEffect: int = ParamField(
+        int, "midstSfxId", game_type=VisualEffect, default=-1,
+        tooltip="Ongoing visual effect for special effect. -1 is no effect.",
     )
-    MidstSeId: int = ParamField(
+    OngoingSoundEffect: int = ParamField(
         int, "midstSeId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Ongoing sound effect for special effect. -1 is no effect.",
     )
-    InitSfxId: int = ParamField(
-        int, "initSfxId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    InitialVisualEffect: int = ParamField(
+        int, "initSfxId", game_type=VisualEffect, default=-1,
+        tooltip="One-off visual effect when special effect begins. -1 is no effect.",
     )
-    InitSeId: int = ParamField(
+    InitialSoundEffect: int = ParamField(
         int, "initSeId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="One-off sound effect when special effect begins. -1 is no effect. (Does not appear to work.)",
     )
-    FinishSfxId: int = ParamField(
-        int, "finishSfxId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    FinishVisualEffect: int = ParamField(
+        int, "finishSfxId", game_type=VisualEffect, default=-1,
+        tooltip="One-off visual effect when special effect ends. -1 is no effect.",
     )
-    FinishSeId: int = ParamField(
+    FinishSoundEffect: int = ParamField(
         int, "finishSeId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="One-off sound effect when special effect ends. -1 is no effect. (Does not appear to work.)",
     )
-    CamouflageBeginDist: float = ParamField(
+    HideStartDistance: float = ParamField(
         float, "camouflageBeginDist", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Closest distance at which effect is disabled.",
     )
-    CamouflageEndDist: float = ParamField(
+    HideEndDistance: float = ParamField(
         float, "camouflageEndDist", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Furthest distance at which effect is disabled.",
     )
-    TransformProtectorId: int = ParamField(
-        int, "transformProtectorId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    TransformationArmorID: int = ParamField(
+        int, "transformProtectorId", game_type=ArmorParam, default=-1,
+        tooltip="Transformation armor ID. Unknown effect. -1 is no armor.",
     )
-    MidstDmyId: int = ParamField(
-        short, "midstDmyId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    OngoingModelPoint: int = ParamField(
+        short, "midstDmyId", game_type=ModelDummy, default=-1,
+        tooltip="Model point where ongoing effects are centered. -1 is model root.",
     )
-    InitDmyId: int = ParamField(
-        short, "initDmyId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    InitialModelPoint: int = ParamField(
+        short, "initDmyId", game_type=ModelDummy, default=-1,
+        tooltip="Model point where initial effect is centered. -1 is model root.",
     )
-    FinishDmyId: int = ParamField(
-        short, "finishDmyId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    FinishModelPoint: int = ParamField(
+        short, "finishDmyId", game_type=ModelDummy, default=-1,
+        tooltip="Model point where finish effect is centered. -1 is model root.",
     )
     EffectType: int = ParamField(
         byte, "effectType", SP_EFFECT_VFX_EFFECT_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of effect. Enum not yet mapped.",
     )
-    SoulParamIdForWepEnchant: int = ParamField(
+    WeaponEnchantmentSoulParam: int = ParamField(
         byte, "soulParamIdForWepEnchant", SP_EFFECT_VFX_SOUL_PARAM_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'Soul Param ID for weapon enchantment.' Enum not yet mapped.",
     )
-    PlayCategory: int = ParamField(
+    PlaybackCategory: int = ParamField(
         byte, "playCategory", SP_EFFECT_VFX_PLAYCATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Only one effect in each category can be active at once (determined by PlaybackPriority).",
     )
-    PlayPriority: int = ParamField(
+    PlaybackPriority: int = ParamField(
         byte, "playPriority", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Only the lowest-numbered-priority effect in each PlaybackCategory will be active at once.",
     )
-    ExistEffectForLarge: bool = ParamField(
+    LargeEffectExists: bool = ParamField(
         byte, "existEffectForLarge:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if a large version of the effect exists.",
     )
-    ExistEffectForSoul: bool = ParamField(
+    SoulEffectExists: bool = ParamField(
         byte, "existEffectForSoul:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if a 'soul version' of the effect exists.",
     )
-    EffectInvisibleAtCamouflage: bool = ParamField(
+    InvisibleWhenHidden: bool = ParamField(
         byte, "effectInvisibleAtCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if the effect should be invisible when hidden (unclear exactly what this means).",
     )
-    UseCamouflage: bool = ParamField(
+    HidingActive: bool = ParamField(
         byte, "useCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="I believe this determines if the hiding range fields are actually used.",
     )
-    InvisibleAtFriendCamouflage: bool = ParamField(
+    InvisibleWhenFriendHidden: bool = ParamField(
         byte, "invisibleAtFriendCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unclear.",
     )
     IsHideFootEffectforCamouflage: bool = ParamField(
         byte, "isHideFootEffect_forCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    HalfCamouflage: bool = ParamField(
+    HalfHiddenOnly: bool = ParamField(
         byte, "halfCamouflage:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If enabled, effects are made semi-transparent rather than fully hidden.",
     )
     IsFullBodyTransformProtectorId: bool = ParamField(
         byte, "isFullBodyTransformProtectorId:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsInvisibleWeapon: bool = ParamField(
+    HideWeapon: bool = ParamField(
         byte, "isInvisibleWeapon:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weapon is invisible if enabled.",
     )
-    IsSilence: bool = ParamField(
+    IsSilent: bool = ParamField(
         byte, "isSilence:1", SP_EFFECT_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Movement noises are silenced if enabled.",
     )
     IsMidstFullbody: bool = ParamField(
         byte, "isMidstFullbody:1", SP_EFFECT_BOOL, bit_count=1, default=False,

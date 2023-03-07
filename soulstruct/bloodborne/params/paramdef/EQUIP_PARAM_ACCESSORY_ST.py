@@ -14,8 +14,8 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     SpecialEffect: int = ParamField(
-        int, "refId", default=-1,
-        tooltip="Special effect applied when ring is equipped.",
+        int, "refId", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied when accessory is equipped.",
     )
     SFXVariation: int = ParamField(
         int, "sfxVariationId", default=-1,
@@ -24,12 +24,12 @@ class EQUIP_PARAM_ACCESSORY_ST(ParamRow):
     )
     Weight: float = ParamField(
         float, "weight", default=1.0,
-        tooltip="Weight of ring. Always set to zero in vanilla Dark Souls, but likely works just like other "
+        tooltip="Weight of accessory. Always set to zero in vanilla Dark Souls, but likely works just like other "
                 "equipment.",
     )
     Behavior: int = ParamField(
         int, "behaviorId", game_type=BehaviorParam, default=0,
-        tooltip="Behavior of ring 'skill'. Always zero in the vanilla game.",
+        tooltip="Behavior of accessory 'skill'. Always zero in the vanilla game.",
     )
     BasicCost: int = ParamField(
         int, "basicPrice", default=0,

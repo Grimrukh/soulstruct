@@ -119,7 +119,13 @@ class ParamRow(BinaryStruct):
         raise KeyError(f"No field with internal name or nickname '{field_name_or_nickname}'.")
 
     @classmethod
-    def get_field_metadata(cls, field_name: str) -> ParamFieldMetadata:
+    def get_internal_names(cls) -> tuple[str, ...]:
+        """Returns a tuple of all internal names (in order) for this Param type."""
+        return tuple(metadata.internal_name for metadata in cls.get_all_field_metadata().values())
+
+    @classmethod
+    def get_all_field_metadata(cls) -> MappingProxyType[str, ParamFieldMetadata]:
+        """Returns a mapping of all binary field names to their `ParamFieldMetadata` instances."""
         if cls._FIELD_PARAM_METADATA is None:
             field_types = tp.get_type_hints(cls)
             field_metadata = {}
@@ -130,7 +136,11 @@ class ParamRow(BinaryStruct):
                 field_metadata[f.name] = metadata
             cls._FIELD_PARAM_METADATA = MappingProxyType(field_metadata)
 
-        return cls._FIELD_PARAM_METADATA[field_name]
+        return cls._FIELD_PARAM_METADATA
+
+    @classmethod
+    def get_field_metadata(cls, field_name: str) -> ParamFieldMetadata:
+        return cls.get_all_field_metadata()[field_name]
 
     def to_dict(
         self, ignore_pads=True, ignore_defaults=True, use_internal_names=False

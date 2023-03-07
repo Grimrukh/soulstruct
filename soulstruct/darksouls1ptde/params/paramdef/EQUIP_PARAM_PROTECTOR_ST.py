@@ -328,7 +328,7 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="Visual effect for when damage is taken to weak spot (used for head armor).",
     )
     CanBeStored: bool = ParamField(
-        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="If True, this armor can be stored in the Bottomless Box.",
     )
     EquippedToHead: bool = ParamField(
@@ -336,219 +336,219 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         tooltip="This armor is equipped to the head.",
     )
     EquippedToBody: bool = ParamField(
-        byte, "bodyEquip:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "bodyEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="This armor is equipped to the body.",
     )
     EquippedToHands: bool = ParamField(
-        byte, "armEquip:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "armEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="This armor is equipped to the hands.",
     )
     EquippedToLegs: bool = ParamField(
-        byte, "legEquip:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "legEquip:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="This armor is equipped to the legs.",
     )
     UseFaceScale: bool = ParamField(
-        byte, "useFaceScale:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "useFaceScale:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, the face-scaling parameters of this armor will be applied.",
     )
     HideFlag0: bool = ParamField(
-        byte, "invisibleFlag00:1", bit_count=1, default=0,
+        byte, "invisibleFlag00:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag1HairFringe: bool = ParamField(
-        byte, "invisibleFlag01:1", bit_count=1, default=0,
+        byte, "invisibleFlag01:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (hair fringe)",
     )
     HideFlag2Sideburns: bool = ParamField(
-        byte, "invisibleFlag02:1", bit_count=1, default=0,
+        byte, "invisibleFlag02:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (sideburns)",
     )
     HideFlag3TopOfHead: bool = ParamField(
-        byte, "invisibleFlag03:1", bit_count=1, default=0,
+        byte, "invisibleFlag03:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (top of head)",
     )
     HideFlag4TopOfHead: bool = ParamField(
-        byte, "invisibleFlag04:1", bit_count=1, default=0,
+        byte, "invisibleFlag04:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (top of head)",
     )
     HideFlag5BackHair: bool = ParamField(
-        byte, "invisibleFlag05:1", bit_count=1, default=0,
+        byte, "invisibleFlag05:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (back hair)",
     )
     HideFlag6BackHairTip: bool = ParamField(
-        byte, "invisibleFlag06:1", bit_count=1, default=0,
+        byte, "invisibleFlag06:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (back hair tip)",
     )
     HideFlag7: bool = ParamField(
-        byte, "invisibleFlag07:1", bit_count=1, default=0,
+        byte, "invisibleFlag07:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag8: bool = ParamField(
-        byte, "invisibleFlag08:1", bit_count=1, default=0,
+        byte, "invisibleFlag08:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag9: bool = ParamField(
-        byte, "invisibleFlag09:1", bit_count=1, default=0,
+        byte, "invisibleFlag09:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag10Collar: bool = ParamField(
-        byte, "invisibleFlag10:1", bit_count=1, default=0,
+        byte, "invisibleFlag10:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (collar)",
     )
     HideFlag11AroundCollar: bool = ParamField(
-        byte, "invisibleFlag11:1", bit_count=1, default=0,
+        byte, "invisibleFlag11:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (around collar)",
     )
     HideFlag12: bool = ParamField(
-        byte, "invisibleFlag12:1", bit_count=1, default=0,
+        byte, "invisibleFlag12:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag13: bool = ParamField(
-        byte, "invisibleFlag13:1", bit_count=1, default=0,
+        byte, "invisibleFlag13:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag14: bool = ParamField(
-        byte, "invisibleFlag14:1", bit_count=1, default=0,
+        byte, "invisibleFlag14:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag15HoodHem: bool = ParamField(
-        byte, "invisibleFlag15:1", bit_count=1, default=0,
+        byte, "invisibleFlag15:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (hood hem)",
     )
     HideFlag16: bool = ParamField(
-        byte, "invisibleFlag16:1", bit_count=1, default=0,
+        byte, "invisibleFlag16:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag17: bool = ParamField(
-        byte, "invisibleFlag17:1", bit_count=1, default=0,
+        byte, "invisibleFlag17:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag18: bool = ParamField(
-        byte, "invisibleFlag18:1", bit_count=1, default=0,
+        byte, "invisibleFlag18:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag19: bool = ParamField(
-        byte, "invisibleFlag19:1", bit_count=1, default=0,
+        byte, "invisibleFlag19:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag20SleeveA: bool = ParamField(
-        byte, "invisibleFlag20:1", bit_count=1, default=0,
+        byte, "invisibleFlag20:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (sleeve A)",
     )
     HideFlag21SleeveB: bool = ParamField(
-        byte, "invisibleFlag21:1", bit_count=1, default=0,
+        byte, "invisibleFlag21:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (sleeve B)",
     )
     HideFlag22: bool = ParamField(
-        byte, "invisibleFlag22:1", bit_count=1, default=0,
+        byte, "invisibleFlag22:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag23: bool = ParamField(
-        byte, "invisibleFlag23:1", bit_count=1, default=0,
+        byte, "invisibleFlag23:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag24: bool = ParamField(
-        byte, "invisibleFlag24:1", bit_count=1, default=0,
+        byte, "invisibleFlag24:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag25Arm: bool = ParamField(
-        byte, "invisibleFlag25:1", bit_count=1, default=0,
+        byte, "invisibleFlag25:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (arm)",
     )
     HideFlag26: bool = ParamField(
-        byte, "invisibleFlag26:1", bit_count=1, default=0,
+        byte, "invisibleFlag26:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag27: bool = ParamField(
-        byte, "invisibleFlag27:1", bit_count=1, default=0,
+        byte, "invisibleFlag27:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag28: bool = ParamField(
-        byte, "invisibleFlag28:1", bit_count=1, default=0,
+        byte, "invisibleFlag28:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag29: bool = ParamField(
-        byte, "invisibleFlag29:1", bit_count=1, default=0,
+        byte, "invisibleFlag29:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag30Belt: bool = ParamField(
-        byte, "invisibleFlag30:1", bit_count=1, default=0,
+        byte, "invisibleFlag30:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (belt)",
     )
     HideFlag31: bool = ParamField(
-        byte, "invisibleFlag31:1", bit_count=1, default=0,
+        byte, "invisibleFlag31:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag32: bool = ParamField(
-        byte, "invisibleFlag32:1", bit_count=1, default=0,
+        byte, "invisibleFlag32:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag33: bool = ParamField(
-        byte, "invisibleFlag33:1", bit_count=1, default=0,
+        byte, "invisibleFlag33:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag34: bool = ParamField(
-        byte, "invisibleFlag34:1", bit_count=1, default=0,
+        byte, "invisibleFlag34:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag35: bool = ParamField(
-        byte, "invisibleFlag35:1", bit_count=1, default=0,
+        byte, "invisibleFlag35:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag36: bool = ParamField(
-        byte, "invisibleFlag36:1", bit_count=1, default=0,
+        byte, "invisibleFlag36:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag37: bool = ParamField(
-        byte, "invisibleFlag37:1", bit_count=1, default=0,
+        byte, "invisibleFlag37:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag38: bool = ParamField(
-        byte, "invisibleFlag38:1", bit_count=1, default=0,
+        byte, "invisibleFlag38:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag39: bool = ParamField(
-        byte, "invisibleFlag39:1", bit_count=1, default=0,
+        byte, "invisibleFlag39:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag40: bool = ParamField(
-        byte, "invisibleFlag40:1", bit_count=1, default=0,
+        byte, "invisibleFlag40:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag41: bool = ParamField(
-        byte, "invisibleFlag41:1", bit_count=1, default=0,
+        byte, "invisibleFlag41:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag42: bool = ParamField(
-        byte, "invisibleFlag42:1", bit_count=1, default=0,
+        byte, "invisibleFlag42:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag43: bool = ParamField(
-        byte, "invisibleFlag43:1", bit_count=1, default=0,
+        byte, "invisibleFlag43:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag44: bool = ParamField(
-        byte, "invisibleFlag44:1", bit_count=1, default=0,
+        byte, "invisibleFlag44:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag45: bool = ParamField(
-        byte, "invisibleFlag45:1", bit_count=1, default=0,
+        byte, "invisibleFlag45:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag46: bool = ParamField(
-        byte, "invisibleFlag46:1", bit_count=1, default=0,
+        byte, "invisibleFlag46:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     HideFlag47: bool = ParamField(
-        byte, "invisibleFlag47:1", bit_count=1, default=0,
+        byte, "invisibleFlag47:1", bit_count=1, default=False,
         tooltip="Hide part of the character model: (unknown)",
     )
     DisableMultiplayerShare: bool = ParamField(
-        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this armor cannot be given to other players by dropping it. Always False in vanilla.",
     )
     SimpleDLCModelExists: bool = ParamField(
-        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Unknown; always set to False.",
     )
     _Pad0: bytes = ParamPad(1, "pad_0[1]")

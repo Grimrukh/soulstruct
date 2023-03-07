@@ -35,49 +35,49 @@ class OBJECT_PARAM_ST(ParamRow):
         tooltip="Upper limit of range of destruction animations, which seem to always start at 0.",
     )
     CollidesWithCamera: bool = ParamField(
-        byte, "isCamHit:1", bit_count=1, default=0,
+        byte, "isCamHit:1", bit_count=1, default=False,
         tooltip="If True, the camera will collide with this object.",
     )
     BrokenByPlayerCollision: bool = ParamField(
-        byte, "isBreakByPlayerCollide:1", bit_count=1, default=0,
+        byte, "isBreakByPlayerCollide:1", bit_count=1, default=False,
         tooltip="If True, the player will break the object just by touching it.",
     )
     HasDestructionAnimation: bool = ParamField(
-        byte, "isAnimBreak:1", bit_count=1, default=0,
+        byte, "isAnimBreak:1", bit_count=1, default=False,
         tooltip="If True, the object will use an animation when destroyed rather than using physics-based "
                 "destruction.",
     )
     HitByPiercingBullets: bool = ParamField(
-        byte, "isPenetrationBulletHit:1", bit_count=1, default=0,
+        byte, "isPenetrationBulletHit:1", bit_count=1, default=False,
         tooltip="If True, the object can be damaged by Bullets with target-piercing enabled.",
     )
     CharacterCollision: bool = ParamField(
-        byte, "isChrHit:1", bit_count=1, default=1,
+        byte, "isChrHit:1", bit_count=1, default=True,
         tooltip="If False, characters will pass through the object (e.g. branches).",
     )
     DeflectsAttacks: bool = ParamField(
-        byte, "isAttackBacklash:1", bit_count=1, default=1,
+        byte, "isAttackBacklash:1", bit_count=1, default=True,
         tooltip="If True, attacks will bounce off the object as though it were a wall.",
     )
     CannotSpawnBroken: bool = ParamField(
-        byte, "isDisableBreakForFirstAppear:1", bit_count=1, default=0,
+        byte, "isDisableBreakForFirstAppear:1", bit_count=1, default=False,
         tooltip="If True, the object cannot be destroyed when the player first spawns.",
     )
     IsLadder: bool = ParamField(
-        byte, "isLadder:1", bit_count=1, default=0,
+        byte, "isLadder:1", bit_count=1, default=False,
         tooltip="Object is a ladder.",
     )
     StopAnimationDuringCutscenes: bool = ParamField(
-        byte, "isAnimPauseOnRemoPlay:1", bit_count=1, default=0,
+        byte, "isAnimPauseOnRemoPlay:1", bit_count=1, default=False,
         tooltip="If True, object animation will not play in cutscenes.",
     )
     PreventAllDamage: bool = ParamField(
-        byte, "isDamageNoHit:1", bit_count=1, default=0,
+        byte, "isDamageNoHit:1", bit_count=1, default=False,
         tooltip="If True, all damage to the object will be prevented. (Not sure if this is the same effet as settings "
                 "its HP to -1.)",
     )
     IsMovingObject: bool = ParamField(
-        byte, "isMoveObj:1", bit_count=1, default=0,
+        byte, "isMoveObj:1", bit_count=1, default=False,
         tooltip="If True, this object can move.",
     )
     _BitPad0: int = ParamBitPad(byte, "pad_1:5", bit_count=5)

@@ -200,87 +200,87 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         tooltip="Determines if this good can be used by characters who are Hollow.",
     )
     UseableByWhitePhantoms: bool = ParamField(
-        byte, "enable_white:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enable_white:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used by White Phantoms (summons).",
     )
     UseableByBlackPhantoms: bool = ParamField(
-        byte, "enable_black:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enable_black:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used by Black Phantoms (invaders).",
     )
     UseableInMultiplayer: bool = ParamField(
-        byte, "enable_multi:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enable_multi:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used while multiple players are together.",
     )
     UseableInPVP: bool = ParamField(
-        byte, "enable_pvp:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "enable_pvp:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used while in multiplayer PvP (invasion/arena).",
     )
     DisabledOffline: bool = ParamField(
-        byte, "disable_offline:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disable_offline:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this good can be used while the game is disconnected from the network.",
     )
     CanBeEquipped: bool = ParamField(
-        byte, "isEquip:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isEquip:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="Determines if this good can be equipped in a quick item slot.",
     )
     ConsumedOnUse: bool = ParamField(
-        byte, "isConsume:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isConsume:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="Determines if this good is consumed (count decreases) when used.",
     )
     AutomaticallyEquipped: bool = ParamField(
-        byte, "isAutoEquip:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isAutoEquip:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="Determines if this good will be equipped in an available quick slot when obtained.",
     )
     IsStationary: bool = ParamField(
-        byte, "isEstablishment:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isEstablishment:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Unknown; need to look at usage.",
     )
     IsUnique: bool = ParamField(
-        byte, "isOnlyOne:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isOnlyOne:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if only one of this good exists in the game.",
     )
     CanBeDropped: bool = ParamField(
-        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="Determines if this item can be dropped.",
     )
     CanBeStored: bool = ParamField(
-        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=1,
+        byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=True,
         tooltip="Determines if good can be stored in Bottomless Box.",
     )
     IsDisableHand: bool = ParamField(
-        byte, "isDisableHand:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isDisableHand:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Not sure. Could disable model hand when good is used?",
     )
     IsTravelItem: bool = ParamField(
-        byte, "IsTravelItem:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "IsTravelItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Not sure. Could flag items that warp the player.",
     )
     IsEmptyEstusFlask: bool = ParamField(
-        byte, "isSuppleItem:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Not sure. Only enabled for empty Estus Flask.",
     )
     IsNonEmptyEstusFlask: bool = ParamField(
-        byte, "isFullSuppleItem:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isFullSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Not sure. Only enabled for non-empty Estus Flask.",
     )
     IsUpgradeMaterial: bool = ParamField(
-        byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Determines if this is an upgrade material.",
     )
     IsFixItem: bool = ParamField(
-        byte, "isFixItem:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "isFixItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="Probably True for Repair Powder, etc.",
     )
     DisableMultiplayerShare: bool = ParamField(
-        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this good cannot be given to other players by dropping it.",
     )
     DisabledInArena: bool = ParamField(
-        byte, "disableUseAtColiseum:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableUseAtColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this good cannot be used in the PvP Arena in Oolacile.",
     )
     DisabledOutsideArena: bool = ParamField(
-        byte, "disableUseAtOutOfColiseum:1", EQUIP_BOOL, bit_count=1, default=0,
+        byte, "disableUseAtOutOfColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="If True, this good cannot be used outside the PvP Arena in Oolacile.",
     )
     _Pad0: bytes = ParamPad(9, "pad[9]")

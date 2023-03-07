@@ -19,17 +19,17 @@ class MAGIC_PARAM_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    YesNoDialogMessageId: int = ParamField(
+    ConfirmationMessage: int = ParamField(
         int, "yesNoDialogMessageId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Message displayed in yes/no dialog box to confirm use of spell. Requires the Yes/No menu type.",
     )
-    LimitCancelSpEffectId: int = ParamField(
-        int, "limitCancelSpEffectId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    LimitRemoveSpecialEffect: int = ParamField(
+        int, "limitCancelSpEffectId", game_type=SpecialEffectParam, default=-1,
+        tooltip="Unknown. Never used.",
     )
-    SortId: int = ParamField(
+    SortIndex: int = ParamField(
         short, "sortId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index for automatic inventory sorting.",
     )
     RequirementLuck: int = ParamField(
         byte, "requirementLuck", default=0,
@@ -39,33 +39,33 @@ class MAGIC_PARAM_ST(ParamRow):
         byte, "aiNotifyType", MAGIC_AI_NOTIFY_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    Mp: int = ParamField(
+    MPCost: int = ParamField(
         short, "mp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="MP cost of spell. Unused in Dark Souls 1 (always zero).",
     )
-    Stamina: int = ParamField(
+    StaminaCost: int = ParamField(
         short, "stamina", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Stamina cost of spell. Always zero.",
     )
-    IconId: int = ParamField(
-        short, "iconId", default=0,
-        tooltip="TOOLTIP-TODO",
+    SpellIcon: int = ParamField(
+        short, "iconId", game_type=Icon, default=0,
+        tooltip="Spell icon texture for inventory and equipped slot.",
     )
-    BehaviorId: int = ParamField(
-        short, "behaviorId", default=0,
-        tooltip="TOOLTIP-TODO",
+    Behavior: int = ParamField(
+        short, "behaviorId", game_type=BehaviorParam, default=0,
+        tooltip="Behavior triggered by spell. Never used.",
     )
-    MtrlItemId: int = ParamField(
-        short, "mtrlItemId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    RequiredGood: int = ParamField(
+        short, "mtrlItemId", game_type=GoodParam, default=-1,
+        tooltip="Good required for use. Never used (usability is handled in Shops parameters).",
     )
-    ReplaceMagicId: int = ParamField(
-        short, "replaceMagicId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ReplaceSpell: int = ParamField(
+        short, "replaceMagicId", game_type=SpellParam, default=-1,
+        tooltip="Spell to replace 'when the state change matches'. Never used.",
     )
-    MaxQuantity: int = ParamField(
+    BaseCastCount: int = ParamField(
         short, "maxQuantity", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of spell casts. Note that some spells consume multiple casts per use (e.g. Firestorm).",
     )
     RefCategory1: int = ParamField(
         byte, "refCategory1", BEHAVIOR_REF_TYPE, default=0,
@@ -73,23 +73,23 @@ class MAGIC_PARAM_ST(ParamRow):
     )
     OverDexterity: int = ParamField(
         byte, "overDexterity", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown effect. Always 99.",
     )
     RefCategory2: int = ParamField(
         byte, "refCategory2", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SlotLength: int = ParamField(
+    AttunementSlotsUsed: int = ParamField(
         byte, "slotLength", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of attunement slots required to attune spell.",
     )
-    RequirementIntellect: int = ParamField(
+    RequiredIntelligence: int = ParamField(
         byte, "requirementIntellect", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Minimum intelligence required to cast spell.",
     )
-    RequirementFaith: int = ParamField(
+    RequiredFaith: int = ParamField(
         byte, "requirementFaith", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Minimum faith required to cast spell.",
     )
     AnalogDexterityMin: int = ParamField(
         byte, "analogDexterityMin", default=0,
@@ -99,113 +99,118 @@ class MAGIC_PARAM_ST(ParamRow):
         byte, "analogDexterityMax", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    EzStateBehaviorType: int = ParamField(
+    SpellCategory: int = ParamField(
         byte, "ezStateBehaviorType", MAGIC_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of spell.",
     )
     RefCategory3: int = ParamField(
         byte, "refCategory3", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpEffectCategory: int = ParamField(
+    SpecialEffectCategory: int = ParamField(
         byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines what type of special effects affect the stats of this spell. (Vanilla game uses 3 for "
+                "sorceries and pyromancies, and 4 for miracles.)",
     )
-    RefType: int = ParamField(
+    AnimationType: int = ParamField(
         byte, "refType", MAGIC_MOTION_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Basic animation type when casting spell. The Visual Effect Variation field further refines it.",
     )
-    OpmeMenuType: int = ParamField(
+    MenuActivated: int = ParamField(
         byte, "opmeMenuType", GOODS_OPEN_MENU, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Menu activated (if any) when spell is cast. Only used by Homeward (Yes/No Dialog).",
     )
     RefCategory4: int = ParamField(
         byte, "refCategory4", BEHAVIOR_REF_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    HasSpEffectType: int = ParamField(
+    HasSpecialEffectType: int = ParamField(
         ushort, "hasSpEffectType", SP_EFFECT_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines 'the state change that needs to replace the spell ID'. Never used.",
     )
     ReplaceCategory: int = ParamField(
         byte, "replaceCategory", REPLACE_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines which existing effects this spell will replace. Only used for a few spells.",
     )
-    UseLimitCategory: int = ParamField(
+    LimitCategory: int = ParamField(
         byte, "useLimitCategory", SP_EFFECT_USELIMIT_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Only one special effect with this category can be active at once. Additional attempts to cast spells "
+                "(or use goods) in this category will be prevented.",
     )
-    VowType0: bool = ParamField(
+    UseableByNoCovenant: bool = ParamField(
         byte, "vowType0:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters with no covenant.",
     )
-    VowType1: bool = ParamField(
+    UseableByCovenant1: bool = ParamField(
         byte, "vowType1:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 1.",
     )
-    VowType2: bool = ParamField(
+    UseableByCovenant2: bool = ParamField(
         byte, "vowType2:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 2.",
     )
-    VowType3: bool = ParamField(
+    UseableByCovenant3: bool = ParamField(
         byte, "vowType3:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 3.",
     )
-    VowType4: bool = ParamField(
+    UseableByCovenant4: bool = ParamField(
         byte, "vowType4:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 4.",
     )
-    VowType5: bool = ParamField(
+    UseableByCovenant5: bool = ParamField(
         byte, "vowType5:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 5.",
     )
-    VowType6: bool = ParamField(
+    UseableByCovenant6: bool = ParamField(
         byte, "vowType6:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 6.",
     )
-    VowType7: bool = ParamField(
+    UseableByCovenant7: bool = ParamField(
         byte, "vowType7:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 7.",
     )
-    Enablemulti: bool = ParamField(
+    UseableInMultiplayer: bool = ParamField(
         byte, "enable_multi:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast while multiple players are together. Only disabled for Homeward "
+                "in vanilla game.",
     )
-    Enablemultionly: bool = ParamField(
+    DisabledOutsideMultiplayer: bool = ParamField(
         byte, "enable_multi_only:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can ONLY be cast while multiple players are together. Always False.",
     )
-    IsEnchant: bool = ParamField(
+    IsWeaponBuff: bool = ParamField(
         byte, "isEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if this spell buffs your weapon.",
     )
-    IsShieldEnchant: bool = ParamField(
+    IsShieldBuff: bool = ParamField(
         byte, "isShieldEnchant:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if this spell buffs your shield.",
     )
-    Enablelive: bool = ParamField(
+    UseableByHumans: bool = ParamField(
         byte, "enable_live:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by players who have revived to human.",
     )
-    Enablegray: bool = ParamField(
+    UseableByHollows: bool = ParamField(
         byte, "enable_gray:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by players who have NOT revived to human.",
     )
-    Enablewhite: bool = ParamField(
+    UseableByWhitePhantoms: bool = ParamField(
         byte, "enable_white:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by White Phantoms (summons). Only disabled for Homeward and the "
+                "unused Escape Death miracle in vanilla game.",
     )
-    Enableblack: bool = ParamField(
+    UseableByBlackPhantoms: bool = ParamField(
         byte, "enable_black:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by Black Phantoms (invaders). Only disabled for Homeward and "
+                "the unused Escape Death miracle in vanilla game.",
     )
-    DisableOffline: bool = ParamField(
+    DisabledOffline: bool = ParamField(
         byte, "disableOffline:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this spell cannot be cast without a network connection. Always False.",
     )
-    CastResonanceMagic: bool = ParamField(
+    CreateResonanceRing: bool = ParamField(
         byte, "castResonanceMagic:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, using this spell will create a resonance ring to help players in other worlds.",
     )
     IsValidToughProtSADmg: bool = ParamField(
         byte, "isValidTough_ProtSADmg:1", MAGIC_BOOL, bit_count=1, default=False,
@@ -228,37 +233,37 @@ class MAGIC_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _BitPad1: int = ParamBitPad(byte, "pad_1:1", bit_count=1)
-    VowType8: bool = ParamField(
+    UseableByCovenant8: bool = ParamField(
         byte, "vowType8:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 8.",
     )
-    VowType9: bool = ParamField(
+    UseableByCovenant9: bool = ParamField(
         byte, "vowType9:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in Covenant 9.",
     )
-    VowType10: bool = ParamField(
+    UseableByCovenant10: bool = ParamField(
         byte, "vowType10:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 10.",
     )
-    VowType11: bool = ParamField(
+    UseableByCovenant11: bool = ParamField(
         byte, "vowType11:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 11.",
     )
-    VowType12: bool = ParamField(
+    UseableByCovenant12: bool = ParamField(
         byte, "vowType12:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 12.",
     )
-    VowType13: bool = ParamField(
+    UseableByCovenant13: bool = ParamField(
         byte, "vowType13:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 13.",
     )
-    VowType14: bool = ParamField(
+    UseableByCovenant14: bool = ParamField(
         byte, "vowType14:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 14.",
     )
-    VowType15: bool = ParamField(
+    UseableByCovenant15: bool = ParamField(
         byte, "vowType15:1", MAGIC_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this spell can be cast by characters in unused covenant 15.",
     )
     CastSfxId: int = ParamField(
         int, "castSfxId", default=-1,

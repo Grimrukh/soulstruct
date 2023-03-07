@@ -473,7 +473,7 @@ class Event(abc.ABC):
         self.update_signature()
 
         try:
-            event_flag_enum = enums_manager.check_out_enum(self.event_id, Flag)
+            event_flag_enum = enums_manager.check_out_enum_variable(self.event_id, Flag)
             on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({event_flag_enum})\n"
         except enums_manager.EnumManagerError:
             on_rest_behavior_decorator = f"@{OnRestBehavior(self.on_rest_behavior).name}({self.event_id})\n"

@@ -35,6 +35,9 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     ALL_MAPS: tp.ClassVar = tuple(m for m in ALL_MAPS if m.msb_file_stem)
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
+    # Type hint override.
+    files: dict[str, MSB]
+
     Common = map_property(COMMON)  # type: MSB
     HuntersDream = map_property(HUNTERS_DREAM)  # type: MSB
     AbandonedOldWorkshop = map_property(ABANDONED_OLD_WORKSHOP)  # type: MSB

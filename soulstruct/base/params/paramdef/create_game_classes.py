@@ -94,7 +94,7 @@ def create_game_classes(game_submodule: str, no_info: bool = False):
             "from __future__ import annotations\n",
             f"__all__ = [\"{paramdef_stem}\"]\n",
             "from dataclasses import dataclass\n",
-            "from soulstruct.base.params.utils import *",
+            "from soulstruct.base.params.param_row import *",
             f"from soulstruct.{game_submodule}.game_types import *",
             f"from soulstruct.{game_submodule}.params.enums import *",
             "from soulstruct.utilities.binary import *",
@@ -126,7 +126,10 @@ def create_game_classes(game_submodule: str, no_info: bool = False):
                 if field_name == "sfxMultiplier":  # known bug in DSR ParamDef
                     enum_name = display_type_name
 
-            info = paramdef_info[field_name]
+            try:
+                info = paramdef_info[field_name]
+            except KeyError:
+                raise KeyError(f"No info for field `{field_name}` in paramdef {paramdef_stem}.")
 
             fmt = MAP_PARAM_TYPES[display_type_name]
             field_args = [fmt.__name__, f"\"{field_name}\""]
@@ -241,7 +244,35 @@ def create_game_classes(game_submodule: str, no_info: bool = False):
     (paramdef_dir / "enums.py").write_text(enum_module_text)
 
 
+def modify_paramdef_info(game_submodule):
+    """Transient functions to edit JSON."""
+    paramdef_dir = PACKAGE_PATH(f"{game_submodule}/params/paramdef")
+    json_path = paramdef_dir / "paramdef_info.json"
+    paramdef_info = read_json(json_path)
+    param_info = paramdef_info["CHARACTER_INIT_PARAM"]
+
+    armor_suffixes = {"Helm", "Armer", "Gaunt", "Leg"}
+    ammo_suffixes = {"Arrow", "Bolt", "SubArrow", "SubBolt"}
+
+    for key, info in param_info.items():
+        if "_Wep_" in key or "_Subwep_" in key:
+            info["game_type"] = "WeaponParam"
+        elif key.split("_")[-1] in armor_suffixes:
+            info["game_type"] = "ArmorParam"
+        elif key.split("_")[-1] in ammo_suffixes:
+            info["game_type"] = "WeaponParam"
+        elif "_Accessory" in key:
+            info["game_type"] = "AccessoryParam"
+        elif "_Spell_" in key:
+            info["game_type"] = "SpellParam"
+        elif key.startswith("item_"):
+            info["game_type"] = "GoodParam"
+
+    write_json(json_path, paramdef_info, indent=4)
+
+
 if __name__ == '__main__':
     from soulstruct.eldenring.params.paramdef import GET_BUNDLED_PARAMDEFBND
-    # create_paramdef_info("eldenring", template_info=read_json(PACKAGE_PATH("bloodborne/params/paramdef/paramdef_info.json")))
-    create_game_classes("eldenring", no_info=True)
+    modify_paramdef_info("eldenring")
+    GET_BUNDLED_PARAMDEFBND = GET_BUNDLED_PARAMDEFBND
+    create_game_classes("eldenring")

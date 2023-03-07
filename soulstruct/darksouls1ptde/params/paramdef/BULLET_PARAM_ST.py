@@ -254,28 +254,28 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="Origin type of bullet. Usually comes from model points ('damipoly').",
     )
     RemainAttachedToTarget: bool = ParamField(
-        byte, "isAttackSFX:1", ON_OFF, bit_count=1, default=0,
+        byte, "isAttackSFX:1", ON_OFF, bit_count=1, default=False,
         tooltip="Set whether bullets (e.g. arrows) stay stuck upon impact.",
     )
     IsEndlessHit: bool = ParamField(
-        byte, "isEndlessHit:1", ON_OFF, bit_count=1, default=0,
+        byte, "isEndlessHit:1", ON_OFF, bit_count=1, default=False,
         tooltip="Bullet hitbox is continuous (I think). Only used for corrosion cloud in vanilla.",
     )
     IsMapPiercing: bool = ParamField(
-        byte, "isPenetrateMap:1", ON_OFF, bit_count=1, default=0,
+        byte, "isPenetrateMap:1", ON_OFF, bit_count=1, default=False,
         tooltip="Bullet will pierce the map (e.g. Stray Demon blast).",
     )
     HitsBothTeams: bool = ParamField(
-        byte, "isHitBothTeam:1", ON_OFF, bit_count=1, default=0,
+        byte, "isHitBothTeam:1", ON_OFF, bit_count=1, default=False,
         tooltip="Bullet can hit any character.",
     )
     SharedHitCheck: bool = ParamField(
-        byte, "isUseSharedHitList:1", ON_OFF, bit_count=1, default=0,
+        byte, "isUseSharedHitList:1", ON_OFF, bit_count=1, default=False,
         tooltip="Repeating bullets share the amount of times they have hit a target (usually so the target is only "
                 "hit once by any of those repeating bullets).",
     )
     UsesMultipleModelPoints: bool = ParamField(
-        byte, "isUseMultiDmyPolyIfPlace:1", ON_OFF, bit_count=1, default=0,
+        byte, "isUseMultiDmyPolyIfPlace:1", ON_OFF, bit_count=1, default=False,
         tooltip="Set to True if the same model point ('damipoly') is used multiple times when spawning the bullet.",
     )
     AttachEffectType: int = ParamField(
@@ -283,19 +283,19 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="Mostly 0, but sometimes 1 (Dragon Head breath, Grant AoE, Force miracles).",
     )
     CanBeDeflectedByMagic: bool = ParamField(
-        byte, "isHitForceMagic:1", bit_count=1, default=0,
+        byte, "isHitForceMagic:1", bit_count=1, default=False,
         tooltip="If True, this bullet will impact appropriate Force-type magic (e.g. arrows, bolts, knives).",
     )
     IgnoreVFXOnWaterHit: bool = ParamField(
-        byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=0,
+        byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=False,
         tooltip="If True, hit VFX are not produced if the bullet impacts water.",
     )
     IgnoreStateTransitionOnWaterHit: bool = ParamField(
-        byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=0,
+        byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=False,
         tooltip="Unclear effect, but True for knives/arrows/bolts and False otherwise.",
     )
     CanBeDeflectedBySilverPendant: bool = ParamField(
-        byte, "isHitDarkForceMagic:1", bit_count=1, default=0,
+        byte, "isHitDarkForceMagic:1", bit_count=1, default=False,
         tooltip="If True, this bullet will impact the Silver Pendant shield effect. True only for dark sorceries.",
     )
     _Pad0: bytes = ParamPad(3, "pad[3]")

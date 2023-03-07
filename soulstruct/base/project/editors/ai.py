@@ -9,14 +9,14 @@ from soulstruct.base.ai.lua import LuaError
 from soulstruct.base.ai.lua_scripts import LuaGoalScript, GoalType
 from soulstruct.base.project.editors.base_editor import BaseEditor, EntryRow
 from soulstruct.base.project.enums import ProjectDataType
-from soulstruct.base.project.utilities import bind_events, TextEditor, TagData
+from soulstruct.base.project.utilities import bind_events, TkTextEditor, TagData
 
 if TYPE_CHECKING:
     from soulstruct.base.ai.luabnd import LuaBND
     from soulstruct.base.ai.ai_directory import AIScriptDirectory
 
 
-class AIScriptTextEditor(TextEditor):
+class AIScriptTkTextEditor(TkTextEditor):
     TAGS = {
         "function_def": TagData("#AABBFF", r"function [\w_]+", (0, 0)),
         "lua_word": TagData(
@@ -154,7 +154,7 @@ class AIEntryRow(EntryRow):
             bg=bg_color,
             fg="#F33",
             sticky="ew",
-            tooltip_text="Type of goal: battle (B), logic (L), or neither (U). Left or right click to cycle "
+            tooltip_text="Type of goal: battle (B), logic (L), or unknown (U). Left or right click to cycle "
             "between types.",
         )
         type_bindings = main_bindings.copy()
@@ -300,7 +300,7 @@ class AIEditor(BaseEditor):
         self.go_to_line = None
         self.string_to_find = None
         self.script_editor_canvas = None
-        self.script_editor = None  # type: Optional[AIScriptTextEditor]
+        self.lua_script_editor = None  # type: Optional[AIScriptTkTextEditor]
         self.confirm_button = None
         self.compile_button = None
         self.decompile_button = None
@@ -451,9 +451,9 @@ class AIEditor(BaseEditor):
         self.script_editor_canvas.create_window(0, 0, window=editor_i_frame, anchor="nw")
         editor_i_frame.bind("<Configure>", lambda e, c=self.script_editor_canvas: self.reset_canvas_scroll_region(c))
 
-        self.script_editor = self.CustomWidget(
+        self.lua_script_editor = self.CustomWidget(
             editor_i_frame,
-            custom_widget_class=AIScriptTextEditor,
+            custom_widget_class=AIScriptTkTextEditor,
             set_style_defaults=("text", "cursor"),
             row=0,
             state="disabled",
@@ -464,72 +464,76 @@ class AIEditor(BaseEditor):
             font=("Consolas", self.text_font_size),
         )
         vertical_scrollbar_w = self.Scrollbar(
-            orient="vertical", command=self.script_editor.yview, row=0, column=1, sticky="ns"
+            orient="vertical", command=self.lua_script_editor.yview, row=0, column=1, sticky="ns"
         )
-        self.script_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
-        self.link_to_scrollable(self.script_editor, editor_i_frame)
+        self.lua_script_editor.config(bd=0, yscrollcommand=vertical_scrollbar_w.set)
+        self.link_to_scrollable(self.lua_script_editor, editor_i_frame)
 
         def _update_textbox_height(e):
-            font_size = int(self.script_editor["font"].split()[1])
-            self.script_editor["height"] = e.height // (font_size * 1.5)  # 1.5 line spacing
+            font_size = int(self.lua_script_editor["font"].split()[1])
+            self.lua_script_editor["height"] = e.height // (font_size * 1.5)  # 1.5 line spacing
 
         self.script_editor_canvas.bind("<Configure>", lambda e: _update_textbox_height(e))
 
-        self.script_editor.bind("<<CursorChange>>", self._update_line_number)
-        self.script_editor.bind("<Control-f>", self._control_f_search)
+        self.lua_script_editor.set_callback(self._update_line_number)
+        self.lua_script_editor.bind("<Control-f>", self._control_f_search)
 
     def _go_to_line(self, _):
         number = self.go_to_line.var.get()
         if not number:
             return
         number = int(number)
-        if not self.get_selected_bnd() or number < 1 or int(self.script_editor.index("end-1c").split(".")[0]) < number:
+        if (
+            not self.get_selected_bnd()
+            or number < 1
+            or int(self.lua_script_editor.index("end-1c").split(".")[0]) < number
+        ):
             self.flash_bg(self.go_to_line)
             return
-        self.script_editor.mark_set("insert", f"{number}.0")
-        self.script_editor.see(f"{number}.0")
-        self.script_editor.highlight_line(number, "found")
+        self.lua_script_editor.mark_set("insert", f"{number}.0")
+        self.lua_script_editor.see(f"{number}.0")
+        self.lua_script_editor.highlight_line(number, "found")
 
     def _find_string(self, _):
         string = self.string_to_find.var.get()
         if not string or not self.get_selected_bnd():
             return
-        start_line, start_char = self.script_editor.index("insert").split(".")
-        index = self.script_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
+        start_line, start_char = self.lua_script_editor.index("insert").split(".")
+        index = self.lua_script_editor.search(string, index=f"{start_line}.{int(start_char) + 1}")
 
         if index:
             self.clear_bg_tags()
-            self.script_editor.mark_set("insert", index)
-            self.script_editor.see(index)
+            self.lua_script_editor.mark_set("insert", index)
+            self.lua_script_editor.see(index)
             index_line, index_char = index.split(".")
-            self.script_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
+            self.lua_script_editor.tag_add("found", index, f"{index_line}.{int(index_char) + len(string)}")
         else:
             self.flash_bg(self.string_to_find)
 
     def clear_bg_tags(self):
         for tag in {"found", "error"}:
-            self.script_editor.tag_remove(tag, "1.0", "end")
+            self.lua_script_editor.tag_remove(tag, "1.0", "end")
 
-    def _update_line_number(self, _):
-        current_line = self.script_editor.index("insert").split(".")[0]
+    def _update_line_number(self, *_):
+        current_line = self.lua_script_editor.index("insert").split(".")[0]
         self.line_number.set(f"Line: {current_line}")
 
     def _control_f_search(self, _):
         if self.get_selected_bnd():
-            highlighted = self.script_editor.selection_get()
+            highlighted = self.lua_script_editor.selection_get()
             self.string_to_find.var.set(highlighted)
             self.string_to_find.select_range(0, "end")
             self.string_to_find.icursor("end")
             self.string_to_find.focus_force()
 
     def _highlight_error(self, lineno):
-        self.script_editor.mark_set("insert", f"{lineno}.0")
-        self.script_editor.see(f"{lineno}.0")
-        self.script_editor.highlight_line(lineno, "error")
+        self.lua_script_editor.mark_set("insert", f"{lineno}.0")
+        self.lua_script_editor.see(f"{lineno}.0")
+        self.lua_script_editor.highlight_line(lineno, "error")
 
     def _get_current_text(self):
         """Get all current text from TextBox, minus final newline (added by Tk)."""
-        return self.script_editor.get(1.0, "end")[:-1]
+        return self.lua_script_editor.get(1.0, "end")[:-1]
 
     def _ignored_unsaved(self):
         if self._get_current_text() != self.get_goal().script:
@@ -698,7 +702,7 @@ class AIEditor(BaseEditor):
 
     def export_selected_map(self):
         luabnd = self.get_selected_bnd()
-        luabnd_path = self._project.get_game_path_of_data_type(ProjectDataType.AI) / luabnd.path.name
+        luabnd_path = self._project.get_data_game_path(ProjectDataType.AI) / luabnd.path.name
         luabnd.write(luabnd_path)
 
     def load_all_from_project_folder(self, confirm=True):
@@ -761,9 +765,9 @@ class AIEditor(BaseEditor):
             if current_text:
                 goal = self.get_goal()
                 goal.script = current_text
-                self.script_editor.color_syntax()
+                self.lua_script_editor.color_syntax()
                 if flash_bg:
-                    self.flash_bg(self.script_editor, "#232")
+                    self.flash_bg(self.lua_script_editor, "#232")
 
     def compile_selected(self, mimic_click=False):
         """Compile script, which is not necessary but can be used to test validity. Confirms changes first."""
@@ -777,8 +781,8 @@ class AIEditor(BaseEditor):
                 goal.compile(x64=not self.get_selected_bnd().is_lua_32)
                 if self.allow_decompile:
                     self.decompile_button["state"] = "normal"
-                self.script_editor.tag_remove("error", "1.0", "end")
-                self.flash_bg(self.script_editor, "#223")
+                self.lua_script_editor.tag_remove("error", "1.0", "end")
+                self.flash_bg(self.lua_script_editor, "#223")
             except LuaError as e:
                 msg = self._parse_compile_error(str(e))
                 self.CustomDialog(
@@ -913,7 +917,7 @@ class AIEditor(BaseEditor):
             self.entry_rows[row_index].active = True
             if set_focus_to_text:
                 self.entry_rows[row_index].text_label.focus_set()
-            self.script_editor["state"] = "normal"
+            self.lua_script_editor["state"] = "normal"
             goal = self.get_goal(row_index)
             if self.allow_decompile:
                 self.decompile_button["state"] = "normal" if goal.bytecode else "disabled"
@@ -924,8 +928,8 @@ class AIEditor(BaseEditor):
             self.update_script_text(goal)
         else:
             # No entry is selected.
-            self.script_editor.delete(1.0, "end")
-            self.script_editor["state"] = "disabled"
+            self.lua_script_editor.delete(1.0, "end")
+            self.lua_script_editor["state"] = "disabled"
             self.decompile_button["state"] = "disabled"
             self.confirm_button["state"] = "disabled"
             self.compile_button["state"] = "disabled"
@@ -935,10 +939,10 @@ class AIEditor(BaseEditor):
     def update_script_text(self, goal=None):
         if goal is None:
             goal = self.get_goal()
-        self.script_editor.delete(1.0, "end")
-        self.script_editor.insert(1.0, goal.script)
-        self.script_editor.mark_set("insert", "1.0")
-        self.script_editor.color_syntax()
+        self.lua_script_editor.delete(1.0, "end")
+        self.lua_script_editor.insert(1.0, goal.script)
+        self.lua_script_editor.mark_set("insert", "1.0")
+        self.lua_script_editor.color_syntax()
 
     def get_goal_id_and_type(self, row_index=None):
         if row_index is None:

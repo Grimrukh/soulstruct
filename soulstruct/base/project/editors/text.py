@@ -71,7 +71,7 @@ class TextEntryRow(EntryRow):
 class TextEditor(BaseEditor):
     DATA_NAME = "Text"
     TAB_NAME = "text"
-    CATEGORY_BOX_WIDTH = 280
+    CATEGORY_BOX_WIDTH = 400
     CATEGORY_BOX_HEIGHT = 400
     ENTRY_BOX_WIDTH = 870
     ENTRY_BOX_HEIGHT = 400
@@ -118,14 +118,14 @@ class TextEditor(BaseEditor):
         if category is None:
             category = self.active_category
 
-        text_dict = self.text[category]
+        text_fmg = self.text[category]
         if base_text_id % 100 != 0:
             self.CustomDialog(
                 title="Invalid Base ID for Upgrades",
                 message=f"The base text ID for weapons or armor should be a multiple of 100.",
             )
             return
-        if any(base_text_id + i in text_dict for i in range(1, count + 1)):
+        if any(base_text_id + i in text_fmg.entries for i in range(1, count + 1)):
             if (
                 self.CustomDialog(
                     title="Upgrade IDs already exist",
@@ -139,19 +139,19 @@ class TextEditor(BaseEditor):
                 == 1
             ):
                 return
-        base_text = text_dict[base_text_id]
+        base_text = text_fmg[base_text_id]
         undo_bulk = []
         redo_bulk = []
         for i in range(1, count + 1):
             new_text = f"{base_text}+{i}"
-            if base_text_id + i in text_dict:
-                old_text = text_dict[base_text_id + i]
+            if base_text_id + i in text_fmg:
+                old_text = text_fmg[base_text_id + i]
                 undo_bulk.append((category, base_text_id + i, old_text, "change"))
                 redo_bulk.append((category, base_text_id + i, new_text, "change"))
             else:
                 undo_bulk.append((category, base_text_id + i, None, "delete"))
                 redo_bulk.append((category, base_text_id + i, new_text, "add"))
-            text_dict[base_text_id + i] = new_text
+            text_fmg[base_text_id + i] = new_text
 
         # TODO: History action manager. Will need linker access.
         # self.action_history.record_action(

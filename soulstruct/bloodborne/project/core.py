@@ -12,11 +12,16 @@ from soulstruct.bloodborne.text import MSGDirectory
 
 
 class GameDirectoryProject(_BaseGameDirectoryProject):
+    # This also determines load order, which is important for some types (e.g. Maps -> Enums -> Events).
     DATA_TYPES = {
-        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
-        ProjectDataType.Maps: MapStudioDirectory,
         ProjectDataType.Params: GameParamBND,
+        # ProjectDataType.Lighting: DrawParamDirectory,
+        # ProjectDataType.AI: AIScriptDirectory,
+        # ProjectDataType.Talk: TalkDirectory,  # modified via ESP state machine script files
         ProjectDataType.Text: MSGDirectory,
+        ProjectDataType.Maps: MapStudioDirectory,
+        ProjectDataType.Enums: None,  # modified via Python modules; must be loaded after `Maps`
+        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
     }
 
     params: GameParamBND

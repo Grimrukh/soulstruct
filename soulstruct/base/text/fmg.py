@@ -297,7 +297,7 @@ class FMG(GameFile):
         return self.entries.items()
 
     def __iter__(self):
-        return iter(self.entries.items())
+        return iter(self.entries.keys())
 
     def __repr__(self):
         s = f"FMG Path: {str(self.path) if self.path is not None else '<None>'}"

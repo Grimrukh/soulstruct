@@ -28,8 +28,10 @@ class GameEnumInfo:
         self.class_name = enum.__class__.__name__
         self.module_name = module_name
 
-    def get_variable_string(self) -> str:
+    def get_variable_string(self, star_module_names: list[str]) -> str:
         """String that should appear in actual EVS calls."""
+        if self.module_name in star_module_names:
+            return f"{self.class_name}.{self.enum.name}"  # no module prefix alias needed
         return f"{self.get_class_alias()}.{self.enum.name}"
 
     def get_class_alias(self) -> str:
@@ -241,7 +243,9 @@ class GameEnumsManager(abc.ABC):
             star_module_names = self.star_module_names
 
         if not game_types:
-            game_types = list(self.enums.keys())  # all keys
+            game_types = []
+            for module_enums in self.enums.values():
+                game_types.extend(module_enums.keys())  # all keys in all modules (star modules still checked first)
 
         # Search all managed modules for given `enum_value`, starting with `star_module_names`.
         # NOTE: To ensure maximum validity, we do NOT simply stop at the first hit (see docstring above for details).
@@ -312,18 +316,32 @@ class GameEnumsManager(abc.ABC):
         self.missing_enums.add(ex)
         raise ex
 
+    def check_out_enum_variable(
+        self,
+        enum_value: int,
+        *game_types: GAME_TYPE | tp.Sequence[GAME_TYPE],
+        star_module_names: tp.Sequence[str] = None,
+    ) -> str:
+        """Calls `check_out_enum()` but only returns `enum_info.get_variable_string()`."""
+        if not star_module_names:
+            star_module_names = self.star_module_names
+        return self.check_out_enum(
+            enum_value, *game_types, star_module_names=star_module_names
+        ).get_variable_string(star_module_names)
+
     def get_import_lines(self, star_module_names: tp.Collection[str], module_prefix: str) -> str:
         if not self.used_enums:
             _LOGGER.warning("No enums used by `GameEnumsManager` for import lines.")
             return ""
 
-        imported_star = []
+        imported_star = set()
         non_star_imports = {}
         imports = ""
         for used_enum in self.used_enums:
             if used_enum.module_name in star_module_names:
                 if used_enum.module_name not in imported_star:
                     imports += f"\nfrom {module_prefix}{used_enum.module_name} import *"
+                    imported_star.add(used_enum.module_name)
             else:
                 # Non-star import.
                 non_star_imports.setdefault(used_enum.module_name, set()).add(used_enum.get_import_string())

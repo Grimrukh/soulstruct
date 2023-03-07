@@ -597,7 +597,7 @@ class MSBEntry(abc.ABC):
             if not nickname or not tooltip:
                 # Try to get default name and/or tooltip.
                 subtype_name = cls.SUBTYPE_ENUM.name.replace("Unused", "")  # redirect 'Unused' subtypes
-                keys = (f"{subtype_name}[{f.name}]", f"{cls.SUPERTYPE_ENUM}[{f.name}]")
+                keys = (f"{subtype_name}[{f.name}]", f"{cls.SUPERTYPE_ENUM.name}[{f.name}]")
                 for key in keys:
                     if key in FIELD_INFO:
                         default_nickname, default_tooltip = FIELD_INFO[key]

@@ -14,7 +14,7 @@ from soulstruct.utilities.binary import *
 @dataclass(slots=True)
 class MENUPROPERTY_LAYOUT(ParamRow):
     LayoutPath: str = ParamField(
-        bytes, "LayoutPath[16]", encoding="shift_jis_2004", length=16, default=0.0,
+        str, "LayoutPath[16]", encoding="shift_jis_2004", length=16, default=0.0,
         tooltip="TODO",
     )
     MenuPropertyID: int = ParamField(

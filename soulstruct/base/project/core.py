@@ -85,6 +85,7 @@ class GameDirectoryProject(abc.ABC):
 
     # Maps `ProjectDataType` enums supported by this game to the classes that load them (`MapStudioDirectory`, etc.).
     DATA_TYPES: tp.ClassVar[dict[ProjectDataType, tp.Type[DATA_CLASS_TYPING]]] = {}
+    DataType: tp.ClassVar[tp.Type[ProjectDataType]] = ProjectDataType
 
     game_root: Path
     project_root: Path
@@ -99,7 +100,7 @@ class GameDirectoryProject(abc.ABC):
     # Instance data dictionary. Contents should be accessed with properties (`ai`, `maps`, etc.).
     # Values here are not necessarily classes from `DATA_TYPES.values()`, e.g. Events/Talk are stored as plaintext.
     _data: dict[ProjectDataType, DATA_OBJECT_TYPING]
-    _vanilla_game_root: Path
+    _vanilla_game_root: Path | None
 
     def __init__(self, project_path="", with_window: ProjectWindow = None, game_root: Path | str = None):
 
@@ -107,7 +108,7 @@ class GameDirectoryProject(abc.ABC):
         self.save_manager = SaveManager(self.get_game())
         self.last_import_time = ""
         self.last_export_time = ""
-        self._vanilla_game_root = Path()
+        self._vanilla_game_root = None
         self.python_script_directory = Path()
         self.text_editor_font_size = DEFAULT_TEXT_EDITOR_FONT_SIZE
         self.enums_in_events_folder = False
@@ -144,6 +145,10 @@ class GameDirectoryProject(abc.ABC):
         return self.DATA_TYPES[data_type]
 
     @property
+    def vanilla_game_root(self):
+        return self._vanilla_game_root if self._vanilla_game_root else self.game_root
+
+    @property
     def is_empty(self) -> bool:
         return not self._data
 
@@ -157,6 +162,10 @@ class GameDirectoryProject(abc.ABC):
         self._set_data(ProjectDataType.AI, value)
 
     # NOTE: No `events` property. Events are stored as plaintext EVS scripts until binary file needs to be written.
+
+    @property
+    def events_directory(self):
+        return self.project_root / "events"
 
     @property
     def lighting(self) -> DrawParamDirectory:
@@ -175,6 +184,12 @@ class GameDirectoryProject(abc.ABC):
         self._set_data(ProjectDataType.Maps, value)
 
     @property
+    def enums_directory(self) -> Path:
+        """Enums modules can optionally be written next to EVS scripts in 'events' folder, but by default,
+        go in their own folder 'enums'."""
+        return self.project_root / ("events" if self.enums_in_events_folder else "enums")
+
+    @property
     def params(self) -> GameParamBND:
         return self._get_data(ProjectDataType.Params)
 
@@ -183,6 +198,10 @@ class GameDirectoryProject(abc.ABC):
         self._set_data(ProjectDataType.Params, value)
 
     # NOTE: No `talk` property. Talk scripts are stored as plaintext ESP scripts until binary file needs to be written.
+
+    @property
+    def talk_directory(self):
+        return self.project_root / "talk"
 
     @property
     def text(self) -> MSGDirectory:
@@ -199,7 +218,7 @@ class GameDirectoryProject(abc.ABC):
         # TODO: warn user if project data already exists (even though we're not saving yet).
         data_class = self.get_data_class(data_type)
         import_directory = Path(import_directory)
-        data_import_path = self.get_game_path_of_data_type(data_type, root=import_directory)
+        data_import_path = self.get_data_game_path(data_type, root=import_directory)
         return data_class.from_path(data_import_path)
 
     def import_all(self, import_directory: Path | str):
@@ -212,21 +231,32 @@ class GameDirectoryProject(abc.ABC):
         ai = self._default_import(ProjectDataType.AI, import_directory)
         self._set_data(ProjectDataType.AI, ai)
 
-    def import_Maps(self, import_directory: Path | str, put_enums_in_events_folder=False):
+    def import_Maps(self, import_directory: Path | str):
         maps = self._default_import(ProjectDataType.Maps, import_directory)  # type: MapStudioDirectory
+        self._set_data(ProjectDataType.Maps, maps)
+
+    def import_Enums(self, import_directory: Path | str, use_loaded_maps_data=True, put_enums_in_events_folder=False):
+        """Generates `{map_stem}_enums.py` modules from MSBs.
+
+        Uses existing `maps` data if available and `use_maps_data` is True. Otherwise, imports temporary MSBs.
+        """
+        if use_loaded_maps_data and self.maps:
+            maps = self.maps
+        else:  # temporary MSB import
+            maps = self._default_import(ProjectDataType.Maps, import_directory)  # type: MapStudioDirectory
 
         if put_enums_in_events_folder and ProjectDataType.Events not in self.DATA_TYPES:
-            _LOGGER.warning(f"Cannot put entity modules in 'events' folder when game project does not support Events.")
+            _LOGGER.warning("Cannot put enums modules in 'events' folder when game project does not support Events.")
             put_enums_in_events_folder = False
 
         self.enums_in_events_folder = put_enums_in_events_folder
 
-        enums_folder = self.project_root / ("events" if put_enums_in_events_folder else "enums")
+        enums_folder = self.enums_directory
         for map_stem, msb in maps.files.items():
             game_map = maps.GET_MAP(map_stem)
             msb.write_entities_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
 
-        self._set_data(ProjectDataType.Maps, maps)
+        # No data to set (Python module files on disk ARE the project data).
 
     def import_Params(self, import_directory: Path | str):
         """Currently no options."""
@@ -246,17 +276,17 @@ class GameDirectoryProject(abc.ABC):
     ):
         event_class = self.get_data_class(ProjectDataType.Events)  # type: tp.Type[EventDirectory]
         import_directory = Path(import_directory)
-        event_directory_path = self.get_game_path_of_data_type(ProjectDataType.Events, root=import_directory)
+        event_directory_path = self.get_data_game_path(ProjectDataType.Events, root=import_directory)
         event_directory = event_class.from_path(event_directory_path)
         # TODO: Enums must be written first to make use of them (obviously).
         #  Can just pass our GameEnumsManager itself, in that case.
         event_directory.write_evs()
         if use_enums_in_event_scripts:
-            enums_directory = self.project_root / ("events" if self.enums_in_events_folder else "enums")
+            enums_directory = self.enums_directory
         else:
             enums_directory = None
         event_directory.write_evs(
-            self.project_root / "events",
+            self.events_directory,
             enums_directory=enums_directory,
             warn_missing_enums=True,  # TODO: project setting
             enums_module_prefix="." if self.enums_in_events_folder else "..enums.",
@@ -268,17 +298,16 @@ class GameDirectoryProject(abc.ABC):
         """Option to remove all empty strings from all FMGs."""
         text = self._default_import(ProjectDataType.Text, import_directory)  # type: MSGDirectory
         if delete_empty_text_entries:
-            for fmg in text.fmgs.values():
-                fmg.remove_empty_strings()
+            text.remove_empty_strings(category_name_regex=r".*")
         self._set_data(ProjectDataType.Text, text)
 
     def import_Talk(self, import_directory: Path | str):
         # TODO: Automatically writes ESP scripts to project. Should be made clear.
         talk_class = self.get_data_class(ProjectDataType.Talk)  # type: tp.Type[TalkDirectory]
         import_directory = Path(import_directory)
-        talk_directory_path = self.get_game_path_of_data_type(ProjectDataType.Talk, root=import_directory)
+        talk_directory_path = self.get_data_game_path(ProjectDataType.Talk, root=import_directory)
         talk_directory = talk_class.from_path(talk_directory_path)
-        talk_directory.write_esp_directory(self.project_root / "talk")
+        talk_directory.write_esp_directory(self.talk_directory)
     # endregion
 
     # region Project Export Methods
@@ -290,7 +319,7 @@ class GameDirectoryProject(abc.ABC):
         if not data:
             _LOGGER.warning(f"There is no {data_type.name} data to export in this project.")
             return None, None
-        return data, self.get_game_path_of_data_type(data_type, root=Path(export_directory))
+        return data, self.get_data_game_path(data_type, root=Path(export_directory))
 
     def export_all(self, export_directory: Path | str):
         for data_type in self.DATA_TYPES:
@@ -313,8 +342,8 @@ class GameDirectoryProject(abc.ABC):
         _, export_path = self._get_data_and_export_path(ProjectDataType.Events, export_directory)
         if specific_map:
             emevd = event_class.FILE_CLASS.from_evs_path(
-                self.project_root / f"events/{specific_map}.evs.py",
-                script_directory=self.project_root / "events"
+                self.events_directory / f"{specific_map}.evs.py",
+                script_directory=self.events_directory,
             )
             emevd.write(export_path / specific_map)  # extension handled automatically
         else:
@@ -381,10 +410,10 @@ class GameDirectoryProject(abc.ABC):
                 esd.set_from_game_file(talk)
                 talkesdbnd.write()  # same path
             else:
-                talkesdbnd = talk_class.FILE_CLASS.from_esp_directory(self.project_root / f"talk/{specific_map}")
+                talkesdbnd = talk_class.FILE_CLASS.from_esp_directory(self.talk_directory / specific_map)
                 talkesdbnd.write(export_path / specific_map, check_hash=True)  # extension handled automatically
         else:
-            talk_directory = talk_class.from_path(self.project_root / "talk")
+            talk_directory = talk_class.from_path(self.talk_directory)
             talk_directory.write(export_path)
         self._write_config()
     # endregion
@@ -406,7 +435,7 @@ class GameDirectoryProject(abc.ABC):
             luabnd = ai[specific_map]
             luabnd.write_unpacked_directory(self.project_root / f"ai/{specific_map}")
         else:
-            ai.write_unpacked_luabnds(self.project_root / "ai")
+            ai.write_unpacked_luabnds(self.project_root / "ai_scripts")
         self._write_config()
 
     # TODO: Save Enums.
@@ -568,11 +597,11 @@ class GameDirectoryProject(abc.ABC):
 
         Returned dict maps each setting name to a `(display_label, default_setting)` tuple.
         """
-        if data_type == ProjectDataType.Maps:
+        if data_type == ProjectDataType.Enums:
             return dict(
                 put_enums_in_events_folder=(
                     "Put Enums in Events Folder", False,
-                    "Write enums Python modules to 'events' folder instead of 'enums' folder."
+                    "Write Python `{map_stem}_enums.py` modules to 'events' folder instead of 'enums' folder."
                 ),
             )
 
@@ -602,7 +631,7 @@ class GameDirectoryProject(abc.ABC):
 
         return {}
 
-    def get_game_path_of_data_type(self, data_type: ProjectDataType, root=None) -> Path:
+    def get_data_game_path(self, data_type: ProjectDataType, root=None) -> Path:
         game = self.get_game()
         root = self.game_root if root is None else Path(root)
         data_class_name = self.DATA_TYPES[data_type].__name__
@@ -776,17 +805,19 @@ class GameDirectoryProject(abc.ABC):
             self.game_root = Path(new_game_root)
             rewrite_config = True
         else:
-            if new_game_root is not None:
+            config_game_root = config["GameDirectory"]
+            if new_game_root is not None and new_game_root != config_game_root:
                 self.game_root = Path(new_game_root)
                 _LOGGER.info(
-                    f"Previous project 'GameDirectory' ({config['GameDirectory']}) has been replaced with new "
+                    f"Previous project 'GameDirectory' {config_game_root} has been replaced with new "
                     f"directory: {self.game_root}"
                 )
                 rewrite_config = True
             else:
-                self.game_root = Path(config["GameDirectory"])
+                self.game_root = Path(config_game_root)
 
         if not self._validate_game_directory(self.game_root):
+            _LOGGER.warning(f"Project 'GameDirectory' {self.game_root} is not valid. (See log for details.)")
             return False
 
         last_save_version = config.get("LastSaveVersion", "unknown")
@@ -844,6 +875,15 @@ class GameDirectoryProject(abc.ABC):
                 f"project from the other version of Soulstruct and import those game files into this project."
             )
 
+        # Load data.
+        for data_type in self.DATA_TYPES:
+            if data_type in {ProjectDataType.Enums, ProjectDataType.Events, ProjectDataType.Talk}:
+                continue  # loaded by their own Editor classes (from plaintext project scripts/modules).
+
+            load_func = getattr(self, f"load_{data_type.name}")
+            self._data[data_type] = load_func()  # no arguments for any load functions
+            _LOGGER.info(f"Loaded {data_type.name} data from project.")
+
         if rewrite_config:
             self._write_config()
         return True
@@ -877,9 +917,9 @@ class GameDirectoryProject(abc.ABC):
             if result == 0:
                 for data_type in self.DATA_TYPES:
                     import_func = getattr(self, f"import_{data_type.name}")
-                    import_func(import_directory=self.game_root)  # TODO: no options supported
-                    # NOTE: Events and Talk data are 'saved' implicitly on import (plaintext scripts written).
-                    if data_type not in {ProjectDataType.Events, ProjectDataType.Talk}:
+                    import_func(import_directory=self.game_root)  # TODO: no options supported here!
+                    # NOTE: Enums, Events, and Talk data are 'saved' implicitly on import (plaintext scripts written).
+                    if data_type not in {ProjectDataType.Enums, ProjectDataType.Events, ProjectDataType.Talk}:
                         save_func = getattr(self, f"save_{data_type.name}")
                         save_func()
             self._write_config()
@@ -903,10 +943,12 @@ class GameDirectoryProject(abc.ABC):
             # NOTE: It's up to each `import` function signature to match settings names properly.
             import_func = getattr(self, f"import_{data_type.name}")
             import_func(import_directory=self.game_root, **import_settings.data_type_settings[data_type])
-            # NOTE: Events and Talk data are 'saved' implicitly on import (plaintext scripts written).
-            if data_type not in {ProjectDataType.Events, ProjectDataType.Talk}:
+            # NOTE: Enums, Events, and Talk data are 'saved' implicitly on import (plaintext scripts written).
+            if data_type not in {ProjectDataType.Enums, ProjectDataType.Events, ProjectDataType.Talk}:
                 save_func = getattr(self, f"save_{data_type.name}")
                 save_func()
+
+        self.python_script_directory = self.project_root / "python_scripts"
 
         self._write_config()
         return True
@@ -914,15 +956,15 @@ class GameDirectoryProject(abc.ABC):
     def copy_events_submodule(self, with_window: ProjectWindow = None):
         name = self.get_game().submodule_name
         events_submodule = PACKAGE_PATH(f"{name}/events")
-        if (self.project_root / "events/soulstruct").is_dir():
+        if (self.events_directory / "soulstruct").is_dir():
             self.error(
                 "'events/soulstruct' folder already exists. Cannot copy Python submodule over. "
                 "Delete it and try again from the top menu.",
                 with_window,
             )
             return
-        (self.project_root / f"events/soulstruct/{name}").mkdir(parents=True, exist_ok=True)
-        shutil.copytree(events_submodule, self.project_root / f"events/soulstruct/{name}/events")
+        (self.events_directory / f"soulstruct/{name}").mkdir(parents=True, exist_ok=True)
+        shutil.copytree(events_submodule, self.events_directory / f"soulstruct/{name}/events")
         _LOGGER.info(f"Copied `soulstruct.{name}.events` submodule into project events folder.")
 
     def run_python_script(self, script_path: Path, stdout=None, stderr=None) -> subprocess.CompletedProcess:
@@ -948,16 +990,6 @@ class GameDirectoryProject(abc.ABC):
             return get_game(match.group(1))
         raise ValueError(f"Could not detect game name from module of class `{cls.__name__}`: {cls.__module__}")
 
-    @property
-    def enums_directory(self) -> Path:
-        """Enums modules can optionally be written next to EVS scripts in 'events' folder, but by default,
-        go in their own folder 'enums'."""
-        return self.project_root / ("events" if self.enums_in_events_folder else "enums")
-
-    @property
-    def vanilla_game_root(self):
-        return self._vanilla_game_root if self._vanilla_game_root else self.game_root
-
     # region Private Methods
 
     @staticmethod
@@ -972,10 +1004,11 @@ class GameDirectoryProject(abc.ABC):
             "GameDirectory": str(self.game_root),
             "LastImportTime": self.last_import_time,
             "LastExportTime": self.last_export_time,
-            "VanillaGameDirectory": str(self._vanilla_game_root),
+            "VanillaGameDirectory": str(self._vanilla_game_root) if self._vanilla_game_root else None,
             "PythonScriptDirectory": str(self.python_script_directory),
             "TextEditorFontSize": DEFAULT_TEXT_EDITOR_FONT_SIZE,
             "EnumsInEventsFolder": self.enums_in_events_folder,
+            "DoNotWriteParamDefaults": self.do_not_write_param_defaults,
             "OtherSettings": self.other_settings,
         }
 

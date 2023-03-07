@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import typing as tp
 
-from soulstruct.base.game_types import BaseParam
+from soulstruct.base.game_types import BaseParam, GAME_TYPE
 from soulstruct.base.params.param_row import ParamRow, ParamFieldMetadata
 from soulstruct.base.project.editors.base_editor import EntryRow
 from soulstruct.base.project.editors.field_editor import FieldRow, BaseFieldEditor
@@ -96,6 +96,7 @@ class ParamsEditor(BaseFieldEditor):
     CATEGORY_BOX_WIDTH = 400
     ENTRY_BOX_WIDTH = 350
     ENTRY_RANGE_SIZE = 300
+    FIELD_NAME_WIDTH = 50
     FIELD_BOX_WIDTH = 500
     FIELD_ROW_COUNT = 185  # highest count (Params[SpecialEffects] in Bloodborne)
 
@@ -143,7 +144,7 @@ class ParamsEditor(BaseFieldEditor):
         self.select_entry_id(param_id, set_focus_to_text=False, edit_if_already_selected=False)
 
     def find_all_param_references(self, param_id):
-        """Iterates over all ParamTables to find references to this param ID, and presents them in a floating list."""
+        """Iterates over all params to find references to this param ID, and presents them in a pop-out list."""
         category = self.active_category
         game_type = self.params.GAME_TYPES[category]
         linking_fields = []  # type: list[tuple[str, str, ParamFieldMetadata]]
@@ -252,18 +253,30 @@ class ParamsEditor(BaseFieldEditor):
                 raise ValueError("No params category selected.")
         return self.params.get_param(category)[entry_id]
 
-    def get_field_display_info(self, field_dict: ParamRow, field_name):
+    def get_field_display_info(self, field_dict: ParamRow, field_name) -> tuple[str, bool, GAME_TYPE, str]:
         field_metadata = field_dict.get_field_metadata(field_name)  # type: ParamFieldMetadata
         if field_metadata.dynamic_callback:
             game_type, suffix, tooltip = field_metadata.dynamic_callback(field_dict)
             field_name += suffix
+            tooltip = f"{field_metadata.internal_name}: {tooltip}"
         else:  # static metadata
             game_type = field_metadata.game_type
-            tooltip = field_metadata.tooltip
+            tooltip = f"{field_metadata.internal_name}: {field_metadata.tooltip}"
         return field_name, not field_metadata.hide, game_type, tooltip
 
-    def get_field_names(self, field_dict: ParamRow):
-        return field_dict.get_binary_field_names() if field_dict else []
+    def get_field_names(self, field_dict: ParamRow) -> list[str]:
+        """NOTE: Param field names are now identical to their nicknames/display names.
+
+        Ignores pad fields.
+        """
+        if not field_dict:
+            return []
+        field_names = []
+        for field_name, field_metadata in field_dict.get_all_field_metadata().items():
+            if field_metadata.is_pad:
+                continue
+            field_names.append(field_name)
+        return field_names
 
     def get_field_links(self, field_type, field_value, valid_null_values=None):
         if valid_null_values is None:

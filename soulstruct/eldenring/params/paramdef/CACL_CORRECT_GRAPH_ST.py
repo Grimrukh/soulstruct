@@ -13,80 +13,81 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class CACL_CORRECT_GRAPH_ST(ParamRow):
-    StageMaxVal0: float = ParamField(
+    StageMaxIntercept0: float = ParamField(
         float, "stageMaxVal0", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Y-intercept in equation of 'stage max' line 0.",
     )
-    StageMaxVal1: float = ParamField(
+    StageMaxIntercept1: float = ParamField(
         float, "stageMaxVal1", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Y-intercept in equation of 'stage max' line 1.",
     )
-    StageMaxVal2: float = ParamField(
+    StageMaxIntercept2: float = ParamField(
         float, "stageMaxVal2", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Y-intercept in equation of 'stage max' line 2.",
     )
-    StageMaxVal3: float = ParamField(
+    StageMaxIntercept3: float = ParamField(
         float, "stageMaxVal3", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Y-intercept in equation of 'stage max' line 3.",
     )
-    StageMaxVal4: float = ParamField(
+    StageMaxIntercept4: float = ParamField(
         float, "stageMaxVal4", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Y-intercept in equation of 'stage max' line 4.",
     )
-    StageMaxGrowVal0: float = ParamField(
+    StageMaxSlope0: float = ParamField(
         float, "stageMaxGrowVal0", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope in equation of 'stage max' line 0.",
     )
-    StageMaxGrowVal1: float = ParamField(
+    StageMaxSlope1: float = ParamField(
         float, "stageMaxGrowVal1", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope in equation of 'stage max' line 1.",
     )
-    StageMaxGrowVal2: float = ParamField(
+    StageMaxSlope2: float = ParamField(
         float, "stageMaxGrowVal2", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope in equation of 'stage max' line 2.",
     )
-    StageMaxGrowVal3: float = ParamField(
+    StageMaxSlope3: float = ParamField(
         float, "stageMaxGrowVal3", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope in equation of 'stage max' line 3.",
     )
-    StageMaxGrowVal4: float = ParamField(
+    StageMaxSlope4: float = ParamField(
         float, "stageMaxGrowVal4", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope in equation of 'stage max' line 4.",
     )
-    AdjPtmaxGrowVal0: float = ParamField(
+    AdjustmentMaxSlope0: float = ParamField(
         float, "adjPt_maxGrowVal0", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Adjustment factor for slope in equation of 'stage max' line 0.",
     )
-    AdjPtmaxGrowVal1: float = ParamField(
+    AdjustmentMaxSlope1: float = ParamField(
         float, "adjPt_maxGrowVal1", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Adjustment factor for slope in equation of 'stage max' line 1.",
     )
-    AdjPtmaxGrowVal2: float = ParamField(
+    AdjustmentMaxSlope2: float = ParamField(
         float, "adjPt_maxGrowVal2", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Adjustment factor for slope in equation of 'stage max' line 2.",
     )
-    AdjPtmaxGrowVal3: float = ParamField(
+    AdjustmentMaxSlope3: float = ParamField(
         float, "adjPt_maxGrowVal3", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Adjustment factor for slope in equation of 'stage max' line 3.",
     )
-    AdjPtmaxGrowVal4: float = ParamField(
+    AdjustmentMaxSlope4: float = ParamField(
         float, "adjPt_maxGrowVal4", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Adjustment factor for slope in equation of 'stage max' line 4.",
     )
-    Initinclinationsoul: float = ParamField(
+    InitialLevellingCostSlope: float = ParamField(
         float, "init_inclination_soul", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Initial slope of equation determining levelling costs (alpha 1).",
     )
-    Adjustmentvalue: float = ParamField(
+    LevellingCostEarlyAdjustment: float = ParamField(
         float, "adjustment_value", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="'Early' adjustment value of equation determining levelling costs (alpha 2).",
     )
-    Boundryinclinationsoul: float = ParamField(
+    LateLevellingCostSlope: float = ParamField(
         float, "boundry_inclination_soul", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Slope of equation determining required levelling souls after 'LateLevellingCostThreshold' value "
+                "(alpha 3).",
     )
-    Boundryvalue: float = ParamField(
+    LateLevellingCostThreshold: float = ParamField(
         float, "boundry_value", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Threshold at which 'LateLevellingCostSlope' takes over for levelling (t).",
     )
     _Pad0: bytes = ParamPad(4, "pad[4]")

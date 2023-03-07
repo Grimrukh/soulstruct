@@ -83,15 +83,15 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         tooltip="Percentage of lightning damage prevented when guarding with this weapon.",
     )
     SpecialEffectOnHit0: int = ParamField(
-        int, "spEffectBehaviorId0", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId0", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 0).",
     )
     SpecialEffectOnHit1: int = ParamField(
-        int, "spEffectBehaviorId1", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId1", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 1).",
     )
     SpecialEffectOnHit2: int = ParamField(
-        int, "spEffectBehaviorId2", game_type=BehaviorParam, default=-1,
+        int, "spEffectBehaviorId2", game_type=SpecialEffectParam, default=-1,
         tooltip="Special effect applied to struck target (slot 2).",
     )
     EquippedSpecialEffect0: int = ParamField(

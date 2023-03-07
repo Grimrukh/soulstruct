@@ -35,25 +35,25 @@ class WindowLinker(_BaseWindowLinker):
             if not param_nickname:
                 # Could be Player or Non Player. Provide both links.
                 param_nickname = "Attacks" if field_type == AttackParam else "Behaviors"
-                player_table = self.project.params.get_param(f"Player{param_nickname}")
-                non_player_table = self.project.params.get_param(f"NonPlayer{param_nickname}")
+                player_param = self.project.params.get_param(f"Player{param_nickname}")
+                non_player_param = self.project.params.get_param(f"NonPlayer{param_nickname}")
                 links = []
-                if field_value in player_table:
+                if field_value in player_param:
                     links.append(
                         ParamsLink(
                             self,
                             param_name=f"Player{param_nickname}",
                             param_entry_id=field_value,
-                            name=player_table[field_value].name,
+                            name=player_param[field_value].Name,
                         )
                     )
-                if field_value in non_player_table:
+                if field_value in non_player_param:
                     links.append(
                         ParamsLink(
                             self,
                             param_name=f"NonPlayer{param_nickname}",
                             param_entry_id=field_value,
-                            name=non_player_table[field_value].name,
+                            name=non_player_param[field_value].Name,
                         )
                     )
                 if links:

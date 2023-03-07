@@ -13,29 +13,29 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class HIT_MTRL_PARAM_ST(ParamRow):
-    AiVolumeRate: float = ParamField(
+    SoundRadiusMultiplier: float = ParamField(
         float, "aiVolumeRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for foot sound effect radius on this terrain.",
     )
-    SpEffectIdOnHit0: int = ParamField(
-        int, "spEffectIdOnHit0", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffect1: int = ParamField(
+        int, "spEffectIdOnHit0", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to character walking on terrain (first of two).",
     )
-    SpEffectIdOnHit1: int = ParamField(
-        int, "spEffectIdOnHit1", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffect2: int = ParamField(
+        int, "spEffectIdOnHit1", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to character walking on terrain (second of two).",
     )
     FootEffectHeightType: int = ParamField(
         byte, "footEffectHeightType:2", HMP_FOOT_EFFECT_HEIGHT_TYPE, bit_count=2, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines the height at which foot impact effects are generated.",
     )
-    FootEffectDirType: int = ParamField(
+    FootEffectDirectionType: int = ParamField(
         byte, "footEffectDirType:2", HMP_FOOT_EFFECT_DIR_TYPE, bit_count=2, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines the direction of foot impact effects.",
     )
-    FloorHeightType: int = ParamField(
+    TerrainHeightType: int = ParamField(
         byte, "floorHeightType:2", HMP_FLOOR_HEIGHT_TYPE, bit_count=2, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines distance from floor collision at which effects are applied.",
     )
     DisableFallDamage: bool = ParamField(
         byte, "disableFallDamage:1", bit_count=1, default=False,

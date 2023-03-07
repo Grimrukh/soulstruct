@@ -166,6 +166,10 @@ class Vector3(BaseVector):
         self._data[2] = value
 
     @classmethod
+    def from_vector4(cls, vector4: Vector4) -> Vector3:
+        return cls((vector4.x, vector4.y, vector4.z))
+
+    @classmethod
     def from_repr(cls, repr_string: str) -> Vector3:
         """For JSON decoding."""
         if (match := re.match(r"^Vector3(\([-\d., ]+\))", repr_string)) is not None:
@@ -225,6 +229,10 @@ class Vector4(BaseVector):
     @w.setter
     def w(self, value: float):
         self._data[3] = value
+
+    @classmethod
+    def from_vector3(cls, vector3: Vector3, w=1.0) -> Vector4:
+        return cls((vector3.x, vector3.y, vector3.z, w))
 
     @classmethod
     def from_repr(cls, repr_string: str) -> Vector4:

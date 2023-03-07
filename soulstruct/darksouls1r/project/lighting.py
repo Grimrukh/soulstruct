@@ -46,15 +46,15 @@ class LightingEditor(_BaseLightingEditor):
                 self.Button(
                     text="Copy Slot 0 to Slot 1",
                     bg="#622",
-                    width=20,
+                    width=25,
                     padx=5,
                     command=self.regenerate_slot_1,
                 )
                 self.Button(
                     text="Inject This Param",
                     bg="#622",
-                    width=17,
-                    padx=5,
+                    width=20,
+                    padx=(50, 10),
                     command=self.inject_current_param,
                 )
                 self.auto_inject = self.Checkbutton(

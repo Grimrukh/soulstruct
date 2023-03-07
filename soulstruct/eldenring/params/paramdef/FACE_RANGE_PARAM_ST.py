@@ -409,429 +409,429 @@ class FACE_RANGE_PARAM_ST(ParamRow):
         float, "decal_mirror", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    ChrBodyScaleHead: float = ParamField(
+    HeadScale: float = ParamField(
         float, "chrBodyScaleHead", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleBreast: float = ParamField(
+    BreastScale: float = ParamField(
         float, "chrBodyScaleBreast", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleAbdomen: float = ParamField(
+    AbdomenScale: float = ParamField(
         float, "chrBodyScaleAbdomen", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleArm: float = ParamField(
+    ArmScale: float = ParamField(
         float, "chrBodyScaleArm", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleLeg: float = ParamField(
+    LegScale: float = ParamField(
         float, "chrBodyScaleLeg", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     Age: float = ParamField(
         float, "age", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     Gender: float = ParamField(
         float, "gender", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CaricatureGeometry: float = ParamField(
         float, "caricatureGeometry", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CaricatureTexture: float = ParamField(
         float, "caricatureTexture", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    FaceGeoData00: float = ParamField(
+    GeometryData00: float = ParamField(
         float, "faceGeoData00", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 0.",
     )
-    FaceGeoData01: float = ParamField(
+    GeometryData01: float = ParamField(
         float, "faceGeoData01", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 1.",
     )
-    FaceGeoData02: float = ParamField(
+    GeometryData02: float = ParamField(
         float, "faceGeoData02", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 2.",
     )
-    FaceGeoData03: float = ParamField(
+    GeometryData03: float = ParamField(
         float, "faceGeoData03", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 3.",
     )
-    FaceGeoData04: float = ParamField(
+    GeometryData04: float = ParamField(
         float, "faceGeoData04", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 4.",
     )
-    FaceGeoData05: float = ParamField(
+    GeometryData05: float = ParamField(
         float, "faceGeoData05", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 5.",
     )
-    FaceGeoData06: float = ParamField(
+    GeometryData06: float = ParamField(
         float, "faceGeoData06", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 6.",
     )
-    FaceGeoData07: float = ParamField(
+    GeometryData07: float = ParamField(
         float, "faceGeoData07", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 7.",
     )
-    FaceGeoData08: float = ParamField(
+    GeometryData08: float = ParamField(
         float, "faceGeoData08", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 8.",
     )
-    FaceGeoData09: float = ParamField(
+    GeometryData09: float = ParamField(
         float, "faceGeoData09", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 9.",
     )
-    FaceGeoData10: float = ParamField(
+    GeometryData10: float = ParamField(
         float, "faceGeoData10", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 10.",
     )
-    FaceGeoData11: float = ParamField(
+    GeometryData11: float = ParamField(
         float, "faceGeoData11", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 11.",
     )
-    FaceGeoData12: float = ParamField(
+    GeometryData12: float = ParamField(
         float, "faceGeoData12", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 12.",
     )
-    FaceGeoData13: float = ParamField(
+    GeometryData13: float = ParamField(
         float, "faceGeoData13", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 13.",
     )
-    FaceGeoData14: float = ParamField(
+    GeometryData14: float = ParamField(
         float, "faceGeoData14", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 14.",
     )
-    FaceGeoData15: float = ParamField(
+    GeometryData15: float = ParamField(
         float, "faceGeoData15", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 15.",
     )
-    FaceGeoData16: float = ParamField(
+    GeometryData16: float = ParamField(
         float, "faceGeoData16", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 16.",
     )
-    FaceGeoData17: float = ParamField(
+    GeometryData17: float = ParamField(
         float, "faceGeoData17", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 17.",
     )
-    FaceGeoData18: float = ParamField(
+    GeometryData18: float = ParamField(
         float, "faceGeoData18", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 18.",
     )
-    FaceGeoData19: float = ParamField(
+    GeometryData19: float = ParamField(
         float, "faceGeoData19", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 19.",
     )
-    FaceGeoData20: float = ParamField(
+    GeometryData20: float = ParamField(
         float, "faceGeoData20", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 20.",
     )
-    FaceGeoData21: float = ParamField(
+    GeometryData21: float = ParamField(
         float, "faceGeoData21", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 21.",
     )
-    FaceGeoData22: float = ParamField(
+    GeometryData22: float = ParamField(
         float, "faceGeoData22", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 22.",
     )
-    FaceGeoData23: float = ParamField(
+    GeometryData23: float = ParamField(
         float, "faceGeoData23", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 23.",
     )
-    FaceGeoData24: float = ParamField(
+    GeometryData24: float = ParamField(
         float, "faceGeoData24", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 24.",
     )
-    FaceGeoData25: float = ParamField(
+    GeometryData25: float = ParamField(
         float, "faceGeoData25", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 25.",
     )
-    FaceGeoData26: float = ParamField(
+    GeometryData26: float = ParamField(
         float, "faceGeoData26", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 26.",
     )
-    FaceGeoData27: float = ParamField(
+    GeometryData27: float = ParamField(
         float, "faceGeoData27", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 27.",
     )
-    FaceGeoData28: float = ParamField(
+    GeometryData28: float = ParamField(
         float, "faceGeoData28", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 28.",
     )
-    FaceGeoData29: float = ParamField(
+    GeometryData29: float = ParamField(
         float, "faceGeoData29", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 29.",
     )
-    FaceGeoData30: float = ParamField(
+    GeometryData30: float = ParamField(
         float, "faceGeoData30", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 30.",
     )
-    FaceGeoData31: float = ParamField(
+    GeometryData31: float = ParamField(
         float, "faceGeoData31", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 31.",
     )
-    FaceGeoData32: float = ParamField(
+    GeometryData32: float = ParamField(
         float, "faceGeoData32", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 32.",
     )
-    FaceGeoData33: float = ParamField(
+    GeometryData33: float = ParamField(
         float, "faceGeoData33", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 33.",
     )
-    FaceGeoData34: float = ParamField(
+    GeometryData34: float = ParamField(
         float, "faceGeoData34", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 34.",
     )
-    FaceGeoData35: float = ParamField(
+    GeometryData35: float = ParamField(
         float, "faceGeoData35", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 35.",
     )
-    FaceGeoData36: float = ParamField(
+    GeometryData36: float = ParamField(
         float, "faceGeoData36", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 36.",
     )
-    FaceGeoData37: float = ParamField(
+    GeometryData37: float = ParamField(
         float, "faceGeoData37", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 37.",
     )
-    FaceGeoData38: float = ParamField(
+    GeometryData38: float = ParamField(
         float, "faceGeoData38", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 38.",
     )
-    FaceGeoData39: float = ParamField(
+    GeometryData39: float = ParamField(
         float, "faceGeoData39", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 39.",
     )
-    FaceGeoData40: float = ParamField(
+    GeometryData40: float = ParamField(
         float, "faceGeoData40", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 40.",
     )
-    FaceGeoData41: float = ParamField(
+    GeometryData41: float = ParamField(
         float, "faceGeoData41", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 41.",
     )
-    FaceGeoData42: float = ParamField(
+    GeometryData42: float = ParamField(
         float, "faceGeoData42", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 42.",
     )
-    FaceGeoData43: float = ParamField(
+    GeometryData43: float = ParamField(
         float, "faceGeoData43", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 43.",
     )
-    FaceGeoData44: float = ParamField(
+    GeometryData44: float = ParamField(
         float, "faceGeoData44", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 44.",
     )
-    FaceGeoData45: float = ParamField(
+    GeometryData45: float = ParamField(
         float, "faceGeoData45", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 45.",
     )
-    FaceGeoData46: float = ParamField(
+    GeometryData46: float = ParamField(
         float, "faceGeoData46", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 46.",
     )
-    FaceGeoData47: float = ParamField(
+    GeometryData47: float = ParamField(
         float, "faceGeoData47", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 47.",
     )
-    FaceGeoData48: float = ParamField(
+    GeometryData48: float = ParamField(
         float, "faceGeoData48", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 48.",
     )
-    FaceGeoData49: float = ParamField(
+    GeometryData49: float = ParamField(
         float, "faceGeoData49", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 49.",
     )
-    FaceGeoData50: float = ParamField(
+    GeometryData50: float = ParamField(
         float, "faceGeoData50", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 50.",
     )
-    FaceGeoData51: float = ParamField(
+    GeometryData51: float = ParamField(
         float, "faceGeoData51", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 51.",
     )
-    FaceGeoData52: float = ParamField(
+    GeometryData52: float = ParamField(
         float, "faceGeoData52", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 52.",
     )
-    FaceGeoData53: float = ParamField(
+    GeometryData53: float = ParamField(
         float, "faceGeoData53", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 53.",
     )
-    FaceGeoData54: float = ParamField(
+    GeometryData54: float = ParamField(
         float, "faceGeoData54", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 54.",
     )
-    FaceGeoData55: float = ParamField(
+    GeometryData55: float = ParamField(
         float, "faceGeoData55", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 55.",
     )
-    FaceGeoData56: float = ParamField(
+    GeometryData56: float = ParamField(
         float, "faceGeoData56", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 56.",
     )
-    FaceGeoData57: float = ParamField(
+    GeometryData57: float = ParamField(
         float, "faceGeoData57", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 57.",
     )
-    FaceGeoData58: float = ParamField(
+    GeometryData58: float = ParamField(
         float, "faceGeoData58", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 58.",
     )
-    FaceGeoData59: float = ParamField(
+    GeometryData59: float = ParamField(
         float, "faceGeoData59", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 59.",
     )
-    FaceGeoData60: float = ParamField(
+    GeometryData60: float = ParamField(
         float, "faceGeoData60", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 60.",
     )
-    FaceTexData00: float = ParamField(
+    TextureData00: float = ParamField(
         float, "faceTexData00", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 0.",
     )
-    FaceTexData01: float = ParamField(
+    TextureData01: float = ParamField(
         float, "faceTexData01", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 1.",
     )
-    FaceTexData02: float = ParamField(
+    TextureData02: float = ParamField(
         float, "faceTexData02", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 2.",
     )
-    FaceTexData03: float = ParamField(
+    TextureData03: float = ParamField(
         float, "faceTexData03", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 3.",
     )
-    FaceTexData04: float = ParamField(
+    TextureData04: float = ParamField(
         float, "faceTexData04", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 4.",
     )
-    FaceTexData05: float = ParamField(
+    TextureData05: float = ParamField(
         float, "faceTexData05", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 5.",
     )
-    FaceTexData06: float = ParamField(
+    TextureData06: float = ParamField(
         float, "faceTexData06", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 6.",
     )
-    FaceTexData07: float = ParamField(
+    TextureData07: float = ParamField(
         float, "faceTexData07", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 7.",
     )
-    FaceTexData08: float = ParamField(
+    TextureData08: float = ParamField(
         float, "faceTexData08", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 8.",
     )
-    FaceTexData09: float = ParamField(
+    TextureData09: float = ParamField(
         float, "faceTexData09", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 9.",
     )
-    FaceTexData10: float = ParamField(
+    TextureData10: float = ParamField(
         float, "faceTexData10", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 10.",
     )
-    FaceTexData11: float = ParamField(
+    TextureData11: float = ParamField(
         float, "faceTexData11", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 11.",
     )
-    FaceTexData12: float = ParamField(
+    TextureData12: float = ParamField(
         float, "faceTexData12", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 12.",
     )
-    FaceTexData13: float = ParamField(
+    TextureData13: float = ParamField(
         float, "faceTexData13", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 13.",
     )
-    FaceTexData14: float = ParamField(
+    TextureData14: float = ParamField(
         float, "faceTexData14", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 14.",
     )
-    FaceTexData15: float = ParamField(
+    TextureData15: float = ParamField(
         float, "faceTexData15", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 15.",
     )
-    FaceTexData16: float = ParamField(
+    TextureData16: float = ParamField(
         float, "faceTexData16", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 16.",
     )
-    FaceTexData17: float = ParamField(
+    TextureData17: float = ParamField(
         float, "faceTexData17", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 17.",
     )
-    FaceTexData18: float = ParamField(
+    TextureData18: float = ParamField(
         float, "faceTexData18", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 18.",
     )
-    FaceTexData19: float = ParamField(
+    TextureData19: float = ParamField(
         float, "faceTexData19", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 19.",
     )
-    FaceTexData20: float = ParamField(
+    TextureData20: float = ParamField(
         float, "faceTexData20", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 20.",
     )
-    FaceTexData21: float = ParamField(
+    TextureData21: float = ParamField(
         float, "faceTexData21", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 21.",
     )
-    FaceTexData22: float = ParamField(
+    TextureData22: float = ParamField(
         float, "faceTexData22", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 22.",
     )
-    FaceTexData23: float = ParamField(
+    TextureData23: float = ParamField(
         float, "faceTexData23", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 23.",
     )
-    FaceTexData24: float = ParamField(
+    TextureData24: float = ParamField(
         float, "faceTexData24", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 24.",
     )
-    FaceTexData25: float = ParamField(
+    TextureData25: float = ParamField(
         float, "faceTexData25", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 25.",
     )
-    FaceTexData26: float = ParamField(
+    TextureData26: float = ParamField(
         float, "faceTexData26", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 26.",
     )
-    FaceTexData27: float = ParamField(
+    TextureData27: float = ParamField(
         float, "faceTexData27", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 27.",
     )
-    FaceTexData28: float = ParamField(
+    TextureData28: float = ParamField(
         float, "faceTexData28", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 28.",
     )
-    FaceTexData29: float = ParamField(
+    TextureData29: float = ParamField(
         float, "faceTexData29", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 29.",
     )
-    FaceTexData30: float = ParamField(
+    TextureData30: float = ParamField(
         float, "faceTexData30", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 30.",
     )
-    FaceTexData31: float = ParamField(
+    TextureData31: float = ParamField(
         float, "faceTexData31", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 31.",
     )
-    FaceTexData32: float = ParamField(
+    TextureData32: float = ParamField(
         float, "faceTexData32", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 32.",
     )
-    FaceTexData33: float = ParamField(
+    TextureData33: float = ParamField(
         float, "faceTexData33", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 33.",
     )
-    FaceTexData34: float = ParamField(
+    TextureData34: float = ParamField(
         float, "faceTexData34", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 34.",
     )
-    FaceTexData35: float = ParamField(
+    TextureData35: float = ParamField(
         float, "faceTexData35", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 35.",
     )
     Burnscar: float = ParamField(
         float, "burn_scar", default=0.0,

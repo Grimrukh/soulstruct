@@ -110,7 +110,6 @@ class MSGDirectory(_BaseMSGDirectory):
     # NOTE: This is for the GUI, which will always sync Patch categories, so those aren't needed.
     MAIN_CATEGORIES = (
         "NPCNames",
-        "NPCNames",
         "PlaceNames",
         "EventText",
         "SoapstoneMessages",

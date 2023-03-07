@@ -9,38 +9,40 @@ from soulstruct.eldenring.game_types import *
 from soulstruct.eldenring.params.enums import *
 from soulstruct.utilities.binary import *
 
+from .dynamics import BehaviorReference
+
 
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BEHAVIOR_PARAM_ST(ParamRow):
-    VariationId: int = ParamField(
+    VariationID: int = ParamField(
         int, "variationId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    BehaviorJudgeId: int = ParamField(
+    BehaviorJudgeID: int = ParamField(
         int, "behaviorJudgeId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="This is the ID specified by TAE events that trigger behaviors.",
     )
-    EzStateBehaviorTypeold: int = ParamField(
+    EzstateBehaviorType: int = ParamField(
         byte, "ezStateBehaviorType_old", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unused remnant from Demon's Souls.",
     )
-    RefType: int = ParamField(
+    ReferenceType: int = ParamField(
         byte, "refType", BEHAVIOR_REF_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Is the reference ID below an Attack or Bullet ID?",
     )
     _Pad0: bytes = ParamPad(2, "pad2[2]")
-    RefId: int = ParamField(
-        int, "refId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ReferenceID: int = ParamField(
+        int, "refId", default=-1, dynamic_callback=BehaviorReference(),
+        tooltip="TODO",
     )
     ConsumeSA: float = ParamField(
         float, "consumeSA", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    Stamina: int = ParamField(
+    StaminaCost: int = ParamField(
         int, "stamina", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Stamina cost of behavior.",
     )
     ConsumeDurability: int = ParamField(
         int, "consumeDurability", default=0,
@@ -48,10 +50,11 @@ class BEHAVIOR_PARAM_ST(ParamRow):
     )
     Category: int = ParamField(
         byte, "category", BEHAVIOR_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' "
+                "for thrown goods and 'No Category' otherwise.",
     )
-    HeroPoint: int = ParamField(
+    HumanityCost: int = ParamField(
         byte, "heroPoint", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Humanity cost of behavior. Never used.",
     )
     _Pad1: bytes = ParamPad(2, "pad1[2]")

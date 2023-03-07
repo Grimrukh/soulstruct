@@ -134,7 +134,7 @@ class BinderVersion(enum.Enum):
 
 @dataclass(slots=True)
 class BinderHeaderV3(BinaryStruct):
-    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BND3"))
+    version: bytes = field(**BinaryString(4, asserted=[b"BND3", b"BHF3"]))
     signature: str = field(**BinaryString(8, encoding="ASCII", rstrip_null=True))
     flags: byte
     big_endian: bool
@@ -150,7 +150,7 @@ class BinderHeaderV3(BinaryStruct):
 
 @dataclass(slots=True)
 class BinderHeaderV4(BinaryStruct):
-    _version: bytes = field(init=False, **BinaryString(4, asserted=b"BND4"))
+    version: bytes = field(**BinaryString(4, asserted=[b"BND4", b"BHF4"]))
     unknown1: bool
     unknown2: bool
     _pad1: bytes = field(init=False, **BinaryPad(3))
@@ -369,9 +369,9 @@ class Binder(BaseBinaryFile):
                 raise ValueError("BDT reader required to load split BHD/BDT binder.")
             entry_reader = bdt_reader
             # Skip useless BDT header.
-            if version_bytes[3] == b"3":
+            if version_bytes[3:4] == b"3":
                 entry_reader.read(0x10)
-            elif version_bytes[3] == b"4":
+            elif version_bytes[3:4] == b"4":
                 entry_reader.read(0x30)
             else:
                 raise ValueError(f"Unsupported BHD/BDT version: {version_bytes}")
@@ -694,6 +694,7 @@ class Binder(BaseBinaryFile):
     def _header_to_writer_v3(self) -> BinaryWriter:
 
         return BinderHeaderV3(
+            version=b"BHD3" if self.is_split_bxf else b"BND3",
             signature=self.signature,
             flags=byte(self.flags.to_byte(self.bit_big_endian)),
             big_endian=self.big_endian,
@@ -729,6 +730,7 @@ class Binder(BaseBinaryFile):
             raise AttributeError("`Binder version `V4` must have a `v4_info`.")
 
         return BinderHeaderV4(
+            version=b"BHD4" if self.is_split_bxf else b"BND4",
             unknown1=self.v4_info.unknown1,
             unknown2=self.v4_info.unknown2,
             big_endian=self.big_endian,
@@ -836,7 +838,6 @@ class Binder(BaseBinaryFile):
         else:
             directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
-        print(directory)
 
         entry_tree_dict = {}
         use_index_prefix = self.has_repeated_entry_names
@@ -991,7 +992,9 @@ class Binder(BaseBinaryFile):
         """
         matches = [entry for entry in self.entries if re.match(regex, entry.name)]
         if len(matches) > 1:
-            raise ValueError(f"Found multiple Binder entries with name matching '{regex}'.")
+            raise ValueError(
+                f"Found multiple Binder entries with name matching '{regex}':\n  {[m.path for m in matches]}"
+            )
         if not matches:
             raise BinderEntryNotFoundError(f"No Binder entries found with name matching '{regex}'.")
         return matches[0]
@@ -1086,6 +1089,10 @@ class Binder(BaseBinaryFile):
 
     def __len__(self):
         return len(self.entries)
+
+    def __bool__(self):
+        """Implemented so that instances with no entries do not evaluate as `False` (they may have other attributes)."""
+        return True
 
     def __repr__(self):
         if not self.entries:

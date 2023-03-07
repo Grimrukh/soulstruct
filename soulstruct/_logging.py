@@ -66,6 +66,17 @@ _LOGGER.setLevel(1)  # All filtering is done by handlers.
 _LOGGER.addHandler(CONSOLE_HANDLER)
 _LOGGER.addHandler(FILE_HANDLER)
 
+
+def handle_unhandled_exception(exc_type, exc_value, exc_traceback):
+    if issubclass(exc_type, KeyboardInterrupt):
+        # Use default `excepthook` for KeyboardInterrupts.
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+    else:
+        _LOGGER.critical("Unhandled exception: ", exc_info=(exc_type, exc_value, exc_traceback))
+
+
+sys.excepthook = handle_unhandled_exception
+
 _LOGGER.info(
     f"Log file {LOG_PATH} opened with level {logging.getLevelName(FILE_HANDLER.level)} ({FILE_HANDLER.level})."
 )

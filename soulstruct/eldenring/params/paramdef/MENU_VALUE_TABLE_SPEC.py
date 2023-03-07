@@ -15,14 +15,14 @@ from soulstruct.utilities.binary import *
 class MENU_VALUE_TABLE_SPEC(ParamRow):
     Value: int = ParamField(
         int, "value", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    TextId: int = ParamField(
+    TextID: int = ParamField(
         int, "textId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CompareType: int = ParamField(
         sbyte, "compareType", MENU_VALUE_TABLE_CMP_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     _Pad0: bytes = ParamPad(3, "padding[3]")

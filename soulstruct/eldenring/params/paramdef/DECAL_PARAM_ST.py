@@ -13,53 +13,53 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class DECAL_PARAM_ST(ParamRow):
-    TextureId: int = ParamField(
+    TextureID: int = ParamField(
         int, "textureId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    DmypolyId: int = ParamField(
-        int, "dmypolyId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ModelPoint: int = ParamField(
+        int, "dmypolyId", game_type=ModelDummy, default=-1,
+        tooltip="TODO",
     )
     PitchAngle: float = ParamField(
         float, "pitchAngle", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     YawAngle: float = ParamField(
         float, "yawAngle", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     NearDistance: float = ParamField(
         float, "nearDistance", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     FarDistance: float = ParamField(
         float, "farDistance", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     NearSize: float = ParamField(
         float, "nearSize", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     FarSize: float = ParamField(
         float, "farSize", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    MaskSpeffectId: int = ParamField(
-        int, "maskSpeffectId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    MaskSpecialEffectID: int = ParamField(
+        int, "maskSpeffectId", game_type=SpecialEffectParam, default=-1,
+        tooltip="TODO",
     )
     Pad10: int = ParamField(
         uint, "pad_10:4", bit_count=4, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ReplaceTextureIdbyMaterial: bool = ParamField(
+    ReplaceTextureIDWithMaterial: bool = ParamField(
         uint, "replaceTextureId_byMaterial:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    DmypolyCategory: int = ParamField(
+    ModelPointCategory: int = ParamField(
         uint, "dmypolyCategory:2", bit_count=2, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     Pad05: int = ParamField(
         uint, "pad_05:4", bit_count=4, default=0,
@@ -67,11 +67,11 @@ class DECAL_PARAM_ST(ParamRow):
     )
     UseDeferredDecal: bool = ParamField(
         uint, "useDeferredDecal:1", bit_count=1, default=True,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     UsePaintDecal: bool = ParamField(
         uint, "usePaintDecal:1", bit_count=1, default=True,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     BloodTypeEnable: bool = ParamField(
         uint, "bloodTypeEnable:1", bit_count=1, default=False,
@@ -91,7 +91,7 @@ class DECAL_PARAM_ST(ParamRow):
     )
     UsePom: bool = ParamField(
         uint, "usePom:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     UseEmissive: bool = ParamField(
         uint, "useEmissive:1", bit_count=1, default=False,
@@ -103,47 +103,47 @@ class DECAL_PARAM_ST(ParamRow):
     )
     RandomSizeMin: int = ParamField(
         short, "randomSizeMin", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomSizeMax: int = ParamField(
         short, "randomSizeMax", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomRollMin: float = ParamField(
         float, "randomRollMin", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomRollMax: float = ParamField(
         float, "randomRollMax", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomPitchMin: float = ParamField(
         float, "randomPitchMin", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomPitchMax: float = ParamField(
         float, "randomPitchMax", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomYawMin: float = ParamField(
         float, "randomYawMin", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     RandomYawMax: float = ParamField(
         float, "randomYawMax", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    PomHightScale: float = ParamField(
+    PomHeightScale: float = ParamField(
         float, "pomHightScale", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     PomSampleMin: int = ParamField(
         byte, "pomSampleMin", default=8,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     PomSampleMax: int = ParamField(
         byte, "pomSampleMax", default=64,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     BlendMode: int = ParamField(
         sbyte, "blendMode", DECAL_PARAM_BLEND_MODE, default=1,

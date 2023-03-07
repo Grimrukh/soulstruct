@@ -2,9 +2,7 @@ __all__ = ["MSGDirectory"]
 
 import typing as tp
 
-from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory
-from soulstruct.utilities.misc import BiDict
-
+from soulstruct.base.text.msg_directory import MSGDirectory as _BaseMSGDirectory, fmg_property
 from soulstruct.base.text.fmg import FMG
 from .msgbnd import MSGBND
 
@@ -13,54 +11,53 @@ class MSGDirectory(_BaseMSGDirectory):
 
     FILE_CLASS: tp.ClassVar[tp.Type[MSGBND]] = MSGBND
 
-    # TODO: Regenerate defaults/properties from BB msgbnds.
+    DEFAULT_ENTRY_STEMS = {
+        # ITEM
+        ("item", 10): "アイテム名",
+        ("item", 11): "武器名",
+        ("item", 12): "防具名",
+        ("item", 13): "アクセサリ名",
+        ("item", 14): "魔法名",
+        ("item", 18): "NPC名",
+        ("item", 19): "地名",
+        ("item", 20): "アイテム説明",
+        ("item", 21): "武器説明",
+        ("item", 22): "防具説明",
+        ("item", 23): "アクセサリ説明",
+        ("item", 24): "アイテムうんちく",
+        ("item", 25): "武器うんちく",
+        ("item", 26): "防具うんちく",
+        ("item", 27): "アクセサリうんちく",
+        ("item", 28): "魔法説明",
+        ("item", 29): "魔法うんちく",
+        # MENU
+        ("menu", 1): "会話",
+        ("menu", 2): "血文字",
+        ("menu", 3): "ムービー字幕",
+        ("menu", 4): "死因",
+        ("menu", 30): "イベントテキスト",
+        ("menu", 31): "魔石名",
+        ("menu", 32): "魔石説明",
+        ("menu", 33): "魔石うんちく",
+        ("menu", 34): "魔石接頭語",
+        ("menu", 35): "魔石効果",
+        ("menu", 70): "インゲームメニュー",
+        ("menu", 76): "メニュー共通テキスト",
+        ("menu", 77): "メニューその他",
+        ("menu", 78): "ダイアログ",
+        ("menu", 79): "キーガイド",
+        ("menu", 80): "一行ヘルプ",
+        ("menu", 90): "テキスト表示用タグ一覧",
+        ("menu", 91): "機種別タグ_win64",
+        ("menu", 92): "システムメッセージ_win64",
+        ("menu", 200): "SP_メニューテキスト",
+        ("menu", 201): "SP_一行ヘルプ",
+        ("menu", 202): "SP_キーガイド",
+        ("menu", 203): "SP_システムメッセージ_win64",
+        ("menu", 204): "SP_ダイアログ",
+    }
 
-    _MSGBND_INDEX_NAMES = BiDict(
-        (1, "Subtitles"),
-        (2, "SoapstoneMessages"),
-        (3, "OpeningSubtitles"),
-        (4, "CausesOfDeath"),
-        (10, "GoodNames"),
-        (11, "WeaponNames"),
-        (12, "ArmorNames"),
-        (13, "AccessoryNames"),
-        (14, "SpellNames"),
-        (18, "NPCNames"),
-        (19, "PlaceNames"),
-        (20, "GoodSummaries"),
-        (21, "WeaponSummaries"),
-        (22, "ArmorSummaries"),
-        (23, "AccessorySummaries"),
-        (24, "GoodDescriptions"),
-        (25, "WeaponDescriptions"),
-        (26, "ArmorDescriptions"),
-        (27, "AccessoryDescriptions"),
-        (28, "SpellSummaries"),
-        (29, "SpellDescriptions"),
-        (30, "EventText"),
-        (31, "BloodGemNames"),
-        (32, "BloodGemSummaries"),
-        (33, "BloodGemDescriptions"),
-        (34, "BloodGemPrefixes"),
-        (35, "BloodGemEffects"),
-        (70, "IngameMenus"),
-        (76, "MenuText_Common"),
-        (77, "MenuText_Other"),
-        (78, "MenuDialogs"),
-        (79, "KeyGuide"),
-        (80, "MenuHelpSnippets"),
-        (90, "TextTagPlaceholders"),
-        (91, "DebugTags_Win64"),
-        (92, "SystemMessages_Win64"),
-        # Old playtest categories.
-        (200, "MenuText_SP"),
-        (201, "MenuHelpSnippets_SP"),
-        (202, "KeyGuide_SP"),
-        (203, "SystemMessages_Win64_SP"),
-        (204, "MenuDialogs_SP"),
-        # NOTE: No Patch categories.
-    )
-    _ORIGINAL_PATCH_SUFFIX = ""  # no Patch categories
+    BASE_PATCH_FMGS = {}  # no patches
 
     MAIN_CATEGORIES = (
         "NPCNames",
@@ -113,50 +110,44 @@ class MSGDirectory(_BaseMSGDirectory):
         "TextTagPlaceholders",
     )
 
-    ALL_CATEGORIES = ALL_FMG_NAMES = MAIN_CATEGORIES + INTERNAL_CATEGORIES
-
-    ArmorDescriptions: dict
-    ArmorNames: dict
-    ArmorSummaries: dict
-    BloodGemDescriptions: dict
-    BloodGemEffects: dict
-    BloodGemNames: dict
-    BloodGemPrefixes: dict
-    BloodGemSummaries: dict
-    CausesOfDeath: dict
-    ContextualHelp: dict
-    Subtitles: dict
-    DebugTags_Win64: dict
-    EventText: dict
-    FeatureDescriptions: dict
-    FeatureNames: dict
-    FeatureSummaries: dict
-    IngameMenus: dict
-    GoodDescriptions: dict
-    GoodNames: dict
-    GoodSummaries: dict
-    KeyGuide: dict
-    KeyGuide_SP: dict
-    SpellDescriptions: dict
-    SpellNames: dict
-    SpellSummaries: dict
-    MenuDialogs: dict
-    MenuDialogs_SP: dict
-    MenuHelpSnippets: dict
-    MenuHelpSnippets_SP: dict
-    MenuText_Common: dict
-    MenuText_Other: dict
-    MenuText_SP: dict
-    NPCNames: dict
-    OpeningSubtitles: dict
-    PlaceNames: dict
-    AccessoryDescriptions: dict
-    AccessoryNames: dict
-    AccessorySummaries: dict
-    SoapstoneMessages: dict
-    SystemMessages_Win64: dict
-    SystemMessages_Win64_SP: dict
-    TextTagPlaceholders: dict
-    WeaponDescriptions: dict
-    WeaponNames: dict
-    WeaponSummaries: dict
+    ArmorDescriptions = fmg_property("item", 26)  # type: FMG
+    ArmorNames = fmg_property("item", 12)  # type: FMG
+    ArmorSummaries = fmg_property("item", 22)  # type: FMG
+    BloodGemDescriptions = fmg_property("menu", 33)  # type: FMG
+    BloodGemEffects = fmg_property("menu", 35)  # type: FMG
+    BloodGemNames = fmg_property("menu", 31)  # type: FMG
+    BloodGemPrefixes = fmg_property("menu", 34)  # type: FMG
+    BloodGemSummaries = fmg_property("menu", 32)  # type: FMG
+    CausesOfDeath = fmg_property("menu", 4)  # type: FMG
+    Subtitles = fmg_property("menu", 1)  # type: FMG
+    DebugTags_Win64 = fmg_property("menu", 91)  # type: FMG
+    EventText = fmg_property("menu", 30)  # type: FMG
+    IngameMenus = fmg_property("menu", 70)  # type: FMG
+    GoodDescriptions = fmg_property("item", 24)  # type: FMG
+    GoodNames = fmg_property("item", 10)  # type: FMG
+    GoodSummaries = fmg_property("item", 20)  # type: FMG
+    KeyGuide = fmg_property("menu", 79)  # type: FMG
+    KeyGuide_SP = fmg_property("menu", 202)  # type: FMG
+    SpellDescriptions = fmg_property("item", 27)  # type: FMG
+    SpellNames = fmg_property("item", 14)  # type: FMG
+    SpellSummaries = fmg_property("item", 28)  # type: FMG
+    MenuDialogs = fmg_property("menu", 78)  # type: FMG
+    MenuDialogs_SP = fmg_property("menu", 204)  # type: FMG
+    MenuHelpSnippets = fmg_property("menu", 80)  # type: FMG
+    MenuHelpSnippets_SP = fmg_property("menu", 201)  # type: FMG
+    MenuText_Common = fmg_property("menu", 76)  # type: FMG
+    MenuText_Other = fmg_property("menu", 77)  # type: FMG
+    MenuText_SP = fmg_property("menu", 200)  # type: FMG
+    NPCNames = fmg_property("item", 18)  # type: FMG
+    OpeningSubtitles = fmg_property("menu", 3)  # type: FMG
+    PlaceNames = fmg_property("item", 19)  # type: FMG
+    AccessoryDescriptions = fmg_property("item", 27)  # type: FMG
+    AccessoryNames = fmg_property("item", 13)  # type: FMG
+    AccessorySummaries = fmg_property("item", 23)  # type: FMG
+    SoapstoneMessages = fmg_property("menu", 2)  # type: FMG
+    SystemMessages_Win64 = fmg_property("menu", 92)  # type: FMG
+    SystemMessages_Win64_SP = fmg_property("menu", 203)  # type: FMG
+    TextTagPlaceholders = fmg_property("menu", 90)  # type: FMG
+    WeaponDescriptions = fmg_property("item", 25)  # type: FMG
+    WeaponNames = fmg_property("item", 11)  # type: FMG
+    WeaponSummaries = fmg_property("item", 21)  # type: FMG

@@ -11,7 +11,7 @@ from soulstruct.base.project import GameDirectoryProject as _BaseGameDirectoryPr
 from soulstruct.darksouls1r.ai import AIScriptDirectory
 from soulstruct.darksouls1r.ezstate import TalkDirectory
 from soulstruct.darksouls1r.events import EventDirectory
-from soulstruct.darksouls1r.maps import MapStudioDirectory, MSB
+from soulstruct.darksouls1r.maps import MapStudioDirectory
 from soulstruct.darksouls1r.params import GameParamBND
 from soulstruct.darksouls1r.params import DrawParamDirectory
 from soulstruct.darksouls1r.text import MSGDirectory
@@ -25,14 +25,16 @@ _LOGGER = logging.getLogger(__name__)
 
 class GameDirectoryProject(_BaseGameDirectoryProject):
 
+    # This also determines load order, which is important for some types (e.g. Maps -> Enums -> Events).
     DATA_TYPES = {
-        ProjectDataType.AI: AIScriptDirectory,
-        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
-        ProjectDataType.Lighting: DrawParamDirectory,
-        ProjectDataType.Maps: MapStudioDirectory,
         ProjectDataType.Params: GameParamBND,
+        ProjectDataType.Lighting: DrawParamDirectory,
+        ProjectDataType.AI: AIScriptDirectory,
         ProjectDataType.Talk: TalkDirectory,  # modified via ESP state machine script files
         ProjectDataType.Text: MSGDirectory,
+        ProjectDataType.Maps: MapStudioDirectory,
+        ProjectDataType.Enums: None,  # modified via Python modules; must be loaded after `Maps`
+        ProjectDataType.Events: EventDirectory,  # modified via EVS event script files
     }
 
     ai: AIScriptDirectory
@@ -45,10 +47,6 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         base_dict = super().get_data_type_import_settings(data_type)
         if data_type == ProjectDataType.Maps:
             base_dict |= dict(
-                use_bundled_vanilla_enums=(
-                    "Use Vanilla Entities from Soulstruct", True,
-                    "Use the renamed (vanilla) game IDs included with Soulstruct for this game."
-                ),
                 translate_japanese_map_entity_names=(
                     "Translate Japanese Map Entity Names", True,
                     "Apply bundled translations for vanilla event/region MSB entries with entity IDs. "
@@ -58,14 +56,21 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
                 remove_broken_regions=(
                     "Remove Broken Duke's Archives Regions", True,
                     "In vanilla Dark Souls, the Duke's Archives has four unused regions that can break event\n"
-                    "scripts. Would you like Soulstruct to delete those four regions now?",
+                    "scripts. It is highly recommended that you use this option to immediately delete them.",
                 ),
             )
+        elif data_type == ProjectDataType.Enums:
+            base_dict |= dict(
+                use_bundled_vanilla_enums=(
+                    "Use Vanilla Entities from Soulstruct", True,
+                    "Use the renamed (vanilla) game IDs included with Soulstruct for this game.",
+                ),
+            )
+
         return base_dict
 
-    def write_vanilla_entities(self, map_studio_directory: MapStudioDirectory, in_events_folder=False):
-        # Write vanilla `common` entities, if it exists.
-        enums_dir = self.project_root / ("events" if in_events_folder else "enums")
+    def write_entities_modules_with_bundled_vanilla(self, map_studio_directory: MapStudioDirectory):
+        """Write vanilla entities packaged with Soulstruct for DSR (adding any new entries in MSB)."""
         try:
             vanilla_common_entities = PACKAGE_PATH(
                 f"darksouls1ptde/events/vanilla_entities/common_entities.py"
@@ -75,7 +80,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
             pass
         else:
             _LOGGER.info("Writing `common_entities.py` to project from Soulstruct.")
-            common_entities_path = enums_dir / "common_enums.py"
+            common_entities_path = self.enums_directory / "common_enums.py"
             common_entities_path.parent.mkdir(parents=True, exist_ok=True)
             common_entities_path.write_text(vanilla_common_entities)
             # `EventDirectory.to_evs()` will automatically add non-star imports from `common` if it exists.
@@ -89,7 +94,7 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
             except FileNotFoundError:
                 vanilla_module = ""
             msb.write_entities_module(
-                enums_dir / f"{game_map.emevd_file_stem}_enums.py",
+                self.enums_directory / f"{game_map.emevd_file_stem}_enums.py",
                 append_to_module=vanilla_module,
             )
 
@@ -97,21 +102,12 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
         self,
         import_directory: Path | str,
         put_enums_in_events_folder=False,
-        use_bundled_vanilla_enums=True,
         translate_japanese_map_entity_names=True,
         remove_broken_regions=True,
     ):
         maps = self._default_import(ProjectDataType.Maps, import_directory)  # type: MapStudioDirectory
 
-        if translate_japanese_map_entity_names:
-            # NOTE: Must be done BEFORE writing `enums` modules below.
-            for msb in maps.files.values():
-                msb: MSB
-                msb.translate_entity_id_names()
-
-        if use_bundled_vanilla_enums:
-            self.write_vanilla_entities(maps)
-
+        # Delete broken regions (if requested) before translating names, to avoid extra warnings.
         if remove_broken_regions:
             archives_msb = maps.DukesArchives
             repeats = archives_msb.get_repeated_entity_ids()
@@ -119,7 +115,44 @@ class GameDirectoryProject(_BaseGameDirectoryProject):
                 for entry in repeats["POINT_PARAM_ST"]:
                     archives_msb.remove_entry(entry)
 
+        if translate_japanese_map_entity_names:
+            # NOTE: Must be done BEFORE writing `enums` modules below.
+            for msb_name, msb in maps.files.items():
+                _LOGGER.info(f"Translating Japanese entity names in {msb_name}.msb...")
+                msb.translate_entity_id_names()
+
         self._set_data(ProjectDataType.Maps, maps)
+
+    def import_Enums(
+        self,
+        import_directory: Path | str,
+        use_loaded_maps_data=True,
+        put_enums_in_events_folder=False,
+        use_bundled_vanilla_enums=True,
+    ):
+        """Generates `{map_stem}_enums.py` modules from MSBs.
+
+        Uses existing `maps` data if available and `use_maps_data` is True. Otherwise, imports temporary MSBs.
+        """
+        if use_loaded_maps_data and self.maps:
+            maps = self.maps
+        else:  # temporary MSB import
+            maps = self._default_import(ProjectDataType.Maps, import_directory)  # type: MapStudioDirectory
+
+        if put_enums_in_events_folder and ProjectDataType.Events not in self.DATA_TYPES:
+            _LOGGER.warning("Cannot put enums modules in 'events' folder when game project does not support Events.")
+            put_enums_in_events_folder = False
+
+        self.enums_in_events_folder = put_enums_in_events_folder
+
+        if use_bundled_vanilla_enums:
+            # Includes MSB entities.
+            self.write_entities_modules_with_bundled_vanilla(maps)
+        else:
+            enums_folder = self.enums_directory
+            for map_stem, msb in maps.files.items():
+                game_map = maps.GET_MAP(map_stem)
+                msb.write_entities_module(enums_folder / f"{game_map.emevd_file_stem}_enums.py")
 
     def copy_events_submodule(self, with_window: ProjectWindow = None):
         """Also need PTDE submodule for DSR."""

@@ -297,40 +297,40 @@ class ATK_PARAM_ST(ParamRow):
                 "parameter.",
     )
     IgnoreGuard: bool = ParamField(
-        byte, "disableGuard:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "disableGuard:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, this attack cannot be blocked (e.g. throws).",
     )
     NoStaminaDamage: bool = ParamField(
-        byte, "disableStaminaAttack:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "disableStaminaAttack:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, this attack will deal no stamina damage, regardless of its stamina attack power.",
     )
     NoSpecialEffects: bool = ParamField(
-        byte, "disableHitSpEffect:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "disableHitSpEffect:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, this attack will trigger no special effects on the target. Internal description mentions "
                 "this is an 'SCE bug countermeasure' (referring to the original Dark Souls demo).",
     )
     NoMissNotificationForAI: bool = ParamField(
-        byte, "IgnoreNotifyMissSwingForAI:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "IgnoreNotifyMissSwingForAI:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, the character's AI will not be informed when this attack misses. Enabled for basic body "
                 "attacks (falling, rolling, ladder punches, etc.) that are generally not considered to be serious "
                 "attacks.",
     )
     RepeatHitSoundEffects: bool = ParamField(
-        byte, "repeatHitSfx:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "repeatHitSfx:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, sound effects will supposedly be repeated as long as the attack continuously hits a wall. "
                 "Never enabled, which is probably a good thing.",
     )
     IsPhysicalProjectile: bool = ParamField(
-        byte, "isArrowAtk:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "isArrowAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="Flags if this is the attack damage parameter of a physical projectile (arrow, bolt, or throwing "
                 "knife).",
     )
     IsAttackByGhost: bool = ParamField(
-        byte, "isGhostAtk:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "isGhostAtk:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="Flags if this is an attack of a ghost, which presumably disables wall collision, etc.",
     )
     IgnoreInvincibilityFrames: bool = ParamField(
-        byte, "isDisableNoDamage:1", ATK_PARAM_BOOL, bit_count=1, default=0,
+        byte, "isDisableNoDamage:1", ATK_PARAM_BOOL, bit_count=1, default=False,
         tooltip="If True, this attack will ignore invincibility frames from rolling or backstepping (but not other "
                 "sources of invincibility such as TAE or events).",
     )

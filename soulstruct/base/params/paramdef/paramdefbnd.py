@@ -80,22 +80,7 @@ class ParamDefBND(Binder, abc.ABC):
                 "Update/reinstall Soulstruct or copy the ParamDef files in yourself."
             )
 
-        paramdefbnd = cls.from_path(paramdefbnd_path)  # type: Self
-        for entry in paramdefbnd.entries:
-            try:
-                paramdef = entry.to_game_file(cls.PARAMDEF_CLASS)
-            except Exception:
-                _LOGGER.error(f"Could not load ParamDefBND entry: {entry.name}")
-                raise
-            if paramdef.param_type in paramdefbnd.paramdefs:
-                _LOGGER.warning(
-                    f"ParamDef type {paramdef.param_type} was loaded more than once in ParamDefBND. "
-                    f"Only first will be used."
-                )
-            else:
-                paramdefbnd.paramdefs[paramdef.param_type] = paramdef
-
-        return paramdefbnd
+        return cls.from_path(paramdefbnd_path)
 
     def __getitem__(self, param_type) -> ParamDef:
         try:

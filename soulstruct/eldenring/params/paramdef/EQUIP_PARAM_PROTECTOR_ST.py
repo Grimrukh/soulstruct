@@ -19,13 +19,13 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    SortId: int = ParamField(
+    SortIndex: int = ParamField(
         int, "sortId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index for automatic inventory sorting.",
     )
-    WanderingEquipId: int = ParamField(
+    GhostArmorReplacement: int = ParamField(
         uint, "wanderingEquipId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Replacement equipment for network ghosts.",
     )
     ResistSleep: int = ParamField(
         ushort, "resistSleep", default=0,
@@ -35,262 +35,284 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         ushort, "resistMadness", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SaDurability: float = ParamField(
+    Poise: float = ParamField(
         float, "saDurability", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of poise added when wearing armor.",
     )
     ToughnessCorrectRate: float = ParamField(
         float, "toughnessCorrectRate", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    FixPrice: int = ParamField(
+    RepairCost: int = ParamField(
         int, "fixPrice", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls required to repair armor fully. Actual repair cost is this multiplied by current "
+                "durability over max durability.",
     )
-    BasicPrice: int = ParamField(
+    BasicCost: int = ParamField(
         int, "basicPrice", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unsure when this is used. Possibly sets the default if the cost is not specified in Shop parameters. "
+                "Always set to 200.",
     )
-    SellValue: int = ParamField(
+    FramptSellValue: int = ParamField(
         int, "sellValue", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold.",
     )
     Weight: float = ParamField(
         float, "weight", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weight of armor.",
     )
-    ResidentSpEffectId: int = ParamField(
-        int, "residentSpEffectId", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect1: int = ParamField(
+        int, "residentSpEffectId", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (first of three).",
     )
-    ResidentSpEffectId2: int = ParamField(
-        int, "residentSpEffectId2", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect2: int = ParamField(
+        int, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (second of three).",
     )
-    ResidentSpEffectId3: int = ParamField(
-        int, "residentSpEffectId3", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect3: int = ParamField(
+        int, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (third of three).",
     )
-    MaterialSetId: int = ParamField(
-        int, "materialSetId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    UpgradeMaterialID: int = ParamField(
+        int, "materialSetId", game_type=UpgradeMaterialParam, default=-1,
+        tooltip="Upgrade material set for reinforcement.",
     )
-    PartsDamageRate: float = ParamField(
+    SiteDamageMultiplier: float = ParamField(
         float, "partsDamageRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for damage taken to this part of the body. Used to specify weakness, not strength, so is "
+                "never less than 1. Usually 1.5 for weak head pieces, 1.3 for strong head pieces, 1.1 for gauntlets "
+                "and leggings, and 1 for torso armor.",
     )
-    CorectSARecover: float = ParamField(
+    PoiseRecoveryTimeModifier: float = ParamField(
         float, "corectSARecover", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Value added to poise recovery time (so negative values are better). -0.1 for heavy armor and 0 "
+                "otherwise.",
     )
-    OriginEquipPro: int = ParamField(
+    UpgradeOrigin0: int = ParamField(
         int, "originEquipPro", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 0 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro1: int = ParamField(
+    UpgradeOrigin1: int = ParamField(
         int, "originEquipPro1", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 1 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro2: int = ParamField(
+    UpgradeOrigin2: int = ParamField(
         int, "originEquipPro2", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 2 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro3: int = ParamField(
+    UpgradeOrigin3: int = ParamField(
         int, "originEquipPro3", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 3 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro4: int = ParamField(
+    UpgradeOrigin4: int = ParamField(
         int, "originEquipPro4", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 4 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro5: int = ParamField(
+    UpgradeOrigin5: int = ParamField(
         int, "originEquipPro5", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 5 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro6: int = ParamField(
+    UpgradeOrigin6: int = ParamField(
         int, "originEquipPro6", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 6 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro7: int = ParamField(
+    UpgradeOrigin7: int = ParamField(
         int, "originEquipPro7", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 7 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro8: int = ParamField(
+    UpgradeOrigin8: int = ParamField(
         int, "originEquipPro8", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 8 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro9: int = ParamField(
+    UpgradeOrigin9: int = ParamField(
         int, "originEquipPro9", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 9 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro10: int = ParamField(
+    UpgradeOrigin10: int = ParamField(
         int, "originEquipPro10", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 10 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro11: int = ParamField(
+    UpgradeOrigin11: int = ParamField(
         int, "originEquipPro11", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 11 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro12: int = ParamField(
+    UpgradeOrigin12: int = ParamField(
         int, "originEquipPro12", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 12 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro13: int = ParamField(
+    UpgradeOrigin13: int = ParamField(
         int, "originEquipPro13", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 13 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro14: int = ParamField(
+    UpgradeOrigin14: int = ParamField(
         int, "originEquipPro14", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 14 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipPro15: int = ParamField(
+    UpgradeOrigin15: int = ParamField(
         int, "originEquipPro15", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 15 of this armor (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the armor cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    FaceScaleMScaleX: float = ParamField(
+    MaleFaceScaleX: float = ParamField(
         float, "faceScaleM_ScaleX", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Scale factor applied to X dimension of male faces when worn.",
     )
-    FaceScaleMScaleZ: float = ParamField(
+    MaleFaceScaleZ: float = ParamField(
         float, "faceScaleM_ScaleZ", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Scale factor applied to Z dimension of male faces when worn.",
     )
-    FaceScaleMMaxX: float = ParamField(
+    MaleFaceMaxScaleX: float = ParamField(
         float, "faceScaleM_MaxX", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum scale permitted for X dimension of male faces when worn.",
     )
-    FaceScaleMMaxZ: float = ParamField(
+    MaleFaceMaxScaleZ: float = ParamField(
         float, "faceScaleM_MaxZ", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum scale permitted for Z dimension of male faces when worn.",
     )
-    FaceScaleFScaleX: float = ParamField(
+    FemaleFaceScaleX: float = ParamField(
         float, "faceScaleF_ScaleX", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Scale factor applied to X dimension of female faces when worn.",
     )
-    FaceScaleFScaleZ: float = ParamField(
+    FemaleFaceScaleZ: float = ParamField(
         float, "faceScaleF_ScaleZ", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Scale factor applied to Z dimension of female faces when worn.",
     )
-    FaceScaleFMaxX: float = ParamField(
+    FemaleFaceMaxScaleX: float = ParamField(
         float, "faceScaleF_MaxX", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum scale permitted for X dimension of female faces when worn.",
     )
-    FaceScaleFMaxZ: float = ParamField(
+    FemaleFaceMaxScaleZ: float = ParamField(
         float, "faceScaleF_MaxZ", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum scale permitted for Z dimension of female faces when worn.",
     )
-    QwcId: int = ParamField(
+    QWCID: int = ParamField(
         int, "qwcId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unused world tendency remnant.",
     )
-    EquipModelId: int = ParamField(
-        ushort, "equipModelId", default=0,
-        tooltip="TOOLTIP-TODO",
+    EquipmentModel: int = ParamField(
+        ushort, "equipModelId", game_type=EquipmentModel, default=0,
+        tooltip="Model ID of armor.",
     )
-    IconIdM: int = ParamField(
-        ushort, "iconIdM", default=0,
-        tooltip="TOOLTIP-TODO",
+    MaleIcon: int = ParamField(
+        ushort, "iconIdM", game_type=Icon, default=0,
+        tooltip="Icon of male variant of armor in inventory.",
     )
-    IconIdF: int = ParamField(
-        ushort, "iconIdF", default=0,
-        tooltip="TOOLTIP-TODO",
+    FemaleIcon: int = ParamField(
+        ushort, "iconIdF", game_type=Icon, default=0,
+        tooltip="Icon of female variant of armor in inventory.",
     )
-    KnockBack: int = ParamField(
+    KnockbackPercentageReduction: int = ParamField(
         ushort, "knockBack", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Never used. Probably the percentage of knockback reduced (from 0 to 100) when wearing armor.",
     )
-    KnockbackBounceRate: int = ParamField(
+    KnockbackBouncePercentage: int = ParamField(
         ushort, "knockbackBounceRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Never used. Possibly affects knockback of incoming attacks.",
     )
-    Durability: int = ParamField(
+    InitialDurability: int = ParamField(
         ushort, "durability", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Durability of armor when it is obtained. Always equal to max durability in vanilla game.",
     )
-    DurabilityMax: int = ParamField(
+    MaxDurability: int = ParamField(
         ushort, "durabilityMax", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum durability of armor.",
     )
     _Pad1: bytes = ParamPad(2, "pad03[2]")
-    DefFlickPower: int = ParamField(
+    RepelDefense: int = ParamField(
         ushort, "defFlickPower", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines when incoming attacks will bounce off.",
     )
-    DefensePhysics: int = ParamField(
+    PhysicalDefense: int = ParamField(
         ushort, "defensePhysics", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against physical attack damage.",
     )
-    DefenseMagic: int = ParamField(
+    MagicDefense: int = ParamField(
         ushort, "defenseMagic", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against magic attack damage.",
     )
-    DefenseFire: int = ParamField(
+    FireDefense: int = ParamField(
         ushort, "defenseFire", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against fire attack damage.",
     )
-    DefenseThunder: int = ParamField(
+    LightningDefense: int = ParamField(
         ushort, "defenseThunder", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against lightning attack damage.",
     )
-    DefenseSlash: int = ParamField(
+    SlashDefense: int = ParamField(
         short, "defenseSlash", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against physical slash attack damage.",
     )
-    DefenseBlow: int = ParamField(
+    StrikeDefense: int = ParamField(
         short, "defenseBlow", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against physical strike attack damage.",
     )
-    DefenseThrust: int = ParamField(
+    ThrustDefense: int = ParamField(
         short, "defenseThrust", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Added defense against physical thrust attack damage.",
     )
-    ResistPoison: int = ParamField(
+    PoisonResistance: int = ParamField(
         ushort, "resistPoison", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Poison resistance added by armor.",
     )
-    ResistDisease: int = ParamField(
+    ToxicResistance: int = ParamField(
         ushort, "resistDisease", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Toxic resistance added by armor.",
     )
-    ResistBlood: int = ParamField(
+    BleedResistance: int = ParamField(
         ushort, "resistBlood", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bleed resistance added by armor.",
     )
-    ResistCurse: int = ParamField(
+    CurseResistance: int = ParamField(
         ushort, "resistCurse", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Curse resistance added by armor.",
     )
-    ReinforceTypeId: int = ParamField(
-        short, "reinforceTypeId", default=0,
-        tooltip="TOOLTIP-TODO",
+    ArmorUpgradeID: int = ParamField(
+        short, "reinforceTypeId", game_type=ArmorUpgradeParam, default=0,
+        tooltip="Effects applied at consecutive upgrade reinforcement levels.",
     )
     TrophySGradeId: int = ParamField(
         short, "trophySGradeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    ShopLv: int = ParamField(
+    ShopLevel: int = ParamField(
         short, "shopLv", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Level of armor that can be sold in 'the shop'. Always -1 or 0. Probably unused.",
     )
-    KnockbackParamId: int = ParamField(
-        byte, "knockbackParamId", default=0,
-        tooltip="TOOLTIP-TODO",
+    KnockbackID: int = ParamField(
+        byte, "knockbackParamId", game_type=KnockbackParam, default=0,
+        tooltip="Knockback entry. Always 1.",
     )
-    FlickDamageCutRate: int = ParamField(
+    RepelDamagePercentageReduction: int = ParamField(
         byte, "flickDamageCutRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines some aspect of attack deflection. Always set to 0 (for light armor) or 255 (for heavy "
+                "armor).",
     )
-    EquipModelCategory: int = ParamField(
+    EquipmentModelCategory: int = ParamField(
         byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Body part covered by armor model.",
     )
-    EquipModelGender: int = ParamField(
+    EquipmentModelGender: int = ParamField(
         byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Gender variant of armor.",
     )
-    ProtectorCategory: int = ParamField(
+    ArmorType: int = ParamField(
         byte, "protectorCategory", PROTECTOR_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Type of armor (equip slot).",
     )
     Rarity: int = ParamField(
         byte, "rarity", default=0,
@@ -300,34 +322,34 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         byte, "sortGroupId", default=255,
         tooltip="TOOLTIP-TODO",
     )
-    PartsDmgType: int = ParamField(
+    PartsDamageType: int = ParamField(
         byte, "partsDmgType", ATK_PARAM_PARTSDMGTYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
     _Pad2: bytes = ParamPad(2, "pad04[2]")
-    IsDeposit: bool = ParamField(
+    CanBeStored: bool = ParamField(
         byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this armor can be stored in storage.",
     )
-    HeadEquip: bool = ParamField(
+    EquippedToHead: bool = ParamField(
         byte, "headEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="This armor is equipped to the head.",
     )
-    BodyEquip: bool = ParamField(
+    EquippedToBody: bool = ParamField(
         byte, "bodyEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="This armor is equipped to the body.",
     )
-    ArmEquip: bool = ParamField(
+    EquippedToHands: bool = ParamField(
         byte, "armEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="This armor is equipped to the hands.",
     )
-    LegEquip: bool = ParamField(
+    EquippedToLegs: bool = ParamField(
         byte, "legEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="This armor is equipped to the legs.",
     )
     UseFaceScale: bool = ParamField(
         byte, "useFaceScale:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the face-scaling parameters of this armor will be applied.",
     )
     IsSkipWeakDamageAnim: bool = ParamField(
         byte, "isSkipWeakDamageAnim:1", EQUIP_BOOL, bit_count=1, default=False,
@@ -358,13 +380,13 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DisableMultiDropShare: bool = ParamField(
+    DisableMultiplayerShare: bool = ParamField(
         byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this armor cannot be given to other players by dropping it. Always False in vanilla.",
     )
-    SimpleModelForDlc: bool = ParamField(
+    SimpleDLCModelExists: bool = ParamField(
         byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown; always set to False.",
     )
     ShowLogCondType: bool = ParamField(
         byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
@@ -379,29 +401,29 @@ class EQUIP_PARAM_PROTECTOR_ST(ParamRow):
         float, "neutralDamageCutRate", default=1.0,
         tooltip="TOOLTIP-TODO",
     )
-    SlashDamageCutRate: float = ParamField(
+    SlashDamagePercentageReduction: float = ParamField(
         float, "slashDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    BlowDamageCutRate: float = ParamField(
+    BluntDamagePercentageReduction: float = ParamField(
         float, "blowDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ThrustDamageCutRate: float = ParamField(
+    ThrustDamagePercentageReduction: float = ParamField(
         float, "thrustDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    MagicDamageCutRate: float = ParamField(
+    MagicDamagePercentageReduction: float = ParamField(
         float, "magicDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    FireDamageCutRate: float = ParamField(
+    FireDamagePercentageReduction: float = ParamField(
         float, "fireDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ThunderDamageCutRate: float = ParamField(
+    LightningDamagePercentageReduction: float = ParamField(
         float, "thunderDamageCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     DefenseMaterialSfx1: int = ParamField(
         ushort, "defenseMaterialSfx1", WEP_MATERIAL_DEF_SFX, default=50,

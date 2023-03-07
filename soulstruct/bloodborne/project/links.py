@@ -74,9 +74,9 @@ class WindowLinker(_BaseWindowLinker):
         else:
             param_nickname = field_type.get_param_nickname()
 
-        param_table = self.project.params.get_param(param_nickname)
+        param = self.project.params.get_param(param_nickname)
         try:
-            name = param_table[field_value].name + name_extension
+            name = param[field_value].name + name_extension
         except KeyError:
             return [BrokenLink()]
         else:

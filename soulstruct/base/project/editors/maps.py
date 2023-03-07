@@ -62,11 +62,14 @@ class MapEntryRow(EntryRow):
         super().__init__(editor=editor, row_index=row_index, main_bindings=main_bindings)
 
     def update_entry(self, entry_index: int, entry_text: str, entry_tooltip: str = ""):
-        """Update the data contain in this `MapEntryRow`."""
+        """Update the data currently presented in this `MapEntryRow`."""
         self.entry_id = entry_index
         entry_data = self.master.get_category_data()[entry_index]  # type: MSBEntry
+        text_label_fg = "#FFF"  # white
         if hasattr(entry_data, "entity_id"):
             text_tail = f"  {{ID: {entry_data.entity_id}}}" if entry_data.entity_id not in {-1, 0} else ""
+            if text_tail:
+                text_label_fg = "#FDA"  # orange
         elif isinstance(entry_data, BaseMSBModel) and entry_data.SUBTYPE_ENUM.name in {"Character", "Player"}:
             try:
                 model_id = int(entry_text.lstrip("c"))
@@ -86,6 +89,7 @@ class MapEntryRow(EntryRow):
             self.tooltip.text = None
         self._entry_text = entry_text
         self.text_label.var.set(entry_text + text_tail)
+        self.text_label["fg"] = text_label_fg
         self.build_entry_context_menu()
         self.unhide()
 
@@ -484,7 +488,7 @@ class MapsEditor(BaseFieldEditor, abc.ABC):
     FIELD_ROW_COUNT = 42  # highest count found so far (Parts.Collisions in Bloodborne)
     FIELD_NAME_WIDTH = 20
     FIELD_VALUE_BOX_WIDTH = 200
-    FIELD_VALUE_WIDTH = 60
+    FIELD_VALUE_WIDTH = 80
 
     ENTRY_ROW_CLASS = MapEntryRow
     FIELD_ROW_CLASS = MapFieldRow

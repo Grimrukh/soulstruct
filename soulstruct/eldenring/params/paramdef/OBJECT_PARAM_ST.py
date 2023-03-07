@@ -13,69 +13,72 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class OBJECT_PARAM_ST(ParamRow):
-    Hp: int = ParamField(
+    ObjectHP: int = ParamField(
         short, "hp", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of damage object can take before it is destroyed. (Set to -1 for invulnerability.)",
     )
-    Defense: int = ParamField(
+    MinAttackForDamage: int = ParamField(
         ushort, "defense", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Minimum attack power required to damage object. Attacks with less power than this will deal no "
+                "damage.",
     )
-    ExtRefTexId: int = ParamField(
+    ExternalTextureID: int = ParamField(
         short, "extRefTexId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'mAA / mAA_????.tpf (-1: None) (AA: Area number)'.",
     )
-    MaterialId: int = ParamField(
+    MaterialID: int = ParamField(
         short, "materialId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Treated the same as floor material. (Set to -1 to use default.)",
     )
-    AnimBreakIdMax: int = ParamField(
+    MaxDestructionAnimationID: int = ParamField(
         byte, "animBreakIdMax", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Upper limit of range of destruction animations, which seem to always start at 0.",
     )
-    IsCamHit: bool = ParamField(
+    CollidesWithCamera: bool = ParamField(
         byte, "isCamHit:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the camera will collide with this object.",
     )
-    IsBreakByPlayerCollide: bool = ParamField(
+    BrokenByPlayerCollision: bool = ParamField(
         byte, "isBreakByPlayerCollide:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the player will break the object just by touching it.",
     )
-    IsAnimBreak: bool = ParamField(
+    HasDestructionAnimation: bool = ParamField(
         byte, "isAnimBreak:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the object will use an animation when destroyed rather than using physics-based "
+                "destruction.",
     )
-    IsPenetrationBulletHit: bool = ParamField(
+    HitByPiercingBullets: bool = ParamField(
         byte, "isPenetrationBulletHit:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the object can be damaged by Bullets with target-piercing enabled.",
     )
-    IsChrHit: bool = ParamField(
+    CharacterCollision: bool = ParamField(
         byte, "isChrHit:1", bit_count=1, default=True,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If False, characters will pass through the object (e.g. branches).",
     )
-    IsAttackBacklash: bool = ParamField(
+    DeflectsAttacks: bool = ParamField(
         byte, "isAttackBacklash:1", bit_count=1, default=True,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, attacks will bounce off the object as though it were a wall.",
     )
-    IsDisableBreakForFirstAppear: bool = ParamField(
+    CannotSpawnBroken: bool = ParamField(
         byte, "isDisableBreakForFirstAppear:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the object cannot be destroyed when the player first spawns.",
     )
     IsLadder: bool = ParamField(
         byte, "isLadder:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Object is a ladder.",
     )
-    IsAnimPauseOnRemoPlay: bool = ParamField(
+    StopAnimationDuringCutscenes: bool = ParamField(
         byte, "isAnimPauseOnRemoPlay:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, object animation will not play in cutscenes.",
     )
-    IsDamageNoHit: bool = ParamField(
+    PreventAllDamage: bool = ParamField(
         byte, "isDamageNoHit:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, all damage to the object will be prevented. (Not sure if this is the same effet as settings "
+                "its HP to -1.)",
     )
-    IsMoveObj: bool = ParamField(
+    IsMovingObject: bool = ParamField(
         byte, "isMoveObj:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this object can move.",
     )
     IsRopeBridge: bool = ParamField(
         byte, "isRopeBridge:1", bit_count=1, default=False,
@@ -97,13 +100,13 @@ class OBJECT_PARAM_ST(ParamRow):
         byte, "isBreakByEnemyCollide:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    DefaultLodParamId: int = ParamField(
+    DefaultLOD: int = ParamField(
         sbyte, "defaultLodParamId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Default LOD (level of default) parameter.",
     )
-    BreakSfxId: int = ParamField(
-        int, "breakSfxId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    DestructionSoundEffect: int = ParamField(
+        int, "breakSfxId", game_type=VisualEffect, default=-1,
+        tooltip="Sound effect played upon destruction. (Set to -1 to use default value, which is apparently 80.)",
     )
     BreakSfxCpId: int = ParamField(
         int, "breakSfxCpId", default=-1,
@@ -189,9 +192,9 @@ class OBJECT_PARAM_ST(ParamRow):
         ushort, "burnBulletInterval", default=30,
         tooltip="TOOLTIP-TODO",
     )
-    NavimeshFlag: int = ParamField(
+    NavmeshFlag: int = ParamField(
         byte, "navimeshFlag", OBJECT_NAVIMESH_FLAG, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CollisionType: int = ParamField(
         byte, "collisionType", OBJECT_COLLISION_TYPE, default=0,

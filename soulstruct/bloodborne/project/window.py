@@ -3,6 +3,7 @@ from __future__ import annotations
 __all__ = ["ProjectWindow"]
 
 # from soulstruct.models.bloodborne import CHARACTER_MODELS
+from soulstruct.base.project.enums import ProjectDataType
 from soulstruct.base.project.window import ProjectWindow as _BaseProjectWindow
 
 from .core import GameDirectoryProject
@@ -34,21 +35,21 @@ class ProjectWindow(_BaseProjectWindow):
             foreground="#FFF",
             command=self._rename_param_entries_from_text,
         )
-        for param_table in ("Weapons", "Armor", "Goods", "GemsAndRunes"):  # handful of "spells" not renamed
+        for param_nickname in ("Weapons", "Armor", "Goods", "GemsAndRunes"):  # handful of "spells" not renamed
             params_menu.add_command(
-                label=f"Rename {param_table} from Text",
+                label=f"Rename {param_nickname} from Text",
                 foreground="#FFF",
-                command=lambda p=param_table: self._rename_param_entries_from_text(p),
+                command=lambda p=param_nickname: self._rename_param_entries_from_text(p),
             )
         return params_menu
 
-    def _rename_param_entries_from_text(self, param_table=None):
+    def _rename_param_entries_from_text(self, param_nickname: str = None):
         # TODO: Doesn't work properly for Gems and Runes yet.
-        self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_table)
-        if self.page_tabs.index(self.page_tabs.select()) == self.ordered_tabs.index("params"):
+        self.project.params.rename_entries_from_text(self.project.text, param_nickname=param_nickname)
+        if self.current_data_type == ProjectDataType.Params:
             if (
-                not param_table
+                not param_nickname
                 and self.params_tab.active_category in {"Weapons", "Armor", "Goods", "GemsAndRunes"}
-                or param_table == self.params_tab.active_category
+                or param_nickname == self.params_tab.active_category
             ):
                 self.params_tab.refresh_entries()

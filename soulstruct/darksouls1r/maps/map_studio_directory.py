@@ -31,6 +31,9 @@ class MapStudioDirectory(_BaseMapStudioDirectory):
     ALL_MAPS: tp.ClassVar = tuple(m for m in ALL_MAPS if m.msb_file_stem)
     GET_MAP: tp.ClassVar = staticmethod(get_map)
 
+    # Type hint override.
+    files: dict[str, MSB]
+
     Common = map_property(COMMON)  # type: MSB
     Depths = map_property(DEPTHS)  # type: MSB
     UndeadBurg = map_property(UNDEAD_BURG)  # type: MSB  # and Undead Parish

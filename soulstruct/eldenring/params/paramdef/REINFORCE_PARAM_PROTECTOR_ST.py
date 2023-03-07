@@ -13,65 +13,65 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class REINFORCE_PARAM_PROTECTOR_ST(ParamRow):
-    PhysicsDefRate: float = ParamField(
+    PhysicalDefenseMultiplier: float = ParamField(
         float, "physicsDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for physical defense at this upgrade level.",
     )
-    MagicDefRate: float = ParamField(
+    MagicDefenseMultiplier: float = ParamField(
         float, "magicDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for magic defense at this upgrade level.",
     )
-    FireDefRate: float = ParamField(
+    FireDefenseMultiplier: float = ParamField(
         float, "fireDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for fire defense at this upgrade level.",
     )
-    ThunderDefRate: float = ParamField(
+    LightningDefenseMultiplier: float = ParamField(
         float, "thunderDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for lightning defense at this upgrade level.",
     )
-    SlashDefRate: float = ParamField(
+    SlashDefenseMultiplier: float = ParamField(
         float, "slashDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for slash defense at this upgrade level.",
     )
-    BlowDefRate: float = ParamField(
+    StrikeDefenseMultiplier: float = ParamField(
         float, "blowDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for strike defense at this upgrade level.",
     )
-    ThrustDefRate: float = ParamField(
+    ThrustDefenseMultiplier: float = ParamField(
         float, "thrustDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for thrust defense at this upgrade level.",
     )
-    ResistPoisonRate: float = ParamField(
+    PoisonResistanceMultiplier: float = ParamField(
         float, "resistPoisonRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for poison resistance at this upgrade level.",
     )
-    ResistDiseaseRate: float = ParamField(
+    ToxicResistanceMultiplier: float = ParamField(
         float, "resistDiseaseRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for toxic resistance at this upgrade level.",
     )
-    ResistBloodRate: float = ParamField(
+    BleedResistanceMultiplier: float = ParamField(
         float, "resistBloodRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for bleed resistance at this upgrade level.",
     )
-    ResistCurseRate: float = ParamField(
+    CurseResistanceMultiplier: float = ParamField(
         float, "resistCurseRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier for curse resistance at this upgrade level.",
     )
-    ResidentSpEffectId1: int = ParamField(
-        byte, "residentSpEffectId1", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect1: int = ParamField(
+        byte, "residentSpEffectId1", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (first of three).",
     )
-    ResidentSpEffectId2: int = ParamField(
-        byte, "residentSpEffectId2", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect2: int = ParamField(
+        byte, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (second of three).",
     )
-    ResidentSpEffectId3: int = ParamField(
-        byte, "residentSpEffectId3", default=0,
-        tooltip="TOOLTIP-TODO",
+    WearerSpecialEffect3: int = ParamField(
+        byte, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to wearer (third of three).",
     )
-    MaterialSetId: int = ParamField(
-        byte, "materialSetId", default=0,
-        tooltip="TOOLTIP-TODO",
+    UpgradeMaterialID: int = ParamField(
+        byte, "materialSetId", game_type=UpgradeMaterialParam, default=0,
+        tooltip="Upgrade material set for reinforcement.",
     )
     DarkDefRate: float = ParamField(
         float, "darkDefRate", default=1.0,

@@ -159,8 +159,8 @@ class Matrix4:
     @classmethod
     def from_flat_row_order(cls, data: list | tuple) -> Matrix4:
         """Create `Matrix4` from flattened elements, in row-first order."""
-        if len(data) != 12:
-            raise ValueError(f"Input list must have 12 elements, but has {len(data)}.")
+        if len(data) != 16:
+            raise ValueError(f"Input list must have 16 elements, but has {len(data)}.")
         return cls(np.array(data, dtype=np.float32).reshape((4, 4)))
 
     def to_flat_row_order(self) -> list[float]:
@@ -170,8 +170,8 @@ class Matrix4:
     @classmethod
     def from_flat_column_order(cls, data) -> Matrix4:
         """Create `Matrix` from flattened elements, in column-first order."""
-        if len(data) != 12:
-            raise ValueError(f"Input list must have 12 elements, but has {len(data)}.")
+        if len(data) != 16:
+            raise ValueError(f"Input list must have 16 elements, but has {len(data)}.")
         return cls(np.array(data, dtype=np.float32).reshape((4, 4)).T)
 
     def to_flat_column_order(self) -> list[int] | list[float]:

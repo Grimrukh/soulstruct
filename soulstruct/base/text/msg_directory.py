@@ -10,7 +10,7 @@ import typing as tp
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from soulstruct.containers import Binder, BinderEntry
+from soulstruct.containers import Binder, BinderEntry, DCXType
 from soulstruct.base.game_file_directory import GameFileDirectory
 from soulstruct.utilities.files import read_json, write_json
 
@@ -51,6 +51,9 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
     # When `merge_base_and_patch()` is called, all base and patch FMGs will be merged (with 'patch' taking precedence in
     # case of conflicts) and the results written to BOTH base and patch.
     BASE_PATCH_FMGS: tp.ClassVar[dict[(str, int), (str, int)]] = {}
+
+    # DCX compression type to use for `FMG` entries. Typically Null.
+    FMG_DCX_TYPE: tp.ClassVar[DCXType] = DCXType.Null
 
     # Override file type.
     files: dict[str, Binder] = field(default_factory=dict)  # maps 'true stems' to `FILE_CLASS` instances
@@ -133,6 +136,7 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                     fmg = FMG.from_json(directory / json_name)
                 except FileNotFoundError:
                     raise FileNotFoundError(f"Could not find text (FMG) JSON file: {directory / json_name}")
+                fmg.dcx_type = cls.FMG_DCX_TYPE
                 entry_path = cls.FILE_CLASS.get_default_entry_path(json_stem + ".fmg")
                 entry = BinderEntry(bytes(fmg), entry_id, entry_path, cls.FILE_CLASS.DEFAULT_ENTRY_FLAGS)
                 entries.append(entry)
@@ -250,23 +254,27 @@ class MSGDirectory(GameFileDirectory, abc.ABC):
                 fmgs[attr_name] = getattr(self, attr_name)
         return fmgs
 
-    def remove_empty_strings(self, category_name_regex: str):
+    def remove_empty_strings(self, category_name_regex: str = ""):
         """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and remove empty strings from all
         FMGs in properties that match `category_name_regex` pattern (e.g. r".*Descriptions").
 
-        Use match-all regex like `r".*"` to affect all FMGs.
+        Default `category_name_regex` will match all FMG names.
         """
-        for fmg in self.get_matching_fmgs(category_name_regex).values():
-            fmg.remove_empty_strings()
+        matching_fmgs = list(self.get_matching_fmgs(category_name_regex).values())
+        for fmg_key, fmg in self.fmgs.items():
+            if fmg in matching_fmgs:
+                self.fmgs[fmg_key] = fmg.remove_empty_strings()
 
-    def apply_line_limits(self, category_name_regex: str, max_chars_per_line: int = None, max_lines: int = None):
+    def apply_line_limits(self, category_name_regex: str = "", max_chars_per_line: int = None, max_lines: int = None):
         """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and apply given word wrap and line
         count limits to all FMGs in properties that match `category_name_regex` pattern (e.g. r".*Descriptions").
 
-        Use match-all regex like `r".*"` to affect all FMGs.
+        Default `category_name_regex` will match all FMG names.
         """
-        for fmg in self.get_matching_fmgs(category_name_regex).values():
-            fmg.apply_line_limits(max_chars_per_line, max_lines)
+        matching_fmgs = list(self.get_matching_fmgs(category_name_regex).values())
+        for fmg_key, fmg in self.fmgs.items():
+            if fmg in matching_fmgs:
+                self.fmgs[fmg_key] = fmg.apply_line_limits(max_chars_per_line, max_lines)
 
     def replace_substring_in_all(self, category_name_regex: str, old_substring: str, new_substring: str):
         """Iterate over all `MSGDirectory` property names (e.g. "WeaponDescriptions") and replace the given substring

@@ -152,7 +152,7 @@ class GameParamBND(_BaseGameParamBND):
 
     GET_BUNDLED_PARAMDEFBND: tp.ClassVar[tp.Callable] = GET_BUNDLED_PARAMDEFBND
 
-    def rename_entries_from_text(self, text: MSGDirectory, param_nickname=None):
+    def rename_entries_from_text(self, text: MSGDirectory, param_nickname: str = None):
         """Rename item param entries according to their (presumably more desirable) names in DS1 Text data.
 
         Args:
@@ -164,18 +164,19 @@ class GameParamBND(_BaseGameParamBND):
             param_nickname = param_nickname.lower().rstrip("s")
             if param_nickname not in {"weapon", "armor", "ring", "good", "spell"}:
                 raise ValueError(
-                    f"Invalid item type: {param_nickname}. Must be 'Weapons', 'Armor', 'Rings', "
+                    f"Invalid `param_nickname`: {param_nickname}. Must be 'Weapons', 'Armor', 'Rings', "
                     f"'Goods', or 'Spells'."
                 )
-        for item_type_check, param, text_dict in zip(
+        for item_type_check, param, text_fmg in zip(
             ("weapon", "armor", "ring", "good", "spell"),
             (self.Weapons, self.Armor, self.Rings, self.Goods, self.Spells),
             (text.WeaponNames, text.ArmorNames, text.RingNames, text.GoodNames, text.SpellNames),
         ):
             if not param_nickname or param_nickname == item_type_check:
+                print(f"Renaming {item_type_check} entries...")
                 for param_id, param_row in param.items():
-                    if param_id in text_dict:
-                        param_row.Name = text_dict[param_id]
+                    if param_id in text_fmg.entries:
+                        param_row.Name = text_fmg.entries[param_id]
 
     def print_hitbox_info(self):
         current_var_id = None

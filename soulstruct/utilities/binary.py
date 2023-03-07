@@ -1424,8 +1424,10 @@ class BinaryStruct:
         struct_input = []  # type: list[float | int | bool | bytes]
         start_offset = writer.position
 
-        def get_fmt_size():
+        def get_fmt_size() -> int:
             nonlocal full_fmt
+            if not full_fmt:
+                return 0
             if long_varints is None:
                 return struct.calcsize(full_fmt)
             return writer.calcsize(full_fmt)

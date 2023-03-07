@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["ProjectWindow"]
+__all__ = ["ImportSettings", "ProjectCreatorWizard", "ProjectWindow"]
 
 import abc
 import logging
@@ -23,7 +23,7 @@ from . import editor_config
 from .editors import (
     AIEditor,
     EnumsEditor,
-    EventEditor,
+    EventsEditor,
     LightingEditor,
     MapsEditor,
     ParamsEditor,
@@ -49,7 +49,7 @@ TAB_EDITORS = {
     ProjectDataType.Params: ParamsEditor,
     ProjectDataType.Lighting: LightingEditor,
     ProjectDataType.Text: TextEditor,
-    ProjectDataType.Events: EventEditor,
+    ProjectDataType.Events: EventsEditor,
     ProjectDataType.AI: AIEditor,
     ProjectDataType.Talk: TalkEditor,
 }  # also specifies tab order ("runtime" always comes last, followed by any other game-specific extras)
@@ -203,12 +203,12 @@ class ProjectWindow(SmartFrame, abc.ABC):
     PARAMS_EDITOR_CLASS: tp.Type[ParamsEditor] = ParamsEditor
     LIGHTING_EDITOR_CLASS: tp.Type[LightingEditor] = LightingEditor
     TEXT_EDITOR_CLASS: tp.Type[TextEditor] = TextEditor
-    EVENT_EDITOR_CLASS: tp.Type[EventEditor] = EventEditor
+    EVENT_EDITOR_CLASS: tp.Type[EventsEditor] = EventsEditor
     AI_EDITOR_CLASS: tp.Type[AIEditor] = AIEditor
     TALK_EDITOR_CLASS: tp.Type[TalkEditor] = TalkEditor
     RUNTIME_MANAGER_CLASS: tp.Type[RuntimeManager] = None
 
-    EXTRA_TAB_CLASSES = {}  # maps tab names to classes
+    EXTRA_TAB_CLASSES = {}  # maps tab names to classes (they should take `project` argument)
     # TODO: Random specific info to have here. Probably combine into a more general class (when more is actually here).
     CHARACTER_MODELS = {}  # optional game-specific dictionary
 
@@ -217,7 +217,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
     params_tab: ParamsEditor | None
     lighting_tab: LightingEditor | None
     text_tab: TextEditor | None
-    events_tab: EventEditor | None
+    events_tab: EventsEditor | None
     ai_tab: AIEditor | None
     talk_tab: TalkEditor | None
     runtime_tab: RuntimeManager | None
@@ -275,6 +275,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
 
         if self.project.is_empty:
             self.destroy()
+            _LOGGER.warning("Soulstruct project is empty. Destroying window.")
             return
 
         self.linker = self.LINKER_CLASS(self)  # TODO: Individual editors should have a lesser linker.
@@ -292,6 +293,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         self.ai_tab = None
         self.talk_tab = None
         self.runtime_tab = None
+        self.tab_frames = {}
         self.extra_tabs = []
 
         self.save_all_button = None
@@ -353,109 +355,67 @@ class ProjectWindow(SmartFrame, abc.ABC):
                 command=lambda: self._export_all(export_directory=self.project.game_root),
             )
 
-        tab_frames = {
+        self.tab_frames = {
             tab_name: self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
             for tab_name in self.ordered_tabs
         }
         for tab_name in self.EXTRA_TAB_CLASSES:
-            tab_frames[tab_name] = self.Frame(frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1])
-
-        if ProjectDataType.Maps in self.data_types and self.project.maps:
-            self.maps_tab = self.SmartFrame(
-                frame=tab_frames["maps"],
-                smart_frame_class=self.MAPS_EDITOR_CLASS,
-                project=self.project,
-                character_models=self.CHARACTER_MODELS,
-                global_map_choice_func=self.set_global_map_choice,
-                linker=self.linker,
-                sticky="nsew",
+            self.tab_frames[tab_name] = self.Frame(
+                frame=self.page_tabs, sticky="nsew", row_weights=[1], column_weights=[1]
             )
-            self.maps_tab.bind("<Visibility>", self._update_banner)
 
-            self.enums_tab = self.SmartFrame(
-                frame=tab_frames["enums"],
-                smart_frame_class=self.ENUMS_EDITOR_CLASS,
-                project=self.project,
-                enums_directory=self.project.enums_directory,
-                global_map_choice_func=self.set_global_map_choice,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.enums_tab.bind("<Visibility>", self._update_banner)
+        if "maps" in self.tab_frames:
+            if self.project.maps:
+                self.create_Maps_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Maps, self.project.import_Maps)
 
-        if ProjectDataType.Params in self.data_types and self.project.params:
-            self.params_tab = self.SmartFrame(
-                frame=tab_frames["params"],
-                smart_frame_class=self.PARAMS_EDITOR_CLASS,
-                project=self.project,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.params_tab.bind("<Visibility>", self._update_banner)
+        if "enums" in self.tab_frames:
+            if self.project.enums_directory.is_dir():
+                self.create_Enums_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Enums, self.project.import_Enums)
 
-        if ProjectDataType.Lighting in self.data_types and self.project.lighting:
-            self.lighting_tab = self.SmartFrame(
-                frame=tab_frames["lighting"],
-                smart_frame_class=self.LIGHTING_EDITOR_CLASS,
-                project=self.project,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.lighting_tab.bind("<Visibility>", self._update_banner)
+        if "params" in self.tab_frames:
+            if self.project.params:
+                self.create_Params_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Params, self.project.import_Params)
 
-        if ProjectDataType.Text in self.data_types and self.project.text:
-            self.text_tab = self.SmartFrame(
-                frame=tab_frames["text"],
-                smart_frame_class=self.TEXT_EDITOR_CLASS,
-                project=self.project,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.text_tab.bind("<Visibility>", self._update_banner)
+        if "lighting" in self.tab_frames:
+            if self.project.lighting:
+                self.create_Lighting_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Lighting, self.project.import_Lighting)
 
-        if ProjectDataType.Events in self.data_types and (self.project.project_root / "events").is_dir():
-            self.events_tab = self.SmartFrame(
-                frame=tab_frames["events"],
-                smart_frame_class=self.EVENT_EDITOR_CLASS,
-                project=self.project,
-                evs_directory=self.project.project_root / "events",
-                game_root=self.project.game_root,
-                global_map_choice_func=self.set_global_map_choice,
-                text_font_size=self.project.text_editor_font_size,
-                sticky="nsew",
-            )
-            self.events_tab.bind("<Visibility>", self._update_banner)
+        if "text" in self.tab_frames:
+            if self.project.text:
+                self.create_Text_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Text, self.project.import_Text)
 
-        if ProjectDataType.AI in self.data_types and self.project.ai:
-            self.ai_tab = self.SmartFrame(
-                frame=tab_frames["ai"],
-                smart_frame_class=self.AI_EDITOR_CLASS,
-                project=self.project,
-                script_directory=self.project.project_root / "ai_scripts",
-                allow_decompile=self.project.get_game().name == "Dark Souls Remastered",
-                global_map_choice_func=self.set_global_map_choice,
-                text_font_size=self.project.text_editor_font_size,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.ai_tab.bind("<Visibility>", self._update_banner)
+        if "events" in self.tab_frames:
+            if self.project.events_directory.is_dir():
+                self.create_Events_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Events, self.project.import_Events)
 
-        if ProjectDataType.Talk in self.data_types and (self.project.project_root / "talk").is_dir():
-            self.talk_tab = self.SmartFrame(
-                frame=tab_frames["talk"],
-                smart_frame_class=self.TALK_EDITOR_CLASS,
-                project=self.project,
-                esp_directory=self.project.project_root / "talk",
-                global_map_choice_func=self.set_global_map_choice,
-                text_font_size=self.project.text_editor_font_size,
-                linker=self.linker,
-                sticky="nsew",
-            )
-            self.talk_tab.bind("<Visibility>", self._update_banner)
+        if "ai" in self.tab_frames:
+            if self.project.ai:
+                self.create_AI_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.AI, self.project.import_AI)
 
-        if self.RUNTIME_MANAGER_CLASS:
+        if "talk" in self.tab_frames:
+            if self.project.talk_directory.is_dir():
+                self.create_Talk_tab()
+            else:
+                self.create_dummy_tab(ProjectDataType.Talk, self.project.import_Talk)
+
+        # Created now or never.
+        if "runtime" in self.tab_frames:
             self.runtime_tab = self.SmartFrame(
-                frame=tab_frames["runtime"],
+                frame=self.tab_frames["runtime"],
                 smart_frame_class=self.RUNTIME_MANAGER_CLASS,
                 project=self.project,
                 sticky="nsew",
@@ -463,8 +423,9 @@ class ProjectWindow(SmartFrame, abc.ABC):
             self.runtime_tab.bind("<Visibility>", self._update_banner)
 
         for tab_name, smart_frame_class in self.EXTRA_TAB_CLASSES.items():
+            # `smart_frame_class` just needs to accept `project` argument.
             extra_tab = self.SmartFrame(
-                frame=tab_frames[tab_name],
+                frame=self.tab_frames[tab_name],
                 smart_frame_class=smart_frame_class,
                 project=self.project,
                 sticky="nsew",
@@ -472,7 +433,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
             extra_tab.bind("<Visibility>", self._update_banner)
             self.extra_tabs.append(extra_tab)
 
-        for tab_name, tab_frame in tab_frames.items():
+        for tab_name, tab_frame in self.tab_frames.items():
             self.page_tabs.add(tab_frame, text=f"  {data_type_caps(tab_name)}  ")
 
         self.create_key_bindings()
@@ -480,6 +441,132 @@ class ProjectWindow(SmartFrame, abc.ABC):
         # Default window dimensions are 75% of screen width/height.
         dimensions = (0.75 * self.toplevel.winfo_screenwidth(), 0.75 * self.toplevel.winfo_screenheight())
         self.set_geometry(dimensions=dimensions)
+
+    # region Tab Creators
+
+    def create_Maps_tab(self):
+        self.maps_tab = self.SmartFrame(
+            frame=self.tab_frames["maps"],
+            smart_frame_class=self.MAPS_EDITOR_CLASS,
+            project=self.project,
+            character_models=self.CHARACTER_MODELS,
+            global_map_choice_func=self.set_global_map_choice,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.maps_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Enums_tab(self):
+        self.enums_tab = self.SmartFrame(
+            frame=self.tab_frames["enums"],
+            smart_frame_class=self.ENUMS_EDITOR_CLASS,
+            project=self.project,
+            enums_directory=self.project.enums_directory,
+            global_map_choice_func=self.set_global_map_choice,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.enums_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Params_tab(self):
+        self.params_tab = self.SmartFrame(
+            frame=self.tab_frames["params"],
+            smart_frame_class=self.PARAMS_EDITOR_CLASS,
+            project=self.project,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.params_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Lighting_tab(self):
+        self.lighting_tab = self.SmartFrame(
+            frame=self.tab_frames["lighting"],
+            smart_frame_class=self.LIGHTING_EDITOR_CLASS,
+            project=self.project,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.lighting_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Text_tab(self):
+        self.text_tab = self.SmartFrame(
+            frame=self.tab_frames["text"],
+            smart_frame_class=self.TEXT_EDITOR_CLASS,
+            project=self.project,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.text_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Events_tab(self):
+        self.events_tab = self.SmartFrame(
+            frame=self.tab_frames["events"],
+            smart_frame_class=self.EVENT_EDITOR_CLASS,
+            project=self.project,
+            evs_directory=self.project.project_root / "events",
+            game_root=self.project.game_root,
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_editor_font_size,
+            sticky="nsew",
+        )
+        self.events_tab.bind("<Visibility>", self._update_banner)
+
+    def create_AI_tab(self):
+        self.ai_tab = self.SmartFrame(
+            frame=self.tab_frames["ai"],
+            smart_frame_class=self.AI_EDITOR_CLASS,
+            project=self.project,
+            script_directory=self.project.project_root / "ai_scripts",
+            allow_decompile=self.project.get_game().name == "Dark Souls Remastered",
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_editor_font_size,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.ai_tab.bind("<Visibility>", self._update_banner)
+
+    def create_Talk_tab(self):
+        self.talk_tab = self.SmartFrame(
+            frame=self.tab_frames["talk"],
+            smart_frame_class=self.TALK_EDITOR_CLASS,
+            project=self.project,
+            esp_directory=self.project.project_root / "talk",
+            global_map_choice_func=self.set_global_map_choice,
+            text_font_size=self.project.text_editor_font_size,
+            linker=self.linker,
+            sticky="nsew",
+        )
+        self.talk_tab.bind("<Visibility>", self._update_banner)
+
+    def create_dummy_tab(self, data_type: ProjectDataType, import_func: tp.Callable):
+        """Create a tab that just has a big 'Import' button for this data type."""
+        tab = self.Frame(
+            frame=self.tab_frames[data_type.value.lower()],
+            sticky="nsew",
+        )
+
+        def _import_and_create_tab():
+            import_func(self.project.game_root)
+            tab.destroy()
+            getattr(self, f"create_{data_type.name}_tab")()
+
+        with self.set_master(tab):
+            self.Button(
+                text=f"Import {data_type_caps(data_type.value)}",
+                command=_import_and_create_tab,
+                font=editor_config.HEADING_FONT,
+                bg="#622",
+                width=30,
+            )
+
+        # Center button.
+        tab.grid_rowconfigure(0, weight=1)
+        tab.grid_columnconfigure(0, weight=1)
+
+        setattr(self, f"{data_type.lower()}_tab", tab)  # will be replaced by real tab when button is clicked
+        tab.bind("<Visibility>", self._update_banner)
+
+    # endregion
 
     def build_top_menu(self):
         top_menu = self.Menu()
@@ -754,15 +841,14 @@ class ProjectWindow(SmartFrame, abc.ABC):
         return wizard.go()
 
     @property
-    def current_data_type(self):
-        """Return name of current tab's data type. Could be 'runtime'."""
+    def current_data_type(self) -> ProjectDataType | None:
+        """Return name of current tab's data type (or None if not data type is connected to the active tab)."""
         tab_index = self.page_tabs.index(self.page_tabs.select())
         tab_name = self.ordered_tabs[tab_index]
         if tab_name == "runtime":
             return None
         if tab_name == "enums":
-            # TODO: Improve.
-            return ProjectDataType.Maps
+            return ProjectDataType.Enums
         return ProjectDataType.Maps
 
     def set_global_map_choice(self, map_id, ignore_tabs=()):
@@ -802,7 +888,7 @@ class ProjectWindow(SmartFrame, abc.ABC):
         try:
             self._thread_with_loading_dialog(
                 "Importing",
-                f"Importing all data types...",
+                "Importing all data types...",
                 self.project.import_all,
                 import_directory,
             )
@@ -1107,7 +1193,8 @@ class ProjectWindow(SmartFrame, abc.ABC):
         try:
             data_name = event.widget.DATA_NAME
         except AttributeError:
-            raise AttributeError(f"No `DATA_NAME` for widget: {type(event.widget)}")
+            # Dummy tab with no associated data.
+            data_name = None
         if data_name is None:
             self.save_tab_button.var.set("SAVE")
             self.export_tab_button.var.set("EXPORT")

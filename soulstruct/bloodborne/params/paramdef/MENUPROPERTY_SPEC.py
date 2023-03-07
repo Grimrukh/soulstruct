@@ -34,6 +34,6 @@ class MENUPROPERTY_SPEC(ParamRow):
         tooltip="TODO",
     )
     AdhocCaption: str = ParamField(
-        bytes, "AdhocCaption[9]", encoding="utf-16", length=18, default=0.0,
+        str, "AdhocCaption[9]", encoding="utf-16", length=18, default=0.0,
         tooltip="TODO",
     )

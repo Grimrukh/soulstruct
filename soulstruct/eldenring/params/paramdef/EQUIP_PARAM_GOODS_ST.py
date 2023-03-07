@@ -23,41 +23,41 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         int, "refId_default", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    SfxVariationId: int = ParamField(
+    AnimationVariationID: int = ParamField(
         int, "sfxVariationId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Animation variation ID to combine with the base usage animation.",
     )
     Weight: float = ParamField(
         float, "weight", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weight of good. Never used in vanilla Dark Souls.",
     )
     BasicPrice: int = ParamField(
         int, "basicPrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SellValue: int = ParamField(
+    FramptSellValue: int = ParamField(
         int, "sellValue", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold.",
     )
-    BehaviorId: int = ParamField(
-        int, "behaviorId", default=0,
-        tooltip="TOOLTIP-TODO",
+    Behavior: int = ParamField(
+        int, "behaviorId", game_type=BehaviorParam, default=0,
+        tooltip="Behavior triggered by good use. Never used.",
     )
-    ReplaceItemId: int = ParamField(
+    GoodToReplace: int = ParamField(
         int, "replaceItemId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Good to replace when this item is obtained. Used only for full/empty Estus Flask exchange.",
     )
-    SortId: int = ParamField(
+    SortIndex: int = ParamField(
         int, "sortId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index for automatic inventory sorting.",
     )
     AppearanceReplaceItemId: int = ParamField(
         int, "appearanceReplaceItemId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    YesNoDialogMessageId: int = ParamField(
+    ConfirmationMessage: int = ParamField(
         int, "yesNoDialogMessageId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Message displayed in yes/no dialog box to confirm use of good.",
     )
     UseEnableSpEffectType: int = ParamField(
         ushort, "useEnableSpEffectType", SP_EFFECT_TYPE, default=0,
@@ -68,163 +68,167 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad[1]")
-    IconId: int = ParamField(
-        ushort, "iconId", default=0,
-        tooltip="TOOLTIP-TODO",
+    GoodIcon: int = ParamField(
+        ushort, "iconId", game_type=Icon, default=0,
+        tooltip="Good icon texture ID.",
     )
-    ModelId: int = ParamField(
-        ushort, "modelId", default=0,
-        tooltip="TOOLTIP-TODO",
+    ModelID: int = ParamField(
+        ushort, "modelId", game_type=EquipmentModel, default=0,
+        tooltip="Model of good. Never used.",
     )
-    ShopLv: int = ParamField(
+    ShopLevel: int = ParamField(
         short, "shopLv", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Level of good that can be sold in 'the shop'. Always -1 or 0. Probably unused.",
     )
-    CompTrophySedId: int = ParamField(
+    CollectionAchievementID: int = ParamField(
         short, "compTrophySedId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Collection achievement (e.g. all spells) to which obtaining this good contributes.",
     )
-    TrophySeqId: int = ParamField(
+    AchievementID: int = ParamField(
         short, "trophySeqId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Achievement unlocked when this good is first obtained (e.g. Estus Flask).",
     )
-    MaxNum: int = ParamField(
+    MaxHoldQuantity: int = ParamField(
         short, "maxNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum number of good that can be held at once.",
     )
-    ConsumeHeroPoint: int = ParamField(
+    HumanityCost: int = ParamField(
         byte, "consumeHeroPoint", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Humanity cost of using good. Always zero.",
     )
     OverDexterity: int = ParamField(
         byte, "overDexterity", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="'Skill over start value'. Unknown effect; set to 0 for spells and 50 otherwise.",
     )
-    GoodsType: int = ParamField(
+    GoodType: int = ParamField(
         byte, "goodsType", GOODS_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this is a basic good, upgrade material, key item, or spell.",
     )
-    RefCategory: int = ParamField(
+    ReferenceType: int = ParamField(
         byte, "refCategory", BEHAVIOR_REF_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Indicates if this good triggers a Bullet or Special Effect. (Attacks are possible, but unused.)",
     )
-    SpEffectCategory: int = ParamField(
+    SpecialEffectCategory: int = ParamField(
         byte, "spEffectCategory", BEHAVIOR_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines compatibility with special effects that affect certain types of attacks. Set to 'Basic' "
+                "for thrown goods and 'No Category' otherwise.",
     )
     _Pad2: bytes = ParamPad(1, "pad3[1]")
-    GoodsUseAnim: int = ParamField(
+    UseAnimation: int = ParamField(
         byte, "goodsUseAnim", GOODS_USE_ANIM, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Points to basic animation used when good is used. Visual/sound effects are set by the variation ID.",
     )
-    OpmeMenuType: int = ParamField(
+    MenuActivated: int = ParamField(
         byte, "opmeMenuType", GOODS_OPEN_MENU, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Menu activated (if any) when good is used. Generally only 'No Menu' or 'Yes or No Menu' will be "
+                "useful.",
     )
-    UseLimitCategory: int = ParamField(
+    LimitCategory: int = ParamField(
         byte, "useLimitCategory", SP_EFFECT_USELIMIT_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Only one good-triggered special effect with this category can be active at once. Additional attempts "
+                "to use goods in this category will be prevented. (Unclear how Dragon Stones work, though.)",
     )
     ReplaceCategory: int = ParamField(
         byte, "replaceCategory", REPLACE_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="The special effect triggered by this good will replace any special effects in the same category as "
+                "this one. Used only by Dragon Stones.",
     )
     _Pad3: bytes = ParamPad(2, "reserve4[2]")
-    Enablelive: bool = ParamField(
+    UseableByHumans: bool = ParamField(
         byte, "enable_live:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used by characters who have revived to Human status.",
     )
-    Enablegray: bool = ParamField(
+    UseableByHollows: bool = ParamField(
         byte, "enable_gray:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used by characters who are Hollow.",
     )
-    Enablewhite: bool = ParamField(
+    UseableByWhitePhantoms: bool = ParamField(
         byte, "enable_white:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used by White Phantoms (summons).",
     )
-    Enableblack: bool = ParamField(
+    UseableByBlackPhantoms: bool = ParamField(
         byte, "enable_black:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used by Black Phantoms (invaders).",
     )
-    Enablemulti: bool = ParamField(
+    UseableInMultiplayer: bool = ParamField(
         byte, "enable_multi:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used while multiple players are together.",
     )
-    Disableoffline: bool = ParamField(
+    DisabledOffline: bool = ParamField(
         byte, "disable_offline:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be used while the game is disconnected from the network.",
     )
-    IsEquip: bool = ParamField(
+    CanBeEquipped: bool = ParamField(
         byte, "isEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good can be equipped in a quick item slot.",
     )
-    IsConsume: bool = ParamField(
+    ConsumedOnUse: bool = ParamField(
         byte, "isConsume:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good is consumed (count decreases) when used.",
     )
-    IsAutoEquip: bool = ParamField(
+    AutomaticallyEquipped: bool = ParamField(
         byte, "isAutoEquip:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this good will be equipped in an available quick slot when obtained.",
     )
-    IsEstablishment: bool = ParamField(
+    IsStationary: bool = ParamField(
         byte, "isEstablishment:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown; need to look at usage.",
     )
-    IsOnlyOne: bool = ParamField(
+    IsUnique: bool = ParamField(
         byte, "isOnlyOne:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if only one of this good exists in the game.",
     )
     IsDiscard: bool = ParamField(
         byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsDeposit: bool = ParamField(
+    CanBeStored: bool = ParamField(
         byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if good can be stored in Bottomless Box.",
     )
     IsDisableHand: bool = ParamField(
         byte, "isDisableHand:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Not sure. Could disable model hand when good is used?",
     )
     IsRemoveItemforGameClear: bool = ParamField(
         byte, "isRemoveItem_forGameClear:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsSuppleItem: bool = ParamField(
+    IsEmptyEstusFlask: bool = ParamField(
         byte, "isSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Not sure. Only enabled for empty Estus Flask.",
     )
-    IsFullSuppleItem: bool = ParamField(
+    IsNonEmptyEstusFlask: bool = ParamField(
         byte, "isFullSuppleItem:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Not sure. Only enabled for non-empty Estus Flask.",
     )
-    IsEnhance: bool = ParamField(
+    IsUpgradeMaterial: bool = ParamField(
         byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this is an upgrade material.",
     )
     IsFixItem: bool = ParamField(
         byte, "isFixItem:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Probably True for Repair Powder, etc.",
     )
-    DisableMultiDropShare: bool = ParamField(
+    DisableMultiplayerShare: bool = ParamField(
         byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this good cannot be given to other players by dropping it.",
     )
-    DisableUseAtColiseum: bool = ParamField(
+    DisabledInArena: bool = ParamField(
         byte, "disableUseAtColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this good cannot be used in the PvP Arena in Oolacile.",
     )
-    DisableUseAtOutOfColiseum: bool = ParamField(
+    DisabledOutsideArena: bool = ParamField(
         byte, "disableUseAtOutOfColiseum:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this good cannot be used outside the PvP Arena in Oolacile.",
     )
     IsEnableFastUseItem: bool = ParamField(
         byte, "isEnableFastUseItem:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsApplySpecialEffect: bool = ParamField(
+    ApplySpecialEffect: bool = ParamField(
         byte, "isApplySpecialEffect:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     SyncNumVaryId: int = ParamField(
         byte, "syncNumVaryId", default=0,
@@ -234,21 +238,21 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         int, "refId_1", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    RefVirtualWepId: int = ParamField(
+    VirtualWeaponID: int = ParamField(
         int, "refVirtualWepId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    VagrantItemLotId: int = ParamField(
-        int, "vagrantItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantItemLot: int = ParamField(
+        int, "vagrantItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
-    VagrantBonusEneDropItemLotId: int = ParamField(
-        int, "vagrantBonusEneDropItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantBonusEnemyDropItemLot: int = ParamField(
+        int, "vagrantBonusEneDropItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
-    VagrantItemEneDropItemLotId: int = ParamField(
-        int, "vagrantItemEneDropItemLotId", default=0,
-        tooltip="TOOLTIP-TODO",
+    VagrantItemEnemyDropItemLot: int = ParamField(
+        int, "vagrantItemEneDropItemLotId", game_type=ItemLotParam, default=0,
+        tooltip="TODO",
     )
     CastSfxId: int = ParamField(
         int, "castSfxId", default=-1,
@@ -280,7 +284,7 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
     )
     CanMultiUse: bool = ParamField(
         byte, "canMultiUse:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     IsShieldEnchant: bool = ParamField(
         byte, "isShieldEnchant:1", EQUIP_BOOL, bit_count=1, default=False,
@@ -302,9 +306,9 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         byte, "autoReplenishType", AUTO_REPLENISH_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    IsDrop: bool = ParamField(
+    CanBeDropped: bool = ParamField(
         byte, "isDrop:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this item can be dropped.",
     )
     ShowLogCondType: bool = ParamField(
         byte, "showLogCondType:1", EQUIP_BOOL, bit_count=1, default=True,
@@ -330,9 +334,9 @@ class EQUIP_PARAM_GOODS_ST(ParamRow):
         byte, "disableRiding:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    MaxRepositoryNum: int = ParamField(
+    MaxStorageCount: int = ParamField(
         short, "maxRepositoryNum", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     SortGroupId: int = ParamField(
         byte, "sortGroupId", default=255,

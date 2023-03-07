@@ -542,145 +542,145 @@ class SP_EFFECT_PARAM_ST(ParamRow):
         tooltip="Effect will target character when they attack (e.g. HP drain).",
     )
     DisplayIconWhenInactive: bool = ParamField(
-        byte, "dispIconNonactive:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "dispIconNonactive:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Display icon even when special effect is inactive (not sure what that means). Never enabled.",
     )
     UseVisualEffect: bool = ParamField(
-        byte, "useSpEffectEffect:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "useSpEffectEffect:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Use visual effect from Special Effect Visuals table (indexed by Special State field).",
     )
     UseIntelligenceScaling: bool = ParamField(
-        byte, "bAdjustMagicAblity:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "bAdjustMagicAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, special effect damage will be scaled by character intelligence (I believe).",
     )
     UseFaithScaling: bool = ParamField(
-        byte, "bAdjustFaithAblity:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "bAdjustFaithAblity:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, special effect damage will be scaled by character faith (I believe).",
     )
     ForNewGamePlus: bool = ParamField(
-        byte, "bGameClearBonus:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "bGameClearBonus:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, this effect will be applied multiple times depending on the NG+ cycle (I think).",
     )
     AffectsMagic: bool = ParamField(
-        byte, "magParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "magParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, multipliers will be applied to magic attacks.",
     )
     AffectsMiracles: bool = ParamField(
-        byte, "miracleParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "miracleParamChange:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, multipliers will be applied to miracle attacks.",
     )
     ClearSoul: bool = ParamField(
-        byte, "clearSoul:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "clearSoul:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unused Demon's Souls remnant.",
     )
     RequestWhitePhantomSummon: bool = ParamField(
-        byte, "requestSOS:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by White Sign Soapstone.",
     )
     RequestBlackPhantomSummon: bool = ParamField(
-        byte, "requestBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Red Sign Soapstone.",
     )
     RequestInvasion: bool = ParamField(
-        byte, "requestForceJoinBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestForceJoinBlackSOS:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only be (Cracked) Red Eye Orb.",
     )
     RequestKick: bool = ParamField(
-        byte, "requestKickSession:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestKickSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Not used by any item. Likely kicks all clients out of your world.",
     )
     RequestReturnToOwnWorld: bool = ParamField(
-        byte, "requestLeaveSession:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestLeaveSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Black Separation Crystal.",
     )
     RequestNPCInvasion: bool = ParamField(
-        byte, "requestNpcInveda:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestNpcInveda:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Black Eye Orb (Lautrec quest and cut Shiva quest).",
     )
     Immortal: bool = ParamField(
-        byte, "noDead:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "noDead:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character cannot die. Never used in vanilla game.",
     )
     CurrentHPIgnoresMaxHPChange: bool = ParamField(
-        byte, "bCurrHPIndependeMaxHP:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "bCurrHPIndependeMaxHP:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, changes to maximum HP will not affect current HP (unless it must be reduced to new "
                 "maximum).",
     )
     IgnoreCorrosion: bool = ParamField(
-        byte, "corrosionIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "corrosionIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore corrosion damage to durability. Used only by Demon's Souls junk.",
     )
     IgnoreSightReduction: bool = ParamField(
-        byte, "sightSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "sightSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any changes to their sight range from other special effects. Used "
                 "only by Demon's Souls junk.",
     )
     IgnoreHearingReduction: bool = ParamField(
-        byte, "hearingSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "hearingSearchCutIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any changes to their hearing range from other special effects. Used "
                 "only by Demon's Souls junk.",
     )
     IgnoreMagicDisabling: bool = ParamField(
-        byte, "antiMagicIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "antiMagicIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, character will ignore any special effect that attempts to disable their magic. Used only by "
                 "Demon's Souls junk.",
     )
     IgnoreFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "fakeTargetIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreUndeadFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnoreUndead:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "fakeTargetIgnoreUndead:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreBeastFakeTargets: bool = ParamField(
-        byte, "fakeTargetIgnoreAnimal:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "fakeTargetIgnoreAnimal:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Unknown; never used.",
     )
     IgnoreGravity: bool = ParamField(
-        byte, "grabityIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "grabityIgnore:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Ignore gravity. (Not sure if this actually works.)",
     )
     PoisonImmunity: bool = ParamField(
-        byte, "disablePoison:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "disablePoison:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to poison.",
     )
     ToxicImmunity: bool = ParamField(
-        byte, "disableDisease:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "disableDisease:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to toxic.",
     )
     BleedImmunity: bool = ParamField(
-        byte, "disableBlood:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "disableBlood:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to curse.",
     )
     CurseImmunity: bool = ParamField(
-        byte, "disableCurse:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "disableCurse:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to poison.",
     )
     EnableCharming: bool = ParamField(
-        byte, "enableCharm:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "enableCharm:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Not sure if this refers to the Alluring Skull. May not work at all.",
     )
     EnableLifeTime: bool = ParamField(
-        byte, "enableLifeTime:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "enableLifeTime:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Internal description: 'Is the life extended when setting a flag by TAE?'. Effect unknown. Used by "
                 "Dragon Head and Torso Stones and some internal summon-related effects.",
     )
     HasTarget: bool = ParamField(
-        byte, "hasTarget : 1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "hasTarget : 1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="For unused 'evil eye' mechanics, probably a Demon's Souls remnant.",
     )
     FireImmunity: bool = ParamField(
-        byte, "isFireDamageCancel:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "isFireDamageCancel:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Immune to fire damage. Never enabled, and may not actually work. Needs testing.",
     )
     AffectedByEffectExtension: bool = ParamField(
-        byte, "isExtendSpEffectLife:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "isExtendSpEffectLife:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="If True, this special effect will be affected by special state (193), i.e. the effect used by the "
                 "vanilla Lingering Dragoncrest Ring, that extends effect durations.",
     )
     RequestColiseumExit: bool = ParamField(
-        byte, "requestLeaveColiseumSession:1", SP_EFFECT_BOOL, bit_count=1, default=0,
+        byte, "requestLeaveColiseumSession:1", SP_EFFECT_BOOL, bit_count=1, default=False,
         tooltip="Used only by Purple Coward's Crystal.",
     )
     _BitPad0: int = ParamBitPad(byte, "pad_2:4", bit_count=4)

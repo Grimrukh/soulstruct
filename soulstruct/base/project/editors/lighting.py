@@ -98,7 +98,7 @@ class LightingEditor(BaseFieldEditor):
                 self.Button(
                     text="Copy Slot 0 to Slot 1",
                     bg="#622",
-                    width=20,
+                    width=25,
                     padx=5,
                     command=self.regenerate_slot_1,
                 )

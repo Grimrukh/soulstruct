@@ -411,7 +411,7 @@ class EMEVD(GameFile, abc.ABC):
                     game_types = event_args[j - 1].combined_game_types
                     try:
                         if game_types:
-                            args[j] = f"{enums_manager.check_out_enum(int_value, *game_types)}"
+                            args[j] = f"{enums_manager.check_out_enum_variable(int_value, *game_types)}"
                     except enums_manager.EnumManagerError:
                         pass
                 kwargs = [f"{arg_name}={arg_value}" for arg_name, arg_value in zip(arg_names, args[1:], strict=True)]

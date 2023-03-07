@@ -19,161 +19,182 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
     )
     _BitPad0: int = ParamBitPad(byte, "disableParamReserve1:7", bit_count=7)
     _Pad0: bytes = ParamPad(3, "disableParamReserve2[3]")
-    BehaviorVariationId: int = ParamField(
+    BehaviorVariationID: int = ParamField(
         int, "behaviorVariationId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplied by 1000 and added to player behavior lookups (hitboxes, bullets) triggered by TAE.",
     )
-    SortId: int = ParamField(
+    SortIndex: int = ParamField(
         int, "sortId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Index for automatic inventory sorting.",
     )
-    WanderingEquipId: int = ParamField(
+    GhostWeaponReplacement: int = ParamField(
         uint, "wanderingEquipId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weapon replacement for ghosts.",
     )
     Weight: float = ParamField(
         float, "weight", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Weight of weapon.",
     )
-    WeaponWeightRate: float = ParamField(
+    WeightRatio: float = ParamField(
         float, "weaponWeightRate", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown effect. Value is about evenly split between 0 and 1 across weapons, with no obvious pattern.",
     )
-    FixPrice: int = ParamField(
+    RepairCost: int = ParamField(
         int, "fixPrice", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls required to repair weapon fully. Actual repair cost is this multiplied by current "
+                "durability over max durability.",
     )
     ReinforcePrice: int = ParamField(
         int, "reinforcePrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SellValue: int = ParamField(
+    FramptSellValue: int = ParamField(
         int, "sellValue", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of souls received when fed to Frampt. (Set to -1 to prevent it from being sold.",
     )
-    CorrectStrength: float = ParamField(
+    StrengthScaling: float = ParamField(
         float, "correctStrength", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of attack power gained from strength. (I believe this is the percentage of the player's "
+                "strength to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
     )
-    CorrectAgility: float = ParamField(
+    DexterityScaling: float = ParamField(
         float, "correctAgility", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of attack power gained from dexterity. (I believe this is the percentage of the player's "
+                "dexterity to add to the weapon's attack power, but it also depends on ScalingFormulaType below.).",
     )
-    CorrectMagic: float = ParamField(
+    IntelligenceScaling: float = ParamField(
         float, "correctMagic", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of attack power gained from intelligence. (I believe this is the percentage of the player's "
+                "intelligence to add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
     )
-    CorrectFaith: float = ParamField(
+    FaithScaling: float = ParamField(
         float, "correctFaith", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Amount of attack power gained from faith. (I believe this is the percentage of the player's faith to "
+                "add to the weapon's attack power, but it also depends on ScalingFormulaType below.)",
     )
-    PhysGuardCutRate: float = ParamField(
+    PhysicalGuardPercentage: float = ParamField(
         float, "physGuardCutRate", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of physical damage prevented when guarding with this weapon.",
     )
-    MagGuardCutRate: float = ParamField(
+    MagicGuardPercentage: float = ParamField(
         float, "magGuardCutRate", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of magic damage prevented when guarding with this weapon.",
     )
-    FireGuardCutRate: float = ParamField(
+    FireGuardPercentage: float = ParamField(
         float, "fireGuardCutRate", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of fire damage prevented when guarding with this weapon.",
     )
-    ThunGuardCutRate: float = ParamField(
+    LightningGuardPercentage: float = ParamField(
         float, "thunGuardCutRate", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of lightning damage prevented when guarding with this weapon.",
     )
-    SpEffectBehaviorId0: int = ParamField(
-        int, "spEffectBehaviorId0", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit0: int = ParamField(
+        int, "spEffectBehaviorId0", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to struck target (slot 0).",
     )
-    SpEffectBehaviorId1: int = ParamField(
-        int, "spEffectBehaviorId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit1: int = ParamField(
+        int, "spEffectBehaviorId1", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to struck target (slot 1).",
     )
-    SpEffectBehaviorId2: int = ParamField(
-        int, "spEffectBehaviorId2", default=-1,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit2: int = ParamField(
+        int, "spEffectBehaviorId2", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to struck target (slot 2).",
     )
-    ResidentSpEffectId: int = ParamField(
-        int, "residentSpEffectId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect0: int = ParamField(
+        int, "residentSpEffectId", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect granted to character with weapon equipped (slot 0).",
     )
-    ResidentSpEffectId1: int = ParamField(
-        int, "residentSpEffectId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect1: int = ParamField(
+        int, "residentSpEffectId1", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect granted to character with weapon equipped (slot 1).",
     )
-    ResidentSpEffectId2: int = ParamField(
-        int, "residentSpEffectId2", default=-1,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect2: int = ParamField(
+        int, "residentSpEffectId2", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect granted to character with weapon equipped (slot 2).",
     )
-    MaterialSetId: int = ParamField(
-        int, "materialSetId", default=-1,
-        tooltip="TOOLTIP-TODO",
+    UpgradeMaterialID: int = ParamField(
+        int, "materialSetId", game_type=UpgradeMaterialParam, default=-1,
+        tooltip="Upgrade Material parameter that sets costs for weapon reinforcement.",
     )
-    OriginEquipWep: int = ParamField(
+    UpgradeOrigin0: int = ParamField(
         int, "originEquipWep", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 0 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep1: int = ParamField(
+    UpgradeOrigin1: int = ParamField(
         int, "originEquipWep1", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 1 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep2: int = ParamField(
+    UpgradeOrigin2: int = ParamField(
         int, "originEquipWep2", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 2 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep3: int = ParamField(
+    UpgradeOrigin3: int = ParamField(
         int, "originEquipWep3", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 3 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep4: int = ParamField(
+    UpgradeOrigin4: int = ParamField(
         int, "originEquipWep4", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 4 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep5: int = ParamField(
+    UpgradeOrigin5: int = ParamField(
         int, "originEquipWep5", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 5 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep6: int = ParamField(
+    UpgradeOrigin6: int = ParamField(
         int, "originEquipWep6", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 6 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep7: int = ParamField(
+    UpgradeOrigin7: int = ParamField(
         int, "originEquipWep7", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 7 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep8: int = ParamField(
+    UpgradeOrigin8: int = ParamField(
         int, "originEquipWep8", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 8 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep9: int = ParamField(
+    UpgradeOrigin9: int = ParamField(
         int, "originEquipWep9", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 9 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep10: int = ParamField(
+    UpgradeOrigin10: int = ParamField(
         int, "originEquipWep10", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 10 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep11: int = ParamField(
+    UpgradeOrigin11: int = ParamField(
         int, "originEquipWep11", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 11 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep12: int = ParamField(
+    UpgradeOrigin12: int = ParamField(
         int, "originEquipWep12", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 12 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep13: int = ParamField(
+    UpgradeOrigin13: int = ParamField(
         int, "originEquipWep13", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 13 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep14: int = ParamField(
+    UpgradeOrigin14: int = ParamField(
         int, "originEquipWep14", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 14 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
-    OriginEquipWep15: int = ParamField(
+    UpgradeOrigin15: int = ParamField(
         int, "originEquipWep15", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin armor for level 15 of this weapon (i.e. what you receive when a blacksmith removes upgrades). "
+                "If -1, the weapon cannot be reverted. Otherwise, it will appear in each blacksmith's reversion menu.",
     )
     WeakADamageRate: float = ParamField(
         float, "weakA_DamageRate", default=1.0,
@@ -199,109 +220,113 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         float, "madnessGuardResist_MaxCorrect", default=0.0,
         tooltip="TOOLTIP-TODO",
     )
-    SaWeaponDamage: float = ParamField(
+    BasePoiseDamage: float = ParamField(
         float, "saWeaponDamage", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base poise damage of weapon attacks.",
     )
-    EquipModelId: int = ParamField(
-        ushort, "equipModelId", default=0,
-        tooltip="TOOLTIP-TODO",
+    WeaponModel: int = ParamField(
+        ushort, "equipModelId", game_type=EquipmentModel, default=0,
+        tooltip="Weapon model ID.",
     )
-    IconId: int = ParamField(
-        ushort, "iconId", default=0,
-        tooltip="TOOLTIP-TODO",
+    WeaponIcon: int = ParamField(
+        ushort, "iconId", game_type=Icon, default=0,
+        tooltip="Weapon icon texture ID.",
     )
-    Durability: int = ParamField(
+    InitialDurability: int = ParamField(
         ushort, "durability", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Durability of weapon when it is obtained. Always equal to max durability in vanilla game.",
     )
-    DurabilityMax: int = ParamField(
+    MaxDurability: int = ParamField(
         ushort, "durabilityMax", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum durability of weapon.",
     )
-    AttackThrowEscape: int = ParamField(
+    ThrowEscapePower: int = ParamField(
         ushort, "attackThrowEscape", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Power for escaping throws. Always 1, except for a few (and only a few) of the ghost replacement "
+                "weapons.",
     )
-    ParryDamageLife: int = ParamField(
+    MaxParryWindowDuration: int = ParamField(
         short, "parryDamageLife", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum parry window duration (cannot exceed TAE duration). Always set to 10.",
     )
-    AttackBasePhysics: int = ParamField(
+    BasePhysicalDamage: int = ParamField(
         ushort, "attackBasePhysics", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base physical damage of weapon attacks.",
     )
-    AttackBaseMagic: int = ParamField(
+    BaseMagicDamage: int = ParamField(
         ushort, "attackBaseMagic", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base magic damage of weapon attacks.",
     )
-    AttackBaseFire: int = ParamField(
+    BaseFireDamage: int = ParamField(
         ushort, "attackBaseFire", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base fire damage of weapon attacks.",
     )
-    AttackBaseThunder: int = ParamField(
+    BaseLightningDamage: int = ParamField(
         ushort, "attackBaseThunder", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base lightning damage of weapon attacks.",
     )
-    AttackBaseStamina: int = ParamField(
+    BaseStaminaDamage: int = ParamField(
         ushort, "attackBaseStamina", default=100,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Base stamina damage of weapon attacks.",
     )
-    GuardAngle: int = ParamField(
+    EffectiveGuardAngle: int = ParamField(
         short, "guardAngle", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Angle that can be guarded with this weapon. Never used.",
     )
-    SaDurability: float = ParamField(
+    AttackPoiseBonus: float = ParamField(
         float, "saDurability", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Poise gained during attack animations with this weapon. Never used (probably done in TAE).",
     )
-    StaminaGuardDef: int = ParamField(
+    GuardStaminaDefense: int = ParamField(
         short, "staminaGuardDef", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Defense against (i.e. value subtracted from) stamina attack damage while guarding.",
     )
-    ReinforceTypeId: int = ParamField(
-        short, "reinforceTypeId", default=0,
-        tooltip="TOOLTIP-TODO",
+    WeaponUpgradeID: int = ParamField(
+        short, "reinforceTypeId", game_type=WeaponUpgradeParam, default=0,
+        tooltip="Weapon Upgrade parameter that specifies upgrade benefits.",
     )
     TrophySGradeId: int = ParamField(
         short, "trophySGradeId", default=-1,
         tooltip="TOOLTIP-TODO",
     )
-    TrophySeqId: int = ParamField(
+    MaxUpgradeAchievementID: int = ParamField(
         short, "trophySeqId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Achievement unlocked when weapon is upgraded to maximum level (one per upgrade path).",
     )
-    ThrowAtkRate: int = ParamField(
+    ThrowDamageChangePercentage: int = ParamField(
         short, "throwAtkRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage damage increase (if positive) or decrease (if negative) during backstabs and ripostes "
+                "with this weapon.",
     )
-    BowDistRate: int = ParamField(
+    BowRangeChangePercentage: int = ParamField(
         short, "bowDistRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage range increase (if positive) or decrease (if negative) with this bow.",
     )
-    EquipModelCategory: int = ParamField(
+    WeaponModelCategory: int = ParamField(
         byte, "equipModelCategory", EQUIP_MODEL_CATEGORY, default=7,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Model category for equipment. Only one option for weapons.",
     )
-    EquipModelGender: int = ParamField(
+    WeaponModelGender: int = ParamField(
         byte, "equipModelGender", EQUIP_MODEL_GENDER, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Model gender variant. All weapons are genderless.",
     )
     WeaponCategory: int = ParamField(
         byte, "weaponCategory", WEAPON_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Basic category of weapon. Many 'weapon types' you may be familiar with are merged here (e.g. whips "
+                "are straight swords).",
     )
-    WepmotionCategory: int = ParamField(
+    AttackAnimationCategory: int = ParamField(
         byte, "wepmotionCategory", WEPMOTION_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Basic weapon attack animation type. More diverse than WeaponCategory. This number is multiplied by "
+                "10000 and used as an animation offset for all attacks, I believe.",
     )
-    GuardmotionCategory: int = ParamField(
+    GuardAnimationCategory: int = ParamField(
         byte, "guardmotionCategory", GUARDMOTION_CATEGORY, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Basic weapon/shield block animation type.",
     )
-    AtkMaterial: int = ParamField(
+    VisualSoundEffectsOnHit: int = ParamField(
         byte, "atkMaterial", WEP_MATERIAL_ATK, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines the sounds and visual effects generated when this weapon hits.",
     )
     DefSeMaterial1: int = ParamField(
         ushort, "defSeMaterial1", WEP_MATERIAL_DEF, default=0,
@@ -311,161 +336,168 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         byte, "correctType_Physics", WEP_CORRECT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    SpAttribute: int = ParamField(
+    ElementAttribute: int = ParamField(
         byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Element attached to hits with this weapon.",
     )
-    SpAtkcategory: int = ParamField(
+    SpecialAttackCategory: int = ParamField(
         ushort, "spAtkcategory", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Overrides AttackAnimationCategory for some attacks. Ranges from 50 to 199 (or 0 for none). Often "
+                "used to give weapons unique strong (R2) attacks, for example, but can override any attack animation.",
     )
-    WepmotionOneHandId: int = ParamField(
+    OneHandedAnimationCategory: int = ParamField(
         byte, "wepmotionOneHandId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Animation category for one-handed non-attack animations (like walking).",
     )
-    WepmotionBothHandId: int = ParamField(
+    TwoHandedAnimationCategory: int = ParamField(
         byte, "wepmotionBothHandId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Animation category for two-handed non-attack animations (like walking).",
     )
-    ProperStrength: int = ParamField(
+    RequiredStrength: int = ParamField(
         byte, "properStrength", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Required strength to wield weapon properly. (Reduced by one third if held two-handed.)",
     )
-    ProperAgility: int = ParamField(
+    RequiredDexterity: int = ParamField(
         byte, "properAgility", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Required dexterity to wield weapon properly.",
     )
-    ProperMagic: int = ParamField(
+    RequiredIntelligence: int = ParamField(
         byte, "properMagic", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Required intelligence to wield weapon properly.",
     )
-    ProperFaith: int = ParamField(
+    RequiredFaith: int = ParamField(
         byte, "properFaith", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Required faith to wield weapon properly.",
     )
     OverStrength: int = ParamField(
         byte, "overStrength", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown. Always set to 99, except for arrows and bolts.",
     )
     AttackBaseParry: int = ParamField(
         byte, "attackBaseParry", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown. Never used.",
     )
     DefenseBaseParry: int = ParamField(
         byte, "defenseBaseParry", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown. Never used.",
     )
-    GuardBaseRepel: int = ParamField(
+    DeflectOnBlock: int = ParamField(
         byte, "guardBaseRepel", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if an enemy will be deflected when you block them with this weapon (by comparing it to "
+                "their DeflectOnAttack).",
     )
-    AttackBaseRepel: int = ParamField(
+    DeflectOnAttack: int = ParamField(
         byte, "attackBaseRepel", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines if this weapon will be deflected when attacking a blocking enemy (by comparing it to "
+                "their DeflectOnBlock).",
     )
-    GuardCutCancelRate: int = ParamField(
+    IgnoreGuardPercentage: int = ParamField(
         sbyte, "guardCutCancelRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage (from -100 to 100) of target's current guard rate to ignore. A value of 100 will ignore "
+                "guarding completely, and a value of -100 will double their guarding effectiveness. Never used, in "
+                "favor of the simple 'IgnoreGuard' boolean field.",
     )
     GuardLevel: int = ParamField(
         sbyte, "guardLevel", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'in which guard motion is the enemy attacked when guarded?' Exact effects are "
+                "unclear, but this ranges from 0 to 4 in effectiveness of blocking in a predictable way (daggers are "
+                "worse than swords, which are worse than greatswords, which are worse than all shields).",
     )
-    SlashGuardCutRate: int = ParamField(
+    SlashDamageReductionWhenGuarding: int = ParamField(
         sbyte, "slashGuardCutRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
-    BlowGuardCutRate: int = ParamField(
+    StrikeDamageReductionWhenGuarding: int = ParamField(
         sbyte, "blowGuardCutRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
-    ThrustGuardCutRate: int = ParamField(
+    ThrustDamageReductionWhenGuarding: int = ParamField(
         sbyte, "thrustGuardCutRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Always zero.",
     )
-    PoisonGuardResist: int = ParamField(
+    PoisonDamageReductionWhenGuarding: int = ParamField(
         sbyte, "poisonGuardResist", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of incoming poison damage ignored when guarding.",
     )
-    DiseaseGuardResist: int = ParamField(
+    ToxicDamageReductionWhenGuarding: int = ParamField(
         sbyte, "diseaseGuardResist", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of incoming toxic damage ignored when guarding.",
     )
-    BloodGuardResist: int = ParamField(
+    BleedDamageReductionWhenGuarding: int = ParamField(
         sbyte, "bloodGuardResist", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of incoming bleed damage ignored when guarding.",
     )
-    CurseGuardResist: int = ParamField(
+    CurseDamageReductionWhenGuarding: int = ParamField(
         sbyte, "curseGuardResist", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage of incoming curse damage ignored when guarding.",
     )
     AtkAttribute: int = ParamField(
         byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    RightHandEquipable: bool = ParamField(
+    RightHandAllowed: bool = ParamField(
         byte, "rightHandEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be equipped in the right hand.",
     )
-    LeftHandEquipable: bool = ParamField(
+    LeftHandAllowed: bool = ParamField(
         byte, "leftHandEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be equipped in the left hand.",
     )
-    BothHandEquipable: bool = ParamField(
+    BothHandsAllowed: bool = ParamField(
         byte, "bothHandEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be held in two-handed mode.",
     )
-    ArrowSlotEquipable: bool = ParamField(
+    UsesEquippedArrows: bool = ParamField(
         byte, "arrowSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon will use equipped arrow slot.",
     )
-    BoltSlotEquipable: bool = ParamField(
+    UsesEquippedBolts: bool = ParamField(
         byte, "boltSlotEquipable:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon will use equipped bolt slot.",
     )
-    EnableGuard: bool = ParamField(
+    GuardEnabled: bool = ParamField(
         byte, "enableGuard:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the player can guard with this weapon by holding L1.",
     )
-    EnableParry: bool = ParamField(
+    ParryEnabled: bool = ParamField(
         byte, "enableParry:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, the player can parry with this weapon by pressing L2.",
     )
-    EnableMagic: bool = ParamField(
+    CanCastSorceries: bool = ParamField(
         byte, "enableMagic:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be used to cast sorceries.",
     )
-    EnableSorcery: bool = ParamField(
+    CanCastPyromancy: bool = ParamField(
         byte, "enableSorcery:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be used to cast pyromancy.",
     )
-    EnableMiracle: bool = ParamField(
+    CanCastMiracles: bool = ParamField(
         byte, "enableMiracle:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be used to cast miracles.",
     )
-    EnableVowMagic: bool = ParamField(
+    CanCastCovenantMagic: bool = ParamField(
         byte, "enableVowMagic:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsNormalAttackType: bool = ParamField(
+    DealsNeutralDamage: bool = ParamField(
         byte, "isNormalAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsBlowAttackType: bool = ParamField(
+    DealsStrikeDamage: bool = ParamField(
         byte, "isBlowAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsSlashAttackType: bool = ParamField(
+    DealsSlashDamage: bool = ParamField(
         byte, "isSlashAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsThrustAttackType: bool = ParamField(
+    DealsThrustDamage: bool = ParamField(
         byte, "isThrustAttackType:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsEnhance: bool = ParamField(
+    IsUpgraded: bool = ParamField(
         byte, "isEnhance:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     IsHeroPointCorrect: bool = ParamField(
         byte, "isHeroPointCorrect:1", EQUIP_BOOL, bit_count=1, default=False,
@@ -473,47 +505,47 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
     )
     IsCustom: bool = ParamField(
         byte, "isCustom:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     DisableBaseChangeReset: bool = ParamField(
         byte, "disableBaseChangeReset:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    DisableRepair: bool = ParamField(
+    DisableRepairs: bool = ParamField(
         byte, "disableRepair:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon cannot be repaired.",
     )
     IsDarkHand: bool = ParamField(
         byte, "isDarkHand:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Enabled only for the Dark Hand.",
     )
-    SimpleModelForDlc: bool = ParamField(
+    SimpleDLCModelExists: bool = ParamField(
         byte, "simpleModelForDlc:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown; always set to False.",
     )
-    LanternWep: bool = ParamField(
+    IsLantern: bool = ParamField(
         byte, "lanternWep:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsVersusGhostWep: bool = ParamField(
+    CanHitGhosts: bool = ParamField(
         byte, "isVersusGhostWep:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can hit ghosts without a Transient Curse active.",
     )
     BaseChangeCategory: int = ParamField(
         byte, "baseChangeCategory:6", WEP_BASE_CHANGE_CATEGORY, bit_count=6, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Never used. Likely Demon's Souls junk.",
     )
     IsDragonSlayer: bool = ParamField(
         byte, "isDragonSlayer:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    IsDeposit: bool = ParamField(
+    CanBeStored: bool = ParamField(
         byte, "isDeposit:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon can be stored in storage. Always True for rings.",
     )
-    DisableMultiDropShare: bool = ParamField(
+    DisableMultiplayerShare: bool = ParamField(
         byte, "disableMultiDropShare:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this weapon cannot be given to other players by dropping it. Always False in vanilla.",
     )
     IsDiscard: bool = ParamField(
         byte, "isDiscard:1", EQUIP_BOOL, bit_count=1, default=False,
@@ -687,9 +719,9 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         byte, "isEnableEmergencyStep:1", EQUIP_BOOL, bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    InvisibleOnRemo: bool = ParamField(
+    InvisibleInCutscenes: bool = ParamField(
         byte, "invisibleOnRemo:1", EQUIP_BOOL, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     _BitPad1: int = ParamBitPad(byte, "pad2:3", bit_count=3)
     CorrectTypeMagic: int = ParamField(
@@ -972,9 +1004,9 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         int, "baseChangePrice", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    LevelSyncCorrectId: int = ParamField(
+    LevelSyncCorrectID: int = ParamField(
         short, "levelSyncCorrectId", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CorrectTypeSleep: int = ParamField(
         byte, "correctType_Sleep", WEP_CORRECT_TYPE, default=0,
@@ -992,9 +1024,9 @@ class EQUIP_PARAM_WEAPON_ST(ParamRow):
         byte, "gemMountType", GEM_MOUNT_TYPE, default=0,
         tooltip="TOOLTIP-TODO",
     )
-    WepRegainHp: int = ParamField(
+    WeaponRegainHP: int = ParamField(
         ushort, "wepRegainHp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     SpEffectMsgId0: int = ParamField(
         int, "spEffectMsgId0", default=-1,

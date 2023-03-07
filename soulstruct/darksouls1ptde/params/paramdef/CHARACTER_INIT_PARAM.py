@@ -30,71 +30,71 @@ class CHARACTER_INIT_PARAM(ParamRow):
         tooltip="Starting soul count of character.",
     )
     RightHandWeapon1: int = ParamField(
-        int, "equip_Wep_Right", default=-1,
+        int, "equip_Wep_Right", game_type=WeaponParam, default=-1,
         tooltip="First (default) weapon/shield equipped in right hand.",
     )
     RightHandWeapon2: int = ParamField(
-        int, "equip_Subwep_Right", default=-1,
+        int, "equip_Subwep_Right", game_type=WeaponParam, default=-1,
         tooltip="Second weapon/shield equipped in right hand.",
     )
     LeftHandWeapon1: int = ParamField(
-        int, "equip_Wep_Left", default=-1,
+        int, "equip_Wep_Left", game_type=WeaponParam, default=-1,
         tooltip="First (default) weapon/shield equipped in left hand.",
     )
     LeftHandWeapon2: int = ParamField(
-        int, "equip_Subwep_Left", default=-1,
+        int, "equip_Subwep_Left", game_type=WeaponParam, default=-1,
         tooltip="Second weapon/shield equipped in left hand.",
     )
     HeadArmor: int = ParamField(
-        int, "equip_Helm", default=-1,
+        int, "equip_Helm", game_type=ArmorParam, default=-1,
         tooltip="Armor equipped to head.",
     )
     BodyArmor: int = ParamField(
-        int, "equip_Armer", default=-1,
+        int, "equip_Armer", game_type=ArmorParam, default=-1,
         tooltip="Armor equipped to body.",
     )
     HandsArmor: int = ParamField(
-        int, "equip_Gaunt", default=-1,
+        int, "equip_Gaunt", game_type=ArmorParam, default=-1,
         tooltip="Armor equipped to hands.",
     )
     LegsArmor: int = ParamField(
-        int, "equip_Leg", default=-1,
+        int, "equip_Leg", game_type=ArmorParam, default=-1,
         tooltip="Armor equipped to legs.",
     )
     ArrowSlot1: int = ParamField(
-        int, "equip_Arrow", default=-1,
+        int, "equip_Arrow", game_type=WeaponParam, default=-1,
         tooltip="Arrows equipped in slot 1.",
     )
     BoltSlot1: int = ParamField(
-        int, "equip_Bolt", default=-1,
+        int, "equip_Bolt", game_type=WeaponParam, default=-1,
         tooltip="Bolts equipped in slot 1.",
     )
     ArrowSlot2: int = ParamField(
-        int, "equip_SubArrow", default=-1,
+        int, "equip_SubArrow", game_type=WeaponParam, default=-1,
         tooltip="Arrows equipped in slot 2.",
     )
     BoltSlot2: int = ParamField(
-        int, "equip_SubBolt", default=-1,
+        int, "equip_SubBolt", game_type=WeaponParam, default=-1,
         tooltip="Bolts equipped in slot 2.",
     )
     RingSlot1: int = ParamField(
-        int, "equip_Accessory01", default=-1,
+        int, "equip_Accessory01", game_type=AccessoryParam, default=-1,
         tooltip="First ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     RingSlot2: int = ParamField(
-        int, "equip_Accessory02", default=-1,
+        int, "equip_Accessory02", game_type=AccessoryParam, default=-1,
         tooltip="Second ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     RingSlot3: int = ParamField(
-        int, "equip_Accessory03", default=-1,
+        int, "equip_Accessory03", game_type=AccessoryParam, default=-1,
         tooltip="Third ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     RingSlot4: int = ParamField(
-        int, "equip_Accessory04", default=-1,
+        int, "equip_Accessory04", game_type=AccessoryParam, default=-1,
         tooltip="Fourth ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     RingSlot5: int = ParamField(
-        int, "equip_Accessory05", default=-1,
+        int, "equip_Accessory05", game_type=AccessoryParam, default=-1,
         tooltip="Fifth ring equipped. Note that up to five rings can be equipped to human NPCs.",
     )
     SkillSlot1: int = ParamField(
@@ -110,71 +110,71 @@ class CHARACTER_INIT_PARAM(ParamRow):
         tooltip="TODO",
     )
     SpellSlot1: int = ParamField(
-        int, "equip_Spell_01", default=-1,
+        int, "equip_Spell_01", game_type=SpellParam, default=-1,
         tooltip="First spell equipped.",
     )
     SpellSlot2: int = ParamField(
-        int, "equip_Spell_02", default=-1,
+        int, "equip_Spell_02", game_type=SpellParam, default=-1,
         tooltip="Second spell equipped.",
     )
     SpellSlot3: int = ParamField(
-        int, "equip_Spell_03", default=-1,
+        int, "equip_Spell_03", game_type=SpellParam, default=-1,
         tooltip="Third spell equipped.",
     )
     SpellSlot4: int = ParamField(
-        int, "equip_Spell_04", default=-1,
+        int, "equip_Spell_04", game_type=SpellParam, default=-1,
         tooltip="Fourth spell equipped.",
     )
     SpellSlot5: int = ParamField(
-        int, "equip_Spell_05", default=-1,
+        int, "equip_Spell_05", game_type=SpellParam, default=-1,
         tooltip="Fifth spell equipped.",
     )
     SpellSlot6: int = ParamField(
-        int, "equip_Spell_06", default=-1,
+        int, "equip_Spell_06", game_type=SpellParam, default=-1,
         tooltip="Sixth spell equipped.",
     )
     SpellSlot7: int = ParamField(
-        int, "equip_Spell_07", default=-1,
+        int, "equip_Spell_07", game_type=SpellParam, default=-1,
         tooltip="Seventh spell equipped.",
     )
     GoodSlot1: int = ParamField(
-        int, "item_01", default=-1,
+        int, "item_01", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 1.",
     )
     GoodSlot2: int = ParamField(
-        int, "item_02", default=-1,
+        int, "item_02", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 2.",
     )
     GoodSlot3: int = ParamField(
-        int, "item_03", default=-1,
+        int, "item_03", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 3.",
     )
     GoodSlot4: int = ParamField(
-        int, "item_04", default=-1,
+        int, "item_04", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 4.",
     )
     GoodSlot5: int = ParamField(
-        int, "item_05", default=-1,
+        int, "item_05", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 5.",
     )
     GoodSlot6: int = ParamField(
-        int, "item_06", default=-1,
+        int, "item_06", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 6.",
     )
     GoodSlot7: int = ParamField(
-        int, "item_07", default=-1,
+        int, "item_07", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 7.",
     )
     GoodSlot8: int = ParamField(
-        int, "item_08", default=-1,
+        int, "item_08", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 8.",
     )
     GoodSlot9: int = ParamField(
-        int, "item_09", default=-1,
+        int, "item_09", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 9.",
     )
     GoodSlot10: int = ParamField(
-        int, "item_10", default=-1,
+        int, "item_10", game_type=GoodParam, default=-1,
         tooltip="Good (item) equipped in slot 10.",
     )
     FaceID: int = ParamField(

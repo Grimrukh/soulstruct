@@ -13,206 +13,226 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class BULLET_PARAM_ST(ParamRow):
-    AtkIdBullet: int = ParamField(
-        int, "atkId_Bullet", default=-1,
-        tooltip="TOOLTIP-TODO",
+    BulletAttack: int = ParamField(
+        int, "atkId_Bullet", game_type=AttackParam, default=-1,
+        tooltip="Attack parameters for bullet impact. Only certain fields in the attack parameter are used. Could be "
+                "directed to either PlayerAttacks table or NonPlayerAttacks table, depending on the bullet's owner. "
+                "Set to 0 if bullet has no attack data (no damage).",
     )
-    SfxIdBullet: int = ParamField(
-        int, "sfxId_Bullet", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ProjectileVFX: int = ParamField(
+        int, "sfxId_Bullet", game_type=VisualEffect, default=-1,
+        tooltip="Visual effect ID for bullet projectile.",
     )
-    SfxIdHit: int = ParamField(
-        int, "sfxId_Hit", default=-1,
-        tooltip="TOOLTIP-TODO",
+    ImpactVFX: int = ParamField(
+        int, "sfxId_Hit", game_type=VisualEffect, default=-1,
+        tooltip="Visual effect ID for bullet impact.",
     )
-    SfxIdFlick: int = ParamField(
-        int, "sfxId_Flick", default=-1,
-        tooltip="TOOLTIP-TODO",
+    FlickVFX: int = ParamField(
+        int, "sfxId_Flick", game_type=VisualEffect, default=-1,
+        tooltip="Visual effect ID for when bullet is blocked (I think). Used predominantly for arrows and throwing "
+                "knives.",
     )
-    Life: float = ParamField(
+    LifeTime: float = ParamField(
         float, "life", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum time before bullet will disappear on its own. -1 means it will last indefinitely.",
     )
-    Dist: float = ParamField(
+    AttenuationDistance: float = ParamField(
         float, "dist", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Distance at which attenuation of the projectile begins.",
     )
-    ShootInterval: float = ParamField(
+    LaunchInterval: float = ParamField(
         float, "shootInterval", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Time between emitted bullets. Does nothing for bullets that only shoot once and is generally left at "
+                "zero for those bullets.",
     )
-    GravityInRange: float = ParamField(
+    GravityBeforeAttenuation: float = ParamField(
         float, "gravityInRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Downward acceleration of bullet. Rarely used.",
     )
-    GravityOutRange: float = ParamField(
+    GravityAfterAttenuation: float = ParamField(
         float, "gravityOutRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Downward acceleration of bullet after it passes the attenuation distance.",
     )
-    HormingStopRange: float = ParamField(
+    ClosestHomingDistance: float = ParamField(
         float, "hormingStopRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bullet will stop homing if it is within this distance of its homing target. Use this to prevent "
+                "homing bullets from being too oppressive.",
     )
-    InitVellocity: float = ParamField(
+    InitialSpeed: float = ParamField(
         float, "initVellocity", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Initial speed of bullet.",
     )
-    AccelInRange: float = ParamField(
+    AccelerationBeforeAttenuation: float = ParamField(
         float, "accelInRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Forward acceleration acting on bullet before it reaches the attenuation distance. Negative values "
+                "will slow the bullet down.",
     )
-    AccelOutRange: float = ParamField(
+    AccelerationAfterAttenuation: float = ParamField(
         float, "accelOutRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Forward acceleration acting on bullet after it passes the attenuation distance. Negative values will "
+                "slow the bullet down.",
     )
-    MaxVellocity: float = ParamField(
+    MaxSpeed: float = ParamField(
         float, "maxVellocity", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Maximum speed of bullet, regardless of acceleration.",
     )
-    MinVellocity: float = ParamField(
+    MinSpeed: float = ParamField(
         float, "minVellocity", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Minimum speed of bullet, regardless of acceleration.",
     )
-    AccelTime: float = ParamField(
+    AccelerationTime: float = ParamField(
         float, "accelTime", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Time that acceleration is active after bullet creation.",
     )
-    HomingBeginDist: float = ParamField(
+    HomingStartDistance: float = ParamField(
         float, "homingBeginDist", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Distance from owner at which the bullet starts homing in on targets.",
     )
-    HitRadius: float = ParamField(
+    InitialHitRadius: float = ParamField(
         float, "hitRadius", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Initial hit radius of bullet projectile.",
     )
-    HitRadiusMax: float = ParamField(
+    FinalHitRadius: float = ParamField(
         float, "hitRadiusMax", default=-1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Final hit radius of bullet projectile. Set to -1 if radius does not change, which is always coupled "
+                "with a value of 0 for RadiusIncreaseDuration.",
     )
-    SpreadTime: float = ParamField(
+    RadiusIncreaseTime: float = ParamField(
         float, "spreadTime", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Time taken by bullet to transition from initial to final hit radius. Value of 0 are always coupled "
+                "with values of -1 for RadiusIncreaseDuration. I'm not sure if this can actually decrease the hit "
+                "radius if the final value is less than the initial value.",
     )
     ExpDelay: float = ParamField(
         float, "expDelay", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Delay between impact and 'explosion' (not sure if that refers to the visual effect and/or hitbox). "
+                "Never used (always zero).",
     )
-    HormingOffsetRange: float = ParamField(
+    HomingOffsetRange: float = ParamField(
         float, "hormingOffsetRange", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'When shooting, aim to shift each component of XYZ by this amount.' Nonzero "
+                "only for Hydra blasts and Vagrant attacks.",
     )
-    DmgHitRecordLifeTime: float = ParamField(
+    HitboxLifeTime: float = ParamField(
         float, "dmgHitRecordLifeTime", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Duration of bullet impact hitbox. A value of zero means it is disabled immediately after first "
+                "impact.",
     )
     ExternalForce: float = ParamField(
         float, "externalForce", default=0.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown. Used only for Gargoyle fire breath and Undead Dragon poison breath.",
     )
-    SpEffectIDForShooter: int = ParamField(
-        int, "spEffectIDForShooter", default=-1,
-        tooltip="TOOLTIP-TODO",
+    OwnerSpecialEffect: int = ParamField(
+        int, "spEffectIDForShooter", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to owner when bullet is created. (Unclear if it is applied repeatedly by "
+                "repeating bullets.)",
     )
-    AutoSearchNPCThinkID: int = ParamField(
-        int, "autoSearchNPCThinkID", default=0,
-        tooltip="TOOLTIP-TODO",
+    BulletAI: int = ParamField(
+        int, "autoSearchNPCThinkID", game_type=AIParam, default=0,
+        tooltip="AI parameter ID for triggered floating bullets. Only used by Homing [Crystal] Soulmass (10000) and "
+                "Pursuers (10001) in the vanilla game.",
     )
-    HitBulletID: int = ParamField(
+    BulletOnHit: int = ParamField(
         int, "HitBulletID", default=-1,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bullet emitted on impact of this bullet. Used often for 'throw'/'landing' or 'parent'/'child' "
+                "combinations, like a thrown Firebomb (bullet 110) triggering a fiery explosion (bullet 111). These "
+                "can be chained together indefinitely (see White Dragon Breath, bullet 11500).",
     )
-    SpEffectId0: int = ParamField(
-        int, "spEffectId0", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HitSpecialEffect0: int = ParamField(
+        int, "spEffectId0", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to target hit by bullet. (Slot 0)",
     )
-    SpEffectId1: int = ParamField(
-        int, "spEffectId1", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HitSpecialEffect1: int = ParamField(
+        int, "spEffectId1", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to target hit by bullet. (Slot 1)",
     )
-    SpEffectId2: int = ParamField(
-        int, "spEffectId2", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HitSpecialEffect2: int = ParamField(
+        int, "spEffectId2", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to target hit by bullet. (Slot 2)",
     )
-    SpEffectId3: int = ParamField(
-        int, "spEffectId3", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HitSpecialEffect3: int = ParamField(
+        int, "spEffectId3", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to target hit by bullet. (Slot 3)",
     )
-    SpEffectId4: int = ParamField(
-        int, "spEffectId4", default=-1,
-        tooltip="TOOLTIP-TODO",
+    HitSpecialEffect4: int = ParamField(
+        int, "spEffectId4", game_type=SpecialEffectParam, default=-1,
+        tooltip="Special effect applied to target hit by bullet. (Slot 4)",
     )
-    NumShoot: int = ParamField(
+    BulletCount: int = ParamField(
         ushort, "numShoot", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Number of bullets emitted at once.",
     )
-    HomingAngle: int = ParamField(
+    HomingAnglePerSecond: int = ParamField(
         short, "homingAngle", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Turning angle of homing bullet per second. Higher values are better for homing.",
     )
-    ShootAngle: int = ParamField(
+    AzimuthAngleStart: int = ParamField(
         short, "shootAngle", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Angle of first bullet in degrees around the vertical axis, relative to the forward direction.",
     )
-    ShootAngleInterval: int = ParamField(
+    AzimuthAngleInterval: int = ParamField(
         short, "shootAngleInterval", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Angle from one bullet to the next around the vertical axis, beginning at the azimuth angle start.",
     )
-    ShootAngleXInterval: int = ParamField(
+    ElevationAngleInterval: int = ParamField(
         short, "shootAngleXInterval", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Angle between bullets in elevation.",
     )
-    DamageDamp: int = ParamField(
+    PhysicalDamageDamp: int = ParamField(
         sbyte, "damageDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in physical damage per second.",
     )
-    SpelDamageDamp: int = ParamField(
+    MagicDamageDamp: int = ParamField(
         sbyte, "spelDamageDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in magic damage per second.",
     )
     FireDamageDamp: int = ParamField(
         sbyte, "fireDamageDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in fire damage per second.",
     )
-    ThunderDamageDamp: int = ParamField(
+    LightningDamageDamp: int = ParamField(
         sbyte, "thunderDamageDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in lightning damage per second.",
     )
     StaminaDamp: int = ParamField(
         sbyte, "staminaDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in stamina damage per second.",
     )
     KnockbackDamp: int = ParamField(
         sbyte, "knockbackDamp", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Percentage reduction in knockback power per second.",
     )
-    ShootAngleXZ: int = ParamField(
+    FirstBulletElevationAngle: int = ParamField(
         sbyte, "shootAngleXZ", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Angle of elevation of first bullet. Positive values will angle the bullets up (e.g. Quelaag's "
+                "fireballs) and negative values will angle the bullets down (e.g. most breath attacks).",
     )
-    LockShootLimitAng: int = ParamField(
+    LockShootLimitAngle: int = ParamField(
         byte, "lockShootLimitAng", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unknown, but likely important. Set to 30 for most basic projectile magic.",
     )
     _Pad0: bytes = ParamPad(1, "pad2[1]")
-    PrevVelocityDirRate: int = ParamField(
+    PreviousDirectionRatio: int = ParamField(
         byte, "prevVelocityDirRate", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Internal description: 'Ratio of adding the previous moving direction to the current direction when a "
+                "sliding bullet hits the wall.' Like ExternalForce, this is used only for Gargoyle and Undead Dragon "
+                "breath (100) and is zero for everything else.",
     )
-    AtkAttribute: int = ParamField(
+    AttackAttribute: int = ParamField(
         byte, "atkAttribute", ATKPARAM_ATKATTR_TYPE, default=254,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Attack type. Almost always 4 ('other'), but sometimes 3 (knives/arrows/bolts).",
     )
-    SpAttribute: int = ParamField(
+    ElementAttribute: int = ParamField(
         byte, "spAttribute", ATKPARAM_SPATTR_TYPE, default=254,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Element attached to bullet hit.",
     )
     MaterialAttackType: int = ParamField(
         byte, "Material_AttackType", BEHAVIOR_ATK_TYPE, default=254,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Determines visual effects of bullet hit.",
     )
-    MaterialAttackMaterial: int = ParamField(
+    EffectsOnHit: int = ParamField(
         byte, "Material_AttackMaterial", WEP_MATERIAL_ATK, default=254,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Sound and visual effects on hit.",
     )
     IsPenetrateChr: bool = ParamField(
         byte, "isPenetrateChr:1", ON_OFF, bit_count=1, default=False,
@@ -225,39 +245,40 @@ class BULLET_PARAM_ST(ParamRow):
     _BitPad0: int = ParamBitPad(byte, "pad:6", bit_count=6)
     LaunchConditionType: int = ParamField(
         byte, "launchConditionType", BULLET_LAUNCH_CONDITION_TYPE, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Condition for determing if a new bullet will be generated when this bullet lands or expires.",
     )
     FollowType: int = ParamField(
         byte, "FollowType:3", BULLET_FOLLOW_TYPE, bit_count=3, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Follow type.",
     )
-    EmittePosType: int = ParamField(
+    OriginType: int = ParamField(
         byte, "EmittePosType:3", BULLET_EMITTE_POS_TYPE, bit_count=3, default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Origin type of bullet. Usually comes from model points ('damipoly').",
     )
-    IsAttackSFX: bool = ParamField(
+    RemainAttachedToTarget: bool = ParamField(
         byte, "isAttackSFX:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Set whether bullets (e.g. arrows) stay stuck upon impact.",
     )
     IsEndlessHit: bool = ParamField(
         byte, "isEndlessHit:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bullet hitbox is continuous (I think). Only used for corrosion cloud in vanilla.",
     )
-    IsPenetrateMap: bool = ParamField(
+    IsMapPiercing: bool = ParamField(
         byte, "isPenetrateMap:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bullet will pierce the map (e.g. Stray Demon blast).",
     )
-    IsHitBothTeam: bool = ParamField(
+    HitsBothTeams: bool = ParamField(
         byte, "isHitBothTeam:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Bullet can hit any character.",
     )
-    IsUseSharedHitList: bool = ParamField(
+    SharedHitCheck: bool = ParamField(
         byte, "isUseSharedHitList:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Repeating bullets share the amount of times they have hit a target (usually so the target is only "
+                "hit once by any of those repeating bullets).",
     )
-    IsUseMultiDmyPolyIfPlace: bool = ParamField(
+    UsesMultipleModelPoints: bool = ParamField(
         byte, "isUseMultiDmyPolyIfPlace:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Set to True if the same model point ('damipoly') is used multiple times when spawning the bullet.",
     )
     IsHitOtherBulletForceEraseA: bool = ParamField(
         byte, "isHitOtherBulletForceEraseA:1", bit_count=1, default=False,
@@ -267,21 +288,21 @@ class BULLET_PARAM_ST(ParamRow):
         byte, "isHitOtherBulletForceEraseB:1", bit_count=1, default=False,
         tooltip="TOOLTIP-TODO",
     )
-    IsHitForceMagic: bool = ParamField(
+    CanBeDeflectedByMagic: bool = ParamField(
         byte, "isHitForceMagic:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this bullet will impact appropriate Force-type magic (e.g. arrows, bolts, knives).",
     )
-    IsIgnoreSfxIfHitWater: bool = ParamField(
+    IgnoreVFXOnWaterHit: bool = ParamField(
         byte, "isIgnoreSfxIfHitWater:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, hit VFX are not produced if the bullet impacts water.",
     )
-    IsIgnoreMoveStateIfHitWater: bool = ParamField(
+    IgnoreStateTransitionOnWaterHit: bool = ParamField(
         byte, "isIgnoreMoveStateIfHitWater:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Unclear effect, but True for knives/arrows/bolts and False otherwise.",
     )
-    IsHitDarkForceMagic: bool = ParamField(
+    CanBeDeflectedByBeastRoar: bool = ParamField(
         byte, "isHitDarkForceMagic:1", bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="If True, this bullet will impact the Beast Roar deflection effect.",
     )
     DmgCalcSide: int = ParamField(
         byte, "dmgCalcSide:2", DMG_CALC_SIDE_TYPE, bit_count=2, default=0,
@@ -356,9 +377,9 @@ class BULLET_PARAM_ST(ParamRow):
         tooltip="TOOLTIP-TODO",
     )
     _Pad1: bytes = ParamPad(1, "pad5[1]")
-    IsInheritSpeedToChild: bool = ParamField(
+    ChildrenInheritSpeed: bool = ParamField(
         byte, "isInheritSpeedToChild:1", ON_OFF, bit_count=1, default=False,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     IsDisableHitSfxbyChrAndObj: bool = ParamField(
         byte, "isDisableHitSfx_byChrAndObj:1", ON_OFF, bit_count=1, default=False,

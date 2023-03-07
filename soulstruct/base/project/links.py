@@ -193,7 +193,7 @@ class WindowLinker:
                 text_ids["Summaries"] = base_armor_id
                 text_ids["Descriptions"] = base_armor_id
         for text_category, text_id in text_ids.items():
-            if text_ids[text_category] not in self.project.text[prefix + text_category]:
+            if text_ids[text_category] not in self.project.text[prefix + text_category].entries:
                 links.append(BrokenLink())
             else:
                 links.append(

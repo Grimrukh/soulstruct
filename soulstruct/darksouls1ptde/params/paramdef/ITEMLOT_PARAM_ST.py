@@ -251,74 +251,74 @@ class ITEMLOT_PARAM_ST(ParamRow):
         tooltip="Count of item (slot 8).",
     )
     Item1LuckEnabled: bool = ParamField(
-        ushort, "enableLuck01:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck01:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item2LuckEnabled: bool = ParamField(
-        ushort, "enableLuck02:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck02:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item3LuckEnabled: bool = ParamField(
-        ushort, "enableLuck03:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck03:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item4LuckEnabled: bool = ParamField(
-        ushort, "enableLuck04:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck04:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item5LuckEnabled: bool = ParamField(
-        ushort, "enableLuck05:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck05:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item6LuckEnabled: bool = ParamField(
-        ushort, "enableLuck06:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck06:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item7LuckEnabled: bool = ParamField(
-        ushort, "enableLuck07:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck07:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item8LuckEnabled: bool = ParamField(
-        ushort, "enableLuck08:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=0,
+        ushort, "enableLuck08:1", ITEMLOT_ENABLE_LUCK, bit_count=1, default=False,
         tooltip="If True, increased player luck will *reduce* the chance points of this slot. Usually used on the "
                 "empty item slot so that rarer items have a relatively better chance of dropping.",
     )
     Item1ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset01:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset01:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item2ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset02:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset02:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item3ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset03:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset03:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item4ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset04:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset04:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item5ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset05:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset05:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item6ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset06:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset06:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item7ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset07:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset07:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )
     Item8ResetCumulativePointsOnDrop: bool = ParamField(
-        ushort, "cumulateReset08:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=0,
+        ushort, "cumulateReset08:1", ITEMLOT_CUMULATE_RESET, bit_count=1, default=False,
         tooltip="If True, all cumulative points in this slot will be reset when the slot is actually dropped.",
     )

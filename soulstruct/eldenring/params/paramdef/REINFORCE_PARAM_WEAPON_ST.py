@@ -13,113 +13,116 @@ from soulstruct.utilities.binary import *
 # noinspection PyDataclass
 @dataclass(slots=True)
 class REINFORCE_PARAM_WEAPON_ST(ParamRow):
-    PhysicsAtkRate: float = ParamField(
+    PhysicalDamageMultiplier: float = ParamField(
         float, "physicsAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to outgoing physical damage (of any type).",
     )
-    MagicAtkRate: float = ParamField(
+    MagicDamageMultiplier: float = ParamField(
         float, "magicAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to outgoing magic damage.",
     )
-    FireAtkRate: float = ParamField(
+    FireDamageMultiplier: float = ParamField(
         float, "fireAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to outgoing fire damage.",
     )
-    ThunderAtkRate: float = ParamField(
+    LightningDamageMultiplier: float = ParamField(
         float, "thunderAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to outgoing lightning damage.",
     )
-    StaminaAtkRate: float = ParamField(
+    StaminaDamageMultiplier: float = ParamField(
         float, "staminaAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the amount of damage dealt to targets' stamina.",
     )
-    SaWeaponAtkRate: float = ParamField(
+    PoiseDamageMultiplier: float = ParamField(
         float, "saWeaponAtkRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the amount of damage dealt to targets' poise. Never used.",
     )
-    SaDurabilityRate: float = ParamField(
+    PoiseDefenseMultiplier: float = ParamField(
         float, "saDurabilityRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to wielder's poise while using (attacking/blocking with?) weapon. Never used.",
     )
-    CorrectStrengthRate: float = ParamField(
+    StrengthScalingMultiplier: float = ParamField(
         float, "correctStrengthRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to strength scaling of this weapon.",
     )
-    CorrectAgilityRate: float = ParamField(
+    DexterityScalingMultiplier: float = ParamField(
         float, "correctAgilityRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to dexterity scaling of this weapon.",
     )
-    CorrectMagicRate: float = ParamField(
+    IntelligenceScalingMultiplier: float = ParamField(
         float, "correctMagicRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to intelligence scaling of this weapon.",
     )
-    CorrectFaithRate: float = ParamField(
+    FaithScalingMultiplier: float = ParamField(
         float, "correctFaithRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to faith scaling of this weapon.",
     )
-    PhysicsGuardCutRate: float = ParamField(
+    PhysicalGuardReductionMultiplier: float = ParamField(
         float, "physicsGuardCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of physical damage blocked by this weapon/shield.",
     )
-    MagicGuardCutRate: float = ParamField(
+    MagicGuardReductionMultiplier: float = ParamField(
         float, "magicGuardCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of magic damage blocked by this weapon/shield.",
     )
-    FireGuardCutRate: float = ParamField(
+    FireGuardReductionMultiplier: float = ParamField(
         float, "fireGuardCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of fire damage blocked by this weapon/shield.",
     )
-    ThunderGuardCutRate: float = ParamField(
+    LightningGuardReductionMultiplier: float = ParamField(
         float, "thunderGuardCutRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of lightning damage blocked by this weapon/shield.",
     )
-    PoisonGuardResistRate: float = ParamField(
+    PoisonGuardResistanceMultiplier: float = ParamField(
         float, "poisonGuardResistRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of poison damage blocked by this weapon/shield.",
     )
-    DiseaseGuardResistRate: float = ParamField(
+    ToxicGuardResistanceMultiplier: float = ParamField(
         float, "diseaseGuardResistRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of toxic damage blocked by this weapon/shield.",
     )
-    BloodGuardResistRate: float = ParamField(
+    BleedGuardResistanceMultiplier: float = ParamField(
         float, "bloodGuardResistRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of bleed damage blocked by this weapon/shield.",
     )
-    CurseGuardResistRate: float = ParamField(
+    CurseGuardResistanceMultiplier: float = ParamField(
         float, "curseGuardResistRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of curse damage blocked by this weapon/shield.",
     )
-    StaminaGuardDefRate: float = ParamField(
+    StaminaGuardReductionMultiplier: float = ParamField(
         float, "staminaGuardDefRate", default=1.0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Multiplier applied to the percentage of stamina damage blocked by this weapon/shield.",
     )
-    SpEffectId1: int = ParamField(
-        byte, "spEffectId1", default=0,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit0: int = ParamField(
+        byte, "spEffectId1", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect applied to struck target (slot 0). Overrides slot 0 of base weapon parameters.",
     )
-    SpEffectId2: int = ParamField(
-        byte, "spEffectId2", default=0,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit1: int = ParamField(
+        byte, "spEffectId2", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect applied to struck target (slot 1). Overrides slot 1 of base weapon parameters.",
     )
-    SpEffectId3: int = ParamField(
-        byte, "spEffectId3", default=0,
-        tooltip="TOOLTIP-TODO",
+    SpecialEffectOnHit2: int = ParamField(
+        byte, "spEffectId3", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect applied to struck target (slot 2). Overrides slot 2 of base weapon parameters.",
     )
-    ResidentSpEffectId1: int = ParamField(
-        byte, "residentSpEffectId1", default=0,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect0: int = ParamField(
+        byte, "residentSpEffectId1", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to character with weapon equipped (slot 0). Overrides slot 0 of base weapon "
+                "parameters.",
     )
-    ResidentSpEffectId2: int = ParamField(
-        byte, "residentSpEffectId2", default=0,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect1: int = ParamField(
+        byte, "residentSpEffectId2", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to character with weapon equipped (slot 1). Overrides slot 1 of base weapon "
+                "parameters.",
     )
-    ResidentSpEffectId3: int = ParamField(
-        byte, "residentSpEffectId3", default=0,
-        tooltip="TOOLTIP-TODO",
+    EquippedSpecialEffect2: int = ParamField(
+        byte, "residentSpEffectId3", game_type=SpecialEffectParam, default=0,
+        tooltip="Special effect granted to character with weapon equipped (slot 2). Overrides slot 2 of base weapon "
+                "parameters.",
     )
-    MaterialSetId: int = ParamField(
+    UpgradeMaterialOffset: int = ParamField(
         byte, "materialSetId", default=0,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Value to be added to Upgrade Materials field in base weapon parameters.",
     )
     MaxReinforceLevel: int = ParamField(
         byte, "maxReinforceLevel", default=0,

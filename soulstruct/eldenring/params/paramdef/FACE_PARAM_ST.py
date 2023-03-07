@@ -409,17 +409,17 @@ class FACE_PARAM_ST(ParamRow):
         byte, "decal_mirror", default=0,
         tooltip="TOOLTIP-TODO",
     )
-    ChrBodyScaleHead: int = ParamField(
+    HeadScale: int = ParamField(
         byte, "chrBodyScaleHead", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleBreast: int = ParamField(
+    BreastScale: int = ParamField(
         byte, "chrBodyScaleBreast", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    ChrBodyScaleAbdomen: int = ParamField(
+    AbdomenScale: int = ParamField(
         byte, "chrBodyScaleAbdomen", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     ChrBodyScaleRArm: int = ParamField(
         byte, "chrBodyScaleRArm", default=128,
@@ -469,509 +469,509 @@ class FACE_PARAM_ST(ParamRow):
     _Pad0: bytes = ParamPad(5, "pad[5]")
     Age: int = ParamField(
         byte, "age", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     Gender: int = ParamField(
         byte, "gender", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CaricatureGeometry: int = ParamField(
         byte, "caricatureGeometry", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
     CaricatureTexture: int = ParamField(
         byte, "caricatureTexture", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="TODO",
     )
-    FaceGeoData00: int = ParamField(
+    GeometryData00: int = ParamField(
         byte, "faceGeoData00", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 0.",
     )
-    FaceGeoData01: int = ParamField(
+    GeometryData01: int = ParamField(
         byte, "faceGeoData01", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 1.",
     )
-    FaceGeoData02: int = ParamField(
+    GeometryData02: int = ParamField(
         byte, "faceGeoData02", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 2.",
     )
-    FaceGeoData03: int = ParamField(
+    GeometryData03: int = ParamField(
         byte, "faceGeoData03", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 3.",
     )
-    FaceGeoData04: int = ParamField(
+    GeometryData04: int = ParamField(
         byte, "faceGeoData04", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 4.",
     )
-    FaceGeoData05: int = ParamField(
+    GeometryData05: int = ParamField(
         byte, "faceGeoData05", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 5.",
     )
-    FaceGeoData06: int = ParamField(
+    GeometryData06: int = ParamField(
         byte, "faceGeoData06", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 6.",
     )
-    FaceGeoData07: int = ParamField(
+    GeometryData07: int = ParamField(
         byte, "faceGeoData07", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 7.",
     )
-    FaceGeoData08: int = ParamField(
+    GeometryData08: int = ParamField(
         byte, "faceGeoData08", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 8.",
     )
-    FaceGeoData09: int = ParamField(
+    GeometryData09: int = ParamField(
         byte, "faceGeoData09", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 9.",
     )
-    FaceGeoData10: int = ParamField(
+    GeometryData10: int = ParamField(
         byte, "faceGeoData10", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 10.",
     )
-    FaceGeoData11: int = ParamField(
+    GeometryData11: int = ParamField(
         byte, "faceGeoData11", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 11.",
     )
-    FaceGeoData12: int = ParamField(
+    GeometryData12: int = ParamField(
         byte, "faceGeoData12", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 12.",
     )
-    FaceGeoData13: int = ParamField(
+    GeometryData13: int = ParamField(
         byte, "faceGeoData13", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 13.",
     )
-    FaceGeoData14: int = ParamField(
+    GeometryData14: int = ParamField(
         byte, "faceGeoData14", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 14.",
     )
-    FaceGeoData15: int = ParamField(
+    GeometryData15: int = ParamField(
         byte, "faceGeoData15", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 15.",
     )
-    FaceGeoData16: int = ParamField(
+    GeometryData16: int = ParamField(
         byte, "faceGeoData16", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 16.",
     )
-    FaceGeoData17: int = ParamField(
+    GeometryData17: int = ParamField(
         byte, "faceGeoData17", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 17.",
     )
-    FaceGeoData18: int = ParamField(
+    GeometryData18: int = ParamField(
         byte, "faceGeoData18", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 18.",
     )
-    FaceGeoData19: int = ParamField(
+    GeometryData19: int = ParamField(
         byte, "faceGeoData19", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 19.",
     )
-    FaceGeoData20: int = ParamField(
+    GeometryData20: int = ParamField(
         byte, "faceGeoData20", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 20.",
     )
-    FaceGeoData21: int = ParamField(
+    GeometryData21: int = ParamField(
         byte, "faceGeoData21", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 21.",
     )
-    FaceGeoData22: int = ParamField(
+    GeometryData22: int = ParamField(
         byte, "faceGeoData22", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 22.",
     )
-    FaceGeoData23: int = ParamField(
+    GeometryData23: int = ParamField(
         byte, "faceGeoData23", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 23.",
     )
-    FaceGeoData24: int = ParamField(
+    GeometryData24: int = ParamField(
         byte, "faceGeoData24", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 24.",
     )
-    FaceGeoData25: int = ParamField(
+    GeometryData25: int = ParamField(
         byte, "faceGeoData25", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 25.",
     )
-    FaceGeoData26: int = ParamField(
+    GeometryData26: int = ParamField(
         byte, "faceGeoData26", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 26.",
     )
-    FaceGeoData27: int = ParamField(
+    GeometryData27: int = ParamField(
         byte, "faceGeoData27", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 27.",
     )
-    FaceGeoData28: int = ParamField(
+    GeometryData28: int = ParamField(
         byte, "faceGeoData28", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 28.",
     )
-    FaceGeoData29: int = ParamField(
+    GeometryData29: int = ParamField(
         byte, "faceGeoData29", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 29.",
     )
-    FaceGeoData30: int = ParamField(
+    GeometryData30: int = ParamField(
         byte, "faceGeoData30", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 30.",
     )
-    FaceGeoData31: int = ParamField(
+    GeometryData31: int = ParamField(
         byte, "faceGeoData31", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 31.",
     )
-    FaceGeoData32: int = ParamField(
+    GeometryData32: int = ParamField(
         byte, "faceGeoData32", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 32.",
     )
-    FaceGeoData33: int = ParamField(
+    GeometryData33: int = ParamField(
         byte, "faceGeoData33", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 33.",
     )
-    FaceGeoData34: int = ParamField(
+    GeometryData34: int = ParamField(
         byte, "faceGeoData34", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 34.",
     )
-    FaceGeoData35: int = ParamField(
+    GeometryData35: int = ParamField(
         byte, "faceGeoData35", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 35.",
     )
-    FaceGeoData36: int = ParamField(
+    GeometryData36: int = ParamField(
         byte, "faceGeoData36", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 36.",
     )
-    FaceGeoData37: int = ParamField(
+    GeometryData37: int = ParamField(
         byte, "faceGeoData37", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 37.",
     )
-    FaceGeoData38: int = ParamField(
+    GeometryData38: int = ParamField(
         byte, "faceGeoData38", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 38.",
     )
-    FaceGeoData39: int = ParamField(
+    GeometryData39: int = ParamField(
         byte, "faceGeoData39", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 39.",
     )
-    FaceGeoData40: int = ParamField(
+    GeometryData40: int = ParamField(
         byte, "faceGeoData40", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 40.",
     )
-    FaceGeoData41: int = ParamField(
+    GeometryData41: int = ParamField(
         byte, "faceGeoData41", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 41.",
     )
-    FaceGeoData42: int = ParamField(
+    GeometryData42: int = ParamField(
         byte, "faceGeoData42", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 42.",
     )
-    FaceGeoData43: int = ParamField(
+    GeometryData43: int = ParamField(
         byte, "faceGeoData43", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 43.",
     )
-    FaceGeoData44: int = ParamField(
+    GeometryData44: int = ParamField(
         byte, "faceGeoData44", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 44.",
     )
-    FaceGeoData45: int = ParamField(
+    GeometryData45: int = ParamField(
         byte, "faceGeoData45", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 45.",
     )
-    FaceGeoData46: int = ParamField(
+    GeometryData46: int = ParamField(
         byte, "faceGeoData46", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 46.",
     )
-    FaceGeoData47: int = ParamField(
+    GeometryData47: int = ParamField(
         byte, "faceGeoData47", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 47.",
     )
-    FaceGeoData48: int = ParamField(
+    GeometryData48: int = ParamField(
         byte, "faceGeoData48", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 48.",
     )
-    FaceGeoData49: int = ParamField(
+    GeometryData49: int = ParamField(
         byte, "faceGeoData49", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 49.",
     )
-    FaceGeoData50: int = ParamField(
+    GeometryData50: int = ParamField(
         byte, "faceGeoData50", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 50.",
     )
-    FaceGeoData51: int = ParamField(
+    GeometryData51: int = ParamField(
         byte, "faceGeoData51", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 51.",
     )
-    FaceGeoData52: int = ParamField(
+    GeometryData52: int = ParamField(
         byte, "faceGeoData52", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 52.",
     )
-    FaceGeoData53: int = ParamField(
+    GeometryData53: int = ParamField(
         byte, "faceGeoData53", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 53.",
     )
-    FaceGeoData54: int = ParamField(
+    GeometryData54: int = ParamField(
         byte, "faceGeoData54", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 54.",
     )
-    FaceGeoData55: int = ParamField(
+    GeometryData55: int = ParamField(
         byte, "faceGeoData55", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 55.",
     )
-    FaceGeoData56: int = ParamField(
+    GeometryData56: int = ParamField(
         byte, "faceGeoData56", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 56.",
     )
-    FaceGeoData57: int = ParamField(
+    GeometryData57: int = ParamField(
         byte, "faceGeoData57", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 57.",
     )
-    FaceGeoData58: int = ParamField(
+    GeometryData58: int = ParamField(
         byte, "faceGeoData58", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 58.",
     )
-    FaceGeoData59: int = ParamField(
+    GeometryData59: int = ParamField(
         byte, "faceGeoData59", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 59.",
     )
-    FaceGeoData60: int = ParamField(
+    GeometryData60: int = ParamField(
         byte, "faceGeoData60", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry data point 60.",
     )
-    FaceTexData00: int = ParamField(
+    TextureData00: int = ParamField(
         byte, "faceTexData00", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 0.",
     )
-    FaceTexData01: int = ParamField(
+    TextureData01: int = ParamField(
         byte, "faceTexData01", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 1.",
     )
-    FaceTexData02: int = ParamField(
+    TextureData02: int = ParamField(
         byte, "faceTexData02", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 2.",
     )
-    FaceTexData03: int = ParamField(
+    TextureData03: int = ParamField(
         byte, "faceTexData03", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 3.",
     )
-    FaceTexData04: int = ParamField(
+    TextureData04: int = ParamField(
         byte, "faceTexData04", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 4.",
     )
-    FaceTexData05: int = ParamField(
+    TextureData05: int = ParamField(
         byte, "faceTexData05", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 5.",
     )
-    FaceTexData06: int = ParamField(
+    TextureData06: int = ParamField(
         byte, "faceTexData06", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 6.",
     )
-    FaceTexData07: int = ParamField(
+    TextureData07: int = ParamField(
         byte, "faceTexData07", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 7.",
     )
-    FaceTexData08: int = ParamField(
+    TextureData08: int = ParamField(
         byte, "faceTexData08", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 8.",
     )
-    FaceTexData09: int = ParamField(
+    TextureData09: int = ParamField(
         byte, "faceTexData09", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 9.",
     )
-    FaceTexData10: int = ParamField(
+    TextureData10: int = ParamField(
         byte, "faceTexData10", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 10.",
     )
-    FaceTexData11: int = ParamField(
+    TextureData11: int = ParamField(
         byte, "faceTexData11", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 11.",
     )
-    FaceTexData12: int = ParamField(
+    TextureData12: int = ParamField(
         byte, "faceTexData12", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 12.",
     )
-    FaceTexData13: int = ParamField(
+    TextureData13: int = ParamField(
         byte, "faceTexData13", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 13.",
     )
-    FaceTexData14: int = ParamField(
+    TextureData14: int = ParamField(
         byte, "faceTexData14", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 14.",
     )
-    FaceTexData15: int = ParamField(
+    TextureData15: int = ParamField(
         byte, "faceTexData15", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 15.",
     )
-    FaceTexData16: int = ParamField(
+    TextureData16: int = ParamField(
         byte, "faceTexData16", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 16.",
     )
-    FaceTexData17: int = ParamField(
+    TextureData17: int = ParamField(
         byte, "faceTexData17", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 17.",
     )
-    FaceTexData18: int = ParamField(
+    TextureData18: int = ParamField(
         byte, "faceTexData18", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 18.",
     )
-    FaceTexData19: int = ParamField(
+    TextureData19: int = ParamField(
         byte, "faceTexData19", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 19.",
     )
-    FaceTexData20: int = ParamField(
+    TextureData20: int = ParamField(
         byte, "faceTexData20", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 20.",
     )
-    FaceTexData21: int = ParamField(
+    TextureData21: int = ParamField(
         byte, "faceTexData21", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 21.",
     )
-    FaceTexData22: int = ParamField(
+    TextureData22: int = ParamField(
         byte, "faceTexData22", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 22.",
     )
-    FaceTexData23: int = ParamField(
+    TextureData23: int = ParamField(
         byte, "faceTexData23", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 23.",
     )
-    FaceTexData24: int = ParamField(
+    TextureData24: int = ParamField(
         byte, "faceTexData24", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 24.",
     )
-    FaceTexData25: int = ParamField(
+    TextureData25: int = ParamField(
         byte, "faceTexData25", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 25.",
     )
-    FaceTexData26: int = ParamField(
+    TextureData26: int = ParamField(
         byte, "faceTexData26", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 26.",
     )
-    FaceTexData27: int = ParamField(
+    TextureData27: int = ParamField(
         byte, "faceTexData27", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 27.",
     )
-    FaceTexData28: int = ParamField(
+    TextureData28: int = ParamField(
         byte, "faceTexData28", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 28.",
     )
-    FaceTexData29: int = ParamField(
+    TextureData29: int = ParamField(
         byte, "faceTexData29", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 29.",
     )
-    FaceTexData30: int = ParamField(
+    TextureData30: int = ParamField(
         byte, "faceTexData30", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 30.",
     )
-    FaceTexData31: int = ParamField(
+    TextureData31: int = ParamField(
         byte, "faceTexData31", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 31.",
     )
-    FaceTexData32: int = ParamField(
+    TextureData32: int = ParamField(
         byte, "faceTexData32", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 32.",
     )
-    FaceTexData33: int = ParamField(
+    TextureData33: int = ParamField(
         byte, "faceTexData33", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 33.",
     )
-    FaceTexData34: int = ParamField(
+    TextureData34: int = ParamField(
         byte, "faceTexData34", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 34.",
     )
-    FaceTexData35: int = ParamField(
+    TextureData35: int = ParamField(
         byte, "faceTexData35", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Texture data point 35.",
     )
-    FaceGeoAsymData00: int = ParamField(
+    GeoAsymData00: int = ParamField(
         byte, "faceGeoAsymData00", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 0.",
     )
-    FaceGeoAsymData01: int = ParamField(
+    GeoAsymData01: int = ParamField(
         byte, "faceGeoAsymData01", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 1.",
     )
-    FaceGeoAsymData02: int = ParamField(
+    GeoAsymData02: int = ParamField(
         byte, "faceGeoAsymData02", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 2.",
     )
-    FaceGeoAsymData03: int = ParamField(
+    GeoAsymData03: int = ParamField(
         byte, "faceGeoAsymData03", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 3.",
     )
-    FaceGeoAsymData04: int = ParamField(
+    GeoAsymData04: int = ParamField(
         byte, "faceGeoAsymData04", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 4.",
     )
-    FaceGeoAsymData05: int = ParamField(
+    GeoAsymData05: int = ParamField(
         byte, "faceGeoAsymData05", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 5.",
     )
-    FaceGeoAsymData06: int = ParamField(
+    GeoAsymData06: int = ParamField(
         byte, "faceGeoAsymData06", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 6.",
     )
-    FaceGeoAsymData07: int = ParamField(
+    GeoAsymData07: int = ParamField(
         byte, "faceGeoAsymData07", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 7.",
     )
-    FaceGeoAsymData08: int = ParamField(
+    GeoAsymData08: int = ParamField(
         byte, "faceGeoAsymData08", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 8.",
     )
-    FaceGeoAsymData09: int = ParamField(
+    GeoAsymData09: int = ParamField(
         byte, "faceGeoAsymData09", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 9.",
     )
-    FaceGeoAsymData10: int = ParamField(
+    GeoAsymData10: int = ParamField(
         byte, "faceGeoAsymData10", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 10.",
     )
-    FaceGeoAsymData11: int = ParamField(
+    GeoAsymData11: int = ParamField(
         byte, "faceGeoAsymData11", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 11.",
     )
-    FaceGeoAsymData12: int = ParamField(
+    GeoAsymData12: int = ParamField(
         byte, "faceGeoAsymData12", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 12.",
     )
-    FaceGeoAsymData13: int = ParamField(
+    GeoAsymData13: int = ParamField(
         byte, "faceGeoAsymData13", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 13.",
     )
-    FaceGeoAsymData14: int = ParamField(
+    GeoAsymData14: int = ParamField(
         byte, "faceGeoAsymData14", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 14.",
     )
-    FaceGeoAsymData15: int = ParamField(
+    GeoAsymData15: int = ParamField(
         byte, "faceGeoAsymData15", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 15.",
     )
-    FaceGeoAsymData16: int = ParamField(
+    GeoAsymData16: int = ParamField(
         byte, "faceGeoAsymData16", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 16.",
     )
-    FaceGeoAsymData17: int = ParamField(
+    GeoAsymData17: int = ParamField(
         byte, "faceGeoAsymData17", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 17.",
     )
-    FaceGeoAsymData18: int = ParamField(
+    GeoAsymData18: int = ParamField(
         byte, "faceGeoAsymData18", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 18.",
     )
-    FaceGeoAsymData19: int = ParamField(
+    GeoAsymData19: int = ParamField(
         byte, "faceGeoAsymData19", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 19.",
     )
-    FaceGeoAsymData20: int = ParamField(
+    GeoAsymData20: int = ParamField(
         byte, "faceGeoAsymData20", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 20.",
     )
-    FaceGeoAsymData21: int = ParamField(
+    GeoAsymData21: int = ParamField(
         byte, "faceGeoAsymData21", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 21.",
     )
-    FaceGeoAsymData22: int = ParamField(
+    GeoAsymData22: int = ParamField(
         byte, "faceGeoAsymData22", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 22.",
     )
-    FaceGeoAsymData23: int = ParamField(
+    GeoAsymData23: int = ParamField(
         byte, "faceGeoAsymData23", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 23.",
     )
-    FaceGeoAsymData24: int = ParamField(
+    GeoAsymData24: int = ParamField(
         byte, "faceGeoAsymData24", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 24.",
     )
-    FaceGeoAsymData25: int = ParamField(
+    GeoAsymData25: int = ParamField(
         byte, "faceGeoAsymData25", default=128,
-        tooltip="TOOLTIP-TODO",
+        tooltip="Geometry asym data point 25.",
     )
