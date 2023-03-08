@@ -47,8 +47,10 @@ class MSBEntryList(list[MSBEntryType]):
     def find_entry_intenum(self, entry_intenum: IntEnum) -> MSBEntryType:
         return self.find_entry_name(entry_intenum.name)
 
-    def find_entry_name(self, entry_name: str) -> MSBEntryType:
+    def find_entry_name(self, entry_name: str | IntEnum) -> MSBEntryType:
         """Try to retrieve entry with given name."""
+        if isinstance(entry_name, IntEnum):
+            entry_name = entry_name.name
         entries = [entry for entry in self if entry.name == entry_name]
         if not entries:
             raise KeyError(f"Entry name '{entry_name}' does not appear in {self.__class__.__name__}.")
@@ -61,6 +63,11 @@ class MSBEntryList(list[MSBEntryType]):
 
     def find_entry_names(self, entry_names: tp.Container[str]) -> list[MSBEntryType]:
         return [entry for entry in self if entry.name in entry_names]
+
+    def __getitem__(self, index_or_name: int | IntEnum | str) -> MSBEntryType:
+        if isinstance(index_or_name, int):
+            return super().__getitem__(index_or_name)
+        return self.find_entry_name(index_or_name)
 
     def sort_by_name(self):
         """Sort entries in subtype by name, alphabetically."""
@@ -141,7 +148,9 @@ class MSBEntryList(list[MSBEntryType]):
             self.append(entry)
         return entry
 
-    def duplicate(self, entry_or_index: MSBEntryType | int, index_offset=0, **kwargs) -> MSBEntryType:
+    def duplicate(
+        self, entry_or_index_or_name: MSBEntryType | int | str | IntEnum, index_offset=0, **kwargs
+    ) -> MSBEntryType:
         """Duplicate the specified `entry`.
 
         If `index_offset = 0` (default), the duplicated entry will be inserted right after the source entry. Higher
@@ -152,14 +161,19 @@ class MSBEntryList(list[MSBEntryType]):
         further modification if desired). Unless otherwise specified, the `name` of the new entry will also be given a
         '<COPY>' duplicate tag suffix, which must be edited/removed by the user.
         """
-        if isinstance(entry_or_index, int):
-            entry = self[entry_or_index]
-            index = entry_or_index
-        elif isinstance(entry_or_index, MSBEntry):
-            entry = entry_or_index
+        if isinstance(entry_or_index_or_name, IntEnum):
+            entry_or_index_or_name = entry_or_index_or_name.name
+        if isinstance(entry_or_index_or_name, int):
+            entry = self[entry_or_index_or_name]
+            index = entry_or_index_or_name
+        elif isinstance(entry_or_index_or_name, str):
+            entry = self.find_entry_name(entry_or_index_or_name)
+            index = self.index_entry(entry)  # -1 if not found
+        elif isinstance(entry_or_index_or_name, MSBEntry):
+            entry = entry_or_index_or_name
             index = self.index_entry(entry)  # -1 if not found
         else:
-            raise TypeError("`entry_or_index` must be an `MSBEntry` or index of one in this list.")
+            raise TypeError("`entry_or_index_or_name` must be an `MSBEntry` or index of one in this list.")
         
         duplicated = entry.copy()
         if "entity_enum" in kwargs:

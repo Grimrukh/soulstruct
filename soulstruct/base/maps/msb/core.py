@@ -8,6 +8,7 @@ import re
 import struct
 import typing as tp
 from dataclasses import dataclass, fields
+from enum import Enum
 from pathlib import Path
 
 from soulstruct.base.game_file import GameFile
@@ -304,6 +305,46 @@ class MSB(GameFile, abc.ABC):
         if len(results) > 1:
             raise ValueError(f"Found entries of multiple types with name '{name}': {list(results)}")
         return results[0]
+
+    def find_model_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBModel:
+        """Get `MSBModel` with name `name` that is one of the given `entry_subtypes` or any type by default.
+
+        Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
+        """
+        if isinstance(name, Enum):
+            name = name.name
+        # noinspection PyTypeChecker
+        return self.find_entry_by_name(name, supertypes=[MSBSupertype.MODELS], subtypes=subtypes)
+
+    def find_event_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBEvent:
+        """Get `MSBEvent` with name `name` that is one of the given `entry_subtypes` or any type by default.
+
+        Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
+        """
+        if isinstance(name, Enum):
+            name = name.name
+        # noinspection PyTypeChecker
+        return self.find_entry_by_name(name, supertypes=[MSBSupertype.EVENTS], subtypes=subtypes)
+
+    def find_region_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBRegion:
+        """Get `MSBRegion` with name `name` that is one of the given `entry_subtypes` or any type by default.
+
+        Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
+        """
+        if isinstance(name, Enum):
+            name = name.name
+        # noinspection PyTypeChecker
+        return self.find_entry_by_name(name, supertypes=[MSBSupertype.REGIONS], subtypes=subtypes)
+
+    def find_part_name(self, name: str | Enum, subtypes: tp.Iterable[str] = ()) -> BaseMSBPart:
+        """Get `MSBPart` with name `name` that is one of the given `entry_subtypes` or any type by default.
+
+        Raises a `KeyError` if the name cannot be found, and a `ValueError` if multiple entries are found.
+        """
+        if isinstance(name, Enum):
+            name = name.name
+        # noinspection PyTypeChecker
+        return self.find_entry_by_name(name, supertypes=[MSBSupertype.PARTS], subtypes=subtypes)
 
     def to_dict(self, ignore_defaults=True) -> dict:
         """Return a dictionary form of the MSB.
@@ -695,3 +736,8 @@ class MSB(GameFile, abc.ABC):
         """Retrieve entry subtype list by name, e.g. "characters", or enum name, e.g. "Character"."""
         subtype_list_name = self.resolve_subtype_name(subtype_name)
         return getattr(self, subtype_list_name)
+
+    def get_models_of_part_subtype(self, part_subtype_name: str) -> MSBEntryList:
+        """Retrieve all models that are used by the given part subtype."""
+        model_subtype_list_name = self.resolve_subtype_name(part_subtype_name + "Model", MSBSupertype.MODELS)
+        return getattr(self, model_subtype_list_name)

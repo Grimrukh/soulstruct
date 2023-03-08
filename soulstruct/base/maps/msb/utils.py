@@ -116,6 +116,16 @@ class GroupBitSet:
             raise ValueError(f"Bit {bit} is out of range for {self.bit_count}-bit `GroupBitSet`.")
         self.enabled_bits.add(bit)
 
+    def __or__(self, other: GroupBitSet | set[int]) -> GroupBitSet:
+        if isinstance(other, GroupBitSet):
+            if self.bit_count != other.bit_count:
+                raise ValueError(
+                    f"Cannot combine `GroupBitSet`s with different bit counts: {self.bit_count} and {other.bit_count}."
+                )
+            return GroupBitSet(self.enabled_bits | other.enabled_bits, self.bit_count)
+        elif isinstance(other, set):
+            return GroupBitSet(self.enabled_bits | other, self.bit_count)
+
     def remove(self, bit: int):
         if not 0 <= bit <= self.bit_count:
             raise ValueError(f"Bit {bit} is out of range for {self.bit_count}-bit `GroupBitSet`.")

@@ -177,6 +177,11 @@ class MSBEntry(abc.ABC):
         except AttributeError:
             raise KeyError(f"Field {repr(field_name)} does not exist in MSB entry type {self.__class__.__name__}.")
 
+    def set(self, **kwargs):
+        """Attribute shortcut setter."""
+        for key, value in kwargs.items():
+            self[key] = value
+
     def get_entity_id(self) -> int | None:
         """`entity_id` is a critical field for most MSB entries, but not quite all of them (and not models).
 

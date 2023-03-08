@@ -282,7 +282,7 @@ class MSB(_BaseMSB):
         self,
         translate: Vector3,
         rotate: Vector3,
-        point_entity_enum: tp.Optional[RegionPoint] = None,
+        point_entity_enum: RegionPoint = None,
         **vfx_event_kwargs,
     ) -> MSBVFXEvent:
         if "attached_region" in vfx_event_kwargs:

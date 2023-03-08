@@ -181,18 +181,20 @@ def _embed_component(component_func):
     return component_with_label
 
 
-# TODO: Testing here. Need a better setup for imports/config.
-from soulstruct.base.project import editor_config
+SMALL_FONT = ("Inconsolata Regular", 12)
+REGULAR_FONT = ("Inconsolata Regular", 14)
+BOLD_FONT = ("Inconsolata Bold", 14)
+HEADING_FONT = ("Inconsolata Bold", 18)
 
 
 # noinspection PyPep8Naming
 class SmartFrame(tk.Frame):
     FONT_DEFAULTS = {
-        "label": editor_config.REGULAR_FONT,
-        "heading": editor_config.HEADING_FONT,
-        "button": editor_config.SMALL_FONT,
-        "tab": editor_config.REGULAR_FONT,
-        "entry": editor_config.REGULAR_FONT,
+        "label": REGULAR_FONT,
+        "heading": HEADING_FONT,
+        "button": SMALL_FONT,
+        "tab": REGULAR_FONT,
+        "entry": REGULAR_FONT,
     }
 
     FileDialog = filedialog
